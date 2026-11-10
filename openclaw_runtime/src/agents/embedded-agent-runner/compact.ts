@@ -1662,6 +1662,7 @@ async function compactEmbeddedAgentSessionDirectOnce(
             try {
               const storedCheckpoint = await persistSessionCompactionCheckpoint({
                 cfg: params.config,
+                agentId: sessionAgentId,
                 sessionKey: params.sessionKey,
                 sessionId: activeSessionId,
                 reason: resolveSessionCompactionCheckpointReason({

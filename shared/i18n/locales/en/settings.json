@@ -1005,6 +1005,7 @@
     "removeTitle": "Remove this worktree?",
     "removeHint": "Removes the idle checkout from disk and retains its Git branch. Occupied or modified worktrees are kept.",
     "protected": {
+      "owner": "Managed by its conversation or task; release it through the owning workflow.",
       "primary": "Primary checkout",
       "active": "Current workspace",
       "locked": "Locked in Git",

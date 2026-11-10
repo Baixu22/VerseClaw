@@ -1,0 +1,17 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "observedAt": "2026-11-10T05:12:48.262Z",
+  "source": "8e201dcbf0e6697de78240d993437b1e930d00a5",
+  "parallelUi": {
+    "own": {
+      "pid": 37140,
+      "startedLocal": "2026-11-10T13:04:43.392450+08:00"
+    },
+    "u4": {
+      "pid": 15800,
+      "startedLocal": "2026-11-10T13:10:38.598109+08:00"
+    }
+  },
+  "policy": "Preserve both active attempts. Do not kill other owner resources; wait for process-confirmed handoff before the next launch."
+}

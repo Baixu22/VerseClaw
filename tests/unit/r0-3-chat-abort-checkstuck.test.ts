@@ -107,7 +107,7 @@ describe('R0-3 chat abort/checkStuck reclamation', () => {
       if (method === 'config.get') return { messages: [] };
       if (method === 'chat.history') return { messages: [] };
       if (method === 'chat.send') return { runId: 'run-r0-3' };
-      if (method === 'chat.abort') return { ok: true };
+      if (method === 'chat.abort') return { ok: true, aborted: true, runIds: ['run-r0-3'] };
       if (method === 'sessions.list') return { sessions: [] };
       throw new Error('Unexpected gateway RPC: ' + method);
     });
@@ -172,7 +172,7 @@ describe('R0-3 chat abort/checkStuck reclamation', () => {
     expect(state.activeRunId).toBeNull();
     expect(state.streamingText).toBe('');
     expect(state.streamingTools).toEqual([]);
-    expect(gatewayRpcMock).toHaveBeenCalledWith('chat.abort', { sessionKey: 'agent:main:main' });
+    expect(gatewayRpcMock).toHaveBeenCalledWith('chat.abort', { sessionKey: 'agent:main:main', runId: 'run-r0-3' });
     expect(vi.mocked(toast.warning)).not.toHaveBeenCalled();
   });
 

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "RsiProtocolPrivateArchiveVerification/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-protocol-archive-verifier",
+  "archive": "D:\\ClawX-acceptance\\rsi-protocol-contrast-20261109-01a1be64-final\\raw-campaign.zip",
+  "archiveBytes": 48852858,
+  "archiveSha256": "2a8a25923813e936822dbc810626ea1e0c8f632c347b1e1dcc8affd35be8e6e6",
+  "entryCount": 4291,
+  "logicalBytes": 243561853,
+  "bundle": "D:\\ClawX-acceptance\\rsi-protocol-contrast-20261109-01a1be64-final\\frozen-source.bundle",
+  "bundleBytes": 39316,
+  "bundleSha256": "fe68d60fd8208788a8d34f692498afbb2bbe5181e101334e5e44d327994d92a5",
+  "crcAndEveryFileSha256Verified": true,
+  "passed": true
+}

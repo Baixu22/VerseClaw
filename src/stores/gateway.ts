@@ -5,6 +5,7 @@
 import { create } from 'zustand';
 import { hostApi } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
+import { mergeSessionActivity } from '@/lib/session-read-model';
 import { OPENCLAW_GATEWAY_PORT } from '@shared/gateway-endpoint';
 import type { GatewayNotification, GatewayHealth, GatewayStatus } from '../types/gateway';
 import type { ChatRuntimeEvent } from '../../shared/chat-runtime-events';
@@ -190,10 +191,7 @@ function touchSessionActivity(sessionKey: string | null | undefined, activityMs 
   import('./chat')
     .then(({ useChatStore }) => {
       useChatStore.setState((state) => ({
-        sessionLastActivity: {
-          ...state.sessionLastActivity,
-          [sessionKey]: Math.max(state.sessionLastActivity[sessionKey] ?? 0, activityMs),
-        },
+        sessionLastActivity: mergeSessionActivity(state.sessionLastActivity, { [sessionKey]: activityMs }),
       }));
     })
     .catch(() => {});

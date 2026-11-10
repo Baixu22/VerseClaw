@@ -1,0 +1,441 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": "289ee63a210eaec06c202de17b6c9cf23a74f17e",
+  "deliveryCandidate": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+  "equivalence": "observation-equivalence.json",
+  "cases": [
+    {
+      "name": "checkpoint-rollback-executor (A3) validateCheckpointRecord accepts a structurally valid checkpoint",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) validateCheckpointRecord rejects missing/invalid shape",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) validateCheckpointRecord rejects unparseable createdAt",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) applyCheckpointToJournal restores files to the checkpoint instant (post-checkpoint writes undone)",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) applyCheckpointToJournal restores created files (hadPrior=false) by unlinking them",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) applyCheckpointToJournal no-op when no journal entries exist after the checkpoint",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) applyCheckpointToJournal #176 fails closed when the journal id is the canonical key, not the session UUID",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) applyCheckpointToJournal #176 refuses to roll back when no journal session id is supplied",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) applyCheckpointToJournal #175 aborts instead of deleting a concurrent write that landed after the selection",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) applyCheckpointToJournal uses metadata.journalSeq as the boundary when stamped (partial rollback without same-ms ambiguity)",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) applyCheckpointToJournal ignores a non-numeric journalSeq and falls back to createdAt filtering",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) resolveCheckpointJournalRoot prefers the matching worktree root when metadata.worktreeId is set",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) resolveCheckpointJournalRoot falls back to workspace root without worktree metadata",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) createCheckpointRollbackDeps + executeReplayRollback restores a discovered worktree journal using its absolute root",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) createCheckpointRollbackDeps + executeReplayRollback legacy checkpoint path restores and records outcome",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) createCheckpointRollbackDeps + executeReplayRollback #175/#176 surface a failed rollback as a thrown failure, never a silent success",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) createCheckpointRollbackDeps + executeReplayRollback #175 serializes the rollback against a writer holding the same file lease",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) createCheckpointRollbackDeps + executeReplayRollback event_log target fails explicitly when pilot is disabled (no fake success)",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) createCheckpointRollbackDeps + executeReplayRollback invalid decision is rejected",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-rollback-executor (A3) default recordOutcome (console sink) is wired when no explicit sink is given",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration token budget + concurrent metrics (C3-4) aborts when goal budget exceeded",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration token budget + concurrent metrics (C3-4) resets wave budget on advance",
+      "status": "passed"
+    },
+    {
+      "name": "orchestration token budget + concurrent metrics (C3-4) records wave conflict checks when packing",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget quota identity normalizes endpoint identity and treats default ports as equal",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget quota identity shares one group across model names on the same endpoint and credential",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget quota identity separates different credentials on the same endpoint and different endpoints",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget quota identity never puts the raw credential into the group id",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget configuration surface is inert until an operator configures a limit",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget configuration surface keeps the coverage table honest about what is not gated",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget guarded transport boundary sends nothing while ungated and shares one slot when a limit is configured",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget guarded transport boundary rejects an over-capacity request without sending it to the provider",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget guarded transport boundary releases only when the guarded request is confirmed finished",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget guarded transport boundary releases the slot when the transport fails and re-admits the retry",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget guarded transport boundary does not block a different account or a different endpoint",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget guarded transport boundary maps two derived groups onto one quota group through an explicit alias",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget guarded transport boundary leaves no slot behind when a queued caller is aborted",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget logical request budget records a physical provider attempt inside an ambient logical request",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget logical request budget fails closed before sending when the ambient budget is already exhausted",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget shutdown and fairness rejects queued waiters on shutdown and leaves no slot behind",
+      "status": "passed"
+    },
+    {
+      "name": "provider outbound concurrency budget shutdown and fairness does not starve a waiter when the holder keeps running",
+      "status": "passed"
+    },
+    {
+      "name": "workspace resource leases cancels a queued request without waiting for the holder or invoking its effect",
+      "status": "passed"
+    },
+    {
+      "name": "workspace resource leases checks cancellation again between granting a slot and starting the callback",
+      "status": "passed"
+    },
+    {
+      "name": "workspace resource leases keeps an already-started operation holding capacity until its owner settles",
+      "status": "passed"
+    },
+    {
+      "name": "workspace resource leases caps workspaceSearch at 2 and queues the third with queuedMs > 0",
+      "status": "passed"
+    },
+    {
+      "name": "workspace resource leases serializes overlapping fileMutation paths and runs disjoint paths in parallel",
+      "status": "passed"
+    },
+    {
+      "name": "workspace resource leases serializes overlapping subtreeMutation paths and runs disjoint subtrees in parallel",
+      "status": "passed"
+    },
+    {
+      "name": "workspace resource leases keeps different workspace keys independent",
+      "status": "passed"
+    },
+    {
+      "name": "workspace resource leases caps 8 concurrent workspaceExec acquisitions at the workspace budget",
+      "status": "passed"
+    },
+    {
+      "name": "workspace resource leases releases idempotently without over-admitting the next batch",
+      "status": "passed"
+    },
+    {
+      "name": "workspace resource leases records gateway leases in the shadow resource envelope",
+      "status": "passed"
+    },
+    {
+      "name": "workspace resource leases rejects with a typed timeout error and reclaims the slot after release",
+      "status": "passed"
+    },
+    {
+      "name": "subagent spawn quota release (issue #32) does not release capacity merely because an unended execution is old",
+      "status": "passed"
+    },
+    {
+      "name": "subagent spawn quota release (issue #32) retains an ended parent slot while its old descendant still has no terminal evidence",
+      "status": "passed"
+    },
+    {
+      "name": "subagent spawn quota release (issue #32) counts only still-running children, even when cleanup is pending",
+      "status": "passed"
+    },
+    {
+      "name": "subagent spawn quota release (issue #32) counts zero once every child in the lineage has finished, even with cleanup pending",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease-guard (C5-1 wiring) is a no-op when enabled is not true",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease-guard (C5-1 wiring) blocks concurrent holders on the same path symbol when enabled",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease-guard (C5-1 wiring) resolves apply_patch paths to file-level symbols",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease-guard (C5-1 wiring) orders owner keys and compensates the first lease when a later resource is held",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease-guard (C5-1 wiring) does not acquire a lease or execute an already cancelled tool request",
+      "status": "passed"
+    },
+    {
+      "name": "worktree-service (C4 interface) create seeds files and cleanup removes tree (inprocess default)",
+      "status": "passed"
+    },
+    {
+      "name": "worktree-service (C4 interface) merge queue serializes and detects overlapping conflicts (2-worker same file)",
+      "status": "passed"
+    },
+    {
+      "name": "worktree-service (C4 interface) conflict policy can return work to worker",
+      "status": "passed"
+    },
+    {
+      "name": "worktree-service (C4 interface) merge missing worktree fails cleanly",
+      "status": "passed"
+    },
+    {
+      "name": "worktree-service (C4 interface) git backend creates isolated worktree when available (opt-in, not production default)",
+      "status": "passed"
+    },
+    {
+      "name": "worktree-service (C4 interface) git backend falls back to inprocess when not a git repo",
+      "status": "passed"
+    },
+    {
+      "name": "worktree-service (C4 interface) resolveWorktreeBackend defaults to inprocess",
+      "status": "passed"
+    },
+    {
+      "name": "C4 isolation request + HandoffPack coordinates normalizeIsolationMode defaults to shared",
+      "status": "passed"
+    },
+    {
+      "name": "C4 isolation request + HandoffPack coordinates orchestrator plan isolation defaults shared and accepts worktree",
+      "status": "passed"
+    },
+    {
+      "name": "C4 isolation request + HandoffPack coordinates HandoffPack carries writeSet/worktreeId/isolation and parse round-trips",
+      "status": "passed"
+    },
+    {
+      "name": "C4 isolation request + HandoffPack coordinates empty writeSet handoff remains compatible (omit field)",
+      "status": "passed"
+    },
+    {
+      "name": "worktree-service C4-H hardening exports PRODUCTION_GIT_WORKTREE_HARDENED without flipping defaults",
+      "status": "passed"
+    },
+    {
+      "name": "worktree-service C4-H hardening normalizes Windows separators and rejects traversal",
+      "status": "passed"
+    },
+    {
+      "name": "worktree-service C4-H hardening writeWorktreeFile accepts backslash rel paths",
+      "status": "passed"
+    },
+    {
+      "name": "worktree-service C4-H hardening git backend concurrent create/merge/cleanup stays isolated (C4-H)",
+      "status": "passed"
+    },
+    {
+      "name": "worktree-service C4-H hardening hardened git env disables repository hooks (C4-H parity with Codex info.rs)",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease (C5-1 + C5-H) second holder blocked until owner release (memory)",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease (C5-1 + C5-H) C5-H wal: expiry fences a live holder instead of admitting a second writer",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease (C5-1 + C5-H) C5-H wal: rehydrate from WAL blocks second logical process (crash recovery path)",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease (C5-1 + C5-H) C5-H wal: release then second process can acquire",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease (C5-1 + C5-H) exports MULTI_PROCESS_WAL_HARDENED capability (defaults unchanged elsewhere)",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease (C5-1 + C5-H) C5-H wal: concurrent acquire under lock yields single winner",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease (C5-1 + C5-H) C5-H wal: compact keeps active acquire rows",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease (C5-1 + C5-H) does not free an expired live lease when the process-local view is cleared",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease (C5-1 + C5-H) requires the issued nonce and cannot use an old release against a replacement",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease (C5-1 + C5-H) keeps a legacy expired lease with no provable process owner unavailable",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease (C5-1 + C5-H) refuses admission when the owner journal contains a torn record",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease (C5-1 + C5-H) does not turn a missing previously initialized journal into empty capacity",
+      "status": "passed"
+    },
+    {
+      "name": "symbol-lease (C5-1 + C5-H) does not treat the first contended lock directory as an initialized lease journal",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity admits everything and allocates no counter until a capacity is declared",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity bounds the instance-wide live count and refuses beyond it",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity persists identity-only ownership without inventing a capacity limit",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity counts a double release without freeing a second slot",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity reads the declared capacity and per-run defaults from the environment",
+      "status": "passed"
+    },
+    {
+      "name": "managed process capacity exposes the declared default limits to the process boundary",
+      "status": "passed"
+    },
+    {
+      "name": "bash workspaceExec admission settles cancellation while both slots remain held and never starts the shell",
+      "status": "passed"
+    },
+    {
+      "name": "bash workspaceExec admission queues behind the workspace budget before spawning the shell",
+      "status": "passed"
+    },
+    {
+      "name": "direct resource wait consumers preserves write owner-confirmed completion after cancellation",
+      "status": "passed"
+    },
+    {
+      "name": "direct resource wait consumers preserves edit owner-confirmed completion after cancellation",
+      "status": "passed"
+    },
+    {
+      "name": "direct resource wait consumers cancels bash while queued without starting the operation",
+      "status": "passed"
+    },
+    {
+      "name": "direct resource wait consumers cancels find while queued without starting the operation",
+      "status": "passed"
+    },
+    {
+      "name": "direct resource wait consumers cancels grep while queued without starting the operation",
+      "status": "passed"
+    },
+    {
+      "name": "direct resource wait consumers cancels write while queued without starting the operation",
+      "status": "passed"
+    },
+    {
+      "name": "direct resource wait consumers cancels edit while queued without starting the operation",
+      "status": "passed"
+    },
+    {
+      "name": "direct resource wait consumers uses remaining bash time and retains the lease until observed child close",
+      "status": "passed"
+    },
+    {
+      "name": "direct resource wait consumers keeps running find ownership through cancellation until close",
+      "status": "passed"
+    },
+    {
+      "name": "direct resource wait consumers keeps running grep ownership through cancellation until close",
+      "status": "passed"
+    },
+    {
+      "name": "direct resource wait consumers does not spawn grep after cancellation during asynchronous preparation",
+      "status": "passed"
+    }
+  ]
+}

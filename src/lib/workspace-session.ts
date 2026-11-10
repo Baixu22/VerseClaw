@@ -132,29 +132,36 @@ export async function clearWorkspaceActiveTopicMarker(rootPath: string | undefin
   } catch { /* Legacy topic reset is best-effort, as before. */ }
 }
 
-export async function createWorkspaceScopedNewSession(): Promise<string> {
+export function createWorkspaceScopedNewSession(): Promise<string | null> {
+  const intent = ++navigationIntent;
   const chatState = useChatStore.getState();
   const currentAgentId = chatState.currentAgentId || getAgentIdFromSessionKey(chatState.currentSessionKey);
   const sourceSessionKey = chatState.currentSessionKey;
-  const workspace = await ensureActiveWorkspaceForSession();
-
-  if (!workspace?.id) {
-    chatState.newSession({ deferSessionEntry: true });
-    return useChatStore.getState().currentSessionKey;
-  }
-
-  const sessionKey = createFreshWorkspaceSessionKey(currentAgentId);
-  await hostApi.workspaces.update(workspace.id, {
-    agentId: currentAgentId,
-    activeSessionKey: sessionKey,
-    sessionKey,
-    state: { activeTopicId: null },
+  const sourceRevision = chatState.viewRevision;
+  const isSourceCurrent = () => intent === navigationIntent && useChatStore.getState().currentSessionKey === sourceSessionKey
+    && useChatStore.getState().viewRevision === sourceRevision;
+  const operation = navigationTail.catch(() => undefined).then(async () => {
+    if (!isSourceCurrent()) return null;
+    const workspace = await ensureActiveWorkspaceForSession();
+    if (!isSourceCurrent()) return null;
+    if (!workspace?.id) {
+      chatState.newSession({ deferSessionEntry: true });
+      return useChatStore.getState().currentSessionKey;
+    }
+    const sessionKey = createFreshWorkspaceSessionKey(currentAgentId);
+    await hostApi.workspaces.update(workspace.id, {
+      agentId: currentAgentId, activeSessionKey: sessionKey, sessionKey, state: { activeTopicId: null },
+    });
+    await inheritSessionWorkgroup(workspace, sourceSessionKey, sessionKey);
+    if (!isSourceCurrent() || useWorkspacesStore.getState().activeWorkspaceId !== workspace.id) return null;
+    await useWorkspacesStore.getState().fetchWorkspaces();
+    await clearWorkspaceActiveTopicMarker(workspace.rootPath);
+    if (!isSourceCurrent() || useWorkspacesStore.getState().activeWorkspaceId !== workspace.id) return null;
+    chatState.resetSessionView(sessionKey, { deferSessionEntry: true });
+    return sessionKey;
   });
-  await inheritSessionWorkgroup(workspace, sourceSessionKey, sessionKey);
-  await useWorkspacesStore.getState().fetchWorkspaces();
-  await clearWorkspaceActiveTopicMarker(workspace.rootPath);
-  chatState.resetSessionView(sessionKey, { deferSessionEntry: true });
-  return sessionKey;
+  navigationTail = operation;
+  return operation;
 }
 
 export async function createWorkspaceScopedHandoffSession(draftInput: string, options: { operationId?: string; sourceSessionKey?: string } = {}): Promise<string> {

@@ -2,19 +2,20 @@ import { useLayoutEffect, useRef } from 'react';
 import { AnimatePresence, motion, useIsPresent, useReducedMotion, type HTMLMotionProps } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
-type Props = HTMLMotionProps<'div'> & { open: boolean; align?: 'left' | 'right' };
+type Props = HTMLMotionProps<'div'> & { open: boolean; align?: 'left' | 'right'; inline?: boolean };
 
 /** The composer's small menus share the add menu's blur/slide, including exit. */
 export function ComposerPopover({ open, ...props }: Props) {
   return <AnimatePresence>{open && <Surface {...props} />}</AnimatePresence>;
 }
 
-function Surface({ align = 'left', className, children, ...props }: Omit<Props, 'open'>) {
+function Surface({ align = 'left', inline = false, className, children, style, ...props }: Omit<Props, 'open'>) {
   const ref = useRef<HTMLDivElement>(null);
   const present = useIsPresent();
   const reducedMotion = useReducedMotion();
 
   useLayoutEffect(() => {
+    if (inline) return;
     const panel = ref.current;
     const anchor = panel?.parentElement;
     if (!panel || !anchor) return;
@@ -51,12 +52,13 @@ function Surface({ align = 'left', className, children, ...props }: Omit<Props, 
       window.removeEventListener('resize', place);
       window.removeEventListener('scroll', place, true);
     };
-  }, [align]);
+  }, [align, inline]);
 
   return (
     <motion.div
       {...props}
       ref={ref}
+      style={inline ? { ...style, position: 'relative', top: 'auto', bottom: 'auto', left: 0, width: '100%', minWidth: 0, maxHeight: '50vh' } : style}
       className={cn('codex-composer-menu codex-composer-popover', className)}
       data-state={present ? 'open' : 'closed'}
       inert={!present}

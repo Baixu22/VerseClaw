@@ -28,6 +28,7 @@ import {
   Pin,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toastUserError } from '@/lib/user-error';
 import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-status';
 import { isGatewayRestarting } from '@/lib/gateway-status';
 import { rendererExtensionRegistry } from '@/extensions/registry';
@@ -998,15 +999,17 @@ export function Sidebar() {
     // Record where the session lived, so the archive lists it under its project
     // and workgroup and the host scopes its resource cleanup to that project.
     const workspace = findWorkspaceForSession(sessionKey);
+    const visit = useChatStore.getState().viewRevision;
     try {
       await archiveSession(sessionKey, {
         workspaceId: workspace?.id ?? null,
         folderId: workspace?.sessionFolderAssignments?.[sessionKey] ?? null,
       });
     } catch {
-      toast.error(t('chat:sidebar.archiveFailed'));
+      if (useChatStore.getState().viewRevision === visit) toast.error(t('chat:sidebar.archiveFailed'));
       return;
     }
+    if (useChatStore.getState().viewRevision !== visit) return;
     if (currentSessionKey === sessionKey) navigate('/');
     toast.success(t('chat:sidebar.archivedToast', { label }), {
       action: {
@@ -1881,12 +1884,14 @@ export function Sidebar() {
               onClick={async () => {
                 const target = sessionToDelete;
                 if (!target) return;
+                const visit = useChatStore.getState().viewRevision;
                 setDeleteDialogOpen(false);
                 try {
                   await archiveSession(target.key);
-                  if (currentSessionKey === target.key) navigate('/');
+                  if (currentSessionKey === target.key && useChatStore.getState().viewRevision === visit) navigate('/');
                 } catch (error) {
                   console.warn('[sidebar] archiveSession failed:', error);
+                  if (useChatStore.getState().viewRevision === visit) toastUserError(error);
                 }
               }}
             >
@@ -1899,12 +1904,14 @@ export function Sidebar() {
               onClick={async () => {
                 const target = sessionToDelete;
                 if (!target) return;
+                const visit = useChatStore.getState().viewRevision;
                 setDeleteDialogOpen(false);
                 try {
                   await deleteSession(target.key);
-                  if (currentSessionKey === target.key) navigate('/');
+                  if (currentSessionKey === target.key && useChatStore.getState().viewRevision === visit) navigate('/');
                 } catch (error) {
                   console.warn('[sidebar] deleteSession failed:', error);
+                  if (useChatStore.getState().viewRevision === visit) toastUserError(error);
                 }
               }}
             >

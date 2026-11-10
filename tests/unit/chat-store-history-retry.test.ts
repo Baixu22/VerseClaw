@@ -80,6 +80,20 @@ describe('useChatStore startup history retry', () => {
     vi.useRealTimers();
   });
 
+  it('keeps newer live activity when an older history page finishes', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const key = 'agent:main:history-activity';
+    const liveAt = 1_794_285_987_499;
+    useChatStore.setState({ currentSessionKey: key, currentAgentId: 'main', sessions: [{ key }], messages: [],
+      sessionLabels: {}, sessionLastActivity: { [key]: liveAt }, sending: false, activeRunId: null,
+      streamingText: '', streamingMessage: null, streamingTools: [], pendingFinal: false, lastUserMessageAt: null,
+      pendingToolImages: [], error: null, runError: null, loading: false, thinkingLevel: null });
+    gatewayRpcMock.mockResolvedValue({ messages: [{ role: 'user', content: 'Persisted earlier turn', timestamp: liveAt - 13_000 }] });
+    await useChatStore.getState().loadHistory(false);
+    expect(useChatStore.getState().messages.some(message => message.content === 'Persisted earlier turn')).toBe(true);
+    expect(useChatStore.getState().sessionLastActivity[key]).toBe(liveAt);
+  });
+
   it('uses the longer timeout only for the initial foreground history load', async () => {
     const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
     const { useChatStore } = await import('@/stores/chat');

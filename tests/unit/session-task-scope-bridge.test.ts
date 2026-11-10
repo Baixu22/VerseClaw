@@ -102,24 +102,29 @@ afterEach(() => {
 });
 
 describe('runtime → Gateway → Main task admission bridge', () => {
-  it('handles reverse admission independently of an expired socket-opening host deadline', async () => {
+  it('gives an unsolicited admission its own bounded deadline instead of the expired socket creator', async () => {
     dispose();
-    const observed: Array<ReturnType<typeof getHostDeadline>> = [];
-    const originalRpc = gateway.rpc;
-    gateway.rpc = (method, params) => { observed.push(getHostDeadline()); return originalRpc(method, params); };
-    dispose = registerSessionTaskScopeBridge(gateway as unknown as GatewayManager, async request => {
-      observed.push(getHostDeadline());
-      return admission(request);
+    const deadlines: Array<ReturnType<typeof getHostDeadline>> = [];
+    const reply = vi.spyOn(gateway, 'rpc').mockImplementation(async (method, params) => {
+      deadlines.push(getHostDeadline()); return dispatch(method, params, backend);
     });
-    const expired = createHostDeadline({ stage: 'main', timeoutMs: 1, now: () => 0 });
+    dispose = registerSessionTaskScopeBridge(gateway as unknown as GatewayManager, async request => {
+      deadlines.push(getHostDeadline()); await new Promise(resolve => setTimeout(resolve, 5)); return admission(request);
+    });
     try {
+      const expired = createHostDeadline({ stage: 'renderer', timeoutMs: 1, requestId: 'old-gateway-start', now: () => Date.now() - 2000 });
       await runWithHostDeadline(expired, async () => {
-        expect(getHostDeadline()).toBe(expired);
         expect(await execute()).toBe('written');
         expect(getHostDeadline()).toBe(expired);
       });
-      expect(observed).toEqual([undefined, undefined]);
-    } finally { gateway.rpc = originalRpc; }
+      expect(deadlines).toHaveLength(2);
+      for (const deadline of deadlines) {
+        expect(deadline?.requestId).not.toBe('old-gateway-start');
+        expect(deadline?.deadlineAtMs).toBeGreaterThan(Date.now());
+        expect(deadline?.timeoutMs).toBe(20_000);
+      }
+      expect(deadlines[0]).toEqual(deadlines[1]);
+    } finally { reply.mockRestore(); }
   });
   it('admits a direct embedded execution without a Chat tracker and rejects its former run id', async () => {
     active.delete(runId);

@@ -1,0 +1,68 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": "289ee63a210eaec06c202de17b6c9cf23a74f17e",
+  "deliveryCandidate": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+  "equivalence": "observation-equivalence.json",
+  "reports": [
+    {
+      "source": "D:\\tmp\\tf0839\\sealed-gates\\pty-pipes-1794234495105.json",
+      "sha256": "8d3e27a4084e0b7f796b0f588c9d7c132b19ba7bd51178ac785e485ed9e85816",
+      "result": {
+        "driven_by": "agent",
+        "actor": "codex",
+        "cycles": [
+          {
+            "cycle": 0,
+            "remaining": 0
+          },
+          {
+            "cycle": 1,
+            "remaining": 0
+          },
+          {
+            "cycle": 2,
+            "remaining": 0
+          },
+          {
+            "cycle": 3,
+            "remaining": 0
+          },
+          {
+            "cycle": 4,
+            "remaining": 0
+          },
+          {
+            "cycle": 5,
+            "remaining": 0
+          },
+          {
+            "cycle": 6,
+            "remaining": 0
+          },
+          {
+            "cycle": 7,
+            "remaining": 0
+          },
+          {
+            "cycle": 8,
+            "remaining": 0
+          },
+          {
+            "cycle": 9,
+            "remaining": 0
+          },
+          {
+            "cycle": 10,
+            "remaining": 0
+          },
+          {
+            "cycle": 11,
+            "remaining": 0
+          }
+        ],
+        "remaining": 0
+      }
+    }
+  ]
+}

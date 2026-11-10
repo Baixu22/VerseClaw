@@ -1,0 +1,198 @@
+
+Running 1 test using 1 worker
+
+[app:out] [2026-11-10T02:12:35.563Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)
+[app:out] [2026-11-10T02:12:35.563Z] [INFO] [ResourceTracker] Started heartbeat interval
+[2026-11-10T02:12:35.564Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=25944, ppid=21492
+[2026-11-10T02:12:35.564Z] [INFO] Running in E2E mode: startup side effects minimized
+[app:err] [2026-11-10T02:12:35.900Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[app:err] [2026-11-10T02:12:35.901Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-11-10T02:12:35.901Z] [WARN] [webview-security] deny permission-check: WebView permission "web-app-installation" denied by default (fail-closed)
+[2026-11-10T02:12:35.901Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default
+[app:out] [2026-11-10T02:12:35.974Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-10T02:12:35.974Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [25944:1110/101236.063:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[25944:1110/101236.063:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:err] [2026-11-10T02:12:36.320Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:12:36.320Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:12:36.321Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:12:36.321Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-10T02:12:36.410Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\tmp\unified-management-20261109\lifecycle-validation\u5-archive-final-results\session-lifecycle-recovery-eebee-d-a-Main-gate-clear-failure\workspace\.verse-claw\harness
+[app:out] [2026-11-10T02:12:36.777Z] [INFO] Gateway stop requested
+[app:out] [2026-11-10T02:12:36.778Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[app:out] [2026-11-10T02:12:36.811Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (start)
+[app:out] [2026-11-10T02:12:36.813Z] [INFO] Gateway start requested (port=64151)
+[app:out] [2026-11-10T02:12:36.819Z] [DEBUG] Device identity loaded (deviceId=b8292354361582924ee588385ea7dbb9e07e75836f09ad8be7e98d7b6874e7ab)
+[app:out] [2026-11-10T02:12:36.819Z] [DEBUG] Gateway state changed: stopped -> starting
+[app:out] [2026-11-10T02:12:37.354Z] [DEBUG] Checking for existing Gateway...
+[app:err] (node:25944) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[app:out] [2026-11-10T02:12:37.937Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[app:out] [2026-11-10T02:12:38.019Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:out] [2026-11-10T02:12:38.031Z] [DEBUG] No existing Gateway found, starting new process...
+[app:out] [2026-11-10T02:12:38.156Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)
+[app:err] [2026-11-10T02:12:38.228Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[app:out] [2026-11-10T02:12:38.236Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":0,"providerEnvMs":11,"channelStartupPolicyMs":14,"uvEnvMs":61,"mcpEnvMs":45,"runtimeConfigReadMs":1,"verseShellBundleMs":1,"totalMs":194,"maintenance":{},"configuredChannelCount":0}
+[app:out] [2026-11-10T02:12:38.238Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=64151, entry="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\dist\entry.js", args="gateway --port 64151 --allow-unconfigured", execArgv="", cwd="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime", bundledBin=yes, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)
+[app:out] [2026-11-10T02:12:38.446Z] [INFO] Gateway process started (pid=46180)
+[app:out] [2026-11-10T02:12:38.447Z] [DEBUG] Gateway manager now owns process pid=46180
+[app:out] [2026-11-10T02:12:41.129Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[app:out] [2026-11-10T02:12:43.247Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)
+[app:out] [2026-11-10T02:12:43.957Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"power-saver","activeReasons":["power-saver"],"transitionCount":3}
+[app:out] [2026-11-10T02:12:45.388Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)
+[app:out] [2026-11-10T02:12:47.511Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)
+[app:out] [2026-11-10T02:12:49.608Z] [DEBUG] Still waiting for Gateway... (attempt 51/2400)
+[app:out] [2026-11-10T02:12:51.675Z] [DEBUG] Still waiting for Gateway... (attempt 61/2400)
+[app:out] [2026-11-10T02:12:53.787Z] [DEBUG] Still waiting for Gateway... (attempt 71/2400)
+[app:out] [2026-11-10T02:12:55.458Z] [DEBUG] [Gateway stderr] (node:46180) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[app:err] [2026-11-10T02:12:55.458Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)
+[2026-11-10T02:12:55.459Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[app:out] [2026-11-10T02:12:55.459Z] [DEBUG] [Gateway stderr] (node:46180) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[app:out] [2026-11-10T02:12:57.403Z] [DEBUG] Still waiting for Gateway... (attempt 81/2400)
+[app:out] [2026-11-10T02:12:58.727Z] [DEBUG] Gateway ready after 82 attempt(s)
+[app:out] [2026-11-10T02:12:58.733Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:64151/ws)
+[app:err] [2026-11-10T02:12:58.765Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=f9a2f3f3-96e7-43cc-a4f4-c2bb1bfa4f5a peer=127.0.0.1:49356->127.0.0.1:64151 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:64151 ua=n/a code=1006 reason=n/a[39m
+[app:err] [2026-11-10T02:12:58.765Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=167dc680-359b-4603-9ef3-d7ed47b0485d peer=127.0.0.1:64156->127.0.0.1:64151 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:64151 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-10T02:12:58.806Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-10T02:12:58.806Z] [DEBUG] Received connect.challenge, sending handshake
+[app:out] [2026-11-10T02:12:58.807Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:out] [2026-11-10T02:12:58.863Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:64151/ws)
+[app:err] [2026-11-10T02:12:58.865Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[app:out] [2026-11-10T02:13:01.545Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-10T02:13:01.546Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-10T02:13:01.546Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:out] [2026-11-10T02:13:02.828Z] [DEBUG] Gateway connect handshake completed (protocol=4)
+[app:out] [2026-11-10T02:13:02.828Z] [DEBUG] Gateway state changed: starting -> running
+[app:out] [2026-11-10T02:13:02.830Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[app:out] [2026-11-10T02:13:02.831Z] [INFO] [metric] gateway.startup {"configSyncMs":1094,"spawnToReadyMs":20280,"readyToConnectMs":4104,"totalMs":25478}
+[app:err] [2026-11-10T02:13:05.176Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:05.177Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:05.177Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:05.177Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:06.532Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:06.532Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:06.533Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:06.533Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:06.677Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:06.677Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:06.677Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:06.677Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-10T02:13:08.413Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73 sessionKey=agent:main:session-1794276756327-ulifecycle
+[app:err] [2026-11-10T02:13:08.955Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:08.955Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:08.955Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[app:err] [2026-11-10T02:13:08.955Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:09.512Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:09.512Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:09.512Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:09.512Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:09.629Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:09.629Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:09.629Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[app:err] [2026-11-10T02:13:09.629Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:10.447Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:10.447Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:10.447Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:10.447Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:11.241Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:11.242Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:11.242Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:11.242Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:12.025Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:12.025Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:12.025Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[app:err] [2026-11-10T02:13:12.025Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:12.846Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:12.847Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:12.847Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[app:err] [2026-11-10T02:13:12.847Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-10T02:13:13.527Z] [INFO] [session-delete-gate] Cleared operationId=fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73
+[app:err] [2026-11-10T02:13:13.928Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:13.928Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:13.928Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:13.928Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:14.455Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:14.455Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:14.455Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:14.455Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:15.155Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:15.155Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:15.155Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:15.155Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-10T02:13:15.486Z] [INFO] [session-delete-gate] Persisted kind=restore operationId=db437105-9008-487c-ab9c-a98d8dc03ddd sessionKey=agent:main:session-1794276756327-ulifecycle
+[app:err] [2026-11-10T02:13:15.892Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:15.892Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:15.892Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[app:err] [2026-11-10T02:13:15.892Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:16.106Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:16.106Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:16.106Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:16.106Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:16.579Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:16.579Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:16.579Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:16.579Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-10T02:13:16.777Z] [INFO] [session-delete-gate] Cleared operationId=db437105-9008-487c-ab9c-a98d8dc03ddd
+[app:err] [2026-11-10T02:13:16.896Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:16.897Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:16.897Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:16.897Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:17.109Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:17.109Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:17.109Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:17.109Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:20.013Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:20.014Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:20.014Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[app:err] [2026-11-10T02:13:20.014Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:20.137Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:20.137Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:20.138Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:20.138Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:20.390Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:20.390Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:20.390Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[app:err] [2026-11-10T02:13:20.390Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:20.688Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:20.688Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:20.688Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:20.688Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-10T02:13:23.223Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=12c7692c-4b07-412a-b242-e8b6ae77164d sessionKey=agent:main:session-1794276756327-ulifecycle
+[app:out] [2026-11-10T02:13:23.591Z] [INFO] [session:delete] key=agent:main:session-1794276756327-ulifecycle agentId=main
+[2026-11-10T02:13:23.591Z] [INFO] [session:delete] sessionsJson=D:\ClawX-work\session-task-unified-relay-20261109\.tmp\e2e-runs\verse-claw-e2e-run-k7iFKF\verse-claw-e2e-home-B1eXJc\.openclaw\agents\main\sessions\sessions.json
+[app:err] [2026-11-10T02:13:23.592Z] [WARN] [session:delete] Could not read sessions.json: Error: ENOENT: no such file or directory, open 'D:\ClawX-work\session-task-unified-relay-20261109\.tmp\e2e-runs\verse-claw-e2e-run-k7iFKF\verse-claw-e2e-home-B1eXJc\.openclaw\agents\main\sessions\sessions.json'
+[app:err] [2026-11-10T02:13:24.260Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:24.260Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:24.260Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:24.260Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:24.963Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:24.964Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:24.964Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:24.964Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-10T02:13:25.182Z] [INFO] [session-delete-gate] Cleared operationId=12c7692c-4b07-412a-b242-e8b6ae77164d
+[app:err] [2026-11-10T02:13:25.597Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:25.597Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:25.598Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:25.598Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T02:13:25.994Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T02:13:25.994Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T02:13:25.994Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T02:13:25.995Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-10T02:13:27.339Z] [INFO] Gateway stop requested
+[app:out] [2026-11-10T02:13:27.339Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (stop)
+[app:out] [2026-11-10T02:13:27.341Z] [INFO] Sending kill to Gateway process (pid=46180)
+[app:err] [2026-11-10T02:13:27.366Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[app:out] [2026-11-10T02:13:27.366Z] [DEBUG] Gateway state changed: running -> stopped
+[app:out] [2026-11-10T02:13:28.183Z] [INFO] Gateway process exited (code=1, expected=yes)
+[app:out] [2026-11-10T02:13:28.184Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[app:out] [2026-11-10T02:13:28.444Z] [INFO] Gateway stop requested
+[2026-11-10T02:13:28.445Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)
+[app:err] Debugger ending on ws://127.0.0.1:50101/2563bc3b-a154-41d4-b5c9-bda18e3e0403
+For help, see: https://nodejs.org/en/docs/inspector
+[app:out] [2026-11-10T02:13:28.474Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"window-hidden","activeReasons":["window-hidden","power-saver"],"transitionCount":4}
+[app:out] [2026-11-10T02:13:28.475Z] [INFO] [ResourceTracker] Stopped
+[2026-11-10T02:13:28.475Z] [INFO] [ResourceTracker] Shutdown complete
+[2026-11-10T02:13:28.475Z] [INFO] [efficiency-sampler] stopped
+[2026-11-10T02:13:28.476Z] [INFO] [efficiency] runtime efficiency sampling stopped
+  ok 1 tests\e2e\session-lifecycle-recovery.spec.ts:336:5 › U5 archive restore and confirmed delete retry their retained operationId after Runtime commit and a Main gate-clear failure (1.2m)
+
+  1 passed (1.3m)

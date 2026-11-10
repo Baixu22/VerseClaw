@@ -1,4 +1,5 @@
 {
+  "operationGenerationUnavailable": "The session identity is unavailable. Refresh before continuing.",
   "gatewayNotRunning": "Gateway Not Running",
   "retry": "Retry",
   "gatewayRequired": "The OpenClaw Gateway needs to be running to use chat. It will start automatically, or you can start it from Settings.",
@@ -1362,7 +1363,7 @@
     "skillEmpty": "No matching skills found",
     "pickAgent": "Choose agent",
     "pickModel": "Choose model",
-    "abortFailed": "Failed to stop — the run is still going.",
+    "abortFailed": "Could not confirm the stop. Refresh the session to check its status.",
     "actions": {
       "add": "Add",
       "context": "Add context",
@@ -1751,6 +1752,7 @@
     "tokenUsageWithLimit": "{{used}} / {{max}} tokens",
     "contextHidden": "{{count}} hidden",
     "compaction": {
+      "toastPending": "Compression request accepted. Refresh the conversation to check the result.",
       "compress": "Compress current session",
       "compressTooltip": "Compress the current session history",
       "viewEvidence": "View compression evidence",
@@ -2328,6 +2330,11 @@
     "dropHint": "Drag onto another conversation to group them together"
   },
   "archive": {
+    "mutationUnconfirmed": "Could not confirm the operation. Refresh the list to check the current state.",
+    "pendingTitle": "Operations awaiting confirmation",
+    "pendingDescription": "Check the recorded operation and continue it from its saved state.",
+    "resumeMutation": "Check and continue",
+    "pendingKinds": {"archive": "Archive", "restore": "Restore", "delete": "Delete"},
     "searchPlaceholder": "Search archived conversations",
     "ungrouped": "Ungrouped",
     "noMatches": "No matching conversations",

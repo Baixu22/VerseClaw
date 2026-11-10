@@ -11,6 +11,7 @@ import { getResourceTracker } from './resource-tracker';
 import { enforcePermission, git, parseWorktrees } from './git-api';
 import type { TerminalSessionManager } from './terminal-session-manager';
 import { readProcessTreeSample } from '../../openclaw_runtime/src/process/process-tree-sampler';
+import { inspectUiWorktreeRemoval } from './task-system-service';
 
 function pathKey(path: string): string {
   const key = resolve(path);
@@ -100,12 +101,13 @@ export function createSessionStorageApi(context: {
         });
         // Include ignored files: Git refuses to discard build output without --force.
         const status = await git(['status', '--porcelain', '--untracked-files=all', '--ignored=matching'], tree.path);
+        const ownership = index === 0 || tree.bare ? null : inspectUiWorktreeRemoval(profile.rootPath, tree.path, profiles);
         const protection = index === 0 || tree.bare ? 'primary'
           : owners.some((owner) => owner.id === snapshot.activeWorkspaceId) ? 'active'
             : tree.locked ? 'locked' : resources ? 'resources'
-              : owners.length ? 'sessions' : status.exitCode !== 0 ? 'unavailable'
+              : owners.length ? 'sessions' : ownership?.blocked || status.exitCode !== 0 ? 'unavailable'
                 : status.stdout.trim() ? 'dirty' : null;
-        worktrees.push({ ...tree, repositoryWorkspaceId: profile.id, repositoryName: profile.name,
+        worktrees.push({ ...tree, ...(ownership?.blocked ? { reason: ownership.reason } : {}), repositoryWorkspaceId: profile.id, repositoryName: profile.name,
           workspaceIds: owners.map((owner) => owner.id), protection,
           disk: measure ? await measureStorage(tree.path, 20_000, Math.min(diskDeadline, Date.now() + 2000)) : { bytes: 0, partial: false } });
       }
@@ -113,6 +115,8 @@ export function createSessionStorageApi(context: {
     return { profiles, worktrees };
   };
   let snapshotPending: ReturnType<CompleteHostServiceRegistry['sessionStorage']['snapshot']> | null = null;
+  const removalUnavailable = (error: unknown) => ({ success: false, blocked: true,
+    reason: `UI_CLEANUP_OWNER_UNAVAILABLE: ${String(error)}; owner=Workspace/session lifecycle; entry=/settings/storage` });
   const collect = async () => {
     const { profiles, worktrees } = await inventory();
     const sessions: SessionStorageEntry[] = [];
@@ -159,14 +163,25 @@ export function createSessionStorageApi(context: {
     },
     removeWorktree: async (payload) => {
       if (!payload || typeof payload.path !== 'string' || typeof payload.workspaceId !== 'string') throw new Error('Worktree and workspace are required');
-      const { profiles, worktrees } = await inventory(false);
+      const initial = await inventory(false).catch(error => ({ error }));
+      if ('error' in initial) return removalUnavailable(initial.error);
+      const { profiles, worktrees } = initial;
       const profile = profiles.find((row) => row.id === payload.workspaceId);
       const tree = worktrees.find((row) => row.repositoryWorkspaceId === payload.workspaceId && pathKey(row.path) === pathKey(payload.path));
       if (!profile || !tree) throw new Error('Worktree is not registered with this repository');
-      if (tree.protection) return { success: false, blocked: true, reason: tree.protection };
+      const before = inspectUiWorktreeRemoval(profile.rootPath, tree.path, profiles);
+      if (before.blocked) return { success: false, blocked: true, reason: before.reason };
+      if (tree.protection) return { success: false, blocked: true, reason: tree.reason || tree.protection };
       const blocked = await enforcePermission({ workspace: profile, action: 'storageWorktreeRemove', risk: 'dangerous', approvalId: payload.approvalId,
-        command: `git worktree remove ${tree.path}`, paths: [tree.path] });
+        command: `git worktree remove ${tree.path}`, paths: [tree.path], targetIdentity: before.identity });
       if (blocked) return blocked;
+      const latest = await inventory(false).catch(error => ({ error }));
+      if ('error' in latest) return removalUnavailable(latest.error);
+      const currentTree = latest.worktrees.find(row => row.repositoryWorkspaceId === payload.workspaceId && pathKey(row.path) === pathKey(tree.path));
+      const current = inspectUiWorktreeRemoval(profile.rootPath, tree.path, latest.profiles);
+      if (current.blocked) return { success: false, blocked: true, reason: current.reason };
+      if (!currentTree || currentTree.protection || current.identity !== before.identity)
+        return { success: false, blocked: true, reason: currentTree?.reason || 'UI_CLEANUP_STATE_CHANGED; entry=/settings/storage' };
       const result = await git(['worktree', 'remove', '--', tree.path], profile.rootPath);
       return { success: result.exitCode === 0, ...result };
     },

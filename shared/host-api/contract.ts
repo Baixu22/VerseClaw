@@ -153,6 +153,7 @@ import type {
   WorkspaceContextRange,
   KnowledgeInvocationMode,
   SessionArchiveEntry,
+  SessionPendingMutation,
   SessionFolder,
   WorkspaceCoordinatorArchiveRestorePolicy,
   WorkspaceCoordinatorBinding,
@@ -3020,19 +3021,21 @@ export type SessionLabelSummary = {
 export type SessionSummariesResult = HostSuccess & {
   summaries?: SessionLabelSummary[];
 };
-export type SessionDeletePayload = { id: string };
+export type SessionDeletePayload = { id: string; resumeOperationId?: string };
 export type SessionRenamePayload = { id: string; title: string };
 export type SessionArchivePayload = {
   id: string;
+  resumeOperationId?: string;
   label?: string;
   originalWorkspaceId?: string | null;
   originalFolderId?: string | null;
 };
-export type SessionRestorePayload = { id: string };
+export type SessionRestorePayload = { id: string; resumeOperationId?: string };
 export type SessionPermanentDeletePayload = { id: string };
 export type SessionListArchivedPayload = { agentId?: string };
 export type SessionListArchivedResult = HostSuccess & {
   entries: SessionArchiveEntry[];
+  pendingMutations?: SessionPendingMutation[];
 };
 export type SessionEmptyArchivePayload = { agentId?: string };
 /** context-folding-rlm: read-only flag/limits/rollback descriptor (no session required). */
@@ -3208,6 +3211,7 @@ export type SessionResumeCheckpointsResult = HostSuccess & {
   checkpoints: LongTaskCheckpointRecord[];
 };
 export type SessionRestoreCheckpointPayload = SessionLongTaskControlHistoryPayload & {
+  expectedSessionId?: string;
   checkpointId: string;
 };
 export type SessionCheckpointDiffFile = {
@@ -3236,6 +3240,7 @@ export type SessionQueueDrainResult = HostSuccess & {
   reason?: string;
 };
 export type SessionManualCompactPayload = SessionCompactionPayload & {
+  expectedSessionId?: string;
   customInstructions?: string;
   force?: boolean;
 };
@@ -3244,6 +3249,7 @@ export type SessionManualCompactPayload = SessionCompactionPayload & {
  * untouched side verbatim. Exactly one of fromLeafId / toLeafId is required.
  */
 export type SessionCompactRangePayload = SessionCompactionPayload & {
+  expectedSessionId?: string;
   customInstructions?: string;
   fromLeafId?: string;
   toLeafId?: string;
@@ -3281,7 +3287,7 @@ export type SessionCompactionHistoryResult = HostSuccess & {
   entries: SessionCompactionHistoryEntry[];
 };
 export type SessionCompactionResult = HostSuccess & {
-  status?: 'compacted' | 'skipped' | 'failed';
+  status?: 'compacted' | 'skipped' | 'pending' | 'failed';
   compacted?: boolean;
   summary?: string;
   reason?: string;

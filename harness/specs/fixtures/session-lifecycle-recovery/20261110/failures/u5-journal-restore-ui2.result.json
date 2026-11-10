@@ -1,0 +1,540 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "name": "u5-journal-restore-ui2",
+  "cwd": "D:\\ClawX-work\\session-task-unified-relay-20261109",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "tests/e2e/session-context-commit-recovery.spec.ts",
+    "--grep",
+    "real journal",
+    "--workers=1",
+    "--retries=0",
+    "--max-failures=1",
+    "--reporter=list,json",
+    "--output=D:/tmp/unified-management-20261109/lifecycle-validation/u5-journal-restore-ui2-results"
+  ],
+  "startedAt": "2026-11-09T17:11:52.862Z",
+  "finishedAt": "2026-11-09T17:16:21.308Z",
+  "durationMs": 268435,
+  "exitCode": 1,
+  "signal": null,
+  "sourceUnchanged": true,
+  "before": {
+    "commit": "3168a9ebfeba1e05fdabbb59a3cb4f8f8a7b036b",
+    "tree": "6335100e351190000161743d700b8e179717ef22",
+    "dirty": "",
+    "files": [
+      {
+        "file": "electron/services/git-api.ts",
+        "sha256": "0e87aae243d32ecb5602f4075b9919f325bafd667914ce0ac397da747c8ae879"
+      },
+      {
+        "file": "electron/services/long-session-resource-reclamation.ts",
+        "sha256": "a1ad56ff4374b68aee63eb282dd74522c8a132db0464c9052cdf2fdee687a644"
+      },
+      {
+        "file": "electron/services/session-delete-gate.ts",
+        "sha256": "425120b18e389ebfa32eb26547bed67cff12ce76c4f8baa6d441e9a31f25e50e"
+      },
+      {
+        "file": "electron/services/session-storage-api.ts",
+        "sha256": "b793ebfbbe45070cdefd0e793ca6f8c1c91b10a3e35caaf0ab55b2b42243560a"
+      },
+      {
+        "file": "electron/services/sessions-api.ts",
+        "sha256": "5b7a1e0b0d21a7199dda9120ef392e4c2ddc5ba2e73e49d2eb4b5fd4c7ad820f"
+      },
+      {
+        "file": "electron/services/task-system-service.ts",
+        "sha256": "1c5a21991c405550180e76e10e9972063a482ab6433fe07787ffb9abd3b28aee"
+      },
+      {
+        "file": "openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts",
+        "sha256": "dbd4cf64df03646c3c87cb41beac0cbad8c3adc903c967c0ed8323eae5580809"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/embedded-agent-runner/compact.queued.ts",
+        "sha256": "6d15824dd3df089ab3dfa4070b97c2ff9b8c9032d42882c793f16b81ad9dbcaf"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/embedded-agent-runner/compact.ts",
+        "sha256": "6a204981f88fe2b6678d97cd8b694a658c9c0ade2181b70849680fac959b8ce2"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/worktree-service.ts",
+        "sha256": "8cd8d5907937ebe2cb8d22628ff879859e7279bb181a009454b3a2ac8c470d03"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.compaction-range.handler.test.ts",
+        "sha256": "45cc829f16aa5fd71a28efbc428bc7d832c24efa61121d5268215080967e878c"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.compaction.ts",
+        "sha256": "77676ac01394b98e959a4cf675fb1537be65f2356fbe71d3800b1df6a49c75a4"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts",
+        "sha256": "038c6cb25f99a9cb369a7c051b44e293f8b4a0eece3c90be1b9c557d2d10c4d7"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts",
+        "sha256": "0e4eda0cbdb4725f8c4dde74ec21689aa257ddec62d6e3a4942edf90702f76b6"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/session-compaction-checkpoints.ts",
+        "sha256": "a8230bc8e73cec23a5f0edc19523c19be18cd7da4f5be0d69010c8ce6e523d69"
+      },
+      {
+        "file": "shared/chat/types.ts",
+        "sha256": "cbad0dbb7ed069cfaeff9fa93cbce149e3ee801059aa0cdb0f29c843df23c0eb"
+      },
+      {
+        "file": "shared/host-api/contract.ts",
+        "sha256": "af8d345674f63460fca11f323ae657dc5f30b066d3268d588d075c380ed8218d"
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "sha256": "fa1d68916e3ad766cc7af74fd69b149d3aadc9e9771944d05f5325c20a7bb23a"
+      },
+      {
+        "file": "shared/i18n/locales/en/settings.json",
+        "sha256": "7c8cbe6418eb38c00e2eb9000bd908a89dee82d90f9c4505467be372c64402d8"
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "sha256": "5941613660cdb77b955444670e3a3e83f75788355af5fa4cb9de0e2750da84f2"
+      },
+      {
+        "file": "shared/i18n/locales/ja/settings.json",
+        "sha256": "fffc87c33a04c03ec912aaebb3a498c0f42ce739085c22b5b5e93eba4ab4aceb"
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "sha256": "fa7b4af7c0759b0d90830d27d5ddf77a3db0b8ecd5391c3ac15dd23ba48ceef8"
+      },
+      {
+        "file": "shared/i18n/locales/ru/settings.json",
+        "sha256": "177e99a0f85a129c7fec6b90d83c91c1afde40da1502db72536dc13b90943eb0"
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "sha256": "e4e6b536ac2ab618e25607fdf8c8be183c975d742a9c4a53e950318b64ce10e4"
+      },
+      {
+        "file": "shared/i18n/locales/zh/settings.json",
+        "sha256": "0213a208bbb66f4ed0688c39e41f1f8f6b343c780d64ffd8b83088c6bdfb69f6"
+      },
+      {
+        "file": "shared/task-system/store.ts",
+        "sha256": "dbb82f8c4753c48971e7bacc385554a0fe8d866ad45339dd5d855cf8d1539fe0"
+      },
+      {
+        "file": "shared/types/workspace.ts",
+        "sha256": "e6742fe457173e07b206e39b7784e83616537aee4b4248d7eb1144d55bc5a080"
+      },
+      {
+        "file": "src/components/chat/CheckpointsDialog.tsx",
+        "sha256": "8c0a276696f73d38798fd1371c217d815dcd763c4ed97ae2b7abb800750bf598"
+      },
+      {
+        "file": "src/components/chat/ComposerPopover.tsx",
+        "sha256": "3ee1ed4c8b4c21ac0275132813237023146bcb08fe58fbeec2fab3fc6b84f5de"
+      },
+      {
+        "file": "src/components/chat/ResourceChip.tsx",
+        "sha256": "b79e4c85cc016bda31ddad1ce0dcdeed17513a84713e66dc4946fda4b62bf811"
+      },
+      {
+        "file": "src/components/chat/SessionWorkspacePicker.tsx",
+        "sha256": "00f35566c9bcea5a44d48226078e6a01c118eb40f0109f77ceddf8a478936160"
+      },
+      {
+        "file": "src/components/chat/WelcomeProjectPicker.tsx",
+        "sha256": "8750962728ef2f8c8b1592b4328f41675efe8f12f89cf30c5b52416041aeef01"
+      },
+      {
+        "file": "src/components/layout/Sidebar.tsx",
+        "sha256": "176d54e3a29911c301d1ea8cc0babc238a69e73038e177cf3e3c6bb291b32bb1"
+      },
+      {
+        "file": "src/components/layout/use-new-chat-action.ts",
+        "sha256": "50169bfe869b25862b35d74245d089db8e1357af75e3a0ded595a78a89d922bb"
+      },
+      {
+        "file": "src/lib/host-api.ts",
+        "sha256": "110948cef97af65d5fccd5d76d45101bc954f8fb35b8a3dc17922cc009eb2ed1"
+      },
+      {
+        "file": "src/lib/workspace-session.ts",
+        "sha256": "c65bb8330a9af1166ab1f87a6d0d30845841c1a058e39df051f58bc33fcd3dd4"
+      },
+      {
+        "file": "src/pages/Chat/ChatInput.tsx",
+        "sha256": "5b1339dd3e9b8ec70d2c1ed235688e6e08cfdb519be355e34761b5b884f313a4"
+      },
+      {
+        "file": "src/pages/Chat/index.tsx",
+        "sha256": "c8ab0a47ebf0cede9258ebfd086964fa3bb44145e8fde7577bab0b886f8c2bc1"
+      },
+      {
+        "file": "src/pages/Settings/sections/ArchivedSection.tsx",
+        "sha256": "c9e3eaafa126de685d1fe0f14db8f64c72bd556ed9dd6c3dbf1fb9e715889698"
+      },
+      {
+        "file": "src/pages/Settings/sections/StorageSection.tsx",
+        "sha256": "9788d4b2e2c0ed8e00e17c8a1d025a98870475d455d50fc7f65654e49484582f"
+      },
+      {
+        "file": "src/stores/chat.ts",
+        "sha256": "0996f8093d73407fb4fc4640c89cc742160dc3e64419fd3da5d0af7223bd7cc0"
+      },
+      {
+        "file": "tests/e2e/chat-workspace-header.spec.ts",
+        "sha256": "fd14dbabb868a9f6c0577dae9424e1ded7d145733759488de1c7c33d8c2ed034"
+      },
+      {
+        "file": "tests/e2e/fixtures/session-context-owner-seed.ts",
+        "sha256": "3a47d83a41a686c56475cc519684192550fed22b457bc003b098c7eb2590bcd5"
+      },
+      {
+        "file": "tests/e2e/session-context-commit-recovery.spec.ts",
+        "sha256": "c149aa4537dff78e6ade37c8223549e7e735ad542e36ede33ca279b0676dbcbf"
+      },
+      {
+        "file": "tests/e2e/session-context-recovery.spec.ts",
+        "sha256": "6ff139f815a84a0f11298505a1b213682d8174ac76fcbbd4b94f15b44ac02927"
+      },
+      {
+        "file": "tests/e2e/session-lifecycle-recovery.spec.ts",
+        "sha256": "35792629ae823793f268da9d75daf05f00ceafb1bc0f8c9f749186509fb1902f"
+      },
+      {
+        "file": "tests/e2e/session-worktree-storage.spec.ts",
+        "sha256": "b9a7bae060120fc4092647fe56477073b67cb26347c24445f34a130959e480a1"
+      },
+      {
+        "file": "tests/unit/checkout-writer-ownership.test.ts",
+        "sha256": "4b6a85ba86fa65b1e2634b00c8cff0dc38447994490d595b568dc5482eadc0ad"
+      },
+      {
+        "file": "tests/unit/checkpoints-dialog.test.tsx",
+        "sha256": "692fdd8092b211ca144b8690d363c804c384ac2047f5b2c5fbe8fd00d16f0a78"
+      },
+      {
+        "file": "tests/unit/durable-task-authority-access.test.ts",
+        "sha256": "4c362fbe2bf527f993d6ddb82f2c90293c8ca6b4981116150cb5946cc0599fc3"
+      },
+      {
+        "file": "tests/unit/git-api.test.ts",
+        "sha256": "eee53201bfce7d9dc2ddaa0034f35b02d2c1fe4179260bc64ca4335a5b14ef33"
+      },
+      {
+        "file": "tests/unit/host-services.test.ts",
+        "sha256": "0f344a0efd9d7b46263981e049850baffef201d4110fa5d59692d5de0ff3e77b"
+      },
+      {
+        "file": "tests/unit/long-session-lifecycle-barrier.test.ts",
+        "sha256": "6b121bf7be81e3e912e9748a242cf23fbffe77e0c489d5523be8b552c7ecc01d"
+      },
+      {
+        "file": "tests/unit/r0-2-sessions-delete-fail.test.ts",
+        "sha256": "4b534357dfda955158a4f930bc8cb298edef6b0f3155911c290030d58d7bffb4"
+      },
+      {
+        "file": "tests/unit/r0-3-chat-abort-checkstuck.test.ts",
+        "sha256": "02e61add00e63ebc8145885813c04c0d09cf1de284f74e618f2399126741a267"
+      },
+      {
+        "file": "tests/unit/session-delete-gate.test.ts",
+        "sha256": "ab393e6e6d8696349168ca837b1b00dc1486aa7d646d19919a61293f83b60642"
+      },
+      {
+        "file": "tests/unit/session-lifecycle-control-scope.test.ts",
+        "sha256": "2daaeff8309df5cdbba48df3b28eb4a0abf4c14f2aa25928cff17b0f403d6dfa"
+      },
+      {
+        "file": "tests/unit/session-lifecycle-tail.test.ts",
+        "sha256": "f3390e3cc850ac33ee64029d854ab0e2976ad90e9462011504ba54145ad35746"
+      },
+      {
+        "file": "tests/unit/session-storage-api.test.ts",
+        "sha256": "caa0b3e76ce68fcdefe3bf141c27645d63b864016cc7dbdf8f4b41bbc3911a32"
+      },
+      {
+        "file": "tests/unit/ui-worktree-cleanup-conservative.test.ts",
+        "sha256": "be90294b5a5cc025d902af0ea95a740797b4d83967d307231223427dc40cb08f"
+      },
+      {
+        "file": "tests/unit/workspace-session.test.ts",
+        "sha256": "5a88622d48f54588b83cc4a6aa42d84c4b188c3552e269402542f17c3ca178fc"
+      }
+    ]
+  },
+  "after": {
+    "commit": "3168a9ebfeba1e05fdabbb59a3cb4f8f8a7b036b",
+    "tree": "6335100e351190000161743d700b8e179717ef22",
+    "dirty": "",
+    "files": [
+      {
+        "file": "electron/services/git-api.ts",
+        "sha256": "0e87aae243d32ecb5602f4075b9919f325bafd667914ce0ac397da747c8ae879"
+      },
+      {
+        "file": "electron/services/long-session-resource-reclamation.ts",
+        "sha256": "a1ad56ff4374b68aee63eb282dd74522c8a132db0464c9052cdf2fdee687a644"
+      },
+      {
+        "file": "electron/services/session-delete-gate.ts",
+        "sha256": "425120b18e389ebfa32eb26547bed67cff12ce76c4f8baa6d441e9a31f25e50e"
+      },
+      {
+        "file": "electron/services/session-storage-api.ts",
+        "sha256": "b793ebfbbe45070cdefd0e793ca6f8c1c91b10a3e35caaf0ab55b2b42243560a"
+      },
+      {
+        "file": "electron/services/sessions-api.ts",
+        "sha256": "5b7a1e0b0d21a7199dda9120ef392e4c2ddc5ba2e73e49d2eb4b5fd4c7ad820f"
+      },
+      {
+        "file": "electron/services/task-system-service.ts",
+        "sha256": "1c5a21991c405550180e76e10e9972063a482ab6433fe07787ffb9abd3b28aee"
+      },
+      {
+        "file": "openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts",
+        "sha256": "dbd4cf64df03646c3c87cb41beac0cbad8c3adc903c967c0ed8323eae5580809"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/embedded-agent-runner/compact.queued.ts",
+        "sha256": "6d15824dd3df089ab3dfa4070b97c2ff9b8c9032d42882c793f16b81ad9dbcaf"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/embedded-agent-runner/compact.ts",
+        "sha256": "6a204981f88fe2b6678d97cd8b694a658c9c0ade2181b70849680fac959b8ce2"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/worktree-service.ts",
+        "sha256": "8cd8d5907937ebe2cb8d22628ff879859e7279bb181a009454b3a2ac8c470d03"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.compaction-range.handler.test.ts",
+        "sha256": "45cc829f16aa5fd71a28efbc428bc7d832c24efa61121d5268215080967e878c"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.compaction.ts",
+        "sha256": "77676ac01394b98e959a4cf675fb1537be65f2356fbe71d3800b1df6a49c75a4"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts",
+        "sha256": "038c6cb25f99a9cb369a7c051b44e293f8b4a0eece3c90be1b9c557d2d10c4d7"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.run-control.ts",
+        "sha256": "0e4eda0cbdb4725f8c4dde74ec21689aa257ddec62d6e3a4942edf90702f76b6"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/session-compaction-checkpoints.ts",
+        "sha256": "a8230bc8e73cec23a5f0edc19523c19be18cd7da4f5be0d69010c8ce6e523d69"
+      },
+      {
+        "file": "shared/chat/types.ts",
+        "sha256": "cbad0dbb7ed069cfaeff9fa93cbce149e3ee801059aa0cdb0f29c843df23c0eb"
+      },
+      {
+        "file": "shared/host-api/contract.ts",
+        "sha256": "af8d345674f63460fca11f323ae657dc5f30b066d3268d588d075c380ed8218d"
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "sha256": "fa1d68916e3ad766cc7af74fd69b149d3aadc9e9771944d05f5325c20a7bb23a"
+      },
+      {
+        "file": "shared/i18n/locales/en/settings.json",
+        "sha256": "7c8cbe6418eb38c00e2eb9000bd908a89dee82d90f9c4505467be372c64402d8"
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "sha256": "5941613660cdb77b955444670e3a3e83f75788355af5fa4cb9de0e2750da84f2"
+      },
+      {
+        "file": "shared/i18n/locales/ja/settings.json",
+        "sha256": "fffc87c33a04c03ec912aaebb3a498c0f42ce739085c22b5b5e93eba4ab4aceb"
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "sha256": "fa7b4af7c0759b0d90830d27d5ddf77a3db0b8ecd5391c3ac15dd23ba48ceef8"
+      },
+      {
+        "file": "shared/i18n/locales/ru/settings.json",
+        "sha256": "177e99a0f85a129c7fec6b90d83c91c1afde40da1502db72536dc13b90943eb0"
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "sha256": "e4e6b536ac2ab618e25607fdf8c8be183c975d742a9c4a53e950318b64ce10e4"
+      },
+      {
+        "file": "shared/i18n/locales/zh/settings.json",
+        "sha256": "0213a208bbb66f4ed0688c39e41f1f8f6b343c780d64ffd8b83088c6bdfb69f6"
+      },
+      {
+        "file": "shared/task-system/store.ts",
+        "sha256": "dbb82f8c4753c48971e7bacc385554a0fe8d866ad45339dd5d855cf8d1539fe0"
+      },
+      {
+        "file": "shared/types/workspace.ts",
+        "sha256": "e6742fe457173e07b206e39b7784e83616537aee4b4248d7eb1144d55bc5a080"
+      },
+      {
+        "file": "src/components/chat/CheckpointsDialog.tsx",
+        "sha256": "8c0a276696f73d38798fd1371c217d815dcd763c4ed97ae2b7abb800750bf598"
+      },
+      {
+        "file": "src/components/chat/ComposerPopover.tsx",
+        "sha256": "3ee1ed4c8b4c21ac0275132813237023146bcb08fe58fbeec2fab3fc6b84f5de"
+      },
+      {
+        "file": "src/components/chat/ResourceChip.tsx",
+        "sha256": "b79e4c85cc016bda31ddad1ce0dcdeed17513a84713e66dc4946fda4b62bf811"
+      },
+      {
+        "file": "src/components/chat/SessionWorkspacePicker.tsx",
+        "sha256": "00f35566c9bcea5a44d48226078e6a01c118eb40f0109f77ceddf8a478936160"
+      },
+      {
+        "file": "src/components/chat/WelcomeProjectPicker.tsx",
+        "sha256": "8750962728ef2f8c8b1592b4328f41675efe8f12f89cf30c5b52416041aeef01"
+      },
+      {
+        "file": "src/components/layout/Sidebar.tsx",
+        "sha256": "176d54e3a29911c301d1ea8cc0babc238a69e73038e177cf3e3c6bb291b32bb1"
+      },
+      {
+        "file": "src/components/layout/use-new-chat-action.ts",
+        "sha256": "50169bfe869b25862b35d74245d089db8e1357af75e3a0ded595a78a89d922bb"
+      },
+      {
+        "file": "src/lib/host-api.ts",
+        "sha256": "110948cef97af65d5fccd5d76d45101bc954f8fb35b8a3dc17922cc009eb2ed1"
+      },
+      {
+        "file": "src/lib/workspace-session.ts",
+        "sha256": "c65bb8330a9af1166ab1f87a6d0d30845841c1a058e39df051f58bc33fcd3dd4"
+      },
+      {
+        "file": "src/pages/Chat/ChatInput.tsx",
+        "sha256": "5b1339dd3e9b8ec70d2c1ed235688e6e08cfdb519be355e34761b5b884f313a4"
+      },
+      {
+        "file": "src/pages/Chat/index.tsx",
+        "sha256": "c8ab0a47ebf0cede9258ebfd086964fa3bb44145e8fde7577bab0b886f8c2bc1"
+      },
+      {
+        "file": "src/pages/Settings/sections/ArchivedSection.tsx",
+        "sha256": "c9e3eaafa126de685d1fe0f14db8f64c72bd556ed9dd6c3dbf1fb9e715889698"
+      },
+      {
+        "file": "src/pages/Settings/sections/StorageSection.tsx",
+        "sha256": "9788d4b2e2c0ed8e00e17c8a1d025a98870475d455d50fc7f65654e49484582f"
+      },
+      {
+        "file": "src/stores/chat.ts",
+        "sha256": "0996f8093d73407fb4fc4640c89cc742160dc3e64419fd3da5d0af7223bd7cc0"
+      },
+      {
+        "file": "tests/e2e/chat-workspace-header.spec.ts",
+        "sha256": "fd14dbabb868a9f6c0577dae9424e1ded7d145733759488de1c7c33d8c2ed034"
+      },
+      {
+        "file": "tests/e2e/fixtures/session-context-owner-seed.ts",
+        "sha256": "3a47d83a41a686c56475cc519684192550fed22b457bc003b098c7eb2590bcd5"
+      },
+      {
+        "file": "tests/e2e/session-context-commit-recovery.spec.ts",
+        "sha256": "c149aa4537dff78e6ade37c8223549e7e735ad542e36ede33ca279b0676dbcbf"
+      },
+      {
+        "file": "tests/e2e/session-context-recovery.spec.ts",
+        "sha256": "6ff139f815a84a0f11298505a1b213682d8174ac76fcbbd4b94f15b44ac02927"
+      },
+      {
+        "file": "tests/e2e/session-lifecycle-recovery.spec.ts",
+        "sha256": "35792629ae823793f268da9d75daf05f00ceafb1bc0f8c9f749186509fb1902f"
+      },
+      {
+        "file": "tests/e2e/session-worktree-storage.spec.ts",
+        "sha256": "b9a7bae060120fc4092647fe56477073b67cb26347c24445f34a130959e480a1"
+      },
+      {
+        "file": "tests/unit/checkout-writer-ownership.test.ts",
+        "sha256": "4b6a85ba86fa65b1e2634b00c8cff0dc38447994490d595b568dc5482eadc0ad"
+      },
+      {
+        "file": "tests/unit/checkpoints-dialog.test.tsx",
+        "sha256": "692fdd8092b211ca144b8690d363c804c384ac2047f5b2c5fbe8fd00d16f0a78"
+      },
+      {
+        "file": "tests/unit/durable-task-authority-access.test.ts",
+        "sha256": "4c362fbe2bf527f993d6ddb82f2c90293c8ca6b4981116150cb5946cc0599fc3"
+      },
+      {
+        "file": "tests/unit/git-api.test.ts",
+        "sha256": "eee53201bfce7d9dc2ddaa0034f35b02d2c1fe4179260bc64ca4335a5b14ef33"
+      },
+      {
+        "file": "tests/unit/host-services.test.ts",
+        "sha256": "0f344a0efd9d7b46263981e049850baffef201d4110fa5d59692d5de0ff3e77b"
+      },
+      {
+        "file": "tests/unit/long-session-lifecycle-barrier.test.ts",
+        "sha256": "6b121bf7be81e3e912e9748a242cf23fbffe77e0c489d5523be8b552c7ecc01d"
+      },
+      {
+        "file": "tests/unit/r0-2-sessions-delete-fail.test.ts",
+        "sha256": "4b534357dfda955158a4f930bc8cb298edef6b0f3155911c290030d58d7bffb4"
+      },
+      {
+        "file": "tests/unit/r0-3-chat-abort-checkstuck.test.ts",
+        "sha256": "02e61add00e63ebc8145885813c04c0d09cf1de284f74e618f2399126741a267"
+      },
+      {
+        "file": "tests/unit/session-delete-gate.test.ts",
+        "sha256": "ab393e6e6d8696349168ca837b1b00dc1486aa7d646d19919a61293f83b60642"
+      },
+      {
+        "file": "tests/unit/session-lifecycle-control-scope.test.ts",
+        "sha256": "2daaeff8309df5cdbba48df3b28eb4a0abf4c14f2aa25928cff17b0f403d6dfa"
+      },
+      {
+        "file": "tests/unit/session-lifecycle-tail.test.ts",
+        "sha256": "f3390e3cc850ac33ee64029d854ab0e2976ad90e9462011504ba54145ad35746"
+      },
+      {
+        "file": "tests/unit/session-storage-api.test.ts",
+        "sha256": "caa0b3e76ce68fcdefe3bf141c27645d63b864016cc7dbdf8f4b41bbc3911a32"
+      },
+      {
+        "file": "tests/unit/ui-worktree-cleanup-conservative.test.ts",
+        "sha256": "be90294b5a5cc025d902af0ea95a740797b4d83967d307231223427dc40cb08f"
+      },
+      {
+        "file": "tests/unit/workspace-session.test.ts",
+        "sha256": "5a88622d48f54588b83cc4a6aa42d84c4b188c3552e269402542f17c3ca178fc"
+      }
+    ]
+  },
+  "tests": {
+    "startTime": "2026-11-09T17:11:55.108Z",
+    "duration": 264637.936,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "log": {
+    "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui2.log",
+    "sha256": "dce102e34a23ea06eccbddc705efa837ede12f3957e7c49f59060293cacdce77"
+  }
+}

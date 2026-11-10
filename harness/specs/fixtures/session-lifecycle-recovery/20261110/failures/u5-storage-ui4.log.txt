@@ -1,0 +1,71 @@
+
+Running 1 test using 1 worker
+
+(node:31292) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31292) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-09T16:38:24.780Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-09T16:38:24.781Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [28812:1110/003824.994:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[28812:1110/003824.994:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:err] [2026-11-09T16:38:25.161Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T16:38:25.161Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T16:38:25.161Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T16:38:25.162Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-09T16:38:25.357Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[app:out] [2026-11-09T16:38:25.359Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:out] [2026-11-09T16:38:26.212Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\ClawX-work\session-task-unified-relay-20261109\.tmp\storage-acceptance-xSkskX\workspace-demo\.verse-claw\harness
+[app:err] [2026-11-09T16:38:26.993Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T16:38:26.993Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T16:38:26.993Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T16:38:26.994Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-09T16:38:32.421Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"power-saver","activeReasons":["power-saver"],"transitionCount":3}
+[app:out] [2026-11-09T16:38:57.968Z] [INFO] Gateway stop requested
+[2026-11-09T16:38:57.968Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[2026-11-09T16:38:58.049Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"window-hidden","activeReasons":["window-hidden","power-saver"],"transitionCount":4}
+[2026-11-09T16:38:58.050Z] [INFO] [ResourceTracker] Stopped
+[2026-11-09T16:38:58.050Z] [INFO] [ResourceTracker] Shutdown complete
+[2026-11-09T16:38:58.050Z] [INFO] [efficiency-sampler] stopped
+[2026-11-09T16:38:58.051Z] [INFO] [efficiency] runtime efficiency sampling stopped
+[app:err] Waiting for the debugger to disconnect...
+  x  1 tests\e2e\session-worktree-storage.spec.ts:25:5 › real repository, isolated worktree, storage command and settings in light/dark/narrow layouts (1.3m)
+[31mTesting stopped early after 1 maximum allowed failures.[39m
+
+
+  1) tests\e2e\session-worktree-storage.spec.ts:25:5 › real repository, isolated worktree, storage command and settings in light/dark/narrow layouts 
+
+    TimeoutError: locator.focus: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByTestId('chat-header-environment-project').getByRole('button').first()[22m
+    [2m    - locator resolved to <button type="button" data-state="closed" class="inline-flex max-w-[200px] items-center gap-1 rounded-md px-1.5 py-1 text-xs font-normal text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10">…</button>[22m
+    [2m  - element was detached from the DOM, retrying[22m
+
+
+      18 |     const project = page.getByTestId('welcome-project-trigger');
+      19 |     const parent = await project.isVisible() ? project : page.getByTestId('chat-header-environment-project').getByRole('button').first();
+    > 20 |     await parent.focus(); await parent.press('Enter');
+         |                  ^
+      21 |   }
+      22 |   await expect(trigger).toBeVisible(); await trigger.focus(); await trigger.press('Enter');
+      23 | }
+        at openWorktrees (D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\session-worktree-storage.spec.ts:20:18)
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\session-worktree-storage.spec.ts:48:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\lifecycle-validation\u5-storage-ui4-results\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\lifecycle-validation\u5-storage-ui4-results\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\lifecycle-validation\u5-storage-ui4-results\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\lifecycle-validation\u5-storage-ui4-results\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\session-worktree-storage.spec.ts:25:5 › real repository, isolated worktree, storage command and settings in light/dark/narrow layouts 
+  1 error was not a part of any test, see above for details

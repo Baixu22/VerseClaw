@@ -63,7 +63,7 @@ import {
   createPermissionApproval,
   recordPermissionAudit,
 } from './permissions-api';
-import { getActiveWorkspaceProfile } from './workspaces-api';
+import { createWorkspacesApi, getActiveWorkspaceProfile } from './workspaces-api';
 import { isPathInsideWorkspace, isPathInsideWorkspaceResolved, requireWorkspace } from './workspace-permissions';
 
 type ExecResult = {
@@ -730,11 +730,13 @@ export async function enforcePermission(input: {
   /** Extra grading facts appended to the approval reason so the dialog explains
    * why this specific operation is dangerous, not just that it is. */
   grading?: string[];
+  targetIdentity?: string;
 }): Promise<GitOperationResult | null> {
   if (input.risk === 'none') return null;
   const requestHash = createRequestHash(input.action, input.workspace, {
     command: input.command,
     paths: input.paths ?? [],
+    ...(input.targetIdentity ? { targetIdentity: input.targetIdentity } : {}),
   });
 
   if (input.risk === 'dangerous') {
@@ -808,9 +810,18 @@ async function withGitOperation(
   action: string,
   risk: GitRisk,
   args: string[],
-  payload: { approvalId?: string; paths?: string[]; grading?: string[]; context?: RepoContext } = {},
+  payload: { approvalId?: string; paths?: string[]; grading?: string[]; context?: RepoContext; removalTarget?: string } = {},
 ): Promise<GitOperationResult> {
   const ctx = payload.context ?? await requireRepoContext();
+  const inspectRemoval = async () => {
+    try {
+      const { inspectUiWorktreeRemoval } = await import('./task-system-service');
+      return inspectUiWorktreeRemoval(ctx.repoRoot, payload.removalTarget!, (await createWorkspacesApi().list()).profiles);
+    } catch (error) { return { blocked: true as const,
+      reason: `UI_CLEANUP_OWNER_UNAVAILABLE: ${String(error)}; owner=Workspace/session lifecycle; entry=/settings/storage` }; }
+  };
+  const before = payload.removalTarget ? await inspectRemoval() : null;
+  if (before?.blocked) return { success: false, blocked: true, reason: before.reason };
   const blocked = await enforcePermission({
     workspace: ctx.workspace,
     action,
@@ -819,8 +830,15 @@ async function withGitOperation(
     command: `git ${args.join(' ')}`,
     paths: payload.paths,
     grading: payload.grading,
+    targetIdentity: before && !before.blocked ? before.identity : undefined,
   });
   if (blocked) return blocked;
+  if (payload.removalTarget) {
+    const current = await inspectRemoval();
+    if (current.blocked) return { success: false, blocked: true, reason: current.reason };
+    if (before && !before.blocked && current.identity !== before.identity)
+      return { success: false, blocked: true, reason: 'UI_CLEANUP_TARGET_CHANGED; entry=/settings/storage; refresh the owning session' };
+  }
   const result = await git(args, ctx.workspaceRoot);
   if (result.exitCode === 0) invalidateGitStatusCache(ctx.repoRoot);
   return {
@@ -1837,9 +1855,10 @@ export function createGitApi(): CompleteHostServiceRegistry['git'] {
         ? parseWorktrees(listed.stdout).some((worktree) => resolve(worktree.path) === target)
         : false;
       if (!knownWorktree) throw new Error('worktree path is not registered with this repository');
-      return withGitOperation('worktreeRemove', 'dangerous', ['worktree', 'remove', target], {
+      return withGitOperation('worktreeRemove', 'dangerous', ['worktree', 'remove', '--', target], {
         approvalId: payload.approvalId,
         paths: [target],
+        context: ctx, removalTarget: target,
       });
     },
     worktreePrune: async (payload) => withGitOperation(

@@ -1,0 +1,34 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "testedCandidate": {
+    "commit": "289ee63a210eaec06c202de17b6c9cf23a74f17e",
+    "tree": "92d432bafa794066435c2480357b9d53eec03942",
+    "dirty": false
+  },
+  "deliveryCandidate": {
+    "commit": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+    "tree": "6da4b804e2edce227a43121e4376908d76303457",
+    "dirty": false
+  },
+  "changedPaths": [
+    "tests/e2e/fixtures/electron.ts",
+    "tests/e2e/resource-lifecycle-soak.spec.ts"
+  ],
+  "productAndMixedDriverDiff": "",
+  "fixtureCleanupOnly": true,
+  "fixtureDiff": "diff --git a/tests/e2e/fixtures/electron.ts b/tests/e2e/fixtures/electron.ts\nindex ce3a9881f..9edd6f6fb 100644\n--- a/tests/e2e/fixtures/electron.ts\n+++ b/tests/e2e/fixtures/electron.ts\n@@ -297,8 +297,12 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {\n   let graceful = false;\n   try { graceful = await bounded(closing, timeoutMs, 'Playwright close'); } catch { /* fall back to owned handles */ }\n   let processes: WindowsProcessCheck[] = [];\n+  const processObservations: WindowsProcessCheck[][] = [];\n   try {\n-    if (process.platform === 'win32' && owned) processes = await checkWindowsProcesses(owned.identities, true);\n+    if (process.platform === 'win32' && owned) {\n+      processes = await checkWindowsProcesses(owned.identities, true);\n+      processObservations.push(processes);\n+    }\n   } catch (error) { errors.push(String(error)); }\n   if (launcher && launcher.exitCode === null && launcher.signalCode === null) {\n     // ChildProcess.kill uses the launcher's existing native handle on Windows.\n@@ -311,11 +315,20 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {\n   let closeSettled = false;\n   try { closeSettled = await bounded(closing, 2_000, 'Playwright close after launcher exit'); }\n   catch (error) { errors.push(String(error)); }\n-  if (owned && processes.some(({ status }) => status === 'alive')) {\n+  if (owned && (processes.length !== owned.identities.length\n+    || processes.some(({ status }) => status === 'alive' || status === 'unavailable'))) {\n     // A signalled Main can finish after the launcher's pipes close. Read the\n     // same identities again before deciding whether this close left survivors.\n-    try { processes = await checkWindowsProcesses(owned.identities); }\n-    catch (error) { errors.push(String(error)); }\n+    // Retry failed observations only; never replay an uncertain termination.\n+    for (let attempt = 1; ; attempt++) {\n+      try {\n+        processes = await checkWindowsProcesses(owned.identities);\n+        processObservations.push(processes);\n+        if (processes.every(({ status }) => status !== 'alive' && status !== 'unavailable')) break;\n+      } catch (error) { errors.push(String(error)); }\n+      if (attempt >= 3) break;\n+      await new Promise(resolve => setTimeout(resolve, 250));\n+    }\n   }\n   const launcherExited = Boolean(launcher && (launcher.exitCode !== null || launcher.signalCode !== null));\n   const mainExited = process.platform === 'win32'\n@@ -339,7 +352,7 @@ async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000) {\n   }\n   // Other E2E callers close sockets after this helper. Return exit confirmation\n   // so those cleanups run even when a process or inspector cannot be closed.\n-  return { mainExited, launcherExited, graceful, closeSettled, processes, errors, ...(snapshotError ? { snapshotError } : {}) };\n+  return { mainExited, launcherExited, graceful, closeSettled, processes, processObservations, errors, ...(snapshotError ? { snapshotError } : {}) };\n }\n \n async function seedE2eSettings(userDataDir: string, theme?: LaunchElectronOptions['theme']): Promise<void> {",
+  "reason": "Product, startup, mixed workload and measurement code are identical to testedCandidate. Only lifecycle identity reads and post-test cleanup observations changed. Final Electron E2E and lifecycle both run on deliveryCandidate; every failed observation and earlier attempt is retained.",
+  "electronCandidate": {
+    "commit": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+    "tree": "6da4b804e2edce227a43121e4376908d76303457",
+    "dirty": false
+  },
+  "electronToDeliveryChangedPaths": [],
+  "electronToDeliveryDiff": "",
+  "intermediateElectronCandidate": {
+    "commit": "09558a8dd84725d1de5e6b1194f067823f9f1ffa",
+    "tree": "337992626a819e0a78d16514352de839fb9b9947",
+    "dirty": false
+  }
+}

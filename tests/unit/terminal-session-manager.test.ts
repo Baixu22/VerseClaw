@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { createServer } from 'node:net';
+import { createServer, Socket } from 'node:net';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 
 const ptyMocks = vi.hoisted(() => ({
@@ -63,6 +63,20 @@ afterEach(() => {
 });
 
 describe('TerminalSessionManager', () => {
+  it('closes a Windows PTY input pipe on native exit, not merely on cancellation', async () => {
+    setPlatform('win32');
+    const input = new Socket();
+    let exit!: (event: { exitCode: number }) => void;
+    ptyMocks.spawn.mockReturnValue({ pid: 1234, _agent: { inSocket: input }, onData: vi.fn(), onExit: (listener: typeof exit) => { exit = listener; }, write: vi.fn(), resize: vi.fn(), kill: vi.fn() });
+    const { TerminalSessionManager } = await import('@electron/services/terminal-session-manager');
+    const manager = new TerminalSessionManager(); const terminal = manager.open({ workspace: workspace(process.cwd()) });
+    try {
+      const closing = manager.close(terminal.sessionId!);
+      expect(input.destroyed).toBe(false);
+      exit({ exitCode: 0 }); await closing;
+      expect(input.destroyed).toBe(true); expect(manager.listAll()).toEqual([]);
+    } finally { input.destroy(); }
+  });
   it('retains a native terminal receipt when persistence fails and retries through the owner', async () => {
     const { configureManagedProcessCapacity, resetManagedProcessCapacity, managedProcessCapacityStats } = await import('../../openclaw_runtime/src/agents/verseshell/managed-process-capacity');
     const reservations = await import('../../openclaw_runtime/src/agents/verseshell/managed-process-reservation');

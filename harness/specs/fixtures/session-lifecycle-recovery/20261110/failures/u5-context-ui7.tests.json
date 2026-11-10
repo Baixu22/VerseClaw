@@ -1,0 +1,572 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/lifecycle-validation/u5-context-ui7-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "session-context-recovery.spec.ts",
+      "file": "session-context-recovery.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "U5 manual compact preserves its instructions on cancel, pending, refusal and timeout",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 196495,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-compaction-dialog')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-compaction-dialog')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-compaction-dialog')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-compaction-dialog')\u001b[22m\n\n    at open (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-context-recovery.spec.ts:149:64)\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-context-recovery.spec.ts:151:5",
+                    "location": {
+                      "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-context-recovery.spec.ts",
+                      "column": 64,
+                      "line": 149
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 147 |\u001b[39m       \u001b[36mawait\u001b[39m expect(option)\u001b[33m.\u001b[39mtoContainText(\u001b[35m/[\\d.]+k?\\s*\\/\\s*[\\d.]+k?\\s*tokens/\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 148 |\u001b[39m       \u001b[36mawait\u001b[39m option\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 149 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'chat-compaction-dialog'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 150 |\u001b[39m     }\u001b[33m;\u001b[39m\n \u001b[90m 151 |\u001b[39m     \u001b[36mawait\u001b[39m open()\u001b[33m;\u001b[39m\n \u001b[90m 152 |\u001b[39m     \u001b[36mconst\u001b[39m dialog \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'chat-compaction-dialog'\u001b[39m)\u001b[33m,\u001b[39m instructions \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'chat-compaction-instructions'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-context-recovery.spec.ts",
+                        "column": 64,
+                        "line": 149
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-compaction-dialog')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-compaction-dialog')\u001b[22m\n\n\n  147 |       await expect(option).toContainText(/[\\d.]+k?\\s*\\/\\s*[\\d.]+k?\\s*tokens/);\n  148 |       await option.click();\n> 149 |       await expect(page.getByTestId('chat-compaction-dialog')).toBeVisible();\n      |                                                                ^\n  150 |     };\n  151 |     await open();\n  152 |     const dialog = page.getByTestId('chat-compaction-dialog'), instructions = page.getByTestId('chat-compaction-instructions');\n    at open (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-context-recovery.spec.ts:149:64)\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-context-recovery.spec.ts:151:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:49.830Z] [INFO] Gateway stop requested\n[2026-11-09T14:46:49.831Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:50.560Z] [INFO] Scheduling Gateway reload after saving provider \"custom-sessionc\" config\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:50.561Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"custom-sessionc/mock-coder\" for provider \"custom-sessionc\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:51.429Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-context-ui7-results\\session-context-recovery-U-b9f4a-pending-refusal-and-timeout\\workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:52.060Z] [INFO] [gateway-refresh] mode=reload requested pid=n/a state=stopped\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:46:52.061Z] [WARN] [gateway-refresh] mode=reload result=fallback_restart cause=not_running\n[2026-11-09T14:46:52.061Z] [WARN] Gateway reload requested while not running; falling back to restart\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:52.061Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=n/a\n[2026-11-09T14:46:52.061Z] [INFO] Gateway stop requested\n[2026-11-09T14:46:52.061Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:52.062Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)\n[2026-11-09T14:46:52.062Z] [INFO] Gateway start requested (port=18789)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:52.223Z] [DEBUG] Device identity loaded (deviceId=983b1d71b6d7985c915200cec23c0c32c86f68408ff2aebd1c1209fe9ff123ec)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:52.224Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:54.014Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:43020) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:54.797Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:54.797Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:57.280Z] [DEBUG] Gateway start/find-existing superseded (expectedEpoch=3, currentEpoch=4)\n[2026-11-09T14:46:57.280Z] [DEBUG] Gateway state changed: starting -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:57.281Z] [INFO] [metric] gateway.restart.executed {\"gateway_restart_executed_total\":1,\"gateway_restart_suppressed_total\":0,\"gateway_restart_circuit_open_until\":0}\n[2026-11-09T14:46:57.281Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=n/a pidAfter=n/a suppressed=0 executed=1 circuitOpenUntil=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:57.379Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:57.381Z] [INFO] Gateway start requested (port=65115)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:46:57.382Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:03.497Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:04.810Z] [INFO] Python environment missing or incomplete, attempting background repair...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:06.871Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:08.204Z] [INFO] Setting up managed Python 3.12 (uv=uv, source=path, arch=x64, mirror=true)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:08.290Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"custom-sessionc/mock-coder\" for provider \"custom-sessionc\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:47:08.627Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:08.632Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":5,\"defaultProviderRuntimeSyncMs\":231,\"providerEnvMs\":12,\"channelStartupPolicyMs\":4,\"uvEnvMs\":0,\"mcpEnvMs\":31,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":1,\"totalMs\":325,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:08.632Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=65115, entry=\"D:\\ClawX-work\\session-task-unified-relay-20261109\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 65115 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\ClawX-work\\session-task-unified-relay-20261109\\openclaw_runtime\", bundledBin=yes, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:08.864Z] [INFO] Gateway process started (pid=21696)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:08.865Z] [DEBUG] Gateway manager now owns process pid=21696\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:09.686Z] [INFO] [python-setup:mirror] stderr: \u001b[36m\u001b[1mDownloading\u001b[0m\u001b[39m cpython-3.12.13-windows-x86_64-none (download)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:09.686Z] [INFO] [python-setup:mirror] stderr: \u001b[2m(20.9MiB)\u001b[0m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:11.009Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:13.158Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:15.294Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:17.439Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:19.571Z] [DEBUG] Still waiting for Gateway... (attempt 51/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:20.680Z] [DEBUG] [Gateway stderr] (node:21696) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:47:20.680Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:20.681Z] [DEBUG] [Gateway stderr] (node:21696) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:47:20.681Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:23.642Z] [INFO] [python-setup:mirror] stderr: \u001b[1m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:23.653Z] [INFO] [python-setup:mirror] stderr: \u001b[31merror\u001b[39m\u001b[0m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:23.661Z] [INFO] [python-setup:mirror] stderr: \u001b[1m:\u001b[0m \u001b[1mFailed to install cpython-3.12.13-windows-x86_64-none\u001b[0m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:23.666Z] [INFO] [python-setup:mirror] stderr: \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: Failed to extract archive: cpython-3.12.13-20260504-x86_64-pc-windows-msvc-install_only_stripped.tar.gz\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:23.675Z] [INFO] [python-setup:mirror] stderr: \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: I/O operation failed during extraction\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:23.676Z] [INFO] [python-setup:mirror] stderr: \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: failed to unpack `\\\\?\\D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-75ABMw\\verse-claw-e2e-home-hvJtdr\\AppData\\Roaming\\uv\\python\\.temp\\.tmpNZSvFq\\python\\vcruntime140.dll`\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: failed to unpack `python/vcruntime140.dll` into `\\\\?\\D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-75ABMw\\verse-claw-e2e-home-hvJtdr\\AppData\\Roaming\\uv\\python\\.temp\\.tmpNZSvFq\\python\\vcruntime140.dll`\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:23.677Z] [INFO] [python-setup:mirror] stderr: \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: 拒绝访问。 (os error 5)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:47:23.829Z] [WARN] Python install attempt 1 failed: Error: Python installation failed with code 1 [mirror]\n  uv binary: uv\n  platform: win32/x64\n  output: \u001b[36m\u001b[1mDownloading\u001b[0m\u001b[39m cpython-3.12.13-windows-x86_64-none (download)\n\u001b[2m(20.9MiB)\u001b[0m\n\u001b[1m\n\u001b[31merror\u001b[39m\u001b[0m\n\u001b[1m:\u001b[0m \u001b[1mFailed to install cpython-3.12.13-windows-x86_64-none\u001b[0m\n\u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: Failed to extract archive: cpython-3.12.13-20260504-x86_64-pc-windows-msvc-install_only_stripped.tar.gz\n\u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: I/O operation failed during extraction\n\u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: failed to unpack `\\\\?\\D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-75ABMw\\verse-claw-e2e-home-hvJtdr\\AppData\\Roaming\\uv\\python\\.temp\\.tmpNZSvFq\\python\\vcruntime140.dll`\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: failed to unpack `python/vcruntime140.dll` into `\\\\?\\D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-75ABMw\\verse-claw-e2e-home-hvJtdr\\AppData\\Roaming\\uv\\python\\.temp\\.tmpNZSvFq\\python\\vcruntime140.dll`\n\u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: 拒绝访问。 (os error 5)\nError: Python installation failed with code 1 [mirror]\n  uv binary: uv\n  platform: win32/x64\n  output: \u001b[36m\u001b[1mDownloading\u001b[0m\u001b[39m cpython-3.12.13-windows-x86_64-none (download)\n\u001b[2m(20.9MiB)\u001b[0m\n\u001b[1m\n\u001b[31merror\u001b[39m\u001b[0m\n\u001b[1m:\u001b[0m \u001b[1mFailed to install cpython-3.12.13-windows-x86_64-none\u001b[0m\n\u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: Failed to extract archive: cpython-3.12.13-20260504-x86_64-pc-windows-msvc-install_only_stripped.tar.gz\n\u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: I/O operation failed during extraction\n\u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: failed to unpack `\\\\?\\D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-75ABMw\\verse-claw-e2e-home-hvJtdr\\AppData\\Roaming\\uv\\python\\.temp\\.tmpNZSvFq\\python\\vcruntime140.dll`\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: failed to unpack `python/vcruntime140.dll` into `\\\\?\\D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-75ABMw\\verse-claw-e2e-home-hvJtdr\\AppData\\Roaming\\uv\\python\\.temp\\.tmpNZSvFq\\python\\vcruntime140.dll`\n\u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: 拒绝访问。 (os error 5)\n    at ChildProcess.<anonymous> (D:\\ClawX-work\\session-task-unified-relay-20261109\\dist-electron\\main\\index-DpnHincO.js:80:37)\n    at ChildProcess.emit (node:events:508:28)\n    at maybeClose (node:internal/child_process:1100:16)\n    at ChildProcess._handle.onexit (node:internal/child_process:305:5)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:23.829Z] [INFO] Retrying Python install without mirror...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:26.039Z] [INFO] [python-setup:no-mirror] stderr: \u001b[36m\u001b[1mDownloading\u001b[0m\u001b[39m cpython-3.12.13-windows-x86_64-none (download) \u001b[2m(20.9MiB)\u001b[0m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:26.204Z] [DEBUG] Still waiting for Gateway... (attempt 61/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:27.337Z] [DEBUG] Gateway ready after 62 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:27.338Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:65115/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:47:27.403Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=5690987d-8816-4411-881d-562618b8c0e1 peer=127.0.0.1:59042->127.0.0.1:65115 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:65115 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:47:27.409Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=c98ddeb8-2469-408c-badc-31c006e93fb3 peer=127.0.0.1:59025->127.0.0.1:65115 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:65115 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:47:27.414Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=c1c8d1aa-d58f-466c-b1d1-04614d945321 peer=127.0.0.1:59022->127.0.0.1:65115 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:65115 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:27.421Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:27.422Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-09T14:47:27.423Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:47:27.426Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=42212067-7398-4601-a9e6-3367c3bf9767 peer=127.0.0.1:55923->127.0.0.1:65115 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:65115 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:27.566Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:65115/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:47:27.568Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:31.156Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:31.157Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-09T14:47:31.157Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:33.408Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:33.409Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:33.410Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:33.412Z] [INFO] [metric] gateway.startup {\"configSyncMs\":5369,\"spawnToReadyMs\":18472,\"readyToConnectMs\":6075,\"totalMs\":29916}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:39.552Z] [INFO] [chat:sendWithMedia] Sending: message=\"U5_HEAD\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:39.553Z] [INFO] [gateway-rpc] chat.send serialized id=d57072ab-db43-49ec-8d44-fbbf79a7dffc timeoutMs=900000 bytes=452\n[2026-11-09T14:47:39.553Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=d57072ab-db43-49ec-8d44-fbbf79a7dffc\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:47:39.987Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=36b5755c-d864-400a-93e7-80e466943f67 id=d57072ab-db43-49ec-8d44-fbbf79a7dffc\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:47:39.988Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=36b5755c-d864-400a-93e7-80e466943f67 id=d57072ab-db43-49ec-8d44-fbbf79a7dffc\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:47:39.988Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:47:40.235Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=U5_HEAD sessionKey=agent:main:session-1794235611189-ucompact loadSessionMs=0.848\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:47:40.439Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=U5_HEAD sessionKey=agent:main:session-1794235611189-ucompact attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:47:40.508Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=U5_HEAD sessionKey=agent:main:session-1794235611189-ucompact\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:40.510Z] [INFO] [gateway-rpc] chat.send response id received durationMs=958\n[2026-11-09T14:47:40.510Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"U5_HEAD\",\"status\":\"started\"}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:47:40.648Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=36b5755c-d864-400a-93e7-80e466943f67 id=d57072ab-db43-49ec-8d44-fbbf79a7dffc\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:47:43.528Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:48:00.617Z] [INFO] [chat:sendWithMedia] Sending: message=\"U5_TARGET\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:48:00.617Z] [INFO] [gateway-rpc] chat.send serialized id=20a68e6c-3715-498a-9f69-c0d4b07e8f12 timeoutMs=900000 bytes=456\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:48:00.618Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=20a68e6c-3715-498a-9f69-c0d4b07e8f12\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:48:00.618Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=36b5755c-d864-400a-93e7-80e466943f67 id=20a68e6c-3715-498a-9f69-c0d4b07e8f12\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:48:00.619Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=36b5755c-d864-400a-93e7-80e466943f67 id=20a68e6c-3715-498a-9f69-c0d4b07e8f12\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:48:00.624Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=U5_TARGET sessionKey=agent:main:session-1794235611189-ucompact loadSessionMs=0.63\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:48:00.627Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=U5_TARGET sessionKey=agent:main:session-1794235611189-ucompact attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:48:00.628Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=U5_TARGET sessionKey=agent:main:session-1794235611189-ucompact\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:48:00.629Z] [INFO] [gateway-rpc] chat.send response id received durationMs=12\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:48:00.629Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"U5_TARGET\",\"status\":\"started\"}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:48:00.630Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=36b5755c-d864-400a-93e7-80e466943f67 id=20a68e6c-3715-498a-9f69-c0d4b07e8f12\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:48:17.946Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T14:48:17.947Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T14:48:17.947Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T14:48:17.947Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:48:25.126Z] [INFO] [python-setup:no-mirror] stderr: \u001b[1m\u001b[31merror\u001b[39m\u001b[0m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:48:25.127Z] [INFO] [python-setup:no-mirror] stderr: \u001b[1m:\u001b[0m \u001b[1mFailed to install cpython-3.12.13-windows-x86_64-none\u001b[0m\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: Failed to extract archive: cpython-3.12.13-20260504-x86_64-pc-windows-msvc-install_only_stripped.tar.gz\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:48:25.127Z] [INFO] [python-setup:no-mirror] stderr: \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: I/O operation failed during extraction\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: failed to unpack `\\\\?\\D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-75ABMw\\verse-claw-e2e-home-hvJtdr\\AppData\\Roaming\\uv\\python\\.temp\\.tmpULLM77\\python\\vcruntime140.dll`\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: failed to unpack `python/vcruntime140.dll` into `\\\\?\\D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-75ABMw\\verse-claw-e2e-home-hvJtdr\\AppData\\Roaming\\uv\\python\\.temp\\.tmpULLM77\\python\\vcruntime140.dll`\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:48:25.132Z] [INFO] [python-setup:no-mirror] stderr: \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: 拒绝访问。 (os error 5)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:48:25.401Z] [ERROR] Python install attempt 2 (no mirror) also failed: Error: Python installation failed with code 1 [no-mirror]\n  uv binary: uv\n  platform: win32/x64\n  output: \u001b[36m\u001b[1mDownloading\u001b[0m\u001b[39m cpython-3.12.13-windows-x86_64-none (download) \u001b[2m(20.9MiB)\u001b[0m\n\u001b[1m\u001b[31merror\u001b[39m\u001b[0m\n\u001b[1m:\u001b[0m \u001b[1mFailed to install cpython-3.12.13-windows-x86_64-none\u001b[0m\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: Failed to extract archive: cpython-3.12.13-20260504-x86_64-pc-windows-msvc-install_only_stripped.tar.gz\n\u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: I/O operation failed during extraction\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: failed to unpack `\\\\?\\D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-75ABMw\\verse-claw-e2e-home-hvJtdr\\AppData\\Roaming\\uv\\python\\.temp\\.tmpULLM77\\python\\vcruntime140.dll`\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: failed to unpack `python/vcruntime140.dll` into `\\\\?\\D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-75ABMw\\verse-claw-e2e-home-hvJtdr\\AppData\\Roaming\\uv\\python\\.temp\\.tmpULLM77\\python\\vcruntime140.dll`\n\u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: 拒绝访问。 (os error 5)\nError: Python installation failed with code 1 [no-mirror]\n  uv binary: uv\n  platform: win32/x64\n  output: \u001b[36m\u001b[1mDownloading\u001b[0m\u001b[39m cpython-3.12.13-windows-x86_64-none (download) \u001b[2m(20.9MiB)\u001b[0m\n\u001b[1m\u001b[31merror\u001b[39m\u001b[0m\n\u001b[1m:\u001b[0m \u001b[1mFailed to install cpython-3.12.13-windows-x86_64-none\u001b[0m\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: Failed to extract archive: cpython-3.12.13-20260504-x86_64-pc-windows-msvc-install_only_stripped.tar.gz\n\u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: I/O operation failed during extraction\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: failed to unpack `\\\\?\\D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-75ABMw\\verse-claw-e2e-home-hvJtdr\\AppData\\Roaming\\uv\\python\\.temp\\.tmpULLM77\\python\\vcruntime140.dll`\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: failed to unpack `python/vcruntime140.dll` into `\\\\?\\D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-75ABMw\\verse-claw-e2e-home-hvJtdr\\AppData\\Roaming\\uv\\python\\.temp\\.tmpULLM77\\python\\vcruntime140.dll`\n\u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: 拒绝访问。 (os error 5)\n    at ChildProcess.<anonymous> (D:\\ClawX-work\\session-task-unified-relay-20261109\\dist-electron\\main\\index-DpnHincO.js:80:37)\n    at ChildProcess.emit (node:events:508:28)\n    at maybeClose (node:internal/child_process:1100:16)\n    at ChildProcess._handle.onexit (node:internal/child_process:305:5)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:48:25.402Z] [ERROR] Background Python repair failed: Error: Python installation failed with code 1 [no-mirror]\n  uv binary: uv\n  platform: win32/x64\n  output: \u001b[36m\u001b[1mDownloading\u001b[0m\u001b[39m cpython-3.12.13-windows-x86_64-none (download) \u001b[2m(20.9MiB)\u001b[0m\n\u001b[1m\u001b[31merror\u001b[39m\u001b[0m\n\u001b[1m:\u001b[0m \u001b[1mFailed to install cpython-3.12.13-windows-x86_64-none\u001b[0m\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: Failed to extract archive: cpython-3.12.13-20260504-x86_64-pc-windows-msvc-install_only_stripped.tar.gz\n\u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: I/O operation failed during extraction\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: failed to unpack `\\\\?\\D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-75ABMw\\verse-claw-e2e-home-hvJtdr\\AppData\\Roaming\\uv\\python\\.temp\\.tmpULLM77\\python\\vcruntime140.dll`\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: failed to unpack `python/vcruntime140.dll` into `\\\\?\\D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-75ABMw\\verse-claw-e2e-home-hvJtdr\\AppData\\Roaming\\uv\\python\\.temp\\.tmpULLM77\\python\\vcruntime140.dll`\n\u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: 拒绝访问。 (os error 5)\nError: Python installation failed with code 1 [no-mirror]\n  uv binary: uv\n  platform: win32/x64\n  output: \u001b[36m\u001b[1mDownloading\u001b[0m\u001b[39m cpython-3.12.13-windows-x86_64-none (download) \u001b[2m(20.9MiB)\u001b[0m\n\u001b[1m\u001b[31merror\u001b[39m\u001b[0m\n\u001b[1m:\u001b[0m \u001b[1mFailed to install cpython-3.12.13-windows-x86_64-none\u001b[0m\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: Failed to extract archive: cpython-3.12.13-20260504-x86_64-pc-windows-msvc-install_only_stripped.tar.gz\n\u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: I/O operation failed during extraction\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: failed to unpack `\\\\?\\D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-75ABMw\\verse-claw-e2e-home-hvJtdr\\AppData\\Roaming\\uv\\python\\.temp\\.tmpULLM77\\python\\vcruntime140.dll`\n  \u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: failed to unpack `python/vcruntime140.dll` into `\\\\?\\D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-75ABMw\\verse-claw-e2e-home-hvJtdr\\AppData\\Roaming\\uv\\python\\.temp\\.tmpULLM77\\python\\vcruntime140.dll`\n\u001b[1m\u001b[31mCaused by\u001b[39m\u001b[0m: 拒绝访问。 (os error 5)\n    at ChildProcess.<anonymous> (D:\\ClawX-work\\session-task-unified-relay-20261109\\dist-electron\\main\\index-DpnHincO.js:80:37)\n    at ChildProcess.emit (node:events:508:28)\n    at maybeClose (node:internal/child_process:1100:16)\n    at ChildProcess._handle.onexit (node:internal/child_process:305:5)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:48:55.390Z] [INFO] Gateway stop requested\n[2026-11-09T14:48:55.390Z] [DEBUG] Gateway lifecycle epoch advanced to 6 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:48:55.391Z] [INFO] Sending kill to Gateway process (pid=21696)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T14:48:56.615Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:48:56.616Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:48:57.755Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:48:57.756Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:49:01.485Z] [INFO] Gateway stop requested\n[2026-11-09T14:49:01.485Z] [DEBUG] Gateway lifecycle epoch advanced to 7 (stop)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:60072/00065329-c18b-44d7-9d24-f94d17432849\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:49:01.531Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:49:01.531Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-09T14:49:01.531Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T14:49:01.532Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-09T14:45:47.713Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-context-ui7-results\\session-context-recovery-U-b9f4a-pending-refusal-and-timeout\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-context-ui7-results\\session-context-recovery-U-b9f4a-pending-refusal-and-timeout\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-context-ui7-results\\session-context-recovery-U-b9f4a-pending-refusal-and-timeout\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-context-recovery.spec.ts",
+                    "column": 64,
+                    "line": 149
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "7427f4e25f92e1e951c1-24fc29d66da3c9a720af",
+          "file": "session-context-recovery.spec.ts",
+          "line": 127,
+          "column": 5
+        },
+        {
+          "title": "U5 range compact keeps the exact boundary and draft, and ignores a late error in another session",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "7427f4e25f92e1e951c1-7b22b603b0ad8542307b",
+          "file": "session-context-recovery.spec.ts",
+          "line": 194,
+          "column": 5
+        },
+        {
+          "title": "U5 checkpoint restore keeps pending and rejected states honest and refreshes the original owner after timeout",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "7427f4e25f92e1e951c1-132b5c52eb4b01a5d0ca",
+          "file": "session-context-recovery.spec.ts",
+          "line": 257,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mTesting stopped early after 1 maximum allowed failures.\u001b[39m"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-11-09T14:45:42.833Z",
+    "duration": 203929.117,
+    "expected": 0,
+    "skipped": 2,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

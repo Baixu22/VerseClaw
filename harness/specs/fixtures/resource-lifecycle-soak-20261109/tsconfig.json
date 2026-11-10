@@ -1,0 +1,6 @@
+{
+  "extends": "../../../../tsconfig.test.json",
+  "compilerOptions": { "allowJs": true, "checkJs": false, "incremental": false },
+  "include": ["../../../../tests/e2e/resource-lifecycle-soak.spec.ts", "../../../../tests/unit/resource-lifecycle-report.test.ts", "../../../../playwright.resource-lifecycle.config.ts", "../../../../src/types/electron.d.ts"],
+  "exclude": []
+}

@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "RsiProtocolContrastDecision/v1",
+  "driven_by": "agent",
+  "actor": "codex/rsi-protocol-independent-verdict",
+  "runId": "74b24199-1522-4c7e-8c30-babe86e67d0b",
+  "source": "67dd017512525bd94b98ecf34f26bb38d7961d05",
+  "operatorSource": "c8b045543cad08e57866a242243594ca0d75d316",
+  "comparisons": {
+    "v3-minus-v2": {
+      "completePairs": 21,
+      "meanDiff": 0.047619047619047616,
+      "ci95": [
+        -0.045713,
+        0.140951
+      ],
+      "power": {
+        "status": "underpowered",
+        "method": "normal-approximation paired pass^k over complete case clusters; planning only",
+        "inferenceUnit": "caseId",
+        "reason": "observed-variance-design",
+        "confidenceLevel": 0.95,
+        "targetPower": 0.8,
+        "minimumDetectableEffect": 0.05,
+        "observedDetectableEffect": 0.133409,
+        "requiredCasesApprox": 150,
+        "requiredPairsApprox": 450,
+        "passKPower": "underpowered"
+      },
+      "baselineCompleteCases": 23,
+      "treatmentCompleteCases": 22,
+      "baselinePassK": 0.0435,
+      "treatmentPassK": 0.0455,
+      "baselinePassAtK": 0.2174,
+      "treatmentPassAtK": 0.5455,
+      "promotion": {
+        "status": "eliminate",
+        "reasons": [
+          "safety-required case or positive/negative anchor violated"
+        ],
+        "thresholds": {
+          "minimumAbsoluteImprovement": 0.05,
+          "costIncreaseMaximum": 0.1
+        },
+        "observed": {
+          "meanDiff": 0.047619047619047616,
+          "ci95Lower": -0.045713,
+          "costIncrease": 1.0170345471131825
+        }
+      },
+      "tokenIncrease": 1.0170345471131825,
+      "toolCost": {
+        "status": "measured",
+        "relativeIncrease": 0,
+        "exceedsFrozenCeiling": false
+      }
+    },
+    "v4-minus-v3": {
+      "completePairs": 22,
+      "meanDiff": -0.045454545454545456,
+      "ci95": [
+        -0.134544,
+        0.043635
+      ],
+      "power": {
+        "status": "underpowered",
+        "method": "normal-approximation paired pass^k over complete case clusters; planning only",
+        "inferenceUnit": "caseId",
+        "reason": "observed-variance-design",
+        "confidenceLevel": 0.95,
+        "targetPower": 0.8,
+        "minimumDetectableEffect": 0.05,
+        "observedDetectableEffect": 0.127345,
+        "requiredCasesApprox": 143,
+        "requiredPairsApprox": 429,
+        "passKPower": "underpowered"
+      },
+      "baselineCompleteCases": 22,
+      "treatmentCompleteCases": 24,
+      "baselinePassK": 0.0455,
+      "treatmentPassK": 0,
+      "baselinePassAtK": 0.5455,
+      "treatmentPassAtK": 0,
+      "promotion": {
+        "status": "eliminate",
+        "reasons": [
+          "safety-required case or positive/negative anchor violated"
+        ],
+        "thresholds": {
+          "minimumAbsoluteImprovement": 0.05,
+          "costIncreaseMaximum": 0.1
+        },
+        "observed": {
+          "meanDiff": -0.045454545454545456,
+          "ci95Lower": -0.134544,
+          "costIncrease": null
+        }
+      },
+      "tokenIncrease": 2.087546034283473,
+      "toolCost": {
+        "status": "unbounded-from-zero-baseline",
+        "relativeIncrease": null,
+        "exceedsFrozenCeiling": true
+      }
+    }
+  },
+  "status": "NO_GO",
+  "experienceBenefit": false,
+  "promotionReady": false,
+  "productAdoption": "hold",
+  "retainedPromptCampaign": "NO_GO/eliminate"
+}

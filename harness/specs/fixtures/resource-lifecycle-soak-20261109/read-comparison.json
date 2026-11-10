@@ -1,0 +1,185 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "value": {
+    "binarySha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+    "serverStartupMs": 964.4123999999993,
+    "serverSpawns": 1,
+    "results": [
+      {
+        "mode": "cli",
+        "reads": 8,
+        "durationMs": 990.332699999999,
+        "spawned": 8,
+        "rssBytes": 60682240,
+        "memoryScope": "child self-reported RSS",
+        "persistentExecutorPids": []
+      },
+      {
+        "mode": "batch",
+        "reads": 8,
+        "durationMs": 120.76300000000083,
+        "spawned": 1,
+        "rssBytes": 60579840,
+        "memoryScope": "child self-reported RSS",
+        "persistentExecutorPids": []
+      },
+      {
+        "mode": "server",
+        "reads": 8,
+        "durationMs": 12.679800000001705,
+        "spawned": 0,
+        "rssBytes": 90312704,
+        "executorMemory": {
+          "Id": 38164,
+          "WorkingSet64": 23154688,
+          "PrivateMemorySize64": 13811712
+        },
+        "memoryScope": "host process RSS",
+        "persistentExecutorPids": [
+          38164
+        ]
+      },
+      {
+        "mode": "native",
+        "reads": 8,
+        "durationMs": 1.404899999997724,
+        "spawned": 0,
+        "rssBytes": 90664960,
+        "memoryScope": "host process RSS",
+        "persistentExecutorPids": []
+      },
+      {
+        "mode": "native",
+        "reads": 8,
+        "durationMs": 1.2790999999997439,
+        "spawned": 0,
+        "rssBytes": 90664960,
+        "memoryScope": "host process RSS",
+        "persistentExecutorPids": []
+      },
+      {
+        "mode": "server",
+        "reads": 8,
+        "durationMs": 9.221799999999348,
+        "spawned": 0,
+        "rssBytes": 90664960,
+        "executorMemory": {
+          "Id": 38164,
+          "WorkingSet64": 23154688,
+          "PrivateMemorySize64": 13811712
+        },
+        "memoryScope": "host process RSS",
+        "persistentExecutorPids": [
+          38164
+        ]
+      },
+      {
+        "mode": "batch",
+        "reads": 8,
+        "durationMs": 133.6175000000003,
+        "spawned": 1,
+        "rssBytes": 56565760,
+        "memoryScope": "child self-reported RSS",
+        "persistentExecutorPids": []
+      },
+      {
+        "mode": "cli",
+        "reads": 8,
+        "durationMs": 970.0866999999998,
+        "spawned": 8,
+        "rssBytes": 56549376,
+        "memoryScope": "child self-reported RSS",
+        "persistentExecutorPids": []
+      },
+      {
+        "mode": "native",
+        "reads": 8,
+        "durationMs": 3.193299999998999,
+        "spawned": 0,
+        "rssBytes": 90664960,
+        "memoryScope": "host process RSS",
+        "persistentExecutorPids": []
+      },
+      {
+        "mode": "server",
+        "reads": 8,
+        "durationMs": 1246.6333000000013,
+        "spawned": 0,
+        "rssBytes": 90664960,
+        "executorMemory": {
+          "Id": 38164,
+          "WorkingSet64": 23154688,
+          "PrivateMemorySize64": 13811712
+        },
+        "memoryScope": "host process RSS",
+        "persistentExecutorPids": [
+          38164
+        ]
+      },
+      {
+        "mode": "batch",
+        "reads": 8,
+        "durationMs": 107.08129999999801,
+        "spawned": 1,
+        "rssBytes": 56582144,
+        "memoryScope": "child self-reported RSS",
+        "persistentExecutorPids": []
+      },
+      {
+        "mode": "cli",
+        "reads": 8,
+        "durationMs": 1060.9599000000017,
+        "spawned": 8,
+        "rssBytes": 57520128,
+        "memoryScope": "child self-reported RSS",
+        "persistentExecutorPids": []
+      },
+      {
+        "mode": "cli",
+        "reads": 8,
+        "durationMs": 1105.5953999999983,
+        "spawned": 8,
+        "rssBytes": 57683968,
+        "memoryScope": "child self-reported RSS",
+        "persistentExecutorPids": []
+      },
+      {
+        "mode": "batch",
+        "reads": 8,
+        "durationMs": 111.1247000000003,
+        "spawned": 1,
+        "rssBytes": 57749504,
+        "memoryScope": "child self-reported RSS",
+        "persistentExecutorPids": []
+      },
+      {
+        "mode": "server",
+        "reads": 8,
+        "durationMs": 10.293300000001182,
+        "spawned": 0,
+        "rssBytes": 90537984,
+        "executorMemory": {
+          "Id": 38164,
+          "WorkingSet64": 23158784,
+          "PrivateMemorySize64": 13811712
+        },
+        "memoryScope": "host process RSS",
+        "persistentExecutorPids": [
+          38164
+        ]
+      },
+      {
+        "mode": "native",
+        "reads": 8,
+        "durationMs": 1.9879000000000815,
+        "spawned": 0,
+        "rssBytes": 90681344,
+        "memoryScope": "host process RSS",
+        "persistentExecutorPids": []
+      }
+    ],
+    "decision": "Use existing native file reads for local reads; retain the existing typed server for governed operations. Do not add a generic resident CLI proxy.",
+    "remaining": 0
+  }
+}

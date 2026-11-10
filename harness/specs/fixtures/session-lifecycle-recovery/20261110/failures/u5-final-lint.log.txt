@@ -1,0 +1,13 @@
+
+D:\ClawX-work\session-task-unified-relay-20261109\src\pages\Chat\index.tsx
+  294:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  337:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\ClawX-work\session-task-unified-relay-20261109\src\stores\chat.ts
+  4698:9  error  The value assigned to 'stopConfirmed' is not used in subsequent statements  no-useless-assignment
+
+D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\session-lifecycle-recovery.spec.ts
+  210:23  error  Unexpected empty object pattern  no-empty-pattern
+
+✖ 4 problems (2 errors, 2 warnings)
+

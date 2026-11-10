@@ -4,7 +4,7 @@ id: session-delegation-status
 title: Show delegation, execution, reporting and continuation as separate facts
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: c308b60e1e8dc6849628c524ff8d8e1f0ce0a522
+diffBase: 390e39259429255b6712c84440be4f567e2ec25d
 intent: Complete the existing session/task UI contract through owner-backed, generation-scoped results.
 ownedPaths:
   - README.md
@@ -105,6 +105,7 @@ expectedUserBehavior:
 acceptance:
   - Apply the complete U4 contract from session-derivation-ui-design and TF-0660, retaining all nine original criteria.
   - Use canonical host actions and current owner receipts; do not infer task acceptance from text or a finished run.
+  - Consume the mainline reverse-admission bridge's independent twenty-second deadline and preserve the original caller context; keep one bounded owner entry.
   - Worker details read the canonical task for the displayed child generation; pending, accepted and cancelled remain separate from run completion. Task read failures preserve the transcript and show unavailable acceptance.
   - Delegated effects accept a generation-matching canonical parent reference when its navigation link has not yet been written; task identity, generation and writer fencing remain required.
   - File verification, submission and the existing verifier owner produce a real accepted task before either worker surface displays acceptance. Four locales use task-specific labels.

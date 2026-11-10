@@ -1,0 +1,366 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/lifecycle-validation/u5-combined-archive2-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "session-lifecycle-recovery.spec.ts",
+      "file": "session-lifecycle-recovery.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "U5 archive restore and confirmed delete retry their retained operationId after Runtime commit and a Main gate-clear failure",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 108666,
+                  "error": {
+                    "message": "TimeoutError: locator.inputValue: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('session-family-children')\u001b[22m\n",
+                    "stack": "TimeoutError: locator.inputValue: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('session-family-children')\u001b[22m\n\n    at select (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-lifecycle-recovery.spec.ts:91:78)\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-lifecycle-recovery.spec.ts:370:5",
+                    "location": {
+                      "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-lifecycle-recovery.spec.ts",
+                      "column": 78,
+                      "line": 91
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 89 |\u001b[39m     \u001b[36mfinally\u001b[39m {\n \u001b[90m 90 |\u001b[39m       \u001b[36mconst\u001b[39m navigation \u001b[33m=\u001b[39m c\u001b[33m.\u001b[39mfacts\u001b[33m.\u001b[39mnavigation \u001b[36mas\u001b[39m unknown[] \u001b[33m?\u001b[39m\u001b[33m?\u001b[39m []\u001b[33m;\u001b[39m c\u001b[33m.\u001b[39mfacts\u001b[33m.\u001b[39mnavigation \u001b[33m=\u001b[39m navigation\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 91 |\u001b[39m       navigation\u001b[33m.\u001b[39mpush({ target\u001b[33m:\u001b[39m key\u001b[33m,\u001b[39m at\u001b[33m:\u001b[39m \u001b[33mDate\u001b[39m\u001b[33m.\u001b[39mnow()\u001b[33m,\u001b[39m selection\u001b[33m:\u001b[39m \u001b[36mawait\u001b[39m family\u001b[33m.\u001b[39minputValue()\u001b[33m,\u001b[39m\n \u001b[90m    |\u001b[39m                                                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 92 |\u001b[39m         draft\u001b[33m:\u001b[39m \u001b[36mawait\u001b[39m c\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'chat-composer-input'\u001b[39m)\u001b[33m.\u001b[39minputValue()\u001b[33m,\u001b[39m\n \u001b[90m 93 |\u001b[39m         workspace\u001b[33m:\u001b[39m \u001b[36mawait\u001b[39m hostInvoke(c\u001b[33m.\u001b[39mapp\u001b[33m,\u001b[39m \u001b[32m'workspaces'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'getActive'\u001b[39m)\u001b[33m,\u001b[39m\n \u001b[90m 94 |\u001b[39m         selectedRows\u001b[33m:\u001b[39m \u001b[36mawait\u001b[39m c\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mlocator(\u001b[32m'[data-hook-selected=\"true\"]'\u001b[39m)\u001b[33m.\u001b[39mevaluateAll(rows \u001b[33m=>\u001b[39m rows\u001b[33m.\u001b[39mmap(row \u001b[33m=>\u001b[39m row\u001b[33m.\u001b[39mtextContent)) })\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-lifecycle-recovery.spec.ts",
+                        "column": 78,
+                        "line": 91
+                      },
+                      "message": "TimeoutError: locator.inputValue: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('session-family-children')\u001b[22m\n\n\n  89 |     finally {\n  90 |       const navigation = c.facts.navigation as unknown[] ?? []; c.facts.navigation = navigation;\n> 91 |       navigation.push({ target: key, at: Date.now(), selection: await family.inputValue(),\n     |                                                                              ^\n  92 |         draft: await c.page.getByTestId('chat-composer-input').inputValue(),\n  93 |         workspace: await hostInvoke(c.app, 'workspaces', 'getActive'),\n  94 |         selectedRows: await c.page.locator('[data-hook-selected=\"true\"]').evaluateAll(rows => rows.map(row => row.textContent)) });\n    at select (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-lifecycle-recovery.spec.ts:91:78)\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-lifecycle-recovery.spec.ts:370:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:50.382Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:50.383Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [40872:1110/095450.446:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[40872:1110/095450.446:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:54:50.668Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T01:54:50.668Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T01:54:50.668Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-10T01:54:50.668Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:50.777Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-combined-archive2-results\\session-lifecycle-recovery-eebee-d-a-Main-gate-clear-failure\\workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:51.004Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:51.004Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:51.032Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:51.033Z] [INFO] Gateway start requested (port=62682)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:51.037Z] [DEBUG] Device identity loaded (deviceId=ef008b184e8ef086889c1e550221d611cfd28de6ea83294c6fc7e39b309c3274)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:51.038Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:51.393Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:40872) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:52.037Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:52.054Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:52.099Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:52.143Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:54:52.211Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:52.215Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":1,\"providerEnvMs\":12,\"channelStartupPolicyMs\":48,\"uvEnvMs\":17,\"mcpEnvMs\":36,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":0,\"totalMs\":150,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:52.216Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=62682, entry=\"D:\\ClawX-work\\session-task-unified-relay-20261109\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 62682 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\ClawX-work\\session-task-unified-relay-20261109\\openclaw_runtime\", bundledBin=yes, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:52.359Z] [INFO] Gateway process started (pid=44948)\n[2026-11-10T01:54:52.359Z] [DEBUG] Gateway manager now owns process pid=44948\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:54.968Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:57.129Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:58.452Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:54:59.282Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:00.815Z] [DEBUG] [Gateway stderr] (node:44948) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:55:00.816Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:00.816Z] [DEBUG] [Gateway stderr] (node:44948) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:55:00.816Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:02.930Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:05.432Z] [DEBUG] Gateway ready after 43 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:05.433Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:62682/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:55:05.487Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=33f63f6b-47fb-47c0-9d4e-6202b62ab5f3 peer=127.0.0.1:58789->127.0.0.1:62682 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:62682 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:55:05.490Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=f810323b-ac28-49cf-993d-3afafd512329 peer=127.0.0.1:58778->127.0.0.1:62682 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:62682 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:05.495Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:05.496Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:05.496Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:55:05.500Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=9194dc70-78eb-4ec6-a389-36848c1c5e31 peer=127.0.0.1:58791->127.0.0.1:62682 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:62682 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:05.608Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:62682/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:55:05.610Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:09.683Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:09.684Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-10T01:55:09.684Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:13.344Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:13.345Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:13.346Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:13.348Z] [INFO] [metric] gateway.startup {\"configSyncMs\":966,\"spawnToReadyMs\":13073,\"readyToConnectMs\":7916,\"totalMs\":21955}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:55:16.016Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T01:55:16.016Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T01:55:16.017Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-10T01:55:16.017Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:55:17.341Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:55:17.341Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T01:55:17.341Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-10T01:55:17.341Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:55:17.522Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:55:17.522Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T01:55:17.522Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-10T01:55:17.522Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:19.434Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=2030ca00-f7a8-4e33-b340-4161120ca5e6 sessionKey=agent:main:session-1794275690695-ulifecycle\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:55:20.066Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:55:20.066Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T01:55:20.067Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-10T01:55:20.067Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:50.466Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:50.466Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:50.467Z] [INFO] Sending kill to Gateway process (pid=44948)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:55:50.513Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:50.513Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:53.091Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:53.091Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:56.137Z] [INFO] Gateway stop requested\n[2026-11-10T01:55:56.137Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:53070/d5d42de5-0c4d-4345-b712-77d156232835\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:58.912Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":4}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:58.913Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:58.913Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:58.913Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:55:58.913Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-10T01:54:28.856Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-combined-archive2-results\\session-lifecycle-recovery-eebee-d-a-Main-gate-clear-failure\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-combined-archive2-results\\session-lifecycle-recovery-eebee-d-a-Main-gate-clear-failure\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-combined-archive2-results\\session-lifecycle-recovery-eebee-d-a-Main-gate-clear-failure\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-lifecycle-recovery.spec.ts",
+                    "column": 78,
+                    "line": 91
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "281fbb4a773b67308c27-16245f5ab5432064176c",
+          "file": "session-lifecycle-recovery.spec.ts",
+          "line": 336,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mTesting stopped early after 1 maximum allowed failures.\u001b[39m"
+    },
+    {
+      "message": "Error: Command failed: pwsh.exe -NoLogo -NoProfile -NonInteractive -Command \n$ErrorActionPreference = 'Stop'\n[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)\n$entries = $env:CLAWX_PROCESS_IDENTITIES | ConvertFrom-Json\n$results = @(foreach ($entry in $entries) {\n  $result = [ordered]@{ pid = $entry.pid; creationTime = $entry.creationTime; status = 'unavailable' }\n  $owned = $null\n  try {\n    try { $owned = [Diagnostics.Process]::GetProcessById([int]$entry.pid) }\n    catch [ArgumentException] { $result.status = 'exited' }\n    if ($null -ne $owned) {\n      $null = $owned.Handle\n      if ($owned.HasExited) { $result.status = 'exited' }\n      elseif (([DateTimeOffset]$owned.StartTime).ToUnixTimeMilliseconds() -ne [long]$entry.creationTime) {\n        $result.status = 'replaced'\n      } else {\n        $result.status = 'alive'\n        if ($env:CLAWX_PROCESS_TERMINATE -eq '1') {\n          $owned.Kill()\n          if ($owned.WaitForExit(2000)) { $result.status = 'terminated' }\n        }\n      }\n    }\n  } catch {\n    if ($null -ne $owned -and $owned.HasExited) { $result.status = 'exited' }\n    else { $result.status = 'unavailable'; $result.error = $_.Exception.Message }\n  } finally {\n    if ($null -ne $owned) { $owned.Dispose() }\n  }\n  [pscustomobject]$result\n})\nConvertTo-Json -InputObject $results -Depth 3 -Compress\n\n",
+      "stack": "Error: Command failed: pwsh.exe -NoLogo -NoProfile -NonInteractive -Command \n$ErrorActionPreference = 'Stop'\n[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)\n$entries = $env:CLAWX_PROCESS_IDENTITIES | ConvertFrom-Json\n$results = @(foreach ($entry in $entries) {\n  $result = [ordered]@{ pid = $entry.pid; creationTime = $entry.creationTime; status = 'unavailable' }\n  $owned = $null\n  try {\n    try { $owned = [Diagnostics.Process]::GetProcessById([int]$entry.pid) }\n    catch [ArgumentException] { $result.status = 'exited' }\n    if ($null -ne $owned) {\n      $null = $owned.Handle\n      if ($owned.HasExited) { $result.status = 'exited' }\n      elseif (([DateTimeOffset]$owned.StartTime).ToUnixTimeMilliseconds() -ne [long]$entry.creationTime) {\n        $result.status = 'replaced'\n      } else {\n        $result.status = 'alive'\n        if ($env:CLAWX_PROCESS_TERMINATE -eq '1') {\n          $owned.Kill()\n          if ($owned.WaitForExit(2000)) { $result.status = 'terminated' }\n        }\n      }\n    }\n  } catch {\n    if ($null -ne $owned -and $owned.HasExited) { $result.status = 'exited' }\n    else { $result.status = 'unavailable'; $result.error = $_.Exception.Message }\n  } finally {\n    if ($null -ne $owned) { $owned.Dispose() }\n  }\n  [pscustomobject]$result\n})\nConvertTo-Json -InputObject $results -Depth 3 -Compress\n\n"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-11-10T01:54:26.855Z",
+    "duration": 127987.651,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

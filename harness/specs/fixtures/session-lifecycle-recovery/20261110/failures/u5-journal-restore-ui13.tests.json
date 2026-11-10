@@ -1,0 +1,239 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/lifecycle-validation/u5-journal-restore-ui13-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "session-context-commit-recovery.spec.ts",
+      "file": "session-context-commit-recovery.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "U5 real journal checkpoint restore changes v2 to v1 despite reply loss and retains generation",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 420000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 118747,
+                  "error": {
+                    "message": "Error: electronApplication.evaluate: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> \"D:\\tmp\\clawx-audit-next-20261107\\candidate\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-QazkIO\\verse-claw-e2e-user-data-iyGghg\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"D:\\ClawX-work\\session-task-unified-relay-20261109\\dist-electron\\main\\index.js\" \n<launched> pid=33976\n[pid=33976][out] \n[pid=33976][err] Debugger listening on ws://127.0.0.1:52171/648ff8b0-0c24-4bc0-a4d7-c7e4a933c921\n[pid=33976][err] For help, see: https://nodejs.org/en/docs/inspector\n[pid=33976][err] Debugger attached.\n[pid=33976][out] [2026-11-09T20:11:58.446Z] [DEBUG] [extensions] No clawx-extensions.json found, loading all builtin extensions\n[pid=33976][out] [2026-11-09T20:11:58.477Z] [DEBUG] [extensions] Registered extension \"builtin/clawhub-marketplace\"\n[pid=33976][out] [2026-11-09T20:11:58.477Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/clawhub-marketplace\"\n[pid=33976][out] [2026-11-09T20:11:58.477Z] [DEBUG] [extensions] Registered extension \"builtin/diagnostics\"\n[pid=33976][out] [2026-11-09T20:11:58.477Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/diagnostics\"\n[pid=33976][err] (node:38244) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n[pid=33976][err] (Use `electron --trace-warnings ...` to show where the warning was created)\n[pid=33976][err] (node:38244) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\n[pid=33976][err] \n[pid=33976][err] DevTools listening on ws://127.0.0.1:52168/devtools/browser/c05981a6-7b9e-40f1-a7c3-c712f67d6bae\n[pid=33976][out] [2026-11-09T20:12:00.522Z] [INFO] === Verse Claw Application Starting ===\n[pid=33976][out] [2026-11-09T20:12:00.639Z] [INFO] [efficiency-sampler] started {\"intervalMs\":5000,\"maxSamples\":720}\n[pid=33976][out] [2026-11-09T20:12:00.639Z] [INFO] [efficiency] runtime efficiency sampling started {\"intervalMs\":5000,\"platform\":\"win32\"}\n[pid=33976][out] [2026-11-09T20:12:00.641Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":1}\n[pid=33976][err] [38244:1110/041200.815:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\n[pid=33976][out] [2026-11-09T20:12:01.051Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n[pid=33976][out] [2026-11-09T20:12:01.051Z] [INFO] [ResourceTracker] Started heartbeat interval\n[pid=33976][out] [2026-11-09T20:12:01.051Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=38244, ppid=33976\n[pid=33976][out] [2026-11-09T20:12:01.051Z] [INFO] Running in E2E mode: startup side effects minimized\n[pid=33976][err] [2026-11-09T20:12:01.212Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[pid=33976][err] [2026-11-09T20:12:01.213Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[pid=33976][err] [2026-11-09T20:12:01.213Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[pid=33976][err] [2026-11-09T20:12:01.213Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n[pid=33976][out] [2026-11-09T20:12:01.266Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n[pid=33976][out] [2026-11-09T20:12:01.267Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n[pid=33976][err] [38244:1110/041201.396:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\n[pid=33976][err] [38244:1110/041201.396:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\n[pid=33976][out] [2026-11-09T20:12:01.539Z] [INFO] Gateway stop requested\n[pid=33976][out] [2026-11-09T20:12:01.539Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n[pid=33976][out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n[pid=33976][out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n[pid=33976][out] [2026-11-09T20:12:01.787Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n[pid=33976][err] [2026-11-09T20:12:01.789Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[pid=33976][err] [2026-11-09T20:12:01.789Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[pid=33976][err] [2026-11-09T20:12:01.789Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[pid=33976][err] [2026-11-09T20:12:01.789Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n[pid=33976][out] [2026-11-09T20:12:01.792Z] [INFO] Gateway auto-start skipped in E2E mode\n[pid=33976][out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n[pid=33976][out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n[pid=33976][out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n[pid=33976][out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n[pid=33976][out] [2026-11-09T20:12:02.290Z] [INFO] Scheduling Gateway reload after saving provider \"custom-sessionc\" config\n[pid=33976][out] [2026-11-09T20:12:02.291Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n[pid=33976][out] Set OpenClaw default model to \"custom-sessionc/mock-coder\" for provider \"custom-sessionc\" (runtime override)\n[pid=33976][out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n[pid=33976][out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n[pid=33976][out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n[pid=33976][out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n[pid=33976][out] [2026-11-09T20:12:03.019Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui13-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\.verse-claw\\harness\n[pid=33976][out] [2026-11-09T20:12:03.495Z] [INFO] [gateway-refresh] mode=reload requested pid=n/a state=stopped\n[pid=33976][err] [2026-11-09T20:12:03.496Z] [WARN] [gateway-refresh] mode=reload result=fallback_restart cause=not_running\n[pid=33976][err] [2026-11-09T20:12:03.496Z] [WARN] Gateway reload requested while not running; falling back to restart\n[pid=33976][out] [2026-11-09T20:12:03.496Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=n/a\n[pid=33976][out] [2026-11-09T20:12:03.496Z] [INFO] Gateway stop requested\n[pid=33976][out] [2026-11-09T20:12:03.496Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n[pid=33976][out] [2026-11-09T20:12:03.497Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)\n[pid=33976][out] [2026-11-09T20:12:03.497Z] [INFO] Gateway start requested (port=18789)\n[pid=33976][out] [2026-11-09T20:12:03.516Z] [DEBUG] Device identity loaded (deviceId=c821f314506c7acfd42127faf40d22f2f13afa60b651e4c6dcf7628c342a52d4)\n[pid=33976][out] [2026-11-09T20:12:03.517Z] [DEBUG] Gateway state changed: stopped -> starting",
+                    "stack": "Error: electronApplication.evaluate: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> \"D:\\tmp\\clawx-audit-next-20261107\\candidate\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-QazkIO\\verse-claw-e2e-user-data-iyGghg\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"D:\\ClawX-work\\session-task-unified-relay-20261109\\dist-electron\\main\\index.js\" \n<launched> pid=33976\n[pid=33976][out] \n[pid=33976][err] Debugger listening on ws://127.0.0.1:52171/648ff8b0-0c24-4bc0-a4d7-c7e4a933c921\n[pid=33976][err] For help, see: https://nodejs.org/en/docs/inspector\n[pid=33976][err] Debugger attached.\n[pid=33976][out] [2026-11-09T20:11:58.446Z] [DEBUG] [extensions] No clawx-extensions.json found, loading all builtin extensions\n[pid=33976][out] [2026-11-09T20:11:58.477Z] [DEBUG] [extensions] Registered extension \"builtin/clawhub-marketplace\"\n[pid=33976][out] [2026-11-09T20:11:58.477Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/clawhub-marketplace\"\n[pid=33976][out] [2026-11-09T20:11:58.477Z] [DEBUG] [extensions] Registered extension \"builtin/diagnostics\"\n[pid=33976][out] [2026-11-09T20:11:58.477Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/diagnostics\"\n[pid=33976][err] (node:38244) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n[pid=33976][err] (Use `electron --trace-warnings ...` to show where the warning was created)\n[pid=33976][err] (node:38244) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\n[pid=33976][err] \n[pid=33976][err] DevTools listening on ws://127.0.0.1:52168/devtools/browser/c05981a6-7b9e-40f1-a7c3-c712f67d6bae\n[pid=33976][out] [2026-11-09T20:12:00.522Z] [INFO] === Verse Claw Application Starting ===\n[pid=33976][out] [2026-11-09T20:12:00.639Z] [INFO] [efficiency-sampler] started {\"intervalMs\":5000,\"maxSamples\":720}\n[pid=33976][out] [2026-11-09T20:12:00.639Z] [INFO] [efficiency] runtime efficiency sampling started {\"intervalMs\":5000,\"platform\":\"win32\"}\n[pid=33976][out] [2026-11-09T20:12:00.641Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":1}\n[pid=33976][err] [38244:1110/041200.815:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\n[pid=33976][out] [2026-11-09T20:12:01.051Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n[pid=33976][out] [2026-11-09T20:12:01.051Z] [INFO] [ResourceTracker] Started heartbeat interval\n[pid=33976][out] [2026-11-09T20:12:01.051Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=38244, ppid=33976\n[pid=33976][out] [2026-11-09T20:12:01.051Z] [INFO] Running in E2E mode: startup side effects minimized\n[pid=33976][err] [2026-11-09T20:12:01.212Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[pid=33976][err] [2026-11-09T20:12:01.213Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[pid=33976][err] [2026-11-09T20:12:01.213Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[pid=33976][err] [2026-11-09T20:12:01.213Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n[pid=33976][out] [2026-11-09T20:12:01.266Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n[pid=33976][out] [2026-11-09T20:12:01.267Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n[pid=33976][err] [38244:1110/041201.396:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\n[pid=33976][err] [38244:1110/041201.396:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\n[pid=33976][out] [2026-11-09T20:12:01.539Z] [INFO] Gateway stop requested\n[pid=33976][out] [2026-11-09T20:12:01.539Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n[pid=33976][out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n[pid=33976][out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n[pid=33976][out] [2026-11-09T20:12:01.787Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n[pid=33976][err] [2026-11-09T20:12:01.789Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[pid=33976][err] [2026-11-09T20:12:01.789Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[pid=33976][err] [2026-11-09T20:12:01.789Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[pid=33976][err] [2026-11-09T20:12:01.789Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n[pid=33976][out] [2026-11-09T20:12:01.792Z] [INFO] Gateway auto-start skipped in E2E mode\n[pid=33976][out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n[pid=33976][out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n[pid=33976][out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n[pid=33976][out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n[pid=33976][out] [2026-11-09T20:12:02.290Z] [INFO] Scheduling Gateway reload after saving provider \"custom-sessionc\" config\n[pid=33976][out] [2026-11-09T20:12:02.291Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n[pid=33976][out] Set OpenClaw default model to \"custom-sessionc/mock-coder\" for provider \"custom-sessionc\" (runtime override)\n[pid=33976][out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n[pid=33976][out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n[pid=33976][out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n[pid=33976][out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n[pid=33976][out] [2026-11-09T20:12:03.019Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui13-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\.verse-claw\\harness\n[pid=33976][out] [2026-11-09T20:12:03.495Z] [INFO] [gateway-refresh] mode=reload requested pid=n/a state=stopped\n[pid=33976][err] [2026-11-09T20:12:03.496Z] [WARN] [gateway-refresh] mode=reload result=fallback_restart cause=not_running\n[pid=33976][err] [2026-11-09T20:12:03.496Z] [WARN] Gateway reload requested while not running; falling back to restart\n[pid=33976][out] [2026-11-09T20:12:03.496Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=n/a\n[pid=33976][out] [2026-11-09T20:12:03.496Z] [INFO] Gateway stop requested\n[pid=33976][out] [2026-11-09T20:12:03.496Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n[pid=33976][out] [2026-11-09T20:12:03.497Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)\n[pid=33976][out] [2026-11-09T20:12:03.497Z] [INFO] Gateway start requested (port=18789)\n[pid=33976][out] [2026-11-09T20:12:03.516Z] [DEBUG] Device identity loaded (deviceId=c821f314506c7acfd42127faf40d22f2f13afa60b651e4c6dcf7628c342a52d4)\n[pid=33976][out] [2026-11-09T20:12:03.517Z] [DEBUG] Gateway state changed: stopped -> starting\n    at hostInvoke (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\fp-p1-harness.ts:39:30)\n    at createSessionChainProject (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\session-task-chain.ts:64:34)\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-context-commit-recovery.spec.ts:266:21",
+                    "location": {
+                      "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\fp-p1-harness.ts",
+                      "column": 30,
+                      "line": 39
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mfixtures\\fp-p1-harness.ts:39\n\n\u001b[0m \u001b[90m 37 |\u001b[39m   payload\u001b[33m:\u001b[39m \u001b[33mRecord\u001b[39m\u001b[33m<\u001b[39m\u001b[33mstring\u001b[39m\u001b[33m,\u001b[39m unknown\u001b[33m>\u001b[39m \u001b[33m|\u001b[39m \u001b[36mnull\u001b[39m \u001b[33m=\u001b[39m \u001b[36mnull\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 38 |\u001b[39m )\u001b[33m:\u001b[39m \u001b[33mPromise\u001b[39m\u001b[33m<\u001b[39m\u001b[33mT\u001b[39m\u001b[33m>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 39 |\u001b[39m   \u001b[36mconst\u001b[39m bridged \u001b[33m=\u001b[39m (\u001b[36mawait\u001b[39m app\u001b[33m.\u001b[39mevaluate(\u001b[36masync\u001b[39m (_electron\u001b[33m,\u001b[39m input) \u001b[33m=>\u001b[39m {\n \u001b[90m    |\u001b[39m                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 40 |\u001b[39m     \u001b[36mconst\u001b[39m { senderWindowId\u001b[33m,\u001b[39m \u001b[33m...\u001b[39mrequest } \u001b[33m=\u001b[39m input\u001b[33m;\u001b[39m\n \u001b[90m 41 |\u001b[39m     \u001b[36mconst\u001b[39m { ipcMain\u001b[33m,\u001b[39m \u001b[33mBrowserWindow\u001b[39m } \u001b[33m=\u001b[39m process\u001b[33m.\u001b[39mmainModule\u001b[33m!\u001b[39m\u001b[33m.\u001b[39mrequire(\n \u001b[90m 42 |\u001b[39m       \u001b[32m'electron'\u001b[39m\u001b[33m,\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\fp-p1-harness.ts",
+                        "column": 30,
+                        "line": 39
+                      },
+                      "message": "Error: electronApplication.evaluate: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> \"D:\\tmp\\clawx-audit-next-20261107\\candidate\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-QazkIO\\verse-claw-e2e-user-data-iyGghg\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"D:\\ClawX-work\\session-task-unified-relay-20261109\\dist-electron\\main\\index.js\" \n<launched> pid=33976\n[pid=33976][out] \n[pid=33976][err] Debugger listening on ws://127.0.0.1:52171/648ff8b0-0c24-4bc0-a4d7-c7e4a933c921\n[pid=33976][err] For help, see: https://nodejs.org/en/docs/inspector\n[pid=33976][err] Debugger attached.\n[pid=33976][out] [2026-11-09T20:11:58.446Z] [DEBUG] [extensions] No clawx-extensions.json found, loading all builtin extensions\n[pid=33976][out] [2026-11-09T20:11:58.477Z] [DEBUG] [extensions] Registered extension \"builtin/clawhub-marketplace\"\n[pid=33976][out] [2026-11-09T20:11:58.477Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/clawhub-marketplace\"\n[pid=33976][out] [2026-11-09T20:11:58.477Z] [DEBUG] [extensions] Registered extension \"builtin/diagnostics\"\n[pid=33976][out] [2026-11-09T20:11:58.477Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/diagnostics\"\n[pid=33976][err] (node:38244) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n[pid=33976][err] (Use `electron --trace-warnings ...` to show where the warning was created)\n[pid=33976][err] (node:38244) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\n[pid=33976][err] \n[pid=33976][err] DevTools listening on ws://127.0.0.1:52168/devtools/browser/c05981a6-7b9e-40f1-a7c3-c712f67d6bae\n[pid=33976][out] [2026-11-09T20:12:00.522Z] [INFO] === Verse Claw Application Starting ===\n[pid=33976][out] [2026-11-09T20:12:00.639Z] [INFO] [efficiency-sampler] started {\"intervalMs\":5000,\"maxSamples\":720}\n[pid=33976][out] [2026-11-09T20:12:00.639Z] [INFO] [efficiency] runtime efficiency sampling started {\"intervalMs\":5000,\"platform\":\"win32\"}\n[pid=33976][out] [2026-11-09T20:12:00.641Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":1}\n[pid=33976][err] [38244:1110/041200.815:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\n[pid=33976][out] [2026-11-09T20:12:01.051Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n[pid=33976][out] [2026-11-09T20:12:01.051Z] [INFO] [ResourceTracker] Started heartbeat interval\n[pid=33976][out] [2026-11-09T20:12:01.051Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=38244, ppid=33976\n[pid=33976][out] [2026-11-09T20:12:01.051Z] [INFO] Running in E2E mode: startup side effects minimized\n[pid=33976][err] [2026-11-09T20:12:01.212Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[pid=33976][err] [2026-11-09T20:12:01.213Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[pid=33976][err] [2026-11-09T20:12:01.213Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[pid=33976][err] [2026-11-09T20:12:01.213Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n[pid=33976][out] [2026-11-09T20:12:01.266Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n[pid=33976][out] [2026-11-09T20:12:01.267Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n[pid=33976][err] [38244:1110/041201.396:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\n[pid=33976][err] [38244:1110/041201.396:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\n[pid=33976][out] [2026-11-09T20:12:01.539Z] [INFO] Gateway stop requested\n[pid=33976][out] [2026-11-09T20:12:01.539Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n[pid=33976][out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n[pid=33976][out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n[pid=33976][out] [2026-11-09T20:12:01.787Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n[pid=33976][err] [2026-11-09T20:12:01.789Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[pid=33976][err] [2026-11-09T20:12:01.789Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[pid=33976][err] [2026-11-09T20:12:01.789Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[pid=33976][err] [2026-11-09T20:12:01.789Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n[pid=33976][out] [2026-11-09T20:12:01.792Z] [INFO] Gateway auto-start skipped in E2E mode\n[pid=33976][out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n[pid=33976][out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n[pid=33976][out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n[pid=33976][out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n[pid=33976][out] [2026-11-09T20:12:02.290Z] [INFO] Scheduling Gateway reload after saving provider \"custom-sessionc\" config\n[pid=33976][out] [2026-11-09T20:12:02.291Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n[pid=33976][out] Set OpenClaw default model to \"custom-sessionc/mock-coder\" for provider \"custom-sessionc\" (runtime override)\n[pid=33976][out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n[pid=33976][out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n[pid=33976][out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n[pid=33976][out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n[pid=33976][out] [2026-11-09T20:12:03.019Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui13-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\.verse-claw\\harness\n[pid=33976][out] [2026-11-09T20:12:03.495Z] [INFO] [gateway-refresh] mode=reload requested pid=n/a state=stopped\n[pid=33976][err] [2026-11-09T20:12:03.496Z] [WARN] [gateway-refresh] mode=reload result=fallback_restart cause=not_running\n[pid=33976][err] [2026-11-09T20:12:03.496Z] [WARN] Gateway reload requested while not running; falling back to restart\n[pid=33976][out] [2026-11-09T20:12:03.496Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=n/a\n[pid=33976][out] [2026-11-09T20:12:03.496Z] [INFO] Gateway stop requested\n[pid=33976][out] [2026-11-09T20:12:03.496Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n[pid=33976][out] [2026-11-09T20:12:03.497Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)\n[pid=33976][out] [2026-11-09T20:12:03.497Z] [INFO] Gateway start requested (port=18789)\n[pid=33976][out] [2026-11-09T20:12:03.516Z] [DEBUG] Device identity loaded (deviceId=c821f314506c7acfd42127faf40d22f2f13afa60b651e4c6dcf7628c342a52d4)\n[pid=33976][out] [2026-11-09T20:12:03.517Z] [DEBUG] Gateway state changed: stopped -> starting\n\n   at fixtures\\fp-p1-harness.ts:39\n\n  37 |   payload: Record<string, unknown> | null = null,\n  38 | ): Promise<T> {\n> 39 |   const bridged = (await app.evaluate(async (_electron, input) => {\n     |                              ^\n  40 |     const { senderWindowId, ...request } = input;\n  41 |     const { ipcMain, BrowserWindow } = process.mainModule!.require(\n  42 |       'electron',\n    at hostInvoke (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\fp-p1-harness.ts:39:30)\n    at createSessionChainProject (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\session-task-chain.ts:64:34)\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-context-commit-recovery.spec.ts:266:21"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-09T20:12:01.266Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:12:01.267Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [38244:1110/041201.396:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[38244:1110/041201.396:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:12:01.539Z] [INFO] Gateway stop requested\n[2026-11-09T20:12:01.539Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:12:01.787Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:12:01.789Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:12:01.789Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:12:01.789Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T20:12:01.789Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:12:01.792Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:12:02.290Z] [INFO] Scheduling Gateway reload after saving provider \"custom-sessionc\" config\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:12:02.291Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"custom-sessionc/mock-coder\" for provider \"custom-sessionc\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:12:03.019Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui13-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:12:03.495Z] [INFO] [gateway-refresh] mode=reload requested pid=n/a state=stopped\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T20:12:03.496Z] [WARN] [gateway-refresh] mode=reload result=fallback_restart cause=not_running\n[2026-11-09T20:12:03.496Z] [WARN] Gateway reload requested while not running; falling back to restart\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:12:03.496Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=n/a\n[2026-11-09T20:12:03.496Z] [INFO] Gateway stop requested\n[2026-11-09T20:12:03.496Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:12:03.497Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)\n[2026-11-09T20:12:03.497Z] [INFO] Gateway start requested (port=18789)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:12:03.516Z] [DEBUG] Device identity loaded (deviceId=c821f314506c7acfd42127faf40d22f2f13afa60b651e4c6dcf7628c342a52d4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T20:12:03.517Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-09T20:11:02.937Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui13-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui13-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\fp-p1-harness.ts",
+                    "column": 30,
+                    "line": 39
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "26fe0be2f07f123b9e74-91dffae853fee50d06a5",
+          "file": "session-context-commit-recovery.spec.ts",
+          "line": 249,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mTesting stopped early after 1 maximum allowed failures.\u001b[39m"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-11-09T20:11:00.575Z",
+    "duration": 122917.74299999999,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,876 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-u5-context",
+  "action": "compactRange",
+  "status": "passed",
+  "previewCancel": "not_applicable: explicit message action",
+  "mutationSuccess": "not_claimed",
+  "postCommitReplyLoss": "not_run",
+  "before": {
+    "described": {
+      "session": {
+        "key": "agent:main:session-1794274611007-urange",
+        "kind": "direct",
+        "label": "U5 Range coordinator",
+        "displayName": "U5 Range coordinator",
+        "chatType": "direct",
+        "origin": {
+          "label": "Verse Claw",
+          "provider": "webchat",
+          "surface": "webchat",
+          "chatType": "direct"
+        },
+        "updatedAt": 1794274698085,
+        "sessionId": "97ec3900-22f3-41f5-9def-751a70027325",
+        "systemSent": true,
+        "abortedLastRun": false,
+        "thinkingLevels": [
+          {
+            "id": "off",
+            "label": "off"
+          },
+          {
+            "id": "minimal",
+            "label": "minimal"
+          },
+          {
+            "id": "low",
+            "label": "low"
+          },
+          {
+            "id": "medium",
+            "label": "medium"
+          },
+          {
+            "id": "high",
+            "label": "high"
+          }
+        ],
+        "thinkingOptions": [
+          "off",
+          "minimal",
+          "low",
+          "medium",
+          "high"
+        ],
+        "thinkingDefault": "medium",
+        "inputTokens": 120,
+        "outputTokens": 30,
+        "totalTokens": 120,
+        "totalTokensFresh": true,
+        "estimatedCostUsd": 0,
+        "status": "done",
+        "startedAt": 1794274683440,
+        "endedAt": 1794274690460,
+        "runtimeMs": 7020,
+        "childSessions": [
+          "agent:main:dashboard:0e04938f-140b-49ac-97f8-c1aa186ed48c"
+        ],
+        "modelProvider": "custom-sessionc",
+        "model": "mock-coder",
+        "agentRuntime": {
+          "id": "auto",
+          "source": "implicit"
+        },
+        "contextTokens": 128000,
+        "deliveryContext": {
+          "channel": "webchat"
+        },
+        "lastChannel": "webchat",
+        "hasActiveRun": false
+      }
+    },
+    "history": {
+      "success": true,
+      "messages": [
+        {
+          "role": "user",
+          "content": "U5_HEAD",
+          "timestamp": 1794274638688,
+          "idempotencyKey": "U5_HEAD:user",
+          "__openclaw": {
+            "id": "f904de6d",
+            "recordTimestampMs": 1794274653114,
+            "seq": 1
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "U5 context preceding the next question."
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "stop",
+          "timestamp": 1794274659015,
+          "__openclaw": {
+            "id": "2e17b468",
+            "recordTimestampMs": 1794274659376,
+            "seq": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "U5_TARGET",
+          "timestamp": 1794274672266,
+          "idempotencyKey": "U5_TARGET:user",
+          "__openclaw": {
+            "id": "29128b86",
+            "recordTimestampMs": 1794274685513,
+            "seq": 3
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "U5 context preceding the next question."
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "stop",
+          "timestamp": 1794274688765,
+          "__openclaw": {
+            "id": "32dad9ed",
+            "recordTimestampMs": 1794274688818,
+            "seq": 4
+          }
+        }
+      ],
+      "sessionGeneration": "97ec3900-22f3-41f5-9def-751a70027325",
+      "model": "custom-sessionc/mock-coder"
+    },
+    "status": {
+      "success": true,
+      "available": true,
+      "canCompact": true,
+      "inProgress": false,
+      "usedTokens": 120,
+      "maxTokens": 128000,
+      "remainingTokens": 127880,
+      "pressure": "low",
+      "truncatedMessageCount": 0,
+      "warnings": [
+        "context_budget_unknown"
+      ]
+    },
+    "checkpoints": {
+      "success": true,
+      "key": "agent:main:session-1794274611007-urange",
+      "checkpoints": []
+    }
+  },
+  "acceptedPending": {
+    "inputRetained": true,
+    "successNotShown": true,
+    "dispatchedCalls": 4
+  },
+  "fault": {
+    "driven_by": "agent",
+    "injection": "Host failure before mutation dispatch",
+    "calls": [
+      {
+        "id": "3333f489-5948-4c10-a843-6ad5d63d1a48",
+        "module": "sessions",
+        "action": "compactRange",
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "expectedSessionId": "97ec3900-22f3-41f5-9def-751a70027325",
+          "agentId": "main",
+          "fromLeafId": "29128b86"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274782834,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "3333f489-5948-4c10-a843-6ad5d63d1a48"
+        }
+      },
+      {
+        "id": "267c93f0-0bc1-4ee9-bed8-d8499e308e97",
+        "module": "sessions",
+        "action": "compactRange",
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "expectedSessionId": "97ec3900-22f3-41f5-9def-751a70027325",
+          "agentId": "main",
+          "fromLeafId": "29128b86"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274783219,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "267c93f0-0bc1-4ee9-bed8-d8499e308e97"
+        }
+      },
+      {
+        "id": "f7a88482-9ee7-4ec0-9b96-dd59e9f644f8",
+        "module": "sessions",
+        "action": "compactRange",
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "expectedSessionId": "97ec3900-22f3-41f5-9def-751a70027325",
+          "agentId": "main",
+          "fromLeafId": "29128b86"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274783642,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "f7a88482-9ee7-4ec0-9b96-dd59e9f644f8"
+        }
+      },
+      {
+        "id": "da4baa44-6e06-4b51-b43d-431bcbe65301",
+        "module": "sessions",
+        "action": "compactRange",
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "expectedSessionId": "97ec3900-22f3-41f5-9def-751a70027325",
+          "agentId": "main",
+          "fromLeafId": "29128b86"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274786068,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "da4baa44-6e06-4b51-b43d-431bcbe65301"
+        }
+      }
+    ],
+    "reads": [
+      {
+        "id": "1b45f494-3c3d-4fbd-bd5c-63a7707a7305",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "u5-range",
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "reconcile": true
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274775848,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "1b45f494-3c3d-4fbd-bd5c-63a7707a7305"
+        }
+      },
+      {
+        "id": "f6611968-0ef2-4353-a5a5-2309dc4928b1",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274776353,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "f6611968-0ef2-4353-a5a5-2309dc4928b1"
+        }
+      },
+      {
+        "id": "eda9bba9-b3dc-4099-ad52-1814043e8116",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274776353,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "eda9bba9-b3dc-4099-ad52-1814043e8116"
+        }
+      },
+      {
+        "id": "c57c6b37-9f46-4c36-b5fb-2a5789f04074",
+        "module": "sessions",
+        "action": "history",
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "limit": 200
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274777325,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "c57c6b37-9f46-4c36-b5fb-2a5789f04074"
+        }
+      },
+      {
+        "id": "73918924-5a3d-47b0-8673-e59c8e4ca6e4",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "u5-range",
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "reconcile": true
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274780108,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "73918924-5a3d-47b0-8673-e59c8e4ca6e4"
+        }
+      },
+      {
+        "id": "28f2d53e-121e-4899-a1b2-dcb5b8025c77",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274780610,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "28f2d53e-121e-4899-a1b2-dcb5b8025c77"
+        }
+      },
+      {
+        "id": "27768a4f-a77a-41e3-b003-ddb5c2f134d3",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274780610,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "27768a4f-a77a-41e3-b003-ddb5c2f134d3"
+        }
+      },
+      {
+        "id": "e3c56768-b750-4a17-92e7-7b0aacb12502",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274781513,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "e3c56768-b750-4a17-92e7-7b0aacb12502"
+        }
+      },
+      {
+        "id": "066cd555-9de6-43b9-a1a4-7fb01c391b9f",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274781513,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "066cd555-9de6-43b9-a1a4-7fb01c391b9f"
+        }
+      },
+      {
+        "id": "d9040f1b-6ca9-490f-a038-94d2ac38c3ae",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274783003,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "d9040f1b-6ca9-490f-a038-94d2ac38c3ae"
+        }
+      },
+      {
+        "id": "989d54a0-f3a7-410f-97aa-6d973f7b0681",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274783495,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "989d54a0-f3a7-410f-97aa-6d973f7b0681"
+        }
+      },
+      {
+        "id": "04ba9174-dfb0-4ef9-8519-952eab66d75b",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "u5-range",
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "reconcile": true
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274784888,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "04ba9174-dfb0-4ef9-8519-952eab66d75b"
+        }
+      },
+      {
+        "id": "e91b2743-6fec-439e-9a82-da64f0e7906a",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274785394,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "e91b2743-6fec-439e-9a82-da64f0e7906a"
+        }
+      },
+      {
+        "id": "3837109a-57a2-4cae-ac8d-6cc1f70e2ea6",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274785394,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "3837109a-57a2-4cae-ac8d-6cc1f70e2ea6"
+        }
+      },
+      {
+        "id": "04dc922f-88c8-40f5-ac8a-d51756b73f56",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794274786120,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "04dc922f-88c8-40f5-ac8a-d51756b73f56"
+        }
+      }
+    ],
+    "cacheChecks": [
+      {
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "modelRef": "custom-sessionc/mock-coder",
+          "usedTokens": 0
+        },
+        "startedAt": 1794274717150,
+        "result": {
+          "id": "2ead7dde-76b2-4ee7-b65b-9a80fb164e53",
+          "ok": true,
+          "data": {
+            "success": true,
+            "assessment": {
+              "sessionKey": "agent:main:session-1794274611007-urange",
+              "status": "unknown",
+              "severity": "none",
+              "shouldWarn": false,
+              "confidence": "unknown",
+              "providerStrategy": "openai-compatible",
+              "hitRate": null,
+              "promptTokens": 0,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 0,
+              "lastTurnHitRate": null,
+              "warmTurnHitRate": null,
+              "lastTurnCacheReadTokens": 0,
+              "lastTurnCacheMissTokens": 0,
+              "costEstimateReliable": false,
+              "reason": "provider-unknown",
+              "warningCount": 0,
+              "cancelledBreakCount": 0,
+              "updatedAt": 1794274717180
+            }
+          }
+        },
+        "finishedAt": 1794274717180
+      },
+      {
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "modelRef": "custom-sessionc/mock-coder",
+          "usedTokens": 0
+        },
+        "startedAt": 1794274721301,
+        "result": {
+          "id": "5e0f6d4b-3aa3-498e-a046-d21f21ab03f2",
+          "ok": true,
+          "data": {
+            "success": true,
+            "assessment": {
+              "sessionKey": "agent:main:session-1794274611007-urange",
+              "status": "unknown",
+              "severity": "none",
+              "shouldWarn": false,
+              "confidence": "unknown",
+              "providerStrategy": "openai-compatible",
+              "hitRate": null,
+              "promptTokens": 0,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 0,
+              "lastTurnHitRate": null,
+              "warmTurnHitRate": null,
+              "lastTurnCacheReadTokens": 0,
+              "lastTurnCacheMissTokens": 0,
+              "costEstimateReliable": false,
+              "reason": "provider-unknown",
+              "warningCount": 0,
+              "cancelledBreakCount": 0,
+              "updatedAt": 1794274721305
+            }
+          }
+        },
+        "finishedAt": 1794274721305
+      },
+      {
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "modelRef": "custom-sessionc/mock-coder",
+          "usedTokens": 0
+        },
+        "startedAt": 1794274722230,
+        "result": {
+          "id": "de28bba8-6b51-4580-90be-24d7432cd5b9",
+          "ok": true,
+          "data": {
+            "success": true,
+            "assessment": {
+              "sessionKey": "agent:main:session-1794274611007-urange",
+              "status": "unknown",
+              "severity": "none",
+              "shouldWarn": false,
+              "confidence": "unknown",
+              "providerStrategy": "openai-compatible",
+              "hitRate": null,
+              "promptTokens": 0,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 0,
+              "lastTurnHitRate": null,
+              "warmTurnHitRate": null,
+              "lastTurnCacheReadTokens": 0,
+              "lastTurnCacheMissTokens": 0,
+              "costEstimateReliable": false,
+              "reason": "provider-unknown",
+              "warningCount": 0,
+              "cancelledBreakCount": 0,
+              "updatedAt": 1794274722232
+            }
+          }
+        },
+        "finishedAt": 1794274722232
+      },
+      {
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "modelRef": "custom-sessionc/mock-coder",
+          "usedTokens": null
+        },
+        "startedAt": 1794274725597,
+        "result": {
+          "id": "002ed7bb-1216-4817-a47c-2686615b26fb",
+          "ok": true,
+          "data": {
+            "success": true,
+            "assessment": {
+              "sessionKey": "agent:main:session-1794274611007-urange",
+              "status": "unknown",
+              "severity": "none",
+              "shouldWarn": false,
+              "confidence": "unknown",
+              "providerStrategy": "openai-compatible",
+              "hitRate": null,
+              "promptTokens": 0,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 0,
+              "lastTurnHitRate": null,
+              "warmTurnHitRate": null,
+              "lastTurnCacheReadTokens": 0,
+              "lastTurnCacheMissTokens": 0,
+              "costEstimateReliable": false,
+              "reason": "provider-unknown",
+              "warningCount": 0,
+              "cancelledBreakCount": 0,
+              "updatedAt": 1794274725613
+            }
+          }
+        },
+        "finishedAt": 1794274725613
+      },
+      {
+        "payload": {
+          "sessionKey": "agent:main:session-1794274611007-urange",
+          "modelRef": "custom-sessionc/mock-coder",
+          "usedTokens": 0
+        },
+        "startedAt": 1794274726273,
+        "result": {
+          "id": "62ac3ae5-98ff-4de7-bfd7-eae84d7f5045",
+          "ok": true,
+          "data": {
+            "success": true,
+            "assessment": {
+              "sessionKey": "agent:main:session-1794274611007-urange",
+              "status": "unknown",
+              "severity": "none",
+              "shouldWarn": false,
+              "confidence": "unknown",
+              "providerStrategy": "openai-compatible",
+              "hitRate": null,
+              "promptTokens": 0,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 0,
+              "lastTurnHitRate": null,
+              "warmTurnHitRate": null,
+              "lastTurnCacheReadTokens": 0,
+              "lastTurnCacheMissTokens": 0,
+              "costEstimateReliable": false,
+              "reason": "provider-unknown",
+              "warningCount": 0,
+              "cancelledBreakCount": 0,
+              "updatedAt": 1794274726276
+            }
+          }
+        },
+        "finishedAt": 1794274726276
+      }
+    ],
+    "ownerMutationDispatches": 0
+  },
+  "after": {
+    "described": {
+      "session": {
+        "key": "agent:main:session-1794274611007-urange",
+        "kind": "direct",
+        "label": "U5 Range coordinator",
+        "displayName": "U5 Range coordinator",
+        "chatType": "direct",
+        "origin": {
+          "label": "Verse Claw",
+          "provider": "webchat",
+          "surface": "webchat",
+          "chatType": "direct"
+        },
+        "updatedAt": 1794274698085,
+        "sessionId": "97ec3900-22f3-41f5-9def-751a70027325",
+        "systemSent": true,
+        "abortedLastRun": false,
+        "thinkingLevels": [
+          {
+            "id": "off",
+            "label": "off"
+          },
+          {
+            "id": "minimal",
+            "label": "minimal"
+          },
+          {
+            "id": "low",
+            "label": "low"
+          },
+          {
+            "id": "medium",
+            "label": "medium"
+          },
+          {
+            "id": "high",
+            "label": "high"
+          }
+        ],
+        "thinkingOptions": [
+          "off",
+          "minimal",
+          "low",
+          "medium",
+          "high"
+        ],
+        "thinkingDefault": "medium",
+        "inputTokens": 120,
+        "outputTokens": 30,
+        "totalTokens": 120,
+        "totalTokensFresh": true,
+        "estimatedCostUsd": 0,
+        "status": "done",
+        "startedAt": 1794274683440,
+        "endedAt": 1794274690460,
+        "runtimeMs": 7020,
+        "childSessions": [
+          "agent:main:dashboard:0e04938f-140b-49ac-97f8-c1aa186ed48c"
+        ],
+        "modelProvider": "custom-sessionc",
+        "model": "mock-coder",
+        "agentRuntime": {
+          "id": "auto",
+          "source": "implicit"
+        },
+        "contextTokens": 128000,
+        "deliveryContext": {
+          "channel": "webchat"
+        },
+        "lastChannel": "webchat",
+        "hasActiveRun": false
+      }
+    },
+    "history": {
+      "success": true,
+      "messages": [
+        {
+          "role": "user",
+          "content": "U5_HEAD",
+          "timestamp": 1794274638688,
+          "idempotencyKey": "U5_HEAD:user",
+          "__openclaw": {
+            "id": "f904de6d",
+            "recordTimestampMs": 1794274653114,
+            "seq": 1
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "U5 context preceding the next question."
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "stop",
+          "timestamp": 1794274659015,
+          "__openclaw": {
+            "id": "2e17b468",
+            "recordTimestampMs": 1794274659376,
+            "seq": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "U5_TARGET",
+          "timestamp": 1794274672266,
+          "idempotencyKey": "U5_TARGET:user",
+          "__openclaw": {
+            "id": "29128b86",
+            "recordTimestampMs": 1794274685513,
+            "seq": 3
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "U5 context preceding the next question."
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "stop",
+          "timestamp": 1794274688765,
+          "__openclaw": {
+            "id": "32dad9ed",
+            "recordTimestampMs": 1794274688818,
+            "seq": 4
+          }
+        }
+      ],
+      "sessionGeneration": "97ec3900-22f3-41f5-9def-751a70027325",
+      "model": "custom-sessionc/mock-coder"
+    },
+    "status": {
+      "success": true,
+      "available": true,
+      "canCompact": true,
+      "inProgress": false,
+      "usedTokens": 120,
+      "maxTokens": 128000,
+      "remainingTokens": 127880,
+      "pressure": "low",
+      "truncatedMessageCount": 0,
+      "warnings": [
+        "context_budget_unknown"
+      ]
+    },
+    "checkpoints": {
+      "success": true,
+      "key": "agent:main:session-1794274611007-urange",
+      "checkpoints": []
+    }
+  },
+  "project": {
+    "workspaceId": "u5-range",
+    "rootPath": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-range-pending-ui-results\\session-context-recovery-U-1d05a-te-error-in-another-session\\workspace",
+    "sessionKey": "agent:main:session-1794274611007-urange",
+    "generation": "97ec3900-22f3-41f5-9def-751a70027325"
+  },
+  "entryId": "29128b86",
+  "remainingFault": null
+}

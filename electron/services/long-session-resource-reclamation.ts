@@ -48,7 +48,7 @@ function reclaimOwnedWorktrees(params: {
   const sessions = typeof service.list === 'function' ? service.list() : [];
   const owned = sessions.filter((session) => (
     session.sessionKey === params.sessionKey
-    && (!params.workspaceId || !session.workspaceId || session.workspaceId === params.workspaceId)
+    && (params.workspaceId ? session.workspaceId === params.workspaceId : !session.workspaceId)
   ));
   let reclaimed = 0;
   for (const session of owned) {

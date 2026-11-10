@@ -1,0 +1,12 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/rsi-protocol-authorization-recorder",
+  "authorization": {
+    "approvedBy": "owner",
+    "currency": "CNY",
+    "maxCost": 0,
+    "maxProviderCalls": 433,
+    "maxTotalTokens": 12000000,
+    "source": "Owner reply to request_user_input_async call_autz2RMfwRSVZ5Sn75pO17kT: 批准新增对照与上述资源上限"
+  }
+}

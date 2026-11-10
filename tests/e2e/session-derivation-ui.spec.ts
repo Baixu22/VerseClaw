@@ -90,6 +90,15 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
   const captureUi = await observeSessionUi(app);
   const metrics: unknown[] = [];
   const budgets: Record<string, unknown> = {};
+  const ownerReadErrors: Array<{ at: number; method: string; error: string }> = [];
+  const readRunState = async <T,>(method: string, params: Record<string, unknown>): Promise<T | undefined> => {
+    try { return await hostInvoke<T>(app, 'gateway', 'rpc', { method, params, timeoutMs: 30_000 }); }
+    catch (error) {
+      if (!/RPC timeout|Execution context was destroyed/.test(String(error))) throw error;
+      ownerReadErrors.push({ at: Date.now(), method, error: String(error) });
+      return undefined;
+    }
+  };
   const result = { status: 'running', error: null as string | null };
   try {
     const { readFile } = await import('node:fs/promises');
@@ -154,8 +163,11 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
 
     await configureSessionChainProvider(app, llm.port);
     const project = await createSessionChainProject(app, testInfo.outputPath('workspace'), 'Family project');
-    await hostInvoke(app, 'chat', 'sendWithMedia', { workspaceId: project.workspaceId, sessionKey: project.sessionKey,
+    const baselineSend = await hostInvoke<{ success: boolean; result?: { runId?: string } }>(app, 'chat', 'sendWithMedia', { workspaceId: project.workspaceId, sessionKey: project.sessionKey,
       message: 'Agent-driven family render probe', idempotencyKey: 'family-render-user-turn' });
+    expect(baselineSend.success).toBe(true); expect(baselineSend.result?.runId).toBeTruthy();
+    await expect.poll(async () => (await readRunState<{ status: string }>('agent.wait',
+      { runId: baselineSend.result!.runId, timeoutMs: 1000 }))?.status, { timeout: 90_000 }).toBe('ok');
     await expect.poll(async () => JSON.stringify(await hostInvoke(app, 'gateway', 'rpc', { method: 'chat.history',
       params: { sessionKey: project.sessionKey, limit: 20 }, timeoutMs: 30_000 })).includes('Agent-driven family fixture.'),
     { timeout: 45_000 }).toBe(true);
@@ -166,12 +178,13 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
     const page = await getStableWindow(app);
     await page.addInitScript(() => {
       type Fiber = { child?: Fiber | null; sibling?: Fiber | null; alternate?: Fiber | null; flags: number; tag: number;
-        memoizedProps?: { session?: { key?: string }; sessionLabel?: string; onSwitch?: unknown } };
-      type Probe = { rendererCount: number; commits: number; identifiedRows: number; rowWork: Record<string, number>; domMutations: number };
+        memoizedProps?: Record<string, unknown> & { session?: { key?: string }; sessionLabel?: string; onSwitch?: unknown } };
+      type Probe = { rendererCount: number; commits: number; identifiedRows: number; rowWork: Record<string, number>; domMutations: number;
+        rowCommits: Array<{ key: string; at: number; commit: number; changed: Record<string, unknown>; orderHeld: string[] }> };
       type Hook = { supportsFiber?: boolean; inject?: (renderer: unknown) => number; onCommitFiberRoot?: (id: number, root: { current: Fiber }) => void };
       const target = window as unknown as { __REACT_DEVTOOLS_GLOBAL_HOOK__?: Hook; __familyRenderProbe?: Probe };
       const previous = target.__REACT_DEVTOOLS_GLOBAL_HOOK__;
-      const probe: Probe = { rendererCount: 0, commits: 0, identifiedRows: 0, rowWork: {}, domMutations: 0 };
+      const probe: Probe = { rendererCount: 0, commits: 0, identifiedRows: 0, rowWork: {}, domMutations: 0, rowCommits: [] };
       const previousRows = new Map<string, Fiber>();
       target.__familyRenderProbe = probe;
       target.__REACT_DEVTOOLS_GLOBAL_HOOK__ = {
@@ -192,6 +205,14 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
               // Bailouts retain old subtrees and flags; only a new committed row fibre can add work.
               if (previousRows.get(key) !== fiber && (!fiber.alternate || (fiber.flags & 1) !== 0)) {
                 probe.rowWork[key] = (probe.rowWork[key] ?? 0) + 1;
+                if (probe.rowCommits.length < 1000) {
+                  const old = fiber.alternate?.memoizedProps;
+                  const value = (input: unknown) => typeof input === 'function' ? '[callback]' : JSON.stringify(input)?.slice(0, 800);
+                  probe.rowCommits.push({ key, at: Date.now(), commit: probe.commits,
+                    changed: Object.fromEntries(Object.keys(props).filter(name => old?.[name] !== props[name])
+                      .map(name => [name, { before: value(old?.[name]), after: value(props[name]) }])),
+                    orderHeld: [...document.querySelectorAll('.ws-tree')].map(tree => tree.getAttribute('data-order-held') ?? '') });
+                }
               }
               previousRows.set(key, fiber);
             }
@@ -246,6 +267,9 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
     const committedWork = (sample: Awaited<ReturnType<typeof renderer>>) => [project.sessionKey, ...children]
       .reduce((sum, key) => sum + (sample.rowWork[key] ?? 0), 0);
     const chooseProjection = async (view: Projection) => {
+      const window = await app.browserWindow(page);
+      await window.evaluate(window => { window.show(); window.focus(); }); await window.dispose();
+      await page.bringToFront();
       const organize = page.getByTestId('sidebar-session-organize');
       await revealSectionHeadingActionsFor(organize); await organize.click();
       const option = page.getByRole('menuitemradio', { name: viewLabels[view], exact: true });
@@ -259,6 +283,7 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
         await expect(toggle).toBeVisible({ timeout: 30_000 });
         await expect(toggle).toContainText(String(children.length));
         if (await toggle.getAttribute('aria-expanded') !== 'true') { await toggle.focus(); await toggle.press('ArrowRight'); }
+        await expect(toggle).toHaveAttribute('aria-expanded', 'true');
       } else await expect(page.getByTestId('session-family-toggle-' + project.sessionKey)).toHaveCount(0);
       await twoFrames();
     };
@@ -312,22 +337,39 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
         rpc, rootCommits: after.commits - before.commits, committedRowWork: committedWork(after) - committedWork(before),
         rowWorkByKey, domMutations: after.domMutations - before.domMutations };
     };
-    const streamProbe = async (view: Projection, eventCount: number) => {
+    const startStreamProbe = async () => {
       held = false;
       holdNext = true;
-      const identity = 'family-render-' + children.length + '-' + eventCount + '-' + Date.now();
+      const identity = 'family-render-' + children.length + '-' + Date.now();
       const receipt = await hostInvoke<{ success: boolean; result?: { runId?: string } }>(app, 'chat', 'sendWithMedia', {
         workspaceId: project.workspaceId, sessionKey: project.sessionKey, message: 'FAMILY-HOLD ' + identity, idempotencyKey: identity,
       });
       const runId = receipt.result?.runId;
       if (!receipt.success || !runId) throw new Error('Live family probe run was not acknowledged');
       await expect.poll(() => held, { timeout: 30_000 }).toBe(true);
+      return { identity, receipt, runId };
+    };
+    const streamProbe = async (view: Projection, eventCount: number, run: Awaited<ReturnType<typeof startStreamProbe>>) => {
+      const { identity, receipt, runId } = run;
       await page.reload();
+      // The warmup must include this run's persisted user turn. Otherwise an old
+      // history read can update the row timestamp inside the token measurement.
+      const currentInput = page.getByText('FAMILY-HOLD ' + identity, { exact: true });
+      const startupError = page.getByTestId('chat-startup-error');
+      await expect(currentInput.or(startupError)).toBeVisible({ timeout: 30_000 });
+      const historyRecovery = [];
+      if (await startupError.isVisible()) {
+        historyRecovery.push({ at: Date.now(), error: await startupError.innerText(), via: 'existing retry-loading action' });
+        await page.screenshot({ path: testInfo.outputPath(`history-retry-${children.length}-${view}-${eventCount}.png`) });
+        await page.getByTestId('chat-startup-retry').click();
+      }
+      await expect(currentInput).toBeVisible({ timeout: 30_000 });
       await chooseProjection(view); await exposeProjection(view); await revealChildren();
-      const actualOwner = await hostInvoke<{ session: { sessionId: string; hasActiveRun: boolean } }>(app, 'gateway', 'rpc', {
-        method: 'sessions.describe', params: { key: project.sessionKey }, timeoutMs: 30_000,
-      });
-      expect(actualOwner.session).toMatchObject({ sessionId: project.generation, hasActiveRun: true });
+      let actualOwner: { session: { sessionId: string; hasActiveRun: boolean } } | undefined;
+      await expect.poll(async () => {
+        actualOwner = await readRunState('sessions.describe', { key: project.sessionKey });
+        return actualOwner?.session;
+      }, { timeout: 30_000 }).toMatchObject({ sessionId: project.generation, hasActiveRun: true });
       const ts = Date.now();
       await publish({ type: 'run.started', runId, sessionKey: project.sessionKey, seq: 0, ts, startedAt: ts });
       await publish({ type: 'assistant.delta', runId, sessionKey: project.sessionKey, seq: 1, ts, replace: true,
@@ -347,22 +389,20 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
       expect(before.identifiedRows).toBeGreaterThan(0);
       expect(committedWork(before)).toBeGreaterThan(0);
       for (const key of [project.sessionKey, ...children]) expect(before.rowWork[key]).toBeGreaterThan(0);
+      const sequenceSamples = [];
       for (let seq = 1; seq <= eventCount; seq += 1) {
         await publish({ type: 'assistant.delta', runId, sessionKey: project.sessionKey, seq: seq + 1, ts, replace: true,
           text: 'FAMILY-STREAM-' + eventCount + '-' + seq });
         await expect(page.locator('body')).toContainText('FAMILY-STREAM-' + eventCount + '-' + seq);
         await twoFrames();
+        const sample = await renderer();
+        sequenceSamples.push({ seq, at: Date.now(), rowWork: sample.rowWork });
       }
       const after = await renderer();
       const dom = (await readRows()).filter((row) => children.includes(row.key));
       expect(dom.map((row) => row.key).sort()).toEqual([...children].sort());
-      releaseHold();
-      await expect.poll(async () => (await hostInvoke<{ session: { hasActiveRun: boolean } }>(app, 'gateway', 'rpc', {
-        method: 'sessions.describe', params: { key: project.sessionKey }, timeoutMs: 30_000,
-      })).session.hasActiveRun, { timeout: 30_000 }).toBe(false);
-      await twoFrames();
-      return { projection: view, sourceIdentity, eventCount, warmupEvents: 1, settledSamples, before, after,
-        committedRowWork: committedWork(after) - committedWork(before), dom, receipt, actualOwner,
+      return { projection: view, sourceIdentity, eventCount, warmupEvents: 1, settledSamples, historyRecovery, before, after,
+        committedRowWork: committedWork(after) - committedWork(before), sequenceSamples, dom, receipt, actualOwner,
         streamInput: 'agent event replay during an actual live Gateway model request' };
     };
 
@@ -406,14 +446,26 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
       metrics.push(measurement);
       const streamContainment: unknown[] = [];
       measurement.streamContainment = streamContainment;
+      // Both projections and event counts share the same live owner and persisted input.
+      const sharedRun = await startStreamProbe(); measurement.sharedStreamRun = sharedRun;
       for (const view of ['time', 'project'] as const) {
-        const few = await streamProbe(view, streamCounts[0]);
-        const many = await streamProbe(view, streamCounts[1]);
+        const few = await streamProbe(view, streamCounts[0], sharedRun);
+        const many = await streamProbe(view, streamCounts[1], sharedRun);
         streamContainment.push({ projection: view, sourceIdentity, datasetIdentity, evidenceType: 'electron-main-event-fixture',
           channel: HOST_EVENT_CHANNELS.chat.runtimeEvent, few, many, oneConstantPass: children.length + 1 });
         expect(many.committedRowWork).toBe(few.committedRowWork);
         expect(many.committedRowWork).toBeLessThanOrEqual(children.length + 1);
       }
+      releaseHold();
+      let terminalReceipt: { status: string; [key: string]: unknown } | undefined;
+      await expect.poll(async () => {
+        terminalReceipt = await readRunState('agent.wait', { runId: sharedRun.runId, timeoutMs: 1000 });
+        return terminalReceipt?.status;
+      }, { timeout: 90_000 }).toBe('ok');
+      measurement.terminalReceipt = terminalReceipt;
+      await expect.poll(async () => (await readRunState<{ session: { hasActiveRun: boolean } }>(
+        'sessions.describe', { key: project.sessionKey }))?.session.hasActiveRun, { timeout: 30_000 }).toBe(false);
+      await twoFrames();
       await chooseProjection('project'); await exposeProjection('project'); await revealChildren();
       const durationsMs: number[] = [];
       for (let index = 0; index < baseline.sessionSwitch.count; index += 1) {
@@ -440,14 +492,15 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
     for (const theme of ['light', 'dark'] as const) {
       await hostInvoke(app, 'settings', 'set', { key: 'theme', value: theme });
       await page.reload();
+      await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', project.generation, { timeout: 30_000 });
       for (const width of [1280, 960]) {
         expect(await setSessionChainViewport(app, { width, height: 800 })).toEqual({ width, height: 800 });
         await twoFrames();
         const sidebarToggle = page.getByTestId('sidebar-collapse-toggle');
         if (await sidebarToggle.getAttribute('aria-label') === 'Expand sidebar') await sidebarToggle.click();
+        await chooseProjection('project'); await exposeProjection('project');
         const toggle = page.getByTestId('session-family-toggle-' + project.sessionKey);
-        await expect(toggle).toBeVisible();
-        if (await toggle.getAttribute('aria-expanded') !== 'true') await toggle.click();
+        await expect(toggle).toContainText(String(children.length));
         const dom = await revealChildren();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
         const first = page.locator('.ws-family-row[data-lineage-depth="1"]').first();
@@ -468,7 +521,7 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
   } catch (error) { result.status = 'failed'; result.error = String(error); throw error; } finally {
     releaseHold();
     await writeFile(testInfo.outputPath('family-layout.json'), JSON.stringify({ driven_by: 'agent', actor: 'playwright-session-family',
-      provider: 'local-scripted', status: result.status, error: result.error, fixtureScale: true, budgets, metrics, providerLog: llm.log }, null, 2));
+      provider: 'local-scripted', status: result.status, error: result.error, fixtureScale: true, budgets, metrics, ownerReadErrors, providerLog: llm.log }, null, 2));
     await captureUi((name) => testInfo.outputPath(name));
     await hostInvoke(app, 'gateway', 'stop').catch(() => undefined); await closeElectronApp(app);
     llm.server.closeAllConnections(); await new Promise<void>((done) => llm.server.close(() => done()));

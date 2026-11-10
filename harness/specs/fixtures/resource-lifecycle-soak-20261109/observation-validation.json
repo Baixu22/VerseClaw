@@ -1,0 +1,149 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": {
+    "commit": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+    "tree": "6da4b804e2edce227a43121e4376908d76303457",
+    "dirty": false
+  },
+  "commands": [
+    {
+      "id": "cleanup-history-types",
+      "argv": [
+        "node",
+        "openclaw_runtime/node_modules/@typescript/native-preview/bin/tsgo.js",
+        "-p",
+        "harness/specs/fixtures/resource-lifecycle-soak-20261109/tsconfig.json"
+      ],
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0839\\cleanup-history-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "cleanup-history-lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "tests/e2e/fixtures/electron.ts"
+      ],
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0839\\cleanup-history-lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "probes-harness-validate",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/resource-lifecycle-soak-20261109.md"
+      ],
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0839\\probes-harness-validate.log",
+      "sha256": "031295f4a95454abe7fa1ffb961b1e4553910303921ca3659a747702a566d42b"
+    },
+    {
+      "id": "probes-harness-dry-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/resource-lifecycle-soak-20261109.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "log": "D:\\tmp\\tf0839\\probes-harness-dry-run.log",
+      "sha256": "041fc5747e9e53cd90c705ac1d95024165e07150b6247d0122b54fa0f0c9d35d"
+    }
+  ],
+  "smoke": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "pass": true,
+    "repeatCycles": 3,
+    "ownedExits": 16,
+    "createdTreeProbeErrors": [],
+    "exitProbeErrors": [],
+    "cleanup": {
+      "mainExited": true,
+      "launcherExited": true,
+      "graceful": false,
+      "closeSettled": false,
+      "processes": [
+        {
+          "pid": 35312,
+          "creationTime": 1794242072206,
+          "status": "exited"
+        },
+        {
+          "pid": 5068,
+          "creationTime": 1794242082824,
+          "status": "exited"
+        },
+        {
+          "pid": 25364,
+          "creationTime": 1794242084302,
+          "status": "exited"
+        }
+      ],
+      "processObservations": [
+        [
+          {
+            "pid": 35312,
+            "creationTime": 1794242072206,
+            "status": "alive"
+          },
+          {
+            "pid": 5068,
+            "creationTime": 1794242082824,
+            "status": "alive"
+          },
+          {
+            "pid": 25364,
+            "creationTime": 1794242084302,
+            "status": "exited"
+          }
+        ],
+        [
+          {
+            "pid": 35312,
+            "creationTime": 1794242072206,
+            "status": "exited"
+          },
+          {
+            "pid": 5068,
+            "creationTime": 1794242082824,
+            "status": "exited"
+          },
+          {
+            "pid": 25364,
+            "creationTime": 1794242084302,
+            "status": "exited"
+          }
+        ]
+      ],
+      "errors": [
+        "Error: Playwright close after launcher exit timed out after 2000ms",
+        "Error: Playwright close after owned pipe disposal timed out after 2000ms"
+      ]
+    }
+  },
+  "review": {
+    "findings": [],
+    "overall_correctness": "patch is correct",
+    "overall_explanation": "...",
+    "overall_confidence": 0.9
+  },
+  "sources": [
+    {
+      "path": "tests/e2e/fixtures/electron.ts",
+      "sha256": "1074824d07d971c4d0179f2f2d604ab973c42fa2f5ba65c375e24c7c08605645"
+    },
+    {
+      "path": "tests/e2e/resource-lifecycle-soak.spec.ts",
+      "sha256": "eca6fced0e407bb2be44cd5dfcc11d9e387f91de2ddc20a4e54becf69abd71d8"
+    }
+  ]
+}

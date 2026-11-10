@@ -1,0 +1,69 @@
+
+Running 1 test using 1 worker
+
+[app:out] [2026-11-09T18:24:14.472Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-09T18:24:14.472Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [38384:1110/022414.629:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[38384:1110/022414.629:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:out] [2026-11-09T18:24:14.746Z] [INFO] Gateway stop requested
+[app:out] [2026-11-09T18:24:14.746Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-09T18:24:15.866Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[app:out] [2026-11-09T18:24:15.869Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:err] [2026-11-09T18:24:15.875Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T18:24:15.875Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T18:24:15.875Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[app:err] [2026-11-09T18:24:15.875Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-09T18:24:16.115Z] [INFO] Scheduling Gateway reload after saving provider "custom-sessionc" config
+[app:out] [2026-11-09T18:24:16.115Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-09T18:24:17.315Z] [INFO] [gateway-refresh] mode=reload requested pid=n/a state=stopped
+[app:err] [2026-11-09T18:24:17.315Z] [WARN] [gateway-refresh] mode=reload result=fallback_restart cause=not_running
+[2026-11-09T18:24:17.315Z] [WARN] Gateway reload requested while not running; falling back to restart
+[app:out] [2026-11-09T18:24:17.315Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=n/a
+[2026-11-09T18:24:17.315Z] [INFO] Gateway stop requested
+[2026-11-09T18:24:17.316Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)
+[app:out] [2026-11-09T18:24:17.316Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)
+[app:out] [2026-11-09T18:24:17.316Z] [INFO] Gateway start requested (port=18789)
+[app:out] [2026-11-09T18:24:17.370Z] [DEBUG] Device identity loaded (deviceId=446f48c04400afaebd8cf9435cc8dd9fb91b04ece3f688ca4094191314e08e0c)
+[app:out] [2026-11-09T18:24:17.371Z] [DEBUG] Gateway state changed: stopped -> starting
+[app:out] [2026-11-09T18:24:20.013Z] [DEBUG] Checking for existing Gateway...
+[app:err] (node:38384) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [2026-11-09T18:24:20.444Z] [DEBUG] No existing Gateway found, starting new process...
+[app:out] [2026-11-09T18:24:20.556Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\tmp\unified-management-20261109\lifecycle-validation\u5-journal-restore-ui7-results\session-context-commit-rec-e72a0-loss-and-retains-generation\workspace\.verse-claw\harness
+[app:err] [2026-11-09T18:24:21.153Z] [ERROR] Unhandled promise rejection in main process: Error: ENOSPC: no space left on device, write
+Error: ENOSPC: no space left on device, write
+    at writeSync (node:fs:916:3)
+    at attempt (file:///D:/ClawX/node_modules/.pnpm/stubborn-utils@1.0.2/node_modules/stubborn-utils/dist/retryify_sync.js:11:31)
+    at writeFileSync (file:///D:/ClawX/node_modules/.pnpm/atomically@2.1.1/node_modules/atomically/dist/index.js:167:45)
+    at ElectronStore._write (file:///D:/ClawX/node_modules/.pnpm/conf@15.1.0/node_modules/conf/dist/source/index.js:417:17)
+    at set store (file:///D:/ClawX/node_modules/.pnpm/conf@15.1.0/node_modules/conf/dist/source/index.js:265:14)
+    at ElectronStore.set (file:///D:/ClawX/node_modules/.pnpm/conf@15.1.0/node_modules/conf/dist/source/index.js:104:20)
+    at S7 (D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-CwQUaPqx.js:49:84853)
+    at async D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-CwQUaPqx.js:49:84955
+[app:err] [logger] write failure (ENOSPC): ENOSPC: no space left on device, write [consecutiveFailures=1]
+[app:err] [2026-11-09T18:24:21.392Z] [ERROR] Failed to write OpenClaw config AtomicWriteError: Atomic write failed for D:\ClawX-work\session-task-unified-relay-20261109\.tmp\e2e-runs\verse-claw-e2e-run-u8VNNY\verse-claw-e2e-home-uBUEFj\.openclaw\openclaw.json (ENOSPC): ENOSPC: no space left on device, write
+AtomicWriteError: Atomic write failed for D:\ClawX-work\session-task-unified-relay-20261109\.tmp\e2e-runs\verse-claw-e2e-run-u8VNNY\verse-claw-e2e-home-uBUEFj\.openclaw\openclaw.json (ENOSPC): ENOSPC: no space left on device, write
+    at J_ (D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-CwQUaPqx.js:16:18613)
+    at tj (D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-CwQUaPqx.js:17:1885)
+    at async je (D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-CwQUaPqx.js:20:14210)
+    at async ZJ (D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-CwQUaPqx.js:49:58442)
+    at async Vm (D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-CwQUaPqx.js:49:118373)
+    at async create (D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-CwQUaPqx.js:49:141968)
+    at async Cue (D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-CwQUaPqx.js:2173:22325)
+    at async D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-CwQUaPqx.js:2173:26114
+    at async eval (eval at evaluate (:302:30), <anonymous>:23:17)
+    at async <anonymous>:328:30
+
+Node.js v24.22.1

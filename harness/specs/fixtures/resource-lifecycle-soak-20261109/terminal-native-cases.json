@@ -1,0 +1,17 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "candidate": "289ee63a210eaec06c202de17b6c9cf23a74f17e",
+  "deliveryCandidate": "ed2cfbb11a1ff59819ac607f922874803e57eb3d",
+  "equivalence": "observation-equivalence.json",
+  "cases": [
+    {
+      "name": "native Windows PTY owns descendants, generation, capacity and cancellation receipt",
+      "status": "passed"
+    },
+    {
+      "name": "repeated native terminal exits release their input pipe handles",
+      "status": "passed"
+    }
+  ]
+}

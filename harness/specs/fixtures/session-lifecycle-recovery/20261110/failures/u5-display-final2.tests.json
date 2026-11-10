@@ -1,0 +1,325 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/lifecycle-validation/u5-display-final2-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-context-pressure.spec.ts",
+      "file": "chat-context-pressure.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat context pressure",
+          "file": "chat-context-pressure.spec.ts",
+          "line": 20,
+          "column": 6,
+          "specs": [
+            {
+              "title": "shows session context, cache-served tokens and warm hit rate in the composer",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 37884,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-slash-command-option-compact')\nExpected substring: \u001b[32m\"64k / 128k tokens\"\u001b[39m\nReceived string:    \u001b[31m\"Compact session/compactOpen the current-session compression dialog.The session identity is unavailable. Refresh before continuing.\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-slash-command-option-compact')\u001b[22m\n\u001b[2m    18 × locator resolved to <button type=\"button\" role=\"option\" aria-selected=\"true\" data-selected=\"true\" data-testid=\"chat-slash-command-option-compact\" class=\"codex-composer-menu__item codex-composer-menu__item--compact\">…</button>\u001b[22m\n\u001b[2m       - unexpected value \"Compact session/compactOpen the current-session compression dialog.The session identity is unavailable. Refresh before continuing.\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-slash-command-option-compact')\nExpected substring: \u001b[32m\"64k / 128k tokens\"\u001b[39m\nReceived string:    \u001b[31m\"Compact session/compactOpen the current-session compression dialog.The session identity is unavailable. Refresh before continuing.\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-slash-command-option-compact')\u001b[22m\n\u001b[2m    18 × locator resolved to <button type=\"button\" role=\"option\" aria-selected=\"true\" data-selected=\"true\" data-testid=\"chat-slash-command-option-compact\" class=\"codex-composer-menu__item codex-composer-menu__item--compact\">…</button>\u001b[22m\n\u001b[2m       - unexpected value \"Compact session/compactOpen the current-session compression dialog.The session identity is unavailable. Refresh before continuing.\"\u001b[22m\n\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\chat-context-pressure.spec.ts:141:29",
+                        "location": {
+                          "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\chat-context-pressure.spec.ts",
+                          "column": 29,
+                          "line": 141
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 139 |\u001b[39m       \u001b[90m// clicking: asserting only visibility races the composer's status refresh\u001b[39m\n \u001b[90m 140 |\u001b[39m       \u001b[90m// and the click can land on a not-yet-ready item.\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 141 |\u001b[39m       \u001b[36mawait\u001b[39m expect(compact)\u001b[33m.\u001b[39mtoContainText(\u001b[32m'64k / 128k tokens'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 142 |\u001b[39m       \u001b[36mawait\u001b[39m compact\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 143 |\u001b[39m\n \u001b[90m 144 |\u001b[39m       \u001b[36mconst\u001b[39m pressure \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'chat-context-pressure'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\chat-context-pressure.spec.ts",
+                            "column": 29,
+                            "line": 141
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-slash-command-option-compact')\nExpected substring: \u001b[32m\"64k / 128k tokens\"\u001b[39m\nReceived string:    \u001b[31m\"Compact session/compactOpen the current-session compression dialog.The session identity is unavailable. Refresh before continuing.\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-slash-command-option-compact')\u001b[22m\n\u001b[2m    18 × locator resolved to <button type=\"button\" role=\"option\" aria-selected=\"true\" data-selected=\"true\" data-testid=\"chat-slash-command-option-compact\" class=\"codex-composer-menu__item codex-composer-menu__item--compact\">…</button>\u001b[22m\n\u001b[2m       - unexpected value \"Compact session/compactOpen the current-session compression dialog.The session identity is unavailable. Refresh before continuing.\"\u001b[22m\n\n\n  139 |       // clicking: asserting only visibility races the composer's status refresh\n  140 |       // and the click can land on a not-yet-ready item.\n> 141 |       await expect(compact).toContainText('64k / 128k tokens');\n      |                             ^\n  142 |       await compact.click();\n  143 |\n  144 |       const pressure = page.getByTestId('chat-context-pressure');\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\chat-context-pressure.spec.ts:141:29"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[app:out] [2026-11-09T18:15:19.660Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T18:15:19.661Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-09T18:15:19.661Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=14732, ppid=19060\n[2026-11-09T18:15:19.661Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T18:15:19.871Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T18:15:19.871Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-09T18:15:19.871Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-09T18:15:19.871Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T18:15:19.918Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T18:15:19.919Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                        },
+                        {
+                          "text": "[app:err] [14732:1110/021519.974:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[14732:1110/021519.974:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T18:15:20.152Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T18:15:20.153Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-09T18:15:20.153Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T18:15:20.153Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T18:15:20.233Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T18:15:20.235Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T18:15:27.935Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T18:15:36.235Z] [INFO] Gateway stop requested\n[2026-11-09T18:15:36.235Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                        },
+                        {
+                          "text": "[app:err] Debugger ending on ws://127.0.0.1:52741/893658e6-1156-4e1b-99a2-b582428fc729\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T18:15:36.270Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":4}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T18:15:36.270Z] [INFO] [ResourceTracker] Stopped\n[2026-11-09T18:15:36.270Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T18:15:36.270Z] [INFO] [efficiency-sampler] stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-09T18:15:36.271Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-09T18:14:59.465Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-display-final2-results\\chat-context-pressure-Vers-a51b5-rm-hit-rate-in-the-composer\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-display-final2-results\\chat-context-pressure-Vers-a51b5-rm-hit-rate-in-the-composer\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-display-final2-results\\chat-context-pressure-Vers-a51b5-rm-hit-rate-in-the-composer\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\chat-context-pressure.spec.ts",
+                        "column": 29,
+                        "line": 141
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "7970d0a6f8af0c6eb6c0-65f2b7fbb8191596fa13",
+              "file": "chat-context-pressure.spec.ts",
+              "line": 21,
+              "column": 7
+            },
+            {
+              "title": "shows the session row but omits optional metrics the runtime did not report",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7970d0a6f8af0c6eb6c0-04ec628c6735b9ea8acf",
+              "file": "chat-context-pressure.spec.ts",
+              "line": 161,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-slash-session-lifecycle.spec.ts",
+      "file": "chat-slash-session-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "slash /rename renames the current session through the host API",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "1560b8bfb4b44fe713ea-682cc5828f9cc174cf62",
+          "file": "chat-slash-session-lifecycle.spec.ts",
+          "line": 95,
+          "column": 5
+        },
+        {
+          "title": "slash /clear resets the local message view",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "1560b8bfb4b44fe713ea-e00650372c88a8b37b74",
+          "file": "chat-slash-session-lifecycle.spec.ts",
+          "line": 125,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "memory-surface.spec.ts",
+      "file": "memory-surface.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "TF-0498 unified Memory surface",
+          "file": "memory-surface.spec.ts",
+          "line": 177,
+          "column": 6,
+          "specs": [
+            {
+              "title": "exposes candidate review, export and tombstone deletion in one panel",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3588834ea4b0dcb4ef31-39cc4dafc32d09377384",
+              "file": "memory-surface.spec.ts",
+              "line": 178,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mTesting stopped early after 1 maximum allowed failures.\u001b[39m"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-11-09T18:14:57.555Z",
+    "duration": 41077.632999999994,
+    "expected": 0,
+    "skipped": 4,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
