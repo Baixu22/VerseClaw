@@ -42,6 +42,7 @@ import { isRuntimeLineage } from '../../openclaw_runtime/src/runtime-core/lineag
 import { readBoundedKnowledgePage, retrieveSelectedSourceSetEvidence } from './knowledge-source-set-answer';
 import { prepareKnowledgeReadScope, assertKnowledgeReadScopeCurrent } from './knowledge-read-scope';
 import { normalizeSourceRefV2, isOwnerReadSnapshotV1, evaluateOwnerReadSnapshot } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
+import type { KnowledgeEmbeddingSelection, KnowledgeEmbeddingStatus, KnowledgeEmbeddingStatusResult } from '../../shared/knowledge/embedding';
 import { createKnowledgeSourceSync } from './knowledge-source-sync';
 import { createKnowledgeGithubConnector, validateGithubConnector } from './knowledge-github-connector';
 import { boundedKnowledgeHistory, buildKnowledgeQaPrompt, runKnowledgeModel, validateKnowledgeQaOutput, type KnowledgeConversationTurn, type KnowledgeQaEvidence } from './knowledge-evidence-qa';
@@ -51,11 +52,8 @@ export function stopAllKnowledgeSourceWatches(): void {
   for (const dispose of knowledgeSourceWatchDisposers.values()) dispose();
   knowledgeSourceWatchDisposers.clear();
 }
-import {
-  createSiliconFlowEmbeddingProvider,
-  hasSiliconFlowEmbeddingProvider,
-  resolveEmbeddingDeadlineMs,
-} from './knowledge-embedding-provider';
+import type { RuntimeEmbeddingProvider } from '../../openclaw_runtime/src/runtime-core/memory-embedding-provider';
+import { resolveEmbeddingDeadlineMs } from './knowledge-embedding-provider';
 import type { ContextBlockSink } from '../../openclaw_runtime/src/context-engine/block';
 import type {
   HostSuccess,
@@ -3352,10 +3350,32 @@ export function createKnowledgeApi({
     }
     const sourceSet = input.sourceSetId ? await readSourceSet(input.sourceSetId) : null;
     const semanticRequested = input.semantic === true;
-    const embeddingProvider = semanticRequested && hasSiliconFlowEmbeddingProvider()
-      ? createSiliconFlowEmbeddingProvider({
-          deadlineMs: resolveEmbeddingDeadlineMs(process.env.KNOWLEDGE_EMBEDDING_DEADLINE_MS),
-        }) : undefined;
+    let embeddingProvider: RuntimeEmbeddingProvider | undefined;
+    if (semanticRequested) {
+      const deadlineAt = Date.now() + resolveEmbeddingDeadlineMs(process.env.KNOWLEDGE_EMBEDDING_DEADLINE_MS);
+      const selectionScope = await prepareKnowledgeReadScope(gatewayManager, { workspaceId: input.workspaceId });
+      const capability = await rpc<KnowledgeEmbeddingStatus>('wiki.embedding.status', { readIdentity: selectionScope.identity }, 15_000).catch(() => undefined);
+      await assertKnowledgeReadScopeCurrent(gatewayManager, selectionScope);
+      if (capability?.status === 'ready' && capability.dimensions && capability.providerRef) {
+        const embeddingScope = await prepareKnowledgeReadScope(gatewayManager, { workspaceId: input.workspaceId }, [capability.providerRef]);
+        const embed = async (payload: Record<string, unknown>) => {
+          await assertKnowledgeReadScopeCurrent(gatewayManager, embeddingScope);
+          const remaining = Math.ceil(deadlineAt - Date.now());
+          if (remaining <= 0) throw new Error('Knowledge embedding total deadline exceeded');
+          const result = await rpc<{ vectors: number[][] }>('wiki.embedding.embed', { ...payload, expectedSpaceId: capability.spaceId,
+            deadlineAt, readIdentity: embeddingScope.identity }, remaining);
+          await assertKnowledgeReadScopeCurrent(gatewayManager, embeddingScope);
+          return result.vectors;
+        };
+        embeddingProvider = {
+          id: capability.providerRef,
+          dimension: capability.dimensions,
+          embedQuery: async text => (await embed({ kind: 'query', text }))[0],
+          embedSources: sources => embed({ kind: 'document', sources }),
+          embedBatch: async () => { throw new Error('Owner-pinned embedding sources are required'); },
+        };
+      }
+    }
     const readScope = await prepareKnowledgeReadScope(gatewayManager, { workspaceId: input.workspaceId }, embeddingProvider ? [embeddingProvider.id] : undefined);
     const readEvidence = (selectedRefs: KnowledgeSourceRef[], semantic = false) => retrieveSelectedSourceSetEvidence({
       question, sourceRefs: selectedRefs,
@@ -3675,7 +3695,34 @@ export function createKnowledgeApi({
     }
   };
 
+  const embeddingOperation = async (operation: string, selection?: KnowledgeEmbeddingSelection): Promise<KnowledgeEmbeddingStatusResult> => {
+    try {
+      if (selection && !['local', 'remote'].includes(selection.mode)) throw new Error('Invalid embedding mode');
+      if (selection && ['providerRef', 'model'].some(key => {
+        const value = selection[key as keyof KnowledgeEmbeddingSelection];
+        return value !== undefined && (typeof value !== 'string' || value.length > 256 || /[\r\n\0]/.test(value));
+      })) throw new Error('Invalid embedding provider selection');
+      const normalized = selection ? { mode: selection.mode,
+        ...(selection.providerRef?.trim() ? { providerRef: selection.providerRef.trim() } : {}),
+        ...(selection.model?.trim() ? { model: selection.model.trim() } : {}) } : undefined;
+      const egress = normalized?.mode === 'remote' ? [normalized.providerRef || 'siliconflow'] : [];
+      const scope = await prepareKnowledgeReadScope(gatewayManager, {}, egress);
+      const embedding = await rpc<KnowledgeEmbeddingStatus>(`wiki.embedding.${operation}`, {
+        ...(normalized ?? {}), readIdentity: scope.identity,
+      }, 30_000);
+      await assertKnowledgeReadScopeCurrent(gatewayManager, scope);
+      return { success: true, embedding };
+    } catch (error) {
+      return { success: false, error: sanitizeUiErrorText(error) };
+    }
+  };
+
   return {
+    embeddingStatus: () => embeddingOperation('status'),
+    embeddingConfigure: payload => embeddingOperation('configure', payload),
+    embeddingCancel: () => embeddingOperation('cancel'),
+    embeddingDisable: () => embeddingOperation('disable'),
+    embeddingRetry: () => embeddingOperation('retry'),
     status: async () => {
       try {
         return { success: true, status: await rpc('wiki.status', {}, 12_000) };

@@ -2905,6 +2905,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/evidence/project-rag/RAG-04/20261110-2744a4486/source-inputs.json
 !/docs/dev/evidence/project-rag/RAG-04/20261110-2744a4486/source-mutation-guard.json
 !/docs/dev/evidence/project-rag/RAG-04/20261110-2744a4486/typecheck.log
+!/docs/dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

@@ -207,6 +207,7 @@ Main layers：
 - Project RAG は workspace に紐付く明示的な index lifecycle API を備え、SQLite 公開、background worker、owner 引用検証を行います。[索引ライフサイクル契約](docs/dev/project-rag/INDEX-LIFECYCLE-CONTRACT.md)を参照してください。
 - Librarian は許可済みの証拠と制限された会話履歴を設定済み Gateway モデルへ渡し、原文引用と版を検証します。部分読み取り、矛盾、モデル失敗を明示し、Studio はレビュー用の抜粋草稿を保存します。
 - 中国語検索、長文の制限付き続読、provider 別 embedding キャッシュ、版に紐付く Steward 所見を実装しています。任意の公開 GitHub ディレクトリ接続は更新と撤回を Inbox へ送ります。他の SaaS 接続は未実装です。
+- 設定 > モデルとプロバイダーから、プロジェクト検索用のローカル EmbeddingGemma または設定済みリモート Qwen VL を選択できます。インストール、検証、準備、キャンセル、認証情報の更新は [embedding ライフサイクル](docs/dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md) を参照してください。
 - Log、trace、screenshot、Task Forest、handoff は明示的に curated されない限り local working data。
 
 Local storage は offline execution を意味しません。Online model、channel、browser、external tool は設定に従って data を受け取ります。Credential や private transcript を commit / public issue に含めないでください。

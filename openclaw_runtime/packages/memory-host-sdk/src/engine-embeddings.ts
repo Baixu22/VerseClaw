@@ -17,6 +17,12 @@ export type {
   MemoryEmbeddingProviderRuntime,
 } from "./host/openclaw-runtime-memory.js";
 export { createLocalEmbeddingProvider, DEFAULT_LOCAL_MODEL } from "./host/embeddings.js";
+export {
+  DEFAULT_LOCAL_EMBEDDING_ARTIFACT,
+  installLocalEmbeddingModel,
+  verifyLocalEmbeddingModel,
+  type LocalEmbeddingModelArtifact,
+} from "./host/embedding-model-artifact.js";
 export { extractBatchErrorMessage, formatUnavailableBatchError } from "./host/batch-error-utils.js";
 export { postJsonWithRetry } from "./host/batch-http.js";
 export { applyEmbeddingBatchOutputLine } from "./host/batch-output.js";

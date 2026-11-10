@@ -70,6 +70,7 @@ const SAFE_GATEWAY_METHODS = new Set([
   'health',
   'wiki.index.status',
   'wiki.index.search',
+  'wiki.embedding.status',
   // Role-first runtime read methods (registry/templates/planning are side-effect free).
   // orchestrator.run is intentionally NOT here: it spawns subagents and is gated as a
   // mutating request so it requires approval outside fullAccess mode.

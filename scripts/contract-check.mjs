@@ -809,6 +809,7 @@ async function runContractCheck(fixtures) {
         {
           knowledgeHostApi: await readProjectFile('src/lib/host-api/knowledge/index.ts'),
           knowledgeLibraryApi: await readProjectFile('src/lib/host-api/knowledge/library.ts'),
+          knowledgeEmbeddingApi: await readProjectFile('src/lib/host-api/knowledge/embedding.ts'),
           knowledgeRoutingApi: await readProjectFile('src/lib/host-api/knowledge/routing.ts'),
           knowledgeInboxApi: await readProjectFile('src/lib/host-api/knowledge/inbox.ts'),
           knowledgeDraftsApi: await readProjectFile('src/lib/host-api/knowledge/drafts.ts'),

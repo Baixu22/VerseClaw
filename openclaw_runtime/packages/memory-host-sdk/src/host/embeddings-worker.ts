@@ -12,6 +12,7 @@ import type {
   EmbeddingProvider,
   EmbeddingProviderCallOptions,
   EmbeddingProviderOptions,
+  LocalEmbeddingInspection,
 } from "./embeddings.types.js";
 import { normalizeOptionalString } from "./string-utils.js";
 
@@ -34,6 +35,11 @@ type LocalEmbeddingWorkerRequestPayload =
       texts: string[];
     }
   | {
+      type: "inspect";
+      options: EmbeddingProviderOptions;
+      texts: string[];
+    }
+  | {
       type: "close";
     };
 
@@ -44,7 +50,7 @@ type LocalEmbeddingWorkerResponse =
   | {
       id: number;
       ok: true;
-      value?: number[] | number[][];
+      value?: number[] | number[][] | LocalEmbeddingInspection;
     }
   | {
       id: number;
@@ -59,7 +65,7 @@ type LocalEmbeddingWorkerResponse =
 
 /** Pending parent request plus abort cleanup. */
 type PendingRequest = {
-  resolve: (value: number[] | number[][] | undefined) => void;
+  resolve: (value: number[] | number[][] | LocalEmbeddingInspection | undefined) => void;
   reject: (err: unknown) => void;
   abort?: () => void;
 };
@@ -195,6 +201,16 @@ class LocalEmbeddingWorkerClient {
     return Array.isArray(result) ? (result as number[][]) : [];
   }
 
+  async inspect(
+    options: EmbeddingProviderOptions,
+    texts: string[],
+    callOptions?: EmbeddingProviderCallOptions,
+  ): Promise<LocalEmbeddingInspection> {
+    const result = await this.send({ type: "inspect", options, texts }, callOptions);
+    if (!result || Array.isArray(result)) throw new Error("Local embedding inspection failed");
+    return result;
+  }
+
   /** Ask the child to close gracefully, then force shutdown after a short grace period. */
   async close(): Promise<void> {
     const child = this.child;
@@ -231,17 +247,17 @@ class LocalEmbeddingWorkerClient {
       serialization: "json",
       stdio: ["ignore", "ignore", "ignore", "ipc"],
     });
-    child.on("message", (message) => this.handleMessage(message));
+    child.on("message", (message) => {
+      if (this.child === child) this.handleMessage(message);
+    });
     child.on("exit", (code, signal) => {
-      if (this.child === child) {
-        this.child = null;
-      }
+      if (this.child !== child) return;
+      this.child = null;
       this.rejectPending(createWorkerExitError(code, signal));
     });
     child.on("error", (err) => {
-      if (this.child === child) {
-        this.child = null;
-      }
+      if (this.child !== child) return;
+      this.child = null;
       this.rejectPending(
         createLocalEmbeddingWorkerFailureError({
           message: `Local embedding worker process failed: ${err.message}`,
@@ -259,7 +275,7 @@ class LocalEmbeddingWorkerClient {
   private async send(
     request: LocalEmbeddingWorkerRequestPayload,
     options?: EmbeddingProviderCallOptions,
-  ): Promise<number[] | number[][] | undefined> {
+  ): Promise<number[] | number[][] | LocalEmbeddingInspection | undefined> {
     options?.signal?.throwIfAborted();
     const child = this.ensureChild();
     const id = this.nextRequestId++;
@@ -323,6 +339,9 @@ class LocalEmbeddingWorkerClient {
   private shutdownChild(): void {
     const child = this.child;
     this.child = null;
+    // Settle this child's requests now. Its late exit must not reject requests
+    // already admitted to a replacement child after cancellation.
+    this.rejectPending(new Error("Local embedding worker was closed"));
     if (!child) {
       return;
     }
@@ -372,6 +391,10 @@ export async function createLocalEmbeddingWorkerProvider(
   return {
     id: "local",
     model: modelPath,
+    inspect: async (texts, callOptions) => {
+      throwIfClosed();
+      return await client.inspect(workerOptions, texts, callOptions);
+    },
     embedQuery: async (text, callOptions) => {
       throwIfClosed();
       return await client.embedQuery(workerOptions, text, callOptions);

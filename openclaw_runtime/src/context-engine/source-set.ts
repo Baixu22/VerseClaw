@@ -960,9 +960,14 @@ export async function retrieveSourceSet(
       // A provider wait must not widen the stale-authorisation window for document bytes.
       await verify("embedding", provider.id);
       if (!accepted.length) throw new Error("no-admitted-sources");
-      const contentVectors = await provider.embedBatch(
-        accepted.map((candidate) => candidate.content),
-      );
+      const pins = accepted.map((candidate) => candidate.ref.sourceRef);
+      if (provider.embedSources && pins.some((pin) => !pin))
+        throw new Error("embedding-owner-pin-unavailable");
+      const contentVectors = provider.embedSources
+        ? await provider.embedSources(pins.filter((pin) => pin !== undefined))
+        : await provider.embedBatch(accepted.map((candidate) => candidate.content));
+      if (contentVectors.length !== accepted.length)
+        throw new Error("embedding-vector-count-mismatch");
       const similarities = accepted.map((candidate, index) => {
         const similarity = cosineSimilarity(queryVector, contentVectors[index] ?? []);
         return { refId: candidate.ref.refId, similarity };

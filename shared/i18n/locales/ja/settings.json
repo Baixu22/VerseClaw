@@ -1013,5 +1013,28 @@
       "dirty": "ローカルファイル・変更あり",
       "unavailable": "ディレクトリが利用不可"
     }
+  },
+  "embedding": {
+    "title": "プロジェクト検索の埋め込みモデル",
+    "description": "プロジェクト検索で使用するモデルサービスを選択します。",
+    "mode": "サービスの場所",
+    "local": "ローカルモデル",
+    "remote": "リモートサービス",
+    "provider": "設定済みプロバイダー",
+    "configure": "このサービスを使用",
+    "retry": "再試行 / 認証情報を更新",
+    "cancel": "キャンセル",
+    "disable": "無効にする",
+    "statusLabel": "状態",
+    "progress": "モデルのダウンロード進捗",
+    "failed": "埋め込みサービスを利用できません。",
+    "states": {
+      "disabled": "無効",
+      "installing": "モデルをインストール中",
+      "warming": "準備中",
+      "ready": "準備完了",
+      "unavailable": "利用不可",
+      "cancelled": "キャンセル済み"
+    }
   }
 }

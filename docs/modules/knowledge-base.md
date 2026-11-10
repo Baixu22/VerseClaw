@@ -250,15 +250,18 @@ Host API：
 中文词法复用 CJK bigram；续读每次 80 行，最多 800 行/96000 字符，选择问题最相关
 的窗口，保留实际行号和截断信息。每次续读必须绑定相同 owner 版本/新鲜度、状态和
 权限；缺少版本信息或显式摘要钉选时不继续。版本/权限变化拒绝整次读取，不拼接
-不一致快照。SourceSet 报告仍最多 20 个来源。embedding 缓存最多 256 个向量，按
-端点、模型、凭据和内容摘要隔离；不持久化、不缓存失败，版本改变内容时重新计算。
+不一致快照。SourceSet 报告仍最多 20 个来源。embedding 缓存每个会话最多 256 个向量，按
+workspace、credential generation、模型空间、输入类型与来源 pin 隔离。缓存前后均复核 owner 准入。
 
 语义检索：
 
-- 当前实现支持 SiliconFlow embedding provider；
+- 设置 > 模型与服务选择本地 EmbeddingGemma 768 维，或 registry 配置的远端 Qwen VL 4096 维服务；
+- 选择保存在 SQLite，提供安装、校验、warmup、取消、重试和禁用；远端默认 SiliconFlow `Qwen/Qwen3-VL-Embedding-8B`；
 - 只有显式请求且 provider 可用时才走 semantic lane；
 - 没有 provider 或调用失败时保留 lexical fallback；
 - semantic lane 状态必须显式返回，不能把 fallback 说成向量检索成功。
+
+输入格式、tokenizer、凭据及恢复约定见[embedding 生命周期](../dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md)。
 
 ## 8. OKF
 

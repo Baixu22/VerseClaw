@@ -12,6 +12,7 @@ import { hostApi } from '@/lib/host-api';
 import { trackUiEvent } from '@/lib/telemetry';
 import { cn } from '@/lib/utils';
 import { ProvidersSettings } from '@/components/settings/ProvidersSettings';
+import { KnowledgeEmbeddingSettings } from '@/components/settings/KnowledgeEmbeddingSettings';
 import { FeedbackState } from '@/components/common/FeedbackState';
 import { ProgressiveLoadingSurface } from '@/components/loading/StructuralLoadingOverlay';
 import { ModelsUsageLoadingSkeleton } from '@/components/loading/PageLoadingSkeletons';
@@ -297,6 +298,7 @@ export function Models({ embedded = false }: { embedded?: boolean } = {}) {
           
           {/* AI Providers Section */}
           <ProvidersSettings />
+          <KnowledgeEmbeddingSettings />
 
           {/* Token Usage History Section */}
           <div>

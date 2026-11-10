@@ -207,6 +207,7 @@ flowchart LR
 | `pnpm run typecheck` | Full node/web/test typecheck |
 | `pnpm run lint:check` | Lint без изменения файлов |
 | `pnpm test` | Root test groups и selected regressions |
+- В разделе «Настройки > Модели и провайдеры» можно выбрать локальную EmbeddingGemma или настроенный удалённый сервис Qwen VL для поиска по проекту, установить и проверить модель, отменить подготовку и обновить учётные данные. См. [жизненный цикл эмбеддингов](docs/dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md).
 | `pnpm run test:e2e` | Build и Electron Playwright |
 | `pnpm contract:check` / `pnpm i18n:lint` | Host contract и покрытие четырёх языков |
 | `pnpm run harness:ci` | Repository Harness baseline |

@@ -28,6 +28,7 @@ import { buildMemoryWikiDoctorReport, resolveMemoryWikiStatus } from "./status.j
 import { initializeMemoryWikiVault } from "./vault.js";
 import type { MemoryWikiReadIdentity } from "./owner-read.js";
 import type { MemoryWikiProjectionService } from "./retrieval-index.js";
+import type { MemoryWikiEmbeddingService } from "./retrieval-embeddings.js";
 
 const READ_SCOPE = "operator.read" as const;
 const WRITE_SCOPE = "operator.write" as const;
@@ -126,8 +127,79 @@ export function registerMemoryWikiGatewayMethods(params: {
   config: ResolvedMemoryWikiConfig;
   appConfig?: OpenClawConfig;
   projection?: MemoryWikiProjectionService;
+  embedding?: MemoryWikiEmbeddingService;
 }) {
   const { api, config, appConfig } = params;
+
+  if (params.embedding) {
+    const embedding = params.embedding;
+    for (const operation of [
+      "status",
+      "configure",
+      "retry",
+      "cancel",
+      "disable",
+      "embed",
+    ] as const) {
+      api.registerGatewayMethod(
+        `wiki.embedding.${operation}`,
+        async ({ params: request, respond, client }) => {
+          try {
+            const identity = readIdentity(request, client);
+            if (!identity)
+              throw new Error("Embedding operations require a backend-owned read identity");
+            let result: unknown;
+            if (operation === "configure") {
+              const mode = readEnumParam(request, "mode", ["local", "remote"] as const);
+              if (!mode) throw new Error("Embedding mode is required");
+              result = await embedding.configure(
+                {
+                  mode,
+                  providerRef: readStringParam(request, "providerRef"),
+                  model: readStringParam(request, "model"),
+                },
+                identity,
+              );
+            } else if (operation === "embed") {
+              if (
+                request.deadlineAt !== undefined &&
+                (typeof request.deadlineAt !== "number" || !Number.isFinite(request.deadlineAt))
+              ) {
+                throw new Error("Invalid embedding deadline");
+              }
+              const deadlineAt =
+                typeof request.deadlineAt === "number" ? request.deadlineAt : undefined;
+              const kind = readEnumParam(request, "kind", ["query", "document"] as const);
+              if (kind === "query") {
+                result = await embedding.embed(identity, {
+                  kind,
+                  text: readStringParam(request, "text", { required: true }),
+                  expectedSpaceId: readStringParam(request, "expectedSpaceId"),
+                  deadlineAt,
+                });
+              } else if (kind === "document" && Array.isArray(request.sources)) {
+                const sources = request.sources.map(normalizeSourceRefV2);
+                if (sources.some((source) => !source))
+                  throw new Error("Invalid embedding source pins");
+                result = await embedding.embed(identity, {
+                  kind,
+                  sources: sources.filter((source) => source !== undefined),
+                  expectedSpaceId: readStringParam(request, "expectedSpaceId"),
+                  deadlineAt,
+                });
+              } else throw new Error("Embedding inputs are required");
+            } else {
+              result = await embedding[operation](identity);
+            }
+            respond(true, result);
+          } catch (error) {
+            respondError(respond, error);
+          }
+        },
+        { scope: operation === "status" ? READ_SCOPE : WRITE_SCOPE },
+      );
+    }
+  }
 
   if (params.projection) {
     const projection = params.projection;

@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
+import { createOwnerReadSnapshot, deriveReadAdmissionContext, digestOwnerReadContent } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -1629,6 +1630,7 @@ describe('knowledge host API', () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
         if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+        if (method === 'wiki.embedding.status') return { mode: 'remote', status: 'ready', providerRef: 'agent-fixture-provider', dimensions: 2, spaceId: 'agent-fixture-space' };
         if (method === 'wiki.get') return {
           corpus: 'wiki', path: 'notes/archived.md', title: 'Archived decision',
           content: 'ARCHIVED_BODY_MUST_NOT_ENTER_ANSWER', status: 'archived', revision: 19,
@@ -1648,6 +1650,7 @@ describe('knowledge host API', () => {
     expect(answer.answer).not.toContain('ARCHIVED_BODY_MUST_NOT_ENTER_ANSWER');
     expect(answer.rejections).toEqual([expect.objectContaining({ reason: 'archived', subjectId: 'notes/archived.md' })]);
     expect(answer.confidence).toBeUndefined();
+    expect(gatewayManager.rpc.mock.calls.some(call => call[0] === 'wiki.embedding.embed')).toBe(false);
   });
 
   it('retains explicit Source Set version pins and rejects a changed owner revision', async () => {
@@ -1836,67 +1839,95 @@ describe('knowledge host API', () => {
     expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
   });
 
-  it('uses the real semantic lane for opt-in SourceSet answers while preserving fallback inputs', async () => {
+  it.each([false, true])('uses the selected semantic service with owner pins and one shared deadline (query expires=%s)', async (queryExpires) => {
+    let clock = Date.now();
+    const now = vi.spyOn(Date, 'now').mockImplementation(() => clock);
+    vi.stubEnv('KNOWLEDGE_EMBEDDING_DEADLINE_MS', '1000');
+    try {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
         if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+        if (method === 'wiki.embedding.status') return { mode: 'remote', status: 'ready', providerRef: 'agent-fixture-provider', dimensions: 2, spaceId: 'agent-fixture-space' };
+        if (method === 'wiki.embedding.embed') {
+          if (params.kind === 'query') { clock += queryExpires ? 1001 : 100; return { vectors: [[1, 0]] }; }
+          return { vectors: (params.sources as Array<{ subjectId: string }>).map(pin => pin.subjectId.includes('procedure') ? [0, 1] : [1, 0]) };
+        }
         if (method === 'wiki.get') {
-          return {
-            lookup: params.lookup,
-            title: params.lookup === 'notes/decision.md' ? 'Decision note' : 'Procedure note',
-            pagePath: params.lookup,
-            body: params.lookup === 'notes/decision.md'
-              ? 'Use source-backed drafts before durable Knowledge writes.'
-              : 'Review generated artifacts before applying them.',
-          };
+          const identity = params.readIdentity as { workspaceId: string; sessionId: string; agentSessionKey: string; egressProviderRefs: string[] };
+          const context = deriveReadAdmissionContext({ principalId: 'operator', sessionId: identity.sessionId,
+            sessionKey: identity.agentSessionKey, workspaceId: identity.workspaceId, ownerNamespaces: ['agent-fixture-wiki'],
+            policyDigest: digestOwnerReadContent('agent-fixture-policy'), egressProviderRefs: identity.egressProviderRefs,
+            expiresAt: new Date(Date.now() + 30_000).toISOString() });
+          const body = params.lookup === 'notes/decision.md'
+            ? 'Use source-backed drafts before durable Knowledge writes.'
+            : 'Review generated artifacts before applying them.';
+          const title = params.lookup === 'notes/decision.md' ? 'Decision note' : 'Procedure note';
+          const snapshot = createOwnerReadSnapshot({ raw: body, startChar: 0, endChar: body.length, title, context,
+            source: { domain: 'wiki', authorityId: 'memory-wiki', namespaceId: 'agent-fixture-wiki', subjectId: String(params.lookup), revision: '1' },
+            policy: { status: 'active', trust: 'confirmed', sensitivity: 'workspace', acl: { read: ['operator'] }, retention: { policy: 'source-coupled' } } });
+          return { lookup: params.lookup, title, pagePath: params.lookup, body, ownerSnapshot: snapshot };
         }
         if (method === 'wiki.apply') throw new Error('wiki.apply must not be called');
-        throw new Error(`unexpected rpc ${method}`);
+        throw new Error('unexpected rpc ' + method);
       }),
     };
-    const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
-      const body = JSON.parse(String(init?.body ?? '{}')) as { input: string[] };
-      const data = body.input.map((text, index) => ({
-        index,
-        embedding: body.input.length === 1
-          ? [1, 0]
-          : (text.includes('Review generated artifacts') ? [0, 1] : [1, 0]),
-      }));
-      return new Response(JSON.stringify({ data }), { status: 200 });
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    const answer = await api.answerFromSourceSet({
+      question: 'Why keep review before durable writes?', semantic: true,
+      sourceRefs: [
+        { id: 'notes/procedure.md', kind: 'wiki', path: 'notes/procedure.md', label: 'Procedure note' },
+        { id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision note' },
+      ],
     });
-    vi.stubGlobal('fetch', fetchMock);
-    vi.stubEnv('SILICONFLOW_API_KEY', 'test-key');
-    try {
-      const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
-      const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
-      const answer = await api.answerFromSourceSet({
-        question: 'Why keep review before durable writes?',
-        semantic: true,
-        sourceRefs: [
-          { id: 'notes/procedure.md', kind: 'wiki', path: 'notes/procedure.md', label: 'Procedure note' },
-          { id: 'notes/decision.md', kind: 'wiki', path: 'notes/decision.md', label: 'Decision note' },
-        ],
-      });
-
-      expect(answer.success).toBe(true);
-      expect(answer.semanticRequested).toBe(true);
-      expect(answer.semanticLane).toMatchObject({
-        status: 'available',
-        providerId: expect.stringContaining('siliconflow:Qwen/Qwen3-Embedding-8B:'),
-      });
-      expect(answer.retrievalDiagnostics.backend).toBe('semantic');
-      expect(answer.sources.map((source) => source.lookup)).toEqual([
-        'notes/decision.md',
-        'notes/procedure.md',
-      ]);
-      expect(fetchMock).toHaveBeenCalledTimes(2);
-      const batchBody = JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit | undefined)?.body)) as { input: string[] };
-      expect(batchBody.input).toHaveLength(2);
-      expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
-    } finally {
-      vi.unstubAllGlobals();
-      vi.unstubAllEnvs();
+    expect(answer.success).toBe(true);
+    expect(answer.semanticRequested).toBe(true);
+    if (queryExpires) {
+      expect(answer.semanticLane).toMatchObject({ status: 'error', reason: expect.stringContaining('total deadline') });
+      expect(gatewayManager.rpc.mock.calls.filter(call => call[0] === 'wiki.embedding.embed')).toHaveLength(1);
+      return;
     }
+    expect(answer.semanticLane, JSON.stringify(answer)).toMatchObject({ status: 'available', providerId: 'agent-fixture-provider' });
+    expect(answer.retrievalDiagnostics.backend).toBe('semantic');
+    expect(answer.sources.map(source => source.lookup)).toEqual(['notes/decision.md', 'notes/procedure.md']);
+    const calls = gatewayManager.rpc.mock.calls.filter(call => call[0] === 'wiki.embedding.embed');
+    expect(calls).toHaveLength(2);
+    expect(calls[0][1]).toMatchObject({ kind: 'query', expectedSpaceId: 'agent-fixture-space' });
+    expect(calls[1][1]).toMatchObject({ kind: 'document', expectedSpaceId: 'agent-fixture-space' });
+    expect((calls[1][1].sources as unknown[])).toHaveLength(2);
+    expect(calls[1][1]).not.toHaveProperty('texts');
+    expect(calls[0][1].deadlineAt).toBe(calls[1][1].deadlineAt);
+    expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
+    } finally { now.mockRestore(); vi.unstubAllEnvs(); }
+  });
+
+  it('normalizes provider whitespace before deriving owner egress and sending configure', async () => {
+    const gatewayManager = { rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+      if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+      if (method === 'wiki.embedding.configure') return { mode: params.mode, status: 'installing', credentialEpoch: 1 };
+      throw new Error(`unexpected rpc ${method}`);
+    }) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    await expect(api.embeddingConfigure({ mode: 'remote', providerRef: ' siliconflow ' })).resolves.toMatchObject({ success: true });
+    const call = gatewayManager.rpc.mock.calls.find(row => row[0] === 'wiki.embedding.configure')!;
+    expect(call[1]).toMatchObject({ providerRef: 'siliconflow', readIdentity: { egressProviderRefs: ['siliconflow'] } });
+  });
+
+  it('keeps admitted lexical evidence available when the embedding status service fails', async () => {
+    const gatewayManager = { rpc: vi.fn(async (method: string) => {
+      if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+      if (method === 'wiki.embedding.status') throw new Error('embedding service unavailable');
+      if (method === 'wiki.get') return { corpus: 'wiki', path: 'notes/decision.md', title: 'Decision', content: 'Review source-backed drafts before durable writes.', status: 'active', revision: 1 };
+      throw new Error(`unexpected rpc ${method}`);
+    }) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    const result = await api.answerFromSourceSet({ question: 'Review before durable writes', semantic: true,
+      sourceRefs: [{ id: 'notes/decision.md', path: 'notes/decision.md', kind: 'wiki' }] });
+    expect(result.sources).toHaveLength(1);
+    expect(result.semanticLane?.status).toBe('unavailable');
+    expect(gatewayManager.rpc.mock.calls.some(call => call[0] === 'wiki.embedding.embed')).toBe(false);
   });
 
   it('creates reviewable studio artifact drafts from selected source sets', async () => {

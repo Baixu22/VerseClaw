@@ -2,7 +2,11 @@
 export { getMemoryWikiPage } from "./src/query.js";
 export { ingestMemoryWikiSource } from "./src/ingest.js";
 export { createMemoryWikiProjectionService } from "./src/retrieval-index.js";
-export { readMemoryWikiRetrievalChunks, readMemoryWikiChunkCitation } from "./src/retrieval-document.js";
+export { createMemoryWikiEmbeddingService } from "./src/retrieval-embeddings.js";
+export {
+  readMemoryWikiRetrievalChunks,
+  readMemoryWikiChunkCitation,
+} from "./src/retrieval-document.js";
 export { resolveMemoryWikiConfig, type MemoryWikiPluginConfig } from "./src/config.js";
 export {
   createMemoryWikiReadContext,

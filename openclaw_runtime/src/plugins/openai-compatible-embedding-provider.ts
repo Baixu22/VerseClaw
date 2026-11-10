@@ -30,6 +30,7 @@ export type OpenAICompatibleEmbeddingClient = {
 
 type OpenAICompatibleEmbeddingResponse = {
   data?: unknown;
+  model?: unknown;
 };
 
 type ConfiguredEmbeddingProvider = {
@@ -253,8 +254,12 @@ function malformedEmbeddingResponse(): Error {
   return new Error("openai-compatible embeddings failed: malformed JSON response");
 }
 
-function readEmbeddingVector(value: unknown): number[] {
-  if (!Array.isArray(value)) {
+function readEmbeddingVector(value: unknown, dimensions?: number): number[] {
+  if (
+    !Array.isArray(value) ||
+    value.length === 0 ||
+    (dimensions !== undefined && value.length !== dimensions)
+  ) {
     throw malformedEmbeddingResponse();
   }
   for (const entry of value) {
@@ -268,17 +273,38 @@ function readEmbeddingVector(value: unknown): number[] {
 function readEmbeddingVectors(
   payload: OpenAICompatibleEmbeddingResponse,
   expectedCount: number,
+  expectedDimensions?: number,
 ): number[][] {
   if (!Array.isArray(payload.data) || payload.data.length !== expectedCount) {
     throw malformedEmbeddingResponse();
   }
-  return payload.data.map((entry) => {
+  const rows = payload.data.map((entry) => {
     const record = asRecord(entry);
     if (!record) {
       throw malformedEmbeddingResponse();
     }
-    return readEmbeddingVector(record.embedding);
+    return record;
   });
+  // A service may omit every index. Once it supplies indices, each input must be
+  // represented exactly once; response ordering cannot silently relabel documents.
+  if (rows.some((row) => row.index !== undefined)) {
+    const seen = new Set<number>();
+    for (const row of rows) {
+      if (
+        typeof row.index !== "number" ||
+        !Number.isInteger(row.index) ||
+        row.index < 0 ||
+        row.index >= expectedCount ||
+        seen.has(row.index)
+      ) {
+        throw malformedEmbeddingResponse();
+      }
+      seen.add(row.index);
+    }
+    rows.sort((left, right) => Number(left.index) - Number(right.index));
+  }
+  const dimensions = expectedDimensions ?? readEmbeddingVector(rows[0]?.embedding).length;
+  return rows.map((row) => readEmbeddingVector(row.embedding, dimensions));
 }
 
 async function readJsonResponse(response: Response): Promise<unknown> {
@@ -316,14 +342,13 @@ async function postEmbeddingRequest(params: {
   });
   try {
     if (!response.ok) {
-      throw new Error(
-        `openai-compatible embeddings failed: HTTP ${response.status}: ${await response.text()}`,
-      );
+      throw new Error(`openai-compatible embeddings failed: HTTP ${response.status}`);
     }
-    return readEmbeddingVectors(
-      (await readJsonResponse(response)) as OpenAICompatibleEmbeddingResponse,
-      input.length,
-    );
+    const payload = (await readJsonResponse(response)) as OpenAICompatibleEmbeddingResponse;
+    if (payload.model !== undefined && payload.model !== client.model) {
+      throw new Error("openai-compatible embeddings failed: response model mismatch");
+    }
+    return readEmbeddingVectors(payload, input.length, client.dimensions);
   } finally {
     await release();
   }

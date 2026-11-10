@@ -1013,5 +1013,28 @@
       "dirty": "Contains local files or changes",
       "unavailable": "Directory unavailable"
     }
+  },
+  "embedding": {
+    "title": "Project search embeddings",
+    "description": "Choose the model service used for project search.",
+    "mode": "Service location",
+    "local": "Local model",
+    "remote": "Remote service",
+    "provider": "Configured provider",
+    "configure": "Use this service",
+    "retry": "Retry / refresh credentials",
+    "cancel": "Cancel",
+    "disable": "Disable",
+    "statusLabel": "Status",
+    "progress": "Model download progress",
+    "failed": "Embedding service is unavailable.",
+    "states": {
+      "disabled": "Disabled",
+      "installing": "Installing model",
+      "warming": "Warming up",
+      "ready": "Ready",
+      "unavailable": "Unavailable",
+      "cancelled": "Cancelled"
+    }
   }
 }

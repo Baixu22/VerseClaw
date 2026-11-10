@@ -10,6 +10,9 @@ export {
   createRemoteEmbeddingProvider,
   debugEmbeddingsLog,
   DEFAULT_LOCAL_MODEL,
+  DEFAULT_LOCAL_EMBEDDING_ARTIFACT,
+  installLocalEmbeddingModel,
+  verifyLocalEmbeddingModel,
   EMBEDDING_BATCH_ENDPOINT,
   enforceEmbeddingMaxInputTokens,
   estimateStructuredEmbeddingInputBytes,
@@ -52,6 +55,7 @@ export type {
   ProviderBatchOutputLine,
   RemoteEmbeddingClient,
   RemoteEmbeddingProviderId,
+  LocalEmbeddingModelArtifact,
 } from "../../packages/memory-host-sdk/src/engine-embeddings.js";
 export {
   getMemoryEmbeddingProvider,

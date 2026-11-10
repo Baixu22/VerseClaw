@@ -10,6 +10,7 @@ import {
 } from "./src/import-runs-state.js";
 import { createWikiPromptSectionBuilder } from "./src/prompt-section.js";
 import { createMemoryWikiProjectionService } from "./src/retrieval-index.js";
+import { createMemoryWikiEmbeddingService } from "./src/retrieval-embeddings.js";
 import {
   configureMemoryWikiSourceSyncStateStore,
   createMemoryWikiSourceSyncStateStore,
@@ -51,7 +52,17 @@ export default definePluginEntry({
       start: () => projection.start(),
       stop: () => projection.stop(),
     });
-    registerMemoryWikiGatewayMethods({ api, config, appConfig: api.config, projection });
+    const embedding = createMemoryWikiEmbeddingService({
+      config,
+      appConfig: api.config,
+      openKeyedStore: api.runtime.state.openKeyedStore,
+    });
+    api.registerService({
+      id: "wiki-retrieval-embedding",
+      start: () => embedding.start(),
+      stop: () => embedding.stop(),
+    });
+    registerMemoryWikiGatewayMethods({ api, config, appConfig: api.config, projection, embedding });
     api.registerTool(createWikiStatusTool(config, api.config), { name: "wiki_status" });
     api.registerTool(createWikiLintTool(config, api.config), { name: "wiki_lint" });
     if (config.tools.allowAgentApply) {

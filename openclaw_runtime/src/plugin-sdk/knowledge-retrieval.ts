@@ -2,6 +2,16 @@
 export { normalizeKnowledgeSourceDocument } from "../knowledge/retrieval/source-document.js";
 export { chunkKnowledgeDocument } from "../knowledge/retrieval/chunker.js";
 export {
+  KnowledgeEmbeddingSession,
+  type EmbeddingJobV1,
+} from "../knowledge/retrieval/embedding-session.js";
+export {
+  createEmbeddingSpace,
+  assertSameEmbeddingSpace,
+  type EmbeddingSpaceV1,
+  type ProviderCapabilitySnapshotV1,
+} from "../knowledge/retrieval/embedding-space.js";
+export {
   KnowledgeProjectionController,
   type ProjectionOwnerAdapter,
 } from "../knowledge/retrieval/index-controller.js";

@@ -9,8 +9,10 @@ import { knowledgeWatchedDirectoriesApi } from './watched-directories';
 import { knowledgeProvenanceApi } from './provenance';
 import { knowledgeRoutingApi } from './routing';
 import { knowledgeConnectorsApi } from './connectors';
+import { knowledgeEmbeddingApi } from './embedding';
 
 export const knowledgeHostApi = {
+  ...knowledgeEmbeddingApi,
   ...knowledgeConnectorsApi,
   ...knowledgeLibraryApi,
   ...knowledgeRoutingApi,

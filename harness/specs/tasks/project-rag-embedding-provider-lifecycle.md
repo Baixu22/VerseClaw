@@ -1,17 +1,36 @@
 ---
 lifecycleStatus: active
-implementationStatus: planned
+implementationStatus: implemented
 id: project-rag-embedding-provider-lifecycle
 title: 接通本地与远端 embedding 的完整生命周期
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-05
 intent: 使语义召回可离线工作，并能安全切换获授权的模型服务。
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: e58bc2b8cb0266e4b904d32fcf5f7e451e253f4b
 touchedAreas:
+  - "AGENTS.md"
   - "openclaw_runtime/src/plugin-sdk/embedding-providers.ts"
+  - "openclaw_runtime/src/plugin-sdk/knowledge-retrieval.ts"
+  - "openclaw_runtime/src/plugin-sdk/memory-core-host-engine-embeddings.ts"
+  - "openclaw_runtime/src/plugins/*embedding*.ts"
+  - "openclaw_runtime/packages/memory-host-sdk/**"
   - "openclaw_runtime/src/embeddings/**"
+  - "openclaw_runtime/src/runtime-core/memory-embedding-provider.ts"
+  - "openclaw_runtime/src/context-engine/source-set.ts"
+  - "openclaw_runtime/src/context-engine/source-set.test.ts"
   - "openclaw_runtime/extensions/memory-core/runtime-api.ts"
+  - "openclaw_runtime/extensions/memory-wiki/**"
+  - "openclaw_runtime/pnpm-lock.yaml"
+  - "electron/services/knowledge-api.ts"
+  - "electron/services/gateway-api.ts"
+  - "electron/services/workspace-permissions.ts"
+  - "shared/knowledge/embedding.ts"
+  - "shared/host-api/contract.ts"
+  - "src/lib/host-api/knowledge/**"
+  - "src/components/settings/KnowledgeEmbeddingSettings.tsx"
+  - "src/pages/Models/index.tsx"
+  - "shared/i18n/locales/*/settings.json"
   - "openclaw_runtime/src/knowledge/retrieval/**"
   - "electron/services/knowledge-embedding-provider.ts"
   - "shared/dcs/prod-flags-catalog.ts"
@@ -29,8 +48,12 @@ touchedAreas:
   - "harness/specs/rules/project-rag-long-term-boundary.md"
   - ".gitignore"
   - "scripts/repository-artifacts.json"
+  - "scripts/contract-check.mjs"
   - "README*.md"
   - "tests/unit/knowledge-retrieval.test.ts"
+  - "tests/unit/knowledge-api.test.ts"
+  - "tests/unit/knowledge-source-set-answer.test.ts"
+  - "tests/unit/knowledge-embedding-deadline.test.ts"
   - "tests/unit/project-rag-embedding-lifecycle.test.ts"
   - "tests/e2e/project-rag-provider-settings.spec.ts"
 requiredProfiles:
@@ -42,7 +65,12 @@ requiredRules:
   - "knowledge-source-set-read-admission"
   - "project-rag-long-term-boundary"
 requiredTests:
+  - "openclaw_runtime/src/context-engine/source-set.test.ts"
   - "tests/unit/knowledge-retrieval.test.ts"
+  - "tests/unit/knowledge-api.test.ts"
+  - "tests/unit/knowledge-source-set-answer.test.ts"
+  - "tests/unit/project-rag-embedding-lifecycle.test.ts"
+  - "tests/e2e/project-rag-provider-settings.spec.ts"
 plannedTests:
   - "tests/unit/project-rag-embedding-lifecycle.test.ts"
 plannedE2E:
@@ -57,10 +85,11 @@ acceptance:
   - "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
 docs:
   required: true
-  readmeTranslations: not-required
+  readmeTranslations: required
   files:
     - docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md
     - docs/dev/project-rag/WORK-PACKAGES.md
+    - docs/dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md
 ---
 
 # 接通本地与远端 embedding 的完整生命周期

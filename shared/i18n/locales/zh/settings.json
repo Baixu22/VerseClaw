@@ -1013,5 +1013,28 @@
       "dirty": "包含本地文件或修改",
       "unavailable": "目录不可用"
     }
+  },
+  "embedding": {
+    "title": "项目检索向量模型",
+    "description": "选择项目检索使用的模型服务。",
+    "mode": "服务位置",
+    "local": "本地模型",
+    "remote": "远端服务",
+    "provider": "已配置的服务",
+    "configure": "使用此服务",
+    "retry": "重试 / 刷新凭据",
+    "cancel": "取消",
+    "disable": "禁用",
+    "statusLabel": "状态",
+    "progress": "模型下载进度",
+    "failed": "向量模型服务不可用。",
+    "states": {
+      "disabled": "已禁用",
+      "installing": "安装模型中",
+      "warming": "预热中",
+      "ready": "已就绪",
+      "unavailable": "不可用",
+      "cancelled": "已取消"
+    }
   }
 }

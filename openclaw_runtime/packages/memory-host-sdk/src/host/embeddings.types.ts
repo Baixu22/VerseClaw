@@ -13,6 +13,19 @@ export type EmbeddingProvider = {
     options?: EmbeddingProviderCallOptions,
   ) => Promise<number[][]>;
   close?: () => Promise<void> | void;
+  inspect?: (
+    texts: string[],
+    options?: EmbeddingProviderCallOptions,
+  ) => Promise<LocalEmbeddingInspection>;
+};
+
+export type LocalEmbeddingInspection = {
+  dimensions: number;
+  maxInputTokens: number;
+  modelDigest: string;
+  tokenizerId: string;
+  tokenizerDigest: string;
+  tokenCounts: number[];
 };
 
 export type EmbeddingProviderCallOptions = {

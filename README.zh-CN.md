@@ -207,6 +207,7 @@ flowchart LR
 - Project RAG 提供显式启用、绑定 workspace 的索引生命周期 API，支持 SQLite 发布、后台 worker 和 owner 引用复核，见[索引生命周期合同](docs/dev/project-rag/INDEX-LIFECYCLE-CONTRACT.md)。
 - Librarian 问答与有界追问通过已配置 Gateway 模型处理准入后的证据，核验逐项原文引用与版本；部分读取、冲突和模型失败明确披露。Studio 继续生成待审摘录草稿。
 - 中文词法、长文有界续读、按 provider 隔离的 embedding 缓存和版本绑定的 Steward 发现共用来源准入。可选公共 GitHub 目录连接器将更新与撤销送入 Inbox；其他 SaaS 连接器尚未实现。
+- 设置 > 模型与服务可为项目检索选择本地 EmbeddingGemma 或配置的远端 Qwen VL，提供安装、校验、预热、取消和凭据刷新。参见 [embedding 生命周期](docs/dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md)。
 - 日志、trace、截图、Task Forest 与 handoff 默认是本地工作数据，除非明确整理为 curated evidence。
 
 本地存储不等于离线执行。在线模型、渠道、浏览器和外部工具会按配置接收数据。不要把凭据、私人 transcript、原始日志提交到仓库或公开 issue。

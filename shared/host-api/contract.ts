@@ -1,4 +1,5 @@
 import type { RawMessage } from '../chat/types';
+import type { KnowledgeEmbeddingSelection, KnowledgeEmbeddingStatusResult } from '../knowledge/embedding';
 import type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
 export type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
 import type { SessionHandoffOperation } from '../types/session-handoff';
@@ -6242,6 +6243,11 @@ export type HostApiContract = {
     validateArtifact: (payload: WorkProviderValidateArtifactPayload) => WorkProviderValidateArtifactResult;
   };
   knowledge: {
+    embeddingStatus: () => KnowledgeEmbeddingStatusResult;
+    embeddingConfigure: (payload: KnowledgeEmbeddingSelection) => KnowledgeEmbeddingStatusResult;
+    embeddingCancel: () => KnowledgeEmbeddingStatusResult;
+    embeddingDisable: () => KnowledgeEmbeddingStatusResult;
+    embeddingRetry: () => KnowledgeEmbeddingStatusResult;
     status: () => KnowledgeStatusResult;
     init: () => KnowledgeInitResult;
     configure: (payload?: KnowledgeConfigurePayload) => HostSuccess;
