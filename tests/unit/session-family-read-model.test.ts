@@ -99,6 +99,31 @@ describe('scoped task container', () => {
   it('reads linked business tasks and keeps their recorded status', () => {
     expect(readSessionTaskContainer({ workspaceId: 'workspace-a', session, read: read() })).toMatchObject({ status: 'ready', nodes: [{ id: 'task', status: 'done' }] });
   });
+  it('does not infer task ownership or kind from matching titles or IDs', () => {
+    const misleadingSession: ChatSession = {
+      ...session, key: 'agent:main:task:worker', label: 'Coordinator task',
+      derivedTitle: 'Coordinator task',
+    };
+    const owner = snapshot();
+    const linkedTask = { ...owner.nodes[0], id: 'opaque-node', title: 'Unrelated label' };
+    owner.nodes = [
+      { ...owner.nodes[0], id: misleadingSession.key, title: misleadingSession.label! },
+      linkedTask,
+      { ...owner.nodes[0], id: 'task:coordinator', title: 'Coordinator task', kind: 'check' },
+    ];
+    owner.sessionLinks = [];
+    const readOwner = () => readSessionTaskContainer({
+      workspaceId: 'workspace-a', session: misleadingSession,
+      read: read({ sessionKey: misleadingSession.key, snapshot: owner }),
+    });
+    expect(readOwner()).toEqual({ status: 'empty', nodes: [] });
+
+    owner.sessionLinks = [linkedTask.id, 'task:coordinator'].map((nodeId) => ({
+      ...snapshot().sessionLinks[0], id: 'link-' + nodeId,
+      sessionKey: misleadingSession.key, nodeId,
+    }));
+    expect(readOwner()).toEqual({ status: 'ready', nodes: [linkedTask] });
+  });
   it('distinguishes a discussion container from owner failure', () => {
     const empty = snapshot(); empty.sessionLinks = [];
     expect(readSessionTaskContainer({ workspaceId: 'workspace-a', session, read: read({ snapshot: empty }) }).status).toBe('empty');

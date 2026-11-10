@@ -26,6 +26,7 @@ ownedPaths: &paths
   - tests/unit/git-api.test.ts
   - tests/unit/ui-worktree-cleanup-conservative.test.ts
   - tests/unit/session-storage-api.test.ts
+  - tests/unit/session-family-read-model.test.ts
   - tests/unit/worktree-reclamation-preservation.test.ts
   - tests/unit/checkout-writer-ownership.test.ts
   - tests/unit/execution-migration.test.ts
@@ -74,6 +75,7 @@ acceptance:
 requiredTests:
   - pnpm exec vitest run tests/unit/task-artifact-retention.test.ts tests/unit/task-worktree-retention.test.ts tests/unit/checkout-writer-ownership.test.ts tests/unit/execution-domain-registry.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec vitest run tests/unit/ui-worktree-cleanup-conservative.test.ts tests/unit/worktree-reclamation-preservation.test.ts --maxWorkers=1 --no-file-parallelism
+  - pnpm exec vitest run tests/unit/session-family-read-model.test.ts tests/unit/session-activity-panel-sections.test.tsx tests/unit/session-task-scope-completion.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm run typecheck
   - pnpm run typecheck:test
   - pnpm run contract:check
