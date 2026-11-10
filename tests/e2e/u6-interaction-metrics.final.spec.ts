@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { realpathSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { ElectronApplication, Page } from '@playwright/test';
@@ -19,6 +20,14 @@ type BuildManifest = { schema_version: 1; driven_by: 'agent'; side: 'baseline' |
 class Unsupported extends Error {}
 const sha = (value: string | Buffer) => createHash('sha256').update(value).digest('hex');
 const requiredEnv = (name: string): string => { const value = process.env[name]?.trim(); if (!value) throw new Error('缺少必需环境变量 ' + name); return value; };
+const fileIdentity = (pathname: string) => {
+  const actual = realpathSync.native(pathname);
+  const canonical = actual.replace(/^\\\\\?\\UNC\\/u, '\\\\').replace(/^\\\\\?\\/u, '').replace(/\\/g, '/');
+  return { old: pathname, actual, canonical: process.platform === 'win32' ? canonical.toLowerCase() : canonical };
+};
+const sameFile = (left: string, right: string): boolean => {
+  try { return fileIdentity(left).canonical === fileIdentity(right).canonical; } catch { return false; }
+};
 const readBuildManifest = async (side: 'baseline' | 'candidate', head: string) => {
   const input = requiredEnv('CLAWX_U6_BUILD_MANIFEST');
   const raw = await readFile(input);
@@ -65,11 +74,11 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
   const events: Entry[] = [], seen = new Map<string, string>();
   const unsupportedProof = JSON.parse(process.env.CLAWX_U6_UNSUPPORTED_PROOF ?? '{}') as Record<string, string>;
   let operation = `${journey}:goal-v1`, lastAction = '', recording = false;
-  let status: 'passed' | 'failed' | 'unsupported', reason: string | null = null;
+  let status: 'running' | 'passed' | 'failed' | 'unsupported' = 'running', reason: string | null = null;
   let cleanupFailure: Error | undefined;
   const evidence: Record<string, unknown> = { schema_version: 2, driven_by: 'agent', actor: 'playwright-u6',
     requestmodel: 'ccs-workbuddy/deepseek-v4.1-flash', requested_route: 'ccs-workbuddy/deepseek-v4.1-flash',
-    author_backend: null, provider: 'local-scripted', side, journey, source_head: head, homeDir, profileDir: userDataDir,
+    author_backend: null, provider: 'local-scripted', side, journey, status, source_head: head, homeDir, profileDir: userDataDir,
     fixture: { id: 'u6-goal-v1', objective, target: 'artifact.txt', content_sha256: sha(content), locale: 'en', viewport: '1280x800' }, unsupportedProof,
     task_control_call_id: taskControlCallId,
     setup: [], owner: {}, fault: null, events, tracked_product_and_helper_diff_empty: inputChanges.length === 0 };
@@ -141,6 +150,43 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
     if (child) {
       await rpc('chat.inject', { sessionKey: child, message: `Recorded objective: ${objective}`, label: 'agent fixture' });
       await hostInvoke(app, 'taskLedger', 'linkSession', { workspaceId: project.workspaceId, sessionKey: child, nodeId: task!.contract.taskNodeId });
+      await hostInvoke(app, 'workspaces', 'switch', { id: project.workspaceId });
+      await hostInvoke(app, 'workspaces', 'update', { id: project.workspaceId, agentId: 'main', activeSessionKey: child, sessionKey: child });
+      const childBinding = await hostInvoke<{ success: boolean; binding: { activeTaskNodeId?: string; sessionKey: string; sessionGeneration: string } }>(app,
+        'workspaces', 'bindCoordinator', { workspaceId: project.workspaceId, sessionKey: child, agentId: 'main', expectedRevision: 0,
+          taskLedgerNodeIds: [task!.contract.taskNodeId], environment: { kind: 'local', rootPath: sourceRoot }, archiveRestorePolicy: 'restore' });
+      expect(childBinding).toMatchObject({ success: true, binding: { activeTaskNodeId: task!.contract.taskNodeId, sessionKey: child } });
+      const childGeneration = await rpc<{ session: { sessionId: string } }>('sessions.describe', { key: child });
+      expect(childBinding.binding.sessionGeneration).toBe(childGeneration.session.sessionId);
+      const childClaim = await hostInvoke<{ result: { claim: { taskNodeId: string; sessionKey: string; generation: string } } }>(app,
+        'taskLedger', 'command', { workspaceId: project.workspaceId, command: { action: 'claim', taskNodeId: task!.contract.taskNodeId,
+          sessionKey: child, requestId: 'u6-continue-claim' } });
+      expect(childClaim.result.claim).toMatchObject({ taskNodeId: task!.contract.taskNodeId, sessionKey: child,
+        generation: childGeneration.session.sessionId });
+      const childOwner = await hostInvoke<{ task: { contract: { taskNodeId: string }; claim?: { sessionKey: string; generation: string } } | null }>(app,
+        'taskLedger', 'sessionTask', { workspaceId: project.workspaceId, sessionKey: child });
+      expect(childOwner.task).toMatchObject({ contract: { taskNodeId: task!.contract.taskNodeId },
+        claim: { sessionKey: child, generation: childGeneration.session.sessionId } });
+      evidence.persistent_task_owner = { binding: childBinding, sessionTask: childOwner };
+      await hostInvoke(app, 'workspaces', 'update', { id: project.workspaceId, agentId: 'main',
+        activeSessionKey: project.sessionKey, sessionKey: project.sessionKey });
+    }
+    if (journey === 'crash-recovery') {
+      const projectBinding = await hostInvoke<{ success: boolean; binding: { activeTaskNodeId?: string; sessionKey: string; sessionGeneration: string } }>(app,
+        'workspaces', 'bindCoordinator', { workspaceId: project.workspaceId, sessionKey: project.sessionKey, agentId: 'main', expectedRevision: 0,
+          taskLedgerNodeIds: [task!.contract.taskNodeId], environment: { kind: 'local', rootPath: sourceRoot }, archiveRestorePolicy: 'restore' });
+      expect(projectBinding).toMatchObject({ success: true, binding: { activeTaskNodeId: task!.contract.taskNodeId,
+        sessionKey: project.sessionKey, sessionGeneration: project.generation } });
+      const projectClaim = await hostInvoke<{ result: { claim: { taskNodeId: string; sessionKey: string; generation: string } } }>(app,
+        'taskLedger', 'command', { workspaceId: project.workspaceId, command: { action: 'claim', taskNodeId: task!.contract.taskNodeId,
+          sessionKey: project.sessionKey, requestId: 'u6-crash-claim' } });
+      expect(projectClaim.result.claim).toMatchObject({ taskNodeId: task!.contract.taskNodeId, sessionKey: project.sessionKey,
+        generation: project.generation });
+      const projectOwner = await hostInvoke<{ task: { contract: { taskNodeId: string }; claim?: { sessionKey: string; generation: string } } | null }>(app,
+        'taskLedger', 'sessionTask', { workspaceId: project.workspaceId, sessionKey: project.sessionKey });
+      expect(projectOwner.task).toMatchObject({ contract: { taskNodeId: task!.contract.taskNodeId },
+        claim: { sessionKey: project.sessionKey, generation: project.generation } });
+      evidence.persistent_task_owner = { binding: projectBinding, sessionTask: projectOwner };
     }
     let targetWorkspaceId: string | null = null;
     if (journey === 'cross-tree-migration') {
@@ -158,16 +204,29 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
         artifacts: Array<{ path: string; sha256: string }> } } }>(app, 'taskLedger', 'sessionTask',
         { workspaceId: project.workspaceId, sessionKey: project.sessionKey });
       expect(checkpointSeed.task.contract.taskNodeId).toBe(task!.contract.taskNodeId);
-      expect(checkpointSeed.task.checkpoint).toMatchObject({ completed: ['Prior output retained'], nextAction: 'Continue in target',
-        artifacts: [{ path: join(sourceRoot, 'artifact.txt'), sha256: sha(content) }] });
-      expect(sha(await readFile(join(sourceRoot, 'artifact.txt')))).toBe(sha(content)); evidence.checkpoint_seed = checkpointSeed;
+      expect(checkpointSeed.task.checkpoint).toMatchObject({ completed: ['Prior output retained'], nextAction: 'Continue in target' });
+      const seedArtifact = checkpointSeed.task.checkpoint?.artifacts[0], expectedArtifact = join(sourceRoot, 'artifact.txt');
+      expect(seedArtifact).toBeDefined(); expect(sameFile(seedArtifact!.path, expectedArtifact)).toBe(true);
+      expect(seedArtifact!.sha256).toBe(sha(content)); expect(sha(await readFile(seedArtifact!.path))).toBe(sha(content));
+      evidence.checkpoint_seed = { ...checkpointSeed, artifact_identity: { ...fileIdentity(seedArtifact!.path), expected: expectedArtifact } };
+      await hostInvoke(app, 'chat', 'sendWithMedia', { workspaceId: project.workspaceId, sessionKey: project.sessionKey,
+        message: 'U6-MIGRATION-INITIAL', idempotencyKey: 'u6-migration-initial' });
+      await expect.poll(async () => JSON.stringify(await rpc('chat.history', { sessionKey: project.sessionKey, limit: 30 }))
+        .includes('U6-ACK'), { timeout: 60_000 }).toBe(true);
+      await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>('sessions.describe',
+        { key: project.sessionKey })).session.hasActiveRun, { timeout: 30_000 }).toBe(false);
+      evidence.migration_source_chat = { completed: true, sessionKey: project.sessionKey, expectedSessionGeneration: project.generation,
+        send: 'U6-MIGRATION-INITIAL', reply: 'U6-ACK' };
       const target = await hostInvoke<{ activeWorkspace: { id: string } }>(app, 'workspaces', 'create', {
         name: 'U6 target', rootPath: targetRoot, agentId: 'main', activeSessionKey: 'agent:main:u6-target', permissionMode: 'fullAccess' });
       targetWorkspaceId = target.activeWorkspace.id;
       await hostInvoke(app, 'workspaces', 'switch', { id: project.workspaceId });
     }
     evidence.setup = ['isolated profile and Git fixture', 'scripted provider', 'project/session/history',
-      ...(task ? ['task/reference'] : []), ...(child ? ['child/draft'] : []), ...(targetWorkspaceId ? ['linked checkout/claim/checkpoint'] : [])];
+      ...(task ? ['persistent task contract', 'task/reference'] : []),
+      ...(child || journey === 'crash-recovery' ? ['persistent task owner claim/readback'] : []),
+      ...(child ? ['child/draft'] : []),
+      ...(targetWorkspaceId ? ['linked checkout/claim/checkpoint', 'completed chat run binds source root'] : [])];
     evidence.identities = { project, child, taskNodeId: task?.contract.taskNodeId ?? null, targetWorkspaceId };
     await page.reload(); await expect(id('main-layout')).toBeVisible({ timeout: 30_000 });
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
@@ -263,7 +322,9 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
       const read = await hostInvoke<{ task: { contract: { taskNodeId: string }; checkpoint?: { artifacts: Array<{ path: string; sha256: string }> } } }>(app,
         'taskLedger', 'sessionTask', { workspaceId: targetWorkspaceId, sessionKey: project.sessionKey });
       expect(read.task.contract.taskNodeId).toBe(task!.contract.taskNodeId);
-      expect(read.task.checkpoint?.artifacts).toEqual([{ path: join(sourceRoot, 'artifact.txt'), sha256: sha(content) }]); evidence.task_readback = read;
+      const movedArtifact = read.task.checkpoint?.artifacts[0]; expect(movedArtifact).toBeDefined();
+      expect(sameFile(movedArtifact!.path, join(sourceRoot, 'artifact.txt'))).toBe(true); expect(movedArtifact!.sha256).toBe(sha(content));
+      evidence.task_readback = { ...read, artifact_identity: { ...fileIdentity(movedArtifact!.path), expected: join(sourceRoot, 'artifact.txt') } };
     } else if (journey === 'archive-restore') {
       operation = 'archive:goal-v1';
       const sourceRow = id(`sidebar-session-${project.sessionKey}`), sourceMore = id(`sidebar-session-more-${project.sessionKey}`);
@@ -297,7 +358,7 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
         await click(`sidebar-session-${project.sessionKey}`, { identity: true });
       await expect(page.getByText(`Recorded objective: ${objective}`, { exact: true })).toBeVisible();
     } else if (journey === 'handoff') {
-      await ui('click', 'chat-header:options', () => id('chat-project-session-header').getByRole('button').nth(1).click());
+      await ui('click', 'chat-header:options', () => id('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click());
       await need('chat-session-handoff'); await click('chat-session-handoff');
       await expect(id('chat-handoff-dialog')).toBeVisible();
       let draft = await id('chat-handoff-draft').inputValue(); expect(draft.trim()).not.toBe('');
