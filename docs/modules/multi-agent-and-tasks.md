@@ -429,6 +429,8 @@ Runtime 还包含：
 
 “在新会话中提问”保留所选问题之前的上下文，把编辑后的问题放入子会话草稿。Handoff 的按钮为“创建并发送”：Workspace 保存 source generation、操作标识、child 和首发 key；runtime 确认来源后完成创建。重启或响应丢失后先核对同一个 child。网关接收与 transcript 中的首轮记录是两个状态；结果未知时保留草稿并提供核实入口。恢复已创建的续接沿用已保存的草稿，新的问题可以在子会话中另行提交。
 
+会话身份加载完成后可准备 Handoff；加载期间入口显示原因。侧栏已发起的接力意图会等待同一目标就绪，预览只接收当前会话和代次的结果。
+
 Agents 面板将派发准入、实际执行、报告回传、验证回执、任务验收和父会话续行分列。单个 worker 的准入取自身回执；验证记录按任务版本、执行 epoch 和候选归组，任务验收由 Task owner 单独决定。活动快照保存 worker 的实际 child key；选择 worker 后读取其 transcript 和实际模型，并在实际发送边界核验 parent 与 child generation。任务清单展示账本记录状态；完成 owner 尚未提供可核对的验收回执时，自动验收显示不可用。
 
 领取事务同时核对首次读取的合同 revision 与 digest；准入期间修订合同会拒绝此次领取。受管进程把 session、generation 和 run 身份保存到既有资源 reservation，未设置数量限额时也保留归属记录。任务切换、环境切换和 Handoff 查询同会话的全部未结清进程，包括旧 generation；旧记录身份不全时保持占用，等待进程 owner 核实。普通执行检查仍按具体 run 核对持久资源。

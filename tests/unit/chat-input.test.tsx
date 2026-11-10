@@ -1473,6 +1473,34 @@ describe('ChatInput slash commands', () => {
     });
     expect(textbox).toHaveValue('');
   });
+
+  it('shows the generation reason and refuses every disabled handoff control', async () => {
+    const reason = 'The session identity is unavailable. Refresh before continuing.';
+    const onHandoffSession = vi.fn().mockResolvedValue(undefined);
+    renderChatInput(vi.fn(), {
+      handoffDisabled: true,
+      handoffDisabledReason: reason,
+      onHandoffSession,
+    });
+
+    const textbox = screen.getByTestId('chat-composer-input') as HTMLTextAreaElement;
+    fireEvent.change(textbox, { target: { value: '/handoff' } });
+    const slashOption = screen.getByTestId('chat-slash-command-option-handoff');
+    expect(slashOption).toHaveTextContent(reason);
+    fireEvent.keyDown(textbox, { key: 'Enter' });
+
+    await waitFor(() => expect(sonnerToast.message).toHaveBeenCalledWith(reason));
+    expect(onHandoffSession).not.toHaveBeenCalled();
+
+    openComposerActionMenu();
+    fireEvent.click(screen.getByTestId('chat-composer-action-more'));
+    const action = screen.getByTestId('chat-composer-action-handoff');
+    expect(action).toBeDisabled();
+    expect(action).toHaveAttribute('title', reason);
+    expect(action).toHaveTextContent(reason);
+    fireEvent.click(action);
+    expect(onHandoffSession).not.toHaveBeenCalled();
+  });
 });
 
 describe('ChatInput capability action preflight', () => {

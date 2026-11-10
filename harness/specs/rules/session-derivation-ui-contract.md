@@ -47,6 +47,7 @@ requiredTests:
 
 - **Fork**：从完整 transcript 或指定消息建立独立分支；消息级边界使用现有 `fromLeafId` 能力。
 - **Handoff**：准备可编辑的交接包，确认按钮明确写出“创建并发送”，沿用 `ad77bf57c` 后的首轮发送行为。不得把自动发送藏在“创建会话”标签下；发送失败须保留新会话、来源和可重试草稿，效果未知时先核实结果，不能盲目重发。
+- Handoff 准备入口等待当前会话 generation 就绪，并显示本地化原因；侧栏已登记的意图在同一目标身份加载后消费。真实 generation 重置、会话或项目切换后的迟到结果继续按原 scope 丢弃，A→B→A 不恢复旧请求。
 - 创建与首发由现有持久层保存稳定操作标识、源 key/generation、草稿一致性、child key、首发 idempotency key 和 pending/sent/failed/unknown 阶段。重复点击、创建响应丢失、切换/重启恢复均先对账并复用同一 child；同一发送重试复用 key。更改 payload 必须形成新的明确意图；没有可证明的跨重启发送结果则保持 unknown，不能宣称 exactly-once。
 - **Spawn**：显示为父会话委派的 worker/subagent，保留角色和活动状态；打开 worker transcript 的入口与普通 Chat 子会话有明确区别。
 - **从消息带问题开新会话**：仍然是 Fork，不新增第五种持久关系。用户消息的分叉点取最近 assistant 祖先，界面明确提示“使用此提问之前的上下文”；原问题可预填供修改。无有效 ancestor 时拒绝，不退化到 transcript tip。新问题在新会话 composer 中作为未发送草稿出现。

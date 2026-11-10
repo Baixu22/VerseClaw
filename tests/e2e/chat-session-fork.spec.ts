@@ -281,7 +281,7 @@ test.describe('Verse Claw chat session fork', () => {
         gatewayRpc: {
           [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
             success: true,
-            result: { sessions: [{ key: SOURCE_SESSION_KEY, displayName: 'main' }] },
+            result: { sessions: [{ key: SOURCE_SESSION_KEY, sessionId: 'fork-source-generation', displayName: 'main' }] },
           },
           [stableStringify(['chat.history', { sessionKey: SOURCE_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
             success: true,
@@ -385,9 +385,10 @@ test.describe('Verse Claw chat session fork', () => {
             if (payload.method === 'sessions.list' && calls.workspaceSaveState.some((value) => (value as { sessionKey?: string }).sessionKey === params.forkSessionKey)) {
               return respond(request.id, {
                 sessions: [
-                  { key: params.sourceSessionKey, displayName: 'main' },
+                  { key: params.sourceSessionKey, sessionId: 'fork-source-generation', displayName: 'main' },
                   {
                     key: params.forkSessionKey,
+                    sessionId: 'fork-child-generation',
                     displayName: 'Forked main',
                     parentSessionKey: params.sourceSessionKey,
                     forkedFromParent: true,
@@ -521,7 +522,7 @@ test.describe('Verse Claw chat session fork', () => {
         gatewayRpc: {
           [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
             success: true,
-            result: { sessions: [{ key: SOURCE_SESSION_KEY, displayName: 'main' }] },
+            result: { sessions: [{ key: SOURCE_SESSION_KEY, sessionId: 'fork-source-generation', displayName: 'main' }] },
           },
           [stableStringify(['chat.history', { sessionKey: SOURCE_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
             success: true,
@@ -619,7 +620,7 @@ test.describe('Verse Claw chat session fork', () => {
         gatewayRpc: {
           [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
             success: true,
-            result: { sessions: [{ key: SOURCE_SESSION_KEY, displayName: 'main' }] },
+            result: { sessions: [{ key: SOURCE_SESSION_KEY, sessionId: 'fork-source-generation', displayName: 'main' }] },
           },
           [stableStringify(['chat.history', { sessionKey: SOURCE_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
             success: true,

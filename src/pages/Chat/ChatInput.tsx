@@ -159,6 +159,7 @@ interface ChatInputProps {
   forkDisabled?: boolean;
   forkBusy?: boolean;
   handoffDisabled?: boolean;
+  handoffDisabledReason?: string;
   handoffBusy?: boolean;
   knowledgeScope?: WorkspaceKnowledgeScope;
   onKnowledgeScopeChange?: (scope: WorkspaceKnowledgeScope) => void | Promise<void>;
@@ -974,6 +975,7 @@ export function ChatInput({
   forkDisabled = false,
   forkBusy = false,
   handoffDisabled = false,
+  handoffDisabledReason,
   handoffBusy = false,
   knowledgeScope = 'none',
   onKnowledgeScopeChange,
@@ -1552,7 +1554,7 @@ export function ChatInput({
       return t('composer.slashCommands.toasts.forkUnavailable');
     }
     if (command.kind === 'handoff' && handoffDisabled) {
-      return t('composer.handoff.disabledActiveRun');
+      return handoffDisabledReason ?? t('composer.handoff.disabledActiveRun');
     }
     return t(`composer.slashCommands.groups.${command.group}`);
   }, [
@@ -1562,6 +1564,7 @@ export function ChatInput({
     compactionUsedTokens,
     forkDisabled,
     handoffDisabled,
+    handoffDisabledReason,
     knowledgeMode,
     knowledgeScope,
     selectedKnowledgeRefs.length,
@@ -2583,7 +2586,7 @@ export function ChatInput({
 
     if (command.kind === 'handoff') {
       if (!onHandoffSession || handoffDisabled || handoffBusy) {
-        toast.message(t('composer.handoff.disabledActiveRun'));
+        toast.message(handoffDisabledReason ?? t('composer.handoff.disabledActiveRun'));
         return;
       }
       clearComposer();
@@ -2736,6 +2739,7 @@ export function ChatInput({
     forkDisabled,
     handoffBusy,
     handoffDisabled,
+    handoffDisabledReason,
     inputDisabled,
     knowledgeMode,
     knowledgeScope,
@@ -3699,6 +3703,8 @@ export function ChatInput({
                           label={t('composer.actions.handoff')}
                           testId="chat-composer-action-handoff"
                           disabled={handoffDisabled || handoffBusy}
+                          title={handoffDisabledReason}
+                          description={handoffDisabledReason}
                           onClick={() => {
                             setActionMenuOpen(false);
                             void onHandoffSession();

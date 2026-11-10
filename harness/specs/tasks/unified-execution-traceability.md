@@ -8,6 +8,8 @@ diffBase: 949757ca1
 intent: Complete TF-0867 using the existing Task events, execution-domain registration, checkout writer and Git object owners.
 ownedPaths: &paths
   - shared/git-native-root.ts
+  - src/pages/Chat/index.tsx
+  - src/pages/Chat/ChatInput.tsx
   - electron/services/git-api.ts
   - electron/services/task-system-service.ts
   - shared/task-system/**
@@ -24,8 +26,12 @@ ownedPaths: &paths
   - tests/unit/fixtures/task-retention-worker.mts
   - tests/e2e/unified-execution-traceability.spec.ts
   - tests/e2e/u6-interaction-metrics.final.spec.ts
+  - tests/e2e/chat-session-handoff.spec.ts
+  - tests/e2e/chat-session-fork.spec.ts
+  - tests/unit/chat-input.test.tsx
   - harness/specs/tasks/unified-execution-traceability.md
   - harness/specs/rules/durable-task-system-boundary.md
+  - harness/specs/rules/session-derivation-ui-contract.md
   - harness/specs/fixtures/unified-execution-traceability/**
   - docs/modules/multi-agent-and-tasks.md
   - README.md
@@ -48,6 +54,7 @@ requiredProfiles:
 expectedUserBehavior:
   - Completed results remain traceable after their execution checkout is reclaimed.
   - Cleanup preserves exact historical artifacts before releasing their path references.
+  - Handoff waits for the current session identity before preparing its draft; hydration preserves pending sidebar intent while reset and navigation discard stale results.
   - Task creation, authority registration and deletion serialize on the same execution-domain barrier.
 acceptance:
   - Two sessions compete, A executes, migration crashes, B continues, stale A is refused, an exact candidate is accepted, and A is safely reclaimed.
@@ -66,6 +73,7 @@ requiredTests:
   - pnpm run build:runtime
   - pnpm run build:vite
   - pnpm exec playwright test tests/e2e/unified-execution-traceability.spec.ts --workers=1
+  - pnpm exec playwright test tests/e2e/chat-session-handoff.spec.ts --workers=1
   - pnpm harness validate --spec harness/specs/tasks/unified-execution-traceability.md
   - pnpm harness run --spec harness/specs/tasks/unified-execution-traceability.md --dry-run
 docs:

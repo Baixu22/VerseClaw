@@ -1,6 +1,7 @@
 import { closeElectronApp, expect, getAgentDevHostCalls, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const MAIN_SESSION_KEY = 'agent:main:main';
+const SESSION_GENERATION_UNAVAILABLE_REASON = 'The session identity is unavailable. Refresh before continuing.';
 const HANDOFF_DRAFT = [
   '# Handoff: continue this Verse Claw conversation',
   '',
@@ -89,7 +90,7 @@ function baseHostApiMocks() {
         ok: true,
         json: {
           success: true,
-          result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+          result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'main-generation', displayName: 'main' }] },
         },
       },
     },
@@ -224,11 +225,68 @@ function baseHostApiMocks() {
 }
 
 test.describe('Verse Claw chat session handoff', () => {
+  test('keeps a sidebar handoff intent until a cold session generation hydrates', async ({ launchElectronApp }) => {
+    const app = await launchElectronApp({ skipSetup: true });
+    try {
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        gatewayRpcByMethod: {
+          'sessions.list': { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+        },
+        gatewayRpc: {
+          [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: { success: true, result: { messages: [] } },
+        },
+        hostApi: baseHostApiMocks(),
+      });
+
+      const page = await getStableWindow(app);
+      await page.reload();
+      await page.waitForLoadState('domcontentloaded');
+      await expect(page.getByTestId('chat-project-session-header')).toBeVisible({ timeout: 30_000 });
+
+      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      const headerHandoff = page.getByTestId('chat-session-handoff');
+      await expect(headerHandoff).toBeDisabled();
+      await expect(headerHandoff).toHaveAttribute('title', SESSION_GENERATION_UNAVAILABLE_REASON);
+      await page.keyboard.press('Escape');
+
+      await page.getByTestId('chat-composer-actions').click();
+      await page.getByTestId('chat-composer-action-more').click();
+      const composerHandoff = page.getByTestId('chat-composer-action-handoff');
+      await expect(composerHandoff).toBeDisabled();
+      await expect(composerHandoff).toHaveAttribute('title', SESSION_GENERATION_UNAVAILABLE_REASON);
+      await expect(composerHandoff).toContainText(SESSION_GENERATION_UNAVAILABLE_REASON);
+      await page.keyboard.press('Escape');
+
+      await page.getByTestId(`sidebar-session-more-${MAIN_SESSION_KEY}`).click();
+      await page.getByTestId('sidebar-session-context-handoff').click();
+      await expect(page.getByTestId('chat-handoff-dialog')).toHaveCount(0);
+      expect((await getAgentDevHostCalls(page)).filter((value) => {
+        const call = value as { module?: string; action?: string };
+        return call.module === 'sessions' && call.action === 'prepareHandoff';
+      })).toHaveLength(0);
+
+      await page.waitForTimeout(1_300);
+      await installIpcMocks(app, { gatewayRpcByMethod: {
+        'sessions.list': { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'main-generation', displayName: 'main' }] },
+      } });
+      await page.getByTestId('chat-toolbar-refresh').click();
+      await expect(page.getByTestId('chat-handoff-dialog')).toBeVisible();
+      await expect(page.getByTestId('chat-handoff-draft')).toHaveValue(HANDOFF_DRAFT);
+      await expect.poll(async () => (await getAgentDevHostCalls(page)).filter((value) => {
+        const call = value as { module?: string; action?: string; payload?: { sessionKey?: string } };
+        return call.module === 'sessions' && call.action === 'prepareHandoff' && call.payload?.sessionKey === MAIN_SESSION_KEY;
+      }).length).toBe(1);
+    } finally {
+      await closeElectronApp(app);
+    }
+  });
+
   test('keeps the current handoff draft when an old conversation responds late', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
     const otherKey = 'agent:main:session-isolation-b';
     const isolationWorkspace = { ...activeWorkspace, sessionStates: { [MAIN_SESSION_KEY]: {}, [otherKey]: {} } };
-    const sessions = [{ key: MAIN_SESSION_KEY, displayName: 'Conversation A', workspaceId: 'workspace-a', updatedAt: Date.now(), messageCount: 2 }, { key: otherKey, displayName: 'Conversation B', workspaceId: 'workspace-a', updatedAt: Date.now(), messageCount: 2 }];
+    const sessions = [{ key: MAIN_SESSION_KEY, sessionId: 'conversation-a-generation', displayName: 'Conversation A', workspaceId: 'workspace-a', updatedAt: Date.now(), messageCount: 2 }, { key: otherKey, sessionId: 'conversation-b-generation', displayName: 'Conversation B', workspaceId: 'workspace-a', updatedAt: Date.now(), messageCount: 2 }];
     try {
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
@@ -309,7 +367,7 @@ test.describe('Verse Claw chat session handoff', () => {
         gatewayRpc: {
           [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
             success: true,
-            result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+            result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'main-generation', displayName: 'main' }] },
           },
           [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
             success: true,
@@ -481,7 +539,7 @@ test.describe('Verse Claw chat session handoff', () => {
         gatewayRpc: {
           [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
             success: true,
-            result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+            result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'main-generation', displayName: 'main' }] },
           },
           [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
             success: true,
@@ -550,7 +608,7 @@ test.describe('Verse Claw chat session handoff', () => {
         gatewayRpc: {
           [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
             success: true,
-            result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+            result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'main-generation', displayName: 'main' }] },
           },
           [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
             success: true,

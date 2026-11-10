@@ -414,6 +414,7 @@ function ProjectSessionHeader({
   forkDisabled,
   forkBusy,
   handoffDisabled,
+  handoffDisabledReason,
   handoffBusy,
   continuityRecommendation,
   runtimeRuns,
@@ -443,6 +444,7 @@ function ProjectSessionHeader({
   forkDisabled?: boolean;
   forkBusy?: boolean;
   handoffDisabled?: boolean;
+  handoffDisabledReason?: string;
   handoffBusy?: boolean;
   continuityRecommendation?: SessionContinuityRecommendation;
   runtimeRuns?: Record<string, ChatRuntimeRunState>;
@@ -643,6 +645,7 @@ function ProjectSessionHeader({
               className="codex-header-menu__item codex-header-menu__item--muted"
               data-testid="chat-session-handoff"
               disabled={handoffDisabled || handoffBusy}
+              title={handoffDisabledReason}
               onClick={() => {
                 setOpen(null);
                 void onHandoffSession();
@@ -2240,7 +2243,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     longTaskControlStatus,
   }), [compactionStatus, contextRange, continuityRunActive, gatewayAvailable, liveUsage, longTaskControlStatus]);
   const continuityRecommendation = continuityPreflight.recommendation;
-  const handoffDisabled = continuityPreflight.handoff.disabled;
+  const handoffDisabled = continuityPreflight.handoff.disabled || !controlGeneration;
+  const handoffDisabledReason = !controlGeneration ? t('operationGenerationUnavailable')
+    : continuityPreflight.handoff.disabled ? t('composer.handoff.disabledActiveRun') : undefined;
   const forkDisabled = continuityPreflight.fork.disabled;
   const handleForkSessionRef = useRef<(() => Promise<void>) | null>(null);
   const handlePrepareHandoffRef = useRef<(() => Promise<void>) | null>(null);
@@ -2393,7 +2398,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   }, [handleCompactRange]);
 
   const handlePrepareHandoff = useCallback(async () => {
-    if (handoffDisabled || handoffBusy || !isCurrentControlScope()) return;
+    if (!isCurrentControlScope()) return;
+    if (!controlGeneration) { toast.error(t('operationGenerationUnavailable')); return; }
+    if (handoffDisabled || handoffBusy) return;
     setHandoffBusy(true);
     try {
       const result = await hostApi.sessions.prepareHandoff({
@@ -2440,6 +2447,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     }
   }, [
     activeWorkspace?.id,
+    controlGeneration,
     currentAgentId,
     currentSessionKey,
     gatewayAvailable,
@@ -2469,9 +2477,10 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       return;
     }
     if (sessionIntent.sessionKey !== currentSessionKey) return;
+    if (!controlGeneration) return;
     clearSessionIntent();
     void handlePrepareHandoffRef.current?.();
-  }, [clearSessionIntent, currentSessionKey, sessionIntent]);
+  }, [clearSessionIntent, controlGeneration, currentSessionKey, sessionIntent]);
 
   const handleCreateHandoffSession = useCallback(async () => {
     const draft = handoffDraft.trim();
@@ -3416,6 +3425,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                 forkBusy={forkBusy}
                 onHandoffSession={handlePrepareHandoff}
                 handoffDisabled={handoffDisabled}
+                handoffDisabledReason={handoffDisabledReason}
                 handoffBusy={handoffBusy}
                 continuityRecommendation={continuityRecommendation}
                 runtimeRuns={runtimeRuns}
@@ -3921,6 +3931,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         forkBusy={forkBusy}
         onHandoffSession={handlePrepareHandoff}
         handoffDisabled={handoffDisabled}
+        handoffDisabledReason={handoffDisabledReason}
         handoffBusy={handoffBusy}
         knowledgeScope={knowledgeScope}
         onKnowledgeScopeChange={handleKnowledgeScopeChange}
