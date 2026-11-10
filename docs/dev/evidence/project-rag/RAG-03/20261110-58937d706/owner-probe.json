@@ -1,0 +1,201 @@
+{
+  "schema": "ProjectRagSourceChunkProbe/v1",
+  "actor": "codex/project-rag-source-probe",
+  "driven_by": "agent",
+  "candidate": "58937d7063f89db4e26e778e8a4f1703a1405d02",
+  "fixtureOrigin": "agent-authored-local-Wiki-owner",
+  "tokenizerMode": "agent-fixture-codepoints",
+  "sourceDigest": "sha256:826a5b50477a9e9721d768a02cbb229ede6e97b11da516cb792746f378bc6e3f",
+  "parser": {
+    "id": "owner-markdown/v1",
+    "encoding": "utf-8",
+    "normalization": "identity-raw-utf8"
+  },
+  "chunks": [
+    {
+      "chunkId": "chunk:sha256:4d3405a1fae075b004f9f6459d0cc7876aa9372213108d6fffdc8bc2224f7988",
+      "kind": "heading",
+      "ordinal": 0,
+      "sectionId": "section:23a0e36ce959416cca0a2ce859c9380437e350bdfae77e40733652381b76a28f",
+      "locator": {
+        "coordinateSpace": "raw-source-utf8-v1",
+        "startByte": 87,
+        "endByteExclusive": 105,
+        "startLine": 7,
+        "endLine": 8
+      },
+      "chunkDigest": "sha256:83a555d6fb6b06caaea863f73bd6540d4cf015aa03c3932d709e3543250bdf48",
+      "tokenCount": 10,
+      "retainedBytes": 18,
+      "retrievalCharacters": 10
+    },
+    {
+      "chunkId": "chunk:sha256:6724197cb91538ab2163827fa9b3877e9911bf1ae70f688f745bcaf9a17eb2ea",
+      "kind": "paragraph",
+      "ordinal": 1,
+      "sectionId": "section:23a0e36ce959416cca0a2ce859c9380437e350bdfae77e40733652381b76a28f",
+      "locator": {
+        "coordinateSpace": "raw-source-utf8-v1",
+        "startByte": 105,
+        "endByteExclusive": 180,
+        "startLine": 9,
+        "endLine": 10
+      },
+      "chunkDigest": "sha256:2f282b91743bd5ec864ce05a5f351d0d1b47e74bddcae547e2cde8d05facc18b",
+      "tokenCount": 61,
+      "retainedBytes": 75,
+      "retrievalCharacters": 61
+    },
+    {
+      "chunkId": "chunk:sha256:436a9fb741d796b4fef595470bb8f1658e32e3f456e269feb38502c9925cf912",
+      "kind": "heading",
+      "ordinal": 2,
+      "sectionId": "section:28f235c1cc55e6088ec279d970d5ee5e80bc34a749829c663b907d76912cd7cb",
+      "locator": {
+        "coordinateSpace": "raw-source-utf8-v1",
+        "startByte": 180,
+        "endByteExclusive": 196,
+        "startLine": 11,
+        "endLine": 12
+      },
+      "chunkDigest": "sha256:d8932781fd5d8b42616aa7fff64d164c012843f70dc16afa5860283a67ec04de",
+      "tokenCount": 22,
+      "retainedBytes": 16,
+      "retrievalCharacters": 22
+    },
+    {
+      "chunkId": "chunk:sha256:8e2856845abb096825946ee62c8f04095a4864507126eabd21d0a3c37fdee484",
+      "kind": "step",
+      "ordinal": 3,
+      "sectionId": "section:28f235c1cc55e6088ec279d970d5ee5e80bc34a749829c663b907d76912cd7cb",
+      "locator": {
+        "coordinateSpace": "raw-source-utf8-v1",
+        "startByte": 196,
+        "endByteExclusive": 216,
+        "startLine": 13,
+        "endLine": 13
+      },
+      "chunkDigest": "sha256:62e4a78cccd63a1badd9c87f5a95b9729792a88012e29f31f6c0ddcf04795b15",
+      "tokenCount": 37,
+      "retainedBytes": 20,
+      "retrievalCharacters": 37
+    },
+    {
+      "chunkId": "chunk:sha256:0a61a6e1f893bb9ecfe20339cecc80797585e70dbd0c6c1300aaaa7d586cfce8",
+      "kind": "step",
+      "ordinal": 4,
+      "sectionId": "section:28f235c1cc55e6088ec279d970d5ee5e80bc34a749829c663b907d76912cd7cb",
+      "locator": {
+        "coordinateSpace": "raw-source-utf8-v1",
+        "startByte": 216,
+        "endByteExclusive": 236,
+        "startLine": 14,
+        "endLine": 15
+      },
+      "chunkDigest": "sha256:9db160c4bda63ef02e2db0a4899f625f1247059f11474b37528bfbb13957b83d",
+      "tokenCount": 37,
+      "retainedBytes": 20,
+      "retrievalCharacters": 37
+    },
+    {
+      "chunkId": "chunk:sha256:9dcf0f78a3593dab2fa08d0e2b672fd505536f0b4d24e695bbf59d79f2cb1a0c",
+      "kind": "table",
+      "ordinal": 5,
+      "sectionId": "section:28f235c1cc55e6088ec279d970d5ee5e80bc34a749829c663b907d76912cd7cb",
+      "locator": {
+        "coordinateSpace": "raw-source-utf8-v1",
+        "startByte": 236,
+        "endByteExclusive": 291,
+        "startLine": 16,
+        "endLine": 19
+      },
+      "chunkDigest": "sha256:9db2b1656468b6c645ab68143966b68c5cf660e1f336ca0fd1108638ec9d9d1a",
+      "tokenCount": 68,
+      "retainedBytes": 55,
+      "retrievalCharacters": 68
+    },
+    {
+      "chunkId": "chunk:sha256:f9f454e0b4a92e4c627ed54a4639060761e2d519c9fcff536214c19ce6026540",
+      "kind": "code",
+      "ordinal": 6,
+      "sectionId": "section:28f235c1cc55e6088ec279d970d5ee5e80bc34a749829c663b907d76912cd7cb",
+      "locator": {
+        "coordinateSpace": "raw-source-utf8-v1",
+        "startByte": 291,
+        "endByteExclusive": 896,
+        "startLine": 20,
+        "endLine": 21
+      },
+      "chunkDigest": "sha256:026dde94a173cf3c034c0028b0c6a9e7151b7f7a26c31525553a1f0198b4d686",
+      "tokenCount": 384,
+      "retainedBytes": 605,
+      "retrievalCharacters": 384
+    },
+    {
+      "chunkId": "chunk:sha256:699758faef00067f3305c50cfec72f22517d481b63e5faff69757a7abf9796a9",
+      "kind": "code",
+      "ordinal": 7,
+      "sectionId": "section:28f235c1cc55e6088ec279d970d5ee5e80bc34a749829c663b907d76912cd7cb",
+      "locator": {
+        "coordinateSpace": "raw-source-utf8-v1",
+        "startByte": 896,
+        "endByteExclusive": 1519,
+        "startLine": 21,
+        "endLine": 21
+      },
+      "chunkDigest": "sha256:c0ec243d79de8f18b0e13c80f4ddea6c0748caa5b98d6586426c8ac8166c4414",
+      "tokenCount": 384,
+      "retainedBytes": 623,
+      "retrievalCharacters": 384
+    },
+    {
+      "chunkId": "chunk:sha256:b520e0800fdd995eab7f44ddd1072a3e562d7c66eedbf87b5e8a4cdc64f11ea4",
+      "kind": "code",
+      "ordinal": 8,
+      "sectionId": "section:28f235c1cc55e6088ec279d970d5ee5e80bc34a749829c663b907d76912cd7cb",
+      "locator": {
+        "coordinateSpace": "raw-source-utf8-v1",
+        "startByte": 1519,
+        "endByteExclusive": 2141,
+        "startLine": 21,
+        "endLine": 21
+      },
+      "chunkDigest": "sha256:659bfff1049c8e453af7b5a2ee7275521a6d6de693976f1987f770963f98c6ed",
+      "tokenCount": 384,
+      "retainedBytes": 622,
+      "retrievalCharacters": 384
+    },
+    {
+      "chunkId": "chunk:sha256:53c86a797be583bc7c4e4c48ba981041c08df19c83e79f8c82514d164ede0927",
+      "kind": "code",
+      "ordinal": 9,
+      "sectionId": "section:28f235c1cc55e6088ec279d970d5ee5e80bc34a749829c663b907d76912cd7cb",
+      "locator": {
+        "coordinateSpace": "raw-source-utf8-v1",
+        "startByte": 2141,
+        "endByteExclusive": 3052,
+        "startLine": 21,
+        "endLine": 22
+      },
+      "chunkDigest": "sha256:48443749d6bfe12e040e42d92d4cb29d62d9db43357b3fcaac11b91484db682d",
+      "tokenCount": 557,
+      "retainedBytes": 911,
+      "retrievalCharacters": 557
+    }
+  ],
+  "roundTrips": 10,
+  "noLostBytes": true,
+  "changed": {
+    "status": "invalid",
+    "reason": "revision_mismatch"
+  },
+  "revoked": {
+    "status": "invalid",
+    "reason": "revoked"
+  },
+  "deleted": {
+    "status": "invalid",
+    "reason": "not_found"
+  },
+  "status": "pass"
+}

@@ -1,0 +1,136 @@
+{
+  "schema": "ProjectRagSourceChunkAcceptance/v1",
+  "node": "TF-0880",
+  "programKey": "RAG-03",
+  "status": "pass",
+  "candidate": "58937d7063f89db4e26e778e8a4f1703a1405d02",
+  "branch": "codex/project-rag-longterm-20261109",
+  "worktree": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "recordedAt": "2026-11-10T09:30:10.366Z",
+  "acceptance": [
+    {
+      "criterion": 1,
+      "status": "pass",
+      "evidence": [
+        "runtime-unit.json",
+        "root-unit.json",
+        "owner-probe.json"
+      ],
+      "result": "Structural boundaries for headings, paragraphs, list items, steps, code, tables and blockquotes retain CRLF, frontmatter-relative raw lines, UTF-8 byte offsets and multilingual code points."
+    },
+    {
+      "criterion": 2,
+      "status": "pass",
+      "evidence": [
+        "runtime-unit.json",
+        "owner-probe.json"
+      ],
+      "result": "Original quote bytes are separate from heading retrieval prefixes and NFKC/case-folded search fields; Chinese/Japanese bigrams, kana, Cyrillic and identifier splits are covered."
+    },
+    {
+      "criterion": 3,
+      "status": "pass",
+      "evidence": [
+        "runtime-unit.json",
+        "root-unit.json",
+        "built-sdk.json"
+      ],
+      "result": "Source/version/policy/span/profile/tokenizer-bound chunk IDs rebuild deterministically. Parent/heading section/ordinal remain traceable; exact citations are reread by the owner and reject stale pins."
+    },
+    {
+      "criterion": 4,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "owner-probe.json"
+      ],
+      "result": "Accepted file/directory/GitHub provenance uses the same owner normalization. Direct file import, directory reconciliation and GitHub capture use strict source validation; invalid updates preserve old cursors and recover as updated events."
+    },
+    {
+      "criterion": 5,
+      "status": "pass",
+      "evidence": [
+        "gates.json",
+        "runtime-unit.json",
+        "root-unit.json",
+        "harness-ci-report.json"
+      ],
+      "result": "Planned runtime chunker and root citation tests are implemented and required. The clean candidate passed 177 root and 10 runtime tests, all 15 formal gates, complete types and 12 Harness CI stages."
+    }
+  ],
+  "tests": {
+    "root": {
+      "passed": 177,
+      "total": 177,
+      "skipped": 0
+    },
+    "runtime": {
+      "passed": 10,
+      "total": 10,
+      "skipped": 0
+    },
+    "ownerFileCitationRoundTrips": 10,
+    "builtSdkCitationRoundTrips": 2
+  },
+  "checks": {
+    "formalSteps": 15,
+    "allExitZero": true,
+    "runtimeBuild": {
+      "exitCode": 0,
+      "gatewayReady": true
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "projects": [
+        "node",
+        "web",
+        "test"
+      ]
+    },
+    "sdkExports": 0,
+    "builtSdk": {
+      "functions": [
+        "normalizeKnowledgeSourceDocument",
+        "chunkKnowledgeDocument",
+        "citationLocatorForChunk",
+        "verifyKnowledgeCitation"
+      ],
+      "roundTrips": 2,
+      "artifactDigest": "sha256:0808b07230d7a335246ae4c6cbdf81f434541f22bfc5770f7574215d0b341633"
+    },
+    "rootLint": 0,
+    "runtimeLint": {
+      "exitCode": 0,
+      "warnings": 9,
+      "warningKind": "Intentional Unicode code-point counting in agent fixture tests"
+    },
+    "contract": 0,
+    "commsReplay": 0,
+    "commsCompare": 0,
+    "harnessValidate": 0,
+    "harnessDryRun": 0,
+    "harnessCi": {
+      "completed": 12,
+      "total": 12,
+      "exitCode": 0
+    },
+    "artifactRetention": 0
+  },
+  "verificationModes": {
+    "ownerProbe": "agent-authored-local-Wiki-owner",
+    "tokenizer": "agent-fixture-codepoints",
+    "sourceConnectorProvider": "agent-scripted GitHub responses plus real local filesystem",
+    "driven_by": "agent"
+  },
+  "review": {
+    "status": "pass",
+    "openFindings": 0,
+    "evidence": "review.json"
+  },
+  "rollback": {
+    "previousCandidate": "eaa53b06931f386e676ac4e8c44cb3b87ce1b263",
+    "method": "Revert the RAG-03 change set; preserve source owners and immutable RAG-01/RAG-02 evidence."
+  }
+}

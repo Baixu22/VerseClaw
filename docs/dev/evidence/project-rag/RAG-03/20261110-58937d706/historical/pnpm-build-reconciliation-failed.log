@@ -1,0 +1,26 @@
+[canvas] build: node scripts/bundle-a2ui.mjs
+<DIR>/a2ui.bundle.js  chunk │ size: 394.48 kB
+
+√ rolldown v1.1.0 Finished in 126.78 ms
+[diffs] build: node ../../scripts/build-diffs-viewer-runtime.mjs curated
+[diffs-language-pack] build: node ../../scripts/build-diffs-viewer-runtime.mjs full
+[build-all] tsdown
+Scope: all 155 workspace projects
+[ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY] Aborted removal of modules directory due to no TTY
+
+If you are running pnpm in CI, set the CI environment variable to "true", or set "confirmModulesPurge" to "false".
+[ERROR] Command failed with exit code 1: "C:\Program Files\nodejs\node.exe" "C:\Users\27933\AppData\Local\pnpm\.tools\pnpm\11.2.2\node_modules\pnpm\bin\pnpm.mjs" install
+
+pnpm: Command failed with exit code 1: "C:\Program Files\nodejs\node.exe" "C:\Users\27933\AppData\Local\pnpm\.tools\pnpm\11.2.2\node_modules\pnpm\bin\pnpm.mjs" install
+    at getFinalError (file:///C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/dist/pnpm.mjs:29448:14)
+    at makeError (file:///C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/dist/pnpm.mjs:31755:21)
+    at getSyncResult (file:///C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/dist/pnpm.mjs:33599:10)
+    at spawnSubprocessSync (file:///C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/dist/pnpm.mjs:33559:14)
+    at execaCoreSync (file:///C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/dist/pnpm.mjs:33489:23)
+    at callBoundExeca (file:///C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/dist/pnpm.mjs:36017:23)
+    at boundExeca (file:///C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/dist/pnpm.mjs:35994:49)
+    at sync (file:///C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/dist/pnpm.mjs:36153:10)
+    at runPnpmCli (file:///C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/dist/pnpm.mjs:213261:5)
+    at runDepsStatusCheck (file:///C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/dist/pnpm.mjs:214967:7)
+[build-all] tsdown failed after 12.2s
+[build-all] phase timings: total 12.2s; slowest tsdown (failed) 12.2s

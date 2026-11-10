@@ -1,0 +1,191 @@
+{
+  "schema": "ProjectRagSourceInputs/v1",
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "candidate": "58937d7063f89db4e26e778e8a4f1703a1405d02",
+  "diffBase": "eaa53b06931f386e676ac4e8c44cb3b87ce1b263",
+  "kind": "git-blobs-at-candidate",
+  "workingTreeMatchedAtFreeze": true,
+  "inputs": [
+    {
+      "path": ".gitignore",
+      "digest": "sha256:73773c1aad0a0d18d4d56b296ada1b1dc60871a5ceb2ab0f83056990cb18c5b3",
+      "bytes": 182403,
+      "gitBlob": "13b4272ee6fad5e5c9d429f53310e8465a34e74e"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "digest": "sha256:a7fbbc06a3c2b0c5b12a00275052f5fde96b6d93498c2802fc2019e9668b0b7a",
+      "bytes": 30169,
+      "gitBlob": "5fd5caf9b2e37c7ffac66b68a85a33b3e3946bcd"
+    },
+    {
+      "path": "README.md",
+      "digest": "sha256:6e9fa3682eae27c84df19a4d44d5a18f10b794d27882ddf7337a52cc715d5aef",
+      "bytes": 26957,
+      "gitBlob": "3db017cf40d869cb11ec25651466b10419e61f4b"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "digest": "sha256:829b06eb2bdad1fb0e2881bb5a65ddf428d670e6fbf36afbe54cf4d8571534ea",
+      "bytes": 24434,
+      "gitBlob": "379b3a37ffe058bfb80b2a4eec374d2d214aafa7"
+    },
+    {
+      "path": "docs/dev/project-rag/SOURCE-CHUNK-CONTRACT.md",
+      "digest": "sha256:54a5b537362bf90905232ddfa8eb2c5708820d9a7e49ac083f2888ec79dd73b7",
+      "bytes": 3058,
+      "gitBlob": "b02fe6f2976afd6cb5a7d47dc7897460df7be160"
+    },
+    {
+      "path": "docs/dev/project-rag/WORK-PACKAGES.md",
+      "digest": "sha256:115b799416bc0a2c6c4f20bddfdd83913e852d754a892ce978a29869c054d218",
+      "bytes": 35780,
+      "gitBlob": "f7d62c7e8d65d67ca5d5c0648fbbc72a89157f23"
+    },
+    {
+      "path": "electron/services/knowledge-github-connector.ts",
+      "digest": "sha256:277fe7fd67d70229c92c0ebd309bd066fc56de26179e05080836948a3a6a6982",
+      "bytes": 10716,
+      "gitBlob": "f0f21dcdabf92681ced0809773bf53f7ad04a7b3"
+    },
+    {
+      "path": "electron/services/knowledge-source-sync.ts",
+      "digest": "sha256:7b6c71c94b6fce1ce7d25a6078ee08df635e2bafeedd0706d1f180bfd9611820",
+      "bytes": 8164,
+      "gitBlob": "4807af206a15b7e1273068dcf314563086806a55"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-structure-chunk-citation.md",
+      "digest": "sha256:25dd96a36228712e9b76645a0965aa28c4df9ec5fc4b5ca19e0fcd9f7d4cd464",
+      "bytes": 4858,
+      "gitBlob": "7e4a17b9923aaa7e5f18489c612e0811e36b479f"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/runtime-api.ts",
+      "digest": "sha256:46876b679f0c919260d562c377bb3146c0aa9667247b39cad2347fdae878f373",
+      "bytes": 561,
+      "gitBlob": "d0ab559e5aac8c9320357817bb223707f257964c"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/ingest.ts",
+      "digest": "sha256:d9a8807029de622bffa4288334bea1a1e7ab11707c5296d03315456a6f33d297",
+      "bytes": 3692,
+      "gitBlob": "f600fe09f134a619c4653683a24fa9bf356d134c"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/retrieval-document.ts",
+      "digest": "sha256:94b046db44cd11f64d758b5f3070c86a99d395896a27725b4437db873e4a577f",
+      "bytes": 2473,
+      "gitBlob": "2b44950d9d20333d8b5ac9fef0a1f7d5758e075b"
+    },
+    {
+      "path": "openclaw_runtime/package.json",
+      "digest": "sha256:df800a4c5c024543efd657714d89f00d9fc53f2bd11358c811cca5a8a6d8f5ae",
+      "bytes": 107306,
+      "gitBlob": "2e9d479a26b1663cf769170ffddb0cd25ac657f7"
+    },
+    {
+      "path": "openclaw_runtime/packages/markdown-core/src/ir.test.ts",
+      "digest": "sha256:db1ea7b55534ccb9e440e2c4c345d88bb298dda1229faa89201121a3fb609578",
+      "bytes": 1530,
+      "gitBlob": "cf41520362412e6982db15c5a3ecf40954b593e9"
+    },
+    {
+      "path": "openclaw_runtime/packages/markdown-core/src/ir.ts",
+      "digest": "sha256:e58391e74179fdabc55f38d49f0f01b0d29b6ebeeb9cc8c9f911abe535b84049",
+      "bytes": 31974,
+      "gitBlob": "970eacbdbaf24ec77cc4d202d68c16ed8c07dcd8"
+    },
+    {
+      "path": "openclaw_runtime/scripts/lib/plugin-sdk-entrypoints.json",
+      "digest": "sha256:ced07765ed2b17fcf8e79a52840dff134ed206c446b96d24bb0398906f01c45d",
+      "bytes": 8078,
+      "gitBlob": "a7dd41e18297d302b4ad4b68b227d5c18589c874"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/chunker.test.ts",
+      "digest": "sha256:3669b47b01a811b657629672142977e7d6956cd1ff7ce34f34b513209f3bc7a5",
+      "bytes": 12870,
+      "gitBlob": "f1651c8a97190a90b804e99273d834cc5b57232c"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/chunker.ts",
+      "digest": "sha256:2e779dc24597ff004f68e18896e1fa4ded0dcdeea92e96a48b4aff41fbedd2f4",
+      "bytes": 15612,
+      "gitBlob": "adb175883a5f686eb9e81c293e67fa92ccbd41c9"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/citation.ts",
+      "digest": "sha256:c6f04dab6141296071100389076644c99a8ea72fdbb2c93e0f631cf891b71478",
+      "bytes": 2468,
+      "gitBlob": "79c50cbd10132b19c81ae9f7011dd45756f880da"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/contracts.ts",
+      "digest": "sha256:82b6a493f2d2258c0eb0d63b06b3d0d22afa9957f7a787b7f085e24738ee9b35",
+      "bytes": 2025,
+      "gitBlob": "b1a8f2986a788061a2285bc1f5b900d5f263361e"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/source-document.ts",
+      "digest": "sha256:3399dcf3447dcb7f0a02f7841309eb7f847532e5e1cd465cbf3ac66a3a4efadb",
+      "bytes": 2292,
+      "gitBlob": "cee8779b4f2e9eefdc81ab00de58eaae7fbbfe12"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/entrypoints.ts",
+      "digest": "sha256:51b6c575243578a2df6103d1ad3f232faac0a6aadbe9dc22ef526ffcd9469904",
+      "bytes": 4997,
+      "gitBlob": "b26a46a0fed996505f1d3b1328aba3b952a9588a"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/knowledge-retrieval.ts",
+      "digest": "sha256:c90f87796c3dd7ff5893434002af8033602c169a91439df3501b7f639a4bdfdb",
+      "bytes": 586,
+      "gitBlob": "70b271dd32f7b8dc306dbf22af70e9487be89bc8"
+    },
+    {
+      "path": "scripts/knowledge-rag-built-probe.mjs",
+      "digest": "sha256:55762b115163d2722fb393f46c80fc88e10b605d9a21c4211e5ba4098af08476",
+      "bytes": 4121,
+      "gitBlob": "6dc68e710b9ab6a4b0ab05660bb28cf3c8c672b1"
+    },
+    {
+      "path": "scripts/knowledge-rag-source-probe.ts",
+      "digest": "sha256:9335dc5ff6ccb27144fd13fe916421081a963da6475657de7fabb5b96391a98c",
+      "bytes": 4888,
+      "gitBlob": "a64325c113cb8d02589cd93cd7312f66141de00a"
+    },
+    {
+      "path": "scripts/repository-artifacts.json",
+      "digest": "sha256:c4b9d7d8756ec371613df1ec80bc47762642790430e700e1c5911ec97e99fbec",
+      "bytes": 187690,
+      "gitBlob": "1352ff2838b357d4460ae1474d7f0451de3415c4"
+    },
+    {
+      "path": "tests/unit/knowledge-github-connector.test.ts",
+      "digest": "sha256:b46415bbc24784ba0676408f4601fdbbfea960860175e56a7d2ae013d92f76af",
+      "bytes": 10498,
+      "gitBlob": "f50311e75134e7a80b831b09ee4d202659b28d0e"
+    },
+    {
+      "path": "tests/unit/knowledge-source-sync.test.ts",
+      "digest": "sha256:277bee4ca479ca999f10e727a49da0b2201d2bb7851958e6658e81cece692b52",
+      "bytes": 8305,
+      "gitBlob": "bd12635caa7301a49792c2731f2ed16869edb9a7"
+    },
+    {
+      "path": "tests/unit/project-rag-citation-locator.test.ts",
+      "digest": "sha256:c3e40feda58bda64fe3338d220694a22b6c3aa722e2f04e6aefb4150e5e8c026",
+      "bytes": 8206,
+      "gitBlob": "be43c911a1b919fc4c14e53b5e8443316d22a3ed"
+    },
+    {
+      "path": "tsconfig.test.json",
+      "digest": "sha256:d955f555eb6ea9abb946b292ca1249c23645b99728a02b7a7d6e9359c8cc49c4",
+      "bytes": 3507,
+      "gitBlob": "9718cf5b45e4aba58255e4ae61562135460bb16e"
+    }
+  ]
+}

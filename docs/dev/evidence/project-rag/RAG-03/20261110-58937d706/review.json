@@ -1,0 +1,92 @@
+{
+  "schema": "ProjectRagIndependentReview/v1",
+  "actor": "independent-agent-review",
+  "driven_by": "agent",
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "candidate": "58937d7063f89db4e26e778e8a4f1703a1405d02",
+  "status": "pass",
+  "openFindings": [],
+  "finding": {
+    "id": "source-invalid-as-withdrawn",
+    "severity": "P1",
+    "observedCandidate": "4da6818d1ed9b28db2d163379258967bea23635a",
+    "fixCandidate": "52b5c8af704a8a4e3a08855fe0f843f0293f6511",
+    "closureReviewer": "01a1c4b4-a943-77a1-b851-a2c56b325f1b",
+    "status": "closed",
+    "closure": "Matched invalid/empty/oversized source input fails before any transition/capture/cursor update; recovery remains an update. Existing-source cursor tests verify this for local and GitHub source owners."
+  },
+  "reviewAttempts": [
+    {
+      "thread": "01a1c48c-d22c-77e1-aea9-9beca6c7ae95",
+      "initialMessages": [
+        {
+          "type": "agentMessage",
+          "id": "msg_31ac29a7183af8c660544d95e692cbd3",
+          "text": "先按固定树核对仓库与 runtime 约束、RAG-03 spec/ADR/契约，再沿各接口追到实际 owner 调用、GitHub connector、public SDK 包装和 planned tests。全程只读，不改文件、不提交、不运行测试。",
+          "phase": null
+        },
+        {
+          "type": "agentMessage",
+          "id": "msg_b5a5e9aec5acec5e3db38bddab7870b9",
+          "text": "约束已确认：主仓负责产品/UI 边界，`openclaw_runtime` 的插件只能经公开 SDK/runtime-api 访问核心，测试与行为验证不得从私有 core internals 借道。接下来重点核对四项能力是否有真实 owner 实现和可执行 planned tests，而非仅有类型或计划声明。",
+          "phase": null
+        },
+        {
+          "type": "agentMessage",
+          "id": "msg_612794789d1f79cff36010165bc898f3",
+          "text": "收到主线门禁与 owner probe 的边界。我已确认 citation 复读不是“整页 digest 对片段 digest”的误判，因为 Wiki owner 会按 pin 先裁出精确 range；现在只再收窄一个接口契约点，然后立即给出可复现结论，不等待大仓穷尽。",
+          "phase": null
+        },
+        {
+          "type": "agentMessage",
+          "id": "msg_f149045b051680b6913fe0cb2310dcbe",
+          "text": "候选 `4da6818d1ed9b28db2d163379258967bea23635a` 已核实为 clean。发现 **1 个可复现 P1**；其余已核对关键链路未再发现 P1/P2。\n\n**P1：本地来源同步会把空文件、超限文件和含 NUL 文件静默当成删除**\n\n- 位置：[knowledge-source-sync.ts](C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/electron/services/knowledge-source-sync.ts:86)、[knowledge-source-sync.ts](C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/electron/services/knowledge-source-sync.ts:108)、[knowledge-source-sync.test.ts](C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-source-sync.test.ts:90)\n- 触发：先正常同步一个非空文件，再把它覆盖为空文件、超过 `maxBytesPerFile`，或写入含 NUL 的二进制内容，然后调用 `scan()`。\n- 实际行为：匹配文件在读取前因 `size === 0`/超限被 `continue`，或读到 NUL 后被跳过；文件不在 `current` 中，但 `complete` 仍为 true。后续删除差异判断将该文件作为 `withdrawn` 捕获，并推进 cursor。新出现的此类文件则完全无错误、无候选。\n- 影响：违反“无正文、NUL、超出 2 MiB 均明确报错”和“失败保持游标”。把解析失败误报为来源撤销，可能触发已接受知识的下线判断。现有测试名为 “rejects oversized/binary files”，实际只断言它们未进入 captured 集合，反而固化了静默跳过行为；因此 root `66/66`、runtime `10/10` 和类型测试通过不会覆盖此缺口。\n\n最小修复：对已匹配的普通文件，将空文件、超限读取和 NUL 改为明确抛错，使整轮 reconcile 在创建 transition 前终止且 cursor 不推进。对应测试应断言 `scan()` reject、无 capture、cursor digest 不变，并覆盖“既有非空文件被替换为空/超限/NUL”，防止被解释为 withdrawn。\n\nGitHub connector 对零字节 blob 也存在同类入口：[knowledge-github-connector.ts](C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/electron/services/knowledge-github-connector.ts:99) 接受 `size === 0`，随后在 [knowledge-github-connector.ts](C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/electron/services/knowledge-github-connector.ts:124) 生成空正文候选。最小修复是将零字节判为显式来源错误并保持 cursor，与本地同步统一。\n\n其余确认无发现：\n\n- 真实 `getMemoryWikiPage` pin 读取会先按 owner 权限、revision、source digest、policy 与精确 raw range 复核；citation 复读返回范围原文。\n- 严格的 `TextDecoder({ fatal: true, ignoreBOM: true })` 已落在本地同步、GitHub blob 和 Wiki ingest。\n- chunk、citation、profile 的 tokenizer id/digest 绑定会拒绝不一致输入；public SDK facade 与 registry/package export 已对齐。\n- `readMemoryWikiRetrievalChunks`、`readMemoryWikiChunkCitation` 及不同来源 provenance 映射沿用 owner 读取链，未发现额外接口缺口。\n\n按约束未执行测试或修改文件；以上 P1 由候选源码路径和现有测试断言直接复现。",
+          "phase": null
+        }
+      ],
+      "followupStatus": "errored",
+      "error": "Error running remote compact task: exceeded retry limit, last status: 429 Too Many Requests"
+    },
+    {
+      "thread": "01a1c4b4-a943-77a1-b851-a2c56b325f1b",
+      "status": "completed",
+      "messages": [
+        {
+          "type": "agentMessage",
+          "id": "msg_101e9cbbfae15c81a8e7bf4f66f64360",
+          "text": "我会在固定 worktree 中只读核对候选 HEAD、指定 diff，以及相关函数和测试上下文；不运行测试、不改文件。结论将只依据代码中的错误传播、cursor 状态与 GitHub 空内容处理路径。\n\n",
+          "phase": null
+        },
+        {
+          "type": "agentMessage",
+          "id": "msg_9df1b98add6a5b79ffd2b444b309b81d",
+          "text": "HEAD 与给定候选一致，worktree 状态为空。当前 diff 很小，下一步只展开三处运行代码和三个测试文件的断言，重点确认失败是否保留 cursor、不会触发 capture，以及恢复后能否正常 updated。",
+          "phase": null
+        },
+        {
+          "type": "agentMessage",
+          "id": "msg_38de9e2a643eefde7799e293c87d4092",
+          "text": "\n",
+          "phase": null
+        },
+        {
+          "type": "agentMessage",
+          "id": "msg_d808f87dcd81b96ff9ab17397f9f57c1",
+          "text": "代码路径已核完：本地同步在构建 transition 列表前完成全部文件校验，非法内容直接终止本轮；GitHub 也先收集并验证整个 snapshot，再执行 capture/写 cursor。正在最后核对 ingest 入口与测试是否覆盖“失败后恢复为 updated”，之后给出关闭判断。\n\n\n\n",
+          "phase": null
+        },
+        {
+          "type": "agentMessage",
+          "id": "msg_491062ecc2afbe2495858a6675c2cecc",
+          "text": "**结论：原 P1 已关闭（静态代码复核范围）。** 固定 worktree 位于候选 `52b5c8af704a8a4e3a08855fe0f843f0293f6511`，`git status` clean。\n\n- 本地同步在生成 transition 前对 empty、oversize、NUL、whitespace 直接抛错；因此不会产生 `withdrawn` 或调用 capture。cursor 只在 capture 成功并写入状态后推进。[knowledge-source-sync.ts](C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/electron/services/knowledge-source-sync.ts:87)\n- 新增测试先用合法内容建立 cursor，再分别覆盖 empty、oversize、NUL、whitespace，断言无 capture、cursor 字节不变；恢复合法内容后只有一次 `updated`。[knowledge-source-sync.test.ts](C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-source-sync.test.ts:97)\n- GitHub connector 对 `size <= 0` 直接报错，对解码后空白内容也报错。错误发生在 capture 和 cursor 提交之前，已有 Git blob SHA cursor 保持不变。[knowledge-github-connector.ts](C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/electron/services/knowledge-github-connector.ts:99)\n- GitHub 测试覆盖空字符串和 BOM/whitespace，断言 error receipt、零 created/updated/withdrawn、capture 为空、cursor 完全不变；退避后恢复为合法内容，断言 `updated: 1`。[knowledge-github-connector.test.ts](C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-github-connector.test.ts:37)\n- Wiki ingest 在创建 page 前拒绝 empty、oversize、NUL 和空白内容；对应测试确认不会生成 source page。[ingest.ts](C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/extensions/memory-wiki/src/ingest.ts:29) [project-rag-citation-locator.test.ts](C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-citation-locator.test.ts:98)\n\n未运行测试。正式 checks 的候选结果需以其实际输出为准。",
+          "phase": null
+        }
+      ]
+    }
+  ],
+  "finalCandidateChangesSinceClosure": [
+    "docs/dev/project-rag/SOURCE-CHUNK-CONTRACT.md",
+    "harness/specs/tasks/project-rag-structure-chunk-citation.md",
+    "scripts/knowledge-rag-built-probe.mjs"
+  ]
+}

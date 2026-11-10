@@ -1,0 +1,33 @@
+{
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "candidate": "58937d7063f89db4e26e778e8a4f1703a1405d02",
+  "node": "v24.22.1",
+  "packages": [
+    {
+      "id": "vitest/package.json",
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\package.json"
+    },
+    {
+      "id": "typescript/package.json",
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\typescript@5.9.3\\node_modules\\typescript\\package.json"
+    },
+    {
+      "id": "@typescript/native-preview/package.json",
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\@typescript+native-preview@7.0.0-dev.20260527.2\\node_modules\\@typescript\\native-preview\\package.json"
+    },
+    {
+      "id": "vitest/package.json",
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\runtime\\.pnpm\\vitest@4.1.7_@opentelemetry_f5449208cde661befa315c6fea555e10\\node_modules\\vitest\\package.json"
+    },
+    {
+      "id": "yaml/package.json",
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\runtime\\.pnpm\\yaml@2.9.0\\node_modules\\yaml\\package.json"
+    },
+    {
+      "id": "markdown-it/package.json",
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\runtime\\.pnpm\\markdown-it@14.2.0\\node_modules\\markdown-it\\package.json"
+    }
+  ],
+  "mainNodeModulesReused": false
+}

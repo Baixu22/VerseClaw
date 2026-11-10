@@ -1,0 +1,42 @@
+{
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "candidate": "58937d7063f89db4e26e778e8a4f1703a1405d02",
+  "failures": [
+    {
+      "kind": "development-module-resolution",
+      "artifact": "historical/development-runtime-failed.json",
+      "observed": "Four chunker cases loaded the stale Markdown package output; two source-map tests exposed separator blank ranges.",
+      "resolution": "Rebuilt the existing Markdown package, trimmed structural contributor ranges without changing source bytes, and verified 10/10 final runtime cases."
+    },
+    {
+      "kind": "development-types",
+      "artifact": "historical/development-types-failed.log",
+      "observed": "The test TypeScript project lacked the Markdown core source path mapping.",
+      "resolution": "Added the workspace package mapping; complete final node/web/test types passed."
+    },
+    {
+      "kind": "dependency-reconciliation",
+      "artifact": "historical/pnpm-build-reconciliation-failed.log",
+      "observed": "pnpm dependency self-check attempted a noninteractive module reconciliation before compilation.",
+      "resolution": "Used the existing OPENCLAW_BUILD_ALL_NO_PNPM entry with independent dependencies; final full runtime build and Gateway startup smoke passed."
+    },
+    {
+      "kind": "source-invalid-as-withdrawn",
+      "observedCandidate": "4da6818d1ed9b28db2d163379258967bea23635a",
+      "review": "review.json",
+      "resolution": "52b5c8af7 throws before transitions/cursor changes for empty/oversized/NUL/whitespace source content; final cursor failure/recovery regressions passed."
+    },
+    {
+      "kind": "formal-runner-argument",
+      "artifact": "historical/runner-argument-failed-gates.json",
+      "observed": "The temporary PowerShell runner unwrapped singleton argument arrays. Two Node commands did not execute.",
+      "resolution": "Typed string[] argument vectors; all 15 final-candidate steps executed with exit 0."
+    },
+    {
+      "kind": "review-service-error",
+      "observed": "The original reviewer followup exceeded remote compaction retries with HTTP 429.",
+      "resolution": "An independent replacement reviewer inspected the bounded fix and closed the P1; original review and error are retained in review.json."
+    }
+  ]
+}

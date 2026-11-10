@@ -1,0 +1,4 @@
+$ tsgo --noEmit -p tsconfig.test.json --composite false
+openclaw_runtime/src/knowledge/retrieval/chunker.ts(1,69): error TS7016: Could not find a declaration file for module '@openclaw/markdown-core/ir'. 'C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/packages/markdown-core/dist/ir.mjs' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/openclaw__markdown-core` if it exists or add a new declaration (.d.ts) file containing `declare module '@openclaw/markdown-core/ir';`
+[ELIFECYCLE] Command failed with exit code 2.

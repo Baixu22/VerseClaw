@@ -1,0 +1,10 @@
+{
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "testedCandidate": "58937d7063f89db4e26e778e8a4f1703a1405d02",
+  "changes": [
+    "harness/specs/tasks/project-rag-structure-chunk-citation.md"
+  ],
+  "kind": "completion-and-retention-metadata-only",
+  "verifiedSourceInputs": 30
+}

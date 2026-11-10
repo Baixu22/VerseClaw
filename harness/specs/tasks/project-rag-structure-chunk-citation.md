@@ -1,6 +1,6 @@
 ---
 lifecycleStatus: active
-implementationStatus: partial
+implementationStatus: implemented
 id: project-rag-structure-chunk-citation
 title: 实现来源标准化、结构切块与精确定位
 scenario: gateway-backend-communication
@@ -95,3 +95,5 @@ docs:
 所有检索来源和模型调用接受 owner 准入，DCS 保留最终上下文决定权；验证结果标记 driven_by: agent。
 
 回滚：切换到已验证 chunker generation 或 owner page read，旧来源不迁移。
+
+实现合同见 `docs/dev/project-rag/SOURCE-CHUNK-CONTRACT.md`。当前候选验收记录为 `docs/dev/evidence/project-rag/RAG-03/20261110-58937d706/report.json`，包含 root/runtime 测试、公开 SDK 构建产物探针、owner 复读和失败历史。
