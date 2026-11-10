@@ -1,9 +1,11 @@
 export const GROUPS: readonly string[];
 export function validateInventory(inventory: unknown, root?: string, defaultIds?: string[]): string[];
 export function collectCases(report: unknown, root?: string): Array<{
-  key: string; file: string; title: string; expectedStatus: string;
+  key: string; file: string; title: string; expectedStatus: string; timeout: number;
   results: Array<{ status: string }>; status: string;
 }>;
+export function declaredCaseTimeoutMs(source: string): number;
+export function executionBudgetMs(cases: Array<{ file?: string; timeout: number }>, timeoutOverrides?: Record<string, number>): number;
 export function evaluateReport(discovery: unknown, actual: unknown, exitCode: number | null, root?: string): {
   passed: boolean;
   counts: { planned: number; observed: number; passed: number; failed: number; skipped: number };

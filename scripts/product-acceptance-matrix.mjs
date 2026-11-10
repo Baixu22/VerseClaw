@@ -4,8 +4,9 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { createRequire } from 'node:module';
 import { spawnSync } from 'node:child_process';
+import ts from 'typescript';
 import { COMPONENT_DISPOSITION_ENTRIES } from '../shared/dcs/component-disposition-catalog.ts';
-import { createFreshProductBuildProof, readProductCandidate } from '../tests/e2e/fixtures/product-candidate.ts';
+import { assertFreshProductBuildProof, createFreshProductBuildProof, readProductCandidate } from '../tests/e2e/fixtures/product-candidate.ts';
 import { assertSafeOutputDirectory, repositoryIdentity, sha256, sha256File } from './lib/agent-engineering-acceptance.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -61,7 +62,7 @@ export function collectCases(report, root = ROOT) {
         for (const test of spec.tests ?? []) {
           cases.push({
             key: JSON.stringify([file, ...titles, spec.title, test.projectName ?? '', test.repeatEachIndex ?? 0]),
-            file, title: [...titles, spec.title].join(' > '), expectedStatus: test.expectedStatus,
+            file, title: [...titles, spec.title].join(' > '), expectedStatus: test.expectedStatus, timeout: test.timeout,
             results: test.results ?? [], status: test.status,
           });
         }
@@ -71,6 +72,35 @@ export function collectCases(report, root = ROOT) {
   };
   walk(report.suites);
   return cases;
+}
+
+export function declaredCaseTimeoutMs(source) {
+  let maximum = 0;
+  const visit = node => {
+    if (ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression)
+        && ts.isIdentifier(node.expression.expression) && ['test', 'testInfo'].includes(node.expression.expression.text)
+        && node.expression.name.text === 'setTimeout') {
+      const value = node.arguments[0];
+      if (node.arguments.length !== 1 || !value || !ts.isNumericLiteral(value)
+          || !Number.isSafeInteger(Number(value.text)) || Number(value.text) <= 0) {
+        throw new Error('Test timeout overrides must be positive numeric literals');
+      }
+      maximum = Math.max(maximum, Number(value.text));
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(ts.createSourceFile('matrix.spec.ts', source, ts.ScriptTarget.Latest));
+  return maximum;
+}
+
+export function executionBudgetMs(cases, timeoutOverrides = {}) {
+  if (!cases.length || cases.some(test => !Number.isSafeInteger(test.timeout) || test.timeout <= 0)) {
+    throw new Error('Every collected test must have a positive bounded timeout');
+  }
+  // Include fixture teardown per case and a final worker/report cleanup allowance.
+  const budget = cases.reduce((total, test) => total + Math.max(test.timeout, timeoutOverrides[test.file] ?? 0) + 90_000, 180_000);
+  if (!Number.isSafeInteger(budget) || budget > 2_147_483_647) throw new Error('Matrix execution budget is too large');
+  return budget;
 }
 
 export function evaluateReport(discovery, actual, exitCode, root = ROOT) {
@@ -99,7 +129,7 @@ export function evaluateReport(discovery, actual, exitCode, root = ROOT) {
   return { passed: failures.length === 0, counts: { planned: planned.length, observed: observed.length, passed, failed, skipped }, failures };
 }
 
-function executeCommand(label, executable, argv, output, env) {
+function executeCommand(label, executable, argv, output, env, timeoutMs = 3_600_000) {
   const jsonPath = resolve(output, `${label}.json`);
   const stdout = resolve(output, `${label}.stdout.txt`), stderr = resolve(output, `${label}.stderr.txt`);
   const handles = [openSync(stdout, 'wx'), openSync(stderr, 'wx')];
@@ -107,22 +137,22 @@ function executeCommand(label, executable, argv, output, env) {
   let result;
   try {
     result = spawnSync(executable, argv, { cwd: ROOT, env: { ...env, PLAYWRIGHT_JSON_OUTPUT_FILE: jsonPath },
-      stdio: ['ignore', ...handles], windowsHide: true, timeout: label === 'discovery' ? 120_000 : 3_600_000 });
+      stdio: ['ignore', ...handles], windowsHide: true, timeout: timeoutMs });
   } finally { handles.forEach((handle) => closeSync(handle)); }
   let report = null;
   if (existsSync(jsonPath)) {
     try { report = JSON.parse(readFileSync(jsonPath, 'utf8')); } catch { /* Invalid output is rejected by evaluateReport. */ }
   }
-  return { report, command: { argv: [executable, ...argv], startedAt, finishedAt: new Date().toISOString(),
+  return { report, command: { argv: [executable, ...argv], startedAt, finishedAt: new Date().toISOString(), timeoutMs,
     exitCode: result.status, signal: result.signal, error: result.error?.message ?? null,
     artifacts: [stdout, stderr, ...(existsSync(jsonPath) ? [jsonPath] : [])].map((path) => ({ path: relative(output, path), sha256: sha256File(path) })) } };
 }
 
-function executePlaywright(label, files, output, env) {
+function executePlaywright(label, files, output, env, timeoutMs = 120_000) {
   const cli = createRequire(import.meta.url).resolve('@playwright/test/cli');
-  const argv = [cli, 'test', ...files, '--workers=1', '--retries=0', '--reporter=json', `--output=${resolve(output, 'test-results')}`];
+  const argv = [cli, 'test', ...files, '--workers=1', '--retries=0', '--reporter=line,json', `--output=${resolve(output, 'test-results')}`];
   if (label === 'discovery') argv.push('--list');
-  return executeCommand(label, process.execPath, argv, output, env);
+  return executeCommand(label, process.execPath, argv, output, env, timeoutMs);
 }
 
 function executeBuild(label, script, output, env, candidate) {
@@ -162,8 +192,9 @@ function buildIdentity(candidate) {
 }
 
 export function main(argv = process.argv.slice(2)) {
-  const { values } = parseArgs({ args: argv, options: { check: { type: 'boolean' }, plan: { type: 'boolean' }, run: { type: 'boolean' }, output: { type: 'string' }, group: { type: 'string', multiple: true } } });
+  const { values } = parseArgs({ args: argv, options: { check: { type: 'boolean' }, plan: { type: 'boolean' }, run: { type: 'boolean' }, output: { type: 'string' }, group: { type: 'string', multiple: true }, 'build-proof': { type: 'string' } } });
   if ([values.check, values.plan, values.run].filter(Boolean).length !== 1) throw new Error('Choose exactly one of --check, --plan, --run');
+  if (values['build-proof'] && !values.run) throw new Error('--build-proof requires --run');
   const inventory = JSON.parse(readFileSync(resolve(ROOT, INVENTORY), 'utf8'));
   const errors = validateInventory(inventory);
   if (errors.length) throw new Error(errors.join('\n'));
@@ -177,8 +208,9 @@ export function main(argv = process.argv.slice(2)) {
   mkdirSync(output, { recursive: true });
   const save = (name, value) => writeFileSync(resolve(output, name), JSON.stringify(value, null, 2) + '\n');
   const candidate = repositoryIdentity(ROOT);
+  const reusedBuildProof = values['build-proof'] ? { path: resolve(values['build-proof']), sha256: sha256File(resolve(values['build-proof'])) } : null;
   const plan = { schema: 'ProductMatrixPlan/v1', driven_by: 'agent', actor: 'product-matrix-runner', node: inventory.node,
-    createdAt: new Date().toISOString(), candidate, selectedGroups: selected, files, inventory,
+    createdAt: new Date().toISOString(), candidate, selectedGroups: selected, files, inventory, reusedBuildProof,
     inventorySha256: sha256File(resolve(ROOT, INVENTORY)), catalogSha256: sha256File(resolve(ROOT, 'shared/dcs/component-disposition-catalog.ts')) };
   save('plan.json', plan);
   if (values.plan) { console.log(JSON.stringify({ plan: resolve(output, 'plan.json'), groups: selected.length, files: files.length, executed: false })); return 0; }
@@ -193,11 +225,19 @@ export function main(argv = process.argv.slice(2)) {
   for (const file of files) if (!planned.some((test) => test.file === file)) discoveryFailures.push(`No collected tests for ${file}`);
   for (const test of planned) if (!files.includes(test.file)) discoveryFailures.push(`Unexpected collected file ${test.file}`);
   for (const test of planned) if (test.expectedStatus !== 'passed') discoveryFailures.push(`Required test is skipped or expected to fail: ${test.title}`);
+  let timeoutMs;
+  try {
+    const timeoutOverrides = Object.fromEntries(files.map(file => [file, declaredCaseTimeoutMs(readFileSync(resolve(ROOT, file), 'utf8'))]));
+    timeoutMs = executionBudgetMs(planned, timeoutOverrides);
+    save('execution-budget.json', { timeoutMs, fixtureCleanupMs: 90_000, finalCleanupMs: 180_000, timeoutOverrides,
+      cases: planned.map(test => ({ key: test.key, file: test.file, collectedTimeoutMs: test.timeout,
+        budgetTimeoutMs: Math.max(test.timeout, timeoutOverrides[test.file]) })) });
+  } catch (error) { discoveryFailures.push(error.message); }
   const builds = [];
   let build = null;
   let freshBuildProofSha256 = null;
   if (!discoveryFailures.length) {
-    for (const [label, script] of [['vite-build', 'build:vite'], ['runtime-build', 'build:runtime']]) {
+    for (const [label, script] of reusedBuildProof ? [] : [['vite-build', 'build:vite'], ['runtime-build', 'build:runtime']]) {
       const step = executeBuild(label, script, output, env, candidate);
       builds.push(step);
       if (step.exitCode !== 0) { discoveryFailures.push(`${label} failed: ${step.exitCode}`); break; }
@@ -206,14 +246,19 @@ export function main(argv = process.argv.slice(2)) {
       try {
         build = buildIdentity(candidate);
         save('build-inputs.json', build);
-        save('fresh-build-proof.json', createFreshProductBuildProof(build, builds));
+        if (reusedBuildProof) {
+          const bytes = readFileSync(reusedBuildProof.path);
+          if (sha256(bytes) !== reusedBuildProof.sha256) throw new Error('Supplied build proof changed after planning');
+          assertFreshProductBuildProof(JSON.parse(bytes.toString('utf8')), build);
+          writeFileSync(resolve(output, 'fresh-build-proof.json'), bytes);
+        } else save('fresh-build-proof.json', createFreshProductBuildProof(build, builds));
         env.CLAWX_SPACE_BUNNY_BUILD_PROOF = resolve(output, 'fresh-build-proof.json');
         freshBuildProofSha256 = sha256File(env.CLAWX_SPACE_BUNNY_BUILD_PROOF);
       }
       catch (error) { discoveryFailures.push(error.message); }
     }
   }
-  const actual = discoveryFailures.length ? null : executePlaywright('execution', files, output, env);
+  const actual = discoveryFailures.length ? null : executePlaywright('execution', files, output, env, timeoutMs);
   const result = actual ? evaluateReport(discovery.report, actual.report, actual.command.exitCode)
     : { passed: false, counts: { planned: planned.length, observed: 0, passed: 0, failed: 0, skipped: 0 }, failures: discoveryFailures };
   const after = repositoryIdentity(ROOT);
@@ -227,7 +272,7 @@ export function main(argv = process.argv.slice(2)) {
     executionAttempted: Boolean(actual),
     nodeAcceptance: 'incomplete',
     buildDigest: build?.digest ?? null, inputDigest: build?.inputDigest ?? null,
-    freshBuildProofSha256,
+    freshBuildProofSha256, reusedBuildProof,
     commands: [discovery.command, ...builds, ...(actual ? [actual.command] : [])],
     groups: inventory.groups.map((group) => ({ id: group.id, selected: selected.includes(group.id), suiteStatus: selected.includes(group.id) && actual ? (result.passed ? 'passed' : 'failed') : 'not-run', evidenceLayers: group.evidenceLayers, remainingChecks: group.remainingChecks })),
     remainingAcceptance: [...inventory.additionalAcceptance, ...inventory.groups.filter((group) => !selected.includes(group.id)).map((group) => `${group.id}: not run in this batch`), ...inventory.groups.flatMap((group) => group.remainingChecks.map((check) => `${group.id}: ${check}`))] };

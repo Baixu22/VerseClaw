@@ -249,7 +249,7 @@ The [personal-agent QA pack](openclaw_runtime/qa/README.md) runs ten Gateway sce
 
 The [Responses acceptance contract](harness/specs/tasks/product-acceptance-space-bunny.md) covers text after reasoning, one tool round trip, session isolation, cancellation and provider failures on a configured local service. An interrupted Responses stream cannot finish a turn successfully or dispatch an incomplete tool call. These checks do not approve a model or a release.
 
-The [core product matrix](harness/specs/tasks/product-acceptance-matrix.md) maps nine journey groups to frozen test sources and records each batch's execution results and outstanding acceptance checks.
+The [core product matrix](harness/specs/tasks/product-acceptance-matrix.md) maps nine journey groups to frozen test sources and records each batch's execution results and outstanding acceptance checks. Serial batches can reuse the same verified build with `--build-proof`; their execution budgets follow the declared case timeouts.
 
 See [development and validation](docs/modules/development-and-validation.md) for the full gate map and evidence rules.
 

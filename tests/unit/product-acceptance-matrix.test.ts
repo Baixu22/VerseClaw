@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve, sep } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { collectCases, evaluateReport, matrixEnvironment, matrixOutputDirectory, validateBuildStamp, validateInventory } from '../../scripts/product-acceptance-matrix.mjs';
+import { collectCases, declaredCaseTimeoutMs, evaluateReport, executionBudgetMs, matrixEnvironment, matrixOutputDirectory, validateBuildStamp, validateInventory } from '../../scripts/product-acceptance-matrix.mjs';
 import { assertFreshProductBuildProof, createFreshProductBuildProof, readProductCandidate } from '../e2e/fixtures/product-candidate';
 import { gradeJudgeVotes, gradeReviewSample, parseJudgeResponse } from '../../scripts/product-matrix-judge.mjs';
 import { redactSpaceBunny } from '../e2e/fixtures/space-bunny-responses';
@@ -14,7 +14,7 @@ const inventory = () => JSON.parse(readFileSync(resolve(root, 'harness/specs/fix
 const report = (names = ['positive', 'negative'], discovery = false) => ({
   config: { rootDir: resolve(root, 'tests/e2e') }, errors: [],
   suites: [{ title: 'settings.spec.ts', specs: names.map((title) => ({ file: 'settings.spec.ts', title,
-    tests: [{ projectName: '', repeatEachIndex: 0, expectedStatus: 'passed', status: 'expected', results: discovery ? [] : [{ status: 'passed' }] }],
+    tests: [{ projectName: '', repeatEachIndex: 0, expectedStatus: 'passed', status: 'expected', timeout: 90_000, results: discovery ? [] : [{ status: 'passed' }] }],
   })) }],
 });
 
@@ -38,6 +38,42 @@ describe('TF-0582 product matrix', () => {
     const result = evaluateReport(report(undefined, true), report(), 0);
     expect(result).toMatchObject({ passed: true, counts: { planned: 2, observed: 2, passed: 2, failed: 0, skipped: 0 } });
     expect(collectCases(report())[0].file).toBe('tests/e2e/settings.spec.ts');
+  });
+
+  it('budgets a serial batch from collected case timeouts without truncating a long valid suite', () => {
+    const discovery = report(['first', 'second'], true);
+    discovery.suites[0].specs[0].tests[0].timeout = 2_400_000;
+    discovery.suites[0].specs[1].tests[0].timeout = 1_800_000;
+    const cases = collectCases(discovery);
+    expect(executionBudgetMs(cases)).toBe(4_560_000);
+    expect(cases.map(test => test.timeout)).toEqual([2_400_000, 1_800_000]);
+    expect(executionBudgetMs(collectCases(report(undefined, true)))).toBe(540_000);
+  });
+
+  it('rejects missing, unbounded and overflowing test timeout budgets', () => {
+    expect(() => executionBudgetMs([])).toThrow('positive bounded timeout');
+    for (const timeout of [0, -1, NaN, Infinity, 1.5]) {
+      expect(() => executionBudgetMs([{ timeout }])).toThrow('positive bounded timeout');
+    }
+    const discovery = report();
+    Reflect.deleteProperty(discovery.suites[0].specs[0].tests[0], 'timeout');
+    expect(() => executionBudgetMs(collectCases(discovery))).toThrow('positive bounded timeout');
+    expect(() => executionBudgetMs([{ timeout: Number.MAX_SAFE_INTEGER }])).toThrow('too large');
+  });
+
+  it('includes timeout overrides inside test bodies that Playwright discovery has not executed', () => {
+    const source = `// test.setTimeout(900_000);
+      const label = 'test.setTimeout(800_000)';
+      test('owner', async () => { test.setTimeout(600_000); });
+      test('shorter', async ({}, testInfo) => { testInfo.setTimeout(120_000); });`;
+    const cases = collectCases(report(undefined, true));
+    const timeoutOverrides = { [cases[0].file]: declaredCaseTimeoutMs(source) };
+    expect(timeoutOverrides[cases[0].file]).toBe(600_000);
+    expect(executionBudgetMs(cases, timeoutOverrides)).toBe(1_560_000);
+    expect(declaredCaseTimeoutMs('// test.setTimeout(0)')).toBe(0);
+    for (const value of ['0', '-1', 'Infinity', 'process.env.TIMEOUT', '1000 * 60']) {
+      expect(() => declaredCaseTimeoutMs(`test.setTimeout(${value})`)).toThrow('positive numeric literals');
+    }
   });
 
   it('rejects missing, extra and duplicate test identities and an empty collection', () => {

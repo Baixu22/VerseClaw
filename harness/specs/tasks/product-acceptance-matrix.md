@@ -65,6 +65,8 @@ acceptance:
   - The parent TF-0582 contract remains the node closure authority; implementation checks alone do not close the node.
   - The support-bundle journey retains the sanitized bundle in test output before its temporary profile is removed.
   - Successful pnpm Vite/runtime builds produce the fresh-build proof consumed by the provider suite, using a shared source/build digest; altered inputs, failed commands and preflight overrides cannot pass matrix acceptance.
+  - Serial batches may reuse a sealed build only after matching the clean candidate, runtime stamp, source/build digest and successful build receipts; the original proof is retained byte-for-byte and rechecked for planning-time drift.
+  - The outer execution budget includes collected timeouts and literal overrides inside frozen test bodies plus fixture cleanup; missing, unbounded or dynamic timeouts fail before execution.
   - The qualitative judge reuses the frozen clarity rubric, calibrates pass/fail/unknown fixtures on the current model and retains three distinct response receipts per sample; unavailable votes remain unverified.
   - Three clean-profile cancellation trials resume the same session, preserve the aborted run, exclude delayed frames and finish the later reply without a new tool effect.
   - The isolated exploration session records at least twenty minutes of agent interaction, twenty-five actions, all ten charter states, screenshots, console output and reviewed findings against the same sealed build.
@@ -99,6 +101,7 @@ $env:TMP = 'D:\tmp'
 node --import ./openclaw_runtime/node_modules/tsx/dist/loader.mjs scripts/product-acceptance-matrix.mjs --check
 node --import ./openclaw_runtime/node_modules/tsx/dist/loader.mjs scripts/product-acceptance-matrix.mjs --plan --output D:/tmp/product-matrix-plan
 node --import ./openclaw_runtime/node_modules/tsx/dist/loader.mjs scripts/product-acceptance-matrix.mjs --run --group settings --output D:/tmp/product-matrix-settings
+node --import ./openclaw_runtime/node_modules/tsx/dist/loader.mjs scripts/product-acceptance-matrix.mjs --run --group knowledge --build-proof D:/tmp/product-matrix-settings/fresh-build-proof.json --output D:/tmp/product-matrix-knowledge
 ```
 
 Each output directory must be new and outside the candidate checkout. `--group` may be repeated; omitting it selects
@@ -115,6 +118,15 @@ When present, the VerseShell/VerseGit manifests and binaries are included in the
 same input digest and rechecked after execution. The tools group requires the
 qualified binaries declared by those manifests; a missing binary is an incomplete
 test prerequisite, and its skipped case fails the matrix.
+For later serial groups, `--build-proof` validates an existing proof against the
+current clean candidate, runtime stamp and source/build digest. It retains the
+proof bytes and original path/hash in the new batch, and skips both build commands.
+`execution-budget.json` records each collected timeout and the maximum literal
+`test.setTimeout` or `testInfo.setTimeout` in that frozen file. Test-body overrides
+are not executed by Playwright discovery, so the outer budget uses the larger value
+per case, plus 90 seconds of fixture cleanup per case and 180 seconds for worker/report
+cleanup. Each case keeps its declared timeout. Missing collection timeouts and
+zero or dynamic override values stop the batch.
 The live provider and moyu files retain their existing resource, fresh-build,
 isolation and three-trial requirements. Supply their private environment values
 only to the child process. Provider and moyu receipts are retained under the batch's
