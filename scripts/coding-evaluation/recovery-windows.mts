@@ -15,6 +15,10 @@ function sha256File(file: string): string {
   return createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 }
 
+function sha256Text(value: string): string {
+  return createHash('sha256').update(value).digest('hex');
+}
+
 function run(exe: string, args: string[], cwd: string, env = process.env): { code: number; stdout: string; stderr: string } {
   const result = execFileSync(exe, args, { cwd, env, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
   return { code: 0, stdout: String(result), stderr: '' };
@@ -30,20 +34,59 @@ function writeJson(file: string, value: unknown): void {
   fs.writeFileSync(file, JSON.stringify(value, null, 2) + '\n');
 }
 
-function writeLedger(workspace: string, phase: string, extra: Record<string, unknown> = {}): void {
-  writeJson(path.join(workspace, '.openclaw', 'recovery', 'task-ledger.json'), {
-    schema: 'CodingRecoveryTaskLedger/v1', runId: path.basename(workspace), epoch: 1,
-    phase, terminal: false, completionAuthorized: false, ...extra,
-  });
+function findTaskLedgerEvents(workspace: string): string[] {
+  const root = path.join(workspace, '.state', 'task-ledgers', 'workspaces');
+  if (!fs.existsSync(root)) return [];
+  const found: string[] = [];
+  const visit = (directory: string): void => {
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const target = path.join(directory, entry.name);
+      if (entry.isDirectory()) visit(target);
+      else if (entry.name === 'events.jsonl') found.push(target);
+    }
+  };
+  visit(root);
+  return found.sort();
 }
 
-async function childMain(mode: '--child' | '--readback', window: string, workspace: string): Promise<void> {
+function readTaskLedgerProjection(workspace: string): Record<string, any> {
+  const eventsPath = findTaskLedgerEvents(workspace)[0];
+  if (!eventsPath) {
+    return { schema: 'CodingRecoveryTaskLedgerProjection/v1', rootId: null, eventCount: 0,
+      phase: null, status: null, terminal: false, completionAuthorized: null, ownerEpoch: null, eventsPath: null };
+  }
+  const events = fs.readFileSync(eventsPath, 'utf8').split(/\r?\n/u).filter(Boolean).flatMap((line) => {
+    try { return [JSON.parse(line)]; } catch { return []; }
+  });
+  const created = events.find((event) => event?.type === 'node_created' && event?.payload?.node?.kind === 'goal');
+  const rootId = created?.payload?.node?.id ?? created?.taskId ?? null;
+  let metadata: Record<string, unknown> = rootId ? { ...(created?.payload?.node?.metadata ?? {}) } : {};
+  let status: string | null = created?.payload?.node?.status ?? null;
+  for (const event of events) {
+    if (event?.type !== 'node_updated' || event?.taskId !== rootId) continue;
+    const patch = event?.payload?.patch ?? {};
+    if (patch.status) status = patch.status;
+    if (patch.metadata) metadata = { ...metadata, ...patch.metadata };
+  }
+  return {
+    schema: 'CodingRecoveryTaskLedgerProjection/v1', rootId,
+    eventCount: events.length, eventsPath: path.relative(workspace, eventsPath),
+    phase: metadata.phase ?? null, status, terminal: metadata.terminal === true,
+    completionAuthorized: metadata.completionAuthorized === true,
+    ownerEpoch: typeof metadata.ownerEpoch === 'string' ? metadata.ownerEpoch : null,
+    latestEventId: events.at(-1)?.id ?? null,
+  };
+}
+
+async function childMain(mode: '--child' | '--readback' | '--inspect', window: string, workspace: string): Promise<void> {
   process.env.OPENCLAW_HOME = workspace;
   process.env.OPENCLAW_STATE_DIR = path.join(workspace, '.state');
   process.env.OPENCLAW_CONFIG_PATH = path.join(workspace, 'openclaw.json');
   const journal = await import(sourceUrl('openclaw_runtime/src/agents/tools/write-journal-core.ts'));
+  const ledgerOwner = await import(sourceUrl('openclaw_runtime/src/agents/long-task-control/task-ledger.ts'));
+  const processOwner = await import(sourceUrl('openclaw_runtime/src/agents/goal-wake-helper-protocol.ts'));
+  const { ProcessRunReconciler } = await import(sourceUrl('openclaw_runtime/src/agents/process-run-reconciler.ts'));
   const stateDir = path.join(workspace, '.openclaw', 'recovery');
-  const ledgerPath = path.join(stateDir, 'task-ledger.json');
   const vgReceiptDir = path.join(path.dirname(workspace), `.vg-receipt-${path.basename(workspace)}`);
   const vgReceipt = path.join(stateDir, 'vg-receipt.json');
   const stsReport = path.join(stateDir, 'sts-plan.json');
@@ -53,34 +96,94 @@ async function childMain(mode: '--child' | '--readback', window: string, workspa
   const jj = process.env.TF0780_JJ!;
   const contracts = process.env.TF0780_CONTRACTS!;
   const env = { ...process.env, TEMP: 'D:/tmp', TMP: 'D:/tmp', VG_CONTRACT_DIR: contracts, JJ_CONFIG: path.join(workspace, '.jj-config.toml') };
+  const runId = path.basename(workspace);
+  const sessionKey = 'kill-window';
+  const ownerEpoch = `epoch-${sha256Text(runId).slice(0, 16)}`;
+  const restartEpoch = `restart-${sha256Text(`${runId}:restart`).slice(0, 16)}`;
+  const ledgerRootId = ledgerOwner.stableLongTaskLedgerRootId({ workspaceId: runId, sessionKey, runId, source: 'task_loop' });
+  const durableRoot = path.join(workspace, '.state', 'background-processes');
+  fs.mkdirSync(stateDir, { recursive: true });
+  let ledgerInitialized = false;
+  const readJson = (file: string) => { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return null; } };
 
-  if (mode === '--readback') {
-    const entries = journal.getOrCreateWriteJournal(workspace, 'kill-window').entries;
-    const readJson = (file: string) => { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return null; } };
-    const beforeLedger = readJson(ledgerPath);
-    let oldEpochRejected = false;
-    try {
-      if (!beforeLedger || beforeLedger.epoch !== 1) throw new Error('epoch mismatch');
-      throw new Error('old epoch rejected');
-    } catch { oldEpochRejected = true; }
-    const beforeRecovery = {
+  const appendLedger = (phase: string, extra: Record<string, unknown> = {}, status = 'doing'): Record<string, any> => {
+    if (!ledgerInitialized) {
+      ledgerOwner.ensureLongTaskLedgerRoot({
+        workspaceId: runId, taskLedgerRootId: ledgerRootId, sessionKey,
+        agentId: 'codex-coding-recovery-evaluator', runId,
+        title: 'TF-0780 cross-process recovery window', source: 'task_loop',
+        metadata: { taskLedgerRootId: ledgerRootId, window, ownerEpoch }, env,
+      });
+      ledgerInitialized = true;
+    }
+    const updatedAt = new Date().toISOString();
+    ledgerOwner.appendLongTaskLedgerEvents(runId, [{
+      type: 'node_updated', actor: 'assistant', taskId: ledgerRootId, sessionId: sessionKey,
+      idempotencyKey: `tf0780:${runId}:${phase}:${status}`,
+      payload: {
+        nodeId: ledgerRootId,
+        patch: {
+          status,
+          updatedAt,
+          metadata: { phase, window, ownerEpoch, terminal: false, completionAuthorized: false, ...extra },
+        },
+        note: `TF-0780 phase ${phase}`,
+      },
+    }] as any, env);
+    return readTaskLedgerProjection(workspace);
+  };
+
+  const inspectState = async (): Promise<Record<string, any>> => {
+    const entries = journal.getOrCreateWriteJournal(workspace, sessionKey).entries;
+    const durableFiles = await processOwner.readDurableHelperFiles(runId, { rootDir: durableRoot });
+    const reconciler = new ProcessRunReconciler({ rootDir: durableRoot });
+    const oldEpochAttempt = await reconciler.reconcile({ runId, ownerEpoch: restartEpoch });
+    const expectedEpochAttempt = durableFiles.intent
+      ? await reconciler.reconcile({ runId, ownerEpoch: durableFiles.intent.ownerEpoch })
+      : { runId, state: 'missing', reason: 'intent-missing' };
+    const gitStatus = run('git', ['-C', workspace, 'status', '--short'], repoRoot, env);
+    const gitHead = run('git', ['-C', workspace, 'rev-parse', 'HEAD'], repoRoot, env);
+    const base = fs.existsSync(path.join(workspace, '.tf0780-base'))
+      ? fs.readFileSync(path.join(workspace, '.tf0780-base'), 'utf8').trim() : null;
+    const jjStatus = runAllowFailure(jj, ['-R', workspace, '--no-pager', '--color', 'never', 'status'], repoRoot, env);
+    const jjOperation = runAllowFailure(jj, ['-R', workspace, '--no-pager', '--color', 'never', 'op', 'log', '-n', '1', '--no-graph', '-T', 'self.id() ++ "\\n"'], repoRoot, env);
+    const receiptDoc = readJson(vgReceipt);
+    const stsDoc = readJson(stsReport);
+    return {
       bytes: fs.readFileSync(path.join(workspace, 'a.txt'), 'utf8'),
       treeSha256: sha256File(path.join(workspace, 'a.txt')),
       states: entries.map((entry: any) => entry.batch?.state),
       ref: journal.writeJournalRecoveryRef(entries),
-      git: run('git', ['-C', workspace, 'status', '--short'], repoRoot, env).stdout,
-      jj: runAllowFailure(jj, ['-R', workspace, '--no-pager', '--color', 'never', 'status'], repoRoot, env),
-      vgReceipt: fs.existsSync(vgReceipt) ? { path: path.relative(workspace, vgReceipt), sha256: sha256File(vgReceipt) } : null,
-      stsScope: fs.existsSync(stsReport) ? (((readJson(stsReport)?.runs?.selected?.selection_scope) ?? readJson(stsReport)?.selection_scope) ?? 'unknown') : null,
-      ledger: beforeLedger,
+      git: gitStatus.stdout, gitHead: gitHead.stdout.trim(), base,
+      jj: { ...jjStatus, operation: jjOperation },
+      vgReceipt: receiptDoc ? {
+        path: path.relative(workspace, vgReceipt), sha256: sha256File(vgReceipt),
+        materialized: receiptDoc.materialized === true, candidate: receiptDoc.candidate ?? null,
+      } : null,
+      stsScope: stsDoc ? ((stsDoc.runs?.selected?.selection_scope ?? stsDoc.selection_scope) ?? 'unknown') : null,
+      ledger: readTaskLedgerProjection(workspace),
+      durableProcess: { files: durableFiles, oldEpochAttempt, expectedEpochAttempt },
+      tempRemoved: !fs.existsSync(tempPath),
     };
+  };
+
+  if (mode === '--inspect') {
+    process.send?.({ beforeRecovery: await inspectState(), inspected: true });
+    process.disconnect?.();
+    return;
+  }
+
+  if (mode === '--readback') {
+    const beforeRecovery = await inspectState();
+    const entries = journal.getOrCreateWriteJournal(workspace, sessionKey).entries;
+    const oldEpochRejected = beforeRecovery.durableProcess.oldEpochAttempt?.state === 'lost'
+      && beforeRecovery.durableProcess.oldEpochAttempt?.reason === 'owner-epoch-mismatch';
     const first = await journal.undoLastWrites({ workspaceRoot: workspace, sessionId: 'kill-window', steps: entries.length, workspaceOnly: true });
     const second = await journal.undoLastWrites({ workspaceRoot: workspace, sessionId: 'kill-window', steps: 1, workspaceOnly: true });
     if (fs.existsSync(tempPath)) fs.rmSync(tempPath, { recursive: true, force: true });
-    const finalLedger = { schema: 'CodingRecoveryTaskLedger/v1', runId: path.basename(workspace), epoch: 1,
-      phase: 'recovered', terminal: true, completionAuthorized: false, window, recoveredAt: new Date().toISOString() };
-    writeJson(ledgerPath, finalLedger);
-    process.send?.({ beforeRecovery, first, second, oldEpochRejected, finalLedger,
+    appendLedger('recovered', { terminal: true, completionAuthorized: false, recoveredAt: new Date().toISOString() }, 'review');
+    const finalLedger = readTaskLedgerProjection(workspace);
+    process.send?.({ beforeRecovery, first, second, oldEpochRejected, durableProcess: beforeRecovery.durableProcess, finalLedger,
       bytes: fs.readFileSync(path.join(workspace, 'a.txt'), 'utf8'), tempRemoved: !fs.existsSync(tempPath) });
     process.disconnect?.();
     return;
@@ -91,9 +194,17 @@ async function childMain(mode: '--child' | '--readback', window: string, workspa
   const { decodeTextFile } = await import(sourceUrl('openclaw_runtime/src/agents/sessions/tools/text-file-codec.ts'));
   const { root } = await import(sourceUrl('openclaw_runtime/src/infra/fs-safe.ts'));
   const fileRoot = await root(workspace);
-  writeLedger(workspace, 'intent');
+  const commandDigest = sha256Text(`tf0780:${runId}:${window}`);
+  const durableIntent = await processOwner.createDurableHelperIntent({
+    runId, commandDigest, policyRevision: 'tf0780-cross-process-recovery-v1', ownerEpoch,
+  }, { rootDir: durableRoot });
+  await processOwner.writeDurableHelperStarted({
+    runId, runNonce: durableIntent.nonce, helperPid: process.pid, childPid: process.pid,
+    startedAtMs: Date.now(), commandDigest,
+  }, { rootDir: durableRoot });
+  appendLedger('intent', { durableRunId: runId });
   const park = async (stage: string, extra: Record<string, unknown> = {}): Promise<never> => {
-    writeLedger(workspace, stage, extra);
+    appendLedger(stage, extra);
     setInterval(() => {}, 1000);
     process.send?.({ stage, extra });
     return await new Promise<never>(() => {});
@@ -141,11 +252,18 @@ async function childMain(mode: '--child' | '--readback', window: string, workspa
   fs.writeFileSync(path.join(tempPath, 'transient.txt'), 'cleanup pending\n');
   if (window === 'cleanup') await park('cleanup', { cleanupPending: true });
   fs.rmSync(tempPath, { recursive: true, force: true });
-  writeLedger(workspace, 'returned', { candidate, completionAuthorized: false });
+  appendLedger('returned', { candidate, completionAuthorized: false });
+  if (window === 'control') {
+    await processOwner.writeDurableHelperExit({
+      runId, nonce: durableIntent.nonce, exitCode: 0, signal: null, timedOut: false,
+      endedAtMs: Date.now(), outcomeDigest: processOwner.durableOutcomeDigest({ exitCode: 0, signal: null, timedOut: false }),
+    }, { rootDir: durableRoot });
+    process.send?.({ stage: 'returned', controlled: true, candidate });
+  }
   process.disconnect?.();
 }
 
-if (process.argv[2] === '--child' || process.argv[2] === '--readback') {
+if (process.argv[2] === '--child' || process.argv[2] === '--readback' || process.argv[2] === '--inspect') {
   await childMain(process.argv[2], process.argv[3], process.argv[4]);
 } else {
   const outputIndex = process.argv.indexOf('--output');
@@ -168,23 +286,48 @@ if (process.argv[2] === '--child' || process.argv[2] === '--readback') {
     child.once('error', (error) => { clearTimeout(timer); reject(error); });
     child.once('exit', (code, signal) => { clearTimeout(timer); resolve({ message, code, signal, stderr }); });
   });
+  const prepareWorkspace = (workspace: string) => {
+    fs.mkdirSync(path.join(workspace, 'tests'), { recursive: true });
+    fs.writeFileSync(path.join(workspace, 'a.txt'), 'before\n');
+    fs.writeFileSync(path.join(workspace, 'calc.py'), 'def add(a, b):\n    return a + b\n');
+    fs.writeFileSync(path.join(workspace, 'tests', 'test_calc.py'), 'from calc import add\n\n\ndef test_add():\n    assert add(1, 2) == 3\n');
+    fs.writeFileSync(path.join(workspace, '.gitignore'), '.openclaw/\n.state/\n.recovery-cleanup/\n.tf0780-base\n__pycache__/\n*.pyc\n');
+    fs.writeFileSync(path.join(workspace, '.jj-config.toml'), '[user]\nname="Recovery Eval"\nemail="recovery@example.invalid"\n');
+    run('git', ['init', '-q', '-b', 'main'], workspace);
+    run('git', ['config', 'user.name', 'recovery-eval'], workspace);
+    run('git', ['config', 'user.email', 'recovery@example.invalid'], workspace);
+    run('git', ['add', '-A'], workspace);
+    run('git', ['commit', '-qm', 'base'], workspace);
+    fs.writeFileSync(path.join(workspace, '.tf0780-base'), run('git', ['rev-parse', 'HEAD'], workspace).stdout + '\n');
+    return runAllowFailure(process.env.TF0780_JJ!, ['git', 'init', '--colocate'], workspace,
+      { ...process.env, JJ_CONFIG: path.join(workspace, '.jj-config.toml') });
+  };
+
+  const controlWorkspace = path.join(outRoot, 'control');
+  const controlJjInit = prepareWorkspace(controlWorkspace);
+  const controlRun = await childRun('--child', 'control', controlWorkspace);
+  const controlInspect = await childRun('--inspect', 'control', controlWorkspace);
+  const controlled = controlInspect.message?.beforeRecovery;
+  const control = {
+    jjInit: controlJjInit, run: controlRun, inspect: controlInspect,
+    pass: controlJjInit.code === 0 && controlRun.code === 0 && controlRun.signal === null
+      && controlRun.message?.stage === 'returned' && controlInspect.code === 0
+      && controlled?.bytes === 'after\n' && controlled?.states?.length === 1 && controlled?.states?.[0] === 'committed'
+      && controlled?.ledger?.phase === 'returned' && controlled?.ledger?.terminal === false
+      && controlled?.ledger?.completionAuthorized === false
+      && controlled?.vgReceipt?.materialized === true && ['selected', 'full'].includes(controlled?.stsScope)
+      && controlled?.jj?.code === 0 && controlled?.jj?.operation?.code === 0
+      && controlled?.durableProcess?.oldEpochAttempt?.reason === 'owner-epoch-mismatch'
+      && controlled?.durableProcess?.expectedEpochAttempt?.state === 'terminal'
+      && controlled?.durableProcess?.expectedEpochAttempt?.reason === 'exit-observed'
+      && controlled?.durableProcess?.files?.exit?.exitCode === 0 && controlled?.tempRemoved === true,
+  };
+
   const rows: any[] = [];
   for (const window of windows) {
     for (let repeat = 1; repeat <= repeats; repeat++) {
       const workspace = path.join(outRoot, `${window}-${repeat}`);
-      fs.mkdirSync(path.join(workspace, 'tests'), { recursive: true });
-      fs.writeFileSync(path.join(workspace, 'a.txt'), 'before\n');
-      fs.writeFileSync(path.join(workspace, 'calc.py'), 'def add(a, b):\n    return a + b\n');
-      fs.writeFileSync(path.join(workspace, 'tests', 'test_calc.py'), 'from calc import add\n\n\ndef test_add():\n    assert add(1, 2) == 3\n');
-      fs.writeFileSync(path.join(workspace, '.gitignore'), '.openclaw/\n.state/\n.recovery-cleanup/\n.tf0780-base\n__pycache__/\n*.pyc\n');
-      fs.writeFileSync(path.join(workspace, '.jj-config.toml'), '[user]\nname="Recovery Eval"\nemail="recovery@example.invalid"\n');
-      run('git', ['init', '-q', '-b', 'main'], workspace);
-      run('git', ['config', 'user.name', 'recovery-eval'], workspace);
-      run('git', ['config', 'user.email', 'recovery@example.invalid'], workspace);
-      run('git', ['add', '-A'], workspace);
-      run('git', ['commit', '-qm', 'base'], workspace);
-      fs.writeFileSync(path.join(workspace, '.tf0780-base'), run('git', ['rev-parse', 'HEAD'], workspace).stdout + '\n');
-      const jjInit = runAllowFailure(process.env.TF0780_JJ!, ['git', 'init', '--colocate'], workspace, { ...process.env, JJ_CONFIG: path.join(workspace, '.jj-config.toml') });
+      const jjInit = prepareWorkspace(workspace);
       const killed = await childRun('--child', window, workspace);
       const restarted = await childRun('--readback', window, workspace);
       const actual = restarted.message;
@@ -192,21 +335,34 @@ if (process.argv[2] === '--child' || process.argv[2] === '--readback') {
       const expectedJournal = ['intent', 'effect'].includes(window) ? 'prepared' : 'committed';
       const receiptsExpected = ['materialized', 'validated', 'cleanup'].includes(window);
       const pass = killed.message?.stage === window && killed.signal === 'SIGKILL'
-        && restarted.code === 0 && actual?.beforeRecovery?.bytes === expectedEffect
+        && jjInit.code === 0 && restarted.code === 0 && actual?.beforeRecovery?.bytes === expectedEffect
+        && actual?.beforeRecovery?.treeSha256 === sha256Text(expectedEffect)
         && actual.beforeRecovery.states.length === 1 && actual.beforeRecovery.states[0] === expectedJournal
         && actual.first.errors.length === 0 && actual.first.restored.length === 1
         && actual.second.errors.length === 0 && actual.second.restored.length === 0
         && actual.bytes === 'before\n' && actual.oldEpochRejected && actual.tempRemoved
         && actual.beforeRecovery.ledger?.phase === window
+        && actual.beforeRecovery.ledger?.terminal === false && actual.beforeRecovery.ledger?.completionAuthorized === false
+        && actual.beforeRecovery.ledger?.ownerEpoch === actual.beforeRecovery.durableProcess?.files?.intent?.ownerEpoch
+        && actual.beforeRecovery.durableProcess?.oldEpochAttempt?.state === 'lost'
+        && actual.beforeRecovery.durableProcess?.oldEpochAttempt?.reason === 'owner-epoch-mismatch'
+        && actual.beforeRecovery.durableProcess?.expectedEpochAttempt?.state === 'lost'
+        && actual.beforeRecovery.durableProcess?.expectedEpochAttempt?.reason === 'started-helper-dead'
         && (actual.beforeRecovery.vgReceipt !== null) === receiptsExpected
+        && (!receiptsExpected || actual.beforeRecovery.vgReceipt?.materialized === true)
+        && (!receiptsExpected || actual.beforeRecovery.vgReceipt?.candidate?.parents?.[1] === actual.beforeRecovery.gitHead)
         && typeof actual.beforeRecovery.jj?.stdout === 'string'
+        && actual.beforeRecovery.jj?.code === 0 && actual.beforeRecovery.jj?.operation?.code === 0
+        && typeof actual.beforeRecovery.jj?.operation?.stdout === 'string' && actual.beforeRecovery.jj.operation.stdout.trim().length > 0
         && (receiptsExpected ? ['selected', 'full'].includes(actual.beforeRecovery.stsScope) : actual.beforeRecovery.stsScope === null)
-        && actual.finalLedger?.phase === 'recovered' && actual.finalLedger?.completionAuthorized === false;
+        && actual.finalLedger?.phase === 'recovered' && actual.finalLedger?.terminal === true
+        && actual.finalLedger?.status === 'review' && actual.finalLedger?.completionAuthorized === false;
       rows.push({ window, repeat, workspace, jjInit, killed, restarted, pass });
     }
   }
   const report = { schema: 'CodingRecoveryWindows/v2', driven_by: 'agent', actor: 'codex-coding-recovery-evaluator',
-    realHumanEvidence: false, windows, repeats, rows, pass: rows.length === windows.length * repeats && rows.every((row) => row.pass) };
+    realHumanEvidence: false, windows, repeats, control, rows,
+    pass: control.pass && rows.length === windows.length * repeats && rows.every((row) => row.pass) };
   writeJson(resultPath, report);
   console.log(JSON.stringify({ schema: report.schema, rows: rows.length, pass: report.pass }));
   if (!report.pass) process.exitCode = 1;
