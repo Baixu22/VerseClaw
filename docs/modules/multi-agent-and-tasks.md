@@ -443,6 +443,8 @@ Agents 面板将派发准入、实际执行、报告回传、验证回执、任�
 
 操作范围及恢复入口见[会话、任务与资源操作矩阵](../dev/session-lifecycle-control-matrix.md)。
 
+子代理 transcript 与任务 owner 的读取使用 Gateway 的常规请求预算，并共享调用方的逻辑截止时间；读取前后均核对 generation。
+
 子代理详情和名单面板按当前 child 会话代次读取任务 owner 的验证回执和验收状态，分别显示等待验收、已验收和已取消；刷新可回读核验后的状态。账本中的 worker 会话链接打开原有 transcript 面板，并保持正确负责人范围。验收读取失败时保留已读取的 transcript，任务验收显示不可用。
 
 费用读取当前 transcript 中的结构化 usage 记录；完整费用记录可汇总，缺失费用显示“未知”。

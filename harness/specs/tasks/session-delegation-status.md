@@ -110,8 +110,10 @@ acceptance:
   - Worker admission uses its own child receipt; its canonical task comes from the generation-fenced owner read. Verification records retain task revision, epoch and candidate separately from task acceptance.
   - Generation-fenced worker history reads use message-only Gateway requests and render before the independent task-owner query finishes.
   - Fenced worker history uses the existing Gateway request budget, clamped by the caller's logical deadline, so a concurrent parent history read does not impose a separate ten-second limit.
+  - Generation checks before and after transcript and Task owner reads use the same normal Gateway budget; a slow valid response remains readable and a changed generation still rejects the result.
   - Worker navigation, intervention recovery and coordinator isolation run as separate Electron cases while retaining the complete original journey assertions.
   - Worker intervention acceptance checks the held run and queued run terminal owners before transcript readback; queue drain receipts remain distinct from run completion. Worker journeys use a 420-second overall budget for owner checks and evidence sealing while retaining bounded host, queue, history and generation checks.
+  - Electron evidence waits for transcript and Task owner stages within their existing Host budgets. Renderer diagnostic reads have a five-second limit so an unresponsive window preserves the original failure and reaches process cleanup.
   - Canonical Task Ledger reads skip a contended derived snapshot-cache refresh without waiting on its write lock; explicit cache writes retain serialization, and event or Task owner read failures still reject the read.
   - A queued worker message rejected by the chat owner remains recoverable in the original queue with the rejection recorded; it is not marked drained.
   - Session describe and list share the tracked-run owner projection; retained terminal abort entries stay available for idempotency without keeping a finished worker active.

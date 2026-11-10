@@ -67,14 +67,14 @@ export async function readSessionTask(workspaceId:string,sessionKey:string,gatew
   if (!store) return {task:null,children:[]};
   try {
     if (!gateway) throw new Error('TASK_SESSION_OWNER_UNAVAILABLE');
-    const described=await gateway.rpc<{session?:{sessionId?:string}}>('sessions.describe',{key:sessionKey},10_000);
+    const described=await gateway.rpc<{session?:{sessionId?:string}}>('sessions.describe',{key:sessionKey});
     const generation=described.session?.sessionId;
     if (expectedGeneration && generation !== expectedGeneration) throw new Error('TASK_GENERATION_STALE');
     if (!generation) return {task:null,children:[]};
     const snapshot=store.sessionSnapshot(sessionKey,generation);
     const verificationReceipts=snapshot.task?store.getTaskEvidence(snapshot.task.contract.taskNodeId):[];
     if (expectedGeneration) {
-      const after=await gateway.rpc<{session?:{sessionId?:string}}>('sessions.describe',{key:sessionKey},10_000);
+      const after=await gateway.rpc<{session?:{sessionId?:string}}>('sessions.describe',{key:sessionKey});
       if (after.session?.sessionId !== generation) throw new Error('TASK_GENERATION_STALE');
     }
     return {...snapshot,verificationReceipts};

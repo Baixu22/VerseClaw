@@ -55,6 +55,27 @@ describe('session bridge consumes the persistent task owner', () => {
     await expect(readSessionTask('workspace', 'source', gateway, 'generation-source')).rejects.toThrow('TASK_GENERATION_STALE');
     expect(store!.get(task.contract.taskNodeId).claim).toEqual(task.claim);
   });
+  it.each([1, 2])('keeps the task owner readable when generation check %s takes twelve seconds', async (slowRead) => {
+    const task = owner();
+    vi.mocked(getWorkspaceRootPathById).mockResolvedValue(root);
+    let reads = 0;
+    vi.useFakeTimers();
+    try {
+      const rpc = vi.fn((_method: string, _params?: unknown, timeoutMs = 30_000) => new Promise((resolve, reject) => {
+        const deadline = setTimeout(() => reject(new Error('RPC timeout: sessions.describe')), timeoutMs);
+        setTimeout(() => {
+          clearTimeout(deadline);
+          resolve({ session: { sessionId: 'generation-source' } });
+        }, ++reads === slowRead ? 12_000 : 1);
+      }));
+      const reading = readSessionTask('workspace', 'source', { rpc } as unknown as GatewayManager, 'generation-source')
+        .then(value => ({ value }), error => ({ error: String(error) }));
+      await vi.advanceTimersByTimeAsync(12_010);
+      expect(await reading).toMatchObject({ value: { task: { contract: { taskNodeId: task.contract.taskNodeId } } } });
+      expect(reads).toBe(2);
+      expect(store!.get(task.contract.taskNodeId).claim).toEqual(task.claim);
+    } finally { vi.clearAllTimers(); vi.useRealTimers(); }
+  });
   it('rejects effects without a contract without creating a database', () => {
     expect(() => effect()).toThrow('TASK_CLAIM_REQUIRED');
     expect(existsSync(resolveTaskDomain(root).database)).toBe(false);

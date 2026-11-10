@@ -2097,7 +2097,7 @@ export function createSessionsApi(ctx: {
         let described: Description | null = null;
         if (needsFence) {
           if (!ctx.gatewayManager) return { success: false, error: 'Transcript generation unavailable' };
-          described = await ctx.gatewayManager.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() }, 15_000);
+          described = await ctx.gatewayManager.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() });
           if (!described.session?.sessionId || (payload.expectedSessionGeneration && described.session.sessionId !== payload.expectedSessionGeneration)
             || (payload.expectedParentSessionKey && classifyDerivation(described.session).parentSessionKey !== payload.expectedParentSessionKey)) {
             return { success: false, error: 'Transcript scope or generation changed' };
@@ -2106,7 +2106,7 @@ export function createSessionsApi(ctx: {
         const messages = await loadSessionTranscriptByKey(body.sessionKey.trim(), limit, ctx.gatewayManager, !needsFence);
         if (!messages) return { success: false, error: 'Transcript not found' };
         if (needsFence) {
-          const after = await ctx.gatewayManager!.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() }, 15_000);
+          const after = await ctx.gatewayManager!.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() });
           if (after.session?.sessionId !== described?.session?.sessionId) return { success: false, error: 'Transcript generation changed during read' };
         }
         const executed = messages.findLast((message) => message.role === 'assistant'
@@ -2123,7 +2123,7 @@ export function createSessionsApi(ctx: {
             phase: event.status, idempotencyKey: key, source: 'runtime-intervention',
             ...(event.payload?.queueItemId ? { queueItemId: event.payload.queueItemId } : {}),
           };
-          const current = await ctx.gatewayManager.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() }, 15_000);
+          const current = await ctx.gatewayManager.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() });
           if (current.session?.sessionId !== described.session.sessionId) return { success: false, error: 'Transcript generation changed during delivery read' };
         }
         const recordedMessages = messages as Array<RawMessage & { usage?: unknown }>;

@@ -1451,20 +1451,30 @@ describe('host services', () => {
     expect((await api.prepareHandoff({ sessionKey: 'agent:main:runtime-handoff' })).draft).not.toContain('STALE_LOCAL_RESULT');
   });
 
-  it('allows a generation-fenced worker history to finish within the normal Gateway budget', async () => {
+  it.each(['before', 'history', 'after'])('reads a worker within the Gateway budget when %s is slow', async (slowPhase) => {
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const messages = [{ role: 'assistant', content: 'Current worker result' }];
-    const rpc = vi.fn(async (method: string, _params?: unknown, timeoutMs = 30_000) => {
-      if (method === 'sessions.describe') return { session: { sessionId: 'worker-generation', spawnedBy: 'agent:main:parent' } };
-      if (method === 'chat.history') {
-        if (timeoutMs < 12_000) throw new Error('RPC timeout: chat.history');
-        return { messages };
-      }
-      throw new Error(`Unexpected RPC ${method}`);
-    });
-    const api = createSessionsApi({ gatewayManager: { rpc } as never });
-    expect(await api.history({ sessionKey: 'agent:main:worker', expectedParentSessionKey: 'agent:main:parent',
-      expectedSessionGeneration: 'worker-generation' })).toMatchObject({ success: true, sessionGeneration: 'worker-generation', messages });
+    let descriptions = 0;
+    vi.useFakeTimers();
+    try {
+      const rpc = vi.fn((method: string, _params?: unknown, timeoutMs = 30_000) => {
+        const phase = method === 'chat.history' ? 'history' : ++descriptions === 1 ? 'before' : 'after';
+        return new Promise((resolve, reject) => {
+          const deadline = setTimeout(() => reject(new Error(`RPC timeout: ${method}`)), timeoutMs);
+          setTimeout(() => {
+            clearTimeout(deadline);
+            resolve(method === 'chat.history' ? { messages }
+              : { session: { sessionId: 'worker-generation', spawnedBy: 'agent:main:parent' } });
+          }, phase === slowPhase ? 16_000 : 1);
+        });
+      });
+      const api = createSessionsApi({ gatewayManager: { rpc } as never });
+      const reading = api.history({ sessionKey: 'agent:main:worker', expectedParentSessionKey: 'agent:main:parent',
+        expectedSessionGeneration: 'worker-generation' }).then(value => ({ value }), error => ({ error: String(error) }));
+      await vi.advanceTimersByTimeAsync(16_010);
+      expect(await reading).toMatchObject({ value: { success: true, sessionGeneration: 'worker-generation', messages } });
+      expect(descriptions).toBe(2);
+    } finally { vi.clearAllTimers(); vi.useRealTimers(); }
   });
 
   it('reports recorded transcript cost only when each relevant usage record has a cost', async () => {

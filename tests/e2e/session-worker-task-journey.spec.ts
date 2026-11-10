@@ -180,8 +180,8 @@ test(`a real delegated worker receives its own task, reports separately and acce
     const workerRow = page.getByTestId(`session-activity-subagent-${workerActor.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`);
     await expect(workerRow).toBeVisible(); await workerRow.click();
     await expect(page.getByTestId('workspace-subagent-panel')).toBeVisible();
-    await expect(page.getByTestId('workspace-subagent-panel')).toContainText('WORKER-RUN-FINISHED');
-    await expect(page.getByTestId('workspace-subagent-panel').locator('[data-stage="acceptance"]')).toHaveAttribute('data-status', 'pending');
+    await expect(page.getByTestId('workspace-subagent-panel')).toContainText('WORKER-RUN-FINISHED', { timeout: hostActionTimeoutMs('sessions', 'history') });
+    await expect(page.getByTestId('workspace-subagent-panel').locator('[data-stage="acceptance"]')).toHaveAttribute('data-status', 'pending', { timeout: hostActionTimeoutMs('taskLedger', 'sessionTask') });
       await expect(page.getByTestId('workspace-subagent-panel').locator('[data-stage="verification"]')).toHaveAttribute('data-status', 'pending');
     await expect(page.getByTestId('workspace-subagent-model')).toContainText((history as { model: string }).model);
     if (journey === 'navigation') {
@@ -447,6 +447,7 @@ for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
       return { text: 'ACCEPTED-WORKER-FINISHED' };
     });
     const app = await launchElectronApp({ skipSetup: true });
+    const captureUi = await observeSessionUi(app);
     const evidence: Record<string, unknown> = { driven_by: 'agent', actor: 'playwright-worker-acceptance', provider: 'local-scripted', language, status: 'running' };
     try {
       await configureSessionChainProvider(app, llm.port);
@@ -488,7 +489,8 @@ for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
       const worker = activity.snapshot.subagents.find(entry => entry.childSessionKey === childKey)!;
       await page.getByTestId(`session-activity-subagent-${worker.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`).click();
       const stage = page.getByTestId('workspace-subagent-panel').locator('[data-stage="acceptance"]');
-      await expect(stage).toHaveAttribute('data-status', 'pending');
+      await expect(page.getByTestId('workspace-subagent-transcript')).toContainText('ACCEPTED-WORKER-FINISHED', { timeout: hostActionTimeoutMs('sessions', 'history') });
+      await expect(stage).toHaveAttribute('data-status', 'pending', { timeout: hostActionTimeoutMs('taskLedger', 'sessionTask') });
       await page.screenshot({ path: testInfo.outputPath('worker-awaiting-acceptance.png') });
       evidence.stage = 'owner-verification';
       const current = await hostInvoke<{ task: TaskView }>(app, 'taskLedger', 'sessionTask', { workspaceId: project.workspaceId, sessionKey: project.sessionKey });
@@ -598,7 +600,14 @@ for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
       evidence.project = project; evidence.task = task; evidence.admission = admitted; evidence.childKey = childKey;
       evidence.artifact = { path: target, sha256: createHash('sha256').update(await readFile(target)).digest('hex') };
       evidence.acceptance = { current, receipts, readback, history, locales }; evidence.status = 'passed';
-    } catch (error) { evidence.status = 'failed'; evidence.error = String(error); throw error; }
+    } catch (error) {
+      evidence.status = 'failed'; evidence.error = String(error);
+      evidence.mainLog = await hostInvoke(app, 'logs', 'memory', { count: 300 }).catch(String);
+      const page = await getStableWindow(app).catch(() => null);
+      evidence.hostCalls = page ? await getAgentDevHostCalls(page).catch(String) : 'Window unavailable';
+      await captureUi(name => testInfo.outputPath(name));
+      throw error;
+    }
     finally {
       evidence.providerLog = llm.log; await writeFile(testInfo.outputPath('worker-owner-acceptance.json'), JSON.stringify(evidence, null, 2));
       await app.evaluate(() => {
