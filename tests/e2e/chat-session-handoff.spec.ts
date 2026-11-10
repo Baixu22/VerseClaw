@@ -225,7 +225,7 @@ function baseHostApiMocks() {
 }
 
 test.describe('Verse Claw chat session handoff', () => {
-  test('keeps a sidebar handoff intent until a cold session generation hydrates', async ({ launchElectronApp }) => {
+  test('keeps a sidebar handoff intent until a cold session generation hydrates', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
     try {
       await installIpcMocks(app, {
@@ -234,9 +234,12 @@ test.describe('Verse Claw chat session handoff', () => {
           'sessions.list': { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
         },
         gatewayRpc: {
-          [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: { success: true, result: { messages: [] } },
+          [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: { success: true, result: { messages: handoffHistory } },
         },
-        hostApi: baseHostApiMocks(),
+        hostApi: {
+          ...baseHostApiMocks(),
+          [stableStringify(['sessions', 'history', null])]: { messages: handoffHistory, hasMore: false },
+        },
       });
 
       const page = await getStableWindow(app);
@@ -244,7 +247,7 @@ test.describe('Verse Claw chat session handoff', () => {
       await page.waitForLoadState('domcontentloaded');
       await expect(page.getByTestId('chat-project-session-header')).toBeVisible({ timeout: 30_000 });
 
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click();
       const headerHandoff = page.getByTestId('chat-session-handoff');
       await expect(headerHandoff).toBeDisabled();
       await expect(headerHandoff).toHaveAttribute('title', SESSION_GENERATION_UNAVAILABLE_REASON);
@@ -256,6 +259,7 @@ test.describe('Verse Claw chat session handoff', () => {
       await expect(composerHandoff).toBeDisabled();
       await expect(composerHandoff).toHaveAttribute('title', SESSION_GENERATION_UNAVAILABLE_REASON);
       await expect(composerHandoff).toContainText(SESSION_GENERATION_UNAVAILABLE_REASON);
+      await page.screenshot({ path: testInfo.outputPath('handoff-generation-pending.png') });
       await page.keyboard.press('Escape');
 
       await page.getByTestId(`sidebar-session-more-${MAIN_SESSION_KEY}`).click();
@@ -273,6 +277,7 @@ test.describe('Verse Claw chat session handoff', () => {
       await page.getByTestId('chat-toolbar-refresh').click();
       await expect(page.getByTestId('chat-handoff-dialog')).toBeVisible();
       await expect(page.getByTestId('chat-handoff-draft')).toHaveValue(HANDOFF_DRAFT);
+      await page.screenshot({ path: testInfo.outputPath('handoff-generation-ready.png') });
       await expect.poll(async () => (await getAgentDevHostCalls(page)).filter((value) => {
         const call = value as { module?: string; action?: string; payload?: { sessionKey?: string } };
         return call.module === 'sessions' && call.action === 'prepareHandoff' && call.payload?.sessionKey === MAIN_SESSION_KEY;
@@ -337,12 +342,12 @@ test.describe('Verse Claw chat session handoff', () => {
       await page.reload();
       await expect(page.getByTestId('chat-composer-input')).toBeVisible();
       await page.screenshot({ path: testInfo.outputPath('handoff-isolation-ready.png') });
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click();
       await page.getByTestId('chat-session-handoff').click();
       await expect.poll(() => app.evaluate(() => (globalThis as typeof globalThis & { __handoffIsolation?: { requested: boolean } }).__handoffIsolation?.requested)).toBe(true);
       await page.getByTestId(`sidebar-session-${otherKey}`).click();
       await expect(page.getByTestId(`sidebar-session-${otherKey}`).locator('xpath=ancestor::div[contains(@class, "sidebar-row")][1]')).toHaveClass(/\bselected\b/);
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click();
       await expect(page.getByTestId('chat-session-handoff')).toBeEnabled();
       await page.getByTestId('chat-session-handoff').click();
       await expect(page.getByTestId('chat-handoff-draft')).toHaveValue('Current draft from B');
@@ -482,7 +487,7 @@ test.describe('Verse Claw chat session handoff', () => {
       await page.reload();
       await page.waitForLoadState('domcontentloaded');
 
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click();
       await expect(page.getByTestId('chat-session-fork')).toBeVisible();
       await expect(page.getByTestId('chat-session-handoff')).toBeVisible();
       await expect(page.getByTestId('chat-session-handoff-recommended')).toBeVisible();
@@ -591,7 +596,7 @@ test.describe('Verse Claw chat session handoff', () => {
       await expect(page.getByTestId('chat-composer-fork')).toHaveCount(0);
       await expect(page.getByTestId('chat-composer-handoff')).toHaveCount(0);
 
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click();
       await expect(page.getByTestId('chat-session-fork')).toBeDisabled();
       await expect(page.getByTestId('chat-session-handoff')).toBeDisabled();
     } finally {
@@ -634,7 +639,7 @@ test.describe('Verse Claw chat session handoff', () => {
       await page.waitForLoadState('domcontentloaded');
 
       await expect(page.getByTestId('chat-project-session-header')).toBeVisible({ timeout: 30_000 });
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click();
       await page.getByTestId('chat-session-handoff').click();
 
       // The refusal is surfaced with an actionable, localized message, and no draft dialog opens.
@@ -663,7 +668,7 @@ test.describe('Verse Claw chat session handoff', () => {
       const page = await getStableWindow(app);
       await page.reload();
       await expect(page.getByTestId('chat-project-session-header')).toBeVisible({ timeout: 30_000 });
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await page.getByTestId('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click();
       await page.getByTestId('chat-session-handoff').click();
       await expect(page.getByTestId('chat-handoff-dialog')).toBeVisible();
       await page.getByTestId('chat-handoff-create').click();
