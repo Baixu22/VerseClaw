@@ -1,0 +1,310 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "source": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+  "status": "candidate_journeys_passed_paired_incomplete",
+  "pairedReceipt": {
+    "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\paired-receipt.json",
+    "sha256": "f417d53494d8db5ea79eb36db31d24f2b4838f75df5cf931cc8c6eefb8a58489"
+  },
+  "sides": {
+    "baseline": {
+      "passed": 4,
+      "failed": 2,
+      "cleanupPassed": true,
+      "source": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+      "journeys": [
+        {
+          "journey": "cross-tree-migration",
+          "status": "passed",
+          "counts": {
+            "identity_selection": 1,
+            "page_transition": 0,
+            "repeat_confirmation": 0,
+            "goal_restatement": 0,
+            "repeat_reminder": 0
+          },
+          "source": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+          "raw": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\interaction-metrics.json",
+          "sha256": "721e93b5daa419cb0e90deb13e3b7f3cdf4f9ad49c2a93f1bfe9d381d4bda4a0",
+          "reason": null
+        },
+        {
+          "journey": "crash-recovery",
+          "status": "failed",
+          "counts": {
+            "identity_selection": null,
+            "page_transition": null,
+            "repeat_confirmation": null,
+            "goal_restatement": null,
+            "repeat_reminder": null
+          },
+          "source": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+          "raw": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery\\interaction-metrics.json",
+          "sha256": "f17d829d3312d8b1009ebb4a9bbd947431fba42f052d406280522d4a8efc8968",
+          "reason": "Error: electronApplication.evaluate: Target page, context or browser has been closed"
+        },
+        {
+          "journey": "archive-restore",
+          "status": "passed",
+          "counts": {
+            "identity_selection": 2,
+            "page_transition": 3,
+            "repeat_confirmation": 0,
+            "goal_restatement": 0,
+            "repeat_reminder": 0
+          },
+          "source": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+          "raw": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore\\interaction-metrics.json",
+          "sha256": "5bacbe0bbe5319a4c773a70caae78fbe48194abf400c5ca0173b736ce4073aea",
+          "reason": null
+        },
+        {
+          "journey": "continue",
+          "status": "passed",
+          "counts": {
+            "identity_selection": 1,
+            "page_transition": 1,
+            "repeat_confirmation": 0,
+            "goal_restatement": 0,
+            "repeat_reminder": 0
+          },
+          "source": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+          "raw": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-continue\\interaction-metrics.json",
+          "sha256": "2d539bf04de2541dc41c678ffa19f617fc2e13ad8a7643c8f24066f3897d9c6c",
+          "reason": null
+        },
+        {
+          "journey": "handoff",
+          "status": "failed",
+          "counts": {
+            "identity_selection": null,
+            "page_transition": null,
+            "repeat_confirmation": null,
+            "goal_restatement": null,
+            "repeat_reminder": null
+          },
+          "source": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+          "raw": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-handoff\\interaction-metrics.json",
+          "sha256": "ff30b775258714c00809b41035bc05999228be2b79119cdd3f60962f70a0883d",
+          "reason": "Error: [INTERNAL] Owned Gateway process did not exit (pid=45620)"
+        },
+        {
+          "journey": "new-task",
+          "status": "passed",
+          "counts": {
+            "identity_selection": 0,
+            "page_transition": 1,
+            "repeat_confirmation": 0,
+            "goal_restatement": 0,
+            "repeat_reminder": 0
+          },
+          "source": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+          "raw": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-new-task\\interaction-metrics.json",
+          "sha256": "14d48492bd2273be96d95fb4d63d0d1973af2e27a2e4beb1a8d108e46f71cae2",
+          "reason": null
+        }
+      ]
+    },
+    "candidate": {
+      "passed": 6,
+      "failed": 0,
+      "cleanupPassed": true,
+      "source": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+      "journeys": [
+        {
+          "journey": "cross-tree-migration",
+          "status": "passed",
+          "counts": {
+            "identity_selection": 1,
+            "page_transition": 0,
+            "repeat_confirmation": 0,
+            "goal_restatement": 0,
+            "repeat_reminder": 0
+          },
+          "source": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+          "raw": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\interaction-metrics.json",
+          "sha256": "1eb9f8ca11f4ea7e39f728158fffde6aabf77b757532b005455a3917da627d4f",
+          "reason": null
+        },
+        {
+          "journey": "crash-recovery",
+          "status": "passed",
+          "counts": {
+            "identity_selection": 1,
+            "page_transition": 1,
+            "repeat_confirmation": 0,
+            "goal_restatement": 0,
+            "repeat_reminder": 0
+          },
+          "source": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+          "raw": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery\\interaction-metrics.json",
+          "sha256": "5d6038d34e5f0f449f2b49aa0c05ae3e67e86fd41c180d77c541903cfc2d1b86",
+          "reason": null
+        },
+        {
+          "journey": "archive-restore",
+          "status": "passed",
+          "counts": {
+            "identity_selection": 2,
+            "page_transition": 3,
+            "repeat_confirmation": 0,
+            "goal_restatement": 0,
+            "repeat_reminder": 0
+          },
+          "source": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+          "raw": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore\\interaction-metrics.json",
+          "sha256": "1d104effc308afcc51f560ddb600cbda4b9824628a94b94391464c174013e0d6",
+          "reason": null
+        },
+        {
+          "journey": "continue",
+          "status": "passed",
+          "counts": {
+            "identity_selection": 1,
+            "page_transition": 1,
+            "repeat_confirmation": 0,
+            "goal_restatement": 0,
+            "repeat_reminder": 0
+          },
+          "source": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+          "raw": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-continue\\interaction-metrics.json",
+          "sha256": "b07b9ade5f74497d95e4af150486bd6f2ff8cbbc3008460a68d6596ea9f07ce4",
+          "reason": null
+        },
+        {
+          "journey": "handoff",
+          "status": "passed",
+          "counts": {
+            "identity_selection": 0,
+            "page_transition": 0,
+            "repeat_confirmation": 0,
+            "goal_restatement": 0,
+            "repeat_reminder": 0
+          },
+          "source": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+          "raw": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-handoff\\interaction-metrics.json",
+          "sha256": "a03136ccc472607df7d9879ef1df193087da7aff92ad8e070be9c63df36f01fb",
+          "reason": null
+        },
+        {
+          "journey": "new-task",
+          "status": "passed",
+          "counts": {
+            "identity_selection": 0,
+            "page_transition": 1,
+            "repeat_confirmation": 0,
+            "goal_restatement": 0,
+            "repeat_reminder": 0
+          },
+          "source": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+          "raw": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-new-task\\interaction-metrics.json",
+          "sha256": "dcc7b32ba172d4137d5dd075f87ce1a217258fdd6712880e3d02cc9b6d5d579b",
+          "reason": null
+        }
+      ]
+    }
+  },
+  "comparisons": [
+    {
+      "journey": "new-task",
+      "baseline": {
+        "identity_selection": 0,
+        "page_transition": 1,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      },
+      "candidate": {
+        "identity_selection": 0,
+        "page_transition": 1,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      },
+      "delta": {
+        "identity_selection": 0,
+        "page_transition": 0,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      }
+    },
+    {
+      "journey": "continue",
+      "baseline": {
+        "identity_selection": 1,
+        "page_transition": 1,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      },
+      "candidate": {
+        "identity_selection": 1,
+        "page_transition": 1,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      },
+      "delta": {
+        "identity_selection": 0,
+        "page_transition": 0,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      }
+    },
+    {
+      "journey": "cross-tree-migration",
+      "baseline": {
+        "identity_selection": 1,
+        "page_transition": 0,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      },
+      "candidate": {
+        "identity_selection": 1,
+        "page_transition": 0,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      },
+      "delta": {
+        "identity_selection": 0,
+        "page_transition": 0,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      }
+    },
+    {
+      "journey": "archive-restore",
+      "baseline": {
+        "identity_selection": 2,
+        "page_transition": 3,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      },
+      "candidate": {
+        "identity_selection": 2,
+        "page_transition": 3,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      },
+      "delta": {
+        "identity_selection": 0,
+        "page_transition": 0,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      }
+    }
+  ],
+  "comparableJourneys": 4,
+  "latencyBenefitClaim": false,
+  "humanCognitionClaim": false,
+  "context": "R4 Task Forest apply overlapped baseline crash recovery and handoff; preserve both failures and repeat final paired measurement in the coordinated window."
+}

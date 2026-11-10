@@ -1,0 +1,235 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/traceability-validation/handoff-hydration-cold-ui2-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-session-handoff.spec.ts",
+      "file": "chat-session-handoff.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat session handoff",
+          "file": "chat-session-handoff.spec.ts",
+          "line": 227,
+          "column": 6,
+          "specs": [
+            {
+              "title": "keeps a sidebar handoff intent until a cold session generation hydrates",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 41591,
+                      "error": {
+                        "message": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('sidebar-session-more-agent:main:main')\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" title=\"More actions\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-label=\"More actions\" data-testid=\"sidebar-session-more-agent:main:main\" class=\"task-hover-btn sidebar-session-more-trigger\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    57 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
+                        "stack": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('sidebar-session-more-agent:main:main')\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" title=\"More actions\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-label=\"More actions\" data-testid=\"sidebar-session-more-agent:main:main\" class=\"task-hover-btn sidebar-session-more-trigger\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    57 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\chat-session-handoff.spec.ts:265:74",
+                        "location": {
+                          "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\chat-session-handoff.spec.ts",
+                          "column": 74,
+                          "line": 265
+                        },
+                        "snippet": "  263 |       await page.keyboard.press('Escape');\n  264 |\n> 265 |       await page.getByTestId(`sidebar-session-more-${MAIN_SESSION_KEY}`).click();\n      |                                                                          ^\n  266 |       await page.getByTestId('sidebar-session-context-handoff').click();\n  267 |       await expect(page.getByTestId('chat-handoff-dialog')).toHaveCount(0);\n  268 |       expect((await getAgentDevHostCalls(page)).filter((value) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\chat-session-handoff.spec.ts",
+                            "column": 74,
+                            "line": 265
+                          },
+                          "message": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('sidebar-session-more-agent:main:main')\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" title=\"More actions\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-label=\"More actions\" data-testid=\"sidebar-session-more-agent:main:main\" class=\"task-hover-btn sidebar-session-more-trigger\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    57 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n\n  263 |       await page.keyboard.press('Escape');\n  264 |\n> 265 |       await page.getByTestId(`sidebar-session-more-${MAIN_SESSION_KEY}`).click();\n      |                                                                          ^\n  266 |       await page.getByTestId('sidebar-session-context-handoff').click();\n  267 |       await expect(page.getByTestId('chat-handoff-dialog')).toHaveCount(0);\n  268 |       expect((await getAgentDevHostCalls(page)).filter((value) => {\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\chat-session-handoff.spec.ts:265:74"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "[app:out] [2026-11-10T15:19:46.503Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:19:46.504Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-10T15:19:46.504Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=43884, ppid=51992\n[2026-11-10T15:19:46.504Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:19:46.711Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:19:46.712Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-10T15:19:46.712Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-10T15:19:46.712Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:19:46.755Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:19:46.755Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                        },
+                        {
+                          "text": "[app:err] [43884:1110/231946.797:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[43884:1110/231946.797:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:19:46.969Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:19:46.971Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:19:46.972Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T15:19:46.972Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T15:19:46.972Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-10T15:19:46.972Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:19:46.976Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T15:19:46.977Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T15:19:46.977Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-10T15:19:46.977Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:19:47.590Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"default\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-HyKRfv\\\\verse-claw-e2e-home-nyGoAD\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\default-7505d64a54\\\\snapshot.json\"}\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:19:47.608Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"default\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-HyKRfv\\\\verse-claw-e2e-home-nyGoAD\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\default-7505d64a54\\\\snapshot.json\"}\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:19:47.641Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"default\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-HyKRfv\\\\verse-claw-e2e-home-nyGoAD\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\default-7505d64a54\\\\snapshot.json\"}\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:19:47.820Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"workspace-a\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-HyKRfv\\\\verse-claw-e2e-home-nyGoAD\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\workspace-a-45fd7baeda\\\\snapshot.json\"}\n"
+                        },
+                        {
+                          "text": "[app:err] [2026-11-10T15:19:47.820Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"workspace-a\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-HyKRfv\\\\verse-claw-e2e-home-nyGoAD\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\workspace-a-45fd7baeda\\\\snapshot.json\"}\n[2026-11-10T15:19:47.821Z] [WARN] [task-ledger] snapshot cache write failed {\"workspaceId\":\"workspace-a\",\"error\":\"AtomicWriteError: Timed out acquiring write lock for D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-HyKRfv\\\\verse-claw-e2e-home-nyGoAD\\\\.openclaw\\\\task-ledgers\\\\workspaces\\\\workspace-a-45fd7baeda\\\\snapshot.json\"}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:19:55.195Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:20:19.023Z] [INFO] Gateway stop requested\n[2026-11-10T15:20:19.024Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                        },
+                        {
+                          "text": "[app:err] Debugger ending on ws://127.0.0.1:60717/2e0904a3-3856-47a4-a16c-ceeac6bee84b\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:20:19.056Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":4}\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:20:19.056Z] [INFO] [ResourceTracker] Stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:20:19.056Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:20:19.057Z] [INFO] [efficiency-sampler] stopped\n"
+                        },
+                        {
+                          "text": "[app:out] [2026-11-10T15:20:19.057Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-11-10T15:19:38.086Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-cold-ui2-results\\chat-session-handoff-Verse-d3835-session-generation-hydrates\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-cold-ui2-results\\chat-session-handoff-Verse-d3835-session-generation-hydrates\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-cold-ui2-results\\chat-session-handoff-Verse-d3835-session-generation-hydrates\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\chat-session-handoff.spec.ts",
+                        "column": 74,
+                        "line": 265
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "7fdcf548653fb33be071-e9f27d78f0aed1513777",
+              "file": "chat-session-handoff.spec.ts",
+              "line": 228,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-10T15:19:36.968Z",
+    "duration": 43551.127,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

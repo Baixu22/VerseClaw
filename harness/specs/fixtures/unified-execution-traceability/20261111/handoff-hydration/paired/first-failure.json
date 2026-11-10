@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "driven_by": "agent",
+  "actor": "u6-paired-runner",
+  "run_id": "u6-paired-hydration-20261110",
+  "recorded_at": "2026-11-10T15:40:08.569Z",
+  "stage": "playwright",
+  "side": "baseline",
+  "exit_code": 1,
+  "signal": null,
+  "log_path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\playwright.log"
+}

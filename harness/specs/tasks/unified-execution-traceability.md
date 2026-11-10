@@ -4,7 +4,7 @@ id: unified-execution-traceability
 title: Preserve task evidence through concurrent checkout recovery and cleanup
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 63493df01
+diffBase: f256bb2f2
 intent: Complete TF-0867 using the existing Task events, execution-domain registration, checkout writer and Git object owners.
 ownedPaths: &paths
   - shared/git-native-root.ts

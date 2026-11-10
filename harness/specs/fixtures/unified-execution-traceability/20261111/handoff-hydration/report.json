@@ -1,0 +1,269 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "status": "handoff_hydration_fixed",
+  "sourceCommit": "78d60fc31",
+  "candidate": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+  "productBuildSource": "c6148f4cf5afc20f7ad0b843ca969ccc3170e597",
+  "unit": {
+    "passed": 118,
+    "failed": 0,
+    "skipped": 0
+  },
+  "checks": [
+    {
+      "name": "lint",
+      "exitCode": 0,
+      "durationMs": 6873,
+      "source": "c6148f4cf5afc20f7ad0b843ca969ccc3170e597",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\tmp\\unified-management-20261109\\traceability-validation\\lint-handoff-candidate.cjs"
+      ]
+    },
+    {
+      "name": "types",
+      "exitCode": 0,
+      "durationMs": 81484,
+      "source": "c6148f4cf5afc20f7ad0b843ca969ccc3170e597",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/typecheck-agent-dev.mjs"
+      ]
+    },
+    {
+      "name": "test-types",
+      "exitCode": 0,
+      "durationMs": 73226,
+      "source": "c6148f4cf5afc20f7ad0b843ca969ccc3170e597",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ]
+    },
+    {
+      "name": "contract",
+      "exitCode": 0,
+      "durationMs": 3705,
+      "source": "c6148f4cf5afc20f7ad0b843ca969ccc3170e597",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/contract-check.mjs"
+      ]
+    },
+    {
+      "name": "i18n",
+      "exitCode": 0,
+      "durationMs": 1343,
+      "source": "c6148f4cf5afc20f7ad0b843ca969ccc3170e597",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/i18n-lint.mjs"
+      ]
+    },
+    {
+      "name": "comms-replay",
+      "exitCode": 0,
+      "durationMs": 1077,
+      "source": "c6148f4cf5afc20f7ad0b843ca969ccc3170e597",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/replay.mjs"
+      ]
+    },
+    {
+      "name": "comms-compare",
+      "exitCode": 0,
+      "durationMs": 1122,
+      "source": "c6148f4cf5afc20f7ad0b843ca969ccc3170e597",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/compare.mjs"
+      ]
+    },
+    {
+      "name": "harness",
+      "exitCode": 0,
+      "durationMs": 1721,
+      "source": "c6148f4cf5afc20f7ad0b843ca969ccc3170e597",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/unified-execution-traceability.md"
+      ]
+    },
+    {
+      "name": "harness-flow",
+      "exitCode": 0,
+      "durationMs": 1515,
+      "source": "c6148f4cf5afc20f7ad0b843ca969ccc3170e597",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/unified-execution-traceability.md",
+        "--dry-run"
+      ]
+    },
+    {
+      "name": "runtime-build",
+      "exitCode": 0,
+      "durationMs": 40416,
+      "source": "c6148f4cf5afc20f7ad0b843ca969ccc3170e597",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/build-openclaw-runtime.mjs"
+      ]
+    },
+    {
+      "name": "desktop-build",
+      "exitCode": 0,
+      "durationMs": 44309,
+      "source": "c6148f4cf5afc20f7ad0b843ca969ccc3170e597",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ]
+    }
+  ],
+  "electronColdEntry": {
+    "passed": 1,
+    "failed": 0,
+    "unexpectedSkip": 0,
+    "cleanup": "passed"
+  },
+  "realJourneys": {
+    "candidatePassed": 6,
+    "baselinePassed": 4,
+    "totalPerSide": 6,
+    "pairStatus": "incomplete",
+    "cleanupBoth": "passed"
+  },
+  "comparableJourneys": [
+    {
+      "journey": "new-task",
+      "baseline": {
+        "identity_selection": 0,
+        "page_transition": 1,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      },
+      "candidate": {
+        "identity_selection": 0,
+        "page_transition": 1,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      },
+      "delta": {
+        "identity_selection": 0,
+        "page_transition": 0,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      }
+    },
+    {
+      "journey": "continue",
+      "baseline": {
+        "identity_selection": 1,
+        "page_transition": 1,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      },
+      "candidate": {
+        "identity_selection": 1,
+        "page_transition": 1,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      },
+      "delta": {
+        "identity_selection": 0,
+        "page_transition": 0,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      }
+    },
+    {
+      "journey": "cross-tree-migration",
+      "baseline": {
+        "identity_selection": 1,
+        "page_transition": 0,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      },
+      "candidate": {
+        "identity_selection": 1,
+        "page_transition": 0,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      },
+      "delta": {
+        "identity_selection": 0,
+        "page_transition": 0,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      }
+    },
+    {
+      "journey": "archive-restore",
+      "baseline": {
+        "identity_selection": 2,
+        "page_transition": 3,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      },
+      "candidate": {
+        "identity_selection": 2,
+        "page_transition": 3,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      },
+      "delta": {
+        "identity_selection": 0,
+        "page_transition": 0,
+        "repeat_confirmation": 0,
+        "goal_restatement": 0,
+        "repeat_reminder": 0
+      }
+    }
+  ],
+  "latencyBenefitClaim": false,
+  "behavior": [
+    "Prepare Handoff waits for the current session generation.",
+    "Header, composer and slash actions expose the localized disabled reason.",
+    "Sidebar intent waits for hydration and dispatches preparation once.",
+    "Real Handoff creates one child and records the first send through the existing owner."
+  ],
+  "firstFailures": [
+    "Cold mock initially had empty history, hiding the header menu.",
+    "Sidebar hover-only More was not visible; test uses the supported context menu.",
+    "Paired baseline crash recovery and handoff failed during resource contention."
+  ],
+  "remainingAcceptance": [
+    "Final same-candidate U6 aggregate73 leaf cases",
+    "Valid frozen final paired measurement",
+    "TF0867 AC4",
+    "Sealed R4 integration",
+    "TF closure and main integration"
+  ]
+}

@@ -1,0 +1,403 @@
+{
+  "schema_version": 2,
+  "driven_by": "agent",
+  "actor": "playwright-u6",
+  "requestmodel": "ccs-workbuddy/deepseek-v4.1-flash",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "author_backend": null,
+  "provider": "local-scripted",
+  "side": "baseline",
+  "journey": "cross-tree-migration",
+  "status": "passed",
+  "source_head": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+  "homeDir": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\verse-claw-e2e-run-KDbgDh\\verse-claw-e2e-home-jR7xnM",
+  "profileDir": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\verse-claw-e2e-run-KDbgDh\\verse-claw-e2e-user-data-Rw1J3u",
+  "fixture": {
+    "id": "u6-goal-v1",
+    "objective": "Retain the approved U6 artifact",
+    "target": "artifact.txt",
+    "content_sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7",
+    "locale": "en",
+    "viewport": "1280x800"
+  },
+  "unsupportedProof": {},
+  "task_control_call_id": "u6crosstreemigrationtaskcontrol",
+  "setup": [
+    "isolated profile and Git fixture",
+    "scripted provider",
+    "project/session/history",
+    "persistent task contract",
+    "task/reference",
+    "linked checkout/claim/checkpoint",
+    "completed chat run binds source root"
+  ],
+  "owner": {
+    "success": true,
+    "operation": {
+      "schema": 1,
+      "id": "730ddef0-1b1c-4f62-958d-856fa940b420",
+      "requestDigest": "c1046f5bb706fb5818807e9b66a010fa5c7eddccbeaa740c489993b6c296c25b",
+      "workspaceId": "u6-project",
+      "targetWorkspaceId": "u6-target",
+      "sessionKey": "agent:main:session-1794324393481-uproject",
+      "agentId": "main",
+      "sourceGeneration": "afafd420-b338-49df-9f73-83b8119c969f",
+      "targetGeneration": "81feba14-8bc1-4d0b-9eba-1e7288e81948",
+      "sourceRoot": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source",
+      "targetRoot": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\target",
+      "sourceBindingRevision": 1,
+      "task": {
+        "credential": {
+          "taskNodeId": "b427d60e-51df-4acf-b1ca-0fa037293321",
+          "sessionKey": "agent:main:session-1794324393481-uproject",
+          "generation": "afafd420-b338-49df-9f73-83b8119c969f",
+          "epoch": 1,
+          "attemptId": "9c56582f-984a-48a8-b0a9-b41c884c4300",
+          "worktree": "d:/tmp/unified-management-20261109/u6-final-preparation/runs/u6-paired-hydration-20261110/baseline/run/results/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source",
+          "contractRevision": 1,
+          "expiresAt": 1794324529491,
+          "state": "active"
+        },
+        "revision": 1,
+        "digest": "61bb234ce249623141440f7f1d8d622ce0f087fafe9aeca69d7f3d73fc39c04b",
+        "authority": {
+          "localDomainId": "01cdc1a81c46c8a262e02863c56647b84cc160e68e3a373eb17be73153bca325",
+          "authorityId": "01cdc1a81c46c8a262e02863c56647b84cc160e68e3a373eb17be73153bca325",
+          "authorityDatabase": "d:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\.git\\verse-claw\\task-ledger.sqlite3",
+          "executionWorktree": "d:/tmp/unified-management-20261109/u6-final-preparation/runs/u6-paired-hydration-20261110/baseline/run/results/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source",
+          "registrationRevision": null,
+          "projectRevision": null,
+          "identityDigest": "86a98994e6d49ca97d087dd178fbafe4e6c413bc7897f713995cee48d1db47f5",
+          "databaseIdentity": "3325120695:5629499539461573:1794324404365051800"
+        },
+        "checkpoint": {
+          "nextAction": "Continue in target",
+          "completed": [
+            "Prior output retained"
+          ],
+          "unresolved": [],
+          "artifacts": [
+            {
+              "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\artifact.txt",
+              "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+            }
+          ]
+        }
+      },
+      "phase": "confirmed",
+      "createdAt": "2026-11-10T15:27:21.350Z",
+      "updatedAt": "2026-11-10T15:27:25.704Z",
+      "pausedCredential": {
+        "taskNodeId": "b427d60e-51df-4acf-b1ca-0fa037293321",
+        "sessionKey": "agent:main:session-1794324393481-uproject",
+        "generation": "afafd420-b338-49df-9f73-83b8119c969f",
+        "epoch": 2,
+        "attemptId": "9c56582f-984a-48a8-b0a9-b41c884c4300",
+        "worktree": "d:/tmp/unified-management-20261109/u6-final-preparation/runs/u6-paired-hydration-20261110/baseline/run/results/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source",
+        "contractRevision": 1,
+        "expiresAt": 1794324529491,
+        "state": "paused"
+      },
+      "reservation": {
+        "baseRoot": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\target",
+        "worktreeId": null,
+        "credential": {
+          "root": "d:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\target",
+          "incarnation": "3325120695:5629499539461581:1794324404684304100",
+          "generation": "base:3325120695:5629499539461581:1794324404684304100",
+          "epoch": 1,
+          "token": "bebba4b0-d1cb-4ac0-a0e4-75d9a27e44ae",
+          "owner": {
+            "kind": "run",
+            "run": {
+              "runId": "migration:730ddef0-1b1c-4f62-958d-856fa940b420",
+              "scope": {
+                "workspaceId": "u6-target",
+                "projectId": "u6-target",
+                "sessionKey": "agent:main:session-1794324393481-uproject"
+              }
+            },
+            "agentId": "main",
+            "sessionGeneration": "81feba14-8bc1-4d0b-9eba-1e7288e81948",
+            "bindingRevision": 2
+          }
+        }
+      },
+      "runtimeReceipt": {
+        "operationId": "730ddef0-1b1c-4f62-958d-856fa940b420",
+        "sessionKey": "agent:main:session-1794324393481-uproject",
+        "sourceGeneration": "afafd420-b338-49df-9f73-83b8119c969f",
+        "targetGeneration": "81feba14-8bc1-4d0b-9eba-1e7288e81948",
+        "sourceRoot": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source",
+        "targetRoot": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\target",
+        "state": "confirmed",
+        "transcriptPath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\verse-claw-e2e-run-KDbgDh\\verse-claw-e2e-user-data-Rw1J3u\\openclaw-source-state\\agents\\main\\sessions\\81feba14-8bc1-4d0b-9eba-1e7288e81948.jsonl",
+        "transcriptSha256": "65c0a0776ab67205bfcae94740d0850088a4a0db22675b2fc21c3515a9f38a91"
+      },
+      "targetCredential": {
+        "taskNodeId": "b427d60e-51df-4acf-b1ca-0fa037293321",
+        "sessionKey": "agent:main:session-1794324393481-uproject",
+        "generation": "81feba14-8bc1-4d0b-9eba-1e7288e81948",
+        "epoch": 3,
+        "attemptId": "29b27f1a-fe2d-407a-af4f-b37bca3ffb1b",
+        "worktree": "d:/tmp/unified-management-20261109/u6-final-preparation/runs/u6-paired-hydration-20261110/baseline/run/results/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target",
+        "contractRevision": 1,
+        "expiresAt": 1794324564572,
+        "state": "active"
+      },
+      "targetBindingRevision": 1,
+      "confirmation": {
+        "targetDigest": "61bb234ce249623141440f7f1d8d622ce0f087fafe9aeca69d7f3d73fc39c04b",
+        "candidateArtifacts": [
+          {
+            "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\artifact.txt",
+            "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+          }
+        ],
+        "pendingOperations": 0,
+        "at": "2026-11-10T15:27:25.482Z"
+      },
+      "reservationReleased": true
+    }
+  },
+  "fault": null,
+  "events": [
+    {
+      "id": "e1",
+      "at": "2026-11-10T15:27:20.095Z",
+      "action": "click",
+      "target": "testid:execution-migration-open",
+      "operation": "cross-tree-migration:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e2",
+      "at": "2026-11-10T15:27:21.197Z",
+      "action": "selectOption",
+      "target": "checkout:target",
+      "operation": "cross-tree-migration:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [
+        "identity_selection"
+      ],
+      "repeat_of": null,
+      "rule": "显式选择项目/会话/任务/检出身份",
+      "before": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "value_sha256": "fdd562c7c20103d5ccbffdc556e44cb16eda2d53470714faa5d88ede6de91a5a",
+      "after": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e3",
+      "at": "2026-11-10T15:27:21.213Z",
+      "action": "click",
+      "target": "testid:execution-migration-start",
+      "operation": "cross-tree-migration:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "value_sha256": "fdd562c7c20103d5ccbffdc556e44cb16eda2d53470714faa5d88ede6de91a5a",
+      "after": "file:///D:/ClawX-work/unified-management-baseline-20261110/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    }
+  ],
+  "tracked_product_and_helper_diff_empty": false,
+  "build": {
+    "main_sha256": "8765c7bb76e0e0c44199b8230da6e00d148fb8b95a93e3f631be9368e01c8201",
+    "renderer_sha256": "6c4e9972be89c6b9c3ea07d78f9c15d42b617d651ae9c0b33962723e1849ab42",
+    "runtime_entry_sha256": "e2ca863305b66a323508c0caa73c3509647d01b6b2629059cce5af6cf999e7d5",
+    "manifest_sha256": "1053afd2ed00ee48d5532f1ab8f7f35f2db3610343f7f70145226f9d7ecaf549",
+    "manifest_path": "D:\\tmp\\unified-management-20261109\\baseline-validation\\build-manifest.json",
+    "side": "baseline",
+    "source_head": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976"
+  },
+  "driver_sha256": "79876ca2952852bcc78b3e195cef5199400335885b30fd97f0be05d8420d8732",
+  "helpers": {
+    "electron.ts": "4dfc8c742e79bc63a5e5ee13e6ee9f712b5b14fd5520d875260a263899c739cf",
+    "fp-p1-harness.ts": "31e96027ab5a10d5e510b026831a4f55fd2d65e1a77ff350a28f8c17208d0a14",
+    "session-task-chain.ts": "f2a284662312c70f5b0e3d3208ca348aeaa0840ab351af597c99942eba02e69e",
+    "electron-process-cleanup.ts": "35864693cf9b6be10abc0f4ce5bb4db5a57974314967c425d2fd9ed166c9cc85",
+    "windows-process.ts": "27c7af68a5e580fc108018705711ef71994474a3bf40a7b838e764bdb0862dd9"
+  },
+  "checkpoint_seed": {
+    "success": true,
+    "task": {
+      "contract": {
+        "objective": "Retain the approved U6 artifact",
+        "constraints": [
+          "Retain prior progress"
+        ],
+        "acceptance": [
+          {
+            "id": "file",
+            "description": "Artifact contains the approved output",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "artifact.txt",
+              "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+            }
+          }
+        ],
+        "target": "artifact.txt",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "u6-create"
+        },
+        "taskNodeId": "b427d60e-51df-4acf-b1ca-0fa037293321",
+        "domain": "01cdc1a81c46c8a262e02863c56647b84cc160e68e3a373eb17be73153bca325",
+        "revision": 1,
+        "digest": "61bb234ce249623141440f7f1d8d622ce0f087fafe9aeca69d7f3d73fc39c04b",
+        "state": "doing",
+        "createdAt": 1794324404404,
+        "updatedAt": 1794324406374
+      },
+      "claim": {
+        "taskNodeId": "b427d60e-51df-4acf-b1ca-0fa037293321",
+        "sessionKey": "agent:main:session-1794324393481-uproject",
+        "generation": "afafd420-b338-49df-9f73-83b8119c969f",
+        "epoch": 1,
+        "attemptId": "9c56582f-984a-48a8-b0a9-b41c884c4300",
+        "worktree": "d:/tmp/unified-management-20261109/u6-final-preparation/runs/u6-paired-hydration-20261110/baseline/run/results/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source",
+        "contractRevision": 1,
+        "expiresAt": 1794324526374,
+        "state": "active"
+      },
+      "checkpoint": {
+        "nextAction": "Continue in target",
+        "completed": [
+          "Prior output retained"
+        ],
+        "unresolved": [],
+        "artifacts": [
+          {
+            "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\artifact.txt",
+            "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+          }
+        ]
+      },
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": []
+    },
+    "children": [],
+    "artifact_identity": {
+      "old": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\artifact.txt",
+      "actual": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\artifact.txt",
+      "canonical": "d:/tmp/unified-management-20261109/u6-final-preparation/runs/u6-paired-hydration-20261110/baseline/run/results/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/artifact.txt",
+      "expected": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\artifact.txt"
+    }
+  },
+  "migration_source_chat": {
+    "completed": true,
+    "sessionKey": "agent:main:session-1794324393481-uproject",
+    "expectedSessionGeneration": "afafd420-b338-49df-9f73-83b8119c969f",
+    "send": "U6-MIGRATION-INITIAL",
+    "reply": "U6-ACK"
+  },
+  "identities": {
+    "project": {
+      "workspaceId": "u6-project",
+      "rootPath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source",
+      "sessionKey": "agent:main:session-1794324393481-uproject",
+      "generation": "afafd420-b338-49df-9f73-83b8119c969f"
+    },
+    "child": null,
+    "taskNodeId": "b427d60e-51df-4acf-b1ca-0fa037293321",
+    "targetWorkspaceId": "u6-target"
+  },
+  "task_readback": {
+    "success": true,
+    "task": {
+      "contract": {
+        "objective": "Retain the approved U6 artifact",
+        "constraints": [
+          "Retain prior progress"
+        ],
+        "acceptance": [
+          {
+            "id": "file",
+            "description": "Artifact contains the approved output",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "artifact.txt",
+              "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+            }
+          }
+        ],
+        "target": "artifact.txt",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "u6-create"
+        },
+        "taskNodeId": "b427d60e-51df-4acf-b1ca-0fa037293321",
+        "domain": "01cdc1a81c46c8a262e02863c56647b84cc160e68e3a373eb17be73153bca325",
+        "revision": 1,
+        "digest": "61bb234ce249623141440f7f1d8d622ce0f087fafe9aeca69d7f3d73fc39c04b",
+        "state": "doing",
+        "createdAt": 1794324404404,
+        "updatedAt": 1794324444572
+      },
+      "claim": {
+        "taskNodeId": "b427d60e-51df-4acf-b1ca-0fa037293321",
+        "sessionKey": "agent:main:session-1794324393481-uproject",
+        "generation": "81feba14-8bc1-4d0b-9eba-1e7288e81948",
+        "epoch": 3,
+        "attemptId": "29b27f1a-fe2d-407a-af4f-b37bca3ffb1b",
+        "worktree": "d:/tmp/unified-management-20261109/u6-final-preparation/runs/u6-paired-hydration-20261110/baseline/run/results/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target",
+        "contractRevision": 1,
+        "expiresAt": 1794324564572,
+        "state": "active"
+      },
+      "checkpoint": {
+        "nextAction": "Continue in target",
+        "completed": [
+          "Prior output retained"
+        ],
+        "unresolved": [],
+        "artifacts": [
+          {
+            "path": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\artifact.txt",
+            "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+          }
+        ]
+      },
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": []
+    },
+    "children": [],
+    "artifact_identity": {
+      "old": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\artifact.txt",
+      "actual": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\artifact.txt",
+      "canonical": "d:/tmp/unified-management-20261109/u6-final-preparation/runs/u6-paired-hydration-20261110/baseline/run/results/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/artifact.txt",
+      "expected": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\artifact.txt"
+    }
+  },
+  "provider_log": [
+    {
+      "turn": "[Tue 2026-11-10 23:26 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "text:U6-ACK"
+    }
+  ],
+  "gateway_stop_error": "Error: [INTERNAL] Owned Gateway process did not exit (pid=42372)",
+  "reason": null,
+  "counts_source": "successful_events",
+  "counts": {
+    "identity_selection": 1,
+    "page_transition": 0,
+    "repeat_confirmation": 0,
+    "goal_restatement": 0,
+    "repeat_reminder": 0
+  }
+}

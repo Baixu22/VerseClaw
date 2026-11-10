@@ -1,0 +1,57 @@
+{
+  "schema_version": 2,
+  "driven_by": "agent",
+  "actor": "playwright-u6",
+  "requestmodel": "ccs-workbuddy/deepseek-v4.1-flash",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "author_backend": null,
+  "provider": "local-scripted",
+  "side": "baseline",
+  "journey": "handoff",
+  "status": "failed",
+  "source_head": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+  "homeDir": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\verse-claw-e2e-run-KDbgDh\\verse-claw-e2e-home-5SdFar",
+  "profileDir": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\verse-claw-e2e-run-KDbgDh\\verse-claw-e2e-user-data-aWy0oa",
+  "fixture": {
+    "id": "u6-goal-v1",
+    "objective": "Retain the approved U6 artifact",
+    "target": "artifact.txt",
+    "content_sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7",
+    "locale": "en",
+    "viewport": "1280x800"
+  },
+  "unsupportedProof": {},
+  "task_control_call_id": "u6handofftaskcontrol",
+  "setup": [],
+  "owner": {},
+  "fault": null,
+  "events": [],
+  "tracked_product_and_helper_diff_empty": false,
+  "build": {
+    "main_sha256": "8765c7bb76e0e0c44199b8230da6e00d148fb8b95a93e3f631be9368e01c8201",
+    "renderer_sha256": "6c4e9972be89c6b9c3ea07d78f9c15d42b617d651ae9c0b33962723e1849ab42",
+    "runtime_entry_sha256": "e2ca863305b66a323508c0caa73c3509647d01b6b2629059cce5af6cf999e7d5",
+    "manifest_sha256": "1053afd2ed00ee48d5532f1ab8f7f35f2db3610343f7f70145226f9d7ecaf549",
+    "manifest_path": "D:\\tmp\\unified-management-20261109\\baseline-validation\\build-manifest.json",
+    "side": "baseline",
+    "source_head": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976"
+  },
+  "driver_sha256": "79876ca2952852bcc78b3e195cef5199400335885b30fd97f0be05d8420d8732",
+  "helpers": {
+    "electron.ts": "4dfc8c742e79bc63a5e5ee13e6ee9f712b5b14fd5520d875260a263899c739cf",
+    "fp-p1-harness.ts": "31e96027ab5a10d5e510b026831a4f55fd2d65e1a77ff350a28f8c17208d0a14",
+    "session-task-chain.ts": "f2a284662312c70f5b0e3d3208ca348aeaa0840ab351af597c99942eba02e69e",
+    "electron-process-cleanup.ts": "35864693cf9b6be10abc0f4ce5bb4db5a57974314967c425d2fd9ed166c9cc85",
+    "windows-process.ts": "27c7af68a5e580fc108018705711ef71994474a3bf40a7b838e764bdb0862dd9"
+  },
+  "provider_log": [],
+  "reason": "Error: [INTERNAL] Owned Gateway process did not exit (pid=45620)",
+  "counts_source": null,
+  "counts": {
+    "identity_selection": null,
+    "page_transition": null,
+    "repeat_confirmation": null,
+    "goal_restatement": null,
+    "repeat_reminder": null
+  }
+}

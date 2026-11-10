@@ -1,0 +1,272 @@
+[
+  {
+    "path": "checks/handoff-hydration-v2-lint.result.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-v2-lint.result.json",
+    "sha256": "6e859fa14778ee8a91fb6069970ad2048486a8189129dc994beb6f362fc6c1a0",
+    "bytes": 57391
+  },
+  {
+    "path": "checks/handoff-hydration-v2-types.result.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-v2-types.result.json",
+    "sha256": "dbad079a8d16eef53c528b62feba73d88451e3fdd1c5d27a75ab21e2448a106f",
+    "bytes": 57336
+  },
+  {
+    "path": "checks/handoff-hydration-v2-test-types.result.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-v2-test-types.result.json",
+    "sha256": "c59fa33a3e46e76335925802b68ac29ac6e6b7bf436be01c46e8474a3d560a4b",
+    "bytes": 57450
+  },
+  {
+    "path": "checks/handoff-hydration-v2-contract.result.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-v2-contract.result.json",
+    "sha256": "d74330d8b65b1aeac9bb1d04eda9d0da1c6aed60225960209f29ac4c6a13b520",
+    "bytes": 57336
+  },
+  {
+    "path": "checks/handoff-hydration-v2-i18n.result.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-v2-i18n.result.json",
+    "sha256": "44211270e7d26f99245c738d06655870a377ec845522763a612a35902eb59241",
+    "bytes": 57323
+  },
+  {
+    "path": "checks/handoff-hydration-v2-comms-replay.result.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-v2-comms-replay.result.json",
+    "sha256": "7c5eddbb12fa1d9c4a55fdbc4ed7f7078ae2ec35775556f92ba68ca206aeabe6",
+    "bytes": 57342
+  },
+  {
+    "path": "checks/handoff-hydration-v2-comms-compare.result.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-v2-comms-compare.result.json",
+    "sha256": "10eddfebb38b48035ebdb3e55dae0d339bff68b286181f50ca39788a1f66a3c6",
+    "bytes": 57345
+  },
+  {
+    "path": "checks/handoff-hydration-v2-harness.result.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-v2-harness.result.json",
+    "sha256": "67887987cad84241ee06fd02a91c816f9d43bc9c0b9be75911882ee173082cc9",
+    "bytes": 57418
+  },
+  {
+    "path": "checks/handoff-hydration-v2-harness-flow.result.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-v2-harness-flow.result.json",
+    "sha256": "9728d565b7366d938a28b2874a710d8a1422e9fb3d56f0d616915b0aad65feb7",
+    "bytes": 57440
+  },
+  {
+    "path": "checks/handoff-hydration-v2-runtime-build.result.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-v2-runtime-build.result.json",
+    "sha256": "a946c2ae6c72c8bc5ea3edd8be0992be735c5be33670da4f04f18cddaf44f49d",
+    "bytes": 57355
+  },
+  {
+    "path": "checks/handoff-hydration-v2-desktop-build.result.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-v2-desktop-build.result.json",
+    "sha256": "0496a6e7fbf97a504217c5be430f8982cb26ceb94d4181e1c5e9925d2843a86b",
+    "bytes": 57396
+  },
+  {
+    "path": "checks/unit-result.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-v1-unit.result.json",
+    "sha256": "f8abd37ffcc1c1de2d20cf08836ef1290e6fefca93acb3220ff1e9078505a947",
+    "bytes": 57849
+  },
+  {
+    "path": "checks/unit-tests.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-v1-unit.tests.json",
+    "sha256": "0eb0b2ae91442775a11400890a5ded124d28283babc8eb4e81d59cc8851f064d",
+    "bytes": 39933
+  },
+  {
+    "path": "checks/lint-baseline-comparison.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-lint-baseline-comparison.json",
+    "sha256": "352fdb32032b4c884c0993d21349736da8bf083a512b73532d8eaf1435dc8706",
+    "bytes": 1725
+  },
+  {
+    "path": "electron/handoff-hydration-cold-ui-result.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-cold-ui.result.json",
+    "sha256": "1296f512d9a34e46d4be99fb6a59ac3278b2de065fce9f37617fe9a886e47f09",
+    "bytes": 57828
+  },
+  {
+    "path": "electron/handoff-hydration-cold-ui-tests.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-cold-ui.tests.json",
+    "sha256": "d3b8e6690fe6f4e2cc0a32933d1929f9f26748f0cc5c82f803a519f308e25d24",
+    "bytes": 18437
+  },
+  {
+    "path": "electron/handoff-hydration-cold-ui-cleanup.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-cold-ui-results\\electron-process-cleanup.json",
+    "sha256": "53dbc8c3a13129b6ca857dc0c3b43c7fa2f74fc78bd4641b82e2c6c566b61325",
+    "bytes": 951
+  },
+  {
+    "path": "electron/handoff-hydration-cold-ui2-result.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-cold-ui2.result.json",
+    "sha256": "04accb9d09d205caafbc28dcea4bd18edd06905d5a571e278c5224a5c57af896",
+    "bytes": 57831
+  },
+  {
+    "path": "electron/handoff-hydration-cold-ui2-tests.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-cold-ui2.tests.json",
+    "sha256": "026edea19af7bf3bbb50895f90bb4af2d4abd6696fce4e0e5f753e3106d49692",
+    "bytes": 18868
+  },
+  {
+    "path": "electron/handoff-hydration-cold-ui2-cleanup.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-cold-ui2-results\\electron-process-cleanup.json",
+    "sha256": "a1b6bd1f5fa41097e6a961831338f4bdd06a714e3a7f6a68a085ace7412a9ed7",
+    "bytes": 951
+  },
+  {
+    "path": "electron/handoff-hydration-cold-ui3-result.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-cold-ui3.result.json",
+    "sha256": "5e5098480c95a6e463a45deb0a084111ee456212d723740cdacc39a8750b3d80",
+    "bytes": 57831
+  },
+  {
+    "path": "electron/handoff-hydration-cold-ui3-tests.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-cold-ui3.tests.json",
+    "sha256": "9e1e50a60a5fe6d9a763be7789625f5f5b836adccf5b234bd4cfd09f4a1a8531",
+    "bytes": 12342
+  },
+  {
+    "path": "electron/handoff-hydration-cold-ui3-cleanup.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-cold-ui3-results\\electron-process-cleanup.json",
+    "sha256": "618be7b1fedbdb571bcab79882aa96e3b3970a9a5b7809143da77f4bb5cf8831",
+    "bytes": 949
+  },
+  {
+    "path": "screenshots/handoff-generation-pending.png",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-cold-ui3-results\\chat-session-handoff-Verse-d3835-session-generation-hydrates\\handoff-generation-pending.png",
+    "sha256": "b31d97d406ac82876712bb3c5945802f0ee325893f293f1b5ab72ed4b2974a14",
+    "bytes": 117451
+  },
+  {
+    "path": "screenshots/handoff-generation-ready.png",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\handoff-hydration-cold-ui3-results\\chat-session-handoff-Verse-d3835-session-generation-hydrates\\handoff-generation-ready.png",
+    "sha256": "e96f46da60eeda7ee985acc34fd2a94319c9cdddaef4c6203b0ed071f60de04c",
+    "bytes": 132151
+  },
+  {
+    "path": "paired/receipt.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\paired-receipt.json",
+    "sha256": "f417d53494d8db5ea79eb36db31d24f2b4838f75df5cf931cc8c6eefb8a58489",
+    "bytes": 12886
+  },
+  {
+    "path": "paired/first-failure.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\first-failure.json",
+    "sha256": "a17a7188a744afa74ca08b0879d55d92250f3894938def3b3cdabd36b98951a6",
+    "bytes": 391
+  },
+  {
+    "path": "paired/readback.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\u6-hydration-readback.json",
+    "sha256": "943d9af001bc5187711af3afdae70b8c48044f520bffdfebfb047a64ee5e538e",
+    "bytes": 12125
+  },
+  {
+    "path": "paired/baseline-cleanup.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\cleanup-receipt.json",
+    "sha256": "2d2d69b588a7ae62c2ecf8ee2b5e59f52d247fa27c98e723ba05c3986425dfc4",
+    "bytes": 3158
+  },
+  {
+    "path": "paired/baseline/cross-tree-migration.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\interaction-metrics.json",
+    "sha256": "721e93b5daa419cb0e90deb13e3b7f3cdf4f9ad49c2a93f1bfe9d381d4bda4a0",
+    "bytes": 20257
+  },
+  {
+    "path": "paired/baseline/crash-recovery.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery\\interaction-metrics.json",
+    "sha256": "f17d829d3312d8b1009ebb4a9bbd947431fba42f052d406280522d4a8efc8968",
+    "bytes": 42311
+  },
+  {
+    "path": "paired/baseline/archive-restore.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore\\interaction-metrics.json",
+    "sha256": "5bacbe0bbe5319a4c773a70caae78fbe48194abf400c5ca0173b736ce4073aea",
+    "bytes": 15924
+  },
+  {
+    "path": "paired/baseline/continue.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-continue\\interaction-metrics.json",
+    "sha256": "2d539bf04de2541dc41c678ffa19f617fc2e13ad8a7643c8f24066f3897d9c6c",
+    "bytes": 19747
+  },
+  {
+    "path": "paired/baseline/handoff.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-handoff\\interaction-metrics.json",
+    "sha256": "ff30b775258714c00809b41035bc05999228be2b79119cdd3f60962f70a0883d",
+    "bytes": 2648
+  },
+  {
+    "path": "paired/baseline/new-task.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\baseline\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-new-task\\interaction-metrics.json",
+    "sha256": "14d48492bd2273be96d95fb4d63d0d1973af2e27a2e4beb1a8d108e46f71cae2",
+    "bytes": 12676
+  },
+  {
+    "path": "paired/candidate-cleanup.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\cleanup-receipt.json",
+    "sha256": "06958cae72bab7d6111bb5b04ce70835197fe9172d18fffed1cfe1db20cc7d99",
+    "bytes": 3282
+  },
+  {
+    "path": "paired/candidate/cross-tree-migration.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\interaction-metrics.json",
+    "sha256": "1eb9f8ca11f4ea7e39f728158fffde6aabf77b757532b005455a3917da627d4f",
+    "bytes": 20221
+  },
+  {
+    "path": "paired/candidate/crash-recovery.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery\\interaction-metrics.json",
+    "sha256": "5d6038d34e5f0f449f2b49aa0c05ae3e67e86fd41c180d77c541903cfc2d1b86",
+    "bytes": 24713
+  },
+  {
+    "path": "paired/candidate/archive-restore.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore\\interaction-metrics.json",
+    "sha256": "1d104effc308afcc51f560ddb600cbda4b9824628a94b94391464c174013e0d6",
+    "bytes": 16008
+  },
+  {
+    "path": "paired/candidate/continue.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-continue\\interaction-metrics.json",
+    "sha256": "b07b9ade5f74497d95e4af150486bd6f2ff8cbbc3008460a68d6596ea9f07ce4",
+    "bytes": 19853
+  },
+  {
+    "path": "paired/candidate/handoff.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-handoff\\interaction-metrics.json",
+    "sha256": "a03136ccc472607df7d9879ef1df193087da7aff92ad8e070be9c63df36f01fb",
+    "bytes": 21874
+  },
+  {
+    "path": "paired/candidate/new-task.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\u6-final-preparation\\runs\\u6-paired-hydration-20261110\\candidate\\run\\results\\u6-interaction-metrics.final-U6-interaction-metrics-new-task\\interaction-metrics.json",
+    "sha256": "dcc7b32ba172d4137d5dd075f87ce1a217258fdd6712880e3d02cc9b6d5d579b",
+    "bytes": 12672
+  },
+  {
+    "path": "first-product-failure/handoff-scope-diagnostic.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\u6-handoff-scope-diagnostic-results\\u6-interaction-metrics.final-U6-interaction-metrics-handoff\\interaction-metrics.json",
+    "sha256": "53fe5db3c3497f7465cd0d237aa4a2279a5c2c1d984df4fbf272191b4f3cf188",
+    "bytes": 10899
+  },
+  {
+    "path": "build/manifest.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\build-manifest-handoff-hydration.json",
+    "sha256": "4f4fb284e8a4ee84df7dbc26067e6931def35f80ccb4b4ced2358d53688662f6",
+    "bytes": 1336519
+  },
+  {
+    "path": "build/driver-reuse-manifest.json",
+    "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\build-manifest-handoff-ui3.json",
+    "sha256": "11aaa605039deff050b51a4eb9a8c68717b6057f25787edb36ea4661a5e9d16b",
+    "bytes": 1337222
+  }
+]
