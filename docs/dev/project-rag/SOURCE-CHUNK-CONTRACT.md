@@ -21,3 +21,5 @@
 ## 引用复读
 
 `CitationLocator/v2` 绑定 chunkId、chunkDigest、chunker 与完整 owner SourceRef。Wiki owner 按精确 raw byte range 重新读取；revision、source digest、policy、namespace、范围或权限变化均拒绝。校验成功仅返回该 owner 范围的原始正文。撤销、删除和取消不通过旧索引恢复内容。
+
+验收驱动 `scripts/knowledge-rag-source-probe.ts <receipt.json>` 对真实 Wiki 文件执行精确复读和拒绝检查；`node scripts/knowledge-rag-built-probe.mjs <receipt.json>` 在 runtime 构建后直接校验新增 SDK 的四个函数与片段往返。两者在收据中标明 agent fixture 与测试 tokenizer。

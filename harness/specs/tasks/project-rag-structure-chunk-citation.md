@@ -21,6 +21,7 @@ touchedAreas:
   - "tsconfig.test.json"
   - "tsconfig.node.json"
   - "scripts/knowledge-rag-source-probe.ts"
+  - "scripts/knowledge-rag-built-probe.mjs"
   - "openclaw_runtime/src/plugin-sdk/knowledge-retrieval.ts"
   - "openclaw_runtime/src/plugin-sdk/entrypoints.ts"
   - "openclaw_runtime/scripts/lib/plugin-sdk-entrypoints.json"
