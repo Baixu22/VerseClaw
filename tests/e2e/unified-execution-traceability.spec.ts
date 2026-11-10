@@ -145,7 +145,8 @@ test('TF0867: exclusive claim, real writes, durable migration restart, acceptanc
     evidence.buildManifest = frozenInputs.build;
     await record('frozenInputs', frozenInputs);
     const gitBytes = (cwd: string, ...args: string[]) => execFileSync('git', [
-      '-c', `core.hooksPath=${process.platform === 'win32' ? 'NUL' : '/dev/null'}`, '-c', 'core.fsmonitor=false', ...args,
+      '-c', `core.hooksPath=${process.platform === 'win32' ? 'NUL' : '/dev/null'}`, '-c', 'core.fsmonitor=false',
+      '-c', 'core.longpaths=true', ...args,
     ], { cwd, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'], timeout: 15_000,
       env: { ...process.env, GIT_TERMINAL_PROMPT: '0', GIT_OPTIONAL_LOCKS: '0' } });
     const gitAt = (cwd: string, ...args: string[]) => gitBytes(cwd, ...args).toString('utf8').trim();
