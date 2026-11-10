@@ -74,6 +74,33 @@ describe('agent config lifecycle', () => {
     await expect(listConfiguredAgentIds()).resolves.toEqual(['main']);
   });
 
+  it.each(['model', 'name', 'create-agent'] as const)('keeps implicit main workspace inherited after %s changes', async operation => {
+    await writeOpenClawJson({ agents: { defaults: { workspace: join(testHome, 'old-workspace') } } });
+    const { createAgent, updateAgentModel, updateAgentName, readAgentSoul } = await import('@electron/utils/agent-config');
+    if (operation === 'model') await updateAgentModel('main', 'custom/model');
+    else if (operation === 'name') await updateAgentName('main', 'Project coordinator');
+    else await createAgent('Reviewer');
+    const config = await readOpenClawJson();
+    const agents = config.agents as { defaults: { workspace: string }; list: Array<{ id: string; workspace?: string }> };
+    expect(agents.list.find(entry => entry.id === 'main')?.workspace).toBeUndefined();
+    const target = join(testHome, 'next-project');
+    await mkdir(target, { recursive: true }); await writeFile(join(target, 'SOUL.md'), 'new project context');
+    agents.defaults.workspace = target; await writeOpenClawJson(config);
+    const { resolveAgentWorkspaceDir } = await import('../../openclaw_runtime/src/agents/agent-scope-config');
+    expect(resolveAgentWorkspaceDir(config, 'main')).toBe(target);
+    expect((await readAgentSoul('main')).soulMd).toBe('new project context');
+  });
+
+  it('preserves an explicitly configured main workspace when its model changes', async () => {
+    const explicit = join(testHome, 'explicit-main');
+    await writeOpenClawJson({ agents: { defaults: { workspace: join(testHome, 'default-project') },
+      list: [{ id: 'main', default: true, workspace: explicit }] } });
+    const { updateAgentModel } = await import('@electron/utils/agent-config');
+    await updateAgentModel('main', 'custom/model');
+    const config = await readOpenClawJson();
+    expect((config.agents as { list: Array<{ workspace?: string }> }).list[0].workspace).toBe(explicit);
+  });
+
   it('includes canonical per-agent main session keys in the snapshot', async () => {
     await writeOpenClawJson({
       session: {

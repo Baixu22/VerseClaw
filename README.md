@@ -305,6 +305,8 @@ Cleanup retains ignored files, hidden Git index edits, and in-process files or p
 
 Git and Storage deletion also serialize their final ownership check and native removal with Task creation and claiming, so a new task cannot claim a checkout while it is being removed.
 
+Changing the implicit main agent's model or name preserves its workspace inheritance, so later project switches remain the execution directory source. Explicit agent workspace settings remain explicit.
+
 Search and filter the task list, then load further pages. Agents can suggest related tasks and decompose a goal into dependent tasks while retaining the parent goal and constraints. Cancelling a plan waits for in-flight effects to settle. Acceptance and recovery read receipts from the existing runtime owners.
 
 Conversation tasks are managed by the agent. Identified work appears in one task header above the conversation, with verified step progress and a hide/reopen control. The plain canvas keeps the input clear; a small changed-file entry appears below the composer only when files change. Branches and worktree controls remain in its details.

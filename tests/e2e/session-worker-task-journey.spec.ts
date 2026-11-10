@@ -92,6 +92,8 @@ test(`a real delegated worker receives its own task, reports separately and acce
     const rootClaim = await hostInvoke<{ result: TaskView }>(app, 'taskLedger', 'command', {
       workspaceId: project.workspaceId, command: { action: 'claim', taskNodeId: rootId, sessionKey: project.sessionKey, requestId: 'worker-root-claim' },
     });
+    Object.assign(evidence, { project, initialBinding: binding, rootClaim });
+    expect(rootClaim.result, JSON.stringify(rootClaim)).toBeDefined();
     const plan = await hostInvoke<{ result: TaskView[] }>(app, 'taskLedger', 'command', { workspaceId: project.workspaceId,
       command: { action: 'decompose', credential: rootClaim.result.claim, requestId: 'worker-plan',
         children: [{ key: 'worker-output', contract: { ...taskContract, objective: 'Produce the assigned worker artifact' } }] } });
