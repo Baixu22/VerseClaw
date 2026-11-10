@@ -111,6 +111,7 @@ test('TF0867: exclusive claim, real writes, durable migration restart, acceptanc
   };
   let app: ElectronApplication | undefined, llm: Awaited<ReturnType<typeof startScriptedLlm>> | undefined;
   let closeOwnerDatabase: (() => void) | undefined;
+  let cleanupFailure: unknown;
   const call = <T,>(module: string, action: string, payload: Record<string, unknown> = {}) => hostInvoke<T>(app!, module, action, payload);
   const command = async <T,>(workspaceId: string, input: TaskSystemCommand) => {
     const response = await call<Reply<T>>('taskLedger', 'command', { workspaceId, command: input });
@@ -528,6 +529,7 @@ test('TF0867: exclusive claim, real writes, durable migration restart, acceptanc
     const cleanupFailed = cleanupErrors.length > 0 && evidence.status === 'passed';
     if (cleanupFailed) await saveFirstFailure(cleanupErrors[0]);
     await writeFile(info.outputPath('traceability.json'), JSON.stringify(evidence, null, 2));
-    if (cleanupFailed) throw cleanupErrors[0];
+    if (cleanupFailed) cleanupFailure = cleanupErrors[0];
   }
+  if (cleanupFailure) throw cleanupFailure;
 });

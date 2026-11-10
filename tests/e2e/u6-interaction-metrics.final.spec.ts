@@ -65,7 +65,8 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
   const events: Entry[] = [], seen = new Map<string, string>();
   const unsupportedProof = JSON.parse(process.env.CLAWX_U6_UNSUPPORTED_PROOF ?? '{}') as Record<string, string>;
   let operation = `${journey}:goal-v1`, lastAction = '', recording = false;
-  let status: 'running' | 'passed' | 'failed' | 'unsupported' = 'running', reason: string | null = null;
+  let status: 'passed' | 'failed' | 'unsupported', reason: string | null = null;
+  let cleanupFailure: Error | undefined;
   const evidence: Record<string, unknown> = { schema_version: 2, driven_by: 'agent', actor: 'playwright-u6',
     requestmodel: 'ccs-workbuddy/deepseek-v4.1-flash', requested_route: 'ccs-workbuddy/deepseek-v4.1-flash',
     author_backend: null, provider: 'local-scripted', side, journey, source_head: head, homeDir, profileDir: userDataDir,
@@ -366,6 +367,7 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
     evidence.counts = status === 'passed' ? countMetrics(events)
       : Object.fromEntries(metrics.map(metric => [metric, null]));
     await writeFile(info.outputPath('interaction-metrics.json'), JSON.stringify(evidence, null, 2));
-    if (bodyPassed && cleanupErrors.length) throw new Error('U6 cleanup failed: ' + cleanupErrors.join('; '));
+    if (bodyPassed && cleanupErrors.length) cleanupFailure = new Error('U6 cleanup failed: ' + cleanupErrors.join('; '));
   }
+  if (cleanupFailure) throw cleanupFailure;
 });
