@@ -11,11 +11,15 @@ requiredRules:
   - task-forest-autoclose-and-roles
   - docs-sync
 touchedAreas:
+  - README.md
+  - README.zh-CN.md
+  - README.ja-JP.md
   - harness/specs/tasks/product-acceptance-matrix.md
   - harness/specs/fixtures/product-acceptance-matrix/**
   - scripts/product-acceptance-matrix.mjs
   - scripts/product-acceptance-matrix.d.mts
   - tests/unit/product-acceptance-matrix.test.ts
+  - tests/e2e/support-bundle-fp-p1-06.spec.ts
 expectedUserBehavior:
   - The operator can inspect all nine product journeys, their positive and negative oracles, evidence layers and outstanding checks before running them.
   - A selected batch records every collected test and compares the actual report against that collection; an empty, incomplete, skipped or retried run cannot pass.
@@ -37,10 +41,14 @@ acceptance:
   - Runs retain commands, exits, raw JSON, hashes and before/after Git identities in a new output directory; dirty candidates cannot run acceptance.
   - Selected batches retain all unselected groups and the additional live, exploratory and rubric requirements as incomplete.
   - The parent TF-0582 contract remains the node closure authority; implementation checks alone do not close the node.
+  - The support-bundle journey retains the sanitized bundle in test output before its temporary profile is removed.
 docs:
   required: true
   files:
     - harness/specs/tasks/product-acceptance-matrix.md
+    - README.md
+    - README.zh-CN.md
+    - README.ja-JP.md
 ---
 
 # Core product matrix
@@ -93,5 +101,3 @@ record, calibrated judge rubric and reviewed P0/P1 findings. Mock UI, actual own
 effects, scripted models and live models retain their distinct evidence layers.
 Windows package and final independent aggregate work remain TF-0584 and TF-0585.
 
-README.md, README.zh-CN.md and README.ja-JP.md retain their current product
-behavior; this entry documents the new developer acceptance command.

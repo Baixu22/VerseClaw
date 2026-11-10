@@ -96,7 +96,7 @@ async function startGateway(app: ElectronApplication): Promise<void> {
 test.describe('FP-P1-06 support bundle export (real Electron + real child)', () => {
   test('one-click export is sanitized, child-mirrored, and self-reporting', async ({
     launchElectronApp,
-  }) => {
+  }, testInfo) => {
     test.setTimeout(600_000);
     const workspaceDir = await mkdtemp(join(tmpdir(), 'clawx-fp-p1-06-'));
     // A real source file whose CONTENTS must not reach the bundle.
@@ -250,6 +250,7 @@ export const x = 1;
       for (const entry of truncated ?? []) {
         expect(entry).toMatch(/:/);
       }
+      await writeFile(testInfo.outputPath('support-bundle.json'), raw, 'utf8');
     } finally {
       await closeElectronApp(app);
       await rm(workspaceDir, { recursive: true, force: true }).catch(() => undefined);

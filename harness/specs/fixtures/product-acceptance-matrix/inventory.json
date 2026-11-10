@@ -256,7 +256,7 @@
     "tests/e2e/setup-first-run-fp-p1-01.spec.ts": "24b289e55c76a3c5cd225cdb554962dee7364911875027a1eb2c375666cacf76",
     "tests/e2e/sidebar-session-folders-archive.spec.ts": "71bd82e96b91818c6aed191367e559a47aaffd7858b6f13f450fc95192f6c4fa",
     "tests/e2e/skills-packs.spec.ts": "24eba9a19bb7c15770b965f65db23d9d93b4c302a4ab01291460af1321fd50b7",
-    "tests/e2e/support-bundle-fp-p1-06.spec.ts": "df6a847a976234019e81488301c74a3e66f43001cfa0fa06ee58269f04d11c5b",
+    "tests/e2e/support-bundle-fp-p1-06.spec.ts": "26c6de9dfe0ca7bebcbd80ae887663925739aa8b1c2c5b115971ba28bab7b40a",
     "tests/e2e/versebrowser-host-invocation.spec.ts": "edc10518f30e8e2b3ef561e90d581edc27c7be497d2fe72e10b513dd209a7f22",
     "tests/e2e/versegit-candidate-apply.spec.ts": "56e0153b663804dce35f7559ff2ba23b263fbd0640b2044a9fb1e54858d7036b",
     "tests/e2e/versegit-runtime-bindings.spec.ts": "95c06d322e5be81a9643cceb0074e3e879a92888767f90f12573d294ed80fbbf",
