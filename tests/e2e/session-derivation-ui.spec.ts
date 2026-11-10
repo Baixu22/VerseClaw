@@ -154,8 +154,12 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
 
     await configureSessionChainProvider(app, llm.port);
     const project = await createSessionChainProject(app, testInfo.outputPath('workspace'), 'Family project');
-    await hostInvoke(app, 'chat', 'sendWithMedia', { workspaceId: project.workspaceId, sessionKey: project.sessionKey,
+    const baselineSend = await hostInvoke<{ success: boolean; result?: { runId?: string } }>(app, 'chat', 'sendWithMedia', { workspaceId: project.workspaceId, sessionKey: project.sessionKey,
       message: 'Agent-driven family render probe', idempotencyKey: 'family-render-user-turn' });
+    expect(baselineSend.success).toBe(true); expect(baselineSend.result?.runId).toBeTruthy();
+    await expect.poll(async () => (await hostInvoke<{ status: string }>(app, 'gateway', 'rpc', {
+      method: 'agent.wait', params: { runId: baselineSend.result!.runId, timeoutMs: 1000 }, timeoutMs: 30_000,
+    })).status, { timeout: 90_000 }).toBe('ok');
     await expect.poll(async () => JSON.stringify(await hostInvoke(app, 'gateway', 'rpc', { method: 'chat.history',
       params: { sessionKey: project.sessionKey, limit: 20 }, timeoutMs: 30_000 })).includes('Agent-driven family fixture.'),
     { timeout: 45_000 }).toBe(true);
@@ -444,6 +448,14 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
         expect(many.committedRowWork).toBeLessThanOrEqual(children.length + 1);
       }
       releaseHold();
+      let terminalReceipt: { status: string; [key: string]: unknown } | undefined;
+      await expect.poll(async () => {
+        terminalReceipt = await hostInvoke(app, 'gateway', 'rpc', {
+          method: 'agent.wait', params: { runId: sharedRun.runId, timeoutMs: 1000 }, timeoutMs: 30_000,
+        });
+        return terminalReceipt?.status;
+      }, { timeout: 90_000 }).toBe('ok');
+      measurement.terminalReceipt = terminalReceipt;
       await expect.poll(async () => (await hostInvoke<{ session: { hasActiveRun: boolean } }>(app, 'gateway', 'rpc', {
         method: 'sessions.describe', params: { key: project.sessionKey }, timeoutMs: 30_000,
       })).session.hasActiveRun, { timeout: 30_000 }).toBe(false);
