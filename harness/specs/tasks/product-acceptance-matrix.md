@@ -22,11 +22,17 @@ touchedAreas:
   - scripts/product-matrix-judge.mjs
   - scripts/product-matrix-judge.d.mts
   - tests/unit/product-acceptance-matrix.test.ts
+  - openclaw_runtime/src/entry.ts
+  - openclaw_runtime/src/infra/source-doctor.ts
+  - openclaw_runtime/src/infra/source-doctor.test.ts
   - tests/e2e/fixtures/product-candidate.ts
+  - tests/e2e/fixtures/space-bunny-responses.ts
   - tests/e2e/fixtures/fp-p1-harness.ts
+  - tests/e2e/fixtures/session-task-chain.ts
   - tests/e2e/product-acceptance-space-bunny.spec.ts
   - tests/e2e/product-matrix-delegation.spec.ts
   - tests/e2e/product-matrix-doctor.spec.ts
+  - tests/e2e/knowledge-review-queue.spec.ts
   - tests/e2e/product-matrix-memory.spec.ts
   - tests/e2e/product-matrix-knowledge.spec.ts
   - tests/e2e/product-matrix-tools.spec.ts
@@ -45,6 +51,7 @@ requiredTests:
   - node node_modules/vitest/vitest.mjs run tests/unit/product-acceptance-matrix.test.ts --maxWorkers=1
   - node --import ./openclaw_runtime/node_modules/tsx/dist/loader.mjs scripts/product-acceptance-matrix.mjs --check
   - node node_modules/@playwright/test/cli.js test --config tests/exploration/product-matrix.config.ts --list
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.infra.config.ts src/infra/source-doctor.test.ts --maxWorkers=1
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/product-acceptance-matrix.md
   - node harness/src/cli.mjs run --spec harness/specs/tasks/product-acceptance-matrix.md --dry-run
   - git diff --check
@@ -61,6 +68,9 @@ acceptance:
   - The qualitative judge reuses the frozen clarity rubric, calibrates pass/fail/unknown fixtures on the current model and retains three distinct response receipts per sample; unavailable votes remain unverified.
   - Three clean-profile cancellation trials resume the same session, preserve the aborted run, exclude delayed frames and finish the later reply without a new tool effect.
   - The isolated exploration session records at least twenty minutes of agent interaction, twenty-five actions, all ten charter states, screenshots, console output and reviewed findings against the same sealed build.
+  - Credential redaction preserves task identifiers and artifact paths so the frozen rubric and source-input manifests can be read back.
+  - Knowledge layout checks follow the current knowledge-bot-avatar contract: a bounded nonmodal conversation keeps the library URL and editor mounted, closes on Escape and restores launcher focus without losing the draft.
+  - Source Doctor waits for diagnostic or migration output to flush and exits with the command result, including 1 for malformed configuration, instead of remaining alive until the host timeout.
 docs:
   required: true
   files:
@@ -101,6 +111,10 @@ uses the same file traversal and digest implementation. The runner rechecks thos
 inputs after Electron runs. A failed build stops execution and leaves its test
 groups `not-run`. Matrix acceptance rejects preflight/operational overrides and
 the fault-case selection variable, keeping all required negative controls enabled.
+When present, the VerseShell/VerseGit manifests and binaries are included in the
+same input digest and rechecked after execution. The tools group requires the
+qualified binaries declared by those manifests; a missing binary is an incomplete
+test prerequisite, and its skipped case fails the matrix.
 The live provider and moyu files retain their existing resource, fresh-build,
 isolation and three-trial requirements. Supply their private environment values
 only to the child process. Provider and moyu receipts are retained under the batch's
@@ -108,7 +122,8 @@ only to the child process. Provider and moyu receipts are retained under the bat
 `PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN=false` prevents pnpm from replacing them.
 
 The output includes the frozen inventory and Git identity, the discovery report,
-the execution report, exact commands, exit codes and hashes. Discovery is a list
+the execution report, exact commands, exit codes and hashes. `execution.stdout.txt`
+also records live per-case progress through Playwright's line reporter. Discovery is a list
 of planned tests, not execution evidence. A successful selected batch leaves
 unselected journeys and additional node criteria visible in `remainingAcceptance`.
 Its `selectedSuiteResult` and exit code describe that batch; `nodeAcceptance`

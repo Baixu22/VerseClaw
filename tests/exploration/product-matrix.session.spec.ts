@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
 import type { ElectronApplication } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, test } from '../e2e/fixtures/electron';
-import { allocatePort, hostInvoke, startScriptedLlm } from '../e2e/fixtures/fp-p1-harness';
+import { hostInvoke, startScriptedLlm } from '../e2e/fixtures/fp-p1-harness';
 import { configureSessionChainProvider, createSessionChainProject } from '../e2e/fixtures/session-task-chain';
 import { assertFreshProductBuildProof, readProductCandidate } from '../e2e/fixtures/product-candidate';
 
@@ -24,9 +24,9 @@ test('TF-0582 agent explores the isolated built application for at least twenty 
     candidate: { commit: candidate.commit, tree: candidate.tree, dirty: candidate.dirty, inputDigest: candidate.inputDigest },
     requiredStates: states, status: 'running' };
   try {
-    const port = await allocatePort();
-    app = await launchElectronApp({ skipSetup: true, visualMode: true, theme: 'light',
-      flags: [`--remote-debugging-port=${port}`, '--remote-debugging-address=127.0.0.1'] });
+    app = await launchElectronApp({ skipSetup: true, visualMode: true, theme: 'light' });
+    const port = Number(await app.evaluate(() => process.env.VERSE_CLAW_REMOTE_DEBUGGING_PORT));
+    assert(Number.isInteger(port) && port > 0, 'Isolated Electron CDP port is missing');
     await configureSessionChainProvider(app, llm.port);
     const project = await createSessionChainProject(app, testInfo.outputPath('workspace'), 'Matrix exploration');
     const page = await getStableWindow(app);

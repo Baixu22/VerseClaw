@@ -45,7 +45,7 @@ function asObject(value: unknown): Json {
 export function redactSpaceBunny(value: string): string {
   const key = process.env.CLAWX_SPACE_BUNNY_API_KEY;
   return (key ? value.split(key).join('[REDACTED]') : value)
-    .replace(/sk-[A-Za-z0-9._-]+/g, '[REDACTED]')
+    .replace(/\bsk-[A-Za-z0-9._-]+/g, '[REDACTED]')
     .replace(/Bearer\s+[^\s"\\]+/gi, 'Bearer [REDACTED]');
 }
 

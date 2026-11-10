@@ -9,7 +9,7 @@ import {
   startScriptedLlm,
   type ScriptedLlmRequest,
 } from './fixtures/fp-p1-harness';
-import { createSessionChainProject } from './fixtures/session-task-chain';
+import { configureSessionChainProvider, createSessionChainProject } from './fixtures/session-task-chain';
 
 type History = {
   messages?: Array<{
@@ -361,6 +361,7 @@ test('TF-0582 VerseShell starts, reads input, exits, and cancels through the pro
       skipSetup: true,
       env: { TEMP: 'D:/tmp', TMP: 'D:/tmp' },
     });
+    await configureSessionChainProvider(app, llm.port);
     const project = await createSessionChainProject(app, workspace, 'Product matrix tools');
     const page = await getStableWindow(app);
     await page.reload();
@@ -593,6 +594,7 @@ test('TF-0582 Tool Search expands a real schema and rejects absent or denied too
       skipSetup: true,
       env: { TEMP: 'D:/tmp', TMP: 'D:/tmp' },
     });
+    await configureSessionChainProvider(app, llm.port);
     const project = await createSessionChainProject(app, workspace, 'Product matrix tool search');
     const page = await getStableWindow(app);
     await page.reload();

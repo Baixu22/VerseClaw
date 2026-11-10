@@ -16,7 +16,7 @@ import type {
   KnowledgeSearchResult,
 } from '../../shared/host-api/contract';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
-import { hostInvoke, startScriptedLlm } from './fixtures/fp-p1-harness';
+import { hostInvoke, startGateway, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { configureSessionChainProvider, createSessionChainProject } from './fixtures/session-task-chain';
 
 type HostCall = {
@@ -106,7 +106,7 @@ test('Matrix knowledge imports, indexes, searches, cites, and deletes through is
   test.setTimeout(300_000);
   const marker = randomUUID().replaceAll('-', '');
   const title = `Product matrix knowledge ${marker}`;
-  const sourcePath = testInfo.outputPath('source', `${marker}.md`);
+  const sourcePath = testInfo.outputPath('source', `${title}.md`);
   const vaultPath = testInfo.outputPath('wiki');
   const workspacePath = testInfo.outputPath('workspace');
   const evidence: Record<string, unknown> = {
@@ -152,48 +152,29 @@ test('Matrix knowledge imports, indexes, searches, cites, and deletes through is
     const page = await getStableWindow(runningApp);
     await expect(page.getByTestId('main-layout')).toBeVisible({ timeout: 60_000 });
     await configureSessionChainProvider(runningApp, llm.port);
-    await runningApp.evaluate(async (_electron, args) => {
-      const fs = process.mainModule!.require('node:fs/promises') as typeof import('node:fs/promises');
-      const path = process.mainModule!.require('node:path') as typeof import('node:path');
-      const stateDir = path.join(args.userDataDir, 'openclaw-source-state');
-      await fs.mkdir(stateDir, { recursive: true });
-      const configPath = path.join(stateDir, 'openclaw.json');
-      let config: Record<string, unknown>;
-      try {
-        config = JSON.parse(await fs.readFile(configPath, 'utf8')) as Record<string, unknown>;
-      } catch {
-        config = {};
-      }
-      const plugins = config.plugins as { entries?: Record<string, unknown> } | undefined;
-      config.plugins = {
-        ...plugins,
-        entries: {
-          ...plugins?.entries,
-          'memory-wiki': {
-            enabled: true,
-            config: {
-              vaultMode: 'isolated',
-              vault: { path: args.vaultPath, renderMode: 'native' },
-              ingest: { autoCompile: true, maxConcurrentJobs: 1 },
-              search: { backend: 'local', corpus: 'wiki' },
-            },
-          },
-        },
-      };
-      await fs.writeFile(configPath, JSON.stringify(config, null, 2), 'utf8');
-    }, { userDataDir, vaultPath });
-
     const project = await createSessionChainProject(runningApp, workspacePath, `Matrix knowledge ${marker}`);
     evidence.project = project;
     await installHostCallRecorder(runningApp);
+    const configured = await hostInvoke<{ success: boolean; error?: string }>(runningApp, 'knowledge', 'configure', { vaultPath, renderMode: 'native' });
+    expect(configured.success, configured.error).toBe(true);
+    const snapshot = await hostInvoke<{ hash: string }>(runningApp, 'gateway', 'rpc', { method: 'config.get', params: {}, timeoutMs: 30_000 });
+    expect(snapshot.hash).toBeTruthy();
+    await hostInvoke(runningApp, 'gateway', 'rpc', { method: 'config.patch', params: { baseHash: snapshot.hash,
+      raw: JSON.stringify({ plugins: { entries: { 'memory-wiki': { config: {
+        search: { backend: 'local', corpus: 'wiki' }, ingest: { autoCompile: true, maxConcurrentJobs: 1 },
+      } } } } }), note: 'Isolated product matrix knowledge fixture' }, timeoutMs: 30_000 });
+    await hostInvoke(runningApp, 'gateway', 'stop');
+    await startGateway(runningApp);
     await page.reload();
     await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 60_000 });
 
     const initialStatus = await hostInvoke<{
       success: boolean;
+      error?: string;
       status?: { vaultPath?: string; sourceCounts?: Record<string, number> };
     }>(runningApp, 'knowledge', 'status');
-    expect(initialStatus.success).toBe(true);
+    evidence.initialStatus = initialStatus;
+    expect(initialStatus.success, initialStatus.error).toBe(true);
     expect(resolve(initialStatus.status?.vaultPath ?? '')).toBe(resolve(vaultPath));
     const init = await hostInvoke<{ success: boolean }>(runningApp, 'knowledge', 'init');
     expect(init.success).toBe(true);

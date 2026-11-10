@@ -189,9 +189,14 @@ test.describe('TF-0582 product matrix memory acceptance', () => {
       });
 
       await configureSessionChainProvider(app, llm.port);
-      await startGateway(app);
+      const project = await createSessionChainProject(
+        app,
+        testInfo.outputPath('workspace'),
+        `TF0582 memory ${evidenceId.slice(0, 8)}`,
+      );
+      evidence.workspace = project;
       const beforeConfig = await rpc<RuntimeConfigSnapshot>('config.get');
-      if (!beforeConfig.hash) throw new Error('config.get returned no hash');
+      if (!beforeConfig.hash) throw new Error(`config.get returned no hash: ${JSON.stringify(beforeConfig)}`);
       const beforeRuntimeMemory = runtimeMemoryOwnerSettings(
         runtimeMemoryFrom(beforeConfig),
       );
@@ -211,6 +216,8 @@ test.describe('TF-0582 product matrix memory acceptance', () => {
         baseHash: beforeConfig.hash,
         note: 'TF-0582 accepted-memory request evidence',
       });
+      await hostInvoke(app, 'gateway', 'stop');
+      await startGateway(app);
       const patchedConfig = await rpc<RuntimeConfigSnapshot>('config.get');
       const patchedMemory = runtimeMemoryFrom(patchedConfig);
       const injectPilot = patchedMemory.injectPilot;
@@ -233,13 +240,6 @@ test.describe('TF-0582 product matrix memory acceptance', () => {
           after: afterRuntimeMemory,
         },
       };
-
-      const project = await createSessionChainProject(
-        app,
-        testInfo.outputPath('workspace'),
-        `TF0582 memory ${evidenceId.slice(0, 8)}`,
-      );
-      evidence.workspace = project;
 
       const otherSessionKey = `agent:main:session-${Date.now()}-memory-other-${evidenceId.slice(0, 8)}`;
       const otherSession = await rpc<{ key: string; sessionId: string }>(

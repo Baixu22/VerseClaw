@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { collectCases, evaluateReport, matrixEnvironment, matrixOutputDirectory, validateBuildStamp, validateInventory } from '../../scripts/product-acceptance-matrix.mjs';
 import { assertFreshProductBuildProof, createFreshProductBuildProof, readProductCandidate } from '../e2e/fixtures/product-candidate';
 import { gradeJudgeVotes, gradeReviewSample, parseJudgeResponse } from '../../scripts/product-matrix-judge.mjs';
+import { redactSpaceBunny } from '../e2e/fixtures/space-bunny-responses';
 
 const root = process.cwd();
 const inventory = () => JSON.parse(readFileSync(resolve(root, 'harness/specs/fixtures/product-acceptance-matrix/inventory.json'), 'utf8'));
@@ -133,7 +134,7 @@ describe('TF-0582 shared fresh-build binding', () => {
     const write = (file: string, value: string) => { mkdirSync(dirname(join(fixtureRoot, file)), { recursive: true }); writeFileSync(join(fixtureRoot, file), value); };
     const git = (...args: string[]) => execFileSync('git', args, { cwd: fixtureRoot, encoding: 'utf8', windowsHide: true }).trim();
     try {
-      write('.gitignore', 'dist/\ndist-electron/\nopenclaw_runtime/dist/\nopenclaw_runtime/dist-runtime/\n');
+      write('.gitignore', 'dist/\ndist-electron/\nopenclaw_runtime/dist/\nopenclaw_runtime/dist-runtime/\nresources/bin/\n');
       for (const file of ['src/正文.ts', 'electron/main.ts', 'shared/contract.ts', 'package.json',
         'tests/e2e/product-acceptance-space-bunny.spec.ts', 'tests/e2e/fixtures/space-bunny-responses.ts',
         'harness/specs/tasks/product-acceptance-space-bunny.md', 'harness/specs/tasks/product-acceptance-closeout.md']) write(file, file);
@@ -155,6 +156,13 @@ describe('TF-0582 shared fresh-build binding', () => {
       expect(() => assertFreshProductBuildProof(proof, changed)).toThrow('inputs changed');
       write('src/正文.ts', 'changed source');
       expect(readProductCandidate(fixtureRoot).dirty).toBe(true);
+      write('src/正文.ts', 'src/正文.ts');
+      write('resources/bin/win32-x64/ae.exe', 'fixture tool binary');
+      const withBinary = readProductCandidate(fixtureRoot);
+      expect(withBinary.resourceCount).toBe(1);
+      expect(withBinary.dirty).toBe(false);
+      write('resources/bin/win32-x64/ae.exe', 'changed tool binary');
+      expect(readProductCandidate(fixtureRoot).inputDigest).not.toBe(withBinary.inputDigest);
     } finally {
       expect(resolve(fixtureRoot).startsWith(resolve(tmpdir()) + sep)).toBe(true);
       rmSync(fixtureRoot, { recursive: true, force: true });
@@ -166,6 +174,18 @@ describe('TF-0582 qualitative judge', () => {
   const response = (verdict = 'pass', id = 'response-1') => ({ id, model: 'space-bunny', status: 'completed',
     output: [{ content: [{ type: 'output_text', text: JSON.stringify({ verdict, reason: 'Observed fixture result' }) }] }] });
   const votes = (verdicts = ['pass', 'pass', 'fail']) => verdicts.map((verdict, index) => ({ httpStatus: 200, response: response(verdict, `response-${index}`), error: null }));
+
+  it('preserves task artifact paths while redacting token-shaped and configured secrets', () => {
+    const previous = process.env.CLAWX_SPACE_BUNNY_API_KEY;
+    try {
+      process.env.CLAWX_SPACE_BUNNY_API_KEY = 'fixture-private-credential';
+      expect(redactSpaceBunny('agent-first-task-corpus/task-forest.json sk-fixture-token fixture-private-credential'))
+        .toBe('agent-first-task-corpus/task-forest.json [REDACTED] [REDACTED]');
+    } finally {
+      if (previous === undefined) delete process.env.CLAWX_SPACE_BUNNY_API_KEY;
+      else process.env.CLAWX_SPACE_BUNNY_API_KEY = previous;
+    }
+  });
 
   it('keeps a valid unknown distinct from a malformed or incomplete response', () => {
     expect(parseJudgeResponse(response('unknown'))).toMatchObject({ verdict: 'unknown', valid: true });

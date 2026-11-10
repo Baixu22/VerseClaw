@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 export type ProductCandidateIdentity = { commit: string; tree: string; dirty: boolean };
@@ -44,7 +44,13 @@ export function readProductCandidate(root = process.cwd()) {
     }
   };
   for (const directory of ['dist', 'dist-electron', 'openclaw_runtime/dist', 'openclaw_runtime/dist-runtime']) walk(directory);
-  return { commit, tree, dirty, sourceCount, buildCount: files.length - sourceCount,
+  const buildCount = files.length - sourceCount;
+  const resourceStart = files.length;
+  for (const file of ['resources/verseshell/manifest.json', 'resources/versegit/manifest.json',
+    'resources/bin/win32-x64/ae.exe', 'resources/bin/win32-x64/vg.exe']) {
+    if (existsSync(join(root, file))) addFile(file);
+  }
+  return { commit, tree, dirty, sourceCount, buildCount, resourceCount: files.length - resourceStart,
     runtimeBuildStamp: JSON.parse(readFileSync(join(root, 'openclaw_runtime/dist/.buildstamp'), 'utf8')) as { head: string },
     inputDigest: createHash('sha256').update(JSON.stringify(files)).digest('hex'), files };
 }

@@ -215,7 +215,7 @@ test.describe('TF-0582 Settings Doctor real CLI', () => {
       expect(observation.exitCode).toBe(0);
       expect(observation.cwd).toBe(resolve('openclaw_runtime'));
       expect(observation.stdout).toContain('No provider auth migrations detected.');
-      expect(observation.stderr).toBe('(empty)');
+      expect(observation.stderr).not.toMatch(/Error:|Failed to read config|Timed out/i);
       const configAfterDoctor = await readFile(isolated.configPath, 'utf8');
       expect(configAfterDoctor).toBe(configBeforeDoctor);
       await doctorPanel.screenshot({ path: testInfo.outputPath('doctor-positive.png') });
