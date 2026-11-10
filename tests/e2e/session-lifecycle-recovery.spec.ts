@@ -81,8 +81,18 @@ async function select(c: Context, key: string) {
   if (await back.isVisible()) { await back.focus(); await back.press('Enter'); }
   const family = c.page.getByTestId('session-family-children');
   if (key === c.neighbour && await family.isVisible()) {
+    const window = await c.app.browserWindow(c.page);
+    await window.evaluate(window => { window.show(); window.focus(); }); await window.dispose();
+    await c.page.bringToFront();
     await family.selectOption(key);
-    await expect(c.page.getByTestId('chat-composer-input')).toHaveValue('U5 draft B');
+    try { await expect(c.page.getByTestId('chat-composer-input')).toHaveValue('U5 draft B'); }
+    finally {
+      const navigation = c.facts.navigation as unknown[] ?? []; c.facts.navigation = navigation;
+      navigation.push({ target: key, at: Date.now(), selection: await family.inputValue(),
+        draft: await c.page.getByTestId('chat-composer-input').inputValue(),
+        workspace: await hostInvoke(c.app, 'workspaces', 'getActive'),
+        selectedRows: await c.page.locator('[data-hook-selected="true"]').evaluateAll(rows => rows.map(row => row.textContent)) });
+    }
     return;
   }
   const row = c.page.getByTestId(`sidebar-session-${key}`);
