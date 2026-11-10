@@ -39,6 +39,7 @@ ownedPaths: &paths
   - tests/e2e/chat-session-fork.spec.ts
   - tests/e2e/session-task-scope-completion.spec.ts
   - tests/e2e/session-worker-task-journey.spec.ts
+  - tests/e2e/sidebar-session-folders-archive.spec.ts
   - tests/unit/chat-input.test.tsx
   - harness/specs/tasks/unified-execution-traceability.md
   - harness/specs/tasks/r4-reclamation-preservation-increment.md

@@ -386,6 +386,8 @@ test.describe('Sidebar session workgroups and archive', () => {
 
     await page.getByTestId(`sidebar-session-${SESSION_KEY_A}`).hover();
     await page.getByTestId(`sidebar-session-pin-${SESSION_KEY_A}`).click();
+    await page.getByTestId('sidebar-project-open-workspace-folders').focus();
+    await page.getByTestId('sidebar-project-open-workspace-folders').hover();
     await expect(page.getByTestId(`sidebar-session-pinned-${SESSION_KEY_A}`)).toBeVisible();
   });
 
