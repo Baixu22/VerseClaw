@@ -11,7 +11,7 @@ import type {
   TaskLedgerWarning,
 } from '../../shared/types/task-ledger';
 import { getOpenClawConfigDir } from '../utils/paths';
-import { withFileLock, writeJsonAtomic } from '../utils/atomic-write';
+import { withFileLock, writeJsonAtomic, type FileLockOptions } from '../utils/atomic-write';
 import { logger } from '../utils/logger';
 import { appendPersistentTaskEvents, readPersistentTaskEvents, readTaskEventProjection } from '../../shared/task-system/event-store';
 
@@ -302,9 +302,9 @@ export function projectTaskLedgerSnapshot(
   };
 }
 
-export async function writeTaskLedgerSnapshot(snapshot: TaskLedgerSnapshot): Promise<void> {
+export async function writeTaskLedgerSnapshot(snapshot: TaskLedgerSnapshot, lockOptions: FileLockOptions = {}): Promise<void> {
   const path = getTaskLedgerSnapshotPathForKey(snapshot.workspaceId);
-  await withFileLock(path, () => writeJsonAtomic(path, snapshot));
+  await withFileLock(path, () => writeJsonAtomic(path, snapshot), lockOptions);
 }
 
 export async function loadTaskLedgerSnapshot(workspaceId?: string | null): Promise<TaskLedgerSnapshot> {
@@ -339,7 +339,7 @@ export async function loadTaskLedgerSnapshot(workspaceId?: string | null): Promi
   }
   // The JSON file is a derived cache; owner reads above must still fail closed.
   try {
-    await writeTaskLedgerSnapshot(snapshot);
+    await writeTaskLedgerSnapshot(snapshot, { timeoutMs: 0, staleMs: Number.POSITIVE_INFINITY });
   } catch (error) {
     logger.warn('[task-ledger] snapshot cache write failed', {
       workspaceId: snapshot.sourceWorkspaceId,

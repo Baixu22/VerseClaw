@@ -23,6 +23,7 @@ import { getProcessSupervisor } from "../../process/supervisor/index.js";
 import { getAgentRunContext } from "../../infra/agent-events.js";
 import { replyRunRegistry } from "../../auto-reply/reply/reply-run-registry.js";
 import { loadSessionEntry } from "../session-utils.js";
+import { getSubagentRunByRunId, getLatestSubagentRunByChildSessionKey } from "../../agents/subagent-registry-read.js";
 import type { GatewayClient, GatewayRequestContext, GatewayRequestHandlers } from "./types.js";
 import type { SessionExecutionMigrationRequest } from '../../../../shared/types/execution-migration.js';
 
@@ -149,8 +150,6 @@ export const sessionTaskScopeHandlers: GatewayRequestHandlers = {
     const scheduled = scheduledRunOwner(runId, sessionKey, sessionGeneration);
     const inFlightEffects = sessionTaskEffectsInFlight(runId);
     const abandoned = isEmbeddedRunAbandoned({ sessionId: sessionGeneration, sessionKey });
-    const { getSubagentRunByRunId, getLatestSubagentRunByChildSessionKey } =
-      await import("../../agents/subagent-registry.js");
     const worker =
       getSubagentRunByRunId(runId) ?? getLatestSubagentRunByChildSessionKey(sessionKey);
     const parent = worker?.requesterSessionKey

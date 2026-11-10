@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, utimesSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { TaskSystemStore } from '../../shared/task-system/store';
@@ -13,6 +13,7 @@ import {
   getTaskLedgerSnapshotPath,
   loadTaskLedgerSnapshot,
   normalizeTaskLedgerWorkspaceId,
+  writeTaskLedgerSnapshot,
 } from '../../electron/services/task-ledger-service';
 import { writeJsonAtomic } from '../../electron/utils/atomic-write';
 
@@ -164,16 +165,42 @@ describe('Task Ledger derived snapshot cache', () => {
       }
     });
 
-    const snapshots = await Promise.all(Array.from({ length: 3 }, () => loadTaskLedgerSnapshot(workspaceId)));
+    const snapshot = await loadTaskLedgerSnapshot(workspaceId);
+    cacheWrite.mockClear();
+    await Promise.all(Array.from({ length: 3 }, () => writeTaskLedgerSnapshot(snapshot)));
     expect(cacheWrite).toHaveBeenCalledTimes(3);
     expect(peak).toBe(1);
     expect(fixture.warn).not.toHaveBeenCalled();
-    for (const snapshot of snapshots) {
-      expect(snapshot.sessionLinks).toContainEqual(expect.objectContaining({
-        nodeId: taskId, sessionKey, sessionGeneration: generation,
-      }));
-    }
+    expect(snapshot.sessionLinks).toContainEqual(expect.objectContaining({
+      nodeId: taskId, sessionKey, sessionGeneration: generation,
+    }));
     expect(JSON.parse(readFileSync(getTaskLedgerSnapshotPath(workspaceId), 'utf8')).nodes)
       .toContainEqual(expect.objectContaining({ id: taskId, title: 'Independent coordinator task' }));
+  });
+
+  it.each([0, 60_000])('returns canonical records without replacing a live cache lock aged %i ms', async ageMs => {
+    await loadTaskLedgerSnapshot(workspaceId);
+    cacheWrite.mockClear();
+    const cachePath = getTaskLedgerSnapshotPath(workspaceId);
+    let entered!: () => void;
+    let release!: () => void;
+    const acquired = new Promise<void>(resolve => { entered = resolve; });
+    const released = new Promise<void>(resolve => { release = resolve; });
+    const holder = realAtomic.withFileLock(cachePath, async () => { entered(); await released; });
+    await acquired;
+    const modified = new Date(Date.now() - ageMs);
+    utimesSync(realAtomic.lockPathFor(cachePath), modified, modified);
+    const reading = loadTaskLedgerSnapshot(workspaceId);
+    try {
+      const result = await Promise.race([reading, new Promise(resolve => setTimeout(() => resolve('cache-read-blocked'), 1000))]);
+      expect(result).toMatchObject({ sourceWorkspaceId: workspaceId,
+        nodes: expect.arrayContaining([expect.objectContaining({ id: taskId })]) });
+      expect(cacheWrite).not.toHaveBeenCalled();
+      expect(JSON.parse(readFileSync(realAtomic.lockPathFor(cachePath), 'utf8')).pid).toBe(process.pid);
+    } finally {
+      release();
+      await holder;
+      await reading;
+    }
   });
 });

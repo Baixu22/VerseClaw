@@ -1,0 +1,2 @@
+Harness report: D:\ClawX-work\session-chain-u4-runtime-20261109\artifacts\harness\latest.md
+Harness result: pass

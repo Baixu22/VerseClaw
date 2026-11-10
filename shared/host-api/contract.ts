@@ -2996,6 +2996,7 @@ export type SessionHistoryResult = OptionalHostSuccess & {
   messages?: RawMessage[];
   sessionGeneration?: string;
   model?: string;
+  costUsd?: number | null;
   workerSendReceipt?: { phase: 'queued' | 'steered'; idempotencyKey: string; source: 'runtime-intervention'; queueItemId?: string };
 };
 export type SessionSendWorkerPayload = {
@@ -5018,7 +5019,7 @@ export type TaskSystemCommandResult = HostSuccess & { result?: unknown; error?: 
 export type TaskSystemListResult = HostSuccess & { tasks: import('../task-system/types').TaskView[] };
 export type TaskSystemQueryPayload = TaskLedgerWorkspacePayload & import('../task-system/types').TaskQuery;
 export type TaskSystemQueryResult = HostSuccess & import('../task-system/types').TaskPage;
-export type TaskSessionPayload = { workspaceId: string; sessionKey: string };
+export type TaskSessionPayload = { workspaceId: string; sessionKey: string; expectedSessionGeneration?: string };
 export type TaskSessionResult = HostSuccess & import('../task-system/types').TaskSessionSnapshot;
 export type TaskLedgerSnapshotResult = HostSuccess & { snapshot: TaskLedgerSnapshot };
 export type TaskLedgerAppendEventsPayload = TaskLedgerWorkspacePayload & {

@@ -1315,14 +1315,15 @@ async function loadSessionSummary(
     return { sessionKey, firstUserText: null, lastTimestamp: null };
   }
 }
-async function loadSessionTranscriptByKey(sessionKey: string, limit: number, gateway?: Pick<GatewayManager, 'rpc'>): Promise<RawMessage[] | null> {
+async function loadSessionTranscriptByKey(sessionKey: string, limit: number, gateway?: Pick<GatewayManager, 'rpc'>, includeModelMetadata = true): Promise<RawMessage[] | null> {
   const parsed = parseSessionKey(sessionKey);
   if (!parsed) return null;
 
   // The live runtime owns transcript location (including isolated source state).
   // An empty runtime history is authoritative; never substitute another profile.
   if (gateway) {
-    const result = await gateway.rpc<{ messages?: RawMessage[] }>('chat.history', { sessionKey, limit }, 10_000);
+    const result = await gateway.rpc<{ messages?: RawMessage[] }>('chat.history', { sessionKey, limit,
+      ...(includeModelMetadata ? {} : { includeModelMetadata: false }) }, includeModelMetadata ? 10_000 : undefined);
     if (!Array.isArray(result?.messages)) throw new Error('Runtime history returned no messages array');
     return result.messages;
   }
@@ -2240,16 +2241,16 @@ export function createSessionsApi(ctx: {
         let described: Description | null = null;
         if (needsFence) {
           if (!ctx.gatewayManager) return { success: false, error: 'Transcript generation unavailable' };
-          described = await ctx.gatewayManager.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() }, 15_000);
+          described = await ctx.gatewayManager.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() });
           if (!described.session?.sessionId || (payload.expectedSessionGeneration && described.session.sessionId !== payload.expectedSessionGeneration)
             || (payload.expectedParentSessionKey && classifyDerivation(described.session).parentSessionKey !== payload.expectedParentSessionKey)) {
             return { success: false, error: 'Transcript scope or generation changed' };
           }
         }
-        const messages = await loadSessionTranscriptByKey(body.sessionKey.trim(), limit, ctx.gatewayManager);
+        const messages = await loadSessionTranscriptByKey(body.sessionKey.trim(), limit, ctx.gatewayManager, !needsFence);
         if (!messages) return { success: false, error: 'Transcript not found' };
         if (needsFence) {
-          const after = await ctx.gatewayManager!.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() }, 15_000);
+          const after = await ctx.gatewayManager!.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() });
           if (after.session?.sessionId !== described?.session?.sessionId) return { success: false, error: 'Transcript generation changed during read' };
         }
         const executed = messages.findLast((message) => message.role === 'assistant'
@@ -2266,10 +2267,18 @@ export function createSessionsApi(ctx: {
             phase: event.status, idempotencyKey: key, source: 'runtime-intervention',
             ...(event.payload?.queueItemId ? { queueItemId: event.payload.queueItemId } : {}),
           };
-          const current = await ctx.gatewayManager.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() }, 15_000);
+          const current = await ctx.gatewayManager.rpc<Description>('sessions.describe', { key: body.sessionKey.trim() });
           if (current.session?.sessionId !== described.session.sessionId) return { success: false, error: 'Transcript generation changed during delivery read' };
         }
+        const recordedMessages = messages as Array<RawMessage & { usage?: unknown }>;
+        const costs = recordedMessages.filter(message => message.role === 'assistant' || isRecord(message.usage)).map(message =>
+          isRecord(message.usage) && isRecord(message.usage.cost) && typeof message.usage.cost.total === 'number'
+            && Number.isFinite(message.usage.cost.total) && message.usage.cost.total >= 0 ? message.usage.cost.total : null);
+        const totalCost = costs.length > 0 && costs.every(cost => cost !== null)
+          ? costs.reduce((total, cost) => total + (cost ?? 0), 0) : Number.NaN;
+        const costUsd = Number.isFinite(totalCost) ? totalCost : undefined;
         return { success: true, messages, ...(described?.session?.sessionId ? { sessionGeneration: described.session.sessionId } : {}), ...(model ? { model } : {}),
+          ...(costUsd !== undefined ? { costUsd } : {}),
           ...(workerSendReceipt ? { workerSendReceipt } : {}) };
       }
 

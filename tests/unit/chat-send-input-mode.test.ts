@@ -398,4 +398,24 @@ describe('chat.send inputMode: queue', () => {
     const restored = listLongTaskQueuedMessages(SESSION_KEY)[0];
     expect(restored?.text).toBe('follow-up after restart');
   });
+
+  it('retains a queued follow-up when the chat owner rejects its drain', async () => {
+    seedLedgerRoot(SESSION_KEY);
+    enqueueUserMessage(SESSION_KEY, { text: 'Denied queued follow-up', idempotencyKey: 'denied-queue-drain' });
+    const { resolveActiveEmbeddedRunSessionId } = await import('../../openclaw_runtime/src/agents/embedded-agent-runner/runs.js');
+    vi.mocked(resolveActiveEmbeddedRunSessionId).mockReturnValue(undefined);
+    const { loadSessionEntry } = await import('../../openclaw_runtime/src/gateway/session-utils.js');
+    const load = vi.mocked(loadSessionEntry);
+    const original = load.getMockImplementation()!;
+    load.mockImplementation(() => ({ cfg: {}, canonicalKey: SESSION_KEY,
+      entry: { sessionId: 'session-1', sendPolicy: 'deny', updatedAt: 1 }, storePath: '', store: {}, legacyKey: undefined }));
+    try {
+      const result = await drainQueuedUserMessagesForSession(makeContext() as never, SESSION_KEY);
+      expect(result).toMatchObject({ drained: false, reason: 'drain_failed', queueCount: 1 });
+      expect(listLongTaskQueuedMessages(SESSION_KEY)).toEqual([
+        expect.objectContaining({ text: 'Denied queued follow-up', lastError: 'send blocked by session policy' }),
+      ]);
+      expect(listLongTaskInterventions(SESSION_KEY)).not.toContainEqual(expect.objectContaining({ status: 'drained' }));
+    } finally { load.mockImplementation(original); }
+  });
 });

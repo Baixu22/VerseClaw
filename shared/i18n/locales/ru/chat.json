@@ -2846,6 +2846,11 @@
     }
   },
   "delegationStages": {
+    "verification": {
+      "unavailable": "Недоступно",
+      "pending": "Ожидание квитанций проверки",
+      "recorded": "Записано проверок: {{count}} / {{total}}"
+    },
     "capacity": {
       "planTitle": "План и причины на момент отправки",
       "planDescription": "План из квитанции отправки, а не текущая очередь.",
@@ -2866,6 +2871,7 @@
     },
     "label": {
       "admission": "Допуск",
+      "verification": "Проверка",
       "execution": "Выполнение",
       "report": "Передача отчёта",
       "acceptance": "Приёмка задачи",
@@ -2873,6 +2879,13 @@
     },
     "taskRequired": "Перед запуском выберите рабочую задачу и свяжите её с координатором.",
     "model": "Рабочая модель: {{model}}",
+    "cost": "Стоимость прочитанных записей: {{cost}}",
+    "costUnknown": "Неизвестно",
+    "taskAcceptance": {
+      "pending": "Ожидается приёмка",
+      "accepted": "Задача принята",
+      "cancelled": "Отменено"
+    },
     "status": {
       "unavailable": "Недоступно",
       "in-flight": "Проверка допуска",

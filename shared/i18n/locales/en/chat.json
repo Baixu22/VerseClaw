@@ -2846,6 +2846,11 @@
     }
   },
   "delegationStages": {
+    "verification": {
+      "unavailable": "Unavailable",
+      "pending": "Awaiting verifier receipts",
+      "recorded": "Verifier receipts recorded: {{count}} / {{total}}"
+    },
     "capacity": {
       "planTitle": "Dispatch-time plan and reasons",
       "planDescription": "Recorded when dispatched; this is not the live queue.",
@@ -2866,6 +2871,7 @@
     },
     "label": {
       "admission": "Admission",
+      "verification": "Verification",
       "execution": "Execution",
       "report": "Report delivery",
       "acceptance": "Task acceptance",
@@ -2873,6 +2879,13 @@
     },
     "taskRequired": "Select an existing business task and bind its coordinator before dispatching.",
     "model": "Runtime model: {{model}}",
+    "cost": "Recorded transcript cost: {{cost}}",
+    "costUnknown": "Unknown",
+    "taskAcceptance": {
+      "pending": "Awaiting acceptance",
+      "accepted": "Accepted",
+      "cancelled": "Cancelled"
+    },
     "status": {
       "unavailable": "Unavailable",
       "in-flight": "Admission pending",

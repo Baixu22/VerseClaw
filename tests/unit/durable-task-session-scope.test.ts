@@ -8,9 +8,11 @@ import { execFileSync } from 'node:child_process';
 import { TaskSystemStore } from '../../shared/task-system/store';
 import { resolveTaskDomain } from '../../shared/task-system/identity';
 import type { TaskContractInput } from '../../shared/task-system/types';
+import type { GatewayManager } from '../../electron/gateway/manager';
+import { getWorkspaceRootPathById } from '../../electron/services/workspaces-api';
 
 vi.mock('../../electron/services/workspaces-api', () => ({ getPersistedCoordinatorBinding: vi.fn(), getWorkspaceRootPathById: vi.fn() }));
-import { handoffManagedSessionTask, selectManagedSessionTask, startManagedSessionEffect } from '../../electron/services/task-system-service';
+import { handoffManagedSessionTask, readSessionTask, selectManagedSessionTask, startManagedSessionEffect } from '../../electron/services/task-system-service';
 
 let root: string;
 let store: TaskSystemStore | undefined;
@@ -29,6 +31,51 @@ beforeEach(() => { root = mkdtempSync(join(tmpdir(), 'session-contract-')); });
 afterEach(() => { store?.close(); store = undefined; rmSync(root, { recursive: true, force: true }); });
 
 describe('session bridge consumes the persistent task owner', () => {
+  it('reads actual verifier receipts without promoting a doing task to accepted', async () => {
+    const task = owner();
+    writeFileSync(join(root, 'result.txt'), bytes);
+    const receipt = store!.verifyFile(task.claim!, 'result', 'result.txt', sha, sha);
+    vi.mocked(getWorkspaceRootPathById).mockResolvedValue(root);
+    const gateway = { rpc: vi.fn().mockResolvedValue({ session: { sessionId: 'generation-source' } }) } as unknown as GatewayManager;
+    const snapshot = await readSessionTask('workspace', 'source', gateway, 'generation-source');
+    expect(snapshot.verificationReceipts).toEqual([receipt]);
+    expect(snapshot.verificationReceipts?.[0].candidate).toBe(sha);
+    expect(snapshot.task?.contract.state).toBe('doing');
+  });
+  it('fences worker acceptance reads before and after a session generation changes', async () => {
+    const task = owner();
+    vi.mocked(getWorkspaceRootPathById).mockResolvedValue(root);
+    const rpc = vi.fn().mockResolvedValue({ session: { sessionId: 'generation-source' } });
+    const gateway = { rpc } as unknown as GatewayManager;
+    expect((await readSessionTask('workspace', 'source', gateway, 'generation-source')).task?.contract.taskNodeId).toBe(task.contract.taskNodeId);
+    rpc.mockResolvedValue({ session: { sessionId: 'replacement-generation' } });
+    await expect(readSessionTask('workspace', 'source', gateway, 'generation-source')).rejects.toThrow('TASK_GENERATION_STALE');
+    rpc.mockReset().mockResolvedValueOnce({ session: { sessionId: 'generation-source' } })
+      .mockResolvedValueOnce({ session: { sessionId: 'replacement-generation' } });
+    await expect(readSessionTask('workspace', 'source', gateway, 'generation-source')).rejects.toThrow('TASK_GENERATION_STALE');
+    expect(store!.get(task.contract.taskNodeId).claim).toEqual(task.claim);
+  });
+  it.each([1, 2])('keeps the task owner readable when generation check %s takes twelve seconds', async (slowRead) => {
+    const task = owner();
+    vi.mocked(getWorkspaceRootPathById).mockResolvedValue(root);
+    let reads = 0;
+    vi.useFakeTimers();
+    try {
+      const rpc = vi.fn((_method: string, _params?: unknown, timeoutMs = 30_000) => new Promise((resolve, reject) => {
+        const deadline = setTimeout(() => reject(new Error('RPC timeout: sessions.describe')), timeoutMs);
+        setTimeout(() => {
+          clearTimeout(deadline);
+          resolve({ session: { sessionId: 'generation-source' } });
+        }, ++reads === slowRead ? 12_000 : 1);
+      }));
+      const reading = readSessionTask('workspace', 'source', { rpc } as unknown as GatewayManager, 'generation-source')
+        .then(value => ({ value }), error => ({ error: String(error) }));
+      await vi.advanceTimersByTimeAsync(12_010);
+      expect(await reading).toMatchObject({ value: { task: { contract: { taskNodeId: task.contract.taskNodeId } } } });
+      expect(reads).toBe(2);
+      expect(store!.get(task.contract.taskNodeId).claim).toEqual(task.claim);
+    } finally { vi.clearAllTimers(); vi.useRealTimers(); }
+  });
   it('rejects effects without a contract without creating a database', () => {
     expect(() => effect()).toThrow('TASK_CLAIM_REQUIRED');
     expect(existsSync(resolveTaskDomain(root).database)).toBe(false);

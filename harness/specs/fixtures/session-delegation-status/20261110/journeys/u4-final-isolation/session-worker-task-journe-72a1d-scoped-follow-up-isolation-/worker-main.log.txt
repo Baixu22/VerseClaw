@@ -1,0 +1,167 @@
+[2026-11-10T09:24:40.048Z] [INFO] Gateway stop requested
+[2026-11-10T09:24:40.049Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[2026-11-10T09:24:40.239Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[2026-11-10T09:24:40.240Z] [INFO] Gateway auto-start skipped in E2E mode
+[2026-11-10T09:24:40.241Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T09:24:40.241Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T09:24:40.241Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T09:24:40.241Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+Updated models.json for agent "main" provider "custom-sessionc"
+[2026-11-10T09:24:40.439Z] [INFO] Scheduling Gateway reload after saving provider "custom-sessionc" config
+[2026-11-10T09:24:40.439Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)
+Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[2026-11-10T09:24:40.881Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"default","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\default-7505d64a54\\snapshot.json"}
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[2026-11-10T09:24:41.202Z] [INFO] Seeded default Verse Claw identity for workspace (D:\ClawX-work\session-chain-u4-runtime-20261109\.tmp\e2e-runs\verse-claw-e2e-run-CwyFQe\verse-claw-e2e-home-083OxE\.openclaw\workspace-independent-coordinator)
+[2026-11-10T09:24:41.237Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"default","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\default-7505d64a54\\snapshot.json"}
+[2026-11-10T09:24:41.237Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"default","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\default-7505d64a54\\snapshot.json"}
+[2026-11-10T09:24:41.238Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"default","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\default-7505d64a54\\snapshot.json"}
+[2026-11-10T09:24:41.267Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"default","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\default-7505d64a54\\snapshot.json"}
+[2026-11-10T09:24:41.332Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\ClawX-work\session-chain-u4-runtime-20261109\.tmp\e2e-runs\verse-claw-e2e-run-CwyFQe\verse-claw-e2e-home-083OxE\.openclaw\workspace-independent-coordinator\.verse-claw\harness
+[2026-11-10T09:24:41.366Z] [INFO] Created agent config entry {"agentId":"independent-coordinator","inheritWorkspace":true}
+[2026-11-10T09:24:41.419Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\tmp\clawx-u4-relay-20261110-01a1c454\u4-final-isolation\session-worker-task-journe-72a1d-scoped-follow-up-isolation-\workspace\.verse-claw\harness
+Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main, independent-coordinator)
+[2026-11-10T09:24:41.915Z] [INFO] [gateway-refresh] mode=reload requested pid=n/a state=stopped
+[2026-11-10T09:24:41.915Z] [WARN] [gateway-refresh] mode=reload result=fallback_restart cause=not_running
+[2026-11-10T09:24:41.915Z] [WARN] Gateway reload requested while not running; falling back to restart
+[2026-11-10T09:24:41.915Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=n/a
+[2026-11-10T09:24:41.915Z] [INFO] Gateway stop requested
+[2026-11-10T09:24:41.915Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)
+[2026-11-10T09:24:41.915Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)
+[2026-11-10T09:24:41.919Z] [INFO] Gateway start requested (port=18789)
+[2026-11-10T09:24:41.924Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:24:41.924Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:24:41.924Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:24:41.925Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:24:41.928Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:24:41.940Z] [DEBUG] Device identity loaded (deviceId=f248334931a0bc6e70820970877862ca4624371e01bc68ee1def64551a665e92)
+[2026-11-10T09:24:41.940Z] [DEBUG] Gateway state changed: stopped -> starting
+[2026-11-10T09:24:42.471Z] [DEBUG] Checking for existing Gateway...
+(node:45652) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[2026-11-10T09:24:42.537Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:24:42.570Z] [WARN] Primary config at D:\ClawX-work\session-chain-u4-runtime-20261109\.tmp\e2e-runs\verse-claw-e2e-run-CwyFQe\verse-claw-e2e-home-083OxE\.openclaw\openclaw.json was missing; recovered from D:\ClawX-work\session-chain-u4-runtime-20261109\.tmp\e2e-runs\verse-claw-e2e-run-CwyFQe\verse-claw-e2e-home-083OxE\.openclaw\openclaw.json.bak. Re-save recommended.
+Primary config at D:\ClawX-work\session-chain-u4-runtime-20261109\.tmp\e2e-runs\verse-claw-e2e-run-CwyFQe\verse-claw-e2e-home-083OxE\.openclaw\openclaw.json was missing; recovered from D:\ClawX-work\session-chain-u4-runtime-20261109\.tmp\e2e-runs\verse-claw-e2e-run-CwyFQe\verse-claw-e2e-home-083OxE\.openclaw\openclaw.json.bak. Re-save recommended.
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[2026-11-10T09:24:42.603Z] [INFO] Gateway stop requested
+[2026-11-10T09:24:42.603Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)
+[auth-profiles] independent-coordinator: sealed 1 legacy plaintext credential field(s)
+[2026-11-10T09:24:42.752Z] [DEBUG] Gateway start/find-existing superseded (expectedEpoch=3, currentEpoch=4)
+[2026-11-10T09:24:42.753Z] [DEBUG] Gateway state changed: starting -> stopped
+[2026-11-10T09:24:42.753Z] [INFO] [metric] gateway.restart.executed {"gateway_restart_executed_total":1,"gateway_restart_suppressed_total":0,"gateway_restart_circuit_open_until":0}
+[2026-11-10T09:24:42.753Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=n/a pidAfter=n/a suppressed=0 executed=1 circuitOpenUntil=0
+[2026-11-10T09:24:42.844Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (start)
+[2026-11-10T09:24:42.847Z] [INFO] Gateway start requested (port=59139)
+[2026-11-10T09:24:42.848Z] [DEBUG] Gateway state changed: stopped -> starting
+[2026-11-10T09:24:43.107Z] [DEBUG] Checking for existing Gateway...
+[2026-11-10T09:24:43.158Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:24:43.158Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:24:43.348Z] [DEBUG] No existing Gateway found, starting new process...
+[2026-11-10T09:24:43.379Z] [DEBUG] Verse Claw context merge: 6 startup file(s) still missing (retry 1/5)
+Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main, independent-coordinator)
+Updated models.json for agent "main" provider "custom-sessionc"
+Updated models.json for agent "independent-coordinator" provider "custom-sessionc"
+Updated models.json for agent "main" provider "custom-sessionc"
+Updated models.json for agent "independent-coordinator" provider "custom-sessionc"
+[2026-11-10T09:24:43.827Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)
+[2026-11-10T09:24:43.895Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[2026-11-10T09:24:43.899Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":454,"providerEnvMs":6,"channelStartupPolicyMs":3,"uvEnvMs":7,"mcpEnvMs":55,"runtimeConfigReadMs":1,"verseShellBundleMs":0,"totalMs":543,"maintenance":{},"configuredChannelCount":0}
+[2026-11-10T09:24:43.899Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=59139, entry="D:\ClawX-work\session-chain-u4-runtime-20261109\openclaw_runtime\dist\entry.js", args="gateway --port 59139 --allow-unconfigured", execArgv="", cwd="D:\ClawX-work\session-chain-u4-runtime-20261109\openclaw_runtime", bundledBin=no, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)
+[2026-11-10T09:24:43.981Z] [INFO] Gateway process started (pid=49708)
+[2026-11-10T09:24:43.982Z] [DEBUG] Gateway manager now owns process pid=49708
+[2026-11-10T09:24:44.113Z] [WARN] [Gateway stderr] (node:49708) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2026-11-10T09:24:44.114Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)
+[2026-11-10T09:24:45.397Z] [DEBUG] Verse Claw context merge: 6 startup file(s) still missing (retry 2/5)
+[2026-11-10T09:24:46.075Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[2026-11-10T09:24:47.409Z] [DEBUG] Verse Claw context merge: 6 startup file(s) still missing (retry 3/5)
+[2026-11-10T09:24:48.195Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"power-saver","activeReasons":["power-saver"],"transitionCount":3}
+[2026-11-10T09:24:48.196Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)
+[2026-11-10T09:24:49.430Z] [DEBUG] Verse Claw context merge: 6 startup file(s) still missing (retry 4/5)
+[2026-11-10T09:24:50.240Z] [DEBUG] [Gateway stderr] (node:49708) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[2026-11-10T09:24:50.241Z] [DEBUG] [Gateway stderr] (node:49708) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[2026-11-10T09:24:50.241Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[2026-11-10T09:24:50.282Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)
+[2026-11-10T09:24:51.443Z] [DEBUG] Verse Claw context merge: 6 startup file(s) still missing (retry 5/5)
+[2026-11-10T09:24:51.444Z] [WARN] Verse Claw context merge: 6 startup file(s) still missing after 5 retries
+[2026-11-10T09:24:53.777Z] [DEBUG] Gateway ready after 36 attempt(s)
+[2026-11-10T09:24:53.778Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:59139/ws)
+[2026-11-10T09:24:53.806Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=ace40b16-fe7b-492b-ab4c-ff0965f17b17 peer=127.0.0.1:59463->127.0.0.1:59139 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:59139 ua=n/a code=1006 reason=n/a[39m
+[2026-11-10T09:24:53.819Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-11-10T09:24:53.819Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-10T09:24:53.819Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-11-10T09:24:53.822Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=5c7ff126-a557-43f5-b5b8-ea53eb5db6f4 peer=127.0.0.1:58744->127.0.0.1:59139 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:59139 ua=n/a code=1006 reason=n/a[39m
+[2026-11-10T09:24:53.877Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:59139/ws)
+[2026-11-10T09:24:53.878Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[2026-11-10T09:24:55.762Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-11-10T09:24:55.762Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-10T09:24:55.763Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-11-10T09:24:56.576Z] [DEBUG] Gateway connect handshake completed (protocol=4)
+[2026-11-10T09:24:56.576Z] [DEBUG] Gateway state changed: starting -> running
+[2026-11-10T09:24:56.577Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[2026-11-10T09:24:56.578Z] [INFO] [metric] gateway.startup {"configSyncMs":875,"spawnToReadyMs":9795,"readyToConnectMs":2801,"totalMs":13471}
+[2026-11-10T09:24:56.670Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[auth-profiles] independent-coordinator: sealed 1 legacy plaintext credential field(s)
+[2026-11-10T09:25:44.013Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T09:25:44.014Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T09:25:44.014Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T09:25:44.014Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[2026-11-10T09:25:44.506Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"default","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\default-7505d64a54\\snapshot.json"}
+[2026-11-10T09:25:44.680Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:25:44.680Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:25:44.680Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:25:44.680Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:25:44.681Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:25:44.681Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:25:44.683Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:25:44.683Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:26:20.474Z] [WARN] [Gateway stderr] [33m[agent/embedded][39m [33m[trace:embedded-run] prep stages: runId=announce:v1:agent:main:subagent:49dee44f-4c04-498e-9439-5efb4104497b:68529199-9bdd-4199-9ed8-38b8892aa584 sessionId=bfc0afea-b66e-4ec9-a5f1-71261a6c4a40 phase=stream-ready totalMs=23453 stages=workspace-sandbox:28ms@28ms,skills:0ms@28ms,core-plugin-tools:258ms@286ms,bootstrap-context:23050ms@23336ms,bundle-tools:12ms@23348ms,system-prompt:24ms@23372ms,session-resource-loader:42ms@23414ms,agent-session:11ms@23425ms,stream-setup:28ms@23453ms[39m
+[2026-11-10T09:26:47.175Z] [WARN] [Gateway stderr] [33m[agent/embedded][39m [33m[trace:embedded-run] prep stages: runId=7dfa60a4-09ce-4626-82d7-a46b3c1dfc66 sessionId=22ddca30-eed7-4758-bb5d-8e5e52b9381f phase=stream-ready totalMs=9177 stages=workspace-sandbox:7692ms@7692ms,skills:0ms@7692ms,core-plugin-tools:478ms@8170ms,bootstrap-context:125ms@8295ms,bundle-tools:4ms@8299ms,system-prompt:318ms@8617ms,session-resource-loader:18ms@8635ms,agent-session:3ms@8638ms,stream-setup:539ms@9177ms[39m
+[2026-11-10T09:26:52.569Z] [WARN] [Gateway stderr] [31m[diagnostic][39m [33mliveness warning: reasons=event_loop_delay interval=32s eventLoopDelayP99Ms=5951.7 eventLoopDelayMaxMs=5951.7 eventLoopUtilization=0 cpuCoreRatio=0.467 active=1 waiting=0 queued=0 recentPhases=post-attach.update-check:3ms,sidecars.session-locks:31ms,sidecars.restart-sentinel:28ms,post-attach.update-sentinel:8ms,post-ready.maintenance:60ms,post-ready.agent-runtime-plugins:3ms work=[active=agent:independent-coordinator:subagent:efbedb56-e06d-4ec3-b82c-7860a6102416(processing/embedded_run,q=0,age=5s last=embedded_run:started)][39m
+[2026-11-10T09:26:57.282Z] [WARN] [Gateway stderr] [33m[agent/embedded][39m [33magent cleanup timed out: runId=announce:v1:agent:main:subagent:49dee44f-4c04-498e-9439-5efb4104497b:68529199-9bdd-4199-9ed8-38b8892aa584 sessionId=bfc0afea-b66e-4ec9-a5f1-71261a6c4a40 step=openclaw-trajectory-flush timeoutMs=10000 details=pendingWrites=1 queuedBytes=0 activeOperation=file-replace yieldBeforeWrite=false maxQueuedBytes=10485760 maxFileBytes=10485760[39m
+[2026-11-10T09:27:13.385Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T09:27:13.386Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T09:27:13.386Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T09:27:13.386Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[2026-11-10T09:27:13.994Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"default","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\default-7505d64a54\\snapshot.json"}
+[2026-11-10T09:27:14.247Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:14.247Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:14.255Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:14.255Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:14.255Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:14.255Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:14.310Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:14.366Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T09:27:14.366Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T09:27:14.367Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T09:27:14.367Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[2026-11-10T09:27:14.686Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:14.686Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:14.687Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:14.689Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:14.691Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:20.265Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=5c66528e-501c-4ea4-9877-9d06d32f8fc6 peer=127.0.0.1:53338->127.0.0.1:59139 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:59139 ua=n/a code=1006 reason=n/a[39m
+[2026-11-10T09:27:22.071Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T09:27:22.071Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T09:27:22.071Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T09:27:22.071Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[2026-11-10T09:27:22.352Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:22.352Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:22.359Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:22.360Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:22.360Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:22.360Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:22.361Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-home-083OxE\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:27:34.927Z] [WARN] [Gateway stderr] Subagent announce failed: GatewayTransportError: gateway timeout after 10000ms
+[2026-11-10T09:27:34.928Z] [WARN] [Gateway stderr] Gateway target: ws://127.0.0.1:59139
+[2026-11-10T09:27:34.928Z] [WARN] [Gateway stderr] Source: local loopback
+[2026-11-10T09:27:34.928Z] [WARN] [Gateway stderr] Config: D:\ClawX-work\session-chain-u4-runtime-20261109\.tmp\e2e-runs\verse-claw-e2e-run-CwyFQe\verse-claw-e2e-user-data-EVtDlZ\openclaw-source-state\openclaw.json
+[2026-11-10T09:27:34.929Z] [WARN] [Gateway stderr] Bind: loopback
+[2026-11-10T09:27:36.501Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=3860dd43-f12c-40db-acac-d3be6ed8f914 peer=127.0.0.1:51270->127.0.0.1:59139 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:59139 ua=n/a code=1006 reason=n/a[39m

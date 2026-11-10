@@ -13,6 +13,7 @@ const historyMock = vi.fn();
 vi.mock('@/lib/host-api', () => ({
   hostApi: {
     sessions: { history: (...args: unknown[]) => historyMock(...args) },
+    taskLedger: { sessionTask: () => Promise.resolve({ success: true, task: null, children: [] }) },
     gateway: { rpc: () => Promise.resolve({ success: true }) },
   },
 }));
@@ -70,6 +71,7 @@ vi.mock('react-i18next', async (importOriginal) => {
 describe('WorkspaceAgentsPanel transcript failure (R2)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    SNAPSHOT.subagents = [SUBAGENT];
     historyMock.mockRejectedValue(new Error('history boom sk-12345678901234567890'));
   });
 
@@ -82,5 +84,16 @@ describe('WorkspaceAgentsPanel transcript failure (R2)', () => {
     expect(retry).toBeInTheDocument();
     fireEvent.click(retry);
     expect(historyMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('keeps run-only roster facts on the selected row when several children lack session keys', () => {
+    SNAPSHOT.subagents = [
+      { ...SUBAGENT, id: 'older', childSessionKey: undefined, status: 'error', updatedAt: 1 },
+      { ...SUBAGENT, id: 'newer', childSessionKey: undefined, status: 'completed', updatedAt: 2 },
+    ];
+    const { container } = render(<MemoryRouter><WorkspaceAgentsPanel /></MemoryRouter>);
+    expect(container.querySelector('[data-stage="execution"]')).toHaveAttribute('data-status', 'completed');
+    fireEvent.click(screen.getByTestId('workspace-agents-row-older'));
+    expect(container.querySelector('[data-stage="execution"]')).toHaveAttribute('data-status', 'error');
   });
 });

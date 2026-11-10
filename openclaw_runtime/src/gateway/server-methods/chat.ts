@@ -2559,6 +2559,7 @@ async function handleChatHistoryRequest({
     agentId?: string;
     limit?: number;
     maxChars?: number;
+    includeModelMetadata?: boolean;
   };
   const agentIdOverride = normalizeOptionalText((params as { agentId?: string }).agentId);
   const requestedAgentId = resolveRequestedChatAgentId({
@@ -2591,7 +2592,7 @@ async function handleChatHistoryRequest({
             startedLoad: startupModelCatalogLoad,
             timeoutMs: CHAT_STARTUP_OPTIONAL_MODEL_CATALOG_TIMEOUT_MS,
           })
-        : loadOptionalServerMethodModelCatalog(context, method),
+        : loadOptionalServerMethodModelCatalog(context, method, { enabled: params.includeModelMetadata !== false }),
     {
       config: cfg,
       phase: method,
@@ -2833,6 +2834,8 @@ export async function drainQueuedUserMessagesForSession(
   });
 
   try {
+    let accepted = false;
+    let rejection: string | undefined;
     await chatHandlers["chat.send"]({
       params: {
         sessionKey,
@@ -2842,13 +2845,15 @@ export async function drainQueuedUserMessagesForSession(
         ...(firstAgentId ? { agentId: firstAgentId } : {}),
         ...(firstWorkspaceId ? { workspaceId: firstWorkspaceId } : {}),
       },
-      respond: () => {
-        // Background drain responses are observable through events/status.
+      respond: (ok: boolean, _payload: unknown, error?: { message: string }) => {
+        accepted = ok;
+        if (!ok) rejection = error?.message ?? "Queued follow-up was rejected";
       },
       context,
       client: null,
       isWebchatConnect: () => false,
     } as never);
+    if (!accepted) throw new Error(rejection ?? "Queued follow-up has no acceptance receipt");
     completeDrainedUserMessages(messages);
     recordLongTaskInterventionEvent({
       idempotencyKey: `${syntheticIdempotencyKey}:drained`,
@@ -3731,100 +3736,6 @@ export const chatHandlers: GatewayRequestHandlers = {
         }
         // Register the drain callback (idempotent — only needs to be set once
         // per process; subsequent registrations are harmless no-ops).
-        setQueueDrainCallback(async (drainSessionKey: string) => {
-          const messages = drainUserMessages(drainSessionKey);
-          if (messages.length === 0) return;
-          // Combine multiple queued messages into one follow-up turn.
-          const combinedText = messages.map((m) => m.text).join("\n\n");
-          const firstAgentId = messages[0]?.agentId;
-          const firstWorkspaceId = messages[0]?.workspaceId;
-          const firstTaskLedgerRootId = messages[0]?.taskLedgerRootId;
-          try {
-            context.broadcast(
-              "chat.queue-status",
-              {
-                sessionKey: drainSessionKey,
-                action: "drain",
-                queueCount: 0,
-                messageCount: messages.length,
-              },
-              { dropIfSlow: true },
-            );
-          } catch {
-            /* best-effort */
-          }
-          // Re-dispatch as a new chat.send. The prior run is already cleared
-          // from ACTIVE_EMBEDDED_RUNS, so this starts cleanly.
-          // We use a synthetic internal call to the chat handler.
-          const syntheticParams = {
-            sessionKey: drainSessionKey,
-            message: combinedText,
-            deliver: false,
-            idempotencyKey: `queue_drain_${drainSessionKey}_${Date.now()}`,
-            ...(firstAgentId ? { agentId: firstAgentId } : {}),
-            ...(firstWorkspaceId ? { workspaceId: firstWorkspaceId } : {}),
-          };
-          const { resolveActiveEmbeddedRunSessionId } =
-            await import("../../agents/embedded-agent-runner/runs.js");
-          // Wait a tick to ensure the run-clear is fully committed.
-          await new Promise((resolve) => setImmediate(resolve));
-          // If a new run already started (user sent another message), don't
-          // interfere; restore claimed rows for the next idle drain.
-          const newActiveSession = resolveActiveEmbeddedRunSessionId(drainSessionKey);
-          if (newActiveSession) {
-            restoreDrainingUserMessages(messages, "active_run_started_before_queue_drain");
-            return;
-          }
-          recordLongTaskInterventionEvent({
-            idempotencyKey: `${syntheticParams.idempotencyKey}:event`,
-            sessionKey: drainSessionKey,
-            agentId: firstAgentId,
-            workspaceId: firstWorkspaceId,
-            taskLedgerRootId: firstTaskLedgerRootId,
-            mode: "queue",
-            trigger: "queue_drain",
-            status: "draining",
-            payload: { messageCount: messages.length, queueItemIds: messages.map((m) => m.id) },
-          });
-          // Re-invoke the chat.send handler with synthetic params.
-          try {
-            await chatHandlers["chat.send"]({
-              params: syntheticParams,
-              respond: () => {
-                /* swallow response: this is a background drain */
-              },
-              context,
-              client: null,
-              isWebchatConnect: () => false,
-            } as never);
-            completeDrainedUserMessages(messages);
-            recordLongTaskInterventionEvent({
-              idempotencyKey: `${syntheticParams.idempotencyKey}:drained`,
-              sessionKey: drainSessionKey,
-              agentId: firstAgentId,
-              workspaceId: firstWorkspaceId,
-              taskLedgerRootId: firstTaskLedgerRootId,
-              mode: "queue",
-              trigger: "queue_drain",
-              status: "drained",
-              payload: { messageCount: messages.length, queueItemIds: messages.map((m) => m.id) },
-            });
-          } catch (error) {
-            const message = error instanceof Error ? error.message : String(error);
-            restoreDrainingUserMessages(messages, message);
-            recordLongTaskInterventionEvent({
-              idempotencyKey: `${syntheticParams.idempotencyKey}:failed`,
-              sessionKey: drainSessionKey,
-              agentId: firstAgentId,
-              workspaceId: firstWorkspaceId,
-              taskLedgerRootId: firstTaskLedgerRootId,
-              mode: "queue",
-              trigger: "queue_drain",
-              status: "failed",
-              payload: { message, queueItemIds: messages.map((m) => m.id) },
-            });
-          }
-        });
         installQueueDrainCallback(context);
         respond(
           true,

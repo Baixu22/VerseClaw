@@ -2846,6 +2846,11 @@
     }
   },
   "delegationStages": {
+    "verification": {
+      "unavailable": "不可用",
+      "pending": "等待验证回执",
+      "recorded": "已记录 {{count}} / {{total}} 项验证回执"
+    },
     "capacity": {
       "planTitle": "派发时的安排与原因",
       "planDescription": "这是派发回执中的计划，不是实时队列。",
@@ -2866,6 +2871,7 @@
     },
     "label": {
       "admission": "派发准入",
+      "verification": "验证回执",
       "execution": "实际执行",
       "report": "报告回传",
       "acceptance": "任务验收",
@@ -2873,6 +2879,13 @@
     },
     "taskRequired": "派发前需要选择已有业务任务并绑定协调器。",
     "model": "实际运行模型：{{model}}",
+    "cost": "已读记录费用：{{cost}}",
+    "costUnknown": "未知",
+    "taskAcceptance": {
+      "pending": "等待验收",
+      "accepted": "已验收",
+      "cancelled": "已取消"
+    },
     "status": {
       "unavailable": "不可用",
       "in-flight": "准入处理中",

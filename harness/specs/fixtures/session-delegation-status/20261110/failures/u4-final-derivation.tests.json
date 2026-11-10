@@ -1,0 +1,204 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-chain-u4-runtime-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-chain-u4-runtime-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-chain-u4-runtime-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-derivation",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-chain-u4-runtime-20261109/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "session-derivation-ui.spec.ts",
+      "file": "session-derivation-ui.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "question fork keeps its source draft and handoff submits one reviewed first turn",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 97838,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #3\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-10T10:04:28.938Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a5374e2f5c95128e707d-cab1d4c5d9753e201002",
+          "file": "session-derivation-ui.spec.ts",
+          "line": 9,
+          "column": 5
+        },
+        {
+          "title": "family navigation preserves 2/20/100 runtime children and responsive keyboard layouts",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 900000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 221177,
+                  "error": {
+                    "message": "Error: electronApplication.evaluate: Execution context was destroyed, most likely because of a navigation.",
+                    "stack": "Error: electronApplication.evaluate: Execution context was destroyed, most likely because of a navigation.\n    at readSessionChainHostCalls (D:\\ClawX-work\\session-chain-u4-runtime-20261109\\tests\\e2e\\fixtures\\session-task-chain.ts:110:14)\n    at rpcWindow (D:\\ClawX-work\\session-chain-u4-runtime-20261109\\tests\\e2e\\session-derivation-ui.spec.ts:297:52)\n    at D:\\ClawX-work\\session-chain-u4-runtime-20261109\\tests\\e2e\\session-derivation-ui.spec.ts:423:20",
+                    "location": {
+                      "file": "D:\\ClawX-work\\session-chain-u4-runtime-20261109\\tests\\e2e\\fixtures\\session-task-chain.ts",
+                      "column": 14,
+                      "line": 110
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mfixtures\\session-task-chain.ts:110\n\n  108 |\n  109 | export function readSessionChainHostCalls(app: ElectronApplication) {\n> 110 |   return app.evaluate(() => (globalThis as unknown as { sessionChainCalls: Array<{ module?: string; action?: string; method?: string }> }).sessionChainCalls);\n      |              ^\n  111 | }\n  112 |\n  113 | /** Agent-driven transport fault after the real Main creation commit. */"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\session-chain-u4-runtime-20261109\\tests\\e2e\\fixtures\\session-task-chain.ts",
+                        "column": 14,
+                        "line": 110
+                      },
+                      "message": "Error: electronApplication.evaluate: Execution context was destroyed, most likely because of a navigation.\n\n   at fixtures\\session-task-chain.ts:110\n\n  108 |\n  109 | export function readSessionChainHostCalls(app: ElectronApplication) {\n> 110 |   return app.evaluate(() => (globalThis as unknown as { sessionChainCalls: Array<{ module?: string; action?: string; method?: string }> }).sessionChainCalls);\n      |              ^\n  111 | }\n  112 |\n  113 | /** Agent-driven transport fault after the real Main creation commit. */\n    at readSessionChainHostCalls (D:\\ClawX-work\\session-chain-u4-runtime-20261109\\tests\\e2e\\fixtures\\session-task-chain.ts:110:14)\n    at rpcWindow (D:\\ClawX-work\\session-chain-u4-runtime-20261109\\tests\\e2e\\session-derivation-ui.spec.ts:297:52)\n    at D:\\ClawX-work\\session-chain-u4-runtime-20261109\\tests\\e2e\\session-derivation-ui.spec.ts:423:20"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-10T10:06:06.796Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-derivation\\session-derivation-ui-fami-880f5-responsive-keyboard-layouts\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-derivation\\session-derivation-ui-fami-880f5-responsive-keyboard-layouts\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-derivation\\session-derivation-ui-fami-880f5-responsive-keyboard-layouts\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\session-chain-u4-runtime-20261109\\tests\\e2e\\fixtures\\session-task-chain.ts",
+                    "column": 14,
+                    "line": 110
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "a5374e2f5c95128e707d-d22efb361a56a6ff6a70",
+          "file": "session-derivation-ui.spec.ts",
+          "line": 76,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-10T10:04:27.632Z",
+    "duration": 343496.878,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

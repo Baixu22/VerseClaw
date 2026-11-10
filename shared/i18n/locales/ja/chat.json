@@ -2846,6 +2846,11 @@
     }
   },
   "delegationStages": {
+    "verification": {
+      "unavailable": "利用不可",
+      "pending": "検証記録を待機中",
+      "recorded": "検証記録：{{count}} / {{total}}"
+    },
     "capacity": {
       "planTitle": "派遣時の計画と理由",
       "planDescription": "派遣時の受領記録です。現在のキューではありません。",
@@ -2866,6 +2871,7 @@
     },
     "label": {
       "admission": "実行受付",
+      "verification": "検証記録",
       "execution": "実行状態",
       "report": "結果の送達",
       "acceptance": "タスク検証",
@@ -2873,6 +2879,13 @@
     },
     "taskRequired": "既存の業務タスクを選び、担当セッションを関連付けてください。",
     "model": "実行モデル：{{model}}",
+    "cost": "読込記録の費用：{{cost}}",
+    "costUnknown": "不明",
+    "taskAcceptance": {
+      "pending": "検証待ち",
+      "accepted": "検証完了",
+      "cancelled": "取消済み"
+    },
     "status": {
       "unavailable": "利用不可",
       "in-flight": "受付処理中",

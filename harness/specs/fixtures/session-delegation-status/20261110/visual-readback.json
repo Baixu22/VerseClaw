@@ -1,0 +1,42 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-u4-relay-01a1c454",
+  "inspected": [
+    {
+      "language": "en",
+      "path": "journeys/u4-final-acceptance-en/session-worker-task-journe-bea7e-on-and-owner-acceptance-en-/worker-owner-accepted-en.png",
+      "sha256": "9bcc7fd0b5a6ebbd9c4af31ff9d0a759bfe49456551ee0063a12c32196f20717",
+      "width": 1922,
+      "height": 1202,
+      "observed": "Task acceptance, 2/2 verifier records, actual model, unknown cost and preserved draft are visible and readable.",
+      "source": "D:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-en/session-worker-task-journe-bea7e-on-and-owner-acceptance-en-\\worker-owner-accepted-en.png"
+    },
+    {
+      "language": "zh",
+      "path": "journeys/u4-final-acceptance-zh/session-worker-task-journe-f592b-on-and-owner-acceptance-zh-/worker-owner-accepted-zh.png",
+      "sha256": "c05927e157da44c8d7973c48d7b988b1fdb4134c4567cf2242916215f73d5032",
+      "width": 1922,
+      "height": 1202,
+      "observed": "Task acceptance, 2/2 verifier records, actual model, unknown cost and preserved draft are visible and readable.",
+      "source": "D:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-zh/session-worker-task-journe-f592b-on-and-owner-acceptance-zh-\\worker-owner-accepted-zh.png"
+    },
+    {
+      "language": "ja",
+      "path": "journeys/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/worker-owner-accepted-ja.png",
+      "sha256": "aa2d08e3ab2c96557f0db8d61172b49ffa5e46f8e7e7ad3188e70c921ba0d16f",
+      "width": 1922,
+      "height": 1202,
+      "observed": "Task acceptance, 2/2 verifier records, actual model, unknown cost and preserved draft are visible and readable.",
+      "source": "D:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-\\worker-owner-accepted-ja.png"
+    },
+    {
+      "language": "ru",
+      "path": "journeys/u4-final-acceptance-ru/session-worker-task-journe-30f78-on-and-owner-acceptance-ru-/worker-owner-accepted-ru.png",
+      "sha256": "a961e9c4c71c3f30403b176a2e2411cd5e43dae3f951b0e03a22f5590ca97055",
+      "width": 1922,
+      "height": 1202,
+      "observed": "Task acceptance, 2/2 verifier records, actual model, unknown cost and preserved draft are visible and readable.",
+      "source": "D:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ru/session-worker-task-journe-30f78-on-and-owner-acceptance-ru-\\worker-owner-accepted-ru.png"
+    }
+  ]
+}

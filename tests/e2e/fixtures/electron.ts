@@ -628,7 +628,8 @@ export async function configureAgentDevHostReplay(
 }
 
 export async function getAgentDevHostCalls(page: Page): Promise<unknown[]> {
-  return page.evaluate(() => (window as AgentDevTestWindow).__CLAWX_TEST__?.hostApiCalls ?? []);
+  return bounded(page.evaluate(() => (window as AgentDevTestWindow).__CLAWX_TEST__?.hostApiCalls ?? []),
+    5_000, 'Renderer host-call diagnostics');
 }
 
 /** Push a gateway status event into every open window (the gateway store subscribes to it). */

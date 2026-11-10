@@ -1,0 +1,10 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-u4-relay-01a1c454",
+  "source": "D:\\tmp\\clawx-session-chain-u4-20261109-01a1ba3e",
+  "archive": "D:\\ClawX-acceptance\\session-delegation-status-20261110-01a1c454\\inherited-run-evidence.zip",
+  "sha256": "6145de7e9c08c667d06a55af566b66168067c7d6000add7ff4fe6ad7629461f1",
+  "bytes": 54653858,
+  "entryCount": 1223,
+  "readback": "crc-and-every-file-sha256-passed"
+}
