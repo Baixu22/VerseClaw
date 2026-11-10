@@ -1,0 +1,62 @@
+{
+  "findings": [
+    {
+      "title": "Local tokenizer requests drop the caller's AbortSignal and can hang cancellation",
+      "body": "`retrieval-embeddings.ts` stores `count: async (text) => (await native.inspect!([text])).tokenCounts[0]`, so token budget checks never pass the operation signal. The worker `inspect` path then calls `currentProvider.inspect(request.texts)` without call options. If warmup or a foreground document reaches an inspect request that is queued behind slow native work, cancellation closes the session/model but cannot abort the in-flight inspect; `embedding-session` races only the parent-side promise. The cancellation test also uses an in-process provider and does not exercise this worker/queue path. Pass the signal through `count` into `inspect`, serialize it over IPC, and provide it to `inspect(request.texts, { signal })` in the child.",
+      "priority": "P2",
+      "confidence": 0.86,
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/extensions/memory-wiki/src/retrieval-embeddings.ts",
+        "line": 179
+      }
+    },
+    {
+      "title": "Remote local-tokenizer downloads have no read deadline inside tokenizer installation",
+      "body": "`createQwenVlTextTokenizer` streams each pinned file with `signal`, but the only signal supplied by remote configure is `AbortSignal.any([operation.signal, AbortSignal.timeout(10 * 60_000)])`. That bounds the whole configure operation, not a stalled body read, and tokenizer creation is awaited before warmup and before the service reports `warming`. A stalled Hugging Face body therefore keeps the operation in `installing` for up to ten minutes even though the embedding lifecycle contract promises bounded install/cancel behavior. The model installer has explicit download/verification stages; this tokenizer path needs a per-transfer timeout (or progress-based idle timeout) and corresponding cancellation tests.",
+      "priority": "P2",
+      "confidence": 0.79,
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/extensions/memory-wiki/src/embedding-tokenizer.ts",
+        "line": 51
+      }
+    },
+    {
+      "title": "Credential refresh silently loses the owner egress scope after reload",
+      "body": "On restart, `start()` loads `saved` and immediately calls `activate(previous.selection, previous.identity)`. `activate` starts with `await stop()`, which does not modify `saved`, then writes a new `Saved` from the passed identity. That normally preserves the persisted `egressProviderRefs`; however `retry()` explicitly splices `previous.identity.egressProviderRefs` onto the caller-supplied identity, while `configure()` stores a new identity. The result is that a UI operation such as disable/cancel followed by retry, or a configure call made while the persisted selection is still active, can replace `saved.identity` with a backend identity whose `egressProviderRefs` were derived from the current operation only. The readiness check then requires `selection.identity.egressProviderRefs?.includes(providerRef)`, but the stored owner admission is overwritten by the new call. The security decision should be checked against the persisted owner context and provider registry at every activation, not just the request that happened to trigger it. This is most visible after a restart when the frontend has no providerRef and sends a bare retry/status path.",
+      "priority": "P2",
+      "confidence": 0.63,
+      "category": "security",
+      "code_location": {
+        "file_path": "openclaw_runtime/extensions/memory-wiki/src/retrieval-embeddings.ts",
+        "line": 339
+      }
+    },
+    {
+      "title": "`embedSources` maps owner-pinned vectors back by accepted-candidate order without count validation",
+      "body": "In `retrieveSourceSet`, `contentVectors = provider.embedSources(pins.filter(...))` and then `accepted.map((candidate, index) => contentVectors[index])`. If the host returns fewer vectors than admitted sources, the missing entries silently become zero similarity; if it returns more, extra rows are ignored. The session can only detect count mismatches when `missing` is non-empty, so a cache-hit path can return a full vector array; but the host contract and the `RuntimeEmbeddingProvider.embedSources` type do not require the provider to validate the count. Add an explicit `contentVectors.length === accepted.length` check before similarity scoring and fail the semantic lane, consistent with the provider response contract.",
+      "priority": "P2",
+      "confidence": 0.78,
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/context-engine/source-set.ts",
+        "line": 966
+      }
+    },
+    {
+      "title": "Settings selection is not restored from status, so configure can overwrite the persisted selection",
+      "body": "`KnowledgeEmbeddingSettings` initializes `selection` to `{ mode: 'remote', providerRef: 'siliconflow' }` and never syncs it from `status` after the initial status poll. If a project has an active local selection or a remote provider alias, opening Settings shows the default remote form; clicking Configure submits that default and replaces the persisted selection. The UI should derive the form state from the returned status before allowing configure, or present an explicit edit/apply flow. This is a user-visible regression in the lifecycle contract that selection is restored across restarts.",
+      "priority": "P2",
+      "confidence": 0.72,
+      "category": "regression",
+      "code_location": {
+        "file_path": "src/components/settings/KnowledgeEmbeddingSettings.tsx",
+        "line": 10
+      }
+    }
+  ],
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The staged candidate resolves the four named review items in the main paths: semantic status failure falls back to lexical, query/document calls share deadlineAt, owner context is refreshed after inference, and providerRef is trimmed before egress admission. The remaining defects are in cancellation/cleanup and in the UI/owner-scope plumbing: the local worker inspect path drops call options, remote tokenizer downloads have no per-transfer idle timeout, provider-vector counts are not checked before ranking, and the Settings form does not restore its persisted selection. These are reproducible from the inspected call chains and are actionable before the candidate is treated as complete.",
+  "overall_confidence": 0.78
+}

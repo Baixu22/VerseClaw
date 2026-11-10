@@ -1,0 +1,51 @@
+{
+  "findings": [
+    {
+      "title": "\u8bed\u4e49 embedding \u80fd\u529b\u63a2\u6d4b\u5931\u8d25\u4f1a\u963b\u65ad lexical fallback",
+      "body": "\u5728 semanticRequested \u5206\u652f\u4e2d\uff0cprepareKnowledgeReadScope\u3001wiki.embedding.status \u548c assertKnowledgeReadScopeCurrent \u90fd\u88ab\u76f4\u63a5 await\uff0c\u4e14\u6ca1\u6709 try/catch\u3002status RPC \u8d85\u65f6/\u5931\u8d25\u3001scope \u6355\u83b7\u5931\u8d25\u6216\u8eab\u4efd\u53d8\u5316\u65f6\u5f02\u5e38\u4f1a\u9003\u51fa buildAnswerFromSourceSet\uff0cretrieveSourceSet \u4e0d\u4f1a\u6267\u884c\uff0c\u5df2\u51c6\u5165\u7684 lexical \u7ed3\u679c\u4e5f\u65e0\u6cd5\u8fd4\u56de\uff0c\u8fdd\u53cd docs/modules/knowledge-base.md \u4e2d\u201c\u6ca1\u6709 provider \u6216\u8c03\u7528\u5931\u8d25\u65f6\u4fdd\u7559 lexical fallback\u201d\u7684\u7ea6\u5b9a\u3002\u5e94\u5728\u6574\u4e2a capability/scope acquisition \u5916\u5305 catch\uff0c\u5931\u8d25\u65f6\u4ec5\u4ee4 embeddingProvider \u4fdd\u6301 undefined\u3002",
+      "priority": "P1",
+      "confidence": 0.99,
+      "category": "regression",
+      "code_location": {
+        "file_path": "electron/services/knowledge-api.ts",
+        "line": 3355
+      }
+    },
+    {
+      "title": "\u751f\u4ea7\u8def\u5f84\u4e22\u5931\u53ef\u914d\u7f6e\u603b deadline \u4e14\u6309\u8c03\u7528\u91cd\u590d\u8ba1\u65f6",
+      "body": "wiki.embedding.embed \u8c03\u7528\u5728 line 3362 \u4f7f\u7528\u786c\u7f16\u7801 120_000ms\uff0c\u65b0 KnowledgeEmbeddingSession \u53c8\u5728\u6bcf\u6b21 embed \u8c03\u7528\u521b\u5efa AbortSignal.timeout(120_000)\uff08embedding-session.ts:113\uff09\uff1bretrieveSourceSet \u7684 query \u4e0e document \u662f\u4e24\u6b21\u72ec\u7acb RPC\uff0c\u56e0\u6b64\u603b\u9884\u7b97\u6700\u591a 240s\uff0c\u800c\u4e14\u4e0d\u518d\u8c03\u7528 resolveEmbeddingDeadlineMs(process.env.KNOWLEDGE_EMBEDDING_DEADLINE_MS)\u3002\u65e7 knowledge-embedding-deadline.test.ts \u4ecd\u53ea\u6d4b\u5df2\u4e0d\u88ab\u751f\u4ea7\u8def\u5f84\u5f15\u7528\u7684 electron/services/knowledge-embedding-provider.ts\uff0c\u65e0\u6cd5\u8986\u76d6\u8be5\u56de\u5f52\u3002\u5e94\u628a\u5355\u4e00 deadline \u4f20\u5165\u65b0 session/RPC\uff0c\u5e76\u8ba9 query+document \u5171\u4eab\u5269\u4f59\u9884\u7b97\u3002",
+      "priority": "P2",
+      "confidence": 0.92,
+      "category": "regression",
+      "code_location": {
+        "file_path": "electron/services/knowledge-api.ts",
+        "line": 3362
+      }
+    },
+    {
+      "title": "30 \u79d2 owner context \u4f1a\u5728 120 \u79d2 embedding \u8c03\u7528\u8fd4\u56de\u524d\u8fc7\u671f",
+      "body": "createMemoryWikiReadContext \u5728 owner-read.ts:82 \u8bbe\u7f6e expiresAt=now+30_000\uff0c\u800c KnowledgeEmbeddingSession \u5728 line 113 \u5141\u8bb8 120_000\uff1bprovider \u8fd4\u56de\u540e line 226 \u518d\u6b21 assertContext\u3002\u4efb\u4f55\u8017\u65f6\u8d85\u8fc7 30s \u7684\u8fdc\u7a0b\u8c03\u7528\u3001\u6279\u91cf\u6587\u6863\u6216 warmup \u90fd\u4f1a\u5728\u7ed3\u679c\u5df2\u5230\u8fbe\u65f6\u88ab\u5224\u5b9a\u4e3a expired\uff0csemantic lane \u8fdb\u5165\u9519\u8bef\uff0c\u5c3d\u7ba1 120s \u9884\u7b97\u5c1a\u672a\u8017\u5c3d\u3002\u5e94\u5728 provider \u8fd4\u56de\u540e\u7528\u65b0 context \u91cd\u8bfb/\u6821\u9a8c\uff0c\u6216\u7edf\u4e00\u4e24\u8005\u671f\u9650\u3002",
+      "priority": "P2",
+      "confidence": 0.9,
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/knowledge/retrieval/embedding-session.ts",
+        "line": 226
+      }
+    },
+    {
+      "title": "egress providerRef \u672a trim \u5bfc\u81f4\u5408\u6cd5\u522b\u540d\u88ab\u62d2\u7edd",
+      "body": "embeddingOperation \u5728\u6784\u9020 egress \u65f6\u4f7f\u7528\u672a trim \u7684 selection.providerRef\uff0c\u800c gateway.readStringParam \u4f1a\u628a providerRef trim \u540e\u518d\u4ea4\u7ed9 embedding.configure\uff1bretrieval-embeddings.ts:191 \u53c8\u7528 egressProviderRefs.includes(providerRef) \u7cbe\u786e\u6bd4\u8f83\u3002providerRef \u4e3a ' siliconflow ' \u65f6 egress \u4e3a ' siliconflow '\u3001\u670d\u52a1\u7aef\u68c0\u67e5 'siliconflow'\uff0c\u914d\u7f6e\u4f1a\u8bef\u62a5 Embedding egress was not admitted by the owner\u3002\u5e94\u5728\u8fdb\u5165 egress \u524d trim/\u89c4\u8303\u5316 providerRef\u3002",
+      "priority": "P3",
+      "confidence": 0.97,
+      "category": "bug",
+      "code_location": {
+        "file_path": "electron/services/knowledge-api.ts",
+        "line": 3701
+      }
+    }
+  ],
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "provider alias \u4fee\u590d\u672c\u8eab\u4e0e\u56de\u5f52\u6d4b\u8bd5\u4e00\u81f4\uff0c\u4f46 staged \u5019\u9009\u5728\u5931\u8d25\u964d\u7ea7\u3001\u603b deadline\u3001owner context \u6709\u6548\u671f\u548c egress providerRef \u89c4\u8303\u5316\u4e0a\u4ecd\u6709\u53ef\u590d\u73b0\u7f3a\u9677\u3002",
+  "overall_confidence": 0.93
+}

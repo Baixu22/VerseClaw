@@ -1,0 +1,7 @@
+$ tsgo --noEmit -p tsconfig.test.json --composite false
+tests/unit/project-rag-embedding-lifecycle.test.ts(99,113): error TS2345: Argument of type '(vector: number | null | undefined) => void' is not assignable to parameter of type '(...args: [] | [number, number] | [null, number, number] | [number, number, number]) => Awaitable<void>'.
+  Types of parameters 'vector' and 'args' are incompatible.
+    Type '[] | [number, number] | [null, number, number] | [number, number, number]' is not assignable to type '[vector: number | null | undefined]'.
+      Type '[]' is not assignable to type '[vector: number | null | undefined]'.
+        Source has 0 element(s) but target requires 1.
+[ELIFECYCLE] Command failed with exit code 2.

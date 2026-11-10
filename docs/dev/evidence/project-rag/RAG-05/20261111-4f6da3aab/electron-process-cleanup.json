@@ -1,0 +1,28 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\project-rag-TF-0882\\formal-4f6da3aab\\electron-runs\\verse-claw-e2e-run-bGCSTu",
+  "ledgerEntries": 5,
+  "checks": [
+    {
+      "pid": 15820,
+      "creationTime": 1794338719862,
+      "status": "exited"
+    },
+    {
+      "pid": 44624,
+      "creationTime": 1794338728990,
+      "status": "exited"
+    },
+    {
+      "pid": 44200,
+      "creationTime": 1794338729961,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

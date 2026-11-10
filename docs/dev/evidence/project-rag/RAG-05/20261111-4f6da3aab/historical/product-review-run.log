@@ -1,0 +1,11 @@
+review still running: codex elapsed=60s pid=2784
+review engine returned unexpected JSON shape:
+autoreview target: local
+branch: codex/project-rag-longterm-20261109
+engine: codex
+model: ccs-workbuddy/deepseek-v4.1-flash
+thinking: high
+tools: on
+web_search: on
+bundle: 187051 chars
+{}

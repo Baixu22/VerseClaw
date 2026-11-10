@@ -1,0 +1,75 @@
+{
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "candidate": "4f6da3aabcb6bb92e6358388b700142bffa9067d",
+  "node": "v24.22.1",
+  "platform": "win32",
+  "arch": "x64",
+  "tempRoot": "D:/tmp",
+  "nativeResolution": {
+    "package": "node-llama-cpp",
+    "version": "3.22.3",
+    "resolvedPath": "D:\\tmp\\project-rag-longterm-20261109-deps\\runtime\\.pnpm\\node-llama-cpp@3.22.3_typescript@6.0.3\\node_modules\\node-llama-cpp\\dist\\index.js",
+    "resolverHook": "none",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "mainCheckoutDependenciesReused": false,
+  "provider": {
+    "name": "siliconflow",
+    "endpoint": "https://api.siliconflow.cn/v1/embeddings",
+    "model": "Qwen/Qwen3-VL-Embedding-8B",
+    "credentialReferenceOnly": "env:SILICONFLOW_API_KEY"
+  },
+  "agentDevFastPath": {
+    "status": "needs-full-gate",
+    "reason": "Daily-loop fast-path evidence passed; run the listed full gates before PR/release review.",
+    "dailyLoopReady": true,
+    "releaseReady": false,
+    "fullGateComplete": false,
+    "budgetStatus": "watch",
+    "fastPathModes": [
+      "reuse-build",
+      "cached-typecheck"
+    ],
+    "requiredFullGates": [
+      "pnpm run build:vite",
+      "pnpm run typecheck"
+    ],
+    "watchSteps": [
+      "typecheck",
+      "contract",
+      "i18n",
+      "harness-agent-dev"
+    ],
+    "limitSteps": []
+  },
+  "requiredFullGatesSatisfiedBy": [
+    {
+      "startedAt": "2026-11-10T19:03:10.4989396+00:00",
+      "args": [
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "build:vite"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "name": "desktop-build",
+      "finishedAt": "2026-11-10T19:04:11.6450814+00:00",
+      "exitCode": 0
+    },
+    {
+      "startedAt": "2026-11-10T19:05:16.0620842+00:00",
+      "args": [
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "name": "typecheck",
+      "finishedAt": "2026-11-10T19:06:00.0172594+00:00",
+      "exitCode": 0
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "I inspected the changed embedding-space, artifact installation, local provider/worker, and OpenAI-compatible response-binding paths. The change preserves existing contracts, validates response row indices and vector dimensions, verifies model bytes before installation, and propagates inspection through the worker boundary. I found no actionable defect introduced by this bundle.",
+  "overall_confidence": 0.74
+}

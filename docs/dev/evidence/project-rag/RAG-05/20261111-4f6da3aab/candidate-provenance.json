@@ -1,0 +1,15 @@
+{
+  "candidate": "4f6da3aabcb6bb92e6358388b700142bffa9067d",
+  "implementationCandidate": "5c936bbabeab0fc9f807b6923330e40a8785949b",
+  "reviewedImplementationCandidate": "5c936bbabeab0fc9f807b6923330e40a8785949b",
+  "postReviewChanges": [
+    "artifacts/agent-dev-deep-test/history.json",
+    "artifacts/agent-dev-deep-test/report.json",
+    "artifacts/agent-dev-deep-test/report.md",
+    "artifacts/agent-dev-quality/report.json",
+    "artifacts/agent-dev-workbench/evidence.json",
+    "harness/specs/tasks/project-rag-embedding-provider-lifecycle.md"
+  ],
+  "kind": "shared contract evidence refresh and task ownership metadata only",
+  "runtimeSourcesChanged": false
+}

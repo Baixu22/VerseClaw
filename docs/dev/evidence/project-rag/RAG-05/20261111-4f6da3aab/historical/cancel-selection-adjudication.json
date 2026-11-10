@@ -1,0 +1,40 @@
+{
+  "schema": "ProjectRagReviewAdjudication/v1",
+  "actor": "codex/project-rag-main",
+  "driven_by": "agent",
+  "recordedAt": "2026-11-10T18:30:49.363Z",
+  "review": "final-review-retry3.json",
+  "decisions": [
+    {
+      "finding": 1,
+      "decision": "accepted-parent-side-cancellation-gap",
+      "fix": "Tokenizer count receives the embedding operation signal; native.inspect passes it to the existing parent IPC request so cancellation kills the blocked child. AbortSignal is not JSON-serializable and is intentionally not sent to the child.",
+      "evidence": "cancel-selection-fixes-unit.json",
+      "additionalFix": "Fence old child exit/message/error callbacks and reject its pending requests synchronously before replacement."
+    },
+    {
+      "finding": 2,
+      "decision": "rejected-new-timeout-requirement",
+      "reason": "A single10-minute configure AbortSignal already bounds connection, headers and streamed tokenizer body; explicit cancellation aborts the same signal. No stricter install/idle budget is specified. A per-transfer budget would introduce a new limit.",
+      "source": "embedding-tokenizer.ts fetchWithSsrFGuard(signal) and body signal.throwIfAborted; retrieval-embeddings.ts AbortSignal.any(operation.signal, timeout10min)"
+    },
+    {
+      "finding": 3,
+      "decision": "rejected-reproduction-contradicts-report",
+      "reason": "retry explicitly combines the fresh trusted identity with previous.identity.egressProviderRefs after the existing scope fence. Restart reads that same SQLite record; disable intentionally deletes the selection. The public service regression now performs remote configure, actual SQLite restart and bare retry with an empty request egress list.",
+      "evidence": "cancel-selection-fixes-unit.json"
+    },
+    {
+      "finding": 4,
+      "decision": "accepted",
+      "fix": "Reject contentVectors.length mismatch before similarity scoring; preserve lexical result and report semantic error.",
+      "evidence": "vector-count-runtime-unit.json"
+    },
+    {
+      "finding": 5,
+      "decision": "accepted",
+      "fix": "The form restores mode/provider from initial status until the user edits it; configure stays disabled before the first status. E2E leaves models and reopens to assert local selection.",
+      "evidence": "project-rag-provider-settings.spec.ts pending rerun"
+    }
+  ]
+}

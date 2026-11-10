@@ -1,0 +1,18 @@
+{
+  "findings": [
+    {
+      "title": "SecretRef-backed providers are dropped by getEmbeddingProvider aliasing",
+      "body": "...",
+      "priority": "P1",
+      "confidence": 0.92,
+      "category": "security",
+      "code_location": {
+        "file_path": "openclaw_runtime/extensions/memory-wiki/src/retrieval-embeddings.ts",
+        "line": 217
+      }
+    }
+  ],
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "...",
+  "overall_confidence": 0.94
+}

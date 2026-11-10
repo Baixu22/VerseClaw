@@ -44,6 +44,7 @@ touchedAreas:
   - "docs/clawx-design-overview.md"
   - "docs/dev/runtime-control-planes.md"
   - "docs/dev/evidence/project-rag-longterm-20261109/**"
+  - "docs/dev/evidence/project-rag/RAG-05/**"
   - "harness/specs/tasks/project-rag-*.md"
   - "harness/specs/rules/project-rag-long-term-boundary.md"
   - ".gitignore"
@@ -108,3 +109,5 @@ docs:
 所有检索来源和模型调用接受 owner 准入，DCS 保留最终上下文决定权；验证结果标记 driven_by: agent。
 
 回滚：停止 embedding jobs，使用已有合格 space 或 lexical；已生成向量不作为知识真相源。
+
+候选验收记录为 `docs/dev/evidence/project-rag/RAG-05/20261111-4f6da3aab/report.json`，包含当前候选的18项门禁、本地安装与断网重启、Settings真进程旅程及独立复核链。

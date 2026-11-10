@@ -1,0 +1,124 @@
+{
+  "schema": "ProjectRagEmbeddingLifecycleAcceptance/v1",
+  "node": "TF-0882",
+  "programKey": "RAG-05",
+  "status": "pass",
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "candidate": "4f6da3aabcb6bb92e6358388b700142bffa9067d",
+  "dirty": false,
+  "recordedAt": "2026-11-10T19:27:50.378Z",
+  "worktree": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+  "acceptance": [
+    {
+      "criterion": 1,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "embedding-lifecycle-receipt.json",
+        "independent-review.json"
+      ],
+      "result": "Existing public provider registry and source-owner lifecycle serve separate query/document inputs. Settings selection is persisted in plugin SQLite and preserves the memory slot."
+    },
+    {
+      "criterion": 2,
+      "status": "pass",
+      "evidence": [
+        "local-model.json",
+        "embedding-lifecycle-receipt.json",
+        "root-unit.json"
+      ],
+      "result": "Real local 768-dimensional and hosted Qwen VL 4096-dimensional vectors are measured. Space identity fences model capability revision, tokenizer, dimensions, full input format and normalization; malformed row/model responses are rejected.",
+      "remoteRevision": "The hosted provider exposes no immutable weight revision; the space explicitly records provider-unversioned plus a measured warmup fingerprint."
+    },
+    {
+      "criterion": 3,
+      "status": "pass",
+      "evidence": [
+        "local-model.json",
+        "offline-restart.json",
+        "root-unit.json",
+        "embedding-lifecycle-receipt.json",
+        "electron-process-cleanup.json"
+      ],
+      "result": "A real first model download is cancelled, staging is removed, a retry verifies the complete SHA256, and isolated native workers warm/reopen. Parent and child complete offline under a network guard with zero network attempts. SQLite selection restores across Gateway restart. Disk/RAM refusal, SecretRef rotation and shared query/document deadline have executable coverage."
+    },
+    {
+      "criterion": 4,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "runtime-unit.json",
+        "embedding-lifecycle-receipt.json"
+      ],
+      "result": "Owner admission and source pins are rechecked before cache reuse and after inference. Egress stays provider-specific, workspace/credential generations isolate bounded caches, and source revocation or physical generation changes discard results."
+    },
+    {
+      "criterion": 5,
+      "status": "pass",
+      "evidence": [
+        "gates.json",
+        "root-unit.json",
+        "runtime-unit.json",
+        "electron.json",
+        "harness-ci-report.json"
+      ],
+      "result": "Implemented required unit and Electron journeys pass on one clean source candidate. All 18 formal gates exit zero."
+    }
+  ],
+  "tests": {
+    "root": {
+      "passed": 308,
+      "total": 308,
+      "skipped": 0
+    },
+    "runtime": {
+      "passed": 19,
+      "total": 19,
+      "skipped": 0
+    },
+    "electron": {
+      "passed": 1,
+      "total": 1,
+      "skipped": 0,
+      "flaky": 0,
+      "steps": {
+        "localCancelled": true,
+        "localRetryReady": true,
+        "selectionFormRestored": true,
+        "localRestartRestored": true,
+        "ownerReadSemanticPath": true,
+        "disabled": true,
+        "unavailableProvider": true,
+        "realRemoteReady": true,
+        "credentialGenerationRefreshed": true
+      }
+    }
+  },
+  "checks": {
+    "formalSteps": 18,
+    "allExitZero": true,
+    "firstFormalRun": {
+      "candidate": "5c936bbabeab0fc9f807b6923330e40a8785949b",
+      "passed": 17,
+      "failed": 1,
+      "failedStage": "harness-ci",
+      "reason": "Agent Dev generated evidence older than the changed shared Host contract",
+      "remediation": "Regenerated Workbench, deep-test, full Agent Dev quality and strict audit; formal full build/typecheck are rerun on the refreshed candidate."
+    },
+    "processCleanup": {
+      "remaining": 0,
+      "survivors": 0,
+      "pendingLaunches": 0
+    },
+    "sourceMutationGuard": "unchanged"
+  },
+  "platform": {
+    "measured": "win32",
+    "arch": "x64"
+  },
+  "review": {
+    "file": "independent-review.json",
+    "openFindings": 0
+  }
+}

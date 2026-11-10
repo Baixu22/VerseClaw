@@ -1,0 +1,23 @@
+{
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "candidate": "4f6da3aabcb6bb92e6358388b700142bffa9067d",
+  "screenshots": [
+    {
+      "path": "D:\\tmp\\project-rag-TF-0882\\formal-4f6da3aab\\electron\\project-rag-provider-setti-69fa0-esh-real-embedding-services\\embedding-local-ready.png",
+      "sha256": "dbc7e55b7ae15f0077a4d043bb6af289e4ae85127d5e5a9283e645fb685f43f9",
+      "inspection": "observed-pass",
+      "observedBy": "codex/project-rag-main",
+      "observedAt": "2026-11-10T19:29:16.134Z",
+      "observation": "Settings model selection shows Local model and Ready google/embeddinggemma-300m 768; controls and text visible."
+    },
+    {
+      "path": "D:\\tmp\\project-rag-TF-0882\\formal-4f6da3aab\\electron\\project-rag-provider-setti-69fa0-esh-real-embedding-services\\embedding-remote-ready.png",
+      "sha256": "7f3613e87567c0caea232fb0809cbe812c96819abbf63d4f4c02efa71d406f9d",
+      "inspection": "observed-pass",
+      "observedBy": "codex/project-rag-main",
+      "observedAt": "2026-11-10T19:29:16.138Z",
+      "observation": "Settings model selection shows Remote service, siliconflow and Ready Qwen/Qwen3-VL-Embedding-8B 4096; controls and text visible."
+    }
+  ]
+}

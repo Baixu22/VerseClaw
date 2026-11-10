@@ -1,0 +1,53 @@
+[canvas] build: node scripts/bundle-a2ui.mjs
+A2UI bundle up to date; skipping.
+[diffs] build: node ../../scripts/build-diffs-viewer-runtime.mjs curated
+[diffs-language-pack] build: node ../../scripts/build-diffs-viewer-runtime.mjs full
+[build-all] tsdown
+[build-all] tsdown done in 15.0s
+[build-all] check-cli-bootstrap-imports
+CLI bootstrap import guard passed.
+[build-all] check-cli-bootstrap-imports done in 389ms
+[build-all] runtime-postbuild
+runtime-postbuild: plugin SDK root alias completed in 1ms
+[bundled-plugin-metadata] skipping missing skill path C:\Users\27933\.codex\worktrees\project-rag-longterm-20261109\ClawX\openclaw_runtime\extensions\acpx\skills (plugin acpx)
+runtime-postbuild: bundled plugin metadata completed in 578ms
+runtime-postbuild: official channel catalog completed in 13ms
+runtime-postbuild: bundled plugin runtime overlay completed in 1238ms
+runtime-postbuild: static extension assets completed in 0ms
+runtime-postbuild: stable root runtime imports completed in 278ms
+runtime-postbuild: stable root runtime aliases completed in 97ms
+runtime-postbuild: legacy root runtime compat aliases completed in 141ms
+runtime-postbuild: legacy CLI exit compat chunks completed in 2ms
+[build-all] runtime-postbuild done in 2.60s
+[build-all] build-stamp
+[build-all] build-stamp done in 181ms
+[build-all] runtime-postbuild-stamp
+[build-all] runtime-postbuild-stamp done in 136ms
+[build-all] write-cli-startup-metadata
+[cli-startup-metadata] skipped: CLI startup sources are unavailable in this pruned runtime.
+[build-all] write-cli-startup-metadata done in 127ms
+[build-all] write-cli-compat
+[cli-compat] skipped: legacy daemon CLI sources are unavailable in this pruned runtime.
+[build-all] write-cli-compat done in 116ms
+[build-all] phase timings: total 18.6s; slowest tsdown 15.0s; runtime-postbuild 2.60s; check-cli-bootstrap-imports 389ms; build-stamp 181ms; runtime-postbuild-stamp 136ms; write-cli-startup-metadata 127ms; write-cli-compat 116ms
+Building openclaw_runtime with esbuild...
+  Source: C:\Users\27933\.codex\worktrees\project-rag-longterm-20261109\ClawX\openclaw_runtime\src
+  Output: C:\Users\27933\.codex\worktrees\project-rag-longterm-20261109\ClawX\openclaw_runtime\dist
+  Found 1205 npm packages (will keep external)
+
+  openclaw_runtime\dist\knowledge\sekb\index.js  394.2kb
+
+Done in 51ms
+  Done in 0.1s
+runtime-postbuild: plugin SDK root alias completed in 1ms
+[bundled-plugin-metadata] skipping missing skill path C:\Users\27933\.codex\worktrees\project-rag-longterm-20261109\ClawX\openclaw_runtime\extensions\acpx\skills (plugin acpx)
+runtime-postbuild: bundled plugin metadata completed in 750ms
+runtime-postbuild: official channel catalog completed in 16ms
+runtime-postbuild: bundled plugin runtime overlay completed in 2215ms
+runtime-postbuild: static extension assets completed in 444ms
+runtime-postbuild: stable root runtime imports completed in 261ms
+runtime-postbuild: stable root runtime aliases completed in 26ms
+runtime-postbuild: legacy root runtime compat aliases completed in 132ms
+runtime-postbuild: legacy CLI exit compat chunks completed in 0ms
+[canvas] copy: node scripts/copy-a2ui.mjs
+[runtime-build-smoke] gateway ready on port 62232

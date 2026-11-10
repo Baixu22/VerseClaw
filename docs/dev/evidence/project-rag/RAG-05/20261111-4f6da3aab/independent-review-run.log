@@ -1,0 +1,13 @@
+review still running: codex elapsed=60s pid=48560
+review still running: codex elapsed=120s pid=48560
+autoreview target: local
+branch: codex/project-rag-longterm-20261109
+engine: codex
+model: ccs-workbuddy/deepseek-v4.1-flash
+thinking: high
+tools: on
+web_search: on
+bundle: 189711 chars
+autoreview clean: no accepted/actionable findings reported
+overall: patch is correct (0.94)
+已复核 KnowledgeEmbeddingSettings 的状态恢复路径：远端状态恢复 providerRef，本地状态保留当前远端草稿，默认 siliconflow 未被本地状态覆盖；禁用后切换远端及未知 provider 负例的 E2E 断言与该行为一致。未发现新的可操作缺陷。

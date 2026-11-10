@@ -1,0 +1,85 @@
+{
+  "schema": "ProjectRagLocalEmbeddingAcceptanceProbe/v1",
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "recordedAt": "2026-11-10T19:10:48.098Z",
+  "status": "pass",
+  "candidate": "4f6da3aabcb6bb92e6358388b700142bffa9067d",
+  "dirty": false,
+  "dependency": {
+    "package": "node-llama-cpp",
+    "version": "3.22.3",
+    "resolvedPath": "D:\\tmp\\project-rag-longterm-20261109-deps\\runtime\\.pnpm\\node-llama-cpp@3.22.3_typescript@6.0.3\\node_modules\\node-llama-cpp\\dist\\index.js",
+    "resolverHook": "none",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "artifact": {
+    "model": "google/embeddinggemma-300m",
+    "revision": "66f974f8cd48cc3b9c41c516b95508e75b4bee64",
+    "filename": "embeddinggemma-300m-qat-Q8_0.gguf",
+    "url": "https://huggingface.co/ggml-org/embeddinggemma-300m-qat-q8_0-GGUF/resolve/66f974f8cd48cc3b9c41c516b95508e75b4bee64/embeddinggemma-300m-qat-Q8_0.gguf",
+    "bytes": 328577056,
+    "sha256": "6fa0c02a9c302be6f977521d399b4de3a46310a4f2621ee0063747881b673f67"
+  },
+  "phase": "complete",
+  "cpuBinding": {
+    "status": "pass",
+    "gpu": false,
+    "release": {
+      "repo": "ggml-org/llama.cpp",
+      "release": "v0.9.0"
+    }
+  },
+  "cancelledInstall": {
+    "status": "pass",
+    "driven_by": "agent",
+    "progressBytes": 138982
+  },
+  "install": {
+    "path": "D:\\tmp\\project-rag-TF-0882\\formal-4f6da3aab\\models\\6fa0c02a9c302be6-embeddinggemma-300m-qat-Q8_0.gguf",
+    "artifact": {
+      "model": "google/embeddinggemma-300m",
+      "revision": "66f974f8cd48cc3b9c41c516b95508e75b4bee64",
+      "filename": "embeddinggemma-300m-qat-Q8_0.gguf",
+      "url": "https://huggingface.co/ggml-org/embeddinggemma-300m-qat-q8_0-GGUF/resolve/66f974f8cd48cc3b9c41c516b95508e75b4bee64/embeddinggemma-300m-qat-Q8_0.gguf",
+      "bytes": 328577056,
+      "sha256": "6fa0c02a9c302be6f977521d399b4de3a46310a4f2621ee0063747881b673f67"
+    },
+    "downloaded": true,
+    "status": "pass"
+  },
+  "warmup": {
+    "status": "pass",
+    "capability": {
+      "dimensions": 768,
+      "maxInputTokens": 2047,
+      "modelDigest": "sha256:6fa0c02a9c302be6f977521d399b4de3a46310a4f2621ee0063747881b673f67",
+      "tokenizerId": "node-llama-cpp/calculateInputLength/v1",
+      "tokenizerDigest": "sha256:582cf5d4bcf3eed88b5468621bb07f634d32eb40d3a932588da4873b0590895e",
+      "tokenCounts": [
+        16,
+        20
+      ]
+    },
+    "inputKinds": [
+      "query",
+      "document"
+    ],
+    "dimensions": [
+      768,
+      768
+    ],
+    "l2Norms": [
+      0.9999999999999998,
+      1.0000000000000007
+    ]
+  },
+  "reopen": {
+    "status": "pass",
+    "downloaded": false,
+    "dimensions": 768,
+    "networkIsolation": "not-applied-in-this-probe"
+  },
+  "finishedAt": "2026-11-10T19:12:12.362Z"
+}

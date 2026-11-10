@@ -1,0 +1,35 @@
+{
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "recordedAt": "2026-11-10T19:02:02.366Z",
+  "sourceCandidate": "5c936bbabeab0fc9f807b6923330e40a8785949b",
+  "deepDecision": {
+    "status": "needs-full-gate",
+    "reason": "Daily-loop fast-path evidence passed; run the listed full gates before PR/release review.",
+    "dailyLoopReady": true,
+    "releaseReady": false,
+    "fullGateComplete": false,
+    "budgetStatus": "watch",
+    "fastPathModes": [
+      "reuse-build",
+      "cached-typecheck"
+    ],
+    "requiredFullGates": [
+      "pnpm run build:vite",
+      "pnpm run typecheck"
+    ],
+    "watchSteps": [
+      "typecheck",
+      "contract",
+      "i18n",
+      "harness-agent-dev"
+    ],
+    "limitSteps": []
+  },
+  "audit": {
+    "status": "warn",
+    "grade": "B",
+    "score": 85,
+    "disqualifiers": []
+  }
+}

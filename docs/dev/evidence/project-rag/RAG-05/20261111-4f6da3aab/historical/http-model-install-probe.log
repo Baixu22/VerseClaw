@@ -1,0 +1,25 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+Error: Transform failed with 22 errors:
+D:\tmp\project-rag-TF-0882\local-formal-probe.ts:9:36: ERROR: Top-level await is currently not supported with the "cjs" output format
+D:\tmp\project-rag-TF-0882\local-formal-probe.ts:33:2: ERROR: Top-level await is currently not supported with the "cjs" output format
+D:\tmp\project-rag-TF-0882\local-formal-probe.ts:35:33: ERROR: Top-level await is currently not supported with the "cjs" output format
+D:\tmp\project-rag-TF-0882\local-formal-probe.ts:36:16: ERROR: Top-level await is currently not supported with the "cjs" output format
+D:\tmp\project-rag-TF-0882\local-formal-probe.ts:38:2: ERROR: Top-level await is currently not supported with the "cjs" output format
+...
+    at failureErrorWithLog (D:\tmp\project-rag-longterm-20261109-deps\runtime\.pnpm\esbuild@0.28.0\node_modules\esbuild\lib\main.js:1748:15)
+    at D:\tmp\project-rag-longterm-20261109-deps\runtime\.pnpm\esbuild@0.28.0\node_modules\esbuild\lib\main.js:1017:50
+    at responseCallbacks.<computed> (D:\tmp\project-rag-longterm-20261109-deps\runtime\.pnpm\esbuild@0.28.0\node_modules\esbuild\lib\main.js:884:9)
+    at handleIncomingPacket (D:\tmp\project-rag-longterm-20261109-deps\runtime\.pnpm\esbuild@0.28.0\node_modules\esbuild\lib\main.js:939:12)
+    at Socket.readFromStdout (D:\tmp\project-rag-longterm-20261109-deps\runtime\.pnpm\esbuild@0.28.0\node_modules\esbuild\lib\main.js:862:7)
+    at Socket.emit (node:events:514:28)
+    at addChunk (node:internal/streams/readable:569:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:520:3)
+    at Readable.push (node:internal/streams/readable:400:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:194:23) {
+  name: 'TransformError'
+}
+
+Node.js v24.22.1

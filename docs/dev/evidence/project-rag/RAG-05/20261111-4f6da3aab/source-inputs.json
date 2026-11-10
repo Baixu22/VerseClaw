@@ -1,0 +1,235 @@
+{
+  "candidate": "4f6da3aabcb6bb92e6358388b700142bffa9067d",
+  "dirty": false,
+  "tree": "eaf2b5136863ca437072a6da51ddc7bfd6409e7c",
+  "inputs": [
+    {
+      "path": ".gitignore",
+      "sha256": "a939ab8c823c893b4aff463b29c72d34938ae0af2430f1be25aaa048254ba6a5"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "c688529abea9401a76401c8445ebfa71db76ed86090ef0db527a3cd63d889a30"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "b462d6309e0b0f7d639d6172950cc22032e499e2d76ebbb063b93b052fcbfe18"
+    },
+    {
+      "path": "README.md",
+      "sha256": "bb20b05b4cffb8bfd6891b9d05cd9235abd5f51cf5a862050bcc07951af2f723"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "sha256": "e757166466b98368d6997c056e05b5007c7bc3b3a06433f940e3ae6cd904022f"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "9e3ca143da46dc282d5d9c9dc02b145b29c2477c8396e25a7cd90421c0448ea9"
+    },
+    {
+      "path": "artifacts/agent-dev-deep-test/history.json",
+      "sha256": "0a4c348ed1457b6f22c63ef2f78aecb690985bb61d00174775263c0c36b92a57"
+    },
+    {
+      "path": "artifacts/agent-dev-deep-test/report.json",
+      "sha256": "839e20ffe496b7a274759c2ab0297dc4533e16abb1b6bd07b2d3cfd8a78d49df"
+    },
+    {
+      "path": "artifacts/agent-dev-deep-test/report.md",
+      "sha256": "6e27ac6c1da3adb1c21c19f75a45dd14fc941943d8de40e53a94827022f6e1a1"
+    },
+    {
+      "path": "artifacts/agent-dev-quality/report.json",
+      "sha256": "710dd9ad51714e5f880677f0140c767e55cf56fa64e863b74489a85dce44aa76"
+    },
+    {
+      "path": "artifacts/agent-dev-workbench/evidence.json",
+      "sha256": "ef7f8dd3f67cdfeff4a09b1bac3d34e4a2f6243313639a26974e3ec429dd88fc"
+    },
+    {
+      "path": "docs/dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md",
+      "sha256": "67e62460d44fc899eae9ccef7a9eb0ad40de805f9233cb96818e3fa40d5f5058"
+    },
+    {
+      "path": "docs/modules/knowledge-base.md",
+      "sha256": "ea206388408888502e0c050b4d9bde1b622441ec55e6efe7592b1a8c5b5429d5"
+    },
+    {
+      "path": "electron/services/gateway-api.ts",
+      "sha256": "d06639d8e43692469561aad426b7faf814007a7cb1589a53829d8920f3264b44"
+    },
+    {
+      "path": "electron/services/knowledge-api.ts",
+      "sha256": "81a061d72f6c6d26407d969b344911159f32a65d4ea0afc7ed93a39817f242d4"
+    },
+    {
+      "path": "electron/services/knowledge-embedding-provider.ts",
+      "sha256": "2251f7df18865a3845ce61d4fb94f6c3f70fca80a3c907d6105256c2dc586806"
+    },
+    {
+      "path": "electron/services/workspace-permissions.ts",
+      "sha256": "27f51094c7cd5a8b61d7b7266bd4c5b24133195e64fe331c8b4dad73e83d2071"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-embedding-provider-lifecycle.md",
+      "sha256": "408b1044d5baf5eb9ac004e771c0eb6643ec002b76cace3e08eed0cc4816ec04"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/index.ts",
+      "sha256": "2b2e9a86b2a829751c74a2ee032e5b6e25ad76d8ab0645e6b28712232c947094"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/package.json",
+      "sha256": "9559e99541c38fc1f4574736bddc60db764b23625bbff0372e15dc5883f6ee26"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/runtime-api.ts",
+      "sha256": "2dcfd59d6d6f476487d11a63537f20bc2ff89f3f5df7f4d5ab9d9e7aab2b0a81"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/embedding-tokenizer.ts",
+      "sha256": "16b6e4daae0bb79c23426be5ef98098d89cbf911c5cd711a945da74af0a50610"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/gateway.ts",
+      "sha256": "1e8748d27a9fcc7799331c8da852b002ef8cc096a9eebdef665d8d492523d7fa"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/retrieval-embeddings.ts",
+      "sha256": "c4cfef03987dc4f533e559804ebb263f593771dd9f709b2e399f3f40441f5b17"
+    },
+    {
+      "path": "openclaw_runtime/packages/memory-host-sdk/package.json",
+      "sha256": "d4da727db3282620c6977db737ad9fe796cf27568722801db2fa43b3ba07b32b"
+    },
+    {
+      "path": "openclaw_runtime/packages/memory-host-sdk/src/engine-embeddings.ts",
+      "sha256": "ca15d0a2b30ffbb6a8675f33d80e6df5238dc26f65c7b821113314722177c0bd"
+    },
+    {
+      "path": "openclaw_runtime/packages/memory-host-sdk/src/host/embedding-model-artifact.ts",
+      "sha256": "7c872050e392216386957d95a64e6824c726822cf1cbf79fd5521b1fab416ebf"
+    },
+    {
+      "path": "openclaw_runtime/packages/memory-host-sdk/src/host/embeddings-worker-child.ts",
+      "sha256": "684ac7510b9ed19698d70575f9cb2cc843190f60779d0f80d869c5d45a13af93"
+    },
+    {
+      "path": "openclaw_runtime/packages/memory-host-sdk/src/host/embeddings-worker.ts",
+      "sha256": "545b115865097be3492bffcd7b42b4f7d57d015bccd3f368ab552c03a8f23ea0"
+    },
+    {
+      "path": "openclaw_runtime/packages/memory-host-sdk/src/host/embeddings.ts",
+      "sha256": "e9581fc977568dfb2a7356c30f0eeb3cc79bf977820d75fed70753cb019460c2"
+    },
+    {
+      "path": "openclaw_runtime/packages/memory-host-sdk/src/host/embeddings.types.ts",
+      "sha256": "dcf3ddcf2cc9955d896fbb2cd8fde0a8798d72380bd03ceb97eff62e3e525900"
+    },
+    {
+      "path": "openclaw_runtime/packages/memory-host-sdk/src/host/node-llama.ts",
+      "sha256": "46d827ca9f2b2acde2cba74f4874a7db0e2b27620c77191d3d79c4b00b9ee17f"
+    },
+    {
+      "path": "openclaw_runtime/pnpm-lock.yaml",
+      "sha256": "765f9b4436d6eac901cd7fc0a281ae6954bc7a478263c31e28c9a5478a252e3a"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/source-set.test.ts",
+      "sha256": "ca8cab2f383af55f40d0951e4035bdc8b4fa8a1b9d909f8a5082f52bb0ce0518"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/source-set.ts",
+      "sha256": "f025aca19cfc0094d3b282768f112d91fedf72f5d27649f514a5fb2fbbaed936"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/embedding-session.ts",
+      "sha256": "a4666306c6c3a9c7a943ba62294e83e96a154b433ddd24062b3c82729adf2cc6"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/embedding-space.ts",
+      "sha256": "7f0dda2e567a0a68390903bab8a90fdac2cb5ec3181c09950c1a2031ed016a36"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/knowledge-retrieval.ts",
+      "sha256": "ef6490a129032722ba50b39d3e3b9a0067558bb7036dbbb2ce3ec2f3087e8b65"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/memory-core-host-engine-embeddings.ts",
+      "sha256": "2a932fd6063753908e5ed9ae47eea856311b87d848a1436b2221af3f4493565b"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/openai-compatible-embedding-provider.ts",
+      "sha256": "8bb8881a4155f02a1a3e8fef883a7d5a5ca80dfc5573e61f930eb939d952197d"
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-core/memory-embedding-provider.ts",
+      "sha256": "5c7ac502a04b8cce9d103e72bf3dd9da9895a99f7cd3ac4488bb18bb6bae31ee"
+    },
+    {
+      "path": "scripts/contract-check.mjs",
+      "sha256": "0c27a6e5e7f1091f0932196a9ba243f02d63539a920dc8980ea32053a8bfdb6a"
+    },
+    {
+      "path": "scripts/repository-artifacts.json",
+      "sha256": "4a707c1fe7cd7d23d1a7deebc5975e0cefc3964cc571c6e65effb88fbc0a1ccc"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "a2e0ef49fa9e7831dc97f531edcc52ad6b88f204e32bcf09973912b6499ce470"
+    },
+    {
+      "path": "shared/i18n/locales/en/settings.json",
+      "sha256": "0a1df956450556120423169699732559203b67e8aa5d94f8375a190fc5040c66"
+    },
+    {
+      "path": "shared/i18n/locales/ja/settings.json",
+      "sha256": "6f242a7aacfba901ab0d4c57b36d177ca759aeb20babf99362a3cb5e13804cb5"
+    },
+    {
+      "path": "shared/i18n/locales/ru/settings.json",
+      "sha256": "537026d923f4996efbb200cd1d38935e939115062b6e50a5d2d4ee0fbe19b94a"
+    },
+    {
+      "path": "shared/i18n/locales/zh/settings.json",
+      "sha256": "38ab3af4e079c2cef03ff7865d8f9b92d6252c1fddeaaf67c7a7a2310902ff2e"
+    },
+    {
+      "path": "shared/knowledge/embedding.ts",
+      "sha256": "30d62904346465b6f31c574cc5e895c0b84454f41ba6e2ce50a07fd5b689905f"
+    },
+    {
+      "path": "src/components/settings/KnowledgeEmbeddingSettings.tsx",
+      "sha256": "55a854ed7b46fe3beb4225f166f39a6c61d9cfbcac4691b21251969978161ab6"
+    },
+    {
+      "path": "src/lib/host-api/knowledge/embedding.ts",
+      "sha256": "4dcb823482c6c7d5cb0169cf884cb3cea4a3f76df7a145d4feb677478c2c2414"
+    },
+    {
+      "path": "src/lib/host-api/knowledge/index.ts",
+      "sha256": "250a96fd89888bf2d23056aa466015dc86d8668cc4d03c3792cf9825c6180895"
+    },
+    {
+      "path": "src/pages/Models/index.tsx",
+      "sha256": "3b3f16176aecfc4e578dddb0282df49a56277dcdd233215a0156a2466e471945"
+    },
+    {
+      "path": "tests/e2e/project-rag-provider-settings.spec.ts",
+      "sha256": "7ccfa896aa4e1bce3567a375eb5c11e637f469c306c4f397be4c7c9be369cd44"
+    },
+    {
+      "path": "tests/unit/knowledge-api.test.ts",
+      "sha256": "cf163fb93df584be57f04ea1ae1b010b22874f776c7e8ff6d1e07cd9dfb37a81"
+    },
+    {
+      "path": "tests/unit/knowledge-retrieval.test.ts",
+      "sha256": "1aab0bd20901960e41fe104e1e29c1b9dc1f88dc96d36bd1f1e82fecac6c1750"
+    },
+    {
+      "path": "tests/unit/project-rag-embedding-lifecycle.test.ts",
+      "sha256": "aa41ff2515534d8b6e5ef5aff9376db45c29dc7858eda749305ae9eb4d176d4f"
+    }
+  ]
+}

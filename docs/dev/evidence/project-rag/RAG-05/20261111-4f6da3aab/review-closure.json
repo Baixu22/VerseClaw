@@ -1,0 +1,44 @@
+{
+  "actor": "codex/project-rag-main",
+  "driven_by": "agent",
+  "candidate": "4f6da3aabcb6bb92e6358388b700142bffa9067d",
+  "finalReview": "independent-review.json",
+  "finalReviewScope": "Last UI provider draft fix and adjacent form state",
+  "reviewChain": [
+    {
+      "artifact": "historical/alias-fix-review.json",
+      "acceptedFindings": [
+        "capability failure fallback",
+        "shared query/document deadline",
+        "owner context renewal",
+        "providerRef whitespace"
+      ],
+      "resolution": "Current source plus formal root regression coverage"
+    },
+    {
+      "artifact": "historical/final-review-retry3.json",
+      "acceptedFindings": [
+        "local tokenizer operation signal",
+        "vector count before scoring",
+        "restore Settings form"
+      ],
+      "resolution": "Closed in historical/cancel-selection-review.json"
+    },
+    {
+      "artifact": "historical/cancel-selection-adjudication.json",
+      "rejectedFindings": [
+        "extra tokenizer idle timeout",
+        "bare retry loses saved egress"
+      ],
+      "resolution": "Source and actual SQLite regression contradict the claims; independent followup confirms both rejections"
+    },
+    {
+      "artifact": "historical/cancel-selection-review.json",
+      "acceptedFindings": [
+        "local provider id contaminates remote draft"
+      ],
+      "resolution": "Closed in independent-review.json; current Electron tests the default after switching back to remote"
+    }
+  ],
+  "openAcceptedFindings": 0
+}
