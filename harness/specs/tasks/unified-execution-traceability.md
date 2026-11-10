@@ -13,6 +13,7 @@ ownedPaths: &paths
   - electron/services/git-api.ts
   - electron/services/task-system-service.ts
   - electron/services/session-storage-api.ts
+  - electron/utils/agent-config.ts
   - shared/task-system/**
   - openclaw_runtime/src/agents/execution-task-authority.ts
   - openclaw_runtime/src/agents/execution-task-barrier.ts
@@ -27,6 +28,7 @@ ownedPaths: &paths
   - tests/unit/ui-worktree-cleanup-conservative.test.ts
   - tests/unit/session-storage-api.test.ts
   - tests/unit/session-family-read-model.test.ts
+  - tests/unit/agent-config.test.ts
   - tests/unit/worktree-reclamation-preservation.test.ts
   - tests/unit/checkout-writer-ownership.test.ts
   - tests/unit/execution-migration.test.ts
@@ -35,6 +37,9 @@ ownedPaths: &paths
   - tests/e2e/u6-interaction-metrics.final.spec.ts
   - tests/e2e/chat-session-handoff.spec.ts
   - tests/e2e/chat-session-fork.spec.ts
+  - tests/e2e/session-task-scope-completion.spec.ts
+  - tests/e2e/session-worker-task-journey.spec.ts
+  - tests/e2e/sidebar-session-folders-archive.spec.ts
   - tests/unit/chat-input.test.tsx
   - harness/specs/tasks/unified-execution-traceability.md
   - harness/specs/tasks/r4-reclamation-preservation-increment.md

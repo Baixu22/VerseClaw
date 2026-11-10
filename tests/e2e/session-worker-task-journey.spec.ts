@@ -1,5 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import { statSync } from 'node:fs';
 import type { TaskContractInput, TaskView } from '../../shared/task-system/types';
 import type { SessionDelegationResult, WorkspaceCoordinatorBindingResult } from '../../shared/host-api/contract';
 import type { TaskLedgerSnapshot } from '../../shared/types/task-ledger';
@@ -9,6 +10,11 @@ import { hostActionTimeoutMs } from '../../shared/host-api/host-action-timeouts'
 import { closeElectronApp, expect, getAgentDevHostCalls, getStableWindow, test } from './fixtures/electron';
 import { hostInvoke, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { configureSessionChainProvider, createSessionChainProject, createSessionChainTask, observeSessionUi } from './fixtures/session-task-chain';
+
+const filesystemInstance = (pathname: string) => {
+  const stat = statSync(pathname, { bigint: true });
+  return `${stat.dev}:${stat.ino}:${stat.birthtimeNs}`;
+};
 
 for (const journey of ['navigation', 'controls', 'isolation'] as const) {
 test(`a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (${journey})`, async ({ launchElectronApp }, testInfo) => {
@@ -92,6 +98,8 @@ test(`a real delegated worker receives its own task, reports separately and acce
     const rootClaim = await hostInvoke<{ result: TaskView }>(app, 'taskLedger', 'command', {
       workspaceId: project.workspaceId, command: { action: 'claim', taskNodeId: rootId, sessionKey: project.sessionKey, requestId: 'worker-root-claim' },
     });
+    Object.assign(evidence, { project, initialBinding: binding, rootClaim });
+    expect(rootClaim.result, JSON.stringify(rootClaim)).toBeDefined();
     const plan = await hostInvoke<{ result: TaskView[] }>(app, 'taskLedger', 'command', { workspaceId: project.workspaceId,
       command: { action: 'decompose', credential: rootClaim.result.claim, requestId: 'worker-plan',
         children: [{ key: 'worker-output', contract: { ...taskContract, objective: 'Produce the assigned worker artifact' } }] } });
@@ -140,7 +148,11 @@ test(`a real delegated worker receives its own task, reports separately and acce
     expect(after.snapshot.sessionLinks.some((link) => link.sessionKey === childKey && link.nodeId === childTask!.id)).toBe(true);
     expect(after.snapshot.nodes.find((node) => node.id === rootId)?.status).toBe('todo');
     expect(childTask?.status).toBe('doing');
-    expect(childTask?.evidenceRefs?.some(ref => ref.ref === target)).toBe(true);
+    const artifactReference = childTask?.evidenceRefs?.find(ref => ref.type === 'file' && filesystemInstance(ref.ref) === filesystemInstance(target));
+    expect(artifactReference).toBeDefined();
+    expect(await readFile(artifactReference!.ref, 'utf8')).toBe('agent-driven worker result\n');
+    evidence.retainedWorkerArtifact = { reference: artifactReference, fileIdentity: filesystemInstance(target),
+      sha256: createHash('sha256').update(await readFile(target)).digest('hex') };
     const duplicate = await hostInvoke<SessionDelegationResult>(app, 'sessions', 'delegate', request);
     expect(duplicate.replayed).toBe(true);
     expect(duplicate.receipt?.children[0].childSessionKey).toBe(childKey);

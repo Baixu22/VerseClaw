@@ -33,10 +33,31 @@ test('a real isolated schedule admits its first write without replacing the proj
   });
   const app = await launchElectronApp({ skipSetup: true });
   const evidence: Record<string, unknown> = { driven_by: 'agent', actor: 'playwright-scheduled-task-scope', provider: 'local-scripted', status: 'running' };
+  const captureWorkspaceConfig = async (stage: string) => {
+    const profiles = await hostInvoke(app, 'workspaces', 'list');
+    const config = await app.evaluate(async ({ app }) => {
+      const modules = Object.values(process.mainModule!.require('node:module')._cache) as Array<{ exports?: { readOpenClawConfig?: () => Promise<Record<string, unknown>> } }>;
+      const owner = modules.find(module => typeof module.exports?.readOpenClawConfig === 'function');
+      const raw = await owner?.exports?.readOpenClawConfig?.();
+      const fs = process.mainModule!.require('node:fs') as typeof import('node:fs');
+      const path = process.mainModule!.require('node:path') as typeof import('node:path');
+      const isolatedPath = path.join(app.getPath('userData'), 'openclaw-source-state', 'openclaw.json');
+      const select = (value: Record<string, unknown> | undefined) => {
+        const agents = value?.agents as { defaults?: { workspace?: string }; list?: Array<{ id?: string; workspace?: string; default?: boolean }> } | undefined;
+        return { defaultWorkspace: agents?.defaults?.workspace, agents: agents?.list?.map(({ id, workspace, default: isDefault }) => ({ id, workspace, default: isDefault })) };
+      };
+      return { userData: app.getPath('userData'), mainOwnerAvailable: Boolean(owner), main: raw ? select(raw) : null, isolatedPath,
+        isolated: fs.existsSync(isolatedPath) ? select(JSON.parse(fs.readFileSync(isolatedPath, 'utf8'))) : null };
+    });
+    ((evidence.workspaceConfig ??= []) as unknown[]).push({ stage, profiles, config });
+    await writeFile(testInfo.outputPath('scheduled-task-scope.json'), JSON.stringify(evidence, null, 2));
+  };
   try {
     await getStableWindow(app);
     await configureSessionChainProvider(app, llm.port);
+    await captureWorkspaceConfig('after-provider');
     const project = await createSessionChainProject(app, testInfo.outputPath('scheduled-workspace'), 'Scheduled project');
+    await captureWorkspaceConfig('after-project-start');
     const job = await hostInvoke<{ id: string }>(app, 'cron', 'create', { name: 'Agent schedule acceptance', agentId: 'main',
       schedule: '0 0 1 1 *', enabled: false, message: 'A4-SCHEDULED-EFFECT: write the assigned result.', delivery: { mode: 'none' } });
     const trigger = await hostInvoke(app, 'cron', 'trigger', { id: job.id });
