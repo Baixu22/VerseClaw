@@ -9,6 +9,7 @@ intent: 聚合 TF-0764–TF-0781 的当前磁盘证据，在同一候选完成�
 ownedPaths:
   - harness/specs/tasks/coding-vg-sts-jj-maturity-closeout.md
   - .gitignore
+  - .gitattributes
   - harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json
   - tests/unit/channels-page.test.tsx
   - scripts/coding-evaluation/package-evaluation.py
@@ -33,6 +34,7 @@ ownedPaths:
 touchedAreas:
   - harness/specs/tasks/coding-vg-sts-jj-maturity-closeout.md
   - .gitignore
+  - .gitattributes
   - harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json
   - tests/unit/channels-page.test.tsx
   - scripts/coding-evaluation/package-evaluation.py

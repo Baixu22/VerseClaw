@@ -1,0 +1,1663 @@
+{
+  "schema": "CodingWindowsPackageEvaluation/v1",
+  "taskId": "TF-0781",
+  "driven_by": "agent",
+  "actor": "codex-coding-package-evaluator",
+  "realHumanEvidence": false,
+  "acceptanceEligible": true,
+  "recordedAt": "2026-11-10T21:06:02.029222+00:00",
+  "candidate": {
+    "commit": "3e7d5924fa05c5119f7dc367bd5531ff44c35cf1",
+    "tree": "03c394d2bd0c7ae91a97b266ab06b78f34955e00",
+    "dirty": false,
+    "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "package": {
+    "root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package",
+    "executable": {
+      "path": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\Verse Claw.exe",
+      "sha256": "a428e316e383f599973c331d1b28ce829415625db9a5ca2ca5c72a96a7ced3a1",
+      "bytes": 213919744,
+      "version": "0.4.9-alpha.0"
+    },
+    "vg": {
+      "path": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+      "sha256": "6fef0fab309702fafdcc716c0f8518257440efafd0a46809930fe33be865c2b4",
+      "bytes": 40831488
+    },
+    "ae": {
+      "path": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\ae.exe",
+      "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+      "bytes": 15144448
+    },
+    "node": {
+      "path": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\node.exe",
+      "sha256": "b3094d0b49f9ad602262a9921551737bb97637c05dd357a06ae98188d7290aa3",
+      "bytes": 92279112
+    },
+    "uv": {
+      "path": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\uv.exe",
+      "sha256": "5e559e322ad2f2e25e7d9c3cb51e3891ab0676a7e7b59ea250a021e4cb2f6e31",
+      "bytes": 63647232
+    },
+    "agentBrowser": {
+      "path": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\agent-browser.exe",
+      "sha256": "da3f7385b6c568ca6d816b6cada22e18e80ff6a9f16701b96bb35f46efbc70b6",
+      "bytes": 11897344
+    },
+    "manifests": {
+      "versegit": {
+        "path": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\resources\\versegit\\manifest.json",
+        "sha256": "476dfcfb72df4c43a294af2add1844e1d7e00b79235297cbe0ea27ba1f2c0676",
+        "bytes": 2916,
+        "artifact": "inputs/versegit-manifest.json"
+      },
+      "verseshell": {
+        "path": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\resources\\verseshell\\manifest.json",
+        "sha256": "b26c9edbbc620943af2c9080cee72de68f93e3fa8649aa33859a435a1650d1a7",
+        "bytes": 7559,
+        "artifact": "inputs/verseshell-manifest.json"
+      }
+    },
+    "asar": {
+      "app": {
+        "path": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\app.asar",
+        "sha256": "c7b929665350526b9305f237458ccfa49ebf915e85b57aa6c702c02fe6909573",
+        "bytes": 306487498
+      },
+      "mainRuntime": {
+        "path": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\main-runtime.asar",
+        "sha256": "7c8aa662f97575b5b87fe746e137e3c76a1abc0cb5a6ed45a9ed70d1a8de08bf",
+        "bytes": 730541346
+      }
+    },
+    "nodeRuntime": {
+      "artifact": "inputs/node-runtime.json",
+      "sha256": "a7cc13971a8a95d55428a6fa8ee085b9dba2e1979086ea5a3e023985378bbcc3",
+      "bytes": 132
+    },
+    "source": {
+      "versegitCommit": "d9c38a8659274c24ea776b56480a260831b4537f",
+      "verseshellCommit": "c06f406e83566bb968448222d9c8caf429e580a0",
+      "nodeVersion": "24.16.0"
+    },
+    "installer": {
+      "status": "not-run",
+      "reason": "TF-0781 evaluates win-unpacked only"
+    }
+  },
+  "profiles": [
+    {
+      "profileId": "profile-a",
+      "status": "pass",
+      "driven_by": "agent",
+      "actor": "codex-coding-package-evaluator",
+      "realHumanEvidence": false,
+      "roots": {
+        "userData": "D:\\tmp\\tf0782-final-c00e-20261110\\.tmp\\e2e-runs\\verse-claw-e2e-run-siCd6g\\verse-claw-e2e-user-data-NXV2hZ\\profile-a-user-data",
+        "home": "D:\\tmp\\tf0782-final-c00e-20261110\\.tmp\\e2e-runs\\verse-claw-e2e-run-siCd6g\\verse-claw-e2e-home-oomeUy\\profile-a",
+        "state": "D:\\tmp\\tf0782-final-c00e-20261110\\.tmp\\e2e-runs\\verse-claw-e2e-run-siCd6g\\verse-claw-e2e-user-data-NXV2hZ\\profile-a-user-data\\openclaw-state",
+        "workspace": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-a\\workspace"
+      },
+      "app": {
+        "isPackaged": true,
+        "appPath": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\app.asar",
+        "resourcesPath": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources",
+        "version": "0.4.9-alpha.0"
+      },
+      "sourceDetached": true,
+      "packageExecutableSha256": "a428e316e383f599973c331d1b28ce829415625db9a5ca2ca5c72a96a7ced3a1",
+      "coding": {
+        "worktreeBackend": "git-worktree",
+        "verifiedCheckout": true,
+        "terminalStatus": "ok",
+        "verificationObserved": true,
+        "scratchRemoved": true,
+        "mathSha256": "754052599694724afaf234c67ab548b34584aa20a91a46e3f61ecfdca6f5383e",
+        "providerAnomalies": [],
+        "providerRequests": 7,
+        "workerToolResults": {
+          "write": "Successfully wrote 65 bytes to math.js\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+          "verify": "Warning: background execution is disabled; running synchronously and returning only after the process exits.\n\n\n\nPACKAGED_VERIFY_PASS"
+        },
+        "undoToolResults": {
+          "write": "Successfully wrote 10 bytes to scratch.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+          "undo": "{\n  \"ok\": true,\n  \"restored\": [\n    \"scratch.txt\"\n  ],\n  \"errors\": [],\n  \"journalDir\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-a\\\\workspace\\\\.openclaw\\\\journal\\\\3f1342e2-bdaa-46ca-99e6-5a9fa49d767b\",\n  \"remainingEntries\": 0\n}"
+        }
+      },
+      "vg": {
+        "capabilities": {
+          "compat": {
+            "git_only": "preserved",
+            "next": "preserved",
+            "package_names": [
+              "smart-test-sorter",
+              "smart_sorter"
+            ],
+            "sts_protocols": [
+              "1.1",
+              "2.0"
+            ]
+          },
+          "mcp_tools": [
+            "vg_capabilities",
+            "verdict",
+            "integration_status",
+            "who_touches",
+            "explain_conflict",
+            "declare_intent",
+            "basis_status",
+            "basis_watermark"
+          ],
+          "read": [
+            "workspace.root",
+            "change.status",
+            "change.log",
+            "verify.status",
+            "conflicts",
+            "basis.status",
+            "report",
+            "verdict",
+            "doctor"
+          ],
+          "safety": {
+            "default_enable": false,
+            "evidence_land_present": true,
+            "managed_opt_in": true,
+            "strict_admission_present": true
+          },
+          "schema": "versegit.capabilities/v1",
+          "verdict": {
+            "dimensions": [
+              "candidate",
+              "execution",
+              "evidence",
+              "freshness",
+              "risk",
+              "trial"
+            ],
+            "note": "六维各自独立呈现；admitted 是它们的合取，selected 不覆盖全集",
+            "read_surface": {
+              "observed_channels": [
+                "read",
+                "grep",
+                "glob",
+                "write",
+                "edit"
+              ],
+              "unobserved_channels": [
+                "bash",
+                "other-mcp",
+                "network",
+                "direct-fs"
+              ]
+            },
+            "schema": "versegit.verdict/v1",
+            "single_green_light": false
+          },
+          "workflows": [
+            {
+              "entries": [
+                "workspace.init",
+                "workspace.root",
+                "doctor"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_workspace_lifecycle.rs",
+                "crates/vg-cli/tests/jj_public_surface.rs"
+              ],
+              "id": "workspace",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "change.new",
+                "change.file",
+                "change.describe",
+                "change.snapshot",
+                "change.diffedit"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_change_lifecycle.rs",
+                "crates/vg-cli/tests/jj_diffedit.rs"
+              ],
+              "id": "change.edit",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "change.log",
+                "op.restore",
+                "op.undo"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_operation_restore.rs",
+                "crates/vg-cli/tests/jj_op_undo_redo.rs",
+                "crates/vg-cli/tests/jj_backup_restore.rs"
+              ],
+              "id": "history.recover",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "verify.status",
+                "verdict",
+                "basis.status"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_managed_plan.rs",
+                "crates/vg-cli/tests/jj_evidence_land.rs",
+                "crates/vg-cli/tests/jj_verdict.rs"
+              ],
+              "id": "validation.admit",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "change.materialize",
+                "land",
+                "report"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_managed_candidate.rs",
+                "crates/vg-cli/tests/jj_closed_loop.rs",
+                "crates/vg-cli/tests/land_concurrency.rs"
+              ],
+              "id": "candidate.land",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "git.fetch",
+                "git.push",
+                "gerrit.upload"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_git_ref_sync.rs",
+                "crates/vg-cli/tests/jj_gerrit_upload.rs"
+              ],
+              "id": "external.publish",
+              "status": "controlled"
+            }
+          ],
+          "write": [
+            "workspace.init",
+            "change.new",
+            "change.file",
+            "change.describe",
+            "change.snapshot",
+            "change.diffedit",
+            "change.materialize",
+            "change.duplicate",
+            "change.abandon",
+            "change.rebase",
+            "change.squash",
+            "change.split",
+            "op.restore",
+            "op.undo",
+            "land",
+            "admit.check",
+            "git.fetch",
+            "git.push",
+            "gerrit.upload"
+          ]
+        },
+        "workspaceImport": {
+          "colocated": true,
+          "command": "workspace.import",
+          "head_commit": "ba807b4180d6d64828b90054432712345660cfb5",
+          "root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-a\\vg-workspace",
+          "schema": "versegit.vg-json/v1",
+          "snapshot": {
+            "change_id": "22c8f051acecc22d0e88ed6f48cc9025",
+            "operation_id": "438f85e98393c520e0943cf8e379eb0f523a7674aeb0b4d8edb9887d358d467d0f93e5dca891049920e670920de8fa9cda0508272781832ec2c2c0e76aa5896e",
+            "schema": "versegit.vg-json/v1",
+            "wc_commit_id": "7a4c8157012f067df05ef8644d2c34f1c3dd7847",
+            "workspace_root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-a\\vg-workspace"
+          }
+        },
+        "change": {
+          "change_id": "efdfab8d55a67280d3f51d25fcefcabb",
+          "operation_id": "a2212d3082f485b78ccf309d9da489942c9fffbdb70909ce25c89e3cfa99a3465bcd2d120591c41dd67d3136de0cdfcbd83c21085a12bcdcfebe8f7235978cd4",
+          "schema": "versegit.vg-json/v1",
+          "wc_commit_id": "bbc921a18bb8b3b6c7119c8b974d537948bcd74f",
+          "workspace_root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-a\\vg-workspace"
+        },
+        "snapshot": {
+          "change_id": "efdfab8d55a67280d3f51d25fcefcabb",
+          "operation_id": "51735f03a01a12037ab8134badab523cc2a6460b7698fb8f3322f822ee6342bec0ae0802024282a7ccf89b97dac49e8541b4206fac7d12f749c1a1f95db041b8",
+          "schema": "versegit.vg-json/v1",
+          "wc_commit_id": "a05c53f9eae150fc0b6af1998c8e8ca8c75299fc",
+          "workspace_root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-a\\vg-workspace"
+        },
+        "sts11": {
+          "ok": true,
+          "protocol": "1.1",
+          "invalidRejected": 10,
+          "invalidTotal": 10,
+          "validPassed": 9,
+          "validTotal": 9
+        },
+        "sts20": {
+          "ok": true,
+          "protocol": "2.0",
+          "invalidRejected": 8,
+          "invalidTotal": 8,
+          "validPassed": 5,
+          "validTotal": 5
+        },
+        "bundledPythonPresent": false,
+        "standaloneJjPresent": false
+      },
+      "commands": [
+        {
+          "id": "vg-capabilities",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "capabilities",
+            "--json"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-a\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"compat\": {\n    \"git_only\": \"preserved\",\n    \"next\": \"preserved\",\n    \"package_names\": [\n      \"smart-test-sorter\",\n      \"smart_sorter\"\n    ],\n    \"sts_protocols\": [\n      \"1.1\",\n      \"2.0\"\n    ]\n  },\n  \"mcp_tools\": [\n    \"vg_capabilities\",\n    \"verdict\",\n    \"integration_status\",\n    \"who_touches\",\n    \"explain_conflict\",\n    \"declare_intent\",\n    \"basis_status\",\n    \"basis_watermark\"\n  ],\n  \"read\": [\n    \"workspace.root\",\n    \"change.status\",\n    \"change.log\",\n    \"verify.status\",\n    \"conflicts\",\n    \"basis.status\",\n    \"report\",\n    \"verdict\",\n    \"doctor\"\n  ],\n  \"safety\": {\n    \"default_enable\": false,\n    \"evidence_land_present\": true,\n    \"managed_opt_in\": true,\n    \"strict_admission_present\": true\n  },\n  \"schema\": \"versegit.capabilities/v1\",\n  \"verdict\": {\n    \"dimensions\": [\n      \"candidate\",\n      \"execution\",\n      \"evidence\",\n      \"freshness\",\n      \"risk\",\n      \"trial\"\n    ],\n    \"note\": \"六维各自独立呈现；admitted 是它们的合取，selected 不覆盖全集\",\n    \"read_surface\": {\n      \"observed_channels\": [\n        \"read\",\n        \"grep\",\n        \"glob\",\n        \"write\",\n        \"edit\"\n      ],\n      \"unobserved_channels\": [\n        \"bash\",\n        \"other-mcp\",\n        \"network\",\n        \"direct-fs\"\n      ]\n    },\n    \"schema\": \"versegit.verdict/v1\",\n    \"single_green_light\": false\n  },\n  \"workflows\": [\n    {\n      \"entries\": [\n        \"workspace.init\",\n        \"workspace.root\",\n        \"doctor\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_workspace_lifecycle.rs\",\n        \"crates/vg-cli/tests/jj_public_surface.rs\"\n      ],\n      \"id\": \"workspace\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.new\",\n        \"change.file\",\n        \"change.describe\",\n        \"change.snapshot\",\n        \"change.diffedit\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_change_lifecycle.rs\",\n        \"crates/vg-cli/tests/jj_diffedit.rs\"\n      ],\n      \"id\": \"change.edit\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.log\",\n        \"op.restore\",\n        \"op.undo\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_operation_restore.rs\",\n        \"crates/vg-cli/tests/jj_op_undo_redo.rs\",\n        \"crates/vg-cli/tests/jj_backup_restore.rs\"\n      ],\n      \"id\": \"history.recover\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"verify.status\",\n        \"verdict\",\n        \"basis.status\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_managed_plan.rs\",\n        \"crates/vg-cli/tests/jj_evidence_land.rs\",\n        \"crates/vg-cli/tests/jj_verdict.rs\"\n      ],\n      \"id\": \"validation.admit\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.materialize\",\n        \"land\",\n        \"report\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_managed_candidate.rs\",\n        \"crates/vg-cli/tests/jj_closed_loop.rs\",\n        \"crates/vg-cli/tests/land_concurrency.rs\"\n      ],\n      \"id\": \"candidate.land\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"git.fetch\",\n        \"git.push\",\n        \"gerrit.upload\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_git_ref_sync.rs\",\n        \"crates/vg-cli/tests/jj_gerrit_upload.rs\"\n      ],\n      \"id\": \"external.publish\",\n      \"status\": \"controlled\"\n    }\n  ],\n  \"write\": [\n    \"workspace.init\",\n    \"change.new\",\n    \"change.file\",\n    \"change.describe\",\n    \"change.snapshot\",\n    \"change.diffedit\",\n    \"change.materialize\",\n    \"change.duplicate\",\n    \"change.abandon\",\n    \"change.rebase\",\n    \"change.squash\",\n    \"change.split\",\n    \"op.restore\",\n    \"op.undo\",\n    \"land\",\n    \"admit.check\",\n    \"git.fetch\",\n    \"git.push\",\n    \"gerrit.upload\"\n  ]\n}\n",
+          "stderr": "",
+          "stdoutSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 31
+        },
+        {
+          "id": "vg-workspace-import",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "workspace",
+            "import",
+            "--root",
+            "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-a\\vg-workspace",
+            "--json"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-a\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"colocated\": true,\n  \"command\": \"workspace.import\",\n  \"head_commit\": \"ba807b4180d6d64828b90054432712345660cfb5\",\n  \"root\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-a\\\\vg-workspace\",\n  \"schema\": \"versegit.vg-json/v1\",\n  \"snapshot\": {\n    \"change_id\": \"22c8f051acecc22d0e88ed6f48cc9025\",\n    \"operation_id\": \"438f85e98393c520e0943cf8e379eb0f523a7674aeb0b4d8edb9887d358d467d0f93e5dca891049920e670920de8fa9cda0508272781832ec2c2c0e76aa5896e\",\n    \"schema\": \"versegit.vg-json/v1\",\n    \"wc_commit_id\": \"7a4c8157012f067df05ef8644d2c34f1c3dd7847\",\n    \"workspace_root\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-a\\\\vg-workspace\"\n  }\n}\n",
+          "stderr": "",
+          "stdoutSha256": "23628a9666fd8d6f15ca6312bd0fc2ddf164afaffadac579e63e3e09dc5625a0",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 504
+        },
+        {
+          "id": "vg-change-new",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "change",
+            "new",
+            "--root",
+            "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-a\\vg-workspace",
+            "--description",
+            "profile-a",
+            "--run-key",
+            "profile-a-change",
+            "--json"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-a\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"change_id\": \"efdfab8d55a67280d3f51d25fcefcabb\",\n  \"operation_id\": \"a2212d3082f485b78ccf309d9da489942c9fffbdb70909ce25c89e3cfa99a3465bcd2d120591c41dd67d3136de0cdfcbd83c21085a12bcdcfebe8f7235978cd4\",\n  \"schema\": \"versegit.vg-json/v1\",\n  \"wc_commit_id\": \"bbc921a18bb8b3b6c7119c8b974d537948bcd74f\",\n  \"workspace_root\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-a\\\\vg-workspace\"\n}\n",
+          "stderr": "",
+          "stdoutSha256": "32f6d3969659f05507b48a4db9e4cad38e9e7a27dbd94fa8311389f6b69dca64",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 200
+        },
+        {
+          "id": "vg-change-snapshot",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "change",
+            "snapshot",
+            "--root",
+            "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-a\\vg-workspace",
+            "--description",
+            "profile-a snapshot",
+            "--run-key",
+            "profile-a-snapshot",
+            "--json"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-a\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"change_id\": \"efdfab8d55a67280d3f51d25fcefcabb\",\n  \"operation_id\": \"51735f03a01a12037ab8134badab523cc2a6460b7698fb8f3322f822ee6342bec0ae0802024282a7ccf89b97dac49e8541b4206fac7d12f749c1a1f95db041b8\",\n  \"schema\": \"versegit.vg-json/v1\",\n  \"wc_commit_id\": \"a05c53f9eae150fc0b6af1998c8e8ca8c75299fc\",\n  \"workspace_root\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-a\\\\vg-workspace\"\n}\n",
+          "stderr": "",
+          "stdoutSha256": "6970fc3f8f47e87f86891a67f031560729574b96b721c50f02cbc8073484f89c",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 154
+        },
+        {
+          "id": "sts-contract-1.1",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "--json",
+            "sts",
+            "contract",
+            "--dir",
+            "D:\\tmp\\tf0782-final-c00e-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0781\\inputs\\vg-sts\\v1"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-a\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"boundaries\": [\n    \"VG 只核验摘要与自身解析结果；版本口径按 manifest 声明的 version_policy\",\n    \"接收只固定契约与样例，不代表计划生成/执行入口已交付（那属 STS 的 plan_request/run_plan 入口）\",\n    \"本入口不执行来自计划的任何命令；plan/refusal 是数据，不是待执行的 shell\",\n    \"绑定只核身份链一致性（request_id/plan_id/target_identity/selection_scope/协议版本），不重算选择\"\n  ],\n  \"consumer\": \"VG:TF-0168\",\n  \"contract\": \"vg-sts\",\n  \"contract_status\": null,\n  \"declared_source_commit\": null,\n  \"digests\": {\n    \"matched\": 29,\n    \"mismatched\": [],\n    \"total\": 29\n  },\n  \"dir\": \"D:\\\\tmp\\\\tf0782-final-c00e-20261110\\\\harness\\\\specs\\\\fixtures\\\\coding-evaluation\\\\TF-0781\\\\inputs\\\\vg-sts\\\\v1\",\n  \"input_error\": false,\n  \"is_draft\": false,\n  \"mode\": \"consume\",\n  \"ok\": true,\n  \"produced_by\": \"STS:TF-0026\",\n  \"product_version\": \"0.1.0\",\n  \"protocol_version\": \"1.1\",\n  \"refusals\": [],\n  \"schema\": \"versegit.sts-contract-intake/v1\",\n  \"supported_protocol_versions\": [\n    \"1.0\",\n    \"1.1\"\n  ],\n  \"unregistered_files\": [],\n  \"version_policy\": \"digests-authoritative\",\n  \"vg_side_parse\": {\n    \"applicable\": true,\n    \"invalid_rejected\": 10,\n    \"invalid_total\": 10,\n    \"not_applicable_reason\": null,\n    \"pairs_invalid_rejected\": 1,\n    \"pairs_invalid_total\": 1,\n    \"pairs_valid_passed\": 1,\n    \"pairs_valid_total\": 1,\n    \"samples\": [\n      {\n        \"errors\": [],\n        \"file\": \"plan_full_fallback.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"plan_risk_decisions_stale.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"plan_selected_parametrized.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"refusal_collection_error.json\",\n        \"kind\": \"refusal\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_candidate_risk_cjk_path.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_commit_minimal.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_workspace_norisk.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"result_complete_pass.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"result_incomplete_budget_abort.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [\n          \"selection_scope=selected 但既无选中也无排除（空计划不得当作已规划）\"\n        ],\n        \"file\": \"plan_empty_selection.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"selection_scope=full 时 selected 必须等于 collected 全集\"\n        ],\n        \"file\": \"plan_full_scope_not_all.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"conservative_full_available=true 需同时满足 target_confirmable=true 与 attempted_collection.succeeded=true（未知目标或未收集到全集时不得声称可保守全量）\"\n        ],\n        \"file\": \"refusal_full_without_confirm.json\",\n        \"kind\": \"refusal\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"candidate 模式缺少 target.theirs_oid（两侧变更并集所需，不能只比第一父）\",\n          \"candidate 模式必须给出 target.candidate_tree_oid 或 candidate_commit_oid 作为候选内容身份（候选目录仅作定位，临时路径不能当唯一身份）\"\n        ],\n        \"file\": \"request_candidate_missing_theirs.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"identities.code_oid 缺失（缺失不得作为'无变化可安全跳过'的证明）\"\n        ],\n        \"file\": \"request_missing_code_oid.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"协议版本 \\\"0.9\\\" 不受支持（VG 只实现了 [\\\"1.0\\\", \\\"1.1\\\"]；该版本未定稿/未实现，见 TF-0188）——拒绝，且**不**拿已实现的版本的规则去判它\"\n        ],\n        \"file\": \"request_unknown_protocol_version.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"completeness=complete 但 not_executed 非空（计划内有测试未跑完，应记为 incomplete）\"\n        ],\n        \"file\": \"result_complete_but_not_executed.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"raw_exit_code=0 但 outcomes 中存在 failed/error（退出码与事实矛盾）\"\n        ],\n        \"file\": \"result_exit0_but_failure.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"completeness=incomplete 必须给出 incomplete_reason\"\n        ],\n        \"file\": \"result_incomplete_missing_reason.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"零执行不得报告为完整有效通过（executed 为空）\"\n        ],\n        \"file\": \"result_zero_exec_marked_pass.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"matched\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"wrong_candidate\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      }\n    ],\n    \"valid_passed\": 9,\n    \"valid_total\": 9\n  }\n}\n",
+          "stderr": "",
+          "stdoutSha256": "ef8f5396b870a7a234fa68648a42b0a4d5c72954e51dfc1caba3ad36c86595a3",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 34
+        },
+        {
+          "id": "sts-contract-2.0",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "--json",
+            "sts",
+            "contract",
+            "--dir",
+            "D:\\tmp\\tf0782-final-c00e-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0781\\inputs\\vg-sts\\v2"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-a\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"boundaries\": [\n    \"VG 只核验摘要与自身解析结果；版本口径按 manifest 声明的 version_policy\",\n    \"接收只固定契约与样例，不代表计划生成/执行入口已交付（那属 STS 的 plan_request/run_plan 入口）\",\n    \"本入口不执行来自计划的任何命令；plan/refusal 是数据，不是待执行的 shell\",\n    \"绑定只核身份链一致性（request_id/plan_id/target_identity/selection_scope/协议版本），不重算选择\"\n  ],\n  \"consumer\": \"VG\",\n  \"contract\": \"vg-sts\",\n  \"contract_status\": \"authoritative\",\n  \"declared_source_commit\": null,\n  \"digests\": {\n    \"matched\": 40,\n    \"mismatched\": [],\n    \"total\": 40\n  },\n  \"dir\": \"D:\\\\tmp\\\\tf0782-final-c00e-20261110\\\\harness\\\\specs\\\\fixtures\\\\coding-evaluation\\\\TF-0781\\\\inputs\\\\vg-sts\\\\v2\",\n  \"input_error\": false,\n  \"is_draft\": false,\n  \"mode\": \"consume\",\n  \"ok\": true,\n  \"produced_by\": \"STS:TF-0040\",\n  \"product_version\": \"0.1.0\",\n  \"protocol_version\": \"2.0\",\n  \"refusals\": [],\n  \"schema\": \"versegit.sts-contract-intake/v1\",\n  \"supported_protocol_versions\": [\n    \"2.0\"\n  ],\n  \"unregistered_files\": [],\n  \"version_policy\": \"digests-authoritative\",\n  \"vg_side_parse\": {\n    \"applicable\": true,\n    \"invalid_rejected\": 8,\n    \"invalid_total\": 8,\n    \"not_applicable_reason\": null,\n    \"pairs_invalid_rejected\": 6,\n    \"pairs_invalid_total\": 6,\n    \"pairs_valid_passed\": 1,\n    \"pairs_valid_total\": 1,\n    \"samples\": [\n      {\n        \"errors\": [],\n        \"file\": \"plan_with_full_content_identity.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"refusal_content_unbound.json\",\n        \"kind\": \"refusal\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_candidate_full_content_identity.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_pure_source_no_config_data.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"result_with_execution_identity.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [\n          \"R10-order-is-permutation-of-selected: order 不是 selected 的排列（order=1 项、selected=2 项）\"\n        ],\n        \"file\": \"plan_order_not_permutation_of_selected.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R6-full-only-when-content-confirmed: 内容未确认（或没收集到全集）却声称可保守全量\",\n          \"R7-unconfirmed-must-be-listed: 内容未确认，但没列出没确认到哪一项\"\n        ],\n        \"file\": \"refusal_full_available_without_content.json\",\n        \"kind\": \"refusal\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R2-label-is-not-identity: content_identity.value 是短 hex（\\\"d444444\\\"）——短标签只能作展示，不能当完整身份\"\n        ],\n        \"file\": \"request_bare_short_content_value.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R4-digest-carries-algorithm: \\\"calc.py\\\" 的摘要 \\\"deadbeef\\\" 不符合 '<算法>:<hex>'\"\n        ],\n        \"file\": \"request_digest_without_algorithm.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R3-manifest-covers-config-and-data: 声明了 `config_data_absent: true`，但清单里**确实有** config/data 条目——自相矛盾，必拒\"\n        ],\n        \"file\": \"request_manifest_declares_absent_but_has_config.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\\\"source\\\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\\\"config_data_absent\\\": true`（「漏列了」与「真没有」必须能分辨）\"\n        ],\n        \"file\": \"request_manifest_only_source_entry.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"出现未声明字段 \\\"generator_note\\\"（additionalProperties=false）\"\n        ],\n        \"file\": \"request_unknown_field.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R9-invalid-or-unconfirmed-cannot-be-valid: 观察为 before=confirmed/after=unconfirmed 却声称 valid\"\n        ],\n        \"file\": \"result_execution_end_unconfirmed_but_valid.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"matched\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/valid\"\n      },\n      {\n        \"errors\": [\n          \"R12-environment-identity-must-match-plan: 执行环境与计划不一致（dependencies_digest=\\\"sha256:2222222222222222222222222222222222222222222222222222222222222222\\\" vs 计划期望 \\\"sha256:1111111111111111111111111111111111111111111111111111111111111111\\\"）\"\n        ],\n        \"file\": \"dependencies_identity_drift\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"environment_identity_drift/request.json 自身不合法：R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\\\"source\\\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\\\"config_data_absent\\\": true`（「漏列了」与「真没有」必须能分辨）\",\n          \"R12-environment-identity-must-match-plan: 执行环境与计划不一致（python=\\\"3.12.1\\\" vs 计划期望 \\\"3.10.3\\\"）\",\n          \"R12-environment-identity-must-match-plan: 执行环境与计划不一致（platform=\\\"linux\\\" vs 计划期望 \\\"win32\\\"）\"\n        ],\n        \"file\": \"environment_identity_drift\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"R12-environment-identity-must-match-plan: 计划声明了 `expected_environment_identity`，但 result **没有报** `environment_identity`——缺报告 ≠ 一致\"\n        ],\n        \"file\": \"environment_not_reported\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"execution_identity_drift/request.json 自身不合法：R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\\\"source\\\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\\\"config_data_absent\\\": true`（「漏列了」与「真没有」必须能分辨）\",\n          \"R9-invalid-or-unconfirmed-cannot-be-valid: 执行身份与计划不一致（execution_id=\\\"exec-someone-else-9\\\" vs 计划期望 \\\"exec-expected-1\\\"）\",\n          \"R9-invalid-or-unconfirmed-cannot-be-valid: 执行身份与计划不一致（interpreter=\\\"D:/venvs/other/python.exe\\\" vs 计划期望 \\\"D:/venvs/example/python.exe\\\"）\",\n          \"R12-environment-identity-must-match-plan: 计划声明了 `expected_environment_identity`，但 result **没有报** `environment_identity`——缺报告 ≠ 一致\"\n        ],\n        \"file\": \"execution_identity_drift\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"R11-cross-document-binding: result.content_identity.value \\\"e555555555555555555555555555555555555555\\\" 与 plan 的 \\\"d444444444444444444444444444444444444444\\\" 不一致（完整内容身份必须逐项相同）\",\n          \"R11-cross-document-binding: result.content_identity.manifest_digest \\\"sha256:cccc00000000000000000000000000000000000000000000000000000000000c\\\" 与 plan 的 \\\"sha256:bbbb00000000000000000000000000000000000000000000000000000000000b\\\" 不一致（完整内容身份必须逐项相同）\",\n          \"R12-environment-identity-must-match-plan: 计划声明了 `expected_environment_identity`，但 result **没有报** `environment_identity`——缺报告 ≠ 一致\"\n        ],\n        \"file\": \"same_label_different_content\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"same_value_different_kind/request.json 自身不合法：R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\\\"source\\\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\\\"config_data_absent\\\": true`（「漏列了」与「真没有」必须能分辨）\",\n          \"R11-cross-document-binding: request.content_identity.kind \\\"git-tree\\\" 与 plan 的 \\\"git-commit\\\" 不一致（完整内容身份必须逐项相同）\"\n        ],\n        \"file\": \"same_value_different_kind\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      }\n    ],\n    \"valid_passed\": 5,\n    \"valid_total\": 5\n  }\n}\n",
+          "stderr": "",
+          "stdoutSha256": "f92b634288dd4f943a2b36863bff81ff69f39dad66a04e5f1921329af7ca6285",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 45
+        }
+      ],
+      "rawArtifact": "raw-profiles/profile-a.json"
+    },
+    {
+      "profileId": "profile-b",
+      "status": "pass",
+      "driven_by": "agent",
+      "actor": "codex-coding-package-evaluator",
+      "realHumanEvidence": false,
+      "roots": {
+        "userData": "D:\\tmp\\tf0782-final-c00e-20261110\\.tmp\\e2e-runs\\verse-claw-e2e-run-siCd6g\\verse-claw-e2e-user-data-4yrx6a\\profile-b-user-data",
+        "home": "D:\\tmp\\tf0782-final-c00e-20261110\\.tmp\\e2e-runs\\verse-claw-e2e-run-siCd6g\\verse-claw-e2e-home-d8gmoP\\profile-b",
+        "state": "D:\\tmp\\tf0782-final-c00e-20261110\\.tmp\\e2e-runs\\verse-claw-e2e-run-siCd6g\\verse-claw-e2e-user-data-4yrx6a\\profile-b-user-data\\openclaw-state",
+        "workspace": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-b\\workspace"
+      },
+      "app": {
+        "isPackaged": true,
+        "appPath": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\app.asar",
+        "resourcesPath": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources",
+        "version": "0.4.9-alpha.0"
+      },
+      "sourceDetached": true,
+      "packageExecutableSha256": "a428e316e383f599973c331d1b28ce829415625db9a5ca2ca5c72a96a7ced3a1",
+      "coding": {
+        "worktreeBackend": "git-worktree",
+        "verifiedCheckout": true,
+        "terminalStatus": "ok",
+        "verificationObserved": true,
+        "scratchRemoved": true,
+        "mathSha256": "754052599694724afaf234c67ab548b34584aa20a91a46e3f61ecfdca6f5383e",
+        "providerAnomalies": [],
+        "providerRequests": 7,
+        "workerToolResults": {
+          "write": "Successfully wrote 65 bytes to math.js\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+          "verify": "Warning: background execution is disabled; running synchronously and returning only after the process exits.\n\n\n\nPACKAGED_VERIFY_PASS"
+        },
+        "undoToolResults": {
+          "write": "Successfully wrote 10 bytes to scratch.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+          "undo": "{\n  \"ok\": true,\n  \"restored\": [\n    \"scratch.txt\"\n  ],\n  \"errors\": [],\n  \"journalDir\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-b\\\\workspace\\\\.openclaw\\\\journal\\\\e3e39874-1a59-4e6d-b6b4-ead0a95fa2f9\",\n  \"remainingEntries\": 0\n}"
+        }
+      },
+      "vg": {
+        "capabilities": {
+          "compat": {
+            "git_only": "preserved",
+            "next": "preserved",
+            "package_names": [
+              "smart-test-sorter",
+              "smart_sorter"
+            ],
+            "sts_protocols": [
+              "1.1",
+              "2.0"
+            ]
+          },
+          "mcp_tools": [
+            "vg_capabilities",
+            "verdict",
+            "integration_status",
+            "who_touches",
+            "explain_conflict",
+            "declare_intent",
+            "basis_status",
+            "basis_watermark"
+          ],
+          "read": [
+            "workspace.root",
+            "change.status",
+            "change.log",
+            "verify.status",
+            "conflicts",
+            "basis.status",
+            "report",
+            "verdict",
+            "doctor"
+          ],
+          "safety": {
+            "default_enable": false,
+            "evidence_land_present": true,
+            "managed_opt_in": true,
+            "strict_admission_present": true
+          },
+          "schema": "versegit.capabilities/v1",
+          "verdict": {
+            "dimensions": [
+              "candidate",
+              "execution",
+              "evidence",
+              "freshness",
+              "risk",
+              "trial"
+            ],
+            "note": "六维各自独立呈现；admitted 是它们的合取，selected 不覆盖全集",
+            "read_surface": {
+              "observed_channels": [
+                "read",
+                "grep",
+                "glob",
+                "write",
+                "edit"
+              ],
+              "unobserved_channels": [
+                "bash",
+                "other-mcp",
+                "network",
+                "direct-fs"
+              ]
+            },
+            "schema": "versegit.verdict/v1",
+            "single_green_light": false
+          },
+          "workflows": [
+            {
+              "entries": [
+                "workspace.init",
+                "workspace.root",
+                "doctor"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_workspace_lifecycle.rs",
+                "crates/vg-cli/tests/jj_public_surface.rs"
+              ],
+              "id": "workspace",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "change.new",
+                "change.file",
+                "change.describe",
+                "change.snapshot",
+                "change.diffedit"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_change_lifecycle.rs",
+                "crates/vg-cli/tests/jj_diffedit.rs"
+              ],
+              "id": "change.edit",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "change.log",
+                "op.restore",
+                "op.undo"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_operation_restore.rs",
+                "crates/vg-cli/tests/jj_op_undo_redo.rs",
+                "crates/vg-cli/tests/jj_backup_restore.rs"
+              ],
+              "id": "history.recover",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "verify.status",
+                "verdict",
+                "basis.status"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_managed_plan.rs",
+                "crates/vg-cli/tests/jj_evidence_land.rs",
+                "crates/vg-cli/tests/jj_verdict.rs"
+              ],
+              "id": "validation.admit",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "change.materialize",
+                "land",
+                "report"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_managed_candidate.rs",
+                "crates/vg-cli/tests/jj_closed_loop.rs",
+                "crates/vg-cli/tests/land_concurrency.rs"
+              ],
+              "id": "candidate.land",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "git.fetch",
+                "git.push",
+                "gerrit.upload"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_git_ref_sync.rs",
+                "crates/vg-cli/tests/jj_gerrit_upload.rs"
+              ],
+              "id": "external.publish",
+              "status": "controlled"
+            }
+          ],
+          "write": [
+            "workspace.init",
+            "change.new",
+            "change.file",
+            "change.describe",
+            "change.snapshot",
+            "change.diffedit",
+            "change.materialize",
+            "change.duplicate",
+            "change.abandon",
+            "change.rebase",
+            "change.squash",
+            "change.split",
+            "op.restore",
+            "op.undo",
+            "land",
+            "admit.check",
+            "git.fetch",
+            "git.push",
+            "gerrit.upload"
+          ]
+        },
+        "workspaceImport": {
+          "colocated": true,
+          "command": "workspace.import",
+          "head_commit": "55277f2bcc3fbd03d93446540aff088b9b22531f",
+          "root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-b\\vg-workspace",
+          "schema": "versegit.vg-json/v1",
+          "snapshot": {
+            "change_id": "d9998046050ad40813d547d4e82b496f",
+            "operation_id": "744693ed6500b0f2c22cda0ea0c1a121a4e5527cfe76c7867d485e13d7161aff4c5144c4750f557b0b2cb0a30573691157a6125908879821d71340b43406b459",
+            "schema": "versegit.vg-json/v1",
+            "wc_commit_id": "50980da35e3af998eadea82aa290b34a43676f17",
+            "workspace_root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-b\\vg-workspace"
+          }
+        },
+        "change": {
+          "change_id": "d2192fccde4a51ce1d72b72edf3ad058",
+          "operation_id": "c2889b1e53d0cc9a50a7dbca5bf416391a1ec1eccaf7d913c6f31869a33ef2fdcf689ffabf06609cc88e2b6b05004c3428d22641de99151c49231f268c2c7dea",
+          "schema": "versegit.vg-json/v1",
+          "wc_commit_id": "c8fd4c5bd32cc8e8de778630aecf93c5fb383391",
+          "workspace_root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-b\\vg-workspace"
+        },
+        "snapshot": {
+          "change_id": "d2192fccde4a51ce1d72b72edf3ad058",
+          "operation_id": "864875a2f738ff0984a97d4fcb0ab1f88ed4ebe69232656a08906497c7606d4defef160233d4fe90b62a6210f9cae90ef9ccbaa0f5bf707e4cfbe08af02c1c4c",
+          "schema": "versegit.vg-json/v1",
+          "wc_commit_id": "6f9e04e7c0ab6bd056c2838f87ce41303e60b4c1",
+          "workspace_root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-b\\vg-workspace"
+        },
+        "sts11": {
+          "ok": true,
+          "protocol": "1.1",
+          "invalidRejected": 10,
+          "invalidTotal": 10,
+          "validPassed": 9,
+          "validTotal": 9
+        },
+        "sts20": {
+          "ok": true,
+          "protocol": "2.0",
+          "invalidRejected": 8,
+          "invalidTotal": 8,
+          "validPassed": 5,
+          "validTotal": 5
+        },
+        "bundledPythonPresent": false,
+        "standaloneJjPresent": false
+      },
+      "commands": [
+        {
+          "id": "vg-capabilities",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "capabilities",
+            "--json"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-b\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"compat\": {\n    \"git_only\": \"preserved\",\n    \"next\": \"preserved\",\n    \"package_names\": [\n      \"smart-test-sorter\",\n      \"smart_sorter\"\n    ],\n    \"sts_protocols\": [\n      \"1.1\",\n      \"2.0\"\n    ]\n  },\n  \"mcp_tools\": [\n    \"vg_capabilities\",\n    \"verdict\",\n    \"integration_status\",\n    \"who_touches\",\n    \"explain_conflict\",\n    \"declare_intent\",\n    \"basis_status\",\n    \"basis_watermark\"\n  ],\n  \"read\": [\n    \"workspace.root\",\n    \"change.status\",\n    \"change.log\",\n    \"verify.status\",\n    \"conflicts\",\n    \"basis.status\",\n    \"report\",\n    \"verdict\",\n    \"doctor\"\n  ],\n  \"safety\": {\n    \"default_enable\": false,\n    \"evidence_land_present\": true,\n    \"managed_opt_in\": true,\n    \"strict_admission_present\": true\n  },\n  \"schema\": \"versegit.capabilities/v1\",\n  \"verdict\": {\n    \"dimensions\": [\n      \"candidate\",\n      \"execution\",\n      \"evidence\",\n      \"freshness\",\n      \"risk\",\n      \"trial\"\n    ],\n    \"note\": \"六维各自独立呈现；admitted 是它们的合取，selected 不覆盖全集\",\n    \"read_surface\": {\n      \"observed_channels\": [\n        \"read\",\n        \"grep\",\n        \"glob\",\n        \"write\",\n        \"edit\"\n      ],\n      \"unobserved_channels\": [\n        \"bash\",\n        \"other-mcp\",\n        \"network\",\n        \"direct-fs\"\n      ]\n    },\n    \"schema\": \"versegit.verdict/v1\",\n    \"single_green_light\": false\n  },\n  \"workflows\": [\n    {\n      \"entries\": [\n        \"workspace.init\",\n        \"workspace.root\",\n        \"doctor\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_workspace_lifecycle.rs\",\n        \"crates/vg-cli/tests/jj_public_surface.rs\"\n      ],\n      \"id\": \"workspace\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.new\",\n        \"change.file\",\n        \"change.describe\",\n        \"change.snapshot\",\n        \"change.diffedit\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_change_lifecycle.rs\",\n        \"crates/vg-cli/tests/jj_diffedit.rs\"\n      ],\n      \"id\": \"change.edit\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.log\",\n        \"op.restore\",\n        \"op.undo\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_operation_restore.rs\",\n        \"crates/vg-cli/tests/jj_op_undo_redo.rs\",\n        \"crates/vg-cli/tests/jj_backup_restore.rs\"\n      ],\n      \"id\": \"history.recover\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"verify.status\",\n        \"verdict\",\n        \"basis.status\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_managed_plan.rs\",\n        \"crates/vg-cli/tests/jj_evidence_land.rs\",\n        \"crates/vg-cli/tests/jj_verdict.rs\"\n      ],\n      \"id\": \"validation.admit\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.materialize\",\n        \"land\",\n        \"report\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_managed_candidate.rs\",\n        \"crates/vg-cli/tests/jj_closed_loop.rs\",\n        \"crates/vg-cli/tests/land_concurrency.rs\"\n      ],\n      \"id\": \"candidate.land\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"git.fetch\",\n        \"git.push\",\n        \"gerrit.upload\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_git_ref_sync.rs\",\n        \"crates/vg-cli/tests/jj_gerrit_upload.rs\"\n      ],\n      \"id\": \"external.publish\",\n      \"status\": \"controlled\"\n    }\n  ],\n  \"write\": [\n    \"workspace.init\",\n    \"change.new\",\n    \"change.file\",\n    \"change.describe\",\n    \"change.snapshot\",\n    \"change.diffedit\",\n    \"change.materialize\",\n    \"change.duplicate\",\n    \"change.abandon\",\n    \"change.rebase\",\n    \"change.squash\",\n    \"change.split\",\n    \"op.restore\",\n    \"op.undo\",\n    \"land\",\n    \"admit.check\",\n    \"git.fetch\",\n    \"git.push\",\n    \"gerrit.upload\"\n  ]\n}\n",
+          "stderr": "",
+          "stdoutSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 53
+        },
+        {
+          "id": "vg-workspace-import",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "workspace",
+            "import",
+            "--root",
+            "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-b\\vg-workspace",
+            "--json"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-b\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"colocated\": true,\n  \"command\": \"workspace.import\",\n  \"head_commit\": \"55277f2bcc3fbd03d93446540aff088b9b22531f\",\n  \"root\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-b\\\\vg-workspace\",\n  \"schema\": \"versegit.vg-json/v1\",\n  \"snapshot\": {\n    \"change_id\": \"d9998046050ad40813d547d4e82b496f\",\n    \"operation_id\": \"744693ed6500b0f2c22cda0ea0c1a121a4e5527cfe76c7867d485e13d7161aff4c5144c4750f557b0b2cb0a30573691157a6125908879821d71340b43406b459\",\n    \"schema\": \"versegit.vg-json/v1\",\n    \"wc_commit_id\": \"50980da35e3af998eadea82aa290b34a43676f17\",\n    \"workspace_root\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-b\\\\vg-workspace\"\n  }\n}\n",
+          "stderr": "",
+          "stdoutSha256": "26496e685e9c2db2c31365c5d8b352284d3df1cc1c6b9d254737200ca7f569eb",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 662
+        },
+        {
+          "id": "vg-change-new",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "change",
+            "new",
+            "--root",
+            "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-b\\vg-workspace",
+            "--description",
+            "profile-b",
+            "--run-key",
+            "profile-b-change",
+            "--json"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-b\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"change_id\": \"d2192fccde4a51ce1d72b72edf3ad058\",\n  \"operation_id\": \"c2889b1e53d0cc9a50a7dbca5bf416391a1ec1eccaf7d913c6f31869a33ef2fdcf689ffabf06609cc88e2b6b05004c3428d22641de99151c49231f268c2c7dea\",\n  \"schema\": \"versegit.vg-json/v1\",\n  \"wc_commit_id\": \"c8fd4c5bd32cc8e8de778630aecf93c5fb383391\",\n  \"workspace_root\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-b\\\\vg-workspace\"\n}\n",
+          "stderr": "",
+          "stdoutSha256": "c96779b9f419c9dc4c57586ab418b45774337af6023d9744bd6a72c5ea06fec7",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 318
+        },
+        {
+          "id": "vg-change-snapshot",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "change",
+            "snapshot",
+            "--root",
+            "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-b\\vg-workspace",
+            "--description",
+            "profile-b snapshot",
+            "--run-key",
+            "profile-b-snapshot",
+            "--json"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-b\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"change_id\": \"d2192fccde4a51ce1d72b72edf3ad058\",\n  \"operation_id\": \"864875a2f738ff0984a97d4fcb0ab1f88ed4ebe69232656a08906497c7606d4defef160233d4fe90b62a6210f9cae90ef9ccbaa0f5bf707e4cfbe08af02c1c4c\",\n  \"schema\": \"versegit.vg-json/v1\",\n  \"wc_commit_id\": \"6f9e04e7c0ab6bd056c2838f87ce41303e60b4c1\",\n  \"workspace_root\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-b\\\\vg-workspace\"\n}\n",
+          "stderr": "",
+          "stdoutSha256": "d28a002d53d67a53873fdfa00eea531d3ff6abf3f8794c2b3d60106f537efc7d",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 214
+        },
+        {
+          "id": "sts-contract-1.1",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "--json",
+            "sts",
+            "contract",
+            "--dir",
+            "D:\\tmp\\tf0782-final-c00e-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0781\\inputs\\vg-sts\\v1"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-b\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"boundaries\": [\n    \"VG 只核验摘要与自身解析结果；版本口径按 manifest 声明的 version_policy\",\n    \"接收只固定契约与样例，不代表计划生成/执行入口已交付（那属 STS 的 plan_request/run_plan 入口）\",\n    \"本入口不执行来自计划的任何命令；plan/refusal 是数据，不是待执行的 shell\",\n    \"绑定只核身份链一致性（request_id/plan_id/target_identity/selection_scope/协议版本），不重算选择\"\n  ],\n  \"consumer\": \"VG:TF-0168\",\n  \"contract\": \"vg-sts\",\n  \"contract_status\": null,\n  \"declared_source_commit\": null,\n  \"digests\": {\n    \"matched\": 29,\n    \"mismatched\": [],\n    \"total\": 29\n  },\n  \"dir\": \"D:\\\\tmp\\\\tf0782-final-c00e-20261110\\\\harness\\\\specs\\\\fixtures\\\\coding-evaluation\\\\TF-0781\\\\inputs\\\\vg-sts\\\\v1\",\n  \"input_error\": false,\n  \"is_draft\": false,\n  \"mode\": \"consume\",\n  \"ok\": true,\n  \"produced_by\": \"STS:TF-0026\",\n  \"product_version\": \"0.1.0\",\n  \"protocol_version\": \"1.1\",\n  \"refusals\": [],\n  \"schema\": \"versegit.sts-contract-intake/v1\",\n  \"supported_protocol_versions\": [\n    \"1.0\",\n    \"1.1\"\n  ],\n  \"unregistered_files\": [],\n  \"version_policy\": \"digests-authoritative\",\n  \"vg_side_parse\": {\n    \"applicable\": true,\n    \"invalid_rejected\": 10,\n    \"invalid_total\": 10,\n    \"not_applicable_reason\": null,\n    \"pairs_invalid_rejected\": 1,\n    \"pairs_invalid_total\": 1,\n    \"pairs_valid_passed\": 1,\n    \"pairs_valid_total\": 1,\n    \"samples\": [\n      {\n        \"errors\": [],\n        \"file\": \"plan_full_fallback.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"plan_risk_decisions_stale.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"plan_selected_parametrized.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"refusal_collection_error.json\",\n        \"kind\": \"refusal\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_candidate_risk_cjk_path.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_commit_minimal.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_workspace_norisk.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"result_complete_pass.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"result_incomplete_budget_abort.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [\n          \"selection_scope=selected 但既无选中也无排除（空计划不得当作已规划）\"\n        ],\n        \"file\": \"plan_empty_selection.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"selection_scope=full 时 selected 必须等于 collected 全集\"\n        ],\n        \"file\": \"plan_full_scope_not_all.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"conservative_full_available=true 需同时满足 target_confirmable=true 与 attempted_collection.succeeded=true（未知目标或未收集到全集时不得声称可保守全量）\"\n        ],\n        \"file\": \"refusal_full_without_confirm.json\",\n        \"kind\": \"refusal\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"candidate 模式缺少 target.theirs_oid（两侧变更并集所需，不能只比第一父）\",\n          \"candidate 模式必须给出 target.candidate_tree_oid 或 candidate_commit_oid 作为候选内容身份（候选目录仅作定位，临时路径不能当唯一身份）\"\n        ],\n        \"file\": \"request_candidate_missing_theirs.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"identities.code_oid 缺失（缺失不得作为'无变化可安全跳过'的证明）\"\n        ],\n        \"file\": \"request_missing_code_oid.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"协议版本 \\\"0.9\\\" 不受支持（VG 只实现了 [\\\"1.0\\\", \\\"1.1\\\"]；该版本未定稿/未实现，见 TF-0188）——拒绝，且**不**拿已实现的版本的规则去判它\"\n        ],\n        \"file\": \"request_unknown_protocol_version.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"completeness=complete 但 not_executed 非空（计划内有测试未跑完，应记为 incomplete）\"\n        ],\n        \"file\": \"result_complete_but_not_executed.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"raw_exit_code=0 但 outcomes 中存在 failed/error（退出码与事实矛盾）\"\n        ],\n        \"file\": \"result_exit0_but_failure.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"completeness=incomplete 必须给出 incomplete_reason\"\n        ],\n        \"file\": \"result_incomplete_missing_reason.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"零执行不得报告为完整有效通过（executed 为空）\"\n        ],\n        \"file\": \"result_zero_exec_marked_pass.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"matched\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"wrong_candidate\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      }\n    ],\n    \"valid_passed\": 9,\n    \"valid_total\": 9\n  }\n}\n",
+          "stderr": "",
+          "stdoutSha256": "ef8f5396b870a7a234fa68648a42b0a4d5c72954e51dfc1caba3ad36c86595a3",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 51
+        },
+        {
+          "id": "sts-contract-2.0",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "--json",
+            "sts",
+            "contract",
+            "--dir",
+            "D:\\tmp\\tf0782-final-c00e-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0781\\inputs\\vg-sts\\v2"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-b\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"boundaries\": [\n    \"VG 只核验摘要与自身解析结果；版本口径按 manifest 声明的 version_policy\",\n    \"接收只固定契约与样例，不代表计划生成/执行入口已交付（那属 STS 的 plan_request/run_plan 入口）\",\n    \"本入口不执行来自计划的任何命令；plan/refusal 是数据，不是待执行的 shell\",\n    \"绑定只核身份链一致性（request_id/plan_id/target_identity/selection_scope/协议版本），不重算选择\"\n  ],\n  \"consumer\": \"VG\",\n  \"contract\": \"vg-sts\",\n  \"contract_status\": \"authoritative\",\n  \"declared_source_commit\": null,\n  \"digests\": {\n    \"matched\": 40,\n    \"mismatched\": [],\n    \"total\": 40\n  },\n  \"dir\": \"D:\\\\tmp\\\\tf0782-final-c00e-20261110\\\\harness\\\\specs\\\\fixtures\\\\coding-evaluation\\\\TF-0781\\\\inputs\\\\vg-sts\\\\v2\",\n  \"input_error\": false,\n  \"is_draft\": false,\n  \"mode\": \"consume\",\n  \"ok\": true,\n  \"produced_by\": \"STS:TF-0040\",\n  \"product_version\": \"0.1.0\",\n  \"protocol_version\": \"2.0\",\n  \"refusals\": [],\n  \"schema\": \"versegit.sts-contract-intake/v1\",\n  \"supported_protocol_versions\": [\n    \"2.0\"\n  ],\n  \"unregistered_files\": [],\n  \"version_policy\": \"digests-authoritative\",\n  \"vg_side_parse\": {\n    \"applicable\": true,\n    \"invalid_rejected\": 8,\n    \"invalid_total\": 8,\n    \"not_applicable_reason\": null,\n    \"pairs_invalid_rejected\": 6,\n    \"pairs_invalid_total\": 6,\n    \"pairs_valid_passed\": 1,\n    \"pairs_valid_total\": 1,\n    \"samples\": [\n      {\n        \"errors\": [],\n        \"file\": \"plan_with_full_content_identity.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"refusal_content_unbound.json\",\n        \"kind\": \"refusal\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_candidate_full_content_identity.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_pure_source_no_config_data.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"result_with_execution_identity.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [\n          \"R10-order-is-permutation-of-selected: order 不是 selected 的排列（order=1 项、selected=2 项）\"\n        ],\n        \"file\": \"plan_order_not_permutation_of_selected.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R6-full-only-when-content-confirmed: 内容未确认（或没收集到全集）却声称可保守全量\",\n          \"R7-unconfirmed-must-be-listed: 内容未确认，但没列出没确认到哪一项\"\n        ],\n        \"file\": \"refusal_full_available_without_content.json\",\n        \"kind\": \"refusal\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R2-label-is-not-identity: content_identity.value 是短 hex（\\\"d444444\\\"）——短标签只能作展示，不能当完整身份\"\n        ],\n        \"file\": \"request_bare_short_content_value.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R4-digest-carries-algorithm: \\\"calc.py\\\" 的摘要 \\\"deadbeef\\\" 不符合 '<算法>:<hex>'\"\n        ],\n        \"file\": \"request_digest_without_algorithm.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R3-manifest-covers-config-and-data: 声明了 `config_data_absent: true`，但清单里**确实有** config/data 条目——自相矛盾，必拒\"\n        ],\n        \"file\": \"request_manifest_declares_absent_but_has_config.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\\\"source\\\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\\\"config_data_absent\\\": true`（「漏列了」与「真没有」必须能分辨）\"\n        ],\n        \"file\": \"request_manifest_only_source_entry.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"出现未声明字段 \\\"generator_note\\\"（additionalProperties=false）\"\n        ],\n        \"file\": \"request_unknown_field.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R9-invalid-or-unconfirmed-cannot-be-valid: 观察为 before=confirmed/after=unconfirmed 却声称 valid\"\n        ],\n        \"file\": \"result_execution_end_unconfirmed_but_valid.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"matched\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/valid\"\n      },\n      {\n        \"errors\": [\n          \"R12-environment-identity-must-match-plan: 执行环境与计划不一致（dependencies_digest=\\\"sha256:2222222222222222222222222222222222222222222222222222222222222222\\\" vs 计划期望 \\\"sha256:1111111111111111111111111111111111111111111111111111111111111111\\\"）\"\n        ],\n        \"file\": \"dependencies_identity_drift\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"environment_identity_drift/request.json 自身不合法：R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\\\"source\\\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\\\"config_data_absent\\\": true`（「漏列了」与「真没有」必须能分辨）\",\n          \"R12-environment-identity-must-match-plan: 执行环境与计划不一致（python=\\\"3.12.1\\\" vs 计划期望 \\\"3.10.3\\\"）\",\n          \"R12-environment-identity-must-match-plan: 执行环境与计划不一致（platform=\\\"linux\\\" vs 计划期望 \\\"win32\\\"）\"\n        ],\n        \"file\": \"environment_identity_drift\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"R12-environment-identity-must-match-plan: 计划声明了 `expected_environment_identity`，但 result **没有报** `environment_identity`——缺报告 ≠ 一致\"\n        ],\n        \"file\": \"environment_not_reported\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"execution_identity_drift/request.json 自身不合法：R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\\\"source\\\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\\\"config_data_absent\\\": true`（「漏列了」与「真没有」必须能分辨）\",\n          \"R9-invalid-or-unconfirmed-cannot-be-valid: 执行身份与计划不一致（execution_id=\\\"exec-someone-else-9\\\" vs 计划期望 \\\"exec-expected-1\\\"）\",\n          \"R9-invalid-or-unconfirmed-cannot-be-valid: 执行身份与计划不一致（interpreter=\\\"D:/venvs/other/python.exe\\\" vs 计划期望 \\\"D:/venvs/example/python.exe\\\"）\",\n          \"R12-environment-identity-must-match-plan: 计划声明了 `expected_environment_identity`，但 result **没有报** `environment_identity`——缺报告 ≠ 一致\"\n        ],\n        \"file\": \"execution_identity_drift\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"R11-cross-document-binding: result.content_identity.value \\\"e555555555555555555555555555555555555555\\\" 与 plan 的 \\\"d444444444444444444444444444444444444444\\\" 不一致（完整内容身份必须逐项相同）\",\n          \"R11-cross-document-binding: result.content_identity.manifest_digest \\\"sha256:cccc00000000000000000000000000000000000000000000000000000000000c\\\" 与 plan 的 \\\"sha256:bbbb00000000000000000000000000000000000000000000000000000000000b\\\" 不一致（完整内容身份必须逐项相同）\",\n          \"R12-environment-identity-must-match-plan: 计划声明了 `expected_environment_identity`，但 result **没有报** `environment_identity`——缺报告 ≠ 一致\"\n        ],\n        \"file\": \"same_label_different_content\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"same_value_different_kind/request.json 自身不合法：R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\\\"source\\\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\\\"config_data_absent\\\": true`（「漏列了」与「真没有」必须能分辨）\",\n          \"R11-cross-document-binding: request.content_identity.kind \\\"git-tree\\\" 与 plan 的 \\\"git-commit\\\" 不一致（完整内容身份必须逐项相同）\"\n        ],\n        \"file\": \"same_value_different_kind\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      }\n    ],\n    \"valid_passed\": 5,\n    \"valid_total\": 5\n  }\n}\n",
+          "stderr": "",
+          "stdoutSha256": "f92b634288dd4f943a2b36863bff81ff69f39dad66a04e5f1921329af7ca6285",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 50
+        }
+      ],
+      "rawArtifact": "raw-profiles/profile-b.json"
+    },
+    {
+      "profileId": "profile-c",
+      "status": "pass",
+      "driven_by": "agent",
+      "actor": "codex-coding-package-evaluator",
+      "realHumanEvidence": false,
+      "roots": {
+        "userData": "D:\\tmp\\tf0782-final-c00e-20261110\\.tmp\\e2e-runs\\verse-claw-e2e-run-siCd6g\\verse-claw-e2e-user-data-jvIFP5\\profile-c-user-data",
+        "home": "D:\\tmp\\tf0782-final-c00e-20261110\\.tmp\\e2e-runs\\verse-claw-e2e-run-siCd6g\\verse-claw-e2e-home-GxaDov\\profile-c",
+        "state": "D:\\tmp\\tf0782-final-c00e-20261110\\.tmp\\e2e-runs\\verse-claw-e2e-run-siCd6g\\verse-claw-e2e-user-data-jvIFP5\\profile-c-user-data\\openclaw-state",
+        "workspace": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\workspace"
+      },
+      "app": {
+        "isPackaged": true,
+        "appPath": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\app.asar",
+        "resourcesPath": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources",
+        "version": "0.4.9-alpha.0"
+      },
+      "sourceDetached": true,
+      "packageExecutableSha256": "a428e316e383f599973c331d1b28ce829415625db9a5ca2ca5c72a96a7ced3a1",
+      "coding": {
+        "worktreeBackend": "git-worktree",
+        "verifiedCheckout": true,
+        "terminalStatus": "ok",
+        "verificationObserved": true,
+        "scratchRemoved": true,
+        "mathSha256": "754052599694724afaf234c67ab548b34584aa20a91a46e3f61ecfdca6f5383e",
+        "providerAnomalies": [],
+        "providerRequests": 7,
+        "workerToolResults": {
+          "write": "Successfully wrote 65 bytes to math.js\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+          "verify": "Warning: background execution is disabled; running synchronously and returning only after the process exits.\n\n\n\nPACKAGED_VERIFY_PASS"
+        },
+        "undoToolResults": {
+          "write": "Successfully wrote 10 bytes to scratch.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+          "undo": "{\n  \"ok\": true,\n  \"restored\": [\n    \"scratch.txt\"\n  ],\n  \"errors\": [],\n  \"journalDir\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-c\\\\workspace\\\\.openclaw\\\\journal\\\\cb5697da-1463-436d-9e4e-36cabdf3a5e0\",\n  \"remainingEntries\": 0\n}"
+        }
+      },
+      "vg": {
+        "capabilities": {
+          "compat": {
+            "git_only": "preserved",
+            "next": "preserved",
+            "package_names": [
+              "smart-test-sorter",
+              "smart_sorter"
+            ],
+            "sts_protocols": [
+              "1.1",
+              "2.0"
+            ]
+          },
+          "mcp_tools": [
+            "vg_capabilities",
+            "verdict",
+            "integration_status",
+            "who_touches",
+            "explain_conflict",
+            "declare_intent",
+            "basis_status",
+            "basis_watermark"
+          ],
+          "read": [
+            "workspace.root",
+            "change.status",
+            "change.log",
+            "verify.status",
+            "conflicts",
+            "basis.status",
+            "report",
+            "verdict",
+            "doctor"
+          ],
+          "safety": {
+            "default_enable": false,
+            "evidence_land_present": true,
+            "managed_opt_in": true,
+            "strict_admission_present": true
+          },
+          "schema": "versegit.capabilities/v1",
+          "verdict": {
+            "dimensions": [
+              "candidate",
+              "execution",
+              "evidence",
+              "freshness",
+              "risk",
+              "trial"
+            ],
+            "note": "六维各自独立呈现；admitted 是它们的合取，selected 不覆盖全集",
+            "read_surface": {
+              "observed_channels": [
+                "read",
+                "grep",
+                "glob",
+                "write",
+                "edit"
+              ],
+              "unobserved_channels": [
+                "bash",
+                "other-mcp",
+                "network",
+                "direct-fs"
+              ]
+            },
+            "schema": "versegit.verdict/v1",
+            "single_green_light": false
+          },
+          "workflows": [
+            {
+              "entries": [
+                "workspace.init",
+                "workspace.root",
+                "doctor"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_workspace_lifecycle.rs",
+                "crates/vg-cli/tests/jj_public_surface.rs"
+              ],
+              "id": "workspace",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "change.new",
+                "change.file",
+                "change.describe",
+                "change.snapshot",
+                "change.diffedit"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_change_lifecycle.rs",
+                "crates/vg-cli/tests/jj_diffedit.rs"
+              ],
+              "id": "change.edit",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "change.log",
+                "op.restore",
+                "op.undo"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_operation_restore.rs",
+                "crates/vg-cli/tests/jj_op_undo_redo.rs",
+                "crates/vg-cli/tests/jj_backup_restore.rs"
+              ],
+              "id": "history.recover",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "verify.status",
+                "verdict",
+                "basis.status"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_managed_plan.rs",
+                "crates/vg-cli/tests/jj_evidence_land.rs",
+                "crates/vg-cli/tests/jj_verdict.rs"
+              ],
+              "id": "validation.admit",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "change.materialize",
+                "land",
+                "report"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_managed_candidate.rs",
+                "crates/vg-cli/tests/jj_closed_loop.rs",
+                "crates/vg-cli/tests/land_concurrency.rs"
+              ],
+              "id": "candidate.land",
+              "status": "verified"
+            },
+            {
+              "entries": [
+                "git.fetch",
+                "git.push",
+                "gerrit.upload"
+              ],
+              "evidence": [
+                "crates/vg-cli/tests/jj_git_ref_sync.rs",
+                "crates/vg-cli/tests/jj_gerrit_upload.rs"
+              ],
+              "id": "external.publish",
+              "status": "controlled"
+            }
+          ],
+          "write": [
+            "workspace.init",
+            "change.new",
+            "change.file",
+            "change.describe",
+            "change.snapshot",
+            "change.diffedit",
+            "change.materialize",
+            "change.duplicate",
+            "change.abandon",
+            "change.rebase",
+            "change.squash",
+            "change.split",
+            "op.restore",
+            "op.undo",
+            "land",
+            "admit.check",
+            "git.fetch",
+            "git.push",
+            "gerrit.upload"
+          ]
+        },
+        "workspaceImport": {
+          "colocated": true,
+          "command": "workspace.import",
+          "head_commit": "40a83df09753d90796f7d39f78d2f954e4fcd666",
+          "root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+          "schema": "versegit.vg-json/v1",
+          "snapshot": {
+            "change_id": "91e52dfbab9d45e5082b907718e36fcd",
+            "operation_id": "935612a6aad3f8371d5786a2b868158b86e30ee7d2d25a746b4de7aaf757d04366ad727a3a3bdff2c63a2da989d7d497f5f78fc2260b81d0c0236e6fc66734e4",
+            "schema": "versegit.vg-json/v1",
+            "wc_commit_id": "8e08b0867386e5e8c2a18f7a6e881d1fd4d24cab",
+            "workspace_root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace"
+          }
+        },
+        "change": {
+          "change_id": "146aeb806350de468ff9122879dd8ef6",
+          "operation_id": "2ba5ec748d6a285c4a186de99b2c15ed8819381cae25b06b3eb371755eaf645fb2924eaaa48a0afccc4cd97009cc0ec12ebd6115e2fb44df6a24f4c313f57998",
+          "schema": "versegit.vg-json/v1",
+          "wc_commit_id": "f8c6e5c42aad4514d674385b0421ff30e351219e",
+          "workspace_root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace"
+        },
+        "snapshot": {
+          "change_id": "146aeb806350de468ff9122879dd8ef6",
+          "operation_id": "d6a13554afcfeb06a8fbc9e6d3cbaf139609b10487aeba60f5c3724866d7a07ffbe182cf086c51cd1d483453d1d9981803ca7c2c6b85840b0a25cb14c200ed96",
+          "schema": "versegit.vg-json/v1",
+          "wc_commit_id": "48a2b28145eb48ed9f0b7262b81f06fa090e2d2a",
+          "workspace_root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace"
+        },
+        "sts11": {
+          "ok": true,
+          "protocol": "1.1",
+          "invalidRejected": 10,
+          "invalidTotal": 10,
+          "validPassed": 9,
+          "validTotal": 9
+        },
+        "sts20": {
+          "ok": true,
+          "protocol": "2.0",
+          "invalidRejected": 8,
+          "invalidTotal": 8,
+          "validPassed": 5,
+          "validTotal": 5
+        },
+        "bundledPythonPresent": false,
+        "standaloneJjPresent": false
+      },
+      "commands": [
+        {
+          "id": "vg-capabilities",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "capabilities",
+            "--json"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"compat\": {\n    \"git_only\": \"preserved\",\n    \"next\": \"preserved\",\n    \"package_names\": [\n      \"smart-test-sorter\",\n      \"smart_sorter\"\n    ],\n    \"sts_protocols\": [\n      \"1.1\",\n      \"2.0\"\n    ]\n  },\n  \"mcp_tools\": [\n    \"vg_capabilities\",\n    \"verdict\",\n    \"integration_status\",\n    \"who_touches\",\n    \"explain_conflict\",\n    \"declare_intent\",\n    \"basis_status\",\n    \"basis_watermark\"\n  ],\n  \"read\": [\n    \"workspace.root\",\n    \"change.status\",\n    \"change.log\",\n    \"verify.status\",\n    \"conflicts\",\n    \"basis.status\",\n    \"report\",\n    \"verdict\",\n    \"doctor\"\n  ],\n  \"safety\": {\n    \"default_enable\": false,\n    \"evidence_land_present\": true,\n    \"managed_opt_in\": true,\n    \"strict_admission_present\": true\n  },\n  \"schema\": \"versegit.capabilities/v1\",\n  \"verdict\": {\n    \"dimensions\": [\n      \"candidate\",\n      \"execution\",\n      \"evidence\",\n      \"freshness\",\n      \"risk\",\n      \"trial\"\n    ],\n    \"note\": \"六维各自独立呈现；admitted 是它们的合取，selected 不覆盖全集\",\n    \"read_surface\": {\n      \"observed_channels\": [\n        \"read\",\n        \"grep\",\n        \"glob\",\n        \"write\",\n        \"edit\"\n      ],\n      \"unobserved_channels\": [\n        \"bash\",\n        \"other-mcp\",\n        \"network\",\n        \"direct-fs\"\n      ]\n    },\n    \"schema\": \"versegit.verdict/v1\",\n    \"single_green_light\": false\n  },\n  \"workflows\": [\n    {\n      \"entries\": [\n        \"workspace.init\",\n        \"workspace.root\",\n        \"doctor\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_workspace_lifecycle.rs\",\n        \"crates/vg-cli/tests/jj_public_surface.rs\"\n      ],\n      \"id\": \"workspace\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.new\",\n        \"change.file\",\n        \"change.describe\",\n        \"change.snapshot\",\n        \"change.diffedit\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_change_lifecycle.rs\",\n        \"crates/vg-cli/tests/jj_diffedit.rs\"\n      ],\n      \"id\": \"change.edit\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.log\",\n        \"op.restore\",\n        \"op.undo\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_operation_restore.rs\",\n        \"crates/vg-cli/tests/jj_op_undo_redo.rs\",\n        \"crates/vg-cli/tests/jj_backup_restore.rs\"\n      ],\n      \"id\": \"history.recover\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"verify.status\",\n        \"verdict\",\n        \"basis.status\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_managed_plan.rs\",\n        \"crates/vg-cli/tests/jj_evidence_land.rs\",\n        \"crates/vg-cli/tests/jj_verdict.rs\"\n      ],\n      \"id\": \"validation.admit\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.materialize\",\n        \"land\",\n        \"report\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_managed_candidate.rs\",\n        \"crates/vg-cli/tests/jj_closed_loop.rs\",\n        \"crates/vg-cli/tests/land_concurrency.rs\"\n      ],\n      \"id\": \"candidate.land\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"git.fetch\",\n        \"git.push\",\n        \"gerrit.upload\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_git_ref_sync.rs\",\n        \"crates/vg-cli/tests/jj_gerrit_upload.rs\"\n      ],\n      \"id\": \"external.publish\",\n      \"status\": \"controlled\"\n    }\n  ],\n  \"write\": [\n    \"workspace.init\",\n    \"change.new\",\n    \"change.file\",\n    \"change.describe\",\n    \"change.snapshot\",\n    \"change.diffedit\",\n    \"change.materialize\",\n    \"change.duplicate\",\n    \"change.abandon\",\n    \"change.rebase\",\n    \"change.squash\",\n    \"change.split\",\n    \"op.restore\",\n    \"op.undo\",\n    \"land\",\n    \"admit.check\",\n    \"git.fetch\",\n    \"git.push\",\n    \"gerrit.upload\"\n  ]\n}\n",
+          "stderr": "",
+          "stdoutSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 45
+        },
+        {
+          "id": "vg-workspace-import",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "workspace",
+            "import",
+            "--root",
+            "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+            "--json"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"colocated\": true,\n  \"command\": \"workspace.import\",\n  \"head_commit\": \"40a83df09753d90796f7d39f78d2f954e4fcd666\",\n  \"root\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-c\\\\vg-workspace\",\n  \"schema\": \"versegit.vg-json/v1\",\n  \"snapshot\": {\n    \"change_id\": \"91e52dfbab9d45e5082b907718e36fcd\",\n    \"operation_id\": \"935612a6aad3f8371d5786a2b868158b86e30ee7d2d25a746b4de7aaf757d04366ad727a3a3bdff2c63a2da989d7d497f5f78fc2260b81d0c0236e6fc66734e4\",\n    \"schema\": \"versegit.vg-json/v1\",\n    \"wc_commit_id\": \"8e08b0867386e5e8c2a18f7a6e881d1fd4d24cab\",\n    \"workspace_root\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-c\\\\vg-workspace\"\n  }\n}\n",
+          "stderr": "",
+          "stdoutSha256": "51c7f6efcfe4c4264f835f1b0f515b7b42e67d0488e4adad0289533f64a2b10e",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 538
+        },
+        {
+          "id": "vg-change-new",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "change",
+            "new",
+            "--root",
+            "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+            "--description",
+            "profile-c",
+            "--run-key",
+            "profile-c-change",
+            "--json"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"change_id\": \"146aeb806350de468ff9122879dd8ef6\",\n  \"operation_id\": \"2ba5ec748d6a285c4a186de99b2c15ed8819381cae25b06b3eb371755eaf645fb2924eaaa48a0afccc4cd97009cc0ec12ebd6115e2fb44df6a24f4c313f57998\",\n  \"schema\": \"versegit.vg-json/v1\",\n  \"wc_commit_id\": \"f8c6e5c42aad4514d674385b0421ff30e351219e\",\n  \"workspace_root\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-c\\\\vg-workspace\"\n}\n",
+          "stderr": "",
+          "stdoutSha256": "b8705824b8b896a974794fbbf1f5ae3b69100950d355f799facead1f6a246550",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 227
+        },
+        {
+          "id": "vg-change-snapshot",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "change",
+            "snapshot",
+            "--root",
+            "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+            "--description",
+            "profile-c snapshot",
+            "--run-key",
+            "profile-c-snapshot",
+            "--json"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"change_id\": \"146aeb806350de468ff9122879dd8ef6\",\n  \"operation_id\": \"d6a13554afcfeb06a8fbc9e6d3cbaf139609b10487aeba60f5c3724866d7a07ffbe182cf086c51cd1d483453d1d9981803ca7c2c6b85840b0a25cb14c200ed96\",\n  \"schema\": \"versegit.vg-json/v1\",\n  \"wc_commit_id\": \"48a2b28145eb48ed9f0b7262b81f06fa090e2d2a\",\n  \"workspace_root\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-c\\\\vg-workspace\"\n}\n",
+          "stderr": "",
+          "stdoutSha256": "48893a211e3c293bcfcbf5e39c04f01d46f0e09a78449fd419b896aca53474b3",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 173
+        },
+        {
+          "id": "sts-contract-1.1",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "--json",
+            "sts",
+            "contract",
+            "--dir",
+            "D:\\tmp\\tf0782-final-c00e-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0781\\inputs\\vg-sts\\v1"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"boundaries\": [\n    \"VG 只核验摘要与自身解析结果；版本口径按 manifest 声明的 version_policy\",\n    \"接收只固定契约与样例，不代表计划生成/执行入口已交付（那属 STS 的 plan_request/run_plan 入口）\",\n    \"本入口不执行来自计划的任何命令；plan/refusal 是数据，不是待执行的 shell\",\n    \"绑定只核身份链一致性（request_id/plan_id/target_identity/selection_scope/协议版本），不重算选择\"\n  ],\n  \"consumer\": \"VG:TF-0168\",\n  \"contract\": \"vg-sts\",\n  \"contract_status\": null,\n  \"declared_source_commit\": null,\n  \"digests\": {\n    \"matched\": 29,\n    \"mismatched\": [],\n    \"total\": 29\n  },\n  \"dir\": \"D:\\\\tmp\\\\tf0782-final-c00e-20261110\\\\harness\\\\specs\\\\fixtures\\\\coding-evaluation\\\\TF-0781\\\\inputs\\\\vg-sts\\\\v1\",\n  \"input_error\": false,\n  \"is_draft\": false,\n  \"mode\": \"consume\",\n  \"ok\": true,\n  \"produced_by\": \"STS:TF-0026\",\n  \"product_version\": \"0.1.0\",\n  \"protocol_version\": \"1.1\",\n  \"refusals\": [],\n  \"schema\": \"versegit.sts-contract-intake/v1\",\n  \"supported_protocol_versions\": [\n    \"1.0\",\n    \"1.1\"\n  ],\n  \"unregistered_files\": [],\n  \"version_policy\": \"digests-authoritative\",\n  \"vg_side_parse\": {\n    \"applicable\": true,\n    \"invalid_rejected\": 10,\n    \"invalid_total\": 10,\n    \"not_applicable_reason\": null,\n    \"pairs_invalid_rejected\": 1,\n    \"pairs_invalid_total\": 1,\n    \"pairs_valid_passed\": 1,\n    \"pairs_valid_total\": 1,\n    \"samples\": [\n      {\n        \"errors\": [],\n        \"file\": \"plan_full_fallback.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"plan_risk_decisions_stale.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"plan_selected_parametrized.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"refusal_collection_error.json\",\n        \"kind\": \"refusal\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_candidate_risk_cjk_path.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_commit_minimal.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_workspace_norisk.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"result_complete_pass.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"result_incomplete_budget_abort.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [\n          \"selection_scope=selected 但既无选中也无排除（空计划不得当作已规划）\"\n        ],\n        \"file\": \"plan_empty_selection.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"selection_scope=full 时 selected 必须等于 collected 全集\"\n        ],\n        \"file\": \"plan_full_scope_not_all.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"conservative_full_available=true 需同时满足 target_confirmable=true 与 attempted_collection.succeeded=true（未知目标或未收集到全集时不得声称可保守全量）\"\n        ],\n        \"file\": \"refusal_full_without_confirm.json\",\n        \"kind\": \"refusal\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"candidate 模式缺少 target.theirs_oid（两侧变更并集所需，不能只比第一父）\",\n          \"candidate 模式必须给出 target.candidate_tree_oid 或 candidate_commit_oid 作为候选内容身份（候选目录仅作定位，临时路径不能当唯一身份）\"\n        ],\n        \"file\": \"request_candidate_missing_theirs.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"identities.code_oid 缺失（缺失不得作为'无变化可安全跳过'的证明）\"\n        ],\n        \"file\": \"request_missing_code_oid.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"协议版本 \\\"0.9\\\" 不受支持（VG 只实现了 [\\\"1.0\\\", \\\"1.1\\\"]；该版本未定稿/未实现，见 TF-0188）——拒绝，且**不**拿已实现的版本的规则去判它\"\n        ],\n        \"file\": \"request_unknown_protocol_version.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"completeness=complete 但 not_executed 非空（计划内有测试未跑完，应记为 incomplete）\"\n        ],\n        \"file\": \"result_complete_but_not_executed.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"raw_exit_code=0 但 outcomes 中存在 failed/error（退出码与事实矛盾）\"\n        ],\n        \"file\": \"result_exit0_but_failure.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"completeness=incomplete 必须给出 incomplete_reason\"\n        ],\n        \"file\": \"result_incomplete_missing_reason.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"零执行不得报告为完整有效通过（executed 为空）\"\n        ],\n        \"file\": \"result_zero_exec_marked_pass.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"matched\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"wrong_candidate\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      }\n    ],\n    \"valid_passed\": 9,\n    \"valid_total\": 9\n  }\n}\n",
+          "stderr": "",
+          "stdoutSha256": "ef8f5396b870a7a234fa68648a42b0a4d5c72954e51dfc1caba3ad36c86595a3",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 37
+        },
+        {
+          "id": "sts-contract-2.0",
+          "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+          "argv": [
+            "--json",
+            "sts",
+            "contract",
+            "--dir",
+            "D:\\tmp\\tf0782-final-c00e-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0781\\inputs\\vg-sts\\v2"
+          ],
+          "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+          "exitCode": 0,
+          "expectedExitCode": 0,
+          "waitedForExit": true,
+          "stdout": "{\n  \"boundaries\": [\n    \"VG 只核验摘要与自身解析结果；版本口径按 manifest 声明的 version_policy\",\n    \"接收只固定契约与样例，不代表计划生成/执行入口已交付（那属 STS 的 plan_request/run_plan 入口）\",\n    \"本入口不执行来自计划的任何命令；plan/refusal 是数据，不是待执行的 shell\",\n    \"绑定只核身份链一致性（request_id/plan_id/target_identity/selection_scope/协议版本），不重算选择\"\n  ],\n  \"consumer\": \"VG\",\n  \"contract\": \"vg-sts\",\n  \"contract_status\": \"authoritative\",\n  \"declared_source_commit\": null,\n  \"digests\": {\n    \"matched\": 40,\n    \"mismatched\": [],\n    \"total\": 40\n  },\n  \"dir\": \"D:\\\\tmp\\\\tf0782-final-c00e-20261110\\\\harness\\\\specs\\\\fixtures\\\\coding-evaluation\\\\TF-0781\\\\inputs\\\\vg-sts\\\\v2\",\n  \"input_error\": false,\n  \"is_draft\": false,\n  \"mode\": \"consume\",\n  \"ok\": true,\n  \"produced_by\": \"STS:TF-0040\",\n  \"product_version\": \"0.1.0\",\n  \"protocol_version\": \"2.0\",\n  \"refusals\": [],\n  \"schema\": \"versegit.sts-contract-intake/v1\",\n  \"supported_protocol_versions\": [\n    \"2.0\"\n  ],\n  \"unregistered_files\": [],\n  \"version_policy\": \"digests-authoritative\",\n  \"vg_side_parse\": {\n    \"applicable\": true,\n    \"invalid_rejected\": 8,\n    \"invalid_total\": 8,\n    \"not_applicable_reason\": null,\n    \"pairs_invalid_rejected\": 6,\n    \"pairs_invalid_total\": 6,\n    \"pairs_valid_passed\": 1,\n    \"pairs_valid_total\": 1,\n    \"samples\": [\n      {\n        \"errors\": [],\n        \"file\": \"plan_with_full_content_identity.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"refusal_content_unbound.json\",\n        \"kind\": \"refusal\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_candidate_full_content_identity.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_pure_source_no_config_data.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"result_with_execution_identity.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [\n          \"R10-order-is-permutation-of-selected: order 不是 selected 的排列（order=1 项、selected=2 项）\"\n        ],\n        \"file\": \"plan_order_not_permutation_of_selected.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R6-full-only-when-content-confirmed: 内容未确认（或没收集到全集）却声称可保守全量\",\n          \"R7-unconfirmed-must-be-listed: 内容未确认，但没列出没确认到哪一项\"\n        ],\n        \"file\": \"refusal_full_available_without_content.json\",\n        \"kind\": \"refusal\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R2-label-is-not-identity: content_identity.value 是短 hex（\\\"d444444\\\"）——短标签只能作展示，不能当完整身份\"\n        ],\n        \"file\": \"request_bare_short_content_value.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R4-digest-carries-algorithm: \\\"calc.py\\\" 的摘要 \\\"deadbeef\\\" 不符合 '<算法>:<hex>'\"\n        ],\n        \"file\": \"request_digest_without_algorithm.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R3-manifest-covers-config-and-data: 声明了 `config_data_absent: true`，但清单里**确实有** config/data 条目——自相矛盾，必拒\"\n        ],\n        \"file\": \"request_manifest_declares_absent_but_has_config.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\\\"source\\\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\\\"config_data_absent\\\": true`（「漏列了」与「真没有」必须能分辨）\"\n        ],\n        \"file\": \"request_manifest_only_source_entry.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"出现未声明字段 \\\"generator_note\\\"（additionalProperties=false）\"\n        ],\n        \"file\": \"request_unknown_field.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R9-invalid-or-unconfirmed-cannot-be-valid: 观察为 before=confirmed/after=unconfirmed 却声称 valid\"\n        ],\n        \"file\": \"result_execution_end_unconfirmed_but_valid.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"matched\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/valid\"\n      },\n      {\n        \"errors\": [\n          \"R12-environment-identity-must-match-plan: 执行环境与计划不一致（dependencies_digest=\\\"sha256:2222222222222222222222222222222222222222222222222222222222222222\\\" vs 计划期望 \\\"sha256:1111111111111111111111111111111111111111111111111111111111111111\\\"）\"\n        ],\n        \"file\": \"dependencies_identity_drift\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"environment_identity_drift/request.json 自身不合法：R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\\\"source\\\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\\\"config_data_absent\\\": true`（「漏列了」与「真没有」必须能分辨）\",\n          \"R12-environment-identity-must-match-plan: 执行环境与计划不一致（python=\\\"3.12.1\\\" vs 计划期望 \\\"3.10.3\\\"）\",\n          \"R12-environment-identity-must-match-plan: 执行环境与计划不一致（platform=\\\"linux\\\" vs 计划期望 \\\"win32\\\"）\"\n        ],\n        \"file\": \"environment_identity_drift\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"R12-environment-identity-must-match-plan: 计划声明了 `expected_environment_identity`，但 result **没有报** `environment_identity`——缺报告 ≠ 一致\"\n        ],\n        \"file\": \"environment_not_reported\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"execution_identity_drift/request.json 自身不合法：R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\\\"source\\\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\\\"config_data_absent\\\": true`（「漏列了」与「真没有」必须能分辨）\",\n          \"R9-invalid-or-unconfirmed-cannot-be-valid: 执行身份与计划不一致（execution_id=\\\"exec-someone-else-9\\\" vs 计划期望 \\\"exec-expected-1\\\"）\",\n          \"R9-invalid-or-unconfirmed-cannot-be-valid: 执行身份与计划不一致（interpreter=\\\"D:/venvs/other/python.exe\\\" vs 计划期望 \\\"D:/venvs/example/python.exe\\\"）\",\n          \"R12-environment-identity-must-match-plan: 计划声明了 `expected_environment_identity`，但 result **没有报** `environment_identity`——缺报告 ≠ 一致\"\n        ],\n        \"file\": \"execution_identity_drift\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"R11-cross-document-binding: result.content_identity.value \\\"e555555555555555555555555555555555555555\\\" 与 plan 的 \\\"d444444444444444444444444444444444444444\\\" 不一致（完整内容身份必须逐项相同）\",\n          \"R11-cross-document-binding: result.content_identity.manifest_digest \\\"sha256:cccc00000000000000000000000000000000000000000000000000000000000c\\\" 与 plan 的 \\\"sha256:bbbb00000000000000000000000000000000000000000000000000000000000b\\\" 不一致（完整内容身份必须逐项相同）\",\n          \"R12-environment-identity-must-match-plan: 计划声明了 `expected_environment_identity`，但 result **没有报** `environment_identity`——缺报告 ≠ 一致\"\n        ],\n        \"file\": \"same_label_different_content\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"same_value_different_kind/request.json 自身不合法：R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\\\"source\\\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\\\"config_data_absent\\\": true`（「漏列了」与「真没有」必须能分辨）\",\n          \"R11-cross-document-binding: request.content_identity.kind \\\"git-tree\\\" 与 plan 的 \\\"git-commit\\\" 不一致（完整内容身份必须逐项相同）\"\n        ],\n        \"file\": \"same_value_different_kind\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      }\n    ],\n    \"valid_passed\": 5,\n    \"valid_total\": 5\n  }\n}\n",
+          "stderr": "",
+          "stdoutSha256": "f92b634288dd4f943a2b36863bff81ff69f39dad66a04e5f1921329af7ca6285",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wallMs": 44
+        }
+      ],
+      "rawArtifact": "raw-profiles/profile-c.json"
+    }
+  ],
+  "checks": {
+    "threeIndependentProfiles": true,
+    "packagedApplication": true,
+    "sourceDetached": true,
+    "codingWorktree": true,
+    "verificationObserved": true,
+    "undoRestored": true,
+    "vgJjPassed": true,
+    "stsContractsPassed": true,
+    "defaultsOff": true,
+    "installerNotRun": true,
+    "targetedCommandsPassed": true,
+    "processSurvivors": 0,
+    "cleanCandidate": true
+  },
+  "commands": [
+    {
+      "id": "package-build",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "corepack pnpm run package"
+      ],
+      "cwd": "D:\\tmp\\tf0782-final-c00e-20261110",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "wallSeconds": 799.1815145,
+      "stdoutArtifact": "outputs/package-build.stdout.bin",
+      "stderrArtifact": "outputs/package-build.stderr.bin",
+      "stdoutSha256": "ca0b841121b7019df8c8370d6f64b8be7168206a4d83be1b2bde9268c2207db5",
+      "stderrSha256": "aa1469aab37838bc459a2f40d13180fa4871a015d94bb95193fbe72c956664e3"
+    },
+    {
+      "id": "package-directory",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "node scripts/run-electron-builder.mjs --win --x64 --dir --publish never --config.electronDist=D:/tmp/tf0782-final-c00e-20261110/node_modules/.pnpm/electron@40.8.4/node_modules/electron/dist --config.win.signAndEditExecutable=false"
+      ],
+      "cwd": "D:\\tmp\\tf0782-final-c00e-20261110",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "wallSeconds": 414.15024300001096,
+      "stdoutArtifact": "outputs/package-directory.stdout.bin",
+      "stderrArtifact": "outputs/package-directory.stderr.bin",
+      "stdoutSha256": "3c8c60467ab593e2eb7ef5dd050d333478bd347e574e46f32ad56bc65741ca53",
+      "stderrSha256": "660c251d069ee01cc964e94fcd1cde532f90339224fb95cfff4d57482afcf526"
+    },
+    {
+      "id": "package-evidence-tests",
+      "argv": [
+        "C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "D:\\tmp\\tf0782-final-c00e-20261110\\scripts\\coding-evaluation\\test_package_evaluation.py"
+      ],
+      "cwd": "D:\\tmp\\tf0782-final-c00e-20261110",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "wallSeconds": 1.4525318999949377,
+      "stdoutArtifact": "outputs/package-evidence-tests.stdout.bin",
+      "stderrArtifact": "outputs/package-evidence-tests.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "aa6a1c0582df463e48c29991d9e1747684246fc4389dc437f788bcf3625906fd"
+    },
+    {
+      "id": "vite-package-alias-tests",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "corepack pnpm exec vitest run tests/unit/vite-config-openclaw-runtime.test.ts --maxWorkers=1"
+      ],
+      "cwd": "D:\\tmp\\tf0782-final-c00e-20261110",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "wallSeconds": 4.434222599986242,
+      "stdoutArtifact": "outputs/vite-package-alias-tests.stdout.bin",
+      "stderrArtifact": "outputs/vite-package-alias-tests.stderr.bin",
+      "stdoutSha256": "6de3acd238cc1443390b41f4eff2cdaf21fa9df3830c90889185cbf34776b689",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "verseshell-package-verify",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "D:\\tmp\\tf0782-final-c00e-20261110\\scripts\\verseshell-bundle.mjs",
+        "verify-package",
+        "--platform",
+        "win32",
+        "--arch",
+        "x64"
+      ],
+      "cwd": "D:\\tmp\\tf0782-final-c00e-20261110",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "wallSeconds": 0.13313189998734742,
+      "stdoutArtifact": "outputs/verseshell-package-verify.stdout.bin",
+      "stderrArtifact": "outputs/verseshell-package-verify.stderr.bin",
+      "stdoutSha256": "b4d4d23b772536cfe8c5ec4c2768af75e3fb0fc92e8798ecc15b93ea7e996027",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "versegit-package-verify",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "D:\\tmp\\tf0782-final-c00e-20261110\\scripts\\versegit-sidecar-package.mjs",
+        "--verify"
+      ],
+      "cwd": "D:\\tmp\\tf0782-final-c00e-20261110",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "wallSeconds": 0.2873013000062201,
+      "stdoutArtifact": "outputs/versegit-package-verify.stdout.bin",
+      "stderrArtifact": "outputs/versegit-package-verify.stderr.bin",
+      "stdoutSha256": "38b5400d912d12104929df6dbc1b6c27afc123653db24ea814426f38e2d1bfc0",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "package-cli-probe",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "D:\\tmp\\tf0782-final-c00e-20261110\\scripts\\check-packaged-windows-cli.mjs",
+        "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package",
+        "D:\\tmp\\tf0782-package-3e7d5924f\\package-cli"
+      ],
+      "cwd": "D:\\tmp\\tf0782-final-c00e-20261110",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "wallSeconds": 5.041675300017232,
+      "stdoutArtifact": "outputs/package-cli-probe.stdout.bin",
+      "stderrArtifact": "outputs/package-cli-probe.stderr.bin",
+      "stdoutSha256": "e00e5c7534a46da2b25c7a73db4c6f88e8898072884e21950881628be10c3c98",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "playwright-package-profiles",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "corepack pnpm exec playwright test tests/e2e/coding-package-three-profiles.spec.ts --workers=1"
+      ],
+      "cwd": "D:\\tmp\\tf0782-final-c00e-20261110",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "wallSeconds": 194.90024869999615,
+      "stdoutArtifact": "outputs/playwright-package-profiles.stdout.bin",
+      "stderrArtifact": "outputs/playwright-package-profiles.stderr.bin",
+      "stdoutSha256": "97f6646a615d01dd3a55f615880d42e93c52044d2dfb204998c48375a49c6570",
+      "stderrSha256": "50529e12a12919ead95e28ddc63e37eedc81586cb61ac9dd20abdff8856f64d4"
+    },
+    {
+      "id": "harness-validate",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "D:\\tmp\\tf0782-final-c00e-20261110\\harness\\src\\cli.mjs",
+        "validate",
+        "--spec",
+        "D:\\tmp\\tf0782-final-c00e-20261110\\harness\\specs\\tasks\\coding-windows-package-evaluation.md",
+        "--since",
+        "3e7d5924fa05c5119f7dc367bd5531ff44c35cf1"
+      ],
+      "cwd": "D:\\tmp\\tf0782-final-c00e-20261110",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "wallSeconds": 0.6389791000110563,
+      "stdoutArtifact": "outputs/harness-validate.stdout.bin",
+      "stderrArtifact": "outputs/harness-validate.stderr.bin",
+      "stdoutSha256": "02482c76cd1b8902f6ce7d1a04c149069ffeca861afd00a60d3ac377a689952b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "comms-replay",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "corepack pnpm run comms:replay"
+      ],
+      "cwd": "D:\\tmp\\tf0782-final-c00e-20261110",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "wallSeconds": 0.7147227000095882,
+      "stdoutArtifact": "outputs/comms-replay.stdout.bin",
+      "stderrArtifact": "outputs/comms-replay.stderr.bin",
+      "stdoutSha256": "04062f43f87070fb29f6826849831031c0c3d30ca6a0282122d92575a05b1d18",
+      "stderrSha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a"
+    },
+    {
+      "id": "comms-compare",
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "corepack pnpm run comms:compare"
+      ],
+      "cwd": "D:\\tmp\\tf0782-final-c00e-20261110",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "wallSeconds": 0.5838150000199676,
+      "stdoutArtifact": "outputs/comms-compare.stdout.bin",
+      "stderrArtifact": "outputs/comms-compare.stderr.bin",
+      "stdoutSha256": "9e8c84967d8c4734b3c005faaf0504082dbfff78794ca349b66e05addd6e7226",
+      "stderrSha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e"
+    },
+    {
+      "id": "repository-artifacts",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "D:\\tmp\\tf0782-final-c00e-20261110\\scripts\\check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\tmp\\tf0782-final-c00e-20261110",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "wallSeconds": 3.9794026000017766,
+      "stdoutArtifact": "outputs/repository-artifacts.stdout.bin",
+      "stderrArtifact": "outputs/repository-artifacts.stderr.bin",
+      "stdoutSha256": "799dd830edbb08a8e28ca21d1f29cd00731178b753ddd6affb93cffedfb4ef73",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "costs": {
+    "wallSecondsTotal": 1425.4977886000415
+  },
+  "cleanup": {
+    "ownedProcesses": 0,
+    "survivors": []
+  },
+  "claims": {
+    "realHuman": false,
+    "ga": false,
+    "releaseAuthorized": false,
+    "defaultChanged": false,
+    "productLockChanged": false
+  },
+  "artifacts": {
+    "evidence/package.json": {
+      "sha256": "7199b86b5ba3650410b2a3312ce3f397baccf9627283bdda9d74fd3628dbf208",
+      "bytes": 3042
+    },
+    "evidence/source.json": {
+      "sha256": "a2804a036f44ee31c7590a410e94a77f59662c3dd486e84fe3d7d8cbe7abd18c",
+      "bytes": 221
+    },
+    "inputs/node-runtime.json": {
+      "sha256": "a7cc13971a8a95d55428a6fa8ee085b9dba2e1979086ea5a3e023985378bbcc3",
+      "bytes": 132
+    },
+    "inputs/package-runtime.json": {
+      "sha256": "c64154b2f169b98ca90cd79d7b2cdb986a85c10d30119ee463c70bd8d18b0c0b",
+      "bytes": 141
+    },
+    "inputs/versegit-manifest.json": {
+      "sha256": "476dfcfb72df4c43a294af2add1844e1d7e00b79235297cbe0ea27ba1f2c0676",
+      "bytes": 2916
+    },
+    "inputs/verseshell-manifest.json": {
+      "sha256": "b26c9edbbc620943af2c9080cee72de68f93e3fa8649aa33859a435a1650d1a7",
+      "bytes": 7559
+    },
+    "outputs/comms-compare.stderr.bin": {
+      "sha256": "48e7603e40a1735e4502fdb4dbadda746f0fc1bc06398dfa60dbc0c967aa1a5e",
+      "bytes": 33
+    },
+    "outputs/comms-compare.stdout.bin": {
+      "sha256": "9e8c84967d8c4734b3c005faaf0504082dbfff78794ca349b66e05addd6e7226",
+      "bytes": 3426
+    },
+    "outputs/comms-replay.stderr.bin": {
+      "sha256": "a20e0262fa7317650a11e0e9ed31f2eb84da093326dafb4a5d29f2ec9592474a",
+      "bytes": 32
+    },
+    "outputs/comms-replay.stdout.bin": {
+      "sha256": "04062f43f87070fb29f6826849831031c0c3d30ca6a0282122d92575a05b1d18",
+      "bytes": 101
+    },
+    "outputs/harness-validate.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/harness-validate.stdout.bin": {
+      "sha256": "02482c76cd1b8902f6ce7d1a04c149069ffeca861afd00a60d3ac377a689952b",
+      "bytes": 197
+    },
+    "outputs/package-build.stderr.bin": {
+      "sha256": "aa1469aab37838bc459a2f40d13180fa4871a015d94bb95193fbe72c956664e3",
+      "bytes": 11701
+    },
+    "outputs/package-build.stdout.bin": {
+      "sha256": "ca0b841121b7019df8c8370d6f64b8be7168206a4d83be1b2bde9268c2207db5",
+      "bytes": 43797
+    },
+    "outputs/package-cli-probe.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/package-cli-probe.stdout.bin": {
+      "sha256": "e00e5c7534a46da2b25c7a73db4c6f88e8898072884e21950881628be10c3c98",
+      "bytes": 101
+    },
+    "outputs/package-directory.stderr.bin": {
+      "sha256": "660c251d069ee01cc964e94fcd1cde532f90339224fb95cfff4d57482afcf526",
+      "bytes": 528
+    },
+    "outputs/package-directory.stdout.bin": {
+      "sha256": "3c8c60467ab593e2eb7ef5dd050d333478bd347e574e46f32ad56bc65741ca53",
+      "bytes": 4546
+    },
+    "outputs/package-evidence-tests.stderr.bin": {
+      "sha256": "aa6a1c0582df463e48c29991d9e1747684246fc4389dc437f788bcf3625906fd",
+      "bytes": 116
+    },
+    "outputs/package-evidence-tests.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/playwright-package-profiles.stderr.bin": {
+      "sha256": "50529e12a12919ead95e28ddc63e37eedc81586cb61ac9dd20abdff8856f64d4",
+      "bytes": 538
+    },
+    "outputs/playwright-package-profiles.stdout.bin": {
+      "sha256": "97f6646a615d01dd3a55f615880d42e93c52044d2dfb204998c48375a49c6570",
+      "bytes": 21715
+    },
+    "outputs/repository-artifacts.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/repository-artifacts.stdout.bin": {
+      "sha256": "799dd830edbb08a8e28ca21d1f29cd00731178b753ddd6affb93cffedfb4ef73",
+      "bytes": 60
+    },
+    "outputs/versegit-package-verify.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/versegit-package-verify.stdout.bin": {
+      "sha256": "38b5400d912d12104929df6dbc1b6c27afc123653db24ea814426f38e2d1bfc0",
+      "bytes": 167
+    },
+    "outputs/verseshell-package-verify.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/verseshell-package-verify.stdout.bin": {
+      "sha256": "b4d4d23b772536cfe8c5ec4c2768af75e3fb0fc92e8798ecc15b93ea7e996027",
+      "bytes": 291
+    },
+    "outputs/vite-package-alias-tests.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/vite-package-alias-tests.stdout.bin": {
+      "sha256": "6de3acd238cc1443390b41f4eff2cdaf21fa9df3830c90889185cbf34776b689",
+      "bytes": 218
+    },
+    "package-cli/isolated-home-t9ehxP/.openclaw/openclaw.json": {
+      "sha256": "d8e3fd8a974291b3d857f89135cedb06906edaf78f95016a0d8c1f2ad123fbfd",
+      "bytes": 37
+    },
+    "package-cli/report.json": {
+      "sha256": "fdda34c21db8d08c6156edb72a295c64945a52739e029a4a6dd2f60e7334e5a2",
+      "bytes": 6350
+    },
+    "raw-profiles/profile-a.json": {
+      "sha256": "b82745b70c03817896f77ea8120ad09185967e8514e9a55002efc1c1ba55c703",
+      "bytes": 92680
+    },
+    "raw-profiles/profile-b.json": {
+      "sha256": "1f781044a3cdb5f91535f5c1365f7c511881cef5b4c0c84db9204990bf72ba1e",
+      "bytes": 92680
+    },
+    "raw-profiles/profile-c.json": {
+      "sha256": "124349875bb53f2d5234c7270d89ba142a323d00fce4cfc7c6844dfd1b4512a6",
+      "bytes": 92680
+    }
+  }
+}

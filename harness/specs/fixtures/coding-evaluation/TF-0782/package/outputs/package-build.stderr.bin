@@ -1,0 +1,76 @@
+$ node scripts/generate-ext-bridge.mjs && pnpm run build:vite && pnpm run build:runtime && zx scripts/bundle-openclaw.mjs && zx scripts/bundle-openclaw-plugins.mjs && zx scripts/bundle-openclaw-runtime.mjs && zx scripts/bundle-preinstalled-skills.mjs && node scripts/bundle-main-runtime.mjs
+<script src="./boot-theme.js"> in "/index.html" can't be bundled without type="module" attribute
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+warn - The class `duration-[280ms]` is ambiguous and matches multiple utilities.
+warn - If this is content and not a class, replace it with `duration-&lsqb;280ms&rsqb;` to silence this warning.
+
+warn - The class `ease-[cubic-bezier(0.22,1,0.36,1)]` is ambiguous and matches multiple utilities.
+warn - If this is content and not a class, replace it with `ease-&lsqb;cubic-bezier(0.22,1,0.36,1)&rsqb;` to silence this warning.
+Circular chunk: index -> react-vendor -> index. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "react-vendor" to be bundled into the chunk "index".
+Circular chunk: App -> settings-overview -> App. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "settings-overview" to be bundled into the chunk "App".
+Circular chunk: GeneratedFilesPanel -> AssistantMarkdown -> assistant-ui-runtime -> GeneratedFilesPanel. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "assistant-ui-runtime" to be bundled into the chunk "GeneratedFilesPanel".
+Circular chunk: AssistantMarkdown -> assistant-ui-runtime -> AssistantMarkdown. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "assistant-ui-runtime" to be bundled into the chunk "AssistantMarkdown".
+Circular chunk: markdown-rendering -> index -> markdown-rendering. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "index" to be bundled into the chunk "markdown-rendering".
+Circular chunk: markdown-rendering -> attachment -> markdown-rendering. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "attachment" to be bundled into the chunk "markdown-rendering".
+Circular chunk: GeneratedFilesPanel -> AssistantMarkdown -> assistant-ui-runtime -> markdown-rendering -> GeneratedFilesPanel. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "markdown-rendering" to be bundled into the chunk "GeneratedFilesPanel".
+Circular chunk: markdown-rendering -> FilePreviewBody -> markdown-rendering. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "FilePreviewBody" to be bundled into the chunk "markdown-rendering".
+[plugin vite:reporter] 
+(!) D:/tmp/tf0782-final-c00e-20261110/src/stores/chat.ts is dynamically imported by D:/tmp/tf0782-final-c00e-20261110/src/stores/gateway.ts, D:/tmp/tf0782-final-c00e-20261110/src/stores/gateway.ts, D:/tmp/tf0782-final-c00e-20261110/src/stores/gateway.ts, D:/tmp/tf0782-final-c00e-20261110/src/stores/gateway.ts but also statically imported by D:/tmp/tf0782-final-c00e-20261110/src/components/chat/ResourceChip.tsx, D:/tmp/tf0782-final-c00e-20261110/src/components/file-preview/WorkspaceAgentsPanel.tsx, D:/tmp/tf0782-final-c00e-20261110/src/components/file-preview/WorkspaceLiveBrowserPanel.tsx, D:/tmp/tf0782-final-c00e-20261110/src/components/file-preview/WorkspaceProcessPanel.tsx, D:/tmp/tf0782-final-c00e-20261110/src/components/file-preview/WorkspaceSubagentPanel.tsx, D:/tmp/tf0782-final-c00e-20261110/src/components/file-preview/WorkspaceTerminalPanel.tsx, D:/tmp/tf0782-final-c00e-20261110/src/components/file-preview/WorkspaceWebPreviewPanel.tsx, D:/tmp/tf0782-final-c00e-20261110/src/components/layout/Sidebar.tsx, D:/tmp/tf0782-final-c00e-20261110/src/components/rareui/CompletionActivityMenu.tsx, D:/tmp/tf0782-final-c00e-20261110/src/components/task-ledger/TaskNodeSelector.tsx, D:/tmp/tf0782-final-c00e-20261110/src/lib/workspace-session.ts, D:/tmp/tf0782-final-c00e-20261110/src/pages/Chat/ChatInput.tsx, D:/tmp/tf0782-final-c00e-20261110/src/pages/Chat/ChatToolbar.tsx, D:/tmp/tf0782-final-c00e-20261110/src/pages/Chat/TeamOrchestrationCard.tsx, D:/tmp/tf0782-final-c00e-20261110/src/pages/Chat/index.tsx, D:/tmp/tf0782-final-c00e-20261110/src/pages/ClawGraph/index.tsx, D:/tmp/tf0782-final-c00e-20261110/src/pages/Cron/index.tsx, D:/tmp/tf0782-final-c00e-20261110/src/pages/Settings/sections/ArchivedSection.tsx, D:/tmp/tf0782-final-c00e-20261110/src/pages/Settings/sections/RecoverySettingsSection.tsx, D:/tmp/tf0782-final-c00e-20261110/src/pages/TaskLedger/index.tsx, D:/tmp/tf0782-final-c00e-20261110/src/stores/cron.ts, dynamic import will not move module into another chunk.
+
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+"default" is imported from external module "@shikijs/engine-oniguruma/wasm-inlined" but never used in "node_modules/.pnpm/shiki@4.3.1/node_modules/shiki/dist/wasm.mjs".
+[plugin vite:reporter] 
+(!) D:/tmp/tf0782-final-c00e-20261110/electron/utils/store.ts is dynamically imported by D:/tmp/tf0782-final-c00e-20261110/electron/gateway/manager.ts but also statically imported by D:/tmp/tf0782-final-c00e-20261110/electron/gateway/config-sync.ts, D:/tmp/tf0782-final-c00e-20261110/electron/gateway/manager.ts, D:/tmp/tf0782-final-c00e-20261110/electron/main/index.ts, D:/tmp/tf0782-final-c00e-20261110/electron/main/launch-at-startup.ts, D:/tmp/tf0782-final-c00e-20261110/electron/main/menu.ts, D:/tmp/tf0782-final-c00e-20261110/electron/main/proxy.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/agent-dev-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/chat-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/dcs-prod-flags-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/efficiency-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/gateway-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/remote-control-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/remote-tasks-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/sensitive-capture-gate.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/session-delegation-store.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/settings-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/support-bundle.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/system-notifications-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/usage-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/work-providers-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/utils/app-version-rollback.ts, D:/tmp/tf0782-final-c00e-20261110/electron/utils/control-ui-device-pairing.ts, D:/tmp/tf0782-final-c00e-20261110/electron/utils/openclaw-auth.ts, D:/tmp/tf0782-final-c00e-20261110/electron/utils/telemetry.ts, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) D:/tmp/tf0782-final-c00e-20261110/electron/utils/channel-config.ts is dynamically imported by D:/tmp/tf0782-final-c00e-20261110/electron/services/cron-api.ts but also statically imported by D:/tmp/tf0782-final-c00e-20261110/electron/gateway/config-sync.ts, D:/tmp/tf0782-final-c00e-20261110/electron/gateway/supervisor.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/agents-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/channels-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/dcs-prod-flags-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/hooks-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/mcp-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/roles-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/workspace-runtime-sync.ts, D:/tmp/tf0782-final-c00e-20261110/electron/utils/agent-config.ts, D:/tmp/tf0782-final-c00e-20261110/electron/utils/app-version-rollback.ts, D:/tmp/tf0782-final-c00e-20261110/electron/utils/openclaw-image-generation.ts, D:/tmp/tf0782-final-c00e-20261110/electron/utils/openclaw-proxy.ts, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) D:/tmp/tf0782-final-c00e-20261110/electron/services/long-session-resource-reclamation.ts is dynamically imported by D:/tmp/tf0782-final-c00e-20261110/electron/services/workspaces-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/workspaces-api.ts but also statically imported by D:/tmp/tf0782-final-c00e-20261110/electron/main/index.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/session-activity-api.ts, D:/tmp/tf0782-final-c00e-20261110/electron/services/sessions-api.ts, dynamic import will not move module into another chunk.
+
+[build-all] tsdown
+[build-all] tsdown done in 9.53s
+[build-all] check-cli-bootstrap-imports
+[build-all] check-cli-bootstrap-imports done in 429ms
+[build-all] runtime-postbuild
+runtime-postbuild: plugin SDK root alias completed in 1ms
+[bundled-plugin-metadata] skipping missing skill path D:\tmp\tf0782-final-c00e-20261110\openclaw_runtime\extensions\acpx\skills (plugin acpx)
+runtime-postbuild: bundled plugin metadata completed in 544ms
+runtime-postbuild: official channel catalog completed in 18ms
+runtime-postbuild: bundled plugin runtime overlay completed in 701ms
+runtime-postbuild: static extension assets completed in 0ms
+runtime-postbuild: stable root runtime imports completed in 349ms
+runtime-postbuild: stable root runtime aliases completed in 75ms
+runtime-postbuild: legacy root runtime compat aliases completed in 113ms
+runtime-postbuild: legacy CLI exit compat chunks completed in 1ms
+[build-all] runtime-postbuild done in 2.09s
+[build-all] build-stamp
+[build-all] build-stamp done in 120ms
+[build-all] runtime-postbuild-stamp
+[build-all] runtime-postbuild-stamp done in 108ms
+[build-all] write-cli-startup-metadata
+[build-all] write-cli-startup-metadata done in 122ms
+[build-all] write-cli-compat
+[build-all] write-cli-compat done in 95ms
+[build-all] phase timings: total 12.5s; slowest tsdown 9.53s; runtime-postbuild 2.09s; check-cli-bootstrap-imports 429ms; write-cli-startup-metadata 122ms; build-stamp 120ms; runtime-postbuild-stamp 108ms; write-cli-compat 95ms
+
+  openclaw_runtime\dist\knowledge\sekb\index.js  367.8kb
+
+Done in 38ms
+runtime-postbuild: plugin SDK root alias completed in 0ms
+[bundled-plugin-metadata] skipping missing skill path D:\tmp\tf0782-final-c00e-20261110\openclaw_runtime\extensions\acpx\skills (plugin acpx)
+runtime-postbuild: bundled plugin metadata completed in 443ms
+runtime-postbuild: official channel catalog completed in 17ms
+runtime-postbuild: bundled plugin runtime overlay completed in 1216ms
+runtime-postbuild: static extension assets completed in 214ms
+runtime-postbuild: stable root runtime imports completed in 276ms
+runtime-postbuild: stable root runtime aliases completed in 27ms
+runtime-postbuild: legacy root runtime compat aliases completed in 96ms
+runtime-postbuild: legacy CLI exit compat chunks completed in 0ms

@@ -1,0 +1,2083 @@
+{
+  "schema": "CodingPackageProfile/v1",
+  "taskId": "TF-0781",
+  "profileId": "profile-c",
+  "driven_by": "agent",
+  "actor": "codex-coding-package-evaluator",
+  "realHumanEvidence": false,
+  "package": {
+    "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\Verse Claw.exe",
+    "resourcesRoot": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources",
+    "vgSha256": "6fef0fab309702fafdcc716c0f8518257440efafd0a46809930fe33be865c2b4",
+    "aeSha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+    "nodeSha256": "b3094d0b49f9ad602262a9921551737bb97637c05dd357a06ae98188d7290aa3",
+    "versegitManifestSha256": "476dfcfb72df4c43a294af2add1844e1d7e00b79235297cbe0ea27ba1f2c0676",
+    "verseshellManifestSha256": "b26c9edbbc620943af2c9080cee72de68f93e3fa8649aa33859a435a1650d1a7",
+    "versegitSourceCommit": "d9c38a8659274c24ea776b56480a260831b4537f",
+    "verseshellSourceCommit": "c06f406e83566bb968448222d9c8caf429e580a0",
+    "detachedFromSource": true
+  },
+  "defaults": {
+    "bundledPythonPresent": false,
+    "standaloneJjPresent": false,
+    "managedModeMustBeExplicit": true
+  },
+  "workspace": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\workspace",
+  "profileDir": "D:\\tmp\\tf0782-final-c00e-20261110\\.tmp\\e2e-runs\\verse-claw-e2e-run-siCd6g\\verse-claw-e2e-user-data-jvIFP5\\profile-c-user-data",
+  "profileHome": "D:\\tmp\\tf0782-final-c00e-20261110\\.tmp\\e2e-runs\\verse-claw-e2e-run-siCd6g\\verse-claw-e2e-home-GxaDov\\profile-c",
+  "profileState": "D:\\tmp\\tf0782-final-c00e-20261110\\.tmp\\e2e-runs\\verse-claw-e2e-run-siCd6g\\verse-claw-e2e-user-data-jvIFP5\\profile-c-user-data\\openclaw-state",
+  "commands": [
+    {
+      "id": "vg-capabilities",
+      "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+      "argv": [
+        "capabilities",
+        "--json"
+      ],
+      "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "stdout": "{\n  \"compat\": {\n    \"git_only\": \"preserved\",\n    \"next\": \"preserved\",\n    \"package_names\": [\n      \"smart-test-sorter\",\n      \"smart_sorter\"\n    ],\n    \"sts_protocols\": [\n      \"1.1\",\n      \"2.0\"\n    ]\n  },\n  \"mcp_tools\": [\n    \"vg_capabilities\",\n    \"verdict\",\n    \"integration_status\",\n    \"who_touches\",\n    \"explain_conflict\",\n    \"declare_intent\",\n    \"basis_status\",\n    \"basis_watermark\"\n  ],\n  \"read\": [\n    \"workspace.root\",\n    \"change.status\",\n    \"change.log\",\n    \"verify.status\",\n    \"conflicts\",\n    \"basis.status\",\n    \"report\",\n    \"verdict\",\n    \"doctor\"\n  ],\n  \"safety\": {\n    \"default_enable\": false,\n    \"evidence_land_present\": true,\n    \"managed_opt_in\": true,\n    \"strict_admission_present\": true\n  },\n  \"schema\": \"versegit.capabilities/v1\",\n  \"verdict\": {\n    \"dimensions\": [\n      \"candidate\",\n      \"execution\",\n      \"evidence\",\n      \"freshness\",\n      \"risk\",\n      \"trial\"\n    ],\n    \"note\": \"六维各自独立呈现；admitted 是它们的合取，selected 不覆盖全集\",\n    \"read_surface\": {\n      \"observed_channels\": [\n        \"read\",\n        \"grep\",\n        \"glob\",\n        \"write\",\n        \"edit\"\n      ],\n      \"unobserved_channels\": [\n        \"bash\",\n        \"other-mcp\",\n        \"network\",\n        \"direct-fs\"\n      ]\n    },\n    \"schema\": \"versegit.verdict/v1\",\n    \"single_green_light\": false\n  },\n  \"workflows\": [\n    {\n      \"entries\": [\n        \"workspace.init\",\n        \"workspace.root\",\n        \"doctor\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_workspace_lifecycle.rs\",\n        \"crates/vg-cli/tests/jj_public_surface.rs\"\n      ],\n      \"id\": \"workspace\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.new\",\n        \"change.file\",\n        \"change.describe\",\n        \"change.snapshot\",\n        \"change.diffedit\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_change_lifecycle.rs\",\n        \"crates/vg-cli/tests/jj_diffedit.rs\"\n      ],\n      \"id\": \"change.edit\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.log\",\n        \"op.restore\",\n        \"op.undo\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_operation_restore.rs\",\n        \"crates/vg-cli/tests/jj_op_undo_redo.rs\",\n        \"crates/vg-cli/tests/jj_backup_restore.rs\"\n      ],\n      \"id\": \"history.recover\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"verify.status\",\n        \"verdict\",\n        \"basis.status\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_managed_plan.rs\",\n        \"crates/vg-cli/tests/jj_evidence_land.rs\",\n        \"crates/vg-cli/tests/jj_verdict.rs\"\n      ],\n      \"id\": \"validation.admit\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"change.materialize\",\n        \"land\",\n        \"report\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_managed_candidate.rs\",\n        \"crates/vg-cli/tests/jj_closed_loop.rs\",\n        \"crates/vg-cli/tests/land_concurrency.rs\"\n      ],\n      \"id\": \"candidate.land\",\n      \"status\": \"verified\"\n    },\n    {\n      \"entries\": [\n        \"git.fetch\",\n        \"git.push\",\n        \"gerrit.upload\"\n      ],\n      \"evidence\": [\n        \"crates/vg-cli/tests/jj_git_ref_sync.rs\",\n        \"crates/vg-cli/tests/jj_gerrit_upload.rs\"\n      ],\n      \"id\": \"external.publish\",\n      \"status\": \"controlled\"\n    }\n  ],\n  \"write\": [\n    \"workspace.init\",\n    \"change.new\",\n    \"change.file\",\n    \"change.describe\",\n    \"change.snapshot\",\n    \"change.diffedit\",\n    \"change.materialize\",\n    \"change.duplicate\",\n    \"change.abandon\",\n    \"change.rebase\",\n    \"change.squash\",\n    \"change.split\",\n    \"op.restore\",\n    \"op.undo\",\n    \"land\",\n    \"admit.check\",\n    \"git.fetch\",\n    \"git.push\",\n    \"gerrit.upload\"\n  ]\n}\n",
+      "stderr": "",
+      "stdoutSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wallMs": 45
+    },
+    {
+      "id": "vg-workspace-import",
+      "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+      "argv": [
+        "workspace",
+        "import",
+        "--root",
+        "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+        "--json"
+      ],
+      "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "stdout": "{\n  \"colocated\": true,\n  \"command\": \"workspace.import\",\n  \"head_commit\": \"40a83df09753d90796f7d39f78d2f954e4fcd666\",\n  \"root\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-c\\\\vg-workspace\",\n  \"schema\": \"versegit.vg-json/v1\",\n  \"snapshot\": {\n    \"change_id\": \"91e52dfbab9d45e5082b907718e36fcd\",\n    \"operation_id\": \"935612a6aad3f8371d5786a2b868158b86e30ee7d2d25a746b4de7aaf757d04366ad727a3a3bdff2c63a2da989d7d497f5f78fc2260b81d0c0236e6fc66734e4\",\n    \"schema\": \"versegit.vg-json/v1\",\n    \"wc_commit_id\": \"8e08b0867386e5e8c2a18f7a6e881d1fd4d24cab\",\n    \"workspace_root\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-c\\\\vg-workspace\"\n  }\n}\n",
+      "stderr": "",
+      "stdoutSha256": "51c7f6efcfe4c4264f835f1b0f515b7b42e67d0488e4adad0289533f64a2b10e",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wallMs": 538
+    },
+    {
+      "id": "vg-change-new",
+      "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+      "argv": [
+        "change",
+        "new",
+        "--root",
+        "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+        "--description",
+        "profile-c",
+        "--run-key",
+        "profile-c-change",
+        "--json"
+      ],
+      "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "stdout": "{\n  \"change_id\": \"146aeb806350de468ff9122879dd8ef6\",\n  \"operation_id\": \"2ba5ec748d6a285c4a186de99b2c15ed8819381cae25b06b3eb371755eaf645fb2924eaaa48a0afccc4cd97009cc0ec12ebd6115e2fb44df6a24f4c313f57998\",\n  \"schema\": \"versegit.vg-json/v1\",\n  \"wc_commit_id\": \"f8c6e5c42aad4514d674385b0421ff30e351219e\",\n  \"workspace_root\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-c\\\\vg-workspace\"\n}\n",
+      "stderr": "",
+      "stdoutSha256": "b8705824b8b896a974794fbbf1f5ae3b69100950d355f799facead1f6a246550",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wallMs": 227
+    },
+    {
+      "id": "vg-change-snapshot",
+      "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+      "argv": [
+        "change",
+        "snapshot",
+        "--root",
+        "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+        "--description",
+        "profile-c snapshot",
+        "--run-key",
+        "profile-c-snapshot",
+        "--json"
+      ],
+      "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "stdout": "{\n  \"change_id\": \"146aeb806350de468ff9122879dd8ef6\",\n  \"operation_id\": \"d6a13554afcfeb06a8fbc9e6d3cbaf139609b10487aeba60f5c3724866d7a07ffbe182cf086c51cd1d483453d1d9981803ca7c2c6b85840b0a25cb14c200ed96\",\n  \"schema\": \"versegit.vg-json/v1\",\n  \"wc_commit_id\": \"48a2b28145eb48ed9f0b7262b81f06fa090e2d2a\",\n  \"workspace_root\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-c\\\\vg-workspace\"\n}\n",
+      "stderr": "",
+      "stdoutSha256": "48893a211e3c293bcfcbf5e39c04f01d46f0e09a78449fd419b896aca53474b3",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wallMs": 173
+    },
+    {
+      "id": "sts-contract-1.1",
+      "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+      "argv": [
+        "--json",
+        "sts",
+        "contract",
+        "--dir",
+        "D:\\tmp\\tf0782-final-c00e-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0781\\inputs\\vg-sts\\v1"
+      ],
+      "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "stdout": "{\n  \"boundaries\": [\n    \"VG 只核验摘要与自身解析结果；版本口径按 manifest 声明的 version_policy\",\n    \"接收只固定契约与样例，不代表计划生成/执行入口已交付（那属 STS 的 plan_request/run_plan 入口）\",\n    \"本入口不执行来自计划的任何命令；plan/refusal 是数据，不是待执行的 shell\",\n    \"绑定只核身份链一致性（request_id/plan_id/target_identity/selection_scope/协议版本），不重算选择\"\n  ],\n  \"consumer\": \"VG:TF-0168\",\n  \"contract\": \"vg-sts\",\n  \"contract_status\": null,\n  \"declared_source_commit\": null,\n  \"digests\": {\n    \"matched\": 29,\n    \"mismatched\": [],\n    \"total\": 29\n  },\n  \"dir\": \"D:\\\\tmp\\\\tf0782-final-c00e-20261110\\\\harness\\\\specs\\\\fixtures\\\\coding-evaluation\\\\TF-0781\\\\inputs\\\\vg-sts\\\\v1\",\n  \"input_error\": false,\n  \"is_draft\": false,\n  \"mode\": \"consume\",\n  \"ok\": true,\n  \"produced_by\": \"STS:TF-0026\",\n  \"product_version\": \"0.1.0\",\n  \"protocol_version\": \"1.1\",\n  \"refusals\": [],\n  \"schema\": \"versegit.sts-contract-intake/v1\",\n  \"supported_protocol_versions\": [\n    \"1.0\",\n    \"1.1\"\n  ],\n  \"unregistered_files\": [],\n  \"version_policy\": \"digests-authoritative\",\n  \"vg_side_parse\": {\n    \"applicable\": true,\n    \"invalid_rejected\": 10,\n    \"invalid_total\": 10,\n    \"not_applicable_reason\": null,\n    \"pairs_invalid_rejected\": 1,\n    \"pairs_invalid_total\": 1,\n    \"pairs_valid_passed\": 1,\n    \"pairs_valid_total\": 1,\n    \"samples\": [\n      {\n        \"errors\": [],\n        \"file\": \"plan_full_fallback.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"plan_risk_decisions_stale.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"plan_selected_parametrized.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"refusal_collection_error.json\",\n        \"kind\": \"refusal\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_candidate_risk_cjk_path.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_commit_minimal.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_workspace_norisk.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"result_complete_pass.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"result_incomplete_budget_abort.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [\n          \"selection_scope=selected 但既无选中也无排除（空计划不得当作已规划）\"\n        ],\n        \"file\": \"plan_empty_selection.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"selection_scope=full 时 selected 必须等于 collected 全集\"\n        ],\n        \"file\": \"plan_full_scope_not_all.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"conservative_full_available=true 需同时满足 target_confirmable=true 与 attempted_collection.succeeded=true（未知目标或未收集到全集时不得声称可保守全量）\"\n        ],\n        \"file\": \"refusal_full_without_confirm.json\",\n        \"kind\": \"refusal\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"candidate 模式缺少 target.theirs_oid（两侧变更并集所需，不能只比第一父）\",\n          \"candidate 模式必须给出 target.candidate_tree_oid 或 candidate_commit_oid 作为候选内容身份（候选目录仅作定位，临时路径不能当唯一身份）\"\n        ],\n        \"file\": \"request_candidate_missing_theirs.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"identities.code_oid 缺失（缺失不得作为'无变化可安全跳过'的证明）\"\n        ],\n        \"file\": \"request_missing_code_oid.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"协议版本 \\\"0.9\\\" 不受支持（VG 只实现了 [\\\"1.0\\\", \\\"1.1\\\"]；该版本未定稿/未实现，见 TF-0188）——拒绝，且**不**拿已实现的版本的规则去判它\"\n        ],\n        \"file\": \"request_unknown_protocol_version.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"completeness=complete 但 not_executed 非空（计划内有测试未跑完，应记为 incomplete）\"\n        ],\n        \"file\": \"result_complete_but_not_executed.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"raw_exit_code=0 但 outcomes 中存在 failed/error（退出码与事实矛盾）\"\n        ],\n        \"file\": \"result_exit0_but_failure.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"completeness=incomplete 必须给出 incomplete_reason\"\n        ],\n        \"file\": \"result_incomplete_missing_reason.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"零执行不得报告为完整有效通过（executed 为空）\"\n        ],\n        \"file\": \"result_zero_exec_marked_pass.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"matched\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"wrong_candidate\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      }\n    ],\n    \"valid_passed\": 9,\n    \"valid_total\": 9\n  }\n}\n",
+      "stderr": "",
+      "stdoutSha256": "ef8f5396b870a7a234fa68648a42b0a4d5c72954e51dfc1caba3ad36c86595a3",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wallMs": 37
+    },
+    {
+      "id": "sts-contract-2.0",
+      "executable": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\bin\\vg.exe",
+      "argv": [
+        "--json",
+        "sts",
+        "contract",
+        "--dir",
+        "D:\\tmp\\tf0782-final-c00e-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0781\\inputs\\vg-sts\\v2"
+      ],
+      "cwd": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "waitedForExit": true,
+      "stdout": "{\n  \"boundaries\": [\n    \"VG 只核验摘要与自身解析结果；版本口径按 manifest 声明的 version_policy\",\n    \"接收只固定契约与样例，不代表计划生成/执行入口已交付（那属 STS 的 plan_request/run_plan 入口）\",\n    \"本入口不执行来自计划的任何命令；plan/refusal 是数据，不是待执行的 shell\",\n    \"绑定只核身份链一致性（request_id/plan_id/target_identity/selection_scope/协议版本），不重算选择\"\n  ],\n  \"consumer\": \"VG\",\n  \"contract\": \"vg-sts\",\n  \"contract_status\": \"authoritative\",\n  \"declared_source_commit\": null,\n  \"digests\": {\n    \"matched\": 40,\n    \"mismatched\": [],\n    \"total\": 40\n  },\n  \"dir\": \"D:\\\\tmp\\\\tf0782-final-c00e-20261110\\\\harness\\\\specs\\\\fixtures\\\\coding-evaluation\\\\TF-0781\\\\inputs\\\\vg-sts\\\\v2\",\n  \"input_error\": false,\n  \"is_draft\": false,\n  \"mode\": \"consume\",\n  \"ok\": true,\n  \"produced_by\": \"STS:TF-0040\",\n  \"product_version\": \"0.1.0\",\n  \"protocol_version\": \"2.0\",\n  \"refusals\": [],\n  \"schema\": \"versegit.sts-contract-intake/v1\",\n  \"supported_protocol_versions\": [\n    \"2.0\"\n  ],\n  \"unregistered_files\": [],\n  \"version_policy\": \"digests-authoritative\",\n  \"vg_side_parse\": {\n    \"applicable\": true,\n    \"invalid_rejected\": 8,\n    \"invalid_total\": 8,\n    \"not_applicable_reason\": null,\n    \"pairs_invalid_rejected\": 6,\n    \"pairs_invalid_total\": 6,\n    \"pairs_valid_passed\": 1,\n    \"pairs_valid_total\": 1,\n    \"samples\": [\n      {\n        \"errors\": [],\n        \"file\": \"plan_with_full_content_identity.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"refusal_content_unbound.json\",\n        \"kind\": \"refusal\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_candidate_full_content_identity.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"request_pure_source_no_config_data.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"result_with_execution_identity.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"valid\"\n      },\n      {\n        \"errors\": [\n          \"R10-order-is-permutation-of-selected: order 不是 selected 的排列（order=1 项、selected=2 项）\"\n        ],\n        \"file\": \"plan_order_not_permutation_of_selected.json\",\n        \"kind\": \"plan\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R6-full-only-when-content-confirmed: 内容未确认（或没收集到全集）却声称可保守全量\",\n          \"R7-unconfirmed-must-be-listed: 内容未确认，但没列出没确认到哪一项\"\n        ],\n        \"file\": \"refusal_full_available_without_content.json\",\n        \"kind\": \"refusal\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R2-label-is-not-identity: content_identity.value 是短 hex（\\\"d444444\\\"）——短标签只能作展示，不能当完整身份\"\n        ],\n        \"file\": \"request_bare_short_content_value.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R4-digest-carries-algorithm: \\\"calc.py\\\" 的摘要 \\\"deadbeef\\\" 不符合 '<算法>:<hex>'\"\n        ],\n        \"file\": \"request_digest_without_algorithm.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R3-manifest-covers-config-and-data: 声明了 `config_data_absent: true`，但清单里**确实有** config/data 条目——自相矛盾，必拒\"\n        ],\n        \"file\": \"request_manifest_declares_absent_but_has_config.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\\\"source\\\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\\\"config_data_absent\\\": true`（「漏列了」与「真没有」必须能分辨）\"\n        ],\n        \"file\": \"request_manifest_only_source_entry.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"出现未声明字段 \\\"generator_note\\\"（additionalProperties=false）\"\n        ],\n        \"file\": \"request_unknown_field.json\",\n        \"kind\": \"request\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [\n          \"R9-invalid-or-unconfirmed-cannot-be-valid: 观察为 before=confirmed/after=unconfirmed 却声称 valid\"\n        ],\n        \"file\": \"result_execution_end_unconfirmed_but_valid.json\",\n        \"kind\": \"result\",\n        \"ok\": true,\n        \"section\": \"invalid\"\n      },\n      {\n        \"errors\": [],\n        \"file\": \"matched\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/valid\"\n      },\n      {\n        \"errors\": [\n          \"R12-environment-identity-must-match-plan: 执行环境与计划不一致（dependencies_digest=\\\"sha256:2222222222222222222222222222222222222222222222222222222222222222\\\" vs 计划期望 \\\"sha256:1111111111111111111111111111111111111111111111111111111111111111\\\"）\"\n        ],\n        \"file\": \"dependencies_identity_drift\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"environment_identity_drift/request.json 自身不合法：R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\\\"source\\\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\\\"config_data_absent\\\": true`（「漏列了」与「真没有」必须能分辨）\",\n          \"R12-environment-identity-must-match-plan: 执行环境与计划不一致（python=\\\"3.12.1\\\" vs 计划期望 \\\"3.10.3\\\"）\",\n          \"R12-environment-identity-must-match-plan: 执行环境与计划不一致（platform=\\\"linux\\\" vs 计划期望 \\\"win32\\\"）\"\n        ],\n        \"file\": \"environment_identity_drift\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"R12-environment-identity-must-match-plan: 计划声明了 `expected_environment_identity`，但 result **没有报** `environment_identity`——缺报告 ≠ 一致\"\n        ],\n        \"file\": \"environment_not_reported\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"execution_identity_drift/request.json 自身不合法：R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\\\"source\\\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\\\"config_data_absent\\\": true`（「漏列了」与「真没有」必须能分辨）\",\n          \"R9-invalid-or-unconfirmed-cannot-be-valid: 执行身份与计划不一致（execution_id=\\\"exec-someone-else-9\\\" vs 计划期望 \\\"exec-expected-1\\\"）\",\n          \"R9-invalid-or-unconfirmed-cannot-be-valid: 执行身份与计划不一致（interpreter=\\\"D:/venvs/other/python.exe\\\" vs 计划期望 \\\"D:/venvs/example/python.exe\\\"）\",\n          \"R12-environment-identity-must-match-plan: 计划声明了 `expected_environment_identity`，但 result **没有报** `environment_identity`——缺报告 ≠ 一致\"\n        ],\n        \"file\": \"execution_identity_drift\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"R11-cross-document-binding: result.content_identity.value \\\"e555555555555555555555555555555555555555\\\" 与 plan 的 \\\"d444444444444444444444444444444444444444\\\" 不一致（完整内容身份必须逐项相同）\",\n          \"R11-cross-document-binding: result.content_identity.manifest_digest \\\"sha256:cccc00000000000000000000000000000000000000000000000000000000000c\\\" 与 plan 的 \\\"sha256:bbbb00000000000000000000000000000000000000000000000000000000000b\\\" 不一致（完整内容身份必须逐项相同）\",\n          \"R12-environment-identity-must-match-plan: 计划声明了 `expected_environment_identity`，但 result **没有报** `environment_identity`——缺报告 ≠ 一致\"\n        ],\n        \"file\": \"same_label_different_content\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      },\n      {\n        \"errors\": [\n          \"same_value_different_kind/request.json 自身不合法：R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\\\"source\\\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\\\"config_data_absent\\\": true`（「漏列了」与「真没有」必须能分辨）\",\n          \"R11-cross-document-binding: request.content_identity.kind \\\"git-tree\\\" 与 plan 的 \\\"git-commit\\\" 不一致（完整内容身份必须逐项相同）\"\n        ],\n        \"file\": \"same_value_different_kind\",\n        \"kind\": \"pair\",\n        \"ok\": true,\n        \"section\": \"pairs/invalid\"\n      }\n    ],\n    \"valid_passed\": 5,\n    \"valid_total\": 5\n  }\n}\n",
+      "stderr": "",
+      "stdoutSha256": "f92b634288dd4f943a2b36863bff81ff69f39dad66a04e5f1921329af7ca6285",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wallMs": 44
+    }
+  ],
+  "app": {
+    "isPackaged": true,
+    "appPath": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources\\app.asar",
+    "resourcesPath": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package\\resources",
+    "version": "0.4.9-alpha.0"
+  },
+  "appVersion": "0.4.9-alpha.0",
+  "versegitStatus": {
+    "schema": "clawx.versegit.host-diagnostics/v1",
+    "generatedAt": "2026-11-10T21:04:56.378Z",
+    "enabled": true,
+    "mode": "M1",
+    "status": "observed",
+    "identity": {
+      "repoId": "profile-c-repo",
+      "binarySha256": "6fef0fab309702fafdcc716c0f8518257440efafd0a46809930fe33be865c2b4",
+      "version": "vg 0.1.0",
+      "capabilitiesSchema": "versegit.capabilities/v1"
+    },
+    "coverage": {
+      "declared": [
+        "version",
+        "capabilities"
+      ],
+      "unobserved": [
+        "doctor",
+        "session",
+        "observe",
+        "conflicts",
+        "shell",
+        "direct-fs",
+        "network",
+        "mcp"
+      ]
+    },
+    "capabilities": {
+      "schema": "versegit.capabilities/v1",
+      "safety": {
+        "default_enable": false,
+        "managed_opt_in": true,
+        "strict_admission_present": true
+      },
+      "verdict": {
+        "single_green_light": false,
+        "dimensions": [
+          "candidate",
+          "execution",
+          "evidence",
+          "freshness",
+          "risk",
+          "trial"
+        ],
+        "read_surface": {
+          "observed_channels": [
+            "read",
+            "grep",
+            "glob",
+            "write",
+            "edit"
+          ],
+          "unobserved_channels": [
+            "bash",
+            "other-mcp",
+            "network",
+            "direct-fs"
+          ]
+        }
+      }
+    },
+    "observation": {
+      "processStarted": true,
+      "exitCode": 0,
+      "deadlineMs": 30000,
+      "timedOut": false,
+      "cancelled": false,
+      "stdoutSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "issues": [],
+    "hostVerdict": "unchanged"
+  },
+  "run": {
+    "status": "accepted",
+    "orchestrationRunId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9",
+    "plan": {
+      "mode": "lead-workers",
+      "leadRole": "implementer",
+      "workers": [
+        {
+          "roleName": "implementer",
+          "task": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+          "modelRef": null,
+          "writeSet": [
+            "math.js"
+          ],
+          "isolation": "worktree"
+        }
+      ],
+      "reasons": [
+        "explicit-workers",
+        "lead:implementer",
+        "max-workers:5"
+      ],
+      "routeDiagnostics": {
+        "difficulty": "complex",
+        "confidence": 0.68,
+        "reasons": [
+          "explicit-workers",
+          "lead:implementer",
+          "max-workers:5",
+          "difficulty:complex",
+          "confidence:0.68"
+        ],
+        "selectedRoles": [
+          "implementer"
+        ],
+        "rejectedRoles": [
+          {
+            "roleName": "planner",
+            "reason": "capability-gap"
+          },
+          {
+            "roleName": "architect",
+            "reason": "capability-gap"
+          },
+          {
+            "roleName": "tester",
+            "reason": "capability-gap"
+          },
+          {
+            "roleName": "reviewer",
+            "reason": "capability-gap"
+          },
+          {
+            "roleName": "security-reviewer",
+            "reason": "capability-gap"
+          },
+          {
+            "roleName": "docs-writer",
+            "reason": "not-selected-by-route"
+          },
+          {
+            "roleName": "knowledge-librarian",
+            "reason": "capability-gap"
+          },
+          {
+            "roleName": "skeptic",
+            "reason": "capability-gap"
+          }
+        ],
+        "requiredCapabilities": [
+          "task-analysis",
+          "code-change"
+        ],
+        "capabilityGaps": [],
+        "isolationAdvisory": {
+          "boundary": "advisory-only",
+          "applied": false,
+          "recommendedMode": "shared",
+          "reason": "shared_l0_default",
+          "score": {
+            "duration": 0,
+            "workers": 1,
+            "writeDensity": 1,
+            "writeSetOverlapRisk": 0
+          }
+        }
+      },
+      "taskGraph": {
+        "graphRunId": "explicit-workers",
+        "mode": "auto",
+        "status": "planned",
+        "nodes": [
+          {
+            "taskNodeId": "implementer-1",
+            "agentId": "main",
+            "roleName": "implementer",
+            "task": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+            "phase": "implementation",
+            "dependsOn": [],
+            "scope": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+            "requiredCapabilities": [
+              "task-analysis",
+              "code-change"
+            ],
+            "attemptPolicy": {
+              "maxRepairAttempts": 1,
+              "maxRedoAttempts": 1
+            },
+            "status": "ready",
+            "modelRef": null,
+            "writeSet": [
+              "math.js"
+            ],
+            "isolation": "worktree",
+            "worktreeId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9-implemen-7958d4ecad"
+          }
+        ],
+        "edges": []
+      },
+      "graphStatus": "planned",
+      "executionWaves": [
+        {
+          "wave": 1,
+          "taskNodeIds": [
+            "implementer-1"
+          ],
+          "roles": [
+            "implementer"
+          ],
+          "reason": "scheduled 1 ready node(s) within concurrency cap 5"
+        }
+      ],
+      "capabilityGaps": [],
+      "estimatedRepairPolicy": {
+        "maxRepairAttempts": 1,
+        "maxRedoAttempts": 1,
+        "maxFollowupRuns": 2
+      },
+      "isolation": "worktree",
+      "verifierNoSelfRepair": true,
+      "complexityDecision": {
+        "mode": "team-orchestrated",
+        "confidence": 0.82,
+        "signals": [
+          {
+            "name": "taskWordCount",
+            "value": 12
+          },
+          {
+            "name": "fileHintCount",
+            "value": 0
+          },
+          {
+            "name": "riskHintCount",
+            "value": 0
+          },
+          {
+            "name": "capabilityFamilyCount",
+            "value": 0
+          },
+          {
+            "name": "toolHintCount",
+            "value": 0
+          },
+          {
+            "name": "priorFailureCount",
+            "value": 0
+          },
+          {
+            "name": "explicitTeamRequested",
+            "value": true
+          },
+          {
+            "name": "explicitRunbookRequested",
+            "value": false
+          }
+        ],
+        "reasons": [
+          "explicit-team-requested"
+        ],
+        "warnings": []
+      },
+      "runbookSelection": {
+        "unselected": [
+          {
+            "runbookId": "code-review",
+            "reasons": [
+              "no-intent-match"
+            ]
+          },
+          {
+            "runbookId": "feature-implementation",
+            "reasons": [
+              "intent:add"
+            ]
+          },
+          {
+            "runbookId": "security-check",
+            "reasons": [
+              "no-intent-match"
+            ]
+          },
+          {
+            "runbookId": "documentation-migration",
+            "reasons": [
+              "no-intent-match"
+            ]
+          },
+          {
+            "runbookId": "test-repair",
+            "reasons": [
+              "no-intent-match"
+            ]
+          }
+        ]
+      },
+      "qualityRouting": {
+        "authority": {
+          "state": "unavailable",
+          "source": "none",
+          "qualityOverall": null,
+          "scorecardBacked": false,
+          "verified": false,
+          "routingEligible": false,
+          "reason": "No Task Loop quality authority reference was supplied.",
+          "evidenceRefs": []
+        },
+        "affected": false,
+        "reason": "explicit-plan"
+      }
+    },
+    "resultBundle": {
+      "schemaVersion": 1,
+      "phase": "spawn",
+      "orchestrationRunId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9",
+      "taskGraphId": "explicit-workers",
+      "attempt": 1,
+      "status": "pending",
+      "leadRole": "implementer",
+      "selectedRoles": [
+        "implementer"
+      ],
+      "roleOutcomes": [
+        {
+          "roleName": "implementer",
+          "agentId": "main",
+          "task": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+          "phase": "worker",
+          "taskId": "implementer-1",
+          "taskNodeId": "implementer-1",
+          "roleInstanceId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9:implementer-1:implementer:attempt-1",
+          "attempt": 1,
+          "status": "accepted",
+          "childRunId": "904a1c49-5b14-4742-b32a-6477bb8c27cd",
+          "childSessionKey": "agent:main:subagent:cfd197f9-103e-4997-90ce-22ac4d8c653d",
+          "evidenceRefs": [
+            {
+              "type": "run",
+              "ref": "904a1c49-5b14-4742-b32a-6477bb8c27cd",
+              "roleName": "implementer",
+              "taskId": "implementer-1"
+            }
+          ]
+        }
+      ],
+      "handoffArtifacts": [],
+      "artifacts": [],
+      "evidenceRefs": [],
+      "permissionEvents": [],
+      "failures": [],
+      "memoryProposals": [],
+      "traceIds": [
+        "trace_d4589db6-0327-4f41-ad25-afe0da51e3e8"
+      ]
+    },
+    "admissionReceipts": [
+      {
+        "schemaVersion": "DelegationAdmissionReceipt/v1",
+        "receiptId": "profile-c-receipt",
+        "idempotencyKey": "profile-c-worker",
+        "requestDigest": "de1fea0b853503656d69360a010bd7adcb7835ee0caf9e9e0becb4487fc9ef57",
+        "coordinator": {
+          "workspaceId": "profile-c",
+          "agentId": "main",
+          "sessionKey": "agent:main:dashboard:591da74f-7457-4eb4-99e5-f910b77e80d1",
+          "sessionId": "c41db885-a8d6-44f7-baca-fa1417f70142",
+          "bindingRevision": 1
+        },
+        "taskRef": {
+          "kind": "task-ledger",
+          "nodeId": "profile-c"
+        },
+        "roleName": "implementer",
+        "task": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+        "state": "accepted",
+        "acceptedIsNotCompletion": true,
+        "orchestrationRunId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9",
+        "taskNodeId": "implementer-1",
+        "taskId": "implementer-1",
+        "roleInstanceId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9:implementer-1:implementer:attempt-1",
+        "childSessionKey": "agent:main:subagent:cfd197f9-103e-4997-90ce-22ac4d8c653d",
+        "childRunId": "904a1c49-5b14-4742-b32a-6477bb8c27cd",
+        "backend": {
+          "kind": "openclaw-embedded",
+          "provider": "openai",
+          "model": "openai/gpt-5.5",
+          "evidence": "role-spawn:spawnSubagentDirect"
+        },
+        "toolAuthorization": {
+          "allowlist": [
+            "read",
+            "write",
+            "edit",
+            "bash"
+          ],
+          "denylist": [
+            "web_search",
+            "web_fetch",
+            "x_search",
+            "code_execution",
+            "browser",
+            "__role_capability:mcp_network"
+          ],
+          "permissionDecisionCount": 6,
+          "source": "role-clamped-inherited"
+        },
+        "isolation": {
+          "mode": "worktree",
+          "backend": "git",
+          "worktreeId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9-implemen-7958d4ecad",
+          "writeSet": [
+            "math.js"
+          ],
+          "parallelWritesAllowed": true,
+          "writeSetBasis": "git-checkout"
+        },
+        "reason": null,
+        "createdAt": "2026-11-10T21:05:11.865Z",
+        "updatedAt": "2026-11-10T21:05:13.534Z",
+        "acceptedAt": "2026-11-10T21:05:13.534Z",
+        "rejectedAt": null
+      }
+    ],
+    "delegationReceipt": {
+      "schemaVersion": "clawx.session-delegation-receipt/v1",
+      "admissionId": "profile-c-receipt",
+      "idempotencyKey": "profile-c-worker",
+      "status": "accepted",
+      "orchestrationRunId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9",
+      "acceptedAt": "2026-11-10T21:05:13.756Z",
+      "coordinator": {
+        "workspaceId": "profile-c",
+        "agentId": "main",
+        "sessionKey": "agent:main:dashboard:591da74f-7457-4eb4-99e5-f910b77e80d1",
+        "bindingRevision": 1,
+        "sessionGeneration": "c41db885-a8d6-44f7-baca-fa1417f70142"
+      },
+      "taskRef": "profile-c",
+      "parentEnvironment": {
+        "kind": "local",
+        "canonicalRoot": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\workspace",
+        "backend": "local-workspace",
+        "branch": null,
+        "detachedHead": false,
+        "setupProfile": null
+      },
+      "parentEnvironmentRevision": 1,
+      "authorization": {
+        "approvalId": null,
+        "grantState": "authorized",
+        "owner": "gateway-permission"
+      },
+      "budget": {
+        "status": "observed",
+        "reason": null,
+        "maxWorkers": 5,
+        "process": {
+          "maxChildrenPerAgent": 5,
+          "maxSpawnDepth": 1,
+          "source": "agents.defaults.subagents"
+        },
+        "backgroundTerminal": {
+          "lane": "subagent",
+          "maxConcurrent": 8,
+          "activeCount": 0,
+          "queuedCount": 0,
+          "source": "process.command-queue.subagent"
+        }
+      },
+      "scheduler": {
+        "executionWaves": [
+          {
+            "wave": 1,
+            "taskNodeIds": [
+              "implementer-1"
+            ],
+            "roles": [
+              "implementer"
+            ],
+            "reason": "scheduled"
+          }
+        ],
+        "metrics": {
+          "queued": 1,
+          "running": 0,
+          "scheduled": 1,
+          "skipped": 0,
+          "concurrencyCap": 5,
+          "budgetEstimate": 2
+        }
+      },
+      "children": [
+        {
+          "roleName": "implementer",
+          "taskNodeId": "implementer-1",
+          "roleInstanceId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9:implementer-1:implementer:attempt-1",
+          "admissionStatus": "accepted",
+          "runState": "accepted-not-completed",
+          "completionObserved": false,
+          "backend": "subagent",
+          "childSessionKey": "agent:main:subagent:cfd197f9-103e-4997-90ce-22ac4d8c653d",
+          "childRunId": "904a1c49-5b14-4742-b32a-6477bb8c27cd",
+          "toolAuthorization": {
+            "status": "effective",
+            "source": "role-contract+parent-clamp",
+            "roleName": "implementer",
+            "effectiveRoleName": "implementer",
+            "parentRoleName": null,
+            "allowlist": [
+              "read",
+              "write",
+              "edit",
+              "bash"
+            ],
+            "denylist": [
+              "web_search",
+              "web_fetch",
+              "x_search",
+              "code_execution",
+              "browser",
+              "__role_capability:mcp_network"
+            ],
+            "permissionDecisionCount": 6
+          },
+          "isolation": {
+            "mode": "worktree",
+            "backend": "git-worktree",
+            "canonicalRoot": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\workspace\\.openclaw\\worktrees\\orch_7749a666-20ac-4523-ab48-8a5922ebecb9-implemen-7958d4ecad",
+            "branch": null,
+            "detachedHead": true,
+            "verifiedCheckout": true,
+            "worktreeId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9-implemen-7958d4ecad"
+          },
+          "schedulerWave": 1,
+          "error": null
+        }
+      ],
+      "errors": [],
+      "completionObserved": false,
+      "recoveryRequired": false
+    },
+    "handoffMode": "off",
+    "handoffState": "disabled",
+    "handoffArtifacts": [],
+    "blackboardState": {
+      "entries": [
+        {
+          "id": "bb_orch_7749a666-20ac-4523-ab48-8a5922ebecb9_implementer_implementer-1",
+          "type": "claim",
+          "authorRole": "implementer",
+          "taskId": "implementer-1",
+          "content": {
+            "subject": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+            "conclusion": "accepted",
+            "phase": "worker"
+          },
+          "confidence": 0.45,
+          "evidenceRefs": [
+            "904a1c49-5b14-4742-b32a-6477bb8c27cd"
+          ],
+          "visibility": "verifier",
+          "status": "needs_review",
+          "trustBoundary": "role-output",
+          "version": 1,
+          "createdAt": "2026-11-10T21:05:13.754Z",
+          "updatedAt": "2026-11-10T21:05:13.754Z"
+        }
+      ]
+    },
+    "blackboardSummary": {
+      "entryCount": 1,
+      "unresolvedConflicts": 0,
+      "openQuestions": 0,
+      "openRisks": 0,
+      "memoryProposals": 0,
+      "evidenceRefs": [
+        "904a1c49-5b14-4742-b32a-6477bb8c27cd"
+      ],
+      "trustBoundaries": [
+        "role-output"
+      ]
+    },
+    "synthesis": {
+      "schemaVersion": 1,
+      "orchestrationRunId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9",
+      "taskGraphId": "explicit-workers",
+      "status": "verified",
+      "summary": "Verified result; 1 role contribution(s), 0 evidence ref(s), 0 artifact(s).",
+      "roleContributions": [
+        {
+          "roleName": "implementer",
+          "task": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+          "taskId": "implementer-1",
+          "status": "accepted",
+          "phase": "worker",
+          "evidenceRefs": [
+            {
+              "type": "run",
+              "ref": "904a1c49-5b14-4742-b32a-6477bb8c27cd",
+              "roleName": "implementer",
+              "taskId": "implementer-1"
+            }
+          ]
+        }
+      ],
+      "evidenceRefs": [],
+      "artifactRefs": [],
+      "visibleFailures": [],
+      "verifier": {
+        "decision": "not_required",
+        "evidenceRefs": [],
+        "reasons": []
+      },
+      "traceIds": [
+        "trace_d4589db6-0327-4f41-ad25-afe0da51e3e8"
+      ],
+      "blackboardSummary": {
+        "entryCount": 1,
+        "unresolvedConflicts": 0,
+        "openQuestions": 0,
+        "openRisks": 0,
+        "memoryProposals": 0,
+        "evidenceRefs": [
+          "904a1c49-5b14-4742-b32a-6477bb8c27cd"
+        ],
+        "trustBoundaries": [
+          "role-output"
+        ]
+      },
+      "policy": {
+        "toolAccess": "none",
+        "verifierAuthority": "preserved",
+        "memoryWrite": "none"
+      }
+    },
+    "complexityDecision": {
+      "mode": "team-orchestrated",
+      "confidence": 0.82,
+      "signals": [
+        {
+          "name": "taskWordCount",
+          "value": 12
+        },
+        {
+          "name": "fileHintCount",
+          "value": 0
+        },
+        {
+          "name": "riskHintCount",
+          "value": 0
+        },
+        {
+          "name": "capabilityFamilyCount",
+          "value": 0
+        },
+        {
+          "name": "toolHintCount",
+          "value": 0
+        },
+        {
+          "name": "priorFailureCount",
+          "value": 0
+        },
+        {
+          "name": "explicitTeamRequested",
+          "value": true
+        },
+        {
+          "name": "explicitRunbookRequested",
+          "value": false
+        }
+      ],
+      "reasons": [
+        "explicit-team-requested"
+      ],
+      "warnings": []
+    },
+    "runbookSelection": {
+      "unselected": [
+        {
+          "runbookId": "code-review",
+          "reasons": [
+            "no-intent-match"
+          ]
+        },
+        {
+          "runbookId": "feature-implementation",
+          "reasons": [
+            "intent:add"
+          ]
+        },
+        {
+          "runbookId": "security-check",
+          "reasons": [
+            "no-intent-match"
+          ]
+        },
+        {
+          "runbookId": "documentation-migration",
+          "reasons": [
+            "no-intent-match"
+          ]
+        },
+        {
+          "runbookId": "test-repair",
+          "reasons": [
+            "no-intent-match"
+          ]
+        }
+      ]
+    },
+    "routeDiagnostics": {
+      "difficulty": "complex",
+      "confidence": 0.68,
+      "reasons": [
+        "explicit-workers",
+        "lead:implementer",
+        "max-workers:5",
+        "difficulty:complex",
+        "confidence:0.68"
+      ],
+      "selectedRoles": [
+        "implementer"
+      ],
+      "rejectedRoles": [
+        {
+          "roleName": "planner",
+          "reason": "capability-gap"
+        },
+        {
+          "roleName": "architect",
+          "reason": "capability-gap"
+        },
+        {
+          "roleName": "tester",
+          "reason": "capability-gap"
+        },
+        {
+          "roleName": "reviewer",
+          "reason": "capability-gap"
+        },
+        {
+          "roleName": "security-reviewer",
+          "reason": "capability-gap"
+        },
+        {
+          "roleName": "docs-writer",
+          "reason": "not-selected-by-route"
+        },
+        {
+          "roleName": "knowledge-librarian",
+          "reason": "capability-gap"
+        },
+        {
+          "roleName": "skeptic",
+          "reason": "capability-gap"
+        }
+      ],
+      "requiredCapabilities": [
+        "task-analysis",
+        "code-change"
+      ],
+      "capabilityGaps": [],
+      "isolationAdvisory": {
+        "boundary": "advisory-only",
+        "applied": false,
+        "recommendedMode": "shared",
+        "reason": "shared_l0_default",
+        "score": {
+          "duration": 0,
+          "workers": 1,
+          "writeDensity": 1,
+          "writeSetOverlapRisk": 0
+        }
+      }
+    },
+    "taskGraph": {
+      "graphRunId": "explicit-workers",
+      "mode": "auto",
+      "status": "planned",
+      "nodes": [
+        {
+          "taskNodeId": "implementer-1",
+          "agentId": "main",
+          "roleName": "implementer",
+          "task": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+          "phase": "implementation",
+          "dependsOn": [],
+          "scope": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+          "requiredCapabilities": [
+            "task-analysis",
+            "code-change"
+          ],
+          "attemptPolicy": {
+            "maxRepairAttempts": 1,
+            "maxRedoAttempts": 1
+          },
+          "status": "ready",
+          "modelRef": null,
+          "writeSet": [
+            "math.js"
+          ],
+          "isolation": "worktree",
+          "worktreeId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9-implemen-7958d4ecad"
+        }
+      ],
+      "edges": []
+    },
+    "graphStatus": "completed",
+    "executionWaves": [
+      {
+        "wave": 1,
+        "taskNodeIds": [
+          "implementer-1"
+        ],
+        "roles": [
+          "implementer"
+        ],
+        "reason": "scheduled 1 ready node(s) within concurrency cap 5"
+      }
+    ],
+    "schedulerMetrics": {
+      "queued": 1,
+      "running": 0,
+      "completed": 1,
+      "skipped": 0,
+      "concurrencyCap": 5,
+      "budgetEstimate": 2,
+      "roleCostSummary": [
+        {
+          "roleName": "implementer",
+          "taskNodeIds": [
+            "implementer-1"
+          ],
+          "estimatedCost": 2
+        }
+      ]
+    },
+    "spawnedRunIds": [
+      "904a1c49-5b14-4742-b32a-6477bb8c27cd"
+    ],
+    "expectedChildren": [
+      {
+        "roleName": "implementer",
+        "task": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+        "taskId": "implementer-1",
+        "roleInstanceId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9:implementer-1:implementer:attempt-1",
+        "runId": "904a1c49-5b14-4742-b32a-6477bb8c27cd",
+        "childSessionKey": "agent:main:subagent:cfd197f9-103e-4997-90ce-22ac4d8c653d"
+      }
+    ],
+    "pendingVerifier": false,
+    "attempts": [
+      {
+        "taskId": "implementer-1",
+        "taskNodeId": "implementer-1",
+        "graphRunId": "explicit-workers",
+        "roleName": "implementer",
+        "roleInstanceId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9:implementer-1:implementer:attempt-1",
+        "attempt": 1,
+        "phase": "worker",
+        "scope": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+        "requiredCapabilities": [
+          "task-analysis",
+          "code-change"
+        ],
+        "status": "accepted",
+        "executionWave": 1,
+        "startedAt": 1794344712492,
+        "endedAt": 1794344713534
+      }
+    ],
+    "pendingGraphNodes": [],
+    "orchestrationDiagnostics": {
+      "kind": "ordinary-orchestration-diagnostics",
+      "boundary": "diagnostics-only",
+      "status": "ok",
+      "summary": "Ordinary orchestration completed without diagnostic recommendations.",
+      "failedWorkerCount": 0,
+      "taskLoopUpgradeAvailable": true,
+      "recommendations": [],
+      "nextSteps": []
+    },
+    "rerouteRecommendations": [],
+    "capabilityGaps": [],
+    "estimatedRepairPolicy": {
+      "maxRepairAttempts": 1,
+      "maxRedoAttempts": 1,
+      "maxFollowupRuns": 2
+    },
+    "quality": [
+      {
+        "roleName": "implementer",
+        "childRunId": "904a1c49-5b14-4742-b32a-6477bb8c27cd",
+        "childSessionKey": "agent:main:subagent:cfd197f9-103e-4997-90ce-22ac4d8c653d",
+        "overall": "good",
+        "score": 75,
+        "schemaCompliance": "weak",
+        "evidenceCoverage": "partial",
+        "scopeDiscipline": "pass",
+        "actionability": "strong",
+        "verificationSignal": "weak",
+        "verifierVerdict": "not_available",
+        "runtimeHealth": "healthy",
+        "reasons": [
+          "schema:weak"
+        ]
+      }
+    ],
+    "qualityState": "shadow",
+    "qualityStateReason": "Ordinary orchestration scored from 1 worker attempt(s) and observability trace trace_d4589db6-0327-4f41-ad25-afe0da51e3e8; this evidence is shadow-only and cannot change routing.",
+    "qualityScorecard": {
+      "state": "shadow",
+      "overall": "good",
+      "worst": "good",
+      "reason": "Ordinary orchestration scored from 1 worker attempt(s) and observability trace trace_d4589db6-0327-4f41-ad25-afe0da51e3e8; this evidence is shadow-only and cannot change routing.",
+      "evidenceRefs": [
+        "orchestration:orch_7749a666-20ac-4523-ab48-8a5922ebecb9",
+        "trace:trace_d4589db6-0327-4f41-ad25-afe0da51e3e8",
+        "run:904a1c49-5b14-4742-b32a-6477bb8c27cd"
+      ],
+      "workerScores": [
+        {
+          "roleName": "implementer",
+          "childRunId": "904a1c49-5b14-4742-b32a-6477bb8c27cd",
+          "childSessionKey": "agent:main:subagent:cfd197f9-103e-4997-90ce-22ac4d8c653d",
+          "overall": "good",
+          "score": 75,
+          "schemaCompliance": "weak",
+          "evidenceCoverage": "partial",
+          "scopeDiscipline": "pass",
+          "actionability": "strong",
+          "verificationSignal": "weak",
+          "verifierVerdict": "not_available",
+          "runtimeHealth": "healthy",
+          "reasons": [
+            "schema:weak"
+          ]
+        }
+      ],
+      "scorecardBacked": true,
+      "authority": {
+        "state": "shadow",
+        "source": "ordinary_orchestration_scorecard",
+        "qualityOverall": "good",
+        "scorecardBacked": true,
+        "verified": false,
+        "routingEligible": false,
+        "reason": "Ordinary orchestration scored from 1 worker attempt(s) and observability trace trace_d4589db6-0327-4f41-ad25-afe0da51e3e8; this evidence is shadow-only and cannot change routing.",
+        "evidenceRefs": [
+          "orchestration:orch_7749a666-20ac-4523-ab48-8a5922ebecb9",
+          "trace:trace_d4589db6-0327-4f41-ad25-afe0da51e3e8",
+          "run:904a1c49-5b14-4742-b32a-6477bb8c27cd"
+        ]
+      },
+      "observabilityScore": {
+        "traceId": "trace_d4589db6-0327-4f41-ad25-afe0da51e3e8",
+        "grade": "B",
+        "score": 84
+      },
+      "summary": {
+        "good": 1,
+        "needsAttention": 0,
+        "poorAttempts": 0
+      }
+    },
+    "qualitySummary": {
+      "good": 1,
+      "needsAttention": 0,
+      "poorAttempts": 0
+    },
+    "qualityDecision": {
+      "result": {
+        "state": "shadow",
+        "source": "ordinary_orchestration_scorecard",
+        "qualityOverall": "good",
+        "scorecardBacked": true,
+        "verified": false,
+        "routingEligible": false,
+        "reason": "Ordinary orchestration scored from 1 worker attempt(s) and observability trace trace_d4589db6-0327-4f41-ad25-afe0da51e3e8; this evidence is shadow-only and cannot change routing.",
+        "evidenceRefs": [
+          "orchestration:orch_7749a666-20ac-4523-ab48-8a5922ebecb9",
+          "trace:trace_d4589db6-0327-4f41-ad25-afe0da51e3e8",
+          "run:904a1c49-5b14-4742-b32a-6477bb8c27cd"
+        ]
+      },
+      "routing": {
+        "authority": {
+          "state": "unavailable",
+          "source": "none",
+          "qualityOverall": null,
+          "scorecardBacked": false,
+          "verified": false,
+          "routingEligible": false,
+          "reason": "No Task Loop quality authority reference was supplied.",
+          "evidenceRefs": []
+        },
+        "affected": false,
+        "reason": "explicit-plan"
+      }
+    },
+    "followupCandidates": [],
+    "memoryCandidates": [],
+    "outcomes": [
+      {
+        "roleName": "implementer",
+        "task": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+        "isVerifier": false,
+        "ledger": {
+          "taskId": "implementer-1",
+          "taskNodeId": "implementer-1",
+          "graphRunId": "explicit-workers",
+          "roleName": "implementer",
+          "roleInstanceId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9:implementer-1:implementer:attempt-1",
+          "attempt": 1,
+          "phase": "worker",
+          "scope": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+          "requiredCapabilities": [
+            "task-analysis",
+            "code-change"
+          ],
+          "status": "accepted",
+          "executionWave": 1,
+          "startedAt": 1794344712492,
+          "endedAt": 1794344713534
+        },
+        "status": "accepted",
+        "runId": "904a1c49-5b14-4742-b32a-6477bb8c27cd",
+        "childSessionKey": "agent:main:subagent:cfd197f9-103e-4997-90ce-22ac4d8c653d"
+      }
+    ],
+    "failures": []
+  },
+  "workerTerminal": {
+    "runId": "904a1c49-5b14-4742-b32a-6477bb8c27cd",
+    "status": "ok",
+    "startedAt": 1794344729679,
+    "endedAt": 1794344737713,
+    "stopReason": "stop",
+    "livenessState": "working"
+  },
+  "persistedWorker": {
+    "runId": "904a1c49-5b14-4742-b32a-6477bb8c27cd",
+    "childSessionKey": "agent:main:subagent:cfd197f9-103e-4997-90ce-22ac4d8c653d",
+    "controllerSessionKey": "agent:main:dashboard:591da74f-7457-4eb4-99e5-f910b77e80d1",
+    "requesterSessionKey": "agent:main:dashboard:591da74f-7457-4eb4-99e5-f910b77e80d1",
+    "requesterSessionId": "c41db885-a8d6-44f7-baca-fa1417f70142",
+    "requesterDisplayKey": "agent:main:dashboard:591da74f-7457-4eb4-99e5-f910b77e80d1",
+    "task": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+    "cleanup": "keep",
+    "expectsCompletionMessage": true,
+    "spawnMode": "run",
+    "label": "Implementer",
+    "model": "openai/gpt-5.5",
+    "agentDir": "D:\\tmp\\tf0782-final-c00e-20261110\\.tmp\\e2e-runs\\verse-claw-e2e-run-siCd6g\\verse-claw-e2e-user-data-jvIFP5\\profile-c-user-data\\openclaw-source-state\\agents\\main\\agent",
+    "workspaceDir": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\workspace\\.openclaw\\worktrees\\orch_7749a666-20ac-4523-ab48-8a5922ebecb9-implemen-7958d4ecad",
+    "runTimeoutSeconds": 0,
+    "createdAt": 1794344713507,
+    "startedAt": 1794344729679,
+    "execution": {
+      "status": "terminal",
+      "startedAt": 1794344729679,
+      "endedAt": 1794344737713,
+      "outcome": {
+        "status": "ok",
+        "startedAt": 1794344729679,
+        "endedAt": 1794344737713,
+        "elapsedMs": 8034
+      }
+    },
+    "completion": {
+      "required": true,
+      "resultText": "PKG_WORKER_DONE_PROFILE_C",
+      "capturedAt": 1794344739314
+    },
+    "delivery": {
+      "status": "pending",
+      "lastError": null
+    },
+    "sessionStartedAt": 1794344713507,
+    "accumulatedRuntimeMs": 0,
+    "cleanupHandled": false,
+    "orchestration": {
+      "orchestrationRunId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9",
+      "roleName": "implementer",
+      "isVerifier": false,
+      "phase": "worker",
+      "expectedWorkerRunIds": [
+        "904a1c49-5b14-4742-b32a-6477bb8c27cd"
+      ],
+      "leadRole": "implementer",
+      "originalTask": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+      "taskId": "implementer-1",
+      "roleInstanceId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9:implementer-1:implementer:attempt-1",
+      "attempt": 1,
+      "scope": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+      "requiredCapabilities": [
+        "task-analysis",
+        "code-change"
+      ],
+      "ledger": {
+        "taskId": "implementer-1",
+        "taskNodeId": "implementer-1",
+        "graphRunId": "explicit-workers",
+        "roleName": "implementer",
+        "roleInstanceId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9:implementer-1:implementer:attempt-1",
+        "attempt": 1,
+        "phase": "worker",
+        "scope": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+        "requiredCapabilities": [
+          "task-analysis",
+          "code-change"
+        ],
+        "status": "planned",
+        "executionWave": 1,
+        "startedAt": 1794344712492
+      },
+      "taskNodeId": "implementer-1",
+      "graphRunId": "explicit-workers",
+      "executionWave": 1,
+      "taskGraph": {
+        "graphRunId": "explicit-workers",
+        "mode": "auto",
+        "status": "planned",
+        "nodes": [
+          {
+            "taskNodeId": "implementer-1",
+            "agentId": "main",
+            "roleName": "implementer",
+            "task": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+            "phase": "implementation",
+            "dependsOn": [],
+            "scope": "PACKAGE_PROFILE_C_WORKER: replace math.js with the correct addition and run the verification command.",
+            "requiredCapabilities": [
+              "task-analysis",
+              "code-change"
+            ],
+            "attemptPolicy": {
+              "maxRepairAttempts": 1,
+              "maxRedoAttempts": 1
+            },
+            "status": "ready",
+            "modelRef": null,
+            "writeSet": [
+              "math.js"
+            ],
+            "isolation": "worktree",
+            "worktreeId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9-implemen-7958d4ecad"
+          }
+        ],
+        "edges": []
+      },
+      "executionWaves": [
+        {
+          "wave": 1,
+          "taskNodeIds": [
+            "implementer-1"
+          ],
+          "roles": [
+            "implementer"
+          ],
+          "reason": "scheduled 1 ready node(s) within concurrency cap 5"
+        }
+      ],
+      "isolation": "worktree",
+      "worktreeId": "orch_7749a666-20ac-4523-ab48-8a5922ebecb9-implemen-7958d4ecad",
+      "worktreeBackend": "git",
+      "worktreeWriteSet": [
+        "math.js"
+      ],
+      "routeDiagnostics": {
+        "difficulty": "complex",
+        "confidence": 0.68,
+        "reasons": [
+          "explicit-workers",
+          "lead:implementer",
+          "max-workers:5",
+          "difficulty:complex",
+          "confidence:0.68"
+        ],
+        "selectedRoles": [
+          "implementer"
+        ],
+        "rejectedRoles": [
+          {
+            "roleName": "planner",
+            "reason": "capability-gap"
+          },
+          {
+            "roleName": "architect",
+            "reason": "capability-gap"
+          },
+          {
+            "roleName": "tester",
+            "reason": "capability-gap"
+          },
+          {
+            "roleName": "reviewer",
+            "reason": "capability-gap"
+          },
+          {
+            "roleName": "security-reviewer",
+            "reason": "capability-gap"
+          },
+          {
+            "roleName": "docs-writer",
+            "reason": "not-selected-by-route"
+          },
+          {
+            "roleName": "knowledge-librarian",
+            "reason": "capability-gap"
+          },
+          {
+            "roleName": "skeptic",
+            "reason": "capability-gap"
+          }
+        ],
+        "requiredCapabilities": [
+          "task-analysis",
+          "code-change"
+        ],
+        "capabilityGaps": [],
+        "isolationAdvisory": {
+          "boundary": "advisory-only",
+          "applied": false,
+          "recommendedMode": "shared",
+          "reason": "shared_l0_default",
+          "score": {
+            "duration": 0,
+            "workers": 1,
+            "writeDensity": 1,
+            "writeSetOverlapRisk": 0
+          }
+        }
+      },
+      "qualityPolicy": "standard",
+      "repairPolicy": {
+        "maxRepairAttempts": 1,
+        "maxRedoAttempts": 1,
+        "maxFollowupRuns": 2
+      },
+      "workerCommunication": "none",
+      "handoffArtifactsMode": "off",
+      "allowFollowupPlanning": false,
+      "worktreeMergeStatus": "merged",
+      "worktreeWriteSetMismatch": [],
+      "worktreeMergeJournalRef": "write-journal:review-apply-64cdabe3-3604-40d3-85ea-baf467902b34:1",
+      "worktreeMergeHashes": {
+        "math.js": "754052599694724afaf234c67ab548b34584aa20a91a46e3f61ecfdca6f5383e"
+      },
+      "worktreeMergeRecoveryRequired": false,
+      "worktreeMergeProcessedAt": 1794344739232,
+      "verifierSkippedReason": "no-verifier-role",
+      "verifierSkippedAt": 1794344739707
+    },
+    "endedAt": 1794344737713,
+    "outcome": {
+      "status": "ok",
+      "startedAt": 1794344729679,
+      "endedAt": 1794344737713,
+      "elapsedMs": 8034
+    },
+    "endedReason": "subagent-complete",
+    "browserCleanupDispatchedAt": 1794344738324
+  },
+  "workerToolResults": {
+    "write": "Successfully wrote 65 bytes to math.js\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+    "verify": "Warning: background execution is disabled; running synchronously and returning only after the process exits.\n\n\n\nPACKAGED_VERIFY_PASS"
+  },
+  "undoToolResults": {
+    "write": "Successfully wrote 10 bytes to scratch.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+    "undo": "{\n  \"ok\": true,\n  \"restored\": [\n    \"scratch.txt\"\n  ],\n  \"errors\": [],\n  \"journalDir\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-c\\\\workspace\\\\.openclaw\\\\journal\\\\cb5697da-1463-436d-9e4e-36cabdf3a5e0\",\n  \"remainingEntries\": 0\n}"
+  },
+  "coding": {
+    "workspace": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\workspace",
+    "mathSha256": "754052599694724afaf234c67ab548b34584aa20a91a46e3f61ecfdca6f5383e",
+    "scratchRemoved": true,
+    "providerRequests": 7,
+    "providerAnomalies": [],
+    "providerLog": [
+      {
+        "turn": "[Wed 2026-11-11 05:05 GMT+8] [Subagent Context] You are runn",
+        "toolResults": {},
+        "issued": "pkgwrite"
+      },
+      {
+        "turn": "[Wed 2026-11-11 05:05 GMT+8] [Subagent Context] You are runn",
+        "toolResults": {
+          "pkgwrite": "Successfully wrote 65 bytes to math.js\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+        },
+        "issued": "pkgverify"
+      },
+      {
+        "turn": "[Wed 2026-11-11 05:05 GMT+8] [Subagent Context] You are runn",
+        "toolResults": {
+          "pkgwrite": "Successfully wrote 65 bytes to math.js\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+          "pkgverify": "Warning: background execution is disabled; running synchronously and returning only after the process exits.\n\n\n\nPACKAGED_VERIFY_PASS"
+        },
+        "issued": "text:PKG_WORKER_DONE_PROFILE_C"
+      },
+      {
+        "turn": "[Inter-session message] sourceSession=agent:main:subagent:cf",
+        "toolResults": {},
+        "issued": "text:package observer idle"
+      },
+      {
+        "turn": "[Wed 2026-11-11 05:05 GMT+8] PACKAGE_PROFILE_C_UNDO: create ",
+        "toolResults": {},
+        "issued": "pkgscratch"
+      },
+      {
+        "turn": "[Wed 2026-11-11 05:05 GMT+8] PACKAGE_PROFILE_C_UNDO: create ",
+        "toolResults": {
+          "pkgscratch": "Successfully wrote 10 bytes to scratch.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+        },
+        "issued": "pkgundo"
+      },
+      {
+        "turn": "[Wed 2026-11-11 05:05 GMT+8] Sender (untrusted metadata):\n``",
+        "toolResults": {
+          "pkgscratch": "Successfully wrote 10 bytes to scratch.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+          "pkgundo": "{\n  \"ok\": true,\n  \"restored\": [\n    \"scratch.txt\"\n  ],\n  \"errors\": [],\n  \"journalDir\": \"D:\\\\tmp\\\\tf0782-package-3e7d5924f-raw\\\\profile-c\\\\workspace\\\\.openclaw\\\\journal\\\\cb5697da-1463-436d-9e4e-36cabdf3a5e0\",\n  \"remainingEntries\": 0\n}"
+        },
+        "issued": "text:PKG_UNDO_DONE_PROFILE_C"
+      }
+    ]
+  },
+  "vg": {
+    "capabilities": {
+      "compat": {
+        "git_only": "preserved",
+        "next": "preserved",
+        "package_names": [
+          "smart-test-sorter",
+          "smart_sorter"
+        ],
+        "sts_protocols": [
+          "1.1",
+          "2.0"
+        ]
+      },
+      "mcp_tools": [
+        "vg_capabilities",
+        "verdict",
+        "integration_status",
+        "who_touches",
+        "explain_conflict",
+        "declare_intent",
+        "basis_status",
+        "basis_watermark"
+      ],
+      "read": [
+        "workspace.root",
+        "change.status",
+        "change.log",
+        "verify.status",
+        "conflicts",
+        "basis.status",
+        "report",
+        "verdict",
+        "doctor"
+      ],
+      "safety": {
+        "default_enable": false,
+        "evidence_land_present": true,
+        "managed_opt_in": true,
+        "strict_admission_present": true
+      },
+      "schema": "versegit.capabilities/v1",
+      "verdict": {
+        "dimensions": [
+          "candidate",
+          "execution",
+          "evidence",
+          "freshness",
+          "risk",
+          "trial"
+        ],
+        "note": "六维各自独立呈现；admitted 是它们的合取，selected 不覆盖全集",
+        "read_surface": {
+          "observed_channels": [
+            "read",
+            "grep",
+            "glob",
+            "write",
+            "edit"
+          ],
+          "unobserved_channels": [
+            "bash",
+            "other-mcp",
+            "network",
+            "direct-fs"
+          ]
+        },
+        "schema": "versegit.verdict/v1",
+        "single_green_light": false
+      },
+      "workflows": [
+        {
+          "entries": [
+            "workspace.init",
+            "workspace.root",
+            "doctor"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_workspace_lifecycle.rs",
+            "crates/vg-cli/tests/jj_public_surface.rs"
+          ],
+          "id": "workspace",
+          "status": "verified"
+        },
+        {
+          "entries": [
+            "change.new",
+            "change.file",
+            "change.describe",
+            "change.snapshot",
+            "change.diffedit"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_change_lifecycle.rs",
+            "crates/vg-cli/tests/jj_diffedit.rs"
+          ],
+          "id": "change.edit",
+          "status": "verified"
+        },
+        {
+          "entries": [
+            "change.log",
+            "op.restore",
+            "op.undo"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_operation_restore.rs",
+            "crates/vg-cli/tests/jj_op_undo_redo.rs",
+            "crates/vg-cli/tests/jj_backup_restore.rs"
+          ],
+          "id": "history.recover",
+          "status": "verified"
+        },
+        {
+          "entries": [
+            "verify.status",
+            "verdict",
+            "basis.status"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_managed_plan.rs",
+            "crates/vg-cli/tests/jj_evidence_land.rs",
+            "crates/vg-cli/tests/jj_verdict.rs"
+          ],
+          "id": "validation.admit",
+          "status": "verified"
+        },
+        {
+          "entries": [
+            "change.materialize",
+            "land",
+            "report"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_managed_candidate.rs",
+            "crates/vg-cli/tests/jj_closed_loop.rs",
+            "crates/vg-cli/tests/land_concurrency.rs"
+          ],
+          "id": "candidate.land",
+          "status": "verified"
+        },
+        {
+          "entries": [
+            "git.fetch",
+            "git.push",
+            "gerrit.upload"
+          ],
+          "evidence": [
+            "crates/vg-cli/tests/jj_git_ref_sync.rs",
+            "crates/vg-cli/tests/jj_gerrit_upload.rs"
+          ],
+          "id": "external.publish",
+          "status": "controlled"
+        }
+      ],
+      "write": [
+        "workspace.init",
+        "change.new",
+        "change.file",
+        "change.describe",
+        "change.snapshot",
+        "change.diffedit",
+        "change.materialize",
+        "change.duplicate",
+        "change.abandon",
+        "change.rebase",
+        "change.squash",
+        "change.split",
+        "op.restore",
+        "op.undo",
+        "land",
+        "admit.check",
+        "git.fetch",
+        "git.push",
+        "gerrit.upload"
+      ]
+    },
+    "import": {
+      "colocated": true,
+      "command": "workspace.import",
+      "head_commit": "40a83df09753d90796f7d39f78d2f954e4fcd666",
+      "root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace",
+      "schema": "versegit.vg-json/v1",
+      "snapshot": {
+        "change_id": "91e52dfbab9d45e5082b907718e36fcd",
+        "operation_id": "935612a6aad3f8371d5786a2b868158b86e30ee7d2d25a746b4de7aaf757d04366ad727a3a3bdff2c63a2da989d7d497f5f78fc2260b81d0c0236e6fc66734e4",
+        "schema": "versegit.vg-json/v1",
+        "wc_commit_id": "8e08b0867386e5e8c2a18f7a6e881d1fd4d24cab",
+        "workspace_root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace"
+      }
+    },
+    "change": {
+      "change_id": "146aeb806350de468ff9122879dd8ef6",
+      "operation_id": "2ba5ec748d6a285c4a186de99b2c15ed8819381cae25b06b3eb371755eaf645fb2924eaaa48a0afccc4cd97009cc0ec12ebd6115e2fb44df6a24f4c313f57998",
+      "schema": "versegit.vg-json/v1",
+      "wc_commit_id": "f8c6e5c42aad4514d674385b0421ff30e351219e",
+      "workspace_root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace"
+    },
+    "snapshot": {
+      "change_id": "146aeb806350de468ff9122879dd8ef6",
+      "operation_id": "d6a13554afcfeb06a8fbc9e6d3cbaf139609b10487aeba60f5c3724866d7a07ffbe182cf086c51cd1d483453d1d9981803ca7c2c6b85840b0a25cb14c200ed96",
+      "schema": "versegit.vg-json/v1",
+      "wc_commit_id": "48a2b28145eb48ed9f0b7262b81f06fa090e2d2a",
+      "workspace_root": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\profile-c\\vg-workspace"
+    },
+    "sts11": {
+      "ok": true,
+      "protocol": "1.1",
+      "digests": {
+        "matched": 29,
+        "mismatched": [],
+        "total": 29
+      },
+      "parse": {
+        "applicable": true,
+        "invalid_rejected": 10,
+        "invalid_total": 10,
+        "not_applicable_reason": null,
+        "pairs_invalid_rejected": 1,
+        "pairs_invalid_total": 1,
+        "pairs_valid_passed": 1,
+        "pairs_valid_total": 1,
+        "samples": [
+          {
+            "errors": [],
+            "file": "plan_full_fallback.json",
+            "kind": "plan",
+            "ok": true,
+            "section": "valid"
+          },
+          {
+            "errors": [],
+            "file": "plan_risk_decisions_stale.json",
+            "kind": "plan",
+            "ok": true,
+            "section": "valid"
+          },
+          {
+            "errors": [],
+            "file": "plan_selected_parametrized.json",
+            "kind": "plan",
+            "ok": true,
+            "section": "valid"
+          },
+          {
+            "errors": [],
+            "file": "refusal_collection_error.json",
+            "kind": "refusal",
+            "ok": true,
+            "section": "valid"
+          },
+          {
+            "errors": [],
+            "file": "request_candidate_risk_cjk_path.json",
+            "kind": "request",
+            "ok": true,
+            "section": "valid"
+          },
+          {
+            "errors": [],
+            "file": "request_commit_minimal.json",
+            "kind": "request",
+            "ok": true,
+            "section": "valid"
+          },
+          {
+            "errors": [],
+            "file": "request_workspace_norisk.json",
+            "kind": "request",
+            "ok": true,
+            "section": "valid"
+          },
+          {
+            "errors": [],
+            "file": "result_complete_pass.json",
+            "kind": "result",
+            "ok": true,
+            "section": "valid"
+          },
+          {
+            "errors": [],
+            "file": "result_incomplete_budget_abort.json",
+            "kind": "result",
+            "ok": true,
+            "section": "valid"
+          },
+          {
+            "errors": [
+              "selection_scope=selected 但既无选中也无排除（空计划不得当作已规划）"
+            ],
+            "file": "plan_empty_selection.json",
+            "kind": "plan",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [
+              "selection_scope=full 时 selected 必须等于 collected 全集"
+            ],
+            "file": "plan_full_scope_not_all.json",
+            "kind": "plan",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [
+              "conservative_full_available=true 需同时满足 target_confirmable=true 与 attempted_collection.succeeded=true（未知目标或未收集到全集时不得声称可保守全量）"
+            ],
+            "file": "refusal_full_without_confirm.json",
+            "kind": "refusal",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [
+              "candidate 模式缺少 target.theirs_oid（两侧变更并集所需，不能只比第一父）",
+              "candidate 模式必须给出 target.candidate_tree_oid 或 candidate_commit_oid 作为候选内容身份（候选目录仅作定位，临时路径不能当唯一身份）"
+            ],
+            "file": "request_candidate_missing_theirs.json",
+            "kind": "request",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [
+              "identities.code_oid 缺失（缺失不得作为'无变化可安全跳过'的证明）"
+            ],
+            "file": "request_missing_code_oid.json",
+            "kind": "request",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [
+              "协议版本 \"0.9\" 不受支持（VG 只实现了 [\"1.0\", \"1.1\"]；该版本未定稿/未实现，见 TF-0188）——拒绝，且**不**拿已实现的版本的规则去判它"
+            ],
+            "file": "request_unknown_protocol_version.json",
+            "kind": "request",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [
+              "completeness=complete 但 not_executed 非空（计划内有测试未跑完，应记为 incomplete）"
+            ],
+            "file": "result_complete_but_not_executed.json",
+            "kind": "result",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [
+              "raw_exit_code=0 但 outcomes 中存在 failed/error（退出码与事实矛盾）"
+            ],
+            "file": "result_exit0_but_failure.json",
+            "kind": "result",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [
+              "completeness=incomplete 必须给出 incomplete_reason"
+            ],
+            "file": "result_incomplete_missing_reason.json",
+            "kind": "result",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [
+              "零执行不得报告为完整有效通过（executed 为空）"
+            ],
+            "file": "result_zero_exec_marked_pass.json",
+            "kind": "result",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [],
+            "file": "matched",
+            "kind": "pair",
+            "ok": true,
+            "section": "pairs/valid"
+          },
+          {
+            "errors": [],
+            "file": "wrong_candidate",
+            "kind": "pair",
+            "ok": true,
+            "section": "pairs/invalid"
+          }
+        ],
+        "valid_passed": 9,
+        "valid_total": 9
+      }
+    },
+    "sts20": {
+      "ok": true,
+      "protocol": "2.0",
+      "digests": {
+        "matched": 40,
+        "mismatched": [],
+        "total": 40
+      },
+      "parse": {
+        "applicable": true,
+        "invalid_rejected": 8,
+        "invalid_total": 8,
+        "not_applicable_reason": null,
+        "pairs_invalid_rejected": 6,
+        "pairs_invalid_total": 6,
+        "pairs_valid_passed": 1,
+        "pairs_valid_total": 1,
+        "samples": [
+          {
+            "errors": [],
+            "file": "plan_with_full_content_identity.json",
+            "kind": "plan",
+            "ok": true,
+            "section": "valid"
+          },
+          {
+            "errors": [],
+            "file": "refusal_content_unbound.json",
+            "kind": "refusal",
+            "ok": true,
+            "section": "valid"
+          },
+          {
+            "errors": [],
+            "file": "request_candidate_full_content_identity.json",
+            "kind": "request",
+            "ok": true,
+            "section": "valid"
+          },
+          {
+            "errors": [],
+            "file": "request_pure_source_no_config_data.json",
+            "kind": "request",
+            "ok": true,
+            "section": "valid"
+          },
+          {
+            "errors": [],
+            "file": "result_with_execution_identity.json",
+            "kind": "result",
+            "ok": true,
+            "section": "valid"
+          },
+          {
+            "errors": [
+              "R10-order-is-permutation-of-selected: order 不是 selected 的排列（order=1 项、selected=2 项）"
+            ],
+            "file": "plan_order_not_permutation_of_selected.json",
+            "kind": "plan",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [
+              "R6-full-only-when-content-confirmed: 内容未确认（或没收集到全集）却声称可保守全量",
+              "R7-unconfirmed-must-be-listed: 内容未确认，但没列出没确认到哪一项"
+            ],
+            "file": "refusal_full_available_without_content.json",
+            "kind": "refusal",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [
+              "R2-label-is-not-identity: content_identity.value 是短 hex（\"d444444\"）——短标签只能作展示，不能当完整身份"
+            ],
+            "file": "request_bare_short_content_value.json",
+            "kind": "request",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [
+              "R4-digest-carries-algorithm: \"calc.py\" 的摘要 \"deadbeef\" 不符合 '<算法>:<hex>'"
+            ],
+            "file": "request_digest_without_algorithm.json",
+            "kind": "request",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [
+              "R3-manifest-covers-config-and-data: 声明了 `config_data_absent: true`，但清单里**确实有** config/data 条目——自相矛盾，必拒"
+            ],
+            "file": "request_manifest_declares_absent_but_has_config.json",
+            "kind": "request",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [
+              "R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\"source\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\"config_data_absent\": true`（「漏列了」与「真没有」必须能分辨）"
+            ],
+            "file": "request_manifest_only_source_entry.json",
+            "kind": "request",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [
+              "出现未声明字段 \"generator_note\"（additionalProperties=false）"
+            ],
+            "file": "request_unknown_field.json",
+            "kind": "request",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [
+              "R9-invalid-or-unconfirmed-cannot-be-valid: 观察为 before=confirmed/after=unconfirmed 却声称 valid"
+            ],
+            "file": "result_execution_end_unconfirmed_but_valid.json",
+            "kind": "result",
+            "ok": true,
+            "section": "invalid"
+          },
+          {
+            "errors": [],
+            "file": "matched",
+            "kind": "pair",
+            "ok": true,
+            "section": "pairs/valid"
+          },
+          {
+            "errors": [
+              "R12-environment-identity-must-match-plan: 执行环境与计划不一致（dependencies_digest=\"sha256:2222222222222222222222222222222222222222222222222222222222222222\" vs 计划期望 \"sha256:1111111111111111111111111111111111111111111111111111111111111111\"）"
+            ],
+            "file": "dependencies_identity_drift",
+            "kind": "pair",
+            "ok": true,
+            "section": "pairs/invalid"
+          },
+          {
+            "errors": [
+              "environment_identity_drift/request.json 自身不合法：R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\"source\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\"config_data_absent\": true`（「漏列了」与「真没有」必须能分辨）",
+              "R12-environment-identity-must-match-plan: 执行环境与计划不一致（python=\"3.12.1\" vs 计划期望 \"3.10.3\"）",
+              "R12-environment-identity-must-match-plan: 执行环境与计划不一致（platform=\"linux\" vs 计划期望 \"win32\"）"
+            ],
+            "file": "environment_identity_drift",
+            "kind": "pair",
+            "ok": true,
+            "section": "pairs/invalid"
+          },
+          {
+            "errors": [
+              "R12-environment-identity-must-match-plan: 计划声明了 `expected_environment_identity`，但 result **没有报** `environment_identity`——缺报告 ≠ 一致"
+            ],
+            "file": "environment_not_reported",
+            "kind": "pair",
+            "ok": true,
+            "section": "pairs/invalid"
+          },
+          {
+            "errors": [
+              "execution_identity_drift/request.json 自身不合法：R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\"source\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\"config_data_absent\": true`（「漏列了」与「真没有」必须能分辨）",
+              "R9-invalid-or-unconfirmed-cannot-be-valid: 执行身份与计划不一致（execution_id=\"exec-someone-else-9\" vs 计划期望 \"exec-expected-1\"）",
+              "R9-invalid-or-unconfirmed-cannot-be-valid: 执行身份与计划不一致（interpreter=\"D:/venvs/other/python.exe\" vs 计划期望 \"D:/venvs/example/python.exe\"）",
+              "R12-environment-identity-must-match-plan: 计划声明了 `expected_environment_identity`，但 result **没有报** `environment_identity`——缺报告 ≠ 一致"
+            ],
+            "file": "execution_identity_drift",
+            "kind": "pair",
+            "ok": true,
+            "section": "pairs/invalid"
+          },
+          {
+            "errors": [
+              "R11-cross-document-binding: result.content_identity.value \"e555555555555555555555555555555555555555\" 与 plan 的 \"d444444444444444444444444444444444444444\" 不一致（完整内容身份必须逐项相同）",
+              "R11-cross-document-binding: result.content_identity.manifest_digest \"sha256:cccc00000000000000000000000000000000000000000000000000000000000c\" 与 plan 的 \"sha256:bbbb00000000000000000000000000000000000000000000000000000000000b\" 不一致（完整内容身份必须逐项相同）",
+              "R12-environment-identity-must-match-plan: 计划声明了 `expected_environment_identity`，但 result **没有报** `environment_identity`——缺报告 ≠ 一致"
+            ],
+            "file": "same_label_different_content",
+            "kind": "pair",
+            "ok": true,
+            "section": "pairs/invalid"
+          },
+          {
+            "errors": [
+              "same_value_different_kind/request.json 自身不合法：R3-manifest-covers-config-and-data: 清单里既没有 config 也没有 data（只列了 [\"source\"]）——若树里**确实**一个都没有，必须在 content_manifest 里显式写 `\"config_data_absent\": true`（「漏列了」与「真没有」必须能分辨）",
+              "R11-cross-document-binding: request.content_identity.kind \"git-tree\" 与 plan 的 \"git-commit\" 不一致（完整内容身份必须逐项相同）"
+            ],
+            "file": "same_value_different_kind",
+            "kind": "pair",
+            "ok": true,
+            "section": "pairs/invalid"
+          }
+        ],
+        "valid_passed": 5,
+        "valid_total": 5
+      }
+    }
+  },
+  "status": "pass",
+  "recordedAt": "2026-11-10T21:05:53.126Z"
+}

@@ -1,0 +1,177 @@
+{
+  "driven_by": "agent",
+  "actor": "packaged-cli-probe",
+  "app": "D:\\tmp\\tf0782-package-3e7d5924f-raw\\detached-package",
+  "status": "pass",
+  "receipt": {
+    "version": "24.16.0",
+    "required": ">=22.19.0",
+    "sha256": "b3094d0b49f9ad602262a9921551737bb97637c05dd357a06ae98188d7290aa3",
+    "target": "win32-x64"
+  },
+  "expectedVersion": "2026.6.2",
+  "stateBefore": [
+    {
+      "directory": ".config"
+    },
+    {
+      "directory": ".openclaw"
+    },
+    {
+      "file": ".openclaw/openclaw.json",
+      "sha256": "d8e3fd8a974291b3d857f89135cedb06906edaf78f95016a0d8c1f2ad123fbfd"
+    },
+    {
+      "directory": "AppData"
+    },
+    {
+      "directory": "AppData/Local"
+    },
+    {
+      "directory": "AppData/Roaming"
+    }
+  ],
+  "stateAfter": [
+    {
+      "directory": ".config"
+    },
+    {
+      "directory": ".openclaw"
+    },
+    {
+      "file": ".openclaw/openclaw.json",
+      "sha256": "d8e3fd8a974291b3d857f89135cedb06906edaf78f95016a0d8c1f2ad123fbfd"
+    },
+    {
+      "directory": "AppData"
+    },
+    {
+      "directory": "AppData/Local"
+    },
+    {
+      "directory": "AppData/Roaming"
+    }
+  ],
+  "probes": [
+    {
+      "label": "bundled-node/cmd/--version",
+      "pid": 2560,
+      "startedAt": "2026-11-10T21:02:34.901Z",
+      "completedAt": "2026-11-10T21:02:35.478Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "stdout": "2026.6.2\n",
+      "stderr": ""
+    },
+    {
+      "label": "bundled-node/cmd/--help",
+      "pid": 20868,
+      "startedAt": "2026-11-10T21:02:35.483Z",
+      "completedAt": "2026-11-10T21:02:35.886Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "stdout": "Usage: openclaw <command> [options]\n\nVerse Claw source runtime commands:\n  gateway [run]   Start Gateway (--port, --token, --bind,\n                 --allow-unconfigured, --defer-startup-sidecars)\n  doctor         Inspect provider auth migrations (--json, --fix)\n  --version, -V  Print the bundled runtime version\n  --help, -h     Show this help\n\nOther upstream CLI commands are not included in this source runtime.\n\n",
+      "stderr": ""
+    },
+    {
+      "label": "bundled-node/cmd/not-a-command",
+      "pid": 35296,
+      "startedAt": "2026-11-10T21:02:35.889Z",
+      "completedAt": "2026-11-10T21:02:36.246Z",
+      "exitCode": 1,
+      "timedOut": false,
+      "stdout": "",
+      "stderr": "Unsupported command in the Verse Claw source runtime. Run openclaw --help.\n"
+    },
+    {
+      "label": "bundled-node/bash/--version",
+      "pid": 40676,
+      "startedAt": "2026-11-10T21:02:36.247Z",
+      "completedAt": "2026-11-10T21:02:36.673Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "stdout": "2026.6.2\n",
+      "stderr": ""
+    },
+    {
+      "label": "bundled-node/bash/--help",
+      "pid": 34992,
+      "startedAt": "2026-11-10T21:02:36.675Z",
+      "completedAt": "2026-11-10T21:02:37.067Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "stdout": "Usage: openclaw <command> [options]\n\nVerse Claw source runtime commands:\n  gateway [run]   Start Gateway (--port, --token, --bind,\n                 --allow-unconfigured, --defer-startup-sidecars)\n  doctor         Inspect provider auth migrations (--json, --fix)\n  --version, -V  Print the bundled runtime version\n  --help, -h     Show this help\n\nOther upstream CLI commands are not included in this source runtime.\n\n",
+      "stderr": ""
+    },
+    {
+      "label": "bundled-node/bash/not-a-command",
+      "pid": 3276,
+      "startedAt": "2026-11-10T21:02:37.069Z",
+      "completedAt": "2026-11-10T21:02:37.480Z",
+      "exitCode": 1,
+      "timedOut": false,
+      "stdout": "",
+      "stderr": "Unsupported command in the Verse Claw source runtime. Run openclaw --help.\n"
+    },
+    {
+      "label": "electron-fallback/cmd/--version",
+      "pid": 24592,
+      "startedAt": "2026-11-10T21:02:37.485Z",
+      "completedAt": "2026-11-10T21:02:38.168Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "stdout": "2026.6.2\n",
+      "stderr": ""
+    },
+    {
+      "label": "electron-fallback/cmd/--help",
+      "pid": 25180,
+      "startedAt": "2026-11-10T21:02:38.169Z",
+      "completedAt": "2026-11-10T21:02:38.492Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "stdout": "Usage: openclaw <command> [options]\n\nVerse Claw source runtime commands:\n  gateway [run]   Start Gateway (--port, --token, --bind,\n                 --allow-unconfigured, --defer-startup-sidecars)\n  doctor         Inspect provider auth migrations (--json, --fix)\n  --version, -V  Print the bundled runtime version\n  --help, -h     Show this help\n\nOther upstream CLI commands are not included in this source runtime.\n\n",
+      "stderr": ""
+    },
+    {
+      "label": "electron-fallback/cmd/not-a-command",
+      "pid": 48120,
+      "startedAt": "2026-11-10T21:02:38.493Z",
+      "completedAt": "2026-11-10T21:02:38.753Z",
+      "exitCode": 1,
+      "timedOut": false,
+      "stdout": "",
+      "stderr": "Unsupported command in the Verse Claw source runtime. Run openclaw --help.\n"
+    },
+    {
+      "label": "electron-fallback/bash/--version",
+      "pid": 32168,
+      "startedAt": "2026-11-10T21:02:38.756Z",
+      "completedAt": "2026-11-10T21:02:39.079Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "stdout": "2026.6.2\n",
+      "stderr": ""
+    },
+    {
+      "label": "electron-fallback/bash/--help",
+      "pid": 4060,
+      "startedAt": "2026-11-10T21:02:39.082Z",
+      "completedAt": "2026-11-10T21:02:39.366Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "stdout": "Usage: openclaw <command> [options]\n\nVerse Claw source runtime commands:\n  gateway [run]   Start Gateway (--port, --token, --bind,\n                 --allow-unconfigured, --defer-startup-sidecars)\n  doctor         Inspect provider auth migrations (--json, --fix)\n  --version, -V  Print the bundled runtime version\n  --help, -h     Show this help\n\nOther upstream CLI commands are not included in this source runtime.\n\n",
+      "stderr": ""
+    },
+    {
+      "label": "electron-fallback/bash/not-a-command",
+      "pid": 40640,
+      "startedAt": "2026-11-10T21:02:39.368Z",
+      "completedAt": "2026-11-10T21:02:39.682Z",
+      "exitCode": 1,
+      "timedOut": false,
+      "stdout": "",
+      "stderr": "Unsupported command in the Verse Claw source runtime. Run openclaw --help.\n"
+    }
+  ]
+}
