@@ -256,13 +256,15 @@ test.describe('Verse Claw chat session handoff', () => {
       await page.getByTestId('chat-composer-actions').click();
       await page.getByTestId('chat-composer-action-more').click();
       const composerHandoff = page.getByTestId('chat-composer-action-handoff');
+      await composerHandoff.scrollIntoViewIfNeeded();
+      await expect(composerHandoff).toBeVisible();
       await expect(composerHandoff).toBeDisabled();
       await expect(composerHandoff).toHaveAttribute('title', SESSION_GENERATION_UNAVAILABLE_REASON);
       await expect(composerHandoff).toContainText(SESSION_GENERATION_UNAVAILABLE_REASON);
       await page.screenshot({ path: testInfo.outputPath('handoff-generation-pending.png') });
-      await page.keyboard.press('Escape');
+      await page.getByTestId('chat-composer-actions').click();
 
-      await page.getByTestId(`sidebar-session-more-${MAIN_SESSION_KEY}`).click();
+      await page.getByTestId(`sidebar-session-${MAIN_SESSION_KEY}`).click({ button: 'right' });
       await page.getByTestId('sidebar-session-context-handoff').click();
       await expect(page.getByTestId('chat-handoff-dialog')).toHaveCount(0);
       expect((await getAgentDevHostCalls(page)).filter((value) => {
