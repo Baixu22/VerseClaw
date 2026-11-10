@@ -159,8 +159,9 @@ def main() -> int:
             raise RuntimeError("node is not available")
         baseline_dir = out / "baseline"
         recovery_dir = out / "recovery"
-        run(out, commands, "journal-kill-baseline", [node, "--import", ROOT / "openclaw_runtime/node_modules/tsx/dist/loader.mjs", ROOT / "scripts/coding-baseline/probes/journal-kill.mts"], cwd=ROOT, timeout=900, env_extra={"CODING_BASELINE_OUTPUT": baseline_dir, "TEMP": "D:/tmp", "TMP": "D:/tmp"})
-        run(out, commands, "recovery-windows", [node, "--import", ROOT / "openclaw_runtime/node_modules/tsx/dist/loader.mjs", ROOT / "scripts/coding-evaluation/recovery-windows.mts", "--output", recovery_dir], cwd=ROOT, timeout=1200, env_extra={"TF0780_VG": args.vg.resolve(), "TF0780_JJ": args.jj.resolve(), "TF0780_PYTHON": args.python.resolve(), "TF0780_CONTRACTS": args.contracts.resolve(), "TEMP": "D:/tmp", "TMP": "D:/tmp"})
+        tsx_loader = (ROOT / "openclaw_runtime/node_modules/tsx/dist/loader.mjs").as_uri()
+        run(out, commands, "journal-kill-baseline", [node, "--import", tsx_loader, ROOT / "scripts/coding-baseline/probes/journal-kill.mts"], cwd=ROOT, timeout=900, env_extra={"CODING_BASELINE_OUTPUT": baseline_dir, "TEMP": "D:/tmp", "TMP": "D:/tmp"})
+        run(out, commands, "recovery-windows", [node, "--import", tsx_loader, ROOT / "scripts/coding-evaluation/recovery-windows.mts", "--output", recovery_dir], cwd=ROOT, timeout=1200, env_extra={"TF0780_VG": args.vg.resolve(), "TF0780_JJ": args.jj.resolve(), "TF0780_PYTHON": args.python.resolve(), "TF0780_CONTRACTS": args.contracts.resolve(), "TEMP": "D:/tmp", "TMP": "D:/tmp"})
         run(out, commands, "recovery-evidence-tests", [sys.executable, "-X", "utf8", "-B", ROOT / "scripts/coding-evaluation/test_recovery_evidence.py"], cwd=ROOT, timeout=300)
         run(out, commands, "clawx-recovery-units", ["cmd.exe", "/d", "/s", "/c", "corepack pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/apply-patch-consistency.test.ts src/agents/tools/write-journal.test.ts src/agents/apply-patch-effect-receipt.test.ts src/agents/subagent-registry-queries.quota.test.ts --maxWorkers=1"], cwd=ROOT, timeout=1200)
         run(out, commands, "comms-replay", ["cmd.exe", "/d", "/s", "/c", "corepack pnpm run comms:replay"], cwd=ROOT, timeout=900)
