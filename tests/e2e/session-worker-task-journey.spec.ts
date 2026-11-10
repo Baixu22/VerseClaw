@@ -12,7 +12,7 @@ import { configureSessionChainProvider, createSessionChainProject, createSession
 
 for (const journey of ['navigation', 'controls', 'isolation'] as const) {
 test(`a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (${journey})`, async ({ launchElectronApp }, testInfo) => {
-  test.setTimeout(300_000);
+  test.setTimeout(journey === 'controls' ? 420_000 : 300_000);
   const target = testInfo.outputPath('workspace', 'worker.txt');
   let wrote = false;
   let holdNext = false;
@@ -233,7 +233,14 @@ test(`a real delegated worker receives its own task, reports separately and acce
     await page.getByTestId('workspace-subagent-dispatch-input').fill('interrupt WORKER-HOLD: open a model turn for receipt validation.');
     await page.getByTestId('workspace-subagent-dispatch').click();
     await expect(page.getByTestId('worker-send-phase')).toHaveText(/Accepted|已接收/, { timeout: dispatchTimeout });
-    await expect.poll(() => held, { timeout: 30_000 }).toBe(true);
+    const holdRunId = await app.evaluate(() => {
+      const records = (globalThis as unknown as { u4WorkerDispatches: Array<{
+        request: { message?: string }; result?: { data?: { run?: { runId?: string } } };
+      }> }).u4WorkerDispatches;
+      return records.findLast(record => record.request.message?.includes('WORKER-HOLD'))?.result?.data?.run?.runId;
+    });
+    expect(holdRunId).toBeTruthy();
+    await expect.poll(() => held, { timeout: dispatchTimeout }).toBe(true);
     await app.evaluate(() => {
       const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
       const handlers = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: unknown) => Promise<unknown>> })._invokeHandlers;
@@ -257,7 +264,7 @@ test(`a real delegated worker receives its own task, reports separately and acce
     const lostAck = await app.evaluate(() => (globalThis as unknown as { workerLostAck: {
       request: { payload: { idempotencyKey: string } }; result: { data: { phase: string } } } }).workerLostAck);
     expect(lostAck.result.data.phase).toBe('queued');
-    const delivery = await hostInvoke<{ workerSendReceipt?: { phase: string; idempotencyKey: string; source: string } }>(app, 'sessions', 'history', {
+    const delivery = await hostInvoke<{ workerSendReceipt?: { phase: string; idempotencyKey: string; source: string; queueItemId?: string } }>(app, 'sessions', 'history', {
       sessionKey: childKey, expectedParentSessionKey: project.sessionKey, expectedSessionGeneration: described.session.sessionId,
       workerSendIdempotencyKey: lostAck.request.payload.idempotencyKey });
     expect(delivery.workerSendReceipt).toMatchObject({ phase: 'queued', source: 'runtime-intervention', idempotencyKey: lostAck.request.payload.idempotencyKey });
@@ -272,6 +279,28 @@ test(`a real delegated worker receives its own task, reports separately and acce
     expect(guide.events.some((entry) => entry.status === 'steered' && entry.payload?.message === 'btw WORKER-GUIDE use the already recorded evidence.')).toBe(true);
     evidence.intervention = { driven_by: 'agent', actor: 'playwright-worker-task', fault: 'simulated-ack-loss-after-real-queue', lostAck, delivery, guide };
     releaseHold();
+    await expect.poll(async () => {
+      const owner = await rpc<{ status: string }>('agent.wait', { runId: holdRunId, timeoutMs: 1000 });
+      evidence.holdRunOwner = owner;
+      return owner.status;
+    }, { timeout: dispatchTimeout }).toBe('ok');
+    type DrainEvent = { idempotencyKey?: string; status: string; payload?: { queueItemIds?: string[] } };
+    const queueItemId = delivery.workerSendReceipt?.queueItemId;
+    expect(queueItemId).toBeTruthy();
+    await expect.poll(async () => {
+      const history = await rpc<{ events: DrainEvent[] }>('sessions.longTaskControlHistory', { key: childKey, limit: 200 });
+      evidence.queueDrainHistory = history;
+      return history.events.some(event => event.status === 'drained' && queueItemId && event.payload?.queueItemIds?.includes(queueItemId));
+    }, { timeout: 30_000 }).toBe(true);
+    const queueHistory = await rpc<{ events: DrainEvent[] }>('sessions.longTaskControlHistory', { key: childKey, limit: 200 });
+    const drainEvent = queueHistory.events.find(event => event.status === 'drained' && queueItemId && event.payload?.queueItemIds?.includes(queueItemId));
+    const queuedRunId = drainEvent?.idempotencyKey?.replace(/:drained$/, '');
+    expect(queuedRunId).toMatch(/^queue_drain_/);
+    await expect.poll(async () => {
+      const owner = await rpc<{ status: string }>('agent.wait', { runId: queuedRunId, timeoutMs: 1000 });
+      evidence.queueDrainOwner = owner;
+      return owner.status;
+    }, { timeout: dispatchTimeout }).toBe('ok');
     await expect.poll(async () => JSON.stringify(await rpc('chat.history', { sessionKey: childKey, limit: 100 })).includes('later WORKER-QUEUED'), { timeout: 60_000 }).toBe(true);
     await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>('sessions.describe', { key: childKey })).session.hasActiveRun, { timeout: 30_000 }).toBe(false);
     }
