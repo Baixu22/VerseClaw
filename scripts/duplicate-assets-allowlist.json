@@ -57,6 +57,15 @@
       "reason": "The frozen measurement retains an exact calibration receipt copied from the independently readable admission pack; both manifests and offline readback require their own stable paths."
     },
     {
+      "sha256": "274b0581ddc9205de8dbd1c7ec8313f88cfa4b4bc752249d3c381f6cea7ffafe",
+      "paths": [
+        "harness/specs/fixtures/project-rag/v2/programs/t-code-knowledge-governance.ts",
+        "harness/specs/fixtures/project-rag/v3/programs/t-code-knowledge-governance.ts",
+        "harness/specs/fixtures/project-rag/v4/programs/t-code-knowledge-governance.ts"
+      ],
+      "reason": "Independently frozen Project RAG corpus versions retain identical starter-code or trial-plan bytes under their original external freeze pins; version history and manifest verification require each stable path."
+    },
+    {
       "sha256": "3daa95aa0e666f9488519dc16960233128d7e7d37c6dca606e9584cc7c72bb6b",
       "paths": [
         "resources/icons/icon-dark.svg",
@@ -98,6 +107,15 @@
         "harness/specs/fixtures/agent-first-system/product-effect/profile-3-profile-before-restart.png"
       ],
       "reason": "Retained product-effect evidence mirrors: each profile keeps its own pre-restart capture path so a single profile can be reviewed without rewriting sibling evidence."
+    },
+    {
+      "sha256": "9a579fef74e511854f71212236382a57aa064ef18bb48401b0e6182b5a68bf8c",
+      "paths": [
+        "harness/specs/fixtures/project-rag/v2/trial-plan.json",
+        "harness/specs/fixtures/project-rag/v3/trial-plan.json",
+        "harness/specs/fixtures/project-rag/v4/trial-plan.json"
+      ],
+      "reason": "Independently frozen Project RAG corpus versions retain identical starter-code or trial-plan bytes under their original external freeze pins; version history and manifest verification require each stable path."
     },
     {
       "sha256": "9a7db03e620cdd01f80fa8ee10bd623e29569e1f270e618846955dec40c8b372",

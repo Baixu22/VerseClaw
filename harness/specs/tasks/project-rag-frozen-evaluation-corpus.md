@@ -30,6 +30,7 @@ touchedAreas:
   - "harness/specs/rules/project-rag-long-term-boundary.md"
   - ".gitignore"
   - "scripts/repository-artifacts.json"
+  - "scripts/duplicate-assets-allowlist.json"
   - "README*.md"
   - "docs/dev/evidence/project-rag/RAG-02/**"
   - "tests/unit/knowledge-retrieval.test.ts"
