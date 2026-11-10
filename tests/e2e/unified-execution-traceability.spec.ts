@@ -178,6 +178,11 @@ test('TF0867: exclusive claim, real writes, durable migration restart, acceptanc
     app = await launch(); await getStableWindow(app); await configureSessionChainProvider(app, llm.port);
     const left = await createSessionChainProject(app, trees[0].root, 'TF0867 left');
     const right = await createSessionChainProject(app, trees[1].root, 'TF0867 right');
+    const bridgeRead = await rpc<{ success: boolean; rejectedBeforeDispatch: boolean }>('taskScope.migration.read', {
+      sessionKey: left.sessionKey, operationId: 'tf0867-migration',
+    });
+    expect(bridgeRead).toMatchObject({ success: false, rejectedBeforeDispatch: true });
+    await record('frontendBridgeReadDenied', bridgeRead);
     const participants = [left, right];
     const created = await createSessionChainTask(app, left.workspaceId, 'tf0867-create-task', {
       objective: 'Continue the exact artifact across a fenced execution migration', target: 'artifact.txt', constraints: ['Preserve checkpoint bytes'],
@@ -259,9 +264,8 @@ test('TF0867: exclusive claim, real writes, durable migration restart, acceptanc
     expect(interrupted.phase).toBe('binding-committed'); expect(interrupted.error).toContain(faultMessage);
     const disk = JSON.parse(await readFile(join(userDataDir, 'workspaces.json'), 'utf8')) as { profiles: WorkspaceProfile[] };
     expect(disk.profiles.find(p => p.id === a.workspaceId)!.executionMigrations![request.operationId]).toEqual(interrupted);
-    const bridgeRead = await rpc<{ success: boolean; rejectedBeforeDispatch: boolean }>('taskScope.migration.read', { sessionKey: a.sessionKey, operationId: request.operationId });
-    expect(bridgeRead).toMatchObject({ success: false, rejectedBeforeDispatch: true });
     const prepared = interrupted.runtimeReceipt;
+    await record('interruptedOwnerReadback', { main: interrupted, runtime: prepared });
     expect(prepared?.state).toBe('prepared'); expect(prepared?.targetGeneration).toBe(interrupted.targetGeneration);
     expect(prepared?.operationId).toBe(request.operationId);
     await record('interruptedAfterDiskCommit', { request, main: interrupted, runtime: prepared,
