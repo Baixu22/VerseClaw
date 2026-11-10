@@ -65,7 +65,7 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
   const head = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8', windowsHide: true }).trim();
   const inputChanges = execFileSync('git', ['status', '--porcelain=v1', '--untracked-files=all', '--', 'src', 'shared', 'electron', 'openclaw_runtime', 'tests/e2e/fixtures'],
     { encoding: 'utf8', windowsHide: true }).trim();
-  const allowedBaselineHelperChanges = new Set(['M tests/e2e/fixtures/electron.ts', 'M tests/e2e/fixtures/electron-process-cleanup.ts', 'M tests/e2e/fixtures/windows-process.ts']);
+  const allowedBaselineHelperChanges = new Set(helperNames.map(name => `M tests/e2e/fixtures/${name}`));
   const unexpectedInputChanges = inputChanges.split(/\r?\n/).map(line => line.trim()).filter(Boolean)
     .filter(line => !(side === 'baseline' && allowedBaselineHelperChanges.has(line)));
   expect(unexpectedInputChanges, '产品或公共 helper 有未冻结差异，先固定候选').toEqual([]);
