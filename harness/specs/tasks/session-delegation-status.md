@@ -47,6 +47,7 @@ ownedPaths:
   - tests/unit/host-services.test.ts
   - tests/e2e/session-derivation-ui.spec.ts
   - tests/e2e/session-worker-task-journey.spec.ts
+  - tests/e2e/fixtures/electron.ts
   - harness/specs/tasks/session-delegation-status.md
   - shared/i18n/locales/**/chat.json
   - docs/modules/multi-agent-and-tasks.md

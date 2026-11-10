@@ -367,6 +367,9 @@ test(`a real delegated worker receives its own task, reports separately and acce
       expectedChildGeneration: described.session.sessionId, message: 'Wrong coordinator follow-up',
       idempotencyKey: 'crossed-worker-followup', mode: 'send' });
     expect(crossed).toMatchObject({ success: false, phase: 'rejected' });
+    evidence.multiCoordinator = { secondAgent, second, secondTask, readOnly, readOnlyDescription, observerOwnerBefore, observerDuringRun,
+      firstOrigin, secondOrigin, crossed, currentProject };
+    await writeFile(testInfo.outputPath('worker-owner-isolation.json'), JSON.stringify(evidence.multiCoordinator, null, 2));
     await page.reload();
     await page.getByTestId(`sidebar-project-open-${project.workspaceId}`).click();
     await expect(page.getByTestId('project-coordinator-entry')).toContainText('Worker project');
@@ -374,7 +377,7 @@ test(`a real delegated worker receives its own task, reports separately and acce
     await expect(page.getByTestId('session-family-children')).toBeVisible();
     await page.getByTestId('session-family-children').selectOption(readOnlyKey);
     await expect(page.getByTestId('workspace-subagent-panel')).toBeVisible();
-    await expect(page.getByTestId('workspace-subagent-panel')).toContainText('WORKER-HOLD-FINISHED');
+    await expect(page.getByTestId('workspace-subagent-panel')).toContainText('WORKER-HOLD-FINISHED', { timeout: hostActionTimeoutMs('sessions', 'history') });
     const taskSummary = page.getByTestId('session-task-container');
     await expect(taskSummary).toHaveAttribute('data-state', 'ready');
     const taskSummaryToggle = taskSummary.getByTestId('session-tasks-toggle');
