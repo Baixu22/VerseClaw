@@ -90,6 +90,15 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
   const captureUi = await observeSessionUi(app);
   const metrics: unknown[] = [];
   const budgets: Record<string, unknown> = {};
+  const ownerReadErrors: Array<{ at: number; method: string; error: string }> = [];
+  const readRunState = async <T,>(method: string, params: Record<string, unknown>): Promise<T | undefined> => {
+    try { return await hostInvoke<T>(app, 'gateway', 'rpc', { method, params, timeoutMs: 30_000 }); }
+    catch (error) {
+      if (!/RPC timeout|Execution context was destroyed/.test(String(error))) throw error;
+      ownerReadErrors.push({ at: Date.now(), method, error: String(error) });
+      return undefined;
+    }
+  };
   const result = { status: 'running', error: null as string | null };
   try {
     const { readFile } = await import('node:fs/promises');
@@ -157,9 +166,8 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
     const baselineSend = await hostInvoke<{ success: boolean; result?: { runId?: string } }>(app, 'chat', 'sendWithMedia', { workspaceId: project.workspaceId, sessionKey: project.sessionKey,
       message: 'Agent-driven family render probe', idempotencyKey: 'family-render-user-turn' });
     expect(baselineSend.success).toBe(true); expect(baselineSend.result?.runId).toBeTruthy();
-    await expect.poll(async () => (await hostInvoke<{ status: string }>(app, 'gateway', 'rpc', {
-      method: 'agent.wait', params: { runId: baselineSend.result!.runId, timeoutMs: 1000 }, timeoutMs: 30_000,
-    })).status, { timeout: 90_000 }).toBe('ok');
+    await expect.poll(async () => (await readRunState<{ status: string }>('agent.wait',
+      { runId: baselineSend.result!.runId, timeoutMs: 1000 }))?.status, { timeout: 90_000 }).toBe('ok');
     await expect.poll(async () => JSON.stringify(await hostInvoke(app, 'gateway', 'rpc', { method: 'chat.history',
       params: { sessionKey: project.sessionKey, limit: 20 }, timeoutMs: 30_000 })).includes('Agent-driven family fixture.'),
     { timeout: 45_000 }).toBe(true);
@@ -450,15 +458,12 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
       releaseHold();
       let terminalReceipt: { status: string; [key: string]: unknown } | undefined;
       await expect.poll(async () => {
-        terminalReceipt = await hostInvoke(app, 'gateway', 'rpc', {
-          method: 'agent.wait', params: { runId: sharedRun.runId, timeoutMs: 1000 }, timeoutMs: 30_000,
-        });
+        terminalReceipt = await readRunState('agent.wait', { runId: sharedRun.runId, timeoutMs: 1000 });
         return terminalReceipt?.status;
       }, { timeout: 90_000 }).toBe('ok');
       measurement.terminalReceipt = terminalReceipt;
-      await expect.poll(async () => (await hostInvoke<{ session: { hasActiveRun: boolean } }>(app, 'gateway', 'rpc', {
-        method: 'sessions.describe', params: { key: project.sessionKey }, timeoutMs: 30_000,
-      })).session.hasActiveRun, { timeout: 30_000 }).toBe(false);
+      await expect.poll(async () => (await readRunState<{ session: { hasActiveRun: boolean } }>(
+        'sessions.describe', { key: project.sessionKey }))?.session.hasActiveRun, { timeout: 30_000 }).toBe(false);
       await twoFrames();
       await chooseProjection('project'); await exposeProjection('project'); await revealChildren();
       const durationsMs: number[] = [];
@@ -515,7 +520,7 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
   } catch (error) { result.status = 'failed'; result.error = String(error); throw error; } finally {
     releaseHold();
     await writeFile(testInfo.outputPath('family-layout.json'), JSON.stringify({ driven_by: 'agent', actor: 'playwright-session-family',
-      provider: 'local-scripted', status: result.status, error: result.error, fixtureScale: true, budgets, metrics, providerLog: llm.log }, null, 2));
+      provider: 'local-scripted', status: result.status, error: result.error, fixtureScale: true, budgets, metrics, ownerReadErrors, providerLog: llm.log }, null, 2));
     await captureUi((name) => testInfo.outputPath(name));
     await hostInvoke(app, 'gateway', 'stop').catch(() => undefined); await closeElectronApp(app);
     llm.server.closeAllConnections(); await new Promise<void>((done) => llm.server.close(() => done()));
