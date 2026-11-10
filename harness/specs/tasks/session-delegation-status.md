@@ -50,6 +50,8 @@ ownedPaths:
   - tests/e2e/session-derivation-ui.spec.ts
   - tests/e2e/session-worker-task-journey.spec.ts
   - tests/e2e/fixtures/electron.ts
+  - tests/e2e/fixtures/electron-process-cleanup.ts
+  - tests/unit/electron-process-identity.test.ts
   - harness/specs/tasks/session-delegation-status.md
   - shared/i18n/locales/**/chat.json
   - docs/modules/multi-agent-and-tasks.md
@@ -114,12 +116,14 @@ acceptance:
   - Worker navigation, intervention recovery and coordinator isolation run as separate Electron cases while retaining the complete original journey assertions.
   - Worker intervention acceptance checks the held run and queued run terminal owners before transcript readback; queue drain receipts remain distinct from run completion. Worker journeys use a 420-second overall budget for owner checks and evidence sealing while retaining bounded host, queue, history and generation checks.
   - Electron evidence waits for transcript and Task owner stages within their existing Host budgets. Renderer diagnostic reads have a five-second limit so an unresponsive window preserves the original failure and reaches process cleanup.
+  - Runner cleanup rechecks a temporarily unreadable or still-exiting process identity without repeating termination. It retains every observation and fails if the final process state remains unknown or alive.
   - Canonical Task Ledger reads skip a contended derived snapshot-cache refresh without waiting on its write lock; explicit cache writes retain serialization, and event or Task owner read failures still reject the read.
   - A queued worker message rejected by the chat owner remains recoverable in the original queue with the rejection recorded; it is not marked drained.
   - Session describe and list share the tracked-run owner projection; retained terminal abort entries stay available for idempotency without keeping a finished worker active.
   - Task Ledger worker links use runtime source facts to open the existing transcript surface under the correct coordinator.
   - Four-locale Electron journeys and focused negative tests identify the same candidate and agent actor.
 requiredTests:
+  - pnpm exec vitest run tests/unit/electron-process-identity.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec vitest run tests/unit/chat-send-input-mode.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec vitest run tests/unit/task-ledger-snapshot-cache.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec vitest run tests/unit/gateway-session-active-runs.test.ts --maxWorkers=1 --no-file-parallelism

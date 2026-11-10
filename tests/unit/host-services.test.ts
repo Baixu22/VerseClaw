@@ -1469,8 +1469,8 @@ describe('host services', () => {
         });
       });
       const api = createSessionsApi({ gatewayManager: { rpc } as never });
-      const reading = api.history({ sessionKey: 'agent:main:worker', expectedParentSessionKey: 'agent:main:parent',
-        expectedSessionGeneration: 'worker-generation' }).then(value => ({ value }), error => ({ error: String(error) }));
+      const reading = Promise.resolve(api.history({ sessionKey: 'agent:main:worker', expectedParentSessionKey: 'agent:main:parent',
+        expectedSessionGeneration: 'worker-generation' })).then(value => ({ value }), error => ({ error: String(error) }));
       await vi.advanceTimersByTimeAsync(16_010);
       expect(await reading).toMatchObject({ value: { success: true, sessionGeneration: 'worker-generation', messages } });
       expect(descriptions).toBe(2);

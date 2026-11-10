@@ -7,8 +7,34 @@ import { basename, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createRequire } from 'node:module';
 import { expect, test, vi } from 'vitest';
+import * as processOwners from '../e2e/fixtures/windows-process';
 import { checkWindowsProcesses, discoverWindowsElectronProcesses } from '../e2e/fixtures/windows-process';
 import { cleanupElectronProcesses, ELECTRON_PID_LEDGER } from '../e2e/fixtures/electron-process-cleanup';
+
+test.skipIf(process.platform !== 'win32').each(['exited', 'unavailable'] as const)(
+  'cleanup rechecks an unavailable identity without repeating termination (%s)', async (nextStatus) => {
+    const root = await mkdtemp(join(tmpdir(), 'verse-claw-e2e-run-'));
+    const identity = { pid: 424242, creationTime: Date.now() };
+    const checks = vi.spyOn(processOwners, 'checkWindowsProcesses')
+      .mockResolvedValue([{ ...identity, status: nextStatus }])
+      .mockResolvedValueOnce([{ ...identity, status: 'unavailable', error: 'Creation time temporarily unavailable' }]);
+    try {
+      await writeFile(join(root, ELECTRON_PID_LEDGER), JSON.stringify({ ...identity, userDataDir: join(root, 'profile') }) + '\n');
+      const cleanup = cleanupElectronProcesses(root, root);
+      if (nextStatus === 'exited') await cleanup;
+      else await expect(cleanup).rejects.toThrow('could not be checked');
+      const report = JSON.parse(await readFile(join(root, 'electron-process-cleanup.json'), 'utf8'));
+      expect(report.status).toBe(nextStatus === 'exited' ? 'passed' : 'failed');
+      expect(report.processObservations[0][0].status).toBe('unavailable');
+      expect(report.checks[0].status).toBe(nextStatus);
+      expect(checks.mock.calls.map(([, terminate]) => Boolean(terminate)))
+        .toEqual(nextStatus === 'exited' ? [true, false] : [true, false, false]);
+    } finally {
+      checks.mockRestore();
+      await rm(root, { recursive: true, force: true });
+    }
+  },
+);
 
 test.skipIf(process.platform !== 'win32')('cleanup preserves a reused PID and terminates only its recorded process identity', async () => {
   const child = spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], { stdio: 'ignore', windowsHide: true });
