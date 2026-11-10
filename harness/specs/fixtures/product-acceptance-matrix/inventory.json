@@ -1,0 +1,102 @@
+{
+  "schema": "ProductAcceptanceMatrix/v1",
+  "node": "TF-0582",
+  "groups": [
+    {
+      "id": "provider",
+      "title": "Provider 配置、流式聊天和失败恢复",
+      "defaultComponents": [],
+      "files": ["tests/e2e/setup-first-run-fp-p1-01.spec.ts", "tests/e2e/provider-lifecycle.spec.ts", "tests/e2e/product-acceptance-space-bunny.spec.ts"],
+      "evidenceLayers": ["real-electron-and-http", "live-provider", "mock-ui"],
+      "positiveOracles": ["保存的 provider 在重开后仍可见；三次产品 smoke 具有真实 read、后续回复和会话隔离回执"],
+      "negativeOracles": ["401/404/429/500/504、停滞 SSE、畸形响应、断流和取消产生可见终态，下一轮可以恢复"],
+      "remainingChecks": ["三次 live smoke 需当前候选的 fresh-build proof 和既有私有环境资源"]
+    },
+    {
+      "id": "sessions",
+      "title": "会话创建、切换、重开、归档、删除和任务保留",
+      "defaultComponents": ["component.task-ledger"],
+      "files": ["tests/e2e/chat-new-session-date.spec.ts", "tests/e2e/session-family-lifecycle.spec.ts", "tests/e2e/sidebar-session-folders-archive.spec.ts"],
+      "evidenceLayers": ["real-gateway-scripted-model", "mock-ui"],
+      "positiveOracles": ["归档/恢复后的 session generation、子会话 transcript、Task Ledger 和真实 result.txt 均可读回"],
+      "negativeOracles": ["取消删除保留父会话；删除父会话保留子会话、任务及被引用产物"],
+      "remainingChecks": []
+    },
+    {
+      "id": "coding",
+      "title": "moyu 编码、审批、撤销和工作区上下文",
+      "defaultComponents": ["component.working-memory-context", "component.tool-registry-context", "component.dcs-context-tools", "component.coding-execution-backend", "component.permission-approval-authority", "feature.coding-recovery"],
+      "files": ["tests/e2e/product-acceptance-moyu.spec.ts", "tests/e2e/workspace-context-settings.spec.ts", "tests/e2e/context-view-tool-surface.spec.ts"],
+      "evidenceLayers": ["real-gateway-live-model", "real-owner", "mock-ui"],
+      "positiveOracles": ["三次 moyu 旅程核对文件、测试、重启读回和 undo；上下文开关及只读工具入口映射到既有 owner"],
+      "negativeOracles": ["readOnly 拒绝真实 edit；越界 exec 审批拒绝；缺少 journal snapshot 时 undo 不覆盖现存文件"],
+      "remainingChecks": ["使用经过筛选的 moyu 临时副本及既有授权 provider；普通取消后续接的三次证据单独回读"]
+    },
+    {
+      "id": "knowledge",
+      "title": "知识审核、生命周期、检索与引用",
+      "defaultComponents": ["component.knowledge-review-authority", "component.knowledge-retrieval-source"],
+      "files": ["tests/e2e/knowledge-review-queue.spec.ts", "tests/e2e/knowledge-lifecycle.spec.ts", "tests/e2e/knowledge-ks04-chat-dcs.spec.ts"],
+      "evidenceLayers": ["mock-ui-and-gateway-seam"],
+      "positiveOracles": ["审核选择仅准备和批准所选 proposal；六种生命周期操作返回对应 EffectReceipt；Chat 携带所选引用"],
+      "negativeOracles": ["拒绝候选不持久化；权限拒绝的知识引用显示原因并不成为有效注入"],
+      "remainingChecks": ["这些 UI seam 测试尚不能证明真实导入→索引→检索→引用→删除的同候选磁盘链，需补充实际 owner/Gateway 证据"]
+    },
+    {
+      "id": "memory",
+      "title": "接受记忆、后续取回和作用域隔离",
+      "defaultComponents": ["component.role-memory"],
+      "files": ["tests/e2e/memory-surface.spec.ts", "tests/e2e/long-session-continuity-context.spec.ts"],
+      "evidenceLayers": ["real-gateway-scripted-model", "mock-ui"],
+      "positiveOracles": ["真实 memory.propose/review 后的 continuity preview 包含接受的 memory-ref；统一界面导出可读 JSON"],
+      "negativeOracles": ["未接受上下文被排除；跨 scope 返回 missing；删除负责人后预览失效"],
+      "remainingChecks": ["统一 Memory UI 的删除/重开持久化证据需与真实 owner 路径核对，不能从 mock 导出推断"]
+    },
+    {
+      "id": "delegation",
+      "title": "子会话委派、完成回执和父会话续接",
+      "defaultComponents": [],
+      "files": ["tests/e2e/long-session-delegation-admission.spec.ts", "tests/e2e/long-session-completion-continuation.spec.ts", "tests/e2e/session-worker-task-journey.spec.ts"],
+      "evidenceLayers": ["real-gateway-scripted-model"],
+      "positiveOracles": ["admission/run/child/generation/budget 回执、Task Ledger 和子会话真实文件读回；重启恢复同一 completion batch"],
+      "negativeOracles": ["重复请求和 completion 不产生第二次效果；unknown role、unsupported backend、stale generation 拒绝"],
+      "remainingChecks": ["将父会话实际续接终态与 UI 回执对应读回；不以 completion batch 存在替代续接完成"]
+    },
+    {
+      "id": "channels",
+      "title": "本地渠道、一次定时提醒和取消",
+      "defaultComponents": [],
+      "files": ["tests/e2e/rc10-operator-live.spec.ts", "tests/e2e/session-task-scope-completion.spec.ts", "tests/e2e/long-session-followup-scheduling.spec.ts"],
+      "evidenceLayers": ["real-gateway-and-loopback-transport", "real-gateway-scripted-model"],
+      "positiveOracles": ["本地 IRC 恰好投递一次并读回 approval/effect/runtime receipt；定时任务产生真实 scheduled.txt"],
+      "negativeOracles": ["deny/cancel 无投递；重启不重发；负责人失效后 trigger 拒绝且 run log 为空"],
+      "remainingChecks": ["RC-10 development 报告保留原 evidence level；生产第三方渠道未在本矩阵内实测"]
+    },
+    {
+      "id": "tools",
+      "title": "VB 浏览、工具来源、VS 进程与 VG 受控写回",
+      "defaultComponents": ["component.skills-mcp-source-registry", "component.tool-search-schema-expander"],
+      "files": ["tests/e2e/versebrowser-host-invocation.spec.ts", "tests/e2e/workspace-git-mcp-runtime.spec.ts", "tests/e2e/skills-packs.spec.ts", "tests/e2e/versegit-runtime-bindings.spec.ts", "tests/e2e/versegit-candidate-apply.spec.ts"],
+      "evidenceLayers": ["real-embedded-browser", "real-owner-and-binary", "mock-ui"],
+      "positiveOracles": ["批准后的浏览动作、Git MCP 运行时绑定、候选校验和 journaled apply 可回读"],
+      "negativeOracles": ["私网和伪造审批拒绝；跨仓库/错误 owner/旧 epoch 拒绝；候选失败和 TOCTOU 不修改 main"],
+      "remainingChecks": ["直接 VerseShell 产品调用与 Tool Search 展开结果仍需对应执行证据；包内 VG/STS/JJ 联合证据由活跃 TF-0781 会话负责"]
+    },
+    {
+      "id": "settings",
+      "title": "Settings、Doctor 与脱敏支持诊断",
+      "defaultComponents": ["component.renderer-ui-surface"],
+      "files": ["tests/e2e/settings-drawer.spec.ts", "tests/e2e/support-bundle-fp-p1-06.spec.ts", "tests/e2e/channels-health-diagnostics.spec.ts"],
+      "evidenceLayers": ["real-electron-and-gateway-child", "mock-ui"],
+      "positiveOracles": ["Settings 返回原路由、主题键盘焦点及窄屏状态正确；支持包从磁盘读回真实 Gateway child mirror"],
+      "negativeOracles": ["支持包不含种植的 key、源码正文或 gatewayToken；degraded 状态展示明确的恢复动作"],
+      "remainingChecks": ["Doctor 真实命令执行、超时和错误报告需单独回执"]
+    }
+  ],
+  "additionalAcceptance": [
+    "普通 Chat 最终回复、moyu 编码/撤销、取消后续接各三次同候选 live 结果",
+    "至少 20 分钟 agent 驱动探索，记录动作、截图、console、最终状态和问题 owner",
+    "冻结 Judge rubric 并以正确、错误、无法判定样例校准；文件/DB/状态 oracle 优先",
+    "逐项处理当前 P0/P1，并回读全部原始结果、来源绑定和 SHA256"
+  ]
+}
