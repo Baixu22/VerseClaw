@@ -360,6 +360,13 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
       await expect(page.getByText(`Recorded objective: ${objective}`, { exact: true })).toBeVisible();
     } else if (journey === 'handoff') {
       await instrumentSessionChainHost(app);
+      await page.evaluate(() => {
+        const target = document.querySelector('[data-testid="chat-page"]')!;
+        const state = window as unknown as { u6HandoffScopes: unknown[] };
+        state.u6HandoffScopes = [];
+        const capture = () => state.u6HandoffScopes.push({ at: Date.now(), generation: target.getAttribute('data-session-generation'), workspace: target.getAttribute('data-project-workspace') });
+        capture(); new MutationObserver(capture).observe(target, { attributes: true, attributeFilter: ['data-session-generation', 'data-project-workspace'] });
+      });
       await app.evaluate(() => {
         const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
         const state = globalThis as unknown as { u6HandoffResults: unknown[] };
@@ -426,6 +433,7 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
     recording = false;
     evidence.provider_log = llm?.log ?? [];
     if (page) await page.screenshot({ path: info.outputPath('final-state.png') }).catch(() => undefined);
+    if (page && journey === 'handoff') evidence.handoff_scope_samples = await page.evaluate(() => (window as unknown as { u6HandoffScopes?: unknown[] }).u6HandoffScopes).catch(error => ({ error: String(error) }));
     const cleanupErrors: string[] = [];
     if (app) {
       if (journey === 'handoff') evidence.handoff_host_calls = await readSessionChainHostCalls(app).catch(error => ({ error: String(error) }));
