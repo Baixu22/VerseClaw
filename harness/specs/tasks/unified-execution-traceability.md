@@ -38,6 +38,7 @@ ownedPaths: &paths
   - harness/specs/rules/durable-task-system-boundary.md
   - harness/specs/rules/session-derivation-ui-contract.md
   - harness/specs/fixtures/unified-execution-traceability/**
+  - harness/specs/fixtures/autonomous-project-system/r4/reclamation-increment/**
   - docs/modules/multi-agent-and-tasks.md
   - docs/modules/workspace-and-coding.md
   - README.md
