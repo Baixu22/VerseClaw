@@ -1,0 +1,65 @@
+{
+  "actor": "codex/project-rag-index-electron",
+  "driven_by": "agent",
+  "platform": "win32",
+  "status": "pass",
+  "steps": {
+    "explicitEnable": true,
+    "forgedScopeClamped": true,
+    "nativeWorkerPublished": true,
+    "updateReplaced": true,
+    "aclRejected": true,
+    "restartReconciled": true,
+    "deletionRejected": true,
+    "corruptFtsIsolated": true,
+    "ordinaryChatVisible": true
+  },
+  "enabled": {
+    "status": "running",
+    "lastError": null,
+    "sources": [
+      {
+        "sourceKey": "source:sha256:3121b28a01337b6d3f0bbbe30a3aead81626e93cd70a896560563018f2bac606",
+        "intentSequence": 1,
+        "eligible": false,
+        "activeGeneration": null,
+        "reason": null
+      }
+    ],
+    "jobs": [
+      {
+        "jobId": "3dc40ed2-18b9-4711-8fcb-82820ba63db5",
+        "state": "leased",
+        "attempt": 1,
+        "error": null
+      }
+    ],
+    "activeWorker": true,
+    "workerThreadIds": []
+  },
+  "firstStatus": {
+    "status": "running",
+    "lastError": null,
+    "sources": [
+      {
+        "sourceKey": "source:sha256:3121b28a01337b6d3f0bbbe30a3aead81626e93cd70a896560563018f2bac606",
+        "intentSequence": 1,
+        "eligible": true,
+        "activeGeneration": "3f70f298-6306-407b-935a-a80f28640c86",
+        "reason": null
+      }
+    ],
+    "jobs": [
+      {
+        "jobId": "3dc40ed2-18b9-4711-8fcb-82820ba63db5",
+        "state": "complete",
+        "attempt": 1,
+        "error": null
+      }
+    ],
+    "activeWorker": false,
+    "workerThreadIds": [
+      1
+    ]
+  }
+}

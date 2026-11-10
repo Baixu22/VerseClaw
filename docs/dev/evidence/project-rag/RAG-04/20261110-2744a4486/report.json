@@ -1,0 +1,176 @@
+{
+  "schema": "ProjectRagIndexLifecycleAcceptance/v1",
+  "node": "TF-0881",
+  "programKey": "RAG-04",
+  "status": "pass",
+  "candidate": "2744a4486e521315840ee9f8f91c8d869a1cbca0",
+  "branch": "codex/project-rag-longterm-20261109",
+  "worktree": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "recordedAt": "2026-11-10T14:31:24.675Z",
+  "acceptance": [
+    {
+      "criterion": 1,
+      "status": "pass",
+      "evidence": [
+        "runtime-unit.json",
+        "index-probe.json",
+        "index-lifecycle-receipt.json"
+      ],
+      "result": "Shared SQLite source/generation/job/chunk state and lazy FTS5 publication use atomic generation CAS. Pending/failed builds are not active; 1100-chunk batch publication and FTS-failure rollback are covered. A locator-only source change advances intent and retires the prior generation even when the full-file version and digest stay fixed."
+    },
+    {
+      "criterion": 2,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "runtime-unit.json",
+        "index-probe.json",
+        "index-lifecycle-receipt.json"
+      ],
+      "result": "Creates, edits, ACL changes, revocation/deletion, source changes during stop and restart reconcile through the same owner. Invalidation removes eligibility and fences late publication; query quotes require current owner pin/ACL checks."
+    },
+    {
+      "criterion": 3,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "runtime-unit.json",
+        "crash-lease-probe.json",
+        "index-probe.json"
+      ],
+      "result": "Startup reconciliation, WatcherHub hints and periodic scans share one intent owner. Durable leases, nonces, total deadlines, three attempts, idempotency and derived cleanup are exercised; an abruptly exited child leaves a recoverable lease and cannot publish after recovery."
+    },
+    {
+      "criterion": 4,
+      "status": "pass",
+      "evidence": [
+        "runtime-unit.json",
+        "index-lifecycle-receipt.json",
+        "crash-lease-probe.json"
+      ],
+      "result": "FTS initialization is outside shared startup DDL. Lost/recreated/invalid FTS remains unavailable until rebuild; real Electron restarts with malformed FTS and retains ordinary Chat UI. Chunking, publication and old-generation cleanup execute in native workers."
+    },
+    {
+      "criterion": 5,
+      "status": "pass",
+      "evidence": [
+        "gates.json",
+        "root-unit.json",
+        "runtime-unit.json",
+        "electron.json",
+        "harness-ci-report.json"
+      ],
+      "result": "Planned store, recovery and Electron files are implemented and requiredTests. The clean final candidate passes all 18 gates, root 111/111, runtime 24/24, Electron 1/1, complete types and 12 Harness CI stages."
+    }
+  ],
+  "tests": {
+    "root": {
+      "passed": 111,
+      "total": 111,
+      "skipped": 0
+    },
+    "runtime": {
+      "passed": 24,
+      "total": 24,
+      "skipped": 0
+    },
+    "electron": {
+      "passed": 1,
+      "total": 1,
+      "skipped": 0,
+      "flaky": 0,
+      "steps": {
+        "explicitEnable": true,
+        "forgedScopeClamped": true,
+        "nativeWorkerPublished": true,
+        "updateReplaced": true,
+        "aclRejected": true,
+        "restartReconciled": true,
+        "deletionRejected": true,
+        "corruptFtsIsolated": true,
+        "ordinaryChatVisible": true
+      }
+    },
+    "crashLeaseRecovery": {
+      "childExitCode": 73,
+      "recoveredAttempt": 2,
+      "oldLeasePublicationRejected": true
+    },
+    "sqliteProbe": {
+      "sourceRows": 1,
+      "remainingGenerations": 0,
+      "remainingChunks": 0
+    }
+  },
+  "checks": {
+    "formalSteps": 18,
+    "allExitZero": true,
+    "runtimeBuild": 0,
+    "desktopBuild": 0,
+    "schemaGenerated": 0,
+    "typecheck": {
+      "exitCode": 0,
+      "projects": [
+        "node",
+        "web",
+        "test"
+      ]
+    },
+    "rootLint": 0,
+    "runtimeLint": {
+      "exitCode": 0,
+      "warnings": 1,
+      "warningKind": "Unicode code-point length bound in retrieval query input"
+    },
+    "contract": 0,
+    "commsReplay": 0,
+    "commsCompare": 0,
+    "harnessValidate": 0,
+    "harnessDryRun": 0,
+    "harnessCi": {
+      "completed": 12,
+      "total": 12,
+      "exitCode": 0
+    },
+    "artifactRetention": 0
+  },
+  "verificationModes": {
+    "actor": "agent",
+    "owner": "real local Wiki files",
+    "selection": "real plugin-scoped SQLite keyed state",
+    "worker": "native Node worker threads",
+    "electron": "Windows Electron Host/Gateway/runtime",
+    "provider": "no paid provider inference required for this lifecycle leaf"
+  },
+  "review": {
+    "status": "pass",
+    "openFindings": 0,
+    "evidence": "review.json",
+    "independentReviewCandidate": "351f143b51e9d811e229c444c89839e4f26c98ac",
+    "currentCandidateFollowupActor": "codex/project-rag-main"
+  },
+  "rollback": {
+    "previousCandidate": "57c40c0e8943e597e8463dd45c6a27ad27dc9241",
+    "method": "Stop the new projection service and revert the RAG-04 change set; keep canonical owner/governance state. Derived index tables can be rebuilt; shared state and raw sources remain the authority."
+  },
+  "sourceCandidate": {
+    "commit": "2744a4486e521315840ee9f8f91c8d869a1cbca0",
+    "tree": "73d38e26366221797632ef6712aa4e4a69fdccd9",
+    "dirty": false,
+    "evidence": [
+      "gates.json",
+      "source-mutation-guard.json"
+    ]
+  },
+  "processCleanup": {
+    "status": "pass",
+    "remaining": 0,
+    "survivors": 0,
+    "pendingLaunches": 0,
+    "ownedPidsRecheckedAt": "2026-11-10T14:35:39.296Z",
+    "ownedPidsPresent": 0,
+    "evidence": "electron-process-cleanup.json"
+  }
+}

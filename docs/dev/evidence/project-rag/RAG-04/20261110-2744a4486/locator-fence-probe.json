@@ -1,0 +1,103 @@
+{
+  "schema": "ProjectRagLocatorIntentProbe/v1",
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "candidate": "2744a4486e521315840ee9f8f91c8d869a1cbca0",
+  "scope": "single SQLite owner; no native model, Electron or full gates",
+  "fixtureOrigin": "agent-authored owner snapshots sharing file/revision/digest/policy",
+  "initialSource": {
+    "sourceKey": "source:sha256:05b5c6d9ce982c3ad278eef7e82d8caeee1063ddeb5d2d2e4ab048ffb6836e45",
+    "source": {
+      "schema": "SourceRef/v2",
+      "domain": "wiki",
+      "authorityId": "agent-fixture",
+      "namespaceId": "agent-fixture",
+      "subjectId": "same-file.md",
+      "revision": "1",
+      "sourceDigest": "sha256:2c03a18db5d69975e222e8845e462142b32745aacc66f2ba397042e6957b8944",
+      "policyEpoch": "sha256:fc7949b10d9d1f05444a3be187fa211f704a97cbe629bd2a1d50a78fba8db8b1",
+      "locator": {
+        "coordinateSpace": "raw-source-utf8-v1",
+        "startByte": 0,
+        "endByteExclusive": 13,
+        "startLine": 1,
+        "endLine": 2
+      }
+    },
+    "profileDigest": "sha256:2e8883ead948a28ab74b131f16923d2d20981d652833ac9a5677404e4a03c8eb",
+    "intentSequence": 1,
+    "eligible": false,
+    "desiredEligible": true,
+    "activeGeneration": null,
+    "reason": null
+  },
+  "changedSource": {
+    "sourceKey": "source:sha256:05b5c6d9ce982c3ad278eef7e82d8caeee1063ddeb5d2d2e4ab048ffb6836e45",
+    "source": {
+      "schema": "SourceRef/v2",
+      "domain": "wiki",
+      "authorityId": "agent-fixture",
+      "namespaceId": "agent-fixture",
+      "subjectId": "same-file.md",
+      "revision": "1",
+      "sourceDigest": "sha256:2c03a18db5d69975e222e8845e462142b32745aacc66f2ba397042e6957b8944",
+      "policyEpoch": "sha256:fc7949b10d9d1f05444a3be187fa211f704a97cbe629bd2a1d50a78fba8db8b1",
+      "locator": {
+        "coordinateSpace": "raw-source-utf8-v1",
+        "startByte": 6,
+        "endByteExclusive": 13,
+        "startLine": 2,
+        "endLine": 2
+      }
+    },
+    "profileDigest": "sha256:2e8883ead948a28ab74b131f16923d2d20981d652833ac9a5677404e4a03c8eb",
+    "intentSequence": 2,
+    "eligible": false,
+    "desiredEligible": true,
+    "activeGeneration": null,
+    "reason": null
+  },
+  "newJob": {
+    "schema": "IndexJob/v1",
+    "jobId": "0d03d0f4-cd29-466f-ad3a-070a5e72a81c",
+    "sourceKey": "source:sha256:05b5c6d9ce982c3ad278eef7e82d8caeee1063ddeb5d2d2e4ab048ffb6836e45",
+    "source": {
+      "schema": "SourceRef/v2",
+      "domain": "wiki",
+      "authorityId": "agent-fixture",
+      "namespaceId": "agent-fixture",
+      "subjectId": "same-file.md",
+      "revision": "1",
+      "sourceDigest": "sha256:2c03a18db5d69975e222e8845e462142b32745aacc66f2ba397042e6957b8944",
+      "policyEpoch": "sha256:fc7949b10d9d1f05444a3be187fa211f704a97cbe629bd2a1d50a78fba8db8b1",
+      "locator": {
+        "coordinateSpace": "raw-source-utf8-v1",
+        "startByte": 6,
+        "endByteExclusive": 13,
+        "startLine": 2,
+        "endLine": 2
+      }
+    },
+    "profileDigest": "sha256:2e8883ead948a28ab74b131f16923d2d20981d652833ac9a5677404e4a03c8eb",
+    "intentSequence": 2,
+    "state": "pending",
+    "attempt": 0,
+    "leaseOwner": null,
+    "leaseExpiresAt": null,
+    "deadlineAt": 1794319705521,
+    "nextAttemptAt": 1794319675521,
+    "error": null
+  },
+  "oldGeneration": [
+    {
+      "schema": "ProjectionGeneration/v1",
+      "generationId": "54d13ace-acb4-4ba3-9116-2ac66e13abc6",
+      "sourceKey": "source:sha256:05b5c6d9ce982c3ad278eef7e82d8caeee1063ddeb5d2d2e4ab048ffb6836e45",
+      "intentSequence": 1,
+      "state": "retired",
+      "chunkCount": 1
+    }
+  ],
+  "expected": "same subject row; changed locator advances intent, revokes old eligibility and schedules a new job",
+  "status": "pass"
+}

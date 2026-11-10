@@ -1,0 +1,133 @@
+{
+  "schema": "ProjectRagIndexLifecycleProbe/v1",
+  "actor": "codex/project-rag-index-probe",
+  "driven_by": "agent",
+  "candidate": "2744a4486e521315840ee9f8f91c8d869a1cbca0",
+  "fixtureOrigin": "agent-authored-Wiki-owner",
+  "selectionStorage": "real-plugin-SQLite",
+  "status": "pass",
+  "initial": {
+    "status": "running",
+    "lastError": null,
+    "sources": [
+      {
+        "sourceKey": "source:sha256:93004e08de9241a1c85df1a7684346ddbfac158ca6eacb555e132225042f3716",
+        "intentSequence": 1,
+        "eligible": true,
+        "activeGeneration": "10ba7dd6-b7b9-4378-93a6-55aa3acd595d",
+        "reason": null
+      }
+    ],
+    "jobs": [
+      {
+        "jobId": "9fa4a82e-7d30-431c-8e96-ba1191aa5705",
+        "state": "complete",
+        "attempt": 1,
+        "error": null
+      }
+    ],
+    "activeWorker": false,
+    "workerThreadIds": [
+      2
+    ]
+  },
+  "resumed": {
+    "status": "running",
+    "lastError": null,
+    "sources": [
+      {
+        "sourceKey": "source:sha256:93004e08de9241a1c85df1a7684346ddbfac158ca6eacb555e132225042f3716",
+        "intentSequence": 4,
+        "eligible": true,
+        "activeGeneration": "5026b57c-be30-4dd3-b221-4110435fe99a",
+        "reason": null
+      }
+    ],
+    "jobs": [
+      {
+        "jobId": "9fa4a82e-7d30-431c-8e96-ba1191aa5705",
+        "state": "complete",
+        "attempt": 1,
+        "error": null
+      },
+      {
+        "jobId": "2221f03a-ff30-4646-b280-54ff271589df",
+        "state": "complete",
+        "attempt": 1,
+        "error": null
+      },
+      {
+        "jobId": "387da3ec-818a-4e9d-bbb1-c4d8a65f1519",
+        "state": "complete",
+        "attempt": 1,
+        "error": null
+      }
+    ],
+    "activeWorker": false,
+    "workerThreadIds": [
+      5,
+      6
+    ]
+  },
+  "deleted": {
+    "status": "running",
+    "lastError": null,
+    "sources": [
+      {
+        "sourceKey": "source:sha256:93004e08de9241a1c85df1a7684346ddbfac158ca6eacb555e132225042f3716",
+        "intentSequence": 5,
+        "eligible": false,
+        "activeGeneration": null,
+        "reason": "not_found"
+      }
+    ],
+    "jobs": [
+      {
+        "jobId": "9fa4a82e-7d30-431c-8e96-ba1191aa5705",
+        "state": "complete",
+        "attempt": 1,
+        "error": null
+      },
+      {
+        "jobId": "2221f03a-ff30-4646-b280-54ff271589df",
+        "state": "complete",
+        "attempt": 1,
+        "error": null
+      },
+      {
+        "jobId": "387da3ec-818a-4e9d-bbb1-c4d8a65f1519",
+        "state": "complete",
+        "attempt": 1,
+        "error": null
+      }
+    ],
+    "activeWorker": false,
+    "workerThreadIds": [
+      5,
+      6,
+      7
+    ]
+  },
+  "counts": {
+    "sources": {
+      "count": 1
+    },
+    "generations": {
+      "count": 0
+    },
+    "chunks": {
+      "count": 0
+    }
+  },
+  "steps": {
+    "explicitEnable": true,
+    "nativeWorkerPublished": true,
+    "editReplaced": true,
+    "restartRestoredSqliteSelection": true,
+    "sourceIdentityStable": true,
+    "changedGenerationRejected": true,
+    "aclRejected": true,
+    "deleteAndCleanupComplete": true
+  },
+  "errors": []
+}

@@ -1,0 +1,3 @@
+$ tsgo --noEmit -p tsconfig.test.json --composite false
+openclaw_runtime/src/knowledge/retrieval/projection-store.ts(1086,39): error TS2345: Argument of type '"g.chunk_count"' is not assignable to parameter of type 'ReferenceExpression<ProjectionDatabase, "knowledge_index_chunks" | "knowledge_index_events" | "knowledge_index_generations" | "knowledge_index_jobs" | "knowledge_index_sources">'.
+[ELIFECYCLE] Command failed with exit code 2.

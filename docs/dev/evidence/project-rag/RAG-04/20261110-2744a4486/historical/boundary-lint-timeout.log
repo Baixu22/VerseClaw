@@ -1,0 +1,15 @@
+[qa-channel boundary dts] fresh; skipping
+[plugin-sdk boundary dts] [plugin-sdk-source-dts] staged 4381 declaration files
+[plugin-sdk boundary dts] [plugin-sdk-source-dts] staged 5726 package declaration files
+plugin-sdk boundary root shims timed out after 300000ms
+file:///C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/scripts/run-oxlint.mjs:213
+      throw new Error(
+            ^
+
+Error: prepare-extension-package-boundary-artifacts failed with exit code 1
+    at prepareExtensionPackageBoundaryArtifacts (file:///C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/scripts/run-oxlint.mjs:213:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async main (file:///C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/scripts/run-oxlint.mjs:270:7)
+    at async file:///C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/scripts/run-oxlint.mjs:285:3
+
+Node.js v24.22.1

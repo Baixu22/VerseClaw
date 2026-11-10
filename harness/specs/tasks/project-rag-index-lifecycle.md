@@ -100,4 +100,4 @@ docs:
 
 回滚：停止新 jobs、切回有效 generation 或 page 路径，只清理派生索引。
 
-实现接口和恢复行为见 `docs/dev/project-rag/INDEX-LIFECYCLE-CONTRACT.md`。候选验收记录为 `docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/report.json`，包含 SQLite、worker、跨进程租约恢复和真实 Electron 生命周期证据。
+实现接口和恢复行为见 `docs/dev/project-rag/INDEX-LIFECYCLE-CONTRACT.md`。候选验收记录为 `docs/dev/evidence/project-rag/RAG-04/20261110-2744a4486/report.json`，包含 SQLite、worker、跨进程租约恢复和真实 Electron 生命周期证据。

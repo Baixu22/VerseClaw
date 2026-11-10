@@ -1,0 +1,19 @@
+{
+  "schema": "ProjectRagBuiltSdkProbe/v1",
+  "actor": "codex/project-rag-built-probe",
+  "driven_by": "agent",
+  "candidate": "2744a4486e521315840ee9f8f91c8d869a1cbca0",
+  "artifact": "openclaw_runtime/dist/plugin-sdk/knowledge-retrieval.js",
+  "artifactDigest": "sha256:62b2333c69972f9f7a32a1bf9b6730a6477c00d895e837cce35b97793c81c566",
+  "fixtureOrigin": "agent-authored-owner-snapshot",
+  "tokenizerMode": "agent-fixture-codepoints",
+  "functions": [
+    "normalizeKnowledgeSourceDocument",
+    "chunkKnowledgeDocument",
+    "citationLocatorForChunk",
+    "verifyKnowledgeCitation"
+  ],
+  "chunks": 2,
+  "roundTrips": 2,
+  "status": "pass"
+}

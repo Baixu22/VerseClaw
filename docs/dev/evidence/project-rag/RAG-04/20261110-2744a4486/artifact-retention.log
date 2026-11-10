@@ -1,0 +1,2 @@
+$ node scripts/check-repository-artifacts.mjs
+Repository artifact retention passed (24609 tracked paths).

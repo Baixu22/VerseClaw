@@ -1,0 +1,130 @@
+{
+  "schema": "ProjectRagIndependentReview/v1",
+  "actor": "Peirce",
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "driven_by": "agent",
+  "candidate": "2744a4486e521315840ee9f8f91c8d869a1cbca0",
+  "status": "pass",
+  "openFindings": [],
+  "findings": [
+    {
+      "id": "subject-stable-source-identity",
+      "priority": "P2",
+      "status": "closed",
+      "initialReport": "The reviewer identified a possible source row split after changes during a stop. The initial wording overstated which version fields were in the key; direct source read confirmed the actual drifting field was locator.",
+      "resolution": "Removed locator from sourceKeyFor; key is schema/domain/authority/namespace/subject. Pin/profile changes advance the subject row and retire prior generations. Store regression checks same source key, one source row and retired old generation; owner restart regression checks one source row.",
+      "evidence": [
+        "openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts",
+        "tests/unit/project-rag-index-recovery.test.ts"
+      ]
+    },
+    {
+      "id": "physical-session-scope",
+      "priority": "P2",
+      "status": "closed",
+      "initialReport": "The Gateway identity projection and persisted service scope omitted sessionId, so a rebuilt physical generation of the same logical session could inherit enable scope.",
+      "resolution": "Propagate sessionId, require it to enable, compare it for every request, and deny background owner snapshots whose physical session generation differs. Search/reconcile/disable generation drift negative cases added.",
+      "evidence": [
+        "openclaw_runtime/extensions/memory-wiki/src/gateway.ts",
+        "openclaw_runtime/extensions/memory-wiki/src/retrieval-index.ts",
+        "tests/unit/project-rag-index-recovery.test.ts"
+      ]
+    }
+  ],
+  "closureMessages": [
+    {
+      "type": "agentMessage",
+      "id": "msg_8572bfad6bea70f2640b3a49fc76a66c",
+      "text": "我会只重读你点名的 `sourceKeyFor` 20 行和 `observe` 的 `sourceChanged/advancesIntent` 段，核对同 source 变更是否确实复用 row；若我上一条读错，会直接撤回 P2-1，不扩展新面。",
+      "phase": null
+    },
+    {
+      "type": "agentMessage",
+      "id": "msg_9468232637d0aabdd4be0a0b5c5871b1",
+      "text": "我只复核这两个修复点：`sourceKeyFor` 是否已去掉 `locator` 且 `sameSource`/intent 能处理 locator 变化，以及 `sessionId` 是否进入 `readIdentity`、持久化 selection 和 `assertScope`，并检查对应断言是否覆盖。不会运行测试或扩大扫描。",
+      "phase": null
+    },
+    {
+      "type": "agentMessage",
+      "id": "msg_7a984e244005f0d11c0fa3d7d0da5e6e",
+      "text": "**P2-1 纠正：closed，撤回上一轮该 finding 对当前候选的结论。**\n\n当前 `sourceKeyFor` 已改为只包含：\n\n`\"ProjectionSourceKey/v1\" + schema + domain + authorityId + namespaceId + subjectId`\n\n见 [projection-store.ts](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/src/knowledge/retrieval/projection-store.ts:131>)。`locator`、revision、digest、policy 不再参与 row 分裂。\n\n`observe` 的同一 row 路径已确认：`sameSourcePin()` 检测 source pin 变化，`advancesIntent` 递增 intent；随后将旧 pending/leased job 置为 `superseded`，把旧 active generation 退休，并把该 row 设为 `eligible=0`、`activeGeneration=null`，见 [projection-store.ts](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/src/knowledge/retrieval/projection-store.ts:545>) 和 [projection-store.ts](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/src/knowledge/retrieval/projection-store.ts:573>)。\n\n已有同 row 断言是 [projection-store.test.ts](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts:183>)：同一 subject 改变 revision、digest 和 locator 后，断言 `sourceKey` 不变、`sources(\"ns-1\")` 只有一行、旧 generation 全部 retired。现有 restart 端到端测试 [project-rag-index-recovery.test.ts](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-index-recovery.test.ts:43>) 已覆盖停止期间写入后重启并检索。就这轮修复结论，不需要再补新的 restart same-row 断言；如果要把“重启后仍只有一行”作为独立产品级断言，再在 restart 测试中加 `sources` 行数/eligible 检查即可。\n\n**P2-2：closed。**\n\n[gateway.ts](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/extensions/memory-wiki/src/gateway.ts:57>) 已把 `sessionId` 纳入 `readIdentity` 回传；[retrieval-index.ts](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/extensions/memory-wiki/src/retrieval-index.ts:53>) 的 `assertScope` 已比较四字段 `workspaceId/workspaceDir/agentSessionKey/sessionId`；`enable` 也要求 `sessionId`，见同文件 [第 137 行](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/extensions/memory-wiki/src/retrieval-index.ts:137>)。跨 generation 的 `search/reconcile/disable` 反例已加到 [project-rag-index-recovery.test.ts](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-index-recovery.test.ts:83>)。",
+      "phase": null
+    }
+  ],
+  "reviewerThread": "01a1c52a-856c-7bc0-b65c-ebe26e947b42",
+  "reviewedImplementationCandidate": "351f143b51e9d811e229c444c89839e4f26c98ac",
+  "finalCandidateDifference": {
+    "paths": [
+      ".gitignore",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/.gitattributes",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/README.md",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/SHA256SUMS",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/artifact-retention.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/built-sdk.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/closeout-changes.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/comms-compare.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/comms-replay.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/contract.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/crash-lease-driver.mjs",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/crash-lease-probe.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/crash-lease-probe.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/credential-scan.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/dependencies.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/desktop-build.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/electron-process-cleanup.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/electron.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/electron.stderr.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/failure-history.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/gates.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/harness-ci-report.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/harness-ci.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/harness-dry-run.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/harness-validate.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/historical/boundary-lint-timeout.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/historical/index-probe-count-assertion.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/historical/index-probe-idle-failure.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/historical/kysely-alias-types.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/historical/owner-recovery-first.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/historical/owner-recovery-fts-query.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/historical/owner-recovery-loader.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/historical/owner-recovery-source-subject.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/historical/prior-candidate-gates.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/historical/prior-candidate-root-lint.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/index-lifecycle-receipt.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/index-probe.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/index-probe.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/report.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/review.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/root-lint.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/root-unit.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/runtime-build.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/runtime-lint.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/runtime-unit.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/schema-generated.log",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/source-inputs.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/source-mutation-guard.json",
+      "docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/typecheck.log",
+      "harness/specs/tasks/project-rag-index-lifecycle.md",
+      "openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts",
+      "openclaw_runtime/src/knowledge/retrieval/projection-store.ts",
+      "scripts/knowledge-rag-index-probe.ts",
+      "scripts/repository-artifacts.json"
+    ],
+    "kind": "removed unused imports and fixed same-source locator changes to advance and fence projection intent"
+  },
+  "followupReview": {
+    "actor": "codex/project-rag-main",
+    "driven_by": "agent",
+    "kind": "focused source review and real SQLite reproduction",
+    "finding": "observe() detected changed locator but sourceChanged ignored it, retaining old eligibility under the same intent",
+    "resolution": "Use the complete source comparison when deciding to advance the source intent.",
+    "sourceFixCandidate": "fc66e618cbc079daa511396056b4d41a9e94178e",
+    "formatCandidate": "2744a4486e521315840ee9f8f91c8d869a1cbca0",
+    "evidence": [
+      "historical/locator-fence-before.json",
+      "locator-fence-probe.json",
+      "runtime-unit.json"
+    ],
+    "status": "verified against the current candidate by the range-only regression and current-candidate probe"
+  }
+}

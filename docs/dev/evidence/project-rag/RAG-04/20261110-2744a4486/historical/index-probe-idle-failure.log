@@ -1,0 +1,5 @@
+Error: Projection did not become idle within its deadline
+    at KnowledgeProjectionController.idle (C:\Users\27933\.codex\worktrees\project-rag-longterm-20261109\ClawX\openclaw_runtime\src\knowledge\retrieval\index-controller.ts:302:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Object.idle (C:\Users\27933\.codex\worktrees\project-rag-longterm-20261109\ClawX\openclaw_runtime\extensions\memory-wiki\src\retrieval-index.ts:180:7)
+    at async main (C:\Users\27933\.codex\worktrees\project-rag-longterm-20261109\ClawX\scripts\knowledge-rag-index-probe.ts:39:56)

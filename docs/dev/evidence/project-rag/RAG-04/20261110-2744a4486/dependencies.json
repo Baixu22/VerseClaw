@@ -1,0 +1,33 @@
+{
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "candidate": "2744a4486e521315840ee9f8f91c8d869a1cbca0",
+  "node": "v24.22.1",
+  "packages": [
+    {
+      "id": "vitest/package.json",
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\vitest@4.1.1_@opentelemetry_05485d40ab12e73a47b0200fb70ea57a\\node_modules\\vitest\\package.json"
+    },
+    {
+      "id": "typescript/package.json",
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\typescript@5.9.3\\node_modules\\typescript\\package.json"
+    },
+    {
+      "id": "electron/package.json",
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\electron@40.8.4\\node_modules\\electron\\package.json"
+    },
+    {
+      "id": "vitest/package.json",
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\runtime\\.pnpm\\vitest@4.1.7_@opentelemetry_f5449208cde661befa315c6fea555e10\\node_modules\\vitest\\package.json"
+    },
+    {
+      "id": "kysely",
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\runtime\\.pnpm\\kysely@0.29.2\\node_modules\\kysely\\dist\\index.js"
+    },
+    {
+      "id": "yaml/package.json",
+      "path": "D:\\tmp\\project-rag-longterm-20261109-deps\\runtime\\.pnpm\\yaml@2.9.0\\node_modules\\yaml\\package.json"
+    }
+  ],
+  "mainNodeModulesReused": false
+}
