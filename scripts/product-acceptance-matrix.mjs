@@ -1,10 +1,11 @@
-import { closeSync, existsSync, mkdirSync, openSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { closeSync, existsSync, mkdirSync, openSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { createRequire } from 'node:module';
 import { spawnSync } from 'node:child_process';
 import { COMPONENT_DISPOSITION_ENTRIES } from '../shared/dcs/component-disposition-catalog.ts';
+import { createFreshProductBuildProof, readProductCandidate } from '../tests/e2e/fixtures/product-candidate.ts';
 import { assertSafeOutputDirectory, repositoryIdentity, sha256, sha256File } from './lib/agent-engineering-acceptance.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -98,21 +99,21 @@ export function evaluateReport(discovery, actual, exitCode, root = ROOT) {
   return { passed: failures.length === 0, counts: { planned: planned.length, observed: observed.length, passed, failed, skipped }, failures };
 }
 
-function executeNode(label, argv, output, env) {
+function executeCommand(label, executable, argv, output, env) {
   const jsonPath = resolve(output, `${label}.json`);
   const stdout = resolve(output, `${label}.stdout.txt`), stderr = resolve(output, `${label}.stderr.txt`);
   const handles = [openSync(stdout, 'wx'), openSync(stderr, 'wx')];
   const startedAt = new Date().toISOString();
   let result;
   try {
-    result = spawnSync(process.execPath, argv, { cwd: ROOT, env: { ...env, PLAYWRIGHT_JSON_OUTPUT_FILE: jsonPath },
+    result = spawnSync(executable, argv, { cwd: ROOT, env: { ...env, PLAYWRIGHT_JSON_OUTPUT_FILE: jsonPath },
       stdio: ['ignore', ...handles], windowsHide: true, timeout: label === 'discovery' ? 120_000 : 3_600_000 });
   } finally { handles.forEach((handle) => closeSync(handle)); }
   let report = null;
   if (existsSync(jsonPath)) {
     try { report = JSON.parse(readFileSync(jsonPath, 'utf8')); } catch { /* Invalid output is rejected by evaluateReport. */ }
   }
-  return { report, command: { argv: [process.execPath, ...argv], startedAt, finishedAt: new Date().toISOString(),
+  return { report, command: { argv: [executable, ...argv], startedAt, finishedAt: new Date().toISOString(),
     exitCode: result.status, signal: result.signal, error: result.error?.message ?? null,
     artifacts: [stdout, stderr, ...(existsSync(jsonPath) ? [jsonPath] : [])].map((path) => ({ path: relative(output, path), sha256: sha256File(path) })) } };
 }
@@ -121,7 +122,29 @@ function executePlaywright(label, files, output, env) {
   const cli = createRequire(import.meta.url).resolve('@playwright/test/cli');
   const argv = [cli, 'test', ...files, '--workers=1', '--retries=0', '--reporter=json', `--output=${resolve(output, 'test-results')}`];
   if (label === 'discovery') argv.push('--list');
-  return executeNode(label, argv, output, env);
+  return executeCommand(label, process.execPath, argv, output, env);
+}
+
+function executeBuild(label, script, output, env, candidate) {
+  const before = repositoryIdentity(ROOT);
+  if (!before.clean || before.commit !== candidate.commit || before.tree !== candidate.tree) throw new Error('Candidate changed before build');
+  const command = ['pnpm', 'run', script];
+  // These two fixed script names use the installed pnpm shim, including its lifecycle hooks.
+  const [executable, ...args] = process.platform === 'win32'
+    ? ['cmd.exe', '/d', '/s', '/c', command.join(' ')] : command;
+  const step = executeCommand(label, executable, args, output, env);
+  return { ...step.command, command, candidate: { commit: before.commit, tree: before.tree, dirty: false } };
+}
+
+export function matrixEnvironment(output, environment = process.env) {
+  for (const name of ['CLAWX_SPACE_BUNNY_PREFLIGHT', 'CLAWX_SPACE_BUNNY_OPERATIONAL', 'CLAWX_MOYU_PREFLIGHT']) {
+    if (environment[name] === '1') throw new Error(`${name} cannot be used for matrix acceptance`);
+  }
+  if (environment.CLAWX_SPACE_BUNNY_FAULTS?.trim()) throw new Error('CLAWX_SPACE_BUNNY_FAULTS cannot narrow matrix acceptance');
+  return { ...environment, CLAWX_SPACE_BUNNY_ACCEPTANCE: '1', CLAWX_MOYU_ACCEPTANCE: '1',
+    CLAWX_SPACE_BUNNY_ARTIFACT_ROOT: resolve(output, 'b1-space-bunny'), CLAWX_MOYU_ARTIFACT_ROOT: resolve(output, 'b2-moyu'),
+    // Dependencies are provisioned before acceptance; a nested pnpm must not purge a shared dependency directory.
+    PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN: 'false' };
 }
 
 export function validateBuildStamp(stamp, candidate) {
@@ -129,16 +152,13 @@ export function validateBuildStamp(stamp, candidate) {
 }
 
 function buildIdentity(candidate) {
-  const stamp = JSON.parse(readFileSync(resolve(ROOT, 'openclaw_runtime/dist/.buildstamp'), 'utf8'));
-  validateBuildStamp(stamp, candidate);
+  const inputs = readProductCandidate(ROOT);
+  validateBuildStamp(inputs.runtimeBuildStamp, candidate);
+  if (inputs.dirty || inputs.commit !== candidate.commit || inputs.tree !== candidate.tree) throw new Error('Candidate changed during build');
   for (const entry of ['dist/index.html', 'dist-electron/main/index.js', 'openclaw_runtime/dist/entry.js']) {
     if (!statSync(resolve(ROOT, entry)).isFile()) throw new Error(`Missing build entry: ${entry}`);
   }
-  const files = ['dist', 'dist-electron', 'openclaw_runtime/dist', 'openclaw_runtime/dist-runtime'].flatMap((directory) =>
-    readdirSync(resolve(ROOT, directory), { recursive: true, withFileTypes: true }).filter((entry) => entry.isFile())
-      .map((entry) => { const path = resolve(entry.parentPath, entry.name); return { path: relative(ROOT, path).split(sep).join('/'), sha256: sha256File(path) }; }))
-    .sort((left, right) => left.path.localeCompare(right.path));
-  return { stamp, files, digest: sha256(JSON.stringify(files)) };
+  return { ...inputs, digest: sha256(JSON.stringify(inputs.files.slice(inputs.sourceCount))) };
 }
 
 export function main(argv = process.argv.slice(2)) {
@@ -163,9 +183,7 @@ export function main(argv = process.argv.slice(2)) {
   save('plan.json', plan);
   if (values.plan) { console.log(JSON.stringify({ plan: resolve(output, 'plan.json'), groups: selected.length, files: files.length, executed: false })); return 0; }
   if (!candidate.clean) throw new Error('Acceptance requires a clean committed candidate; plan.json records the dirty input');
-  const env = { ...process.env, CLAWX_SPACE_BUNNY_ACCEPTANCE: '1', CLAWX_MOYU_ACCEPTANCE: '1',
-    // Dependencies are provisioned before acceptance; a nested pnpm must not purge a shared dependency directory.
-    pnpm_config_verify_deps_before_run: 'false' };
+  const env = matrixEnvironment(output);
   const discovery = executePlaywright('discovery', files, output, env);
   const discoveryFailures = [];
   let planned = [];
@@ -177,18 +195,21 @@ export function main(argv = process.argv.slice(2)) {
   for (const test of planned) if (test.expectedStatus !== 'passed') discoveryFailures.push(`Required test is skipped or expected to fail: ${test.title}`);
   const builds = [];
   let build = null;
+  let freshBuildProofSha256 = null;
   if (!discoveryFailures.length) {
-    for (const [label, args] of [
-      ['extension-bridge', ['scripts/generate-ext-bridge.mjs']],
-      ['vite-build', ['--max-old-space-size=6144', 'node_modules/vite/bin/vite.js', 'build']],
-      ['runtime-build', ['scripts/build-openclaw-runtime.mjs']],
-    ]) {
-      const step = executeNode(label, args, output, env);
-      builds.push(step.command);
-      if (step.command.exitCode !== 0) { discoveryFailures.push(`${label} failed: ${step.command.exitCode}`); break; }
+    for (const [label, script] of [['vite-build', 'build:vite'], ['runtime-build', 'build:runtime']]) {
+      const step = executeBuild(label, script, output, env, candidate);
+      builds.push(step);
+      if (step.exitCode !== 0) { discoveryFailures.push(`${label} failed: ${step.exitCode}`); break; }
     }
     if (!discoveryFailures.length) {
-      try { build = buildIdentity(candidate); save('build-inputs.json', build); }
+      try {
+        build = buildIdentity(candidate);
+        save('build-inputs.json', build);
+        save('fresh-build-proof.json', createFreshProductBuildProof(build, builds));
+        env.CLAWX_SPACE_BUNNY_BUILD_PROOF = resolve(output, 'fresh-build-proof.json');
+        freshBuildProofSha256 = sha256File(env.CLAWX_SPACE_BUNNY_BUILD_PROOF);
+      }
       catch (error) { discoveryFailures.push(error.message); }
     }
   }
@@ -198,14 +219,16 @@ export function main(argv = process.argv.slice(2)) {
   const after = repositoryIdentity(ROOT);
   if (after.commit !== candidate.commit || after.tree !== candidate.tree || !after.clean) { result.passed = false; result.failures.push('Candidate changed during execution'); }
   if (actual) {
-    try { if (buildIdentity(candidate).digest !== build.digest) throw new Error('Build changed during execution'); }
+    try { if (buildIdentity(candidate).inputDigest !== build.inputDigest) throw new Error('Build or source inputs changed during execution'); }
     catch (error) { result.passed = false; result.failures.push(error.message); }
   }
   const report = { schema: 'ProductMatrixRun/v1', driven_by: 'agent', actor: 'product-matrix-runner', candidate, candidateAfter: after,
     planSha256: sha256File(resolve(output, 'plan.json')), selectedSuiteResult: result,
     executionAttempted: Boolean(actual),
     nodeAcceptance: 'incomplete',
-    buildDigest: build?.digest ?? null, commands: [discovery.command, ...builds, ...(actual ? [actual.command] : [])],
+    buildDigest: build?.digest ?? null, inputDigest: build?.inputDigest ?? null,
+    freshBuildProofSha256,
+    commands: [discovery.command, ...builds, ...(actual ? [actual.command] : [])],
     groups: inventory.groups.map((group) => ({ id: group.id, selected: selected.includes(group.id), suiteStatus: selected.includes(group.id) && actual ? (result.passed ? 'passed' : 'failed') : 'not-run', evidenceLayers: group.evidenceLayers, remainingChecks: group.remainingChecks })),
     remainingAcceptance: [...inventory.additionalAcceptance, ...inventory.groups.filter((group) => !selected.includes(group.id)).map((group) => `${group.id}: not run in this batch`), ...inventory.groups.flatMap((group) => group.remainingChecks.map((check) => `${group.id}: ${check}`))] };
   save('report.json', report);

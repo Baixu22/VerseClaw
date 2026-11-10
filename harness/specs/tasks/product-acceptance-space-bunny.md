@@ -20,6 +20,7 @@ touchedAreas:
   - harness/specs/fixtures/product-acceptance-closeout/b1-space-bunny/**
   - tests/e2e/product-acceptance-space-bunny.spec.ts
   - tests/e2e/fixtures/space-bunny-responses.ts
+  - tests/e2e/fixtures/product-candidate.ts
   - playwright.config.ts
   - tests/unit/provider-validation.test.ts
   - tests/unit/provider-runtime-sync.test.ts
@@ -123,6 +124,9 @@ candidate. The proof includes those command receipts and their candidate binding
 A modified ignored build file must fail this digest check even when the runtime build
 stamp still names the correct commit. Assistant text is replayed as the SDK-supported
 input message string; the paired function call and output keep their original call ID.
+The TF-0582 `scripts/product-acceptance-matrix.mjs` runner creates and supplies this
+proof after its actual pnpm builds. It shares `tests/e2e/fixtures/product-candidate.ts`
+with this suite so source and build hashing use one contract.
 
 A cleanup negative control runs with the Gateway still stopped. The expected missing-PID
 check fails, while a finally block still closes the owned Electron process and proxy;
@@ -131,6 +135,9 @@ the failure receipt stays failed and a separate control receipt records the recl
 Cancellation includes explicit delayed Main-to-Renderer text, tool and final frames for
 the canceled run, before and during recovery. Those synthetic frames remain labeled
 agent-driven; they must not appear in the final UI/transcript or create a file effect.
+For TF-0582, the first fault profile covers all nine failure types and two additional
+clean profiles repeat cancellation and same-session recovery, with separate receipts
+and screenshots.
 
 Write raw runs to `D:/tmp/clawx-product-acceptance/<run-id>/b1-space-bunny/`. Use
 `TEMP=TMP=D:/tmp`, preserving the ordinary Windows environment. If Electron rejects the

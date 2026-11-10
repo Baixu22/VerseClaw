@@ -5,7 +5,7 @@ title: Core product journey matrix and candidate-bound execution
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: Give TF-0582 a reproducible nine-group inventory and compare its frozen Playwright collection with actual results, preserving missing, failed, skipped and stale evidence.
-diffBase: 5e9e865dc911e32615338c593694fa74d7bf8400
+diffBase: 390e39259429255b6712c84440be4f567e2ec25d
 requiredRules:
   - backend-communication-boundary
   - repository-artifact-retention
@@ -19,7 +19,20 @@ touchedAreas:
   - harness/specs/fixtures/product-acceptance-matrix/**
   - scripts/product-acceptance-matrix.mjs
   - scripts/product-acceptance-matrix.d.mts
+  - scripts/product-matrix-judge.mjs
+  - scripts/product-matrix-judge.d.mts
   - tests/unit/product-acceptance-matrix.test.ts
+  - tests/e2e/fixtures/product-candidate.ts
+  - tests/e2e/fixtures/fp-p1-harness.ts
+  - tests/e2e/product-acceptance-space-bunny.spec.ts
+  - tests/e2e/product-matrix-delegation.spec.ts
+  - tests/e2e/product-matrix-doctor.spec.ts
+  - tests/e2e/product-matrix-memory.spec.ts
+  - tests/e2e/product-matrix-knowledge.spec.ts
+  - tests/e2e/product-matrix-tools.spec.ts
+  - tests/exploration/product-matrix.config.ts
+  - tests/exploration/product-matrix.session.spec.ts
+  - harness/specs/tasks/product-acceptance-space-bunny.md
   - tests/e2e/support-bundle-fp-p1-06.spec.ts
 expectedUserBehavior:
   - The operator can inspect all nine product journeys, their positive and negative oracles, evidence layers and outstanding checks before running them.
@@ -31,6 +44,7 @@ requiredProfiles:
 requiredTests:
   - node node_modules/vitest/vitest.mjs run tests/unit/product-acceptance-matrix.test.ts --maxWorkers=1
   - node --import ./openclaw_runtime/node_modules/tsx/dist/loader.mjs scripts/product-acceptance-matrix.mjs --check
+  - node node_modules/@playwright/test/cli.js test --config tests/exploration/product-matrix.config.ts --list
   - node harness/src/cli.mjs validate --spec harness/specs/tasks/product-acceptance-matrix.md
   - node harness/src/cli.mjs run --spec harness/specs/tasks/product-acceptance-matrix.md --dry-run
   - git diff --check
@@ -43,6 +57,10 @@ acceptance:
   - Selected batches retain all unselected groups and the additional live, exploratory and rubric requirements as incomplete.
   - The parent TF-0582 contract remains the node closure authority; implementation checks alone do not close the node.
   - The support-bundle journey retains the sanitized bundle in test output before its temporary profile is removed.
+  - Successful pnpm Vite/runtime builds produce the fresh-build proof consumed by the provider suite, using a shared source/build digest; altered inputs, failed commands and preflight overrides cannot pass matrix acceptance.
+  - The qualitative judge reuses the frozen clarity rubric, calibrates pass/fail/unknown fixtures on the current model and retains three distinct response receipts per sample; unavailable votes remain unverified.
+  - Three clean-profile cancellation trials resume the same session, preserve the aborted run, exclude delayed frames and finish the later reply without a new tool effect.
+  - The isolated exploration session records at least twenty minutes of agent interaction, twenty-five actions, all ten charter states, screenshots, console output and reviewed findings against the same sealed build.
 docs:
   required: true
   files:
@@ -75,13 +93,19 @@ node --import ./openclaw_runtime/node_modules/tsx/dist/loader.mjs scripts/produc
 
 Each output directory must be new and outside the candidate checkout. `--group` may be repeated; omitting it selects
 all groups. A batch runs every test in its selected files, without title filters.
-After discovery, the runner generates the existing extension bridge and executes the Vite/runtime build entries,
-records their logs and exits, checks the runtime stamp against the candidate and
-hashes the build before and after Electron runs. A failed build stops execution
-and leaves its test groups `not-run`.
+After discovery, the runner executes `pnpm run build:vite` and `pnpm run build:runtime`,
+including the existing lifecycle hooks, and records their logs and exits. It checks
+the runtime stamp, hashes the source/build inputs and writes `fresh-build-proof.json`.
+The provider suite consumes that proof through `CLAWX_SPACE_BUNNY_BUILD_PROOF` and
+uses the same file traversal and digest implementation. The runner rechecks those
+inputs after Electron runs. A failed build stops execution and leaves its test
+groups `not-run`. Matrix acceptance rejects preflight/operational overrides and
+the fault-case selection variable, keeping all required negative controls enabled.
 The live provider and moyu files retain their existing resource, fresh-build,
 isolation and three-trial requirements. Supply their private environment values
-only to the child process.
+only to the child process. Provider and moyu receipts are retained under the batch's
+`b1-space-bunny/` and `b2-moyu/` directories. Installed dependencies are reused;
+`PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN=false` prevents pnpm from replacing them.
 
 The output includes the frozen inventory and Git identity, the discovery report,
 the execution report, exact commands, exit codes and hashes. Discovery is a list
@@ -101,3 +125,42 @@ and negative controls, the three repeated live sets, a 20-minute agent explorati
 record, calibrated judge rubric and reviewed P0/P1 findings. Mock UI, actual owner
 effects, scripted models and live models retain their distinct evidence layers.
 Windows package and final independent aggregate work remain TF-0584 and TF-0585.
+
+## Qualitative review
+
+`judge-rubric.json` freezes the existing `tf0590-clarity/v2` prompt and six calibration
+samples by SHA256. `scripts/product-matrix-judge.mjs` runs three Responses votes per
+sample on the authorized space-bunny resource. It keeps raw requests/responses,
+identities and hashes; duplicate responses, incomplete output and model drift make
+the sample unavailable. File, database, process and runtime-state oracles continue
+to determine each business outcome.
+
+```powershell
+node --import ./openclaw_runtime/node_modules/tsx/dist/loader.mjs scripts/product-matrix-judge.mjs --calibrate --output D:/tmp/product-matrix-judge
+node --import ./openclaw_runtime/node_modules/tsx/dist/loader.mjs scripts/product-matrix-judge.mjs --review D:/tmp/product-matrix-review-samples.json --output D:/tmp/product-matrix-review
+```
+
+Review input is an array of `{ "id": "...", "facts": { ... }, "explanation": "..." }`
+from retained outcome artifacts. Each review run first recalibrates the frozen
+samples. A review `unknown` is recorded as `unverified`; the node remains subject
+to the complete TF-0582 evidence gate.
+
+## Agent exploration
+
+The separate `tests/exploration/product-matrix.config.ts` entry keeps the interactive
+twenty-minute charter outside ordinary E2E discovery. It reuses the Electron isolation
+fixture and local scripted provider, exposes only that fixture's loopback CDP port in
+`session.json`, and retains the console and final candidate binding. The executing agent
+uses the existing Playwright/CDP API to inspect navigation, keyboard focus, light/dark
+themes, narrow layout, drafts, empty/error states and return/reopen flows. Screenshots
+and action observations accompany `agent-review.json`; unresolved P0/P1 findings fail
+the run. The session fixture owns shutdown after reviewing that record.
+
+```powershell
+node node_modules/@playwright/test/cli.js test --config tests/exploration/product-matrix.config.ts --workers=1 --retries=0 --reporter=json --output D:/tmp/product-matrix-exploration
+```
+
+Supply `CLAWX_SPACE_BUNNY_BUILD_PROOF` from the current matrix build and use the
+isolated `CLAWX_E2E_RUN_ROOT_BASE`. `session.json` lists the required states and output
+directory. The review records its `runId`, actual `startedAt`/`finishedAt` timestamps,
+`visitedStates`, at least twenty-five `actions`, and findings with `priority`/`status`.

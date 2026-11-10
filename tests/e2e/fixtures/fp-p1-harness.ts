@@ -96,10 +96,24 @@ export type LlmRequestLog = {
 
 export const SCRIPTED_LLM_USAGE = Object.freeze({ prompt_tokens: 120, completion_tokens: 30, total_tokens: 150 });
 
+export type ScriptedLlmRequest = {
+  model?: string;
+  stream?: boolean;
+  tools?: unknown[];
+  messages?: Array<{
+    role: string;
+    content?: unknown;
+    tool_call_id?: string;
+    toolCallId?: string;
+    toolName?: string;
+  }>;
+};
+
 export type LlmScript = (
   userText: string,
   toolResults: Record<string, string>,
   requestIndex: number,
+  request: ScriptedLlmRequest,
 ) => { toolCall?: ToolCallSpec; text?: string } | Promise<{ toolCall?: ToolCallSpec; text?: string }>;
 
 /**
@@ -150,16 +164,7 @@ export function startScriptedLlm(script: LlmScript): Promise<{
       req.on('data', (chunk) => { body += chunk; });
       req.on('end', async () => {
         try {
-        let parsed: {
-          stream?: boolean;
-          messages?: Array<{
-            role: string;
-            content?: unknown;
-            tool_call_id?: string;
-            toolCallId?: string;
-            toolName?: string;
-          }>;
-        } = {};
+        let parsed: ScriptedLlmRequest = {};
         try { parsed = JSON.parse(body); } catch { /* ignore */ }
         if (log.length > 80) {
           res.writeHead(500, { 'content-type': 'application/json' });
@@ -189,7 +194,7 @@ export function startScriptedLlm(script: LlmScript): Promise<{
         }
         // A filtered tool never produces a result frame. Let the scripted
         // control terminate from the request count in that case.
-        const action = await script(userText, toolResults, log.length);
+        const action = await script(userText, toolResults, log.length, parsed);
         log.push({
           turn: userText.slice(0, 60),
           toolResults,

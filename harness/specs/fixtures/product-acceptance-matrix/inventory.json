@@ -90,20 +90,20 @@
       "files": [
         "tests/e2e/knowledge-review-queue.spec.ts",
         "tests/e2e/knowledge-lifecycle.spec.ts",
-        "tests/e2e/knowledge-ks04-chat-dcs.spec.ts"
+        "tests/e2e/knowledge-ks04-chat-dcs.spec.ts",
+        "tests/e2e/product-matrix-knowledge.spec.ts"
       ],
       "evidenceLayers": [
-        "mock-ui-and-gateway-seam"
+        "mock-ui-and-gateway-seam",
+        "real-gateway-explicit-memory-wiki-local-vault"
       ],
       "positiveOracles": [
-        "审核选择仅准备和批准所选 proposal；六种生命周期操作返回对应 EffectReceipt；Chat 携带所选引用"
+        "审核选择仅准备和批准所选 proposal；六种生命周期操作返回对应 EffectReceipt；真实导入和编译产生页面及索引，Chat 实际请求携带所选 owner 引用"
       ],
       "negativeOracles": [
-        "拒绝候选不持久化；权限拒绝的知识引用显示原因并不成为有效注入"
+        "拒绝候选不持久化；权限拒绝的知识引用显示原因并不成为有效注入；批准删除后的页面、检索和索引均不再包含所删知识"
       ],
-      "remainingChecks": [
-        "这些 UI seam 测试尚不能证明真实导入→索引→检索→引用→删除的同候选磁盘链，需补充实际 owner/Gateway 证据"
-      ]
+      "remainingChecks": []
     },
     {
       "id": "memory",
@@ -113,21 +113,21 @@
       ],
       "files": [
         "tests/e2e/memory-surface.spec.ts",
-        "tests/e2e/long-session-continuity-context.spec.ts"
+        "tests/e2e/long-session-continuity-context.spec.ts",
+        "tests/e2e/product-matrix-memory.spec.ts"
       ],
       "evidenceLayers": [
         "real-gateway-scripted-model",
-        "mock-ui"
+        "mock-ui",
+        "explicit-role-memory-pilot"
       ],
       "positiveOracles": [
-        "真实 memory.propose/review 后的 continuity preview 包含接受的 memory-ref；统一界面导出可读 JSON"
+        "真实 memory.propose/review 后的 continuity preview 包含接受的 memory-ref；显式 role-memory pilot 下，后续 Chat 从实际 system request 取回接受事实，并可读回 injection receipt"
       ],
       "negativeOracles": [
         "未接受上下文被排除；跨 scope 返回 missing；删除负责人后预览失效"
       ],
-      "remainingChecks": [
-        "补齐接受记忆在后续真实 Chat 中的消费回执及作用域隔离结果"
-      ]
+      "remainingChecks": []
     },
     {
       "id": "delegation",
@@ -136,20 +136,19 @@
       "files": [
         "tests/e2e/long-session-delegation-admission.spec.ts",
         "tests/e2e/long-session-completion-continuation.spec.ts",
-        "tests/e2e/session-worker-task-journey.spec.ts"
+        "tests/e2e/session-worker-task-journey.spec.ts",
+        "tests/e2e/product-matrix-delegation.spec.ts"
       ],
       "evidenceLayers": [
         "real-gateway-scripted-model"
       ],
       "positiveOracles": [
-        "admission/run/child/generation/budget 回执、Task Ledger 和子会话真实文件读回；重启恢复同一 completion batch"
+        "admission/run/child/generation/budget 回执、Task Ledger 和子会话真实文件读回；重启恢复同一 completion batch；空闲父会话从实际子会话完成通知中取得结果并仅续接一次"
       ],
       "negativeOracles": [
         "重复请求和 completion 不产生第二次效果；unknown role、unsupported backend、stale generation 拒绝"
       ],
-      "remainingChecks": [
-        "将父会话实际续接终态与 UI 回执对应读回；不以 completion batch 存在替代续接完成"
-      ]
+      "remainingChecks": []
     },
     {
       "id": "channels",
@@ -184,22 +183,22 @@
         "tests/e2e/workspace-git-mcp-runtime.spec.ts",
         "tests/e2e/skills-packs.spec.ts",
         "tests/e2e/versegit-runtime-bindings.spec.ts",
-        "tests/e2e/versegit-candidate-apply.spec.ts"
+        "tests/e2e/versegit-candidate-apply.spec.ts",
+        "tests/e2e/product-matrix-tools.spec.ts"
       ],
       "evidenceLayers": [
         "real-embedded-browser",
         "real-owner-and-binary",
-        "mock-ui"
+        "mock-ui",
+        "explicit-verseshell-and-tool-search-config"
       ],
       "positiveOracles": [
-        "批准后的浏览动作、Git MCP 运行时绑定、候选校验和 journaled apply 可回读"
+        "批准后的浏览动作、Git MCP 运行时绑定、候选校验和 journaled apply 可回读；显式 VerseShell 进程具有输出、输入和退出回执，Tool Search 展开真实 schema"
       ],
       "negativeOracles": [
-        "私网和伪造审批拒绝；跨仓库/错误 owner/旧 epoch 拒绝；候选失败和 TOCTOU 不修改 main"
+        "私网和伪造审批拒绝；跨仓库/错误 owner/旧 epoch 拒绝；候选失败和 TOCTOU 不修改 main；VerseShell 取消产生终态，缺失及策略拒绝的工具不能展开或调用"
       ],
-      "remainingChecks": [
-        "直接 VerseShell 产品调用与 Tool Search 展开结果仍需对应执行证据"
-      ]
+      "remainingChecks": []
     },
     {
       "id": "settings",
@@ -210,20 +209,21 @@
       "files": [
         "tests/e2e/settings-drawer.spec.ts",
         "tests/e2e/support-bundle-fp-p1-06.spec.ts",
-        "tests/e2e/channels-health-diagnostics.spec.ts"
+        "tests/e2e/channels-health-diagnostics.spec.ts",
+        "tests/e2e/product-matrix-doctor.spec.ts"
       ],
       "evidenceLayers": [
         "real-electron-and-gateway-child",
         "mock-ui"
       ],
       "positiveOracles": [
-        "Settings 返回原路由、主题键盘焦点及窄屏状态正确；支持包从磁盘读回真实 Gateway child mirror"
+        "Settings 返回原路由、主题键盘焦点及窄屏状态正确；支持包从磁盘读回真实 Gateway child mirror；Doctor 真实命令退出 0 并保留命令、输出与配置哈希"
       ],
       "negativeOracles": [
-        "支持包不含种植的 key、源码正文或 gatewayToken；degraded 状态展示明确的恢复动作"
+        "支持包不含种植的 key、源码正文或 gatewayToken；degraded 状态展示明确的恢复动作；损坏配置让 Doctor 退出 1 并展示错误，配置内容保持不变"
       ],
       "remainingChecks": [
-        "Doctor 真实命令执行、超时和错误报告需单独回执"
+        "Doctor 超时路径尚未执行；当前核心负例覆盖损坏配置"
       ]
     }
   ],
@@ -246,7 +246,12 @@
     "tests/e2e/long-session-followup-scheduling.spec.ts": "8bd76ae1072a0a5222518e33a05fd98dba9f6b2e50cc31ff4225e798514c9c69",
     "tests/e2e/memory-surface.spec.ts": "88ced3d438d20a1158a62b15c14692f369adf5a441bb85235e3704f7cba0e288",
     "tests/e2e/product-acceptance-moyu.spec.ts": "eb89b07934001aadbd40b8e141610c5d23f9e9e414b3b5e975db6ba1f0073ce9",
-    "tests/e2e/product-acceptance-space-bunny.spec.ts": "98067e227d0013a5b5cc482a010e10dc08ad72f5b6f213aac859105bf2ae49b0",
+    "tests/e2e/product-acceptance-space-bunny.spec.ts": "31c4e2d35564c5ba68a14720c37d5d1cc5b688c296bdd955e0ddcaba5c3318a6",
+    "tests/e2e/product-matrix-delegation.spec.ts": "49f8292f472db2fc1fb124f834322e855a232a40c6aaa028de1f55472e9d9d00",
+    "tests/e2e/product-matrix-doctor.spec.ts": "6be034e6f2d7a5a0a8d39d7649f7b96674f30842ef58ca01a31d665f0e6da95c",
+    "tests/e2e/product-matrix-knowledge.spec.ts": "c03687d383674da25453675904da4c34ba17d739e670204e679f0b907d0205f0",
+    "tests/e2e/product-matrix-memory.spec.ts": "8fd1a6e5688773b8e3ff9dde7d2d922396a4bc29b31a0e1da64547571ac7c40f",
+    "tests/e2e/product-matrix-tools.spec.ts": "3fa649e95e81b8112ad5de1a8ec1a45e68ef88e2b784b4967bf357ba8e2ed5af",
     "tests/e2e/provider-lifecycle.spec.ts": "c5678ed23c3d5730e0ee7d9523295f34d288dc481f90571539b6962cb220d395",
     "tests/e2e/rc10-operator-live.spec.ts": "0020073a1feec1bab1c8fcfe2769aa820fff47a89b7ab15cd9d8e8dbf84cae7d",
     "tests/e2e/session-family-lifecycle.spec.ts": "b534cf9e7a5bac219f216a4ec686358dacfa8b481300d9a6d51d3edab84e173c",
