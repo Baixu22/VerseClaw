@@ -1,0 +1,122 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-reclamation-evidence-reader",
+  "candidate": {
+    "commit": "5540d3f2ebe15bf205645a0d08211ea9793b9c14",
+    "tree": "ef882b537b39e79dd11f55cadacb3eebf9abe702",
+    "dirty": false
+  },
+  "base": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+  "sourceManifestSha256": "b03465c50e7605ba9e0d24e2593f2928c8c8e11e0a39a0095b70ff3ae688ebd4",
+  "scope": "independent-reclamation-preservation",
+  "wholeR4NodeStatus": "in_progress",
+  "retained": [
+    {
+      "report": "checks-v1/regressions.json",
+      "sha256": "1648ad5188b4940db183fdbfe1823388483012a2e55d05281b8c5459a6ba3a2e",
+      "passed": 66,
+      "failed": 2,
+      "skipped": 0
+    },
+    {
+      "report": "checks-v2/regressions.json",
+      "sha256": "550b16e3fd744552dd58376544681773525de1944ba8ab7e7cefad826afe870a",
+      "passed": 71,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "report": "review1-red.json",
+      "sha256": "99be1d05e7e518f54cea5eaee9b17c2422f47349c20a8438536a4ec3219812ba",
+      "passed": 0,
+      "failed": 3,
+      "skipped": 7
+    },
+    {
+      "report": "review1-red-v2.json",
+      "sha256": "e26886bc6bdcd25feacc81a886eddeaf322e814239d2feceb7e1a6672f6193c7",
+      "passed": 1,
+      "failed": 2,
+      "skipped": 7
+    },
+    {
+      "report": "review2-red.json",
+      "sha256": "8c7ba7bd919a80ad93119e38ffbbe0f7e6b4880394d881bc76338222f1a8cb31",
+      "passed": 0,
+      "failed": 4,
+      "skipped": 10
+    },
+    {
+      "report": "review3-red.json",
+      "sha256": "abbd2e1415f11f625f4b31c2ac70365cab421c6f0684c3e2b476f8ae10688a8e",
+      "passed": 0,
+      "failed": 2,
+      "skipped": 14
+    }
+  ],
+  "triage": [
+    {
+      "driven_by": "agent",
+      "actor": "codex-r4-independent-reclamation-review-triage",
+      "review": "autoreview-v1.json",
+      "findings": [
+        {
+          "index": 0,
+          "accepted": true,
+          "red": "review1-red-v2.json",
+          "fix": "Only exact native Git status128 dirty/untracked refusal plus same directory/native identity, complete retained path observation and observed Git changes returns known-not-applied. EACCES/IO/unknown stay occupied unknown."
+        },
+        {
+          "index": 1,
+          "accepted": true,
+          "red": "review1-red-v2.json",
+          "fix": "Original Git shared ref checks retain committed executable metadata; non-executable permission bits still match prior baseline/default, uncommitted differences refuse."
+        }
+      ],
+      "initialSuite": {
+        "report": "checks-v1/regressions.json",
+        "passed": 66,
+        "failed": 2,
+        "reason": "old fixture removed undeclared retained.txt; post-admission external edit now refused by earlier inventory guard",
+        "adjustments": "assert preserved bytes before removing only fixture-owned file; accept earlier safety diagnostic while preserving artifact bytes/history assertions"
+      },
+      "firstESMMockFailure": "review1-red.json",
+      "scope": "only cleanup preservation; no candidate pipeline",
+      "posixInventorySimulation": "committed-mode case injects POSIX bits on Windows; Git commit/ref/removal are native"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r4-reclamation-review2-triage",
+      "review": "autoreview-v2.json",
+      "accepted": 2,
+      "red": "review2-red.json",
+      "redCases": {
+        "failed": 4,
+        "passed": 0
+      },
+      "fixes": [
+        "all actual current inprocess files plus deletion deltas must have exact retained target bytes; all actual modes need retained target equality",
+        "native git ls-files -v -z lowercase/skip-worktree flags cause explicit refusal; no user index flags changed, no Git content/filter reconstruction"
+      ],
+      "otherCorrection": "WorktreeChangedFiles type union includes filesystem-snapshot; generated ext bridge prepared before types"
+    },
+    {
+      "driven_by": "agent",
+      "actor": "codex-r4-independent-reclamation-review3-triage",
+      "review": "autoreview-v3.json",
+      "accepted": 1,
+      "red": "review3-red.json",
+      "green": "review3-green.json",
+      "fix": "Only root key empty string compares to creation workerModes root baseline; real root mode changes still refuse with explicit worktree-root label. All file/child-directory metadata continues exact retained-target checks.",
+      "redCounts": {
+        "failed": 2
+      },
+      "greenCounts": {
+        "passed": 2,
+        "failed": 0
+      },
+      "permissionsSimulation": "injected POSIX directory modes on Windows",
+      "metadataFix": "requiredProfiles includes comms"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-reclamation-evidence-reader",
+  "candidate": {
+    "commit": "5540d3f2ebe15bf205645a0d08211ea9793b9c14",
+    "tree": "ef882b537b39e79dd11f55cadacb3eebf9abe702",
+    "dirty": false
+  },
+  "base": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+  "sourceManifestSha256": "b03465c50e7605ba9e0d24e2593f2928c8c8e11e0a39a0095b70ff3ae688ebd4",
+  "scope": "independent-reclamation-preservation",
+  "wholeR4NodeStatus": "in_progress",
+  "nativeIndexGuard": {
+    "module": "openclaw_runtime/src/agents/worktree-service.ts",
+    "export": "assertWorktreeIndexVisible(root)"
+  },
+  "reuseModule": "openclaw_runtime/src/agents/worktree-merge-files.ts",
+  "reuseExports": [
+    "readWorktreeFile",
+    "worktreeContentHash",
+    "captureWorktreeFiles",
+    "captureWorktreeModes",
+    "changedWorktreeFiles"
+  ],
+  "registry": "original WorktreeService mergeBaseline",
+  "cleanupOwner": "original WorktreeService within full execution-task barrier",
+  "outcomeHook": "withCheckoutMaintenance optional outcome callback; known refusal settles not-applied before throwing",
+  "preserved": [
+    "taskCleanup binding/restart finish receipts",
+    "Git dirty refusal and no-force/no-recursive-fallback",
+    "unknown EACCES/IO retains occupied writer"
+  ],
+  "nextOwner": "01a1babd-8a0f-7743-b70f-ea3306679392",
+  "R4CandidatePipelineIncluded": false
+}

@@ -1,0 +1,17 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-reclamation-raw-readback",
+  "candidate": "5540d3f2ebe15bf205645a0d08211ea9793b9c14",
+  "archive": "D:\\ClawX-acceptance\\autonomy-r4\\reclamation-raw-5540d3f2-20261111\\raw.zip",
+  "sha256": "e99d266dc40de1e3d21ae85d1011b1a9fa96e7d23ea4e48127c60c153a24be3d",
+  "members": 195,
+  "indexPath": "D:/ClawX-acceptance/autonomy-r4/reclamation-raw-5540d3f2-20261111/index.json",
+  "indexSha256": "073681cc6aff35965763d8efc28121bd3de85ba090049f7066c32b88b66616fb",
+  "readbackVerified": true,
+  "modelProvenance": {
+    "requestedEngine": "codex",
+    "requestedModel": "ccs-workbuddy/deepseek-v4.1-flash",
+    "backendIdentityVerified": false
+  },
+  "firstFailuresAndRetriesRetained": true
+}

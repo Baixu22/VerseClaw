@@ -1,0 +1,259 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-reclamation-evidence-reader",
+  "candidate": {
+    "commit": "5540d3f2ebe15bf205645a0d08211ea9793b9c14",
+    "tree": "ef882b537b39e79dd11f55cadacb3eebf9abe702",
+    "dirty": false
+  },
+  "base": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+  "sourceManifestSha256": "b03465c50e7605ba9e0d24e2593f2928c8c8e11e0a39a0095b70ff3ae688ebd4",
+  "scope": "independent-reclamation-preservation",
+  "wholeR4NodeStatus": "in_progress",
+  "proofs": [
+    {
+      "name": "committed-mode.json",
+      "sha256": "d2b75d1ae75fa82318430bcd4dbd5cb38c1ea780b00c8d10f3ca246d61bbc9bb",
+      "proof": {
+        "driven_by": "agent",
+        "actor": "r4-independent-reclamation-test",
+        "data": {
+          "actualNativeGit": true,
+          "permissionInventory": "injected-posix-bits-on-Windows",
+          "retainedRef": "retained-mode"
+        }
+      }
+    },
+    {
+      "name": "hidden-assume-unchanged.json",
+      "sha256": "c4021f512a282e31281d6ce937c4289370d34ea3d2c1e933846857dd945169ea",
+      "proof": {
+        "driven_by": "agent",
+        "actor": "r4-independent-reclamation-test",
+        "data": {
+          "actualNativeGit": true,
+          "flag": "--assume-unchanged",
+          "retainedBytes": "hidden external bytes"
+        }
+      }
+    },
+    {
+      "name": "hidden-skip-worktree.json",
+      "sha256": "2e70d3ee3449afed2e68953c544e1bd29fe631ba7a9d36b7cb1c16c38132a5a5",
+      "proof": {
+        "driven_by": "agent",
+        "actor": "r4-independent-reclamation-test",
+        "data": {
+          "actualNativeGit": true,
+          "flag": "--skip-worktree",
+          "retainedBytes": "hidden external bytes"
+        }
+      }
+    },
+    {
+      "name": "known-refusal.json",
+      "sha256": "91d845b93091100b6555741e15b711874d6ea714c7544d3ddefe04133df1347e",
+      "proof": {
+        "driven_by": "agent",
+        "actor": "r4-independent-reclamation-test",
+        "data": {
+          "writer": {
+            "schema": 1,
+            "root": "d:\\tmp\\r4-reclaim-abnl2u\\repo\\.openclaw\\worktrees\\worker",
+            "incarnation": "3325120695:7881299354016066:1794331972653505300",
+            "generation": "f5b7fdad-470e-488d-8d21-08351c4f469f",
+            "epoch": 1,
+            "token": "91aa3639-f328-4a1d-82c4-6b6f9adc5879",
+            "owner": {
+              "kind": "maintenance",
+              "operation": "cleanup",
+              "operationId": "80b9490a-cdba-4e64-a1c2-b326fe0a6ffd"
+            },
+            "requestId": "80b9490a-cdba-4e64-a1c2-b326fe0a6ffd",
+            "requestDigest": "543d41b0b40f5627730268e83dfb1add1f74812ed998c37661871d6b73114638",
+            "state": "released",
+            "acquiredAt": 1794331973617,
+            "expiresAt": null,
+            "operations": [
+              {
+                "id": "80b9490a-cdba-4e64-a1c2-b326fe0a6ffd",
+                "digest": "638620239dccfd6fe6fb12b8819472993e600eb454d485fcd95e11a02bd98902",
+                "state": "settled",
+                "receipt": {
+                  "outcome": "not-applied",
+                  "ownerReceipt": "cleanup:80b9490a-cdba-4e64-a1c2-b326fe0a6ffd"
+                }
+              }
+            ],
+            "requests": [
+              {
+                "id": "80b9490a-cdba-4e64-a1c2-b326fe0a6ffd",
+                "digest": "543d41b0b40f5627730268e83dfb1add1f74812ed998c37661871d6b73114638",
+                "epoch": 1
+              }
+            ],
+            "holderPid": 25752,
+            "holderIncarnation": "134388055688127118"
+          },
+          "record": {
+            "id": "worker",
+            "generation": "f5b7fdad-470e-488d-8d21-08351c4f469f",
+            "root": "D:\\tmp\\r4-reclaim-abNl2u\\repo\\.openclaw\\worktrees\\worker",
+            "baseRoot": "D:\\tmp\\r4-reclaim-abNl2u\\repo",
+            "createdAtMs": 1794331972650,
+            "status": "active",
+            "backend": "git",
+            "registration": {
+              "operationId": "b93783f6-e126-4f2e-8b5d-0edc86ddfe2c",
+              "requestDigest": "fcefad1a02b33b2dea1e77ae1d3bd2f381c42f24376d4853eb38a4d642704b45",
+              "phase": "ready",
+              "rootIdentity": "3325120695:7881299354016066:1794331972653505300",
+              "nativeIdentity": "33f25e4f37b06c30f1cec71f77c696db2785db6bfea53165a923d06651dfb1d1"
+            },
+            "baseOid": "e8456fa4f6cf738e5e5e46a677092d8cbd983e5f",
+            "mergeBaseline": {
+              "parent": {
+                ".gitignore": "16f7a3a47212a51b05b4b07567a2b24507d7b356e62b520a3da153643cc27e56",
+                "a.txt": "cae662172fd450bb0cd710a769079c05bfc5d8e35efa6576edc7d0377afdd4a2"
+              },
+              "worker": {
+                ".gitignore": "16f7a3a47212a51b05b4b07567a2b24507d7b356e62b520a3da153643cc27e56",
+                "a.txt": "cae662172fd450bb0cd710a769079c05bfc5d8e35efa6576edc7d0377afdd4a2"
+              },
+              "workerModes": {
+                "": 438,
+                ".gitignore": 438,
+                "a.txt": 438
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "native-dirty-refusal.json",
+      "sha256": "b0da0f80f675a170d54d4e57ccef87005f752cc4e1e69c9f8568ea1dbf42c02a",
+      "proof": {
+        "driven_by": "agent",
+        "actor": "r4-independent-reclamation-test",
+        "data": {
+          "actualNativeGit": true,
+          "record": {
+            "id": "worker",
+            "generation": "48539247-7e76-4500-88a5-7a2f0f01a849",
+            "root": "D:\\tmp\\r4-reclaim-qWik1u\\repo\\.openclaw\\worktrees\\worker",
+            "baseRoot": "D:\\tmp\\r4-reclaim-qWik1u\\repo",
+            "createdAtMs": 1794331974794,
+            "status": "active",
+            "writeSet": [
+              "a.txt"
+            ],
+            "backend": "git",
+            "registration": {
+              "operationId": "fb2bdf49-7e1c-4273-915c-c0a5d967667b",
+              "requestDigest": "a762731ffe8471e0ed24e6a60ef512d9cdd8cb4269f1543666ce452bdb1640c5",
+              "phase": "ready",
+              "rootIdentity": "3325120695:8162774330726722:1794331974796630000",
+              "nativeIdentity": "2222edf6169e530ef04932e33d2fe0812b445135fdf21655076288440fce3edf"
+            },
+            "baseOid": "c8f7b500d3d8b3223d168b65be895ff6beb6106c",
+            "mergeBaseline": {
+              "parent": {
+                ".gitignore": "16f7a3a47212a51b05b4b07567a2b24507d7b356e62b520a3da153643cc27e56",
+                "a.txt": "cae662172fd450bb0cd710a769079c05bfc5d8e35efa6576edc7d0377afdd4a2"
+              },
+              "worker": {
+                ".gitignore": "16f7a3a47212a51b05b4b07567a2b24507d7b356e62b520a3da153643cc27e56",
+                "a.txt": "cae662172fd450bb0cd710a769079c05bfc5d8e35efa6576edc7d0377afdd4a2"
+              },
+              "workerModes": {
+                "": 438,
+                ".gitignore": 438,
+                "a.txt": 438
+              }
+            }
+          },
+          "writer": {
+            "schema": 1,
+            "root": "d:\\tmp\\r4-reclaim-qwik1u\\repo\\.openclaw\\worktrees\\worker",
+            "incarnation": "3325120695:8162774330726722:1794331974796630000",
+            "generation": "48539247-7e76-4500-88a5-7a2f0f01a849",
+            "epoch": 1,
+            "token": "e8d4680d-b3e5-496d-ae39-cc79f87fd1b7",
+            "owner": {
+              "kind": "maintenance",
+              "operation": "cleanup",
+              "operationId": "5fc55d16-6a8e-44b7-b8d1-4aa830f80098"
+            },
+            "requestId": "5fc55d16-6a8e-44b7-b8d1-4aa830f80098",
+            "requestDigest": "37281e92ebceda6f4a948e69efb1f092c5dda8a194c51fe11946451bdf5ff837",
+            "state": "released",
+            "acquiredAt": 1794331975710,
+            "expiresAt": null,
+            "operations": [
+              {
+                "id": "5fc55d16-6a8e-44b7-b8d1-4aa830f80098",
+                "digest": "49a6165e811bd389e67cf42f4e7f4add5f639defcf69f2872954a9905f1ae88c",
+                "state": "settled",
+                "receipt": {
+                  "outcome": "not-applied",
+                  "ownerReceipt": "cleanup:5fc55d16-6a8e-44b7-b8d1-4aa830f80098"
+                }
+              }
+            ],
+            "requests": [
+              {
+                "id": "5fc55d16-6a8e-44b7-b8d1-4aa830f80098",
+                "digest": "37281e92ebceda6f4a948e69efb1f092c5dda8a194c51fe11946451bdf5ff837",
+                "epoch": 1
+              }
+            ],
+            "holderPid": 25752,
+            "holderIncarnation": "134388055688127118"
+          }
+        }
+      }
+    },
+    {
+      "name": "retained-copy.json",
+      "sha256": "5baceb7af2a138fd6c56fef14773ad0abbea7252d6bd4ecd579ef79672f90b83",
+      "proof": {
+        "driven_by": "agent",
+        "actor": "r4-independent-reclamation-test",
+        "data": {
+          "copy": "worker bytes",
+          "removed": true
+        }
+      }
+    },
+    {
+      "name": "root-mode-false.json",
+      "sha256": "4cafa8b3ca9981f185135d66a048bfeeaf0faa1659927a027a09f3e8403d86e0",
+      "proof": {
+        "driven_by": "agent",
+        "actor": "r4-independent-reclamation-test",
+        "data": {
+          "permissionInventory": "injected POSIX directory modes on Windows",
+          "changed": false,
+          "rootMode": 448,
+          "removed": true
+        }
+      }
+    },
+    {
+      "name": "root-mode-true.json",
+      "sha256": "7a7cdb79f57a664395c1a76022b20d5990d732cd2c7ea631b3d444849ff60de1",
+      "proof": {
+        "driven_by": "agent",
+        "actor": "r4-independent-reclamation-test",
+        "data": {
+          "permissionInventory": "injected POSIX directory modes on Windows",
+          "changed": true,
+          "rootMode": 488,
+          "removed": false
+        }
+      }
+    }
+  ],
+  "POSIXPermissionInventory": "committed executable case injects POSIX bits on Windows; Git commit/ref/removal are native"
+}
