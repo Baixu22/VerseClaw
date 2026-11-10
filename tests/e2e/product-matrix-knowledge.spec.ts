@@ -194,6 +194,7 @@ test('Matrix knowledge imports, indexes, searches, cites, and deletes through is
     });
     expect(imported).toMatchObject({ success: true, imported: 1, failed: 0, truncated: false });
     const importedItem = imported.items.find(item => item.inputPath === sourcePath);
+    expect(importedItem).toMatchObject({ title, created: true });
     expect(importedItem?.pagePath).toBeTruthy();
     expect(importedItem?.pageId).toBeTruthy();
     const sourcePageAbsolutePath = join(vaultPath, importedItem!.pagePath!);
@@ -359,7 +360,10 @@ test('Matrix knowledge imports, indexes, searches, cites, and deletes through is
       lookup: importedItem!.pagePath,
       corpus: 'wiki',
     });
-    expect(getAfterDelete.success).toBe(false);
+    expect(getAfterDelete.success).toBe(true);
+    expect(getAfterDelete).not.toHaveProperty('corpus');
+    expect(getAfterDelete).not.toHaveProperty('path');
+    expect(getAfterDelete).not.toHaveProperty('content');
     const searchAfterDelete = await hostInvoke<KnowledgeSearchResult>(runningApp, 'knowledge', 'search', {
       query: marker,
       maxResults: 10,
