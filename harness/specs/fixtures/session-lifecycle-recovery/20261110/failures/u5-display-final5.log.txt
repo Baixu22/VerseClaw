@@ -1,0 +1,78 @@
+
+Running 5 tests using 1 worker
+
+[app:out] [2026-11-09T18:47:30.166Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)
+[app:out] [2026-11-09T18:47:30.166Z] [INFO] [ResourceTracker] Started heartbeat interval
+[2026-11-09T18:47:30.166Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=36264, ppid=20752
+[2026-11-09T18:47:30.166Z] [INFO] Running in E2E mode: startup side effects minimized
+[app:err] [2026-11-09T18:47:30.238Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[app:err] [2026-11-09T18:47:30.239Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-11-09T18:47:30.239Z] [WARN] [webview-security] deny permission-check: WebView permission "web-app-installation" denied by default (fail-closed)
+[2026-11-09T18:47:30.239Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default
+[app:out] [2026-11-09T18:47:30.348Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-09T18:47:30.348Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [36264:1110/024730.394:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[36264:1110/024730.394:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:out] [2026-11-09T18:47:30.596Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[app:out] [2026-11-09T18:47:30.598Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:err] [2026-11-09T18:47:30.599Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T18:47:30.599Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T18:47:30.600Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T18:47:30.600Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-09T18:47:38.854Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"power-saver","activeReasons":["power-saver"],"transitionCount":3}
+[app:out] [2026-11-09T18:47:46.691Z] [INFO] Gateway stop requested
+[app:out] [2026-11-09T18:47:46.692Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[app:err] Debugger ending on ws://127.0.0.1:53057/9c22b996-4d07-4184-949e-9a912cd013ef
+For help, see: https://nodejs.org/en/docs/inspector
+[app:out] [2026-11-09T18:47:46.731Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"window-hidden","activeReasons":["window-hidden","power-saver"],"transitionCount":4}
+[app:out] [2026-11-09T18:47:46.731Z] [INFO] [ResourceTracker] Stopped
+[2026-11-09T18:47:46.731Z] [INFO] [ResourceTracker] Shutdown complete
+[app:out] [2026-11-09T18:47:46.732Z] [INFO] [efficiency-sampler] stopped
+[2026-11-09T18:47:46.732Z] [INFO] [efficiency] runtime efficiency sampling stopped
+  x  1 tests\e2e\chat-context-pressure.spec.ts:21:7 › Verse Claw chat context pressure › shows session context, cache-served tokens and warm hit rate in the composer (29.5s)
+[31mTesting stopped early after 1 maximum allowed failures.[39m
+
+
+  1) tests\e2e\chat-context-pressure.spec.ts:21:7 › Verse Claw chat context pressure › shows session context, cache-served tokens and warm hit rate in the composer 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByTestId('chat-slash-command-option-compact')
+    Expected substring: [32m"64k / 128k tokens"[39m
+    Received string:    [31m"Compact session/compactOpen the current-session compression dialog.The session identity is unavailable. Refresh before continuing."[39m
+    Timeout: 15000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 15000ms[22m
+    [2m  - waiting for getByTestId('chat-slash-command-option-compact')[22m
+    [2m    18 × locator resolved to <button type="button" role="option" aria-selected="true" data-selected="true" data-testid="chat-slash-command-option-compact" class="codex-composer-menu__item codex-composer-menu__item--compact">…</button>[22m
+    [2m       - unexpected value "Compact session/compactOpen the current-session compression dialog.The session identity is unavailable. Refresh before continuing."[22m
+
+
+      142 |       // clicking: asserting only visibility races the composer's status refresh
+      143 |       // and the click can land on a not-yet-ready item.
+    > 144 |       await expect(compact).toContainText('64k / 128k tokens');
+          |                             ^
+      145 |       await compact.click();
+      146 |
+      147 |       const pressure = page.getByTestId('chat-context-pressure');
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\chat-context-pressure.spec.ts:144:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\lifecycle-validation\u5-display-final5-results\chat-context-pressure-Vers-a51b5-rm-hit-rate-in-the-composer\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\lifecycle-validation\u5-display-final5-results\chat-context-pressure-Vers-a51b5-rm-hit-rate-in-the-composer\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\lifecycle-validation\u5-display-final5-results\chat-context-pressure-Vers-a51b5-rm-hit-rate-in-the-composer\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\lifecycle-validation\u5-display-final5-results\chat-context-pressure-Vers-a51b5-rm-hit-rate-in-the-composer\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\chat-context-pressure.spec.ts:21:7 › Verse Claw chat context pressure › shows session context, cache-served tokens and warm hit rate in the composer 
+  4 did not run
+  1 error was not a part of any test, see above for details

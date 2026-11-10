@@ -1,0 +1,243 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "name": "u5-focused-unit",
+  "cwd": "D:\\ClawX-work\\session-task-unified-relay-20261109",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "tests/unit/session-lifecycle-control-scope.test.ts",
+    "tests/unit/session-delete-gate.test.ts",
+    "tests/unit/checkout-writer-ownership.test.ts",
+    "tests/unit/r0-3-chat-abort-checkstuck.test.ts",
+    "tests/unit/host-services.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism",
+    "--reporter=json",
+    "--outputFile=D:/tmp/unified-management-20261109/lifecycle-validation/u5-focused-unit.tests.json"
+  ],
+  "startedAt": "2026-11-09T12:06:21.430Z",
+  "finishedAt": "2026-11-09T12:09:56.296Z",
+  "durationMs": 214863,
+  "exitCode": 1,
+  "signal": null,
+  "sourceUnchanged": true,
+  "before": {
+    "commit": "f21a75e9db0c5b2a063f7ad05c951471753f65d2",
+    "tree": "4c57c3fcaea2232160188ff7e150c86e6f8b0f45",
+    "dirty": "",
+    "files": [
+      {
+        "file": "electron/services/session-delete-gate.ts",
+        "sha256": "0a81e01733685433d6ee7a828a80bf3802fb73947b685368fe9e5abeb060b31d"
+      },
+      {
+        "file": "electron/services/sessions-api.ts",
+        "sha256": "60ff9e201bc2b1b94c2bae43d896b69ac3ecc015d1f5398f9630c10763bde61b"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/worktree-service.ts",
+        "sha256": "a1d309ff3b083eae2a992faf7aa4187090bdab41e19427f6de8dce2b6b450bc0"
+      },
+      {
+        "file": "shared/chat/types.ts",
+        "sha256": "cbad0dbb7ed069cfaeff9fa93cbce149e3ee801059aa0cdb0f29c843df23c0eb"
+      },
+      {
+        "file": "shared/host-api/contract.ts",
+        "sha256": "4385f149cd2d5ccc710b7f5548b7f708caf86549ebf6c07de2b904bf3fe52b0d"
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "sha256": "1faaafb000b6900f370c4cd6b6bfcc5ffd47120cfdf8824b944b3eae612e067f"
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "sha256": "907be4b27d2284001e47bd55d9124c69ce37531270afc8f3667fd03b8c79c826"
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "sha256": "04a49ae5184bf5e82c09ceea40900111dcdff40724d224d90de18b4c3a6ca390"
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "sha256": "81779c150d501ef36bf93eb1dc8fc793f111eaeca72fb685d4fdac63cae3ef78"
+      },
+      {
+        "file": "shared/types/workspace.ts",
+        "sha256": "e6742fe457173e07b206e39b7784e83616537aee4b4248d7eb1144d55bc5a080"
+      },
+      {
+        "file": "src/components/chat/CheckpointsDialog.tsx",
+        "sha256": "12624776ca8ac29df47f261d3714cc10e3a05685cc5a897b2ff76b6ad9b7d798"
+      },
+      {
+        "file": "src/components/chat/ResourceChip.tsx",
+        "sha256": "b79e4c85cc016bda31ddad1ce0dcdeed17513a84713e66dc4946fda4b62bf811"
+      },
+      {
+        "file": "src/components/layout/Sidebar.tsx",
+        "sha256": "176d54e3a29911c301d1ea8cc0babc238a69e73038e177cf3e3c6bb291b32bb1"
+      },
+      {
+        "file": "src/pages/Chat/ChatInput.tsx",
+        "sha256": "7b6699227d2c193800a88c09681a444fb6f59b5529dcabdcb92ea1df16992f3d"
+      },
+      {
+        "file": "src/pages/Chat/index.tsx",
+        "sha256": "d9702da3c71e965506eb915b8087bdf8b6ff64291b628b25eeb9f20174a4dc72"
+      },
+      {
+        "file": "src/pages/Settings/sections/ArchivedSection.tsx",
+        "sha256": "438da9250e377328ed8bab0d80e67197e8d5ea311b4d2af1524de871a3e6ced2"
+      },
+      {
+        "file": "src/stores/chat.ts",
+        "sha256": "be762a7ec4078ea9fc12f261da18041a2e9a6e41e4522c03d94fde61210db457"
+      },
+      {
+        "file": "tests/e2e/session-context-recovery.spec.ts",
+        "sha256": "5628399d16573ac412ce570170059d9670487e4e86081e1f546b9d8afebcbac3"
+      },
+      {
+        "file": "tests/e2e/session-lifecycle-recovery.spec.ts",
+        "sha256": "e919a89d8de2d0c8c7d97f6cca6668a21f6a2866c88e19dedaf967dc264a6f7f"
+      },
+      {
+        "file": "tests/e2e/session-worktree-storage.spec.ts",
+        "sha256": "33cc21f65fdd69da7ab74de12c0a6b28399b3fdc9ac8478ab6c1eba5e21ac3b5"
+      },
+      {
+        "file": "tests/unit/checkout-writer-ownership.test.ts",
+        "sha256": "4b6a85ba86fa65b1e2634b00c8cff0dc38447994490d595b568dc5482eadc0ad"
+      },
+      {
+        "file": "tests/unit/r0-3-chat-abort-checkstuck.test.ts",
+        "sha256": "02e61add00e63ebc8145885813c04c0d09cf1de284f74e618f2399126741a267"
+      },
+      {
+        "file": "tests/unit/session-delete-gate.test.ts",
+        "sha256": "ab393e6e6d8696349168ca837b1b00dc1486aa7d646d19919a61293f83b60642"
+      },
+      {
+        "file": "tests/unit/session-lifecycle-control-scope.test.ts",
+        "sha256": "0fd8803edabcc9fb1c12081550c2e305d2791f557aafcf4d0333798daef5fb82"
+      }
+    ]
+  },
+  "after": {
+    "commit": "f21a75e9db0c5b2a063f7ad05c951471753f65d2",
+    "tree": "4c57c3fcaea2232160188ff7e150c86e6f8b0f45",
+    "dirty": "",
+    "files": [
+      {
+        "file": "electron/services/session-delete-gate.ts",
+        "sha256": "0a81e01733685433d6ee7a828a80bf3802fb73947b685368fe9e5abeb060b31d"
+      },
+      {
+        "file": "electron/services/sessions-api.ts",
+        "sha256": "60ff9e201bc2b1b94c2bae43d896b69ac3ecc015d1f5398f9630c10763bde61b"
+      },
+      {
+        "file": "openclaw_runtime/src/agents/worktree-service.ts",
+        "sha256": "a1d309ff3b083eae2a992faf7aa4187090bdab41e19427f6de8dce2b6b450bc0"
+      },
+      {
+        "file": "shared/chat/types.ts",
+        "sha256": "cbad0dbb7ed069cfaeff9fa93cbce149e3ee801059aa0cdb0f29c843df23c0eb"
+      },
+      {
+        "file": "shared/host-api/contract.ts",
+        "sha256": "4385f149cd2d5ccc710b7f5548b7f708caf86549ebf6c07de2b904bf3fe52b0d"
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "sha256": "1faaafb000b6900f370c4cd6b6bfcc5ffd47120cfdf8824b944b3eae612e067f"
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "sha256": "907be4b27d2284001e47bd55d9124c69ce37531270afc8f3667fd03b8c79c826"
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "sha256": "04a49ae5184bf5e82c09ceea40900111dcdff40724d224d90de18b4c3a6ca390"
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "sha256": "81779c150d501ef36bf93eb1dc8fc793f111eaeca72fb685d4fdac63cae3ef78"
+      },
+      {
+        "file": "shared/types/workspace.ts",
+        "sha256": "e6742fe457173e07b206e39b7784e83616537aee4b4248d7eb1144d55bc5a080"
+      },
+      {
+        "file": "src/components/chat/CheckpointsDialog.tsx",
+        "sha256": "12624776ca8ac29df47f261d3714cc10e3a05685cc5a897b2ff76b6ad9b7d798"
+      },
+      {
+        "file": "src/components/chat/ResourceChip.tsx",
+        "sha256": "b79e4c85cc016bda31ddad1ce0dcdeed17513a84713e66dc4946fda4b62bf811"
+      },
+      {
+        "file": "src/components/layout/Sidebar.tsx",
+        "sha256": "176d54e3a29911c301d1ea8cc0babc238a69e73038e177cf3e3c6bb291b32bb1"
+      },
+      {
+        "file": "src/pages/Chat/ChatInput.tsx",
+        "sha256": "7b6699227d2c193800a88c09681a444fb6f59b5529dcabdcb92ea1df16992f3d"
+      },
+      {
+        "file": "src/pages/Chat/index.tsx",
+        "sha256": "d9702da3c71e965506eb915b8087bdf8b6ff64291b628b25eeb9f20174a4dc72"
+      },
+      {
+        "file": "src/pages/Settings/sections/ArchivedSection.tsx",
+        "sha256": "438da9250e377328ed8bab0d80e67197e8d5ea311b4d2af1524de871a3e6ced2"
+      },
+      {
+        "file": "src/stores/chat.ts",
+        "sha256": "be762a7ec4078ea9fc12f261da18041a2e9a6e41e4522c03d94fde61210db457"
+      },
+      {
+        "file": "tests/e2e/session-context-recovery.spec.ts",
+        "sha256": "5628399d16573ac412ce570170059d9670487e4e86081e1f546b9d8afebcbac3"
+      },
+      {
+        "file": "tests/e2e/session-lifecycle-recovery.spec.ts",
+        "sha256": "e919a89d8de2d0c8c7d97f6cca6668a21f6a2866c88e19dedaf967dc264a6f7f"
+      },
+      {
+        "file": "tests/e2e/session-worktree-storage.spec.ts",
+        "sha256": "33cc21f65fdd69da7ab74de12c0a6b28399b3fdc9ac8478ab6c1eba5e21ac3b5"
+      },
+      {
+        "file": "tests/unit/checkout-writer-ownership.test.ts",
+        "sha256": "4b6a85ba86fa65b1e2634b00c8cff0dc38447994490d595b568dc5482eadc0ad"
+      },
+      {
+        "file": "tests/unit/r0-3-chat-abort-checkstuck.test.ts",
+        "sha256": "02e61add00e63ebc8145885813c04c0d09cf1de284f74e618f2399126741a267"
+      },
+      {
+        "file": "tests/unit/session-delete-gate.test.ts",
+        "sha256": "ab393e6e6d8696349168ca837b1b00dc1486aa7d646d19919a61293f83b60642"
+      },
+      {
+        "file": "tests/unit/session-lifecycle-control-scope.test.ts",
+        "sha256": "0fd8803edabcc9fb1c12081550c2e305d2791f557aafcf4d0333798daef5fb82"
+      }
+    ]
+  },
+  "tests": {
+    "total": 86,
+    "passed": 86,
+    "failed": 0,
+    "pending": 0
+  },
+  "log": {
+    "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-focused-unit.log",
+    "sha256": "72f419e58a214c48f4ad6d16679bec2fd3b57aa3945555d902b193774484e9eb"
+  }
+}

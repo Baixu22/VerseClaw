@@ -1,0 +1,11 @@
+electron/services/sessions-api.ts(1574,36): error TS2339: Property 'resumeOperationId' does not exist on type 'SessionPayload'.
+electron/services/sessions-api.ts(1638,36): error TS2339: Property 'resumeOperationId' does not exist on type 'SessionPayload'.
+electron/services/sessions-api.ts(3218,9): error TS2353: Object literal may only specify known properties, and 'resumeOperationId' does not exist in type 'SessionPayload'.
+electron/services/sessions-api.ts(3218,33): error TS2339: Property 'resumeOperationId' does not exist on type 'SessionPayload'.
+electron/services/sessions-api.ts(3253,61): error TS2353: Object literal may only specify known properties, and 'resumeOperationId' does not exist in type 'SessionPayload'.
+src/pages/Settings/sections/ArchivedSection.tsx(97,66): error TS2345: Argument of type '{ id: string; resumeOperationId: string; }' is not assignable to parameter of type 'string & SessionArchivePayload & SessionRestorePayload'.
+  Type '{ id: string; resumeOperationId: string; }' is not assignable to type 'string'.
+tests/e2e/session-lifecycle-recovery.spec.ts(292,9): error TS7034: Variable 'observations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+tests/e2e/session-lifecycle-recovery.spec.ts(292,50): error TS7005: Variable 'observations' implicitly has an 'any[]' type.
+tests/e2e/session-lifecycle-recovery.spec.ts(318,57): error TS7034: Variable 'records' implicitly has type 'any[]' in some locations where its type cannot be determined.
+tests/e2e/session-lifecycle-recovery.spec.ts(318,91): error TS7005: Variable 'records' implicitly has an 'any[]' type.

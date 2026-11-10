@@ -1,0 +1,60 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.7 [39m[90mD:/ClawX-work/session-task-unified-relay-20261109/openclaw_runtime[39m
+
+ [32m✓[39m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions.checkpointDiff gateway integration[2m > [22mreturns per-file diffs for a real checkpoint (journal-backed)[33m 705[2mms[22m[39m
+ [32m✓[39m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions.checkpointDiff gateway integration[2m > [22mreports NOT_FOUND for an unknown checkpoint[33m 398[2mms[22m[39m
+[90mstdout[2m | src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22m[2msessions.checkpointDiff gateway integration[2m > [22m[2mrestores through the real journal with expectedSessionId=undefined
+[22m[39m[checkpoint-rollback] legacy_checkpoint_fallback -> checkpoint:mission:m1:tick:2
+
+ [32m✓[39m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions.checkpointDiff gateway integration[2m > [22mrestores through the real journal with expectedSessionId=undefined[33m 519[2mms[22m[39m
+[90mstdout[2m | src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22m[2msessions.checkpointDiff gateway integration[2m > [22m[2mrestores through the real journal with expectedSessionId=sess-uuid-9f3a1c
+[22m[39m[checkpoint-rollback] legacy_checkpoint_fallback -> checkpoint:mission:m1:tick:2
+
+ [32m✓[39m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions.checkpointDiff gateway integration[2m > [22mrestores through the real journal with expectedSessionId=sess-uuid-9f3a1c[33m 356[2mms[22m[39m
+ [31m×[39m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions.checkpointDiff gateway integration[2m > [22muses the session workspaceDir after the agent default moves[32m 296[2mms[22m[39m
+[31m   → expected [] to have a length of 1 but got +0[39m
+ [31m×[39m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions.checkpointDiff gateway integration[2m > [22muses the session spawnedWorkspaceDir after the agent default moves[32m 251[2mms[22m[39m
+[31m   → expected [] to have a length of 1 but got +0[39m
+ [32m✓[39m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions.checkpointDiff gateway integration[2m > [22mrejects stale request with unchanged files, journal and session store[32m 256[2mms[22m[39m
+ [32m✓[39m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions.checkpointDiff gateway integration[2m > [22mrejects old checkpoint journal with unchanged files, journal and session store[32m 228[2mms[22m[39m
+ [32m✓[39m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions.checkpointDiff gateway integration[2m > [22mrejects unstamped checkpoint with unchanged files, journal and session store[32m 263[2mms[22m[39m
+ [32m✓[39m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions.checkpointDiff gateway integration[2m > [22mrefuses restore while the current generation has a busy run[32m 247[2mms[22m[39m
+ [32m✓[39m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions.checkpointDiff gateway integration[2m > [22mrefuses restore while the current generation has a busy permit[32m 261[2mms[22m[39m
+ [32m✓[39m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions.checkpointDiff gateway integration[2m > [22mrefuses restore while the current generation has a busy fence[32m 237[2mms[22m[39m
+ [32m✓[39m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions.checkpointDiff gateway integration[2m > [22mrechecks generation after waiting for the real session-store barrier[33m 319[2mms[22m[39m
+[90mstdout[2m | src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22m[2msessions.checkpointDiff gateway integration[2m > [22m[2mholds the store barrier and admission fence through the real rollback file lease
+[22m[39m[checkpoint-rollback] legacy_checkpoint_fallback -> checkpoint:mission:guard:tick:2
+
+ [32m✓[39m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions.checkpointDiff gateway integration[2m > [22mholds the store barrier and admission fence through the real rollback file lease[32m 276[2mms[22m[39m
+ [32m✓[39m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions checkpoint gateway registry exposure[2m > [22mexposes restoreCheckpoint and checkpointDiff through core gateway descriptors[32m 104[2mms[22m[39m
+ [32m✓[39m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions checkpoint gateway registry exposure[2m > [22mdoes not throw on unclassified handler drift[32m 1[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 2 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions.checkpointDiff gateway integration[2m > [22muses the session workspaceDir after the agent default moves
+[41m[1m FAIL [22m[49m [30m[43m gateway-methods [49m[39m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts[2m > [22msessions.checkpointDiff gateway integration[2m > [22muses the session spawnedWorkspaceDir after the agent default moves
+[31m[1mAssertionError[22m: expected [] to have a length of 1 but got +0[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m src/gateway/server-methods/sessions.run-control.checkpoint-diff.test.ts:[2m236:19[22m[39m
+    [90m234|[39m     expect(diff.calls).toHaveLength(1); expect(diff.calls[0]!.ok).toBe…
+    [90m235|[39m     const files = (diff.calls[0]!.payload as { files: Array<{ unifiedD…
+    [90m236|[39m     expect(files).toHaveLength(1); expect(files[0]!.unifiedDiff).toCon…
+    [90m   |[39m                   [31m^[39m
+    [90m237|[39m     [35mconst[39m restored [33m=[39m [34mmakeRespond[39m()[33m;[39m
+    [90m238|[39m     [35mawait[39m sessionsRunControlHandlers[[32m'sessions.restoreCheckpoint'[39m]({
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m14 passed[39m[22m[90m (16)[39m
+[2m   Start at [22m 02:06:48
+[2m   Duration [22m 55.51s[2m (transform 42.26s, setup 503ms, import 49.56s, tests 4.72s, environment 0ms)[22m
+
+JSON report written to D:/tmp/unified-management-20261109/lifecycle-validation/u5-checkpoint-workspace-red.tests.json

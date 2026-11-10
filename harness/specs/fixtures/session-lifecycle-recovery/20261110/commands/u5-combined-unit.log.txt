@@ -1,0 +1,843 @@
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mD:/ClawX-work/session-task-unified-relay-20261109[39m
+
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts [2m([22m[2m27 tests[22m[2m)[22m[33m 53442[2mms[22m[39m
+     [33m[2m✓[22m[39m shares the same execution owner when the source runtime isolates its session state [33m 1333[2mms[22m[39m
+     [33m[2m✓[22m[39m uses the same base writer for ordinary effects and maintenance [33m 1609[2mms[22m[39m
+     [33m[2m✓[22m[39m resolves managed roots back to their persistent generation after restart [33m 709[2mms[22m[39m
+     [33m[2m✓[22m[39m does not reinterpret a failed managed registration as an independent checkout [33m 318[2mms[22m[39m
+     [33m[2m✓[22m[39m rotates a drained writer without exposing the checkout to a competing task [33m 414[2mms[22m[39m
+     [33m[2m✓[22m[39m retains captured task association in the resource identity across reopen [33m 425[2mms[22m[39m
+     [33m[2m✓[22m[39m excludes a different writer and preserves exact request/owner/epoch identity [33m 458[2mms[22m[39m
+     [33m[2m✓[22m[39m normalizes service aliases and releases only unused claims when multi-root admission fails [33m 570[2mms[22m[39m
+     [33m[2m✓[22m[39m persists in-flight and unknown effects across restart until an explicit owner receipt settles them [33m 737[2mms[22m[39m
+     [33m[2m✓[22m[39m replays a completed receipt without reauthorizing its effect and rejects operation payload drift [33m 385[2mms[22m[39m
+     [33m[2m✓[22m[39m closes expired and draining admission without transferring ownership [33m 318[2mms[22m[39m
+     [33m[2m✓[22m[39m rejects a replaced checkout and keeps epochs monotonic after managed recreation [33m 420[2mms[22m[39m
+     [33m[2m✓[22m[39m gates real service merge, freeze and cleanup before filesystem effects [33m 408[2mms[22m[39m
+     [33m[2m✓[22m[39m finishes only its interrupted cleanup after native removal and permits a new incarnation [33m 402[2mms[22m[39m
+     [33m[2m✓[22m[39m serializes competing processes while different native checkouts keep independent writers [33m 8090[2mms[22m[39m
+     [33m[2m✓[22m[39m retains a crashed native writer and rejects a new process instead of stealing its lease [33m 2631[2mms[22m[39m
+     [33m[2m✓[22m[39m recovers an exited maintenance reservation that never admitted a filesystem operation [33m 2110[2mms[22m[39m
+     [33m[2m✓[22m[39m checks managed Git native identity in addition to directory instance [33m 3014[2mms[22m[39m
+     [33m[2m✓[22m[39m retains an unpushed local branch and recreates its checkout after cleanup [33m 5358[2mms[22m[39m
+     [33m[2m✓[22m[39m refuses a detached exclusive commit across owner reopen and lifecycle cleanup then allows a retained branch [33m 5675[2mms[22m[39m
+     [33m[2m✓[22m[39m allows detached cleanup when main retains the commit [33m 3389[2mms[22m[39m
+     [33m[2m✓[22m[39m allows detached cleanup when remote-tracking retains the commit [33m 3425[2mms[22m[39m
+     [33m[2m✓[22m[39m allows detached cleanup when shared-ref retains the commit [33m 4539[2mms[22m[39m
+     [33m[2m✓[22m[39m does not treat a worktree-local ref as persistent retention [33m 3114[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps the dirty-content guard ahead of cleanup even with a retained commit [33m 1726[2mms[22m[39m
+     [33m[2m✓[22m[39m cleans an untouched detached checkout retained by main [33m 1654[2mms[22m[39m
+ [32m✓[39m tests/unit/ui-worktree-cleanup-conservative.test.ts [2m([22m[2m25 tests[22m[2m)[22m[33m 49323[2mms[22m[39m
+     [33m[2m✓[22m[39m git: removes a taskless native worktree with approval, preserving its branch and no Task DB [33m 1956[2mms[22m[39m
+     [33m[2m✓[22m[39m git: preserves a clean detached unique commit until a shared ref retains it [33m 3478[2mms[22m[39m
+     [33m[2m✓[22m[39m git: routes an empty managed checkout to its original owner [33m 2005[2mms[22m[39m
+     [33m[2m✓[22m[39m git: refuses even an empty existing Task authority [33m 1088[2mms[22m[39m
+     [33m[2m✓[22m[39m git: protects a moved task checkpoint [33m 1233[2mms[22m[39m
+     [33m[2m✓[22m[39m git: protects accepted candidate evidence without changing the Task DB [33m 1373[2mms[22m[39m
+     [33m[2m✓[22m[39m git: preserves a corrupt Task database for its owner [33m 1201[2mms[22m[39m
+     [33m[2m✓[22m[39m git: refuses workspace association before permission and after a late approval [33m 1750[2mms[22m[39m
+     [33m[2m✓[22m[39m git: rechecks Task ownership when approval completes [33m 1851[2mms[22m[39m
+     [33m[2m✓[22m[39m git: never infers no references from a Workspace owner read failure [33m 743[2mms[22m[39m
+     [33m[2m✓[22m[39m storage: removes a taskless native worktree with approval, preserving its branch and no Task DB [33m 3048[2mms[22m[39m
+     [33m[2m✓[22m[39m storage: preserves a clean detached unique commit until a shared ref retains it [33m 6455[2mms[22m[39m
+     [33m[2m✓[22m[39m storage: routes an empty managed checkout to its original owner [33m 2599[2mms[22m[39m
+     [33m[2m✓[22m[39m storage: refuses even an empty existing Task authority [33m 1345[2mms[22m[39m
+     [33m[2m✓[22m[39m storage: protects a moved task checkpoint [33m 1855[2mms[22m[39m
+     [33m[2m✓[22m[39m storage: protects accepted candidate evidence without changing the Task DB [33m 1569[2mms[22m[39m
+     [33m[2m✓[22m[39m storage: preserves a corrupt Task database for its owner [33m 1549[2mms[22m[39m
+     [33m[2m✓[22m[39m storage: refuses workspace association before permission and after a late approval [33m 3694[2mms[22m[39m
+     [33m[2m✓[22m[39m storage: rechecks Task ownership when approval completes [33m 2253[2mms[22m[39m
+     [33m[2m✓[22m[39m storage: never infers no references from a Workspace owner read failure [33m 483[2mms[22m[39m
+     [33m[2m✓[22m[39m distinguishes independent clones until explicit registration with the existing authority [33m 1396[2mms[22m[39m
+     [33m[2m✓[22m[39m refuses active and released original checkout writer records [33m 1667[2mms[22m[39m
+     [33m[2m✓[22m[39m binds approval to native identity across path reuse [33m 1723[2mms[22m[39m
+     [33m[2m✓[22m[39m retains native Git dirty rejection and creates no maintenance reservation [33m 1856[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps enabled VG cleanup authority on its original path [33m 1148[2mms[22m[39m
+[90mstderr[2m | tests/unit/host-services.test.ts[2m > [22m[2mhost services[2m > [22m[2mreports degraded when the default account sync fails partially (R0-2)
+[22m[39m[providers] Default account saved but runtime sync degraded: models.json busy
+
+[90mstdout[2m | tests/unit/host-services.test.ts[2m > [22m[2mhost services[2m > [22m[2mdeletes agents by restarting gateway, removing workspace, and returning snapshot
+[22m[39m[agents] Gateway restart completed after agent deletion
+
+ [32m✓[39m tests/unit/host-services.test.ts [2m([22m[2m50 tests[22m[2m)[22m[33m 9194[2mms[22m[39m
+     [33m[2m✓[22m[39m sends staged media through the typed chat service with gateway attachments [33m 717[2mms[22m[39m
+     [33m[2m✓[22m[39m loads session summaries and transcript history through the typed sessions service [33m 2560[2mms[22m[39m
+     [33m[2m✓[22m[39m forwards an explicit fromLeafId fork point and omits it otherwise (#180) [33m 424[2mms[22m[39m
+     [33m[2m✓[22m[39m persists depth and parent/root ids before activating a handoff session and rejects the next hop [33m 390[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps the four-hop depth bound opt-in with explicit workspace ownership [33m 566[2mms[22m[39m
+     [33m[2m✓[22m[39m preserves current explicit business-task links during fork in Main [33m 515[2mms[22m[39m
+     [33m[2m✓[22m[39m preserves current explicit business-task links during handoff in Main [33m 543[2mms[22m[39m
+     [33m[2m✓[22m[39m drops generation-fenced task references when the source resets during fork [33m 310[2mms[22m[39m
+[90mstdout[2m | tests/unit/chat-input.test.tsx
+[22m[39m🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput draft persistence[2m > [22m[2mclears the parent draft after sending
+[22m[39m[handleSend] text="send this draft", attachments=0, ready=0, sending=false
+
+[90mstderr[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput draft persistence[2m > [22m[2mclears the parent draft after sending
+[22m[39mAn update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput draft persistence[2m > [22m[2msends the selected knowledge scope with the composer payload
+[22m[39m[handleSend] text="Use notes", attachments=0, ready=0, sending=false
+
+[90mstderr[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput draft persistence[2m > [22m[2msends the selected knowledge scope with the composer payload
+[22m[39mAn update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput draft persistence[2m > [22m[2mshows suggest-mode knowledge candidates and attaches them only after user action
+[22m[39m[handleSend] text="What was the previous architecture decision for th", attachments=0, ready=0, sending=false
+
+[90mstderr[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput draft persistence[2m > [22m[2mdismisses knowledge preflight for the same input and still sends if routing fails
+[22m[39mAn update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput draft persistence[2m > [22m[2mdismisses knowledge preflight for the same input and still sends if routing fails
+[22m[39mAn update to Tooltip inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Tooltip inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Tooltip inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Tooltip inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Tooltip inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Tooltip inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput draft persistence[2m > [22m[2mdismisses knowledge preflight for the same input and still sends if routing fails
+[22m[39m[handleSend] text="Use previous project knowledge about routeContext ", attachments=0, ready=0, sending=false
+
+[90mstderr[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput draft persistence[2m > [22m[2mdismisses knowledge preflight for the same input and still sends if routing fails
+[22m[39mAn update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput draft persistence[2m > [22m[2msearches and attaches specific knowledge references before sending
+[22m[39m[handleSend] text="Use this context", attachments=0, ready=0, sending=false
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput draft persistence[2m > [22m[2mdoes not render or send Work Mode
+[22m[39m[handleSend] text="Sketch the rollout", attachments=0, ready=0, sending=false
+
+[90mstderr[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput draft persistence[2m > [22m[2mdoes not render or send Work Mode
+[22m[39mAn update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput slash commands[2m > [22m[2mopens the slash menu, filters commands, and selects with Enter
+[22m[39m[handleSend] text="Write focused tests for the current change.", attachments=0, sending=false
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput slash commands[2m > [22m[2mopens wiki search from slash command and attaches selected context
+[22m[39m[handleSend] text="Use the selected knowledge references to answer.", attachments=0, ready=0, sending=false
+
+[90mstderr[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput slash commands[2m > [22m[2mopens wiki search from slash command and attaches selected context
+[22m[39mAn update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput slash commands[2m > [22m[2mfalls back to a review prompt when no code review hook is provided
+[22m[39m[handleSend] text="Review the current changes as a code reviewer. Foc", attachments=0, sending=false
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput capability action preflight[2m > [22m[2mconfirms a local skill enable action before sending trusted metadata
+[22m[39m[handleSend] text="Conversation info (trusted Verse Claw capability a", attachments=0, sending=false
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput capability action preflight[2m > [22m[2mconfirms MCP JSON registration and injects reload results
+[22m[39m[handleSend] text="Conversation info (trusted Verse Claw capability a", attachments=0, sending=false
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput slash session lifecycle commands[2m > [22m[2msends revise-goal through the intervention button
+[22m[39m[handleSend] text="the goal changed: ship only the core path", attachments=0, sending=false
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput read-only context status[2m > [22m[2mqueues a draft with one click while running, and pauses on a double click
+[22m[39m[handleSend] text="please keep the current validation evidence queued", attachments=0, sending=false
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput read-only context status[2m > [22m[2mqueues a draft with one click while running, and pauses on a double click
+[22m[39m[handleSend] text="please keep the current validation evidence", attachments=0, sending=false
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput read-only context status[2m > [22m[2mqueues a draft with one click while running, and pauses on a double click
+[22m[39m[handleSend] text="stop the active run now", attachments=0, sending=false
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput read-only context status[2m > [22m[2mqueues the draft when the running primary control is clicked once
+[22m[39m[handleSend] text="queue this follow-up after the run", attachments=0, sending=false
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput read-only context status[2m > [22m[2mkeeps compaction diagnostics hidden in basic mode while preserving send payload
+[22m[39m[handleSend] text="ship the same payload", attachments=0, ready=0, sending=false
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput agent targeting[2m > [22m[2mlets the user select an agent target and sends it with the message
+[22m[39m[handleSend] text="Hello direct agent", attachments=0, ready=0, sending=false
+
+[90mstderr[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput agent targeting[2m > [22m[2mlets the user select an agent target and sends it with the message
+[22m[39mAn update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput agent targeting[2m > [22m[2minserts the selected skill from a slash query and prefixes sends
+[22m[39m[handleSend] text="/create-skill  Draft a new helper", attachments=0, ready=0, sending=false
+
+[90mstderr[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput agent targeting[2m > [22m[2minserts the selected skill from a slash query and prefixes sends
+[22m[39mAn update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput agent targeting[2m > [22m[2mkeeps a leading selected skill token on the normal send path
+[22m[39m[handleSend] text="/create-skill  Draft a new helper", attachments=0, ready=0, sending=false
+
+[90mstderr[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput agent targeting[2m > [22m[2mkeeps a leading selected skill token on the normal send path
+[22m[39mAn update to ChatInput inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput agent targeting[2m > [22m[2mstages dropped folders via disk path instead of buffer upload
+[22m[39m[stagePathFiles] Staging files: [ [32m'/tmp/project-folder'[39m ]
+
+[90mstdout[2m | tests/unit/chat-input.test.tsx[2m > [22m[2mChatInput agent targeting[2m > [22m[2mstages dropped folders via disk path instead of buffer upload
+[22m[39m[stagePathFiles] Stage result: [
+  {
+    id: [32m'folder-id'[39m,
+    fileName: [32m'Archive'[39m,
+    mimeType: [32m'application/x-directory'[39m,
+    fileSize: [33m0[39m,
+    stagedPath: [32m'/tmp/project-folder'[39m,
+    hasPreview: [33mfalse[39m
+  }
+]
+
+ [32m✓[39m tests/unit/chat-input.test.tsx [2m([22m[2m73 tests[22m[2m)[22m[33m 13114[2mms[22m[39m
+     [33m[2m✓[22m[39m shows suggest-mode knowledge candidates and attaches them only after user action [33m 1462[2mms[22m[39m
+     [33m[2m✓[22m[39m dismisses knowledge preflight for the same input and still sends if routing fails [33m 1590[2mms[22m[39m
+     [33m[2m✓[22m[39m queues the draft when the running primary control is clicked once [33m 346[2mms[22m[39m
+     [33m[2m✓[22m[39m opens the manual compaction dialog from /compact and confirms with extra instructions [33m 330[2mms[22m[39m
+     [33m[2m✓[22m[39m closes a compaction dialog when switching conversations [33m 316[2mms[22m[39m
+     [33m[2m✓[22m[39m cancels a delayed compaction confirmation after leaving and returning to a conversation [33m 330[2mms[22m[39m
+     [33m[2m✓[22m[39m preserves the new conversation dialog when an old compaction completes [33m 728[2mms[22m[39m
+     [33m[2m✓[22m[39m dismisses a pending cache-risk confirmation when its conversation is left [33m 424[2mms[22m[39m
+Preparing worktree (new branch 'clean')
+Preparing worktree (new branch 'dirty')
+Preparing worktree (new branch 'locked')
+Preparing worktree (new branch 'clean')
+Preparing worktree (new branch 'dirty')
+Preparing worktree (new branch 'locked')
+Preparing worktree (new branch 'clean')
+Preparing worktree (new branch 'dirty')
+Preparing worktree (new branch 'locked')
+Preparing worktree (new branch 'clean')
+Preparing worktree (new branch 'dirty')
+Preparing worktree (new branch 'locked')
+Preparing worktree (new branch 'clean')
+Preparing worktree (new branch 'dirty')
+Preparing worktree (new branch 'locked')
+ [32m✓[39m tests/unit/session-storage-api.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 19063[2mms[22m[39m
+     [33m[2m✓[22m[39m measures files, marks bounded scans and never follows junctions [33m 1214[2mms[22m[39m
+     [33m[2m✓[22m[39m reports real worktrees and protects primary, dirty, locked and registered checkouts [33m 3144[2mms[22m[39m
+     [33m[2m✓[22m[39m retains the branch after approved idle removal and rejects stale cleanup of new changes [33m 9801[2mms[22m[39m
+     [33m[2m✓[22m[39m sizes session transcripts and releases only the exact workspace/session owners [33m 2767[2mms[22m[39m
+     [33m[2m✓[22m[39m waits for terminal owner exit and records a rejected cleanup as failed [33m 2135[2mms[22m[39m
+ [32m✓[39m tests/unit/durable-task-authority-access.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 4985[2mms[22m[39m
+   [33m[2m✓[22m[39m rechecks real authority after another process releases SQLite (unchanged) [33m 1329[2mms[22m[39m
+   [33m[2m✓[22m[39m rechecks real authority after another process releases SQLite (removed) [33m 1395[2mms[22m[39m
+   [33m[2m✓[22m[39m rechecks real authority after another process releases SQLite (replaced) [33m 2019[2mms[22m[39m
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2mcalls the runtime archive method and releases the mirror gate only after a committed receipt
+[22m[39m[2026-11-10T01:23:53.147Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=de510ab9-9546-4736-be1b-399ce119fcbe sessionKey=agent:main:main
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2mcalls the runtime archive method and releases the mirror gate only after a committed receipt
+[22m[39m[2026-11-10T01:23:53.251Z] [INFO] [session-delete-gate] Cleared operationId=de510ab9-9546-4736-be1b-399ce119fcbe
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2mkeeps the same operationId open after an unknown archive RPC and resumes on retry
+[22m[39m[2026-11-10T01:23:53.289Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=ab25e619-1856-43da-8793-414685b411b6 sessionKey=agent:main:retry
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2mkeeps the same operationId open after an unknown archive RPC and resumes on retry
+[22m[39m[2026-11-10T01:23:53.429Z] [INFO] [session-delete-gate] Cleared operationId=ab25e619-1856-43da-8793-414685b411b6
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2mdoes not start a restore while an archive operation is pending for the same session
+[22m[39m[2026-11-10T01:23:53.453Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=72985a37-6bc2-4fed-8ad9-02e4a28b20d5 sessionKey=agent:main:conflict
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2muses the same durable gate contract for restore
+[22m[39m[2026-11-10T01:23:53.531Z] [INFO] [session-delete-gate] Persisted kind=restore operationId=9c558290-b4c2-4b2f-b724-9555a294566f sessionKey=agent:main:restore
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2muses the same durable gate contract for restore
+[22m[39m[2026-11-10T01:23:53.608Z] [INFO] [session-delete-gate] Cleared operationId=9c558290-b4c2-4b2f-b724-9555a294566f
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2mretains the gate for a missing-action archive receipt
+[22m[39m[2026-11-10T01:23:53.630Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=75832d91-5764-42e6-9d10-fe9f3ff056f4 sessionKey=agent:main:receipt-fault
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2mretains the gate for a wrong-session archive receipt
+[22m[39m[2026-11-10T01:23:53.709Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=a2dabc9c-618e-4a45-9f86-a0c01ce43691 sessionKey=agent:main:receipt-fault
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2mreleases a definitively refused pre-intent restore without releasing unknown mutations
+[22m[39m[2026-11-10T01:23:53.777Z] [INFO] [session-delete-gate] Persisted kind=restore operationId=ed936bb1-ba39-4e8a-9992-4e15023cd003 sessionKey=agent:main:refused
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2mreleases a definitively refused pre-intent restore without releasing unknown mutations
+[22m[39m[2026-11-10T01:23:53.817Z] [INFO] [session-delete-gate] Cleared operationId=ed936bb1-ba39-4e8a-9992-4e15023cd003
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2mreleases a definitively refused pre-intent restore without releasing unknown mutations
+[22m[39m[2026-11-10T01:23:53.839Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=48054561-1121-4cd1-8076-743b8a489a24 sessionKey=agent:main:refused
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2mreleases a definitively refused pre-intent restore without releasing unknown mutations
+[22m[39m[2026-11-10T01:23:53.880Z] [INFO] [session-delete-gate] Cleared operationId=48054561-1121-4cd1-8076-743b8a489a24
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2mreleases a correlated definitive failure even when the runtime cannot claim noMutation
+[22m[39m[2026-11-10T01:23:53.934Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=8756396c-7f41-40d5-b35c-5ab3d30de2e1 sessionKey=agent:main:definitive
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2mreleases a correlated definitive failure even when the runtime cannot claim noMutation
+[22m[39m[2026-11-10T01:23:53.971Z] [INFO] [session-delete-gate] Cleared operationId=8756396c-7f41-40d5-b35c-5ab3d30de2e1
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2mretains the gate for a correlated retryable failure
+[22m[39m[2026-11-10T01:23:53.998Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=b65b6c1e-4885-46cd-a3c9-da71b2e54856 sessionKey=agent:main:unknown
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2mresumes the same archive operation after UI metadata changes
+[22m[39m[2026-11-10T01:23:54.070Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=106a595b-3194-4c2c-81dd-6978dbadd990 sessionKey=agent:main:metadata-retry
+
+[90mstdout[2m | tests/unit/long-session-lifecycle-barrier.test.ts[2m > [22m[2mlong-session Main lifecycle barrier[2m > [22m[2mresumes the same archive operation after UI metadata changes
+[22m[39m[2026-11-10T01:23:54.222Z] [INFO] [session-delete-gate] Cleared operationId=106a595b-3194-4c2c-81dd-6978dbadd990
+
+ [32m✓[39m tests/unit/long-session-lifecycle-barrier.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 2776[2mms[22m[39m
+     [33m[2m✓[22m[39m calls the runtime archive method and releases the mirror gate only after a committed receipt [33m 1802[2mms[22m[39m
+ [32m✓[39m tests/unit/git-api.test.ts [2m([22m[2m57 tests[22m[2m)[22m[33m 1360[2mms[22m[39m
+     [33m[2m✓[22m[39m coalesces concurrent status reads and reuses a fresh cached status [33m 657[2mms[22m[39m
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2marchive retains its Runtime generation after one coordinator failure and retries the same ID
+[22m[39m[2026-11-10T01:24:00.270Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=3acafab7-4a71-4a34-b39a-40d9365f990b sessionKey=agent:main:tail
+
+[90mstderr[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2marchive retains its Runtime generation after one coordinator failure and retries the same ID
+[22m[39m[2026-11-10T01:24:00.322Z] [WARN] [session:coordinator-lifecycle] {"event":"archive","sessionKey":"agent:main:tail","error":"Error: injected tail refusal after Runtime receipt"}
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2marchive retains its Runtime generation after one coordinator failure and retries the same ID
+[22m[39m[2026-11-10T01:24:00.463Z] [INFO] [session-delete-gate] Cleared operationId=3acafab7-4a71-4a34-b39a-40d9365f990b
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mrestore retains its Runtime generation after one coordinator failure and retries the same ID
+[22m[39m[2026-11-10T01:24:00.511Z] [INFO] [session-delete-gate] Persisted kind=restore operationId=553d0a42-0497-412f-a7c1-345fb48d9cbd sessionKey=agent:main:tail
+
+[90mstderr[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mrestore retains its Runtime generation after one coordinator failure and retries the same ID
+[22m[39m[2026-11-10T01:24:00.568Z] [WARN] [session:coordinator-lifecycle] {"event":"restore","sessionKey":"agent:main:tail","error":"Error: injected tail refusal after Runtime receipt"}
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mrestore retains its Runtime generation after one coordinator failure and retries the same ID
+[22m[39m[2026-11-10T01:24:00.705Z] [INFO] [session-delete-gate] Cleared operationId=553d0a42-0497-412f-a7c1-345fb48d9cbd
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps partial resource evidence and retries only remaining resources after a committed delete
+[22m[39m[2026-11-10T01:24:00.755Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=d9840d6d-c1f8-414e-b9da-885feb6dcc25 sessionKey=agent:main:tail
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps partial resource evidence and retries only remaining resources after a committed delete
+[22m[39m[2026-11-10T01:24:00.811Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-10T01:24:00.811Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-mFtcU0\agents\main\sessions\sessions.json
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps partial resource evidence and retries only remaining resources after a committed delete
+[22m[39m[2026-11-10T01:24:00.814Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-mFtcU0\agents\main\sessions\generation-source.jsonl
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps partial resource evidence and retries only remaining resources after a committed delete
+[22m[39m[2026-11-10T01:24:00.814Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps partial resource evidence and retries only remaining resources after a committed delete
+[22m[39m[2026-11-10T01:24:00.816Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-mFtcU0\agents\main\sessions\generation-source.jsonl
+[2026-11-10T01:24:00.816Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps partial resource evidence and retries only remaining resources after a committed delete
+[22m[39m[2026-11-10T01:24:00.819Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps partial resource evidence and retries only remaining resources after a committed delete
+[22m[39m[2026-11-10T01:24:01.023Z] [INFO] [session-delete-gate] Cleared operationId=d9840d6d-c1f8-414e-b9da-885feb6dcc25
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mreads back an already applied coordinator state after its gate progress write failed
+[22m[39m[2026-11-10T01:24:01.084Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=49b0a801-62fc-46e7-aac1-6183f9cb810d sessionKey=agent:main:tail
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mreads back an already applied coordinator state after its gate progress write failed
+[22m[39m[2026-11-10T01:24:01.377Z] [INFO] [session-delete-gate] Cleared operationId=49b0a801-62fc-46e7-aac1-6183f9cb810d
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mholds the original per-session lock through tail work and rejects a different resume ID
+[22m[39m[2026-11-10T01:24:01.422Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=be72ffb4-7145-447e-aea6-d7b010226c29 sessionKey=agent:main:tail
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mholds the original per-session lock through tail work and rejects a different resume ID
+[22m[39m[2026-11-10T01:24:01.471Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-10T01:24:01.471Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-cSteLD\agents\main\sessions\sessions.json
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mholds the original per-session lock through tail work and rejects a different resume ID
+[22m[39m[2026-11-10T01:24:01.472Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-cSteLD\agents\main\sessions\generation-source.jsonl
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mholds the original per-session lock through tail work and rejects a different resume ID
+[22m[39m[2026-11-10T01:24:01.472Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mholds the original per-session lock through tail work and rejects a different resume ID
+[22m[39m[2026-11-10T01:24:01.474Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-cSteLD\agents\main\sessions\generation-source.jsonl
+[2026-11-10T01:24:01.474Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mholds the original per-session lock through tail work and rejects a different resume ID
+[22m[39m[2026-11-10T01:24:01.475Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mholds the original per-session lock through tail work and rejects a different resume ID
+[22m[39m[2026-11-10T01:24:01.572Z] [INFO] [session-delete-gate] Cleared operationId=be72ffb4-7145-447e-aea6-d7b010226c29
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mskips completed tails after the final gate-clear write fails
+[22m[39m[2026-11-10T01:24:01.623Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=addfdd68-241c-4c5f-bb6c-d0ea0db043ef sessionKey=agent:main:tail
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mskips completed tails after the final gate-clear write fails
+[22m[39m[2026-11-10T01:24:01.671Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-10T01:24:01.671Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-XK5TxC\agents\main\sessions\sessions.json
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mskips completed tails after the final gate-clear write fails
+[22m[39m[2026-11-10T01:24:01.672Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-XK5TxC\agents\main\sessions\generation-source.jsonl
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mskips completed tails after the final gate-clear write fails
+[22m[39m[2026-11-10T01:24:01.672Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mskips completed tails after the final gate-clear write fails
+[22m[39m[2026-11-10T01:24:01.673Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-XK5TxC\agents\main\sessions\generation-source.jsonl
+[2026-11-10T01:24:01.674Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mskips completed tails after the final gate-clear write fails
+[22m[39m[2026-11-10T01:24:01.675Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mskips completed tails after the final gate-clear write fails
+[22m[39m[2026-11-10T01:24:01.834Z] [INFO] [session-delete-gate] Cleared operationId=addfdd68-241c-4c5f-bb6c-d0ea0db043ef
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mretains unknown owner evidence when the terminal owner is unavailable
+[22m[39m[2026-11-10T01:24:01.877Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=562d2eeb-22a3-40ac-bc2b-b4aec39c029d sessionKey=agent:main:tail
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mretains unknown owner evidence when the terminal owner is unavailable
+[22m[39m[2026-11-10T01:24:01.919Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-10T01:24:01.920Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-lEkWSJ\agents\main\sessions\sessions.json
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mretains unknown owner evidence when the terminal owner is unavailable
+[22m[39m[2026-11-10T01:24:01.921Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-lEkWSJ\agents\main\sessions\generation-source.jsonl
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mretains unknown owner evidence when the terminal owner is unavailable
+[22m[39m[2026-11-10T01:24:01.921Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mretains unknown owner evidence when the terminal owner is unavailable
+[22m[39m[2026-11-10T01:24:01.923Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-lEkWSJ\agents\main\sessions\generation-source.jsonl
+[2026-11-10T01:24:01.923Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mretains unknown owner evidence when the terminal owner is unavailable
+[22m[39m[2026-11-10T01:24:01.928Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mretains unknown owner evidence when the terminal owner is unavailable
+[22m[39m[2026-11-10T01:24:02.129Z] [INFO] [session-delete-gate] Cleared operationId=562d2eeb-22a3-40ac-bc2b-b4aec39c029d
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps the gate and foreign resources when workspace scope is missing
+[22m[39m[2026-11-10T01:24:02.159Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=9f51509b-99c3-4a26-ae95-914b4a0ce47a sessionKey=agent:main:tail
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps the gate and foreign resources when workspace scope is missing
+[22m[39m[2026-11-10T01:24:02.199Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-10T01:24:02.200Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-X4OieX\agents\main\sessions\sessions.json
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps the gate and foreign resources when workspace scope is missing
+[22m[39m[2026-11-10T01:24:02.200Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-X4OieX\agents\main\sessions\generation-source.jsonl
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps the gate and foreign resources when workspace scope is missing
+[22m[39m[2026-11-10T01:24:02.201Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps the gate and foreign resources when workspace scope is missing
+[22m[39m[2026-11-10T01:24:02.202Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-X4OieX\agents\main\sessions\generation-source.jsonl
+[2026-11-10T01:24:02.202Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps the gate and foreign resources when workspace scope is missing
+[22m[39m[2026-11-10T01:24:02.203Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps the gate and foreign resources when workspace scope is different
+[22m[39m[2026-11-10T01:24:02.304Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=84fcfed7-5416-4929-9862-4ad750b46f08 sessionKey=agent:main:tail
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps the gate and foreign resources when workspace scope is different
+[22m[39m[2026-11-10T01:24:02.345Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-10T01:24:02.345Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-qmYyQo\agents\main\sessions\sessions.json
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps the gate and foreign resources when workspace scope is different
+[22m[39m[2026-11-10T01:24:02.346Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-qmYyQo\agents\main\sessions\generation-source.jsonl
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps the gate and foreign resources when workspace scope is different
+[22m[39m[2026-11-10T01:24:02.347Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps the gate and foreign resources when workspace scope is different
+[22m[39m[2026-11-10T01:24:02.348Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-qmYyQo\agents\main\sessions\generation-source.jsonl
+[2026-11-10T01:24:02.349Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mkeeps the gate and foreign resources when workspace scope is different
+[22m[39m[2026-11-10T01:24:02.351Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2maccepts a session with no coordinator binding as a normal no-op
+[22m[39m[2026-11-10T01:24:02.459Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=90bcba80-cd75-4992-ac80-bc88e4a92d85 sessionKey=agent:main:tail
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2maccepts a session with no coordinator binding as a normal no-op
+[22m[39m[2026-11-10T01:24:02.605Z] [INFO] [session-delete-gate] Cleared operationId=90bcba80-cd75-4992-ac80-bc88e4a92d85
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mdoes not reclaim a foreign workspace port registered while terminal cleanup awaits
+[22m[39m[2026-11-10T01:24:02.640Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=b58f12c1-f8aa-4562-9157-974c8a0f452f sessionKey=agent:main:tail
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mdoes not reclaim a foreign workspace port registered while terminal cleanup awaits
+[22m[39m[2026-11-10T01:24:02.689Z] [INFO] [session:delete] key=agent:main:tail agentId=main
+[2026-11-10T01:24:02.689Z] [INFO] [session:delete] sessionsJson=D:\tmp\u5-lifecycle-tail-C0ZfKk\agents\main\sessions\sessions.json
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mdoes not reclaim a foreign workspace port registered while terminal cleanup awaits
+[22m[39m[2026-11-10T01:24:02.690Z] [INFO] [session:delete] file: D:\tmp\u5-lifecycle-tail-C0ZfKk\agents\main\sessions\generation-source.jsonl
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mdoes not reclaim a foreign workspace port registered while terminal cleanup awaits
+[22m[39m[2026-11-10T01:24:02.691Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mdoes not reclaim a foreign workspace port registered while terminal cleanup awaits
+[22m[39m[2026-11-10T01:24:02.692Z] [INFO] [session:delete] Unlinked D:\tmp\u5-lifecycle-tail-C0ZfKk\agents\main\sessions\generation-source.jsonl
+[2026-11-10T01:24:02.692Z] [INFO] [session:delete] Hard-deleted 1 file(s) for generation-source
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mdoes not reclaim a foreign workspace port registered while terminal cleanup awaits
+[22m[39m[2026-11-10T01:24:02.694Z] [INFO] [session:delete] Removed "agent:main:tail" from sessions.json
+
+[90mstdout[2m | tests/unit/session-lifecycle-tail.test.ts[2m > [22m[2mU5 Main lifecycle tail on the original durable gate[2m > [22m[2mdoes not reclaim a foreign workspace port registered while terminal cleanup awaits
+[22m[39m[2026-11-10T01:24:02.780Z] [INFO] [session-delete-gate] Cleared operationId=b58f12c1-f8aa-4562-9157-974c8a0f452f
+
+ [32m✓[39m tests/unit/session-lifecycle-tail.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 2603[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps partial resource evidence and retries only remaining resources after a committed delete [33m 327[2mms[22m[39m
+     [33m[2m✓[22m[39m reads back an already applied coordinator state after its gate progress write failed [33m 344[2mms[22m[39m
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreturns partial with remainingPaths and keeps the index entry when an artefact unlink fails
+[22m[39m[2026-11-10T01:24:04.969Z] [INFO] [session:delete] key=agent:main:abc123 agentId=main
+[2026-11-10T01:24:04.973Z] [INFO] [session:delete] sessionsJson=D:\tmp\clawx-r0-2-sessions-2Qb6Vm\agents\main\sessions\sessions.json
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreturns partial with remainingPaths and keeps the index entry when an artefact unlink fails
+[22m[39m[2026-11-10T01:24:04.975Z] [INFO] [session:delete] file: D:\tmp\clawx-r0-2-sessions-2Qb6Vm\agents\main\sessions\abc123.jsonl
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreturns partial with remainingPaths and keeps the index entry when an artefact unlink fails
+[22m[39m[2026-11-10T01:24:04.976Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+[90mstderr[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreturns partial with remainingPaths and keeps the index entry when an artefact unlink fails
+[22m[39m[2026-11-10T01:24:04.977Z] [WARN] [session:delete] Failed to unlink D:\tmp\clawx-r0-2-sessions-2Qb6Vm\agents\main\sessions\abc123.jsonl.reset.bak: Error: EACCES: permission denied, unlink D:\tmp\clawx-r0-2-sessions-2Qb6Vm\agents\main\sessions\abc123.jsonl.reset.bak
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreturns partial with remainingPaths and keeps the index entry when an artefact unlink fails
+[22m[39m[2026-11-10T01:24:04.977Z] [INFO] [session:delete] Unlinked D:\tmp\clawx-r0-2-sessions-2Qb6Vm\agents\main\sessions\abc123.jsonl
+[2026-11-10T01:24:04.978Z] [INFO] [session:delete] Hard-deleted 1 file(s) for abc123
+
+[90mstderr[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreturns partial with remainingPaths and keeps the index entry when an artefact unlink fails
+[22m[39m[2026-11-10T01:24:04.981Z] [WARN] [session:delete] 1 artefact(s) could not be unlinked for abc123; keeping sessions.json entry for retry
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreturns partial when sessions.json read-modify-write fails after files were removed
+[22m[39m[2026-11-10T01:24:04.998Z] [INFO] [session:delete] key=agent:main:abc123 agentId=main
+[2026-11-10T01:24:04.999Z] [INFO] [session:delete] sessionsJson=D:\tmp\clawx-r0-2-sessions-ig6Kbq\agents\main\sessions\sessions.json
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreturns partial when sessions.json read-modify-write fails after files were removed
+[22m[39m[2026-11-10T01:24:05.000Z] [INFO] [session:delete] file: D:\tmp\clawx-r0-2-sessions-ig6Kbq\agents\main\sessions\abc123.jsonl
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreturns partial when sessions.json read-modify-write fails after files were removed
+[22m[39m[2026-11-10T01:24:05.000Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreturns partial when sessions.json read-modify-write fails after files were removed
+[22m[39m[2026-11-10T01:24:05.001Z] [INFO] [session:delete] Unlinked D:\tmp\clawx-r0-2-sessions-ig6Kbq\agents\main\sessions\abc123.jsonl
+[2026-11-10T01:24:05.001Z] [INFO] [session:delete] Hard-deleted 1 file(s) for abc123
+
+[90mstderr[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreturns partial when sessions.json read-modify-write fails after files were removed
+[22m[39m[2026-11-10T01:24:05.002Z] [WARN] [session:delete] Could not update sessions.json: Error: EBUSY: resource busy, open D:\tmp\clawx-r0-2-sessions-ig6Kbq\agents\main\sessions\sessions.json
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreports success only when every artefact and the index update succeed
+[22m[39m[2026-11-10T01:24:05.013Z] [INFO] [session:delete] key=agent:main:abc123 agentId=main
+[2026-11-10T01:24:05.013Z] [INFO] [session:delete] sessionsJson=D:\tmp\clawx-r0-2-sessions-bP5M86\agents\main\sessions\sessions.json
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreports success only when every artefact and the index update succeed
+[22m[39m[2026-11-10T01:24:05.014Z] [INFO] [session:delete] file: D:\tmp\clawx-r0-2-sessions-bP5M86\agents\main\sessions\abc123.jsonl
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreports success only when every artefact and the index update succeed
+[22m[39m[2026-11-10T01:24:05.014Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreports success only when every artefact and the index update succeed
+[22m[39m[2026-11-10T01:24:05.015Z] [INFO] [session:delete] Unlinked D:\tmp\clawx-r0-2-sessions-bP5M86\agents\main\sessions\abc123.jsonl
+[2026-11-10T01:24:05.015Z] [INFO] [session:delete] Hard-deleted 1 file(s) for abc123
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreports success only when every artefact and the index update succeed
+[22m[39m[2026-11-10T01:24:05.017Z] [INFO] [session:delete] Removed "agent:main:abc123" from sessions.json
+
+[90mstderr[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mreports success only when every artefact and the index update succeed
+[22m[39m[2026-11-10T01:24:05.019Z] [WARN] [resource-reclamation] delete recovery required {"recoveryId":"recovery:session-delete:agent:main:abc123","activeResidue":3}
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2msucceeds without a legacy sessions.json instead of failing the committed delete
+[22m[39m[2026-11-10T01:24:05.049Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=b1d0ea0b-de35-4014-8d76-69ee684252ef sessionKey=agent:main:abc123
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2msucceeds without a legacy sessions.json instead of failing the committed delete
+[22m[39m[2026-11-10T01:24:05.096Z] [INFO] [session:delete] key=agent:main:abc123 agentId=main
+[2026-11-10T01:24:05.096Z] [INFO] [session:delete] sessionsJson=D:\tmp\clawx-r0-2-sessions-4ZypFg\agents\main\sessions\sessions.json
+
+[90mstderr[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2msucceeds without a legacy sessions.json instead of failing the committed delete
+[22m[39m[2026-11-10T01:24:05.097Z] [WARN] [session:delete] Could not read sessions.json: Error: ENOENT: no such file or directory, open 'D:\tmp\clawx-r0-2-sessions-4ZypFg\agents\main\sessions\sessions.json'
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2msucceeds without a legacy sessions.json instead of failing the committed delete
+[22m[39m[2026-11-10T01:24:05.175Z] [INFO] [session-delete-gate] Cleared operationId=b1d0ea0b-de35-4014-8d76-69ee684252ef
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mkeeps an unverified missing local store as a failure
+[22m[39m[2026-11-10T01:24:05.192Z] [INFO] [session:delete] key=agent:main:abc123 agentId=main
+[2026-11-10T01:24:05.192Z] [INFO] [session:delete] sessionsJson=D:\tmp\clawx-r0-2-sessions-3xxqOy\agents\main\sessions\sessions.json
+
+[90mstderr[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mkeeps an unverified missing local store as a failure
+[22m[39m[2026-11-10T01:24:05.193Z] [WARN] [session:delete] Could not read sessions.json: Error: ENOENT: no such file or directory, open 'D:\tmp\clawx-r0-2-sessions-3xxqOy\agents\main\sessions\sessions.json'
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mretries the same runtime operation until its terminal owner confirms cleanup
+[22m[39m[2026-11-10T01:24:05.227Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=d4228040-d760-4b9b-aa92-13dd06726602 sessionKey=agent:main:abc123
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mretries the same runtime operation until its terminal owner confirms cleanup
+[22m[39m[2026-11-10T01:24:05.267Z] [INFO] [session:delete] key=agent:main:abc123 agentId=main
+[2026-11-10T01:24:05.267Z] [INFO] [session:delete] sessionsJson=D:\tmp\clawx-r0-2-sessions-PUmI0B\agents\main\sessions\sessions.json
+
+[90mstderr[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mretries the same runtime operation until its terminal owner confirms cleanup
+[22m[39m[2026-11-10T01:24:05.268Z] [WARN] [session:delete] Could not read sessions.json: Error: ENOENT: no such file or directory, open 'D:\tmp\clawx-r0-2-sessions-PUmI0B\agents\main\sessions\sessions.json'
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mretries the same runtime operation until its terminal owner confirms cleanup
+[22m[39m[2026-11-10T01:24:05.419Z] [INFO] [session-delete-gate] Cleared operationId=d4228040-d760-4b9b-aa92-13dd06726602
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mremoves runtime .jsonl.deleted.<timestamp> transcripts during hard delete
+[22m[39m[2026-11-10T01:24:05.443Z] [INFO] [session:delete] key=agent:main:abc123 agentId=main
+[2026-11-10T01:24:05.444Z] [INFO] [session:delete] sessionsJson=D:\tmp\clawx-r0-2-sessions-vaE2zd\agents\main\sessions\sessions.json
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mremoves runtime .jsonl.deleted.<timestamp> transcripts during hard delete
+[22m[39m[2026-11-10T01:24:05.445Z] [INFO] [session:delete] file: D:\tmp\clawx-r0-2-sessions-vaE2zd\agents\main\sessions\abc123.jsonl
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mremoves runtime .jsonl.deleted.<timestamp> transcripts during hard delete
+[22m[39m[2026-11-10T01:24:05.445Z] [INFO] [session:delete] derivative cascade removed 0 item(s)
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mremoves runtime .jsonl.deleted.<timestamp> transcripts during hard delete
+[22m[39m[2026-11-10T01:24:05.447Z] [INFO] [session:delete] Unlinked D:\tmp\clawx-r0-2-sessions-vaE2zd\agents\main\sessions\abc123.jsonl.deleted.2026-08-22T00-00-00.000Z
+[2026-11-10T01:24:05.447Z] [INFO] [session:delete] Unlinked D:\tmp\clawx-r0-2-sessions-vaE2zd\agents\main\sessions\abc123.jsonl
+[2026-11-10T01:24:05.447Z] [INFO] [session:delete] Hard-deleted 2 file(s) for abc123
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mremoves runtime .jsonl.deleted.<timestamp> transcripts during hard delete
+[22m[39m[2026-11-10T01:24:05.448Z] [INFO] [session:delete] Removed "agent:main:abc123" from sessions.json
+
+[90mstderr[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.delete partial failures[2m > [22m[2mremoves runtime .jsonl.deleted.<timestamp> transcripts during hard delete
+[22m[39m[2026-11-10T01:24:05.449Z] [WARN] [resource-reclamation] delete recovery required {"recoveryId":"recovery:session-delete:agent:main:abc123","activeResidue":3}
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 context archive cleanup (#101)[2m > [22m[2mpermanentDelete removes the context archive and retains the archive index on partial failure
+[22m[39m[2026-11-10T01:24:05.474Z] [INFO] [session:permanentDelete] key=agent:main:arch1 agentId=main
+
+[90mstderr[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 context archive cleanup (#101)[2m > [22m[2mpermanentDelete removes the context archive and retains the archive index on partial failure
+[22m[39m[2026-11-10T01:24:05.478Z] [WARN] [session:permanentDelete] Failed to unlink D:\tmp\clawx-r0-2-sessions-rym6dx\context-archive\arch1\snapshot.context-archive.json: Error: EACCES: permission denied, unlink D:\tmp\clawx-r0-2-sessions-rym6dx\context-archive\arch1\snapshot.context-archive.json
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 context archive cleanup (#101)[2m > [22m[2mpermanentDelete removes the context archive and retains the archive index on partial failure
+[22m[39m[2026-11-10T01:24:05.477Z] [INFO] [session:permanentDelete] Unlinked D:\tmp\clawx-r0-2-sessions-rym6dx\agents\main\sessions\arch1.archived.jsonl
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 context archive cleanup (#101)[2m > [22m[2memptyArchive removes the context archive when all derivatives are deletable
+[22m[39m[2026-11-10T01:24:05.499Z] [INFO] [session:permanentDelete] key=agent:main:arch2 agentId=main
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 context archive cleanup (#101)[2m > [22m[2memptyArchive removes the context archive when all derivatives are deletable
+[22m[39m[2026-11-10T01:24:05.504Z] [INFO] [session:permanentDelete] Unlinked D:\tmp\clawx-r0-2-sessions-PQ0dK5\agents\main\sessions\arch2.archived.jsonl
+[2026-11-10T01:24:05.504Z] [INFO] [session:permanentDelete] Unlinked D:\tmp\clawx-r0-2-sessions-PQ0dK5\context-archive\arch2\snapshot.context-archive.json
+[2026-11-10T01:24:05.504Z] [INFO] [session:permanentDelete] Hard-deleted 1 file(s) and 1 context archive(s) for arch2
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.emptyArchive failures[2m > [22m[2mdoes not report success when an archived file could not be removed
+[22m[39m[2026-11-10T01:24:05.539Z] [INFO] [session:permanentDelete] key=agent:main:arch1 agentId=main
+
+[90mstderr[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.emptyArchive failures[2m > [22m[2mdoes not report success when an archived file could not be removed
+[22m[39m[2026-11-10T01:24:05.541Z] [WARN] [session:permanentDelete] Failed to unlink D:\tmp\clawx-r0-2-sessions-pjZgdJ\agents\main\sessions\arch1.deleted.jsonl: Error: EACCES: permission denied, unlink D:\tmp\clawx-r0-2-sessions-pjZgdJ\agents\main\sessions\arch1.deleted.jsonl
+
+[90mstdout[2m | tests/unit/r0-2-sessions-delete-fail.test.ts[2m > [22m[2mR0-2 sessions.emptyArchive failures[2m > [22m[2mdoes not report success when an archived file could not be removed
+[22m[39m[2026-11-10T01:24:05.541Z] [INFO] [session:permanentDelete] Unlinked D:\tmp\clawx-r0-2-sessions-pjZgdJ\agents\main\sessions\arch1.archived.jsonl
+
+ [32m✓[39m tests/unit/r0-2-sessions-delete-fail.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 1956[2mms[22m[39m
+     [33m[2m✓[22m[39m returns partial with remainingPaths and keeps the index entry when an artefact unlink fails [33m 1399[2mms[22m[39m
+[90mstdout[2m | tests/unit/r0-3-chat-abort-checkstuck.test.ts[2m > [22m[2mR0-3 chat abort/checkStuck reclamation[2m > [22m[2mkeeps the run state when chat.abort fails and warns the user
+[22m[39m🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+[90mstderr[2m | tests/unit/r0-3-chat-abort-checkstuck.test.ts[2m > [22m[2mR0-3 chat abort/checkStuck reclamation[2m > [22m[2mkeeps the run state when chat.abort fails and warns the user
+[22m[39m[abortRun] chat.abort failed: Error: gateway refused abort
+
+[90mstdout[2m | tests/unit/r0-3-chat-abort-checkstuck.test.ts[2m > [22m[2mR0-3 chat abort/checkStuck reclamation[2m > [22m[2mkeeps exactly one pending checkStuck chain across consecutive sends
+[22m[39m[sendMessage] RPC result: success=true, runId=run-r0-3
+
+[90mstdout[2m | tests/unit/r0-3-chat-abort-checkstuck.test.ts[2m > [22m[2mR0-3 chat abort/checkStuck reclamation[2m > [22m[2mkeeps exactly one pending checkStuck chain across consecutive sends
+[22m[39m[sendMessage] RPC result: success=true, runId=run-r0-3
+
+ [32m✓[39m tests/unit/r0-3-chat-abort-checkstuck.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 881[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps the run state when chat.abort fails and warns the user [33m 808[2mms[22m[39m
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[90mstderr[2m | tests/unit/chat-message.test.tsx[2m > [22m[2mChatMessage attachment dedupe[2m > [22m[2mrenders the assistant avatar in a fully clipped stable slot
+[22m[39mreact-i18next:: useTranslation: You will need to pass in an i18next instance by using initReactI18next { code: [32m'NO_I18NEXT_INSTANCE'[39m }
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+[90mstderr[2m | tests/unit/chat-message.test.tsx[2m > [22m[2mChatMessage image copy[2m > [22m[2mcopies image bytes instead of the media URL text when an image attachment is present
+[22m[39mAn update to AssistantHoverBar inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m tests/unit/chat-message.test.tsx [2m([22m[2m37 tests[22m[2m)[22m[33m 2199[2mms[22m[39m
+     [33m[2m✓[22m[39m renders the assistant avatar in a fully clipped stable slot [33m 319[2mms[22m[39m
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mpreserves concurrent gates for different sessions in one atomic file
+[22m[39m[2026-11-10T01:24:27.781Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=2001ea11-7c69-48a0-ac1a-3333576c2d17 sessionKey=agent:main:second
+
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mpreserves concurrent gates for different sessions in one atomic file
+[22m[39m[2026-11-10T01:24:27.816Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=944b2594-2560-4960-8cb7-657a78753f5a sessionKey=agent:main:first
+
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mreuses one operationId for concurrent persistence of the same session
+[22m[39m[2026-11-10T01:24:27.850Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=87bcf568-41ec-4d7b-b2fe-be06e41d5809 sessionKey=agent:main:same
+
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mreuses an archive operation only for the same request digest
+[22m[39m[2026-11-10T01:24:28.464Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=e32169ed-f524-4a11-865b-536a30b9c091 sessionKey=agent:main:archive-ui
+
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mreuses an archive operation only for the same request digest
+[22m[39m[2026-11-10T01:24:28.525Z] [INFO] [session-delete-gate] Cleared operationId=e32169ed-f524-4a11-865b-536a30b9c091
+
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mlists pending operations by agent and rejects a completed or replaced recovery identity
+[22m[39m[2026-11-10T01:24:28.550Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=5098a03e-7179-42c7-84bb-b46cf64c2bed sessionKey=agent:main:recover
+
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mlists pending operations by agent and rejects a completed or replaced recovery identity
+[22m[39m[2026-11-10T01:24:28.566Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=d84317c6-654e-47cc-b79f-c661cfd9de30 sessionKey=agent:worker:recover
+
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mlists pending operations by agent and rejects a completed or replaced recovery identity
+[22m[39m[2026-11-10T01:24:28.610Z] [INFO] [session-delete-gate] Cleared operationId=5098a03e-7179-42c7-84bb-b46cf64c2bed
+
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mlists pending operations by agent and rejects a completed or replaced recovery identity
+[22m[39m[2026-11-10T01:24:28.648Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=8e6e2ea1-103a-4a2c-8f30-662a9add9781 sessionKey=agent:main:recover
+
+ [32m✓[39m tests/unit/session-delete-gate.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 972[2mms[22m[39m
+     [33m[2m✓[22m[39m reuses one operationId for concurrent persistence of the same session [33m 615[2mms[22m[39m
+ [32m✓[39m tests/unit/checkpoints-dialog.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[32m 272[2mms[22m[39m
+ [32m✓[39m tests/unit/session-task-scope-bridge.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 368[2mms[22m[39m
+ [32m✓[39m tests/unit/workspace-session.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 233[2mms[22m[39m
+[90mstdout[2m | tests/unit/session-lifecycle-control-scope.test.ts
+[22m[39m🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+[90mstderr[2m | tests/unit/session-lifecycle-control-scope.test.ts[2m > [22m[2msession lifecycle result scope[2m > [22m[2mretains a still-active run when the abort receipt cannot confirm it
+[22m[39m[abortRun] chat.abort failed: Error: Could not confirm the stop. Refresh the session to check its status.
+
+ [32m✓[39m tests/unit/session-lifecycle-control-scope.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+ [32m✓[39m tests/unit/long-session-owner-reclamation-adapter.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m18 passed[39m[22m[90m (18)[39m
+[2m      Tests [22m [1m[32m378 passed[39m[22m[90m (378)[39m
+[2m   Start at [22m 09:20:58
+[2m   Duration [22m 236.47s[2m (transform 21.69s, setup 3.54s, import 47.34s, tests 162.79s, environment 14.24s)[22m
+
+JSON report written to D:/tmp/unified-management-20261109/lifecycle-validation/u5-combined-unit.tests.json

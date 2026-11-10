@@ -1,0 +1,427 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/lifecycle-validation/u5-family-counter-red-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "session-family-counter-layout.spec.ts",
+      "file": "session-family-counter-layout.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "family counters keep a separate visible area from the title at 2, 20 and 100 children",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 38785,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m45\u001b[39m\nReceived:    \u001b[31m35\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m45\u001b[39m\nReceived:    \u001b[31m35\u001b[39m\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-family-counter-layout.spec.ts:36:34",
+                    "location": {
+                      "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-family-counter-layout.spec.ts",
+                      "column": 34,
+                      "line": 36
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 34 |\u001b[39m           })\u001b[33m;\u001b[39m\n \u001b[90m 35 |\u001b[39m           evidence\u001b[33m.\u001b[39msamples\u001b[33m.\u001b[39mpush({ count\u001b[33m,\u001b[39m theme\u001b[33m,\u001b[39m width\u001b[33m,\u001b[39m \u001b[33m...\u001b[39msample })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 36 |\u001b[39m           expect(sample\u001b[33m.\u001b[39mtitle\u001b[33m.\u001b[39mx)\u001b[33m.\u001b[39mtoBeGreaterThanOrEqual(sample\u001b[33m.\u001b[39mtoggle\u001b[33m.\u001b[39mright \u001b[33m+\u001b[39m \u001b[35m2\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 37 |\u001b[39m           expect(sample\u001b[33m.\u001b[39mlabelRight)\u001b[33m.\u001b[39mtoBeLessThanOrEqual(sample\u001b[33m.\u001b[39mtoggle\u001b[33m.\u001b[39mright \u001b[33m+\u001b[39m \u001b[35m0.5\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 38 |\u001b[39m           expect(sample\u001b[33m.\u001b[39mrowHeight)\u001b[33m.\u001b[39mtoBe(\u001b[35m30\u001b[39m)\u001b[33m;\u001b[39m expect(sample\u001b[33m.\u001b[39moverflow)\u001b[33m.\u001b[39mtoBe(\u001b[36mfalse\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 39 |\u001b[39m           \u001b[36mawait\u001b[39m toggle\u001b[33m.\u001b[39mfocus()\u001b[33m;\u001b[39m \u001b[36mawait\u001b[39m expect(toggle)\u001b[33m.\u001b[39mtoBeFocused()\u001b[33m;\u001b[39m \u001b[36mawait\u001b[39m toggle\u001b[33m.\u001b[39mpress(\u001b[32m'Enter'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-family-counter-layout.spec.ts",
+                        "column": 34,
+                        "line": 36
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m45\u001b[39m\nReceived:    \u001b[31m35\u001b[39m\n\n  34 |           });\n  35 |           evidence.samples.push({ count, theme, width, ...sample });\n> 36 |           expect(sample.title.x).toBeGreaterThanOrEqual(sample.toggle.right + 2);\n     |                                  ^\n  37 |           expect(sample.labelRight).toBeLessThanOrEqual(sample.toggle.right + 0.5);\n  38 |           expect(sample.rowHeight).toBe(30); expect(sample.overflow).toBe(false);\n  39 |           await toggle.focus(); await expect(toggle).toBeFocused(); await toggle.press('Enter');\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-family-counter-layout.spec.ts:36:34"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:33.353Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:33.354Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-09T19:24:33.354Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=50844, ppid=41800\n[2026-11-09T19:24:33.354Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:24:33.468Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:24:33.469Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-09T19:24:33.469Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-09T19:24:33.469Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:33.517Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:33.517Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [50844:1110/032433.552:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[50844:1110/032433.552:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:33.662Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:33.662Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:33.895Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:33.897Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:24:33.906Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:24:33.906Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:24:33.907Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T19:24:33.907Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:34.085Z] [INFO] Scheduling Gateway reload after saving provider \"custom-sessionc\" config\n[2026-11-09T19:24:34.086Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"custom-sessionc/mock-coder\" for provider \"custom-sessionc\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:err] Failed to read openclaw.json for active providers: _d [AtomicWriteError]: Atomic write failed for D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-uJIsSu\\verse-claw-e2e-home-vQhBbs\\.openclaw\\agents\\main\\agent\\auth-profiles.json.clawx-write-meta (EPERM): EPERM: operation not permitted, rename 'D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-uJIsSu\\verse-claw-e2e-home-vQhBbs\\.openclaw\\agents\\main\\agent\\.auth-profiles.json.clawx-write-meta.50844.1794252274553.64a7ceb7.tmp' -> 'D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-uJIsSu\\verse-claw-e2e-home-vQhBbs\\.openclaw\\agents\\main\\agent\\auth-profiles.json.clawx-write-meta'\n    at J_ \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:16:18613\u001b[90m)\u001b[39m\n    at tj \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:17:1885\u001b[90m)\u001b[39m\n    at async q3 \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:17:3\u001b[90m)\u001b[39m\n    at async tj \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:17:1796\u001b[90m)\u001b[39m\n    at async FN \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:44:19316\u001b[90m)\u001b[39m\n    at async cm \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:44:21077\u001b[90m)\u001b[39m\n    at async Ud \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:44:20842\u001b[90m)\u001b[39m\n    at async $N \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:44:23705\u001b[90m)\u001b[39m\n    at async k9 \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:44:38532\u001b[90m)\u001b[39m\n    at async lR.listAccounts \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:2457:4849\u001b[90m)\u001b[39m {\n  code: \u001b[32m'EPERM'\u001b[39m,\n  retryable: \u001b[33mfalse\u001b[39m,\n  causeError: Error: EPERM: operation not permitted, rename 'D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-uJIsSu\\verse-claw-e2e-home-vQhBbs\\.openclaw\\agents\\main\\agent\\.auth-profiles.json.clawx-write-meta.50844.1794252274553.64a7ceb7.tmp' -> 'D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-uJIsSu\\verse-claw-e2e-home-vQhBbs\\.openclaw\\agents\\main\\agent\\auth-profiles.json.clawx-write-meta'\n  \u001b[90m    at async Object.rename (node:internal/fs/promises:782:10)\u001b[39m\n      at async tj \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:17:1594\u001b[90m)\u001b[39m\n      at async q3 \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:17:3\u001b[90m)\u001b[39m\n      at async tj \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:17:1796\u001b[90m)\u001b[39m\n      at async FN \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:44:19316\u001b[90m)\u001b[39m\n      at async cm \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:44:21077\u001b[90m)\u001b[39m\n      at async Ud \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:44:20842\u001b[90m)\u001b[39m\n      at async $N \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:44:23705\u001b[90m)\u001b[39m\n      at async k9 \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:44:38532\u001b[90m)\u001b[39m\n      at async lR.listAccounts \u001b[90m(D:\\ClawX-work\\session-task-unified-relay-20261109\\\u001b[39mdist-electron\\main\\index-CwQUaPqx.js:2457:4849\u001b[90m)\u001b[39m {\n    errno: \u001b[33m-4048\u001b[39m,\n    code: \u001b[32m'EPERM'\u001b[39m,\n    syscall: \u001b[32m'rename'\u001b[39m,\n    path: \u001b[32m'D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-uJIsSu\\\\verse-claw-e2e-home-vQhBbs\\\\.openclaw\\\\agents\\\\main\\\\agent\\\\.auth-profiles.json.clawx-write-meta.50844.1794252274553.64a7ceb7.tmp'\u001b[39m,\n    dest: \u001b[32m'D:\\\\ClawX-work\\\\session-task-unified-relay-20261109\\\\.tmp\\\\e2e-runs\\\\verse-claw-e2e-run-uJIsSu\\\\verse-claw-e2e-home-vQhBbs\\\\.openclaw\\\\agents\\\\main\\\\agent\\\\auth-profiles.json.clawx-write-meta'\u001b[39m\n  }\n}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:34.605Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-family-counter-red-results\\session-family-counter-lay-05afe-le-at-2-20-and-100-children\\workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:35.061Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:35.062Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:35.086Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:35.087Z] [INFO] Gateway start requested (port=62897)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:35.091Z] [DEBUG] Device identity loaded (deviceId=e7876499d7c84b5c8da6aa047e40028a59fee1e8fa62758ec9e0bf783df8d20a)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:35.092Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:35.397Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:50844) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:35.726Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"custom-sessionc/mock-coder\" for provider \"custom-sessionc\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:35.955Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:24:36.009Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:36.015Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":1,\"defaultProviderRuntimeSyncMs\":184,\"providerEnvMs\":9,\"channelStartupPolicyMs\":3,\"uvEnvMs\":22,\"mcpEnvMs\":26,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":1,\"totalMs\":277,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:36.016Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=62897, entry=\"D:\\ClawX-work\\session-task-unified-relay-20261109\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 62897 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\ClawX-work\\session-task-unified-relay-20261109\\openclaw_runtime\", bundledBin=yes, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:36.143Z] [INFO] Gateway process started (pid=23276)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:36.143Z] [DEBUG] Gateway manager now owns process pid=23276\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:38.285Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:40.389Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:41.667Z] [DEBUG] [Gateway stderr] (node:23276) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:24:41.668Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:41.668Z] [DEBUG] [Gateway stderr] (node:23276) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:24:41.669Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:41.993Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:44.451Z] [DEBUG] Gateway ready after 30 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:44.452Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:62897/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:24:44.480Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=a5c500a0-6fa0-40e2-b13b-84fce47451fc peer=127.0.0.1:56556->127.0.0.1:62897 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:62897 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:44.492Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:44.493Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:44.493Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:24:44.497Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=c978e3a1-a349-4a1b-9117-ad1d8535ec14 peer=127.0.0.1:57907->127.0.0.1:62897 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:62897 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:44.589Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:62897/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:24:44.590Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:46.483Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:46.483Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-09T19:24:46.483Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:47.138Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:47.139Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:47.139Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:47.140Z] [INFO] [metric] gateway.startup {\"configSyncMs\":746,\"spawnToReadyMs\":8309,\"readyToConnectMs\":2688,\"totalMs\":11743}\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:24:52.346Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:24:52.346Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:24:52.346Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T19:24:52.346Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:56.575Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:56.575Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:56.576Z] [INFO] Sending kill to Gateway process (pid=23276)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:24:56.593Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:56.593Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:57.151Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:57.152Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:57.301Z] [INFO] Gateway stop requested\n[2026-11-09T19:24:57.301Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (stop)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:63327/7a4d96ec-64ce-41d2-912a-f3ead2367384\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:57.319Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":4}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:57.319Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:57.319Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:57.320Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:24:57.320Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-09T19:24:19.678Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-family-counter-red-results\\session-family-counter-lay-05afe-le-at-2-20-and-100-children\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-family-counter-red-results\\session-family-counter-lay-05afe-le-at-2-20-and-100-children\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-family-counter-red-results\\session-family-counter-lay-05afe-le-at-2-20-and-100-children\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-family-counter-layout.spec.ts",
+                    "column": 34,
+                    "line": 36
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "9121265b60aeaa146895-29eafa4f739a48f37fb9",
+          "file": "session-family-counter-layout.spec.ts",
+          "line": 6,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mTesting stopped early after 1 maximum allowed failures.\u001b[39m"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-11-09T19:24:18.510Z",
+    "duration": 41277.698,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

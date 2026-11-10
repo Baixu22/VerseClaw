@@ -1,0 +1,212 @@
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mD:/ClawX-work/session-task-unified-relay-20261109[39m
+
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mshares the same execution owner when the source runtime isolates its session state[33m 1012[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22muses the same base writer for ordinary effects and maintenance[32m 236[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mresolves managed roots back to their persistent generation after restart[32m 273[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mdoes not reinterpret a failed managed registration as an independent checkout[32m 151[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mrotates a drained writer without exposing the checkout to a competing task[32m 257[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mretains captured task association in the resource identity across reopen[32m 261[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mexcludes a different writer and preserves exact request/owner/epoch identity[32m 282[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mnormalizes service aliases and releases only unused claims when multi-root admission fails[32m 245[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mpersists in-flight and unknown effects across restart until an explicit owner receipt settles them[33m 409[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mreplays a completed receipt without reauthorizing its effect and rejects operation payload drift[32m 225[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mcloses expired and draining admission without transferring ownership[32m 202[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mrejects a replaced checkout and keeps epochs monotonic after managed recreation[32m 274[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mgates real service merge, freeze and cleanup before filesystem effects[33m 389[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mretains failed maintenance and does not free or replay an unknown filesystem effect[32m 215[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mfinishes only its interrupted cleanup after native removal and permits a new incarnation[33m 305[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mserializes competing processes while different native checkouts keep independent writers[33m 6757[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mretains a crashed native writer and rejects a new process instead of stealing its lease[33m 3545[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mrecovers an exited maintenance reservation that never admitted a filesystem operation[33m 3811[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mcheckout writer resource owner[2m > [22mchecks managed Git native identity in addition to directory instance[33m 2929[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mU5 committed checkout retention[2m > [22mretains an unpushed local branch and recreates its checkout after cleanup[33m 17437[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mU5 committed checkout retention[2m > [22mrefuses a detached exclusive commit across owner reopen and lifecycle cleanup then allows a retained branch[33m 11193[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mU5 committed checkout retention[2m > [22mallows detached cleanup when main retains the commit[33m 5138[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mU5 committed checkout retention[2m > [22mallows detached cleanup when remote-tracking retains the commit[33m 5160[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mU5 committed checkout retention[2m > [22mallows detached cleanup when shared-ref retains the commit[33m 4334[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mU5 committed checkout retention[2m > [22mdoes not treat a worktree-local ref as persistent retention[33m 2930[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mU5 committed checkout retention[2m > [22mkeeps the dirty-content guard ahead of cleanup even with a retained commit[33m 2556[2mms[22m[39m
+ [32m✓[39m tests/unit/checkout-writer-ownership.test.ts[2m > [22mU5 committed checkout retention[2m > [22mcleans an untouched detached checkout retained by main[33m 2158[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mruns proxy side effects and restarts a running gateway after settings.set[32m 294[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mrestarts a running gateway when the Role Memory setting changes[32m 9[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mruns launch-at-startup side effects after settings.setMany and reset[32m 7[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mroutes gateway rpc through backpressure[33m 316[2mms[22m[39m
+[90mstderr[2m | tests/unit/host-services.test.ts[2m > [22m[2mhost services[2m > [22m[2mreports degraded when the default account sync fails partially (R0-2)
+[22m[39m[providers] Default account saved but runtime sync degraded: models.json busy
+
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mexposes provider account snapshot actions through the typed providers service[32m 282[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mvalidates provider keys using account metadata and caller options[32m 5[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mcreates provider accounts and syncs runtime config through the typed providers service[32m 5[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22msets the default provider account and syncs runtime defaults[32m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mreports degraded when the default account sync fails partially (R0-2)[32m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mbuilds channel accounts from config without gateway rpc in config mode[32m 78[2mms[22m[39m
+[90mstdout[2m | tests/unit/host-services.test.ts[2m > [22m[2mhost services[2m > [22m[2mdeletes agents by restarting gateway, removing workspace, and returning snapshot
+[22m[39m[agents] Gateway restart completed after agent deletion
+
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mlists channel targets from session history and validates channel type[32m 10[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22msaves channel binding for existing agents and schedules channel refresh[32m 7[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22minstalls plugin, saves config, ensures scoped binding, and schedules refresh on saveConfig[32m 6[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mdeletes agents by restarting gateway, removing workspace, and returning snapshot[32m 20[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mupdates and resets avatars through the typed agents Host API[32m 6[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mreads and updates agent bootstrap tooling config[32m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22massigns agent channels and schedules gateway reload[32m 5[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mreturns diagnostics snapshot with channel view and log tails[32m 260[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mreads only selected log files from the log directory[32m 15[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22msends staged media through the typed chat service with gateway attachments[33m 2182[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mloads session summaries and transcript history through the typed sessions service[33m 5459[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22msummarizes large transcripts from bounded head/tail reads[32m 12[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mreports compaction status unavailable when Gateway is missing[32m 10[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mreports long-task control status unavailable when Gateway is missing[32m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mproxies long-task control RPCs through Gateway[32m 6[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mproxies manual compaction to Gateway with force and appended instructions[32m 6[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mproxies located (range) compaction with the chosen boundary (#178)[32m 6[2mms[22m[39m
+ [31m×[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mforwards compact generation unchanged and preserves omission for legacy callers[32m 21[2mms[22m[39m
+[31m   → Invalid sessionKey: global[39m
+ [31m×[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mforwards compactRange generation unchanged and preserves omission for legacy callers[32m 9[2mms[22m[39m
+[31m   → Invalid sessionKey: global[39m
+ [31m×[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mforwards restoreCheckpoint generation unchanged and preserves omission for legacy callers[32m 13[2mms[22m[39m
+[31m   → Invalid sessionKey: global[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mproxies read-only context recall through Gateway without local archive reads[32m 14[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mforks sessions through Gateway without local transcript fallback[32m 269[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mforwards an explicit fromLeafId fork point and omits it otherwise (#180)[33m 398[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mdoes not fork locally when Gateway is unavailable[32m 11[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22muses runtime history for keyed history and handoff rather than a stale local profile[33m 319[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mprepares deterministic session handoff without requiring Gateway[32m 212[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mrefuses to prepare a handoff past the maximum relay depth (#179)[33m 328[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mmerges runtime checkpoint handoff with ledger, git, observability, and transcript sources[32m 275[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mpersists depth and parent/root ids before activating a handoff session and rejects the next hop[33m 658[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mkeeps the four-hop depth bound opt-in with explicit workspace ownership[33m 1011[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mrejects corrupt lineage before activation and re-reads it at creation time[32m 268[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mdoes not activate a session if lineage cannot be written[32m 219[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mpreserves current explicit business-task links during fork in Main[33m 478[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mpreserves current explicit business-task links during handoff in Main[33m 531[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mrejects task inheritance when the source generation is missing[32m 272[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mrejects task inheritance when the fork generation is missing[32m 296[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mdrops generation-fenced task references when the source resets during fork[33m 374[2mms[22m[39m
+ [32m✓[39m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mrecords canonical fork lineage in Main without creating a handoff[33m 307[2mms[22m[39m
+ [32m✓[39m tests/unit/checkpoints-dialog.test.tsx[2m > [22mCheckpointsDialog[2m > [22mloads and lists checkpoints on open[32m 124[2mms[22m[39m
+ [32m✓[39m tests/unit/checkpoints-dialog.test.tsx[2m > [22mCheckpointsDialog[2m > [22mshows empty state when no checkpoints[32m 23[2mms[22m[39m
+ [32m✓[39m tests/unit/checkpoints-dialog.test.tsx[2m > [22mCheckpointsDialog[2m > [22mrestores a checkpoint and refreshes the list[32m 48[2mms[22m[39m
+ [32m✓[39m tests/unit/checkpoints-dialog.test.tsx[2m > [22mCheckpointsDialog[2m > [22momits the partial-restore notice for full event-log replays[32m 57[2mms[22m[39m
+ [32m✓[39m tests/unit/checkpoints-dialog.test.tsx[2m > [22mCheckpointsDialog[2m > [22msurfaces restore failure[32m 61[2mms[22m[39m
+ [32m✓[39m tests/unit/checkpoints-dialog.test.tsx[2m > [22mCheckpointsDialog[2m > [22mexpands checkpoint diff panel with files and unified diff[32m 37[2mms[22m[39m
+ [32m✓[39m tests/unit/checkpoints-dialog.test.tsx[2m > [22mCheckpointsDialog[2m > [22mshows diff empty state when a checkpoint has no undoable changes[32m 42[2mms[22m[39m
+[90mstdout[2m | tests/unit/r0-3-chat-abort-checkstuck.test.ts[2m > [22m[2mR0-3 chat abort/checkStuck reclamation[2m > [22m[2mkeeps the run state when chat.abort fails and warns the user
+[22m[39m🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+[90mstderr[2m | tests/unit/r0-3-chat-abort-checkstuck.test.ts[2m > [22m[2mR0-3 chat abort/checkStuck reclamation[2m > [22m[2mkeeps the run state when chat.abort fails and warns the user
+[22m[39m[abortRun] chat.abort failed: Error: gateway refused abort
+
+[90mstdout[2m | tests/unit/r0-3-chat-abort-checkstuck.test.ts[2m > [22m[2mR0-3 chat abort/checkStuck reclamation[2m > [22m[2mkeeps exactly one pending checkStuck chain across consecutive sends
+[22m[39m[sendMessage] RPC result: success=true, runId=run-r0-3
+
+[90mstdout[2m | tests/unit/r0-3-chat-abort-checkstuck.test.ts[2m > [22m[2mR0-3 chat abort/checkStuck reclamation[2m > [22m[2mkeeps exactly one pending checkStuck chain across consecutive sends
+[22m[39m[sendMessage] RPC result: success=true, runId=run-r0-3
+
+ [32m✓[39m tests/unit/r0-3-chat-abort-checkstuck.test.ts[2m > [22mR0-3 chat abort/checkStuck reclamation[2m > [22mkeeps the run state when chat.abort fails and warns the user[33m 2162[2mms[22m[39m
+ [32m✓[39m tests/unit/r0-3-chat-abort-checkstuck.test.ts[2m > [22mR0-3 chat abort/checkStuck reclamation[2m > [22mreleases UI state only after a confirmed abort[32m 31[2mms[22m[39m
+ [32m✓[39m tests/unit/r0-3-chat-abort-checkstuck.test.ts[2m > [22mR0-3 chat abort/checkStuck reclamation[2m > [22mkeeps exactly one pending checkStuck chain across consecutive sends[32m 36[2mms[22m[39m
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mpreserves concurrent gates for different sessions in one atomic file
+[22m[39m[2026-11-09T12:48:36.659Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=3b8f6d97-13ea-40fa-96b6-db6f02ce8611 sessionKey=agent:main:first
+
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mpreserves concurrent gates for different sessions in one atomic file
+[22m[39m[2026-11-09T12:48:36.724Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=3d8be751-8953-41db-ab14-a3cddaac3da2 sessionKey=agent:main:second
+
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mreuses one operationId for concurrent persistence of the same session
+[22m[39m[2026-11-09T12:48:36.765Z] [INFO] [session-delete-gate] Persisted kind=delete operationId=890cda63-bb6f-4a39-8be7-2db97bfa5338 sessionKey=agent:main:same
+
+ [32m✓[39m tests/unit/session-delete-gate.test.ts[2m > [22msession delete gate concurrency[2m > [22mpreserves concurrent gates for different sessions in one atomic file[32m 177[2mms[22m[39m
+ [32m✓[39m tests/unit/session-delete-gate.test.ts[2m > [22msession delete gate concurrency[2m > [22mreuses one operationId for concurrent persistence of the same session[33m 2889[2mms[22m[39m
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mreuses an archive operation only for the same request digest
+[22m[39m[2026-11-09T12:48:39.823Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=37ed267d-6c19-411b-8787-8689cf09485a sessionKey=agent:main:archive-ui
+
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mreuses an archive operation only for the same request digest
+[22m[39m[2026-11-09T12:48:40.506Z] [INFO] [session-delete-gate] Cleared operationId=37ed267d-6c19-411b-8787-8689cf09485a
+
+ [32m✓[39m tests/unit/session-delete-gate.test.ts[2m > [22msession delete gate concurrency[2m > [22mreuses an archive operation only for the same request digest[33m 890[2mms[22m[39m
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mlists pending operations by agent and rejects a completed or replaced recovery identity
+[22m[39m[2026-11-09T12:48:40.719Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=7139e751-9fff-474f-8e32-5de63ab64176 sessionKey=agent:main:recover
+
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mlists pending operations by agent and rejects a completed or replaced recovery identity
+[22m[39m[2026-11-09T12:48:40.746Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=ee578426-bb84-42b7-ad35-7e39132a2dcc sessionKey=agent:worker:recover
+
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mlists pending operations by agent and rejects a completed or replaced recovery identity
+[22m[39m[2026-11-09T12:48:40.990Z] [INFO] [session-delete-gate] Cleared operationId=7139e751-9fff-474f-8e32-5de63ab64176
+
+[90mstdout[2m | tests/unit/session-delete-gate.test.ts[2m > [22m[2msession delete gate concurrency[2m > [22m[2mlists pending operations by agent and rejects a completed or replaced recovery identity
+[22m[39m[2026-11-09T12:48:41.217Z] [INFO] [session-delete-gate] Persisted kind=archive operationId=d15a471a-499c-49fc-92ac-1be4aba5f8d3 sessionKey=agent:main:recover
+
+ [32m✓[39m tests/unit/session-delete-gate.test.ts[2m > [22msession delete gate concurrency[2m > [22mlists pending operations by agent and rejects a completed or replaced recovery identity[33m 912[2mms[22m[39m
+ [32m✓[39m tests/unit/session-delete-gate.test.ts[2m > [22msession delete gate concurrency[2m > [22mfails try-lock admission while a delete critical section is active[32m 4[2mms[22m[39m
+[90mstdout[2m | tests/unit/session-lifecycle-control-scope.test.ts
+[22m[39m🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+[90mstderr[2m | tests/unit/session-lifecycle-control-scope.test.ts[2m > [22m[2msession lifecycle result scope[2m > [22m[2mretains a still-active run when the abort receipt cannot confirm it
+[22m[39m[abortRun] chat.abort failed: Error: Could not confirm the stop. Refresh the session to check its status.
+
+ [32m✓[39m tests/unit/session-lifecycle-control-scope.test.ts[2m > [22msession lifecycle result scope[2m > [22massigns a new renderer visit revision when a session view is reset[32m 5[2mms[22m[39m
+ [32m✓[39m tests/unit/session-lifecycle-control-scope.test.ts[2m > [22msession lifecycle result scope[2m > [22mkeeps queued messages attached to their original workspace, session and generation[32m 9[2mms[22m[39m
+ [32m✓[39m tests/unit/session-lifecycle-control-scope.test.ts[2m > [22msession lifecycle result scope[2m > [22mdoes not clear a new session while the old abort response is pending[32m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/session-lifecycle-control-scope.test.ts[2m > [22msession lifecycle result scope[2m > [22mdoes not clear a new run while the old abort response is pending[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/session-lifecycle-control-scope.test.ts[2m > [22msession lifecycle result scope[2m > [22mdoes not clear a new generation while the old abort response is pending[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/session-lifecycle-control-scope.test.ts[2m > [22msession lifecycle result scope[2m > [22mclears the matching run only after owner confirmation[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/session-lifecycle-control-scope.test.ts[2m > [22msession lifecycle result scope[2m > [22mretains a still-active run when the abort receipt cannot confirm it[32m 5[2mms[22m[39m
+ [32m✓[39m tests/unit/session-lifecycle-control-scope.test.ts[2m > [22msession lifecycle result scope[2m > [22mclears an old rejection on retry and accepts an owner-confirmed idle generation[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/session-lifecycle-control-scope.test.ts[2m > [22msession lifecycle result scope[2m > [22mkeeps a restored generation when an old deleteSession success arrives[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/session-lifecycle-control-scope.test.ts[2m > [22msession lifecycle result scope[2m > [22mkeeps a restored generation when an old archiveSession success arrives[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/session-lifecycle-control-scope.test.ts[2m > [22msession lifecycle result scope[2m > [22mpreserves the source run cache after switching away from an unconfirmed Stop[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/session-lifecycle-control-scope.test.ts[2m > [22msession lifecycle result scope[2m > [22mrejects old-agent refreshes and ignores reads completing after an agent switch[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/session-lifecycle-control-scope.test.ts[2m > [22msession lifecycle result scope[2m > [22mpreserves materialized empty sessions and only hides a local pending entry[32m 1[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 3 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mforwards compact generation unchanged and preserves omission for legacy callers
+[31m[1mError[22m: Invalid sessionKey: global[39m
+[36m [2m❯[22m getSessionKey electron/services/sessions-api.ts:[2m562:11[22m[39m
+    [90m560|[39m   const value = body.sessionKey ?? body.id ?? payload;
+    [90m561|[39m   if (typeof value !== 'string' || !value.startsWith('agent:')) {
+    [90m562|[39m     throw new Error(`Invalid sessionKey: ${String(value)}`);
+    [90m   |[39m           [31m^[39m
+    [90m563|[39m   }
+    [90m564|[39m   return value;
+[90m [2m❯[22m Object.compact electron/services/sessions-api.ts:[2m2658:26[22m[39m
+[90m [2m❯[22m tests/unit/host-services.test.ts:[2m1313:23[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mforwards compactRange generation unchanged and preserves omission for legacy callers
+[31m[1mError[22m: Invalid sessionKey: global[39m
+[36m [2m❯[22m getSessionKey electron/services/sessions-api.ts:[2m562:11[22m[39m
+    [90m560|[39m   const value = body.sessionKey ?? body.id ?? payload;
+    [90m561|[39m   if (typeof value !== 'string' || !value.startsWith('agent:')) {
+    [90m562|[39m     throw new Error(`Invalid sessionKey: ${String(value)}`);
+    [90m   |[39m           [31m^[39m
+    [90m563|[39m   }
+    [90m564|[39m   return value;
+[90m [2m❯[22m Object.compactRange electron/services/sessions-api.ts:[2m2679:26[22m[39m
+[90m [2m❯[22m tests/unit/host-services.test.ts:[2m1313:23[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mforwards restoreCheckpoint generation unchanged and preserves omission for legacy callers
+[31m[1mError[22m: Invalid sessionKey: global[39m
+[36m [2m❯[22m getSessionKey electron/services/sessions-api.ts:[2m562:11[22m[39m
+    [90m560|[39m   const value = body.sessionKey ?? body.id ?? payload;
+    [90m561|[39m   if (typeof value !== 'string' || !value.startsWith('agent:')) {
+    [90m562|[39m     throw new Error(`Invalid sessionKey: ${String(value)}`);
+    [90m   |[39m           [31m^[39m
+    [90m563|[39m   }
+    [90m564|[39m   return value;
+[90m [2m❯[22m Object.restoreCheckpoint electron/services/sessions-api.ts:[2m2576:26[22m[39m
+[90m [2m❯[22m tests/unit/host-services.test.ts:[2m1313:23[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m100 passed[39m[22m[90m (103)[39m
+[2m   Start at [22m 20:46:47
+[2m   Duration [22m 116.21s[2m (transform 8.58s, setup 1.87s, import 4.14s, tests 95.54s, environment 11.24s)[22m
+
+JSON report written to D:/tmp/unified-management-20261109/lifecycle-validation/u5-renderer-owner.tests.json

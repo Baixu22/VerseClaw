@@ -1,0 +1,24 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "excludedFromCleanCandidateProof": [
+    {
+      "label": "u5-new-session-green",
+      "when": "2026-11-09T16:58:39.136Z",
+      "exit": 0,
+      "dirtyRows": 4245
+    },
+    {
+      "label": "u5-new-session-red",
+      "when": "2026-11-09T16:56:33.675Z",
+      "exit": 1,
+      "dirtyRows": 4245
+    },
+    {
+      "label": "u5-new-session-red2",
+      "when": "2026-11-09T16:57:07.721Z",
+      "exit": 1,
+      "dirtyRows": 4245
+    }
+  ]
+}

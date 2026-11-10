@@ -1,0 +1,208 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/lifecycle-validation/u5-storage-ui2-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "session-worktree-storage.spec.ts",
+      "file": "session-worktree-storage.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real repository, isolated worktree, storage command and settings in light/dark/narrow layouts",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 82288,
+                  "error": {
+                    "message": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('session-worktree-menu').getByRole('button').filter({ hasText: 'codex/storage-demo' })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"button\" class=\"codex-composer-menu__item\" title=\"D:/ClawX-work/session-task-unified-relay-20261109/.tmp/storage-acceptance-Y8kFUc/workspace-demo-codex-storage-demo\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m  - element was detached from the DOM, retrying\u001b[22m\n",
+                    "stack": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('session-worktree-menu').getByRole('button').filter({ hasText: 'codex/storage-demo' })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"button\" class=\"codex-composer-menu__item\" title=\"D:/ClawX-work/session-task-unified-relay-20261109/.tmp/storage-acceptance-Y8kFUc/workspace-demo-codex-storage-demo\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m  - element was detached from the DOM, retrying\u001b[22m\n\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-worktree-storage.spec.ts:81:115",
+                    "location": {
+                      "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-worktree-storage.spec.ts",
+                      "column": 115,
+                      "line": 81
+                    },
+                    "snippet": "  79 |     await expect.poll(async () => (await invoke(page, 'workspaces', 'getActive')).activeWorkspaceId).toBe(original.id);\n  80 |     await openWorktrees(page);\n> 81 |     await page.getByTestId('session-worktree-menu').getByRole('button').filter({ hasText: 'codex/storage-demo' }).click();\n     |                                                                                                                   ^\n  82 |     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Draft for this worktree');\n  83 |     report.draftRestored = true;\n  84 |     await invoke(page, 'workspaces', 'update', { id: worktree.id, permissionMode: 'acceptEdits' });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-worktree-storage.spec.ts",
+                        "column": 115,
+                        "line": 81
+                      },
+                      "message": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('session-worktree-menu').getByRole('button').filter({ hasText: 'codex/storage-demo' })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"button\" class=\"codex-composer-menu__item\" title=\"D:/ClawX-work/session-task-unified-relay-20261109/.tmp/storage-acceptance-Y8kFUc/workspace-demo-codex-storage-demo\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m  - element was detached from the DOM, retrying\u001b[22m\n\n\n  79 |     await expect.poll(async () => (await invoke(page, 'workspaces', 'getActive')).activeWorkspaceId).toBe(original.id);\n  80 |     await openWorktrees(page);\n> 81 |     await page.getByTestId('session-worktree-menu').getByRole('button').filter({ hasText: 'codex/storage-demo' }).click();\n     |                                                                                                                   ^\n  82 |     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Draft for this worktree');\n  83 |     report.draftRestored = true;\n  84 |     await invoke(page, 'workspaces', 'update', { id: worktree.id, permissionMode: 'acceptEdits' });\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-worktree-storage.spec.ts:81:115"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-09T16:16:39.958Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T16:16:39.959Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-09T16:16:39.959Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=33908, ppid=12092\n[2026-11-09T16:16:39.959Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T16:16:40.758Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T16:16:40.759Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-09T16:16:40.759Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-09T16:16:40.759Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T16:16:40.873Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T16:16:40.874Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [33908:1110/001640.901:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[33908:1110/001640.901:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T16:16:41.386Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T16:16:41.388Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T16:16:41.388Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T16:16:41.389Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T16:16:41.389Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T16:16:41.389Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T16:16:41.780Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\storage-acceptance-Y8kFUc\\workspace-demo\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T16:16:43.704Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T16:16:43.704Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T16:16:43.704Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T16:16:43.705Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T16:16:48.368Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T16:16:56.766Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T16:16:56.767Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T16:16:56.767Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T16:16:56.768Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T16:17:35.034Z] [INFO] Gateway stop requested\n[2026-11-09T16:17:35.034Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:57085/1f3cca5c-3090-43db-890e-b4ce0479ef15\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T16:17:35.105Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":4}\n[2026-11-09T16:17:35.105Z] [INFO] [ResourceTracker] Stopped\n[2026-11-09T16:17:35.105Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-09T16:17:35.106Z] [INFO] [efficiency-sampler] stopped\n[2026-11-09T16:17:35.106Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-09T16:16:23.573Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-storage-ui2-results\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-storage-ui2-results\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-storage-ui2-results\\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-worktree-storage.spec.ts",
+                    "column": 115,
+                    "line": 81
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "8582c5067f0ab6cc5353-4229dee4b702021f86c7",
+          "file": "session-worktree-storage.spec.ts",
+          "line": 25,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mTesting stopped early after 1 maximum allowed failures.\u001b[39m"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-11-09T16:16:20.845Z",
+    "duration": 86411.33600000001,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

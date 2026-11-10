@@ -1,0 +1,184 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-u5-lifecycle",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "case": "U5 current-run Stop retries without its old error and reconciles a lost reply without changing the neighbour",
+  "project": {
+    "workspaceId": "u5-lifecycle",
+    "rootPath": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-combined-lifecycle-ui-results\\session-lifecycle-recovery-18db8-hout-changing-the-neighbour\\workspace",
+    "sessionKey": "agent:main:session-1794275173492-ulifecycle",
+    "generation": "c4616e4d-54e3-4f3a-9432-e191ed75ded8"
+  },
+  "neighbour": "agent:main:dashboard:ddcb0956-a315-49e4-aa37-d2d7c40b4bb4",
+  "recovery": "existing owner reads; archive/restore/delete also retry the persisted Main gate operationId",
+  "faultInjection": "before: no forwarding; after: real Main success reply held/dropped; gate-clear: temp write fails only after real Runtime commit",
+  "runId": "u5-stop-run",
+  "rejection": {
+    "sessionKey": "agent:main:session-1794275173492-ulifecycle",
+    "action": "rpc",
+    "at": "before",
+    "module": "gateway",
+    "method": "chat.abort",
+    "hits": 1,
+    "request": {
+      "id": "a92cadf7-4fc9-42cf-9f6e-6620639b8e9c",
+      "module": "gateway",
+      "action": "rpc",
+      "payload": {
+        "method": "chat.abort",
+        "params": {
+          "sessionKey": "agent:main:session-1794275173492-ulifecycle",
+          "runId": "u5-stop-run"
+        }
+      },
+      "deadline": {
+        "deadlineAtMs": 1794275289994,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "a92cadf7-4fc9-42cf-9f6e-6620639b8e9c"
+      }
+    },
+    "phase": "finished",
+    "outcome": "reject"
+  },
+  "sameRunRetry": {
+    "fault": {
+      "sessionKey": "agent:main:session-1794275173492-ulifecycle",
+      "action": "rpc",
+      "at": "before",
+      "module": "gateway",
+      "method": "chat.abort",
+      "hits": 1,
+      "request": {
+        "id": "019d0d23-d1b6-4a4f-94a6-c75334826d18",
+        "module": "gateway",
+        "action": "rpc",
+        "payload": {
+          "method": "chat.abort",
+          "params": {
+            "sessionKey": "agent:main:session-1794275173492-ulifecycle",
+            "runId": "u5-stop-run"
+          }
+        },
+        "deadline": {
+          "deadlineAtMs": 1794275290897,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "019d0d23-d1b6-4a4f-94a6-c75334826d18"
+        }
+      },
+      "phase": "finished",
+      "outcome": "pass",
+      "reply": {
+        "id": "019d0d23-d1b6-4a4f-94a6-c75334826d18",
+        "ok": true,
+        "data": {
+          "ok": true,
+          "aborted": true,
+          "runIds": [
+            "u5-stop-run"
+          ]
+        }
+      }
+    },
+    "paused": true,
+    "staleErrorVisible": false,
+    "operationId": "not_applicable: chat.abort accepts sessionKey/runId only"
+  },
+  "lostSuccess": {
+    "sessionKey": "agent:main:session-1794275173492-ulifecycle",
+    "action": "rpc",
+    "at": "after",
+    "module": "gateway",
+    "method": "chat.abort",
+    "hits": 1,
+    "request": {
+      "id": "6672f393-be73-4690-b511-a003b671e046",
+      "module": "gateway",
+      "action": "rpc",
+      "payload": {
+        "method": "chat.abort",
+        "params": {
+          "sessionKey": "agent:main:session-1794275173492-ulifecycle",
+          "runId": "u5-stop-second-run"
+        }
+      },
+      "deadline": {
+        "deadlineAtMs": 1794275302097,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "6672f393-be73-4690-b511-a003b671e046"
+      }
+    },
+    "reply": {
+      "id": "6672f393-be73-4690-b511-a003b671e046",
+      "ok": true,
+      "data": {
+        "ok": true,
+        "aborted": true,
+        "runIds": [
+          "u5-stop-second-run"
+        ]
+      }
+    },
+    "phase": "finished",
+    "outcome": "drop"
+  },
+  "reconciled": {
+    "sessionKey": "agent:main:session-1794275173492-ulifecycle",
+    "activeRun": false,
+    "via": "existing refresh + sessions.describe",
+    "operationReplay": "not_applicable: chat.abort has no lifecycle operationId"
+  },
+  "lastFault": {
+    "sessionKey": "agent:main:session-1794275173492-ulifecycle",
+    "action": "rpc",
+    "at": "after",
+    "module": "gateway",
+    "method": "chat.abort",
+    "hits": 1,
+    "request": {
+      "id": "6672f393-be73-4690-b511-a003b671e046",
+      "module": "gateway",
+      "action": "rpc",
+      "payload": {
+        "method": "chat.abort",
+        "params": {
+          "sessionKey": "agent:main:session-1794275173492-ulifecycle",
+          "runId": "u5-stop-second-run"
+        }
+      },
+      "deadline": {
+        "deadlineAtMs": 1794275302097,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "6672f393-be73-4690-b511-a003b671e046"
+      }
+    },
+    "reply": {
+      "id": "6672f393-be73-4690-b511-a003b671e046",
+      "ok": true,
+      "data": {
+        "ok": true,
+        "aborted": true,
+        "runIds": [
+          "u5-stop-second-run"
+        ]
+      }
+    },
+    "phase": "finished",
+    "outcome": "drop"
+  },
+  "lastGate": {
+    "error": "Error: electronApplication.evaluate: TypeError: Cannot read properties of undefined (reading 'path')\n    at eval (eval at evaluate (:302:30), <anonymous>:4:15)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  "ownerReadback": {
+    "live": {
+      "key": "agent:main:session-1794275173492-ulifecycle",
+      "sessionId": "c4616e4d-54e3-4f3a-9432-e191ed75ded8"
+    },
+    "archived": null
+  },
+  "status": "passed",
+  "errors": []
+}

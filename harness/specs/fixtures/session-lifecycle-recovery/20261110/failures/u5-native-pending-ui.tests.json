@@ -1,0 +1,332 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/lifecycle-validation/u5-native-pending-ui-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "session-context-recovery.spec.ts",
+      "file": "session-context-recovery.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "U5 manual compact preserves its instructions on cancel, pending, refusal and timeout",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 260913,
+                  "error": {
+                    "message": "Error: gateway never became ready",
+                    "stack": "Error: gateway never became ready\n    at startGateway (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\fp-p1-harness.ts:86:9)\n    at createSessionChainProject (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\session-task-chain.ts:68:3)\n    at seed (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-context-recovery.spec.ts:20:19)\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-context-recovery.spec.ts:139:21",
+                    "location": {
+                      "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\fp-p1-harness.ts",
+                      "column": 9,
+                      "line": 86
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mfixtures\\fp-p1-harness.ts:86\n\n\u001b[0m \u001b[90m 84 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mPromise\u001b[39m((resolve) \u001b[33m=>\u001b[39m setTimeout(resolve\u001b[33m,\u001b[39m \u001b[35m2\u001b[39m_000))\u001b[33m;\u001b[39m\n \u001b[90m 85 |\u001b[39m   }\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 86 |\u001b[39m   \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m'gateway never became ready'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 87 |\u001b[39m }\n \u001b[90m 88 |\u001b[39m\n \u001b[90m 89 |\u001b[39m \u001b[36mexport\u001b[39m type \u001b[33mToolCallSpec\u001b[39m \u001b[33m=\u001b[39m { id\u001b[33m:\u001b[39m string\u001b[33m;\u001b[39m name\u001b[33m:\u001b[39m string\u001b[33m;\u001b[39m args\u001b[33m:\u001b[39m \u001b[33mRecord\u001b[39m\u001b[33m<\u001b[39m\u001b[33mstring\u001b[39m\u001b[33m,\u001b[39m unknown\u001b[33m>\u001b[39m }\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\fp-p1-harness.ts",
+                        "column": 9,
+                        "line": 86
+                      },
+                      "message": "Error: gateway never became ready\n\n   at fixtures\\fp-p1-harness.ts:86\n\n  84 |     await new Promise((resolve) => setTimeout(resolve, 2_000));\n  85 |   }\n> 86 |   throw new Error('gateway never became ready');\n     |         ^\n  87 | }\n  88 |\n  89 | export type ToolCallSpec = { id: string; name: string; args: Record<string, unknown> };\n    at startGateway (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\fp-p1-harness.ts:86:9)\n    at createSessionChainProject (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\session-task-chain.ts:68:3)\n    at seed (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-context-recovery.spec.ts:20:19)\n    at D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\session-context-recovery.spec.ts:139:21"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:49.268Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:49.269Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-09T19:51:49.269Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=24864, ppid=26592\n[2026-11-09T19:51:49.269Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:51:49.486Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:51:49.487Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-09T19:51:49.487Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-09T19:51:49.487Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:49.533Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:49.534Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [24864:1110/035149.581:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[24864:1110/035149.581:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:49.724Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:49.724Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:49.931Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:49.933Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:51:49.935Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-09T19:51:49.935Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:51:49.935Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-09T19:51:49.936Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:50.081Z] [INFO] Scheduling Gateway reload after saving provider \"custom-sessionc\" config\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:50.082Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"custom-sessionc/mock-coder\" for provider \"custom-sessionc\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:50.546Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-native-pending-ui-results\\session-context-recovery-U-b9f4a-pending-refusal-and-timeout\\workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:51.283Z] [INFO] [gateway-refresh] mode=reload requested pid=n/a state=stopped\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:51:51.283Z] [WARN] [gateway-refresh] mode=reload result=fallback_restart cause=not_running\n[2026-11-09T19:51:51.283Z] [WARN] Gateway reload requested while not running; falling back to restart\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:51.284Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=n/a\n[2026-11-09T19:51:51.284Z] [INFO] Gateway stop requested\n[2026-11-09T19:51:51.284Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:51.285Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:51.285Z] [INFO] Gateway start requested (port=18789)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:51.296Z] [DEBUG] Device identity loaded (deviceId=22d00d3886ff528c7c312b21c91f19dbca6accf83f0b2832b0750a27248685e9)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:51.296Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:51.764Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:24864) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:51.946Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:51.946Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:52.225Z] [DEBUG] Gateway start/find-existing superseded (expectedEpoch=3, currentEpoch=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:52.225Z] [DEBUG] Gateway state changed: starting -> stopped\n[2026-11-09T19:51:52.225Z] [INFO] [metric] gateway.restart.executed {\"gateway_restart_executed_total\":1,\"gateway_restart_suppressed_total\":0,\"gateway_restart_circuit_open_until\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:52.225Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=n/a pidAfter=n/a suppressed=0 executed=1 circuitOpenUntil=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:52.275Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:52.277Z] [INFO] Gateway start requested (port=57047)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:52.278Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:52.654Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:53.065Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"custom-sessionc/mock-coder\" for provider \"custom-sessionc\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:53.324Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T19:51:53.366Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:53.370Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":227,\"providerEnvMs\":8,\"channelStartupPolicyMs\":3,\"uvEnvMs\":10,\"mcpEnvMs\":25,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":0,\"totalMs\":293,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:53.370Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=57047, entry=\"D:\\ClawX-work\\session-task-unified-relay-20261109\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 57047 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\ClawX-work\\session-task-unified-relay-20261109\\openclaw_runtime\", bundledBin=yes, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:53.487Z] [INFO] Gateway process started (pid=27344)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:53.488Z] [DEBUG] Gateway manager now owns process pid=27344\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:55.595Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:57.711Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T19:51:57.803Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-09T19:51:32.269Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-native-pending-ui-results\\session-context-recovery-U-b9f4a-pending-refusal-and-timeout\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-native-pending-ui-results\\session-context-recovery-U-b9f4a-pending-refusal-and-timeout\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\fp-p1-harness.ts",
+                    "column": 9,
+                    "line": 86
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "7427f4e25f92e1e951c1-24fc29d66da3c9a720af",
+          "file": "session-context-recovery.spec.ts",
+          "line": 129,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mTesting stopped early after 1 maximum allowed failures.\u001b[39m"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-11-09T19:51:30.541Z",
+    "duration": 263871.607,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

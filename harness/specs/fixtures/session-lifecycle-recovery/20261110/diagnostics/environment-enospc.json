@@ -1,0 +1,20 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "status": "environment_failure",
+  "candidate": "d9b91b1d64973c459c0d0bbd434f96a20c077b1b",
+  "labels": [
+    "u5-journal-restore-ui7",
+    "u5-display-final3"
+  ],
+  "reason": "D volume ENOSPC; configuration persistence aborted before the journal journey",
+  "launchLog": "admission-fixed-launch.log",
+  "preservedArtifacts": "u5-journal-restore-ui7.log and results",
+  "recovery": {
+    "cachesRemoved": 476,
+    "reproducibleBytes": 113734080,
+    "freeBytes": 1343279104,
+    "orphanProfile": "verse-claw-e2e-run-u8VNNY",
+    "remainingOwnedProcesses": 0
+  }
+}

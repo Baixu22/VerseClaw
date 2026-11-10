@@ -1,0 +1,384 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/lifecycle-validation/u5-journal-restore-ui10-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "session-context-commit-recovery.spec.ts",
+      "file": "session-context-commit-recovery.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "U5 real journal checkpoint restore changes v2 to v1 despite reply loss and retains generation",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 134110,
+                  "error": {
+                    "message": "Error: ENOSPC: no space left on device, write",
+                    "stack": "Error: ENOSPC: no space left on device, write\n    at record (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron.ts:469:53)\n    at Timeout._onTimeout (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron.ts:476:37)",
+                    "location": {
+                      "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron.ts",
+                      "column": 53,
+                      "line": 469
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mfixtures\\electron.ts:469\n\n\u001b[0m \u001b[90m 467 |\u001b[39m     process\u001b[33m.\u001b[39mreport\u001b[33m.\u001b[39mreportOnFatalError \u001b[33m=\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 468 |\u001b[39m     process\u001b[33m.\u001b[39mreport\u001b[33m.\u001b[39mexcludeEnv \u001b[33m=\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 469 |\u001b[39m     \u001b[36mconst\u001b[39m record \u001b[33m=\u001b[39m (phase\u001b[33m:\u001b[39m string) \u001b[33m=>\u001b[39m appendFileSync(join(dir\u001b[33m,\u001b[39m \u001b[32m`worker-${process.pid}.jsonl`\u001b[39m)\u001b[33m,\u001b[39m \u001b[33mJSON\u001b[39m\u001b[33m.\u001b[39mstringify({\n \u001b[90m     |\u001b[39m                                                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 470 |\u001b[39m       driven_by\u001b[33m:\u001b[39m \u001b[32m'agent'\u001b[39m\u001b[33m,\u001b[39m actor\u001b[33m:\u001b[39m \u001b[32m'playwright-worker'\u001b[39m\u001b[33m,\u001b[39m phase\u001b[33m,\u001b[39m time\u001b[33m:\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mDate\u001b[39m()\u001b[33m.\u001b[39mtoISOString()\u001b[33m,\u001b[39m\n \u001b[90m 471 |\u001b[39m       pid\u001b[33m:\u001b[39m process\u001b[33m.\u001b[39mpid\u001b[33m,\u001b[39m ppid\u001b[33m:\u001b[39m process\u001b[33m.\u001b[39mppid\u001b[33m,\u001b[39m execPath\u001b[33m:\u001b[39m process\u001b[33m.\u001b[39mexecPath\u001b[33m,\u001b[39m node\u001b[33m:\u001b[39m process\u001b[33m.\u001b[39mversion\u001b[33m,\u001b[39m\n \u001b[90m 472 |\u001b[39m       workerIndex\u001b[33m:\u001b[39m testInfo\u001b[33m.\u001b[39mworkerIndex\u001b[33m,\u001b[39m test\u001b[33m:\u001b[39m testInfo\u001b[33m.\u001b[39mtitlePath\u001b[33m,\u001b[39m status\u001b[33m:\u001b[39m testInfo\u001b[33m.\u001b[39mstatus\u001b[33m,\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron.ts",
+                        "column": 53,
+                        "line": 469
+                      },
+                      "message": "Error: ENOSPC: no space left on device, write\n\n   at fixtures\\electron.ts:469\n\n  467 |     process.report.reportOnFatalError = true;\n  468 |     process.report.excludeEnv = true;\n> 469 |     const record = (phase: string) => appendFileSync(join(dir, `worker-${process.pid}.jsonl`), JSON.stringify({\n      |                                                     ^\n  470 |       driven_by: 'agent', actor: 'playwright-worker', phase, time: new Date().toISOString(),\n  471 |       pid: process.pid, ppid: process.ppid, execPath: process.execPath, node: process.version,\n  472 |       workerIndex: testInfo.workerIndex, test: testInfo.titlePath, status: testInfo.status,\n    at record (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron.ts:469:53)\n    at Timeout._onTimeout (D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron.ts:476:37)"
+                    },
+                    {
+                      "message": "Error: ENOSPC: no space left on device, write"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:50.719Z] [INFO] Gateway stop requested\n[2026-11-09T18:56:50.719Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:51.185Z] [INFO] Scheduling Gateway reload after saving provider \"custom-sessionc\" config\n[2026-11-09T18:56:51.186Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"custom-sessionc/mock-coder\" for provider \"custom-sessionc\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:52.394Z] [INFO] [gateway-refresh] mode=reload requested pid=n/a state=stopped\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T18:56:52.395Z] [WARN] [gateway-refresh] mode=reload result=fallback_restart cause=not_running\n[2026-11-09T18:56:52.395Z] [WARN] Gateway reload requested while not running; falling back to restart\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:52.395Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=n/a\n[2026-11-09T18:56:52.395Z] [INFO] Gateway stop requested\n[2026-11-09T18:56:52.395Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n[2026-11-09T18:56:52.396Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)\n[2026-11-09T18:56:52.396Z] [INFO] Gateway start requested (port=18789)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:52.407Z] [DEBUG] Device identity loaded (deviceId=022d65ee71b0c8056a03405f4686d71c60dba2a7603f945b96bbac05eaae48d4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:52.408Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:54.254Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:25144) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:54.361Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-journal-restore-ui10-results\\session-context-commit-rec-e72a0-loss-and-retains-generation\\workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:55.161Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:55.439Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:55.440Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"custom-sessionc/mock-coder\" for provider \"custom-sessionc\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:55.968Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T18:56:56.024Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:56.039Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":651,\"providerEnvMs\":10,\"channelStartupPolicyMs\":48,\"uvEnvMs\":69,\"mcpEnvMs\":37,\"runtimeConfigReadMs\":1,\"verseShellBundleMs\":1,\"totalMs\":861,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:56.040Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=18789, entry=\"D:\\ClawX-work\\session-task-unified-relay-20261109\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 18789 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\ClawX-work\\session-task-unified-relay-20261109\\openclaw_runtime\", bundledBin=yes, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:56.201Z] [INFO] Gateway process started (pid=48996)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:56.202Z] [DEBUG] Gateway manager now owns process pid=48996\n[2026-11-09T18:56:56.202Z] [DEBUG] Gateway start/start-process superseded (expectedEpoch=3, currentEpoch=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:56.202Z] [INFO] Sending kill to Gateway process (pid=48996)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:56.203Z] [INFO] [metric] gateway.restart.executed {\"gateway_restart_executed_total\":1,\"gateway_restart_suppressed_total\":0,\"gateway_restart_circuit_open_until\":0}\n[2026-11-09T18:56:56.203Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=n/a pidAfter=48996 suppressed=0 executed=1 circuitOpenUntil=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:56:56.336Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:15.227Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":4}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:15.228Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:15.229Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n[2026-11-09T18:57:15.229Z] [DEBUG] Gateway state changed: starting -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:15.315Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:15.316Z] [INFO] Gateway start requested (port=60862)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:15.317Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:15.928Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:16.454Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:18.506Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":5}\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"custom-sessionc/mock-coder\" for provider \"custom-sessionc\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T18:57:22.614Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:22.617Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":6100,\"providerEnvMs\":12,\"channelStartupPolicyMs\":8,\"uvEnvMs\":1,\"mcpEnvMs\":6,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":0,\"totalMs\":6158,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:22.617Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=60862, entry=\"D:\\ClawX-work\\session-task-unified-relay-20261109\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 60862 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\ClawX-work\\session-task-unified-relay-20261109\\openclaw_runtime\", bundledBin=yes, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:22.725Z] [INFO] Gateway process started (pid=48500)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:22.726Z] [DEBUG] Gateway manager now owns process pid=48500\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:24.818Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:26.925Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:29.028Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:31.132Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:33.220Z] [DEBUG] Still waiting for Gateway... (attempt 51/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:35.335Z] [DEBUG] Still waiting for Gateway... (attempt 61/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:36.512Z] [DEBUG] [Gateway stderr] (node:48500) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T18:57:36.513Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:36.513Z] [DEBUG] [Gateway stderr] (node:48500) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T18:57:36.514Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:38.957Z] [DEBUG] Still waiting for Gateway... (attempt 71/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:43.563Z] [INFO] Gateway stop requested\n[2026-11-09T18:57:43.563Z] [DEBUG] Gateway lifecycle epoch advanced to 6 (stop)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:56726/44dfac96-5324-4aed-9184-9e21886deef0\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:44.419Z] [DEBUG] Gateway start/readiness-probe superseded (expectedEpoch=5, currentEpoch=6)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:44.420Z] [INFO] Sending kill to Gateway process (pid=48500)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T18:57:48.575Z] [WARN] Gateway shutdown timed out during app quit; proceeding with forced quit\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:51.004Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":6}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:51.004Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:51.004Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:51.004Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:51.005Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T18:57:52.081Z] [WARN] Windows process-tree kill failed for Gateway pid=48500: Error: Command failed: taskkill /F /PID 48500 /T\n\nError: Command failed: taskkill /F /PID 48500 /T\n\n    at genericNodeError (node:internal/errors:985:15)\n    at wrappedFn (node:internal/errors:539:14)\n    at ChildProcess.exithandler (node:child_process:417:12)\n    at ChildProcess.emit (node:events:508:28)\n    at maybeClose (node:internal/child_process:1100:16)\n    at Socket.<anonymous> (node:internal/child_process:457:11)\n    at Socket.emit (node:events:508:28)\n    at Pipe.<anonymous> (node:net:346:12)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:52.293Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-09T18:57:52.294Z] [WARN] Forced gateway process termination completed after quit timeout\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-09T18:57:52.294Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n[2026-11-09T18:57:52.294Z] [DEBUG] Gateway state changed: starting -> stopped\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-09T18:55:47.605Z",
+                  "annotations": [],
+                  "attachments": [],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron.ts",
+                    "column": 53,
+                    "line": 469
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "26fe0be2f07f123b9e74-91dffae853fee50d06a5",
+          "file": "session-context-commit-recovery.spec.ts",
+          "line": 248,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mTesting stopped early after 1 maximum allowed failures.\u001b[39m"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-11-09T18:55:46.100Z",
+    "duration": 227009.571,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

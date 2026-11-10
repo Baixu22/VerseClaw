@@ -1,0 +1,227 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-unified-session-relay-01a1babd",
+  "candidate": "0f5d88f83226d7fb3534ea5f544dfbe7fffa2e35",
+  "baseline": "5e9e865dc911e32615338c593694fa74d7bf8400",
+  "status": "existing_baseline_failure",
+  "command": "harness:ci direct installed Node equivalent",
+  "firstFailedStep": "catalogs",
+  "error": "executor site points to a blank line for flag worktree-backend: openclaw_runtime/src/agents/orchestrator-run-observed.ts:435",
+  "catalogObject": "8d0953a2e3ec5d9eedb972e7b4761757c852b38c",
+  "baselineObject": "8d0953a2e3ec5d9eedb972e7b4761757c852b38c",
+  "remainingSteps": "not run after fail-fast",
+  "firstCatalogFailureResolvedBy": "359ed20bef6ed40ccd5d7acb86855a323afdbfeb",
+  "currentStep": "agent-dev-audit",
+  "currentDisqualifiers": [
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:workbench",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-workbench/evidence.json is 86.45h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:deep-test",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-deep-test/report.json is 86.45h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:deep-test-history",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-deep-test/history.json is 86.45h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:quality",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-quality/report.json is 86.45h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "latest-decision-blocked",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "Latest deep-test decision is blocked: vitest-agent-dev, typecheck, contract exceeded hard performance limits.",
+      "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:vitest-agent-dev",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "vitest-agent-dev exceeded hard limit: 180444ms > 21000ms.",
+      "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:typecheck",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "typecheck exceeded hard limit: 81259ms > 45000ms.",
+      "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:contract",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "contract exceeded hard limit: 3977ms > 3000ms.",
+      "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+    }
+  ],
+  "currentPrioritizedFindings": [
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:deep-test",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-deep-test/report.json is 86.45h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review.",
+      "impact": "high",
+      "effort": "low",
+      "validationCommands": [
+        "pnpm agent-dev:workbench",
+        "pnpm agent-dev:deep-test:reuse",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:deep-test-history",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-deep-test/history.json is 86.45h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review.",
+      "impact": "high",
+      "effort": "low",
+      "validationCommands": [
+        "pnpm agent-dev:workbench",
+        "pnpm agent-dev:deep-test:reuse",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:quality",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-quality/report.json is 86.45h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review.",
+      "impact": "high",
+      "effort": "low",
+      "validationCommands": [
+        "pnpm agent-dev:workbench",
+        "pnpm agent-dev:deep-test:reuse",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-stale:workbench",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-workbench/evidence.json is 86.45h old, beyond the 24h freshness window.",
+      "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review.",
+      "impact": "high",
+      "effort": "low",
+      "validationCommands": [
+        "pnpm agent-dev:workbench",
+        "pnpm agent-dev:deep-test:reuse",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "latest-decision-blocked",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "Latest deep-test decision is blocked: vitest-agent-dev, typecheck, contract exceeded hard performance limits.",
+      "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence.",
+      "impact": "high",
+      "effort": "medium",
+      "validationCommands": [
+        "pnpm agent-dev:deep-test --reuse-build --fast-unit --fast-typecheck --smoke-e2e",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:contract",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "contract exceeded hard limit: 3977ms > 3000ms.",
+      "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources.",
+      "impact": "high",
+      "effort": "medium",
+      "validationCommands": [
+        "pnpm agent-dev:deep-test --reuse-build --fast-unit --fast-typecheck --smoke-e2e",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:typecheck",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "typecheck exceeded hard limit: 81259ms > 45000ms.",
+      "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
+      "impact": "high",
+      "effort": "medium",
+      "validationCommands": [
+        "pnpm agent-dev:deep-test --reuse-build --fast-unit --fast-typecheck --smoke-e2e",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:vitest-agent-dev",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "vitest-agent-dev exceeded hard limit: 180444ms > 21000ms.",
+      "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe.",
+      "impact": "high",
+      "effort": "medium",
+      "validationCommands": [
+        "pnpm agent-dev:deep-test --reuse-build --fast-unit --fast-typecheck --smoke-e2e",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-watch:i18n",
+      "severity": "warn",
+      "priority": "P1",
+      "message": "i18n exceeded target: 1103ms > 1000ms.",
+      "recommendation": "Keep literal namespace scans bounded to source and locale directories.",
+      "impact": "medium",
+      "effort": "low",
+      "validationCommands": [
+        "pnpm agent-dev:fast",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-watch:playwright-agent-dev",
+      "severity": "warn",
+      "priority": "P1",
+      "message": "playwright-agent-dev exceeded target: 38302ms > 25000ms.",
+      "recommendation": "Use pnpm agent-dev:deep-test:reuse for the smoke daily loop, and pnpm agent-dev:deep-test:reuse:full only when full Agent Dev E2E evidence is needed without rebuilding.",
+      "impact": "medium",
+      "effort": "low",
+      "validationCommands": [
+        "pnpm agent-dev:fast",
+        "pnpm agent-dev:audit:report"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2468 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-u5-lifecycle",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "case": "U5 archive restore and confirmed delete retry their retained operationId after Runtime commit and a Main gate-clear failure",
+  "project": {
+    "workspaceId": "u5-lifecycle",
+    "rootPath": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-archive-final-results\\session-lifecycle-recovery-eebee-d-a-Main-gate-clear-failure\\workspace",
+    "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+  },
+  "neighbour": "agent:main:dashboard:d3463664-b565-4bee-b781-6ce93efe4eeb",
+  "recovery": "existing owner reads; archive/restore/delete also retry the persisted Main gate operationId",
+  "faultInjection": "before: no forwarding; after: real Main success reply held/dropped; gate-clear: temp write fails only after real Runtime commit",
+  "lifecycle": [
+    {
+      "action": "archive",
+      "before": {
+        "live": {
+          "key": "agent:main:session-1794276756327-ulifecycle",
+          "sessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+        },
+        "archived": null
+      },
+      "rejection": {
+        "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+        "action": "archive",
+        "at": "before",
+        "module": "sessions",
+        "hits": 1,
+        "request": {
+          "id": "ddfdb9f7-a0d7-4e4f-9629-34ab839850b8",
+          "module": "sessions",
+          "action": "archive",
+          "payload": {
+            "id": "agent:main:session-1794276756327-ulifecycle",
+            "originalWorkspaceId": null,
+            "originalFolderId": null
+          },
+          "deadline": {
+            "deadlineAtMs": 1794276847447,
+            "timeoutMs": 60000,
+            "stage": "renderer",
+            "requestId": "ddfdb9f7-a0d7-4e4f-9629-34ab839850b8"
+          }
+        },
+        "phase": "finished",
+        "outcome": "reject"
+      },
+      "pendingGate": {
+        "path": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json",
+        "attempts": [
+          {
+            "operationId": "fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73",
+            "operationKind": "archive",
+            "requestDigest": "546cd9d50535142ffb86535d1f66052e4cd38b427f95f7e189faa13daf72e41a",
+            "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+            "agentId": "main",
+            "createdAt": 1794276788404,
+            "updatedAt": 1794276788617,
+            "workspaceId": "u5-lifecycle",
+            "runtimeReceipt": {
+              "key": "agent:main:session-1794276756327-ulifecycle",
+              "operationId": "fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73",
+              "journalState": "runtime_committed",
+              "sessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+            },
+            "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+            "coordinatorCommitted": true,
+            "resourceReclamationAttempts": [
+              {
+                "schema": "LongSessionResourceReclamation/v1",
+                "action": "session-archive",
+                "scope": {
+                  "workspaceId": "u5-lifecycle",
+                  "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+                  "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+                },
+                "generatedAt": "2026-11-10T02:13:08.609Z",
+                "owners": [
+                  {
+                    "kind": "terminal",
+                    "owner": "TerminalSessionManager",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "action does not close terminals; keep_on_leave preserved"
+                  },
+                  {
+                    "kind": "browser",
+                    "owner": "HostAgentBrowserService",
+                    "outcome": "not-owned",
+                    "authority": "observed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "action does not close browser sessions"
+                  },
+                  {
+                    "kind": "background-port",
+                    "owner": "ResourceTracker",
+                    "outcome": "not-owned",
+                    "authority": "observed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "action does not stop managed ports"
+                  },
+                  {
+                    "kind": "worktree",
+                    "owner": "WorktreeService",
+                    "outcome": "not-owned",
+                    "authority": "observed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "action preserves worktrees"
+                  },
+                  {
+                    "kind": "admission-permit",
+                    "owner": "SessionAdmissionRegistry",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+                  }
+                ],
+                "activeResidue": 0,
+                "keptOnLeave": 0,
+                "recoveryRequired": false,
+                "recoveryId": null,
+                "retryable": false
+              }
+            ],
+            "resourcesCommitted": true,
+            "terminalClosed": true
+          }
+        ],
+        "phase": "committed-before-gate-clear",
+        "persisted": {
+          "operationId": "fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73",
+          "operationKind": "archive",
+          "requestDigest": "546cd9d50535142ffb86535d1f66052e4cd38b427f95f7e189faa13daf72e41a",
+          "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+          "agentId": "main",
+          "createdAt": 1794276788404,
+          "updatedAt": 1794276788617,
+          "workspaceId": "u5-lifecycle",
+          "runtimeReceipt": {
+            "key": "agent:main:session-1794276756327-ulifecycle",
+            "operationId": "fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73",
+            "journalState": "runtime_committed",
+            "sessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+          },
+          "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+          "coordinatorCommitted": true,
+          "resourceReclamationAttempts": [
+            {
+              "schema": "LongSessionResourceReclamation/v1",
+              "action": "session-archive",
+              "scope": {
+                "workspaceId": "u5-lifecycle",
+                "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+                "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+              },
+              "generatedAt": "2026-11-10T02:13:08.609Z",
+              "owners": [
+                {
+                  "kind": "terminal",
+                  "owner": "TerminalSessionManager",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "action does not close terminals; keep_on_leave preserved"
+                },
+                {
+                  "kind": "browser",
+                  "owner": "HostAgentBrowserService",
+                  "outcome": "not-owned",
+                  "authority": "observed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "action does not close browser sessions"
+                },
+                {
+                  "kind": "background-port",
+                  "owner": "ResourceTracker",
+                  "outcome": "not-owned",
+                  "authority": "observed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "action does not stop managed ports"
+                },
+                {
+                  "kind": "worktree",
+                  "owner": "WorktreeService",
+                  "outcome": "not-owned",
+                  "authority": "observed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "action preserves worktrees"
+                },
+                {
+                  "kind": "admission-permit",
+                  "owner": "SessionAdmissionRegistry",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+                }
+              ],
+              "activeResidue": 0,
+              "keptOnLeave": 0,
+              "recoveryRequired": false,
+              "recoveryId": null,
+              "retryable": false
+            }
+          ],
+          "resourcesCommitted": true,
+          "terminalClosed": true
+        }
+      },
+      "runtimeCommittedReceipt": {
+        "ok": true,
+        "key": "agent:main:session-1794276756327-ulifecycle",
+        "operationId": "fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73",
+        "journalState": "runtime_committed",
+        "archived": true,
+        "sessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+        "archivedTranscriptPath": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-user-data-j8iI6r\\openclaw-source-state\\agents\\main\\sessions\\9255a4ff-5c83-4855-8709-a1aa65cba219.archived.jsonl",
+        "archiveIndexPath": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-user-data-j8iI6r\\openclaw-source-state\\agents\\main\\sessions\\sessions.archives.json"
+      },
+      "committed": {
+        "live": null,
+        "archived": {
+          "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+          "sessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+        }
+      },
+      "failedHost": {
+        "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+        "action": "archive",
+        "at": "observe",
+        "module": "sessions",
+        "hits": 1,
+        "request": {
+          "id": "6e3c8811-7f28-4d94-af5c-17cf0b2dc772",
+          "module": "sessions",
+          "action": "archive",
+          "payload": {
+            "id": "agent:main:session-1794276756327-ulifecycle",
+            "originalWorkspaceId": null,
+            "originalFolderId": null
+          },
+          "deadline": {
+            "deadlineAtMs": 1794276848396,
+            "timeoutMs": 60000,
+            "stage": "renderer",
+            "requestId": "6e3c8811-7f28-4d94-af5c-17cf0b2dc772"
+          }
+        },
+        "reply": {
+          "id": "6e3c8811-7f28-4d94-af5c-17cf0b2dc772",
+          "ok": true,
+          "data": {
+            "success": false,
+            "operationId": "fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73",
+            "sessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+            "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+            "resourceReclamation": {
+              "schema": "LongSessionResourceReclamation/v1",
+              "action": "session-archive",
+              "scope": {
+                "workspaceId": "u5-lifecycle",
+                "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+                "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+              },
+              "generatedAt": "2026-11-10T02:13:08.609Z",
+              "owners": [
+                {
+                  "kind": "terminal",
+                  "owner": "TerminalSessionManager",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "action does not close terminals; keep_on_leave preserved"
+                },
+                {
+                  "kind": "browser",
+                  "owner": "HostAgentBrowserService",
+                  "outcome": "not-owned",
+                  "authority": "observed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "action does not close browser sessions"
+                },
+                {
+                  "kind": "background-port",
+                  "owner": "ResourceTracker",
+                  "outcome": "not-owned",
+                  "authority": "observed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "action does not stop managed ports"
+                },
+                {
+                  "kind": "worktree",
+                  "owner": "WorktreeService",
+                  "outcome": "not-owned",
+                  "authority": "observed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "action preserves worktrees"
+                },
+                {
+                  "kind": "admission-permit",
+                  "owner": "SessionAdmissionRegistry",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+                }
+              ],
+              "activeResidue": 0,
+              "keptOnLeave": 0,
+              "recoveryRequired": false,
+              "recoveryId": null,
+              "retryable": false
+            },
+            "error": "Atomic write failed for D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json (EIO): agent-injected gate-clear failure after Runtime commit",
+            "retryable": true,
+            "recoveryRequired": true
+          }
+        },
+        "phase": "finished"
+      },
+      "retainedGate": {
+        "path": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json",
+        "attempts": [
+          {
+            "operationId": "fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73",
+            "operationKind": "archive",
+            "requestDigest": "546cd9d50535142ffb86535d1f66052e4cd38b427f95f7e189faa13daf72e41a",
+            "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+            "agentId": "main",
+            "createdAt": 1794276788404,
+            "updatedAt": 1794276788617,
+            "workspaceId": "u5-lifecycle",
+            "runtimeReceipt": {
+              "key": "agent:main:session-1794276756327-ulifecycle",
+              "operationId": "fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73",
+              "journalState": "runtime_committed",
+              "sessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+            },
+            "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+            "coordinatorCommitted": true,
+            "resourceReclamationAttempts": [
+              {
+                "schema": "LongSessionResourceReclamation/v1",
+                "action": "session-archive",
+                "scope": {
+                  "workspaceId": "u5-lifecycle",
+                  "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+                  "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+                },
+                "generatedAt": "2026-11-10T02:13:08.609Z",
+                "owners": [
+                  {
+                    "kind": "terminal",
+                    "owner": "TerminalSessionManager",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "action does not close terminals; keep_on_leave preserved"
+                  },
+                  {
+                    "kind": "browser",
+                    "owner": "HostAgentBrowserService",
+                    "outcome": "not-owned",
+                    "authority": "observed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "action does not close browser sessions"
+                  },
+                  {
+                    "kind": "background-port",
+                    "owner": "ResourceTracker",
+                    "outcome": "not-owned",
+                    "authority": "observed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "action does not stop managed ports"
+                  },
+                  {
+                    "kind": "worktree",
+                    "owner": "WorktreeService",
+                    "outcome": "not-owned",
+                    "authority": "observed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "action preserves worktrees"
+                  },
+                  {
+                    "kind": "admission-permit",
+                    "owner": "SessionAdmissionRegistry",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+                  }
+                ],
+                "activeResidue": 0,
+                "keptOnLeave": 0,
+                "recoveryRequired": false,
+                "recoveryId": null,
+                "retryable": false
+              }
+            ],
+            "resourcesCommitted": true,
+            "terminalClosed": true
+          }
+        ],
+        "phase": "clear-failed",
+        "persisted": {
+          "operationId": "fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73",
+          "operationKind": "archive",
+          "requestDigest": "546cd9d50535142ffb86535d1f66052e4cd38b427f95f7e189faa13daf72e41a",
+          "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+          "agentId": "main",
+          "createdAt": 1794276788404,
+          "updatedAt": 1794276789103,
+          "workspaceId": "u5-lifecycle",
+          "runtimeReceipt": {
+            "key": "agent:main:session-1794276756327-ulifecycle",
+            "operationId": "fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73",
+            "journalState": "runtime_committed",
+            "sessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+          },
+          "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+          "coordinatorCommitted": true,
+          "resourceReclamationAttempts": [
+            {
+              "schema": "LongSessionResourceReclamation/v1",
+              "action": "session-archive",
+              "scope": {
+                "workspaceId": "u5-lifecycle",
+                "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+                "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+              },
+              "generatedAt": "2026-11-10T02:13:08.609Z",
+              "owners": [
+                {
+                  "kind": "terminal",
+                  "owner": "TerminalSessionManager",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "action does not close terminals; keep_on_leave preserved"
+                },
+                {
+                  "kind": "browser",
+                  "owner": "HostAgentBrowserService",
+                  "outcome": "not-owned",
+                  "authority": "observed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "action does not close browser sessions"
+                },
+                {
+                  "kind": "background-port",
+                  "owner": "ResourceTracker",
+                  "outcome": "not-owned",
+                  "authority": "observed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "action does not stop managed ports"
+                },
+                {
+                  "kind": "worktree",
+                  "owner": "WorktreeService",
+                  "outcome": "not-owned",
+                  "authority": "observed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "action preserves worktrees"
+                },
+                {
+                  "kind": "admission-permit",
+                  "owner": "SessionAdmissionRegistry",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+                }
+              ],
+              "activeResidue": 0,
+              "keptOnLeave": 0,
+              "recoveryRequired": false,
+              "recoveryId": null,
+              "retryable": false
+            }
+          ],
+          "resourcesCommitted": true,
+          "terminalClosed": true,
+          "tailError": "Atomic write failed for D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json (EIO): agent-injected gate-clear failure after Runtime commit"
+        }
+      },
+      "retry": {
+        "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+        "action": "archive",
+        "at": "after",
+        "module": "sessions",
+        "hits": 1,
+        "request": {
+          "id": "7c7ec000-ab2e-4670-a169-00ae675fc03a",
+          "module": "sessions",
+          "action": "archive",
+          "payload": {
+            "id": "agent:main:session-1794276756327-ulifecycle",
+            "resumeOperationId": "fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73"
+          },
+          "deadline": {
+            "deadlineAtMs": 1794276853465,
+            "timeoutMs": 60000,
+            "stage": "renderer",
+            "requestId": "7c7ec000-ab2e-4670-a169-00ae675fc03a"
+          }
+        },
+        "reply": {
+          "id": "7c7ec000-ab2e-4670-a169-00ae675fc03a",
+          "ok": true,
+          "data": {
+            "success": true,
+            "operationId": "fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73",
+            "sessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+            "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+            "resourceReclamation": {
+              "schema": "LongSessionResourceReclamation/v1",
+              "action": "session-archive",
+              "scope": {
+                "workspaceId": "u5-lifecycle",
+                "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+                "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+              },
+              "generatedAt": "2026-11-10T02:13:08.609Z",
+              "owners": [
+                {
+                  "kind": "terminal",
+                  "owner": "TerminalSessionManager",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "action does not close terminals; keep_on_leave preserved"
+                },
+                {
+                  "kind": "browser",
+                  "owner": "HostAgentBrowserService",
+                  "outcome": "not-owned",
+                  "authority": "observed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "action does not close browser sessions"
+                },
+                {
+                  "kind": "background-port",
+                  "owner": "ResourceTracker",
+                  "outcome": "not-owned",
+                  "authority": "observed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "action does not stop managed ports"
+                },
+                {
+                  "kind": "worktree",
+                  "owner": "WorktreeService",
+                  "outcome": "not-owned",
+                  "authority": "observed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "action preserves worktrees"
+                },
+                {
+                  "kind": "admission-permit",
+                  "owner": "SessionAdmissionRegistry",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+                }
+              ],
+              "activeResidue": 0,
+              "keptOnLeave": 0,
+              "recoveryRequired": false,
+              "recoveryId": null,
+              "retryable": false
+            }
+          }
+        },
+        "phase": "finished",
+        "outcome": "pass"
+      },
+      "clearedGate": {
+        "path": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json",
+        "attempts": [
+          {
+            "operationId": "fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73",
+            "operationKind": "archive",
+            "requestDigest": "546cd9d50535142ffb86535d1f66052e4cd38b427f95f7e189faa13daf72e41a",
+            "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+            "agentId": "main",
+            "createdAt": 1794276788404,
+            "updatedAt": 1794276788617,
+            "workspaceId": "u5-lifecycle",
+            "runtimeReceipt": {
+              "key": "agent:main:session-1794276756327-ulifecycle",
+              "operationId": "fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73",
+              "journalState": "runtime_committed",
+              "sessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+            },
+            "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+            "coordinatorCommitted": true,
+            "resourceReclamationAttempts": [
+              {
+                "schema": "LongSessionResourceReclamation/v1",
+                "action": "session-archive",
+                "scope": {
+                  "workspaceId": "u5-lifecycle",
+                  "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+                  "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+                },
+                "generatedAt": "2026-11-10T02:13:08.609Z",
+                "owners": [
+                  {
+                    "kind": "terminal",
+                    "owner": "TerminalSessionManager",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "action does not close terminals; keep_on_leave preserved"
+                  },
+                  {
+                    "kind": "browser",
+                    "owner": "HostAgentBrowserService",
+                    "outcome": "not-owned",
+                    "authority": "observed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "action does not close browser sessions"
+                  },
+                  {
+                    "kind": "background-port",
+                    "owner": "ResourceTracker",
+                    "outcome": "not-owned",
+                    "authority": "observed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "action does not stop managed ports"
+                  },
+                  {
+                    "kind": "worktree",
+                    "owner": "WorktreeService",
+                    "outcome": "not-owned",
+                    "authority": "observed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "action preserves worktrees"
+                  },
+                  {
+                    "kind": "admission-permit",
+                    "owner": "SessionAdmissionRegistry",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+                  }
+                ],
+                "activeResidue": 0,
+                "keptOnLeave": 0,
+                "recoveryRequired": false,
+                "recoveryId": null,
+                "retryable": false
+              }
+            ],
+            "resourcesCommitted": true,
+            "terminalClosed": true
+          },
+          {
+            "operationId": "fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73",
+            "operationKind": "archive",
+            "requestDigest": "546cd9d50535142ffb86535d1f66052e4cd38b427f95f7e189faa13daf72e41a",
+            "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+            "agentId": "main",
+            "createdAt": 1794276788404,
+            "updatedAt": 1794276793495,
+            "workspaceId": "u5-lifecycle",
+            "runtimeReceipt": {
+              "key": "agent:main:session-1794276756327-ulifecycle",
+              "operationId": "fb7f0b09-0a64-4f2f-aac9-c8768c4e5f73",
+              "journalState": "runtime_committed",
+              "sessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+            },
+            "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+            "coordinatorCommitted": true,
+            "resourceReclamationAttempts": [
+              {
+                "schema": "LongSessionResourceReclamation/v1",
+                "action": "session-archive",
+                "scope": {
+                  "workspaceId": "u5-lifecycle",
+                  "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+                  "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+                },
+                "generatedAt": "2026-11-10T02:13:08.609Z",
+                "owners": [
+                  {
+                    "kind": "terminal",
+                    "owner": "TerminalSessionManager",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "action does not close terminals; keep_on_leave preserved"
+                  },
+                  {
+                    "kind": "browser",
+                    "owner": "HostAgentBrowserService",
+                    "outcome": "not-owned",
+                    "authority": "observed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "action does not close browser sessions"
+                  },
+                  {
+                    "kind": "background-port",
+                    "owner": "ResourceTracker",
+                    "outcome": "not-owned",
+                    "authority": "observed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "action does not stop managed ports"
+                  },
+                  {
+                    "kind": "worktree",
+                    "owner": "WorktreeService",
+                    "outcome": "not-owned",
+                    "authority": "observed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "action preserves worktrees"
+                  },
+                  {
+                    "kind": "admission-permit",
+                    "owner": "SessionAdmissionRegistry",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+                  }
+                ],
+                "activeResidue": 0,
+                "keptOnLeave": 0,
+                "recoveryRequired": false,
+                "recoveryId": null,
+                "retryable": false
+              }
+            ],
+            "resourcesCommitted": true,
+            "terminalClosed": true,
+            "tailError": "Atomic write failed for D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json (EIO): agent-injected gate-clear failure after Runtime commit"
+          }
+        ],
+        "phase": "clear-failed",
+        "persisted": null
+      },
+      "recovered": true,
+      "recovery": "same persisted operationId, original Runtime committed receipt, original Main retry and owner queries",
+      "retryEntry": "Archive pending operation row invokes the existing Host action with the exact stored operationId"
+    },
+    {
+      "action": "restore",
+      "before": {
+        "live": null,
+        "archived": {
+          "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+          "sessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+        }
+      },
+      "rejection": {
+        "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+        "action": "restore",
+        "at": "before",
+        "module": "sessions",
+        "hits": 1,
+        "request": {
+          "id": "cebb7387-b357-408a-892e-bcbdcfa76337",
+          "module": "sessions",
+          "action": "restore",
+          "payload": {
+            "id": "agent:main:session-1794276756327-ulifecycle"
+          },
+          "deadline": {
+            "deadlineAtMs": 1794276855265,
+            "timeoutMs": 60000,
+            "stage": "renderer",
+            "requestId": "cebb7387-b357-408a-892e-bcbdcfa76337"
+          }
+        },
+        "phase": "finished",
+        "outcome": "reject"
+      },
+      "pendingGate": {
+        "path": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json",
+        "attempts": [
+          {
+            "operationId": "db437105-9008-487c-ab9c-a98d8dc03ddd",
+            "operationKind": "restore",
+            "requestDigest": "b3e00c3f8d41f0233334acb24b249b76d1b852679e154734c9d86209fe73ed91",
+            "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+            "agentId": "main",
+            "createdAt": 1794276795472,
+            "updatedAt": 1794276795644,
+            "workspaceId": "u5-lifecycle",
+            "runtimeReceipt": {
+              "key": "agent:main:session-1794276756327-ulifecycle",
+              "operationId": "db437105-9008-487c-ab9c-a98d8dc03ddd",
+              "journalState": "runtime_committed",
+              "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+              "previousSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+            },
+            "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+            "coordinatorCommitted": true
+          }
+        ],
+        "phase": "committed-before-gate-clear",
+        "persisted": {
+          "operationId": "db437105-9008-487c-ab9c-a98d8dc03ddd",
+          "operationKind": "restore",
+          "requestDigest": "b3e00c3f8d41f0233334acb24b249b76d1b852679e154734c9d86209fe73ed91",
+          "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+          "agentId": "main",
+          "createdAt": 1794276795472,
+          "updatedAt": 1794276795644,
+          "workspaceId": "u5-lifecycle",
+          "runtimeReceipt": {
+            "key": "agent:main:session-1794276756327-ulifecycle",
+            "operationId": "db437105-9008-487c-ab9c-a98d8dc03ddd",
+            "journalState": "runtime_committed",
+            "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+            "previousSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+          },
+          "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+          "coordinatorCommitted": true
+        }
+      },
+      "runtimeCommittedReceipt": {
+        "ok": true,
+        "key": "agent:main:session-1794276756327-ulifecycle",
+        "operationId": "db437105-9008-487c-ab9c-a98d8dc03ddd",
+        "journalState": "runtime_committed",
+        "restored": true,
+        "previousSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+        "entry": {
+          "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+          "updatedAt": 1794276795518,
+          "label": "U5 lifecycle coordinator",
+          "sessionFile": "95248ee3-3da5-42df-a086-b21d104511a2.jsonl",
+          "sessionStartedAt": 1794276795518
+        },
+        "transcriptPath": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-user-data-j8iI6r\\openclaw-source-state\\agents\\main\\sessions\\95248ee3-3da5-42df-a086-b21d104511a2.jsonl",
+        "archiveIndexPath": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-user-data-j8iI6r\\openclaw-source-state\\agents\\main\\sessions\\sessions.archives.json"
+      },
+      "committed": {
+        "live": {
+          "key": "agent:main:session-1794276756327-ulifecycle",
+          "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+        },
+        "archived": null
+      },
+      "failedHost": {
+        "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+        "action": "restore",
+        "at": "observe",
+        "module": "sessions",
+        "hits": 1,
+        "request": {
+          "id": "1bc42045-9a20-48cd-a974-ff6ca5c922d7",
+          "module": "sessions",
+          "action": "restore",
+          "payload": {
+            "id": "agent:main:session-1794276756327-ulifecycle"
+          },
+          "deadline": {
+            "deadlineAtMs": 1794276855465,
+            "timeoutMs": 60000,
+            "stage": "renderer",
+            "requestId": "1bc42045-9a20-48cd-a974-ff6ca5c922d7"
+          }
+        },
+        "reply": {
+          "id": "1bc42045-9a20-48cd-a974-ff6ca5c922d7",
+          "ok": true,
+          "data": {
+            "success": false,
+            "operationId": "db437105-9008-487c-ab9c-a98d8dc03ddd",
+            "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+            "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+            "previousSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+            "error": "Atomic write failed for D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json (EIO): agent-injected gate-clear failure after Runtime commit",
+            "retryable": true,
+            "recoveryRequired": true
+          }
+        },
+        "phase": "finished"
+      },
+      "retainedGate": {
+        "path": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json",
+        "attempts": [
+          {
+            "operationId": "db437105-9008-487c-ab9c-a98d8dc03ddd",
+            "operationKind": "restore",
+            "requestDigest": "b3e00c3f8d41f0233334acb24b249b76d1b852679e154734c9d86209fe73ed91",
+            "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+            "agentId": "main",
+            "createdAt": 1794276795472,
+            "updatedAt": 1794276795644,
+            "workspaceId": "u5-lifecycle",
+            "runtimeReceipt": {
+              "key": "agent:main:session-1794276756327-ulifecycle",
+              "operationId": "db437105-9008-487c-ab9c-a98d8dc03ddd",
+              "journalState": "runtime_committed",
+              "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+              "previousSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+            },
+            "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+            "coordinatorCommitted": true
+          }
+        ],
+        "phase": "clear-failed",
+        "persisted": {
+          "operationId": "db437105-9008-487c-ab9c-a98d8dc03ddd",
+          "operationKind": "restore",
+          "requestDigest": "b3e00c3f8d41f0233334acb24b249b76d1b852679e154734c9d86209fe73ed91",
+          "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+          "agentId": "main",
+          "createdAt": 1794276795472,
+          "updatedAt": 1794276796204,
+          "workspaceId": "u5-lifecycle",
+          "runtimeReceipt": {
+            "key": "agent:main:session-1794276756327-ulifecycle",
+            "operationId": "db437105-9008-487c-ab9c-a98d8dc03ddd",
+            "journalState": "runtime_committed",
+            "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+            "previousSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+          },
+          "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+          "coordinatorCommitted": true,
+          "tailError": "Atomic write failed for D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json (EIO): agent-injected gate-clear failure after Runtime commit"
+        }
+      },
+      "retry": {
+        "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+        "action": "restore",
+        "at": "after",
+        "module": "sessions",
+        "hits": 1,
+        "request": {
+          "id": "20810ce8-1ff0-4745-982f-e1bcd87e21c1",
+          "module": "sessions",
+          "action": "restore",
+          "payload": {
+            "id": "agent:main:session-1794276756327-ulifecycle",
+            "resumeOperationId": "db437105-9008-487c-ab9c-a98d8dc03ddd"
+          },
+          "deadline": {
+            "deadlineAtMs": 1794276856722,
+            "timeoutMs": 60000,
+            "stage": "renderer",
+            "requestId": "20810ce8-1ff0-4745-982f-e1bcd87e21c1"
+          }
+        },
+        "reply": {
+          "id": "20810ce8-1ff0-4745-982f-e1bcd87e21c1",
+          "ok": true,
+          "data": {
+            "success": true,
+            "operationId": "db437105-9008-487c-ab9c-a98d8dc03ddd",
+            "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+            "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+            "previousSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+          }
+        },
+        "phase": "finished",
+        "outcome": "pass"
+      },
+      "clearedGate": {
+        "path": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json",
+        "attempts": [
+          {
+            "operationId": "db437105-9008-487c-ab9c-a98d8dc03ddd",
+            "operationKind": "restore",
+            "requestDigest": "b3e00c3f8d41f0233334acb24b249b76d1b852679e154734c9d86209fe73ed91",
+            "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+            "agentId": "main",
+            "createdAt": 1794276795472,
+            "updatedAt": 1794276795644,
+            "workspaceId": "u5-lifecycle",
+            "runtimeReceipt": {
+              "key": "agent:main:session-1794276756327-ulifecycle",
+              "operationId": "db437105-9008-487c-ab9c-a98d8dc03ddd",
+              "journalState": "runtime_committed",
+              "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+              "previousSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+            },
+            "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+            "coordinatorCommitted": true
+          },
+          {
+            "operationId": "db437105-9008-487c-ab9c-a98d8dc03ddd",
+            "operationKind": "restore",
+            "requestDigest": "b3e00c3f8d41f0233334acb24b249b76d1b852679e154734c9d86209fe73ed91",
+            "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+            "agentId": "main",
+            "createdAt": 1794276795472,
+            "updatedAt": 1794276796747,
+            "workspaceId": "u5-lifecycle",
+            "runtimeReceipt": {
+              "key": "agent:main:session-1794276756327-ulifecycle",
+              "operationId": "db437105-9008-487c-ab9c-a98d8dc03ddd",
+              "journalState": "runtime_committed",
+              "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+              "previousSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219"
+            },
+            "expectedSessionId": "9255a4ff-5c83-4855-8709-a1aa65cba219",
+            "coordinatorCommitted": true,
+            "tailError": "Atomic write failed for D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json (EIO): agent-injected gate-clear failure after Runtime commit"
+          }
+        ],
+        "phase": "clear-failed",
+        "persisted": null
+      },
+      "recovered": true,
+      "recovery": "same persisted operationId, original Runtime committed receipt, original Main retry and owner queries",
+      "retryEntry": "Archive pending operation row invokes the existing Host action with the exact stored operationId"
+    },
+    {
+      "action": "delete",
+      "before": {
+        "live": {
+          "key": "agent:main:session-1794276756327-ulifecycle",
+          "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+        },
+        "archived": null
+      },
+      "rejection": {
+        "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+        "action": "delete",
+        "at": "before",
+        "module": "sessions",
+        "hits": 1,
+        "request": {
+          "id": "0a3fa77b-a91e-44f8-9604-43d2a78d2ed4",
+          "module": "sessions",
+          "action": "delete",
+          "payload": {
+            "id": "agent:main:session-1794276756327-ulifecycle"
+          },
+          "deadline": {
+            "deadlineAtMs": 1794276862242,
+            "timeoutMs": 60000,
+            "stage": "renderer",
+            "requestId": "0a3fa77b-a91e-44f8-9604-43d2a78d2ed4"
+          }
+        },
+        "phase": "finished",
+        "outcome": "reject"
+      },
+      "pendingGate": {
+        "path": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json",
+        "attempts": [
+          {
+            "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+            "operationKind": "delete",
+            "requestDigest": "579c5283458ca5baab50c52bc1df16e992e438f500ed441bb9e20b05cd10436b",
+            "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+            "agentId": "main",
+            "createdAt": 1794276803200,
+            "updatedAt": 1794276803672,
+            "workspaceId": "u5-lifecycle",
+            "runtimeReceipt": {
+              "key": "agent:main:session-1794276756327-ulifecycle",
+              "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+              "journalState": "runtime_committed",
+              "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+            },
+            "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+            "localSweepCommitted": true,
+            "localSweepSkipped": "legacy-store-absent",
+            "coordinatorCommitted": true,
+            "resourceReclamationAttempts": [
+              {
+                "schema": "LongSessionResourceReclamation/v1",
+                "action": "session-delete",
+                "scope": {
+                  "workspaceId": "u5-lifecycle",
+                  "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+                  "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+                },
+                "generatedAt": "2026-11-10T02:13:23.664Z",
+                "owners": [
+                  {
+                    "kind": "terminal",
+                    "owner": "TerminalSessionManager",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0
+                  },
+                  {
+                    "kind": "browser",
+                    "owner": "HostAgentBrowserService",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0
+                  },
+                  {
+                    "kind": "background-port",
+                    "owner": "ResourceTracker",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0
+                  },
+                  {
+                    "kind": "worktree",
+                    "owner": "WorktreeService",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "runtime lifecycle owner reports worktree cleanup; Main never scans or deletes a worktree directory"
+                  },
+                  {
+                    "kind": "admission-permit",
+                    "owner": "SessionAdmissionRegistry",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+                  }
+                ],
+                "activeResidue": 0,
+                "keptOnLeave": 0,
+                "recoveryRequired": false,
+                "recoveryId": null,
+                "retryable": false
+              }
+            ],
+            "resourcesCommitted": true,
+            "terminalClosed": true
+          }
+        ],
+        "phase": "committed-before-gate-clear",
+        "persisted": {
+          "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+          "operationKind": "delete",
+          "requestDigest": "579c5283458ca5baab50c52bc1df16e992e438f500ed441bb9e20b05cd10436b",
+          "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+          "agentId": "main",
+          "createdAt": 1794276803200,
+          "updatedAt": 1794276803672,
+          "workspaceId": "u5-lifecycle",
+          "runtimeReceipt": {
+            "key": "agent:main:session-1794276756327-ulifecycle",
+            "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+            "journalState": "runtime_committed",
+            "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+          },
+          "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+          "localSweepCommitted": true,
+          "localSweepSkipped": "legacy-store-absent",
+          "coordinatorCommitted": true,
+          "resourceReclamationAttempts": [
+            {
+              "schema": "LongSessionResourceReclamation/v1",
+              "action": "session-delete",
+              "scope": {
+                "workspaceId": "u5-lifecycle",
+                "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+                "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+              },
+              "generatedAt": "2026-11-10T02:13:23.664Z",
+              "owners": [
+                {
+                  "kind": "terminal",
+                  "owner": "TerminalSessionManager",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0
+                },
+                {
+                  "kind": "browser",
+                  "owner": "HostAgentBrowserService",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0
+                },
+                {
+                  "kind": "background-port",
+                  "owner": "ResourceTracker",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0
+                },
+                {
+                  "kind": "worktree",
+                  "owner": "WorktreeService",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "runtime lifecycle owner reports worktree cleanup; Main never scans or deletes a worktree directory"
+                },
+                {
+                  "kind": "admission-permit",
+                  "owner": "SessionAdmissionRegistry",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+                }
+              ],
+              "activeResidue": 0,
+              "keptOnLeave": 0,
+              "recoveryRequired": false,
+              "recoveryId": null,
+              "retryable": false
+            }
+          ],
+          "resourcesCommitted": true,
+          "terminalClosed": true
+        }
+      },
+      "runtimeCommittedReceipt": {
+        "ok": true,
+        "key": "agent:main:session-1794276756327-ulifecycle",
+        "deleted": true,
+        "archived": [
+          "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-user-data-j8iI6r\\openclaw-source-state\\agents\\main\\sessions\\95248ee3-3da5-42df-a086-b21d104511a2.jsonl.deleted.2026-11-10T02-13-23.302Z"
+        ],
+        "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+        "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+        "journalState": "runtime_committed"
+      },
+      "committed": {
+        "live": null,
+        "archived": null
+      },
+      "failedHost": {
+        "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+        "action": "delete",
+        "at": "observe",
+        "module": "sessions",
+        "hits": 1,
+        "request": {
+          "id": "9d86eac2-bb41-4ca2-a801-c9127d857771",
+          "module": "sessions",
+          "action": "delete",
+          "payload": {
+            "id": "agent:main:session-1794276756327-ulifecycle"
+          },
+          "deadline": {
+            "deadlineAtMs": 1794276863187,
+            "timeoutMs": 60000,
+            "stage": "renderer",
+            "requestId": "9d86eac2-bb41-4ca2-a801-c9127d857771"
+          }
+        },
+        "reply": {
+          "id": "9d86eac2-bb41-4ca2-a801-c9127d857771",
+          "ok": true,
+          "data": {
+            "success": false,
+            "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+            "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+            "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+            "resourceReclamation": {
+              "schema": "LongSessionResourceReclamation/v1",
+              "action": "session-delete",
+              "scope": {
+                "workspaceId": "u5-lifecycle",
+                "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+                "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+              },
+              "generatedAt": "2026-11-10T02:13:23.664Z",
+              "owners": [
+                {
+                  "kind": "terminal",
+                  "owner": "TerminalSessionManager",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0
+                },
+                {
+                  "kind": "browser",
+                  "owner": "HostAgentBrowserService",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0
+                },
+                {
+                  "kind": "background-port",
+                  "owner": "ResourceTracker",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0
+                },
+                {
+                  "kind": "worktree",
+                  "owner": "WorktreeService",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "runtime lifecycle owner reports worktree cleanup; Main never scans or deletes a worktree directory"
+                },
+                {
+                  "kind": "admission-permit",
+                  "owner": "SessionAdmissionRegistry",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+                }
+              ],
+              "activeResidue": 0,
+              "keptOnLeave": 0,
+              "recoveryRequired": false,
+              "recoveryId": null,
+              "retryable": false
+            },
+            "error": "Atomic write failed for D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json (EIO): agent-injected gate-clear failure after Runtime commit",
+            "retryable": true,
+            "recoveryRequired": true
+          }
+        },
+        "phase": "finished"
+      },
+      "retainedGate": {
+        "path": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json",
+        "attempts": [
+          {
+            "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+            "operationKind": "delete",
+            "requestDigest": "579c5283458ca5baab50c52bc1df16e992e438f500ed441bb9e20b05cd10436b",
+            "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+            "agentId": "main",
+            "createdAt": 1794276803200,
+            "updatedAt": 1794276803672,
+            "workspaceId": "u5-lifecycle",
+            "runtimeReceipt": {
+              "key": "agent:main:session-1794276756327-ulifecycle",
+              "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+              "journalState": "runtime_committed",
+              "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+            },
+            "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+            "localSweepCommitted": true,
+            "localSweepSkipped": "legacy-store-absent",
+            "coordinatorCommitted": true,
+            "resourceReclamationAttempts": [
+              {
+                "schema": "LongSessionResourceReclamation/v1",
+                "action": "session-delete",
+                "scope": {
+                  "workspaceId": "u5-lifecycle",
+                  "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+                  "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+                },
+                "generatedAt": "2026-11-10T02:13:23.664Z",
+                "owners": [
+                  {
+                    "kind": "terminal",
+                    "owner": "TerminalSessionManager",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0
+                  },
+                  {
+                    "kind": "browser",
+                    "owner": "HostAgentBrowserService",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0
+                  },
+                  {
+                    "kind": "background-port",
+                    "owner": "ResourceTracker",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0
+                  },
+                  {
+                    "kind": "worktree",
+                    "owner": "WorktreeService",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "runtime lifecycle owner reports worktree cleanup; Main never scans or deletes a worktree directory"
+                  },
+                  {
+                    "kind": "admission-permit",
+                    "owner": "SessionAdmissionRegistry",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+                  }
+                ],
+                "activeResidue": 0,
+                "keptOnLeave": 0,
+                "recoveryRequired": false,
+                "recoveryId": null,
+                "retryable": false
+              }
+            ],
+            "resourcesCommitted": true,
+            "terminalClosed": true
+          }
+        ],
+        "phase": "clear-failed",
+        "persisted": {
+          "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+          "operationKind": "delete",
+          "requestDigest": "579c5283458ca5baab50c52bc1df16e992e438f500ed441bb9e20b05cd10436b",
+          "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+          "agentId": "main",
+          "createdAt": 1794276803200,
+          "updatedAt": 1794276804557,
+          "workspaceId": "u5-lifecycle",
+          "runtimeReceipt": {
+            "key": "agent:main:session-1794276756327-ulifecycle",
+            "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+            "journalState": "runtime_committed",
+            "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+          },
+          "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+          "localSweepCommitted": true,
+          "localSweepSkipped": "legacy-store-absent",
+          "coordinatorCommitted": true,
+          "resourceReclamationAttempts": [
+            {
+              "schema": "LongSessionResourceReclamation/v1",
+              "action": "session-delete",
+              "scope": {
+                "workspaceId": "u5-lifecycle",
+                "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+                "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+              },
+              "generatedAt": "2026-11-10T02:13:23.664Z",
+              "owners": [
+                {
+                  "kind": "terminal",
+                  "owner": "TerminalSessionManager",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0
+                },
+                {
+                  "kind": "browser",
+                  "owner": "HostAgentBrowserService",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0
+                },
+                {
+                  "kind": "background-port",
+                  "owner": "ResourceTracker",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0
+                },
+                {
+                  "kind": "worktree",
+                  "owner": "WorktreeService",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "runtime lifecycle owner reports worktree cleanup; Main never scans or deletes a worktree directory"
+                },
+                {
+                  "kind": "admission-permit",
+                  "owner": "SessionAdmissionRegistry",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+                }
+              ],
+              "activeResidue": 0,
+              "keptOnLeave": 0,
+              "recoveryRequired": false,
+              "recoveryId": null,
+              "retryable": false
+            }
+          ],
+          "resourcesCommitted": true,
+          "terminalClosed": true,
+          "tailError": "Atomic write failed for D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json (EIO): agent-injected gate-clear failure after Runtime commit"
+        }
+      },
+      "retry": {
+        "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+        "action": "delete",
+        "at": "after",
+        "module": "sessions",
+        "hits": 1,
+        "request": {
+          "id": "237f87f5-99e7-4528-a3c5-17de81dd70ac",
+          "module": "sessions",
+          "action": "delete",
+          "payload": {
+            "id": "agent:main:session-1794276756327-ulifecycle",
+            "resumeOperationId": "12c7692c-4b07-412a-b242-e8b6ae77164d"
+          },
+          "deadline": {
+            "deadlineAtMs": 1794276865119,
+            "timeoutMs": 60000,
+            "stage": "renderer",
+            "requestId": "237f87f5-99e7-4528-a3c5-17de81dd70ac"
+          }
+        },
+        "reply": {
+          "id": "237f87f5-99e7-4528-a3c5-17de81dd70ac",
+          "ok": true,
+          "data": {
+            "success": true,
+            "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+            "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+            "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+            "resourceReclamation": {
+              "schema": "LongSessionResourceReclamation/v1",
+              "action": "session-delete",
+              "scope": {
+                "workspaceId": "u5-lifecycle",
+                "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+                "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+              },
+              "generatedAt": "2026-11-10T02:13:23.664Z",
+              "owners": [
+                {
+                  "kind": "terminal",
+                  "owner": "TerminalSessionManager",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0
+                },
+                {
+                  "kind": "browser",
+                  "owner": "HostAgentBrowserService",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0
+                },
+                {
+                  "kind": "background-port",
+                  "owner": "ResourceTracker",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0
+                },
+                {
+                  "kind": "worktree",
+                  "owner": "WorktreeService",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "runtime lifecycle owner reports worktree cleanup; Main never scans or deletes a worktree directory"
+                },
+                {
+                  "kind": "admission-permit",
+                  "owner": "SessionAdmissionRegistry",
+                  "outcome": "not-owned",
+                  "authority": "managed",
+                  "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                  "attempted": 0,
+                  "reclaimed": 0,
+                  "kept": 0,
+                  "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+                }
+              ],
+              "activeResidue": 0,
+              "keptOnLeave": 0,
+              "recoveryRequired": false,
+              "recoveryId": null,
+              "retryable": false
+            }
+          }
+        },
+        "phase": "finished",
+        "outcome": "pass"
+      },
+      "clearedGate": {
+        "path": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json",
+        "attempts": [
+          {
+            "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+            "operationKind": "delete",
+            "requestDigest": "579c5283458ca5baab50c52bc1df16e992e438f500ed441bb9e20b05cd10436b",
+            "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+            "agentId": "main",
+            "createdAt": 1794276803200,
+            "updatedAt": 1794276803672,
+            "workspaceId": "u5-lifecycle",
+            "runtimeReceipt": {
+              "key": "agent:main:session-1794276756327-ulifecycle",
+              "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+              "journalState": "runtime_committed",
+              "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+            },
+            "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+            "localSweepCommitted": true,
+            "localSweepSkipped": "legacy-store-absent",
+            "coordinatorCommitted": true,
+            "resourceReclamationAttempts": [
+              {
+                "schema": "LongSessionResourceReclamation/v1",
+                "action": "session-delete",
+                "scope": {
+                  "workspaceId": "u5-lifecycle",
+                  "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+                  "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+                },
+                "generatedAt": "2026-11-10T02:13:23.664Z",
+                "owners": [
+                  {
+                    "kind": "terminal",
+                    "owner": "TerminalSessionManager",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0
+                  },
+                  {
+                    "kind": "browser",
+                    "owner": "HostAgentBrowserService",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0
+                  },
+                  {
+                    "kind": "background-port",
+                    "owner": "ResourceTracker",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0
+                  },
+                  {
+                    "kind": "worktree",
+                    "owner": "WorktreeService",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "runtime lifecycle owner reports worktree cleanup; Main never scans or deletes a worktree directory"
+                  },
+                  {
+                    "kind": "admission-permit",
+                    "owner": "SessionAdmissionRegistry",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+                  }
+                ],
+                "activeResidue": 0,
+                "keptOnLeave": 0,
+                "recoveryRequired": false,
+                "recoveryId": null,
+                "retryable": false
+              }
+            ],
+            "resourcesCommitted": true,
+            "terminalClosed": true
+          },
+          {
+            "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+            "operationKind": "delete",
+            "requestDigest": "579c5283458ca5baab50c52bc1df16e992e438f500ed441bb9e20b05cd10436b",
+            "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+            "agentId": "main",
+            "createdAt": 1794276803200,
+            "updatedAt": 1794276805151,
+            "workspaceId": "u5-lifecycle",
+            "runtimeReceipt": {
+              "key": "agent:main:session-1794276756327-ulifecycle",
+              "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+              "journalState": "runtime_committed",
+              "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+            },
+            "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+            "localSweepCommitted": true,
+            "localSweepSkipped": "legacy-store-absent",
+            "coordinatorCommitted": true,
+            "resourceReclamationAttempts": [
+              {
+                "schema": "LongSessionResourceReclamation/v1",
+                "action": "session-delete",
+                "scope": {
+                  "workspaceId": "u5-lifecycle",
+                  "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+                  "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+                },
+                "generatedAt": "2026-11-10T02:13:23.664Z",
+                "owners": [
+                  {
+                    "kind": "terminal",
+                    "owner": "TerminalSessionManager",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0
+                  },
+                  {
+                    "kind": "browser",
+                    "owner": "HostAgentBrowserService",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0
+                  },
+                  {
+                    "kind": "background-port",
+                    "owner": "ResourceTracker",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0
+                  },
+                  {
+                    "kind": "worktree",
+                    "owner": "WorktreeService",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "runtime lifecycle owner reports worktree cleanup; Main never scans or deletes a worktree directory"
+                  },
+                  {
+                    "kind": "admission-permit",
+                    "owner": "SessionAdmissionRegistry",
+                    "outcome": "not-owned",
+                    "authority": "managed",
+                    "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                    "attempted": 0,
+                    "reclaimed": 0,
+                    "kept": 0,
+                    "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+                  }
+                ],
+                "activeResidue": 0,
+                "keptOnLeave": 0,
+                "recoveryRequired": false,
+                "recoveryId": null,
+                "retryable": false
+              }
+            ],
+            "resourcesCommitted": true,
+            "terminalClosed": true,
+            "tailError": "Atomic write failed for D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json (EIO): agent-injected gate-clear failure after Runtime commit"
+          }
+        ],
+        "phase": "clear-failed",
+        "persisted": null
+      },
+      "recovered": true,
+      "recovery": "same persisted operationId, original Runtime committed receipt, original Main retry and owner queries",
+      "retryEntry": "Archive pending operation row invokes the existing Host action with the exact stored operationId"
+    }
+  ],
+  "navigation": [
+    {
+      "target": "agent:main:dashboard:d3463664-b565-4bee-b781-6ce93efe4eeb",
+      "at": 1794276788982,
+      "selection": [],
+      "draft": "U5 draft B",
+      "workspace": {
+        "success": true,
+        "activeWorkspaceId": "u5-lifecycle",
+        "activeWorkspace": {
+          "id": "u5-lifecycle",
+          "name": "U5 lifecycle",
+          "rootPath": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-archive-final-results\\session-lifecycle-recovery-eebee-d-a-Main-gate-clear-failure\\workspace",
+          "agentId": "main",
+          "selectedAgentId": "main",
+          "activeSessionKey": "agent:main:dashboard:d3463664-b565-4bee-b781-6ce93efe4eeb",
+          "projectCoordinatorSessionKey": "agent:main:session-1794276756327-ulifecycle",
+          "agentBindings": {
+            "main": {
+              "workspaceId": "u5-lifecycle",
+              "agentId": "main",
+              "sessionKey": "agent:main:dashboard:d3463664-b565-4bee-b781-6ce93efe4eeb"
+            }
+          },
+          "permissionMode": "fullAccess",
+          "createdAt": 1794276756359,
+          "updatedAt": 1794276788957,
+          "lastOpenedAt": 1794276756359,
+          "state": {
+            "draftInput": "U5 draft B"
+          },
+          "sessionStates": {
+            "agent:main:session-1794276756327-ulifecycle": {
+              "chatFooter": {
+                "contextRangeVisible": true,
+                "tokenUsageVisible": true,
+                "workContextVisible": true
+              },
+              "draftInput": "U5 draft A",
+              "composerRunState": "idle",
+              "activeTopicId": null,
+              "knowledgeScope": "none",
+              "knowledgeMode": "suggest",
+              "artifactPanel": {
+                "open": false,
+                "expanded": false,
+                "tabs": []
+              },
+              "turnSummaryExpanded": {},
+              "turnSummaryStepDetailsExpanded": {},
+              "readingPosition": {
+                "scrollTop": 0,
+                "messageKey": "msg-0",
+                "offset": 0,
+                "pinned": true
+              },
+              "sessionList": {
+                "unread": false,
+                "lastReadAt": 1794276786665
+              }
+            },
+            "agent:main:dashboard:d3463664-b565-4bee-b781-6ce93efe4eeb": {
+              "draftInput": "U5 draft B"
+            }
+          },
+          "sessionFolders": [],
+          "sessionFolderAssignments": {}
+        }
+      },
+      "selectedRows": [
+        "U5 neighbour"
+      ]
+    },
+    {
+      "target": "agent:main:dashboard:d3463664-b565-4bee-b781-6ce93efe4eeb",
+      "at": 1794276804264,
+      "selection": [],
+      "draft": "U5 draft B",
+      "workspace": {
+        "success": true,
+        "activeWorkspaceId": "u5-lifecycle",
+        "activeWorkspace": {
+          "id": "u5-lifecycle",
+          "name": "U5 lifecycle",
+          "rootPath": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-archive-final-results\\session-lifecycle-recovery-eebee-d-a-Main-gate-clear-failure\\workspace",
+          "agentId": "main",
+          "selectedAgentId": "main",
+          "activeSessionKey": "agent:main:dashboard:d3463664-b565-4bee-b781-6ce93efe4eeb",
+          "projectCoordinatorSessionKey": "agent:main:session-1794276756327-ulifecycle",
+          "agentBindings": {
+            "main": {
+              "workspaceId": "u5-lifecycle",
+              "agentId": "main",
+              "sessionKey": "agent:main:dashboard:d3463664-b565-4bee-b781-6ce93efe4eeb"
+            }
+          },
+          "permissionMode": "fullAccess",
+          "createdAt": 1794276756359,
+          "updatedAt": 1794276804356,
+          "lastOpenedAt": 1794276756359,
+          "state": {
+            "draftInput": "U5 draft B",
+            "composerRunState": "idle",
+            "activeTopicId": null,
+            "knowledgeScope": "none",
+            "knowledgeMode": "suggest",
+            "artifactPanel": {
+              "open": false,
+              "expanded": false,
+              "tabs": []
+            },
+            "turnSummaryExpanded": {},
+            "turnSummaryStepDetailsExpanded": {},
+            "readingPosition": {
+              "generation": "5a264e92-3c15-4ef8-bbfe-c491f8148537",
+              "scrollTop": 0,
+              "messageKey": "msg-0",
+              "offset": 0,
+              "pinned": true
+            },
+            "sessionList": {
+              "unread": false,
+              "lastReadAt": 1794276800378
+            }
+          },
+          "sessionStates": {
+            "agent:main:session-1794276756327-ulifecycle": {
+              "chatFooter": {
+                "contextRangeVisible": true,
+                "tokenUsageVisible": true,
+                "workContextVisible": true
+              },
+              "draftInput": "U5 draft A",
+              "composerRunState": "idle",
+              "activeTopicId": null,
+              "knowledgeScope": "none",
+              "knowledgeMode": "suggest",
+              "artifactPanel": {
+                "open": false,
+                "expanded": false,
+                "tabs": []
+              },
+              "turnSummaryExpanded": {},
+              "turnSummaryStepDetailsExpanded": {},
+              "readingPosition": {
+                "scrollTop": 0,
+                "messageKey": "msg-0",
+                "offset": 0,
+                "pinned": true
+              },
+              "sessionList": {
+                "unread": false,
+                "lastReadAt": 1794276800543
+              }
+            },
+            "agent:main:dashboard:d3463664-b565-4bee-b781-6ce93efe4eeb": {
+              "draftInput": "U5 draft B",
+              "composerRunState": "idle",
+              "activeTopicId": null,
+              "knowledgeScope": "none",
+              "knowledgeMode": "suggest",
+              "artifactPanel": {
+                "open": false,
+                "expanded": false,
+                "tabs": []
+              },
+              "turnSummaryExpanded": {},
+              "turnSummaryStepDetailsExpanded": {},
+              "readingPosition": {
+                "generation": "5a264e92-3c15-4ef8-bbfe-c491f8148537",
+                "scrollTop": 0,
+                "messageKey": "msg-0",
+                "offset": 0,
+                "pinned": true
+              },
+              "sessionList": {
+                "unread": false,
+                "lastReadAt": 1794276800378
+              }
+            }
+          },
+          "sessionFolders": [],
+          "sessionFolderAssignments": {}
+        }
+      },
+      "selectedRows": [
+        "U5 neighbour"
+      ]
+    }
+  ],
+  "lastFault": {
+    "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+    "action": "delete",
+    "at": "after",
+    "module": "sessions",
+    "hits": 1,
+    "request": {
+      "id": "237f87f5-99e7-4528-a3c5-17de81dd70ac",
+      "module": "sessions",
+      "action": "delete",
+      "payload": {
+        "id": "agent:main:session-1794276756327-ulifecycle",
+        "resumeOperationId": "12c7692c-4b07-412a-b242-e8b6ae77164d"
+      },
+      "deadline": {
+        "deadlineAtMs": 1794276865119,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "237f87f5-99e7-4528-a3c5-17de81dd70ac"
+      }
+    },
+    "reply": {
+      "id": "237f87f5-99e7-4528-a3c5-17de81dd70ac",
+      "ok": true,
+      "data": {
+        "success": true,
+        "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+        "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+        "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+        "resourceReclamation": {
+          "schema": "LongSessionResourceReclamation/v1",
+          "action": "session-delete",
+          "scope": {
+            "workspaceId": "u5-lifecycle",
+            "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+            "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+          },
+          "generatedAt": "2026-11-10T02:13:23.664Z",
+          "owners": [
+            {
+              "kind": "terminal",
+              "owner": "TerminalSessionManager",
+              "outcome": "not-owned",
+              "authority": "managed",
+              "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+              "attempted": 0,
+              "reclaimed": 0,
+              "kept": 0
+            },
+            {
+              "kind": "browser",
+              "owner": "HostAgentBrowserService",
+              "outcome": "not-owned",
+              "authority": "managed",
+              "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+              "attempted": 0,
+              "reclaimed": 0,
+              "kept": 0
+            },
+            {
+              "kind": "background-port",
+              "owner": "ResourceTracker",
+              "outcome": "not-owned",
+              "authority": "managed",
+              "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+              "attempted": 0,
+              "reclaimed": 0,
+              "kept": 0
+            },
+            {
+              "kind": "worktree",
+              "owner": "WorktreeService",
+              "outcome": "not-owned",
+              "authority": "managed",
+              "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+              "attempted": 0,
+              "reclaimed": 0,
+              "kept": 0,
+              "detail": "runtime lifecycle owner reports worktree cleanup; Main never scans or deletes a worktree directory"
+            },
+            {
+              "kind": "admission-permit",
+              "owner": "SessionAdmissionRegistry",
+              "outcome": "not-owned",
+              "authority": "managed",
+              "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+              "attempted": 0,
+              "reclaimed": 0,
+              "kept": 0,
+              "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+            }
+          ],
+          "activeResidue": 0,
+          "keptOnLeave": 0,
+          "recoveryRequired": false,
+          "recoveryId": null,
+          "retryable": false
+        }
+      }
+    },
+    "phase": "finished",
+    "outcome": "pass"
+  },
+  "lastGate": {
+    "path": "D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json",
+    "attempts": [
+      {
+        "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+        "operationKind": "delete",
+        "requestDigest": "579c5283458ca5baab50c52bc1df16e992e438f500ed441bb9e20b05cd10436b",
+        "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+        "agentId": "main",
+        "createdAt": 1794276803200,
+        "updatedAt": 1794276803672,
+        "workspaceId": "u5-lifecycle",
+        "runtimeReceipt": {
+          "key": "agent:main:session-1794276756327-ulifecycle",
+          "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+          "journalState": "runtime_committed",
+          "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+        },
+        "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+        "localSweepCommitted": true,
+        "localSweepSkipped": "legacy-store-absent",
+        "coordinatorCommitted": true,
+        "resourceReclamationAttempts": [
+          {
+            "schema": "LongSessionResourceReclamation/v1",
+            "action": "session-delete",
+            "scope": {
+              "workspaceId": "u5-lifecycle",
+              "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+              "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+            },
+            "generatedAt": "2026-11-10T02:13:23.664Z",
+            "owners": [
+              {
+                "kind": "terminal",
+                "owner": "TerminalSessionManager",
+                "outcome": "not-owned",
+                "authority": "managed",
+                "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                "attempted": 0,
+                "reclaimed": 0,
+                "kept": 0
+              },
+              {
+                "kind": "browser",
+                "owner": "HostAgentBrowserService",
+                "outcome": "not-owned",
+                "authority": "managed",
+                "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                "attempted": 0,
+                "reclaimed": 0,
+                "kept": 0
+              },
+              {
+                "kind": "background-port",
+                "owner": "ResourceTracker",
+                "outcome": "not-owned",
+                "authority": "managed",
+                "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                "attempted": 0,
+                "reclaimed": 0,
+                "kept": 0
+              },
+              {
+                "kind": "worktree",
+                "owner": "WorktreeService",
+                "outcome": "not-owned",
+                "authority": "managed",
+                "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                "attempted": 0,
+                "reclaimed": 0,
+                "kept": 0,
+                "detail": "runtime lifecycle owner reports worktree cleanup; Main never scans or deletes a worktree directory"
+              },
+              {
+                "kind": "admission-permit",
+                "owner": "SessionAdmissionRegistry",
+                "outcome": "not-owned",
+                "authority": "managed",
+                "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                "attempted": 0,
+                "reclaimed": 0,
+                "kept": 0,
+                "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+              }
+            ],
+            "activeResidue": 0,
+            "keptOnLeave": 0,
+            "recoveryRequired": false,
+            "recoveryId": null,
+            "retryable": false
+          }
+        ],
+        "resourcesCommitted": true,
+        "terminalClosed": true
+      },
+      {
+        "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+        "operationKind": "delete",
+        "requestDigest": "579c5283458ca5baab50c52bc1df16e992e438f500ed441bb9e20b05cd10436b",
+        "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+        "agentId": "main",
+        "createdAt": 1794276803200,
+        "updatedAt": 1794276805151,
+        "workspaceId": "u5-lifecycle",
+        "runtimeReceipt": {
+          "key": "agent:main:session-1794276756327-ulifecycle",
+          "operationId": "12c7692c-4b07-412a-b242-e8b6ae77164d",
+          "journalState": "runtime_committed",
+          "sessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+        },
+        "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2",
+        "localSweepCommitted": true,
+        "localSweepSkipped": "legacy-store-absent",
+        "coordinatorCommitted": true,
+        "resourceReclamationAttempts": [
+          {
+            "schema": "LongSessionResourceReclamation/v1",
+            "action": "session-delete",
+            "scope": {
+              "workspaceId": "u5-lifecycle",
+              "sessionKey": "agent:main:session-1794276756327-ulifecycle",
+              "expectedSessionId": "95248ee3-3da5-42df-a086-b21d104511a2"
+            },
+            "generatedAt": "2026-11-10T02:13:23.664Z",
+            "owners": [
+              {
+                "kind": "terminal",
+                "owner": "TerminalSessionManager",
+                "outcome": "not-owned",
+                "authority": "managed",
+                "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                "attempted": 0,
+                "reclaimed": 0,
+                "kept": 0
+              },
+              {
+                "kind": "browser",
+                "owner": "HostAgentBrowserService",
+                "outcome": "not-owned",
+                "authority": "managed",
+                "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                "attempted": 0,
+                "reclaimed": 0,
+                "kept": 0
+              },
+              {
+                "kind": "background-port",
+                "owner": "ResourceTracker",
+                "outcome": "not-owned",
+                "authority": "managed",
+                "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                "attempted": 0,
+                "reclaimed": 0,
+                "kept": 0
+              },
+              {
+                "kind": "worktree",
+                "owner": "WorktreeService",
+                "outcome": "not-owned",
+                "authority": "managed",
+                "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                "attempted": 0,
+                "reclaimed": 0,
+                "kept": 0,
+                "detail": "runtime lifecycle owner reports worktree cleanup; Main never scans or deletes a worktree directory"
+              },
+              {
+                "kind": "admission-permit",
+                "owner": "SessionAdmissionRegistry",
+                "outcome": "not-owned",
+                "authority": "managed",
+                "generation": "95248ee3-3da5-42df-a086-b21d104511a2",
+                "attempted": 0,
+                "reclaimed": 0,
+                "kept": 0,
+                "detail": "runtime canonical finalizer completed the admission fence/drain for this generation"
+              }
+            ],
+            "activeResidue": 0,
+            "keptOnLeave": 0,
+            "recoveryRequired": false,
+            "recoveryId": null,
+            "retryable": false
+          }
+        ],
+        "resourcesCommitted": true,
+        "terminalClosed": true,
+        "tailError": "Atomic write failed for D:\\ClawX-work\\session-task-unified-relay-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-k7iFKF\\verse-claw-e2e-home-B1eXJc\\.openclaw\\runtime-lifecycle-governance\\session-delete-gates.json (EIO): agent-injected gate-clear failure after Runtime commit"
+      }
+    ],
+    "phase": "clear-failed",
+    "persisted": null
+  },
+  "ownerReadback": {
+    "live": null,
+    "archived": null
+  },
+  "status": "passed",
+  "errors": []
+}
