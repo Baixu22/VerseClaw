@@ -547,7 +547,7 @@ function SessionFolderTreeInner({
         </div>
       ) : null };
     });
-  }, [expandedFamilies, renderDraggableSession, visibleKeys, t, familyCounts]);
+  }, [expandedFamilies, renderDraggableSession, visibleKeys, t, familyCounts, liveRowGroups]);
 
   return (
     /* Not `space-y-0.5`: the base sidebar rule neutralizes that utility by
