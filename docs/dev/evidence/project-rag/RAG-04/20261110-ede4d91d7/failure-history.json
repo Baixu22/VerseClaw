@@ -1,0 +1,68 @@
+{
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "candidate": "ede4d91d7e957ec3c5588c42bc3096f5ca9931f6",
+  "failures": [
+    {
+      "kind": "source-worker-loader",
+      "artifact": "historical/owner-recovery-loader.json",
+      "observed": "A TypeScript worker resolved tsx from the desktop root and could not load the runtime dependency.",
+      "resolution": "Resolve the runtime loader to an absolute URL before spawning source workers."
+    },
+    {
+      "kind": "watcher-hint-feedback",
+      "artifact": "historical/owner-recovery-first.json",
+      "observed": "Directory hints generated during vault initialization repeatedly invalidated a pending source.",
+      "resolution": "Immediate hints only target owner page paths; complete startup/periodic reconciliation handles directories."
+    },
+    {
+      "kind": "fts-query",
+      "artifact": "historical/owner-recovery-fts-query.json",
+      "observed": "The joined FTS query used an ambiguous generation_id column.",
+      "resolution": "Qualify FTS output columns; initialization/query failures return unavailable."
+    },
+    {
+      "kind": "source-identity",
+      "artifact": "historical/owner-recovery-source-subject.json",
+      "observed": "Windows list path separators split the owner subject; the original source key also included locator.",
+      "resolution": "Portable owner subject paths and subject-stable keys; pin changes advance intent and retire the old generation."
+    },
+    {
+      "kind": "generation-scope",
+      "artifact": "review.json",
+      "observed": "The saved enable selection omitted physical sessionId.",
+      "resolution": "Propagate, require and compare physical generation; background owner reads reject changed generations."
+    },
+    {
+      "kind": "idle-scan-backlog",
+      "artifact": "historical/index-probe-idle-failure.log",
+      "observed": "Slow scans could queue behind the periodic timer and prevent the idle barrier.",
+      "resolution": "Coalesce equivalent in-flight scans; include pending debounce/scan stability in idle."
+    },
+    {
+      "kind": "probe-assertion",
+      "artifact": "historical/index-probe-count-assertion.log",
+      "observed": "node:sqlite count rows have a null prototype, so a strict whole-object assertion failed after successful cleanup.",
+      "resolution": "Assert the actual count values."
+    },
+    {
+      "kind": "boundary-tooling-timeout",
+      "artifact": "historical/boundary-lint-timeout.log",
+      "observed": "The first wrapper invocation timed out preparing plugin boundary root shims after 300000ms.",
+      "resolution": "Final-candidate runtime lint completed with exit 0; original timeout retained."
+    },
+    {
+      "kind": "kysely-alias-types",
+      "artifact": "historical/kysely-alias-types.log",
+      "observed": "The FTS coverage query used a Kysely function builder before its alias was in scope.",
+      "resolution": "Build the aggregate from the query expression context; final full node/web/test typecheck passed."
+    },
+    {
+      "kind": "unused-import-lint",
+      "artifact": "historical/prior-candidate-root-lint.log",
+      "observedCandidate": "351f143b51e9d811e229c444c89839e4f26c98ac",
+      "observed": "The lifecycle probe imported readFile without using it.",
+      "resolution": "Removed two unused probe/test imports and reran all final-candidate gates."
+    }
+  ]
+}

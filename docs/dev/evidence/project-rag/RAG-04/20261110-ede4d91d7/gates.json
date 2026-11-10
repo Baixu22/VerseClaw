@@ -1,0 +1,278 @@
+{
+  "worktree": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+  "actor": "codex/project-rag",
+  "status": "pass",
+  "cleanAtEnd": true,
+  "schema": "ProjectRagFormalGates/v1",
+  "driven_by": "agent",
+  "branch": "codex/project-rag-longterm-20261109",
+  "candidate": "ede4d91d7e957ec3c5588c42bc3096f5ca9931f6",
+  "cleanAtStart": true,
+  "results": [
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "startedAt": "2026-11-10T12:28:50.1204924+00:00",
+      "args": [
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "exitCode": 0,
+      "name": "runtime-build",
+      "finishedAt": "2026-11-10T12:29:26.5533139+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "startedAt": "2026-11-10T12:29:26.8689491+00:00",
+      "args": [
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "build:vite"
+      ],
+      "exitCode": 0,
+      "name": "desktop-build",
+      "finishedAt": "2026-11-10T12:30:11.7964580+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime",
+      "startedAt": "2026-11-10T12:30:12.0268889+00:00",
+      "args": [
+        "scripts/generate-kysely-types.mjs",
+        "--verify"
+      ],
+      "exitCode": 0,
+      "name": "schema-generated",
+      "finishedAt": "2026-11-10T12:30:12.1381650+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime",
+      "startedAt": "2026-11-10T12:30:12.3677609+00:00",
+      "args": [
+        "scripts/run-vitest.mjs",
+        "src/knowledge/retrieval/projection-store.test.ts",
+        "src/knowledge/retrieval/chunker.test.ts",
+        "packages/markdown-core/src/ir.test.ts",
+        "--reporter=json",
+        "--outputFile",
+        "D:\\tmp\\project-rag-TF-0881\\formal-ede4d91d7\\runtime-unit.json"
+      ],
+      "exitCode": 0,
+      "name": "runtime-unit",
+      "finishedAt": "2026-11-10T12:30:34.5471563+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "startedAt": "2026-11-10T12:30:34.9350708+00:00",
+      "args": [
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/project-rag-index-recovery.test.ts",
+        "tests/unit/project-rag-owner-read.test.ts",
+        "tests/unit/project-rag-citation-locator.test.ts",
+        "tests/unit/knowledge-source-sync.test.ts",
+        "tests/unit/knowledge-github-connector.test.ts",
+        "tests/unit/knowledge-retrieval.test.ts",
+        "tests/unit/workspace-permissions.test.ts",
+        "tests/unit/gateway-permissions-api.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile",
+        "D:\\tmp\\project-rag-TF-0881\\formal-ede4d91d7\\root-unit.json"
+      ],
+      "exitCode": 0,
+      "name": "root-unit",
+      "finishedAt": "2026-11-10T12:33:06.8692863+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "startedAt": "2026-11-10T12:33:07.6020016+00:00",
+      "args": [
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "name": "typecheck",
+      "finishedAt": "2026-11-10T12:35:37.5281855+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "startedAt": "2026-11-10T12:35:39.9475279+00:00",
+      "args": [
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "exec",
+        "eslint",
+        "electron/services/gateway-api.ts",
+        "electron/services/workspace-permissions.ts",
+        "scripts/knowledge-rag-index-probe.ts",
+        "tests/unit/project-rag-index-recovery.test.ts",
+        "tests/unit/workspace-permissions.test.ts",
+        "tests/e2e/project-rag-index-lifecycle.spec.ts"
+      ],
+      "exitCode": 0,
+      "name": "root-lint",
+      "finishedAt": "2026-11-10T12:35:52.5682044+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime",
+      "startedAt": "2026-11-10T12:35:53.0222707+00:00",
+      "args": [
+        "scripts/run-oxlint.mjs",
+        "src/knowledge/retrieval/index-controller.ts",
+        "src/knowledge/retrieval/index-worker.ts",
+        "src/knowledge/retrieval/index.worker.ts",
+        "src/knowledge/retrieval/index-profile.ts",
+        "src/knowledge/retrieval/projection-contracts.ts",
+        "src/knowledge/retrieval/projection-store.ts",
+        "src/knowledge/retrieval/projection-store.test.ts",
+        "extensions/memory-wiki/src/retrieval-index.ts"
+      ],
+      "exitCode": 0,
+      "name": "runtime-lint",
+      "finishedAt": "2026-11-10T12:40:02.0523338+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "startedAt": "2026-11-10T12:40:04.9004763+00:00",
+      "args": [
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "--tsconfig",
+        "tsconfig.node.json",
+        "scripts/knowledge-rag-index-probe.ts",
+        "D:\\tmp\\project-rag-TF-0881\\formal-ede4d91d7\\index-probe.json"
+      ],
+      "exitCode": 0,
+      "name": "index-probe",
+      "finishedAt": "2026-11-10T12:40:44.7704225+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "startedAt": "2026-11-10T12:40:45.2644879+00:00",
+      "args": [
+        "scripts/knowledge-rag-built-probe.mjs",
+        "D:\\tmp\\project-rag-TF-0881\\formal-ede4d91d7\\built-sdk.json"
+      ],
+      "exitCode": 0,
+      "name": "built-sdk",
+      "finishedAt": "2026-11-10T12:40:48.6322869+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "startedAt": "2026-11-10T12:40:49.0105304+00:00",
+      "args": [
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "contract:check"
+      ],
+      "exitCode": 0,
+      "name": "contract",
+      "finishedAt": "2026-11-10T12:40:52.7999050+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "startedAt": "2026-11-10T12:40:53.3013382+00:00",
+      "args": [
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "comms:replay"
+      ],
+      "exitCode": 0,
+      "name": "comms-replay",
+      "finishedAt": "2026-11-10T12:40:57.4555254+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "startedAt": "2026-11-10T12:40:57.7646802+00:00",
+      "args": [
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "comms:compare"
+      ],
+      "exitCode": 0,
+      "name": "comms-compare",
+      "finishedAt": "2026-11-10T12:41:00.7199023+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "startedAt": "2026-11-10T12:41:01.0668101+00:00",
+      "args": [
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/project-rag-index-lifecycle.md"
+      ],
+      "exitCode": 0,
+      "name": "harness-validate",
+      "finishedAt": "2026-11-10T12:41:08.9552770+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "startedAt": "2026-11-10T12:41:09.3660107+00:00",
+      "args": [
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/project-rag-index-lifecycle.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "name": "harness-dry-run",
+      "finishedAt": "2026-11-10T12:41:17.6414875+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "startedAt": "2026-11-10T12:41:18.0547660+00:00",
+      "args": [
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "harness:ci"
+      ],
+      "exitCode": 0,
+      "name": "harness-ci",
+      "finishedAt": "2026-11-10T12:43:35.6758318+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "startedAt": "2026-11-10T12:43:36.1435091+00:00",
+      "args": [
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "run",
+        "repo:artifacts:check"
+      ],
+      "exitCode": 0,
+      "name": "artifact-retention",
+      "finishedAt": "2026-11-10T12:43:54.8764435+00:00"
+    },
+    {
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "startedAt": "2026-11-10T12:43:55.2554485+00:00",
+      "args": [
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "--config.verify-deps-before-run=false",
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/project-rag-index-lifecycle.spec.ts",
+        "--reporter=json",
+        "--output",
+        "D:\\tmp\\project-rag-TF-0881\\formal-ede4d91d7\\electron"
+      ],
+      "exitCode": 0,
+      "name": "electron",
+      "finishedAt": "2026-11-10T12:46:30.4942001+00:00"
+    }
+  ]
+}

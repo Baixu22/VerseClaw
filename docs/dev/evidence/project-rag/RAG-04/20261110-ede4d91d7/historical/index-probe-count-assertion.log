@@ -1,0 +1,16 @@
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [Object: null prototype] {
+- {
+    count: 0
+  }
+
+    at main (C:\Users\27933\.codex\worktrees\project-rag-longterm-20261109\ClawX\scripts\knowledge-rag-index-probe.ts:62:12) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: [Object: null prototype],
+  expected: [Object],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}

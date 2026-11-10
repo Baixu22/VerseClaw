@@ -1,0 +1,197 @@
+{
+  "schema": "ProjectRagSourceInputs/v1",
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "candidate": "ede4d91d7e957ec3c5588c42bc3096f5ca9931f6",
+  "diffBase": "57c40c0e8943e597e8463dd45c6a27ad27dc9241",
+  "kind": "git-blobs-at-candidate",
+  "workingTreeMatchedAtFreeze": true,
+  "inputs": [
+    {
+      "path": ".gitignore",
+      "digest": "sha256:fec57607824a5af5898fad7ee8ff141c1f0c5997193b00bdb34c57e15e61d7d0",
+      "bytes": 185508,
+      "gitBlob": "e1232622279dcc36569f7e18a50579a85b1e44d7"
+    },
+    {
+      "path": "README.ja-JP.md",
+      "digest": "sha256:a289aacb116911ac764ecd9ca3186a4cb17d063e98d20b46a3f1c52a36d339c6",
+      "bytes": 30442,
+      "gitBlob": "a2e889761e7a9b3488df5d32eabaf364f231c90a"
+    },
+    {
+      "path": "README.md",
+      "digest": "sha256:38baf18ba8866d0b5e421f387c37f3cda8e5d142d06c70feb437a4ce81340d7d",
+      "bytes": 27188,
+      "gitBlob": "5d673af10a5269c59efd15fa0d963fc61d2e9007"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "digest": "sha256:4a2267b53030bbd7dec53dd09a723357ca2f163000ddc78ca152c1e0cd3a148e",
+      "bytes": 24659,
+      "gitBlob": "b183cf453242127582db89c40bc6793cb7d22267"
+    },
+    {
+      "path": "docs/dev/project-rag/INDEX-LIFECYCLE-CONTRACT.md",
+      "digest": "sha256:9699fd8255389ad03b08e5fa82733dc2ed7125c29d18d2c539531caa1a336030",
+      "bytes": 3652,
+      "gitBlob": "2aeace066e5c5457581030e05b70d5bbd47a80c7"
+    },
+    {
+      "path": "docs/dev/project-rag/WORK-PACKAGES.md",
+      "digest": "sha256:4225334a76cf67bdd5d80102a023181a12d61acdf17fddf9a87db7490ef89660",
+      "bytes": 35917,
+      "gitBlob": "f210fc96956005f8de6b14e9173f0c204093e264"
+    },
+    {
+      "path": "electron/services/gateway-api.ts",
+      "digest": "sha256:29dc6d1df038fe595d71ece999f1ca87a265edd732171d7ab4b17c48f6366108",
+      "bytes": 28032,
+      "gitBlob": "410432e0992acb8fc820f0f38ad84cf5fd4aa7e0"
+    },
+    {
+      "path": "electron/services/workspace-permissions.ts",
+      "digest": "sha256:ce3887d3c9e0a62081f6e9197c21aad7f9afe069f72446298c3699901bc32a66",
+      "bytes": 17986,
+      "gitBlob": "9006a2c48d25c203887f5fcc1331f3fd6fbd8394"
+    },
+    {
+      "path": "harness/specs/tasks/project-rag-index-lifecycle.md",
+      "digest": "sha256:458da969f4cd01e4fd4b75c28af7f5a17d24c395e75b4430ab410368896d0844",
+      "bytes": 4984,
+      "gitBlob": "1a986fa39db6e332dc65fcad787001343098edea"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/index.ts",
+      "digest": "sha256:4f0cad330688d620d52a0971c612811bcc95cc3775aaecb229511887f04ba734",
+      "bytes": 3330,
+      "gitBlob": "0781dc0254bb5852b0abf21c923463df9eea2662"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/runtime-api.ts",
+      "digest": "sha256:ecf6f1632e9abd536564aad3fda8fba5176dc6f5dbddf1983447af855b1d6ffc",
+      "bytes": 639,
+      "gitBlob": "8f24e46e7fdc79a62c75385e1ca90b5abcef98e7"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/gateway.ts",
+      "digest": "sha256:8a8225e46ae11ef3fde40dc5a5cf7470c74a2ae925fb16cc06f63ad2922e547f",
+      "bytes": 15981,
+      "gitBlob": "3fa110d15df8acc047f7716b95f0de684f39daf7"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/query.ts",
+      "digest": "sha256:afb68dfe0bb490ae615dcbf194c9d8f2ed5529b0f1ed3a1b3029001872dc77b7",
+      "bytes": 54739,
+      "gitBlob": "f2da97905d743e109d5f9592ee24ad0b6b7fb703"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/retrieval-index.ts",
+      "digest": "sha256:cd7caf0a0e80a866f82f6773fd771539f4ba267cd6d19690eddaa406839a1fe2",
+      "bytes": 7260,
+      "gitBlob": "e71e6dd4af68109400fd5ad85681033f2ce5dbc7"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/index-controller.ts",
+      "digest": "sha256:40491e71d185758540552b335b881aabc1f03d598f1c926794f5608715c0ff31",
+      "bytes": 13467,
+      "gitBlob": "6ca9e05ce856492e9ec626b32216741fdeaea664"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/index-profile.ts",
+      "digest": "sha256:d1829a8995272fcad601eaf89ae1ebf326bc8293fc819c894560f5d6ea551565",
+      "bytes": 960,
+      "gitBlob": "d94e02c14daa58a8b23de8815bc389387da6afd9"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/index-worker.ts",
+      "digest": "sha256:abe9d8111e8815261690ea8e8140fbcbbfa79356eadd30e8fd467f85e0371863",
+      "bytes": 4122,
+      "gitBlob": "359717c7b1caed17764a3fd390289c3ea94d9a18"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/index.worker.ts",
+      "digest": "sha256:5140329b824f0ef40de4b1a3103e87f03504c02f09ec018cac374be08b932c5c",
+      "bytes": 2446,
+      "gitBlob": "2eea136250034907eefded1e5e609e568664235f"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/projection-contracts.ts",
+      "digest": "sha256:02370822884725f839cf0235bb02d9e74b2b88a80a5a24b90db191572fd1f6cd",
+      "bytes": 1642,
+      "gitBlob": "f207fe77f9ba4c225607dd9dabc73ec058d08021"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts",
+      "digest": "sha256:c25daf3a68d88059305df1e129b97daad4599731ff601e4966340886a0cbcea2",
+      "bytes": 14618,
+      "gitBlob": "daa2c1b9c96dc4c9504a5d7aad80c7b3133d9a42"
+    },
+    {
+      "path": "openclaw_runtime/src/knowledge/retrieval/projection-store.ts",
+      "digest": "sha256:37b2b6456525371268c6d1a82547172f13e056c91d23a620e31cde0fe4dcc311",
+      "bytes": 43870,
+      "gitBlob": "764b04b332fc78bb31bc926e0d6bcc822fb31814"
+    },
+    {
+      "path": "openclaw_runtime/src/plugin-sdk/knowledge-retrieval.ts",
+      "digest": "sha256:f1d77c56f49ceafb9f9dbd5a740836a03bbb71a1f24713dca13bc410ff8141bd",
+      "bytes": 954,
+      "gitBlob": "72d1c366da5d0c0ac842ee4a22968d65645c5ea4"
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-db.generated.d.ts",
+      "digest": "sha256:e8f3df1ecf423d0ed51b1ae0f98d896b469da476ba79f8a846737c99e1194693",
+      "bytes": 40522,
+      "gitBlob": "ca40a90be84581324b9d032cbdc881250fdae20f"
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-schema.generated.ts",
+      "digest": "sha256:88efa051a962fdd6a7fc3b6f132015791a17c75f3d0bcdff20d4d166f763d78f",
+      "bytes": 64860,
+      "gitBlob": "11e8380423d7843baa87812d3c544cb4af38de31"
+    },
+    {
+      "path": "openclaw_runtime/src/state/openclaw-state-schema.sql",
+      "digest": "sha256:9fbf105216464c32637dcc746c0d3959075ccd16379923d2319ab806cca8a04f",
+      "bytes": 64711,
+      "gitBlob": "84aa47cddaa6b9330700df04c5b58b7f6ce6e1ff"
+    },
+    {
+      "path": "openclaw_runtime/tsdown.config.ts",
+      "digest": "sha256:73a75a2c5032c34464a24dd62856f5b94375b057671dc6b1b095f369ca58f66e",
+      "bytes": 31794,
+      "gitBlob": "8639b71d04689632cd73e7f0996ad344a27c340d"
+    },
+    {
+      "path": "scripts/knowledge-rag-index-probe.ts",
+      "digest": "sha256:a5953fc83ce995460de7330f02df88177861c7d5f5aa05ed66516bc0566d1efb",
+      "bytes": 5931,
+      "gitBlob": "908b660dbd126e7a530f35a2067187550a0d4e5f"
+    },
+    {
+      "path": "scripts/repository-artifacts.json",
+      "digest": "sha256:48dae6fa0f2bf9067083248258bc76b7e0905b71d66f8f082aff7c293bf1a2d8",
+      "bytes": 190990,
+      "gitBlob": "ecb2ebb08ab619923b3659d935c1dca912256c66"
+    },
+    {
+      "path": "tests/e2e/project-rag-index-lifecycle.spec.ts",
+      "digest": "sha256:39c01f66138e442bfee580aee139bccfed3b6fc886e60271884b038dfd432014",
+      "bytes": 7337,
+      "gitBlob": "f411eaad1301d233004cfdb49f81f1829211d05f"
+    },
+    {
+      "path": "tests/unit/project-rag-index-recovery.test.ts",
+      "digest": "sha256:6d03464fb495022042e51ecacfda3afd395085a33eb1146a00f5d86c7a22a8fe",
+      "bytes": 6821,
+      "gitBlob": "3cce9428beb3b37970db5d02a424d6bd3319c6f2"
+    },
+    {
+      "path": "tests/unit/workspace-permissions.test.ts",
+      "digest": "sha256:14a598ab61cb07291d9da895372ee96603e385ec93c92755904c35d03c7ebba3",
+      "bytes": 14692,
+      "gitBlob": "2d4d98a5aee19470bb8d7e0493983e97249580a4"
+    }
+  ]
+}

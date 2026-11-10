@@ -1,0 +1,10 @@
+{
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "testedCandidate": "ede4d91d7e957ec3c5588c42bc3096f5ca9931f6",
+  "changes": [
+    "harness/specs/tasks/project-rag-index-lifecycle.md"
+  ],
+  "kind": "completion-and-retention-metadata-only",
+  "verifiedCandidateInputs": 31
+}

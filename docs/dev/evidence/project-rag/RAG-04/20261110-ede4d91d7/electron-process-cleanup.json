@@ -1,0 +1,28 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-aj6su1",
+  "ledgerEntries": 5,
+  "checks": [
+    {
+      "pid": 22004,
+      "creationTime": 1794314642649,
+      "status": "exited"
+    },
+    {
+      "pid": 15136,
+      "creationTime": 1794314662209,
+      "status": "exited"
+    },
+    {
+      "pid": 39552,
+      "creationTime": 1794314663417,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

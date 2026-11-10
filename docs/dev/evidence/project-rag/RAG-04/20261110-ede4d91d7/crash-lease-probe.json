@@ -1,0 +1,31 @@
+{
+  "schema": "ProjectRagAbruptLeaseRecoveryProbe/v1",
+  "candidate": "ede4d91d7e957ec3c5588c42bc3096f5ca9931f6",
+  "actor": "codex/project-rag-crash-lease-probe",
+  "driven_by": "agent",
+  "fixtureOrigin": "agent-authored-owner-snapshot",
+  "clock": "real-wall-clock",
+  "childExitCode": 73,
+  "abandonedLeasePersisted": true,
+  "abandonedClaim": {
+    "jobId": "9522cc16-5a98-4bc4-b35a-6f24c70cf751",
+    "attempt": 1,
+    "leaseOwner": "abrupt-child:99a979fb-07e7-412d-b5c3-a6cd3bfe94cd"
+  },
+  "recoveredClaim": {
+    "jobId": "9522cc16-5a98-4bc4-b35a-6f24c70cf751",
+    "attempt": 2,
+    "leaseOwner": "recovery-owner:2f9a2074-1bbd-4e49-b9a7-0f4b964a2b9e"
+  },
+  "oldLeasePublicationRejected": true,
+  "generation": {
+    "schema": "ProjectionGeneration/v1",
+    "generationId": "40493812-8fca-480f-8ecb-29088bc9e368",
+    "sourceKey": "source:sha256:331a52121c3f0e972f0722808509fb19e8a5300ade98fdbb0af4eee032ab4ca8",
+    "intentSequence": 1,
+    "state": "active",
+    "chunkCount": 2
+  },
+  "lexicalHits": 1,
+  "status": "pass"
+}

@@ -1,0 +1,63 @@
+{
+  "schema": "ProjectRagIndependentReview/v1",
+  "actor": "Peirce",
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "driven_by": "agent",
+  "candidate": "ede4d91d7e957ec3c5588c42bc3096f5ca9931f6",
+  "status": "pass",
+  "openFindings": [],
+  "findings": [
+    {
+      "id": "subject-stable-source-identity",
+      "priority": "P2",
+      "status": "closed",
+      "initialReport": "The reviewer identified a possible source row split after changes during a stop. The initial wording overstated which version fields were in the key; direct source read confirmed the actual drifting field was locator.",
+      "resolution": "Removed locator from sourceKeyFor; key is schema/domain/authority/namespace/subject. Pin/profile changes advance the subject row and retire prior generations. Store regression checks same source key, one source row and retired old generation; owner restart regression checks one source row.",
+      "evidence": [
+        "openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts",
+        "tests/unit/project-rag-index-recovery.test.ts"
+      ]
+    },
+    {
+      "id": "physical-session-scope",
+      "priority": "P2",
+      "status": "closed",
+      "initialReport": "The Gateway identity projection and persisted service scope omitted sessionId, so a rebuilt physical generation of the same logical session could inherit enable scope.",
+      "resolution": "Propagate sessionId, require it to enable, compare it for every request, and deny background owner snapshots whose physical session generation differs. Search/reconcile/disable generation drift negative cases added.",
+      "evidence": [
+        "openclaw_runtime/extensions/memory-wiki/src/gateway.ts",
+        "openclaw_runtime/extensions/memory-wiki/src/retrieval-index.ts",
+        "tests/unit/project-rag-index-recovery.test.ts"
+      ]
+    }
+  ],
+  "closureMessages": [
+    {
+      "type": "agentMessage",
+      "id": "msg_8572bfad6bea70f2640b3a49fc76a66c",
+      "text": "我会只重读你点名的 `sourceKeyFor` 20 行和 `observe` 的 `sourceChanged/advancesIntent` 段，核对同 source 变更是否确实复用 row；若我上一条读错，会直接撤回 P2-1，不扩展新面。",
+      "phase": null
+    },
+    {
+      "type": "agentMessage",
+      "id": "msg_9468232637d0aabdd4be0a0b5c5871b1",
+      "text": "我只复核这两个修复点：`sourceKeyFor` 是否已去掉 `locator` 且 `sameSource`/intent 能处理 locator 变化，以及 `sessionId` 是否进入 `readIdentity`、持久化 selection 和 `assertScope`，并检查对应断言是否覆盖。不会运行测试或扩大扫描。",
+      "phase": null
+    },
+    {
+      "type": "agentMessage",
+      "id": "msg_7a984e244005f0d11c0fa3d7d0da5e6e",
+      "text": "**P2-1 纠正：closed，撤回上一轮该 finding 对当前候选的结论。**\n\n当前 `sourceKeyFor` 已改为只包含：\n\n`\"ProjectionSourceKey/v1\" + schema + domain + authorityId + namespaceId + subjectId`\n\n见 [projection-store.ts](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/src/knowledge/retrieval/projection-store.ts:131>)。`locator`、revision、digest、policy 不再参与 row 分裂。\n\n`observe` 的同一 row 路径已确认：`sameSourcePin()` 检测 source pin 变化，`advancesIntent` 递增 intent；随后将旧 pending/leased job 置为 `superseded`，把旧 active generation 退休，并把该 row 设为 `eligible=0`、`activeGeneration=null`，见 [projection-store.ts](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/src/knowledge/retrieval/projection-store.ts:545>) 和 [projection-store.ts](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/src/knowledge/retrieval/projection-store.ts:573>)。\n\n已有同 row 断言是 [projection-store.test.ts](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts:183>)：同一 subject 改变 revision、digest 和 locator 后，断言 `sourceKey` 不变、`sources(\"ns-1\")` 只有一行、旧 generation 全部 retired。现有 restart 端到端测试 [project-rag-index-recovery.test.ts](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-index-recovery.test.ts:43>) 已覆盖停止期间写入后重启并检索。就这轮修复结论，不需要再补新的 restart same-row 断言；如果要把“重启后仍只有一行”作为独立产品级断言，再在 restart 测试中加 `sources` 行数/eligible 检查即可。\n\n**P2-2：closed。**\n\n[gateway.ts](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/extensions/memory-wiki/src/gateway.ts:57>) 已把 `sessionId` 纳入 `readIdentity` 回传；[retrieval-index.ts](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/extensions/memory-wiki/src/retrieval-index.ts:53>) 的 `assertScope` 已比较四字段 `workspaceId/workspaceDir/agentSessionKey/sessionId`；`enable` 也要求 `sessionId`，见同文件 [第 137 行](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/openclaw_runtime/extensions/memory-wiki/src/retrieval-index.ts:137>)。跨 generation 的 `search/reconcile/disable` 反例已加到 [project-rag-index-recovery.test.ts](</C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-index-recovery.test.ts:83>)。",
+      "phase": null
+    }
+  ],
+  "reviewerThread": "01a1c52a-856c-7bc0-b65c-ebe26e947b42",
+  "reviewedImplementationCandidate": "351f143b51e9d811e229c444c89839e4f26c98ac",
+  "finalCandidateDifference": {
+    "paths": [
+      "openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts",
+      "scripts/knowledge-rag-index-probe.ts"
+    ],
+    "kind": "removed two unused imports from the probe and regression test"
+  }
+}

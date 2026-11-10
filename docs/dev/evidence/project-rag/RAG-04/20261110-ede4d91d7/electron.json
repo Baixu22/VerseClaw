@@ -1,0 +1,116 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-TF-0881/formal-ede4d91d7/electron",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-index-lifecycle.spec.ts",
+      "file": "project-rag-index-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG index publishes, invalidates and recovers through real Electron Host and Gateway",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 147719,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-10T12:44:00.139Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "index-lifecycle-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJhY3RvciI6ICJjb2RleC9wcm9qZWN0LXJhZy1pbmRleC1lbGVjdHJvbiIsCiAgImRyaXZlbl9ieSI6ICJhZ2VudCIsCiAgInBsYXRmb3JtIjogIndpbjMyIiwKICAic3RhdHVzIjogInBhc3MiLAogICJzdGVwcyI6IHsKICAgICJleHBsaWNpdEVuYWJsZSI6IHRydWUsCiAgICAiZm9yZ2VkU2NvcGVDbGFtcGVkIjogdHJ1ZSwKICAgICJuYXRpdmVXb3JrZXJQdWJsaXNoZWQiOiB0cnVlLAogICAgInVwZGF0ZVJlcGxhY2VkIjogdHJ1ZSwKICAgICJhY2xSZWplY3RlZCI6IHRydWUsCiAgICAicmVzdGFydFJlY29uY2lsZWQiOiB0cnVlLAogICAgImRlbGV0aW9uUmVqZWN0ZWQiOiB0cnVlLAogICAgImNvcnJ1cHRGdHNJc29sYXRlZCI6IHRydWUsCiAgICAib3JkaW5hcnlDaGF0VmlzaWJsZSI6IHRydWUKICB9LAogICJlbmFibGVkIjogewogICAgInN0YXR1cyI6ICJydW5uaW5nIiwKICAgICJsYXN0RXJyb3IiOiBudWxsLAogICAgInNvdXJjZXMiOiBbCiAgICAgIHsKICAgICAgICAic291cmNlS2V5IjogInNvdXJjZTpzaGEyNTY6YmVmNjhmYjFlM2I4ZWQ5NTUzZGNiZmQ3ZWNhMTg0NDc1MzY3NTNlMzkzMGJjYjJkOGIxZDBiZDdmMmVkZDIwMCIsCiAgICAgICAgImludGVudFNlcXVlbmNlIjogMSwKICAgICAgICAiZWxpZ2libGUiOiBmYWxzZSwKICAgICAgICAiYWN0aXZlR2VuZXJhdGlvbiI6IG51bGwsCiAgICAgICAgInJlYXNvbiI6IG51bGwKICAgICAgfQogICAgXSwKICAgICJqb2JzIjogWwogICAgICB7CiAgICAgICAgImpvYklkIjogIjY0ZTlkZWJiLWY1NDEtNDFlOS04NDRhLTc0YWY1ZGIyMzQ5MSIsCiAgICAgICAgInN0YXRlIjogImxlYXNlZCIsCiAgICAgICAgImF0dGVtcHQiOiAxLAogICAgICAgICJlcnJvciI6IG51bGwKICAgICAgfQogICAgXSwKICAgICJhY3RpdmVXb3JrZXIiOiB0cnVlLAogICAgIndvcmtlclRocmVhZElkcyI6IFtdCiAgfSwKICAiZmlyc3RTdGF0dXMiOiB7CiAgICAic3RhdHVzIjogInJ1bm5pbmciLAogICAgImxhc3RFcnJvciI6IG51bGwsCiAgICAic291cmNlcyI6IFsKICAgICAgewogICAgICAgICJzb3VyY2VLZXkiOiAic291cmNlOnNoYTI1NjpiZWY2OGZiMWUzYjhlZDk1NTNkY2JmZDdlY2ExODQ0NzUzNjc1M2UzOTMwYmNiMmQ4YjFkMGJkN2YyZWRkMjAwIiwKICAgICAgICAiaW50ZW50U2VxdWVuY2UiOiAxLAogICAgICAgICJlbGlnaWJsZSI6IHRydWUsCiAgICAgICAgImFjdGl2ZUdlbmVyYXRpb24iOiAiYjJkZTc2Y2EtOWJkNS00YjQ2LTk1ZjYtMmI4Nzc4NzJmMThmIiwKICAgICAgICAicmVhc29uIjogbnVsbAogICAgICB9CiAgICBdLAogICAgImpvYnMiOiBbCiAgICAgIHsKICAgICAgICAiam9iSWQiOiAiNjRlOWRlYmItZjU0MS00MWU5LTg0NGEtNzRhZjVkYjIzNDkxIiwKICAgICAgICAic3RhdGUiOiAiY29tcGxldGUiLAogICAgICAgICJhdHRlbXB0IjogMSwKICAgICAgICAiZXJyb3IiOiBudWxsCiAgICAgIH0KICAgIF0sCiAgICAiYWN0aXZlV29ya2VyIjogZmFsc2UsCiAgICAid29ya2VyVGhyZWFkSWRzIjogWwogICAgICAyCiAgICBdCiAgfQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2e64a5a40cdec9ac737f-be3ba60fbc9ac5659e2c",
+          "file": "project-rag-index-lifecycle.spec.ts",
+          "line": 18,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-10T12:43:58.029Z",
+    "duration": 150738.252,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

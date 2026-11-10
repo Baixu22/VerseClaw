@@ -1,6 +1,6 @@
 ---
 lifecycleStatus: active
-implementationStatus: partial
+implementationStatus: implemented
 id: project-rag-index-lifecycle
 title: 实现增量索引、撤销传播与崩溃恢复
 scenario: gateway-backend-communication
@@ -99,3 +99,5 @@ docs:
 所有检索来源和模型调用接受 owner 准入，DCS 保留最终上下文决定权；验证结果标记 driven_by: agent。
 
 回滚：停止新 jobs、切回有效 generation 或 page 路径，只清理派生索引。
+
+实现接口和恢复行为见 `docs/dev/project-rag/INDEX-LIFECYCLE-CONTRACT.md`。候选验收记录为 `docs/dev/evidence/project-rag/RAG-04/20261110-ede4d91d7/report.json`，包含 SQLite、worker、跨进程租约恢复和真实 Electron 生命周期证据。
