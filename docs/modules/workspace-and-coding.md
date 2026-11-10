@@ -394,3 +394,7 @@ VG 卡片只读取现有 host binding/observation 和 receipt owner 已接收的
 [受控启用与回滚](../dev/change-context-review-loop/rollout.md)。
 
 延伸阅读：[Verse 系列组件](verse-tools.md)、[资源与可观测性](resources-and-observability.md)、[默认配置矩阵](../dev/default-config-matrix.md)。
+
+受管工作树回收沿既有执行域屏障和 checkout writer 执行，保留 Git 忽略文件。进程内工作树按创建时记录的实际文件摘要与权限基线核对；变化尚未在目标目录保留时拒绝删除。删除前重核路径实例、内容、权限和引用；预检明确拒绝时结算 `not-applied` 并恢复原生命周期。
+
+回收会检查进程内工作树的全部现存内容及权限是否已有精确目标副本。Git 索引存在 `assume-unchanged` 或 `skip-worktree` 标记时明确拒绝回收并保留原标记。

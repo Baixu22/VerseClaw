@@ -208,6 +208,9 @@ describe('checkout writer resource owner',()=>{
   expect(await child.ready).toMatchObject({ok:true,phase:'prepared'});expect(await child.exit).toBe(23);
   closeOpenClawStateDatabaseForTest();
   expect(s.writer(r.id)).toMatchObject({state:'active',operations:[]});expect(readFileSync(path.join(r.root,'retained.txt'),'utf8')).toBe('retained');
+  expect(()=>s.cleanup(r.id)).toThrow('worktree_cleanup_user_content_present');
+  expect(readFileSync(path.join(r.root,'retained.txt'),'utf8')).toBe('retained');
+  rmSync(path.join(r.root,'retained.txt'));
   // The original native lock owner exited; the new call uses its standard recovery.
   s.cleanup(r.id);expect(existsSync(r.root)).toBe(false);expect(s.list()[0].status).toBe('cleaned');
  });
