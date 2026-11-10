@@ -315,6 +315,7 @@ function SessionFolderTreeInner({
     const keys = rowGroups.flatMap(group => group.rows.map(row => row.entry.session.key));
     if (keys.length) setInteractionOrder(current => current ?? keys);
   };
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- A navigation or sort intent ends the prior pointer-order hold once.
   useEffect(() => { setInteractionOrder(null); }, [workspace.id, currentSessionKey, sessionSort]);
   useEffect(() => {
     if (!interactionOrder) return;
@@ -361,6 +362,7 @@ function SessionFolderTreeInner({
     if (!group) return;
     revealedSelection.current = currentSessionKey;
     const row = threadSessionsByLineage(group).find((entry) => entry.entry.session.key === currentSessionKey);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Reveal an externally selected child once; revealedSelection prevents reopening after an explicit collapse.
     if (row?.originKey) setExpandedFamilies((current) => ({ ...current, [row.originKey!]: true }));
   }, [currentSessionKey, groups]);
 
