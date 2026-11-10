@@ -203,6 +203,22 @@ describe("ProjectionStore real SQLite lifecycle", () => {
     ).toBe(true);
   });
 
+  it("fences the old generation when only the admitted source range changes", () => {
+    const f = fixture();
+    const first = f.store.observe(f.intent());
+    const job = f.store.claim({ namespaceId: "ns-1", leaseOwner: "worker", leaseMs: 30_000 })!;
+    f.store.publish(job, [f.chunk]);
+    const narrowed = { ...f.source, locator: { ...f.source.locator, startByte: 6, startLine: 2 } };
+    const next = f.store.observe(f.intent({ source: narrowed, eventId: "range-only-change" }));
+    expect(next.source.sourceKey).toBe(first.source.sourceKey);
+    expect(next.source.intentSequence).toBe(first.source.intentSequence + 1);
+    expect(next.source).toMatchObject({ eligible: false, activeGeneration: null });
+    expect(next.job?.state).toBe("pending");
+    expect(f.store.generations(first.source.sourceKey).every(generation => generation.state === "retired")).toBe(true);
+    expect(f.store.search({ namespaceId: "ns-1", query: "alpha", limit: 10, context: f.context }).candidates).toEqual([]);
+    expect(f.store.publish(job, [f.chunk])).toBeUndefined();
+  });
+
   it("fences a recovered lease across independent store instances", () => {
     const f = fixture();
     f.store.observe(f.intent());

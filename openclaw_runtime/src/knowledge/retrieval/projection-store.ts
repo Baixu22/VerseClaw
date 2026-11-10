@@ -542,7 +542,9 @@ export class ProjectionStore {
         };
       }
 
-      const sourceChanged = !existing || !sameSourcePin(sourceFromColumns(existing), intent.source);
+      // A changed owner range needs a new projection even when the full-file
+      // digest and revision stay fixed; active chunks belong to the prior range.
+      const sourceChanged = !existing || !sameSource(sourceFromColumns(existing), intent.source);
       const profileChanged = !existing || existing.profile_digest !== intent.profileDigest;
       const desiredChanged = !existing || existing.desired_eligible !== desiredEligible;
       const advancesIntent =
