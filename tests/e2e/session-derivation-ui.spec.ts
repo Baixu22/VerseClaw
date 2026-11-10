@@ -325,16 +325,20 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
         rpc, rootCommits: after.commits - before.commits, committedRowWork: committedWork(after) - committedWork(before),
         rowWorkByKey, domMutations: after.domMutations - before.domMutations };
     };
-    const streamProbe = async (view: Projection, eventCount: number) => {
+    const startStreamProbe = async () => {
       held = false;
       holdNext = true;
-      const identity = 'family-render-' + children.length + '-' + eventCount + '-' + Date.now();
+      const identity = 'family-render-' + children.length + '-' + Date.now();
       const receipt = await hostInvoke<{ success: boolean; result?: { runId?: string } }>(app, 'chat', 'sendWithMedia', {
         workspaceId: project.workspaceId, sessionKey: project.sessionKey, message: 'FAMILY-HOLD ' + identity, idempotencyKey: identity,
       });
       const runId = receipt.result?.runId;
       if (!receipt.success || !runId) throw new Error('Live family probe run was not acknowledged');
       await expect.poll(() => held, { timeout: 30_000 }).toBe(true);
+      return { identity, receipt, runId };
+    };
+    const streamProbe = async (view: Projection, eventCount: number, run: Awaited<ReturnType<typeof startStreamProbe>>) => {
+      const { identity, receipt, runId } = run;
       await page.reload();
       // The warmup must include this run's persisted user turn. Otherwise an old
       // history read can update the row timestamp inside the token measurement.
@@ -375,11 +379,6 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
       const after = await renderer();
       const dom = (await readRows()).filter((row) => children.includes(row.key));
       expect(dom.map((row) => row.key).sort()).toEqual([...children].sort());
-      releaseHold();
-      await expect.poll(async () => (await hostInvoke<{ session: { hasActiveRun: boolean } }>(app, 'gateway', 'rpc', {
-        method: 'sessions.describe', params: { key: project.sessionKey }, timeoutMs: 30_000,
-      })).session.hasActiveRun, { timeout: 30_000 }).toBe(false);
-      await twoFrames();
       return { projection: view, sourceIdentity, eventCount, warmupEvents: 1, settledSamples, before, after,
         committedRowWork: committedWork(after) - committedWork(before), sequenceSamples, dom, receipt, actualOwner,
         streamInput: 'agent event replay during an actual live Gateway model request' };
@@ -425,14 +424,21 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
       metrics.push(measurement);
       const streamContainment: unknown[] = [];
       measurement.streamContainment = streamContainment;
+      // Both projections and event counts share the same live owner and persisted input.
+      const sharedRun = await startStreamProbe(); measurement.sharedStreamRun = sharedRun;
       for (const view of ['time', 'project'] as const) {
-        const few = await streamProbe(view, streamCounts[0]);
-        const many = await streamProbe(view, streamCounts[1]);
+        const few = await streamProbe(view, streamCounts[0], sharedRun);
+        const many = await streamProbe(view, streamCounts[1], sharedRun);
         streamContainment.push({ projection: view, sourceIdentity, datasetIdentity, evidenceType: 'electron-main-event-fixture',
           channel: HOST_EVENT_CHANNELS.chat.runtimeEvent, few, many, oneConstantPass: children.length + 1 });
         expect(many.committedRowWork).toBe(few.committedRowWork);
         expect(many.committedRowWork).toBeLessThanOrEqual(children.length + 1);
       }
+      releaseHold();
+      await expect.poll(async () => (await hostInvoke<{ session: { hasActiveRun: boolean } }>(app, 'gateway', 'rpc', {
+        method: 'sessions.describe', params: { key: project.sessionKey }, timeoutMs: 30_000,
+      })).session.hasActiveRun, { timeout: 30_000 }).toBe(false);
+      await twoFrames();
       await chooseProjection('project'); await exposeProjection('project'); await revealChildren();
       const durationsMs: number[] = [];
       for (let index = 0; index < baseline.sessionSwitch.count; index += 1) {
