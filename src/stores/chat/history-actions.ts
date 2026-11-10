@@ -1,4 +1,5 @@
 import { hostApi } from '@/lib/host-api';
+import { mergeSessionActivity } from '@/lib/session-read-model';
 import { fetchCronSessionHistory } from '@/lib/cron-session-history';
 import { useGatewayStore } from '@/stores/gateway';
 import {
@@ -252,7 +253,7 @@ export function createHistoryActions(
         if (lastMsg?.timestamp) {
           const lastAt = toMs(lastMsg.timestamp);
           set((s) => ({
-            sessionLastActivity: { ...s.sessionLastActivity, [currentSessionKey]: lastAt },
+            sessionLastActivity: mergeSessionActivity(s.sessionLastActivity, { [currentSessionKey]: lastAt }),
           }));
         }
 

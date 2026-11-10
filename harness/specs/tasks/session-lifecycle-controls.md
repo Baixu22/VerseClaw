@@ -94,6 +94,12 @@ ownedPaths:
   - src/styles/codex-sidebar.css
   - src/components/layout/SessionFolderTree.tsx
   - tests/unit/session-family-navigation.test.tsx
+  - src/lib/session-read-model.ts
+  - src/stores/chat/history-actions.ts
+  - src/stores/chat/session-actions.ts
+  - src/stores/gateway.ts
+  - tests/unit/chat-store-history-retry.test.ts
+  - tests/unit/chat-store-session-label-fetch.test.ts
   - harness/specs/rules/session-derivation-ui-contract.md
 touchedAreas:
   - docs/dev/session-worktree-storage.md
@@ -183,6 +189,12 @@ touchedAreas:
   - src/styles/codex-sidebar.css
   - src/components/layout/SessionFolderTree.tsx
   - tests/unit/session-family-navigation.test.tsx
+  - src/lib/session-read-model.ts
+  - src/stores/chat/history-actions.ts
+  - src/stores/chat/session-actions.ts
+  - src/stores/gateway.ts
+  - tests/unit/chat-store-history-retry.test.ts
+  - tests/unit/chat-store-session-label-fetch.test.ts
   - harness/specs/rules/session-derivation-ui-contract.md
 requiredRules:
   - identity-scope-boundary

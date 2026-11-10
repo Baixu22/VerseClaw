@@ -5,7 +5,7 @@
  */
 import { create } from 'zustand';
 import { readSessionDerivationFacts } from '@shared/types/session-derivation';
-import { readSessionListPages } from '@/lib/session-read-model';
+import { mergeSessionActivity, readSessionListPages } from '@/lib/session-read-model';
 import { hostApi, type ChatSendWithMediaResult, type SessionLabelSummary } from '@/lib/host-api';
 import { useGatewayStore } from './gateway';
 import { useAgentsStore } from './agents';
@@ -339,11 +339,9 @@ function applySessionLabelSummaries(
       }
 
       if (typeof summary.lastTimestamp === 'number' && Number.isFinite(summary.lastTimestamp)) {
-        if (nextActivity[summary.sessionKey] !== summary.lastTimestamp) {
-          if (nextActivity === state.sessionLastActivity) {
-            nextActivity = { ...state.sessionLastActivity };
-          }
-          nextActivity[summary.sessionKey] = summary.lastTimestamp;
+        const activity = mergeSessionActivity(nextActivity, { [summary.sessionKey]: summary.lastTimestamp });
+        if (activity !== nextActivity) {
+          nextActivity = activity;
           changed = true;
         }
       }
@@ -3079,20 +3077,14 @@ export const useChatStore = create<ChatState>((set, get, api) => {
             set((state) => ({
               ...buildSessionSwitchPatch(state, nextSessionKey),
               sessions: sessionsWithCurrent,
-              sessionLastActivity: {
-                ...state.sessionLastActivity,
-                ...discoveredActivity,
-              },
+              sessionLastActivity: mergeSessionActivity(state.sessionLastActivity, discoveredActivity),
             }));
           } else {
             set((state) => ({
               sessions: sessionsWithCurrent,
               currentSessionKey: nextSessionKey,
               currentAgentId: getAgentIdFromSessionKey(nextSessionKey),
-              sessionLastActivity: {
-                ...state.sessionLastActivity,
-                ...discoveredActivity,
-              },
+              sessionLastActivity: mergeSessionActivity(state.sessionLastActivity, discoveredActivity),
             }));
           }
           reconcileCurrentSessionIdleFromBackend(set, get, sessionsWithCurrent);
@@ -3756,7 +3748,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       if (lastMsg?.timestamp) {
         const lastAt = toMs(lastMsg.timestamp);
         set((s) => ({
-          sessionLastActivity: { ...s.sessionLastActivity, [currentSessionKey]: lastAt },
+          sessionLastActivity: mergeSessionActivity(s.sessionLastActivity, { [currentSessionKey]: lastAt }),
         }));
       }
 
