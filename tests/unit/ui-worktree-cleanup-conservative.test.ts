@@ -26,11 +26,15 @@ vi.mock('node:child_process', async importOriginal => {
 });
 
 const state = vi.hoisted(() => ({ profiles: [] as WorkspaceProfile[], grants: [] as Array<{ id: string; requestHash: string }>,
-  approved: new Set<string>(), onConsume: null as null | (() => void), failWorkspaceRead: false }));
+  approved: new Set<string>(), onConsume: null as null | (() => void), failWorkspaceRead: false, remainingWorkspaceReads: null as number | null }));
 vi.mock('electron', () => ({ app: { getAppMetrics: () => [] }, shell: {} }));
 vi.mock('../../electron/services/workspaces-api', () => ({
   getActiveWorkspaceProfile: async () => state.profiles[0], getWorkspaceRootPathById: vi.fn(), getPersistedCoordinatorBinding: vi.fn(),
-  createWorkspacesApi: () => ({ list: async () => { if (state.failWorkspaceRead) throw new Error('fixture workspace owner unavailable'); return { profiles: state.profiles }; } }),
+  createWorkspacesApi: () => ({ list: async () => {
+    if (state.failWorkspaceRead || state.remainingWorkspaceReads === 0) throw new Error('fixture workspace owner unavailable');
+    if (state.remainingWorkspaceReads !== null) state.remainingWorkspaceReads--;
+    return { profiles: state.profiles };
+  } }),
 }));
 // 权限/config/resource观测为夹具；Git、Task/registry/writer身份与SQLite均为原实现。
 vi.mock('../../electron/services/permissions-api', () => ({
@@ -76,7 +80,7 @@ describe('conservative UI deletion using original Git and owners', () => {
   beforeEach(async () => {
     root = await mkdtemp(join(tmpdir(), 'u5-ui-conservative-')); repository = join(root, 'repository'); tree = join(root, 'native-tree');
     vi.stubEnv('CLAWX_EXECUTION_STATE_PATH', join(root, 'execution.sqlite'));
-    state.grants.length = 0; state.approved.clear(); state.onConsume = null; state.failWorkspaceRead = false;
+    state.grants.length = 0; state.approved.clear(); state.onConsume = null; state.failWorkspaceRead = false; state.remainingWorkspaceReads = null;
     await mkdir(repository); native(repository, 'init', '-b', 'fixture-main'); await writeFile(join(repository, 'artifact.txt'), 'retained\n');
     native(repository, 'add', 'artifact.txt'); native(repository, '-c', 'user.name=Agent fixture', '-c', 'user.email=agent@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-m', 'fixture');
     native(repository, 'worktree', 'add', '-b', 'native-fixture', tree); state.profiles = [profile('repository', repository)];
@@ -239,6 +243,14 @@ describe('conservative UI deletion using original Git and owners', () => {
     const prompt = await route('git'); state.approved.add(prompt.approval!.id);
     native(repository, 'worktree', 'remove', '--', tree); native(repository, 'worktree', 'add', tree, 'native-fixture');
     const response = await route('git', prompt.approval!.id); expect(response.approvalRequired).toBe(true); expect(existsSync(tree)).toBe(true);
+  });
+  it('reuses the final checked workspace snapshot without another owner read', async () => {
+    const prompt = await route('git'); state.approved.add(prompt.approval!.id);
+    state.onConsume = () => { state.remainingWorkspaceReads = 1; };
+    const result = await route('git', prompt.approval!.id);
+    expect(result.success).toBe(true);
+    expect(state.remainingWorkspaceReads).toBe(0);
+    expect(existsSync(tree)).toBe(false);
   });
   it('retains native Git dirty rejection and creates no maintenance reservation', async () => {
     await writeFile(join(tree, 'unsaved.txt'), 'keep'); const prompt = await route('git'); state.approved.add(prompt.approval!.id);
