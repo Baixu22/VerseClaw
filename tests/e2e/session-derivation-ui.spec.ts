@@ -365,10 +365,11 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
       }
       await expect(currentInput).toBeVisible({ timeout: 30_000 });
       await chooseProjection(view); await exposeProjection(view); await revealChildren();
-      const actualOwner = await hostInvoke<{ session: { sessionId: string; hasActiveRun: boolean } }>(app, 'gateway', 'rpc', {
-        method: 'sessions.describe', params: { key: project.sessionKey }, timeoutMs: 30_000,
-      });
-      expect(actualOwner.session).toMatchObject({ sessionId: project.generation, hasActiveRun: true });
+      let actualOwner: { session: { sessionId: string; hasActiveRun: boolean } } | undefined;
+      await expect.poll(async () => {
+        actualOwner = await readRunState('sessions.describe', { key: project.sessionKey });
+        return actualOwner?.session;
+      }, { timeout: 30_000 }).toMatchObject({ sessionId: project.generation, hasActiveRun: true });
       const ts = Date.now();
       await publish({ type: 'run.started', runId, sessionKey: project.sessionKey, seq: 0, ts, startedAt: ts });
       await publish({ type: 'assistant.delta', runId, sessionKey: project.sessionKey, seq: 1, ts, replace: true,
