@@ -1,0 +1,43 @@
+
+Running 1 test using 1 worker
+
+(node:50188) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50188) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\e2e\session-worktree-storage.spec.ts:25:5 › real repository, isolated worktree, storage command and settings in light/dark/narrow layouts (648ms)
+[31mTesting stopped early after 1 maximum allowed failures.[39m
+
+
+  1) tests\e2e\session-worktree-storage.spec.ts:25:5 › real repository, isolated worktree, storage command and settings in light/dark/narrow layouts 
+
+    Error: [FP-P3-05] openclaw_runtime/dist/entry.js is stale. 1 src file(s) newer than dist.
+    Run `pnpm build:runtime` before E2E to avoid testing a stale bundle.
+    Sample stale files: openclaw_runtime\src\agents\worktree-service.ts
+
+       at fixtures\electron.ts:120
+
+      118 |   if (stale.length > 0) {
+      119 |     const sample = stale.slice(0, 5).map((f) => f.replace(repoRoot + '\\', ''));
+    > 120 |     throw new Error(
+          |           ^
+      121 |       `[FP-P3-05] openclaw_runtime/dist/entry.js is stale. ${stale.length} src file(s) newer than dist.\n` +
+      122 |         `Run \`pnpm build:runtime\` before E2E to avoid testing a stale bundle.\n` +
+      123 |         `Sample stale files: ${sample.join(', ')}${stale.length > 5 ? ` (and ${stale.length - 5} more)` : ''}`,
+        at assertRuntimeDistFresh (D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\fixtures\electron.ts:120:11)
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\fixtures\electron.ts:516:33
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\session-worktree-storage.spec.ts:31:15
+
+    Error Context: ..\..\tmp\unified-management-20261109\lifecycle-validation\u5-storage-ui3-results\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\lifecycle-validation\u5-storage-ui3-results\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\lifecycle-validation\u5-storage-ui3-results\session-worktree-storage-r-5232d-n-light-dark-narrow-layouts\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\session-worktree-storage.spec.ts:25:5 › real repository, isolated worktree, storage command and settings in light/dark/narrow layouts 
+  1 error was not a part of any test, see above for details

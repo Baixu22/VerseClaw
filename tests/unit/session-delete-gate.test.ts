@@ -87,6 +87,22 @@ describe('session delete gate concurrency', () => {
     await clearSessionDeleteGate(first.operationId);
   });
 
+  it('lists pending operations by agent and rejects a completed or replaced recovery identity', async () => {
+    const { listSessionMutationGates, persistSessionMutationGate, clearSessionDeleteGate } = await import('@electron/services/session-delete-gate');
+    const input = { sessionKey: 'agent:main:recover', agentId: 'main', operationKind: 'archive' as const, requestDigest: 'same-request' };
+    const first = await persistSessionMutationGate(input);
+    await persistSessionMutationGate({ ...input, sessionKey: 'agent:worker:recover', agentId: 'worker' });
+    expect((await listSessionMutationGates('main')).map(row => row.operationId)).toEqual([first.operationId]);
+    expect((await persistSessionMutationGate({ ...input, expectedOperationId: first.operationId })).operationId).toBe(first.operationId);
+    await expect(persistSessionMutationGate({ ...input, expectedOperationId: 'wrong-id' })).rejects.toThrow('SESSION_MUTATION_CHANGED');
+    await clearSessionDeleteGate(first.operationId);
+    await expect(persistSessionMutationGate({ ...input, expectedOperationId: first.operationId })).rejects.toThrow('SESSION_MUTATION_CHANGED');
+    expect(await listSessionMutationGates('main')).toEqual([]);
+    const second = await persistSessionMutationGate(input);
+    await expect(persistSessionMutationGate({ ...input, expectedOperationId: first.operationId })).rejects.toThrow('SESSION_MUTATION_CHANGED');
+    expect((await listSessionMutationGates('main')).map(row => row.operationId)).toEqual([second.operationId]);
+  });
+
   it('fails try-lock admission while a delete critical section is active', async () => {
     const {
       tryWithSessionDeleteGateLock,

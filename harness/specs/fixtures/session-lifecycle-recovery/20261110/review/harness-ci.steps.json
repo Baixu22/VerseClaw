@@ -1,0 +1,109 @@
+{
+  "driven_by": "agent",
+  "actor": "codex",
+  "script": "pnpm harness list && pnpm harness validate --spec harness/specs/scenarios/gateway-backend-communication.md && pnpm harness validate --spec harness/specs/tasks/fix-chat-history-gateway-timeout.example.md --no-diff && pnpm harness run --spec harness/specs/scenarios/gateway-backend-communication.md --dry-run && pnpm exec vitest run tests/unit/harness-specs.test.ts tests/unit/harness-git.test.ts tests/unit/harness-spec-lifecycle.test.ts tests/unit/docs-index.test.ts tests/unit/runtime-source-policy.test.ts && pnpm harness:specs:lifecycle && pnpm repo:duplicates:check && pnpm docs:policy:validate && pnpm catalogs:check && pnpm agent-dev:audit && pnpm repo:evidence:check && pnpm repo:test-coverage:check",
+  "execution": "Direct installed Node entry points preserve the harness:ci sequence without dependency installation.",
+  "steps": [
+    {
+      "name": "harness-list",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "list"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "harness-scenario",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/scenarios/gateway-backend-communication.md"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "harness-example",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/fix-chat-history-gateway-timeout.example.md",
+        "--no-diff"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "harness-plan",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/scenarios/gateway-backend-communication.md",
+        "--dry-run"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "harness-units",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/harness-specs.test.ts",
+        "tests/unit/harness-git.test.ts",
+        "tests/unit/harness-spec-lifecycle.test.ts",
+        "tests/unit/docs-index.test.ts",
+        "tests/unit/runtime-source-policy.test.ts",
+        "--maxWorkers=1"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "spec-lifecycle",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/check-spec-lifecycle.mjs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "duplicates",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/check-duplicate-assets.mjs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "policy-docs",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/validate-policy-docs.mjs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "catalogs",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/tsx/dist/cli.mjs",
+        "../scripts/generate-catalogs.mjs",
+        "--check"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "agent-dev-audit",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/agent-dev-audit.mjs"
+      ],
+      "exitCode": 1
+    }
+  ]
+}

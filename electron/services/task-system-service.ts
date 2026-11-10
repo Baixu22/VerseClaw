@@ -1,4 +1,9 @@
-import { existsSync } from "node:fs";
+import { existsSync, statSync } from "node:fs";
+import type { WorkspaceProfile } from '../../shared/types/workspace';
+import { canonicalWorktreePath, findManagedWorktreeByRoot, worktreeNativeIdentity } from '../../openclaw_runtime/src/agents/worktree-registry';
+import { assertCleanupCommitRetained } from '../../openclaw_runtime/src/agents/worktree-service';
+import { checkoutWriterSnapshot } from '../../openclaw_runtime/src/agents/worktree-writer';
+import { resolveExecutionDomain } from '../../openclaw_runtime/src/agents/execution-domain';
 import { TaskSystemStore } from "../../shared/task-system/store";
 import { createExecutionTaskAccess, openExecutionTaskStore, inheritExecutionTaskReference, type ExecutionTaskAuthorityBasis } from "../../openclaw_runtime/src/agents/execution-task-authority";
 import type {
@@ -10,6 +15,44 @@ import type {
 } from "../../shared/task-system/types";
 import { getPersistedCoordinatorBinding, getWorkspaceRootPathById } from "./workspaces-api";
 import type { GatewayManager } from "../gateway/manager";
+
+type UiWorktreeRemovalRead = { blocked: true; reason: string } | { blocked: false; identity: string };
+
+/** UI 只删除无产品 owner 的原生检出；受管对象继续由既有 owner 回收。 */
+export function inspectUiWorktreeRemoval(repositoryRoot: string, target: string, profiles: WorkspaceProfile[]): UiWorktreeRemovalRead {
+  const deny = (code: string, detail: string, owner = 'WorktreeService.cleanup'): UiWorktreeRemovalRead => ({ blocked: true,
+    reason: `${code}: ${detail}; owner=${owner}; entry=/settings/storage (originating session / Task Ledger)` });
+  try {
+    const root = canonicalWorktreePath(target), identity = worktreeNativeIdentity(target, 'git');
+    const domain = resolveExecutionDomain(root), repository = resolveExecutionDomain(repositoryRoot);
+    if (domain.state === 'unavailable') return deny('UI_CLEANUP_OWNER_UNAVAILABLE', domain.reason);
+    if (repository.state === 'unavailable') return deny('UI_CLEANUP_OWNER_UNAVAILABLE', repository.reason);
+    // 使用原生 common-dir + backlink，不从相同remote、父目录或名称合并独立clone。
+    if (domain.local.id !== repository.local.id) return deny('UI_CLEANUP_FOREIGN_GIT_DOMAIN', root);
+    const managed = findManagedWorktreeByRoot(root);
+    if (managed) return deny('UI_CLEANUP_MANAGED_CHECKOUT', `${managed.record.id}@${managed.record.generation}`);
+    const writer = checkoutWriterSnapshot(root);
+    if (writer) return deny('UI_CLEANUP_CHECKOUT_OWNER', `${writer.generation}:${writer.state}`);
+    if (process.env.CLAWX_VERSGIT_CLEANUP_ROOT?.trim() || process.env.CLAWX_VERSGIT_BINDING_ENABLED === '1')
+      return deny('UI_CLEANUP_VG_OWNER', root, 'VerseGit cleanup seal / WorktreeService.cleanup');
+    for (const profile of profiles) {
+      const roots = [profile.rootPath, ...Object.values(profile.coordinatorBindings ?? {}).map(b => b.environment.canonicalRoot),
+        ...Object.values(profile.executionMigrations ?? {}).flatMap(operation => [operation.sourceRoot, operation.targetRoot])];
+      if (roots.some(path => canonicalWorktreePath(path) === root)) return deny('UI_CLEANUP_WORKSPACE_REFERENCE', profile.id, 'Workspace/session lifecycle');
+    }
+    if (domain.state === 'registered') return deny('UI_CLEANUP_TASK_AUTHORITY', domain.authority.id, 'TaskSystemStore / WorktreeService.cleanup');
+    let present = true;
+    try { statSync(domain.authority.database); }
+    catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') present = false; else throw error; }
+    if (!present) {
+      try { assertCleanupCommitRetained({ backend: "git", root, baseRoot: repositoryRoot }); }
+      catch (error) { return deny('UI_CLEANUP_COMMIT_RETENTION', error instanceof Error ? error.message : String(error), 'Git refs / WorktreeService.cleanup'); }
+      return { blocked: false, identity };
+    }
+    // The existing database establishes Task ownership; its schema stays with TaskSystemStore.
+    return deny('UI_CLEANUP_TASK_AUTHORITY', domain.authority.id, 'TaskSystemStore');
+  } catch (error) { return deny('UI_CLEANUP_OWNER_UNAVAILABLE', error instanceof Error ? error.message : String(error)); }
+}
 
 export async function openTaskSystem(
   workspaceId: string,

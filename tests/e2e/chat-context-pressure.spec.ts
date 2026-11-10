@@ -25,6 +25,7 @@ test.describe('Verse Claw chat context pressure', () => {
     try {
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        gatewayRpcByMethod: { 'sessions.list': { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'context-pressure-generation', displayName: 'main' }] } },
         hostApi: {
           [stableStringify(['gateway', 'status', null])]: {
             state: 'running',
@@ -39,7 +40,7 @@ test.describe('Verse Claw chat context pressure', () => {
               ok: true,
               json: {
                 success: true,
-                result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+                result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'context-pressure-generation', displayName: 'main' }] },
               },
             },
           },
@@ -129,6 +130,8 @@ test.describe('Verse Claw chat context pressure', () => {
         },
       });
 
+      await page.reload();
+      await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', 'context-pressure-generation', { timeout: 30_000 });
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
 
       // Open the compaction dialog via the slash palette, which is the current
@@ -165,6 +168,7 @@ test.describe('Verse Claw chat context pressure', () => {
     try {
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        gatewayRpcByMethod: { 'sessions.list': { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'context-pressure-generation', displayName: 'main' }] } },
         hostApi: {
           [stableStringify(['gateway', 'status', null])]: {
             state: 'running',
@@ -177,7 +181,7 @@ test.describe('Verse Claw chat context pressure', () => {
             data: {
               status: 200,
               ok: true,
-              json: { success: true, result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] } },
+              json: { success: true, result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'context-pressure-generation', displayName: 'main' }] } },
             },
           },
           [stableStringify(['/api/chat/history', 'POST'])]: {
@@ -261,6 +265,8 @@ test.describe('Verse Claw chat context pressure', () => {
         },
       });
 
+      await page.reload();
+      await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', 'context-pressure-generation', { timeout: 30_000 });
       await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
       await page.getByTestId('chat-composer-input').fill('/compact');
       const compact = page.getByTestId('chat-slash-command-option-compact');

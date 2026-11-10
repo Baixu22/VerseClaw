@@ -88,7 +88,9 @@ export function ResourceChip() {
           expectedRevision: binding.bindingRevision,
         });
         if (scopeRef.current !== scope) return;
+        if (!result.success) throw new Error(result.error ?? result.recovery.reason ?? t('resourceTracker.coordinator.recovery', { state: 'unknown' }));
         setCoordinatorBinding(result.binding);
+        setCoordinatorRecovery(result.recovery);
         return;
       }
       const taskLedgerNodeIds = binding?.taskLedgerReferences.map((reference) => reference.taskLedgerNodeId)
@@ -121,8 +123,9 @@ export function ResourceChip() {
         archiveRestorePolicy: binding?.archiveRestorePolicy ?? 'restore',
       });
       if (scopeRef.current !== scope) return;
+      if (!result.success) throw new Error(result.error ?? result.recovery.reason ?? t('resourceTracker.coordinator.recovery', { state: 'unknown' }));
       setCoordinatorBinding(result.binding);
-      if (!result.success) setCoordinatorError(result.error ?? result.recovery.reason ?? null);
+      setCoordinatorRecovery(result.recovery);
     } catch (error) {
       if (scopeRef.current === scope) setCoordinatorError(error instanceof Error ? error.message : String(error));
     } finally {
@@ -238,7 +241,7 @@ export function ResourceChip() {
             </div>
 
             {(binding || activeTaskNodeId || resourceEnvelope?.measured || completionBatches.length > 0) && (
-              <section data-testid="long-session-coordinator" className="mx-1 mb-1 rounded-md border border-black/5 bg-foreground/[0.025] p-2 dark:border-white/10">
+              <section data-testid="long-session-coordinator" data-state={binding?.state ?? 'unbound'} aria-busy={coordinatorBusy} className="mx-1 mb-1 rounded-md border border-black/5 bg-foreground/[0.025] p-2 dark:border-white/10">
                 <div className="flex items-center gap-2">
                   <Users className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
                   <span className="min-w-0 flex-1 truncate text-xs font-medium text-foreground">
@@ -318,7 +321,7 @@ export function ResourceChip() {
                     {t('resourceTracker.coordinator.start')}
                   </button>
                 )}
-                {coordinatorError && <p className="mt-1 text-[10px] text-red-700 dark:text-red-400">{coordinatorError}</p>}
+                {coordinatorError && <p role="alert" data-testid="coordinator-error" className="mt-1 text-[10px] text-red-700 dark:text-red-400">{coordinatorError}</p>}
                 {resourceEnvelope?.measured && resourceEnvelope.snapshot && (
                   <div className="mt-1.5 grid grid-cols-2 gap-x-2 gap-y-0.5 border-t border-black/5 pt-1 text-[10px] text-muted-foreground dark:border-white/10">
                     <span>CPU {resourceEnvelope.snapshot.totals.treeCpuPercent.toFixed(1)}%</span>

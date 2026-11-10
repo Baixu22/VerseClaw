@@ -5,6 +5,8 @@ import { cn } from '@/lib/utils';
 import { basenameFromPath } from '@/lib/git-ui';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import { WorkspacePickerMenu } from './WorkspacePickerMenu';
+import { SessionWorkspacePicker } from './SessionWorkspacePicker';
+import type { GitWorktree } from '@shared/types/git';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 /**
@@ -25,10 +27,11 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 export type WelcomeProjectPickerProps = {
   /** Opens the native directory chooser. Wired to Chat's handlePickWorkspaceFolder. */
   onPickFolder?: () => void | Promise<unknown>;
+  onSelectWorktree?: (tree: GitWorktree) => Promise<void>;
   disabled?: boolean;
 };
 
-export function WelcomeProjectPicker({ disabled = false, onPickFolder }: WelcomeProjectPickerProps) {
+export function WelcomeProjectPicker({ disabled = false, onPickFolder, onSelectWorktree }: WelcomeProjectPickerProps) {
   const { t } = useTranslation('chat');
   const profiles = useWorkspacesStore((state) => state.profiles);
   const activeWorkspace = useWorkspacesStore((state) => state.activeWorkspace);
@@ -112,6 +115,7 @@ export function WelcomeProjectPicker({ disabled = false, onPickFolder }: Welcome
           rowTestId="welcome-project-item"
           pickFolderTestId="welcome-project-pick-folder"
           emptyTestId="welcome-project-empty"
+          extraActions={onSelectWorktree ? <SessionWorkspacePicker embedded disabled={disabled} onSelect={async tree => { await onSelectWorktree(tree); close(); }} /> : undefined}
         />
       )}
     </span>

@@ -2,6 +2,8 @@ import type { GatewayManager } from './manager';
 import type { JsonRpcNotification } from './protocol';
 import { parseSessionTaskEffectRequest, type SessionTaskEffectAdmission, type SessionTaskEffectRequest } from '@shared/session-task-scope';
 import { logger } from '../utils/logger';
+import { createHostDeadline } from '@shared/host-api/host-deadline';
+import { runWithHostDeadline } from '../utils/host-deadline-context';
 
 /** Reverse RPC only: the Workspace owner qualifies the runtime's session/run tuple. */
 export function registerSessionTaskScopeBridge(
@@ -13,7 +15,9 @@ export function registerSessionTaskScopeBridge(
     let request: SessionTaskEffectRequest;
     try { request = parseSessionTaskEffectRequest(notification.params); }
     catch { logger.warn('[task-scope] Rejected malformed admission request'); return; }
-    void (async () => {
+    // This notification starts a new reverse request; the socket creator's host action has ended.
+    const deadline = createHostDeadline({ stage: 'gateway', timeoutMs: 20_000, requestId: request.requestId });
+    void runWithHostDeadline(deadline, async () => {
       let result: { admission: SessionTaskEffectAdmission } | { error: string };
       try { result = { admission: await admit(request) }; }
       catch (error) { result = { error: error instanceof Error ? error.message : String(error) }; }
@@ -21,7 +25,7 @@ export function registerSessionTaskScopeBridge(
         requestId: request.requestId, sessionKey: request.sessionKey,
         sessionGeneration: request.sessionGeneration, runId: request.runId, ...result,
       });
-    })().catch((error) => logger.warn('[task-scope] Could not deliver admission result', error));
+    }).catch((error) => logger.warn('[task-scope] Could not deliver admission result', error));
   };
   gateway.on('notification', onNotification);
   return () => { gateway.off('notification', onNotification); };

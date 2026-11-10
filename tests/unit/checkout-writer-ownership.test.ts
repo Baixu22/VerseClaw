@@ -1,4 +1,5 @@
 import { execFileSync, spawn } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -216,4 +217,168 @@ describe('checkout writer resource owner',()=>{
   writeFileSync(path.join(r.root,'a.txt'),'new');s.settleWrite(a,'write',{outcome:'completed',ownerReceipt:'file-owner:sha'});s.releaseWriter(a);
   expect(s.writer(r.id)?.state).toBe('released');
  });
+});
+
+// driven_by: agent; requested_route: ccs-workbuddy/deepseek-v4.1-flash
+// These cases use local Git objects/refs and the real cleanup owner; no network push.
+describe('U5 committed checkout retention', () => {
+  let fixtureRoot: string;
+  let fixtureParent: string;
+  let base: string;
+  let facts: Record<string, unknown>;
+  const content = 'Unpublished work retained by Git\n';
+  const lifecycle = { agentId: 'u5-agent', sessionKey: 'agent:u5:cleanup', expectedSessionId: 'u5-generation' };
+  const git = (cwd: string, ...args: string[]) => execFileSync('git', args, {
+    cwd, windowsHide: true, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'],
+  }).trim();
+  const refs = (head: string) => git(base, 'for-each-ref', `--contains=${head}`, '--format=%(refname)', 'refs/');
+  const fileHash = (file: string) => createHash('sha256').update(readFileSync(file)).digest('hex');
+  function commit(root: string) {
+    writeFileSync(path.join(root, 'unpublished.txt'), content);
+    git(root, 'add', 'unpublished.txt');
+    git(root, 'commit', '-qm', 'unpublished local work');
+    const head = git(root, 'rev-parse', 'HEAD');
+    expect(git(root, 'status', '--porcelain')).toBe('');
+    expect(git(root, 'remote')).toBe('');
+    facts.commit = { head, clean: true, remotes: [], sha256: fileHash(path.join(root, 'unpublished.txt')) };
+    return head;
+  }
+  beforeEach(() => {
+    fixtureParent = process.env.U5_WORKTREE_EVIDENCE_DIR ?? tmpdir();
+    mkdirSync(fixtureParent, { recursive: true });
+    fixtureRoot = mkdtempSync(path.join(fixtureParent, 'u5-cleanup-'));
+    base = path.join(fixtureRoot, 'repository');
+    mkdirSync(base);
+    for (const key of ['GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', 'GIT_COMMON_DIR', 'GIT_CONFIG_COUNT',
+      'GIT_OBJECT_DIRECTORY', 'GIT_ALTERNATE_OBJECT_DIRECTORIES']) vi.stubEnv(key, undefined);
+    vi.stubEnv('GIT_CONFIG_NOSYSTEM', '1');
+    vi.stubEnv('GIT_CONFIG_GLOBAL', process.platform === 'win32' ? 'NUL' : '/dev/null');
+    vi.stubEnv('GIT_TERMINAL_PROMPT', '0');
+    vi.stubEnv('OPENCLAW_STATE_DIR', path.join(fixtureRoot, 'state'));
+    vi.stubEnv('CLAWX_EXECUTION_STATE_PATH', '');
+    vi.stubEnv('CLAWX_VERSGIT_CLEANUP_ROOT', '');
+    vi.stubEnv('CLAWX_VERSGIT_BINDING_ENABLED', '0');
+    git(base, 'init', '-q', '-b', 'main');
+    git(base, 'config', 'user.name', 'U5 agent fixture');
+    git(base, 'config', 'user.email', 'u5@example.invalid');
+    git(base, 'config', 'commit.gpgsign', 'false');
+    git(base, 'config', 'core.hooksPath', process.platform === 'win32' ? 'NUL' : '/dev/null');
+    writeFileSync(path.join(base, '.gitignore'), '.openclaw/\n');
+    git(base, 'add', '.gitignore'); git(base, 'commit', '-qm', 'base');
+    facts = { driven_by: 'agent', requested_route: 'ccs-workbuddy/deepseek-v4.1-flash',
+      git: git(base, '--version'), baseHead: git(base, 'rev-parse', 'HEAD'), externalPush: false };
+  });
+  afterEach(({ task }) => {
+    try {
+      const evidenceDir = process.env.U5_WORKTREE_EVIDENCE_DIR;
+      if (evidenceDir) writeFileSync(path.join(evidenceDir, task.name.replace(/[^a-zA-Z0-9_-]+/g, '-').slice(0,150) + '.json'),
+        JSON.stringify({ ...facts, case: task.name, stateAtCleanup: task.result?.state,
+          errors: task.result?.errors?.map(error => error.message) ?? [] }, null, 2) + '\n');
+    } finally {
+      closeOpenClawStateDatabaseForTest(); vi.unstubAllEnvs();
+      if (!path.resolve(fixtureRoot).startsWith(path.resolve(fixtureParent) + path.sep)) throw new Error('Fixture cleanup escaped its parent');
+      rmSync(fixtureRoot, { recursive: true, force: true });
+    }
+  });
+
+  it('retains an unpushed local branch and recreates its checkout after cleanup', () => {
+    const service = createWorktreeService(base, { backend: 'git' });
+    const row = service.create('branch');
+    git(row.root, 'switch', '-c', 'u5-unpushed');
+    const head = commit(row.root);
+    expect(head).not.toBe(row.baseOid);
+    facts.before = { baseOid: row.baseOid, head, refs: refs(head) };
+    service.cleanup(row.id);
+    expect(existsSync(row.root)).toBe(false);
+    expect(git(base, 'rev-parse', 'refs/heads/u5-unpushed')).toBe(head);
+    const recovered = path.join(fixtureRoot, 'recovered');
+    git(base, 'worktree', 'add', recovered, 'u5-unpushed');
+    expect(readFileSync(path.join(recovered, 'unpublished.txt'), 'utf8')).toBe(content);
+    facts.after = { checkoutRemoved: true, retainedRef: 'refs/heads/u5-unpushed', head: git(recovered, 'rev-parse', 'HEAD'),
+      recoveredFileSha256: fileHash(path.join(recovered, 'unpublished.txt')), registry: service.list()[0].status };
+  });
+
+  it('refuses a detached exclusive commit across owner reopen and lifecycle cleanup then allows a retained branch', () => {
+    let service = createWorktreeService(base, { backend: 'git' });
+    const row = service.create('detached', { owner: { ...lifecycle, retention: 'delete' } });
+    const head = commit(row.root);
+    expect(head).not.toBe(row.baseOid);
+    expect(git(row.root, 'rev-parse', '--abbrev-ref', 'HEAD')).toBe('HEAD');
+    expect(refs(head)).toBe('');
+    facts.before = { head, baseOid: row.baseOid, containingRefs: refs(head) };
+    let error = '';
+    try { service.cleanup(row.id); } catch (cause) { error = String(cause); }
+    facts.firstAttempt = { error, pathExists: existsSync(row.root), record: service.list()[0].status };
+    expect(error).toContain(`worktree_cleanup_unreferenced_commit:${head}`);
+    expect(readFileSync(path.join(row.root, 'unpublished.txt'), 'utf8')).toBe(content);
+    expect(service.writer(row.id)).toMatchObject({ state: 'released', operations: [] });
+    closeOpenClawStateDatabaseForTest();
+    service = createWorktreeService(base, { backend: 'git' });
+    const receipt = service.cleanupOwned(lifecycle);
+    facts.lifecycleReceipt = receipt;
+    expect(receipt).toMatchObject({ attempted: 1, reclaimed: 0, failed: 1 });
+    expect(service.list()[0]).toMatchObject({ generation: row.generation, status: 'active' });
+    expect(git(row.root, 'rev-parse', 'HEAD')).toBe(head);
+    // The explicit recovery action uses the existing Git ref owner.
+    git(base, 'branch', 'u5-retained', head);
+    service.cleanup(row.id);
+    expect(existsSync(row.root)).toBe(false);
+    expect(git(base, 'show', 'refs/heads/u5-retained:unpublished.txt')).toBe(content.trim());
+    facts.recovered = { head, retainedRef: 'refs/heads/u5-retained', commitContent: git(base, 'show', 'refs/heads/u5-retained:unpublished.txt'),
+      checkoutRemoved: true, registry: service.list()[0].status };
+  });
+
+  it.each(['main', 'remote-tracking', 'shared-ref'] as const)('allows detached cleanup when %s retains the commit', (kind) => {
+    const service = createWorktreeService(base, { backend: 'git' });
+    const row = service.create('reachable');
+    const head = commit(row.root);
+    const retainedRef = kind === 'main' ? 'refs/heads/main' : kind === 'remote-tracking' ? 'refs/remotes/proof/main' : 'refs/agent-retention/proof';
+    if (kind === 'main') git(base, 'merge', '--ff-only', head);
+    else git(base, 'update-ref', retainedRef, head);
+    // remote-tracking is a locally seeded Git ref, not a claim that an external push occurred.
+    facts.before = { head, baseOid: row.baseOid, containingRefs: refs(head), refFixture: kind };
+    expect(refs(head)).toContain(retainedRef);
+    service.cleanup(row.id);
+    expect(existsSync(row.root)).toBe(false);
+    expect(git(base, 'rev-parse', retainedRef)).toBe(head);
+    expect(git(base, 'show', `${retainedRef}:unpublished.txt`)).toBe(content.trim());
+    facts.after = { checkoutRemoved: true, retainedRef, head: git(base, 'rev-parse', retainedRef),
+      content: git(base, 'show', `${retainedRef}:unpublished.txt`) };
+  });
+
+  it('does not treat a worktree-local ref as persistent retention', () => {
+    const service = createWorktreeService(base, { backend: 'git' });
+    const row = service.create('local-ref');
+    const head = commit(row.root);
+    git(row.root, 'update-ref', 'refs/worktree/temporary', head);
+    git(base, 'update-ref', 'refs/worktree/temporary', head);
+    facts.before = { head, containingRefs: refs(head) };
+    let error = '';
+    try { service.cleanup(row.id); } catch (cause) { error = String(cause); }
+    facts.after = { error, pathExists: existsSync(row.root) };
+    expect(error).toContain('worktree_cleanup_unreferenced_commit');
+    expect(readFileSync(path.join(row.root, 'unpublished.txt'), 'utf8')).toBe(content);
+  });
+
+  it('keeps the dirty-content guard ahead of cleanup even with a retained commit', () => {
+    const service = createWorktreeService(base, { backend: 'git' });
+    const row = service.create('dirty');
+    writeFileSync(path.join(row.root, 'unsaved.txt'), 'keep dirty work');
+    expect(() => service.cleanup(row.id)).toThrow('worktree_cleanup_user_content_present:unsaved.txt');
+    expect(readFileSync(path.join(row.root, 'unsaved.txt'), 'utf8')).toBe('keep dirty work');
+    expect(service.list()[0].status).toBe('active');
+    facts.after = { error: 'worktree_cleanup_user_content_present:unsaved.txt', pathExists: existsSync(row.root),
+      head: git(row.root, 'rev-parse', 'HEAD'), dirty: git(row.root, 'status', '--porcelain'), fileSha256: fileHash(path.join(row.root, 'unsaved.txt')) };
+  });
+
+  it('cleans an untouched detached checkout retained by main', () => {
+    const service = createWorktreeService(base, { backend: 'git' });
+    const row = service.create('base-only');
+    expect(git(row.root, 'rev-parse', 'HEAD')).toBe(row.baseOid);
+    service.cleanup(row.id);
+    expect(existsSync(row.root)).toBe(false);
+    expect(service.list()[0].status).toBe('cleaned');
+    facts.after = { checkoutRemoved: true, retainedRef: 'refs/heads/main', baseOid: row.baseOid,
+      retainedHead: git(base, 'rev-parse', 'refs/heads/main') };
+  });
 });

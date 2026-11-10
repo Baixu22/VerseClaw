@@ -1,0 +1,95 @@
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mD:/ClawX-work/session-task-unified-relay-20261109[39m
+
+[90mstderr[2m | tests/unit/host-services.test.ts[2m > [22m[2mhost services[2m > [22m[2mreports degraded when the default account sync fails partially (R0-2)
+[22m[39m[providers] Default account saved but runtime sync degraded: models.json busy
+
+[90mstdout[2m | tests/unit/host-services.test.ts[2m > [22m[2mhost services[2m > [22m[2mdeletes agents by restarting gateway, removing workspace, and returning snapshot
+[22m[39m[agents] Gateway restart completed after agent deletion
+
+ [31m❯[39m tests/unit/host-services.test.ts [2m([22m[2m50 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 10780[2mms[22m[39m
+     [33m[2m✓[22m[39m runs proxy side effects and restarts a running gateway after settings.set [33m 316[2mms[22m[39m
+     [32m✓[39m restarts a running gateway when the Role Memory setting changes[32m 5[2mms[22m[39m
+     [32m✓[39m runs launch-at-startup side effects after settings.setMany and reset[32m 4[2mms[22m[39m
+     [33m[2m✓[22m[39m routes gateway rpc through backpressure [33m 302[2mms[22m[39m
+     [32m✓[39m exposes provider account snapshot actions through the typed providers service[32m 240[2mms[22m[39m
+     [32m✓[39m validates provider keys using account metadata and caller options[32m 4[2mms[22m[39m
+     [32m✓[39m creates provider accounts and syncs runtime config through the typed providers service[32m 4[2mms[22m[39m
+     [32m✓[39m sets the default provider account and syncs runtime defaults[32m 4[2mms[22m[39m
+     [32m✓[39m reports degraded when the default account sync fails partially (R0-2)[32m 4[2mms[22m[39m
+     [32m✓[39m builds channel accounts from config without gateway rpc in config mode[32m 85[2mms[22m[39m
+     [32m✓[39m lists channel targets from session history and validates channel type[32m 7[2mms[22m[39m
+     [32m✓[39m saves channel binding for existing agents and schedules channel refresh[32m 6[2mms[22m[39m
+     [32m✓[39m installs plugin, saves config, ensures scoped binding, and schedules refresh on saveConfig[32m 4[2mms[22m[39m
+     [32m✓[39m deletes agents by restarting gateway, removing workspace, and returning snapshot[32m 19[2mms[22m[39m
+     [32m✓[39m updates and resets avatars through the typed agents Host API[32m 4[2mms[22m[39m
+     [32m✓[39m reads and updates agent bootstrap tooling config[32m 9[2mms[22m[39m
+     [32m✓[39m assigns agent channels and schedules gateway reload[32m 4[2mms[22m[39m
+     [32m✓[39m returns diagnostics snapshot with channel view and log tails[32m 267[2mms[22m[39m
+     [32m✓[39m reads only selected log files from the log directory[32m 14[2mms[22m[39m
+     [33m[2m✓[22m[39m sends staged media through the typed chat service with gateway attachments [33m 2188[2mms[22m[39m
+     [33m[2m✓[22m[39m loads session summaries and transcript history through the typed sessions service [33m 3261[2mms[22m[39m
+     [32m✓[39m summarizes large transcripts from bounded head/tail reads[32m 12[2mms[22m[39m
+     [32m✓[39m reports compaction status unavailable when Gateway is missing[32m 7[2mms[22m[39m
+     [32m✓[39m reports long-task control status unavailable when Gateway is missing[32m 4[2mms[22m[39m
+     [32m✓[39m proxies long-task control RPCs through Gateway[32m 5[2mms[22m[39m
+     [32m✓[39m proxies manual compaction to Gateway with force and appended instructions[32m 4[2mms[22m[39m
+[31m     [31m×[31m preserves an asynchronous compact acceptance as pending[39m[32m 12[2mms[22m[39m
+[31m     [31m×[31m preserves an asynchronous compactRange acceptance as pending[39m[32m 5[2mms[22m[39m
+     [32m✓[39m proxies located (range) compaction with the chosen boundary (#178)[32m 4[2mms[22m[39m
+     [32m✓[39m forwards compact generation unchanged and preserves omission for legacy callers[32m 6[2mms[22m[39m
+     [32m✓[39m forwards compactRange generation unchanged and preserves omission for legacy callers[32m 4[2mms[22m[39m
+     [32m✓[39m forwards restoreCheckpoint generation unchanged and preserves omission for legacy callers[32m 4[2mms[22m[39m
+     [32m✓[39m proxies read-only context recall through Gateway without local archive reads[32m 4[2mms[22m[39m
+     [32m✓[39m forks sessions through Gateway without local transcript fallback[32m 238[2mms[22m[39m
+     [32m✓[39m forwards an explicit fromLeafId fork point and omits it otherwise (#180)[32m 274[2mms[22m[39m
+     [32m✓[39m does not fork locally when Gateway is unavailable[32m 6[2mms[22m[39m
+     [32m✓[39m uses runtime history for keyed history and handoff rather than a stale local profile[32m 242[2mms[22m[39m
+     [32m✓[39m prepares deterministic session handoff without requiring Gateway[32m 112[2mms[22m[39m
+     [32m✓[39m refuses to prepare a handoff past the maximum relay depth (#179)[32m 156[2mms[22m[39m
+     [32m✓[39m merges runtime checkpoint handoff with ledger, git, observability, and transcript sources[32m 169[2mms[22m[39m
+     [33m[2m✓[22m[39m persists depth and parent/root ids before activating a handoff session and rejects the next hop [33m 438[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps the four-hop depth bound opt-in with explicit workspace ownership [33m 653[2mms[22m[39m
+     [32m✓[39m rejects corrupt lineage before activation and re-reads it at creation time[32m 169[2mms[22m[39m
+     [32m✓[39m does not activate a session if lineage cannot be written[32m 148[2mms[22m[39m
+     [33m[2m✓[22m[39m preserves current explicit business-task links during fork in Main [33m 343[2mms[22m[39m
+     [32m✓[39m preserves current explicit business-task links during handoff in Main[32m 268[2mms[22m[39m
+     [32m✓[39m rejects task inheritance when the source generation is missing[32m 176[2mms[22m[39m
+     [32m✓[39m rejects task inheritance when the fork generation is missing[32m 140[2mms[22m[39m
+     [32m✓[39m drops generation-fenced task references when the source resets during fork[32m 224[2mms[22m[39m
+     [32m✓[39m records canonical fork lineage in Main without creating a handoff[32m 200[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 2 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mpreserves an asynchronous compact acceptance as pending
+[41m[1m FAIL [22m[49m tests/unit/host-services.test.ts[2m > [22mhost services[2m > [22mpreserves an asynchronous compactRange acceptance as pending
+[31m[1mAssertionError[22m: expected { success: true, …(4) } to match object { success: true, …(2) }
+(2 matching properties omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "compacted": false,[22m
+[32m-   "status": "pending",[39m
+[31m+   "status": "skipped",[39m
+[2m    "success": true,[22m
+[2m  }[22m
+
+[36m [2m❯[22m tests/unit/host-services.test.ts:[2m1277:130[22m[39m
+    [90m1275|[39m     const { createSessionsApi } = await import('@electron/services/ses…
+    [90m1276|[39m     const sessionsApi = createSessionsApi({ gatewayManager: { rpc } as…
+    [90m1277|[39m     await expect(sessionsApi[method]({ sessionKey: 'agent:main:main', …
+    [90m   |[39m                                                                                                                                  [31m^[39m
+    [90m1278|[39m       .resolves.toMatchObject({ success: true, status: 'pending', comp…
+    [90m1279|[39m     [34mexpect[39m(rpc)[33m.[39m[34mtoHaveBeenCalledTimes[39m([34m1[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m48 passed[39m[22m[90m (50)[39m
+[2m   Start at [22m 03:36:30
+[2m   Duration [22m 11.74s[2m (transform 3.79s, setup 397ms, import 180ms, tests 10.78s, environment 0ms)[22m
+
+JSON report written to D:/tmp/unified-management-20261109/lifecycle-validation/u5-native-pending-red.tests.json

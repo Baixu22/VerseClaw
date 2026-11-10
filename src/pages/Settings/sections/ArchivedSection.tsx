@@ -15,12 +15,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 import { useTranslation } from 'react-i18next';
-import { Archive, Loader2, RotateCcw, Search, Trash2 } from 'lucide-react';
+import { Archive, Loader2, RefreshCw, RotateCcw, Search, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { hostApi } from '@/lib/host-api';
+import { toastUserError } from '@/lib/user-error';
 import { useChatStore } from '@/stores/chat';
 import { useWorkspacesStore } from '@/stores/workspaces';
-import type { SessionArchiveEntry } from '@shared/types/workspace';
+import type { SessionArchiveEntry, SessionPendingMutation } from '@shared/types/workspace';
 
 type ArchivedView = 'allSessions' | 'allWorkspaces';
 
@@ -28,18 +30,22 @@ export function ArchivedSection() {
   const { t } = useTranslation(['chat', 'common', 'settings']);
   const {
     archivedSessions,
+    pendingSessionMutations,
     archivedSessionsLoading,
     loadArchivedSessions,
     restoreSession,
     permanentDeleteSession,
   } = useChatStore(useShallow((s) => ({
     archivedSessions: s.archivedSessions,
+    pendingSessionMutations: s.pendingSessionMutations,
     archivedSessionsLoading: s.archivedSessionsLoading,
     loadArchivedSessions: s.loadArchivedSessions,
     restoreSession: s.restoreSession,
     permanentDeleteSession: s.permanentDeleteSession,
   })));
   const workspaces = useWorkspacesStore((s) => s.profiles);
+  const agentId = useChatStore((s) => s.currentAgentId);
+  const sessionLabels = useChatStore((s) => s.sessionLabels);
 
   const [query, setQuery] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<SessionArchiveEntry | null>(null);
@@ -50,13 +56,13 @@ export function ArchivedSection() {
 
   useEffect(() => {
     setConfirmEmpty(false);
-    void loadArchivedSessions();
-  }, [loadArchivedSessions]);
+    void loadArchivedSessions(agentId);
+  }, [loadArchivedSessions, agentId]);
 
   // newest first
   const sorted = useMemo(
-    () => [...archivedSessions].sort((a, b) => b.archivedAt - a.archivedAt),
-    [archivedSessions],
+    () => archivedSessions.filter(entry => entry.agentId === (agentId || 'main')).sort((a, b) => b.archivedAt - a.archivedAt),
+    [archivedSessions, agentId],
   );
 
   const q = query.trim().toLowerCase();
@@ -84,6 +90,20 @@ export function ArchivedSection() {
     }
     return [...map.values()];
   }, [filtered, workspaces, t]);
+
+  const resumeMutation = async (entry: SessionPendingMutation) => {
+    setPendingKey(entry.operationId);
+    try {
+      const result = entry.operationKind === 'delete'
+        ? await hostApi.sessions.delete(entry.sessionKey, entry.operationId)
+        : await hostApi.sessions[entry.operationKind]({ id: entry.sessionKey, resumeOperationId: entry.operationId });
+      if (!result.success) throw new Error(result.error || t('chat:archive.mutationUnconfirmed'));
+    } catch (error) { if (useChatStore.getState().currentAgentId === agentId) toastUserError(error); }
+    finally {
+      await Promise.all([loadArchivedSessions(), useChatStore.getState().loadSessions()]);
+      setPendingKey(null);
+    }
+  };
 
   const handleRestore = async (sessionKey: string) => {
     setPendingKey(sessionKey);
@@ -179,6 +199,12 @@ export function ArchivedSection() {
       )}
 
       <div className="sp-archived-toolbar">
+        <Button variant="ghost" size="sm" data-testid="settings-archived-refresh"
+          aria-label={t('common:actions.refresh')} disabled={pendingKey !== null || archivedSessionsLoading}
+          onClick={() => void loadArchivedSessions()}>
+          <RefreshCw className="h-3.5 w-3.5" />
+          {t('common:actions.refresh')}
+        </Button>
         <div className="sp-archived-search">
           <Search className="h-3.5 w-3.5 shrink-0" />
           <input
@@ -206,6 +232,25 @@ export function ArchivedSection() {
         </div>
       </div>
 
+      {pendingSessionMutations.some(entry => entry.agentId === (agentId || 'main')) && (
+        <section data-testid="settings-pending-mutations" className="mb-4 space-y-2 rounded-lg border border-border p-3">
+          <h3 className="text-sm font-medium">{t('chat:archive.pendingTitle')}</h3>
+          <p className="text-xs text-muted-foreground">{t('chat:archive.pendingDescription')}</p>
+          {pendingSessionMutations.filter(entry => entry.agentId === (agentId || 'main')).map((entry) => (
+            <div key={entry.operationId} className="flex items-center justify-between gap-3">
+              <div className="min-w-0 text-xs">
+                <div className="truncate">{sessionLabels[entry.sessionKey] || archivedSessions.find(row => row.sessionKey === entry.sessionKey)?.label || entry.sessionKey}</div>
+                <div className="text-muted-foreground">{t(`chat:archive.pendingKinds.${entry.operationKind}`)}</div>
+              </div>
+              <Button size="sm" variant="outline" data-testid={`settings-resume-mutation-${entry.operationId}`}
+                disabled={pendingKey !== null || archivedSessionsLoading} onClick={() => void resumeMutation(entry)}>
+                {pendingKey === entry.operationId && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
+                {t('chat:archive.resumeMutation')}
+              </Button>
+            </div>
+          ))}
+        </section>
+      )}
       {archivedSessionsLoading && sorted.length === 0 ? (
         <div className="sp-archived-empty flex items-center gap-2">
           <Loader2 className="h-4 w-4 animate-spin" />

@@ -1,0 +1,142 @@
+
+[1m[46m RUN [49m[22m [36mv4.1.1 [39m[90mD:/ClawX-work/session-task-unified-relay-20261109[39m
+
+ [31m❯[39m tests/unit/session-family-navigation.test.tsx [2m([22m[2m8 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 545[2mms[22m[39m
+[31m     [31m×[31m explicitly expands newly loaded children while retaining the order of other roots[39m[32m 84[2mms[22m[39m
+     [32m✓[39m keeps interacted rows ordered while live status and child counts update[32m 186[2mms[22m[39m
+     [32m✓[39m uses keyboard disclosure without moving or selecting sessions[32m 57[2mms[22m[39m
+     [32m✓[39m reveals a selected child and leaves an explicit collapse intact on later renders[32m 63[2mms[22m[39m
+     [32m✓[39m navigates to the real spawn parent and exposes unloaded sources separately[32m 10[2mms[22m[39m
+     [32m✓[39m keeps every actual parent in a multi-generation relation view[32m 8[2mms[22m[39m
+   [32m✓[39m does not show a late Task Ledger response from another project[32m 91[2mms[22m[39m
+   [32m✓[39m does not carry task selection busy state into a different session scope[32m 42[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/session-family-navigation.test.tsx[2m > [22mfamily navigation[2m > [22mexplicitly expands newly loaded children while retaining the order of other roots
+[31m[1mTestingLibraryElementError[22m: Unable to find an element with the text: Child. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"ws-tree"[31m
+      [33mdata-order-held[31m=[32m"true"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"ws-family-row"[31m
+        [33mdata-lineage-depth[31m=[32m"0"[31m
+        [33mdata-source-status[31m=[32m"root"[31m
+      [36m>[31m
+        [36m<button[31m
+          [33maria-expanded[31m=[32m"true"[31m
+          [33maria-label[31m=[32m"chat:sessionFamily.toggle"[31m
+          [33mclass[31m=[32m"ws-family-toggle"[31m
+          [33mdata-testid[31m=[32m"session-family-toggle-parent"[31m
+          [33mtype[31m=[32m"button"[31m
+        [36m>[31m
+          [36m<svg[31m
+            [33maria-hidden[31m=[32m"true"[31m
+            [33mclass[31m=[32m"lucide lucide-chevron-down"[31m
+            [33mfill[31m=[32m"none"[31m
+            [33mheight[31m=[32m"24"[31m
+            [33mstroke[31m=[32m"currentColor"[31m
+            [33mstroke-linecap[31m=[32m"round"[31m
+            [33mstroke-linejoin[31m=[32m"round"[31m
+            [33mstroke-width[31m=[32m"2"[31m
+            [33mviewBox[31m=[32m"0 0 24 24"[31m
+            [33mwidth[31m=[32m"24"[31m
+            [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+          [36m>[31m
+            [36m<path[31m
+              [33md[31m=[32m"m6 9 6 6 6-6"[31m
+            [36m/>[31m
+          [36m</svg>[31m
+          [36m<span>[31m
+            [0m1[0m
+          [36m</span>[31m
+        [36m</button>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"relative"[31m
+          [33mdata-session-key[31m=[32m"parent"[31m
+          [33mdata-testid[31m=[32m"sidebar-session-drag-parent"[31m
+          [33mdraggable[31m=[32m"true"[31m
+        [36m>[31m
+          [36m<button[31m
+            [33mdata-order-key[31m=[32m"parent"[31m
+          [36m>[31m
+            [0mParent[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"ws-family-row"[31m
+        [33mdata-lineage-depth[31m=[32m"0"[31m
+        [33mdata-source-status[31m=[32m"root"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"relative"[31m
+          [33mdata-session-key[31m=[32m"other"[31m
+          [33mdata-testid[31m=[32m"sidebar-session-drag-other"[31m
+          [33mdraggable[31m=[32m"true"[31m
+        [36m>[31m
+          [36m<button[31m
+            [33mdata-order-key[31m=[32m"other"[31m
+          [36m>[31m
+            [0mOther[0m
+          [36m</button>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+      [36m<button[31m
+        [33mclass[31m=[32m"sidebar-create-workgroup flex w-full items-center gap-1.5 rounded-lg px-2 py-1 text-left transition-colors text-2xs text-muted-foreground/70 hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"[31m
+        [33mdata-testid[31m=[32m"sidebar-folder-create-workspace-a"[31m
+      [36m>[31m
+        [36m<svg[31m
+          [33maria-hidden[31m=[32m"true"[31m
+          [33mclass[31m=[32m"lucide lucide-folder-plus h-3 w-3 shrink-0"[31m
+          [33mfill[31m=[32m"none"[31m
+          [33mheight[31m=[32m"24"[31m
+          [33mstroke[31m=[32m"currentColor"[31m
+          [33mstroke-linecap[31m=[32m"round"[31m
+          [33mstroke-linejoin[31m=[32m"round"[31m
+          [33mstroke-width[31m=[32m"2"[31m
+          [33mviewBox[31m=[32m"0 0 24 24"[31m
+          [33mwidth[31m=[32m"24"[31m
+          [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+        [36m>[31m
+          [36m<path[31m
+            [33md[31m=[32m"M12 10v6"[31m
+          [36m/>[31m
+          [36m<path[31m
+            [33md[31m=[32m"M9 13h6"[31m
+          [36m/>[31m
+          [36m<path[31m
+            [33md[31m=[32m"M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"[31m
+          [36m/>[31m
+        [36m</svg>[31m
+        [0mchat:workgroups.create[0m
+      [36m</button>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+[90m [2m❯[22m Object.getElementError ../../ClawX/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m ../../ClawX/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:[2m76:38[22m[39m
+[90m [2m❯[22m ../../ClawX/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:[2m52:17[22m[39m
+[90m [2m❯[22m ../../ClawX/node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m tests/unit/session-family-navigation.test.tsx:[2m44:19[22m[39m
+    [90m 42|[39m     [35mconst[39m toggle [33m=[39m screen[33m.[39m[34mgetByTestId[39m([32m'session-family-toggle-parent'[39m)[33m;[39m
+    [90m 43|[39m     fireEvent[33m.[39m[34mkeyDown[39m(toggle[33m,[39m { key[33m:[39m [32m'ArrowRight'[39m })[33m;[39m
+    [90m 44|[39m     [34mexpect[39m(screen[33m.[39m[34mgetByText[39m([32m'Child'[39m))[33m.[39m[34mtoBeVisible[39m()[33m;[39m
+    [90m   |[39m                   [31m^[39m
+    [90m 45|[39m     expect(Array.from(view.container.querySelectorAll('[data-order-key…
+    [90m 46|[39m       [33m.[39m[34mtoEqual[39m([[32m'parent'[39m[33m,[39m [32m'child'[39m[33m,[39m [32m'other'[39m])[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m7 passed[39m[22m[90m (8)[39m
+[2m   Start at [22m 12:36:38
+[2m   Duration [22m 7.43s[2m (transform 530ms, setup 574ms, import 1.67s, tests 545ms, environment 4.13s)[22m
+
+JSON report written to D:/tmp/unified-management-20261109/lifecycle-validation/u5-family-expand-red.tests.json

@@ -12,6 +12,17 @@ async function invoke(page: Page, module: string, action: string, payload?: unkn
   }, { module, action, payload });
 }
 
+async function openWorktrees(page: Page) {
+  const trigger = page.getByTestId('session-worktree-trigger');
+  if (!await trigger.isVisible()) {
+    const parent = page.getByTestId('welcome-project-trigger')
+      .or(page.getByTestId('chat-header-environment-project').getByRole('button').first()).filter({ visible: true }).first();
+    await expect(parent).toBeVisible();
+    await parent.focus(); await parent.press('Enter');
+  }
+  await expect(trigger).toBeVisible(); await trigger.focus(); await trigger.press('Enter');
+}
+
 test('real repository, isolated worktree, storage command and settings in light/dark/narrow layouts', async ({ launchElectronApp }, testInfo) => {
   test.setTimeout(240_000);
   // The desktop test profile uses the workspace scratch area on this host.
@@ -22,7 +33,7 @@ test('real repository, isolated worktree, storage command and settings in light/
   const root = join(await mkdtemp(join(scratch, 'storage-acceptance-')), 'workspace-demo');
   await mkdir(root, { recursive: true });
   const git = (...args: string[]) => execFileSync('git', args, { cwd: root, windowsHide: true, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
-  const report: Record<string, unknown> = { driven_by: 'agent', actor: 'codex', git: 'real', hostStorage: 'real', gateway: 'mocked idle transport' };
+  const report: Record<string, unknown> = { driven_by: 'agent', actor: 'codex', requested_route: 'ccs-workbuddy/deepseek-v4.1-flash', git: 'real', hostStorage: 'real', gateway: 'mocked idle transport' };
   try {
     await installIpcMocks(app, {
       gatewayStatus: { state: 'running', gatewayReady: true, port: 18789, pid: 12345 },
@@ -35,8 +46,7 @@ test('real repository, isolated worktree, storage command and settings in light/
     const original = created.activeWorkspace as { id: string; activeSessionKey: string };
     await page.reload();
     await publishGatewayStatus(app, { state: 'running', gatewayReady: true, port: 18789 });
-    await expect(page.getByTestId('session-worktree-trigger')).toBeVisible();
-    await page.getByTestId('session-worktree-trigger').click();
+    await openWorktrees(page);
     await page.getByTestId('session-git-init').click();
     await expect.poll(() => { try { return git('rev-parse', '--is-inside-work-tree'); } catch { return ''; } }).toBe('true');
     report.repositoryInitialized = true;
@@ -46,7 +56,7 @@ test('real repository, isolated worktree, storage command and settings in light/
     git('add', '.'); git('commit', '-m', 'Initial files');
     await page.reload();
     await publishGatewayStatus(app, { state: 'running', gatewayReady: true, port: 18789 });
-    await page.getByTestId('session-worktree-trigger').click();
+    await openWorktrees(page);
     await page.getByTestId('session-worktree-create').click();
     await page.getByTestId('session-worktree-branch').fill('codex/storage-demo');
     await page.screenshot({ path: testInfo.outputPath('worktree-create-light.png') });
@@ -65,10 +75,12 @@ test('real repository, isolated worktree, storage command and settings in light/
       const data = await invoke(page, 'workspaces', 'getActive');
       return (data.activeWorkspace as { state?: { draftInput?: string } })?.state?.draftInput;
     }).toBe('Draft for this worktree');
-    await page.getByTestId('session-worktree-trigger').click();
+    await openWorktrees(page);
     await page.getByTestId('session-worktree-menu').getByRole('button').filter({ hasText: /Local/ }).click();
     await expect.poll(async () => (await invoke(page, 'workspaces', 'getActive')).activeWorkspaceId).toBe(original.id);
-    await page.getByTestId('session-worktree-trigger').click();
+    await expect(page.getByTestId('welcome-project-trigger')).toContainText('Workspace demo');
+    await expect(page.getByTestId('welcome-project-menu')).toHaveCount(0);
+    await openWorktrees(page);
     await page.getByTestId('session-worktree-menu').getByRole('button').filter({ hasText: 'codex/storage-demo' }).click();
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Draft for this worktree');
     report.draftRestored = true;
@@ -84,6 +96,16 @@ test('real repository, isolated worktree, storage command and settings in light/
     expect(terminal.sessionId).toBeTruthy();
     const idlePath = join(dirname(root), 'idle-checkout');
     git('worktree', 'add', '-b', 'codex/cleanup-demo', idlePath);
+    // driven_by: agent; requested_route: ccs-workbuddy/deepseek-v4.1-flash
+    // Real local-only commit: removing its checkout must retain a recoverable branch.
+    const unpublishedContent = 'U5 local-only committed work\n';
+    await writeFile(join(idlePath, 'unpublished.txt'), unpublishedContent);
+    git('-C', idlePath, 'add', 'unpublished.txt');
+    git('-C', idlePath, '-c', 'commit.gpgsign=false', 'commit', '-m', 'Unpublished U5 work');
+    const unpublishedHead = git('-C', idlePath, 'rev-parse', 'HEAD');
+    expect(git('-C', idlePath, 'status', '--porcelain')).toBe('');
+    expect(git('remote')).toBe('');
+    report.unpublishedBeforeRemoval = { head: unpublishedHead, branch: 'codex/cleanup-demo', clean: true, remotes: [] };
     await page.getByTestId('chat-composer-input').fill('/storage');
     await expect(page.getByTestId('chat-slash-command-option-storage')).toBeVisible();
     await page.keyboard.press('Enter');
@@ -117,6 +139,12 @@ test('real repository, isolated worktree, storage command and settings in light/
     await expect(page.getByTestId('storage-confirm')).not.toBeVisible();
     await expect.poll(() => git('worktree', 'list', '--porcelain')).not.toContain('refs/heads/codex/cleanup-demo');
     expect(git('branch', '--list', 'codex/cleanup-demo')).toContain('codex/cleanup-demo');
+    expect(git('rev-parse', 'refs/heads/codex/cleanup-demo')).toBe(unpublishedHead);
+    const recoveredPath = join(dirname(root), 'recovered-checkout');
+    git('worktree', 'add', recoveredPath, 'codex/cleanup-demo');
+    expect(await readFile(join(recoveredPath, 'unpublished.txt'), 'utf8')).toBe(unpublishedContent);
+    report.unpublishedAfterRemoval = { head: git('-C', recoveredPath, 'rev-parse', 'HEAD'),
+      retainedRef: 'refs/heads/codex/cleanup-demo', recoveredContent: await readFile(join(recoveredPath, 'unpublished.txt'), 'utf8') };
     report.worktreeRemovedWithBranchRetained = true;
     await page.getByTestId('storage-refresh').scrollIntoViewIfNeeded();
     report.slashAndSettings = true;

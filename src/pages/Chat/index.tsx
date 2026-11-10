@@ -124,6 +124,7 @@ import { mergeProcessSurfaces, processFromTerminalSurface, projectGeneratedFileD
 import { promoteRunSurfaces } from './run-surface-promotion';
 import { useRunApprovals } from './use-run-approvals';
 import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
+import { SessionWorkspacePicker } from '@/components/chat/SessionWorkspacePicker';
 import { WorkspacePickerMenu } from '@/components/chat/WorkspacePickerMenu';
 import { GeneratedFilesPanel } from '@/components/file-preview/GeneratedFilesPanel';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -398,6 +399,7 @@ function ProjectSessionHeader({
   workspaceProfiles,
   switchWorkspace,
   pickWorkspaceFolder,
+  onSelectWorktree,
   onOpenTaskLedger,
   onOpenClawGraph,
   sessions,
@@ -426,6 +428,7 @@ function ProjectSessionHeader({
   workspaceProfiles: Array<{ id: string; name: string; rootPath: string; lastOpenedAt?: number }>;
   switchWorkspace: (id: string) => Promise<unknown>;
   pickWorkspaceFolder: () => Promise<void>;
+  onSelectWorktree: (tree: GitWorktree) => Promise<void>;
   onOpenTaskLedger: () => void;
   onOpenClawGraph: () => void;
   sessions: ChatSession[];
@@ -538,6 +541,7 @@ function ProjectSessionHeader({
             className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 motion-reduce:animate-none"
             extraActions={(
               <>
+                <SessionWorkspacePicker embedded disabled={sending || pendingFinal} onSelect={async tree => { await onSelectWorktree(tree); setOpen(null); }} />
                 <button type="button" className="codex-header-menu__item codex-header-menu__item--muted" onClick={() => { setOpen(null); onOpenTaskLedger(); }}>
                   <ListChecks className="h-4 w-4" />
                   {t('workspace.actions.openTaskLedger')}
@@ -1254,11 +1258,17 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   ]);
 
   const handleCreateNewSession = useCallback(async () => {
-    await persistCurrentWorkspaceSessionState({
-      activeSessionKey: currentSessionKey,
-      sessionKey: currentSessionKey,
-    });
-    const nextSessionKey = await createWorkspaceScopedNewSession();
+    const visit = useChatStore.getState().viewRevision;
+    const isCurrent = () => useChatStore.getState().viewRevision === visit
+      && useChatStore.getState().currentSessionKey === currentSessionKey
+      && useWorkspacesStore.getState().activeWorkspaceId === activeWorkspace?.id;
+    let nextSessionKey: string | null;
+    try {
+      await persistCurrentWorkspaceSessionState({ activeSessionKey: currentSessionKey, sessionKey: currentSessionKey });
+      if (!isCurrent()) return false;
+      nextSessionKey = await createWorkspaceScopedNewSession();
+    } catch (error) { if (isCurrent()) toastUserError(error); return false; }
+    if (!nextSessionKey) return false;
     workspaceSessionRestoreTargetRef.current = activeWorkspace?.id
       ? { workspaceId: activeWorkspace.id, sessionKey: nextSessionKey }
       : null;
@@ -1271,6 +1281,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     setContextRange(null);
     setLiveUsage(null);
     setKnowledgeScope('none');
+    return true;
   }, [activeWorkspace?.id, currentSessionKey, persistCurrentWorkspaceSessionState]);
 
   // Callback for file cards in chat messages - opens the in-app preview
@@ -2148,19 +2159,27 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   }, [currentAgentId, currentSessionKey, isCurrentControlScope, refreshLongTaskControlStatus, t]);
 
   const handleManualCompact = useCallback(async (customInstructions?: string) => {
-    if (!isCurrentControlScope()) return;
+    if (!isCurrentControlScope()) return false;
+    if (!controlGeneration) { toast.error(t('operationGenerationUnavailable')); return false; }
     setCompactionBusy(true);
     try {
       const result = await hostApi.sessions.compact({
         sessionKey: currentSessionKey,
+        expectedSessionId: controlGeneration,
         agentId: currentAgentId,
         customInstructions,
         force: true,
       });
-      if (!isCurrentControlScope()) return;
+      if (!isCurrentControlScope()) return false;
       if (!result.success) {
         toast.error(result.error || t('composer.compaction.toastFailed'));
-        return;
+        await refreshCompactionStatus();
+        return false;
+      }
+      if (result.status === 'pending') {
+        toast.message(t('composer.compaction.toastPending'));
+        await refreshCompactionStatus();
+        return false;
       }
       if (result.compacted) {
         const before = typeof result.tokensBefore === 'number'
@@ -2184,7 +2203,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
           loadHistory(true),
           loadSessions(),
         ]);
-        if (!isCurrentControlScope()) return;
+        if (!isCurrentControlScope()) return false;
         await Promise.all([
           refreshCompactionStatus(),
           refreshLongTaskControlStatus(),
@@ -2199,13 +2218,16 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       })().catch((refreshError) => {
         console.warn('[chat:manual-compaction] refresh failed', refreshError);
       });
+      return true;
     } catch (error) {
-      if (!isCurrentControlScope()) return;
+      if (!isCurrentControlScope()) return false;
       toast.error(error instanceof Error ? error.message : t('composer.compaction.toastFailed'));
+      await refreshCompactionStatus();
+      return false;
     } finally {
       if (isCurrentControlScope()) setCompactionBusy(false);
     }
-  }, [currentAgentId, currentModelRef, currentSessionKey, isCurrentControlScope, liveUsage?.totalTokens, loadHistory, loadSessions, messages.length, refreshCompactionStatus, refreshLongTaskControlStatus, t]);
+  }, [controlGeneration, currentAgentId, currentModelRef, currentSessionKey, isCurrentControlScope, liveUsage?.totalTokens, loadHistory, loadSessions, messages.length, refreshCompactionStatus, refreshLongTaskControlStatus, t]);
 
   const continuityRunActive = sending || pendingFinal || Boolean(streamingMessage) || Boolean(activeRunId);
   const gatewayAvailable = isGatewayRunning && gatewayStatus.gatewayReady !== false;
@@ -2324,28 +2346,40 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const handleCompactRange = useCallback(async (messageId: string, boundary: 'from' | 'to') => {
     if (!isCurrentControlScope()) return;
     const sessionKey = currentSessionKey;
+    if (!controlGeneration) { toast.error(t('operationGenerationUnavailable')); return; }
     try {
       const result = await hostApi.sessions.compactRange({
         sessionKey,
+        expectedSessionId: controlGeneration,
         ...(currentAgentId ? { agentId: currentAgentId } : {}),
         ...(boundary === 'from' ? { fromLeafId: messageId } : { toLeafId: messageId }),
       });
       if (!isCurrentControlScope()) return;
+      if (result.status === 'pending') {
+        toast.message(t('composer.compaction.toastPending'));
+        await refreshCompactionStatus();
+        return;
+      }
       if (!result.success || result.compacted !== true) {
         toast.error(t('composer.compactRange.toastFailed'), {
-          description: result.reason || t('composer.compactRange.toastFailedDescription'),
+          description: result.error || result.reason || t('composer.compactRange.toastFailedDescription'),
         });
+        await refreshCompactionStatus();
         return;
       }
       await loadSessions();
+      if (!isCurrentControlScope()) return;
       await loadHistory();
+      if (!isCurrentControlScope()) return;
       toast.success(t('composer.compactRange.toastCompacted'));
     } catch (error) {
+      if (!isCurrentControlScope()) return;
       toast.error(t('composer.compactRange.toastFailed'), {
         description: getContinuityErrorMessage(error, t('composer.compactRange.toastFailedDescription')),
       });
+      await refreshCompactionStatus();
     }
-  }, [currentAgentId, currentSessionKey, isCurrentControlScope, loadHistory, loadSessions, t]);
+  }, [controlGeneration, currentAgentId, currentSessionKey, isCurrentControlScope, loadHistory, loadSessions, refreshCompactionStatus, t]);
 
   const handleForkFromMessage = useCallback((messageId: string) => {
     const index = messages.findIndex((message) => getTranscriptEntryId(message) === messageId);
@@ -2685,7 +2719,10 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const hasRunningRuntimeToolStatus = executionProjection.hasRunningRuntimeToolStatus;
   const handlePauseComposerSession = useCallback(async () => {
     if (!inputRunActive) return;
-    setComposerPaused(true);
+    const visit = useChatStore.getState().viewRevision;
+    await abortRun();
+    const current = useChatStore.getState();
+    if (!isCurrentControlScope() || current.viewRevision !== visit || current.sending || current.activeRunId || current.error) return;
     if (activeWorkspace?.id) {
       await saveWorkspaceState({
         id: activeWorkspace.id,
@@ -2693,8 +2730,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         state: { composerRunState: 'paused' },
       });
     }
-    await abortRun();
-  }, [abortRun, activeWorkspace?.id, currentSessionKey, inputRunActive, saveWorkspaceState]);
+    if (isCurrentControlScope() && useChatStore.getState().viewRevision === visit) setComposerPaused(true);
+  }, [abortRun, activeWorkspace?.id, currentSessionKey, inputRunActive, isCurrentControlScope, saveWorkspaceState]);
 
   const handleResumeComposerSession = useCallback(async () => {
     if (!composerPaused) return;
@@ -3328,6 +3365,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     <div
       ref={splitContainerRef}
       data-testid="chat-page"
+      data-session-generation={controlGeneration ?? ''}
       data-project-workspace={projectWorkspaceId}
       className={cn(
         'relative flex min-h-0 overflow-hidden transition-colors duration-180 motion-reduce:transition-none',
@@ -3363,6 +3401,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                 workspaceProfiles={workspaceProfiles}
                 switchWorkspace={handleSwitchWorkspace}
                  pickWorkspaceFolder={handlePickWorkspaceFolder}
+                onSelectWorktree={handleSwitchWorktreeWorkspace}
                  onOpenTaskLedger={handleOpenTaskLedger}
                  onOpenClawGraph={handleOpenClawGraph}
                 sessions={sessions}
@@ -3584,6 +3623,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                         onResendUserMessage={getResendUserMessageHandler(row.message.id, row.index)}
                         onForkFromMessage={handleForkFromMessage}
                         onCompactRange={handleCompactMessageRange}
+                        compactDisabledReason={!controlGeneration ? t('operationGenerationUnavailable')
+                          : inputRunActive ? t('composer.compaction.activeRun') : compactionBusy ? t('composer.compaction.inProgress') : undefined}
                       />
                       {row.runCards.map((card) => {
                         const runKey = card.runKey;
@@ -3887,6 +3928,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         onKnowledgeModeChange={handleKnowledgeModeChange}
         compactionStatus={compactionStatus}
         compactionBusy={compactionBusy}
+        compactionUnavailableReason={!controlGeneration ? t('operationGenerationUnavailable') : undefined}
         onManualCompact={handleManualCompact}
         longTaskControlStatus={longTaskControlStatus}
         queueDrainBusy={queueDrainBusy}
@@ -3909,6 +3951,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
           <div className={cn('relative', sendingAnimation && 'codex-welcome-context--sending')}>
             <WelcomeScreen
               onPickFolder={handlePickWorkspaceFolder}
+              onSelectWorktree={handleSwitchWorktreeWorkspace}
               disabled={!isGatewayRunning}
             />
           </div>
@@ -3923,7 +3966,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         </>
       )}
       <Suspense fallback={null}>
-        {checkpointsOpen && <CheckpointsDialog open onOpenChange={setCheckpointsOpen} sessionKey={currentSessionKey} agentId={currentAgentId} />}
+        {checkpointsOpen && <CheckpointsDialog open onOpenChange={setCheckpointsOpen} sessionKey={currentSessionKey} agentId={currentAgentId} generation={controlGeneration} />}
         {compressionEvidence && <CompactionArtifactViewer
           open onOpenChange={(open) => { if (!open) setCompressionEvidence(null); }}
           sessionKey={currentSessionKey} checkpointId={compressionEvidence.checkpointId}
@@ -4289,6 +4332,7 @@ function ChatStartupError({ message, onRetry }: { message: string | null; onRetr
 // ── Welcome Screen ──────────────────────────────────────────────
 
 type WelcomeScreenProps = {
+  onSelectWorktree?: (tree: GitWorktree) => Promise<void>;
   onSend: (text: string) => void | Promise<unknown>;
   onPickFolder?: () => void | Promise<unknown>;
   disabled?: boolean;
@@ -4361,10 +4405,10 @@ function WelcomeSuggestionScope({ children, suggestions }: Omit<WelcomeSuggestio
 }
 
 /** The empty conversation names its project without exposing Git configuration. */
-function WelcomeScreen({ disabled = false, onPickFolder }: Omit<WelcomeScreenProps, 'onSend'>) {
+function WelcomeScreen({ disabled = false, onPickFolder, onSelectWorktree }: Omit<WelcomeScreenProps, 'onSend'>) {
   const activeWorkspace = useWorkspacesStore(state=>state.activeWorkspace);
   if (!activeWorkspace) return null;
-  return <div className="codex-welcome-stage"><div className="codex-welcome-context" data-testid="chat-welcome-context"><WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder}/></div></div>;
+  return <div className="codex-welcome-stage"><div className="codex-welcome-context" data-testid="chat-welcome-context"><WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder} onSelectWorktree={onSelectWorktree}/></div></div>;
 }
 
 /**

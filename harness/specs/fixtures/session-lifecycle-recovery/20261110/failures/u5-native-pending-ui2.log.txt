@@ -1,0 +1,145 @@
+
+Running 1 test using 1 worker
+
+[app:out] [2026-11-09T20:14:21.933Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-09T20:14:21.934Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [7164:1110/041422.215:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[7164:1110/041422.215:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:out] [2026-11-09T20:14:22.415Z] [INFO] Gateway stop requested
+[app:out] [2026-11-09T20:14:22.415Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[app:out] [2026-11-09T20:14:23.087Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[app:out] [2026-11-09T20:14:26.721Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:err] [2026-11-09T20:14:26.748Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-09T20:14:26.748Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-09T20:14:26.749Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-09T20:14:26.749Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-09T20:14:27.759Z] [INFO] Scheduling Gateway reload after saving provider "custom-sessionc" config
+[app:out] [2026-11-09T20:14:27.759Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-09T20:14:28.423Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\tmp\unified-management-20261109\lifecycle-validation\u5-native-pending-ui2-results\session-context-recovery-U-b9f4a-pending-refusal-and-timeout\workspace\.verse-claw\harness
+[app:out] [2026-11-09T20:14:28.959Z] [INFO] [gateway-refresh] mode=reload requested pid=n/a state=stopped
+[app:err] [2026-11-09T20:14:28.960Z] [WARN] [gateway-refresh] mode=reload result=fallback_restart cause=not_running
+[2026-11-09T20:14:28.960Z] [WARN] Gateway reload requested while not running; falling back to restart
+[app:out] [2026-11-09T20:14:28.960Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=n/a
+[2026-11-09T20:14:28.960Z] [INFO] Gateway stop requested
+[2026-11-09T20:14:28.960Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)
+[2026-11-09T20:14:28.961Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)
+[app:out] [2026-11-09T20:14:28.961Z] [INFO] Gateway start requested (port=18789)
+[app:out] [2026-11-09T20:14:28.969Z] [DEBUG] Device identity loaded (deviceId=dd0cb34ffea9c049ad428b9c508793e82d26a45a46944d01382de8d2d1a29e50)
+[app:out] [2026-11-09T20:14:28.970Z] [DEBUG] Gateway state changed: stopped -> starting
+[app:out] [2026-11-09T20:14:29.364Z] [DEBUG] Checking for existing Gateway...
+[app:err] (node:7164) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[app:out] [2026-11-09T20:14:29.479Z] [INFO] Gateway stop requested
+[app:out] [2026-11-09T20:14:29.479Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)
+[app:out] [2026-11-09T20:14:29.484Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"power-saver","activeReasons":["power-saver"],"transitionCount":3}
+[app:out] [2026-11-09T20:14:29.665Z] [DEBUG] Gateway start/find-existing superseded (expectedEpoch=3, currentEpoch=4)
+[app:out] [2026-11-09T20:14:29.665Z] [DEBUG] Gateway state changed: starting -> stopped
+[2026-11-09T20:14:29.665Z] [INFO] [metric] gateway.restart.executed {"gateway_restart_executed_total":1,"gateway_restart_suppressed_total":0,"gateway_restart_circuit_open_until":0}
+[app:out] [2026-11-09T20:14:29.665Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=n/a pidAfter=n/a suppressed=0 executed=1 circuitOpenUntil=0
+[app:out] [2026-11-09T20:14:29.731Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (start)
+[app:out] [2026-11-09T20:14:29.732Z] [INFO] Gateway start requested (port=63098)
+[app:out] [2026-11-09T20:14:29.733Z] [DEBUG] Gateway state changed: stopped -> starting
+[app:out] [2026-11-09T20:14:29.988Z] [DEBUG] Checking for existing Gateway...
+[app:out] [2026-11-09T20:14:30.225Z] [DEBUG] No existing Gateway found, starting new process...
+[app:out] Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+[app:out] Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] Updated models.json for agent "main" provider "custom-sessionc"
+[app:out] [2026-11-09T20:14:30.616Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)
+[app:err] [2026-11-09T20:14:30.662Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[app:out] [2026-11-09T20:14:30.668Z] [INFO] [metric] gateway.prelaunch {"settingsMs":1,"defaultProviderRuntimeSyncMs":353,"providerEnvMs":10,"channelStartupPolicyMs":3,"uvEnvMs":10,"mcpEnvMs":27,"runtimeConfigReadMs":1,"verseShellBundleMs":0,"totalMs":432,"maintenance":{},"configuredChannelCount":0}
+[app:out] [2026-11-09T20:14:30.668Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=63098, entry="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\dist\entry.js", args="gateway --port 63098 --allow-unconfigured", execArgv="", cwd="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime", bundledBin=yes, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)
+[app:out] [2026-11-09T20:14:31.017Z] [INFO] Gateway process started (pid=27256)
+[app:out] [2026-11-09T20:14:31.017Z] [DEBUG] Gateway manager now owns process pid=27256
+[app:out] [2026-11-09T20:14:33.138Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[app:out] [2026-11-09T20:14:35.208Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)
+[app:out] [2026-11-09T20:14:37.384Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)
+[app:out] [2026-11-09T20:14:39.507Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)
+[app:out] [2026-11-09T20:14:41.643Z] [DEBUG] Still waiting for Gateway... (attempt 51/2400)
+[app:out] [2026-11-09T20:14:42.874Z] [DEBUG] [Gateway stderr] (node:27256) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[app:err] [2026-11-09T20:14:42.874Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-09T20:14:42.875Z] [DEBUG] [Gateway stderr] (node:27256) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[app:err] [2026-11-09T20:14:42.875Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[app:out] [2026-11-09T20:14:46.743Z] [DEBUG] Gateway ready after 61 attempt(s)
+[app:out] [2026-11-09T20:14:46.744Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:63098/ws)
+[app:err] [2026-11-09T20:14:46.784Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=8425f937-fed3-4513-b762-aa9ad8a93657 peer=127.0.0.1:58481->127.0.0.1:63098 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:63098 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-09T20:14:46.789Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-09T20:14:46.789Z] [DEBUG] Received connect.challenge, sending handshake
+[app:out] [2026-11-09T20:14:46.790Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:err] [2026-11-09T20:14:46.794Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=3d0138e4-1b04-4a2c-9f6d-c65515ac8428 peer=127.0.0.1:58500->127.0.0.1:63098 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:63098 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-09T20:14:46.872Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:63098/ws)
+[app:err] [2026-11-09T20:14:46.875Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[app:out] [2026-11-09T20:14:49.592Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-09T20:14:49.592Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-09T20:14:49.592Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:out] [2026-11-09T20:14:50.555Z] [DEBUG] Gateway connect handshake completed (protocol=4)
+[app:out] [2026-11-09T20:14:50.556Z] [DEBUG] Gateway state changed: starting -> running
+[app:out] [2026-11-09T20:14:50.557Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[app:out] [2026-11-09T20:14:50.559Z] [INFO] [metric] gateway.startup {"configSyncMs":1029,"spawnToReadyMs":15727,"readyToConnectMs":3815,"totalMs":20571}
+[app:out] [2026-11-09T20:14:57.699Z] [INFO] [chat:sendWithMedia] Sending: message="U5_HEAD", attachments=0, fileRefs=0
+[app:out] [2026-11-09T20:14:57.699Z] [INFO] [gateway-rpc] chat.send serialized id=f89fef9b-63bf-4297-afc1-24d5e45c2dc8 timeoutMs=900000 bytes=459
+[app:out] [2026-11-09T20:14:57.699Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=f89fef9b-63bf-4297-afc1-24d5e45c2dc8
+[app:err] [2026-11-09T20:14:57.927Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=aecf8f2c-f000-45f1-bc19-95f9bcde3c2b id=f89fef9b-63bf-4297-afc1-24d5e45c2dc8
+[app:err] [2026-11-09T20:14:57.928Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=aecf8f2c-f000-45f1-bc19-95f9bcde3c2b id=f89fef9b-63bf-4297-afc1-24d5e45c2dc8
+[app:err] [2026-11-09T20:14:57.929Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered
+[app:err] [2026-11-09T20:14:57.938Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=U5_HEAD sessionKey=agent:main:session-1794255268297-ucompact loadSessionMs=0.486
+[app:err] [2026-11-09T20:14:57.999Z] [ERROR] Unhandled promise rejection in main process: Error: ENOSPC: no space left on device, write
+Error: ENOSPC: no space left on device, write
+    at writeSync (node:fs:916:3)
+    at attempt (file:///D:/ClawX/node_modules/.pnpm/stubborn-utils@1.0.2/node_modules/stubborn-utils/dist/retryify_sync.js:11:31)
+    at writeFileSync (file:///D:/ClawX/node_modules/.pnpm/atomically@2.1.1/node_modules/atomically/dist/index.js:167:45)
+    at ElectronStore._write (file:///D:/ClawX/node_modules/.pnpm/conf@15.1.0/node_modules/conf/dist/source/index.js:417:17)
+    at set store (file:///D:/ClawX/node_modules/.pnpm/conf@15.1.0/node_modules/conf/dist/source/index.js:265:14)
+    at ElectronStore.set (file:///D:/ClawX/node_modules/.pnpm/conf@15.1.0/node_modules/conf/dist/source/index.js:104:20)
+    at S7 (D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-Wb-tWcgb.js:49:84853)
+    at async D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-Wb-tWcgb.js:49:84955
+[app:err] [2026-11-09T20:14:58.037Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=U5_HEAD sessionKey=agent:main:session-1794255268297-ucompact attachments=0
+[app:err] [2026-11-09T20:14:58.039Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=U5_HEAD sessionKey=agent:main:session-1794255268297-ucompact
+[app:out] [2026-11-09T20:14:58.040Z] [INFO] [gateway-rpc] chat.send response id received durationMs=341
+[app:out] [2026-11-09T20:14:58.041Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"U5_HEAD","status":"started"}
+[app:err] [2026-11-09T20:14:58.050Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=aecf8f2c-f000-45f1-bc19-95f9bcde3c2b id=f89fef9b-63bf-4297-afc1-24d5e45c2dc8
+[app:err] [2026-11-09T20:14:58.056Z] [ERROR] Unhandled promise rejection in main process: Error: ENOSPC: no space left on device, write
+Error: ENOSPC: no space left on device, write
+    at writeSync (node:fs:916:3)
+    at attempt (file:///D:/ClawX/node_modules/.pnpm/stubborn-utils@1.0.2/node_modules/stubborn-utils/dist/retryify_sync.js:11:31)
+    at writeFileSync (file:///D:/ClawX/node_modules/.pnpm/atomically@2.1.1/node_modules/atomically/dist/index.js:167:45)
+    at ElectronStore._write (file:///D:/ClawX/node_modules/.pnpm/conf@15.1.0/node_modules/conf/dist/source/index.js:417:17)
+    at set store (file:///D:/ClawX/node_modules/.pnpm/conf@15.1.0/node_modules/conf/dist/source/index.js:265:14)
+    at ElectronStore.set (file:///D:/ClawX/node_modules/.pnpm/conf@15.1.0/node_modules/conf/dist/source/index.js:104:20)
+    at S7 (D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-Wb-tWcgb.js:49:84853)
+    at async D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-Wb-tWcgb.js:49:84955
+[app:err] [2026-11-09T20:14:58.840Z] [ERROR] Unhandled promise rejection in main process: Error: ENOSPC: no space left on device, write
+Error: ENOSPC: no space left on device, write
+    at writeSync (node:fs:916:3)
+    at attempt (file:///D:/ClawX/node_modules/.pnpm/stubborn-utils@1.0.2/node_modules/stubborn-utils/dist/retryify_sync.js:11:31)
+    at writeFileSync (file:///D:/ClawX/node_modules/.pnpm/atomically@2.1.1/node_modules/atomically/dist/index.js:167:45)
+    at ElectronStore._write (file:///D:/ClawX/node_modules/.pnpm/conf@15.1.0/node_modules/conf/dist/source/index.js:417:17)
+    at set store (file:///D:/ClawX/node_modules/.pnpm/conf@15.1.0/node_modules/conf/dist/source/index.js:265:14)
+    at ElectronStore.set (file:///D:/ClawX/node_modules/.pnpm/conf@15.1.0/node_modules/conf/dist/source/index.js:104:20)
+    at S7 (D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-Wb-tWcgb.js:49:84853)
+    at async D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-Wb-tWcgb.js:49:84955
+[app:err] [2026-11-09T20:14:59.866Z] [ERROR] Unhandled promise rejection in main process: Error: ENOSPC: no space left on device, write
+Error: ENOSPC: no space left on device, write
+    at writeSync (node:fs:916:3)
+    at attempt (file:///D:/ClawX/node_modules/.pnpm/stubborn-utils@1.0.2/node_modules/stubborn-utils/dist/retryify_sync.js:11:31)
+    at writeFileSync (file:///D:/ClawX/node_modules/.pnpm/atomically@2.1.1/node_modules/atomically/dist/index.js:167:45)
+    at ElectronStore._write (file:///D:/ClawX/node_modules/.pnpm/conf@15.1.0/node_modules/conf/dist/source/index.js:417:17)
+    at set store (file:///D:/ClawX/node_modules/.pnpm/conf@15.1.0/node_modules/conf/dist/source/index.js:265:14)
+    at ElectronStore.set (file:///D:/ClawX/node_modules/.pnpm/conf@15.1.0/node_modules/conf/dist/source/index.js:104:20)
+    at S7 (D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-Wb-tWcgb.js:49:84853)
+    at async D:\ClawX-work\session-task-unified-relay-20261109\dist-electron\main\index-Wb-tWcgb.js:49:84955
+
+Node.js v24.22.1

@@ -107,7 +107,7 @@ describe('R0-3 chat abort/checkStuck reclamation', () => {
       if (method === 'config.get') return { messages: [] };
       if (method === 'chat.history') return { messages: [] };
       if (method === 'chat.send') return { runId: 'run-r0-3' };
-      if (method === 'chat.abort') return { ok: true };
+      if (method === 'chat.abort') return { ok: true, aborted: true, runIds: ['run-r0-3'] };
       if (method === 'sessions.list') return { sessions: [] };
       throw new Error('Unexpected gateway RPC: ' + method);
     });

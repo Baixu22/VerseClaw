@@ -2,6 +2,17 @@ import type { ChatSession, RawMessage } from '@shared/chat/types';
 import type { TaskLedgerNode, TaskLedgerSnapshot } from '@shared/types/task-ledger';
 import type { WorkspaceCoordinatorBinding } from '@shared/types/workspace';
 
+/** Older history and summary reads cannot undo activity already observed from the runtime. */
+export function mergeSessionActivity(previous: Record<string, number>, incoming: Record<string, number>): Record<string, number> {
+  let next = previous;
+  for (const [key, at] of Object.entries(incoming)) {
+    if (!Number.isFinite(at) || at <= (previous[key] ?? 0)) continue;
+    if (next === previous) next = { ...previous };
+    next[key] = at;
+  }
+  return next;
+}
+
 export function getTranscriptEntryId(message: RawMessage): string | undefined {
   const ownerId = message.__openclaw?.id;
   if (message.__openclaw) return typeof ownerId === 'string' && ownerId.trim() ? ownerId : undefined;

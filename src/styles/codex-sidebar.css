@@ -443,7 +443,8 @@
 .codex-sidebar .ws-family-row { position: relative; min-width: 0; }
 .codex-sidebar .ws-family-toggle,
 .codex-sidebar .ws-family-kind { position: absolute; z-index: 4; left: 9px; top: 3px; height: 24px; display: flex; align-items: center; gap: 1px; color: var(--cdx-text-3); }
-.codex-sidebar .ws-family-toggle { width: 26px; font-size: 9px; }
+.codex-sidebar .ws-family-toggle { width: 30px; font-size: 9px; }
+.codex-sidebar .ws-family-row:has(> .ws-family-toggle) .task-select { padding-left: max(var(--task-indent), 46px); --task-title-gutter: 4px; }
 .codex-sidebar .ws-family-toggle svg { width: 11px; height: 11px; flex-shrink: 0; }
 .codex-sidebar .ws-family-kind { width: 16px; pointer-events: none; }
 .codex-sidebar .ws-family-kind svg { width: 13px; height: 13px; }

@@ -1,0 +1,96 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-u5-lifecycle",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "case": "U5 coordinator pause and resume reject before commit and recover lost acknowledgements through the scoped owner read",
+  "project": {
+    "workspaceId": "u5-lifecycle",
+    "rootPath": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-combined-lifecycle-ui-results\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+    "sessionKey": "agent:main:session-1794275258969-ulifecycle",
+    "generation": "97db24b2-94f3-49ae-bbe8-99c55f6c516f"
+  },
+  "neighbour": "agent:main:dashboard:e782ec49-03c6-4316-bbd8-359eb2874634",
+  "recovery": "existing owner reads; archive/restore/delete also retry the persisted Main gate operationId",
+  "faultInjection": "before: no forwarding; after: real Main success reply held/dropped; gate-clear: temp write fails only after real Runtime commit",
+  "coordinator": [],
+  "lastFault": {
+    "sessionKey": "agent:main:session-1794275258969-ulifecycle",
+    "action": "pauseCoordinator",
+    "at": "after",
+    "module": "workspaces",
+    "hits": 1,
+    "request": {
+      "id": "98411917-62af-456d-9d5c-2691232419cf",
+      "module": "workspaces",
+      "action": "pauseCoordinator",
+      "payload": {
+        "workspaceId": "u5-lifecycle",
+        "agentId": "main",
+        "sessionKey": "agent:main:session-1794275258969-ulifecycle",
+        "expectedRevision": 1
+      },
+      "deadline": {
+        "deadlineAtMs": 1794275341199,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "98411917-62af-456d-9d5c-2691232419cf"
+      }
+    },
+    "reply": {
+      "id": "98411917-62af-456d-9d5c-2691232419cf",
+      "ok": true,
+      "data": {
+        "success": true,
+        "binding": {
+          "schemaVersion": 1,
+          "workspaceId": "u5-lifecycle",
+          "agentId": "main",
+          "sessionKey": "agent:main:session-1794275258969-ulifecycle",
+          "sessionGeneration": "97db24b2-94f3-49ae-bbe8-99c55f6c516f",
+          "taskLedgerReferences": [
+            {
+              "direction": "workboard-to-task-ledger",
+              "taskLedgerNodeId": "45ef4bdf-74a7-4377-9021-acd56a42db25",
+              "source": "runtime"
+            }
+          ],
+          "activeTaskNodeId": "45ef4bdf-74a7-4377-9021-acd56a42db25",
+          "environment": {
+            "kind": "local",
+            "canonicalRoot": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-combined-lifecycle-ui-results\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+            "backend": "local-workspace",
+            "branch": null,
+            "detachedHead": false,
+            "setupProfile": null
+          },
+          "archiveRestorePolicy": "restore",
+          "state": "paused",
+          "bindingRevision": 2,
+          "invalidationReason": "user-paused",
+          "createdAt": "2026-11-10T01:47:59.485Z",
+          "updatedAt": "2026-11-10T01:48:01.200Z"
+        },
+        "recovery": {
+          "state": "paused",
+          "reason": "user-paused",
+          "bindingRevision": 2
+        }
+      }
+    },
+    "phase": "after-owner"
+  },
+  "lastGate": {
+    "error": "Error: electronApplication.evaluate: TypeError: Cannot read properties of undefined (reading 'path')\n    at eval (eval at evaluate (:302:30), <anonymous>:4:15)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  "ownerReadback": {
+    "live": {
+      "key": "agent:main:session-1794275258969-ulifecycle",
+      "sessionId": "97db24b2-94f3-49ae-bbe8-99c55f6c516f"
+    },
+    "archived": null
+  },
+  "status": "failed",
+  "errors": [
+    "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('chat-composer-input')\nExpected: \u001b[32m\"U5 draft \u001b[7mB\u001b[27m\"\u001b[39m\nReceived: \u001b[31m\"U5 draft \u001b[7mA\u001b[27m\"\u001b[39m\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-composer-input')\u001b[22m\n\u001b[2m    18 × locator resolved to <textarea rows=\"1\" data-testid=\"chat-composer-input\" placeholder=\"Message...  / for commands and skills\" class=\"flex w-full rounded-lg border-input ring-offset-background transition-[background-color,border-color,box-shadow] duration-150 focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none relative min-h-[48px] max-h-[240px] resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none bg-transparent p-0 text…>U5 draft A</textarea>\u001b[22m\n\u001b[2m       - unexpected value \"U5 draft A\"\u001b[22m\n"
+  ]
+}

@@ -1,0 +1,211 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-u5-family-counter",
+  "status": "passed",
+  "samples": [
+    {
+      "count": 2,
+      "theme": "light",
+      "width": 1280,
+      "toggle": {
+        "x": 17,
+        "right": 47,
+        "width": 30
+      },
+      "title": {
+        "x": 50,
+        "width": 199
+      },
+      "labelRight": 33.859375,
+      "rowHeight": 30,
+      "overflow": false
+    },
+    {
+      "count": 2,
+      "theme": "light",
+      "width": 960,
+      "toggle": {
+        "x": 17,
+        "right": 47,
+        "width": 30
+      },
+      "title": {
+        "x": 50,
+        "width": 187.453125
+      },
+      "labelRight": 33.859375,
+      "rowHeight": 30,
+      "overflow": false
+    },
+    {
+      "count": 2,
+      "theme": "dark",
+      "width": 1280,
+      "toggle": {
+        "x": 17,
+        "right": 47,
+        "width": 30
+      },
+      "title": {
+        "x": 50,
+        "width": 199
+      },
+      "labelRight": 33.859375,
+      "rowHeight": 30,
+      "overflow": false
+    },
+    {
+      "count": 2,
+      "theme": "dark",
+      "width": 960,
+      "toggle": {
+        "x": 17,
+        "right": 47,
+        "width": 30
+      },
+      "title": {
+        "x": 50,
+        "width": 191.4375
+      },
+      "labelRight": 33.859375,
+      "rowHeight": 30,
+      "overflow": false
+    },
+    {
+      "count": 20,
+      "theme": "light",
+      "width": 1280,
+      "toggle": {
+        "x": 17,
+        "right": 47,
+        "width": 30
+      },
+      "title": {
+        "x": 50,
+        "width": 199
+      },
+      "labelRight": 38.703125,
+      "rowHeight": 30,
+      "overflow": false
+    },
+    {
+      "count": 20,
+      "theme": "light",
+      "width": 960,
+      "toggle": {
+        "x": 17,
+        "right": 47,
+        "width": 30
+      },
+      "title": {
+        "x": 50,
+        "width": 193.109375
+      },
+      "labelRight": 38.703125,
+      "rowHeight": 30,
+      "overflow": false
+    },
+    {
+      "count": 20,
+      "theme": "dark",
+      "width": 1280,
+      "toggle": {
+        "x": 17,
+        "right": 47,
+        "width": 30
+      },
+      "title": {
+        "x": 50,
+        "width": 199
+      },
+      "labelRight": 38.703125,
+      "rowHeight": 30,
+      "overflow": false
+    },
+    {
+      "count": 20,
+      "theme": "dark",
+      "width": 960,
+      "toggle": {
+        "x": 17,
+        "right": 47,
+        "width": 30
+      },
+      "title": {
+        "x": 50,
+        "width": 193.0625
+      },
+      "labelRight": 38.703125,
+      "rowHeight": 30,
+      "overflow": false
+    },
+    {
+      "count": 100,
+      "theme": "light",
+      "width": 1280,
+      "toggle": {
+        "x": 17,
+        "right": 47,
+        "width": 30
+      },
+      "title": {
+        "x": 50,
+        "width": 199
+      },
+      "labelRight": 42.125,
+      "rowHeight": 30,
+      "overflow": false
+    },
+    {
+      "count": 100,
+      "theme": "light",
+      "width": 960,
+      "toggle": {
+        "x": 17,
+        "right": 47,
+        "width": 30
+      },
+      "title": {
+        "x": 50,
+        "width": 191.4375
+      },
+      "labelRight": 42.125,
+      "rowHeight": 30,
+      "overflow": false
+    },
+    {
+      "count": 100,
+      "theme": "dark",
+      "width": 1280,
+      "toggle": {
+        "x": 17,
+        "right": 47,
+        "width": 30
+      },
+      "title": {
+        "x": 50,
+        "width": 199
+      },
+      "labelRight": 42.125,
+      "rowHeight": 30,
+      "overflow": false
+    },
+    {
+      "count": 100,
+      "theme": "dark",
+      "width": 960,
+      "toggle": {
+        "x": 17,
+        "right": 47,
+        "width": 30
+      },
+      "title": {
+        "x": 50,
+        "width": 199
+      },
+      "labelRight": 42.125,
+      "rowHeight": 30,
+      "overflow": false
+    }
+  ]
+}

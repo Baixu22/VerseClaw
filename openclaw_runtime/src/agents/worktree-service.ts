@@ -339,6 +339,23 @@ function removePathWithRetries(target: string, attempts = 5): void {
   throw lastError instanceof Error ? lastError : new Error(String(lastError ?? 'worktree_remove_failed'));
 }
 
+export function assertCleanupCommitRetained(record: Pick<WorktreeRecord, "backend" | "root" | "baseRoot">): void {
+  if (record.backend !== "git") return;
+  let head: string;
+  let refs: string[];
+  try {
+    head = git(["rev-parse", "--verify", "HEAD^{commit}"], record.root).trim();
+    refs = git(["for-each-ref", `--contains=${head}`, "--format=%(refname)", "refs/"], record.baseRoot)
+      .trim().split(/\r?\n/);
+  } catch (cause) {
+    throw new Error("worktree_cleanup_git_refs_unavailable", { cause });
+  }
+  // Shared refs survive removal. HEAD/reflogs and worktree-local refs do not prove retention.
+  if (!refs.some(ref => ref.startsWith("refs/") && !/^refs\/(?:bisect|rewritten|worktree)\//.test(ref))) {
+    throw new Error(`worktree_cleanup_unreferenced_commit:${head}`);
+  }
+}
+
 function requireCleanupAuthorization(input: {
   rootDir: string;
   baseRoot: string;
@@ -773,6 +790,7 @@ export function createWorktreeService(
           rec.status = "cleaned";
           saveWorktreeRegistryScope(s);
         }, () => {
+          assertCleanupCommitRetained(rec);
           rec.status = "cleaning";
           saveWorktreeRegistryScope(s);
         });

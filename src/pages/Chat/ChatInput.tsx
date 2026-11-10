@@ -153,7 +153,7 @@ interface ChatInputProps {
   onPermissionModeChange?: (mode: WorkspacePermissionMode) => void;
   onPickWorkspaceFolder?: () => void;
   onSwitchAgent?: (agentId: string) => void | Promise<void>;
-  onNewSession?: () => void | Promise<void>;
+  onNewSession?: () => void | boolean | Promise<void | boolean>;
   onForkSession?: () => void | Promise<void>;
   onHandoffSession?: () => void | Promise<void>;
   forkDisabled?: boolean;
@@ -166,7 +166,8 @@ interface ChatInputProps {
   onKnowledgeModeChange?: (mode: KnowledgeInvocationMode) => void | Promise<void>;
   compactionStatus?: SessionCompactionStatus | null;
   compactionBusy?: boolean;
-  onManualCompact?: (customInstructions?: string) => Promise<void>;
+  compactionUnavailableReason?: string;
+  onManualCompact?: (customInstructions?: string) => Promise<boolean | void>;
   longTaskControlStatus?: LongTaskControlStatus | null;
   queueDrainBusy?: boolean;
   onDrainQueuedFollowup?: () => Promise<void>;
@@ -980,6 +981,7 @@ export function ChatInput({
   onKnowledgeModeChange,
   compactionStatus,
   compactionBusy = false,
+  compactionUnavailableReason,
   onManualCompact,
   longTaskControlStatus,
   queueDrainBusy = false,
@@ -1423,6 +1425,7 @@ export function ChatInput({
   const compactionHiddenCount = compactionStatus?.truncatedMessageCount ?? contextRange?.truncatedMessageCount ?? 0;
   const compactionLastDate = formatCompactionDate(compactionStatus?.lastCompaction?.timestamp);
   const compactDisabledReason = useMemo(() => {
+    if (compactionUnavailableReason) return compactionUnavailableReason;
     if (!onManualCompact) return t('composer.compaction.unavailable');
     if (compactionBusy || compactionStatus?.inProgress) return t('composer.compaction.inProgress');
     if (sending) return t('composer.compaction.activeRun');
@@ -1432,7 +1435,7 @@ export function ChatInput({
       return reason;
     }
     return null;
-  }, [compactionBusy, compactionStatus?.available, compactionStatus?.canCompact, compactionStatus?.inProgress, compactionStatus?.reason, onManualCompact, sending, t]);
+  }, [compactionUnavailableReason, compactionBusy, compactionStatus?.available, compactionStatus?.canCompact, compactionStatus?.inProgress, compactionStatus?.reason, onManualCompact, sending, t]);
   const compactDisabled = Boolean(compactDisabledReason);
   const queuedFollowupCount = longTaskControlStatus?.queueCount ?? 0;
   const hasLongTaskControlDetails = queuedFollowupCount > 0
@@ -1728,8 +1731,8 @@ export function ChatInput({
     const generation = sessionGenerationRef.current;
     const allowed = await confirmPromptCacheRisk('manual-compaction');
     if (!allowed || generation !== sessionGenerationRef.current) return;
-    await onManualCompact(compactionInstructions.trim() || undefined);
-    if (generation !== sessionGenerationRef.current) return;
+    const acknowledged = await onManualCompact(compactionInstructions.trim() || undefined);
+    if (generation !== sessionGenerationRef.current || acknowledged === false) return;
     setCompactionInstructions('');
     setCompactionDialogOpen(false);
   }, [compactDisabled, compactionInstructions, confirmPromptCacheRisk, onManualCompact]);
@@ -2104,7 +2107,7 @@ export function ChatInput({
     }
   }, [confirmPromptCacheRisk, currentAgent, currentSessionKey, modelScope, defaultModelRef, effectiveModelRef, switchingModelRef, t, updateAgentModel]);
 
-  const handleWorkspaceAction = useCallback((action: () => void | Promise<void>) => {
+  const handleWorkspaceAction = useCallback((action: () => unknown) => {
     setWorkspaceMenuOpen(false);
     void Promise.resolve(action()).catch((error) => {
       toast.error(t('composer.workspaceActionFailed', { error: String(error) }));
@@ -2593,8 +2596,8 @@ export function ChatInput({
         toast.message(t('composer.slashCommands.toasts.sendUnavailable'));
         return;
       }
-      clearComposer();
-      await onNewSession();
+      closeSlashMenu();
+      if (await onNewSession() === false) return;
       toast.success(t('composer.slashCommands.toasts.newSessionCreated'));
       return;
     }
@@ -4733,6 +4736,7 @@ export function ChatInput({
             <Button
               type="button"
               data-testid="chat-compaction-confirm"
+              title={compactDisabledReason ?? undefined}
               onClick={() => void handleConfirmCompaction()}
               disabled={compactDisabled || compactionBusy}
             >

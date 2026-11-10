@@ -5,7 +5,7 @@
  */
 import { create } from 'zustand';
 import { readSessionDerivationFacts } from '@shared/types/session-derivation';
-import { readSessionListPages } from '@/lib/session-read-model';
+import { mergeSessionActivity, readSessionListPages } from '@/lib/session-read-model';
 import { hostApi, type ChatSendWithMediaResult, type SessionLabelSummary } from '@/lib/host-api';
 import { useGatewayStore } from './gateway';
 import { useAgentsStore } from './agents';
@@ -339,11 +339,9 @@ function applySessionLabelSummaries(
       }
 
       if (typeof summary.lastTimestamp === 'number' && Number.isFinite(summary.lastTimestamp)) {
-        if (nextActivity[summary.sessionKey] !== summary.lastTimestamp) {
-          if (nextActivity === state.sessionLastActivity) {
-            nextActivity = { ...state.sessionLastActivity };
-          }
-          nextActivity[summary.sessionKey] = summary.lastTimestamp;
+        const activity = mergeSessionActivity(nextActivity, { [summary.sessionKey]: summary.lastTimestamp });
+        if (activity !== nextActivity) {
+          nextActivity = activity;
           changed = true;
         }
       }
@@ -2825,6 +2823,8 @@ async function ensureSessionLinkedToLedger(sessionKey: string): Promise<void> {
 
 const streamPublication = createFramePublication<ChatState>();
 
+let archivedReadRevision = 0;
+
 export const useChatStore = create<ChatState>((set, get, api) => {
   streamPublication.attach(api);
   return {
@@ -2855,6 +2855,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
   sessionLabels: {},
   sessionLastActivity: {},
   archivedSessions: [],
+  pendingSessionMutations: [],
   archivedSessionsLoading: false,
 
   thinkingLevel: null,
@@ -3076,20 +3077,14 @@ export const useChatStore = create<ChatState>((set, get, api) => {
             set((state) => ({
               ...buildSessionSwitchPatch(state, nextSessionKey),
               sessions: sessionsWithCurrent,
-              sessionLastActivity: {
-                ...state.sessionLastActivity,
-                ...discoveredActivity,
-              },
+              sessionLastActivity: mergeSessionActivity(state.sessionLastActivity, discoveredActivity),
             }));
           } else {
             set((state) => ({
               sessions: sessionsWithCurrent,
               currentSessionKey: nextSessionKey,
               currentAgentId: getAgentIdFromSessionKey(nextSessionKey),
-              sessionLastActivity: {
-                ...state.sessionLastActivity,
-                ...discoveredActivity,
-              },
+              sessionLastActivity: mergeSessionActivity(state.sessionLastActivity, discoveredActivity),
             }));
           }
           reconcileCurrentSessionIdleFromBackend(set, get, sessionsWithCurrent);
@@ -3233,10 +3228,8 @@ export const useChatStore = create<ChatState>((set, get, api) => {
   // sweep and only releases its gate after a committed runtime receipt.
 
   deleteSession: async (key: string) => {
-    clearCachedSessionHistory(key);
-    clearCachedSessionRunState(key);
-    clearSessionLabelHydrationTracking(key);
-    clearPendingOptimisticUserMessages(key);
+    const generation = get().sessions.find(session => session.key === key)?.sessionId;
+    const visit = get().viewRevision;
     // Main reconciles the local transcript/index mirror after runtime commit.
     try {
       const result = await hostApi.sessions.delete(key);
@@ -3249,9 +3242,18 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     }
 
     const { currentSessionKey, sessions } = get();
+    const current = sessions.find(session => session.key === key);
+    if ((current && current.sessionId !== generation) || (currentSessionKey === key && get().viewRevision !== visit)) {
+      void get().loadSessions();
+      return;
+    }
+    clearCachedSessionHistory(key);
+    clearCachedSessionRunState(key);
+    clearSessionLabelHydrationTracking(key);
+    clearPendingOptimisticUserMessages(key);
     const remaining = sessions.filter((s) => s.key !== key);
 
-    if (currentSessionKey === key) {
+    if (currentSessionKey === key && get().viewRevision === visit) {
       // Switched away from deleted session — pick the first remaining or create new
       const next = remaining[0];
       set((s) => ({
@@ -3353,10 +3355,8 @@ export const useChatStore = create<ChatState>((set, get, api) => {
   // ── Cleanup empty session on navigate away ──
 
   archiveSession: async (key, options) => {
-    clearCachedSessionHistory(key);
-    clearCachedSessionRunState(key);
-    clearSessionLabelHydrationTracking(key);
-    clearPendingOptimisticUserMessages(key);
+    const generation = get().sessions.find(session => session.key === key)?.sessionId;
+    const visit = get().viewRevision;
     try {
       const result = await hostApi.sessions.archive({
         id: key,
@@ -3372,6 +3372,15 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     }
 
     const { currentSessionKey, sessions } = get();
+    const current = sessions.find(session => session.key === key);
+    if ((current && current.sessionId !== generation) || (currentSessionKey === key && get().viewRevision !== visit)) {
+      void get().loadSessions();
+      return;
+    }
+    clearCachedSessionHistory(key);
+    clearCachedSessionRunState(key);
+    clearSessionLabelHydrationTracking(key);
+    clearPendingOptimisticUserMessages(key);
     const remaining = sessions.filter((s) => s.key !== key);
     const dropSessionState = (state: ChatState) => ({
       sessions: remaining,
@@ -3379,7 +3388,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       sessionLastActivity: Object.fromEntries(Object.entries(state.sessionLastActivity).filter(([k]) => k !== key)),
     });
 
-    if (currentSessionKey === key) {
+    if (currentSessionKey === key && get().viewRevision === visit) {
       const next = remaining[0];
       set((s) => ({
         ...dropSessionState(s),
@@ -3406,48 +3415,59 @@ export const useChatStore = create<ChatState>((set, get, api) => {
   },
 
   restoreSession: async (sessionKey) => {
+    const visit = get().viewRevision;
+    const archived = get().archivedSessions.find(entry => entry.sessionKey === sessionKey);
     try {
       const result = await hostApi.sessions.restore({ id: sessionKey });
       if (!result.success) {
-        console.warn(`[restoreSession] IPC reported failure for ${sessionKey}:`, result.error);
-        return;
+        throw new Error(result.error || 'Restore was not confirmed');
       }
     } catch (err) {
       console.warn(`[restoreSession] IPC call failed for ${sessionKey}:`, err);
+      if (get().viewRevision === visit) toast.warning(i18n.t('chat:archive.mutationUnconfirmed'));
       return;
     }
     set((s) => ({
-      archivedSessions: s.archivedSessions.filter((entry) => entry.sessionKey !== sessionKey),
+      archivedSessions: s.archivedSessions.filter((entry) => entry.sessionKey !== sessionKey
+        || !archived || entry.archivedAt !== archived.archivedAt || entry.transcriptPath !== archived.transcriptPath),
     }));
     void get().loadSessions();
   },
 
   permanentDeleteSession: async (sessionKey) => {
+    const visit = get().viewRevision;
+    const archived = get().archivedSessions.find(entry => entry.sessionKey === sessionKey);
     try {
       const result = await hostApi.sessions.permanentDelete({ id: sessionKey });
       if (!result.success) {
-        console.warn(`[permanentDeleteSession] IPC reported failure for ${sessionKey}:`, result.error);
-        return;
+        throw new Error(result.error || 'Delete was not confirmed');
       }
     } catch (err) {
       console.warn(`[permanentDeleteSession] IPC call failed for ${sessionKey}:`, err);
+      if (get().viewRevision === visit) toast.warning(i18n.t('chat:archive.mutationUnconfirmed'));
       return;
     }
     set((s) => ({
-      archivedSessions: s.archivedSessions.filter((entry) => entry.sessionKey !== sessionKey),
+      archivedSessions: s.archivedSessions.filter((entry) => entry.sessionKey !== sessionKey
+        || !archived || entry.archivedAt !== archived.archivedAt || entry.transcriptPath !== archived.transcriptPath),
     }));
   },
 
   loadArchivedSessions: async (agentId) => {
+    const scopeAgent = agentId || get().currentAgentId || 'main';
+    if (scopeAgent !== (get().currentAgentId || 'main')) return;
+    const revision = ++archivedReadRevision;
     set({ archivedSessionsLoading: true });
     try {
-      const result = await hostApi.sessions.listArchived(agentId ? { agentId } : undefined);
-      set({ archivedSessions: result.entries ?? [] });
+      const result = await hostApi.sessions.listArchived({ agentId: scopeAgent });
+      if (revision !== archivedReadRevision || scopeAgent !== (get().currentAgentId || 'main')) return;
+      if (!result.success) throw new Error(result.error || 'Archive state unavailable');
+      set({ archivedSessions: result.entries ?? [], pendingSessionMutations: result.pendingMutations ?? [] });
     } catch (err) {
       console.warn('[loadArchivedSessions] IPC call failed:', err);
-      set({ archivedSessions: [] });
+      if (revision === archivedReadRevision && scopeAgent === (get().currentAgentId || 'main')) toast.warning(i18n.t('chat:archive.mutationUnconfirmed'));
     } finally {
-      set({ archivedSessionsLoading: false });
+      if (revision === archivedReadRevision && scopeAgent === (get().currentAgentId || 'main')) set({ archivedSessionsLoading: false });
     }
   },
 
@@ -3728,7 +3748,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       if (lastMsg?.timestamp) {
         const lastAt = toMs(lastMsg.timestamp);
         set((s) => ({
-          sessionLastActivity: { ...s.sessionLastActivity, [currentSessionKey]: lastAt },
+          sessionLastActivity: mergeSessionActivity(s.sessionLastActivity, { [currentSessionKey]: lastAt }),
         }));
       }
 
@@ -4657,22 +4677,39 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     clearHistoryPoll();
     clearErrorRecoveryTimer();
     clearTurnTimeoutTimer();
-    const { currentSessionKey, sending, activeRunId, sessions } = get();
+    const { currentSessionKey, sending, activeRunId, sessions, viewRevision } = get();
     const generation = sessions.find((session) => session.key === currentSessionKey)?.sessionId;
-    const isCurrentAbortTarget = () => get().currentSessionKey === currentSessionKey && get().activeRunId === activeRunId
+    const isCurrentAbortTarget = () => get().viewRevision === viewRevision && get().currentSessionKey === currentSessionKey && get().activeRunId === activeRunId
       && get().sessions.find((session) => session.key === currentSessionKey)?.sessionId === generation;
+    // A retry clears its previous request error before waiting, never a newer error on completion.
+    set({ error: null });
 
     // R0-3: abort the run FIRST. Only release UI state once the Main process
     // confirms the abort — a failed stop must not masquerade as stopped.
     let receipt: { aborted?: boolean; runIds?: string[] } | undefined;
+    let stopConfirmed: boolean;
     try {
       receipt = await abortChatRunViaHostApi(currentSessionKey, activeRunId);
+      const acknowledged = receipt?.aborted === true && (!activeRunId || !receipt.runIds || receipt.runIds.includes(activeRunId));
+      stopConfirmed = acknowledged;
+      if (!acknowledged && isCurrentAbortTarget()) {
+        const read = await useGatewayStore.getState().rpc<{ session?: { sessionId?: string; hasActiveRun?: boolean } }>(
+          'sessions.describe', { key: currentSessionKey });
+        if (read.session?.hasActiveRun !== false || (generation && read.session?.sessionId !== generation)) {
+          throw new Error(i18n.t('chat:composer.abortFailed'));
+        }
+        stopConfirmed = true;
+      }
     } catch (err) {
       console.warn(`[abortRun] chat.abort failed: ${String(err)}`);
-      if (isCurrentAbortTarget()) set({ error: String(err), sending });
-      toast.warning(i18n.t('chat:composer.abortFailed'));
+      if (isCurrentAbortTarget()) {
+        set({ error: String(err), sending });
+        toast.warning(i18n.t('chat:composer.abortFailed'));
+      }
       return;
     }
+
+    if (!stopConfirmed) return;
 
     // Use the Gateway's acknowledged run identity; retain a result that arrived
     // while the abort request was pending.
@@ -4685,7 +4722,10 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     }) : get().runtimeRuns;
     if (!isCurrentAbortTarget()) {
       if (runtimeRuns !== get().runtimeRuns) set({ runtimeRuns });
-      if (generationUnchanged) captureSessionRunState(currentSessionKey, DEFAULT_SESSION_RUN_STATE);
+      if (generationUnchanged && get().currentSessionKey !== currentSessionKey && activeRunId
+        && getCachedSessionRunState(currentSessionKey).activeRunId === activeRunId) {
+        captureSessionRunState(currentSessionKey, DEFAULT_SESSION_RUN_STATE);
+      }
       return;
     }
     // Release all in-flight UI/run resources (P5-004 A3).

@@ -1,0 +1,665 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-u5-context",
+  "action": "restoreCheckpoint",
+  "status": "passed",
+  "checkpointSelection": "fault-injected read projection only",
+  "mutationSuccess": "not_claimed",
+  "postCommitReplyLoss": "not_run",
+  "before": {
+    "described": {
+      "session": {
+        "key": "agent:main:session-1794237503327-urestore",
+        "kind": "direct",
+        "label": "U5 Restore coordinator",
+        "displayName": "U5 Restore coordinator",
+        "chatType": "direct",
+        "origin": {
+          "label": "Verse Claw",
+          "provider": "webchat",
+          "surface": "webchat",
+          "chatType": "direct"
+        },
+        "updatedAt": 1794237578356,
+        "sessionId": "bbc75414-b4ce-4cdd-8909-ed97f2ee625b",
+        "systemSent": true,
+        "abortedLastRun": false,
+        "thinkingLevels": [
+          {
+            "id": "off",
+            "label": "off"
+          },
+          {
+            "id": "minimal",
+            "label": "minimal"
+          },
+          {
+            "id": "low",
+            "label": "low"
+          },
+          {
+            "id": "medium",
+            "label": "medium"
+          },
+          {
+            "id": "high",
+            "label": "high"
+          }
+        ],
+        "thinkingOptions": [
+          "off",
+          "minimal",
+          "low",
+          "medium",
+          "high"
+        ],
+        "thinkingDefault": "medium",
+        "inputTokens": 120,
+        "outputTokens": 30,
+        "totalTokens": 120,
+        "totalTokensFresh": true,
+        "estimatedCostUsd": 0,
+        "status": "done",
+        "startedAt": 1794237564093,
+        "endedAt": 1794237569749,
+        "runtimeMs": 5656,
+        "modelProvider": "custom-sessionc",
+        "model": "mock-coder",
+        "agentRuntime": {
+          "id": "auto",
+          "source": "implicit"
+        },
+        "contextTokens": 128000,
+        "deliveryContext": {
+          "channel": "webchat"
+        },
+        "lastChannel": "webchat",
+        "hasActiveRun": false
+      }
+    },
+    "history": {
+      "success": true,
+      "messages": [
+        {
+          "role": "user",
+          "content": "U5_HEAD",
+          "timestamp": 1794237531165,
+          "idempotencyKey": "U5_HEAD:user",
+          "__openclaw": {
+            "id": "88ca6dc5",
+            "recordTimestampMs": 1794237545942,
+            "seq": 1
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "U5 checkpoint source context."
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "stop",
+          "timestamp": 1794237549426,
+          "__openclaw": {
+            "id": "040d88b4",
+            "recordTimestampMs": 1794237549546,
+            "seq": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "U5_TARGET",
+          "timestamp": 1794237560042,
+          "idempotencyKey": "U5_TARGET:user",
+          "__openclaw": {
+            "id": "0c6b5690",
+            "recordTimestampMs": 1794237565862,
+            "seq": 3
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "U5 checkpoint source context."
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "stop",
+          "timestamp": 1794237569041,
+          "__openclaw": {
+            "id": "a5aa3683",
+            "recordTimestampMs": 1794237569273,
+            "seq": 4
+          }
+        }
+      ],
+      "sessionGeneration": "bbc75414-b4ce-4cdd-8909-ed97f2ee625b",
+      "model": "custom-sessionc/mock-coder"
+    },
+    "status": {
+      "success": true,
+      "available": true,
+      "canCompact": true,
+      "inProgress": false,
+      "usedTokens": 120,
+      "maxTokens": 128000,
+      "remainingTokens": 127880,
+      "pressure": "low",
+      "truncatedMessageCount": 0,
+      "warnings": [
+        "context_budget_unknown"
+      ]
+    },
+    "checkpoints": {
+      "success": true,
+      "key": "agent:main:session-1794237503327-urestore",
+      "checkpoints": []
+    }
+  },
+  "fault": {
+    "driven_by": "agent",
+    "injection": "Host failure before mutation dispatch",
+    "calls": [
+      {
+        "id": "198ab713-53e8-48d9-b68f-186b1209ecc0",
+        "module": "sessions",
+        "action": "restoreCheckpoint",
+        "payload": {
+          "sessionKey": "agent:main:session-1794237503327-urestore",
+          "expectedSessionId": "bbc75414-b4ce-4cdd-8909-ed97f2ee625b",
+          "agentId": "main",
+          "checkpointId": "u5-read-projection-only"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794237651663,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "198ab713-53e8-48d9-b68f-186b1209ecc0"
+        }
+      },
+      {
+        "id": "4b24637e-2790-49d6-8939-53f3044cc12e",
+        "module": "sessions",
+        "action": "restoreCheckpoint",
+        "payload": {
+          "sessionKey": "agent:main:session-1794237503327-urestore",
+          "expectedSessionId": "bbc75414-b4ce-4cdd-8909-ed97f2ee625b",
+          "agentId": "main",
+          "checkpointId": "u5-read-projection-only"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794237651836,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "4b24637e-2790-49d6-8939-53f3044cc12e"
+        }
+      }
+    ],
+    "reads": [
+      {
+        "id": "2913a551-49fe-4dd5-9f74-856901858466",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "u5-restore",
+          "sessionKey": "agent:main:session-1794237503327-urestore",
+          "reconcile": true
+        },
+        "deadline": {
+          "deadlineAtMs": 1794237645545,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "2913a551-49fe-4dd5-9f74-856901858466"
+        }
+      },
+      {
+        "id": "e6a0a31b-f0b5-4445-961d-894ce0d69148",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794237503327-urestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794237646049,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "e6a0a31b-f0b5-4445-961d-894ce0d69148"
+        }
+      },
+      {
+        "id": "937a3dbb-9391-4ac9-8d27-1e24dd82859b",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794237503327-urestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794237646049,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "937a3dbb-9391-4ac9-8d27-1e24dd82859b"
+        }
+      },
+      {
+        "id": "88c2a924-dae7-490b-8b08-f8f803d8e4f5",
+        "module": "sessions",
+        "action": "history",
+        "payload": {
+          "sessionKey": "agent:main:session-1794237503327-urestore",
+          "limit": 200
+        },
+        "deadline": {
+          "deadlineAtMs": 1794237647029,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "88c2a924-dae7-490b-8b08-f8f803d8e4f5"
+        }
+      },
+      {
+        "id": "73567f83-4842-4410-be09-6aa727d952fb",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794237503327-urestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794237648986,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "73567f83-4842-4410-be09-6aa727d952fb"
+        }
+      },
+      {
+        "id": "d8db19b1-0a98-4940-93b1-2a9b7f814a56",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794237503327-urestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794237648986,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "d8db19b1-0a98-4940-93b1-2a9b7f814a56"
+        }
+      },
+      {
+        "id": "6f12bdf5-00fb-4726-a249-4e7e10d144e3",
+        "module": "sessions",
+        "action": "handoffOperation",
+        "payload": {
+          "workspaceId": "u5-restore",
+          "sessionKey": "agent:main:session-1794237503327-urestore",
+          "reconcile": true
+        },
+        "deadline": {
+          "deadlineAtMs": 1794237649152,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "6f12bdf5-00fb-4726-a249-4e7e10d144e3"
+        }
+      },
+      {
+        "id": "6a972473-022e-45c3-b559-383b53fd1fff",
+        "module": "sessions",
+        "action": "compactionStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794237503327-urestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794237649864,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "6a972473-022e-45c3-b559-383b53fd1fff"
+        }
+      },
+      {
+        "id": "dac5e027-2997-427b-98c8-44db9df9d82f",
+        "module": "sessions",
+        "action": "longTaskControlStatus",
+        "payload": {
+          "sessionKey": "agent:main:session-1794237503327-urestore",
+          "agentId": "main"
+        },
+        "deadline": {
+          "deadlineAtMs": 1794237649864,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "dac5e027-2997-427b-98c8-44db9df9d82f"
+        }
+      }
+    ],
+    "cacheChecks": [
+      {
+        "payload": {
+          "sessionKey": "agent:main:session-1794237503327-urestore",
+          "modelRef": "custom-sessionc/mock-coder",
+          "usedTokens": 0
+        },
+        "startedAt": 1794237586814,
+        "result": {
+          "id": "15106374-23a6-457b-a2a9-bcd7019a97b9",
+          "ok": true,
+          "data": {
+            "success": true,
+            "assessment": {
+              "sessionKey": "agent:main:session-1794237503327-urestore",
+              "status": "unknown",
+              "severity": "none",
+              "shouldWarn": false,
+              "confidence": "unknown",
+              "providerStrategy": "openai-compatible",
+              "hitRate": null,
+              "promptTokens": 0,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 0,
+              "lastTurnHitRate": null,
+              "warmTurnHitRate": null,
+              "lastTurnCacheReadTokens": 0,
+              "lastTurnCacheMissTokens": 0,
+              "costEstimateReliable": false,
+              "reason": "provider-unknown",
+              "warningCount": 0,
+              "cancelledBreakCount": 0,
+              "updatedAt": 1794237586816
+            }
+          }
+        },
+        "finishedAt": 1794237586816
+      },
+      {
+        "payload": {
+          "sessionKey": "agent:main:session-1794237503327-urestore",
+          "modelRef": "custom-sessionc/mock-coder",
+          "usedTokens": null
+        },
+        "startedAt": 1794237589868,
+        "result": {
+          "id": "16c0be11-f025-4de5-9d6d-d3c8f10b584b",
+          "ok": true,
+          "data": {
+            "success": true,
+            "assessment": {
+              "sessionKey": "agent:main:session-1794237503327-urestore",
+              "status": "unknown",
+              "severity": "none",
+              "shouldWarn": false,
+              "confidence": "unknown",
+              "providerStrategy": "openai-compatible",
+              "hitRate": null,
+              "promptTokens": 0,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 0,
+              "lastTurnHitRate": null,
+              "warmTurnHitRate": null,
+              "lastTurnCacheReadTokens": 0,
+              "lastTurnCacheMissTokens": 0,
+              "costEstimateReliable": false,
+              "reason": "provider-unknown",
+              "warningCount": 0,
+              "cancelledBreakCount": 0,
+              "updatedAt": 1794237589873
+            }
+          }
+        },
+        "finishedAt": 1794237589873
+      },
+      {
+        "payload": {
+          "sessionKey": "agent:main:session-1794237503327-urestore",
+          "modelRef": "custom-sessionc/mock-coder",
+          "usedTokens": 0
+        },
+        "startedAt": 1794237590557,
+        "result": {
+          "id": "c5e70d27-7cab-4dbc-a013-3cba94391dbe",
+          "ok": true,
+          "data": {
+            "success": true,
+            "assessment": {
+              "sessionKey": "agent:main:session-1794237503327-urestore",
+              "status": "unknown",
+              "severity": "none",
+              "shouldWarn": false,
+              "confidence": "unknown",
+              "providerStrategy": "openai-compatible",
+              "hitRate": null,
+              "promptTokens": 0,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 0,
+              "lastTurnHitRate": null,
+              "warmTurnHitRate": null,
+              "lastTurnCacheReadTokens": 0,
+              "lastTurnCacheMissTokens": 0,
+              "costEstimateReliable": false,
+              "reason": "provider-unknown",
+              "warningCount": 0,
+              "cancelledBreakCount": 0,
+              "updatedAt": 1794237590560
+            }
+          }
+        },
+        "finishedAt": 1794237590560
+      }
+    ],
+    "ownerMutationDispatches": 0
+  },
+  "after": {
+    "described": {
+      "session": {
+        "key": "agent:main:session-1794237503327-urestore",
+        "kind": "direct",
+        "label": "U5 Restore coordinator",
+        "displayName": "U5 Restore coordinator",
+        "chatType": "direct",
+        "origin": {
+          "label": "Verse Claw",
+          "provider": "webchat",
+          "surface": "webchat",
+          "chatType": "direct"
+        },
+        "updatedAt": 1794237578356,
+        "sessionId": "bbc75414-b4ce-4cdd-8909-ed97f2ee625b",
+        "systemSent": true,
+        "abortedLastRun": false,
+        "thinkingLevels": [
+          {
+            "id": "off",
+            "label": "off"
+          },
+          {
+            "id": "minimal",
+            "label": "minimal"
+          },
+          {
+            "id": "low",
+            "label": "low"
+          },
+          {
+            "id": "medium",
+            "label": "medium"
+          },
+          {
+            "id": "high",
+            "label": "high"
+          }
+        ],
+        "thinkingOptions": [
+          "off",
+          "minimal",
+          "low",
+          "medium",
+          "high"
+        ],
+        "thinkingDefault": "medium",
+        "inputTokens": 120,
+        "outputTokens": 30,
+        "totalTokens": 120,
+        "totalTokensFresh": true,
+        "estimatedCostUsd": 0,
+        "status": "done",
+        "startedAt": 1794237564093,
+        "endedAt": 1794237569749,
+        "runtimeMs": 5656,
+        "modelProvider": "custom-sessionc",
+        "model": "mock-coder",
+        "agentRuntime": {
+          "id": "auto",
+          "source": "implicit"
+        },
+        "contextTokens": 128000,
+        "deliveryContext": {
+          "channel": "webchat"
+        },
+        "lastChannel": "webchat",
+        "hasActiveRun": false
+      }
+    },
+    "history": {
+      "success": true,
+      "messages": [
+        {
+          "role": "user",
+          "content": "U5_HEAD",
+          "timestamp": 1794237531165,
+          "idempotencyKey": "U5_HEAD:user",
+          "__openclaw": {
+            "id": "88ca6dc5",
+            "recordTimestampMs": 1794237545942,
+            "seq": 1
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "U5 checkpoint source context."
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "stop",
+          "timestamp": 1794237549426,
+          "__openclaw": {
+            "id": "040d88b4",
+            "recordTimestampMs": 1794237549546,
+            "seq": 2
+          }
+        },
+        {
+          "role": "user",
+          "content": "U5_TARGET",
+          "timestamp": 1794237560042,
+          "idempotencyKey": "U5_TARGET:user",
+          "__openclaw": {
+            "id": "0c6b5690",
+            "recordTimestampMs": 1794237565862,
+            "seq": 3
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "U5 checkpoint source context."
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "stop",
+          "timestamp": 1794237569041,
+          "__openclaw": {
+            "id": "a5aa3683",
+            "recordTimestampMs": 1794237569273,
+            "seq": 4
+          }
+        }
+      ],
+      "sessionGeneration": "bbc75414-b4ce-4cdd-8909-ed97f2ee625b",
+      "model": "custom-sessionc/mock-coder"
+    },
+    "status": {
+      "success": true,
+      "available": true,
+      "canCompact": true,
+      "inProgress": false,
+      "usedTokens": 120,
+      "maxTokens": 128000,
+      "remainingTokens": 127880,
+      "pressure": "low",
+      "truncatedMessageCount": 0,
+      "warnings": [
+        "context_budget_unknown"
+      ]
+    },
+    "checkpoints": {
+      "success": true,
+      "key": "agent:main:session-1794237503327-urestore",
+      "checkpoints": []
+    }
+  },
+  "project": {
+    "workspaceId": "u5-restore",
+    "rootPath": "D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-checkpoint-ui-results\\session-context-recovery-U-91c6c-riginal-owner-after-timeout\\workspace",
+    "sessionKey": "agent:main:session-1794237503327-urestore",
+    "generation": "bbc75414-b4ce-4cdd-8909-ed97f2ee625b"
+  },
+  "remainingFault": null
+}

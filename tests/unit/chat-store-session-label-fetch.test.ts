@@ -323,6 +323,25 @@ describe('chat store session label summary hydration', () => {
     expect(backgroundHistoryCalls).toHaveLength(0);
   });
 
+  it('retains newer live activity across older list and summary snapshots', async () => {
+    const key = 'agent:main:session-activity';
+    const liveAt = 1_794_285_987_499;
+    gatewayRpcMock.mockImplementation(async (method: string) => method === 'sessions.list'
+      ? { sessions: [{ key, sessionId: 'activity-generation', updatedAt: liveAt - 20_000 }] } : {});
+    hostApiFetchMock.mockImplementation(async (path: string) => path === '/api/sessions/summaries'
+      ? { success: true, summaries: [{ sessionKey: key, firstUserText: 'Original title', lastTimestamp: liveAt - 10_000 }] }
+      : { success: true, messages: [] });
+    const { useChatStore } = await import('@/stores/chat');
+    useChatStore.setState({ currentSessionKey: key, currentAgentId: 'main', sessions: [{ key }], messages: [],
+      sessionLabels: {}, sessionLastActivity: { [key]: liveAt }, sending: false, activeRunId: null, pendingFinal: false,
+      streamingText: '', streamingMessage: null, streamingTools: [], lastUserMessageAt: null, pendingToolImages: [],
+      error: null, runError: null, loading: false, thinkingLevel: null });
+    await useChatStore.getState().loadSessions({ force: true });
+    await Promise.resolve(); await Promise.resolve();
+    expect(useChatStore.getState().sessionLabels[key]).toBe('Original title');
+    expect(useChatStore.getState().sessionLastActivity[key]).toBe(liveAt);
+  });
+
   it('does not re-request label hydration for unchanged sessions across repeated loadSessions calls', async () => {
     gatewayRpcMock.mockImplementation(async (method: string) => {
       if (method === 'sessions.list') {

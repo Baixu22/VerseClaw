@@ -122,7 +122,7 @@ export function StorageSection() {
       <SettingsSection title={t('worktrees')} description={t('worktreesHint')} testId="storage-worktrees">
         {worktrees.length === 0 && <SettingsRow title={t('empty')} />}
         {worktrees.map((tree) => <SettingsRow key={tree.path} title={<span className="block truncate" title={tree.branch}>{tree.branch || tree.head?.slice(0, 8) || tree.repositoryName}</span>}
-          description={<span className="block"><span className="block break-all">{tree.path}</span><span>{tree.disk.partial ? '≥ ' : ''}{formatStorageBytes(tree.disk.bytes)} · {tree.protection ? t(`protected.${tree.protection}`) : t('idle')}</span></span>}
+          description={<span className="block"><span className="block break-all">{tree.path}</span><span>{tree.disk.partial ? '≥ ' : ''}{formatStorageBytes(tree.disk.bytes)} · {tree.reason?.startsWith('UI_CLEANUP_') ? t('protected.owner') : tree.protection ? t(`protected.${tree.protection}`) : t('idle')}</span></span>}
           control={<Button size="sm" variant="outline" disabled={busy || Boolean(tree.protection)} onClick={() => void prepareRemoval(tree)}>{t('remove')}</Button>} />)}
       </SettingsSection>
       <SettingsCard><SettingsRow title={t('archived')} description={t('archivedHint')} control={<Button variant="ghost" size="sm" onClick={() => navigate('/settings/archived')}>{t('manage')}<ArrowUpRight className="ml-1 h-3.5 w-3.5" /></Button>} /></SettingsCard>

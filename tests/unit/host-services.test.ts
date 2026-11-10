@@ -1269,6 +1269,16 @@ describe('host services', () => {
     }), 120_000);
   });
 
+  it.each(['compact', 'compactRange'] as const)('preserves an asynchronous %s acceptance as pending', async (method) => {
+    const rpc = vi.fn().mockResolvedValue({ ok: true, key: 'agent:main:main', compacted: false,
+      result: { details: { backend: 'codex-app-server', signal: 'thread/compact/start', pending: true } } });
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const sessionsApi = createSessionsApi({ gatewayManager: { rpc } as never });
+    await expect(sessionsApi[method]({ sessionKey: 'agent:main:main', expectedSessionId: 'generation-1', fromLeafId: 'entry-1' }))
+      .resolves.toMatchObject({ success: true, status: 'pending', compacted: false });
+    expect(rpc).toHaveBeenCalledTimes(1);
+  });
+
   it('proxies located (range) compaction with the chosen boundary (#178)', async () => {
     const rpc = vi.fn().mockResolvedValue({
       ok: true,
@@ -1301,6 +1311,26 @@ describe('host services', () => {
       customInstructions: expect.stringContaining('Preserve decision D1.'),
     }), 120_000);
   });
+
+  it.each(['compact', 'compactRange', 'restoreCheckpoint'] as const)(
+    'forwards %s generation unchanged and preserves omission for legacy callers',
+    async (method) => {
+      // Transport fixture: only verifies forwarding; Runtime owner tests verify effects.
+      const rpc = vi.fn().mockResolvedValue({ ok: false, reason: 'fixture' });
+      const { createSessionsApi } = await import('@electron/services/sessions-api');
+      const api = createSessionsApi({ gatewayManager: { rpc } as never });
+      const input = { sessionKey: 'agent:reviewer:main', agentId: 'reviewer', checkpointId: 'cp-generation', fromLeafId: 'e1' };
+      await api[method]({ ...input, expectedSessionId: 'generation-old' });
+      expect(rpc.mock.calls[0]?.[1]).toMatchObject({
+        key: 'agent:reviewer:main', agentId: 'reviewer', expectedSessionId: 'generation-old',
+      });
+      await api[method](input);
+      expect(rpc.mock.calls[1]?.[1]).not.toHaveProperty('expectedSessionId');
+      rpc.mockRejectedValueOnce(new Error('Session generation changed'));
+      await expect(api[method]({ ...input, expectedSessionId: 'generation-old' }))
+        .rejects.toThrow('Session generation changed');
+    },
+  );
 
   it('proxies read-only context recall through Gateway without local archive reads', async () => {
     const archiveHandle = {

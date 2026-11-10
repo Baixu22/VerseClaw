@@ -1,4 +1,5 @@
 import { hostApi } from '@/lib/host-api';
+import { mergeSessionActivity } from '@/lib/session-read-model';
 import { clearPendingOptimisticUserMessages, getCanonicalPrefixFromSessions, getMessageText, toMs } from './helpers';
 import { pickStartupSessionFallback } from './session-selection';
 import { DEFAULT_CANONICAL_PREFIX, DEFAULT_SESSION_KEY, type ChatSession, type ChatState, type RawMessage } from './types';
@@ -201,10 +202,7 @@ export function createSessionActions(
             sessions: sessionsWithCurrent,
             currentSessionKey: nextSessionKey,
             currentAgentId: getAgentIdFromSessionKey(nextSessionKey),
-            sessionLastActivity: {
-              ...state.sessionLastActivity,
-              ...discoveredActivity,
-            },
+            sessionLastActivity: mergeSessionActivity(state.sessionLastActivity, discoveredActivity),
           }));
           reconcileCurrentSessionIdleFromBackend(set, get, sessionsWithCurrent);
           applySessionBackendLabels(set, sessionsWithCurrent);
@@ -256,7 +254,7 @@ export function createSessionActions(
                           next.sessionLabels = { ...s.sessionLabels, [session.key]: truncated };
                         }
                         if (lastMsg?.timestamp) {
-                          next.sessionLastActivity = { ...s.sessionLastActivity, [session.key]: toMs(lastMsg.timestamp) };
+                          next.sessionLastActivity = mergeSessionActivity(s.sessionLastActivity, { [session.key]: toMs(lastMsg.timestamp) });
                         }
                         return next;
                       });

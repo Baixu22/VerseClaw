@@ -1,0 +1,139 @@
+
+Running 1 test using 1 worker
+
+[app:out] [2026-11-10T01:53:14.321Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)
+[2026-11-10T01:53:14.322Z] [INFO] [ResourceTracker] Started heartbeat interval
+[2026-11-10T01:53:14.322Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=50220, ppid=15324
+[2026-11-10T01:53:14.322Z] [INFO] Running in E2E mode: startup side effects minimized
+[app:err] [2026-11-10T01:53:14.691Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[app:err] [2026-11-10T01:53:14.692Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default
+[2026-11-10T01:53:14.692Z] [WARN] [webview-security] deny permission-check: WebView permission "web-app-installation" denied by default (fail-closed)
+[2026-11-10T01:53:14.692Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default
+[app:out] [2026-11-10T01:53:14.778Z] [INFO] [extensions] Extension "builtin/clawhub-marketplace" initialized
+[app:out] [2026-11-10T01:53:14.779Z] [INFO] [extensions] Extension "builtin/diagnostics" initialized
+[app:err] [50220:1110/095314.841:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[50220:1110/095314.841:ERROR:gpu\ipc\service\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[app:err] [2026-11-10T01:53:15.145Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T01:53:15.146Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T01:53:15.146Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T01:53:15.146Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-10T01:53:15.247Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\tmp\unified-management-20261109\lifecycle-validation\u5-combined-coordinator2-results\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\workspace\.verse-claw\harness
+[app:out] [2026-11-10T01:53:15.642Z] [INFO] Gateway stop requested
+[app:out] [2026-11-10T01:53:15.642Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+[app:out] [2026-11-10T01:53:15.674Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (start)
+[app:out] [2026-11-10T01:53:15.675Z] [INFO] Gateway start requested (port=56315)
+[app:out] [2026-11-10T01:53:15.685Z] [DEBUG] Device identity loaded (deviceId=3a8d11d8965d417fc03a2ba2e00f8c962ba3163d97290ed3e2470b24ff4fb2b6)
+[app:out] [2026-11-10T01:53:15.686Z] [DEBUG] Gateway state changed: stopped -> starting
+[app:out] [2026-11-10T01:53:16.132Z] [DEBUG] Checking for existing Gateway...
+[app:err] (node:50220) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[app:out] [2026-11-10T01:53:16.517Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[app:out] [2026-11-10T01:53:16.558Z] [INFO] Gateway auto-start skipped in E2E mode
+[app:out] [2026-11-10T01:53:16.646Z] [DEBUG] No existing Gateway found, starting new process...
+[app:out] [2026-11-10T01:53:16.701Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)
+[app:err] [2026-11-10T01:53:16.764Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[app:out] [2026-11-10T01:53:16.768Z] [INFO] [metric] gateway.prelaunch {"settingsMs":0,"defaultProviderRuntimeSyncMs":1,"providerEnvMs":11,"channelStartupPolicyMs":10,"uvEnvMs":19,"mcpEnvMs":36,"runtimeConfigReadMs":1,"verseShellBundleMs":0,"totalMs":109,"maintenance":{},"configuredChannelCount":0}
+[app:out] [2026-11-10T01:53:16.768Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=56315, entry="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime\dist\entry.js", args="gateway --port 56315 --allow-unconfigured", execArgv="", cwd="D:\ClawX-work\session-task-unified-relay-20261109\openclaw_runtime", bundledBin=yes, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)
+[app:out] [2026-11-10T01:53:16.938Z] [INFO] Gateway process started (pid=28484)
+[app:out] [2026-11-10T01:53:16.939Z] [DEBUG] Gateway manager now owns process pid=28484
+[app:out] [2026-11-10T01:53:19.032Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[app:out] [2026-11-10T01:53:21.179Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)
+[app:out] [2026-11-10T01:53:22.646Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"power-saver","activeReasons":["power-saver"],"transitionCount":3}
+[app:out] [2026-11-10T01:53:23.317Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)
+[app:out] [2026-11-10T01:53:25.440Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)
+[app:out] [2026-11-10T01:53:27.316Z] [DEBUG] [Gateway stderr] (node:28484) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[app:err] [2026-11-10T01:53:27.317Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)
+[app:out] [2026-11-10T01:53:27.318Z] [DEBUG] [Gateway stderr] (node:28484) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[app:err] [2026-11-10T01:53:27.318Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[app:out] [2026-11-10T01:53:27.598Z] [DEBUG] Still waiting for Gateway... (attempt 51/2400)
+[app:out] [2026-11-10T01:53:33.163Z] [DEBUG] Gateway ready after 55 attempt(s)
+[app:out] [2026-11-10T01:53:33.164Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:56315/ws)
+[app:err] [2026-11-10T01:53:33.202Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=05f8f3d4-7064-41f6-93ec-cb409800cc91 peer=127.0.0.1:50821->127.0.0.1:56315 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:56315 ua=n/a code=1006 reason=n/a[39m
+[app:err] [2026-11-10T01:53:33.205Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=96f722ef-75f7-466a-b8ab-343da4dee287 peer=127.0.0.1:52393->127.0.0.1:56315 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:56315 ua=n/a code=1006 reason=n/a[39m
+[app:err] [2026-11-10T01:53:33.207Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=76b086c3-6475-4299-895c-b97b5eb12b1b peer=127.0.0.1:52383->127.0.0.1:56315 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:56315 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-10T01:53:33.221Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-10T01:53:33.222Z] [DEBUG] Received connect.challenge, sending handshake
+[app:out] [2026-11-10T01:53:33.222Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:err] [2026-11-10T01:53:33.225Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=e885a792-f740-4bec-ab0a-f350b34dc7e7 peer=127.0.0.1:50825->127.0.0.1:56315 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:56315 ua=n/a code=1006 reason=n/a[39m
+[app:out] [2026-11-10T01:53:33.293Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:56315/ws)
+[app:err] [2026-11-10T01:53:33.294Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[app:out] [2026-11-10T01:53:35.891Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[app:out] [2026-11-10T01:53:35.891Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-10T01:53:35.891Z] [DEBUG] Sending connect handshake with challenge nonce
+[app:out] [2026-11-10T01:53:37.115Z] [DEBUG] Gateway connect handshake completed (protocol=4)
+[app:out] [2026-11-10T01:53:37.116Z] [DEBUG] Gateway state changed: starting -> running
+[app:out] [2026-11-10T01:53:37.117Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[app:out] [2026-11-10T01:53:37.118Z] [INFO] [metric] gateway.startup {"configSyncMs":808,"spawnToReadyMs":16224,"readyToConnectMs":3955,"totalMs":20987}
+[app:err] [2026-11-10T01:53:39.528Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T01:53:39.528Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T01:53:39.529Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T01:53:39.529Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T01:53:41.001Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T01:53:41.001Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T01:53:41.002Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T01:53:41.002Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T01:53:41.576Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T01:53:41.577Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T01:53:41.577Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T01:53:41.577Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T01:53:42.528Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T01:53:42.528Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T01:53:42.529Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T01:53:42.529Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:err] [2026-11-10T01:53:43.608Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[app:err] [2026-11-10T01:53:43.608Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T01:53:43.608Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T01:53:43.608Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[app:out] [2026-11-10T01:54:13.955Z] [INFO] Gateway stop requested
+[2026-11-10T01:54:13.955Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (stop)
+[app:out] [2026-11-10T01:54:13.956Z] [INFO] Sending kill to Gateway process (pid=28484)
+[app:err] [2026-11-10T01:54:13.991Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)
+[app:out] [2026-11-10T01:54:13.991Z] [DEBUG] Gateway state changed: running -> stopped
+[app:out] [2026-11-10T01:54:15.066Z] [INFO] Gateway process exited (code=1, expected=yes)
+[app:out] [2026-11-10T01:54:15.067Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)
+[app:out] [2026-11-10T01:54:15.369Z] [INFO] Gateway stop requested
+[2026-11-10T01:54:15.370Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)
+[app:err] Debugger ending on ws://127.0.0.1:63066/9e8bcba5-eda2-49cf-8c16-facebbac747d
+For help, see: https://nodejs.org/en/docs/inspector
+[app:out] [2026-11-10T01:54:15.408Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"window-hidden","activeReasons":["window-hidden","power-saver"],"transitionCount":4}
+[app:out] [2026-11-10T01:54:15.409Z] [INFO] [ResourceTracker] Stopped
+[2026-11-10T01:54:15.409Z] [INFO] [ResourceTracker] Shutdown complete
+[app:out] [2026-11-10T01:54:15.409Z] [INFO] [efficiency-sampler] stopped
+[app:out] [2026-11-10T01:54:15.409Z] [INFO] [efficiency] runtime efficiency sampling stopped
+  x  1 tests\e2e\session-lifecycle-recovery.spec.ts:300:5 › U5 coordinator pause and resume reject before commit and recover lost acknowledgements through the scoped owner read (1.3m)
+[31mTesting stopped early after 1 maximum allowed failures.[39m
+
+
+  1) tests\e2e\session-lifecycle-recovery.spec.ts:300:5 › U5 coordinator pause and resume reject before commit and recover lost acknowledgements through the scoped owner read 
+
+    TimeoutError: locator.inputValue: Timeout 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByTestId('session-family-children')[22m
+
+
+      89 |     finally {
+      90 |       const navigation = c.facts.navigation as unknown[] ?? []; c.facts.navigation = navigation;
+    > 91 |       navigation.push({ target: key, at: Date.now(), selection: await family.inputValue(),
+         |                                                                              ^
+      92 |         draft: await c.page.getByTestId('chat-composer-input').inputValue(),
+      93 |         workspace: await hostInvoke(c.app, 'workspaces', 'getActive'),
+      94 |         selectedRows: await c.page.locator('[data-hook-selected="true"]').evaluateAll(rows => rows.map(row => row.textContent)) });
+        at select (D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\session-lifecycle-recovery.spec.ts:91:78)
+        at D:\ClawX-work\session-task-unified-relay-20261109\tests\e2e\session-lifecycle-recovery.spec.ts:324:65
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\lifecycle-validation\u5-combined-coordinator2-results\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\tmp\unified-management-20261109\lifecycle-validation\u5-combined-coordinator2-results\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\tmp\unified-management-20261109\lifecycle-validation\u5-combined-coordinator2-results\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\tmp\unified-management-20261109\lifecycle-validation\u5-combined-coordinator2-results\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\session-lifecycle-recovery.spec.ts:300:5 › U5 coordinator pause and resume reject before commit and recover lost acknowledgements through the scoped owner read 
+  1 error was not a part of any test, see above for details

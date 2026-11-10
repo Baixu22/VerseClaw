@@ -1,0 +1,482 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\session-task-unified-relay-20261109\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\session-task-unified-relay-20261109\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/unified-management-20261109/lifecycle-validation/u5-native-pending-ui3-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/session-task-unified-relay-20261109/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "session-context-recovery.spec.ts",
+      "file": "session-context-recovery.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "U5 manual compact preserves its instructions on cancel, pending, refusal and timeout",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 107569,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:35.646Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:35.647Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-10T01:15:35.647Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=40716, ppid=27432\n[2026-11-10T01:15:35.647Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:15:35.914Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:15:35.914Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-10T01:15:35.915Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-10T01:15:35.915Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:35.966Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:35.966Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [40716:1110/091536.029:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[40716:1110/091536.029:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:36.148Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:36.148Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:36.306Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:36.308Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:15:36.310Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T01:15:36.311Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:15:36.311Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-10T01:15:36.311Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:36.484Z] [INFO] Scheduling Gateway reload after saving provider \"custom-sessionc\" config\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:36.485Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"custom-sessionc/mock-coder\" for provider \"custom-sessionc\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:37.168Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\unified-management-20261109\\lifecycle-validation\\u5-native-pending-ui3-results\\session-context-recovery-U-b9f4a-pending-refusal-and-timeout\\workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:37.690Z] [INFO] [gateway-refresh] mode=reload requested pid=n/a state=stopped\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:15:37.690Z] [WARN] [gateway-refresh] mode=reload result=fallback_restart cause=not_running\n[2026-11-10T01:15:37.691Z] [WARN] Gateway reload requested while not running; falling back to restart\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:37.691Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=n/a\n[2026-11-10T01:15:37.691Z] [INFO] Gateway stop requested\n[2026-11-10T01:15:37.691Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n[2026-11-10T01:15:37.692Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:37.693Z] [INFO] Gateway start requested (port=18789)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:37.702Z] [DEBUG] Device identity loaded (deviceId=60465cb10d5f139cca0f20b0c7bb3d1ffbab17efaca73fe01487960a675dc0bb)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:37.702Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:38.120Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:40716) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:38.220Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:38.220Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:38.458Z] [DEBUG] Gateway start/find-existing superseded (expectedEpoch=3, currentEpoch=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:38.458Z] [DEBUG] Gateway state changed: starting -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:38.459Z] [INFO] [metric] gateway.restart.executed {\"gateway_restart_executed_total\":1,\"gateway_restart_suppressed_total\":0,\"gateway_restart_circuit_open_until\":0}\n[2026-11-10T01:15:38.459Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=n/a pidAfter=n/a suppressed=0 executed=1 circuitOpenUntil=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:38.551Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:38.552Z] [INFO] Gateway start requested (port=61182)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:38.555Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:38.858Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:39.140Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"custom-sessionc/mock-coder\" for provider \"custom-sessionc\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"custom-sessionc\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"custom-sessionc\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:39.389Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:15:39.452Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:39.457Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":206,\"providerEnvMs\":13,\"channelStartupPolicyMs\":3,\"uvEnvMs\":15,\"mcpEnvMs\":36,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":0,\"totalMs\":305,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:39.457Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=61182, entry=\"D:\\ClawX-work\\session-task-unified-relay-20261109\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 61182 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\ClawX-work\\session-task-unified-relay-20261109\\openclaw_runtime\", bundledBin=yes, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:39.564Z] [INFO] Gateway process started (pid=31020)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:39.564Z] [DEBUG] Gateway manager now owns process pid=31020\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:41.755Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:43.926Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:44.093Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:46.056Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:46.875Z] [DEBUG] [Gateway stderr] (node:31020) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:15:46.875Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:46.876Z] [DEBUG] [Gateway stderr] (node:31020) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:15:46.876Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:51.186Z] [DEBUG] Gateway ready after 40 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:51.187Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:61182/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:15:51.245Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=7500cbb3-7a9d-4d66-bbfb-d4d0945e01f0 peer=127.0.0.1:50252->127.0.0.1:61182 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:61182 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:15:51.247Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=84eb8233-b0d8-4e11-8c85-2ea13898058b peer=127.0.0.1:50240->127.0.0.1:61182 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:61182 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:51.252Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:51.253Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-10T01:15:51.253Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:15:51.259Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=d782e791-a199-44f3-bf93-20635d950f30 peer=127.0.0.1:55414->127.0.0.1:61182 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:61182 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:51.365Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:61182/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:15:51.367Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:55.398Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:55.398Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-10T01:15:55.399Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:56.822Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:56.823Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:56.824Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:15:56.825Z] [INFO] [metric] gateway.startup {\"configSyncMs\":706,\"spawnToReadyMs\":11622,\"readyToConnectMs\":5639,\"totalMs\":17967}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:16:00.225Z] [INFO] [chat:sendWithMedia] Sending: message=\"U5_HEAD\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:16:00.225Z] [INFO] [gateway-rpc] chat.send serialized id=55eae73e-255d-4459-a027-3db0c4a445ce timeoutMs=900000 bytes=459\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:16:00.226Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=55eae73e-255d-4459-a027-3db0c4a445ce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:16:00.485Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=a77ddc6c-1ed6-4aef-857f-4cc229952392 id=55eae73e-255d-4459-a027-3db0c4a445ce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:16:00.485Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=a77ddc6c-1ed6-4aef-857f-4cc229952392 id=55eae73e-255d-4459-a027-3db0c4a445ce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:16:00.486Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:16:00.497Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=U5_HEAD sessionKey=agent:main:session-1794273337041-ucompact loadSessionMs=0.483\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:16:00.590Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=U5_HEAD sessionKey=agent:main:session-1794273337041-ucompact attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:16:00.592Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=U5_HEAD sessionKey=agent:main:session-1794273337041-ucompact\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:16:00.593Z] [INFO] [gateway-rpc] chat.send response id received durationMs=368\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:16:00.593Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"U5_HEAD\",\"status\":\"started\"}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:16:00.612Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=a77ddc6c-1ed6-4aef-857f-4cc229952392 id=55eae73e-255d-4459-a027-3db0c4a445ce\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:16:24.730Z] [INFO] [chat:sendWithMedia] Sending: message=\"U5_TARGET\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:16:24.731Z] [INFO] [gateway-rpc] chat.send serialized id=db9e05e0-306a-435d-8f5a-d3a612f5e48f timeoutMs=900000 bytes=463\n[2026-11-10T01:16:24.731Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=db9e05e0-306a-435d-8f5a-d3a612f5e48f\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:16:24.732Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=a77ddc6c-1ed6-4aef-857f-4cc229952392 id=db9e05e0-306a-435d-8f5a-d3a612f5e48f\n[2026-11-10T01:16:24.732Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=a77ddc6c-1ed6-4aef-857f-4cc229952392 id=db9e05e0-306a-435d-8f5a-d3a612f5e48f\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:16:24.746Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=U5_TARGET sessionKey=agent:main:session-1794273337041-ucompact loadSessionMs=0.945\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:16:24.750Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=U5_TARGET sessionKey=agent:main:session-1794273337041-ucompact attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:16:24.754Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=U5_TARGET sessionKey=agent:main:session-1794273337041-ucompact\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:16:24.754Z] [INFO] [gateway-rpc] chat.send response id received durationMs=23\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:16:24.754Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"U5_TARGET\",\"status\":\"started\"}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:16:24.757Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=a77ddc6c-1ed6-4aef-857f-4cc229952392 id=db9e05e0-306a-435d-8f5a-d3a612f5e48f\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:16:30.049Z] [INFO] [ResourceTracker] Registered: Session server :51697 (pid=7108, port=51697, session=agent:main:session-1794273337041-ucompact)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:16:30.050Z] [INFO] [ResourceTracker] Registered: Session server :51695 (pid=7108, port=51695, session=agent:main:session-1794273337041-ucompact)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:16:30.050Z] [INFO] [ResourceTracker] Registered: Session server :51693 (pid=7108, port=51693, session=agent:main:session-1794273337041-ucompact)\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:16:52.340Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T01:16:52.341Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-10T01:16:52.341Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-10T01:16:52.341Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] Error occurred in handler for 'host:invoke': Error: U5_TIMEOUT_OUTCOME_UNKNOWN\n    at eval (eval at evaluate (:302:30), <anonymous>:46:41)\n\u001b[90m    at async Session.<anonymous> (node:electron/js2c/browser_init:2:116653)\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:17:07.900Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:17:07.900Z] [DEBUG] Gateway lifecycle epoch advanced to 6 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:17:07.902Z] [INFO] Sending kill to Gateway process (pid=31020)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-10T01:17:07.959Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:17:07.960Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:17:08.941Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:17:08.942Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:17:09.206Z] [INFO] Gateway stop requested\n[2026-11-10T01:17:09.207Z] [DEBUG] Gateway lifecycle epoch advanced to 7 (stop)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:54016/1b952eee-6817-4f7b-8fb2-acce09f05cc5\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:17:09.236Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":4}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:17:09.237Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:17:09.237Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:17:09.238Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-10T01:17:09.240Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-10T01:15:23.470Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7427f4e25f92e1e951c1-24fc29d66da3c9a720af",
+          "file": "session-context-recovery.spec.ts",
+          "line": 129,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-10T01:15:21.469Z",
+    "duration": 111536,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
