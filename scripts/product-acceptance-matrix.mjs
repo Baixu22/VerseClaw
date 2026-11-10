@@ -97,8 +97,11 @@ export function executionBudgetMs(cases, timeoutOverrides = {}) {
   if (!cases.length || cases.some(test => !Number.isSafeInteger(test.timeout) || test.timeout <= 0)) {
     throw new Error('Every collected test must have a positive bounded timeout');
   }
-  // Include fixture teardown per case and a final worker/report cleanup allowance.
-  const budget = cases.reduce((total, test) => total + Math.max(test.timeout, timeoutOverrides[test.file] ?? 0) + 90_000, 180_000);
+  // Playwright gives afterEach and test-fixture teardown a separate timeout slot.
+  const budget = cases.reduce((total, test) => {
+    const timeout = Math.max(test.timeout, timeoutOverrides[test.file] ?? 0);
+    return total + timeout + Math.max(timeout, 90_000) + 90_000;
+  }, 180_000);
   if (!Number.isSafeInteger(budget) || budget > 2_147_483_647) throw new Error('Matrix execution budget is too large');
   return budget;
 }
@@ -229,9 +232,10 @@ export function main(argv = process.argv.slice(2)) {
   try {
     const timeoutOverrides = Object.fromEntries(files.map(file => [file, declaredCaseTimeoutMs(readFileSync(resolve(ROOT, file), 'utf8'))]));
     timeoutMs = executionBudgetMs(planned, timeoutOverrides);
-    save('execution-budget.json', { timeoutMs, fixtureCleanupMs: 90_000, finalCleanupMs: 180_000, timeoutOverrides,
+    save('execution-budget.json', { timeoutMs, workerCleanupMs: 90_000, finalCleanupMs: 180_000, timeoutOverrides,
       cases: planned.map(test => ({ key: test.key, file: test.file, collectedTimeoutMs: test.timeout,
-        budgetTimeoutMs: Math.max(test.timeout, timeoutOverrides[test.file]) })) });
+        budgetTimeoutMs: Math.max(test.timeout, timeoutOverrides[test.file]),
+        afterHooksTimeoutMs: Math.max(test.timeout, timeoutOverrides[test.file], 90_000) })) });
   } catch (error) { discoveryFailures.push(error.message); }
   const builds = [];
   let build = null;

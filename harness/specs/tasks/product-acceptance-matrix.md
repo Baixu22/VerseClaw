@@ -124,8 +124,9 @@ proof bytes and original path/hash in the new batch, and skips both build comman
 `execution-budget.json` records each collected timeout and the maximum literal
 `test.setTimeout` or `testInfo.setTimeout` in that frozen file. Test-body overrides
 are not executed by Playwright discovery, so the outer budget uses the larger value
-per case, plus 90 seconds of fixture cleanup per case and 180 seconds for worker/report
-cleanup. Each case keeps its declared timeout. Missing collection timeouts and
+per case and reserves a separate slot of that size for afterEach/test-fixture teardown,
+with a minimum of the project's 90 seconds. It adds 90 seconds per case for worker cleanup
+and 180 seconds for final reporting. Each case keeps its declared timeout. Missing collection timeouts and
 zero or dynamic override values stop the batch.
 The live provider and moyu files retain their existing resource, fresh-build,
 isolation and three-trial requirements. Supply their private environment values
