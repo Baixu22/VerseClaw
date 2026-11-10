@@ -2,7 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { collectCases, evaluateReport, validateBuildStamp, validateInventory } from '../../scripts/product-acceptance-matrix.mjs';
+import { collectCases, evaluateReport, matrixOutputDirectory, validateBuildStamp, validateInventory } from '../../scripts/product-acceptance-matrix.mjs';
 
 const root = process.cwd();
 const inventory = () => JSON.parse(readFileSync(resolve(root, 'harness/specs/fixtures/product-acceptance-matrix/inventory.json'), 'utf8'));
@@ -73,5 +73,16 @@ describe('TF-0582 product matrix', () => {
     expect(() => validateBuildStamp(null, candidate)).toThrow('clean candidate');
     expect(() => validateBuildStamp({ head: 'b'.repeat(40) }, candidate)).toThrow('clean candidate');
     expect(() => validateBuildStamp({ head: candidate.commit }, { ...candidate, clean: false })).toThrow('clean candidate');
+  });
+
+  it('rejects changes to a frozen test file even when discovery and execution could still agree', () => {
+    const changed = inventory();
+    const file = 'tests/e2e/product-acceptance-moyu.spec.ts';
+    changed.sourceHashes[file] = '0'.repeat(64);
+    expect(validateInventory(changed)).toContain(`Frozen test source changed: ${file}`);
+  });
+
+  it('rejects in-checkout output before creating files that would dirty the candidate', () => {
+    expect(() => matrixOutputDirectory(resolve(root, 'artifacts/agent-engineering-acceptance/new-run'))).toThrow('outside the candidate checkout');
   });
 });

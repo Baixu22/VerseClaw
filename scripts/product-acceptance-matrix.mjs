@@ -1,5 +1,5 @@
 import { closeSync, existsSync, mkdirSync, openSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
-import { dirname, relative, resolve, sep } from 'node:path';
+import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { createRequire } from 'node:module';
@@ -18,14 +18,17 @@ export function validateInventory(inventory, root = ROOT, defaultIds = COMPONENT
   const groups = Array.isArray(inventory?.groups) ? inventory.groups : [];
   if (JSON.stringify(groups.map((group) => group.id).sort()) !== JSON.stringify([...GROUPS].sort())) errors.push('All nine groups must appear exactly once');
   const covered = new Set();
+  const files = new Set();
   for (const group of groups) {
     if (!words(group.positiveOracles) || !words(group.negativeOracles)) errors.push(`${group.id}: positive and negative oracles are required`);
     if (!words(group.evidenceLayers) || !Array.isArray(group.remainingChecks)) errors.push(`${group.id}: evidence layer and remaining checks are required`);
     if (!words(group.files)) errors.push(`${group.id}: test files are required`);
     for (const file of group.files ?? []) {
       const location = typeof file === 'string' ? resolve(root, file) : root;
+      files.add(file);
       if (typeof file !== 'string' || !/^tests\/e2e\/.+\.spec\.ts$/u.test(file) || !location.startsWith(resolve(root) + sep)
           || !existsSync(location) || !statSync(location).isFile()) errors.push(`${group.id}: missing or invalid test file ${file}`);
+      else if (inventory.sourceHashes?.[file] !== sha256File(location)) errors.push(`Frozen test source changed: ${file}`);
     }
     if (!Array.isArray(group.defaultComponents)) errors.push(`${group.id}: disposition mapping is required`);
     for (const id of group.defaultComponents ?? []) {
@@ -34,8 +37,16 @@ export function validateInventory(inventory, root = ROOT, defaultIds = COMPONENT
     }
   }
   for (const id of defaultIds) if (!covered.has(id)) errors.push(`Unmapped default disposition ${id}`);
+  for (const file of Object.keys(inventory?.sourceHashes ?? {})) if (!files.has(file)) errors.push(`Unused frozen test source: ${file}`);
   if (!words(inventory?.additionalAcceptance)) errors.push('Additional TF-0582 acceptance criteria are required');
   return errors;
+}
+
+export function matrixOutputDirectory(output, root = ROOT) {
+  const directory = resolve(output), source = resolve(root);
+  const rel = relative(source, directory);
+  if (!rel || (rel !== '..' && !rel.startsWith(`..${sep}`) && !isAbsolute(rel))) throw new Error('Matrix output must be outside the candidate checkout');
+  return assertSafeOutputDirectory(directory, root);
 }
 
 export function collectCases(report, root = ROOT) {
@@ -141,7 +152,7 @@ export function main(argv = process.argv.slice(2)) {
   const files = [...new Set(inventory.groups.filter((group) => selected.includes(group.id)).flatMap((group) => group.files))].sort();
   if (values.check) { console.log(JSON.stringify({ groups: inventory.groups.length, files: files.length, inventoryValid: true })); return 0; }
   if (!values.output) throw new Error('--output is required');
-  const output = assertSafeOutputDirectory(values.output, ROOT);
+  const output = matrixOutputDirectory(values.output);
   if (existsSync(output)) throw new Error('Output directory already exists; use a fresh run directory');
   mkdirSync(output, { recursive: true });
   const save = (name, value) => writeFileSync(resolve(output, name), JSON.stringify(value, null, 2) + '\n');
@@ -168,6 +179,7 @@ export function main(argv = process.argv.slice(2)) {
   let build = null;
   if (!discoveryFailures.length) {
     for (const [label, args] of [
+      ['extension-bridge', ['scripts/generate-ext-bridge.mjs']],
       ['vite-build', ['--max-old-space-size=6144', 'node_modules/vite/bin/vite.js', 'build']],
       ['runtime-build', ['scripts/build-openclaw-runtime.mjs']],
     ]) {
@@ -191,8 +203,10 @@ export function main(argv = process.argv.slice(2)) {
   }
   const report = { schema: 'ProductMatrixRun/v1', driven_by: 'agent', actor: 'product-matrix-runner', candidate, candidateAfter: after,
     planSha256: sha256File(resolve(output, 'plan.json')), selectedSuiteResult: result,
+    executionAttempted: Boolean(actual),
+    nodeAcceptance: 'incomplete',
     buildDigest: build?.digest ?? null, commands: [discovery.command, ...builds, ...(actual ? [actual.command] : [])],
-    groups: inventory.groups.map((group) => ({ id: group.id, selected: selected.includes(group.id), suiteStatus: selected.includes(group.id) ? (result.passed ? 'passed' : 'failed') : 'not-run', evidenceLayers: group.evidenceLayers, remainingChecks: group.remainingChecks })),
+    groups: inventory.groups.map((group) => ({ id: group.id, selected: selected.includes(group.id), suiteStatus: selected.includes(group.id) && actual ? (result.passed ? 'passed' : 'failed') : 'not-run', evidenceLayers: group.evidenceLayers, remainingChecks: group.remainingChecks })),
     remainingAcceptance: [...inventory.additionalAcceptance, ...inventory.groups.filter((group) => !selected.includes(group.id)).map((group) => `${group.id}: not run in this batch`), ...inventory.groups.flatMap((group) => group.remainingChecks.map((check) => `${group.id}: ${check}`))] };
   save('report.json', report);
   save('report.sha256.json', { 'report.json': sha256(JSON.stringify(report, null, 2) + '\n') });

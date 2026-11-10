@@ -32,6 +32,7 @@ requiredTests:
 acceptance:
   - The inventory contains all nine TF-0582 groups, covers every current default disposition entry and names real test files plus positive and negative final-state oracles.
   - The checker rejects a missing group, unmapped default entry, absent test file or empty oracle.
+  - Frozen test source hashes reject removed cases or weakened assertions even if a new discovery and execution would agree.
   - Playwright discovery and execution use the same exact file list, one worker and zero retries; report errors, missing or extra tests, expected failures and skips fail the batch.
   - Runs retain commands, exits, raw JSON, hashes and before/after Git identities in a new output directory; dirty candidates cannot run acceptance.
   - Selected batches retain all unselected groups and the additional live, exploratory and rubric requirements as incomplete.
@@ -63,11 +64,12 @@ node --import ./openclaw_runtime/node_modules/tsx/dist/loader.mjs scripts/produc
 node --import ./openclaw_runtime/node_modules/tsx/dist/loader.mjs scripts/product-acceptance-matrix.mjs --run --group settings --output D:/tmp/product-matrix-settings
 ```
 
-Each output directory must be new. `--group` may be repeated; omitting it selects
+Each output directory must be new and outside the candidate checkout. `--group` may be repeated; omitting it selects
 all groups. A batch runs every test in its selected files, without title filters.
-After discovery, the runner executes the existing Vite/runtime build entries,
+After discovery, the runner generates the existing extension bridge and executes the Vite/runtime build entries,
 records their logs and exits, checks the runtime stamp against the candidate and
-hashes the build before and after Electron runs. A failed build stops execution.
+hashes the build before and after Electron runs. A failed build stops execution
+and leaves its test groups `not-run`.
 The live provider and moyu files retain their existing resource, fresh-build,
 isolation and three-trial requirements. Supply their private environment values
 only to the child process.
@@ -76,6 +78,10 @@ The output includes the frozen inventory and Git identity, the discovery report,
 the execution report, exact commands, exit codes and hashes. Discovery is a list
 of planned tests, not execution evidence. A successful selected batch leaves
 unselected journeys and additional node criteria visible in `remainingAcceptance`.
+Its `selectedSuiteResult` and exit code describe that batch; `nodeAcceptance`
+remains `incomplete` for the parent review. RC-10 keeps its development evidence
+level. To update a frozen test hash, first review the changed cases and assertions
+against the positive and negative oracles in the inventory.
 
 ## TF-0582 completion
 

@@ -11,3 +11,4 @@ export function evaluateReport(discovery: unknown, actual: unknown, exitCode: nu
 };
 export function main(argv?: string[]): number;
 export function validateBuildStamp(stamp: unknown, candidate: { commit: string; clean: boolean }): void;
+export function matrixOutputDirectory(output: string, root?: string): string;
