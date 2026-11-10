@@ -360,6 +360,18 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
       await expect(page.getByText(`Recorded objective: ${objective}`, { exact: true })).toBeVisible();
     } else if (journey === 'handoff') {
       await instrumentSessionChainHost(app);
+      await app.evaluate(() => {
+        const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+        const state = globalThis as unknown as { u6HandoffResults: unknown[] };
+        state.u6HandoffResults = [];
+        const original = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: unknown) => Promise<unknown>> })._invokeHandlers.get('host:invoke')!;
+        ipcMain.removeHandler('host:invoke');
+        ipcMain.handle('host:invoke', async (event, request: { module?: string; action?: string }) => {
+          const at = Date.now(); const response = await original(event, request);
+          if (request.module === 'sessions' && request.action === 'prepareHandoff') state.u6HandoffResults.push({ at, receivedAt: Date.now(), response });
+          return response;
+        });
+      });
       await ui('click', 'chat-header:options', () => id('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click());
       await need('chat-session-handoff');
       await ui('press', 'testid:chat-session-handoff:Enter', async () => {
@@ -417,6 +429,7 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
     const cleanupErrors: string[] = [];
     if (app) {
       if (journey === 'handoff') evidence.handoff_host_calls = await readSessionChainHostCalls(app).catch(error => ({ error: String(error) }));
+      if (journey === 'handoff') evidence.handoff_host_results = await app.evaluate(() => (globalThis as unknown as { u6HandoffResults?: unknown[] }).u6HandoffResults).catch(error => ({ error: String(error) }));
       await hostInvoke(app, 'gateway', 'stop').catch(error => { evidence.gateway_stop_error = String(error); });
       try { await closeElectronApp(app); } catch (error) { cleanupErrors.push(String(error)); }
     }
