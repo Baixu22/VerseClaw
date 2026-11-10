@@ -359,7 +359,10 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
       await expect(page.getByText(`Recorded objective: ${objective}`, { exact: true })).toBeVisible();
     } else if (journey === 'handoff') {
       await ui('click', 'chat-header:options', () => id('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click());
-      await need('chat-session-handoff'); await click('chat-session-handoff');
+      await need('chat-session-handoff');
+      await ui('press', 'testid:chat-session-handoff:Enter', async () => {
+        await id('chat-session-handoff').focus(); await id('chat-session-handoff').press('Enter');
+      });
       await expect(id('chat-handoff-dialog')).toBeVisible();
       let draft = await id('chat-handoff-draft').inputValue(); expect(draft.trim()).not.toBe('');
       if (!draft.includes(objective)) {
