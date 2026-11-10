@@ -5,7 +5,7 @@ title: Core product journey matrix and candidate-bound execution
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: Give TF-0582 a reproducible nine-group inventory and compare its frozen Playwright collection with actual results, preserving missing, failed, skipped and stale evidence.
-diffBase: ce8bc53284f456c9a43d1dea5e929623278cc5ee
+diffBase: b84a6ec79254801d7809eeb4f5e69e32ee2e96aa
 requiredRules:
   - backend-communication-boundary
   - repository-artifact-retention
