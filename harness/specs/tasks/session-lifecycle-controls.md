@@ -84,6 +84,7 @@ ownedPaths:
   - tests/e2e/chat-context-pressure.spec.ts
   - electron/gateway/session-task-scope-bridge.ts
   - tests/unit/session-task-scope-bridge.test.ts
+  - scripts/lib/resource-lifecycle-report.d.mts
   - tests/e2e/session-family-counter-layout.spec.ts
   - src/styles/codex-sidebar.css
   - harness/specs/rules/session-derivation-ui-contract.md
@@ -165,6 +166,7 @@ touchedAreas:
   - tests/e2e/chat-context-pressure.spec.ts
   - electron/gateway/session-task-scope-bridge.ts
   - tests/unit/session-task-scope-bridge.test.ts
+  - scripts/lib/resource-lifecycle-report.d.mts
   - tests/e2e/session-family-counter-layout.spec.ts
   - src/styles/codex-sidebar.css
   - harness/specs/rules/session-derivation-ui-contract.md

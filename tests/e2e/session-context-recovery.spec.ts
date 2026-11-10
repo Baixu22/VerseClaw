@@ -238,8 +238,15 @@ test('U5 range compact keeps the exact boundary and draft, and ignores a late er
     // Return to the source before owner readback; no mutation is blindly retried.
     await page.getByTestId('session-family-source').click();
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('U5 range draft');
+    await act(); await expect.poll(async () => (await faultState(app)).held, { timeout: 60_000 }).toBe(true);
+    await releaseFault(app, 'accepted-pending');
+    await expect(page.getByText(locale.composer.compaction.toastPending, { exact: true })).toBeVisible();
+    await expect(page.getByText(locale.composer.compactRange.toastCompacted, { exact: true })).toHaveCount(0);
+    await expect(page.getByTestId('chat-composer-input')).toHaveValue('U5 range draft');
+    await paint(page);
     const faults = await faultState(app);
-    expect(faults.calls).toHaveLength(3);
+    expect(faults.calls).toHaveLength(4);
+    evidence.acceptedPending = { inputRetained: true, successNotShown: true, dispatchedCalls: faults.calls.length };
     for (const call of faults.calls as Array<{ payload: Record<string, unknown> }>) {
       expect(call.payload.expectedSessionId).toBe(project.generation);
       expect(call.payload).toMatchObject({ sessionKey: project.sessionKey, fromLeafId: entryId });
