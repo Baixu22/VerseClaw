@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://smart-test-sorter/contracts/vg-sts/v1/candidate_request.schema.json",
+  "title": "VG-STS v1 Candidate Request",
+  "description": "VG -> STS 的一次性候选请求。STS 依据它在【指定候选目录】上分析并收集测试，生成统一计划。协议版本与产品版本分离；候选身份用实际 OID，候选目录仅作定位。风险字段可选——无风险时仍是合法请求。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_version",
+    "product_version",
+    "request_id",
+    "mode",
+    "repo",
+    "target",
+    "identities"
+  ],
+  "properties": {
+    "protocol_version": {
+      "description": "契约协议版本，与产品包版本无关。消费者据此判断是否支持，未知版本必须拒绝、不得静默兼容。",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
+    "product_version": {
+      "description": "生产该请求/计划的 STS 产品版本，如 smart-test-sorter/0.1.0。",
+      "type": "string",
+      "minLength": 1
+    },
+    "capabilities": {
+      "description": "本次请求方声明理解的能力标签（如 selection、prioritization、risk-hints）。缺省表示仅基础选择。",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "request_id": {
+      "description": "请求身份，用于把 plan/result 绑回同一次请求。",
+      "type": "string",
+      "minLength": 1
+    },
+    "mode": {
+      "description": "变更来源模式：workspace=当前工作区未提交改动；commit=历史提交；candidate=VG 已物化的候选目录（两侧变更并集）。",
+      "type": "string",
+      "enum": ["workspace", "commit", "candidate"]
+    },
+    "repo": { "$ref": "#/$defs/repo" },
+    "target": { "$ref": "#/$defs/target" },
+    "identities": { "$ref": "#/$defs/identities" },
+    "dependency_snapshot": {
+      "description": "可选历史逐测试依赖快照身份；缺失/陈旧不得当作无依赖证明。",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "snapshot_id": { "type": "string", "minLength": 1 },
+        "created_at": { "type": "string", "minLength": 1 },
+        "stale": { "type": "boolean" }
+      }
+    },
+    "risk": { "$ref": "#/$defs/risk" }
+  },
+  "$defs": {
+    "oid": {
+      "description": "Git 对象 ID（全 40 位或缩写 >=7 位十六进制）。",
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{7,64}$"
+    },
+    "repo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": {
+          "description": "仓库定位路径。仅作定位，不同临时路径不能成为唯一内容身份。",
+          "type": "string",
+          "minLength": 1
+        },
+        "name": { "type": "string" }
+      }
+    },
+    "target": {
+      "description": "变更目标身份。candidate 模式必须给出 candidate_dir + base_oid + ours_oid + theirs_oid（两侧变更并集，禁止只比合并提交第一父）；workspace/commit 模式对应字段见语义规则。",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "candidate_dir": {
+          "description": "VG 物化好的候选工作目录。仅作定位。",
+          "type": "string",
+          "minLength": 1
+        },
+        "base_oid": { "$ref": "#/$defs/oid" },
+        "ours_oid": { "$ref": "#/$defs/oid" },
+        "theirs_oid": { "$ref": "#/$defs/oid" },
+        "candidate_tree_oid": { "$ref": "#/$defs/oid" },
+        "candidate_commit_oid": { "$ref": "#/$defs/oid" },
+        "commit_oid": {
+          "description": "commit 模式分析的历史提交 OID。",
+          "$ref": "#/$defs/oid"
+        },
+        "head_oid": {
+          "description": "workspace 模式的 HEAD OID（工作区未提交改动相对它）。",
+          "$ref": "#/$defs/oid"
+        },
+        "includes_candidate_extra_changes": {
+          "description": "candidate 模式：是否已把候选相对两侧的额外改动纳入分析。",
+          "type": "boolean"
+        }
+      }
+    },
+    "identities": {
+      "description": "代码/测试/配置/环境的版本身份。任一缺失不得作为'无变化可安全跳过'的证明。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code_oid"],
+      "properties": {
+        "code_oid": { "$ref": "#/$defs/oid" },
+        "test_oid": { "$ref": "#/$defs/oid" },
+        "config_digest": { "type": "string", "minLength": 1 },
+        "env_id": {
+          "description": "运行解释器/环境身份（如 py3.12-win）。",
+          "type": "string",
+          "minLength": 1
+        },
+        "worktree_content_digest": {
+          "description": "【仅 workspace 模式】未提交工作树内容指纹；只用 HEAD 不能识别未提交代码。candidate 模式内容身份由 target.candidate_tree_oid / candidate_commit_oid 唯一确定，应【省略】本字段（语义规则会拒绝 candidate/commit 模式携带它）；commit 模式同样省略。",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "risk": {
+      "description": "可选并行改动风险来源。无风险时整个对象可省略；给出时必须带来源版本，STS 决定是否采用。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_version", "hints"],
+      "properties": {
+        "source_version": { "type": "string", "minLength": 1 },
+        "hints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path"],
+            "properties": {
+              "symbol": {
+                "description": "可选。风险符号；SSI 的 read_path/write_path 边天然可能无符号，允许省略并降级为文件级风险。给出时期望粒度：优先限定名（模块.类.方法 或 模块.函数），退化到裸名亦可。",
+                "type": "string",
+                "minLength": 1
+              },
+              "path": {
+                "description": "必填。风险涉及的文件路径（仓库相对）。无符号提示至少要能定位到文件。",
+                "type": "string",
+                "minLength": 1
+              },
+              "score": { "type": "number" },
+              "oid": { "$ref": "#/$defs/oid" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

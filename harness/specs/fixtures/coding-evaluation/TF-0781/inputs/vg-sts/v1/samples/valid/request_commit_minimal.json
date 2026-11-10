@@ -1,0 +1,13 @@
+{
+  "protocol_version": "1.0",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "req-commit-003",
+  "mode": "commit",
+  "repo": { "path": "D:/verseci/experiment-httpx" },
+  "target": {
+    "commit_oid": "99cba6a"
+  },
+  "identities": {
+    "code_oid": "99cba6a"
+  }
+}

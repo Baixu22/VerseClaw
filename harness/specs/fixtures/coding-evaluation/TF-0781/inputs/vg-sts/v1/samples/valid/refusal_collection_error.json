@@ -1,0 +1,15 @@
+{
+  "protocol_version": "1.1",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "req-collect-fail-004",
+  "refusal_code": "collection-error",
+  "reason": "pytest 收集阶段在 conftest.py 抛 ImportError，无法得到测试全集；目标候选可确认，但既然连收集都失败，不能声称能保守全量。",
+  "target_confirmable": true,
+  "target_identity": "candidate@eeeeeee",
+  "attempted_collection": {
+    "succeeded": false,
+    "collected_count": 0,
+    "note": "collection error: ImportError in conftest.py（缺少可选依赖），0 项被收集"
+  },
+  "conservative_full_available": false
+}

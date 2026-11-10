@@ -1,0 +1,81 @@
+{
+  "protocol_version": "2.0",
+  "product_version": "smart-test-sorter/0.1.0",
+  "capabilities": [
+    "selection",
+    "prioritization"
+  ],
+  "request_id": "req-v2-pure-source",
+  "mode": "candidate",
+  "repo": {
+    "path": "D:/verseci/example-repo",
+    "name": "example"
+  },
+  "target": {
+    "candidate_dir": "D:/verseci/example-candidate",
+    "base_oid": "a111111111111111111111111111111111111111",
+    "ours_oid": "b222222222222222222222222222222222222222",
+    "theirs_oid": "c333333333333333333333333333333333333333",
+    "candidate_tree_oid": "d444444444444444444444444444444444444444",
+    "includes_candidate_extra_changes": true
+  },
+  "identities": {
+    "content_identity": {
+      "kind": "git-tree",
+      "value": "d444444444444444444444444444444444444444",
+      "label": "candidate@d444444"
+    },
+    "environment_identity": {
+      "python": "3.10.3",
+      "platform": "win32",
+      "dependencies_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "plugins": [
+        "pytest-cov"
+      ],
+      "config_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "external_services": [
+        {
+          "name": "postgres",
+          "isolation": "每次运行用临时数据库，结束后销毁"
+        }
+      ]
+    }
+  },
+  "content_manifest": {
+    "algorithm": "sha256",
+    "exclusion_policy_id": "noise-dirs/v2",
+    "line_endings": "normalized-lf",
+    "symlinks": "record-target",
+    "submodules": "reject",
+    "unreadable_files": "unconfirmed",
+    "entries": [
+      {
+        "path": "calc.py",
+        "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "role": "source"
+      },
+      {
+        "path": "app/util.py",
+        "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "role": "source"
+      },
+      {
+        "path": "tests/test_calc.py",
+        "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "role": "test"
+      }
+    ],
+    "config_data_absent": true
+  },
+  "risk": {
+    "source_version": "vg-risk/2",
+    "hints": [
+      {
+        "path": "calc.py",
+        "symbol": "calc.add",
+        "score": 0.8,
+        "oid": "d444444444444444444444444444444444444444"
+      }
+    ]
+  }
+}

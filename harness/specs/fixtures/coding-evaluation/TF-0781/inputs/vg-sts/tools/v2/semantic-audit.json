@@ -1,0 +1,344 @@
+{
+  "schema": "smart-test-sorter/contract-v2-semantic-audit/v1",
+  "draft_commit": "",
+  "rules": [
+    {
+      "id": "R1-protocol-is-2.0",
+      "why": "本草案只讨论 2.0；其它版本按各自契约校验，不在这里静默兼容。",
+      "invalid_samples": [],
+      "read_fields": {
+        "*": [
+          "protocol_version"
+        ]
+      }
+    },
+    {
+      "id": "R2-label-is-not-identity",
+      "why": "candidate@<7 位> 只作展示：content_identity.value 必须是完整身份，不能拿 label 当比较依据。",
+      "invalid_samples": [],
+      "read_fields": {
+        "request": [
+          "identities"
+        ]
+      }
+    },
+    {
+      "id": "R3-manifest-covers-config-and-data",
+      "why": "内容清单必须真的覆盖会读到的输入（含 config/data）；只有 source/test 的清单不算数。",
+      "invalid_samples": [],
+      "read_fields": {
+        "request": [
+          "content_manifest"
+        ]
+      }
+    },
+    {
+      "id": "R4-digest-carries-algorithm",
+      "why": "每个摘要都带算法前缀，否则两版之间不可比。",
+      "invalid_samples": [],
+      "read_fields": {
+        "request": [
+          "content_manifest"
+        ]
+      }
+    },
+    {
+      "id": "R5-exclusion-policy-is-versioned",
+      "why": "排除规则必须有版本化 id，且必须显式声明换行/软链/子模块/不可读文件的行为。",
+      "invalid_samples": [],
+      "read_fields": {
+        "request": [
+          "content_manifest"
+        ]
+      }
+    },
+    {
+      "id": "R6-full-only-when-content-confirmed",
+      "why": "只有 content_confirmed=true 且确实收集到全集时才允许保守全量；内容没确认就不能声称可全量。",
+      "invalid_samples": [],
+      "read_fields": {
+        "refusal": [
+          "content_confirmed",
+          "conservative_full_available",
+          "attempted_collection"
+        ]
+      }
+    },
+    {
+      "id": "R7-unconfirmed-must-be-listed",
+      "why": "拒绝时要把『没确认到哪些观察』逐项列出来，不能只给一句笼统失败。",
+      "invalid_samples": [],
+      "read_fields": {
+        "refusal": [
+          "content_confirmed",
+          "unconfirmed"
+        ]
+      }
+    },
+    {
+      "id": "R8-plan-carries-its-own-identity",
+      "why": "计划自带完整内容身份与政策身份；执行结果自带执行身份与前后观察（不能只靠 request 才能核对）。",
+      "invalid_samples": [],
+      "read_fields": {
+        "plan": [
+          "content_identity",
+          "policy_identity"
+        ],
+        "result": [
+          "content_identity",
+          "execution_identity",
+          "observations"
+        ]
+      }
+    },
+    {
+      "id": "R9-invalid-or-unconfirmed-cannot-be-valid",
+      "why": "观测为 unconfirmed/mismatch，或执行身份与计划不一致时，不得声称 validity=valid。",
+      "invalid_samples": [],
+      "read_fields": {
+        "result": [
+          "observations",
+          "validity"
+        ],
+        "plan": [
+          "expected_execution_identity"
+        ]
+      }
+    },
+    {
+      "id": "R10-order-is-permutation-of-selected",
+      "why": "执行顺序必须是选集的排列；full 时选集必须等于收集全集（与 1.1 同精神，只是换到新字段上重申）。",
+      "invalid_samples": [],
+      "read_fields": {
+        "plan": [
+          "selected",
+          "order",
+          "collected",
+          "selection_scope"
+        ]
+      }
+    },
+    {
+      "id": "R11-cross-document-binding",
+      "why": "request/plan/result 必须同指一次候选：request_id/plan_id/protocol_version/target_identity 以及**完整内容身份**（kind + value + manifest_digest 三项）都要一致——这才是 2.0 想解决的『同一个短标签下换了磁盘』。",
+      "invalid_samples": [],
+      "read_fields": {
+        "request": [
+          "request_id",
+          "protocol_version",
+          "identities"
+        ],
+        "plan": [
+          "request_id",
+          "plan_id",
+          "protocol_version",
+          "target_identity",
+          "content_identity"
+        ],
+        "result": [
+          "request_id",
+          "plan_id",
+          "protocol_version",
+          "target_identity",
+          "content_identity"
+        ]
+      }
+    },
+    {
+      "id": "R12-environment-identity-must-match-plan",
+      "why": "内容一致 ≠ 环境一致：同一份内容在不同解释器/依赖/平台上行为可以不同。plan 记了 expected_environment_identity 就比，没记不判（**不判 ≠ 已核对通过**）。",
+      "invalid_samples": [],
+      "read_fields": {
+        "plan": [
+          "expected_environment_identity"
+        ],
+        "result": [
+          "environment_identity"
+        ]
+      }
+    }
+  ],
+  "schema_delta": {
+    "request": {
+      "added": [
+        "content_manifest"
+      ],
+      "removed": [],
+      "now_required": [
+        "content_manifest"
+      ],
+      "no_longer_required": [],
+      "extra_top_level_keys": [
+        "$defs"
+      ]
+    },
+    "plan": {
+      "added": [
+        "content_identity",
+        "environment_identity",
+        "expected_environment_identity",
+        "expected_execution_identity",
+        "full_comparison",
+        "policy_identity"
+      ],
+      "removed": [],
+      "now_required": [
+        "content_identity",
+        "policy_identity"
+      ],
+      "no_longer_required": [],
+      "extra_top_level_keys": [
+        "$defs"
+      ]
+    },
+    "result": {
+      "added": [
+        "content_identity",
+        "environment_identity",
+        "execution_identity",
+        "isolated_process",
+        "observations"
+      ],
+      "removed": [],
+      "now_required": [
+        "content_identity",
+        "execution_identity"
+      ],
+      "no_longer_required": [
+        "not_executed"
+      ],
+      "extra_top_level_keys": [
+        "$defs"
+      ]
+    },
+    "refusal": {
+      "added": [
+        "content_confirmed",
+        "content_identity",
+        "refusal_kind",
+        "unconfirmed"
+      ],
+      "removed": [],
+      "now_required": [
+        "content_confirmed",
+        "refusal_kind"
+      ],
+      "no_longer_required": [
+        "refusal_code"
+      ],
+      "extra_top_level_keys": []
+    }
+  },
+  "reachability": [],
+  "registered_rules": [
+    "R1-protocol-is-2.0",
+    "R2-label-is-not-identity",
+    "R3-manifest-covers-config-and-data",
+    "R4-digest-carries-algorithm",
+    "R5-exclusion-policy-is-versioned",
+    "R6-full-only-when-content-confirmed",
+    "R7-unconfirmed-must-be-listed",
+    "R8-plan-carries-its-own-identity",
+    "R9-invalid-or-unconfirmed-cannot-be-valid",
+    "R10-order-is-permutation-of-selected",
+    "R11-cross-document-binding",
+    "R12-environment-identity-must-match-plan"
+  ],
+  "read_by_rule": {
+    "R1-protocol-is-2.0": {
+      "*": [
+        "protocol_version"
+      ]
+    },
+    "R2-label-is-not-identity": {
+      "request": [
+        "identities"
+      ]
+    },
+    "R3-manifest-covers-config-and-data": {
+      "request": [
+        "content_manifest"
+      ]
+    },
+    "R4-digest-carries-algorithm": {
+      "request": [
+        "content_manifest"
+      ]
+    },
+    "R5-exclusion-policy-is-versioned": {
+      "request": [
+        "content_manifest"
+      ]
+    },
+    "R6-full-only-when-content-confirmed": {
+      "refusal": [
+        "content_confirmed",
+        "conservative_full_available",
+        "attempted_collection"
+      ]
+    },
+    "R7-unconfirmed-must-be-listed": {
+      "refusal": [
+        "content_confirmed",
+        "unconfirmed"
+      ]
+    },
+    "R8-plan-carries-its-own-identity": {
+      "plan": [
+        "content_identity",
+        "policy_identity"
+      ],
+      "result": [
+        "content_identity",
+        "execution_identity",
+        "observations"
+      ]
+    },
+    "R9-invalid-or-unconfirmed-cannot-be-valid": {
+      "result": [
+        "observations",
+        "validity"
+      ],
+      "plan": [
+        "expected_execution_identity"
+      ]
+    },
+    "R10-order-is-permutation-of-selected": {
+      "plan": [
+        "selected",
+        "order",
+        "collected",
+        "selection_scope"
+      ]
+    },
+    "R11-cross-document-binding": {
+      "request": [
+        "request_id",
+        "protocol_version",
+        "identities"
+      ],
+      "plan": [
+        "request_id",
+        "plan_id",
+        "protocol_version",
+        "target_identity",
+        "content_identity"
+      ],
+      "result": [
+        "request_id",
+        "plan_id",
+        "protocol_version",
+        "target_identity",
+        "content_identity"
+      ]
+    },
+    "R12-environment-identity-must-match-plan": {
+      "plan": [
+        "expected_environment_identity"
+      ],
+      "result": [
+        "environment_identity"
+      ]
+    }
+  }
+}

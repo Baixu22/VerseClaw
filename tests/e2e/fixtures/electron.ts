@@ -421,7 +421,7 @@ async function launchVerseClawElectron(
   if (process.platform === 'win32') {
     try {
       const identities = await bounded(app.evaluate(({ app: electronApp }) => electronApp.getAppMetrics()
-        .map(({ pid, creationTime }) => ({ pid, creationTime }))), 5_000, 'Electron launch process snapshot');
+        .map(({ pid, creationTime }) => ({ pid, creationTime }))), options.packaged ? 60_000 : 5_000, 'Electron launch process snapshot');
       owned.identities = identities;
       await recordElectronProcesses(userDataDir, identities);
       await completeElectronLaunch(pendingLaunch);
