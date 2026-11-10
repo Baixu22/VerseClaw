@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- E2E evidence preserves host/runtime JSON payloads verbatim. */
 import { execFile, execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';

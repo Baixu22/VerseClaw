@@ -171,4 +171,33 @@ export default [
       'react-hooks/rules-of-hooks': 'off',
     },
   },
+  {
+    // Legacy runtime-memory evaluation suites retain optional instrumentation
+    // helpers for manual and alternate evaluation entrypoints. Keep those
+    // fixtures byte-stable for the broader lint gate.
+    files: [
+      'tests/unit/runtime-memory-context-provider.test.ts',
+      'tests/unit/runtime-memory-eval-budget-pressure.test.ts',
+      'tests/unit/runtime-memory-eval-conflict-resolution.test.ts',
+      'tests/unit/runtime-memory-eval-temporal-evolution.test.ts',
+      'tests/unit/runtime-memory-eval-topic-drift.test.ts',
+      'tests/unit/runtime-memory-interleaved-read-write.test.ts',
+      'tests/unit/runtime-memory-locomo-benchmark.test.ts',
+      'tests/unit/runtime-memory-long-conversation-real.test.ts',
+      'tests/unit/runtime-memory-persistence.test.ts',
+      'tests/unit/runtime-memory-proposal-shadow.test.ts',
+      'tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts',
+      'tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts',
+      'tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts',
+      'tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts',
+      'tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts',
+      'tests/unit/runtime-memory-read-hydration-shadow-command.test.ts',
+      'tests/unit/runtime-memory-read-hydration-shadow-opt-in-evaluation.test.ts',
+      'tests/unit/runtime-memory-read-hydration-shadow.test.ts',
+      'tests/unit/runtime-memory-write-path-semantic-real.test.ts',
+    ],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+    },
+  },
 ];

@@ -917,9 +917,11 @@ function resolveBlockHandleMinter(
 ): ((block: ContextBlock) => ContextHandle | null) | undefined {
   if (!resolveContextFoldingEnabledForOptions(options)) return undefined;
   const requester = resolveContextFoldingRequester(options, sessionId);
-  return (block) => handleForContextBlock(block, requester, {
-    ...(options.contextFoldingNow ? { now: options.contextFoldingNow } : {}),
-  });
+  return (block) => handleForContextBlock(
+    block,
+    requester,
+    options.contextFoldingNow ? { now: options.contextFoldingNow } : {},
+  );
 }
 
 function resolveContextExpandDeps(
