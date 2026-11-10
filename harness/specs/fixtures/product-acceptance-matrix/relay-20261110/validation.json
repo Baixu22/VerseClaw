@@ -391,5 +391,20 @@
     "delegation: 将父会话实际续接终态与 UI 回执对应读回；不以 completion batch 存在替代续接完成",
     "tools: 直接 VerseShell 产品调用与 Tool Search 展开结果仍需对应执行证据",
     "settings: Doctor 真实命令执行、超时和错误报告需单独回执"
-  ]
+  ],
+  "baselineCi": {
+    "candidate": "a37d254cfdd67e30d87b9d160401449d7cd19ed1",
+    "exitCode": 1,
+    "baselineUnit": {
+      "passed": 59,
+      "failed": 0
+    },
+    "failedStage": "catalogs:check",
+    "failure": "executor site points to a blank line for flag worktree-backend: openclaw_runtime/src/agents/orchestrator-run-observed.ts:435",
+    "details": "ci-index.json",
+    "independentChecks": {
+      "evidence": 0,
+      "testCoverage": 0
+    }
+  }
 }
