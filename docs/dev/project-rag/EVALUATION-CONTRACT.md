@@ -22,7 +22,7 @@
 
 ## 模型输入与 oracle 隔离
 
-materializer 只写入一个任务请求、同 split 的来源文件和该任务的初始程序。请求及来源使用独立匿名 ID 和路径；family、query、split、global registry、gold、探针输入、期望输出、authoring 与 promotion policy 留在 evaluator 目录。映射收据保留在模型工作区之外，grader 将匿名引用映回真实 owner。相同 task/repeat 的三臂通过同一个外部 anonymizationSeed 使用相同映射；种子不写入请求包。
+materializer 只写入一个任务请求、同 split 的来源文件和该任务的初始程序。请求及来源使用独立匿名 ID 和路径；family、query、split、global registry、gold、探针输入、期望输出、authoring 与 promotion policy 留在 evaluator 目录。研究任务的公开 objective 使用统一的动作比较说明，去掉 evaluator 原题中的来源族标签。映射收据保留在模型工作区之外，grader 将匿名引用映回真实 owner。相同 task/repeat 的三臂通过同一个外部 anonymizationSeed 使用相同映射；种子不写入请求包。
 
 文件白名单读回校验模型 pack 内容。collector 只能向 provider 提交该包，并限制模型工具的工作区；materializer 不授予模型访问 evaluator 文件系统的工具。候选代码在独立受限探针进程运行；其文件、网络、进程、环境和动态代码权限由执行边界及负例测试验证。
 
@@ -52,6 +52,6 @@ page 基线复用当前完整的 owner 读取、有界80行窗口、最多800行
 
 ## 复算入口
 
-在指定 Project RAG 工作树执行 `openclaw_runtime/node_modules/.bin/tsx --tsconfig tsconfig.node.json scripts/knowledge-rag-corpus.ts verify`。`release-v4.json` 为当前外部 freeze pin；冻结命令 `freeze-v4` 遇到已有版本会拒绝覆写。v1/v2 保留首次封存字节，其范围及隔离复核结论随精选验收记录保存。
+在指定 Project RAG 工作树执行 `openclaw_runtime/node_modules/.bin/tsx --tsconfig tsconfig.node.json scripts/knowledge-rag-corpus.ts verify`。`release-v4.json` 为当前外部 freeze pin；冻结命令 `freeze-v4` 遇到已有版本会拒绝覆写。v1/v2/v3 保留首次封存字节及对应复核结论。
 
 240查询、540槽、检索与重排增益、平台与容量，以及实际72小时稳定性均由后续完整验收读回。本合同本身是它们的固定输入。

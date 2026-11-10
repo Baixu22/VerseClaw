@@ -144,6 +144,18 @@ describe('Project RAG frozen evaluation corpus', () => {
     }
   });
 
+  it('omits evaluator family routing from every materialized research objective and nested request field', () => {
+    const b = bundle(), root = temp();
+    for (const task of b.tasks.filter(t => t.profile === 'research')) {
+      const pack = materializeRagTask(b, task.id, join(root, task.id), join(root, 'private'), namespace, unseal(b));
+      const request = JSON.parse(readFileSync(join(pack.workspace, 'request.json'), 'utf8'));
+      expect(request.scenario.objective).toBe('Compare the proposed integration actions with all admitted source contracts and the stated resource constraints.');
+      expect(JSON.stringify(request)).not.toContain(task.familyId);
+      expect(JSON.stringify(request)).not.toContain(task.id);
+      expect(request.scenario.proposals.every((p: Record<string, unknown>) => Object.keys(p).sort().join(',') === 'action,id')).toBe(true);
+    }
+  });
+
   it('captures invalid JSON bytes and a missing delivery as ordinary agent failures', () => {
     const b = bundle(), task = b.tasks.find(t => t.profile === 'quality')!, root = temp();
     const pack = materializeRagTask(b, task.id, join(root, 'participant'), join(root, 'private'), namespace);
