@@ -345,14 +345,27 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
     if (status === 'unsupported') test.skip(true, reason); else throw error;
   } finally {
     recording = false;
+    evidence.provider_log = llm?.log ?? [];
+    if (page) await page.screenshot({ path: info.outputPath('final-state.png') }).catch(() => undefined);
+    const cleanupErrors: string[] = [];
+    if (app) {
+      await hostInvoke(app, 'gateway', 'stop').catch(error => { evidence.gateway_stop_error = String(error); });
+      try { await closeElectronApp(app); } catch (error) { cleanupErrors.push(String(error)); }
+    }
+    if (llm) {
+      try { const server = llm.server; server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); }
+      catch (error) { cleanupErrors.push(String(error)); }
+    }
+    const bodyPassed = status === 'passed';
+    if (cleanupErrors.length) {
+      evidence.first_body_status = status; evidence.first_body_reason = reason;
+      evidence.cleanup_errors = cleanupErrors; status = 'failed'; reason ??= cleanupErrors[0];
+    }
     evidence.status = status; evidence.reason = reason;
     evidence.counts_source = status === 'passed' ? 'successful_events' : null;
     evidence.counts = status === 'passed' ? countMetrics(events)
       : Object.fromEntries(metrics.map(metric => [metric, null]));
-    evidence.provider_log = llm?.log ?? [];
-    if (page) await page.screenshot({ path: info.outputPath('final-state.png') }).catch(() => undefined);
     await writeFile(info.outputPath('interaction-metrics.json'), JSON.stringify(evidence, null, 2));
-    if (app) { await hostInvoke(app, 'gateway', 'stop').catch(() => undefined); await closeElectronApp(app); }
-    if (llm) { const server = llm.server; server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); }
+    if (bodyPassed && cleanupErrors.length) throw new Error('U6 cleanup failed: ' + cleanupErrors.join('; '));
   }
 });
