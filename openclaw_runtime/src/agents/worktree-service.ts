@@ -38,6 +38,7 @@ import type { WorktreeBackend } from "../context-engine/coding-runtime-flags.js"
 import { withExecutionTaskWorktreeCleanup, finishExecutionTaskWorktreeCleanup, openExecutionTaskStore, type TaskWorktreeCleanupBinding } from "./execution-task-authority.js";
 import type { TaskCredential } from '../../../shared/task-system/types.js';
 import { assertGitNativeRoot, nativeGitWorktreeRoot, isSharedGitRef } from '../../../shared/git-native-root.js';
+import { captureWorktreeFiles, captureWorktreeModes, changedWorktreeFiles, readWorktreeFile, worktreeContentHash } from "./worktree-merge-files.js";
 import { reviewDiff } from "../context-engine/views/verify/review-diff-view.js";
 import type { FactStore } from "../context-engine/factstore/store.js";
 import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
@@ -94,6 +95,7 @@ export type WorktreeRecord = {
   baseOid?: string;
   owner?: WorktreeLifecycleOwner;
   taskCleanup?: TaskWorktreeCleanupBinding;
+  mergeBaseline?: { parent: Record<string, string>; worker: Record<string, string>; workerModes?: Record<string, number> };
 };
 
 export type MergeQueueItem = {
@@ -110,7 +112,7 @@ export type MergeConflictPolicy = "mark_conflict" | "return_worker" | "escalate_
 
 export type WorktreeChangedFiles = {
   files: string[];
-  source: "git-status" | "declared-writeSet" | "unavailable";
+  source: "git-status" | "filesystem-snapshot" | "declared-writeSet" | "unavailable";
 };
 
 export type WorktreeIsolationInspection =
@@ -350,6 +352,12 @@ function removePathWithRetries(target: string, attempts = 5): void {
   throw lastError instanceof Error ? lastError : new Error(String(lastError ?? 'worktree_remove_failed'));
 }
 
+/** Shared read-only guard for runtime and Main-owned native worktree removal. */
+export function assertWorktreeIndexVisible(root: string): void {
+  const hidden = git(['ls-files', '-v', '-z'], root).split('\0').filter(entry => /^[a-zS] /.test(entry));
+  if (hidden.length) throw new Error('worktree_cleanup_hidden_index_flags:' + hidden.slice(0, 8).map(entry => entry.slice(2)).join(','));
+}
+
 export function assertCleanupCommitRetained(record: Pick<WorktreeRecord, "backend" | "root" | "baseRoot">): void {
   if (record.backend !== "git") return;
   let head: string;
@@ -545,6 +553,17 @@ export function createWorktreeService(
         }
 
         if (observeWorktree(rec) !== "incomplete") throw new Error("worktree_changed_during_setup");
+        const initialWorker = captureWorktreeFiles(rec.root);
+        const initialParent = new Map<string, string>();
+        for (const file of new Set([...initialWorker.keys(), ...(writeSet ?? [])])) {
+          if (initialWorker.get(file) === 'unsupported-file-identity') {
+            initialParent.set(file, 'unsupported-file-identity');
+            continue;
+          }
+          const hash = worktreeContentHash(readWorktreeFile(resolved, file));
+          if (hash !== null) initialParent.set(file, hash);
+        }
+        rec.mergeBaseline = { parent: Object.fromEntries(initialParent), worker: Object.fromEntries(initialWorker), workerModes: Object.fromEntries(captureWorktreeModes(rec.root)) };
         rec.registration.phase = "registered";
         saveWorktreeRegistryScope(s);
         rec.registration.phase = "ready";
@@ -773,22 +792,84 @@ export function createWorktreeService(
         } else assertCurrentWorktree(rec);
         if (rec.backend === 'git') git(['rev-parse', '--show-toplevel'], resolved);
         return withExecutionTaskWorktreeCleanup(rec.root, resolved, `worktree-cleanup:${rec.generation}`, taskCleanup => {
-        const ownership = requireCleanupAuthorization({
-          rootDir,
-          baseRoot: resolved,
-          record: rec,
-          authorization: cleanupOptions?.authorization,
-          changed: rec.backend === "git"
-            ? { files: listChangedFilesFromGit(rec.root), source: "git-status" }
-            : { files: [...(rec.writeSet ?? [])], source: "declared-writeSet" },
-        });
+        const cleanupInventory = () => {
+          if (rec.backend === 'git') {
+            const ignored = git(['ls-files', '--others', '--ignored', '--exclude-standard', '-z'], rec.root).split('\0').filter(Boolean);
+            if (ignored.length) throw new Error('worktree_cleanup_ignored_content_present:' + ignored.slice(0, 8).join(','));
+            assertWorktreeIndexVisible(rec.root);
+          }
+          const observed = captureWorktreeFiles(rec.root, rec.backend === 'inprocess');
+          const changed = rec.backend === 'git' ? { files: listChangedFilesFromGit(rec.root), source: 'git-status' as const }
+            : { files: changedWorktreeFiles(new Map(Object.entries(rec.mergeBaseline?.worker ?? {})), observed), source: 'filesystem-snapshot' as const };
+          const ownership = requireCleanupAuthorization({ rootDir, baseRoot: resolved, record: rec,
+            authorization: cleanupOptions?.authorization, changed });
+          if (rec.backend === 'inprocess') {
+            for (const file of new Set([...observed.keys(), ...changed.files])) {
+              if (worktreeContentHash(readWorktreeFile(resolved, file)) !== worktreeContentHash(readWorktreeFile(rec.root, file))) {
+                throw new Error('worktree_cleanup_unretained_content:' + file);
+              }
+            }
+          }
+          const beforeModes = rec.mergeBaseline?.workerModes;
+          const retainedModes = captureWorktreeModes(resolved);
+          for (const [file, mode] of captureWorktreeModes(rec.root)) {
+            if (!file) {
+              if (mode !== (beforeModes?.[''] ?? retainedModes.get(''))) throw new Error('worktree_cleanup_unretained_mode:<worktree-root>');
+              continue;
+            }
+            if (rec.backend === 'inprocess') {
+              if (retainedModes.get(file) !== mode) throw new Error('worktree_cleanup_unretained_mode:' + file);
+              continue;
+            }
+            if (beforeModes?.[file] === mode || retainedModes.get(file) === mode) continue;
+            // Git retains ordinary committed files; dirty files were refused above.
+            if (rec.backend === 'git' && beforeModes?.[file] === undefined
+              && mode === ((file && lstatSync(path.join(rec.root, file)).isFile() ? 0o666 : 0o777) & ~process.umask())) continue;
+            if (rec.backend === 'git' && file && lstatSync(path.join(rec.root, file)).isFile()) {
+              const before = beforeModes?.[file] ?? (0o666 & ~process.umask());
+              const committed = /^([0-7]{6}) /.exec(git(['ls-tree', 'HEAD', '--', file], rec.root));
+              if ((mode & ~0o111) === (before & ~0o111) && committed
+                && Boolean(mode & 0o111) === (committed[1] === '100755')) continue;
+            }
+            throw new Error('worktree_cleanup_unretained_mode:' + file);
+          }
+          return ownership;
+        };
+        const ownership = cleanupInventory();
+        const beforeCleanupStatus = rec.status;
         if (taskCleanup) { rec.taskCleanup = taskCleanup; saveWorktreeRegistryScope(s); }
-        withCheckoutMaintenance([{
+        const cleanupResult = withCheckoutMaintenance([{
           root: rec.root, incarnation: rec.registration.rootIdentity!, generation: rec.generation,
         }], "cleanup", () => {
+          try {
+            if (filesystemInstance(rec.root) !== rec.registration.rootIdentity
+              || worktreeNativeIdentity(rec.root, rec.backend) !== rec.registration.nativeIdentity) throw new Error('worktree_cleanup_identity_changed');
+            cleanupInventory();
+            assertCleanupCommitRetained(rec);
+          } catch (error) {
+            rec.status = beforeCleanupStatus; saveWorktreeRegistryScope(s); return { error };
+          }
           if (rec.backend === "git") {
             // Git rechecks live modifications at removal; a refusal retains the checkout.
-            git(["worktree", "remove", ownership.root], resolved);
+            const beforeRemoval = captureWorktreeFiles(rec.root, true);
+            try { git(["worktree", "remove", ownership.root], resolved); }
+            catch (error) {
+              const failure = error as { status?: number; stderr?: Buffer | string };
+              let retainedDirtyRefusal = false;
+              if (failure.status === 128 && /contains modified or untracked files/i.test(String(failure.stderr ?? ''))) {
+                try {
+                  const after = captureWorktreeFiles(rec.root, true);
+                  retainedDirtyRefusal = filesystemInstance(rec.root) === rec.registration.rootIdentity
+                    && worktreeNativeIdentity(rec.root, rec.backend) === rec.registration.nativeIdentity
+                    && [...beforeRemoval.keys()].every(file => after.has(file))
+                    && listChangedFilesFromGit(rec.root).length > 0;
+                } catch { /* An unavailable observation retains the unknown outcome. */ }
+              }
+              if (!retainedDirtyRefusal) throw error;
+              rec.status = beforeCleanupStatus;
+              saveWorktreeRegistryScope(s);
+              return { error };
+            }
           } else {
             removePathWithRetries(ownership.root);
           }
@@ -797,11 +878,13 @@ export function createWorktreeService(
           }
           rec.status = "cleaned";
           saveWorktreeRegistryScope(s);
+          return { error: undefined };
         }, () => {
           assertCleanupCommitRetained(rec);
           rec.status = "cleaning";
           saveWorktreeRegistryScope(s);
-        });
+        }, result => result.error ? 'not-applied' : 'completed');
+        if (cleanupResult.error) throw cleanupResult.error;
         });
       });
     },

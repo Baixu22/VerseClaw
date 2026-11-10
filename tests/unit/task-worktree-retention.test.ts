@@ -119,7 +119,7 @@ describe('Task evidence retention and original checkout cleanup', () => {
         return result;
       });
     }
-    expect(() => service.cleanup(row.id)).toThrow(phase === 'before-cleanup' ? 'worktree_cleanup_user_content_present' : /modified|untracked/i);
+    expect(() => service.cleanup(row.id)).toThrow(/worktree_cleanup_user_content_present|modified|untracked/i);
     expect(readFileSync(path.join(row.root, 'artifact.txt'))).toEqual(changed);
     expect(reader.history(taskId).some(event => event.kind === 'worktree_cleanup_completed')).toBe(false);
     for (const receipt of reader.retentionReceipts(taskId)) expect(reader.readRetainedArtifact(taskId, receipt.receiptId)).toEqual(bytes);

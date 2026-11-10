@@ -273,7 +273,7 @@ export function releaseUnusedCheckoutWriter(input: CheckoutWriterCredential): vo
 }
 
 /** Acquire all roots before the first effect; compensations release only unused claims. */
-export function withCheckoutMaintenance<T>(bases: readonly CheckoutWriterBasis[], operation: "merge" | "freeze" | "cleanup", effect: () => T, prepare?: () => void): T {
+export function withCheckoutMaintenance<T>(bases: readonly CheckoutWriterBasis[], operation: "merge" | "freeze" | "cleanup", effect: () => T, prepare?: () => void, outcome?: (value: T) => CheckoutWriteReceipt['outcome']): T {
   const operationId = randomUUID();
   const claims: CheckoutWriterCredential[] = [];
   try {
@@ -299,7 +299,7 @@ export function withCheckoutMaintenance<T>(bases: readonly CheckoutWriterBasis[]
     result = effect();
     if (result && typeof (result as { then?: unknown }).then === "function") throw new Error("checkout_maintenance_requires_sync_effect");
   } catch (error) { for (const claim of claims) settleCheckoutWrite(claim, operationId, null); throw error; }
-  for (const claim of claims) settleCheckoutWrite(claim, operationId, { outcome: "completed", ownerReceipt: `${operation}:${operationId}` });
+  for (const claim of claims) settleCheckoutWrite(claim, operationId, { outcome: outcome?.(result) ?? "completed", ownerReceipt: `${operation}:${operationId}` });
   for (const claim of claims) releaseCheckoutWriter(claim);
   return result;
 }
