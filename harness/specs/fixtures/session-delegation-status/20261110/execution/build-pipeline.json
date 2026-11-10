@@ -1,0 +1,49 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-u4-relay-01a1c454",
+  "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+  "startedAt": "2026-11-10T08:49:52.175Z",
+  "stages": [
+    {
+      "name": "u4-combined-typecheck",
+      "status": "finished",
+      "queuedAt": "2026-11-10T08:49:52.178Z",
+      "freeMemoryMiB": 3420,
+      "observedAt": "2026-11-10T09:01:26.807Z",
+      "startedAt": "2026-11-10T09:01:26.953Z",
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T09:03:14.766Z"
+    },
+    {
+      "name": "u4-combined-runtime",
+      "status": "finished",
+      "queuedAt": "2026-11-10T09:03:14.779Z",
+      "freeMemoryMiB": 3058,
+      "observedAt": "2026-11-10T09:03:29.797Z",
+      "startedAt": "2026-11-10T09:03:29.879Z",
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T09:05:11.163Z"
+    },
+    {
+      "name": "u4-combined-desktop",
+      "status": "finished",
+      "queuedAt": "2026-11-10T09:05:11.179Z",
+      "freeMemoryMiB": 3667,
+      "observedAt": "2026-11-10T09:09:26.463Z",
+      "startedAt": "2026-11-10T09:09:26.583Z",
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T09:11:24.828Z"
+    },
+    {
+      "name": "u4-combined-harness-ci",
+      "status": "finished",
+      "queuedAt": "2026-11-10T09:11:24.840Z",
+      "freeMemoryMiB": 3804,
+      "observedAt": "2026-11-10T09:11:39.861Z",
+      "startedAt": "2026-11-10T09:11:40.366Z",
+      "exitCode": 1,
+      "finishedAt": "2026-11-10T09:12:35.958Z"
+    }
+  ],
+  "status": "stopped"
+}

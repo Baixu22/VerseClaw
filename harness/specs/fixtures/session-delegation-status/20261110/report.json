@@ -1,0 +1,901 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-u4-relay-01a1c454",
+  "status": "passed",
+  "acceptedNode": "TF-0660",
+  "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+  "base": "390e39259429255b6712c84440be4f567e2ec25d",
+  "candidateDirty": false,
+  "uniqueUnitPassed": 227,
+  "uniqueElectronPassed": 12,
+  "commands": [
+    {
+      "name": "u4-merged-unit",
+      "kind": "unit",
+      "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+      "exitCode": 0,
+      "result": "commands/u4-merged-unit.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [],
+      "tests": "commands/u4-merged-unit.tests.json"
+    },
+    {
+      "name": "u4-final-owner-unit",
+      "kind": "unit",
+      "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+      "exitCode": 0,
+      "result": "commands/u4-final-owner-unit.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [],
+      "tests": "commands/u4-final-owner-unit.tests.json"
+    },
+    {
+      "name": "u4-combined-typecheck",
+      "kind": "command",
+      "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+      "exitCode": 0,
+      "result": "commands/u4-combined-typecheck.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": []
+    },
+    {
+      "name": "u4-combined-runtime",
+      "kind": "command",
+      "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+      "exitCode": 0,
+      "result": "commands/u4-combined-runtime.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": []
+    },
+    {
+      "name": "u4-combined-desktop",
+      "kind": "command",
+      "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+      "exitCode": 0,
+      "result": "commands/u4-combined-desktop.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": []
+    },
+    {
+      "name": "u4-main-contract",
+      "kind": "command",
+      "candidate": "3815b711e2610835ebd1d943bc9e7f8a4be3537a",
+      "exitCode": 0,
+      "result": "commands/u4-main-contract.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [
+        "tests/unit/session-handoff-recovery.test.ts"
+      ]
+    },
+    {
+      "name": "u4-main-i18n",
+      "kind": "command",
+      "candidate": "3815b711e2610835ebd1d943bc9e7f8a4be3537a",
+      "exitCode": 0,
+      "result": "commands/u4-main-i18n.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [
+        "tests/unit/session-handoff-recovery.test.ts"
+      ]
+    },
+    {
+      "name": "u4-main-lint",
+      "kind": "command",
+      "candidate": "3815b711e2610835ebd1d943bc9e7f8a4be3537a",
+      "exitCode": 0,
+      "result": "commands/u4-main-lint.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [
+        "tests/unit/session-handoff-recovery.test.ts"
+      ]
+    },
+    {
+      "name": "u4-main-comms-replay",
+      "kind": "command",
+      "candidate": "3815b711e2610835ebd1d943bc9e7f8a4be3537a",
+      "exitCode": 0,
+      "result": "commands/u4-main-comms-replay.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [
+        "tests/unit/session-handoff-recovery.test.ts"
+      ]
+    },
+    {
+      "name": "u4-main-comms-compare",
+      "kind": "command",
+      "candidate": "3815b711e2610835ebd1d943bc9e7f8a4be3537a",
+      "exitCode": 0,
+      "result": "commands/u4-main-comms-compare.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [
+        "tests/unit/session-handoff-recovery.test.ts"
+      ]
+    },
+    {
+      "name": "u4-main-harness",
+      "kind": "command",
+      "candidate": "3815b711e2610835ebd1d943bc9e7f8a4be3537a",
+      "exitCode": 0,
+      "result": "commands/u4-main-harness.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [
+        "tests/unit/session-handoff-recovery.test.ts"
+      ]
+    },
+    {
+      "name": "u4-final-plan",
+      "kind": "command",
+      "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+      "exitCode": 0,
+      "result": "commands/u4-final-plan.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": []
+    },
+    {
+      "name": "u4-final-navigation",
+      "kind": "electron",
+      "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+      "exitCode": 0,
+      "result": "commands/u4-final-navigation.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [],
+      "cleanup": "journeys/u4-final-navigation/electron-process-cleanup.json",
+      "sourceGuard": "journeys/u4-final-navigation/source-mutation-guard.json",
+      "stats": {
+        "startTime": "2026-11-10T09:18:34.823Z",
+        "duration": 144150.01599999997,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": "commands/u4-final-navigation.tests.json"
+    },
+    {
+      "name": "u4-final-controls",
+      "kind": "electron",
+      "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+      "exitCode": 0,
+      "result": "commands/u4-final-controls.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [],
+      "cleanup": "journeys/u4-final-controls/electron-process-cleanup.json",
+      "sourceGuard": "journeys/u4-final-controls/source-mutation-guard.json",
+      "stats": {
+        "startTime": "2026-11-10T09:21:02.576Z",
+        "duration": 198315.819,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": "commands/u4-final-controls.tests.json"
+    },
+    {
+      "name": "u4-final-isolation",
+      "kind": "electron",
+      "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+      "exitCode": 0,
+      "result": "commands/u4-final-isolation.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [],
+      "cleanup": "journeys/u4-final-isolation/electron-process-cleanup.json",
+      "sourceGuard": "journeys/u4-final-isolation/source-mutation-guard.json",
+      "stats": {
+        "startTime": "2026-11-10T09:24:26.162Z",
+        "duration": 197127.885,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": "commands/u4-final-isolation.tests.json"
+    },
+    {
+      "name": "u4-final-acceptance-en",
+      "kind": "electron",
+      "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+      "exitCode": 0,
+      "result": "commands/u4-final-acceptance-en.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [],
+      "cleanup": "journeys/u4-final-acceptance-en/electron-process-cleanup.json",
+      "sourceGuard": "journeys/u4-final-acceptance-en/source-mutation-guard.json",
+      "stats": {
+        "startTime": "2026-11-10T09:15:26.148Z",
+        "duration": 183862.558,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": "commands/u4-final-acceptance-en.tests.json"
+    },
+    {
+      "name": "u4-final-acceptance-zh",
+      "kind": "electron",
+      "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+      "exitCode": 0,
+      "result": "commands/u4-final-acceptance-zh.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [],
+      "cleanup": "journeys/u4-final-acceptance-zh/electron-process-cleanup.json",
+      "sourceGuard": "journeys/u4-final-acceptance-zh/source-mutation-guard.json",
+      "stats": {
+        "startTime": "2026-11-10T09:28:38.276Z",
+        "duration": 129374.66299999999,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": "commands/u4-final-acceptance-zh.tests.json"
+    },
+    {
+      "name": "u4-final-acceptance-ja",
+      "kind": "electron",
+      "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+      "exitCode": 0,
+      "result": "commands/u4-final-acceptance-ja.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [],
+      "cleanup": "journeys/u4-final-acceptance-ja/electron-process-cleanup.json",
+      "sourceGuard": "journeys/u4-final-acceptance-ja/source-mutation-guard.json",
+      "stats": {
+        "startTime": "2026-11-10T09:46:52.580Z",
+        "duration": 310777.886,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": "commands/u4-final-acceptance-ja.tests.json"
+    },
+    {
+      "name": "u4-final-acceptance-ru",
+      "kind": "electron",
+      "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+      "exitCode": 0,
+      "result": "commands/u4-final-acceptance-ru.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [],
+      "cleanup": "journeys/u4-final-acceptance-ru/electron-process-cleanup.json",
+      "sourceGuard": "journeys/u4-final-acceptance-ru/source-mutation-guard.json",
+      "stats": {
+        "startTime": "2026-11-10T09:53:00.659Z",
+        "duration": 217769.554,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": "commands/u4-final-acceptance-ru.tests.json"
+    },
+    {
+      "name": "u4-final-active-parent",
+      "kind": "electron",
+      "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+      "exitCode": 0,
+      "result": "commands/u4-final-active-parent.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [],
+      "cleanup": "journeys/u4-final-active-parent/electron-process-cleanup.json",
+      "sourceGuard": "journeys/u4-final-active-parent/source-mutation-guard.json",
+      "stats": {
+        "startTime": "2026-11-10T10:01:08.038Z",
+        "duration": 80474.31999999999,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": "commands/u4-final-active-parent.tests.json"
+    },
+    {
+      "name": "u4-final-derivation-retry",
+      "kind": "electron",
+      "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+      "exitCode": 0,
+      "result": "commands/u4-final-derivation-retry.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [],
+      "cleanup": "journeys/u4-final-derivation-retry/electron-process-cleanup.json",
+      "sourceGuard": "journeys/u4-final-derivation-retry/source-mutation-guard.json",
+      "stats": {
+        "startTime": "2026-11-10T10:18:12.797Z",
+        "duration": 537500.44,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": "commands/u4-final-derivation-retry.tests.json"
+    },
+    {
+      "name": "u4-final-owner-replay",
+      "kind": "electron",
+      "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+      "exitCode": 0,
+      "result": "commands/u4-final-owner-replay.result.json",
+      "sourceUnchanged": true,
+      "deltaToCandidate": [],
+      "cleanup": "journeys/u4-final-owner-replay/electron-process-cleanup.json",
+      "sourceGuard": "journeys/u4-final-owner-replay/source-mutation-guard.json",
+      "stats": {
+        "startTime": "2026-11-10T10:02:33.036Z",
+        "duration": 110171.746,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": "commands/u4-final-owner-replay.tests.json"
+    }
+  ],
+  "acceptance": [
+    {
+      "criterion": "复用现有 Team/Agents/Activity，不建第二控制台；角色/任务/隔离/来源按已有事实按需展示，未知字段不猜测。",
+      "result": "passed",
+      "evidence": [
+        "u4-final-navigation",
+        "u4-final-isolation",
+        "u4-merged-unit"
+      ],
+      "observed": "原 Agents/Activity 与 worker 详情消费既有会话、角色、模型和任务 owner；缺失字段显示不可用。"
+    },
+    {
+      "criterion": "admission 的 accepted-not-completed 只显示已接收；running/waiting/partial/rejected/outcome-unknown/report/Task 接纳/parent continuation 分别来自真实 owner receipts。",
+      "result": "passed",
+      "evidence": [
+        "u4-final-controls",
+        "u4-final-acceptance-en",
+        "u4-final-owner-replay",
+        "u4-final-owner-unit"
+      ],
+      "observed": "准入、运行、队列、报告和业务验收分别使用各 owner 的回执；待续行与已投递分开。"
+    },
+    {
+      "criterion": "有持久可访问 child key 才提供 transcript 导航；run-only/已 cleanup/尚无 child/读取失败有独立状态且无伪造消息。",
+      "result": "passed",
+      "evidence": [
+        "u4-final-navigation",
+        "u4-merged-unit"
+      ],
+      "observed": "持久 child transcript 可打开；run-only、owner 不可用与读取失败保留独立状态。"
+    },
+    {
+      "criterion": "传递显示源、目标和回执阶段；仅暴露当前 host 已支持 send/steer/stop/查询动作，不把只读界面变成跨 workspace 自授权入口；模型专用 yield 保持 tool-owned。",
+      "result": "passed",
+      "evidence": [
+        "u4-final-controls",
+        "u4-final-isolation",
+        "u4-merged-unit"
+      ],
+      "observed": "worker 发送和引导经过现有 Host 路由及 parent/child 代次核验，跨协调器操作拒绝。"
+    },
+    {
+      "criterion": "重复完成/回传、generation mismatch、晚到结果、Gateway 不可用、审批等待/拒绝不串会话、不假成功；未知结果可核实恢复。",
+      "result": "passed",
+      "evidence": [
+        "u4-final-owner-unit",
+        "u4-final-owner-replay",
+        "u4-final-controls",
+        "u4-merged-unit"
+      ],
+      "observed": "重复请求、重启、代次变化和拒绝均保留原 owner 结果；丢回执以原键对账。"
+    },
+    {
+      "criterion": "本阶段 Electron E2E + 实际 Host/Gateway receipt 接线分别记录；界面 mock 不冒充 runtime 完成；contract/comms/typecheck/i18n 门禁通过。",
+      "result": "passed",
+      "evidence": [
+        "u4-combined-typecheck",
+        "u4-main-contract",
+        "u4-main-i18n",
+        "u4-main-comms-compare"
+      ],
+      "observed": "类型、契约、四语和通讯门禁通过，Electron 原件记录 agent 与本地脚本 provider。"
+    },
+    {
+      "criterion": "同项目多个coordinator/worker不串任务，项目与会话视图来自同一owner；实际运行模型可见，未知费用不填0。",
+      "result": "passed",
+      "evidence": [
+        "u4-final-isolation",
+        "u4-final-acceptance-en",
+        "u4-final-acceptance-zh",
+        "u4-final-acceptance-ja",
+        "u4-final-acceptance-ru"
+      ],
+      "observed": "双协调器保持独立任务与只读引用，运行模型来自 transcript；缺少费用显示未知。"
+    },
+    {
+      "criterion": "accepted/text/exit0/turn-check done均不能提升为业务任务已验收；从任务可定位worker transcript和相关产物。",
+      "result": "passed",
+      "evidence": [
+        "u4-final-navigation",
+        "u4-final-acceptance-en",
+        "u4-merged-unit"
+      ],
+      "observed": "文件 hash 核验、提交和 verifier owner 接纳后才显示任务已验收；任务可定位产物与 worker transcript。"
+    },
+    {
+      "criterion": "有scope无新grant的既有授权操作不反复要求用户确认；无授权或不可用能力明确阻止，不把状态投影变成许可。",
+      "result": "passed",
+      "evidence": [
+        "u4-final-controls",
+        "u4-final-isolation",
+        "u4-final-owner-unit"
+      ],
+      "observed": "已授权作用域内的操作复用原权限决定；无授权、失效代次和错误 owner 均拒绝。"
+    }
+  ],
+  "sources": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "173e678d9b87ce1587a41a9e2f2528e14c3b138e18215cdc2610a35d21f695ef"
+    },
+    {
+      "path": "README.md",
+      "sha256": "3c7c7498f94f0e1437890346dd108ae403d6aa95a3492e218cd37a36d77f112a"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "sha256": "35b1940cdc2558dd05b918807eb4177f1d1c9b5c6572a486832fe43d37729250"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "2aa51132e42622734591332f7f679621660c8776a541eb360a8805c8ef35e7c3"
+    },
+    {
+      "path": "docs/modules/multi-agent-and-tasks.md",
+      "sha256": "e984e2987629c3e2fdc7516ce38b69221438cd83ec20e4fffd6133e675adbdb4"
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "sha256": "0584b58ce1050e086d3c88547d678da76a97de2c7e638d56a68ac25d43ea3d6c"
+    },
+    {
+      "path": "electron/services/task-ledger-api.ts",
+      "sha256": "f8674a3b8e754f43f1430ee32d503175ebaca0e919f19bd6f230d5a22a188972"
+    },
+    {
+      "path": "electron/services/task-ledger-service.ts",
+      "sha256": "ed760146c185f51e613a02138856f5267a28e194f94f3c8228e31d7c6fcd6076"
+    },
+    {
+      "path": "electron/services/task-system-service.ts",
+      "sha256": "646d948dfdc6b35a5c668db0ebe95da0b5618cc0caeae3cebf8b42c7b3a6db51"
+    },
+    {
+      "path": "electron/services/workspaces-api.ts",
+      "sha256": "df8744d2fa426d4ebac30be296391057eb1183b35e7cafbfaf2eea5c5a839e11"
+    },
+    {
+      "path": "harness/specs/tasks/session-delegation-status.md",
+      "sha256": "fe5d401c5b08fa3db6af36d8d8cba41b54a4d465e98fef11857f1b8fd17711a6"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts",
+      "sha256": "32f75a9a5977c6c2e335ddd43b986112a85346754287e2f738f0899961bbab5c"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/chat.ts",
+      "sha256": "2d4183a9f1c244bd2f4bc50dbbcef4a146f301c86e3a155f3ec2fbeab228c73b"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/optional-model-catalog.ts",
+      "sha256": "bb7351f4d7e47b1b277ed8cfd8a92fa2bb2332ebfa6ba4acb2a80bf0483072ba"
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/server-methods/session-task-scope.ts",
+      "sha256": "fb267f7baeee49ad68666010285ec262d6b759df05651b856b6349b30c3646e1"
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "sha256": "9bcad380a21f597e129cfa0426e6a18c9fe3271058ee3a9da235d1dcd413c369"
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "sha256": "53ae4e8d383c0b0b54dbe88291715e5fd5965b7a2ad6962c2daea283af63e0f6"
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "sha256": "45f2bc99e4bc83ec63374fdce90e5118057ad31df6cf83c061e342ead5457947"
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "sha256": "9b2b9785e7498bd0b780f1111002f266a0b7eb751ed455f0cdd382a82eddcd34"
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "sha256": "45b8e1f5d2c7def2d4f262bb9226f9ae1653679f3ae6022d26e9a75ac44abac7"
+    },
+    {
+      "path": "shared/task-system/types.ts",
+      "sha256": "da81048f06c2be80c8635c1ac24df53c4740983be52d482c8ad42e8b4e7c030d"
+    },
+    {
+      "path": "src/components/chat/SessionDelegationStatus.tsx",
+      "sha256": "c2ae3ca6bb3e404e753abcf74c159a27ce21b650f3dcd82186bf9dd992f1f733"
+    },
+    {
+      "path": "src/components/file-preview/WorkspaceAgentsPanel.tsx",
+      "sha256": "651ba87cec4d19c2a76b5e6b3ab51936ed7de9e8347e790b0eb242ef53c91a55"
+    },
+    {
+      "path": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+      "sha256": "6f5c08b9f5b81407fd2c27294e747946c683b5979957fd4d5dc9df84b7b84487"
+    },
+    {
+      "path": "src/pages/TaskLedger/index.tsx",
+      "sha256": "60ccd92030b9cfb9563cbf382fe38c639e5a767b8796103227c9fa54ec04aa47"
+    },
+    {
+      "path": "tests/e2e/fixtures/electron-process-cleanup.ts",
+      "sha256": "35864693cf9b6be10abc0f4ce5bb4db5a57974314967c425d2fd9ed166c9cc85"
+    },
+    {
+      "path": "tests/e2e/fixtures/electron.ts",
+      "sha256": "4dfc8c742e79bc63a5e5ee13e6ee9f712b5b14fd5520d875260a263899c739cf"
+    },
+    {
+      "path": "tests/e2e/session-worker-task-journey.spec.ts",
+      "sha256": "fec0b07ba70bed4d3af32e6dc8374d43f3411165f80ba8c494c43b6eaac4c1f8"
+    },
+    {
+      "path": "tests/unit/chat-send-input-mode.test.ts",
+      "sha256": "541cfef4cc11c5cbcf50a8cda2edf855cfd881a8dd311d463626438c29b5d2ff"
+    },
+    {
+      "path": "tests/unit/durable-task-session-scope.test.ts",
+      "sha256": "70006e2805fb789288628205c67f25d1345620ccf622148f6c8144461358c6e1"
+    },
+    {
+      "path": "tests/unit/electron-process-identity.test.ts",
+      "sha256": "774bcc915df34cb3224180ad6cac01a25c91889e45cfa85f4f08878b6476fcd3"
+    },
+    {
+      "path": "tests/unit/gateway-worker-history-metadata.test.ts",
+      "sha256": "0793e8853d4fef1a701c9ac69dce19d90617b2c5cac43330c88444df68b97806"
+    },
+    {
+      "path": "tests/unit/host-services.test.ts",
+      "sha256": "7b4ff9efc9ac3aaf16a9cec62145e6a55dc269710b4dda4f2448e41899109f60"
+    },
+    {
+      "path": "tests/unit/session-chain-panels.test.tsx",
+      "sha256": "e474a38129af9eca3b573a9dc254cbf764884eff60274b82862f2f51d7e7eda8"
+    },
+    {
+      "path": "tests/unit/session-delegation-status.test.tsx",
+      "sha256": "06124ceb191565aceed3a58243419ca2aa25c6e238a40a42a5b9b478a664adc5"
+    },
+    {
+      "path": "tests/unit/session-handoff-recovery.test.ts",
+      "sha256": "88ec8fcf7c8ff64a2fac855ee1702b04ddf51804ff6ee6dddd0e1a16fd6698c8"
+    },
+    {
+      "path": "tests/unit/session-task-scope-bridge.test.ts",
+      "sha256": "a59a21d67ab0d144965f1aefd91d2972814f34d1401e6eb9d6778b5e6668b03f"
+    },
+    {
+      "path": "tests/unit/session-task-scope-completion.test.ts",
+      "sha256": "39cb2e98139153a9f25fb10c2f9fe5bb691cd8d8cd6e3427b527f6ba65fd358f"
+    },
+    {
+      "path": "tests/unit/task-ledger-snapshot-cache.test.ts",
+      "sha256": "d757dc856880cef947e089181cc63ca6486b332596151928a45235007bd33da0"
+    },
+    {
+      "path": "tests/unit/workspace-agents-panel-failure.test.tsx",
+      "sha256": "fbf2ea4aa5f0205248b4f430cff6255ff5f1dd270b6017252c18ab89018e208b"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "journeys/u4-final-navigation/artifacts/session-worker-task-journe-ca86a-coped-follow-up-navigation-/workspace/worker.txt",
+      "sha256": "e95cd2db770a8a4187615dceb42ceec7eed10c228b96d5aca684646100acb20e",
+      "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-navigation\\session-worker-task-journe-ca86a-coped-follow-up-navigation-\\workspace\\worker.txt"
+    },
+    {
+      "path": "journeys/u4-final-controls/artifacts/session-worker-task-journe-00810--scoped-follow-up-controls-/workspace/worker.txt",
+      "sha256": "e95cd2db770a8a4187615dceb42ceec7eed10c228b96d5aca684646100acb20e",
+      "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-controls\\session-worker-task-journe-00810--scoped-follow-up-controls-\\workspace\\worker.txt"
+    },
+    {
+      "path": "journeys/u4-final-isolation/artifacts/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/workspace/worker.txt",
+      "sha256": "e95cd2db770a8a4187615dceb42ceec7eed10c228b96d5aca684646100acb20e",
+      "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-isolation\\session-worker-task-journe-72a1d-scoped-follow-up-isolation-\\workspace\\worker.txt"
+    },
+    {
+      "path": "journeys/u4-final-acceptance-en/artifacts/session-worker-task-journe-bea7e-on-and-owner-acceptance-en-/accepted-worker-workspace/accepted.txt",
+      "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+      "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-acceptance-en\\session-worker-task-journe-bea7e-on-and-owner-acceptance-en-\\accepted-worker-workspace\\accepted.txt"
+    },
+    {
+      "path": "journeys/u4-final-acceptance-zh/artifacts/session-worker-task-journe-f592b-on-and-owner-acceptance-zh-/accepted-worker-workspace/accepted.txt",
+      "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+      "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-acceptance-zh\\session-worker-task-journe-f592b-on-and-owner-acceptance-zh-\\accepted-worker-workspace\\accepted.txt"
+    },
+    {
+      "path": "journeys/u4-final-acceptance-ja/artifacts/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace/accepted.txt",
+      "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+      "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-acceptance-ja\\session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-\\accepted-worker-workspace\\accepted.txt"
+    },
+    {
+      "path": "journeys/u4-final-acceptance-ru/artifacts/session-worker-task-journe-30f78-on-and-owner-acceptance-ru-/accepted-worker-workspace/accepted.txt",
+      "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+      "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-acceptance-ru\\session-worker-task-journe-30f78-on-and-owner-acceptance-ru-\\accepted-worker-workspace\\accepted.txt"
+    },
+    {
+      "path": "journeys/u4-final-active-parent/artifacts/session-worker-task-journe-6264b--parent-turn-remains-active/active-parent-workspace/child.txt",
+      "sha256": "97bc8743613c61561d5629c5acc6d938dbb745df147fdf01de085b6bf7da5814",
+      "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-active-parent\\session-worker-task-journe-6264b--parent-turn-remains-active\\active-parent-workspace\\child.txt"
+    }
+  ],
+  "unitCases": [
+    "chat-send-input-mode.test.ts::chat.send inputMode gate rejects a worker send for a changed requester generation before starting a run",
+    "chat-send-input-mode.test.ts::chat.send inputMode gate rejects explicit inputMode without an active /loop Task Ledger root",
+    "chat-send-input-mode.test.ts::chat.send inputMode gate rejects unknown inputMode values at the protocol layer",
+    "chat-send-input-mode.test.ts::chat.send inputMode: guide falls back to a normal send when steering is rejected",
+    "chat-send-input-mode.test.ts::chat.send inputMode: guide steers the active run and records steered evidence",
+    "chat-send-input-mode.test.ts::chat.send inputMode: interrupt checkpoints before aborting, records checkpointed event, and responds ok",
+    "chat-send-input-mode.test.ts::chat.send inputMode: queue drain restores claimed rows when a new run started before drain",
+    "chat-send-input-mode.test.ts::chat.send inputMode: queue persists the queued message and broadcasts queue status",
+    "chat-send-input-mode.test.ts::chat.send inputMode: queue retains a queued follow-up when the chat owner rejects its drain",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner fences worker acceptance reads before and after a session generation changes",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner keeps an accepted task closed when selected for another effect",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner keeps fork references read only until an explicit new owner is granted",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner keeps the task owner readable when generation check 1 takes twelve seconds",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner keeps the task owner readable when generation check 2 takes twelve seconds",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner reads actual verifier receipts without promoting a doing task to accepted",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner rejects a conflicting explicit task instead of reverting the selection",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner rejects a legacy reference without inventing a contract or upgrading its state",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner rejects a second writer and a stale generation at the new entry point",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner rejects conflicting stores after repository initialization",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner rejects effects without a contract without creating a database",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner retains task identity and writer exclusivity when runtime bootstrap initializes Git",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner retains the current task when an execution or an unknown operation blocks selection",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner retains the old owner while an effect is still unresolved",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner reuses the canonical TaskID and writer attempt across admission retries",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner selects another canonical task without changing its state and grants only its next execution",
+    "durable-task-session-scope.test.ts::session bridge consumes the persistent task owner uses the existing handoff epoch and fences the previous credential",
+    "electron-process-identity.test.ts::Electron creation time matches the native process identity",
+    "electron-process-identity.test.ts::cleanup preserves a reused PID and terminates only its recorded process identity",
+    "electron-process-identity.test.ts::cleanup rechecks an unavailable identity without repeating termination (exited)",
+    "electron-process-identity.test.ts::cleanup rechecks an unavailable identity without repeating termination (unavailable)",
+    "gateway-session-active-runs.test.ts::sessions.describe tracked active runs does not borrow an active run from another coordinator",
+    "gateway-session-active-runs.test.ts::sessions.describe tracked active runs does not project hidden background runs into worker activity",
+    "gateway-session-active-runs.test.ts::sessions.describe tracked active runs keeps a terminal abort entry for idempotency without keeping the worker busy",
+    "gateway-session-active-runs.test.ts::sessions.describe tracked active runs keeps global aliases scoped to their owning agent",
+    "gateway-worker-history-metadata.test.ts::worker history optional metadata accepts message-only history and does not start optional catalog discovery",
+    "gateway-worker-history-metadata.test.ts::worker history optional metadata retains optional metadata for ordinary history callers",
+    "host-deadline.test.ts::host logical deadline anchors the deadline to an absolute timestamp instead of a second timeout",
+    "host-deadline.test.ts::host logical deadline clamps each layer to the remaining budget instead of adding to it",
+    "host-deadline.test.ts::host logical deadline reports stage, budget, elapsed time and the local correlation id",
+    "host-deadline.test.ts::host logical deadline stays inert for callers that do not propagate a deadline",
+    "host-deadline.test.ts::host logical deadline validates propagated deadline metadata",
+    "host-services.test.ts::host services assigns agent channels and schedules gateway reload",
+    "host-services.test.ts::host services builds channel accounts from config without gateway rpc in config mode",
+    "host-services.test.ts::host services creates provider accounts and syncs runtime config through the typed providers service",
+    "host-services.test.ts::host services deletes agents by restarting gateway, removing workspace, and returning snapshot",
+    "host-services.test.ts::host services does not activate a session if lineage cannot be written",
+    "host-services.test.ts::host services does not fork locally when Gateway is unavailable",
+    "host-services.test.ts::host services drops generation-fenced task references when the source resets during fork",
+    "host-services.test.ts::host services exposes provider account snapshot actions through the typed providers service",
+    "host-services.test.ts::host services forks sessions through Gateway without local transcript fallback",
+    "host-services.test.ts::host services forwards an explicit fromLeafId fork point and omits it otherwise (#180)",
+    "host-services.test.ts::host services forwards compact generation unchanged and preserves omission for legacy callers",
+    "host-services.test.ts::host services forwards compactRange generation unchanged and preserves omission for legacy callers",
+    "host-services.test.ts::host services forwards restoreCheckpoint generation unchanged and preserves omission for legacy callers",
+    "host-services.test.ts::host services installs plugin, saves config, ensures scoped binding, and schedules refresh on saveConfig",
+    "host-services.test.ts::host services keeps the four-hop depth bound opt-in with explicit workspace ownership",
+    "host-services.test.ts::host services lists channel targets from session history and validates channel type",
+    "host-services.test.ts::host services loads session summaries and transcript history through the typed sessions service",
+    "host-services.test.ts::host services merges runtime checkpoint handoff with ledger, git, observability, and transcript sources",
+    "host-services.test.ts::host services persists depth and parent/root ids before activating a handoff session and rejects the next hop",
+    "host-services.test.ts::host services prepares deterministic session handoff without requiring Gateway",
+    "host-services.test.ts::host services preserves an asynchronous compact acceptance as pending",
+    "host-services.test.ts::host services preserves an asynchronous compactRange acceptance as pending",
+    "host-services.test.ts::host services preserves current explicit business-task links during fork in Main",
+    "host-services.test.ts::host services preserves current explicit business-task links during handoff in Main",
+    "host-services.test.ts::host services proxies located (range) compaction with the chosen boundary (#178)",
+    "host-services.test.ts::host services proxies long-task control RPCs through Gateway",
+    "host-services.test.ts::host services proxies manual compaction to Gateway with force and appended instructions",
+    "host-services.test.ts::host services proxies read-only context recall through Gateway without local archive reads",
+    "host-services.test.ts::host services reads a worker within the Gateway budget when after is slow",
+    "host-services.test.ts::host services reads a worker within the Gateway budget when before is slow",
+    "host-services.test.ts::host services reads a worker within the Gateway budget when history is slow",
+    "host-services.test.ts::host services reads and updates agent bootstrap tooling config",
+    "host-services.test.ts::host services reads only selected log files from the log directory",
+    "host-services.test.ts::host services records canonical fork lineage in Main without creating a handoff",
+    "host-services.test.ts::host services refuses to prepare a handoff past the maximum relay depth (#179)",
+    "host-services.test.ts::host services rejects corrupt lineage before activation and re-reads it at creation time",
+    "host-services.test.ts::host services rejects task inheritance when the fork generation is missing",
+    "host-services.test.ts::host services rejects task inheritance when the source generation is missing",
+    "host-services.test.ts::host services reports compaction status unavailable when Gateway is missing",
+    "host-services.test.ts::host services reports degraded when the default account sync fails partially (R0-2)",
+    "host-services.test.ts::host services reports long-task control status unavailable when Gateway is missing",
+    "host-services.test.ts::host services reports recorded transcript cost only when each relevant usage record has a cost",
+    "host-services.test.ts::host services restarts a running gateway when the Role Memory setting changes",
+    "host-services.test.ts::host services returns diagnostics snapshot with channel view and log tails",
+    "host-services.test.ts::host services routes gateway rpc through backpressure",
+    "host-services.test.ts::host services runs launch-at-startup side effects after settings.setMany and reset",
+    "host-services.test.ts::host services runs proxy side effects and restarts a running gateway after settings.set",
+    "host-services.test.ts::host services saves channel binding for existing agents and schedules channel refresh",
+    "host-services.test.ts::host services sends staged media through the typed chat service with gateway attachments",
+    "host-services.test.ts::host services sets the default provider account and syncs runtime defaults",
+    "host-services.test.ts::host services summarizes large transcripts from bounded head/tail reads",
+    "host-services.test.ts::host services updates and resets avatars through the typed agents Host API",
+    "host-services.test.ts::host services uses runtime history for keyed history and handoff rather than a stale local profile",
+    "host-services.test.ts::host services validates provider keys using account metadata and caller options",
+    "long-session-completion-continuation.test.ts::long-session orchestration completion batches commits one deterministic consolidated receipt after success, failure and cancellation all settle",
+    "long-session-completion-continuation.test.ts::long-session orchestration completion batches fences a terminal batch when the requester generation changed",
+    "long-session-completion-continuation.test.ts::long-session orchestration completion batches keeps multiple independent batches separate",
+    "long-session-completion-continuation.test.ts::long-session orchestration completion batches preserves busy/paused delivery intent and never treats a pending intent as delivered",
+    "long-session-completion-continuation.test.ts::long-session orchestration completion batches replays the same batch receipt from persisted rows after restart",
+    "long-session-completion-continuation.test.ts::long-session orchestration completion batches stays collecting until every expected accepted worker is terminal",
+    "long-session-completion-continuation.test.ts::long-session orchestration completion batches uses terminal outcome facts rather than model text to classify a member",
+    "long-session-delegation-admission.test.ts::A4 delegation task-scope gate rejects before Gateway delegation when the explicit task scope is unavailable",
+    "long-session-delegation-admission.test.ts::A4 delegation task-scope gate uses the Main default resolver for 'a current explicit task link'",
+    "long-session-delegation-admission.test.ts::A4 delegation task-scope gate uses the Main default resolver for 'a missing link'",
+    "long-session-delegation-admission.test.ts::A4 delegation task-scope gate uses the Main default resolver for 'a missing task'",
+    "long-session-delegation-admission.test.ts::A4 delegation task-scope gate uses the Main default resolver for 'an old-generation link'",
+    "long-session-delegation-admission.test.ts::A4 delegation task-scope gate uses the Main default resolver for 'another session link'",
+    "long-session-delegation-admission.test.ts::A4 delegation task-scope gate uses the Main default resolver for 'the requested task after an unrelated…'",
+    "long-session-delegation-admission.test.ts::long-session delegation admission binds accepted children to coordinator, task, backend, permissions, and actual shared isolation without claiming completion",
+    "long-session-delegation-admission.test.ts::long-session delegation admission clamps child tool authorization to the parent allowlist",
+    "long-session-delegation-admission.test.ts::long-session delegation admission coalesces a concurrent duplicate submission into one Gateway admission",
+    "long-session-delegation-admission.test.ts::long-session delegation admission does not reuse an expired or revoked grant and allows retry only through a fresh owner-approved id",
+    "long-session-delegation-admission.test.ts::long-session delegation admission marks an accepted spawn without both child session and run identifiers as rejected",
+    "long-session-delegation-admission.test.ts::long-session delegation admission preserves owner scheduling reasons in the dispatch receipt without aliasing the plan",
+    "long-session-delegation-admission.test.ts::long-session delegation admission records a real Git worktree as verified checkout isolation",
+    "long-session-delegation-admission.test.ts::long-session delegation admission records a refused spawn as rejected with no completion evidence",
+    "long-session-delegation-admission.test.ts::long-session delegation admission rejects a concurrent stop and never upgrades the stale accepted evidence",
+    "long-session-delegation-admission.test.ts::long-session delegation admission rejects a parent reset that crosses admission without reporting an accepted worker",
+    "long-session-delegation-admission.test.ts::long-session delegation admission rejects task ownership before issuing a worker dispatch",
+    "long-session-delegation-admission.test.ts::long-session delegation admission replays a terminal receipt after owner restart without issuing another spawn",
+    "long-session-delegation-admission.test.ts::long-session delegation admission turns an in-flight record left by a terminated owner into outcome-unknown without retrying",
+    "session-chain-panels.test.tsx::session task and worker panels consume owner results keeps a project-wide Ledger warning unavailable and removes task selection",
+    "session-chain-panels.test.tsx::session task and worker panels consume owner results keeps an unavailable recorded cost (null) unknown rather than zero",
+    "session-chain-panels.test.tsx::session task and worker panels consume owner results keeps an unavailable recorded cost (undefined) unknown rather than zero",
+    "session-chain-panels.test.tsx::session task and worker panels consume owner results preserves a recorded zero cost when the owner actually supplies it",
+    "session-chain-panels.test.tsx::session task and worker panels consume owner results reads acceptance for the displayed worker generation and preserves its transcript when that owner is unavailable",
+    "session-chain-panels.test.tsx::session task and worker panels consume owner results reconciles an unknown send with its original intervention key and clears only the acknowledged input",
+    "session-chain-panels.test.tsx::session task and worker panels consume owner results refreshes the current worker generation after definite rejection while retaining the input",
+    "session-chain-panels.test.tsx::session task and worker panels consume owner results shows and scrolls the actual transcript while its task owner is still loading",
+    "session-chain-panels.test.tsx::session task and worker panels consume owner results uses the successful queued receipt without inventing a run or task acceptance",
+    "session-chain-panels.test.tsx::session task and worker panels consume owner results uses the successful steered receipt without inventing a run or task acceptance",
+    "session-delegation-status.test.tsx::delegation stage facts does not borrow another child admission or report for a run-only worker",
+    "session-delegation-status.test.tsx::delegation stage facts does not use an admission for another worker or a stale requester generation",
+    "session-delegation-status.test.tsx::delegation stage facts keeps accepted, run completion and report delivery separate from task acceptance",
+    "session-delegation-status.test.tsx::delegation stage facts keeps each child admission separate from a partial delegation and reads its canonical task independently of the root taskRef",
+    "session-delegation-status.test.tsx::delegation stage facts keeps the known child acceptance unavailable after its live roster and task owner disappear",
+    "session-delegation-status.test.tsx::delegation stage facts shows a business acceptance only after its task owner accepts the contract",
+    "session-delegation-status.test.tsx::delegation stage facts shows recorded verifier facts for one task revision, epoch and candidate without accepting the business task",
+    "session-delegation-status.test.tsx::delegation stage facts uses the latest owner batch and exposes waiting without claiming a parent run started",
+    "session-delegation-status.test.tsx::dispatch-time capacity explanation hides another scope or generation receipt and its action: {\"workspaceId\":\"other\",\"sessionKey\":\"parent\",\"generation\":\"generation-1\"}",
+    "session-delegation-status.test.tsx::dispatch-time capacity explanation hides another scope or generation receipt and its action: {\"workspaceId\":\"project-a\",\"sessionKey\":\"other\",\"generation\":\"generation-1\"}",
+    "session-delegation-status.test.tsx::dispatch-time capacity explanation hides another scope or generation receipt and its action: {\"workspaceId\":\"project-a\",\"sessionKey\":\"parent\",\"generation\":\"generation-2\"}",
+    "session-delegation-status.test.tsx::dispatch-time capacity explanation reads current queue and explicit worker waiting separately, and drops stale generation facts",
+    "session-delegation-status.test.tsx::dispatch-time capacity explanation shows the receipt plan without presenting its queued metric as a current wait",
+    "session-handoff-recovery.test.ts::durable handoff owner allows an explicitly retried pre-effect rejection with the same child and send key",
+    "session-handoff-recovery.test.ts::durable handoff owner binds the task selected in the existing composer before dispatching chat effects",
+    "session-handoff-recovery.test.ts::durable handoff owner confirms runtime ancestry, saves the child draft and reuses one child across duplicate creation requests",
+    "session-handoff-recovery.test.ts::durable handoff owner creates independent children for different intent IDs and replays each ID without creating again",
+    "session-handoff-recovery.test.ts::durable handoff owner does not reuse a first-send key with a different compiled payload",
+    "session-handoff-recovery.test.ts::durable handoff owner fences child transcript reads against wrong parents and reset races",
+    "session-handoff-recovery.test.ts::durable handoff owner keeps a lost worker response unknown until delivery evidence is available",
+    "session-handoff-recovery.test.ts::durable handoff owner keeps the same pending child when the source starts a run during creation",
+    "session-handoff-recovery.test.ts::durable handoff owner reconciles a lost send reply from the exact runtime transcript after restart",
+    "session-handoff-recovery.test.ts::durable handoff owner records acknowledgement separately and confirms the exact persisted first-turn identity",
+    "session-handoff-recovery.test.ts::durable handoff owner recovers a lost creation reply from the same runtime child after reconstructing Main services",
+    "session-handoff-recovery.test.ts::durable handoff owner recovers a lost worker acknowledgement from the exact persisted intervention key",
+    "session-handoff-recovery.test.ts::durable handoff owner rejects a changed source generation or draft without creating a second child",
+    "session-handoff-recovery.test.ts::durable handoff owner reports a definite runtime worker rejection as rejected: -32600",
+    "session-handoff-recovery.test.ts::durable handoff owner reports a definite runtime worker rejection as rejected: -32602",
+    "session-handoff-recovery.test.ts::durable handoff owner reports a definite runtime worker rejection as rejected: INVALID_REQUEST",
+    "session-handoff-recovery.test.ts::durable handoff owner retains a successful worker intervention without requiring a new run: {\"queued\":true,\"steered\":true}",
+    "session-handoff-recovery.test.ts::durable handoff owner retains a successful worker intervention without requiring a new run: {\"queued\":true}",
+    "session-handoff-recovery.test.ts::durable handoff owner retains an unknown delivery and prevents silent resends even when the text matches",
+    "session-handoff-recovery.test.ts::durable handoff owner retains one pending child while source resources remain unresolved without a writer binding",
+    "session-handoff-recovery.test.ts::durable handoff owner sends to the selected worker through the existing permission route and rejects stale parent generations",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge admits a direct embedded execution without a Chat tracker and rejects its former run id",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge admits an actual wrapped tool only after a correlated backend result",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge admits memory flush only while its exact reply operation owns the execution",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge binds isolated execution paths to the project root supplied by the sandbox owner",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge carries a read-only task origin through spawn callbacks without exposing the writer claim",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge checks caller cancellation before effects even if Main completed admission",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge does not accept generic RPC calls without an in-flight tool owner",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge fails closed when no unique backend is connected",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge gives an unsolicited admission its own bounded deadline instead of the expired socket creator",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge keeps a completed run quiescent while a subsequent run owns the session handle",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge keeps immutable worker origin for a later run on the same child",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge matches durable process reservations by exact run identity and fails closed without identity",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge reads the scheduled run owner only while the exact embedded handle executes",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge rechecks generation after an admission result and refuses a reset race",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge refuses a preflight-only caller that cannot account for actual effects",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge rejects wrong connections and wrong generations without consuming the pending result",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge reports in-flight effects and abandoned runs as non-quiescent even when the chat tracker is empty",
+    "session-task-scope-bridge.test.ts::runtime → Gateway → Main task admission bridge times out without effects and ignores a late response",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract admits an owned child while the fenced parent run remains active",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract associates a live isolated scheduled run with its canonical contract without replacing the project coordinator",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract blocks task selection and rebinding on session resources even without a Workspace writer",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract cancels an effect after Main admission without releasing or upgrading its canonical claim",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract captures checkout execution revision while allowing the admitted run through coordinator pause",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract consumes a canonical business contract after a failed turn left a diagnostic deviation link",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract does not release a live canonical claim because a new API instance or response settled",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract does not silently switch a running canonical task through coordinator rebinding",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract fences a generation change while admission is awaiting its final live owner read",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract keeps a Fork reference read-only until an explicit fresh canonical claim, then fences the old token",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract keeps ten discussion/read turns empty, then reuses one canonical contract at the guarded effect boundary",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract leaves a selected task unclaimed when the final run check fails",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract pauses new dispatch while retaining the already admitted writer and workgroup ownership",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract preserves writer fields across UI saves and transfers Handoff through the canonical epoch interface",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract rejects a Legacy done node without creating a canonical replacement or changing it to doing",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract rejects a contract revision changed after resolution without claiming the revised task",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract rejects a missing scheduled coordinator before claiming another task",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract rejects a paused scheduled coordinator before claiming another task",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract rejects a stale scheduled coordinator before claiming another task",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract rejects an isolated schedule from another workspace or agent before creating a task",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract rejects an old claim after canonical epoch rotation even when the Workspace cache still has it",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract rejects effects on a completed canonical task, including after owner reconstruction",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract rejects foreign workspace identity and a changed session generation without manufacturing a replacement",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract rejects forged claim before writing a task",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract rejects missing and incomplete contracts without creating a Legacy business task",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract rejects stale generation before writing a task",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract rejects unknown session before writing a task",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract rejects wrong root before writing a task",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract requires admission for unknown MCP effects and checks cancellation before execution",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract requires explicit canonical selection for multiple links and rejects an external reference as a task",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract selects an existing completed task and preserves its status and historical links",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract starts a complete canonical contract through task_control without requiring a session bridge",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract uses a decomposed scheduled child contract under the recorded parent TaskRef",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract uses the canonical parent reference after transfer even before its navigation link was persisted",
+    "session-task-scope-completion.test.ts::first effect consumes the canonical execution contract uses the captured worker parent TaskRef with a real child contract despite a later parent selection",
+    "task-ledger-snapshot-cache.test.ts::Task Ledger derived snapshot cache rejects a failed TaskSystemStore read instead of returning the prior JSON snapshot",
+    "task-ledger-snapshot-cache.test.ts::Task Ledger derived snapshot cache rejects corrupt event history even when a valid JSON snapshot exists",
+    "task-ledger-snapshot-cache.test.ts::Task Ledger derived snapshot cache returns canonical records without replacing a live cache lock aged 0 ms",
+    "task-ledger-snapshot-cache.test.ts::Task Ledger derived snapshot cache returns canonical records without replacing a live cache lock aged 60000 ms",
+    "task-ledger-snapshot-cache.test.ts::Task Ledger derived snapshot cache returns real event and owner records after EPERM and releases the cache lock for retry",
+    "task-ledger-snapshot-cache.test.ts::Task Ledger derived snapshot cache serializes overlapping writes to the same snapshot using the existing file lock",
+    "workspace-agents-panel-failure.test.tsx::WorkspaceAgentsPanel transcript failure (R2) keeps run-only roster facts on the selected row when several children lack session keys",
+    "workspace-agents-panel-failure.test.tsx::WorkspaceAgentsPanel transcript failure (R2) renders failed+retry instead of an empty transcript when history fails"
+  ],
+  "electronCases": [
+    "long-session-completion-continuation.spec.ts::consolidates deferred worker completion into one generation-fenced batch after restart",
+    "long-session-delegation-admission.spec.ts::delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts",
+    "session-derivation-ui.spec.ts::family navigation preserves 2/20/100 runtime children and responsive keyboard layouts",
+    "session-derivation-ui.spec.ts::question fork keeps its source draft and handoff submits one reviewed first turn",
+    "session-worker-task-journey.spec.ts::a child writes under the canonical transfer while its parent turn remains active",
+    "session-worker-task-journey.spec.ts::a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (controls)",
+    "session-worker-task-journey.spec.ts::a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (isolation)",
+    "session-worker-task-journey.spec.ts::a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (navigation)",
+    "session-worker-task-journey.spec.ts::the worker panel reads a real task acceptance after file verification and owner acceptance (en)",
+    "session-worker-task-journey.spec.ts::the worker panel reads a real task acceptance after file verification and owner acceptance (ja)",
+    "session-worker-task-journey.spec.ts::the worker panel reads a real task acceptance after file verification and owner acceptance (ru)",
+    "session-worker-task-journey.spec.ts::the worker panel reads a real task acceptance after file verification and owner acceptance (zh)"
+  ],
+  "provider": "local-scripted for worker execution; owner replay cases and fault injection labelled in their original records",
+  "baseline": {
+    "name": "u4-combined-harness-ci",
+    "exitCode": 1,
+    "result": "baseline/u4-combined-harness-ci.result.json"
+  },
+  "credentialScan": {
+    "policy": "literal private keys, common provider key prefixes and bearer credentials",
+    "hits": []
+  },
+  "integrationPreview": {
+    "source": "integration-preview/u4-main-overlay.result.json",
+    "unitPassed": 100,
+    "sourceUnchanged": true
+  },
+  "ownerReplay": {
+    "source": "journeys/u4-final-owner-replay/long-session-completion-co-12137--fenced-batch-after-restart/completion-continuation-e2e.json",
+    "terminalOutcome": "failed",
+    "deliveryState": "pending",
+    "sameReceiptAfterRestart": true,
+    "resetGenerationState": "mismatch"
+  }
+}

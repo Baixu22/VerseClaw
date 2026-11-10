@@ -1,0 +1,47 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe",
+  "ledgerEntries": 5,
+  "checks": [
+    {
+      "pid": 45652,
+      "creationTime": 1794302667830,
+      "status": "exited"
+    },
+    {
+      "pid": 17500,
+      "creationTime": 1794302679158,
+      "status": "exited"
+    },
+    {
+      "pid": 37956,
+      "creationTime": 1794302679835,
+      "status": "exited"
+    }
+  ],
+  "processObservations": [
+    [
+      {
+        "pid": 45652,
+        "creationTime": 1794302667830,
+        "status": "exited"
+      },
+      {
+        "pid": 17500,
+        "creationTime": 1794302679158,
+        "status": "exited"
+      },
+      {
+        "pid": 37956,
+        "creationTime": 1794302679835,
+        "status": "exited"
+      }
+    ]
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

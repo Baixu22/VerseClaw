@@ -1,0 +1,64 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-u4-relay-01a1c454",
+  "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+  "startedAt": "2026-11-10T09:39:23.209Z",
+  "cases": [
+    {
+      "name": "u4-final-acceptance-ja",
+      "status": "finished",
+      "queuedAt": "2026-11-10T09:39:23.229Z",
+      "freeMemoryMiB": 3076,
+      "observedAt": "2026-11-10T09:46:48.756Z",
+      "windows": [],
+      "startedAt": "2026-11-10T09:46:49.796Z",
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T09:52:05.135Z"
+    },
+    {
+      "name": "u4-final-acceptance-ru",
+      "status": "finished",
+      "queuedAt": "2026-11-10T09:52:05.150Z",
+      "freeMemoryMiB": 4342,
+      "observedAt": "2026-11-10T09:52:55.338Z",
+      "windows": [],
+      "startedAt": "2026-11-10T09:52:57.024Z",
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T09:56:41.039Z"
+    },
+    {
+      "name": "u4-final-active-parent",
+      "status": "finished",
+      "queuedAt": "2026-11-10T09:56:41.069Z",
+      "freeMemoryMiB": 2942,
+      "observedAt": "2026-11-10T10:01:03.359Z",
+      "windows": [],
+      "startedAt": "2026-11-10T10:01:04.475Z",
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T10:02:29.555Z"
+    },
+    {
+      "name": "u4-final-owner-replay",
+      "status": "finished",
+      "queuedAt": "2026-11-10T10:02:29.558Z",
+      "freeMemoryMiB": 4140,
+      "observedAt": "2026-11-10T10:02:29.559Z",
+      "windows": [],
+      "startedAt": "2026-11-10T10:02:30.224Z",
+      "exitCode": 0,
+      "finishedAt": "2026-11-10T10:04:24.412Z"
+    },
+    {
+      "name": "u4-final-derivation",
+      "status": "finished",
+      "queuedAt": "2026-11-10T10:04:24.414Z",
+      "freeMemoryMiB": 3061,
+      "observedAt": "2026-11-10T10:04:24.415Z",
+      "windows": [],
+      "startedAt": "2026-11-10T10:04:25.232Z",
+      "exitCode": 1,
+      "finishedAt": "2026-11-10T10:10:26.613Z"
+    }
+  ],
+  "status": "stopped"
+}

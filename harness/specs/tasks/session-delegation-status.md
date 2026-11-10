@@ -53,6 +53,7 @@ ownedPaths:
   - tests/e2e/fixtures/electron-process-cleanup.ts
   - tests/unit/electron-process-identity.test.ts
   - harness/specs/tasks/session-delegation-status.md
+  - harness/specs/fixtures/session-delegation-status/**
   - shared/i18n/locales/**/chat.json
   - docs/modules/multi-agent-and-tasks.md
 touchedAreas:

@@ -1,0 +1,9 @@
+{
+  "errors": [],
+  "pages": [
+    {
+      "url": "file:///D:/ClawX-work/session-chain-u4-runtime-20261109/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/",
+      "body": "Verse\nNew task\nInbox\nScheduled\nKnowledge\nProjects\nWorker project\n1\nWorker project coordinator\nCompleted\nIndependent coordinator\nNew workstream\n默认工作区\nNew workstream\nSettings\nCtrl+,\n0\nDerived sessions (1)\nReviewer\nSession tasks\n1\nBusiness tasks linked\nOpen ledger\nIndependent coordinator task\nRecorded: Doing\nSelected\nAttach files\nSearch knowledge\nModel\nMore\nmock-coder\nWorker project\nHandle Tasks\nWork on task-oriented requests\nContinuous Execution\nKeep running through multi-step work\nSable\nAdmission\nUnavailable\nExecution\nRun completed\nReport delivery\nPending\nVerification\nUnavailable\nTask acceptance\nUnavailable\nParent continuation\nUnavailable\n\nCurrent owner observations\n\nCurrent session queue: 0\n\nView sessions and resource usage\n\nSable\n\nreviewer\nDone\n\nWORKER-HOLD: Read the transcript and report without editing files\n\nRuntime model: custom-sessionc/mock-coder\n\nRecorded transcript cost: $0.00\n\nRefresh\n\nYOU\n\n[Subagent Context] You are running as a subagent (depth 1/1). Results auto-announce to your requester; do not busy-poll for status.\n\n[Subagent Task]\n\nWORKER-HOLD: Read the transcript and report without editing files\n\nBegin. Execute the assigned task to completion.\n\nSABLE\n\nWORKER-HOLD-FINISHED"
+    }
+  ]
+}
