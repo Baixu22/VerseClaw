@@ -75,6 +75,32 @@ describe('conservative UI deletion using original Git and owners', () => {
   afterEach(async () => { closeOpenClawStateDatabaseForTest(); vi.unstubAllEnvs(); await rm(root, { recursive: true, force: true }); });
 
   for (const kind of ['git', 'storage'] as const) {
+    for (const flag of ['--assume-unchanged', '--skip-worktree'] as const) {
+      it(`${kind}: preserves tracked edits hidden by ${flag}`, async () => {
+        native(tree, 'update-index', flag, '--', 'artifact.txt');
+        await writeFile(join(tree, 'artifact.txt'), 'hidden native edit\n');
+        expect(native(tree, 'status', '--porcelain')).toBe('');
+        const indexBefore = native(tree, 'ls-files', '-v');
+        await blocked(kind, 'worktree_cleanup_hidden_index_flags');
+        expect(readFileSync(join(tree, 'artifact.txt'), 'utf8')).toBe('hidden native edit\n');
+        expect(native(tree, 'ls-files', '-v')).toBe(indexBefore);
+        expect(existsSync(resolveTaskDomain(tree).database)).toBe(false);
+      });
+    }
+    it(`${kind}: rechecks hidden tracked edits after approval`, async () => {
+      const prompt = await route(kind);
+      expect(prompt.approvalRequired).toBe(true);
+      state.approved.add(prompt.approval!.id);
+      state.onConsume = () => {
+        native(tree, 'update-index', '--skip-worktree', '--', 'artifact.txt');
+        writeFileSync(join(tree, 'artifact.txt'), 'edited during approval\n');
+      };
+      const response = await route(kind, prompt.approval!.id);
+      expect(response).toMatchObject({ success: false, blocked: true });
+      expect(response.reason).toContain('worktree_cleanup_hidden_index_flags');
+      expect(readFileSync(join(tree, 'artifact.txt'), 'utf8')).toBe('edited during approval\n');
+      expect(native(tree, 'ls-files', '-v')).toContain('S artifact.txt');
+    });
     it(`${kind}: removes a taskless native worktree with approval, preserving its branch and no Task DB`, async () => {
       const database = resolveTaskDomain(tree).database, prompt = await route(kind); expect(prompt.approvalRequired).toBe(true);
       expect(existsSync(database)).toBe(false); state.approved.add(prompt.approval!.id);
