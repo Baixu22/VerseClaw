@@ -1,17 +1,32 @@
 ---
 lifecycleStatus: active
-implementationStatus: planned
+implementationStatus: partial
 id: project-rag-structure-chunk-citation
 title: 实现来源标准化、结构切块与精确定位
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-03
 intent: 让相关信息可被召回，并能回到准确原文位置。
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: eaa53b06931f386e676ac4e8c44cb3b87ce1b263
 touchedAreas:
   - "openclaw_runtime/src/knowledge/retrieval/**"
   - "openclaw_runtime/src/runtime-core/memory-tokenization.ts"
   - "openclaw_runtime/extensions/memory-wiki/runtime-api.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/retrieval-document.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/ingest.ts"
+  - "electron/services/knowledge-source-sync.ts"
+  - "electron/services/knowledge-github-connector.ts"
+  - "tests/unit/knowledge-source-sync.test.ts"
+  - "tests/unit/knowledge-github-connector.test.ts"
+  - "tsconfig.test.json"
+  - "tsconfig.node.json"
+  - "scripts/knowledge-rag-source-probe.ts"
+  - "openclaw_runtime/src/plugin-sdk/knowledge-retrieval.ts"
+  - "openclaw_runtime/src/plugin-sdk/entrypoints.ts"
+  - "openclaw_runtime/scripts/lib/plugin-sdk-entrypoints.json"
+  - "openclaw_runtime/package.json"
+  - "openclaw_runtime/packages/markdown-core/src/ir.ts"
+  - "openclaw_runtime/packages/markdown-core/src/ir.test.ts"
   - "shared/knowledge/**"
   - "shared/dcs/prod-flags-catalog.ts"
   - "docs/generated/catalogs/prod-flags.md"
@@ -24,6 +39,7 @@ touchedAreas:
   - "docs/clawx-design-overview.md"
   - "docs/dev/runtime-control-planes.md"
   - "docs/dev/evidence/project-rag-longterm-20261109/**"
+  - "docs/dev/evidence/project-rag/RAG-03/**"
   - "harness/specs/tasks/project-rag-*.md"
   - "harness/specs/rules/project-rag-long-term-boundary.md"
   - ".gitignore"
@@ -42,6 +58,11 @@ requiredRules:
   - "project-rag-long-term-boundary"
 requiredTests:
   - "tests/unit/knowledge-retrieval.test.ts"
+  - "tests/unit/knowledge-source-sync.test.ts"
+  - "tests/unit/knowledge-github-connector.test.ts"
+  - "openclaw_runtime/packages/markdown-core/src/ir.test.ts"
+  - "openclaw_runtime/src/knowledge/retrieval/chunker.test.ts"
+  - "tests/unit/project-rag-citation-locator.test.ts"
 plannedTests:
   - "openclaw_runtime/src/knowledge/retrieval/chunker.test.ts"
   - "tests/unit/project-rag-citation-locator.test.ts"
@@ -59,6 +80,7 @@ docs:
   files:
     - docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md
     - docs/dev/project-rag/WORK-PACKAGES.md
+    - docs/dev/project-rag/SOURCE-CHUNK-CONTRACT.md
 ---
 
 # 实现来源标准化、结构切块与精确定位

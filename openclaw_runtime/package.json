@@ -1149,6 +1149,10 @@
       "types": "./src/plugin-sdk/memory-host-core.ts",
       "default": "./src/plugin-sdk/memory-host-core.ts"
     },
+    "./plugin-sdk/knowledge-retrieval": {
+      "types": "./src/plugin-sdk/knowledge-retrieval.ts",
+      "default": "./src/plugin-sdk/knowledge-retrieval.ts"
+    },
     "./plugin-sdk/memory-owner-read-types": {
       "types": "./src/plugin-sdk/memory-owner-read-types.ts",
       "default": "./src/plugin-sdk/memory-owner-read-types.ts"

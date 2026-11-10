@@ -2676,6 +2676,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/project-rag/WORK-PACKAGES.md
 !/docs/dev/project-rag/OWNER-READ-CONTRACT.md
 !/docs/dev/project-rag/EVALUATION-CONTRACT.md
+!/docs/dev/project-rag/SOURCE-CHUNK-CONTRACT.md
 !/docs/dev/project-rag/RESEARCH-20261109.zh-CN.md
 !/docs/dev/project-rag/program.v2.json
 !/docs/dev/evidence/project-rag-longterm-20261109/research-sources.json

@@ -267,6 +267,7 @@
   "memory-core-host-runtime-files",
   "memory-host-core",
   "memory-owner-read-types",
+  "knowledge-retrieval",
   "memory-host-events",
   "memory-host-files",
   "memory-host-markdown",

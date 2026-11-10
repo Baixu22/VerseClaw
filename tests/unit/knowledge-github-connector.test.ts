@@ -34,6 +34,21 @@ function sync(capture: (change: GithubSourceChange) => Promise<void>) {
   running.push(instance); return instance;
 }
 describe('public GitHub continuous connector', () => {
+  it('rejects malformed UTF-8 after Git blob verification and retains the unadvanced source cursor', async () => {
+    const bytes = Buffer.from([0x23, 0x20, 0xc3, 0x28]);
+    const sha = createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
+    vi.mocked(proxyAwareFetch).mockImplementation(async url => {
+      const path = new URL(String(url)).pathname;
+      if (path.endsWith('/handbook')) return Response.json({ private: false });
+      if (path.includes('/contents/')) return Response.json([{ type: 'file', path: 'docs/a.md', sha, size: bytes.length }]);
+      return Response.json({ sha, encoding: 'base64', content: bytes.toString('base64') });
+    });
+    const changes: GithubSourceChange[] = [];
+    const connector = sync(async change => { changes.push(change); });
+    expect(await connector.sync()).toMatchObject({ status: 'error', created: 0, updated: 0, withdrawn: 0 });
+    expect(changes).toHaveLength(0);
+    await expect(readFile(join(root, 'cursor.json'))).rejects.toMatchObject({ code: 'ENOENT' });
+  });
   it('keeps repeated edit cycles and restoration as distinct governed transitions', async () => {
     const remote = setup(), changes: GithubSourceChange[] = [];
     const connector = sync(async change => { changes.push(change); });

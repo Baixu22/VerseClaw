@@ -106,7 +106,8 @@ export function createKnowledgeGithubConnector(input: {
             const bytes = Buffer.from(blob.content, 'base64');
             const gitSha = createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
             if (bytes.length !== row.size || gitSha !== row.sha || bytes.includes(0)) throw Error('GitHub blob integrity or text validation failed');
-            sources.set(row.path, { sha: row.sha, digest: hash(bytes), body: bytes.toString('utf8') });
+            const body = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes);
+            sources.set(row.path, { sha: row.sha, digest: hash(bytes), body });
           }
         }
       } catch (error) {

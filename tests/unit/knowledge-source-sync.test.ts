@@ -21,6 +21,18 @@ afterEach(async () => {
   for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true });
 });
 describe('continuous local knowledge synchronization', () => {
+  it('rejects invalid UTF-8 without capturing replacement bytes or advancing the owner cursor', async () => {
+    const f = await fixture();
+    await writeFile(join(f.root, 'broken.md'), Buffer.from([0x23, 0x20, 0xc3, 0x28]));
+    await expect(f.sync.scan()).rejects.toThrow();
+    expect(f.received).toHaveLength(0);
+    await expect(readFile(f.config.cursorPath)).rejects.toMatchObject({ code: 'ENOENT' });
+    const raw = '\uFEFF# 中文\r\n日本語 русский 😀\r\n';
+    await writeFile(join(f.root, 'broken.md'), raw, 'utf8');
+    await f.sync.scan();
+    expect(f.received).toHaveLength(1);
+    expect(f.received[0].body).toBe(raw);
+  });
   it('shares recursive roots while preserving independent patterns and final release', async () => {
     const f = await fixture(); const other: KnowledgeSourceTransition[] = [];
     const second = createKnowledgeSourceSync({ ...f.config, id: 'text-source', patterns: ['**/*.txt'], cursorPath: join(f.base, 'text-cursor.json'), capture: async value => { other.push(value); } }); active.push(second);

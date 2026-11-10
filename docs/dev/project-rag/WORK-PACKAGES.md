@@ -12,6 +12,8 @@
 
 语料、540 槽三臂协议、模型输入隔离、任务判据和费用收据见[独立评测合同](EVALUATION-CONTRACT.md)。
 
+来源原始字节、结构切块、tokenizer 绑定和精确引用复读见[来源与切块合同](SOURCE-CHUNK-CONTRACT.md)。
+
 ## 阶段与依赖
 
 | 工作包 | 交付 | 前置 | 实现 owner |

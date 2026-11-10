@@ -96,7 +96,8 @@ export function createKnowledgeSourceSync(input: {
           const after = await handle.stat();
           if (before.size !== after.size || before.mtimeMs !== after.mtimeMs || bytes.length !== after.size) { complete = false; continue; }
           if (bytes.includes(0)) continue;
-          current.set(name, { snapshot: { digest: hash(bytes), updatedAt: after.mtime.toISOString(), bytes: bytes.length }, body: bytes.toString('utf8') });
+          const body = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes);
+          current.set(name, { snapshot: { digest: hash(bytes), updatedAt: after.mtime.toISOString(), bytes: bytes.length }, body });
         } finally { await handle.close(); }
       }
     }
