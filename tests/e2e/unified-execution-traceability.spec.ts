@@ -426,8 +426,9 @@ test('TF0867: exclusive claim, real writes, durable migration restart, acceptanc
         const receipt = matches[0];
         expect(receipt.source).toEqual(source);
         expect(receipt.actor).toBe('agent');
-        expect(receipt.retained.commitOid).toBe(sourceCommit);
-        expect(git('rev-parse', '--verify', receipt.retained.ref)).toBe(sourceCommit);
+        expect(git('rev-parse', '--verify', receipt.retained.ref)).toBe(receipt.retained.commitOid);
+        git('merge-base', '--is-ancestor', sourceCommit, receipt.retained.commitOid);
+        expect(gitBytes(hub, 'cat-file', 'blob', `${receipt.retained.commitOid}:${receipt.retained.path}`)).toEqual(Buffer.from(checkpointBytes));
         const bytes = finalOwner.readRetainedArtifact(taskId, receipt.receiptId);
         expect(sha(bytes)).toBe(source.sha256);
         expect(bytes).toEqual(Buffer.from(checkpointBytes));
