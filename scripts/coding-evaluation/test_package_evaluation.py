@@ -14,6 +14,10 @@ SPEC = importlib.util.spec_from_file_location("package_evidence", HERE / "verify
 package = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(package)
 
+AGG_SPEC = importlib.util.spec_from_file_location("package_aggregator", HERE / "package-evaluation.py")
+aggregator = importlib.util.module_from_spec(AGG_SPEC)
+AGG_SPEC.loader.exec_module(aggregator)
+
 CANDIDATE = "1" * 40
 TREE = "2" * 40
 
@@ -28,14 +32,15 @@ def write_digest(root: Path, artifacts: dict, relative: str, data: bytes) -> Non
 def command_row(identifier: str, artifact_root: str = "outputs") -> dict:
     stdout = f"{identifier}:ok\n"
     stderr = ""
-    relative = f"{artifact_root}/{identifier}.stdout.bin"
+    stdout_relative = f"{artifact_root}/{identifier}.stdout.bin"
+    stderr_relative = f"{artifact_root}/{identifier}.stderr.bin"
     return {
         "id": identifier, "executable": "fixture", "argv": ["fixture"], "cwd": "D:/tmp",
         "exitCode": 0, "expectedExitCode": 0, "waitedForExit": True,
         "stdout": stdout, "stderr": stderr,
         "stdoutSha256": hashlib.sha256(stdout.encode()).hexdigest(),
         "stderrSha256": hashlib.sha256(stderr.encode()).hexdigest(),
-        "stdoutArtifact": relative, "wallMs": 1,
+        "stdoutArtifact": stdout_relative, "stderrArtifact": stderr_relative, "wallMs": 1,
     }
 
 
@@ -44,6 +49,7 @@ def make_report(root: Path) -> dict:
     top_commands = [command_row(identifier) for identifier in sorted(package.REQUIRED_COMMANDS)]
     for row in top_commands:
         write_digest(root, artifacts, row["stdoutArtifact"], row["stdout"].encode())
+        write_digest(root, artifacts, row["stderrArtifact"], row["stderr"].encode())
     write_digest(root, artifacts, "evidence/source.json", b'{"clean":true}\n')
     write_digest(root, artifacts, "evidence/package.json", b'{"packaged":true}\n')
     write_digest(root, artifacts, "inputs/versegit-manifest.json", b'{"schema":"versegit"}\n')
@@ -55,6 +61,7 @@ def make_report(root: Path) -> dict:
         )]
         for row in profile_commands:
             write_digest(root, artifacts, row["stdoutArtifact"], row["stdout"].encode())
+            write_digest(root, artifacts, row["stderrArtifact"], row["stderr"].encode())
         profiles.append({
             "profileId": profile_id, "status": "pass", "driven_by": "agent",
             "realHumanEvidence": False,
@@ -162,6 +169,63 @@ class PackageEvidenceTests(unittest.TestCase):
             checks = package.negative_checks(report, root, CANDIDATE, package.report_digest(report), False)
             self.assertGreaterEqual(len(checks), 7)
             self.assertTrue(all(row["rejected"] for row in checks), checks)
+
+    def test_artifact_backed_commands_verify(self) -> None:
+        with tempfile.TemporaryDirectory(dir="D:/tmp") as directory:
+            root = Path(directory)
+            report = make_report(root)
+            for row in report["commands"]:
+                row.pop("stdout")
+                row.pop("stderr")
+            result = package.verify(report, root, CANDIDATE, package.report_digest(report))
+            self.assertTrue(result["ok"], result["issues"])
+
+    def test_package_document_serializes_paths(self) -> None:
+        with tempfile.TemporaryDirectory(dir="D:/tmp") as directory:
+            root = Path(directory)
+            package_root = root / "package"
+            resources = package_root / "resources"
+            payloads = {
+                "Verse Claw.exe": b"executable",
+                "resources/bin/vg.exe": b"vg",
+                "resources/bin/ae.exe": b"ae",
+                "resources/bin/node.exe": b"node",
+                "resources/bin/uv.exe": b"uv",
+                "resources/bin/agent-browser.exe": b"browser",
+                "resources/app.asar": b"app",
+                "resources/main-runtime.asar": b"runtime",
+                "resources/app.asar.unpacked/package.json": b'{"version":"1.2.3"}\n',
+            }
+            for relative, data in payloads.items():
+                path = package_root / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(data)
+            versegit = {
+                "source": {"commit": "a" * 40},
+                "artifact": {"sha256": hashlib.sha256(payloads["resources/bin/vg.exe"]).hexdigest()},
+            }
+            verseshell = {
+                "provenance": {"commit": "b" * 40},
+                "artifacts": {"win32-x64": {"sha256": hashlib.sha256(payloads["resources/bin/ae.exe"]).hexdigest()}},
+            }
+            node_runtime = {
+                "version": "v-test",
+                "sha256": hashlib.sha256(payloads["resources/bin/node.exe"]).hexdigest(),
+            }
+            for relative, document in {
+                "resources/resources/versegit/manifest.json": versegit,
+                "resources/resources/verseshell/manifest.json": verseshell,
+                "resources/bin/node-runtime.json": node_runtime,
+            }.items():
+                path = package_root / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(json.dumps(document) + "\n", encoding="utf-8")
+            output = root / "output"
+            result = aggregator.package_document(package_root, output)
+            json.dumps(result)
+            package_runtime = json.loads((output / "inputs/package-runtime.json").read_text(encoding="utf-8"))
+            self.assertEqual(package_runtime["path"], str(resources / "app.asar"))
+            self.assertEqual(result["executable"]["version"], "1.2.3")
 
 
 if __name__ == "__main__":

@@ -73,7 +73,9 @@ def check_artifact(report: dict[str, Any], root: Path, relative: str, issues: li
         issues.append(f"artifact unreadable: {relative}: {error}")
 
 
-def validate_command_rows(rows: list[Any], prefix: str, issues: list[str]) -> dict[str, dict[str, Any]]:
+def validate_command_rows(rows: list[Any], prefix: str, issues: list[str],
+                          artifacts: dict[str, Any] | None = None,
+                          root: Path | None = None) -> dict[str, dict[str, Any]]:
     found: dict[str, dict[str, Any]] = {}
     for row in rows:
         if not isinstance(row, dict):
@@ -92,10 +94,25 @@ def validate_command_rows(rows: list[Any], prefix: str, issues: list[str]) -> di
             issues.append(f"{prefix} command did not wait: {identifier}")
         for channel in ("stdout", "stderr"):
             value = row.get(channel)
-            if not isinstance(value, str):
+            digest = row.get(f"{channel}Sha256")
+            if isinstance(value, str):
+                if sha256_bytes(value.encode("utf-8")) != digest:
+                    issues.append(f"{prefix} command {channel} digest mismatch: {identifier}")
+                continue
+            artifact = row.get(f"{channel}Artifact")
+            metadata = artifacts.get(artifact) if isinstance(artifacts, dict) and isinstance(artifact, str) else None
+            if root is None or not isinstance(artifact, str) or not isinstance(metadata, dict):
                 issues.append(f"{prefix} command missing {channel}: {identifier}")
-            elif sha256_bytes(value.encode("utf-8")) != row.get(f"{channel}Sha256"):
+                continue
+            try:
+                data = resolve(root, artifact).read_bytes()
+            except (OSError, TypeError, ValueError) as error:
+                issues.append(f"{prefix} command {channel} artifact unreadable: {identifier}: {error}")
+                continue
+            if sha256_bytes(data) != digest:
                 issues.append(f"{prefix} command {channel} digest mismatch: {identifier}")
+            if len(data) != metadata.get("bytes"):
+                issues.append(f"{prefix} command {channel} size mismatch: {identifier}")
     return found
 
 
@@ -128,7 +145,7 @@ def verify(report: dict[str, Any], root: Path, candidate: str, expected_digest: 
             if isinstance(relative, str):
                 check_artifact(report, root, relative, issues)
 
-    top_commands = validate_command_rows(report.get("commands", []), "top", issues)
+    top_commands = validate_command_rows(report.get("commands", []), "top", issues, artifacts, root)
     check(REQUIRED_COMMANDS.issubset(top_commands), "required top-level command set incomplete")
 
     package = report.get("package") if isinstance(report.get("package"), dict) else {}
@@ -197,7 +214,7 @@ def verify(report: dict[str, Any], root: Path, candidate: str, expected_digest: 
         check(vg.get("bundledPythonPresent") is False, f"unexpected bundled Python: {profile_id}")
         check(vg.get("standaloneJjPresent") is False, f"unexpected standalone JJ: {profile_id}")
 
-        profile_commands = validate_command_rows(row.get("commands", []), str(profile_id), issues)
+        profile_commands = validate_command_rows(row.get("commands", []), str(profile_id), issues, artifacts, root)
         for identifier in ("vg-capabilities", "vg-workspace-import", "vg-change-new", "vg-change-snapshot", "sts-contract-1.1", "sts-contract-2.0"):
             check(identifier in profile_commands, f"missing profile command {identifier}: {profile_id}")
 

@@ -164,7 +164,7 @@ def package_document(package_root: Path, out: Path) -> dict[str, Any]:
         shutil.copy2(path, inputs / f"{name}-manifest.json")
     shutil.copy2(required["nodeRuntime"], inputs / "node-runtime.json")
     package_json = {
-        "name": "verse-claw", "version": None, "path": resources / "app.asar"
+        "name": "verse-claw", "version": None, "path": str(resources / "app.asar")
     }
     try:
         archive_package = json.loads((package_root / "resources" / "app.asar.unpacked" / "package.json").read_text(encoding="utf-8"))
