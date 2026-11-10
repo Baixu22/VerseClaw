@@ -28,6 +28,8 @@ ownedPaths:
   - docs/modules/workspace-and-coding.md
   - docs/modules/verse-tools.md
   - shared/dcs/component-disposition-catalog.ts
+  - shared/host-api/host-action-timeouts.ts
+  - tests/unit/host-action-timeouts.test.ts
 touchedAreas:
   - harness/specs/tasks/coding-vg-sts-jj-maturity-closeout.md
   - .gitignore
@@ -50,6 +52,8 @@ touchedAreas:
   - docs/modules/workspace-and-coding.md
   - docs/modules/verse-tools.md
   - shared/dcs/component-disposition-catalog.ts
+  - shared/host-api/host-action-timeouts.ts
+  - tests/unit/host-action-timeouts.test.ts
 requiredRules:
   - backend-communication-boundary
   - comms-regression

@@ -12,4 +12,9 @@ describe('DCS mutation host timeouts', () => {
     expect(hostActionTimeoutMs('chat', 'sendWithMedia')).toBe(HOST_ACTION_LONG_TIMEOUT_MS);
     expect(hostActionTimeoutMs('chat', 'history')).toBe(HOST_ACTION_DEFAULT_TIMEOUT_MS);
   });
+  it('allows both bounded VerseGit diagnostics without extending unrelated actions', () => {
+    expect(hostActionTimeoutMs('versegit', 'status')).toBe(HOST_ACTION_LONG_TIMEOUT_MS);
+    expect(hostActionTimeoutMs('versegit', 'unrelated')).toBe(HOST_ACTION_DEFAULT_TIMEOUT_MS);
+  });
+
 });
