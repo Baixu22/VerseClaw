@@ -1,0 +1,178 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-u4-relay-01a1c454",
+  "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+  "base": "390e39259429255b6712c84440be4f567e2ec25d",
+  "mappings": [
+    {
+      "target": "d:/clawx/electron/services/sessions-api.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\electron\\services\\sessions-api.ts",
+      "sha256": "e140ffe4dae7776a9e16462a1f32772d4dc54346b9b5294077315dfd9b4da842"
+    },
+    {
+      "target": "d:/clawx/electron/services/task-ledger-api.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\electron\\services\\task-ledger-api.ts",
+      "sha256": "f8674a3b8e754f43f1430ee32d503175ebaca0e919f19bd6f230d5a22a188972"
+    },
+    {
+      "target": "d:/clawx/electron/services/task-ledger-service.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\electron\\services\\task-ledger-service.ts",
+      "sha256": "ed760146c185f51e613a02138856f5267a28e194f94f3c8228e31d7c6fcd6076"
+    },
+    {
+      "target": "d:/clawx/electron/services/task-system-service.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\electron\\services\\task-system-service.ts",
+      "sha256": "646d948dfdc6b35a5c668db0ebe95da0b5618cc0caeae3cebf8b42c7b3a6db51"
+    },
+    {
+      "target": "d:/clawx/electron/services/workspaces-api.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\electron\\services\\workspaces-api.ts",
+      "sha256": "df8744d2fa426d4ebac30be296391057eb1183b35e7cafbfaf2eea5c5a839e11"
+    },
+    {
+      "target": "d:/clawx/openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\openclaw_runtime\\packages\\gateway-protocol\\src\\schema\\logs-chat.ts",
+      "sha256": "32f75a9a5977c6c2e335ddd43b986112a85346754287e2f738f0899961bbab5c"
+    },
+    {
+      "target": "d:/clawx/openclaw_runtime/src/gateway/server-methods/chat.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\openclaw_runtime\\src\\gateway\\server-methods\\chat.ts",
+      "sha256": "2d4183a9f1c244bd2f4bc50dbbcef4a146f301c86e3a155f3ec2fbeab228c73b"
+    },
+    {
+      "target": "d:/clawx/openclaw_runtime/src/gateway/server-methods/optional-model-catalog.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\openclaw_runtime\\src\\gateway\\server-methods\\optional-model-catalog.ts",
+      "sha256": "bb7351f4d7e47b1b277ed8cfd8a92fa2bb2332ebfa6ba4acb2a80bf0483072ba"
+    },
+    {
+      "target": "d:/clawx/openclaw_runtime/src/gateway/server-methods/session-task-scope.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\openclaw_runtime\\src\\gateway\\server-methods\\session-task-scope.ts",
+      "sha256": "fb267f7baeee49ad68666010285ec262d6b759df05651b856b6349b30c3646e1"
+    },
+    {
+      "target": "d:/clawx/shared/host-api/contract.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\shared\\host-api\\contract.ts",
+      "sha256": "9bcad380a21f597e129cfa0426e6a18c9fe3271058ee3a9da235d1dcd413c369"
+    },
+    {
+      "target": "d:/clawx/shared/i18n/locales/en/chat.json",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\shared\\i18n\\locales\\en\\chat.json",
+      "sha256": "20ba62fc1fc107c495cdafec30cf808e88d3805733d0f5cef1f34c67ef443a5b"
+    },
+    {
+      "target": "d:/clawx/shared/i18n/locales/ja/chat.json",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\shared\\i18n\\locales\\ja\\chat.json",
+      "sha256": "0240ebfb238d2ad86e2d45f1582d34cf31dca2cfa4c6eb2afbaea7a9b9e192d0"
+    },
+    {
+      "target": "d:/clawx/shared/i18n/locales/ru/chat.json",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\shared\\i18n\\locales\\ru\\chat.json",
+      "sha256": "0edaebb20533e1622955791c39308b1387b5eef23d84596af5ad84b560554bea"
+    },
+    {
+      "target": "d:/clawx/shared/i18n/locales/zh/chat.json",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\shared\\i18n\\locales\\zh\\chat.json",
+      "sha256": "6f5b583547fa314c5fbe357e708f96b5181c59edcc784df4390c4eacb9c19c56"
+    },
+    {
+      "target": "d:/clawx/shared/task-system/types.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\shared\\task-system\\types.ts",
+      "sha256": "da81048f06c2be80c8635c1ac24df53c4740983be52d482c8ad42e8b4e7c030d"
+    },
+    {
+      "target": "d:/clawx/src/components/chat/sessiondelegationstatus.tsx",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\src\\components\\chat\\SessionDelegationStatus.tsx",
+      "sha256": "c2ae3ca6bb3e404e753abcf74c159a27ce21b650f3dcd82186bf9dd992f1f733"
+    },
+    {
+      "target": "d:/clawx/src/components/file-preview/workspaceagentspanel.tsx",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\src\\components\\file-preview\\WorkspaceAgentsPanel.tsx",
+      "sha256": "651ba87cec4d19c2a76b5e6b3ab51936ed7de9e8347e790b0eb242ef53c91a55"
+    },
+    {
+      "target": "d:/clawx/src/components/file-preview/workspacesubagentpanel.tsx",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\src\\components\\file-preview\\WorkspaceSubagentPanel.tsx",
+      "sha256": "6f5c08b9f5b81407fd2c27294e747946c683b5979957fd4d5dc9df84b7b84487"
+    },
+    {
+      "target": "d:/clawx/src/pages/taskledger/index.tsx",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\src\\pages\\TaskLedger\\index.tsx",
+      "sha256": "60ccd92030b9cfb9563cbf382fe38c639e5a767b8796103227c9fa54ec04aa47"
+    },
+    {
+      "target": "d:/clawx/tests/e2e/fixtures/electron-process-cleanup.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+      "sha256": "35864693cf9b6be10abc0f4ce5bb4db5a57974314967c425d2fd9ed166c9cc85"
+    },
+    {
+      "target": "d:/clawx/tests/e2e/fixtures/electron.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\e2e\\fixtures\\electron.ts",
+      "sha256": "4dfc8c742e79bc63a5e5ee13e6ee9f712b5b14fd5520d875260a263899c739cf"
+    },
+    {
+      "target": "d:/clawx/tests/e2e/session-worker-task-journey.spec.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\e2e\\session-worker-task-journey.spec.ts",
+      "sha256": "fec0b07ba70bed4d3af32e6dc8374d43f3411165f80ba8c494c43b6eaac4c1f8"
+    },
+    {
+      "target": "d:/clawx/tests/unit/chat-send-input-mode.test.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\chat-send-input-mode.test.ts",
+      "sha256": "541cfef4cc11c5cbcf50a8cda2edf855cfd881a8dd311d463626438c29b5d2ff"
+    },
+    {
+      "target": "d:/clawx/tests/unit/durable-task-session-scope.test.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\durable-task-session-scope.test.ts",
+      "sha256": "70006e2805fb789288628205c67f25d1345620ccf622148f6c8144461358c6e1"
+    },
+    {
+      "target": "d:/clawx/tests/unit/electron-process-identity.test.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\electron-process-identity.test.ts",
+      "sha256": "774bcc915df34cb3224180ad6cac01a25c91889e45cfa85f4f08878b6476fcd3"
+    },
+    {
+      "target": "d:/clawx/tests/unit/gateway-worker-history-metadata.test.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\gateway-worker-history-metadata.test.ts",
+      "sha256": "0793e8853d4fef1a701c9ac69dce19d90617b2c5cac43330c88444df68b97806"
+    },
+    {
+      "target": "d:/clawx/tests/unit/host-services.test.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\host-services.test.ts",
+      "sha256": "c7647580fd3c8358508c2ac6c3fa1c00c45192402011878bdea0347d470fb937"
+    },
+    {
+      "target": "d:/clawx/tests/unit/session-chain-panels.test.tsx",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\session-chain-panels.test.tsx",
+      "sha256": "e474a38129af9eca3b573a9dc254cbf764884eff60274b82862f2f51d7e7eda8"
+    },
+    {
+      "target": "d:/clawx/tests/unit/session-delegation-status.test.tsx",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\session-delegation-status.test.tsx",
+      "sha256": "06124ceb191565aceed3a58243419ca2aa25c6e238a40a42a5b9b478a664adc5"
+    },
+    {
+      "target": "d:/clawx/tests/unit/session-handoff-recovery.test.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\session-handoff-recovery.test.ts",
+      "sha256": "88ec8fcf7c8ff64a2fac855ee1702b04ddf51804ff6ee6dddd0e1a16fd6698c8"
+    },
+    {
+      "target": "d:/clawx/tests/unit/session-task-scope-bridge.test.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\session-task-scope-bridge.test.ts",
+      "sha256": "a59a21d67ab0d144965f1aefd91d2972814f34d1401e6eb9d6778b5e6668b03f"
+    },
+    {
+      "target": "d:/clawx/tests/unit/session-task-scope-completion.test.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\session-task-scope-completion.test.ts",
+      "sha256": "39cb2e98139153a9f25fb10c2f9fe5bb691cd8d8cd6e3427b527f6ba65fd358f"
+    },
+    {
+      "target": "d:/clawx/tests/unit/task-ledger-snapshot-cache.test.ts",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\task-ledger-snapshot-cache.test.ts",
+      "sha256": "d757dc856880cef947e089181cc63ca6486b332596151928a45235007bd33da0"
+    },
+    {
+      "target": "d:/clawx/tests/unit/workspace-agents-panel-failure.test.tsx",
+      "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\workspace-agents-panel-failure.test.tsx",
+      "sha256": "fbf2ea4aa5f0205248b4f430cff6255ff5f1dd270b6017252c18ab89018e208b"
+    }
+  ]
+}

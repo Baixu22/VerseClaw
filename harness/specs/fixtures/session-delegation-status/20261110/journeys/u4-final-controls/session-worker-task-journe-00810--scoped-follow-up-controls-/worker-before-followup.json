@@ -1,0 +1,77 @@
+{
+  "owner": {
+    "runId": "95a6b25d-43ea-496f-9a5f-e8ee04971911",
+    "status": "ok",
+    "startedAt": 1794302516728,
+    "endedAt": 1794302525765,
+    "stopReason": "stop",
+    "livenessState": "working"
+  },
+  "described": {
+    "session": {
+      "key": "agent:main:subagent:5f04da93-3a3a-4e8f-9e27-2b20f2e48640",
+      "spawnedBy": "agent:main:session-1794302489648-workerproject",
+      "spawnedWorkspaceDir": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-controls\\session-worker-task-journe-00810--scoped-follow-up-controls-\\workspace",
+      "spawnDepth": 1,
+      "spawnRootSessionKey": "agent:main:session-1794302489648-workerproject",
+      "subagentRole": "leaf",
+      "subagentControlScope": "none",
+      "kind": "direct",
+      "label": "Implementer",
+      "displayName": "Implementer",
+      "updatedAt": 1794302526219,
+      "sessionId": "bf647bbc-7acf-4415-9104-966f4b8e81ed",
+      "abortedLastRun": false,
+      "thinkingLevel": "medium",
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium",
+      "totalTokens": 120,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "status": "done",
+      "subagentRunState": "historical",
+      "hasActiveSubagentRun": false,
+      "startedAt": 1794302509806,
+      "endedAt": 1794302525765,
+      "runtimeMs": 9037,
+      "parentSessionKey": "agent:main:session-1794302489648-workerproject",
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "modelRefOverride": "custom-sessionc/mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 128000,
+      "hasActiveRun": false
+    }
+  }
+}

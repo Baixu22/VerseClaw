@@ -1,0 +1,225 @@
+{
+  "secondAgent": {
+    "id": "independent-coordinator",
+    "name": "Independent coordinator",
+    "isDefault": false,
+    "modelDisplay": "mock-coder",
+    "modelRef": "custom-sessionc/mock-coder",
+    "overrideModelRef": null,
+    "inheritedModel": true,
+    "reasoningEffort": "auto",
+    "workspace": "~/.openclaw/workspace-independent-coordinator",
+    "agentDir": "~/.openclaw/agents/independent-coordinator/agent",
+    "mainSessionKey": "agent:independent-coordinator:main",
+    "channelTypes": [],
+    "emoji": "??",
+    "avatar": {
+      "kind": "dicebear",
+      "source": "config",
+      "preset": {
+        "style": "lorelei-neutral",
+        "seed": "independent-coordinator",
+        "backgroundColor": "#dbeafe"
+      },
+      "revision": "ebc4f291"
+    }
+  },
+  "second": {
+    "ok": true,
+    "key": "agent:independent-coordinator:dashboard:86024949-9482-4b52-8262-9ca2eae6cee5",
+    "sessionId": "c2f52574-5e40-44bf-a744-a7c6f778ff37",
+    "entry": {
+      "sessionId": "c2f52574-5e40-44bf-a744-a7c6f778ff37",
+      "sessionFile": "D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-CwyFQe\\verse-claw-e2e-user-data-EVtDlZ\\openclaw-source-state\\agents\\independent-coordinator\\sessions\\c2f52574-5e40-44bf-a744-a7c6f778ff37.jsonl",
+      "updatedAt": 1794302757012,
+      "label": "Independent coordinator"
+    },
+    "runStarted": false
+  },
+  "secondTask": {
+    "id": "e58d37e9-6a99-40dc-8b98-faa186a5d1ba",
+    "title": "Independent coordinator task"
+  },
+  "readOnly": {
+    "success": true,
+    "status": "accepted",
+    "receipt": {
+      "schemaVersion": "clawx.session-delegation-receipt/v1",
+      "admissionId": "b9aa5ad8-0547-4268-bb9b-1e598a0e4809",
+      "idempotencyKey": "read-only-worker-admission",
+      "status": "accepted",
+      "orchestrationRunId": "orch_98944151-cce4-4f6e-a997-bc5846624369",
+      "acceptedAt": "2026-11-10T09:26:07.674Z",
+      "coordinator": {
+        "workspaceId": "worker-project",
+        "agentId": "independent-coordinator",
+        "sessionKey": "agent:independent-coordinator:dashboard:86024949-9482-4b52-8262-9ca2eae6cee5",
+        "bindingRevision": 1,
+        "sessionGeneration": "c2f52574-5e40-44bf-a744-a7c6f778ff37"
+      },
+      "taskRef": "e58d37e9-6a99-40dc-8b98-faa186a5d1ba",
+      "parentEnvironment": {
+        "kind": "local",
+        "canonicalRoot": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-isolation\\session-worker-task-journe-72a1d-scoped-follow-up-isolation-\\workspace",
+        "backend": "git",
+        "branch": "master",
+        "detachedHead": false,
+        "setupProfile": null
+      },
+      "parentEnvironmentRevision": 1,
+      "authorization": {
+        "approvalId": null,
+        "grantState": "authorized",
+        "owner": "gateway-permission"
+      },
+      "budget": {
+        "status": "observed",
+        "reason": null,
+        "maxWorkers": 5,
+        "process": {
+          "maxChildrenPerAgent": 5,
+          "maxSpawnDepth": 1,
+          "source": "agents.defaults.subagents"
+        },
+        "backgroundTerminal": {
+          "lane": "subagent",
+          "maxConcurrent": 8,
+          "activeCount": 0,
+          "queuedCount": 0,
+          "source": "process.command-queue.subagent"
+        }
+      },
+      "scheduler": {
+        "executionWaves": [
+          {
+            "wave": 1,
+            "taskNodeIds": [
+              "reviewer-1"
+            ],
+            "roles": [
+              "reviewer"
+            ],
+            "reason": "scheduled 1 ready node(s) within concurrency cap 5"
+          }
+        ],
+        "metrics": {
+          "queued": 0,
+          "running": 0,
+          "scheduled": 1,
+          "skipped": 0,
+          "concurrencyCap": 5,
+          "budgetEstimate": 3
+        }
+      },
+      "children": [
+        {
+          "roleName": "reviewer",
+          "taskNodeId": "reviewer-1",
+          "roleInstanceId": "orch_98944151-cce4-4f6e-a997-bc5846624369:reviewer-1:reviewer:attempt-1",
+          "admissionStatus": "accepted",
+          "runState": "accepted-not-completed",
+          "completionObserved": false,
+          "backend": "subagent",
+          "childSessionKey": "agent:independent-coordinator:subagent:efbedb56-e06d-4ec3-b82c-7860a6102416",
+          "childRunId": "7dfa60a4-09ce-4626-82d7-a46b3c1dfc66",
+          "toolAuthorization": {
+            "status": "effective",
+            "source": "role-contract+parent-clamp",
+            "roleName": "reviewer",
+            "effectiveRoleName": "reviewer",
+            "parentRoleName": null,
+            "allowlist": [
+              "read",
+              "glob",
+              "grep"
+            ],
+            "denylist": [
+              "write",
+              "edit",
+              "apply_patch",
+              "undo_write",
+              "team_orchestrate",
+              "task_loop",
+              "mission_loop",
+              "exec",
+              "bash",
+              "__role_capability:mcp_write",
+              "web_search",
+              "web_fetch",
+              "x_search",
+              "code_execution",
+              "browser",
+              "__role_capability:mcp_network"
+            ],
+            "permissionDecisionCount": 16
+          },
+          "isolation": {
+            "mode": "shared",
+            "backend": "shared-inprocess",
+            "canonicalRoot": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-isolation\\session-worker-task-journe-72a1d-scoped-follow-up-isolation-\\workspace",
+            "branch": null,
+            "detachedHead": false,
+            "verifiedCheckout": false
+          },
+          "schedulerWave": 1,
+          "error": null
+        }
+      ],
+      "errors": [],
+      "completionObserved": false,
+      "recoveryRequired": false
+    }
+  },
+  "observerOwnerBefore": {
+    "success": true,
+    "task": {
+      "contract": {
+        "objective": "Independent coordinator task",
+        "constraints": [
+          "Preserve the project coordinator"
+        ],
+        "acceptance": [
+          {
+            "id": "worker-artifact",
+            "description": "Exact assigned output",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "worker.txt",
+              "sha256": "e95cd2db770a8a4187615dceb42ceec7eed10c228b96d5aca684646100acb20e"
+            }
+          }
+        ],
+        "target": "Read the recorded transcript",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "observer-task"
+        },
+        "taskNodeId": "e58d37e9-6a99-40dc-8b98-faa186a5d1ba",
+        "domain": "ddf802070c1d28f1cf39b49efa437994951003200d2bca212f60044fc9de2fbe",
+        "revision": 1,
+        "digest": "a28f4bb3072dff5f01cb21029bf7b0123e218558a67d51ca6e2ca0da9ec74363",
+        "state": "doing",
+        "createdAt": 1794302757394,
+        "updatedAt": 1794302760506
+      },
+      "claim": {
+        "taskNodeId": "e58d37e9-6a99-40dc-8b98-faa186a5d1ba",
+        "sessionKey": "agent:independent-coordinator:dashboard:86024949-9482-4b52-8262-9ca2eae6cee5",
+        "generation": "c2f52574-5e40-44bf-a744-a7c6f778ff37",
+        "epoch": 1,
+        "attemptId": "23394166-852b-46c6-b1fe-9b3a59bc6b7a",
+        "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-isolation/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/workspace",
+        "contractRevision": 1,
+        "expiresAt": 1794302880506,
+        "state": "active"
+      },
+      "checkpoint": null,
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": []
+    },
+    "children": [],
+    "verificationReceipts": []
+  }
+}

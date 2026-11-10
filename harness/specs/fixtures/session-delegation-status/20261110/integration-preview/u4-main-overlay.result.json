@@ -1,0 +1,23 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-u4-relay-01a1c454",
+  "name": "u4-main-overlay",
+  "mode": "main checkout with planned U4 files loaded through a Vite overlay",
+  "before": {
+    "main": "390e39259429255b6712c84440be4f567e2ec25d",
+    "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d"
+  },
+  "after": {
+    "main": "390e39259429255b6712c84440be4f567e2ec25d",
+    "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d"
+  },
+  "startedAt": "2026-11-10T10:18:59.460Z",
+  "finishedAt": "2026-11-10T10:19:47.947Z",
+  "exitCode": 0,
+  "sourceUnchanged": true,
+  "tests": {
+    "passed": 100,
+    "failed": 0,
+    "pending": 0
+  }
+}

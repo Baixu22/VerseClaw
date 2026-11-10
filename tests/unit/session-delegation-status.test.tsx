@@ -3,11 +3,12 @@ import { describe, expect, it, vi } from 'vitest';
 import { SessionDelegationStatus } from '@/components/chat/SessionDelegationStatus';
 import type { SessionDelegationReceipt } from '@shared/types/session-delegation';
 import { createEmptySessionActivitySnapshot, type SessionActivityCompletionBatch } from '@shared/types/session-activity';
+import type { TaskEvidence, TaskView } from '@shared/task-system/types';
 
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 const worker = { id: 'worker-1', childSessionKey: 'child', status: 'completed' as const, updatedAt: 1, source: 'event' as const, summary: 'All business tasks are done.' };
 const receipt = { coordinator: { workspaceId: 'project-a', sessionKey: 'parent', sessionGeneration: 'generation-1' }, status: 'accepted',
-  children: [{ childSessionKey: 'child' }] } as SessionDelegationReceipt;
+  children: [{ childSessionKey: 'child', admissionStatus: 'accepted' }] } as SessionDelegationReceipt;
 function snapshot(generation = 'generation-1') {
   const result = createEmptySessionActivitySnapshot('parent');
   result.session.sessionId = generation;
@@ -18,6 +19,65 @@ function snapshot(generation = 'generation-1') {
   return result;
 }
 describe('delegation stage facts', () => {
+  it('keeps the known child acceptance unavailable after its live roster and task owner disappear', () => {
+    const { container } = render(<SessionDelegationStatus workspaceId="project-a" sessionKey="parent" generation="generation-1"
+      childSessionKey="retained-child" task={null} />);
+    expect(container.querySelector('[data-stage="acceptance"]')).toHaveAttribute('data-status', 'unavailable');
+    expect(container.querySelector('[data-stage="execution"]')).toHaveAttribute('data-status', 'unavailable');
+  });
+  it('does not borrow another child admission or report for a run-only worker', () => {
+    const runOnlyWorker = { id: 'run-only', status: 'error' as const, updatedAt: 1, source: 'event' as const };
+    const { container } = render(<SessionDelegationStatus workspaceId="project-a" sessionKey="parent" generation="generation-1"
+      receipt={receipt} snapshot={snapshot()} worker={runOnlyWorker} />);
+    expect(container.querySelector('[data-stage="execution"]')).toHaveAttribute('data-status', 'error');
+    expect(container.querySelector('[data-stage="admission"]')).toHaveAttribute('data-status', 'unavailable');
+    expect(container.querySelector('[data-stage="report"]')).toHaveAttribute('data-status', 'unavailable');
+  });
+  it('shows a business acceptance only after its task owner accepts the contract', () => {
+    const task = { contract: { taskNodeId: 'task-1', state: 'doing' } } as TaskView;
+    const admission = { ...receipt, taskRef: 'task-1' };
+    const props = { workspaceId: 'project-a', sessionKey: 'parent', generation: 'generation-1',
+      receipt: admission, snapshot: snapshot(), worker };
+    const { container, rerender } = render(<SessionDelegationStatus {...props} task={task} />);
+    expect(container.querySelector('[data-stage="acceptance"]')).toHaveAttribute('data-status', 'pending');
+    rerender(<SessionDelegationStatus {...props} task={{ ...task, contract: { ...task.contract, state: 'done' } }} />);
+    expect(container.querySelector('[data-stage="acceptance"]')).toHaveAttribute('data-status', 'accepted');
+    const otherTask = { ...task, contract: { ...task.contract, taskNodeId: 'another-task', state: 'done' } } as TaskView;
+    rerender(<SessionDelegationStatus {...props} worker={undefined} task={otherTask} />);
+    expect(container.querySelector('[data-stage="acceptance"]')).toHaveAttribute('data-status', 'unavailable');
+  });
+  it('keeps each child admission separate from a partial delegation and reads its canonical task independently of the root taskRef', () => {
+    const partial = { ...receipt, status: 'partial', taskRef: 'root-task', children: [
+      { childSessionKey: 'child', taskNodeId: 'graph-role-1', admissionStatus: 'accepted' },
+      { childSessionKey: 'other-child', taskNodeId: 'graph-role-2', admissionStatus: 'rejected' },
+    ] } as SessionDelegationReceipt;
+    const task = { contract: { taskNodeId: 'canonical-child-task', state: 'done' } } as TaskView;
+    const view = render(<SessionDelegationStatus workspaceId="project-a" sessionKey="parent" generation="generation-1"
+      receipt={partial} worker={worker} task={task} />);
+    expect(view.container.querySelector('[data-stage="admission"]')).toHaveAttribute('data-status', 'accepted');
+    expect(view.container.querySelector('[data-stage="acceptance"]')).toHaveAttribute('data-status', 'accepted');
+    view.rerender(<SessionDelegationStatus workspaceId="project-a" sessionKey="parent" generation="generation-1"
+      receipt={partial} childSessionKey="other-child" />);
+    expect(view.container.querySelector('[data-stage="admission"]')).toHaveAttribute('data-status', 'rejected');
+    view.rerender(<SessionDelegationStatus workspaceId="project-a" sessionKey="parent" generation="generation-1" receipt={partial} />);
+    expect(view.container.querySelector('[data-stage="admission"]')).toHaveAttribute('data-status', 'partial');
+  });
+  it('shows recorded verifier facts for one task revision, epoch and candidate without accepting the business task', () => {
+    const task = { contract: { taskNodeId: 'task-1', revision: 2, state: 'doing',
+      acceptance: [{ id: 'file' }, { id: 'test' }] } } as TaskView;
+    const props = { workspaceId: 'project-a', sessionKey: 'parent', generation: 'generation-1', task, worker };
+    const recorded = [{ taskNodeId: 'task-1', revision: 2, epoch: 3, candidate: 'candidate-a', criterionId: 'file', createdAt: 1 },
+      { taskNodeId: 'task-1', revision: 2, epoch: 3, candidate: 'candidate-b', criterionId: 'test', createdAt: 2 },
+      { taskNodeId: 'other-task', revision: 2, epoch: 3, candidate: 'candidate-b', criterionId: 'file', createdAt: 3 },
+      { taskNodeId: 'task-1', revision: 1, epoch: 3, candidate: 'candidate-b', criterionId: 'file', createdAt: 4 }] as TaskEvidence[];
+    const view = render(<SessionDelegationStatus {...props} verificationReceipts={[]} />);
+    expect(view.container.querySelector('[data-stage="verification"]')).toHaveAttribute('data-status', 'pending');
+    view.rerender(<SessionDelegationStatus {...props} verificationReceipts={recorded} />);
+    expect(view.container.querySelector('[data-stage="verification"]')).toHaveAttribute('data-status', 'recorded');
+    expect(view.container.querySelector('[data-stage="verification"]')).toHaveAttribute('data-recorded-criteria', '1');
+    expect(view.container.querySelector('[data-stage="verification"]')).toHaveAttribute('data-candidate', 'candidate-b');
+    expect(view.container.querySelector('[data-stage="acceptance"]')).toHaveAttribute('data-status', 'pending');
+  });
   it('keeps accepted, run completion and report delivery separate from task acceptance', () => {
     const { container } = render(<SessionDelegationStatus workspaceId="project-a" sessionKey="parent" generation="generation-1"
       receipt={receipt} snapshot={snapshot()} worker={worker} />);

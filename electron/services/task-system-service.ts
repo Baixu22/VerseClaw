@@ -104,16 +104,23 @@ export async function pageManagedTasks(
   }
 }
 
-export async function readSessionTask(workspaceId:string,sessionKey:string,gateway?:GatewayManager):Promise<TaskSessionSnapshot> {
+export async function readSessionTask(workspaceId:string,sessionKey:string,gateway?:GatewayManager,expectedGeneration?:string):Promise<TaskSessionSnapshot> {
   if (!sessionKey?.trim()) throw new Error('TASK_SESSION_IDENTITY_REQUIRED');
   const store=await openTaskSystem(workspaceId);
   if (!store) return {task:null,children:[]};
   try {
     if (!gateway) throw new Error('TASK_SESSION_OWNER_UNAVAILABLE');
-    const described=await gateway.rpc<{session?:{sessionId?:string}}>('sessions.describe',{key:sessionKey},10_000);
+    const described=await gateway.rpc<{session?:{sessionId?:string}}>('sessions.describe',{key:sessionKey});
     const generation=described.session?.sessionId;
+    if (expectedGeneration && generation !== expectedGeneration) throw new Error('TASK_GENERATION_STALE');
     if (!generation) return {task:null,children:[]};
-    return store.sessionSnapshot(sessionKey,generation);
+    const snapshot=store.sessionSnapshot(sessionKey,generation);
+    const verificationReceipts=snapshot.task?store.getTaskEvidence(snapshot.task.contract.taskNodeId):[];
+    if (expectedGeneration) {
+      const after=await gateway.rpc<{session?:{sessionId?:string}}>('sessions.describe',{key:sessionKey});
+      if (after.session?.sessionId !== generation) throw new Error('TASK_GENERATION_STALE');
+    }
+    return {...snapshot,verificationReceipts};
   } finally {store.close();}
 }
 
@@ -153,6 +160,15 @@ type ManagedSessionEffectInput = {
   taskNodeId?: string;
   fallbackTaskNodeId?: string;
 };
+
+/** Read a persisted session reference without acquiring execution ownership. */
+export function readManagedSessionReference(workspaceRoot: string, sessionKey: string, generation: string): TaskView | null {
+  const access = createExecutionTaskAccess(workspaceRoot);
+  if (!existsSync(access.domain.database)) return null;
+  const store = new TaskSystemStore(access.domain, undefined, access);
+  try { return store.binding(sessionKey, generation); }
+  finally { store.close(); }
+}
 
 function resolveManagedSessionEffectTask(store: TaskSystemStore, input: ManagedSessionEffectInput): TaskView {
   const bound = store.binding(input.sessionKey, input.generation);

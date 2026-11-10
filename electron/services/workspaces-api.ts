@@ -1419,12 +1419,15 @@ async function admitSessionTaskEffect(ctx: WorkspacesApiContext, raw: SessionTas
   if (delegatedParentTask && !snapshot.nodes.some((node) => node.id === delegatedParentTask && node.kind === 'task')) throw new Error('TASK_SCOPE_PARENT_TASK_MISSING');
   const parentSession = live.delegation?.parentSessionKey ?? live.scheduled?.coordinator?.sessionKey;
   const parentGeneration = live.delegation?.parentGeneration ?? live.scheduled?.coordinator?.generation;
+  const { readManagedSessionReference, readManagedSessionEffect, startManagedSessionEffect } = await import('./task-system-service');
   if (delegatedParentTask && !snapshot.sessionLinks.some((link) => link.sessionKey === parentSession
-    && link.nodeId === delegatedParentTask && (!link.sessionGeneration || link.sessionGeneration === parentGeneration))) throw new Error('TASK_SCOPE_PARENT_TASK_LINK_STALE');
+    && link.nodeId === delegatedParentTask && (!link.sessionGeneration || link.sessionGeneration === parentGeneration))) {
+    const parentReference = parentSession && parentGeneration ? readManagedSessionReference(root, parentSession, parentGeneration) : null;
+    if (parentReference?.contract.taskNodeId !== delegatedParentTask) throw new Error('TASK_SCOPE_PARENT_TASK_LINK_STALE');
+  }
   const links = snapshot.sessionLinks.filter((link) => link.sessionKey === request.sessionKey && link.nodeId);
   const currentLinks = links.filter((link) => !link.sessionGeneration || link.sessionGeneration === request.sessionGeneration);
   const businessLinks = currentLinks.filter((link) => snapshot.nodes.some((node) => node.id === link.nodeId && node.kind === 'task'));
-  const { readManagedSessionEffect, startManagedSessionEffect } = await import('./task-system-service');
   const managedTask = readManagedSessionEffect({ workspaceRoot: root, sessionKey: request.sessionKey,
     generation: request.sessionGeneration, fallbackTaskNodeId: existing?.activeTaskNodeId });
   const selectedIds = managedTask ? [managedTask.contract.taskNodeId] : existing?.activeTaskNodeId ? [existing.activeTaskNodeId]

@@ -1,0 +1,2702 @@
+{
+  "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+  "sourceUnchanged": true,
+  "drift": [],
+  "used": [
+    [
+      "d:/clawx/tests/setup.ts",
+      {
+        "source": "D:/ClawX/tests/setup.ts",
+        "sha256": "7c9c36877661fc922163d3304b0e18edac978038b89b1ac8d8b3bdecbad04cdf"
+      }
+    ],
+    [
+      "d:/clawx/tests/unit/host-services.test.ts",
+      {
+        "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\host-services.test.ts",
+        "sha256": "c7647580fd3c8358508c2ac6c3fa1c00c45192402011878bdea0347d470fb937"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/settings-api.ts",
+      {
+        "source": "D:/ClawX/electron/services/settings-api.ts",
+        "sha256": "5be398843a9f9d5f9c3981c4e1bfb7d71d65b84e245b5b5c428719a435869dff"
+      }
+    ],
+    [
+      "d:/clawx/electron/main/menu.ts",
+      {
+        "source": "D:/ClawX/electron/main/menu.ts",
+        "sha256": "0861c0729e0edab8723c724d335b4fc43dd1e1415ffd9a79593e2167e070288d"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/menu-labels.ts",
+      {
+        "source": "D:/ClawX/shared/i18n/menu-labels.ts",
+        "sha256": "2d14f47c97d1a54bcb56bb6a048e7e1d4dc0973cb7e55863762205b0f2c4ffab"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/menu.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/menu.json",
+        "sha256": "cfb4659dfac7e92d79e74a5e5786894fbaee58e20c56a2c2c4c2cb2efb39abe8"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/zh/menu.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/zh/menu.json",
+        "sha256": "55ff41637a8bffc7a8a35fe390868e0f0b39796e20f9d05141438ab4f3570de9"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/ja/menu.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/ja/menu.json",
+        "sha256": "8299ddb615031a0ca2bcf64baec909c03de47db782991c0356657ea0d216f257"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/ru/menu.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/ru/menu.json",
+        "sha256": "b4459a223cf346a19c399df78248d8b83605142cf65d4413126abb262f8ea571"
+      }
+    ],
+    [
+      "d:/clawx/shared/language.ts",
+      {
+        "source": "D:/ClawX/shared/language.ts",
+        "sha256": "23cd739ec2c0fae72708fb9be554f300fc31e69eed0fa309b5e047593f7f48f7"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/safe-open-external.ts",
+      {
+        "source": "D:/ClawX/electron/utils/safe-open-external.ts",
+        "sha256": "f9de309eda396a781de5983970c71b6e0775c8ee9d54ff3de69c469f47eeb2ac"
+      }
+    ],
+    [
+      "d:/clawx/shared/security/url-policy.ts",
+      {
+        "source": "D:/ClawX/shared/security/url-policy.ts",
+        "sha256": "b11c8d42f6189f2b07b5495a4e443b96473d0aedbd1e67e443d252714f47a49c"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/telemetry.ts",
+      {
+        "source": "D:/ClawX/electron/utils/telemetry.ts",
+        "sha256": "8e59a3a073eab32ae8d59974eb46a3d992c682e8dd558889e090651250c0bb95"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/logger.ts",
+      {
+        "source": "D:/ClawX/electron/utils/logger.ts",
+        "sha256": "4213fcae045fc63af69727ce7e145116a2fc947a9493b3e531faa61b0dd73049"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/payload-utils.ts",
+      {
+        "source": "D:/ClawX/electron/services/payload-utils.ts",
+        "sha256": "a70e88c91c471e3d208f6f17fcde83c297a4bad7a3f5f9d15e0f6ea1de7d746f"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/gateway-api.ts",
+      {
+        "source": "D:/ClawX/electron/services/gateway-api.ts",
+        "sha256": "3849b7a998b310854d2b3454ae38049da8c3f4804df197eb5ed758a675acb2d4"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/sensitive-capture-gate.ts",
+      {
+        "source": "D:/ClawX/electron/services/sensitive-capture-gate.ts",
+        "sha256": "8cf01fac823319949f384d753bd92926b028d227080b92ef3eb3f26a5c0e1f8d"
+      }
+    ],
+    [
+      "d:/clawx/shared/privacy/sensitive-capture-policy.ts",
+      {
+        "source": "D:/ClawX/shared/privacy/sensitive-capture-policy.ts",
+        "sha256": "b3c8a13dcefc872844066cefe94b0ece371b69f3b3db0da10c805501e003bd63"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/config.ts",
+      {
+        "source": "D:/ClawX/electron/utils/config.ts",
+        "sha256": "aad28c237c58af97cedc431c01fa2868757e8b5587e3bfb221ff746bb71e748a"
+      }
+    ],
+    [
+      "d:/clawx/shared/gateway-endpoint.ts",
+      {
+        "source": "D:/ClawX/shared/gateway-endpoint.ts",
+        "sha256": "d0ffc482df51398f17ee3dc9f5395d0bdf8bb78a276b429229ca739624fe8c94"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/control-ui-device-pairing.ts",
+      {
+        "source": "D:/ClawX/electron/utils/control-ui-device-pairing.ts",
+        "sha256": "9365fb0479c330b08dbc934022d0422cd7e3ec9d5bf9abd965414e68bd594b32"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/env-path.ts",
+      {
+        "source": "D:/ClawX/electron/utils/env-path.ts",
+        "sha256": "575bee6d961eca052b63a72618bf6e9eb9fd9b3e54058ddca388bfa5fec95c1f"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/uv-env.ts",
+      {
+        "source": "D:/ClawX/electron/utils/uv-env.ts",
+        "sha256": "94149304260f4e6c4f482103d3f858446db53b17f7425f422a16c333a892f1e3"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/openclaw-control-ui.ts",
+      {
+        "source": "D:/ClawX/electron/utils/openclaw-control-ui.ts",
+        "sha256": "2a4666bf88728977fe295859014baac76d6350218e85592da658416cba8556fe"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/mock-provider.ts",
+      {
+        "source": "D:/ClawX/electron/services/mock-provider.ts",
+        "sha256": "8fb904c53e6ad6a4acccf0eca259811c6ca9943663d8a2180779716d6e3cc56f"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/permissions-api.ts",
+      {
+        "source": "D:/ClawX/electron/services/permissions-api.ts",
+        "sha256": "2a898c96b2b1f735adcdbd1f10d5e533c8935db75da40ed7dea461f42d18b952"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/orchestration-presets-api.ts",
+      {
+        "source": "D:/ClawX/electron/services/orchestration-presets-api.ts",
+        "sha256": "197e178cc5a41a4310b252542e54db5622aac4cc036290a2925d085637d6d06b"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/permission-decision-audit.ts",
+      {
+        "source": "D:/ClawX/electron/services/permission-decision-audit.ts",
+        "sha256": "7114e18efa86a153ae390f849cc6d393525ebbf415257b24fee320c9484d662a"
+      }
+    ],
+    [
+      "d:/clawx/shared/product-semantics.ts",
+      {
+        "source": "D:/ClawX/shared/product-semantics.ts",
+        "sha256": "83ce341c1bac77ef3cac893555db3fda1f92833db4602cf9694bfd2f6ef86284"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/task-ledger-reference.ts",
+      {
+        "source": "D:/ClawX/shared/types/task-ledger-reference.ts",
+        "sha256": "7fb8caee299a3e5e2bb71bfcecaf3da56be68fcd3493896bafa97717da8f085d"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/identity-scope.ts",
+      {
+        "source": "D:/ClawX/shared/types/identity-scope.ts",
+        "sha256": "d8418a7294578fc5fc0193ad4d94e9cabcafeceaa80cf63aa424470ee8d389bc"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/coding-run.ts",
+      {
+        "source": "D:/ClawX/shared/types/coding-run.ts",
+        "sha256": "1c5b30f8163c820a06351ec740fd444b3b1dab4923a40b228c7424bd9314d686"
+      }
+    ],
+    [
+      "d:/clawx/shared/product-semantic-unsafe-claims.ts",
+      {
+        "source": "D:/ClawX/shared/product-semantic-unsafe-claims.ts",
+        "sha256": "a72cf2655e0f970fd12f946b474f414839f2cc94016690a2fa824d64e315b07b"
+      }
+    ],
+    [
+      "d:/clawx/shared/sandbox/errors.ts",
+      {
+        "source": "D:/ClawX/shared/sandbox/errors.ts",
+        "sha256": "4120d4fe6ec44539698156f97419258b46705dd8bd30bc3c96f9caac569e8772"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/workspace-permissions.ts",
+      {
+        "source": "D:/ClawX/electron/services/workspace-permissions.ts",
+        "sha256": "684ebb1be67621d6d6238706ce8b87e531d10b96de98d559aedb2099c8c303db"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/path-broker.ts",
+      {
+        "source": "D:/ClawX/electron/services/path-broker.ts",
+        "sha256": "0f1a0aad07a4a16d6c9a1aec9fb73791078256dfd6e5d7c29a0e375f780c2983"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/workspace.ts",
+      {
+        "source": "D:/ClawX/shared/types/workspace.ts",
+        "sha256": "e6742fe457173e07b206e39b7784e83616537aee4b4248d7eb1144d55bc5a080"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/sandbox-high-risk-gate.ts",
+      {
+        "source": "D:/ClawX/electron/utils/sandbox-high-risk-gate.ts",
+        "sha256": "18807a8b30ba848209160b4e73ff4d57129c71233fb8ab4b04d097e4247805b2"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/providers-api.ts",
+      {
+        "source": "D:/ClawX/electron/services/providers-api.ts",
+        "sha256": "e9c0ff89ec724bfb2c880188808942688fbea3ba7b30a607d4e84709b6111d2b"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/openclaw-auth.ts",
+      {
+        "source": "D:/ClawX/electron/utils/openclaw-auth.ts",
+        "sha256": "f8e69a02c9b1be8d9faab7bf50891f40db495e2d9581de4a22361d581761b2d5"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/provider-registry.ts",
+      {
+        "source": "D:/ClawX/electron/utils/provider-registry.ts",
+        "sha256": "4ada49c9876d1f006ae2dee1b225161cc5c7dabb6eba0ca3a6f9ca1c0a959de5"
+      }
+    ],
+    [
+      "d:/clawx/electron/shared/providers/types.ts",
+      {
+        "source": "D:/ClawX/electron/shared/providers/types.ts",
+        "sha256": "77f9f022ddc23528247c1eaf66fd0ef7c1e43813e2b55d26d5ae868495e2df57"
+      }
+    ],
+    [
+      "d:/clawx/electron/shared/providers/registry.ts",
+      {
+        "source": "D:/ClawX/electron/shared/providers/registry.ts",
+        "sha256": "b6a1df65c883430d2d22901b6a905c54ea925f939fc9cea7c52ee8b0ea743fa5"
+      }
+    ],
+    [
+      "d:/clawx/shared/openrouter-attribution.ts",
+      {
+        "source": "D:/ClawX/shared/openrouter-attribution.ts",
+        "sha256": "0a34131182dc017b28fd11cb9b55c28e5a08c91e51a1b4f293f8d0255ad92bbf"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/provider-keys.ts",
+      {
+        "source": "D:/ClawX/electron/utils/provider-keys.ts",
+        "sha256": "08be01597ae055180a241b256e1508e86e51ef45b94921e869948e21b1c297a3"
+      }
+    ],
+    [
+      "d:/clawx/electron/shared/pi-ai-model-cost.ts",
+      {
+        "source": "D:/ClawX/electron/shared/pi-ai-model-cost.ts",
+        "sha256": "c501a7442a555d9f6132eb7888ba7a0a7b92e22dab0058787b33caf55c024c14"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/config-mutex.ts",
+      {
+        "source": "D:/ClawX/electron/utils/config-mutex.ts",
+        "sha256": "5327c3c911605522b5cd2dbf45d7b43b23739b32fd555d9af5bf2b500c82fb12"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/atomic-write.ts",
+      {
+        "source": "D:/ClawX/electron/utils/atomic-write.ts",
+        "sha256": "c4201468c95a901298a0bf43368aefdc938a453c66c6197a46b0211f5ac29841"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/secrets/auth-profile-secret-broker.ts",
+      {
+        "source": "D:/ClawX/electron/services/secrets/auth-profile-secret-broker.ts",
+        "sha256": "d00b4f4db22d197080a26f1c7d81543b6d81ef210d5339458acff150d1037f32"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/providers/store-instance.ts",
+      {
+        "source": "D:/ClawX/electron/services/providers/store-instance.ts",
+        "sha256": "855afc3354854fcb9de84ccdc8258b75ee288a8144970ab7d2a5517db1d56ccb"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/secrets/secret-store.ts",
+      {
+        "source": "D:/ClawX/electron/services/secrets/secret-store.ts",
+        "sha256": "94282e1b5f04fa00c701ef513a38fd3a96f3530c5612bd10b82e62225f4df753"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/openclaw-image-relay-constants.ts",
+      {
+        "source": "D:/ClawX/electron/utils/openclaw-image-relay-constants.ts",
+        "sha256": "4c8c0917c543c728fbe7c47c5025ada8b2a573dd69503bdd210416bff9d9d192"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/workspace-runtime-permissions.ts",
+      {
+        "source": "D:/ClawX/electron/utils/workspace-runtime-permissions.ts",
+        "sha256": "d90351e8a0d62fe6568b25236dd46d0015cc48d3e0beeff1d7d90ed149a411a9"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/sandbox-provider-detection.ts",
+      {
+        "source": "D:/ClawX/electron/utils/sandbox-provider-detection.ts",
+        "sha256": "6ac983b6743e970f56934362f8351f3510c732c9dd549b55075d64096f76c774"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/counted-child-process.ts",
+      {
+        "source": "D:/ClawX/electron/utils/counted-child-process.ts",
+        "sha256": "53fa8feb8a8b3ec5a11a0bb313ad6be1817b476ed8bea0f263a030c33062f18b"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/performance-metrics.ts",
+      {
+        "source": "D:/ClawX/electron/services/performance-metrics.ts",
+        "sha256": "d559da7dc5f1f7254fcecd1640824abfa1b28a5cd883a44049d23b68fbfbc1f8"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/channels-api.ts",
+      {
+        "source": "D:/ClawX/electron/services/channels-api.ts",
+        "sha256": "b1e5307db37b91754d883bd227dc380bf23a79958f5408dd18c28745401ba993"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/session-util.ts",
+      {
+        "source": "D:/ClawX/electron/utils/session-util.ts",
+        "sha256": "7560fafb2e62d1940a36240eae496f5c0c7f2a7cf1ca1a76da7a14a2102afeae"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/channel-status.ts",
+      {
+        "source": "D:/ClawX/electron/utils/channel-status.ts",
+        "sha256": "ffc17ae1fea3399742b94559aa2d738a0537786f216b1658392dbba463c12c0d"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/channel-alias.ts",
+      {
+        "source": "D:/ClawX/electron/utils/channel-alias.ts",
+        "sha256": "6ae1a71bf6d1459ab70cc4efd8f109b690d2caae2c5e9d8cfecdba3ea3b9e85b"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/gateway-health.ts",
+      {
+        "source": "D:/ClawX/electron/utils/gateway-health.ts",
+        "sha256": "049fb4676a0782a2d26de5b8bba431d9224f06058884b6a40000e202f6702dbe"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/agents-api.ts",
+      {
+        "source": "D:/ClawX/electron/services/agents-api.ts",
+        "sha256": "ab0168874513cd2d18a658c2aedbbf4a9707c157c9713c6528c1b811ad89f88c"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/diagnostics-api.ts",
+      {
+        "source": "D:/ClawX/electron/services/diagnostics-api.ts",
+        "sha256": "0a2e5077aebe754caae208147c3d1ffa67bc47e7143922000ebf8018b1e0b7df"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/support-bundle.ts",
+      {
+        "source": "D:/ClawX/electron/services/support-bundle.ts",
+        "sha256": "457bab360fd1b1771a894b2597309988a11fcd0db0e1e3cc47739597d5b7b8f2"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/dcs-prod-flags-api.ts",
+      {
+        "source": "D:/ClawX/electron/services/dcs-prod-flags-api.ts",
+        "sha256": "d4f58c4cefbc6ed1ec291c40c4cc2e9990d3cdce9d726fdcaedd84ec35b998c0"
+      }
+    ],
+    [
+      "d:/clawx/shared/dcs/prod-flags-catalog.ts",
+      {
+        "source": "D:/ClawX/shared/dcs/prod-flags-catalog.ts",
+        "sha256": "9ae89fc4d0ed7cdde505c0b2af2db4373b98fded8162d923d1a8f62b33e2fa80"
+      }
+    ],
+    [
+      "d:/clawx/electron/gateway/generation.ts",
+      {
+        "source": "D:/ClawX/electron/gateway/generation.ts",
+        "sha256": "ff5f01549fe081ea0d4771bc5d68adfb06f1710bd87c1de12d1158cd363f384f"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/dcs-flag-ack.ts",
+      {
+        "source": "D:/ClawX/electron/services/dcs-flag-ack.ts",
+        "sha256": "2d820116d2a56e9abe0ca742d6bb7e0da1e260a7902f382260bdc664075cfcc2"
+      }
+    ],
+    [
+      "d:/clawx/shared/dcs/prod-flags-control.ts",
+      {
+        "source": "D:/ClawX/shared/dcs/prod-flags-control.ts",
+        "sha256": "fe3dee6883b0051250a219cae4dcc8505763105e45a085b53180e4477cbc08e6"
+      }
+    ],
+    [
+      "d:/clawx/shared/dcs/workspace-context-profile.ts",
+      {
+        "source": "D:/ClawX/shared/dcs/workspace-context-profile.ts",
+        "sha256": "2fcc0d44ed80e84a6b3aaa142ce9f9eb902b5c092bce1f77a628d8444ce4da77"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/dcs-prod-flags-env.ts",
+      {
+        "source": "D:/ClawX/electron/utils/dcs-prod-flags-env.ts",
+        "sha256": "364d8126391290c2d24c5389bfa27de255edb2bd035ded015519e10c56f62aea"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/cron-maintenance.ts",
+      {
+        "source": "D:/ClawX/electron/services/cron-maintenance.ts",
+        "sha256": "7b160db32e3b8d0a768f43681cfca98f45a5982d4afebe6ada66999f4e94f90c"
+      }
+    ],
+    [
+      "d:/clawx/shared/resources/index.ts",
+      {
+        "source": "D:/ClawX/shared/resources/index.ts",
+        "sha256": "6cc3231a2cd43bd43937031bbe0d15c250ff98366d9488d3b8bc9c8d4b939f76"
+      }
+    ],
+    [
+      "d:/clawx/shared/resources/bounded-cache.ts",
+      {
+        "source": "D:/ClawX/shared/resources/bounded-cache.ts",
+        "sha256": "c86fc2a7e65c9bf2b30e43101680b79b92456ef74be7c4e9413dca323f5c9149"
+      }
+    ],
+    [
+      "d:/clawx/shared/resources/singleflight.ts",
+      {
+        "source": "D:/ClawX/shared/resources/singleflight.ts",
+        "sha256": "b64ecaa252e1208ad02f245f6724ac5d9cba327af9f7810bffd4bc6629e2abd8"
+      }
+    ],
+    [
+      "d:/clawx/shared/resources/wait.ts",
+      {
+        "source": "D:/ClawX/shared/resources/wait.ts",
+        "sha256": "9d569be0fb2878e1f5f6b86b0404b9011dddfa96a5788098aae45f2f4e958f84"
+      }
+    ],
+    [
+      "d:/clawx/shared/resources/adaptive-limit.ts",
+      {
+        "source": "D:/ClawX/shared/resources/adaptive-limit.ts",
+        "sha256": "714b896296d76633881d8f9084dec8f6475b560eb799233da4dcd3e3435558cf"
+      }
+    ],
+    [
+      "d:/clawx/shared/resources/token-bucket.ts",
+      {
+        "source": "D:/ClawX/shared/resources/token-bucket.ts",
+        "sha256": "7ba02f07493173f5f218596794eec3a71b28b41906af4c33c5e8188c7a93ec7c"
+      }
+    ],
+    [
+      "d:/clawx/shared/resources/priority-queue.ts",
+      {
+        "source": "D:/ClawX/shared/resources/priority-queue.ts",
+        "sha256": "2b05c7c673ddad49951b4ee1dd4ebfdb99db0143c673332e67f19c12fc0c46a0"
+      }
+    ],
+    [
+      "d:/clawx/shared/resources/drf-share.ts",
+      {
+        "source": "D:/ClawX/shared/resources/drf-share.ts",
+        "sha256": "36ac8d95320cc36a85c2ec6df5a4eef92749661aed5465af4a46b0fc3ddf9340"
+      }
+    ],
+    [
+      "d:/clawx/shared/resources/timer-aligner.ts",
+      {
+        "source": "D:/ClawX/shared/resources/timer-aligner.ts",
+        "sha256": "bb5bc08695da1c2d0f60e983d4e74e116ed842af96a17a3b77fb20a6461a153a"
+      }
+    ],
+    [
+      "d:/clawx/shared/resources/watcher-hub.ts",
+      {
+        "source": "D:/ClawX/shared/resources/watcher-hub.ts",
+        "sha256": "c257bc9be394abe44e631846c8e97af45eea3f4ee062653b1dc3935012eedc66"
+      }
+    ],
+    [
+      "d:/clawx/shared/resources/write-coalescer.ts",
+      {
+        "source": "D:/ClawX/shared/resources/write-coalescer.ts",
+        "sha256": "0f93f8d52b4ccc04468df09c7b969c8ba251ef45e882f0dc0918c89890cea88c"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/cron-api.ts",
+      {
+        "source": "D:/ClawX/electron/services/cron-api.ts",
+        "sha256": "de38bc38d5f4e4391b84dc723206c8f380a84a748b1093348308888a91833b8b"
+      }
+    ],
+    [
+      "d:/clawx/shared/cron-browser-automation.ts",
+      {
+        "source": "D:/ClawX/shared/cron-browser-automation.ts",
+        "sha256": "e28e7bd62a728799c0e2a1ee6edf81d6a4dd2a9dcddd1789d2ee207ae19d2db8"
+      }
+    ],
+    [
+      "d:/clawx/shared/long-session-followup-scope.ts",
+      {
+        "source": "D:/ClawX/shared/long-session-followup-scope.ts",
+        "sha256": "552283506ae4d89587d1678519f8f0016b0ae7bae3932f2eff1db578d50504d9"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/logs-api.ts",
+      {
+        "source": "D:/ClawX/electron/services/logs-api.ts",
+        "sha256": "eb998673fb47955aeaf5ec82445cca1ded3fb030c69bc85dc60e00b18ea1aea7"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/chat-api.ts",
+      {
+        "source": "D:/ClawX/electron/services/chat-api.ts",
+        "sha256": "6004e57f9a45752a684f1f0ed07892b727a1da6ed098f5ded19037cf68ff6de3"
+      }
+    ],
+    [
+      "d:/clawx/electron/gateway/protocol.ts",
+      {
+        "source": "D:/ClawX/electron/gateway/protocol.ts",
+        "sha256": "47c0899e193999742d9811e64b7641cba970ccdb846ee936595f928b518f2ca7"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/task-ledger-service.ts",
+      {
+        "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\electron\\services\\task-ledger-service.ts",
+        "sha256": "ed760146c185f51e613a02138856f5267a28e194f94f3c8228e31d7c6fcd6076"
+      }
+    ],
+    [
+      "d:/clawx/shared/task-system/event-store.ts",
+      {
+        "source": "D:/ClawX/shared/task-system/event-store.ts",
+        "sha256": "bd3f5455106c7e2a3adb2051172247537b72296591fec5a49974eb551997bfd9"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/task-ledger-working-context.ts",
+      {
+        "source": "D:/ClawX/electron/services/task-ledger-working-context.ts",
+        "sha256": "645090a9637612f23cdd46387b476fbbcc2474b1bb829e0f643598a938bec2d7"
+      }
+    ],
+    [
+      "d:/clawx/shared/task-ledger-working-context.ts",
+      {
+        "source": "D:/ClawX/shared/task-ledger-working-context.ts",
+        "sha256": "43eb5c0c6269ff088b8079608e76bb19afc46a8c8510997ae1388ca9eb68563d"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/task-ledger.ts",
+      {
+        "source": "D:/ClawX/shared/types/task-ledger.ts",
+        "sha256": "75d3fb3d7f79ef5836f2981c8d551fcb8f227c227159bbc777ff31309ae90413"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/resource-tracker.ts",
+      {
+        "source": "D:/ClawX/electron/services/resource-tracker.ts",
+        "sha256": "ba048290d8dde218249270f62a49f45334a9582b388a5cd4445fa1e31822582e"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/resources/background-work-gate.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/resources/background-work-gate.ts",
+        "sha256": "d5dd54a337748aa17b496952071b295cae95ec093fbbf06d03f63d1fb883ef06"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/resources.ts",
+      {
+        "source": "D:/ClawX/shared/types/resources.ts",
+        "sha256": "eaf7cbc7d2d66f1290ac077a9974d158964bee6d564f1742f9bc18086eb9d713"
+      }
+    ],
+    [
+      "d:/clawx/shared/agent-resource-limits.ts",
+      {
+        "source": "D:/ClawX/shared/agent-resource-limits.ts",
+        "sha256": "ed3c52492a61e08d0972dd30c04566f219e8da0183c51aaaa29538acaa4123b6"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/long-task-control.ts",
+      {
+        "source": "D:/ClawX/shared/types/long-task-control.ts",
+        "sha256": "7465c65b17f0d5d738340fa892d1cc2dbbdf8620467e70b6b86beb209ff6c814"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/token-usage.ts",
+      {
+        "source": "D:/ClawX/electron/utils/token-usage.ts",
+        "sha256": "adcd400cd0564b09ea2b2743afd68a547ccf332df7c53d7d50d500e399dbf10e"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/token-usage-core.ts",
+      {
+        "source": "D:/ClawX/electron/utils/token-usage-core.ts",
+        "sha256": "74838c2b10bd71561123611208bb69181b0bbe35996292dbb4009debbcbfdaf3"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/usage.ts",
+      {
+        "source": "D:/ClawX/shared/types/usage.ts",
+        "sha256": "e766dc5d2eb004790d410995aa9316cc8254a60c6caf0a4206fe75bcb1e4135e"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/session-files.ts",
+      {
+        "source": "D:/ClawX/electron/utils/session-files.ts",
+        "sha256": "032d35b68d14e13ddeabe225be3960d42ac947476493aba81836863459c84602"
+      }
+    ],
+    [
+      "d:/clawx/shared/workspace-fingerprint.ts",
+      {
+        "source": "D:/ClawX/shared/workspace-fingerprint.ts",
+        "sha256": "49ce030207375bced1a98ed673c25ebb14c2f09a65ced2379106a14dc6345668"
+      }
+    ],
+    [
+      "d:/clawx/shared/long-session-continuity.ts",
+      {
+        "source": "D:/ClawX/shared/long-session-continuity.ts",
+        "sha256": "88a7b2169805282f9d39f70e1f30dd47207f9772e6bb18b8fce430516e515eb0"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/host-deadline-context.ts",
+      {
+        "source": "D:/ClawX/electron/utils/host-deadline-context.ts",
+        "sha256": "0bd0f5ddf87ccbe58e4b8f3a532470a33a238b4a15c476678cfe8d45afbb1ea7"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/task-system-service.ts",
+      {
+        "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\electron\\services\\task-system-service.ts",
+        "sha256": "646d948dfdc6b35a5c668db0ebe95da0b5618cc0caeae3cebf8b42c7b3a6db51"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/agents/worktree-registry.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/agents/worktree-registry.ts",
+        "sha256": "5bdaf4c0863b567f5afd9c97f44fab5673063c8431c9cb417645c1726ca1fd9a"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/kysely-sync.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/kysely-sync.ts",
+        "sha256": "3e6525dd44fe10e8632d7b89b610a182151a964b20eca4d87552a3b7d7481265"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/kysely-node-sqlite.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/kysely-node-sqlite.ts",
+        "sha256": "3159611c23e8cc1df1ad2865dae5f5511d91828bd7f02c888bb30dca2c308590"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/lru-cache.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/lru-cache.ts",
+        "sha256": "31a1fed176b26ac2b7992ecc83918f3e901cb74cfc2f1f115b69c551ca5b74a5"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/state/execution-state-db.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/state/execution-state-db.ts",
+        "sha256": "3ecd45a0f0c6925ca9248b5a1c51c1260d36fae2d0d15b5f1cae675a9c3478f9"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/state/openclaw-state-db.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/state/openclaw-state-db.ts",
+        "sha256": "b9b6eda8cd5f6e796bc21b0fb33b9a32c652232be7ae70ff623f41c64ebc5e0b"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/node-sqlite.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/node-sqlite.ts",
+        "sha256": "6638dc50bea6c37f531b2b9d33f801791c21926ba3db332f54adb3227998f923"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/errors.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/errors.ts",
+        "sha256": "7cc5b9c6c5fc85716187a0da5ffdb1b721f008bb059eebb7d113f7515ea533e6"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/logging/redact.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/logging/redact.ts",
+        "sha256": "b6cdf21096da3e3064951f6d3e05cf51f4753e2dd2839e4d1116959042bcf10e"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/security/config-regex.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/security/config-regex.ts",
+        "sha256": "eabe0720334c81fdbfbefe3bf65c401e10e5eccdd86f84ed258b17fb0e11c687"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/security/safe-regex.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/security/safe-regex.ts",
+        "sha256": "cd3442ba4a54bc255814575ff8beb8f3de266e98c3286bde145869be2bef6467"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/logging/config.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/logging/config.ts",
+        "sha256": "83bcbc508c26aafd8265bb956eb7fe96dd7c64e032d9a395fdd2f6824b9eb42f"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/packages/normalization-core/src/record-coerce.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/packages/normalization-core/src/record-coerce.ts",
+        "sha256": "250dabc46f0e63bc16f2c8655e18044a763189fd730c5f1335d6d59362f9bf20"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/config/paths.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/config/paths.ts",
+        "sha256": "bee13aa2e469a348fa122b3b3093b84b6577d730402a136c463acadf26d71db0"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/home-dir.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/home-dir.ts",
+        "sha256": "2e57eea3c5e3025e6aed2d8bc1891d9c00f13c543990c3ad9f697ec0cd9f9b5c"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/tcp-port.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/tcp-port.ts",
+        "sha256": "600a8be3cc6f05eb0d0ec0add82295fbb920593ffb6cba8954d9604c055895f1"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/parse-finite-number.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/parse-finite-number.ts",
+        "sha256": "8f3e77b08bef5f825cb44b406c17f704d107ff7a2ac184207c78aced4065ef99"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/packages/normalization-core/src/number-coercion.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/packages/normalization-core/src/number-coercion.ts",
+        "sha256": "1c44e8697f031704d975f05d2402e98c4fefde300bf6411b6ca807c1df08d620"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/logging/redact-bounded.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/logging/redact-bounded.ts",
+        "sha256": "517f401061eb3fe889d580b6374bfcbc6f5e7e6dcfd1cceb8990b694415080ce"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/warning-filter.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/warning-filter.ts",
+        "sha256": "30ac815b920acd33b3ffd552a3c5df6d80c9a5d1fed66259fdaaf60c000370e1"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/shared/global-singleton.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/shared/global-singleton.ts",
+        "sha256": "7169168dcaf0689acc38b44bed3a232291699e87ee79cfd00c5a7048bfa797d8"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/sqlite-transaction.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/sqlite-transaction.ts",
+        "sha256": "9669911ea2927587fa59bc4501ce0bd442b96f7c036995a94a8bf0dcbb98cd4f"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/logging/subsystem.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/logging/subsystem.ts",
+        "sha256": "4e38bb8cbfc931465381c4781fbd2a64532a0336c2b654c181c18380cec6320a"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/packages/normalization-core/src/string-coerce.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/packages/normalization-core/src/string-coerce.ts",
+        "sha256": "bd8aeddbb97cfa5a0980ab76d30973ce3ef5941e9e612994feaa4cbd412a1c94"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/packages/terminal-core/src/progress-line.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/packages/terminal-core/src/progress-line.ts",
+        "sha256": "9ffc5e9becd2262f77f2ac1fb09186c5b2fa4402790021272582346b2f18712c"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/global-state.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/global-state.ts",
+        "sha256": "f69b7ab6f512bea72d2c904eb886413371f8a4fa502479f4514f60905c4e6173"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/runtime.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/runtime.ts",
+        "sha256": "7f77542964dcc84452b28b777d5b9de14b13840da76c6b79a844afd4f61c603b"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/packages/terminal-core/src/restore.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/packages/terminal-core/src/restore.ts",
+        "sha256": "212ab862259452ffe923eb59372d2e99048a272078d5cb9e6af3c9c4e079f3cd"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/logging/console.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/logging/console.ts",
+        "sha256": "68e9a253ef886394d5007c2737a5f729d68a3e65aeea04f0cf2641f3efa46607"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/packages/terminal-core/src/ansi.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/packages/terminal-core/src/ansi.ts",
+        "sha256": "6fc525dfbd3efd33a5c5245c24e2af42cba02d7edc62628766f1f837b75df218"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/logging/env-log-level.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/logging/env-log-level.ts",
+        "sha256": "d5c30c5dd61979682f8daa6369270e0f86a48c8999ad66fb515c92e57a79526d"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/logging/levels.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/logging/levels.ts",
+        "sha256": "d2510bc914ee673a86ce7b511c491e427e45c2f9a6c350662d557ebfec2bd08c"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/logging/state.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/logging/state.ts",
+        "sha256": "43e57760f9cab5e807e7e50ebae092c91f730b0c6888a57c264efc09234c7d19"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/logging/logger.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/logging/logger.ts",
+        "sha256": "eb90679abd00d27eeb998e4c6ad450a652cdf881c7363f18a21398d3647345f4"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/diagnostic-events.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/diagnostic-events.ts",
+        "sha256": "c59dd0d8933ab507ab1c6bf5cd6e57531b10aa86c309bdbe2cf6a7c3b279958f"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/diagnostic-trace-context.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/diagnostic-trace-context.ts",
+        "sha256": "99e099ef792481ef3067f3da1c03cd8cffe2930343e572b54dba4cd3e8931315"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/prototype-keys.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/prototype-keys.ts",
+        "sha256": "edfede2ab3564d9d29675b7a4e8bd15e3fbe4dd9472174381fcd7ade67cde73f"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/regular-file.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/regular-file.ts",
+        "sha256": "7ecd2513efafbac92ba9b8d410cf1941959eeee9620635f13e7ddfdc2dae6c47"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/fs-safe-defaults.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/fs-safe-defaults.ts",
+        "sha256": "fb8eb360be3447f9b030013c9f76ab54cfe69134fe5bb128ab58708258e1686b"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/tmp-openclaw-dir.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/tmp-openclaw-dir.ts",
+        "sha256": "2a8aee7687097b725e0da4488458bdfe26cd6032f31f407690adf82046c646df"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/logging/timestamps.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/logging/timestamps.ts",
+        "sha256": "5cb8322fdaf857543361f9f05a22f0d06bbf8c3fb4d98c231a7190d5b0b4c9cf"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/infra/sqlite-wal.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/infra/sqlite-wal.ts",
+        "sha256": "142ad61f6526fe8b0e3d46adf79ddd03509daf12bf846139ba6e454aa855fb94"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/shared/number-coercion.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/shared/number-coercion.ts",
+        "sha256": "297b3ca0cbab981d9a5360750653ecb2d0bab3275fa9782114dbd7351a16173d"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/state/openclaw-state-db.paths.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/state/openclaw-state-db.paths.ts",
+        "sha256": "c282a953150b8ef1e4f58ab32978e3765e8b7fc64d5019bdf31d373e4f76a591"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/state/openclaw-state-schema.generated.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/state/openclaw-state-schema.generated.ts",
+        "sha256": "834bf5c12598ae91b0e8d2ed514e809a41744f02db03fab91705ac14767ab9b7"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/agents/worktree-service.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/agents/worktree-service.ts",
+        "sha256": "8cd8d5907937ebe2cb8d22628ff879859e7279bb181a009454b3a2ac8c470d03"
+      }
+    ],
+    [
+      "d:/clawx/shared/task-ledger-journal-lock.ts",
+      {
+        "source": "D:/ClawX/shared/task-ledger-journal-lock.ts",
+        "sha256": "70bd3e06ffaefd5460d251db43e9897c7bb3144db97e49d11fc92deb1434775b"
+      }
+    ],
+    [
+      "d:/clawx/shared/task-ledger-process.ts",
+      {
+        "source": "D:/ClawX/shared/task-ledger-process.ts",
+        "sha256": "021a5fb39b556735ee60dc935323ba7522ab0d189e90c90da7b4997a8720f04e"
+      }
+    ],
+    [
+      "d:/clawx/shared/long-session-resource-reclamation.ts",
+      {
+        "source": "D:/ClawX/shared/long-session-resource-reclamation.ts",
+        "sha256": "36ead351d8c3279c21e5655f317b91e50b67f1af01666a8ed568fbb199b74399"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/context-engine/coding-observability.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/context-engine/coding-observability.ts",
+        "sha256": "4ce93c9fe528bc3ea672966af0a324d348172c160038ab6308a4bbd6c5d9dd35"
+      }
+    ],
+    [
+      "d:/clawx/shared/versegit-cleanup-barrier.ts",
+      {
+        "source": "D:/ClawX/shared/versegit-cleanup-barrier.ts",
+        "sha256": "646f775e09ef50dc6596b093aa815723823e709bd49418b1fb6c0230daddf35e"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/versegit.ts",
+      {
+        "source": "D:/ClawX/shared/types/versegit.ts",
+        "sha256": "6c9d98c6d7b40bb6286297296ad5ccda0cd1bf360e70cc8715e399bf89d7b833"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/agents/execution-task-authority.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/agents/execution-task-authority.ts",
+        "sha256": "3fc6c1536924764a8ee47df497bf5edc0356f615588a9464b5977ba0e0ff5de1"
+      }
+    ],
+    [
+      "d:/clawx/shared/task-system/store.ts",
+      {
+        "source": "D:/ClawX/shared/task-system/store.ts",
+        "sha256": "dbb82f8c4753c48971e7bacc385554a0fe8d866ad45339dd5d855cf8d1539fe0"
+      }
+    ],
+    [
+      "d:/clawx/shared/task-system/identity.ts",
+      {
+        "source": "D:/ClawX/shared/task-system/identity.ts",
+        "sha256": "0662a28fde847191cb41a86ba281eab7ebec4280470456e8a505998935ea6ca1"
+      }
+    ],
+    [
+      "d:/clawx/shared/task-system/recognition.ts",
+      {
+        "source": "D:/ClawX/shared/task-system/recognition.ts",
+        "sha256": "69f9f810124e3d854184382fb99a7e61f3ed5622dcf867a26531aed8bf7ae2b5"
+      }
+    ],
+    [
+      "d:/clawx/shared/task-system/types.ts",
+      {
+        "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\shared\\task-system\\types.ts",
+        "sha256": "da81048f06c2be80c8635c1ac24df53c4740983be52d482c8ad42e8b4e7c030d"
+      }
+    ],
+    [
+      "d:/clawx/shared/task-system/runtime.ts",
+      {
+        "source": "D:/ClawX/shared/task-system/runtime.ts",
+        "sha256": "170443ea6d495c8d026d54077023f5bdbbfbdecce2d328eb5be156a59b14d575"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/agents/execution-domain.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/agents/execution-domain.ts",
+        "sha256": "c613d98698dc939623c1dcb968f447db4011b381b0daddd59052cb9e84902f4c"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/agents/worktree-writer.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/agents/worktree-writer.ts",
+        "sha256": "aecc42280ee6c37b74eb75c3d28b02e5de389ad0fbe7426d31b6c31671e4693c"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/context-engine/views/verify/review-diff-view.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/context-engine/views/verify/review-diff-view.ts",
+        "sha256": "96940bc81635bfd111455dfd266b9aa2ad5a7f2dcb022ba672c9f8d9a48f4435"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/context-engine/factstore/ignore.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/context-engine/factstore/ignore.ts",
+        "sha256": "f3827d3e359b24163b679e181fbbb98e1b8fa7a1ffdda869767df8838a2cdb96"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/context-engine/views/impact/impact-view.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/context-engine/views/impact/impact-view.ts",
+        "sha256": "052c290825fd13c60214a9f06da8a7008ce121d1d9ca4144cf7b34d67f7733f2"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/agents/worktree-pnpm-install.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/agents/worktree-pnpm-install.ts",
+        "sha256": "f3894674ab0b3eb55ea77d4e491a56db2ceb763903e3726d443cf76c3befb192"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/sessions-api.ts",
+      {
+        "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\electron\\services\\sessions-api.ts",
+        "sha256": "e140ffe4dae7776a9e16462a1f32772d4dc54346b9b5294077315dfd9b4da842"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/knowledge-api.ts",
+      {
+        "source": "D:/ClawX/electron/services/knowledge-api.ts",
+        "sha256": "b85b80660c3d8c17f4e3a3a94e996dffed492473837db71df34f0b8845559ef7"
+      }
+    ],
+    [
+      "d:/clawx/electron/utils/log-retention.ts",
+      {
+        "source": "D:/ClawX/electron/utils/log-retention.ts",
+        "sha256": "0ededd15336d0d2f56cb63204e481f9873535b6d07fd70846728de5210343a86"
+      }
+    ],
+    [
+      "d:/clawx/shared/privacy/ui-error-sanitize.ts",
+      {
+        "source": "D:/ClawX/shared/privacy/ui-error-sanitize.ts",
+        "sha256": "619f79adaf08d77ddf1cbef8a40eb7eb8e4c9ba2014b8bff2bb8b1db0afad4ab"
+      }
+    ],
+    [
+      "d:/clawx/shared/permission-effect-contract.ts",
+      {
+        "source": "D:/ClawX/shared/permission-effect-contract.ts",
+        "sha256": "b4d3245e1e8729b76be7230aeb04ed527631f4be2d9c5270a6b8fbe7facaf087"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/context-control-plane/artifacts.ts",
+      {
+        "source": "D:/ClawX/shared/types/context-control-plane/artifacts.ts",
+        "sha256": "c4cca9a41783a34683ad27942cb1c01030fa5d15a0119a319e91871ff2d0181f"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/context-engine/block-store.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/context-engine/block-store.ts",
+        "sha256": "5383973ebd0a07e677300419a2a2284587f8af506d2d3c93469e69b82abe7a3b"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/runtime-core/memory-hybrid-retrieval.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/runtime-core/memory-hybrid-retrieval.ts",
+        "sha256": "0ca3c52f6473bee79384dcb7edd691f47beeded3cd184d0e76f8f4e3ecc54721"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/runtime-core/memory-tokenization.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/runtime-core/memory-tokenization.ts",
+        "sha256": "531e61a22590b1d8a9f59a7b4c9a011ca5aaa7779fbb3e8dc57998bd7c73ac06"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/runtime-core/memory-context.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/runtime-core/memory-context.ts",
+        "sha256": "d99af54a0881938fc9174ace10a5f8c3a781f4e06b994f4b5d8c7fc0d69630d5"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/runtime-core/evidence.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/runtime-core/evidence.ts",
+        "sha256": "4ffd11c9d2898f050308e234057ac60ddd75ffc80ee478ae25b4e2f88a44b0db"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/runtime-core/types.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/runtime-core/types.ts",
+        "sha256": "8e9e2d5d510cb03274d342dc4bc079491ecaa1e7d7fd0110a1315e9f72e763f3"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/runtime-core/memory-embedding-provider.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/runtime-core/memory-embedding-provider.ts",
+        "sha256": "982c4e09b19118a8549cb8428b34df48531e02842b272c946f5ed3c8cbfdeeca"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/runtime-core/memory-temporal-policy.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/runtime-core/memory-temporal-policy.ts",
+        "sha256": "063ac60bf8f4b061116dd9cbb00b57c498d8a3a3ea204680276ad76471a6a5a0"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/runtime-core/lineage.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/runtime-core/lineage.ts",
+        "sha256": "0e77a9dd35bf22d51c2fe263aa2725786c29b3fc20f1958e0d5d0d15f81fad92"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/context-engine/block-lifecycle.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/context-engine/block-lifecycle.ts",
+        "sha256": "c8d7f9556265cd5323c671c7d391ba35a4fa25fff7474e89ec6760916e3f4973"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/context-engine/dcs-observability.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/context-engine/dcs-observability.ts",
+        "sha256": "e3aeaa841f45b0ab3b8d764cbb190e00a0d8c45379a64f8f9749e013d6baed5f"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/knowledge/governance-store.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/knowledge/governance-store.ts",
+        "sha256": "ab59c8166ab351c41f02c7fee6f117b97456b1c76ee250d9c3b64aa6132ac977"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/knowledge/governance-adapters.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/knowledge/governance-adapters.ts",
+        "sha256": "f40d707413d9f9085b4284f65ebc83447622ba185792ffb3a00737267de308fa"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/memory/memory-store.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/memory/memory-store.ts",
+        "sha256": "ac39f953e5c3694bb5cd049d2e99743fc651d1388aa5dc676e14c7385a036938"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/memory/gatekeeper.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/memory/gatekeeper.ts",
+        "sha256": "96b176072501a00715476914b9b32ad68a962632ace756fe241551cef906018b"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/memory/memory-policy.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/memory/memory-policy.ts",
+        "sha256": "3c838be80484e035e5a9cbe52c97fa98f9aee9a66246afb132a1a3e23f12fc02"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/memory/memory-card.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/memory/memory-card.ts",
+        "sha256": "2e1d8195529fd4a5b154412cb546d0333164da012fe56c5f1622fe5e7e0e8e8b"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/memory/memory-dual-gate.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/memory/memory-dual-gate.ts",
+        "sha256": "3ff8f43ee2e40141c7197ae33e82ca24a6528ae6fd6a7f78ae0970abb636bc2f"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/runtime-core/memory-runtime-config.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/runtime-core/memory-runtime-config.ts",
+        "sha256": "94570fa96e91068ff2ebd692844b497e101fe0420f9e97412c1a6e76cfe8b69c"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/memory/context-pack.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/memory/context-pack.ts",
+        "sha256": "0d83fda6bc0bd6ee0a611958709b659a6648df68832f95916b270e9fff2eccff"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/knowledge/sekb/knowledge-store.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/knowledge/sekb/knowledge-store.ts",
+        "sha256": "4ca82b56d1e54f2492131a572a699293b1c9714641b55778e1b1cfbb88280028"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/knowledge/sekb/types.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/knowledge/sekb/types.ts",
+        "sha256": "c508dcb36d12012a5d7cf65c8bbf30cc53faffb22f8f5c3c1003bf95de2e8c15"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/knowledge/sekb/trajectory-redaction.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/knowledge/sekb/trajectory-redaction.ts",
+        "sha256": "d8c06c709aebed26298c6286d6ce9dcd246ba2d3f40952886e129f5b449c3d89"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/agents/harness/hook-context.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/agents/harness/hook-context.ts",
+        "sha256": "6cd85edd99292dc32a24bde37186bc02bdaef1eab5af7a7e5a658219327133f0"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/knowledge-source-set-answer.ts",
+      {
+        "source": "D:/ClawX/electron/services/knowledge-source-set-answer.ts",
+        "sha256": "4a63c652138e58053a5d3daa8feb165c415ee59f6662268a16f06620602c3650"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/context-engine/source-set.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/context-engine/source-set.ts",
+        "sha256": "3b0e26468d6dec33190a05bced060fb54df760eadc41ded957dcce16cdab86f8"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/knowledge-source-sync.ts",
+      {
+        "source": "D:/ClawX/electron/services/knowledge-source-sync.ts",
+        "sha256": "3f19954e8e37c748f75b33643ab9f8d9de36e8c28aa95f3f53a1f2fce15f188a"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/knowledge-github-connector.ts",
+      {
+        "source": "D:/ClawX/electron/services/knowledge-github-connector.ts",
+        "sha256": "6ea45fb59e64111f6a9425c85b98d05d6bdcc66c79b735946a7140262fe72fcd"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/knowledge-evidence-qa.ts",
+      {
+        "source": "D:/ClawX/electron/services/knowledge-evidence-qa.ts",
+        "sha256": "2fe36720f89633d63041dde737e029c72f7d2a0b9a70f101998a56129f5205f4"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/knowledge-embedding-provider.ts",
+      {
+        "source": "D:/ClawX/electron/services/knowledge-embedding-provider.ts",
+        "sha256": "1c3dca66c70565a2b997a52cb95073bbe5fac742abbc1329bffda40438049cae"
+      }
+    ],
+    [
+      "d:/clawx/shared/knowledge/error-experience.ts",
+      {
+        "source": "D:/ClawX/shared/knowledge/error-experience.ts",
+        "sha256": "025bf79008486a02fee4ed2fd0da11552fc19ec27fcb0e1a8dfe5bc71315e3ff"
+      }
+    ],
+    [
+      "d:/clawx/shared/knowledge/quality-metrics.ts",
+      {
+        "source": "D:/ClawX/shared/knowledge/quality-metrics.ts",
+        "sha256": "62cbfa71b1664499035fec06b1d131c4639a505c65d3ccb453161d446eaf1918"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/session-delete-gate.ts",
+      {
+        "source": "D:/ClawX/electron/services/session-delete-gate.ts",
+        "sha256": "425120b18e389ebfa32eb26547bed67cff12ce76c4f8baa6d441e9a31f25e50e"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/session-handoff.ts",
+      {
+        "source": "D:/ClawX/shared/types/session-handoff.ts",
+        "sha256": "063fbadffb7e8d9404b5d8e2db88bcbb14ecb9b8064337c28c60b44923ebf42c"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/session-derivation.ts",
+      {
+        "source": "D:/ClawX/shared/types/session-derivation.ts",
+        "sha256": "d4dbb29a538041fe1806a156a447200609117143255f5d5c48588e5dbe47f997"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/session-delegation-admission.ts",
+      {
+        "source": "D:/ClawX/electron/services/session-delegation-admission.ts",
+        "sha256": "11a975bc092da428c3848b68982753a5edc768e7ea11d2292c51e8a4dbf3f579"
+      }
+    ],
+    [
+      "d:/clawx/shared/session-task-scope.ts",
+      {
+        "source": "D:/ClawX/shared/session-task-scope.ts",
+        "sha256": "9772c6c0e5677ea15711f2f830bff739db875d6708230989ebc0bd273ab5cf76"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/session-delegation.ts",
+      {
+        "source": "D:/ClawX/shared/types/session-delegation.ts",
+        "sha256": "3e299453fc4a8c4ec6895c7e80d8a0cbcabcd63575aefd1fd4a5d2a565d548be"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/session-delegation-store.ts",
+      {
+        "source": "D:/ClawX/electron/services/session-delegation-store.ts",
+        "sha256": "a21ba4d83861c35e09cddfcfede2e5102eb027303d35be91b3274510aa42ef10"
+      }
+    ],
+    [
+      "d:/clawx/shared/handoff-depth.ts",
+      {
+        "source": "D:/ClawX/shared/handoff-depth.ts",
+        "sha256": "0cd1294bac541a1a7d8227b347396e739f31deada951b2fff968a2fcd802a7b3"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/git-api.ts",
+      {
+        "source": "D:/ClawX/electron/services/git-api.ts",
+        "sha256": "0e87aae243d32ecb5602f4075b9919f325bafd667914ce0ac397da747c8ae879"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/remote-forge.ts",
+      {
+        "source": "D:/ClawX/shared/types/remote-forge.ts",
+        "sha256": "bf68001123ab0e9d8138bd294782a466d009ed4aa58908bb821805bd870f2438"
+      }
+    ],
+    [
+      "d:/clawx/shared/remote-forge/unified-diff-adapter.ts",
+      {
+        "source": "D:/ClawX/shared/remote-forge/unified-diff-adapter.ts",
+        "sha256": "c615f41a8c33216ac0077d9cfd92970e08f433fdda958c24051ef927cd9ba830"
+      }
+    ],
+    [
+      "d:/clawx/shared/remote-forge/error-envelope.ts",
+      {
+        "source": "D:/ClawX/shared/remote-forge/error-envelope.ts",
+        "sha256": "3f375ce2bc1f0a7f96df1963d3b9e8119dcc736fba544dd739590634ff3b26e9"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/agent-browser-api.ts",
+      {
+        "source": "D:/ClawX/electron/services/agent-browser-api.ts",
+        "sha256": "22035afcc9069d7cfab5af06e71e47ae8b8d97c1c0061676c1ba48636b1899cb"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/agent-browser-network-proxy.ts",
+      {
+        "source": "D:/ClawX/electron/services/agent-browser-network-proxy.ts",
+        "sha256": "b86faec3b9cb3b2b51879acec1dafe5dd8f786c1a203958d3aefe3cd310a6469"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/resource-envelope.ts",
+      {
+        "source": "D:/ClawX/electron/services/resource-envelope.ts",
+        "sha256": "cdce7e27cfbc72dffcc1aa9081116780574c1527d8d5f932da42e6e55c2746a6"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/resources/resource-envelope.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/resources/resource-envelope.ts",
+        "sha256": "8e31b61b42fb156a0019c03f87b542981a1f4562f2288f1b09393d2c03969dbb"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/resources/resource-envelope-snapshot-store.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/resources/resource-envelope-snapshot-store.ts",
+        "sha256": "b3123637b8bd47f16f6a557dea54b40a6cc3f793b7317885d8f1728b60455f42"
+      }
+    ],
+    [
+      "d:/clawx/openclaw_runtime/src/process/process-tree-sampler.ts",
+      {
+        "source": "D:/ClawX/openclaw_runtime/src/process/process-tree-sampler.ts",
+        "sha256": "1a3219d00c151d56315bd7a1df833d87ebbf8229c738a67975ac635822b4e529"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/resource-fabric.ts",
+      {
+        "source": "D:/ClawX/electron/services/resource-fabric.ts",
+        "sha256": "cd33ff82385811925b9358c7f88d4be7f3a2fa6ea9e7b4a50bcb386ae32db4e1"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/index.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/index.js",
+        "sha256": "796d9fa8973e9b87f2ebe4d3e69020749790cfdfe32a1b95cad00e38c57af2ee"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/core/types.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/core/types.js",
+        "sha256": "a168d55acc845c764284814f3159543133e3b9b53bf5a5736d07b8a930515555"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/core/tool-registry.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/core/tool-registry.js",
+        "sha256": "8211b175f70ffab0a7f4f3c769b4d1c625638932c9eb39f6ec6d5f06bb577383"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/core/tool-authorization.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/core/tool-authorization.js",
+        "sha256": "635714385b2070aa7c637b45157adc68a4ba4e8b7c7a11a202fb13a849c7d748"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/core/browser-control.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/core/browser-control.js",
+        "sha256": "0cb951fb239d76cc458676b5c790856c011534909866d4079f0807b6ba5a26e1"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/security/url-policy.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/security/url-policy.js",
+        "sha256": "9d798b36a685c31ed79701353aab19172181d8fc7e5677ef106b836aae667ddd"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/security/net-policy/ip.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/security/net-policy/ip.js",
+        "sha256": "69219b087dd054c297fdca0ccc7518862ac57fb89fee211539959f15bbb577c5"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/core/filesystem-boundary.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/core/filesystem-boundary.js",
+        "sha256": "d0fa6a8fe4eb97c1c9736393718278313da4741828d7527d1e8b9ec9852334a9"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/core/network-context.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/core/network-context.js",
+        "sha256": "05efff2ab537c20356055fc19f1ef59dcf4600d339eacae3150878da9014a193"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/core/text.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/core/text.js",
+        "sha256": "0be1ba0737eac487c5eb3a77d945c63925925aca59e97e4b88fe1fe765f8a6a9"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/security/redact-secrets.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/security/redact-secrets.js",
+        "sha256": "b26860b0d202f769a344c1b53ea27927142dbf14b0005d81029b72877d629789"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/security/net-policy/redact-sensitive-url.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/security/net-policy/redact-sensitive-url.js",
+        "sha256": "6c76c16b7cb16bdc3a13d67dccfa84073a99c795cb2e83f872e2ec7aa174b466"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/security/secret-names.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/security/secret-names.js",
+        "sha256": "621d00d2b54b22537b1f73bd19e9566dee4c6d8bb07fdb1ddabe8cbe65910011"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/contracts/index.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/contracts/index.js",
+        "sha256": "218376021ccd1f91bd463e1a930b9c0dc2f3dd4191f742cb2ec13640af1ffccc"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/evidence/index.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/evidence/index.js",
+        "sha256": "d8ed3f47bb46de14f810c626f2031016ce38993a74073197accd82d4704f72b8"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/evidence/schema.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/evidence/schema.js",
+        "sha256": "e8d057122287e260eec7074c33bf12aeeac0a64d637fe8408e8ec8672eba6597"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/evidence/writer.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/evidence/writer.js",
+        "sha256": "6006b912739ca7f03eb23f36b2c41ba2d683f987e1ac6f06e3d5d9d7c81ac03a"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/evidence/output.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/evidence/output.js",
+        "sha256": "a1ed1e1116ba2003e6dc752f662652e6ca4538f2a4382e5b252894a2e673bf81"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/evidence/path-guard.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/evidence/path-guard.js",
+        "sha256": "a6add1a47ee1e42d091c59d6123ec0328568f5140ffd837ec15b3651e0355e09"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/host/workspace-paths.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/host/workspace-paths.js",
+        "sha256": "3962c29d7dd97952a464b1eef7f6dc634e8eff988be88c864297d09f523785a1"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/evidence/reader.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/evidence/reader.js",
+        "sha256": "688acbb6ab16b40e106fcf7ffcea6957b13e08838395243eb9bb8d543c9893d8"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/evidence/timeline.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/evidence/timeline.js",
+        "sha256": "db401ba13db055652d758df6097fb5abfdef408f4bd69d99b7f1b7680d7efc0b"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/evidence/diagnosis.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/evidence/diagnosis.js",
+        "sha256": "4dac7f4da371df4fdb6e03d66bb9db03f9ff187362ebe8d29469ac5506a61c21"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/security/markdown.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/security/markdown.js",
+        "sha256": "80de1bf93519038a4110ccf18ae79388abc7c8d0ef43ce2f9bc1d100cf68fdb1"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/evidence/pr-comment.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/evidence/pr-comment.js",
+        "sha256": "4b9c2f578064f9a6b3cdb28f705b5115c6dd632f38a6cc97797cd0ccf472cfd6"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/evidence/viewer.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/evidence/viewer.js",
+        "sha256": "a5a165dae7cc31d7373702a6f8a2c445538a450503fe018d00cb5375fc34f581"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/types/host-api.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/types/host-api.js",
+        "sha256": "6c3022e517e5f96f59db9b389b13e4af024fa3ffb119b137a52eeb4953a38faf"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/service.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/service.js",
+        "sha256": "836bacc86b55f4270956a6f34be42d9394890f3b2065ad97f3a8152aee9cea49"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/host/electron-optional.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/host/electron-optional.js",
+        "sha256": "6f244eb5bcf4ab1bdb9ab439f2b1ae6f6c5a11ef3677f28e56a337b2118827b5"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/actions.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/actions.js",
+        "sha256": "150dc7c8ed6536ad7f59f3775073f22e9c80468969280bde1a7a818046bb90f8"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/boundary-choice-tool-executor.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/boundary-choice-tool-executor.js",
+        "sha256": "14656424c5e9c71c50557e8d55fae938412fb571967d8c0ddd4368c9aa414d77"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/browser-debugger-connection.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/browser-debugger-connection.js",
+        "sha256": "70ba3a799e4937b6e6d12ae8f0e36494b1f7c583aa4aee6149e0703763bcc3c8"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/snapshot-manager.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/snapshot-manager.js",
+        "sha256": "03e228b36687b87e347d0089b661705a14e8d012f29419c64ecf6eb4db6b9ff4"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/tab-manager.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/tab-manager.js",
+        "sha256": "eac53036ad3acce8110861b6cfe494e7ca24b59a10eb0b5c67aa9e3d592dab18"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/js-source-tool-executor.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/js-source-tool-executor.js",
+        "sha256": "adc012341eea986ea85160ed8e463e4c3ad1536f38f9b84ab4536bcc62d89358"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/js-source-index.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/js-source-index.js",
+        "sha256": "7515cc3e5f611f08acd00b0fd6d7cd999a1b19752491b075faf5b83d2963c135"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/same-origin-js-fetcher.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/same-origin-js-fetcher.js",
+        "sha256": "60f4ae6c25988b0d29683763e2602061030c606167e9786f269023c8b0c12d3b"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/source-map-tool-executor.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/source-map-tool-executor.js",
+        "sha256": "74336d2b26a8f432a2210560eb96dbd35c25fdb82d4b5e126ae407689681382a"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/same-origin-source-map-fetcher.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/same-origin-source-map-fetcher.js",
+        "sha256": "ff68fa8b4240f3f63450e46a2b23249d06ae72ca39bbc64e8b44e97fed94b323"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/source-map-fetch-guards.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/source-map-fetch-guards.js",
+        "sha256": "89a0305f35275780d10395021965e66454eb9857cc43c3d2720a80ec4e5858a7"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/runtime-read-tool-executor.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/runtime-read-tool-executor.js",
+        "sha256": "dfd167849323fe3bfc647fc1c36d61578edf5200a9e59bfd758a163e65fedc28"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/replay-tool-executor.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/replay-tool-executor.js",
+        "sha256": "6ab42b458009969fa6a0cdd2638de29310102cefa24e851fde8c31a307b3a42b"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/console-recorder.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/console-recorder.js",
+        "sha256": "d2a855887d61c788b95252cce0a0563877f64a974eb4380e178153b0b281171a"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/full-access-tool-executor.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/full-access-tool-executor.js",
+        "sha256": "8a9f12379d289cf8a5b8183e4b73d4928a222b040622242f7895edd5ed68f66f"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/page-text-extractor.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/page-text-extractor.js",
+        "sha256": "0cbbb42d0ee726621d1efe6f273c2f0471ba0a2893f44e77f56e6c4ad21e9ed1"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/navigation-errors.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/navigation-errors.js",
+        "sha256": "44fb6eece1a10610d7a0e6030e5161e5af13fcbc4acbd47a3fc4f7f5ea9312e3"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/core/extraction-rules/validation.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/core/extraction-rules/validation.js",
+        "sha256": "402898ae3fd232d747556f0088efadca55ceda052d87a235a92e6ba30a6426e1"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/browser-control/network-recorder.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/browser-control/network-recorder.js",
+        "sha256": "33b51de9562d44f74e961e99134cfca16ef171c563eae15f6fef8739cc850ca9"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/cli-runner.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/cli-runner.js",
+        "sha256": "f066495cfbef9527cb2cbe457a902cd8c7f3950c7f76c9c2e6f34a7ad09ce1b0"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/facade.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/facade.js",
+        "sha256": "09290be3d31f1a38cc21a01978d8a7e050e1284c841e328338260a8f857252b8"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/mcp/explain-error.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/mcp/explain-error.js",
+        "sha256": "408f281a2496baf22f4806fc1bade8ffff68e3f23cfb7e8d141f6384a339a5ee"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/diagnose-pack.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/diagnose-pack.js",
+        "sha256": "89ed95434c783ff4fb722d56eef27c8c41e6c968df2293452a38413843f73c99"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/core/runtime-mode-policy.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/core/runtime-mode-policy.js",
+        "sha256": "46330644d4776e8e48faeea757f0ff43871bf0bd5b48db80dd34a9ebaf9bfa52"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/hitl-checkpoint.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/hitl-checkpoint.js",
+        "sha256": "d477876ef44b749807ae0862e71b7ae25226231a890338082ef70b19c92fb483"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/driver-profile.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/driver-profile.js",
+        "sha256": "fa2fd6e19e3881538ff226c1e8c8e6481e24d0b8226191d872846ecd8e99beec"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/api.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/api.js",
+        "sha256": "99c3ebed9e639ad350fcc785377f894bcaeb3daa633034a0e52a2604c4efde3d"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/host/sensitive-capture-gate.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/host/sensitive-capture-gate.js",
+        "sha256": "769fb6c8aed285159462a79588dc507449c79bd45089505d0996522d3eb3f8db"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/security/sensitive-capture-policy.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/security/sensitive-capture-policy.js",
+        "sha256": "ea3e44fd49bff3175175904eefc51229fe8d0a4b0b31b6d6a07f7cc8aca29312"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/host/sensitive-capture-policy-loader.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/host/sensitive-capture-policy-loader.js",
+        "sha256": "54620fe201b78a19d9b4ee8a8d6880ff516ed28bfc2cb14e714c6f6e1babd48b"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/types/product-semantics.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/types/product-semantics.js",
+        "sha256": "6445c2d75ee54e7bcc65e569eb408e915b5d768aa569e1ae772127596c917974"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/types/workspace.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/types/workspace.js",
+        "sha256": "a4a649466c63b98b96d6ceb8f0e32f77f00aff03c8461e37c962c6b99cca732f"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/host/sandbox-high-risk-gate.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/host/sandbox-high-risk-gate.js",
+        "sha256": "75fcc75e4d3c52ebe04c02539742b9e8ad90bebdbe8d73e8d066d204c45b160f"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/host/paths.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/host/paths.js",
+        "sha256": "e5f5c7b160be84d045c8e1e3dbf50c4f18f56026ea66ce01b7733ffe049f69d2"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/supervised-task-executor.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/supervised-task-executor.js",
+        "sha256": "4f0391d18ca21b9384349da816b6e0f70aae2fcac7899a2106f86f237d2df0ea"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/task-service.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/task-service.js",
+        "sha256": "79619443c6c4bf981e32383cb306b44db8d27e101662ae5814cdd094eddd8de5"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/engine/vault.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/engine/vault.js",
+        "sha256": "e5aa86b5076cc686167b8a7ea5a6dd56d17c335214be9637b6043bf6bcf493d9"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/host/permissions-hooks.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/host/permissions-hooks.js",
+        "sha256": "504f4ab26dfb82ef804042b38cf134b18925064999e48e10011a5154db79729c"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/host/workspace-hooks.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/host/workspace-hooks.js",
+        "sha256": "f862580cfaa145c78f4448713b2cc39c4670afd6eaca69bddef8773440710dbb"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/security/redline-policy.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/security/redline-policy.js",
+        "sha256": "216596eaa1df8674a7632eb7513ae08170fa6094d23271f611295fc9b1d67105"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/core/automation-playbooks.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/core/automation-playbooks.js",
+        "sha256": "3f72329d0bbd1a834b04134707792ed7452267617d309ae317e7e05b53038e7a"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/collab/multi-agent-boundary.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/collab/multi-agent-boundary.js",
+        "sha256": "a73630b09e8dd95b7c2988c3ded7cef9626f616d7f095594a4a05731679431e1"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/security/audit-trail.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/security/audit-trail.js",
+        "sha256": "7577ce366e6aa10247ce4fc6cda98480b6c1b194838967163c34e6c2c0df3880"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/collab/remote-policy.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/collab/remote-policy.js",
+        "sha256": "0613cf7ba4bf4b6b81d65f61062c446084d875ef33edfbd5690585341ab129ab"
+      }
+    ],
+    [
+      "d:/clawx/packages/versebrowser/dist/mcp/capability-policy.js",
+      {
+        "source": "D:/ClawX/packages/versebrowser/dist/mcp/capability-policy.js",
+        "sha256": "aca0cc9138478d83fbcb996bc1032ddd689986bce5c7a3234291a8d6bc60ef39"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/agent-browser-capabilities.ts",
+      {
+        "source": "D:/ClawX/electron/services/agent-browser-capabilities.ts",
+        "sha256": "174424dca09b0cd246d4dd6c7c77d47be5032df14be44e51696ee33bdb678a8e"
+      }
+    ],
+    [
+      "d:/clawx/shared/agent-browser/private-network-policy.ts",
+      {
+        "source": "D:/ClawX/shared/agent-browser/private-network-policy.ts",
+        "sha256": "c46e3c69c3718d41e17bfce26df8cb9e3fd0db6f7b2a8da283b6b160ee65bf98"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/long-session-resource-reclamation.ts",
+      {
+        "source": "D:/ClawX/electron/services/long-session-resource-reclamation.ts",
+        "sha256": "a1ad56ff4374b68aee63eb282dd74522c8a132db0464c9052cdf2fdee687a644"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/observability-service.ts",
+      {
+        "source": "D:/ClawX/electron/services/observability-service.ts",
+        "sha256": "d32216c51cae45488517694ef06e0d6905cdef3b726af1f9361367bb3036047e"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/context-folding.ts",
+      {
+        "source": "D:/ClawX/shared/types/context-folding.ts",
+        "sha256": "f27a4cc997cb64d1ed1ed9240d0d7af11058561ddad4850fa56ef9e0ce815458"
+      }
+    ],
+    [
+      "d:/clawx/tests/unit/session-handoff-recovery.test.ts",
+      {
+        "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\session-handoff-recovery.test.ts",
+        "sha256": "88ec8fcf7c8ff64a2fac855ee1702b04ddf51804ff6ee6dddd0e1a16fd6698c8"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/workspaces-api.ts",
+      {
+        "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\electron\\services\\workspaces-api.ts",
+        "sha256": "df8744d2fa426d4ebac30be296391057eb1183b35e7cafbfaf2eea5c5a839e11"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/workspace-preflight.ts",
+      {
+        "source": "D:/ClawX/electron/services/workspace-preflight.ts",
+        "sha256": "06ef2671379e3255821d8223837f0284a1d5cc61befd8cf09b1e59774e385d47"
+      }
+    ],
+    [
+      "d:/clawx/electron/services/task-ledger-api.ts",
+      {
+        "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\electron\\services\\task-ledger-api.ts",
+        "sha256": "f8674a3b8e754f43f1430ee32d503175ebaca0e919f19bd6f230d5a22a188972"
+      }
+    ],
+    [
+      "d:/clawx/tests/unit/session-chain-panels.test.tsx",
+      {
+        "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\session-chain-panels.test.tsx",
+        "sha256": "e474a38129af9eca3b573a9dc254cbf764884eff60274b82862f2f51d7e7eda8"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/session-activity.ts",
+      {
+        "source": "D:/ClawX/shared/types/session-activity.ts",
+        "sha256": "aaf08e39a22d4ea94b32a2b729f9e24476b0e42faf56f9cf90bc3c553017dbb0"
+      }
+    ],
+    [
+      "d:/clawx/src/components/task-ledger/taskledgersummarypanel.tsx",
+      {
+        "source": "D:/ClawX/src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+        "sha256": "39e4f7c0cf77ea8e173f9e0030eaf98ec95479d12bc208e33403c4510a20d9df"
+      }
+    ],
+    [
+      "d:/clawx/src/components/ui/button.tsx",
+      {
+        "source": "D:/ClawX/src/components/ui/button.tsx",
+        "sha256": "bc0d419b37cc78386af87001821d16506919523ff9d10429c7ac2d3e1c2c9a86"
+      }
+    ],
+    [
+      "d:/clawx/src/lib/utils.ts",
+      {
+        "source": "D:/ClawX/src/lib/utils.ts",
+        "sha256": "9bebb17b24bfe24a4862f2f39f9a2a68f4a875e1b714a48648a3f9ea3a5ff255"
+      }
+    ],
+    [
+      "d:/clawx/src/components/ui/badge.tsx",
+      {
+        "source": "D:/ClawX/src/components/ui/badge.tsx",
+        "sha256": "0c5f4304ec643c225edfe5f53fe3215f408c0a24449bc974fad5ce2e010e6d65"
+      }
+    ],
+    [
+      "d:/clawx/src/components/ui/sheet.tsx",
+      {
+        "source": "D:/ClawX/src/components/ui/sheet.tsx",
+        "sha256": "8ca8bf2d733fcd0b23490410d156fb05229e3317e75316354c3bab00e78d87b3"
+      }
+    ],
+    [
+      "d:/clawx/src/components/ui/overlay-portal.tsx",
+      {
+        "source": "D:/ClawX/src/components/ui/overlay-portal.tsx",
+        "sha256": "c3689450ead606554c3c95ad757bd12b03203512c771dd61fa884d9fc5d4f8e0"
+      }
+    ],
+    [
+      "d:/clawx/src/components/settings/primitives/usepopover.ts",
+      {
+        "source": "D:/ClawX/src/components/settings/primitives/usePopover.ts",
+        "sha256": "04519acfe1e74834525f9400b7d8c9dd6e1cd13692d5e461654d1e9f85be7a11"
+      }
+    ],
+    [
+      "d:/clawx/src/lib/error-model.ts",
+      {
+        "source": "D:/ClawX/src/lib/error-model.ts",
+        "sha256": "b06fe0a4b6475551d078ab0c2819fb491649138dee6d6a5f392eb9d75eb49dd6"
+      }
+    ],
+    [
+      "d:/clawx/src/lib/session-read-model.ts",
+      {
+        "source": "D:/ClawX/src/lib/session-read-model.ts",
+        "sha256": "24efdad9ce4049af321142f0216bddc32dada93f6e5d579450c4ad56883b6ddb"
+      }
+    ],
+    [
+      "d:/clawx/src/components/file-preview/workspacesubagentpanel.tsx",
+      {
+        "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\src\\components\\file-preview\\WorkspaceSubagentPanel.tsx",
+        "sha256": "6f5c08b9f5b81407fd2c27294e747946c683b5979957fd4d5dc9df84b7b84487"
+      }
+    ],
+    [
+      "d:/clawx/src/components/ui/textarea.tsx",
+      {
+        "source": "D:/ClawX/src/components/ui/textarea.tsx",
+        "sha256": "9542d8014a9627d9523ea0f425d956e0cf7973fbdeb1aa958f7b03323d7274fe"
+      }
+    ],
+    [
+      "d:/clawx/src/pages/chat/message-utils.ts",
+      {
+        "source": "D:/ClawX/src/pages/Chat/message-utils.ts",
+        "sha256": "c2aaef4ab39e59a6b7572de2df0fb481d80e12da3b984fe422528c41d5817ded"
+      }
+    ],
+    [
+      "d:/clawx/src/pages/chat/conversation-resources.ts",
+      {
+        "source": "D:/ClawX/src/pages/Chat/conversation-resources.ts",
+        "sha256": "fd4a8d17b6b565645081e449d99a1553e7349e83759834127b61ee9f30f76730"
+      }
+    ],
+    [
+      "d:/clawx/src/lib/generated-files.ts",
+      {
+        "source": "D:/ClawX/src/lib/generated-files.ts",
+        "sha256": "add6e838ed0f6aa76f9b24312a43e703093a5d6ba59d85071ce2b5dc60e5e0c9"
+      }
+    ],
+    [
+      "d:/clawx/src/components/chat/sessiondelegationstatus.tsx",
+      {
+        "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\src\\components\\chat\\SessionDelegationStatus.tsx",
+        "sha256": "c2ae3ca6bb3e404e753abcf74c159a27ce21b650f3dcd82186bf9dd992f1f733"
+      }
+    ],
+    [
+      "d:/clawx/shared/subagent-identity.ts",
+      {
+        "source": "D:/ClawX/shared/subagent-identity.ts",
+        "sha256": "9fa3d4056f7a9047bffc95a8e56baf67c789c6a4afd5c8510ae941f32d790bc7"
+      }
+    ],
+    [
+      "d:/clawx/shared/agent-avatar.ts",
+      {
+        "source": "D:/ClawX/shared/agent-avatar.ts",
+        "sha256": "43117e1111cef5fcb9790c4827ce09e88ff1613dc3bc6e18c59784b1c391c8ea"
+      }
+    ],
+    [
+      "d:/clawx/shared/types/agent.ts",
+      {
+        "source": "D:/ClawX/shared/types/agent.ts",
+        "sha256": "fded2b6e15307e589d8c9756002e6fffc47b5b79cab419aa64000f2c51925a6a"
+      }
+    ],
+    [
+      "d:/clawx/tests/unit/session-delegation-status.test.tsx",
+      {
+        "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\session-delegation-status.test.tsx",
+        "sha256": "06124ceb191565aceed3a58243419ca2aa25c6e238a40a42a5b9b478a664adc5"
+      }
+    ],
+    [
+      "d:/clawx/tests/unit/workspace-agents-panel-failure.test.tsx",
+      {
+        "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\tests\\unit\\workspace-agents-panel-failure.test.tsx",
+        "sha256": "fbf2ea4aa5f0205248b4f430cff6255ff5f1dd270b6017252c18ab89018e208b"
+      }
+    ],
+    [
+      "d:/clawx/src/components/file-preview/workspaceagentspanel.tsx",
+      {
+        "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\src\\components\\file-preview\\WorkspaceAgentsPanel.tsx",
+        "sha256": "651ba87cec4d19c2a76b5e6b3ab51936ed7de9e8347e790b0eb242ef53c91a55"
+      }
+    ],
+    [
+      "d:/clawx/src/components/agents/agentavatar.tsx",
+      {
+        "source": "D:/ClawX/src/components/agents/AgentAvatar.tsx",
+        "sha256": "c9291103f1f790edea9000a7b67d7889e6ffbfd67f88fca67283175e4728eed6"
+      }
+    ],
+    [
+      "d:/clawx/src/lib/role-visuals.ts",
+      {
+        "source": "D:/ClawX/src/lib/role-visuals.ts",
+        "sha256": "fb277b1009695c2843d3bbcc4f5b807a60b962e59387091f7b6b6d96388ae267"
+      }
+    ],
+    [
+      "d:/clawx/src/lib/user-error.ts",
+      {
+        "source": "D:/ClawX/src/lib/user-error.ts",
+        "sha256": "4d340d1b706a5f4372f253a8e3acae08839e52a7141056eee94ad24ef3be24ea"
+      }
+    ],
+    [
+      "d:/clawx/src/i18n/index.ts",
+      {
+        "source": "D:/ClawX/src/i18n/index.ts",
+        "sha256": "231d16505f7f2a5dbafef973742a57ca685a9dc149664556523a3b5a7f24e1fd"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/namespaces.ts",
+      {
+        "source": "D:/ClawX/shared/i18n/namespaces.ts",
+        "sha256": "b1c05b3288106b806660965d1d5724884f886af27e2ab207e0fd76e940ebd16e"
+      }
+    ],
+    [
+      "d:/clawx/src/i18n/resources.ts",
+      {
+        "source": "D:/ClawX/src/i18n/resources.ts",
+        "sha256": "162cb30c7786b560296744620e64015e17b88dc358342ce026c359efe71eb158"
+      }
+    ],
+    [
+      "d:/clawx/src/i18n/bundles/en.ts",
+      {
+        "source": "D:/ClawX/src/i18n/bundles/en.ts",
+        "sha256": "badf8cdaa493e3ad2d89685063726d0f587be536d72e8d6b7416e18f17cd3b8b"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/common.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/common.json",
+        "sha256": "b5c5c31a079ad0562da930690f1fa882101008b6383ddfa922840d3a00474c1e"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/settings.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/settings.json",
+        "sha256": "7c8cbe6418eb38c00e2eb9000bd908a89dee82d90f9c4505467be372c64402d8"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/dashboard.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/dashboard.json",
+        "sha256": "5a6f5582160a99824dc36b805d38b1832b3f1ccbd8f2abb5cbdf4fe5b832e543"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/chat.json",
+      {
+        "source": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\main-integration\\after\\shared\\i18n\\locales\\en\\chat.json",
+        "sha256": "20ba62fc1fc107c495cdafec30cf808e88d3805733d0f5cef1f34c67ef443a5b"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/channels.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/channels.json",
+        "sha256": "bde8d7a29d30e8b2e81846dab1984a1e9a53608f5105d0f1620e5b573cab24e5"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/agents.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/agents.json",
+        "sha256": "97edaca1c50463b6b023660ce194b9a46d1fb2838b03cced0bb6731ae7d475ea"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/observability.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/observability.json",
+        "sha256": "6c1d3785fd2721dcefd63b3e9ee451d44ae57a409b7173f4f13f19be27e56f71"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/skills.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/skills.json",
+        "sha256": "41c7a8fae7adcc6f1c52ae7d60a86b48864b08152ae77929ac8cbc854238c843"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/cron.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/cron.json",
+        "sha256": "8f811d1217473115bb03ee1ae1b1457355cee40aa4f8d6778086990994905810"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/dreams.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/dreams.json",
+        "sha256": "24943cce6b7760140737a196dbf6e0fea349ca040401db99cdde192b444f6118"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/setup.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/setup.json",
+        "sha256": "ecb190b7fced824a7f025e2f002bb90bd516068206ab2d2b24f064fd9f4056dc"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/taskledger.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/taskLedger.json",
+        "sha256": "4f2659eceae1597df98bf134f50e49d5ae5bb8dee01c63eeda03fa8e1db893f9"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/remotetasks.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/remoteTasks.json",
+        "sha256": "6f685ce7729f532873efb41048080f082ac93184d7eee65edf4fa3982d454348"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/clawgraph.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/clawGraph.json",
+        "sha256": "21df7131cbd216f26cb40a172d2b8eba05a6d67eba6c90453711bce12fbbc41a"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/knowledge.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/knowledge.json",
+        "sha256": "921979246cd44d48fe87655f7b050b440181bfd495ce60d85278f715cac77064"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/codereview.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/codeReview.json",
+        "sha256": "8b48616fff27b436e0e4ba2473190c1cadae87aac5a2932ea9d93a5e24bbc1b4"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/browser.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/browser.json",
+        "sha256": "9eaeb3731d6bf84bfb60d03b777c33ec4ad7c1c5bf8372a59a3da66fd4800134"
+      }
+    ],
+    [
+      "d:/clawx/shared/i18n/locales/en/inbox.json",
+      {
+        "source": "D:/ClawX/shared/i18n/locales/en/inbox.json",
+        "sha256": "3786b6ca94da80da81ccd4cda02103bc6872d654a3ca6ec1f6c67e6be4830943"
+      }
+    ],
+    [
+      "d:/clawx/src/lib/error-message.ts",
+      {
+        "source": "D:/ClawX/src/lib/error-message.ts",
+        "sha256": "5788eb4c0c8f25e56059294103c0384bb7d3914657da8523e9cc31c28ac9f928"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/agents.ts",
+      {
+        "source": "D:/ClawX/src/stores/agents.ts",
+        "sha256": "061d6db7d5d1cd1469b8d35e3e17e930ef15f2ee5930448a9a8a936a76197090"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/chat.ts",
+      {
+        "source": "D:/ClawX/src/stores/chat.ts",
+        "sha256": "9e3fe01ffb4dbf9ba2d9a32a7c5cd80cf21bd4581c6ff1981bec8a3c7e25eaa6"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/gateway.ts",
+      {
+        "source": "D:/ClawX/src/stores/gateway.ts",
+        "sha256": "28c4de47e833dc63324d99700280888f01e58fb942e2076e8746ebe8c342ce12"
+      }
+    ],
+    [
+      "d:/clawx/src/lib/host-events.ts",
+      {
+        "source": "D:/ClawX/src/lib/host-events.ts",
+        "sha256": "fdec1cd7df9e74341772b59aeb4f5b69ba69ede6c39bb3988377c9c6b499af1a"
+      }
+    ],
+    [
+      "d:/clawx/shared/host-events/contract.ts",
+      {
+        "source": "D:/ClawX/shared/host-events/contract.ts",
+        "sha256": "90d9049e5a78c921a7e14d1cb3073807bb6ba51382c4b846aa0f41889f3fb96d"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/baseline-cache.ts",
+      {
+        "source": "D:/ClawX/src/stores/baseline-cache.ts",
+        "sha256": "65f28db754e0bf36249331d47f2e57abf0f6d3d92e85d42ea7be57d5f4f2ec30"
+      }
+    ],
+    [
+      "d:/clawx/src/lib/file-preview-client.ts",
+      {
+        "source": "D:/ClawX/src/lib/file-preview-client.ts",
+        "sha256": "9a88d63a0594dc04b73be5641ec35106684fc2f121e81d9a97d81ba9696fc45c"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/chat/cron-session-utils.ts",
+      {
+        "source": "D:/ClawX/src/stores/chat/cron-session-utils.ts",
+        "sha256": "da6a642d592c2d5674a8c2a880eb7c591398c2c07ea808d7ee9cd01271332b0d"
+      }
+    ],
+    [
+      "d:/clawx/src/lib/cron-session-history.ts",
+      {
+        "source": "D:/ClawX/src/lib/cron-session-history.ts",
+        "sha256": "509ffb0007bb02e6b3b6ecb6e1a3f2f6240dcb586e15733e2f8de3c8bb0f0fa3"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/chat/session-selection.ts",
+      {
+        "source": "D:/ClawX/src/stores/chat/session-selection.ts",
+        "sha256": "767463c4882d73041d7f23eafd78be8ec15989eea7ba136da18312bad111d150"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/chat/history-startup-retry.ts",
+      {
+        "source": "D:/ClawX/src/stores/chat/history-startup-retry.ts",
+        "sha256": "39aa66c6810bec0581ccc08eb0cb21cf3ac1daddba8798cf5608c7fed305eed3"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/chat/history-rpc-params.ts",
+      {
+        "source": "D:/ClawX/src/stores/chat/history-rpc-params.ts",
+        "sha256": "7e4e3bfd44e2630448d2ada9a64fe14b4583d094434942bbc55eb4f108b95e61"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/chat/history-transcript-fallback.ts",
+      {
+        "source": "D:/ClawX/src/stores/chat/history-transcript-fallback.ts",
+        "sha256": "2231025f2e6dbb3fd97bc50f7fb8bdf68bb4e518abb9f45fe537ba5ab7887af3"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/chat/history-transcript-hydrate.ts",
+      {
+        "source": "D:/ClawX/src/stores/chat/history-transcript-hydrate.ts",
+        "sha256": "7c097357611e1779f07f532a777ed4bd60dfa2a2a274ad710fd360fce451c95e"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/chat/history-transcript-merge.ts",
+      {
+        "source": "D:/ClawX/src/stores/chat/history-transcript-merge.ts",
+        "sha256": "6ea416de1b44805ca20e0d989d34b35662a151bf9140946e788f7afb31f93b2f"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/chat/helpers.ts",
+      {
+        "source": "D:/ClawX/src/stores/chat/helpers.ts",
+        "sha256": "8bca28a097036b5c9e8f7381a6faaef20310bebc6327fb9f61b15cd8baf6fedc"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/chat/session-label-hydration.ts",
+      {
+        "source": "D:/ClawX/src/stores/chat/session-label-hydration.ts",
+        "sha256": "3e9824b17732e4949b0e1692ecda6caf4cd6c0baa52d98cef2895a2601a091f0"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/chat/types.ts",
+      {
+        "source": "D:/ClawX/src/stores/chat/types.ts",
+        "sha256": "09c53be9f36bb0c3ba44d52ac1ffec07e0c5bdf60351db34b4597d4cfab1fc8e"
+      }
+    ],
+    [
+      "d:/clawx/shared/chat/types.ts",
+      {
+        "source": "D:/ClawX/shared/chat/types.ts",
+        "sha256": "f3ac895af29f361cf6f70259fe0a2dd7ba729f96864044c2d243d7efbcc24399"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/workspaces.ts",
+      {
+        "source": "D:/ClawX/src/stores/workspaces.ts",
+        "sha256": "40bee7adef9fe40d81e6615dda01cf09e58a356177aa63eb4d69330d022bd017"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/chat/runtime-graph.ts",
+      {
+        "source": "D:/ClawX/src/stores/chat/runtime-graph.ts",
+        "sha256": "9efcf3edb0a001cfc4d6cac63193c1d1f472a3644437e0dc8a1bb461add2fa3a"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/chat/frame-publication.ts",
+      {
+        "source": "D:/ClawX/src/stores/chat/frame-publication.ts",
+        "sha256": "02dd1407485a1ab9f005ec6f18f33a9ce127972ab62103dbaad5a1f0b926ad77"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/chat/content-cache.ts",
+      {
+        "source": "D:/ClawX/src/stores/chat/content-cache.ts",
+        "sha256": "72b6a4b4d0853c02d998a95ac61383e7d2fd2b5b0167f42d9002ea9b8088fe78"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/chat/turn-ledger-recorder.ts",
+      {
+        "source": "D:/ClawX/src/stores/chat/turn-ledger-recorder.ts",
+        "sha256": "e0e9ec2fcbbc82c1df1533c369b657f9269bc1abd3c753e5e128f134222e5e26"
+      }
+    ],
+    [
+      "d:/clawx/src/stores/artifact-panel.ts",
+      {
+        "source": "D:/ClawX/src/stores/artifact-panel.ts",
+        "sha256": "7712201de42c3bc430f1fc928d2b24d0af5638c6ce90aae265ac449d6dcd8585"
+      }
+    ]
+  ]
+}

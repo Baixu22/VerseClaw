@@ -6,6 +6,8 @@ import { normalizeRunScope, normalizeTaskReference } from '@shared/types/identit
 import type { SessionTaskEffectRequest, SessionTaskEffectAdmission } from '@shared/session-task-scope';
 import type { ReplyOperation } from '../../openclaw_runtime/src/auto-reply/reply/reply-run-registry';
 import type { AgentRunContext } from '../../openclaw_runtime/src/infra/agent-events';
+import { createHostDeadline } from '@shared/host-api/host-deadline';
+import { getHostDeadline, runWithHostDeadline } from '@electron/utils/host-deadline-context';
 
 const runtime = vi.hoisted(() => ({ generation: 'generation-1', invoke: vi.fn(), abandoned: false,
   owner: null as ReplyOperation | null, worker: null as Record<string, unknown> | null,
@@ -28,10 +30,10 @@ vi.mock('../../openclaw_runtime/src/agents/embedded-agent-runner/runs', () => ({
 vi.mock('../../openclaw_runtime/src/agents/bash-process-registry', () => ({ listRunningSessions: () => runtime.processes }));
 vi.mock('../../openclaw_runtime/src/process/supervisor/index', () => ({ getProcessSupervisor: () => ({ snapshotRunsForSession: () => runtime.supervised.filter(entry => entry.state !== 'embedded') }) }));
 vi.mock('../../openclaw_runtime/src/agents/verseshell/managed-process-reservation', () => ({ managedProcessReservations: () => runtime.reservations }));
-vi.mock('../../openclaw_runtime/src/agents/subagent-registry', () => ({ getSubagentRunByRunId: () => null, getLatestSubagentRunByChildSessionKey: () => runtime.worker }));
+vi.mock('../../openclaw_runtime/src/agents/subagent-registry', () => { throw new Error('Mutable subagent lifecycle bootstrap is unavailable'); });
+vi.mock('../../openclaw_runtime/src/agents/subagent-registry-read', () => ({ getSubagentRunByRunId: () => null, getLatestSubagentRunByChildSessionKey: () => runtime.worker }));
 
 import { registerSessionTaskScopeBridge } from '@electron/gateway/session-task-scope-bridge';
-import { getHostDeadline, runWithHostDeadline } from '@electron/utils/host-deadline-context';
 import { sessionTaskScopeHandlers } from '../../openclaw_runtime/src/gateway/server-methods/session-task-scope';
 import { withSessionTaskScope, clearSessionTaskScopeRun, currentSessionTaskRequesterReference } from '../../openclaw_runtime/src/agents/session-task-scope';
 import { runBeforeToolCallHook } from '../../openclaw_runtime/src/agents/agent-tools.before-tool-call';
@@ -110,8 +112,11 @@ describe('runtime → Gateway → Main task admission bridge', () => {
       deadlines.push(getHostDeadline()); await new Promise(resolve => setTimeout(resolve, 5)); return admission(request);
     });
     try {
-      const result = runWithHostDeadline({ deadlineAtMs: Date.now() - 1000, timeoutMs: 1, stage: 'renderer', requestId: 'old-gateway-start' }, () => execute());
-      await expect(result).resolves.toBe('written');
+      const expired = createHostDeadline({ stage: 'renderer', timeoutMs: 1, requestId: 'old-gateway-start', now: () => Date.now() - 2000 });
+      await runWithHostDeadline(expired, async () => {
+        expect(await execute()).toBe('written');
+        expect(getHostDeadline()).toBe(expired);
+      });
       expect(deadlines).toHaveLength(2);
       for (const deadline of deadlines) {
         expect(deadline?.requestId).not.toBe('old-gateway-start');

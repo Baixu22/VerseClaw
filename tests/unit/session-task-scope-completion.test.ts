@@ -35,6 +35,7 @@ import { createTaskRuntimeGuard, executeTaskGuarded, finishPersistentTaskRun } f
 import { createPersistentTaskTool } from '../../openclaw_runtime/src/agents/tools/persistent-task-tool';
 import { withSessionTaskScope, clearSessionTaskScopeRun } from '../../openclaw_runtime/src/agents/session-task-scope';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
+import { closeOpenClawAgentDatabasesForTest } from '../../openclaw_runtime/src/state/openclaw-agent-db';
 
 const parent = 'agent:main:parent';
 const child = 'agent:main:child';
@@ -125,12 +126,35 @@ afterEach(async () => {
   finishPersistentTaskRun(state.root, parent, 'run-parent');
   finishPersistentTaskRun(state.root, child, 'run-child');
   closeOpenClawStateDatabaseForTest();
+  closeOpenClawAgentDatabasesForTest();
   tasks?.close();
   vi.unstubAllEnvs(); state.invoke.mockReset();
   await rm(state.root, { recursive: true, force: true });
 });
 
 describe('first effect consumes the canonical execution contract', () => {
+  it('uses the canonical parent reference after transfer even before its navigation link was persisted', async () => {
+    const task = startTask();
+    tasks.prepareWriterDelegation(task.claim!, { delegationId: 'run-child', childSessionKey: child,
+      childGeneration: 'generation-child', childWorktree: state.root, childRunId: 'run-child', mode: 'writer' });
+    expect(tasks.binding(parent, 'generation-parent')?.referenceOnly).toBe(true);
+    expect((await ledger.snapshot({ workspaceId: 'workspace-a' })).snapshot.sessionLinks.some(link =>
+      link.sessionKey === parent && link.nodeId === task.contract.taskNodeId)).toBe(false);
+    runs.get('run-child')!.delegation = { parentSessionKey: parent, parentGeneration: 'generation-parent', workspaceDir: state.root,
+      taskReference: { taskRef: task.contract.taskNodeId, coordinator: { workspaceId: 'workspace-a', sessionKey: parent,
+        sessionGeneration: 'generation-parent', bindingRevision: 0 } } };
+    const admitted = await api().admitTaskEffect(request(child, 'run-child', 'generation-child'));
+    expect(admitted.claim.credential?.sessionKey).toBe(child);
+    expect(() => tasks.assertOwner(task.claim!)).toThrow('TASK_STALE_OWNER');
+    const other = tasks.create(contract('Unrelated task'), 'unrelated-parent-task').task;
+    runs.get('run-child')!.delegation!.taskReference!.taskRef = other.contract.taskNodeId;
+    await expect(api().admitTaskEffect(request(child, 'run-child', 'generation-child'))).rejects.toThrow('TASK_SCOPE_PARENT_TASK_LINK_STALE');
+    runs.get('run-child')!.delegation!.taskReference!.taskRef = task.contract.taskNodeId;
+    runs.get('run-child')!.delegation!.parentGeneration = 'stale-parent';
+    runs.get('run-child')!.delegation!.taskReference!.coordinator.sessionGeneration = 'stale-parent';
+    await expect(api().admitTaskEffect(request(child, 'run-child', 'generation-child'))).rejects.toThrow('TASK_GENERATION_STALE');
+    expect(tasks.get(task.contract.taskNodeId).claim?.epoch).toBe(admitted.claim.credential!.epoch);
+  });
   it('admits an owned child while the fenced parent run remains active', async () => {
     const task = startTask();
     const parentClaim = await api().admitTaskEffect(request());

@@ -1,0 +1,109 @@
+[
+  {
+    "name": "cleanup-readback-red",
+    "candidate": "1ece933e2aaf6b39dd207ee91769d56a49751018",
+    "exitCode": 1,
+    "execution": "executed",
+    "tests": {
+      "total": 4,
+      "passed": 0,
+      "failed": 2,
+      "pending": 2
+    },
+    "path": "failures/cleanup-readback-red.result.json",
+    "originalPath": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\cleanup-readback-red.result.json",
+    "sha256": "8759f0933a28ce8332dd3a77fb24e5902cb484be1ea164549df1dab1f7880e83"
+  },
+  {
+    "name": "read-budget-red",
+    "candidate": "691bd3e18231b2055012151a240dd421c82cac39",
+    "exitCode": 1,
+    "execution": "executed",
+    "tests": {
+      "total": 66,
+      "passed": 1,
+      "failed": 4,
+      "pending": 61
+    },
+    "path": "failures/read-budget-red.result.json",
+    "originalPath": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\read-budget-red.result.json",
+    "sha256": "e574793bc2824c886706366d9c90a6ce6ca750569dcfeb9e604432bd1b088474"
+  },
+  {
+    "name": "u4-final-derivation",
+    "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+    "exitCode": 1,
+    "execution": "executed",
+    "tests": {
+      "startTime": "2026-11-10T10:04:27.632Z",
+      "duration": 343496.878,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 1,
+      "flaky": 0
+    },
+    "path": "failures/u4-final-derivation.result.json",
+    "originalPath": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-derivation.result.json",
+    "sha256": "17d174cb4fa5256f26f59358fc6de4af63376b136c4bf5870a361628848adccd"
+  },
+  {
+    "name": "u4-final-harness-ci",
+    "candidate": "aeaced11a096fa80a3c6d44b2d07205fb2207348",
+    "exitCode": 1,
+    "execution": "executed",
+    "tests": null,
+    "path": "failures/u4-final-harness-ci.result.json",
+    "originalPath": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-harness-ci.result.json",
+    "sha256": "35249a9ca24ee9fb8bf14ee1f3d54214cd754879389d0149d41f53e209cb73cf"
+  },
+  {
+    "name": "u4-main-unit",
+    "candidate": "3815b711e2610835ebd1d943bc9e7f8a4be3537a",
+    "exitCode": 1,
+    "execution": "executed",
+    "tests": {
+      "total": 179,
+      "passed": 179,
+      "failed": 0,
+      "pending": 0
+    },
+    "path": "failures/u4-main-unit.result.json",
+    "originalPath": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-main-unit.result.json",
+    "sha256": "6a4b0cd13a6d42d6d214530f6043ae66943285f8443c11be3f3d72f8bd0dfdcb"
+  },
+  {
+    "name": "u4-merged-typecheck",
+    "candidate": "1ce245ee69ef6d30a38365f12ee58848624ea91d",
+    "exitCode": null,
+    "execution": "not-started",
+    "tests": null,
+    "path": "failures/u4-merged-typecheck.result.json",
+    "originalPath": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-merged-typecheck.result.json",
+    "sha256": "923ff7870d83faa17e66c5c265731c7f7bfae7e0d2ad870f7f0b5052439278b7"
+  },
+  {
+    "name": "u4-relay-final-fences",
+    "candidate": "aeaced11a096fa80a3c6d44b2d07205fb2207348",
+    "exitCode": 1,
+    "execution": "executed",
+    "tests": {
+      "total": 74,
+      "passed": 73,
+      "failed": 1,
+      "pending": 0
+    },
+    "path": "failures/u4-relay-final-fences.result.json",
+    "originalPath": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-relay-final-fences.result.json",
+    "sha256": "553f0513c845949218457f611272e64d2bd2d6379519c9f79f22eefce4174434"
+  },
+  {
+    "name": "u4-relay-typecheck",
+    "candidate": "1ece933e2aaf6b39dd207ee91769d56a49751018",
+    "exitCode": 1,
+    "execution": "executed",
+    "tests": null,
+    "path": "failures/u4-relay-typecheck.result.json",
+    "originalPath": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-relay-typecheck.result.json",
+    "sha256": "19b43527d7febd7cf139a15a1b4963bdb1b228b6b654eed82d13f12b8453bcc9"
+  }
+]

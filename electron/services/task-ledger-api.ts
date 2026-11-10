@@ -158,7 +158,7 @@ export function createTaskLedgerApi(gatewayManager?: GatewayManager): CompleteHo
   return {
     managedTasks: async (payload) => ({ success: true, tasks: await listManagedTasks(payload?.workspaceId) }),
     queryTasks: async (payload) => ({ success: true, ...await pageManagedTasks(payload?.workspaceId, payload) }),
-    sessionTask: async (payload) => ({success:true,...await readSessionTask(payload.workspaceId,payload.sessionKey,gatewayManager)}),
+    sessionTask: async (payload) => ({success:true,...await readSessionTask(payload.workspaceId,payload.sessionKey,gatewayManager,payload.expectedSessionGeneration)}),
     command: async (payload) => {
       try { return { success: true, result: await taskSystemCommand(payload.workspaceId,payload.command,gatewayManager) }; }
       catch (error) { return { success: false, error: error instanceof Error ? error.message : String(error) }; }

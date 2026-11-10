@@ -43,6 +43,7 @@ export async function cleanupElectronProcesses(runRoot: string, outputDir: strin
   if (!/^verse-claw-e2e-run-[A-Za-z0-9]+$/.test(basename(runRoot))) throw new Error('Invalid Electron test run root');
   await mkdir(outputDir, { recursive: true });
   let checks: WindowsProcessCheck[] = [];
+  const processObservations: WindowsProcessCheck[][] = [];
   let failure: unknown;
   let ledger: LedgerEntry[] = [];
   let owned: Awaited<ReturnType<typeof discoverWindowsElectronProcesses>> = [];
@@ -67,6 +68,12 @@ export async function cleanupElectronProcesses(runRoot: string, outputDir: strin
     }
     const identities = [...new Map([...ledger, ...owned].map((entry) => [`${entry.pid}:${entry.creationTime}`, entry])).values()];
     checks = await checkWindowsProcesses(identities, true);
+    processObservations.push(checks);
+    for (let attempt = 0; attempt < 2 && checks.some(({ status }) => status === 'alive' || status === 'unavailable'); attempt++) {
+      await new Promise(resolve => setTimeout(resolve, 250));
+      checks = await checkWindowsProcesses(identities);
+      processObservations.push(checks);
+    }
     if (checks.some(({ status }) => status === 'alive' || status === 'unavailable')) {
       throw new Error('Owned Electron processes survived cleanup or could not be checked');
     }
@@ -74,7 +81,7 @@ export async function cleanupElectronProcesses(runRoot: string, outputDir: strin
   } catch (error) { failure = error; }
   await writeFile(join(outputDir, 'electron-process-cleanup.json'), JSON.stringify({
     driven_by: 'agent', actor: 'playwright-runner', runRoot, ledgerEntries: ledger.length,
-    checks, owned, remaining: checks.filter(({ status }) => status === 'alive'),
+    checks, processObservations, owned, remaining: checks.filter(({ status }) => status === 'alive'),
     survivors: checks.filter(({ status }) => status === 'alive'), pendingLaunches: pending.length,
     status: failure ? 'failed' : 'passed', ...(failure ? { error: String(failure) } : {}),
   }, null, 2));

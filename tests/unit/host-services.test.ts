@@ -1481,6 +1481,48 @@ describe('host services', () => {
     expect((await api.prepareHandoff({ sessionKey: 'agent:main:runtime-handoff' })).draft).not.toContain('STALE_LOCAL_RESULT');
   });
 
+  it.each(['before', 'history', 'after'])('reads a worker within the Gateway budget when %s is slow', async (slowPhase) => {
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const messages = [{ role: 'assistant', content: 'Current worker result' }];
+    let descriptions = 0;
+    vi.useFakeTimers();
+    try {
+      const rpc = vi.fn((method: string, _params?: unknown, timeoutMs = 30_000) => {
+        const phase = method === 'chat.history' ? 'history' : ++descriptions === 1 ? 'before' : 'after';
+        return new Promise((resolve, reject) => {
+          const deadline = setTimeout(() => reject(new Error(`RPC timeout: ${method}`)), timeoutMs);
+          setTimeout(() => {
+            clearTimeout(deadline);
+            resolve(method === 'chat.history' ? { messages }
+              : { session: { sessionId: 'worker-generation', spawnedBy: 'agent:main:parent' } });
+          }, phase === slowPhase ? 16_000 : 1);
+        });
+      });
+      const api = createSessionsApi({ gatewayManager: { rpc } as never });
+      const reading = Promise.resolve(api.history({ sessionKey: 'agent:main:worker', expectedParentSessionKey: 'agent:main:parent',
+        expectedSessionGeneration: 'worker-generation' })).then(value => ({ value }), error => ({ error: String(error) }));
+      await vi.advanceTimersByTimeAsync(16_010);
+      expect(await reading).toMatchObject({ value: { success: true, sessionGeneration: 'worker-generation', messages } });
+      expect(descriptions).toBe(2);
+    } finally { vi.clearAllTimers(); vi.useRealTimers(); }
+  });
+
+  it('reports recorded transcript cost only when each relevant usage record has a cost', async () => {
+    const { createSessionsApi } = await import('@electron/services/sessions-api');
+    const messages: Array<{ role: string; content: string; usage?: { cost: { total: number | null } } }> = [
+      { role: 'assistant', content: 'First result', usage: { cost: { total: 0 } } },
+    ];
+    const rpc = vi.fn(async () => ({ messages }));
+    const api = createSessionsApi({ gatewayManager: { rpc } as never });
+    expect(await api.history({ sessionKey: 'agent:main:recorded-cost' })).toMatchObject({ costUsd: 0 });
+    messages.push({ role: 'assistant', content: 'Second result', usage: { cost: { total: 0.25 } } });
+    expect(await api.history({ sessionKey: 'agent:main:recorded-cost' })).toMatchObject({ costUsd: 0.25 });
+    messages[1].usage!.cost.total = null;
+    expect(await api.history({ sessionKey: 'agent:main:recorded-cost' })).not.toHaveProperty('costUsd');
+    delete messages[1].usage;
+    expect(await api.history({ sessionKey: 'agent:main:recorded-cost' })).not.toHaveProperty('costUsd');
+  });
+
   it('prepares deterministic session handoff without requiring Gateway', async () => {
     const sessionsDir = join(testOpenClawConfigDir, 'agents', 'main', 'sessions');
     mkdirSync(sessionsDir, { recursive: true });

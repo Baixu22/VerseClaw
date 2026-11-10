@@ -1,0 +1,88 @@
+{
+  "childKey": "agent:main:subagent:50421adf-8ffc-4102-8dc2-8ff56e0dac84",
+  "described": {
+    "session": {
+      "key": "agent:main:subagent:50421adf-8ffc-4102-8dc2-8ff56e0dac84",
+      "spawnedBy": "agent:main:session-1794302329805-workerproject",
+      "spawnedWorkspaceDir": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-navigation\\session-worker-task-journe-ca86a-coped-follow-up-navigation-\\workspace",
+      "spawnDepth": 1,
+      "spawnRootSessionKey": "agent:main:session-1794302329805-workerproject",
+      "subagentRole": "leaf",
+      "subagentControlScope": "none",
+      "kind": "direct",
+      "label": "Implementer",
+      "displayName": "Implementer",
+      "updatedAt": 1794302374544,
+      "sessionId": "170e5d71-e265-49ee-9d93-1fd13112f6f0",
+      "abortedLastRun": false,
+      "thinkingLevel": "medium",
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium",
+      "totalTokens": 120,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "status": "done",
+      "subagentRunState": "historical",
+      "hasActiveSubagentRun": false,
+      "startedAt": 1794302358126,
+      "endedAt": 1794302373741,
+      "runtimeMs": 8844,
+      "parentSessionKey": "agent:main:session-1794302329805-workerproject",
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "modelRefOverride": "custom-sessionc/mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 128000,
+      "hasActiveRun": false
+    }
+  },
+  "response": {
+    "success": true,
+    "phase": "accepted",
+    "run": {
+      "runId": "worker-followup-1",
+      "scope": {
+        "workspaceId": "worker-project",
+        "projectId": "worker-project",
+        "sessionKey": "agent:main:subagent:50421adf-8ffc-4102-8dc2-8ff56e0dac84"
+      }
+    }
+  },
+  "requestedAt": "2026-11-10T09:19:48.561Z",
+  "parentOwner": {
+    "sessionKey": "agent:main:session-1794302329805-workerproject",
+    "generation": "b759a389-9acc-4ce8-8a2d-82aebee17be5",
+    "epoch": 3
+  }
+}

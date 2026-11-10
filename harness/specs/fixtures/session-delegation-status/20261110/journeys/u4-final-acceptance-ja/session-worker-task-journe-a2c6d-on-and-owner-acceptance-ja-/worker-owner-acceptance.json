@@ -1,0 +1,1305 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-worker-acceptance",
+  "provider": "local-scripted",
+  "language": "ja",
+  "status": "passed",
+  "project": {
+    "workspaceId": "accepted-worker",
+    "rootPath": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-acceptance-ja\\session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-\\accepted-worker-workspace",
+    "sessionKey": "agent:main:session-1794304029629-acceptedworker",
+    "generation": "4b388b09-ef19-4b89-b796-76ff4ef176a0"
+  },
+  "task": {
+    "contract": {
+      "objective": "Produce and verify the worker artifact",
+      "constraints": [
+        "Preserve the coordinator"
+      ],
+      "acceptance": [
+        {
+          "id": "file",
+          "description": "Exact worker artifact",
+          "verification": {
+            "kind": "file-sha256",
+            "path": "accepted.txt",
+            "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+          }
+        },
+        {
+          "id": "owner",
+          "description": "Existing verifier accepts the evidence",
+          "verification": {
+            "kind": "owner-receipt",
+            "owner": "evidence-verifier",
+            "requires": [
+              "file"
+            ]
+          }
+        }
+      ],
+      "target": "accepted.txt",
+      "dependencies": [],
+      "origin": {
+        "source": "host-task-api",
+        "requestId": "accepted-worker-task"
+      },
+      "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+      "domain": "37068b63427a9f44cf685e9c6cad0f3053a65beb76ca0ef89bde24bab2be3232",
+      "revision": 1,
+      "digest": "200fac260d9a6f1de9155e07d43766df8ea953915e58a92f29a4d56795e39a23",
+      "state": "ready",
+      "createdAt": 1794304055773,
+      "updatedAt": 1794304055773
+    },
+    "claim": null,
+    "checkpoint": null,
+    "pendingOperations": 0,
+    "pendingOperationDetails": [],
+    "childTaskNodeIds": []
+  },
+  "admission": {
+    "success": true,
+    "status": "accepted",
+    "receipt": {
+      "schemaVersion": "clawx.session-delegation-receipt/v1",
+      "admissionId": "a67f1263-e494-4c4e-86b9-a94ff597fa41",
+      "idempotencyKey": "accepted-worker-admission",
+      "status": "accepted",
+      "orchestrationRunId": "orch_caeae04d-23cf-463c-95d6-eaf2e3bf8a0f",
+      "acceptedAt": "2026-11-10T09:47:48.516Z",
+      "coordinator": {
+        "workspaceId": "accepted-worker",
+        "agentId": "main",
+        "sessionKey": "agent:main:session-1794304029629-acceptedworker",
+        "bindingRevision": 1,
+        "sessionGeneration": "4b388b09-ef19-4b89-b796-76ff4ef176a0"
+      },
+      "taskRef": "27999603-4957-44a4-b94c-b942cc5a611c",
+      "parentEnvironment": {
+        "kind": "local",
+        "canonicalRoot": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-acceptance-ja\\session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-\\accepted-worker-workspace",
+        "backend": "local-workspace",
+        "branch": null,
+        "detachedHead": false,
+        "setupProfile": null
+      },
+      "parentEnvironmentRevision": 1,
+      "authorization": {
+        "approvalId": null,
+        "grantState": "authorized",
+        "owner": "gateway-permission"
+      },
+      "budget": {
+        "status": "observed",
+        "reason": null,
+        "maxWorkers": 5,
+        "process": {
+          "maxChildrenPerAgent": 5,
+          "maxSpawnDepth": 1,
+          "source": "agents.defaults.subagents"
+        },
+        "backgroundTerminal": {
+          "lane": "subagent",
+          "maxConcurrent": 8,
+          "activeCount": 0,
+          "queuedCount": 0,
+          "source": "process.command-queue.subagent"
+        }
+      },
+      "scheduler": {
+        "executionWaves": [
+          {
+            "wave": 1,
+            "taskNodeIds": [
+              "implementer-1"
+            ],
+            "roles": [
+              "implementer"
+            ],
+            "reason": "scheduled 1 ready node(s) within concurrency cap 5"
+          }
+        ],
+        "metrics": {
+          "queued": 0,
+          "running": 0,
+          "scheduled": 1,
+          "skipped": 0,
+          "concurrencyCap": 5,
+          "budgetEstimate": 2
+        }
+      },
+      "children": [
+        {
+          "roleName": "implementer",
+          "taskNodeId": "implementer-1",
+          "roleInstanceId": "orch_caeae04d-23cf-463c-95d6-eaf2e3bf8a0f:implementer-1:implementer:attempt-1",
+          "admissionStatus": "accepted",
+          "runState": "accepted-not-completed",
+          "completionObserved": false,
+          "backend": "subagent",
+          "childSessionKey": "agent:main:subagent:e604088e-4775-4bea-9013-0f2c3d44961a",
+          "childRunId": "0b19d4ed-fbfa-46ae-b8fa-15aeeecdcd69",
+          "toolAuthorization": {
+            "status": "effective",
+            "source": "role-contract+parent-clamp",
+            "roleName": "implementer",
+            "effectiveRoleName": "implementer",
+            "parentRoleName": null,
+            "allowlist": [
+              "read",
+              "write",
+              "edit",
+              "bash"
+            ],
+            "denylist": [
+              "web_search",
+              "web_fetch",
+              "x_search",
+              "code_execution",
+              "browser",
+              "__role_capability:mcp_network"
+            ],
+            "permissionDecisionCount": 6
+          },
+          "isolation": {
+            "mode": "shared",
+            "backend": "shared-inprocess",
+            "canonicalRoot": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-acceptance-ja\\session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-\\accepted-worker-workspace",
+            "branch": null,
+            "detachedHead": false,
+            "verifiedCheckout": false
+          },
+          "schedulerWave": 1,
+          "error": null
+        }
+      ],
+      "errors": [],
+      "completionObserved": false,
+      "recoveryRequired": false
+    }
+  },
+  "childKey": "agent:main:subagent:e604088e-4775-4bea-9013-0f2c3d44961a",
+  "stage": "locale-navigation-ja",
+  "uiSeed": {
+    "driven_by": "agent",
+    "kind": "injected-parent-message"
+  },
+  "ownerVerification": {
+    "current": {
+      "success": true,
+      "task": {
+        "contract": {
+          "objective": "Produce and verify the worker artifact",
+          "constraints": [
+            "Preserve the coordinator"
+          ],
+          "acceptance": [
+            {
+              "id": "file",
+              "description": "Exact worker artifact",
+              "verification": {
+                "kind": "file-sha256",
+                "path": "accepted.txt",
+                "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+              }
+            },
+            {
+              "id": "owner",
+              "description": "Existing verifier accepts the evidence",
+              "verification": {
+                "kind": "owner-receipt",
+                "owner": "evidence-verifier",
+                "requires": [
+                  "file"
+                ]
+              }
+            }
+          ],
+          "target": "accepted.txt",
+          "dependencies": [],
+          "origin": {
+            "source": "host-task-api",
+            "requestId": "accepted-worker-task"
+          },
+          "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+          "domain": "37068b63427a9f44cf685e9c6cad0f3053a65beb76ca0ef89bde24bab2be3232",
+          "revision": 1,
+          "digest": "200fac260d9a6f1de9155e07d43766df8ea953915e58a92f29a4d56795e39a23",
+          "state": "doing",
+          "createdAt": 1794304055773,
+          "updatedAt": 1794304064149
+        },
+        "claim": {
+          "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+          "sessionKey": "agent:main:session-1794304029629-acceptedworker",
+          "generation": "4b388b09-ef19-4b89-b796-76ff4ef176a0",
+          "epoch": 3,
+          "attemptId": "78ebc7e7-d3d7-4ae7-b68a-685acc672cff",
+          "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace",
+          "contractRevision": 1,
+          "expiresAt": 1794304254885,
+          "state": "active"
+        },
+        "checkpoint": null,
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "childTaskNodeIds": []
+      },
+      "children": [],
+      "verificationReceipts": []
+    },
+    "receipts": [
+      {
+        "command": {
+          "action": "verifyFile",
+          "credential": {
+            "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+            "sessionKey": "agent:main:session-1794304029629-acceptedworker",
+            "generation": "4b388b09-ef19-4b89-b796-76ff4ef176a0",
+            "epoch": 3,
+            "attemptId": "78ebc7e7-d3d7-4ae7-b68a-685acc672cff",
+            "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace",
+            "contractRevision": 1,
+            "expiresAt": 1794304254885,
+            "state": "active"
+          },
+          "criterionId": "file",
+          "path": "accepted.txt",
+          "expectedSha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+          "candidate": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+        },
+        "result": {
+          "success": true,
+          "result": {
+            "receiptId": "054a236d-ac1f-4810-976a-5d7d4795fa89",
+            "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+            "revision": 1,
+            "epoch": 3,
+            "candidate": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+            "criterionId": "file",
+            "path": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace/accepted.txt",
+            "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+            "verifier": "host-file-verifier",
+            "createdAt": 1794304218178
+          }
+        }
+      },
+      {
+        "command": {
+          "action": "submit",
+          "credential": {
+            "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+            "sessionKey": "agent:main:session-1794304029629-acceptedworker",
+            "generation": "4b388b09-ef19-4b89-b796-76ff4ef176a0",
+            "epoch": 3,
+            "attemptId": "78ebc7e7-d3d7-4ae7-b68a-685acc672cff",
+            "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace",
+            "contractRevision": 1,
+            "expiresAt": 1794304254885,
+            "state": "active"
+          },
+          "candidate": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+        },
+        "result": {
+          "success": true,
+          "result": {
+            "contract": {
+              "objective": "Produce and verify the worker artifact",
+              "constraints": [
+                "Preserve the coordinator"
+              ],
+              "acceptance": [
+                {
+                  "id": "file",
+                  "description": "Exact worker artifact",
+                  "verification": {
+                    "kind": "file-sha256",
+                    "path": "accepted.txt",
+                    "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+                  }
+                },
+                {
+                  "id": "owner",
+                  "description": "Existing verifier accepts the evidence",
+                  "verification": {
+                    "kind": "owner-receipt",
+                    "owner": "evidence-verifier",
+                    "requires": [
+                      "file"
+                    ]
+                  }
+                }
+              ],
+              "target": "accepted.txt",
+              "dependencies": [],
+              "origin": {
+                "source": "host-task-api",
+                "requestId": "accepted-worker-task"
+              },
+              "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+              "domain": "37068b63427a9f44cf685e9c6cad0f3053a65beb76ca0ef89bde24bab2be3232",
+              "revision": 1,
+              "digest": "200fac260d9a6f1de9155e07d43766df8ea953915e58a92f29a4d56795e39a23",
+              "state": "review",
+              "createdAt": 1794304055773,
+              "updatedAt": 1794304219707
+            },
+            "claim": {
+              "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+              "sessionKey": "agent:main:session-1794304029629-acceptedworker",
+              "generation": "4b388b09-ef19-4b89-b796-76ff4ef176a0",
+              "epoch": 3,
+              "attemptId": "78ebc7e7-d3d7-4ae7-b68a-685acc672cff",
+              "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace",
+              "contractRevision": 1,
+              "expiresAt": 1794304254885,
+              "state": "active"
+            },
+            "checkpoint": null,
+            "pendingOperations": 0,
+            "pendingOperationDetails": [],
+            "childTaskNodeIds": []
+          }
+        }
+      },
+      {
+        "command": {
+          "action": "accept",
+          "credential": {
+            "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+            "sessionKey": "agent:main:session-1794304029629-acceptedworker",
+            "generation": "4b388b09-ef19-4b89-b796-76ff4ef176a0",
+            "epoch": 3,
+            "attemptId": "78ebc7e7-d3d7-4ae7-b68a-685acc672cff",
+            "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace",
+            "contractRevision": 1,
+            "expiresAt": 1794304254885,
+            "state": "active"
+          },
+          "candidate": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+        },
+        "result": {
+          "success": true,
+          "result": {
+            "contract": {
+              "objective": "Produce and verify the worker artifact",
+              "constraints": [
+                "Preserve the coordinator"
+              ],
+              "acceptance": [
+                {
+                  "id": "file",
+                  "description": "Exact worker artifact",
+                  "verification": {
+                    "kind": "file-sha256",
+                    "path": "accepted.txt",
+                    "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+                  }
+                },
+                {
+                  "id": "owner",
+                  "description": "Existing verifier accepts the evidence",
+                  "verification": {
+                    "kind": "owner-receipt",
+                    "owner": "evidence-verifier",
+                    "requires": [
+                      "file"
+                    ]
+                  }
+                }
+              ],
+              "target": "accepted.txt",
+              "dependencies": [],
+              "origin": {
+                "source": "host-task-api",
+                "requestId": "accepted-worker-task"
+              },
+              "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+              "domain": "37068b63427a9f44cf685e9c6cad0f3053a65beb76ca0ef89bde24bab2be3232",
+              "revision": 1,
+              "digest": "200fac260d9a6f1de9155e07d43766df8ea953915e58a92f29a4d56795e39a23",
+              "state": "done",
+              "createdAt": 1794304055773,
+              "updatedAt": 1794304221873
+            },
+            "claim": {
+              "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+              "sessionKey": "agent:main:session-1794304029629-acceptedworker",
+              "generation": "4b388b09-ef19-4b89-b796-76ff4ef176a0",
+              "epoch": 4,
+              "attemptId": "78ebc7e7-d3d7-4ae7-b68a-685acc672cff",
+              "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace",
+              "contractRevision": 1,
+              "expiresAt": 1794304254885,
+              "state": "released"
+            },
+            "checkpoint": null,
+            "pendingOperations": 0,
+            "pendingOperationDetails": [],
+            "childTaskNodeIds": []
+          }
+        }
+      }
+    ],
+    "childOwner": {
+      "success": true,
+      "task": {
+        "contract": {
+          "objective": "Produce and verify the worker artifact",
+          "constraints": [
+            "Preserve the coordinator"
+          ],
+          "acceptance": [
+            {
+              "id": "file",
+              "description": "Exact worker artifact",
+              "verification": {
+                "kind": "file-sha256",
+                "path": "accepted.txt",
+                "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+              }
+            },
+            {
+              "id": "owner",
+              "description": "Existing verifier accepts the evidence",
+              "verification": {
+                "kind": "owner-receipt",
+                "owner": "evidence-verifier",
+                "requires": [
+                  "file"
+                ]
+              }
+            }
+          ],
+          "target": "accepted.txt",
+          "dependencies": [],
+          "origin": {
+            "source": "host-task-api",
+            "requestId": "accepted-worker-task"
+          },
+          "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+          "domain": "37068b63427a9f44cf685e9c6cad0f3053a65beb76ca0ef89bde24bab2be3232",
+          "revision": 1,
+          "digest": "200fac260d9a6f1de9155e07d43766df8ea953915e58a92f29a4d56795e39a23",
+          "state": "done",
+          "createdAt": 1794304055773,
+          "updatedAt": 1794304221873
+        },
+        "claim": {
+          "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+          "sessionKey": "agent:main:session-1794304029629-acceptedworker",
+          "generation": "4b388b09-ef19-4b89-b796-76ff4ef176a0",
+          "epoch": 4,
+          "attemptId": "78ebc7e7-d3d7-4ae7-b68a-685acc672cff",
+          "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace",
+          "contractRevision": 1,
+          "expiresAt": 1794304254885,
+          "state": "released"
+        },
+        "checkpoint": null,
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "childTaskNodeIds": [],
+        "referenceOnly": true
+      },
+      "children": [],
+      "verificationReceipts": [
+        {
+          "receiptId": "054a236d-ac1f-4810-976a-5d7d4795fa89",
+          "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+          "revision": 1,
+          "epoch": 3,
+          "candidate": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+          "criterionId": "file",
+          "path": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace/accepted.txt",
+          "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+          "verifier": "host-file-verifier",
+          "createdAt": 1794304218178
+        },
+        {
+          "receiptId": "task-verifier:04de477cebf07350327f141514c057b4e90d2627b0eb9aa95f3da1aa040fefdf",
+          "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+          "revision": 1,
+          "epoch": 3,
+          "candidate": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+          "criterionId": "owner",
+          "path": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace/accepted.txt",
+          "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+          "inputArtifacts": [
+            {
+              "path": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace/accepted.txt",
+              "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+            }
+          ],
+          "verifier": "owner:evidence-verifier",
+          "ownerProof": {
+            "verifierReceiptId": "task-verifier:04de477cebf07350327f141514c057b4e90d2627b0eb9aa95f3da1aa040fefdf",
+            "effectReceiptId": "efx_8f3826a1-78c5-4587-8be5-47be11fdf93c",
+            "evidenceDigest": "dab4db2bb8e7a520718dbc5120ee2cb6ee93dc7de8e1aa1a47d55debd43831a7",
+            "proposalDigest": "812d0f105ba4766bf2bd84d2504f8bda5a26d0142d9e958b88fd5488a4750be8"
+          },
+          "createdAt": 1794304221821
+        }
+      ]
+    }
+  },
+  "ownerRefresh": {
+    "history": {
+      "success": true,
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "[Subagent Context] You are running as a subagent (depth 1/1). Results auto-announce to your requester; do not busy-poll for status.\n\n[Subagent Task]\n\nACCEPTED-WORKER-WRITE\n\nBegin. Execute the assigned task to completion."
+            }
+          ],
+          "timestamp": 1794304084756,
+          "__openclaw": {
+            "id": "586c9e1c",
+            "recordTimestampMs": 1794304087302,
+            "seq": 1
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "toolCall",
+              "id": "accepted-worker-write",
+              "name": "write",
+              "arguments": {
+                "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-acceptance-ja\\session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-\\accepted-worker-workspace\\accepted.txt",
+                "content": "owner-accepted worker result\n"
+              }
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "toolUse",
+          "timestamp": 1794304089178,
+          "__openclaw": {
+            "id": "e38b87d6",
+            "recordTimestampMs": 1794304090911,
+            "seq": 2
+          }
+        },
+        {
+          "role": "toolResult",
+          "toolCallId": "accepted-worker-write",
+          "toolName": "write",
+          "content": [
+            {
+              "type": "text",
+              "text": "Successfully wrote 29 bytes to D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-acceptance-ja\\session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-\\accepted-worker-workspace\\accepted.txt"
+            },
+            {
+              "type": "text",
+              "text": "verify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+            }
+          ],
+          "isError": false,
+          "timestamp": 1794304119270,
+          "__openclaw": {
+            "id": "5b5b7d01",
+            "recordTimestampMs": 1794304119417,
+            "seq": 3
+          },
+          "details": {
+            "patchArtifacts": [
+              {
+                "schema": "GitPatchArtifact/v1",
+                "file": "accepted.txt",
+                "status": "added",
+                "contentKind": "text",
+                "hunks": [
+                  {
+                    "oldStart": 0,
+                    "oldLines": 0,
+                    "newStart": 1,
+                    "newLines": 1,
+                    "lines": [
+                      {
+                        "kind": "addition",
+                        "text": "owner-accepted worker result",
+                        "oldLine": null,
+                        "newLine": 1
+                      }
+                    ]
+                  }
+                ],
+                "patch": "--- /dev/null\n+++ accepted.txt\n@@ -0,0 +1,1 @@\n+owner-accepted worker result\n",
+                "completeness": "complete",
+                "lineage": {
+                  "requestId": "accepted-worker-write",
+                  "journalEntryId": "write-journal:9a936cf0-7a93-4273-9ca8-04e17625b727:1"
+                }
+              }
+            ],
+            "write_journal": {
+              "undoable": true,
+              "snapshots": [
+                {
+                  "seq": 1,
+                  "journalEntryId": "write-journal:9a936cf0-7a93-4273-9ca8-04e17625b727:1",
+                  "path": "accepted.txt",
+                  "hadPrior": false
+                }
+              ]
+            },
+            "verify_tests": {
+              "detected": false,
+              "skipReason": "no-manifest",
+              "message": "No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+              "rendered": "skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+            }
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "ACCEPTED-WORKER-FINISHED"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "stop",
+          "timestamp": 1794304121056,
+          "__openclaw": {
+            "id": "c86455f8",
+            "recordTimestampMs": 1794304123225,
+            "seq": 4
+          }
+        }
+      ],
+      "sessionGeneration": "9a936cf0-7a93-4273-9ca8-04e17625b727",
+      "model": "custom-sessionc/mock-coder",
+      "costUsd": 0
+    },
+    "task": {
+      "success": true,
+      "task": {
+        "contract": {
+          "objective": "Produce and verify the worker artifact",
+          "constraints": [
+            "Preserve the coordinator"
+          ],
+          "acceptance": [
+            {
+              "id": "file",
+              "description": "Exact worker artifact",
+              "verification": {
+                "kind": "file-sha256",
+                "path": "accepted.txt",
+                "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+              }
+            },
+            {
+              "id": "owner",
+              "description": "Existing verifier accepts the evidence",
+              "verification": {
+                "kind": "owner-receipt",
+                "owner": "evidence-verifier",
+                "requires": [
+                  "file"
+                ]
+              }
+            }
+          ],
+          "target": "accepted.txt",
+          "dependencies": [],
+          "origin": {
+            "source": "host-task-api",
+            "requestId": "accepted-worker-task"
+          },
+          "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+          "domain": "37068b63427a9f44cf685e9c6cad0f3053a65beb76ca0ef89bde24bab2be3232",
+          "revision": 1,
+          "digest": "200fac260d9a6f1de9155e07d43766df8ea953915e58a92f29a4d56795e39a23",
+          "state": "done",
+          "createdAt": 1794304055773,
+          "updatedAt": 1794304221873
+        },
+        "claim": {
+          "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+          "sessionKey": "agent:main:session-1794304029629-acceptedworker",
+          "generation": "4b388b09-ef19-4b89-b796-76ff4ef176a0",
+          "epoch": 4,
+          "attemptId": "78ebc7e7-d3d7-4ae7-b68a-685acc672cff",
+          "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace",
+          "contractRevision": 1,
+          "expiresAt": 1794304254885,
+          "state": "released"
+        },
+        "checkpoint": null,
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "childTaskNodeIds": [],
+        "referenceOnly": true
+      },
+      "children": [],
+      "verificationReceipts": [
+        {
+          "receiptId": "054a236d-ac1f-4810-976a-5d7d4795fa89",
+          "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+          "revision": 1,
+          "epoch": 3,
+          "candidate": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+          "criterionId": "file",
+          "path": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace/accepted.txt",
+          "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+          "verifier": "host-file-verifier",
+          "createdAt": 1794304218178
+        },
+        {
+          "receiptId": "task-verifier:04de477cebf07350327f141514c057b4e90d2627b0eb9aa95f3da1aa040fefdf",
+          "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+          "revision": 1,
+          "epoch": 3,
+          "candidate": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+          "criterionId": "owner",
+          "path": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace/accepted.txt",
+          "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+          "inputArtifacts": [
+            {
+              "path": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace/accepted.txt",
+              "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+            }
+          ],
+          "verifier": "owner:evidence-verifier",
+          "ownerProof": {
+            "verifierReceiptId": "task-verifier:04de477cebf07350327f141514c057b4e90d2627b0eb9aa95f3da1aa040fefdf",
+            "effectReceiptId": "efx_8f3826a1-78c5-4587-8be5-47be11fdf93c",
+            "evidenceDigest": "dab4db2bb8e7a520718dbc5120ee2cb6ee93dc7de8e1aa1a47d55debd43831a7",
+            "proposalDigest": "812d0f105ba4766bf2bd84d2504f8bda5a26d0142d9e958b88fd5488a4750be8"
+          },
+          "createdAt": 1794304221821
+        }
+      ]
+    }
+  },
+  "artifact": {
+    "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-acceptance-ja\\session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-\\accepted-worker-workspace\\accepted.txt",
+    "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+  },
+  "acceptance": {
+    "current": {
+      "success": true,
+      "task": {
+        "contract": {
+          "objective": "Produce and verify the worker artifact",
+          "constraints": [
+            "Preserve the coordinator"
+          ],
+          "acceptance": [
+            {
+              "id": "file",
+              "description": "Exact worker artifact",
+              "verification": {
+                "kind": "file-sha256",
+                "path": "accepted.txt",
+                "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+              }
+            },
+            {
+              "id": "owner",
+              "description": "Existing verifier accepts the evidence",
+              "verification": {
+                "kind": "owner-receipt",
+                "owner": "evidence-verifier",
+                "requires": [
+                  "file"
+                ]
+              }
+            }
+          ],
+          "target": "accepted.txt",
+          "dependencies": [],
+          "origin": {
+            "source": "host-task-api",
+            "requestId": "accepted-worker-task"
+          },
+          "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+          "domain": "37068b63427a9f44cf685e9c6cad0f3053a65beb76ca0ef89bde24bab2be3232",
+          "revision": 1,
+          "digest": "200fac260d9a6f1de9155e07d43766df8ea953915e58a92f29a4d56795e39a23",
+          "state": "doing",
+          "createdAt": 1794304055773,
+          "updatedAt": 1794304064149
+        },
+        "claim": {
+          "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+          "sessionKey": "agent:main:session-1794304029629-acceptedworker",
+          "generation": "4b388b09-ef19-4b89-b796-76ff4ef176a0",
+          "epoch": 3,
+          "attemptId": "78ebc7e7-d3d7-4ae7-b68a-685acc672cff",
+          "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace",
+          "contractRevision": 1,
+          "expiresAt": 1794304254885,
+          "state": "active"
+        },
+        "checkpoint": null,
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "childTaskNodeIds": []
+      },
+      "children": [],
+      "verificationReceipts": []
+    },
+    "receipts": [
+      {
+        "command": {
+          "action": "verifyFile",
+          "credential": {
+            "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+            "sessionKey": "agent:main:session-1794304029629-acceptedworker",
+            "generation": "4b388b09-ef19-4b89-b796-76ff4ef176a0",
+            "epoch": 3,
+            "attemptId": "78ebc7e7-d3d7-4ae7-b68a-685acc672cff",
+            "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace",
+            "contractRevision": 1,
+            "expiresAt": 1794304254885,
+            "state": "active"
+          },
+          "criterionId": "file",
+          "path": "accepted.txt",
+          "expectedSha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+          "candidate": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+        },
+        "result": {
+          "success": true,
+          "result": {
+            "receiptId": "054a236d-ac1f-4810-976a-5d7d4795fa89",
+            "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+            "revision": 1,
+            "epoch": 3,
+            "candidate": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+            "criterionId": "file",
+            "path": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace/accepted.txt",
+            "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14",
+            "verifier": "host-file-verifier",
+            "createdAt": 1794304218178
+          }
+        }
+      },
+      {
+        "command": {
+          "action": "submit",
+          "credential": {
+            "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+            "sessionKey": "agent:main:session-1794304029629-acceptedworker",
+            "generation": "4b388b09-ef19-4b89-b796-76ff4ef176a0",
+            "epoch": 3,
+            "attemptId": "78ebc7e7-d3d7-4ae7-b68a-685acc672cff",
+            "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace",
+            "contractRevision": 1,
+            "expiresAt": 1794304254885,
+            "state": "active"
+          },
+          "candidate": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+        },
+        "result": {
+          "success": true,
+          "result": {
+            "contract": {
+              "objective": "Produce and verify the worker artifact",
+              "constraints": [
+                "Preserve the coordinator"
+              ],
+              "acceptance": [
+                {
+                  "id": "file",
+                  "description": "Exact worker artifact",
+                  "verification": {
+                    "kind": "file-sha256",
+                    "path": "accepted.txt",
+                    "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+                  }
+                },
+                {
+                  "id": "owner",
+                  "description": "Existing verifier accepts the evidence",
+                  "verification": {
+                    "kind": "owner-receipt",
+                    "owner": "evidence-verifier",
+                    "requires": [
+                      "file"
+                    ]
+                  }
+                }
+              ],
+              "target": "accepted.txt",
+              "dependencies": [],
+              "origin": {
+                "source": "host-task-api",
+                "requestId": "accepted-worker-task"
+              },
+              "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+              "domain": "37068b63427a9f44cf685e9c6cad0f3053a65beb76ca0ef89bde24bab2be3232",
+              "revision": 1,
+              "digest": "200fac260d9a6f1de9155e07d43766df8ea953915e58a92f29a4d56795e39a23",
+              "state": "review",
+              "createdAt": 1794304055773,
+              "updatedAt": 1794304219707
+            },
+            "claim": {
+              "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+              "sessionKey": "agent:main:session-1794304029629-acceptedworker",
+              "generation": "4b388b09-ef19-4b89-b796-76ff4ef176a0",
+              "epoch": 3,
+              "attemptId": "78ebc7e7-d3d7-4ae7-b68a-685acc672cff",
+              "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace",
+              "contractRevision": 1,
+              "expiresAt": 1794304254885,
+              "state": "active"
+            },
+            "checkpoint": null,
+            "pendingOperations": 0,
+            "pendingOperationDetails": [],
+            "childTaskNodeIds": []
+          }
+        }
+      },
+      {
+        "command": {
+          "action": "accept",
+          "credential": {
+            "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+            "sessionKey": "agent:main:session-1794304029629-acceptedworker",
+            "generation": "4b388b09-ef19-4b89-b796-76ff4ef176a0",
+            "epoch": 3,
+            "attemptId": "78ebc7e7-d3d7-4ae7-b68a-685acc672cff",
+            "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace",
+            "contractRevision": 1,
+            "expiresAt": 1794304254885,
+            "state": "active"
+          },
+          "candidate": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+        },
+        "result": {
+          "success": true,
+          "result": {
+            "contract": {
+              "objective": "Produce and verify the worker artifact",
+              "constraints": [
+                "Preserve the coordinator"
+              ],
+              "acceptance": [
+                {
+                  "id": "file",
+                  "description": "Exact worker artifact",
+                  "verification": {
+                    "kind": "file-sha256",
+                    "path": "accepted.txt",
+                    "sha256": "d5532871a1dd80d48e1137eb2b2cc2e709cbe6085511367b0ab1d2dfd9028f14"
+                  }
+                },
+                {
+                  "id": "owner",
+                  "description": "Existing verifier accepts the evidence",
+                  "verification": {
+                    "kind": "owner-receipt",
+                    "owner": "evidence-verifier",
+                    "requires": [
+                      "file"
+                    ]
+                  }
+                }
+              ],
+              "target": "accepted.txt",
+              "dependencies": [],
+              "origin": {
+                "source": "host-task-api",
+                "requestId": "accepted-worker-task"
+              },
+              "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+              "domain": "37068b63427a9f44cf685e9c6cad0f3053a65beb76ca0ef89bde24bab2be3232",
+              "revision": 1,
+              "digest": "200fac260d9a6f1de9155e07d43766df8ea953915e58a92f29a4d56795e39a23",
+              "state": "done",
+              "createdAt": 1794304055773,
+              "updatedAt": 1794304221873
+            },
+            "claim": {
+              "taskNodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+              "sessionKey": "agent:main:session-1794304029629-acceptedworker",
+              "generation": "4b388b09-ef19-4b89-b796-76ff4ef176a0",
+              "epoch": 4,
+              "attemptId": "78ebc7e7-d3d7-4ae7-b68a-685acc672cff",
+              "worktree": "d:/tmp/clawx-u4-relay-20261110-01a1c454/u4-final-acceptance-ja/session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-/accepted-worker-workspace",
+              "contractRevision": 1,
+              "expiresAt": 1794304254885,
+              "state": "released"
+            },
+            "checkpoint": null,
+            "pendingOperations": 0,
+            "pendingOperationDetails": [],
+            "childTaskNodeIds": []
+          }
+        }
+      }
+    ],
+    "readback": {
+      "success": true,
+      "snapshot": {
+        "schemaVersion": 1,
+        "workspaceId": "accepted-worker-d106af4a3a",
+        "generatedAt": "2026-11-10T09:50:30.294Z",
+        "nodes": [
+          {
+            "id": "27999603-4957-44a4-b94c-b942cc5a611c",
+            "title": "Produce and verify the worker artifact",
+            "description": "accepted.txt",
+            "kind": "task",
+            "status": "done",
+            "createdAt": "2026-11-10T09:47:35.773Z",
+            "updatedAt": "2026-11-10T09:50:21.873Z",
+            "metadata": {
+              "readonlyProjection": true,
+              "source": "task-ledger.execution-contract",
+              "contractRevision": 1
+            },
+            "parentId": null,
+            "evidenceRefs": []
+          }
+        ],
+        "edges": [],
+        "sessionLinks": [
+          {
+            "id": "execution-link:07f1e391d8cdf74e24937f19215f09f2eeb620f0bc47b2891ef80ca6bc8ef3a0",
+            "nodeId": "27999603-4957-44a4-b94c-b942cc5a611c",
+            "sessionKey": "agent:main:subagent:e604088e-4775-4bea-9013-0f2c3d44961a",
+            "sessionGeneration": "9a936cf0-7a93-4273-9ca8-04e17625b727",
+            "agentId": "main",
+            "relation": "related",
+            "createdAt": "2026-11-10T09:47:35.773Z"
+          }
+        ],
+        "rootNodeIds": [
+          "27999603-4957-44a4-b94c-b942cc5a611c"
+        ],
+        "reviewNodeIds": [],
+        "activeNodeIds": [],
+        "blockedNodeIds": [],
+        "currentGoalId": null,
+        "recentDecisions": [],
+        "eventsCount": 1,
+        "warnings": [],
+        "sourceWorkspaceId": "accepted-worker"
+      }
+    },
+    "history": {
+      "success": true,
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "[Subagent Context] You are running as a subagent (depth 1/1). Results auto-announce to your requester; do not busy-poll for status.\n\n[Subagent Task]\n\nACCEPTED-WORKER-WRITE\n\nBegin. Execute the assigned task to completion."
+            }
+          ],
+          "timestamp": 1794304084756,
+          "__openclaw": {
+            "id": "586c9e1c",
+            "recordTimestampMs": 1794304087302,
+            "seq": 1
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "toolCall",
+              "id": "accepted-worker-write",
+              "name": "write",
+              "arguments": {
+                "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-acceptance-ja\\session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-\\accepted-worker-workspace\\accepted.txt",
+                "content": "owner-accepted worker result\n"
+              }
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "toolUse",
+          "timestamp": 1794304089178,
+          "__openclaw": {
+            "id": "e38b87d6",
+            "recordTimestampMs": 1794304090911,
+            "seq": 2
+          }
+        },
+        {
+          "role": "toolResult",
+          "toolCallId": "accepted-worker-write",
+          "toolName": "write",
+          "content": [
+            {
+              "type": "text",
+              "text": "Successfully wrote 29 bytes to D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-acceptance-ja\\session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-\\accepted-worker-workspace\\accepted.txt"
+            },
+            {
+              "type": "text",
+              "text": "verify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+            }
+          ],
+          "isError": false,
+          "timestamp": 1794304119270,
+          "__openclaw": {
+            "id": "5b5b7d01",
+            "recordTimestampMs": 1794304119417,
+            "seq": 3
+          },
+          "details": {
+            "patchArtifacts": [
+              {
+                "schema": "GitPatchArtifact/v1",
+                "file": "accepted.txt",
+                "status": "added",
+                "contentKind": "text",
+                "hunks": [
+                  {
+                    "oldStart": 0,
+                    "oldLines": 0,
+                    "newStart": 1,
+                    "newLines": 1,
+                    "lines": [
+                      {
+                        "kind": "addition",
+                        "text": "owner-accepted worker result",
+                        "oldLine": null,
+                        "newLine": 1
+                      }
+                    ]
+                  }
+                ],
+                "patch": "--- /dev/null\n+++ accepted.txt\n@@ -0,0 +1,1 @@\n+owner-accepted worker result\n",
+                "completeness": "complete",
+                "lineage": {
+                  "requestId": "accepted-worker-write",
+                  "journalEntryId": "write-journal:9a936cf0-7a93-4273-9ca8-04e17625b727:1"
+                }
+              }
+            ],
+            "write_journal": {
+              "undoable": true,
+              "snapshots": [
+                {
+                  "seq": 1,
+                  "journalEntryId": "write-journal:9a936cf0-7a93-4273-9ca8-04e17625b727:1",
+                  "path": "accepted.txt",
+                  "hadPrior": false
+                }
+              ]
+            },
+            "verify_tests": {
+              "detected": false,
+              "skipReason": "no-manifest",
+              "message": "No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run.",
+              "rendered": "skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+            }
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "ACCEPTED-WORKER-FINISHED"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "stop",
+          "timestamp": 1794304121056,
+          "__openclaw": {
+            "id": "c86455f8",
+            "recordTimestampMs": 1794304123225,
+            "seq": 4
+          }
+        }
+      ],
+      "sessionGeneration": "9a936cf0-7a93-4273-9ca8-04e17625b727",
+      "model": "custom-sessionc/mock-coder",
+      "costUsd": 0
+    },
+    "locales": [
+      {
+        "language": "ja",
+        "status": "passed",
+        "label": "検証完了"
+      }
+    ]
+  },
+  "costFault": {
+    "driven_by": "agent",
+    "kind": "null-cost-after-real-host-read"
+  },
+  "providerLog": [
+    {
+      "turn": "[Tue 2026-11-10 17:48 GMT+8] [Subagent Context] You are runn",
+      "toolResults": {},
+      "issued": "accepted-worker-write"
+    },
+    {
+      "turn": "[Tue 2026-11-10 17:48 GMT+8] [Subagent Context] You are runn",
+      "toolResults": {
+        "acceptedworkerwrite": "Successfully wrote 29 bytes to D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\u4-final-acceptance-ja\\session-worker-task-journe-a2c6d-on-and-owner-acceptance-ja-\\accepted-worker-workspace\\accepted.txt\nverify_tests: skipped(no-manifest): No project manifest (package.json / pyproject.toml / Cargo.toml / go.mod) was found; no test suite was run."
+      },
+      "issued": "text:ACCEPTED-WORKER-FINISHED"
+    },
+    {
+      "turn": "[Inter-session message] sourceSession=agent:main:subagent:e6",
+      "toolResults": {},
+      "issued": "text:ACCEPTED-WORKER-FINISHED"
+    }
+  ]
+}

@@ -1,0 +1,347 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex-u4-relay-01a1c454",
+  "name": "cleanup-readback-red",
+  "cwd": "D:\\ClawX-work\\session-chain-u4-runtime-20261109",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "tests/unit/electron-process-identity.test.ts",
+    "-t",
+    "cleanup rechecks",
+    "--maxWorkers=1",
+    "--no-file-parallelism",
+    "--reporter=json",
+    "--outputFile=D:/tmp/clawx-u4-relay-20261110-01a1c454/cleanup-readback-red.tests.json"
+  ],
+  "startedAt": "2026-11-10T07:52:59.087Z",
+  "finishedAt": "2026-11-10T07:53:14.061Z",
+  "durationMs": 14972,
+  "exitCode": 1,
+  "signal": null,
+  "sourceUnchanged": true,
+  "before": {
+    "gitRoot": "D:/ClawX-work/session-chain-u4-runtime-20261109",
+    "commit": "1ece933e2aaf6b39dd207ee91769d56a49751018",
+    "tree": "ff2d344b32d4878bbdeb6960306bba381fa90fa1",
+    "dirty": "M tests/unit/electron-process-identity.test.ts\n M tests/unit/host-services.test.ts",
+    "files": [
+      {
+        "file": "electron/gateway/session-task-scope-bridge.ts",
+        "sha256": "adf4114b398054ff1780b24015d7ce130d5b4fd32355cf58ee339a03fc274cd9"
+      },
+      {
+        "file": "electron/services/sessions-api.ts",
+        "sha256": "541eecbf2ceca5be3312d967823af6e8a0b634d552893e5328d5580b1487b262"
+      },
+      {
+        "file": "electron/services/task-ledger-api.ts",
+        "sha256": "f8674a3b8e754f43f1430ee32d503175ebaca0e919f19bd6f230d5a22a188972"
+      },
+      {
+        "file": "electron/services/task-ledger-service.ts",
+        "sha256": "ed760146c185f51e613a02138856f5267a28e194f94f3c8228e31d7c6fcd6076"
+      },
+      {
+        "file": "electron/services/task-system-service.ts",
+        "sha256": "f13fbc61b71aabdafe78f178bb8b01171953e5edde0831fb8c93b7a36804b61a"
+      },
+      {
+        "file": "electron/services/workspaces-api.ts",
+        "sha256": "df8744d2fa426d4ebac30be296391057eb1183b35e7cafbfaf2eea5c5a839e11"
+      },
+      {
+        "file": "electron/utils/host-deadline-context.ts",
+        "sha256": "80b98bff5be8c9393be7ccbbb5ab5092a74108d83fe570b46d870da3a9c00f2a"
+      },
+      {
+        "file": "openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts",
+        "sha256": "32f75a9a5977c6c2e335ddd43b986112a85346754287e2f738f0899961bbab5c"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/chat.ts",
+        "sha256": "2d4183a9f1c244bd2f4bc50dbbcef4a146f301c86e3a155f3ec2fbeab228c73b"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/optional-model-catalog.ts",
+        "sha256": "bb7351f4d7e47b1b277ed8cfd8a92fa2bb2332ebfa6ba4acb2a80bf0483072ba"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/session-task-scope.ts",
+        "sha256": "fb267f7baeee49ad68666010285ec262d6b759df05651b856b6349b30c3646e1"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.read.ts",
+        "sha256": "786fc0aaad62edab0651b6618c6f40d9fbf767f13579feff7c37297e6f9f1a4c"
+      },
+      {
+        "file": "shared/dcs/prod-flags-catalog.ts",
+        "sha256": "9ae89fc4d0ed7cdde505c0b2af2db4373b98fded8162d923d1a8f62b33e2fa80"
+      },
+      {
+        "file": "shared/host-api/contract.ts",
+        "sha256": "973760af5b81100a8085bdca7adb41158e126942e5905f180b6a0e4c2049d8ec"
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "sha256": "4aa869a682aa6b96b3548a0754247634659b3932bb0ae5daf4ff53506d6eed2d"
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "sha256": "902aa608fd91a80df58b349df5d751fc551ece6e4887717e985ff21d41d1e6d4"
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "sha256": "3e9d7650721c38fa596b5f2a5a1b22ba96824ffb45c736956644e25d3d7d5c1f"
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "sha256": "f88fe6fbf326986eb665b4255100132fe90790546ece66cd84bbc2a737f3a0a5"
+      },
+      {
+        "file": "shared/task-system/types.ts",
+        "sha256": "da81048f06c2be80c8635c1ac24df53c4740983be52d482c8ad42e8b4e7c030d"
+      },
+      {
+        "file": "src/components/chat/SessionDelegationStatus.tsx",
+        "sha256": "c2ae3ca6bb3e404e753abcf74c159a27ce21b650f3dcd82186bf9dd992f1f733"
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceAgentsPanel.tsx",
+        "sha256": "651ba87cec4d19c2a76b5e6b3ab51936ed7de9e8347e790b0eb242ef53c91a55"
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+        "sha256": "6f5c08b9f5b81407fd2c27294e747946c683b5979957fd4d5dc9df84b7b84487"
+      },
+      {
+        "file": "src/pages/TaskLedger/index.tsx",
+        "sha256": "60ccd92030b9cfb9563cbf382fe38c639e5a767b8796103227c9fa54ec04aa47"
+      },
+      {
+        "file": "tests/e2e/fixtures/electron.ts",
+        "sha256": "4dfc8c742e79bc63a5e5ee13e6ee9f712b5b14fd5520d875260a263899c739cf"
+      },
+      {
+        "file": "tests/e2e/session-worker-task-journey.spec.ts",
+        "sha256": "fec0b07ba70bed4d3af32e6dc8374d43f3411165f80ba8c494c43b6eaac4c1f8"
+      },
+      {
+        "file": "tests/unit/chat-send-input-mode.test.ts",
+        "sha256": "541cfef4cc11c5cbcf50a8cda2edf855cfd881a8dd311d463626438c29b5d2ff"
+      },
+      {
+        "file": "tests/unit/durable-task-session-scope.test.ts",
+        "sha256": "70006e2805fb789288628205c67f25d1345620ccf622148f6c8144461358c6e1"
+      },
+      {
+        "file": "tests/unit/electron-process-identity.test.ts",
+        "sha256": "774bcc915df34cb3224180ad6cac01a25c91889e45cfa85f4f08878b6476fcd3"
+      },
+      {
+        "file": "tests/unit/gateway-session-active-runs.test.ts",
+        "sha256": "3e2ea03538cd31aecc1799d0f6439993b3a2f4541f4e896a23de4d665420c5fd"
+      },
+      {
+        "file": "tests/unit/gateway-worker-history-metadata.test.ts",
+        "sha256": "0793e8853d4fef1a701c9ac69dce19d90617b2c5cac43330c88444df68b97806"
+      },
+      {
+        "file": "tests/unit/host-services.test.ts",
+        "sha256": "912dff3e37f55d55c51d46bea5aabdc96b39e69548211c67fd17b92e9c47a6be"
+      },
+      {
+        "file": "tests/unit/session-chain-panels.test.tsx",
+        "sha256": "e474a38129af9eca3b573a9dc254cbf764884eff60274b82862f2f51d7e7eda8"
+      },
+      {
+        "file": "tests/unit/session-delegation-status.test.tsx",
+        "sha256": "06124ceb191565aceed3a58243419ca2aa25c6e238a40a42a5b9b478a664adc5"
+      },
+      {
+        "file": "tests/unit/session-task-scope-bridge.test.ts",
+        "sha256": "629041d0a2b8c07061e6f52d3391535b9efaf16c9caba3bd403f52ab01d017ee"
+      },
+      {
+        "file": "tests/unit/session-task-scope-completion.test.ts",
+        "sha256": "39cb2e98139153a9f25fb10c2f9fe5bb691cd8d8cd6e3427b527f6ba65fd358f"
+      },
+      {
+        "file": "tests/unit/task-ledger-snapshot-cache.test.ts",
+        "sha256": "d757dc856880cef947e089181cc63ca6486b332596151928a45235007bd33da0"
+      },
+      {
+        "file": "tests/unit/workspace-agents-panel-failure.test.tsx",
+        "sha256": "fbf2ea4aa5f0205248b4f430cff6255ff5f1dd270b6017252c18ab89018e208b"
+      }
+    ]
+  },
+  "after": {
+    "gitRoot": "D:/ClawX-work/session-chain-u4-runtime-20261109",
+    "commit": "1ece933e2aaf6b39dd207ee91769d56a49751018",
+    "tree": "ff2d344b32d4878bbdeb6960306bba381fa90fa1",
+    "dirty": "M tests/unit/electron-process-identity.test.ts\n M tests/unit/host-services.test.ts",
+    "files": [
+      {
+        "file": "electron/gateway/session-task-scope-bridge.ts",
+        "sha256": "adf4114b398054ff1780b24015d7ce130d5b4fd32355cf58ee339a03fc274cd9"
+      },
+      {
+        "file": "electron/services/sessions-api.ts",
+        "sha256": "541eecbf2ceca5be3312d967823af6e8a0b634d552893e5328d5580b1487b262"
+      },
+      {
+        "file": "electron/services/task-ledger-api.ts",
+        "sha256": "f8674a3b8e754f43f1430ee32d503175ebaca0e919f19bd6f230d5a22a188972"
+      },
+      {
+        "file": "electron/services/task-ledger-service.ts",
+        "sha256": "ed760146c185f51e613a02138856f5267a28e194f94f3c8228e31d7c6fcd6076"
+      },
+      {
+        "file": "electron/services/task-system-service.ts",
+        "sha256": "f13fbc61b71aabdafe78f178bb8b01171953e5edde0831fb8c93b7a36804b61a"
+      },
+      {
+        "file": "electron/services/workspaces-api.ts",
+        "sha256": "df8744d2fa426d4ebac30be296391057eb1183b35e7cafbfaf2eea5c5a839e11"
+      },
+      {
+        "file": "electron/utils/host-deadline-context.ts",
+        "sha256": "80b98bff5be8c9393be7ccbbb5ab5092a74108d83fe570b46d870da3a9c00f2a"
+      },
+      {
+        "file": "openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts",
+        "sha256": "32f75a9a5977c6c2e335ddd43b986112a85346754287e2f738f0899961bbab5c"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/chat.ts",
+        "sha256": "2d4183a9f1c244bd2f4bc50dbbcef4a146f301c86e3a155f3ec2fbeab228c73b"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/optional-model-catalog.ts",
+        "sha256": "bb7351f4d7e47b1b277ed8cfd8a92fa2bb2332ebfa6ba4acb2a80bf0483072ba"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/session-task-scope.ts",
+        "sha256": "fb267f7baeee49ad68666010285ec262d6b759df05651b856b6349b30c3646e1"
+      },
+      {
+        "file": "openclaw_runtime/src/gateway/server-methods/sessions.read.ts",
+        "sha256": "786fc0aaad62edab0651b6618c6f40d9fbf767f13579feff7c37297e6f9f1a4c"
+      },
+      {
+        "file": "shared/dcs/prod-flags-catalog.ts",
+        "sha256": "9ae89fc4d0ed7cdde505c0b2af2db4373b98fded8162d923d1a8f62b33e2fa80"
+      },
+      {
+        "file": "shared/host-api/contract.ts",
+        "sha256": "973760af5b81100a8085bdca7adb41158e126942e5905f180b6a0e4c2049d8ec"
+      },
+      {
+        "file": "shared/i18n/locales/en/chat.json",
+        "sha256": "4aa869a682aa6b96b3548a0754247634659b3932bb0ae5daf4ff53506d6eed2d"
+      },
+      {
+        "file": "shared/i18n/locales/ja/chat.json",
+        "sha256": "902aa608fd91a80df58b349df5d751fc551ece6e4887717e985ff21d41d1e6d4"
+      },
+      {
+        "file": "shared/i18n/locales/ru/chat.json",
+        "sha256": "3e9d7650721c38fa596b5f2a5a1b22ba96824ffb45c736956644e25d3d7d5c1f"
+      },
+      {
+        "file": "shared/i18n/locales/zh/chat.json",
+        "sha256": "f88fe6fbf326986eb665b4255100132fe90790546ece66cd84bbc2a737f3a0a5"
+      },
+      {
+        "file": "shared/task-system/types.ts",
+        "sha256": "da81048f06c2be80c8635c1ac24df53c4740983be52d482c8ad42e8b4e7c030d"
+      },
+      {
+        "file": "src/components/chat/SessionDelegationStatus.tsx",
+        "sha256": "c2ae3ca6bb3e404e753abcf74c159a27ce21b650f3dcd82186bf9dd992f1f733"
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceAgentsPanel.tsx",
+        "sha256": "651ba87cec4d19c2a76b5e6b3ab51936ed7de9e8347e790b0eb242ef53c91a55"
+      },
+      {
+        "file": "src/components/file-preview/WorkspaceSubagentPanel.tsx",
+        "sha256": "6f5c08b9f5b81407fd2c27294e747946c683b5979957fd4d5dc9df84b7b84487"
+      },
+      {
+        "file": "src/pages/TaskLedger/index.tsx",
+        "sha256": "60ccd92030b9cfb9563cbf382fe38c639e5a767b8796103227c9fa54ec04aa47"
+      },
+      {
+        "file": "tests/e2e/fixtures/electron.ts",
+        "sha256": "4dfc8c742e79bc63a5e5ee13e6ee9f712b5b14fd5520d875260a263899c739cf"
+      },
+      {
+        "file": "tests/e2e/session-worker-task-journey.spec.ts",
+        "sha256": "fec0b07ba70bed4d3af32e6dc8374d43f3411165f80ba8c494c43b6eaac4c1f8"
+      },
+      {
+        "file": "tests/unit/chat-send-input-mode.test.ts",
+        "sha256": "541cfef4cc11c5cbcf50a8cda2edf855cfd881a8dd311d463626438c29b5d2ff"
+      },
+      {
+        "file": "tests/unit/durable-task-session-scope.test.ts",
+        "sha256": "70006e2805fb789288628205c67f25d1345620ccf622148f6c8144461358c6e1"
+      },
+      {
+        "file": "tests/unit/electron-process-identity.test.ts",
+        "sha256": "774bcc915df34cb3224180ad6cac01a25c91889e45cfa85f4f08878b6476fcd3"
+      },
+      {
+        "file": "tests/unit/gateway-session-active-runs.test.ts",
+        "sha256": "3e2ea03538cd31aecc1799d0f6439993b3a2f4541f4e896a23de4d665420c5fd"
+      },
+      {
+        "file": "tests/unit/gateway-worker-history-metadata.test.ts",
+        "sha256": "0793e8853d4fef1a701c9ac69dce19d90617b2c5cac43330c88444df68b97806"
+      },
+      {
+        "file": "tests/unit/host-services.test.ts",
+        "sha256": "912dff3e37f55d55c51d46bea5aabdc96b39e69548211c67fd17b92e9c47a6be"
+      },
+      {
+        "file": "tests/unit/session-chain-panels.test.tsx",
+        "sha256": "e474a38129af9eca3b573a9dc254cbf764884eff60274b82862f2f51d7e7eda8"
+      },
+      {
+        "file": "tests/unit/session-delegation-status.test.tsx",
+        "sha256": "06124ceb191565aceed3a58243419ca2aa25c6e238a40a42a5b9b478a664adc5"
+      },
+      {
+        "file": "tests/unit/session-task-scope-bridge.test.ts",
+        "sha256": "629041d0a2b8c07061e6f52d3391535b9efaf16c9caba3bd403f52ab01d017ee"
+      },
+      {
+        "file": "tests/unit/session-task-scope-completion.test.ts",
+        "sha256": "39cb2e98139153a9f25fb10c2f9fe5bb691cd8d8cd6e3427b527f6ba65fd358f"
+      },
+      {
+        "file": "tests/unit/task-ledger-snapshot-cache.test.ts",
+        "sha256": "d757dc856880cef947e089181cc63ca6486b332596151928a45235007bd33da0"
+      },
+      {
+        "file": "tests/unit/workspace-agents-panel-failure.test.tsx",
+        "sha256": "fbf2ea4aa5f0205248b4f430cff6255ff5f1dd270b6017252c18ab89018e208b"
+      }
+    ]
+  },
+  "tests": {
+    "total": 4,
+    "passed": 0,
+    "failed": 2,
+    "pending": 2
+  },
+  "log": {
+    "path": "D:\\tmp\\clawx-u4-relay-20261110-01a1c454\\cleanup-readback-red.log",
+    "sha256": "f9f198f78aef1537da85578e4d7323e8970d8afa90d47e73fb41fa8e22f7aa41"
+  }
+}
