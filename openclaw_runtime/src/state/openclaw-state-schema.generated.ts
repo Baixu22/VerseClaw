@@ -1850,4 +1850,154 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_effect_receipts_idempotency
   ON effect_receipts(idempotency_key);
 
 CREATE INDEX IF NOT EXISTS idx_effect_receipts_approval
-  ON effect_receipts(approval_id, created_at DESC);\n`;
+  ON effect_receipts(approval_id, created_at DESC);
+
+-- RAG-04 source projection lifecycle. FTS tables are owner-scoped and created
+-- lazily by ProjectionStore so the shared state database never requires FTS5.
+CREATE TABLE IF NOT EXISTS knowledge_index_sources (
+  source_key TEXT NOT NULL PRIMARY KEY,
+  source_schema TEXT NOT NULL CHECK (source_schema = 'SourceRef/v2'),
+  domain TEXT NOT NULL,
+  authority_id TEXT NOT NULL,
+  namespace_id TEXT NOT NULL,
+  subject_id TEXT NOT NULL,
+  source_revision TEXT NOT NULL,
+  source_digest TEXT NOT NULL,
+  policy_epoch TEXT NOT NULL,
+  locator_coordinate_space TEXT,
+  locator_start_byte INTEGER,
+  locator_end_byte_exclusive INTEGER,
+  locator_start_line INTEGER,
+  locator_end_line INTEGER,
+  profile_digest TEXT NOT NULL,
+  intent_sequence INTEGER NOT NULL CHECK (intent_sequence >= 1),
+  eligible INTEGER NOT NULL CHECK (eligible IN (0, 1)),
+  desired_eligible INTEGER NOT NULL CHECK (desired_eligible IN (0, 1)),
+  active_generation_id TEXT,
+  reason TEXT,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_index_sources_namespace
+  ON knowledge_index_sources(namespace_id, subject_id, source_key);
+
+CREATE TABLE IF NOT EXISTS knowledge_index_events (
+  event_id TEXT NOT NULL PRIMARY KEY,
+  source_key TEXT NOT NULL,
+  source_revision TEXT NOT NULL,
+  source_digest TEXT NOT NULL,
+  policy_epoch TEXT NOT NULL,
+  profile_digest TEXT NOT NULL,
+  desired_eligible INTEGER NOT NULL CHECK (desired_eligible IN (0, 1)),
+  reason TEXT,
+  intent_sequence INTEGER NOT NULL CHECK (intent_sequence >= 1),
+  observed_at INTEGER NOT NULL,
+  FOREIGN KEY (source_key) REFERENCES knowledge_index_sources(source_key)
+);
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_index_events_source
+  ON knowledge_index_events(source_key, observed_at DESC);
+
+CREATE TABLE IF NOT EXISTS knowledge_index_jobs (
+  job_id TEXT NOT NULL PRIMARY KEY,
+  source_key TEXT NOT NULL,
+  source_schema TEXT NOT NULL CHECK (source_schema = 'SourceRef/v2'),
+  domain TEXT NOT NULL,
+  authority_id TEXT NOT NULL,
+  namespace_id TEXT NOT NULL,
+  subject_id TEXT NOT NULL,
+  source_revision TEXT NOT NULL,
+  source_digest TEXT NOT NULL,
+  policy_epoch TEXT NOT NULL,
+  locator_coordinate_space TEXT,
+  locator_start_byte INTEGER,
+  locator_end_byte_exclusive INTEGER,
+  locator_start_line INTEGER,
+  locator_end_line INTEGER,
+  profile_digest TEXT NOT NULL,
+  intent_sequence INTEGER NOT NULL CHECK (intent_sequence >= 1),
+  state TEXT NOT NULL CHECK (state IN ('pending', 'leased', 'complete', 'failed', 'superseded')),
+  attempt INTEGER NOT NULL CHECK (attempt BETWEEN 0 AND 3),
+  lease_owner TEXT,
+  lease_expires_at INTEGER,
+  deadline_at INTEGER NOT NULL,
+  next_attempt_at INTEGER NOT NULL,
+  error TEXT,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  FOREIGN KEY (source_key) REFERENCES knowledge_index_sources(source_key)
+);
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_index_jobs_claim
+  ON knowledge_index_jobs(namespace_id, state, next_attempt_at, deadline_at, job_id);
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_index_jobs_source_sequence
+  ON knowledge_index_jobs(source_key, intent_sequence, updated_at DESC);
+
+CREATE TABLE IF NOT EXISTS knowledge_index_generations (
+  generation_id TEXT NOT NULL PRIMARY KEY,
+  source_key TEXT NOT NULL,
+  intent_sequence INTEGER NOT NULL CHECK (intent_sequence >= 1),
+  profile_digest TEXT NOT NULL,
+  state TEXT NOT NULL CHECK (state IN ('building', 'active', 'retired', 'failed')),
+  chunk_count INTEGER NOT NULL CHECK (chunk_count >= 0),
+  created_at INTEGER NOT NULL,
+  published_at INTEGER,
+  retired_at INTEGER,
+  FOREIGN KEY (source_key) REFERENCES knowledge_index_sources(source_key)
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_knowledge_index_generations_active
+  ON knowledge_index_generations(source_key)
+  WHERE state = 'active';
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_index_generations_source
+  ON knowledge_index_generations(source_key, intent_sequence DESC, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS knowledge_index_chunks (
+  generation_id TEXT NOT NULL,
+  source_key TEXT NOT NULL,
+  namespace_id TEXT NOT NULL,
+  chunk_id TEXT NOT NULL,
+  chunk_digest TEXT NOT NULL,
+  ordinal INTEGER NOT NULL CHECK (ordinal >= 0),
+  parent_id TEXT NOT NULL,
+  section_id TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  heading_path_json TEXT NOT NULL,
+  source_schema TEXT NOT NULL CHECK (source_schema = 'SourceRef/v2'),
+  domain TEXT NOT NULL,
+  authority_id TEXT NOT NULL,
+  subject_id TEXT NOT NULL,
+  source_revision TEXT NOT NULL,
+  source_digest TEXT NOT NULL,
+  policy_epoch TEXT NOT NULL,
+  locator_coordinate_space TEXT NOT NULL,
+  locator_start_byte INTEGER NOT NULL,
+  locator_end_byte_exclusive INTEGER NOT NULL,
+  locator_start_line INTEGER NOT NULL,
+  locator_end_line INTEGER NOT NULL,
+  quote TEXT NOT NULL,
+  retrieval_text TEXT NOT NULL,
+  search_tokens_json TEXT NOT NULL,
+  token_count INTEGER NOT NULL CHECK (token_count >= 0),
+  chunker_schema TEXT NOT NULL,
+  chunker_version TEXT NOT NULL,
+  chunker_target_tokens INTEGER NOT NULL,
+  chunker_max_tokens INTEGER NOT NULL,
+  chunker_max_chars INTEGER NOT NULL,
+  chunker_overlap INTEGER NOT NULL,
+  chunker_tokenizer_id TEXT NOT NULL,
+  chunker_tokenizer_digest TEXT NOT NULL,
+  PRIMARY KEY (generation_id, chunk_id),
+  UNIQUE (generation_id, ordinal),
+  FOREIGN KEY (generation_id) REFERENCES knowledge_index_generations(generation_id) ON DELETE CASCADE,
+  FOREIGN KEY (source_key) REFERENCES knowledge_index_sources(source_key)
+);
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_index_chunks_source
+  ON knowledge_index_chunks(source_key, generation_id, ordinal);
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_index_chunks_namespace
+  ON knowledge_index_chunks(namespace_id, generation_id, ordinal);\n`;

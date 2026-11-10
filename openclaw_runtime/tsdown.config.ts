@@ -270,6 +270,7 @@ function buildCoreDistEntries(): Record<string, string> {
     "agents/models-config.runtime": "src/agents/models-config.runtime.ts",
     "agents/code-mode.worker": "src/agents/code-mode.worker.ts",
     "agents/compaction-planning.worker": "src/agents/compaction-planning.worker.ts",
+    "knowledge/retrieval/index.worker": "src/knowledge/retrieval/index.worker.ts",
     "agents/model-provider-auth.worker": "src/agents/model-provider-auth.worker.ts",
     "acp/control-plane/manager": "src/acp/control-plane/manager.ts",
     "provider-dispatcher.runtime": "src/auto-reply/reply/provider-dispatcher.runtime.ts",

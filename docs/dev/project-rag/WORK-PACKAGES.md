@@ -14,6 +14,8 @@
 
 来源原始字节、结构切块、tokenizer 绑定和精确引用复读见[来源与切块合同](SOURCE-CHUNK-CONTRACT.md)。
 
+共享 SQLite 投影、显式启用、后台构建、撤销和崩溃恢复见[索引生命周期合同](INDEX-LIFECYCLE-CONTRACT.md)。
+
 ## 阶段与依赖
 
 | 工作包 | 交付 | 前置 | 实现 owner |

@@ -9,6 +9,7 @@ import {
   createMemoryWikiImportRunStateStore,
 } from "./src/import-runs-state.js";
 import { createWikiPromptSectionBuilder } from "./src/prompt-section.js";
+import { createMemoryWikiProjectionService } from "./src/retrieval-index.js";
 import {
   configureMemoryWikiSourceSyncStateStore,
   createMemoryWikiSourceSyncStateStore,
@@ -39,7 +40,18 @@ export default definePluginEntry({
     api.registerMemoryCorpusSupplement(
       createWikiCorpusSupplement({ config, appConfig: api.config }),
     );
-    registerMemoryWikiGatewayMethods({ api, config, appConfig: api.config });
+    const projection = createMemoryWikiProjectionService({
+      config,
+      appConfig: api.config,
+      openKeyedStore: api.runtime.state.openKeyedStore,
+      onError: (error) => api.logger.warn(`Knowledge projection unavailable: ${error.message}`),
+    });
+    api.registerService({
+      id: "wiki-retrieval-projection",
+      start: () => projection.start(),
+      stop: () => projection.stop(),
+    });
+    registerMemoryWikiGatewayMethods({ api, config, appConfig: api.config, projection });
     api.registerTool(createWikiStatusTool(config, api.config), { name: "wiki_status" });
     api.registerTool(createWikiLintTool(config, api.config), { name: "wiki_lint" });
     if (config.tools.allowAgentApply) {

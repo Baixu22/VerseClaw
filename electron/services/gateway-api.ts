@@ -356,7 +356,7 @@ export function createGatewayApi(
     policyWorkspace?: Awaited<ReturnType<typeof getActiveWorkspaceProfile>>,
   ) => {
     let knowledgeReadScope: KnowledgeReadScope | undefined;
-    if (method === 'wiki.get' || method === 'wiki.search') {
+    if (method === 'wiki.get' || method === 'wiki.search' || method.startsWith('wiki.index.')) {
       const values = isRecord(params) ? params : {};
       knowledgeReadScope = await prepareKnowledgeReadScope(gatewayManager, {
         sessionKey: typeof values.sessionKey === 'string' ? values.sessionKey : undefined,

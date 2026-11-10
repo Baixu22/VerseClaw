@@ -204,6 +204,7 @@ flowchart LR
 - Knowledge 使用 `memory-wiki` vault 和本地 governance metadata。
 - 监听目录通过快照核对新增、修改与撤销，补偿停机期间的变化；变更只进入带版本的待审候选。
 - 文件和 GitHub 来源在推进版本前严格校验 UTF-8，编码无效时保留游标并报告错误。
+- Project RAG 提供显式启用、绑定 workspace 的索引生命周期 API，支持 SQLite 发布、后台 worker 和 owner 引用复核，见[索引生命周期合同](docs/dev/project-rag/INDEX-LIFECYCLE-CONTRACT.md)。
 - Librarian 问答与有界追问通过已配置 Gateway 模型处理准入后的证据，核验逐项原文引用与版本；部分读取、冲突和模型失败明确披露。Studio 继续生成待审摘录草稿。
 - 中文词法、长文有界续读、按 provider 隔离的 embedding 缓存和版本绑定的 Steward 发现共用来源准入。可选公共 GitHub 目录连接器将更新与撤销送入 Inbox；其他 SaaS 连接器尚未实现。
 - 日志、trace、截图、Task Forest 与 handoff 默认是本地工作数据，除非明确整理为 curated evidence。

@@ -31,6 +31,10 @@ function workspace(permissionMode: WorkspaceProfile['permissionMode'] = 'acceptE
 }
 
 describe('workspace permission policy', () => {
+  it('allows projection reads in read-only mode and keeps lifecycle writes gated', () => {
+    for (const method of ['wiki.index.status', 'wiki.index.search']) expect(decideGatewayRpc(method, 'readOnly', { query: 'delete source?' })).toMatchObject({ allowed: true, risk: 'read' });
+    for (const method of ['wiki.index.start', 'wiki.index.stop', 'wiki.index.rebuild', 'wiki.index.reconcile']) expect(decideGatewayRpc(method, 'readOnly')).toMatchObject({ allowed: false });
+  });
   it('classifies common read, write, network, and destructive commands', () => {
     expect(classifyWorkspaceCommand('git status')).toBe('read');
     expect(classifyWorkspaceCommand('rg TODO .')).toBe('read');

@@ -259,17 +259,25 @@ function mergeWikiSearchCorpusResults(params: {
   return sortWikiSearchResults(selected).slice(0, params.maxResults);
 }
 
-async function listWikiMarkdownFiles(rootDir: string): Promise<string[]> {
+export async function listMemoryWikiPagePaths(rootDir: string): Promise<string[]> {
   const files = (
     await Promise.all(
       QUERY_DIRS.map(async (relativeDir) => {
         const dirPath = path.join(rootDir, relativeDir);
-        const entries = await fs.readdir(dirPath, { withFileTypes: true }).catch(() => []);
-        return entries
-          .filter(
-            (entry) => entry.isFile() && entry.name.endsWith(".md") && entry.name !== "index.md",
-          )
-          .map((entry) => path.join(relativeDir, entry.name));
+        const entries = await fs
+          .readdir(dirPath, { withFileTypes: true })
+          .catch((error: unknown) => {
+            if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
+            throw error;
+          });
+        return (
+          entries
+            .filter(
+              (entry) => entry.isFile() && entry.name.endsWith(".md") && entry.name !== "index.md",
+            )
+            // Wiki subjects are portable owner identifiers, including on Windows.
+            .map((entry) => `${relativeDir}/${entry.name}`)
+        );
       }),
     )
   ).flat();
@@ -277,7 +285,7 @@ async function listWikiMarkdownFiles(rootDir: string): Promise<string[]> {
 }
 
 export async function readQueryableWikiPages(rootDir: string): Promise<QueryableWikiPage[]> {
-  const files = await listWikiMarkdownFiles(rootDir);
+  const files = await listMemoryWikiPagePaths(rootDir);
   return readQueryableWikiPagesByPaths(rootDir, files);
 }
 
@@ -1469,7 +1477,7 @@ async function searchWikiCorpus(params: {
     return results;
   }
 
-  const remainingPaths = (await listWikiMarkdownFiles(params.rootDir)).filter(
+  const remainingPaths = (await listMemoryWikiPagePaths(params.rootDir)).filter(
     (relativePath) => !seenPaths.has(relativePath),
   );
   const remainingPages = await readQueryableWikiPagesByPaths(params.rootDir, remainingPaths);

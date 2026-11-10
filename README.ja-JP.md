@@ -204,6 +204,7 @@ Main layers：
 - Knowledge は `memory-wiki` vault と local governance metadata を使用。
 - 監視フォルダーは追加・変更・削除を版付きの審査候補へ同期し、停止中の変更も再走査します。
 - ファイルと GitHub のソースは版を進める前に UTF-8 を検証し、不正な文字列はカーソルを保持してエラーにします。
+- Project RAG は workspace に紐付く明示的な index lifecycle API を備え、SQLite 公開、background worker、owner 引用検証を行います。[索引ライフサイクル契約](docs/dev/project-rag/INDEX-LIFECYCLE-CONTRACT.md)を参照してください。
 - Librarian は許可済みの証拠と制限された会話履歴を設定済み Gateway モデルへ渡し、原文引用と版を検証します。部分読み取り、矛盾、モデル失敗を明示し、Studio はレビュー用の抜粋草稿を保存します。
 - 中国語検索、長文の制限付き続読、provider 別 embedding キャッシュ、版に紐付く Steward 所見を実装しています。任意の公開 GitHub ディレクトリ接続は更新と撤回を Inbox へ送ります。他の SaaS 接続は未実装です。
 - Log、trace、screenshot、Task Forest、handoff は明示的に curated されない限り local working data。

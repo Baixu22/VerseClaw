@@ -684,6 +684,122 @@ export interface KnowledgeGovernanceProposals {
   workspace_id: string | null;
 }
 
+export interface KnowledgeIndexChunks {
+  authority_id: string;
+  chunk_digest: string;
+  chunk_id: string;
+  chunker_max_chars: number;
+  chunker_max_tokens: number;
+  chunker_overlap: number;
+  chunker_schema: string;
+  chunker_target_tokens: number;
+  chunker_tokenizer_digest: string;
+  chunker_tokenizer_id: string;
+  chunker_version: string;
+  domain: string;
+  generation_id: string;
+  heading_path_json: string;
+  kind: string;
+  locator_coordinate_space: string;
+  locator_end_byte_exclusive: number;
+  locator_end_line: number;
+  locator_start_byte: number;
+  locator_start_line: number;
+  namespace_id: string;
+  ordinal: number;
+  parent_id: string;
+  policy_epoch: string;
+  quote: string;
+  retrieval_text: string;
+  search_tokens_json: string;
+  section_id: string;
+  source_digest: string;
+  source_key: string;
+  source_revision: string;
+  source_schema: string;
+  subject_id: string;
+  token_count: number;
+}
+
+export interface KnowledgeIndexEvents {
+  desired_eligible: number;
+  event_id: string;
+  intent_sequence: number;
+  observed_at: number;
+  policy_epoch: string;
+  profile_digest: string;
+  reason: string | null;
+  source_digest: string;
+  source_key: string;
+  source_revision: string;
+}
+
+export interface KnowledgeIndexGenerations {
+  chunk_count: number;
+  created_at: number;
+  generation_id: string;
+  intent_sequence: number;
+  profile_digest: string;
+  published_at: number | null;
+  retired_at: number | null;
+  source_key: string;
+  state: string;
+}
+
+export interface KnowledgeIndexJobs {
+  attempt: number;
+  authority_id: string;
+  created_at: number;
+  deadline_at: number;
+  domain: string;
+  error: string | null;
+  intent_sequence: number;
+  job_id: string;
+  lease_expires_at: number | null;
+  lease_owner: string | null;
+  locator_coordinate_space: string | null;
+  locator_end_byte_exclusive: number | null;
+  locator_end_line: number | null;
+  locator_start_byte: number | null;
+  locator_start_line: number | null;
+  namespace_id: string;
+  next_attempt_at: number;
+  policy_epoch: string;
+  profile_digest: string;
+  source_digest: string;
+  source_key: string;
+  source_revision: string;
+  source_schema: string;
+  state: string;
+  subject_id: string;
+  updated_at: number;
+}
+
+export interface KnowledgeIndexSources {
+  active_generation_id: string | null;
+  authority_id: string;
+  created_at: number;
+  desired_eligible: number;
+  domain: string;
+  eligible: number;
+  intent_sequence: number;
+  locator_coordinate_space: string | null;
+  locator_end_byte_exclusive: number | null;
+  locator_end_line: number | null;
+  locator_start_byte: number | null;
+  locator_start_line: number | null;
+  namespace_id: string;
+  policy_epoch: string;
+  profile_digest: string;
+  reason: string | null;
+  source_digest: string;
+  source_key: string;
+  source_revision: string;
+  source_schema: string;
+  subject_id: string;
+  updated_at: number;
+}
+
 export interface KnowledgeOwnerLinks {
   content_digest: string;
   created_at: string;
@@ -1407,6 +1523,11 @@ export interface DB {
   knowledge_candidates: KnowledgeCandidates;
   knowledge_governance_events: KnowledgeGovernanceEvents;
   knowledge_governance_proposals: KnowledgeGovernanceProposals;
+  knowledge_index_chunks: KnowledgeIndexChunks;
+  knowledge_index_events: KnowledgeIndexEvents;
+  knowledge_index_generations: KnowledgeIndexGenerations;
+  knowledge_index_jobs: KnowledgeIndexJobs;
+  knowledge_index_sources: KnowledgeIndexSources;
   knowledge_owner_links: KnowledgeOwnerLinks;
   long_task_checkpoints: LongTaskCheckpoints;
   long_task_intervention_events: LongTaskInterventionEvents;

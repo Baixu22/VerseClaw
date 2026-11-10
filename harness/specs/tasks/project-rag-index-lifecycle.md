@@ -1,18 +1,33 @@
 ---
 lifecycleStatus: active
-implementationStatus: planned
+implementationStatus: partial
 id: project-rag-index-lifecycle
 title: 实现增量索引、撤销传播与崩溃恢复
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-04
 intent: 让长期索引跟随真实来源变化，而非逐渐过期的缓存。
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: 57c40c0e8943e597e8463dd45c6a27ad27dc9241
 touchedAreas:
   - "openclaw_runtime/src/knowledge/retrieval/**"
   - "openclaw_runtime/src/state/openclaw-state-*"
   - "openclaw_runtime/src/resources/background-work-gate.ts"
   - "openclaw_runtime/extensions/memory-wiki/runtime-api.ts"
+  - "openclaw_runtime/extensions/memory-wiki/index.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/retrieval-*.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/gateway.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/query.ts"
+  - "electron/services/gateway-api.ts"
+  - "electron/services/workspace-permissions.ts"
+  - "tests/unit/workspace-permissions.test.ts"
+  - "openclaw_runtime/src/plugin-sdk/knowledge-retrieval.ts"
+  - "openclaw_runtime/src/plugin-sdk/knowledge-retrieval-worker.ts"
+  - "openclaw_runtime/src/plugin-sdk/resource-runtime.ts"
+  - "openclaw_runtime/src/plugin-sdk/entrypoints.ts"
+  - "openclaw_runtime/scripts/lib/plugin-sdk-entrypoints.json"
+  - "openclaw_runtime/package.json"
+  - "openclaw_runtime/tsdown.config.ts"
+  - "openclaw_runtime/scripts/generate-kysely-types.mjs"
   - "electron/services/knowledge-source-sync.ts"
   - "shared/dcs/prod-flags-catalog.ts"
   - "docs/generated/catalogs/prod-flags.md"
@@ -25,6 +40,7 @@ touchedAreas:
   - "docs/clawx-design-overview.md"
   - "docs/dev/runtime-control-planes.md"
   - "docs/dev/evidence/project-rag-longterm-20261109/**"
+  - "docs/dev/evidence/project-rag/RAG-04/**"
   - "harness/specs/tasks/project-rag-*.md"
   - "harness/specs/rules/project-rag-long-term-boundary.md"
   - ".gitignore"
@@ -33,7 +49,9 @@ touchedAreas:
   - "tests/unit/knowledge-source-sync.test.ts"
   - "openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts"
   - "tests/unit/project-rag-index-recovery.test.ts"
+  - "tests/unit/workspace-permissions.test.ts"
   - "tests/e2e/project-rag-index-lifecycle.spec.ts"
+  - "scripts/knowledge-rag-index-probe.ts"
 requiredProfiles:
   - "fast"
   - "comms"
@@ -44,6 +62,10 @@ requiredRules:
   - "project-rag-long-term-boundary"
 requiredTests:
   - "tests/unit/knowledge-source-sync.test.ts"
+  - "tests/unit/workspace-permissions.test.ts"
+  - "openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts"
+  - "tests/unit/project-rag-index-recovery.test.ts"
+  - "tests/e2e/project-rag-index-lifecycle.spec.ts"
 plannedTests:
   - "openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts"
   - "tests/unit/project-rag-index-recovery.test.ts"
@@ -63,6 +85,7 @@ docs:
   files:
     - docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md
     - docs/dev/project-rag/WORK-PACKAGES.md
+    - docs/dev/project-rag/INDEX-LIFECYCLE-CONTRACT.md
 ---
 
 # 实现增量索引、撤销传播与崩溃恢复

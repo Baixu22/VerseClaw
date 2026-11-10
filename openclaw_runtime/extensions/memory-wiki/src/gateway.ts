@@ -27,6 +27,7 @@ import { syncMemoryWikiImportedSources } from "./source-sync.js";
 import { buildMemoryWikiDoctorReport, resolveMemoryWikiStatus } from "./status.js";
 import { initializeMemoryWikiVault } from "./vault.js";
 import type { MemoryWikiReadIdentity } from "./owner-read.js";
+import type { MemoryWikiProjectionService } from "./retrieval-index.js";
 
 const READ_SCOPE = "operator.read" as const;
 const WRITE_SCOPE = "operator.write" as const;
@@ -55,6 +56,7 @@ function readIdentity(
       : [];
   return {
     agentSessionKey: readStringParam(facts, "agentSessionKey"),
+    sessionId: readStringParam(facts, "sessionId"),
     workspaceId: readStringParam(facts, "workspaceId"),
     workspaceDir: readStringParam(facts, "workspaceDir"),
     egressProviderRefs: providerRefs,
@@ -123,8 +125,54 @@ export function registerMemoryWikiGatewayMethods(params: {
   api: OpenClawPluginApi;
   config: ResolvedMemoryWikiConfig;
   appConfig?: OpenClawConfig;
+  projection?: MemoryWikiProjectionService;
 }) {
   const { api, config, appConfig } = params;
+
+  if (params.projection) {
+    const projection = params.projection;
+    const operations = [
+      "start",
+      "stop",
+      "status",
+      "reconcile",
+      "rebuild",
+      "idle",
+      "search",
+    ] as const;
+    for (const operation of operations) {
+      api.registerGatewayMethod(
+        `wiki.index.${operation}`,
+        async ({ params: request, respond, client }) => {
+          try {
+            const identity = readIdentity(request, client);
+            if (!identity)
+              throw new Error("Projection operations require a backend-owned read identity");
+            const result =
+              operation === "start"
+                ? await projection.enable(identity)
+                : operation === "stop"
+                  ? await projection.disable(identity)
+                  : operation === "status"
+                    ? projection.status(identity)
+                    : operation === "reconcile" || operation === "rebuild"
+                      ? await projection.reconcile(identity, operation === "rebuild")
+                      : operation === "idle"
+                        ? await projection.idle(identity)
+                        : await projection.search(
+                            identity,
+                            readStringParam(request, "query", { required: true }),
+                            readPositiveIntegerParam(request, "limit"),
+                          );
+            respond(true, result);
+          } catch (error) {
+            respondError(respond, error);
+          }
+        },
+        { scope: ["status", "search"].includes(operation) ? READ_SCOPE : WRITE_SCOPE },
+      );
+    }
+  }
 
   api.registerGatewayMethod(
     "wiki.status",

@@ -204,6 +204,7 @@ No separate database server is required.
 - Knowledge uses a `memory-wiki` vault plus local governance metadata.
 - Watched folders reconcile additions, updates and withdrawals into versioned review candidates, including changes missed while the app was stopped.
 - File and GitHub source imports reject invalid UTF-8 before advancing the source version.
+- Project RAG exposes an explicit, workspace-scoped index lifecycle API with SQLite publication, background workers and owner-checked citations. See the [index lifecycle contract](docs/dev/project-rag/INDEX-LIFECYCLE-CONTRACT.md).
 - Librarian questions and bounded follow-ups use admitted evidence through the configured Gateway model; exact quotations and source versions are checked. Partial reads, conflicts and model failures remain visible. Studio keeps review-only excerpts.
 - Chinese lexical retrieval, bounded long-document continuation, a provider-scoped embedding cache and version-bound Steward findings share the same admission boundary. An opt-in public GitHub directory connector sends updates and withdrawals to Inbox; other SaaS connectors are not implemented.
 - Logs, traces, screenshots, Task Forest state and handoffs are local working data unless explicitly curated.
