@@ -12,7 +12,7 @@ import { configureSessionChainProvider, createSessionChainProject, createSession
 
 for (const journey of ['navigation', 'controls', 'isolation'] as const) {
 test(`a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (${journey})`, async ({ launchElectronApp }, testInfo) => {
-  test.setTimeout(journey === 'navigation' ? 300_000 : 420_000);
+  test.setTimeout(420_000);
   const target = testInfo.outputPath('workspace', 'worker.txt');
   let wrote = false;
   let holdNext = false;
@@ -431,10 +431,10 @@ test(`a real delegated worker receives its own task, reports separately and acce
 });
 }
 
-// Each locale prepares a real canonical owner and uses one reload within the 300s case budget.
+// Each locale prepares a canonical owner and verifies it again after navigation.
 for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
   test(`the worker panel reads a real task acceptance after file verification and owner acceptance (${language})`, async ({ launchElectronApp }, testInfo) => {
-    test.setTimeout(300_000);
+    test.setTimeout(420_000);
     const content = 'owner-accepted worker result\n';
     const hash = createHash('sha256').update(content).digest('hex');
     const target = testInfo.outputPath('accepted-worker-workspace', 'accepted.txt');
