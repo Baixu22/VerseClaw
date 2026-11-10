@@ -840,6 +840,11 @@ async function withGitOperation(
     if (current.blocked) return { success: false, blocked: true, reason: current.reason };
     if (before && !before.blocked && current.identity !== before.identity)
       return { success: false, blocked: true, reason: 'UI_CLEANUP_TARGET_CHANGED; entry=/settings/storage; refresh the owning session' };
+    const { removeUiWorktree } = await import('./task-system-service');
+    const profiles = (await createWorkspacesApi().list()).profiles;
+    const removal = removeUiWorktree(ctx.repoRoot, payload.removalTarget, profiles, current.identity);
+    if (removal.success) invalidateGitStatusCache(ctx.repoRoot);
+    return { ...removal, status: removal.success ? await readCurrentGitStatus().catch(() => undefined) : undefined };
   }
   const result = await git(args, ctx.workspaceRoot);
   if (result.exitCode === 0) invalidateGitStatusCache(ctx.repoRoot);

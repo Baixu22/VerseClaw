@@ -11,7 +11,7 @@ import { getResourceTracker } from './resource-tracker';
 import { enforcePermission, git, parseWorktrees } from './git-api';
 import type { TerminalSessionManager } from './terminal-session-manager';
 import { readProcessTreeSample } from '../../openclaw_runtime/src/process/process-tree-sampler';
-import { inspectUiWorktreeRemoval } from './task-system-service';
+import { inspectUiWorktreeRemoval, removeUiWorktree } from './task-system-service';
 
 function pathKey(path: string): string {
   const key = resolve(path);
@@ -182,8 +182,7 @@ export function createSessionStorageApi(context: {
       if (current.blocked) return { success: false, blocked: true, reason: current.reason };
       if (!currentTree || currentTree.protection || current.identity !== before.identity)
         return { success: false, blocked: true, reason: currentTree?.reason || 'UI_CLEANUP_STATE_CHANGED; entry=/settings/storage' };
-      const result = await git(['worktree', 'remove', '--', tree.path], profile.rootPath);
-      return { success: result.exitCode === 0, ...result };
+      return removeUiWorktree(profile.rootPath, tree.path, latest.profiles, current.identity);
     },
   };
 }

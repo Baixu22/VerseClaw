@@ -1,7 +1,8 @@
 import { existsSync, statSync } from "node:fs";
 import type { WorkspaceProfile } from '../../shared/types/workspace';
 import { canonicalWorktreePath, findManagedWorktreeByRoot, worktreeNativeIdentity } from '../../openclaw_runtime/src/agents/worktree-registry';
-import { assertCleanupCommitRetained, assertWorktreeIndexVisible } from '../../openclaw_runtime/src/agents/worktree-service';
+import { assertCleanupCommitRetained, assertWorktreeIndexVisible, removeNativeGitWorktree } from '../../openclaw_runtime/src/agents/worktree-service';
+import type { GitOperationResult } from '../../shared/types/git';
 import { checkoutWriterSnapshot } from '../../openclaw_runtime/src/agents/worktree-writer';
 import { resolveExecutionDomain } from '../../openclaw_runtime/src/agents/execution-domain';
 import { TaskSystemStore } from "../../shared/task-system/store";
@@ -54,6 +55,29 @@ export function inspectUiWorktreeRemoval(repositoryRoot: string, target: string,
     // The existing database establishes Task ownership; its schema stays with TaskSystemStore.
     return deny('UI_CLEANUP_TASK_AUTHORITY', domain.authority.id, 'TaskSystemStore');
   } catch (error) { return deny('UI_CLEANUP_OWNER_UNAVAILABLE', error instanceof Error ? error.message : String(error)); }
+}
+
+/** The final inspection and native effect share the Task first-open/claim barrier. */
+export function removeUiWorktree(repositoryRoot: string, target: string, profiles: WorkspaceProfile[], expectedIdentity: string): GitOperationResult {
+  try {
+    const access = createExecutionTaskAccess(target);
+    return access.withWriteBarrier!(() => {
+      const current = inspectUiWorktreeRemoval(repositoryRoot, target, profiles);
+      if (current.blocked) return { success: false, blocked: true, reason: current.reason };
+      if (current.identity !== expectedIdentity) return { success: false, blocked: true,
+        reason: 'UI_CLEANUP_TARGET_CHANGED; entry=/settings/storage; refresh the owning session' };
+      try {
+        return { success: true, stdout: removeNativeGitWorktree(repositoryRoot, target), stderr: '', exitCode: 0 };
+      } catch (error) {
+        const failure = error as { status?: number; stdout?: string | Buffer; stderr?: string | Buffer };
+        return { success: false, exitCode: typeof failure.status === 'number' ? failure.status : 1,
+          stdout: String(failure.stdout ?? ''), stderr: String(failure.stderr ?? error) };
+      }
+    });
+  } catch (error) {
+    return { success: false, blocked: true,
+      reason: `UI_CLEANUP_OWNER_UNAVAILABLE: ${String(error)}; owner=Workspace/session lifecycle; entry=/settings/storage` };
+  }
 }
 
 export async function openTaskSystem(

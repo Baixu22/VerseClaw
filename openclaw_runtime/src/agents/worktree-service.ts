@@ -358,6 +358,11 @@ export function assertWorktreeIndexVisible(root: string): void {
   if (hidden.length) throw new Error('worktree_cleanup_hidden_index_flags:' + hidden.slice(0, 8).map(entry => entry.slice(2)).join(','));
 }
 
+/** Bounded native removal; callers hold their original ownership/admission guard. */
+export function removeNativeGitWorktree(repository: string, target: string): string {
+  return git(['worktree', 'remove', '--', target], repository);
+}
+
 export function assertCleanupCommitRetained(record: Pick<WorktreeRecord, "backend" | "root" | "baseRoot">): void {
   if (record.backend !== "git") return;
   let head: string;
@@ -852,7 +857,7 @@ export function createWorktreeService(
           if (rec.backend === "git") {
             // Git rechecks live modifications at removal; a refusal retains the checkout.
             const beforeRemoval = captureWorktreeFiles(rec.root, true);
-            try { git(["worktree", "remove", ownership.root], resolved); }
+            try { removeNativeGitWorktree(resolved, ownership.root); }
             catch (error) {
               const failure = error as { status?: number; stderr?: Buffer | string };
               let retainedDirtyRefusal = false;

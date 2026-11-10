@@ -12,6 +12,7 @@ ownedPaths: &paths
   - src/pages/Chat/ChatInput.tsx
   - electron/services/git-api.ts
   - electron/services/task-system-service.ts
+  - electron/services/session-storage-api.ts
   - shared/task-system/**
   - openclaw_runtime/src/agents/execution-task-authority.ts
   - openclaw_runtime/src/agents/execution-task-barrier.ts
@@ -24,6 +25,7 @@ ownedPaths: &paths
   - tests/unit/task-worktree-retention.test.ts
   - tests/unit/git-api.test.ts
   - tests/unit/ui-worktree-cleanup-conservative.test.ts
+  - tests/unit/session-storage-api.test.ts
   - tests/unit/worktree-reclamation-preservation.test.ts
   - tests/unit/checkout-writer-ownership.test.ts
   - tests/unit/execution-migration.test.ts

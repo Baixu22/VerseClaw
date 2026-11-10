@@ -29,7 +29,8 @@ while (!existsSync(input.start)) {
 try {
   if (input.mode === 'first-open') {
     store = new TaskSystemStore(access.domain, undefined, access);
-    store.create(input.contract, 'late-create');
+    const created = store.create(input.contract, 'late-create');
+    if (input.claimAfterCreate) store.claim(created.task.contract.taskNodeId, 'late-session', 'late-generation', 'late-claim');
   } else if (input.mode === 'checkpoint') {
     store!.checkpoint(input.credential, { completed: [], nextAction: 'continue', unresolved: [], artifacts: [input.artifact] });
   } else if (input.mode === 'claim') {

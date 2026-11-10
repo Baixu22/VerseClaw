@@ -1,10 +1,10 @@
 // @vitest-environment node
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { WorkspaceProfile } from '../../shared/types/workspace';
 import type { CompleteHostServiceRegistry } from '../../electron/main/ipc/host-contract';
@@ -15,6 +15,15 @@ import { registerExecutionDomain } from '../../openclaw_runtime/src/agents/execu
 import { createWorktreeService, resolveExecutionCheckout } from '../../openclaw_runtime/src/agents/worktree-service';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import { normalizeRunScope } from '../../shared/types/identity-scope';
+
+const nativeExecution = vi.hoisted(() => ({ before: null as null | ((program: unknown, args: unknown) => void) }));
+vi.mock('node:child_process', async importOriginal => {
+  const actual = await importOriginal<typeof import('node:child_process')>();
+  return { ...actual,
+    execFile: (...args: unknown[]) => { nativeExecution.before?.(args[0], args[1]); return Reflect.apply(actual.execFile, actual, args); },
+    execFileSync: (...args: unknown[]) => { nativeExecution.before?.(args[0], args[1]); return Reflect.apply(actual.execFileSync, actual, args); },
+  };
+});
 
 const state = vi.hoisted(() => ({ profiles: [] as WorkspaceProfile[], grants: [] as Array<{ id: string; requestHash: string }>,
   approved: new Set<string>(), onConsume: null as null | (() => void), failWorkspaceRead: false }));
@@ -72,9 +81,53 @@ describe('conservative UI deletion using original Git and owners', () => {
     native(repository, 'add', 'artifact.txt'); native(repository, '-c', 'user.name=Agent fixture', '-c', 'user.email=agent@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-m', 'fixture');
     native(repository, 'worktree', 'add', '-b', 'native-fixture', tree); state.profiles = [profile('repository', repository)];
   });
-  afterEach(async () => { closeOpenClawStateDatabaseForTest(); vi.unstubAllEnvs(); await rm(root, { recursive: true, force: true }); });
+  afterEach(async () => { nativeExecution.before = null; vi.restoreAllMocks(); closeOpenClawStateDatabaseForTest(); vi.unstubAllEnvs(); await rm(root, { recursive: true, force: true }); });
 
   for (const kind of ['git', 'storage'] as const) {
+    it(`${kind}: serializes native removal against first Task creation and claim after final inspection`, async () => {
+      const prompt = await route(kind);
+      expect(prompt.approvalRequired).toBe(true); state.approved.add(prompt.approval!.id);
+      const ready = join(root, 'ready.json'), start = join(root, 'start'), result = join(root, 'result.json');
+      const input = { mode: 'first-open', workspace: tree, contract, claimAfterCreate: true, ready, start, result };
+      const worker = spawn(process.execPath, ['--import', 'tsx', resolve('tests/unit/fixtures/task-retention-worker.mts'), Buffer.from(JSON.stringify(input)).toString('base64')],
+        { cwd: resolve('openclaw_runtime'), env: process.env, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
+      let output = ''; worker.stdout!.on('data', chunk => output += String(chunk)); worker.stderr!.on('data', chunk => output += String(chunk));
+      const exited = new Promise<number | null>((done, reject) => { worker.once('exit', done); worker.once('error', reject); });
+      let intercepted = false, barrierObserved = false;
+      try {
+        await expect.poll(() => existsSync(ready), { timeout: 20_000 }).toBe(true);
+        expect(existsSync(resolveTaskDomain(tree).database)).toBe(false);
+        const lock = `${join(root, 'execution.sqlite')}.task-domain-${sha(resolveTaskDomain(tree).id)}.clawx-write.lock`;
+        const beforeNativeRemoval = (program: unknown, args: unknown) => {
+          if (program !== 'git' || !Array.isArray(args) || args[0] !== 'worktree' || args[1] !== 'remove') return;
+          intercepted = true; writeFileSync(start, 'start');
+          const pause = new Int32Array(new SharedArrayBuffer(4)), deadline = Date.now() + 15_000;
+          while (!existsSync(result)) {
+            if (existsSync(lock) && readdirSync(lock).filter(name => name.endsWith('.json')).length >= 2) { barrierObserved = true; break; }
+            if (Date.now() > deadline) throw new Error(`No native contention observation: ${output}`);
+            Atomics.wait(pause, 0, 0, 5);
+          }
+        };
+        nativeExecution.before = beforeNativeRemoval;
+        const response = await route(kind, prompt.approval!.id);
+        expect(intercepted, JSON.stringify(response)).toBe(true);
+        expect(await exited, output).toBe(0);
+        const competing = JSON.parse(readFileSync(result, 'utf8'));
+        if (process.env.CLAWX_UI_CLEANUP_RACE_PROOF_DIR) {
+          mkdirSync(process.env.CLAWX_UI_CLEANUP_RACE_PROOF_DIR, { recursive: true });
+          writeFileSync(join(process.env.CLAWX_UI_CLEANUP_RACE_PROOF_DIR, kind + '.json'), JSON.stringify({ driven_by: 'agent', actor: 'ui-native-removal-race',
+            kind, response, competing, intercepted, barrierObserved, targetExists: existsSync(tree), taskDatabaseExists: existsSync(resolveTaskDomain(repository).database) }, null, 2));
+        }
+        expect(intercepted).toBe(true);
+        expect(competing.rejected).toMatch(/ENOENT|unavailable|STALE|no such file/i);
+        expect(barrierObserved).toBe(true);
+        expect(response.success).toBe(true); expect(existsSync(tree)).toBe(false);
+        expect(existsSync(resolveTaskDomain(repository).database)).toBe(false);
+      } finally {
+        if (worker.exitCode === null && worker.signalCode === null) worker.kill('SIGKILL');
+        await exited.catch(() => undefined);
+      }
+    }, 45_000);
     for (const flag of ['--assume-unchanged', '--skip-worktree'] as const) {
       it(`${kind}: preserves tracked edits hidden by ${flag}`, async () => {
         native(tree, 'update-index', flag, '--', 'artifact.txt');
