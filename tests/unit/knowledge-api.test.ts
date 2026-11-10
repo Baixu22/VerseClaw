@@ -357,6 +357,9 @@ describe('knowledge host API', () => {
             hash: 'h1',
             config: {
               plugins: {
+                enabled: false,
+                allow: ['other', 'memory-wiki'],
+                deny: ['blocked-plugin'],
                 entries: {
                   other: { enabled: false },
                   'memory-wiki': {
@@ -383,6 +386,10 @@ describe('knowledge host API', () => {
     const patchPayload = patchCall?.[1] as { raw: string; baseHash?: string };
     const patch = JSON.parse(patchPayload.raw);
     expect(patchPayload.baseHash).toBe('h1');
+    expect(patch.plugins.enabled).toBe(true);
+    expect(patch.plugins).not.toHaveProperty('allow');
+    expect(patch.plugins).not.toHaveProperty('deny');
+    expect(patch.plugins.entries).not.toHaveProperty('other');
     expect(patch.plugins.entries['memory-wiki']).toMatchObject({
       enabled: true,
       config: {
@@ -399,6 +406,44 @@ describe('knowledge host API', () => {
       .at(-1)?.[1] as { raw: string };
     const obsidianPatch = JSON.parse(obsidianPatchPayload.raw);
     expect(obsidianPatch.plugins.entries['memory-wiki'].config.vault.renderMode).toBe('obsidian');
+  });
+
+  it.each([
+    { policy: { allow: ['other'] }, reason: 'not-in-allowlist' },
+    { policy: { allow: ['memory-wiki'], deny: ['memory-wiki'] }, reason: 'blocked-by-denylist' },
+    { policy: { allow: ['other'], deny: ['memory-wiki'], slots: { memory: 'memory-wiki' } }, reason: 'blocked-by-denylist' },
+  ])('refuses Knowledge setup without changing a blocking plugin policy: $reason', async ({ policy, reason }) => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string) => {
+        if (method === 'config.get') return { hash: 'policy-hash', config: { plugins: { enabled: false, ...policy } } };
+        if (method === 'config.patch') return { ok: true };
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    await expect(api.configure()).resolves.toMatchObject({ success: false, error: expect.stringContaining(reason) });
+    expect(gatewayManager.rpc.mock.calls.map(([method]) => method)).toEqual(['config.get']);
+  });
+
+  it('preserves the runtime policy for an explicitly selected plugin slot', async () => {
+    const gatewayManager = {
+      rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+        if (method === 'config.get') return { hash: 'slot-hash', config: { plugins: {
+          enabled: false, allow: ['other'], slots: { memory: 'memory-wiki' },
+        } } };
+        if (method === 'config.patch') return { ok: true, params };
+        throw new Error(`unexpected rpc ${method}`);
+      }),
+    };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    await expect(api.configure()).resolves.toEqual({ success: true });
+    const raw = gatewayManager.rpc.mock.calls.find(([method]) => method === 'config.patch')?.[1].raw as string;
+    const patch = JSON.parse(raw);
+    expect(patch.plugins.enabled).toBe(true);
+    expect(patch.plugins).not.toHaveProperty('allow');
+    expect(patch.plugins).not.toHaveProperty('slots');
   });
 
   it('enumerates bounded text files and skips large or non-text imports', async () => {

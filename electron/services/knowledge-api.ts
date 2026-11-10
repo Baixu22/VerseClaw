@@ -15,6 +15,7 @@ import { rotateLogIfNeeded } from '../utils/log-retention';
 // R2: main-side error returns must stay inside the sanitize boundary — the
 // renderer renders these strings directly in banners/toasts.
 import { sanitizeUiErrorText } from '../../shared/privacy/ui-error-sanitize';
+import { resolvePluginActivationDecisionShared } from '../../openclaw_runtime/src/plugins/config-activation-shared';
 import {
   assertPermissionEffectOwnerCheckpoint,
   permissionEffectBindingFor,
@@ -2438,6 +2439,22 @@ function readMemoryWikiEntry(config: Record<string, unknown> | undefined): Recor
 
 function buildMemoryWikiPatch(snapshot: ConfigSnapshot, input: unknown): Record<string, unknown> {
   const body: Record<string, unknown> = isRecord(input) ? input : {};
+  const plugins = isRecord(snapshot.config?.plugins) ? snapshot.config.plugins : {};
+  const slots = isRecord(plugins.slots) ? plugins.slots : {};
+  // Explicit setup opens the loader, but the runtime still owns allow/deny and slot precedence.
+  const policy = resolvePluginActivationDecisionShared({
+    id: 'memory-wiki',
+    origin: 'bundled',
+    config: {
+      enabled: true,
+      allow: normalizeStringList(plugins.allow),
+      deny: normalizeStringList(plugins.deny),
+      slots: { memory: getString(slots.memory), contextEngine: getString(slots.contextEngine) },
+      entries: { 'memory-wiki': { enabled: true } },
+    },
+    isBundledChannelEnabledByChannelConfig: () => false,
+  });
+  if (!policy.enabled) throw new Error(`memory-wiki activation blocked: ${policy.cause ?? policy.source}`);
   const existingEntry = readMemoryWikiEntry(snapshot.config);
   const existingConfig = isRecord(existingEntry.config) ? existingEntry.config : {};
   const vaultPatch: Record<string, unknown> = {
@@ -2457,6 +2474,8 @@ function buildMemoryWikiPatch(snapshot: ConfigSnapshot, input: unknown): Record<
 
   return {
     plugins: {
+      // Explicit Knowledge setup must also open the source runtime's plugin loader.
+      enabled: true,
       entries: {
         'memory-wiki': {
           ...existingEntry,
@@ -3677,6 +3696,7 @@ export function createKnowledgeApi({
           ...(snapshot.hash ? { baseHash: snapshot.hash } : {}),
           note: 'Enable and configure Verse Claw Knowledge Hub memory-wiki defaults.',
         }, 30_000);
+        // config.patch schedules Gateway reload; status/init report runtime readiness separately.
         return { success: true };
       } catch (error) {
         return { success: false, error: sanitizeUiErrorText(error) };
