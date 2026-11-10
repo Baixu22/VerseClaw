@@ -259,9 +259,13 @@ test('TF0867: exclusive claim, real writes, durable migration restart, acceptanc
     expect(interrupted.phase).toBe('binding-committed'); expect(interrupted.error).toContain(faultMessage);
     const disk = JSON.parse(await readFile(join(userDataDir, 'workspaces.json'), 'utf8')) as { profiles: WorkspaceProfile[] };
     expect(disk.profiles.find(p => p.id === a.workspaceId)!.executionMigrations![request.operationId]).toEqual(interrupted);
-    const prepared = await rpc<SessionExecutionMigrationReceipt>('taskScope.migration.read', { sessionKey: a.sessionKey, operationId: request.operationId });
-    expect(prepared.state).toBe('prepared'); expect(prepared.targetGeneration).toBe(interrupted.targetGeneration);
-    await record('interruptedAfterDiskCommit', { request, main: interrupted, runtime: prepared });
+    const bridgeRead = await rpc<{ success: boolean; rejectedBeforeDispatch: boolean }>('taskScope.migration.read', { sessionKey: a.sessionKey, operationId: request.operationId });
+    expect(bridgeRead).toMatchObject({ success: false, rejectedBeforeDispatch: true });
+    const prepared = interrupted.runtimeReceipt;
+    expect(prepared?.state).toBe('prepared'); expect(prepared?.targetGeneration).toBe(interrupted.targetGeneration);
+    expect(prepared?.operationId).toBe(request.operationId);
+    await record('interruptedAfterDiskCommit', { request, main: interrupted, runtime: prepared,
+      receiptSource: 'Main migration owner persisted Runtime receipt', frontendBridgeRead: bridgeRead });
     // Gateway 先由原 owner 停止；SIGKILL 只命中本 case 持有的 Main 子进程句柄。
     await call('gateway', 'stop'); const child = app.process(), stoppedPid = child.pid, crashAt = Date.now();
     const exited = new Promise<void>(done => child.once('exit', () => done())); expect(child.kill('SIGKILL')).toBe(true); await exited;
@@ -377,7 +381,9 @@ test('TF0867: exclusive claim, real writes, durable migration restart, acceptanc
     expect(existsSync(sourceRoot)).toBe(false); expect(service.list().find(tree => tree.id === sourceTree.id)?.status).toBe('cleaned');
     await record('sourceRemoved', { registry: service.list(), nativeWorktrees: git('worktree', 'list', '--porcelain') });
     await startGateway(app!);
-    const runtimeAfterCleanup = await rpc<SessionExecutionMigrationReceipt>('taskScope.migration.read', { sessionKey: a.sessionKey, operationId: request.operationId });
+    const finalMigration = (await call<{ operation: ExecutionMigrationOperation }>('workspaces', 'executionMigration', request)).operation;
+    const runtimeAfterCleanup = finalMigration.runtimeReceipt as SessionExecutionMigrationReceipt;
+    expect(finalMigration.phase).toBe('confirmed');
     expect(runtimeAfterCleanup.state).toBe('confirmed'); expect(runtimeAfterCleanup.operationId).toBe(moved.id);
     const finalTasks = await call<{ tasks: TaskView[] }>('taskLedger', 'queryTasks', { workspaceId: b.workspaceId });
     expect(finalTasks.tasks.find(t => t.contract.taskNodeId === taskId)?.contract.state).toBe('done');
