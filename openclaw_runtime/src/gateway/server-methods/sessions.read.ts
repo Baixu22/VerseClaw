@@ -364,9 +364,13 @@ export const sessionsReadHandlers: GatewayRequestHandlers = {
       includeLastMessage: p.includeLastMessage,
       transcriptUsageMaxBytes: 64 * 1024,
     });
-    const hasActiveRun = [...context.chatAbortControllers.values()].some(
-      (run) => run.sessionKey === target.canonicalKey && !run.controller.signal.aborted,
-    );
+    const hasActiveRun = hasTrackedActiveSessionRun({
+      context,
+      requestedKey: key,
+      canonicalKey: target.canonicalKey,
+      ...(target.canonicalKey === "global" ? { agentId: target.agentId } : {}),
+      defaultAgentId: resolveDefaultAgentId(cfg),
+    });
     respond(true, { session: { ...row, hasActiveRun } }, undefined);
   },
   "sessions.resolve": async ({ params, respond, context }) => {

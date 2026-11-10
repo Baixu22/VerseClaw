@@ -88,7 +88,7 @@ async function select(c: Context, key: string) {
     try { await expect(c.page.getByTestId('chat-composer-input')).toHaveValue('U5 draft B'); }
     finally {
       const navigation = c.facts.navigation as unknown[] ?? []; c.facts.navigation = navigation;
-      navigation.push({ target: key, at: Date.now(), selection: await family.inputValue(),
+      navigation.push({ target: key, at: Date.now(), selection: await family.evaluateAll(elements => elements.map(element => (element as HTMLSelectElement).value)),
         draft: await c.page.getByTestId('chat-composer-input').inputValue(),
         workspace: await hostInvoke(c.app, 'workspaces', 'getActive'),
         selectedRows: await c.page.locator('[data-hook-selected="true"]').evaluateAll(rows => rows.map(row => row.textContent)) });

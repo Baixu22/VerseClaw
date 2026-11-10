@@ -85,6 +85,8 @@ ownedPaths:
   - electron/gateway/session-task-scope-bridge.ts
   - tests/unit/session-task-scope-bridge.test.ts
   - scripts/lib/resource-lifecycle-report.d.mts
+  - openclaw_runtime/src/gateway/server-methods/sessions.read.ts
+  - tests/unit/gateway-session-active-runs.test.ts
   - tests/e2e/session-family-counter-layout.spec.ts
   - src/styles/codex-sidebar.css
   - harness/specs/rules/session-derivation-ui-contract.md
@@ -167,6 +169,8 @@ touchedAreas:
   - electron/gateway/session-task-scope-bridge.ts
   - tests/unit/session-task-scope-bridge.test.ts
   - scripts/lib/resource-lifecycle-report.d.mts
+  - openclaw_runtime/src/gateway/server-methods/sessions.read.ts
+  - tests/unit/gateway-session-active-runs.test.ts
   - tests/e2e/session-family-counter-layout.spec.ts
   - src/styles/codex-sidebar.css
   - harness/specs/rules/session-derivation-ui-contract.md
