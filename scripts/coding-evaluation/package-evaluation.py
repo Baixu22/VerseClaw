@@ -309,7 +309,7 @@ def main() -> int:
         run(out, commands, "package-cli-probe", [node, ROOT / "scripts/check-packaged-windows-cli.mjs", detached_package, out / "package-cli"], cwd=ROOT, timeout=1200)
         run(out, commands, "playwright-package-profiles", ["cmd.exe", "/d", "/s", "/c", f"corepack pnpm exec playwright test tests/e2e/coding-package-three-profiles.spec.ts --workers=1"], cwd=ROOT, timeout=5400,
             env_extra={"CLAWX_PACKAGED_EXE": executable, "CLAWX_PACKAGE_RAW_ROOT": raw_root, "CLAWX_STS_CONTRACTS": ROOT / "harness/specs/fixtures/coding-evaluation/TF-0781/inputs/vg-sts", "TEMP": "D:/tmp", "TMP": "D:/tmp"})
-        run(out, commands, "harness-validate", [node, ROOT / "harness/src/cli.mjs", "validate", "--spec", ROOT / "harness/specs/tasks/coding-windows-package-evaluation.md"], cwd=ROOT, timeout=600)
+        run(out, commands, "harness-validate", [node, ROOT / "harness/src/cli.mjs", "validate", "--spec", ROOT / "harness/specs/tasks/coding-windows-package-evaluation.md", "--since", candidate["commit"]], cwd=ROOT, timeout=600)
         run(out, commands, "comms-replay", ["cmd.exe", "/d", "/s", "/c", "corepack pnpm run comms:replay"], cwd=ROOT, timeout=900)
         run(out, commands, "comms-compare", ["cmd.exe", "/d", "/s", "/c", "corepack pnpm run comms:compare"], cwd=ROOT, timeout=900)
         run(out, commands, "repository-artifacts", [node, ROOT / "scripts/check-repository-artifacts.mjs"], cwd=ROOT, timeout=900)

@@ -11,6 +11,7 @@ ownedPaths:
   - harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json
   - tests/unit/channels-page.test.tsx
   - .gitignore
+  - scripts/coding-evaluation/package-evaluation.py
   - scripts/coding-evaluation/final_evaluation.py
   - scripts/coding-evaluation/verify_final_evaluation.py
   - scripts/coding-evaluation/test_final_evaluation.py
@@ -32,6 +33,7 @@ touchedAreas:
   - harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json
   - tests/unit/channels-page.test.tsx
   - .gitignore
+  - scripts/coding-evaluation/package-evaluation.py
   - scripts/coding-evaluation/final_evaluation.py
   - scripts/coding-evaluation/verify_final_evaluation.py
   - scripts/coding-evaluation/test_final_evaluation.py
