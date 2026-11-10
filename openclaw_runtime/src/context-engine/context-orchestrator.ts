@@ -896,11 +896,10 @@ export async function computeContextExtraSystemPrompt(
           {
             workspace: input.workspaceDir,
             taskId: input.taskId,
+            goal: input.taskHint,
             ...(input.roleName ? { roleName: input.roleName } : {}),
-            // #182: COMPASS retrieval already selected these fact ids for this
-            // turn and renders them on the `knowledge` channel, which charges
-            // the budget first. Re-injecting the same facts as `memory_pilot`
-            // items would spend bytes on content the model already has.
+            // COMPASS already renders these facts on the higher-precedence knowledge
+            // channel; avoid charging or injecting them again through the memory pilot.
             dedupeFactIds: input.compassContext?.injection.injectedFactIds,
           },
         );

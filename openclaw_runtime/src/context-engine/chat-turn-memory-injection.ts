@@ -28,12 +28,8 @@ import type {
   RuntimeRegistryDiagnostic,
 } from "../runtime-core/index.js";
 
-export const MEMORY_INJECT_PILOT_PROVIDER_IDS = [
-  "role-memory",
-  "runtime-memory",
-] as const;
-export type MemoryInjectPilotProviderId =
-  (typeof MEMORY_INJECT_PILOT_PROVIDER_IDS)[number];
+export const MEMORY_INJECT_PILOT_PROVIDER_IDS = ["role-memory", "runtime-memory"] as const;
+export type MemoryInjectPilotProviderId = (typeof MEMORY_INJECT_PILOT_PROVIDER_IDS)[number];
 
 export type MemoryInjectPilotConfig = {
   enabled: boolean; // default false
@@ -87,9 +83,7 @@ export type ChatTurnMemoryInjectionResult = {
  * Defaults to `enabled: false` — any missing or malformed field falls back to
  * the safe default, never to enabled.
  */
-export function resolveMemoryInjectPilotConfig(
-  value: unknown,
-): MemoryInjectPilotConfig {
+export function resolveMemoryInjectPilotConfig(value: unknown): MemoryInjectPilotConfig {
   // Fail-closed master cut for all memory/context enhancement.
   if (isContextEnhancementKillSwitchEngaged(value)) {
     return { ...DEFAULT_MEMORY_INJECT_PILOT_CONFIG, enabled: false };
@@ -97,9 +91,7 @@ export function resolveMemoryInjectPilotConfig(
 
   const runtime = runtimeConfigFrom(value);
   const memory = isRecord(runtime?.memory) ? runtime.memory : undefined;
-  const injectPilot = isRecord(memory?.injectPilot)
-    ? memory.injectPilot
-    : undefined;
+  const injectPilot = isRecord(memory?.injectPilot) ? memory.injectPilot : undefined;
 
   if (!injectPilot) {
     return DEFAULT_MEMORY_INJECT_PILOT_CONFIG;
@@ -107,9 +99,7 @@ export function resolveMemoryInjectPilotConfig(
 
   const enabled = injectPilot.enabled === true;
   const providers = resolveProviderList(injectPilot.providers);
-  const totalTokenBudget = resolveTotalTokenBudget(
-    injectPilot.totalTokenBudget,
-  );
+  const totalTokenBudget = resolveTotalTokenBudget(injectPilot.totalTokenBudget);
   const sessions = resolveSessions(injectPilot.sessions);
 
   return {
@@ -166,9 +156,7 @@ export async function assembleChatTurnMemoryInjection(
   if (!shouldInjectChatTurnMemory(config, query)) return null;
 
   const targetProviders = providers.filter((provider) =>
-    config.providers.includes(
-      provider.manifest.id as MemoryInjectPilotProviderId,
-    ),
+    config.providers.includes(provider.manifest.id as MemoryInjectPilotProviderId),
   );
   if (targetProviders.length === 0) return null;
 
@@ -312,6 +300,8 @@ export async function computeMemoryExtraSystemPrompt(
   scope?: {
     workspace?: string;
     taskId?: string;
+    /** Current request used by relevance-aware memory providers. */
+    goal?: string;
     /**
      * #183: the caller's persona-derived role name for role-memory lookup. When
      * no persona role is resolved, the caller omits it and the provider resolver
@@ -334,6 +324,7 @@ export async function computeMemoryExtraSystemPrompt(
           sessionKey,
           workspace: scope?.workspace,
           taskId: scope?.taskId,
+          ...(scope?.goal ? { goal: scope.goal } : {}),
           ...(scope?.dedupeFactIds && scope.dedupeFactIds.length > 0
             ? { dedupeFactIds: scope.dedupeFactIds }
             : {}),
@@ -350,10 +341,9 @@ export async function computeMemoryExtraSystemPrompt(
       }
     }
   } catch (err) {
-    log?.(
-      "[memory-inject-pilot] suppressed error, falling back to byte-identical prompt",
-      { err: String(err) },
-    );
+    log?.("[memory-inject-pilot] suppressed error, falling back to byte-identical prompt", {
+      err: String(err),
+    });
   }
   return result;
 }
@@ -382,20 +372,14 @@ function renderMemoryContextBlock(items: readonly ContextItem[]): string {
   return lines.join("\n").trim();
 }
 
-function resolveProviderList(
-  value: unknown,
-): MemoryInjectPilotProviderId[] {
+function resolveProviderList(value: unknown): MemoryInjectPilotProviderId[] {
   if (!Array.isArray(value)) return DEFAULT_MEMORY_INJECT_PILOT_CONFIG.providers;
   const filtered = value.filter(
     (entry): entry is MemoryInjectPilotProviderId =>
       typeof entry === "string" &&
-      MEMORY_INJECT_PILOT_PROVIDER_IDS.includes(
-        entry as MemoryInjectPilotProviderId,
-      ),
+      MEMORY_INJECT_PILOT_PROVIDER_IDS.includes(entry as MemoryInjectPilotProviderId),
   );
-  return filtered.length > 0
-    ? filtered
-    : DEFAULT_MEMORY_INJECT_PILOT_CONFIG.providers;
+  return filtered.length > 0 ? filtered : DEFAULT_MEMORY_INJECT_PILOT_CONFIG.providers;
 }
 
 function resolveTotalTokenBudget(value: unknown): number {
