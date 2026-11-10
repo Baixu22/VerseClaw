@@ -12,7 +12,7 @@ import { configureSessionChainProvider, createSessionChainProject, createSession
 
 for (const journey of ['navigation', 'controls', 'isolation'] as const) {
 test(`a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (${journey})`, async ({ launchElectronApp }, testInfo) => {
-  test.setTimeout(journey === 'controls' ? 420_000 : 300_000);
+  test.setTimeout(journey === 'navigation' ? 300_000 : 420_000);
   const target = testInfo.outputPath('workspace', 'worker.txt');
   let wrote = false;
   let holdNext = false;
