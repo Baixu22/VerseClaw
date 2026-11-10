@@ -141,4 +141,26 @@ describe('R4 independent reclamation preservation', () => {
     writeFileSync(path.join(row.root, 'a.txt'), 'external B'); expect(() => service.cleanup(row.id)).toThrow('worktree_cleanup_user_content_present');
     expect(readFileSync(path.join(row.root, 'a.txt'), 'utf8')).toBe('external B');
   });
+  it.each([false, true])('preserves native modes for a newly committed directory (readonly=%s)', readonly => {
+    repository();
+    const service = createWorktreeService(root, { backend: 'git' }), row = service.create('committed-directory');
+    const directory = path.join(row.root, 'runtime-output');
+    mkdirSync(directory); writeFileSync(path.join(directory, 'receipt.txt'), 'retained runtime output');
+    execFileSync('git', ['switch', '-c', 'retained-directory'], { cwd: row.root, windowsHide: true });
+    execFileSync('git', ['add', '--all'], { cwd: row.root, windowsHide: true });
+    execFileSync('git', ['-c', 'user.name=Agent', '-c', 'user.email=agent@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-qm', 'retained directory'], { cwd: row.root, windowsHide: true });
+    expect(git('show', 'retained-directory:runtime-output/receipt.txt')).toBe('retained runtime output');
+    if (readonly) chmodSync(directory, 0o555);
+    const mode = snapshot.captureWorktreeModes(row.root).get('runtime-output');
+    if (readonly) {
+      expect(() => service.cleanup(row.id)).toThrow('worktree_cleanup_unretained_mode:runtime-output');
+      expect(readFileSync(path.join(directory, 'receipt.txt'), 'utf8')).toBe('retained runtime output');
+      expect(snapshot.captureWorktreeModes(row.root).get('runtime-output')).toBe(mode);
+      chmodSync(directory, 0o777);
+    } else {
+      service.cleanup(row.id);
+      expect(existsSync(row.root)).toBe(false);
+    }
+    proof('native-committed-directory-' + readonly, { actualNativeGit: true, mode, readonly, platform: process.platform, removed: !existsSync(row.root) });
+  });
 });

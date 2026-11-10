@@ -824,7 +824,7 @@ export function createWorktreeService(
             if (beforeModes?.[file] === mode || retainedModes.get(file) === mode) continue;
             // Git retains ordinary committed files; dirty files were refused above.
             if (rec.backend === 'git' && beforeModes?.[file] === undefined
-              && mode === ((file && lstatSync(path.join(rec.root, file)).isFile() ? 0o666 : 0o777) & ~process.umask())) continue;
+              && mode === ((process.platform === 'win32' || (file && lstatSync(path.join(rec.root, file)).isFile()) ? 0o666 : 0o777) & ~process.umask())) continue;
             if (rec.backend === 'git' && file && lstatSync(path.join(rec.root, file)).isFile()) {
               const before = beforeModes?.[file] ?? (0o666 & ~process.umask());
               const committed = /^([0-7]{6}) /.exec(git(['ls-tree', 'HEAD', '--', file], rec.root));
