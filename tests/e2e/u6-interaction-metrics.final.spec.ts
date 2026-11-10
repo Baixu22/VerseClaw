@@ -6,7 +6,8 @@ import { join } from 'node:path';
 import type { ElectronApplication, Page } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, hoverUntilVisible, test } from './fixtures/electron';
 import { hostInvoke, startScriptedLlm } from './fixtures/fp-p1-harness';
-import { addSessionChainChildren, configureSessionChainProvider, createSessionChainProject, createSessionChainTask } from './fixtures/session-task-chain';
+import { addSessionChainChildren, configureSessionChainProvider, createSessionChainProject, createSessionChainTask,
+  instrumentSessionChainHost, readSessionChainHostCalls } from './fixtures/session-task-chain';
 
 const metrics = ['identity_selection', 'page_transition', 'repeat_confirmation', 'goal_restatement', 'repeat_reminder'] as const;
 type Metric = typeof metrics[number];
@@ -358,6 +359,7 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
         await click(`sidebar-session-${project.sessionKey}`, { identity: true });
       await expect(page.getByText(`Recorded objective: ${objective}`, { exact: true })).toBeVisible();
     } else if (journey === 'handoff') {
+      await instrumentSessionChainHost(app);
       await ui('click', 'chat-header:options', () => id('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click());
       await need('chat-session-handoff');
       await ui('press', 'testid:chat-session-handoff:Enter', async () => {
@@ -414,6 +416,7 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
     if (page) await page.screenshot({ path: info.outputPath('final-state.png') }).catch(() => undefined);
     const cleanupErrors: string[] = [];
     if (app) {
+      if (journey === 'handoff') evidence.handoff_host_calls = await readSessionChainHostCalls(app).catch(error => ({ error: String(error) }));
       await hostInvoke(app, 'gateway', 'stop').catch(error => { evidence.gateway_stop_error = String(error); });
       try { await closeElectronApp(app); } catch (error) { cleanupErrors.push(String(error)); }
     }
