@@ -8,6 +8,7 @@ import { openExecutionStateDatabase as openOpenClawStateDatabase, runExecutionSt
 import { filesystemInstance } from "./worktree-registry.js";
 import { TaskSystemStore } from "../../../shared/task-system/store.js";
 import { checkoutWriterSnapshot } from "./worktree-writer.js";
+import { withExecutionTaskBarrier } from './execution-task-barrier.js';
 
 type DomainDatabase = Pick<DB, "execution_domain_registrations">;
 export type ExecutionDomainRegistration = {
@@ -97,7 +98,13 @@ export function registerExecutionDomain(input: {
     domainId: local.id, authorityId: authority.id, actor: input.actor,
     projectRevision: input.projectRevision, expectedRevision: input.expectedRevision,
   })).digest("hex");
-  return runOpenClawStateWriteTransaction(({ db }) => {
+  const before = readRegistration(local.id);
+  const identities = [local.worktree, local.root, authority.root, authority.database].map(filesystemInstance);
+  return withExecutionTaskBarrier([local.id, authority.id, ...(before ? [before.authority.id] : [])], () => runOpenClawStateWriteTransaction(({ db }) => {
+    if (JSON.stringify([local.worktree, local.root, authority.root, authority.database].map(filesystemInstance)) !== JSON.stringify(identities)
+      || resolveTaskDomain(input.workspaceRoot).id !== local.id || resolveTaskDomain(input.authorityRoot).id !== authority.id) {
+      throw new Error('execution_domain_registration_stale');
+    }
     const old = readRegistration(local.id);
     if (old?.operationId === input.operationId) {
       if (old.requestDigest !== requestDigest) throw new Error("execution_domain_operation_conflict");
@@ -122,6 +129,9 @@ export function registerExecutionDomain(input: {
       if (current.state !== 'registered') throw new Error('execution_domain_registration_stale');
       const store = new TaskSystemStore(current.authority);
       try {
+        if (store.recordedExecutionWorktrees().some(root => existsSync(root) && resolveTaskDomain(root).id === local.id && store.worktreeTaskReferences(root).length > 0)) {
+          throw new Error('execution_clone_has_task_references');
+        }
         if (store.worktreeTaskReferences(local.worktree).length) throw new Error('execution_clone_has_task_references');
       } finally { store.close(); }
     }
@@ -144,5 +154,5 @@ export function registerExecutionDomain(input: {
       revision: registration.revision, registration_json: JSON.stringify(registration), updated_at: registration.registeredAt,
     })));
     return registration;
-  });
+  }));
 }

@@ -72,7 +72,7 @@ export function createPersistentTaskTool(input: {
     label: "Task control",
     risk: "write",
     description:
-      "Manage execution tasks quietly within ordinary conversation. Before implementation, read current and identify an existing task by ID or business key; use start with either taskNodeId or a complete contract to resolve and claim atomically. Derive the goal and concrete verification criteria from the user's request and repository; do not ask the user to fill a task form, provide internal IDs, or claim a task. Ordinary discussion creates no task. Report progress and genuine blockers in plain language, without narrating bookkeeping. The app displays the current task automatically. Use stable request IDs for retries; suggestions never grant identity. Checkpoint progress and submit candidate-bound evidence for acceptance. Task ownership does not grant tool permissions. Never replace the goal with a status question.",
+      "Manage execution tasks quietly within ordinary conversation. Before implementation, read current and identify an existing task by ID or business key; use start with either taskNodeId or a complete contract to resolve and claim atomically. Derive the goal and concrete verification criteria from the user's request and repository; do not ask the user to fill a task form, provide internal IDs, or claim a task. Ordinary discussion creates no task. Report progress and genuine blockers in plain language, without narrating bookkeeping. The app displays the current task automatically. Use stable request IDs for retries; suggestions never grant identity. Checkpoint progress and submit candidate-bound evidence for acceptance. Use history to trace candidate checks and retention receipts; readRetainedArtifact returns verified bytes in bounded base64 pages after source cleanup. Task ownership does not grant tool permissions. Never replace the goal with a status question.",
     parameters: Type.Object({
       action: Type.Union(
         [
@@ -81,6 +81,8 @@ export function createPersistentTaskTool(input: {
           "decompose",
           "reconcile",
           "changes",
+          "history",
+          "readRetainedArtifact",
           "acknowledge",
           "current",
           "create",
@@ -115,6 +117,10 @@ export function createPersistentTaskTool(input: {
       ),
       operationId: Type.Optional(Type.String()),
       effectReceiptId: Type.Optional(Type.String()),
+      receiptId: Type.Optional(Type.String()),
+      afterSequence: Type.Optional(Type.Integer({ minimum: 0 })),
+      offset: Type.Optional(Type.Integer({ minimum: 0 })),
+      length: Type.Optional(Type.Integer({ minimum: 1, maximum: 65536 })),
       expectedSequence: Type.Optional(Type.Integer({ minimum: 0 })),
       throughSequence: Type.Optional(Type.Integer({ minimum: 0 })),
       requestId: Type.Optional(Type.String()),
@@ -129,12 +135,13 @@ export function createPersistentTaskTool(input: {
     execute: async (_toolCallId, raw) => {
       if (!input.sessionKey || !input.generation) throw new Error("TASK_SESSION_IDENTITY_REQUIRED");
       const p = raw as Record<string, unknown>;
-      if (process.env.CLAWX_TASK_SCOPE_BRIDGE === '1' && !['list','current','status','changes','history','suggest'].includes(String(p.action))) {
+      if (process.env.CLAWX_TASK_SCOPE_BRIDGE === '1' && !['list','current','status','changes','history','readRetainedArtifact','suggest'].includes(String(p.action))) {
         const session=getSessionEntry({sessionKey:input.sessionKey});
         if ((session as {executionMigration?:{state?:string}}|undefined)?.executionMigration?.state==='prepared')throw new Error('TASK_EXECUTION_MIGRATION_PENDING');
       }
       access.assertCurrent();
       const domain = access.domain;
+      if (!existsSync(domain.database) && ['history', 'readRetainedArtifact'].includes(String(p.action))) throw new Error('TASK_STORE_UNAVAILABLE');
       if (!existsSync(domain.database) && (p.action === "list" || p.action === "current"))
         return {
           content: [{ type: "text", text: p.action === "list" ? '{"tasks":[]}' : "null" }],
@@ -160,7 +167,10 @@ export function createPersistentTaskTool(input: {
           );
           return { content: [{ type: "text", text: JSON.stringify(task) }], details: task };
         }
-        if (p.action === "changes")
+        if (p.action === 'history') result = store.history(str('taskNodeId'), typeof p.afterSequence === 'number' ? p.afterSequence : undefined, typeof p.limit === 'number' ? p.limit : undefined);
+        else if (p.action === 'readRetainedArtifact') result = store.readRetainedArtifactPage(str('taskNodeId'), str('receiptId'),
+          typeof p.offset === 'number' ? p.offset : undefined, typeof p.length === 'number' ? p.length : undefined);
+        else if (p.action === "changes")
           result = store.changes(
             input.sessionKey,
             typeof p.limit === "number" ? p.limit : undefined,

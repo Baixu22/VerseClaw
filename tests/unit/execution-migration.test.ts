@@ -13,6 +13,7 @@ import { registerExecutionDomain } from '../../openclaw_runtime/src/agents/execu
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import { resolveExecutionCheckout } from '../../openclaw_runtime/src/agents/worktree-service';
 import { normalizeRunScope } from '../../shared/types/identity-scope';
+import { canonicalPath } from '../../shared/task-system/identity';
 
 let root:string,sourceRoot:string,targetRoot:string,operationPath:string,sessionPath:string;
 let source:WorkspaceProfile,target:WorkspaceProfile,initial:WorkspaceCoordinatorBinding,taskId:string;
@@ -142,8 +143,8 @@ describe('Main environment migration composition',()=>{
   writeFileSync(join(targetRoot,'result.txt'),'other checkout content');
   failPhase='task-committed';await expect(migrateExecutionEnvironment(payload(),owner(),runtime())).rejects.toThrow('simulated crash');
   const result=await migrateExecutionEnvironment(payload(),owner(),runtime());
-  expect(result.confirmation?.candidateArtifacts[0].path).toBe(join(sourceRoot,'result.txt'));
-  const readback=openExecutionTaskStore(targetRoot);try{expect(readback.get(taskId).checkpoint?.artifacts[0].path).toBe(join(sourceRoot,'result.txt'));}finally{readback.close();}
+  expect(canonicalPath(result.confirmation!.candidateArtifacts[0].path)).toBe(canonicalPath(join(sourceRoot,'result.txt')));
+  const readback=openExecutionTaskStore(targetRoot);try{expect(canonicalPath(readback.get(taskId).checkpoint!.artifacts[0].path)).toBe(canonicalPath(join(sourceRoot,'result.txt')));}finally{readback.close();}
  });
  it('recovers its quiescent target claim after the saved migration outlives its lease',async()=>{
   failPhase='binding-committed';await expect(migrateExecutionEnvironment(payload(),owner(),runtime())).rejects.toThrow('simulated crash');

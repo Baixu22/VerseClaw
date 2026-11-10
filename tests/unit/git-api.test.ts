@@ -85,6 +85,20 @@ describe('git api', () => {
     activeWorkspace.profile = workspace();
   });
 
+  it('rejects a reported Git root that differs from the physical checkout before writing', async () => {
+    const base = await mkdtemp(join(tmpdir(), 'git-native-root-'));
+    const source = join(base, 'source'), neighbour = join(base, 'neighbour');
+    await mkdir(join(source, '.git'), { recursive: true }); await mkdir(join(neighbour, '.git'), { recursive: true });
+    activeWorkspace.profile = { ...workspace(), rootPath: source };
+    const calls: string[][] = [];
+    mockExec((_command, args) => { calls.push(args); return { stdout: isRepoRootProbe(args) ? neighbour + '\n' : '' }; });
+    try {
+      const { createGitApi } = await import('@electron/services/git-api');
+      await expect(createGitApi().stage({ paths: ['artifact.txt'] })).rejects.toThrow('GIT_WORKTREE_ROOT_MISMATCH');
+      expect(calls.some(args => args[0] === 'add')).toBe(false);
+    } finally { await rm(base, { recursive: true, force: true }); }
+  });
+
   it('coalesces concurrent status reads and reuses a fresh cached status', async () => {
     let statusCalls = 0;
     let repoProbeCalls = 0;
@@ -789,13 +803,16 @@ describe('git api', () => {
     // Simulate a repository directly under a volume root so the sibling-area
     // heuristic cannot accidentally bless the entire drive.
     const repoRoot = resolve(process.platform === 'win32' ? 'C:/repo' : '/repo');
+    // This case isolates the volume topology; native binding is exercised above.
+    const native = await import('../../shared/git-native-root');
+    const nativeProbe = vi.spyOn(native, 'assertGitNativeRoot').mockImplementation(() => undefined);
     mockExec((_command, args) => {
       if (args[0] === 'rev-parse' && args[1] === '--show-toplevel') return { stdout: repoRoot + '\n' };
       return { stdout: "" };
     });
     const { createGitApi } = await import('@electron/services/git-api');
 
-    await expect(createGitApi().worktreeAdd({
+    try { await expect(createGitApi().worktreeAdd({
       branch: 'feature/risky',
       path: process.platform === 'win32' ? 'D:/outside-worktree' : '/outside-worktree',
       checkoutNewBranch: true,
@@ -805,6 +822,7 @@ describe('git api', () => {
       approvalRequired: true,
     });
     expect(execFileMock.mock.calls.some((call) => call[1]?.[0] === 'worktree' && call[1]?.[1] === 'add')).toBe(false);
+    } finally { nativeProbe.mockRestore(); }
   });
 
   it('creates GitHub PRs with explicit base/head/draft args after dangerous approval', async () => {

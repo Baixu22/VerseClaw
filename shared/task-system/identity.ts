@@ -19,6 +19,7 @@ export type TaskAuthorityAccess = {
   domain: TaskDomain;
   assertCurrent(): void;
   resolveRelated(workspaceRoot: string): TaskDomain;
+  withWriteBarrier?<T>(operation: () => T): T;
 };
 
 export function canonicalPath(input: string): string {

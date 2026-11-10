@@ -35,8 +35,9 @@ import { codingObservability } from '../context-engine/coding-observability.js';
 import { assertVerseGitCleanupDeletionAllowed, verseGitCleanupResourceId } from '../../../shared/versegit-cleanup-barrier.js';
 import type { VerseGitCleanupDeletionAuthorization } from '../../../shared/types/versegit.js';
 import type { WorktreeBackend } from "../context-engine/coding-runtime-flags.js";
-import { assertExecutionTaskWorktreeReleasable, openExecutionTaskStore } from "./execution-task-authority.js";
+import { withExecutionTaskWorktreeCleanup, finishExecutionTaskWorktreeCleanup, openExecutionTaskStore, type TaskWorktreeCleanupBinding } from "./execution-task-authority.js";
 import type { TaskCredential } from '../../../shared/task-system/types.js';
+import { assertGitNativeRoot, nativeGitWorktreeRoot, isSharedGitRef } from '../../../shared/git-native-root.js';
 import { reviewDiff } from "../context-engine/views/verify/review-diff-view.js";
 import type { FactStore } from "../context-engine/factstore/store.js";
 import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
@@ -92,6 +93,7 @@ export type WorktreeRecord = {
   gitBranch?: string;
   baseOid?: string;
   owner?: WorktreeLifecycleOwner;
+  taskCleanup?: TaskWorktreeCleanupBinding;
 };
 
 export type MergeQueueItem = {
@@ -250,14 +252,21 @@ function isGitRepo(root: string): boolean {
       timeout: GIT_EXEC_TIMEOUT_MS,
       env: hardenedGitEnv(),
     }).trim();
+    if (out === 'true') git(['rev-parse', '--show-toplevel'], root);
     return out === "true";
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && error.message.startsWith('GIT_WORKTREE_')) throw error;
     return false;
   }
 }
 
 /** Hardened git exec for worktree lifecycle (C4-H): hooks disabled, no locks, no stdin, bounded timeout. */
 function git(args: string[], cwd: string): string {
+  if (nativeGitWorktreeRoot(cwd)) {
+    const reported = execFileSync('git', ['rev-parse', '--show-toplevel'], { cwd, encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true, timeout: GIT_EXEC_TIMEOUT_MS, env: hardenedGitEnv() }).trim();
+    assertGitNativeRoot(cwd, reported);
+  }
   return execFileSync("git", args, {
     cwd,
     encoding: "utf8",
@@ -351,7 +360,7 @@ export function assertCleanupCommitRetained(record: Pick<WorktreeRecord, "backen
     throw new Error("worktree_cleanup_git_refs_unavailable", { cause });
   }
   // Shared refs survive removal. HEAD/reflogs and worktree-local refs do not prove retention.
-  if (!refs.some(ref => ref.startsWith("refs/") && !/^refs\/(?:bisect|rewritten|worktree)\//.test(ref))) {
+  if (!refs.some(isSharedGitRef)) {
     throw new Error(`worktree_cleanup_unreferenced_commit:${head}`);
   }
 }
@@ -738,7 +747,10 @@ export function createWorktreeService(
         if (!rec) return;
         if (cleanupOptions?.expectedGeneration !== undefined && rec.generation !== cleanupOptions.expectedGeneration) throw new Error("worktree_stale_generation");
         if (rec.status === "cleaned") {
-          if (!pathEntryExists(rec.root)) finishRemovedCheckoutCleanup({ root: rec.root, incarnation: rec.registration.rootIdentity!, generation: rec.generation });
+          if (!pathEntryExists(rec.root)) {
+            finishRemovedCheckoutCleanup({ root: rec.root, incarnation: rec.registration.rootIdentity!, generation: rec.generation });
+            finishExecutionTaskWorktreeCleanup(rec.taskCleanup);
+          }
           return;
         }
         if (s.queue.some(item => item.worktreeId === rec.id && (item.status === "pending" || item.reason === "merge_outcome_unknown"))) {
@@ -746,6 +758,7 @@ export function createWorktreeService(
         }
         if (rec.status === "cleaning" && observeWorktree(rec) === "missing") {
           finishRemovedCheckoutCleanup({ root: rec.root, incarnation: rec.registration.rootIdentity!, generation: rec.generation });
+          finishExecutionTaskWorktreeCleanup(rec.taskCleanup);
           rec.status = "cleaned";
           saveWorktreeRegistryScope(s);
           return;
@@ -753,7 +766,8 @@ export function createWorktreeService(
         if (rec.status === "cleaning") {
           if (observeWorktree(rec) !== "incomplete") throw new Error("worktree_cleanup_identity_changed");
         } else assertCurrentWorktree(rec);
-        assertExecutionTaskWorktreeReleasable(rec.root);
+        if (rec.backend === 'git') git(['rev-parse', '--show-toplevel'], resolved);
+        return withExecutionTaskWorktreeCleanup(rec.root, resolved, `worktree-cleanup:${rec.generation}`, taskCleanup => {
         const ownership = requireCleanupAuthorization({
           rootDir,
           baseRoot: resolved,
@@ -763,6 +777,7 @@ export function createWorktreeService(
             ? { files: listChangedFilesFromGit(rec.root), source: "git-status" }
             : { files: [...(rec.writeSet ?? [])], source: "declared-writeSet" },
         });
+        if (taskCleanup) { rec.taskCleanup = taskCleanup; saveWorktreeRegistryScope(s); }
         withCheckoutMaintenance([{
           root: rec.root, incarnation: rec.registration.rootIdentity!, generation: rec.generation,
         }], "cleanup", () => {
@@ -770,6 +785,7 @@ export function createWorktreeService(
             try {
               git(["worktree", "remove", "--force", ownership.root], resolved);
             } catch (error) {
+              if (error instanceof Error && error.message.startsWith('GIT_WORKTREE_')) throw error;
               try {
                 removePathWithRetries(ownership.root);
               } catch {
@@ -793,6 +809,7 @@ export function createWorktreeService(
           assertCleanupCommitRetained(rec);
           rec.status = "cleaning";
           saveWorktreeRegistryScope(s);
+        });
         });
       });
     },
@@ -844,6 +861,7 @@ export function createWorktreeService(
 export function resolveExecutionCheckout(root: string): {
   service: WorktreeService; baseRoot: string; worktreeId: string | null; basis: CheckoutWriterBasis;
 } {
+  if (nativeGitWorktreeRoot(root)) git(['rev-parse', '--show-toplevel'], root);
   const registered = findManagedWorktreeByRoot(root);
   const baseRoot = registered?.baseRoot ?? root;
   const service = createWorktreeService(baseRoot);

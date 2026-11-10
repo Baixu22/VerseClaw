@@ -5,6 +5,8 @@ import { TaskSystemStore } from "../../../shared/task-system/store.js";
 import { inheritPersistentTaskReference, assertTaskWorktreeReleasable } from "../../../shared/task-system/runtime.js";
 import { resolveExecutionDomain } from "./execution-domain.js";
 import { filesystemInstance } from "./worktree-registry.js";
+import { withExecutionTaskBarrier } from './execution-task-barrier.js';
+import { canonicalPath } from '../../../shared/task-system/identity.js';
 
 export type ExecutionTaskAuthorityBasis = TaskAuthorityBasis;
 
@@ -21,6 +23,7 @@ function resolveAuthority(workspaceRoot: string) {
     projectRevision: registration?.projectRevision ?? null,
     identityDigest: createHash("sha256").update(JSON.stringify({
       localRoot: filesystemInstance(resolution.local.root),
+      worktree: filesystemInstance(resolution.local.worktree),
       authorityRoot: filesystemInstance(resolution.authority.root),
       registration,
     })).digest("hex"),
@@ -55,6 +58,10 @@ export function createExecutionTaskAccess(workspaceRoot: string, expected?: Exec
   };
   return {
     domain: resolved.domain, basis: resolved.basis, assertCurrent,
+    withWriteBarrier: operation => withExecutionTaskBarrier([resolved.basis.localDomainId, resolved.basis.authorityId], () => {
+      assertCurrent();
+      return operation();
+    }),
     resolveRelated(root: string): TaskDomain {
       assertCurrent();
       return resolveAuthority(root).domain;
@@ -74,4 +81,46 @@ export function inheritExecutionTaskReference(workspace: string, sourceSessionKe
 
 export function assertExecutionTaskWorktreeReleasable(workspace: string) {
   return assertTaskWorktreeReleasable(workspace, existsSync(workspace) ? createExecutionTaskAccess(workspace) : undefined);
+}
+
+export type TaskWorktreeCleanupBinding = {
+  domain: TaskDomain; localDomainId: string; authorityRootIdentity: string; databaseIdentity: string;
+  operationId: string; worktree: string;
+};
+
+/** The barrier also covers an absent Task DB, so first creation cannot race deletion. */
+export function withExecutionTaskWorktreeCleanup<T>(workspace: string, repository: string, operationId: string,
+  effect: (binding?: TaskWorktreeCleanupBinding) => T): T {
+  const access = createExecutionTaskAccess(workspace);
+  return access.withWriteBarrier!(() => {
+    if (!existsSync(access.domain.database)) return effect();
+    const store = new TaskSystemStore(access.domain, undefined, access);
+    const binding: TaskWorktreeCleanupBinding = { domain: access.domain, localDomainId: access.basis.localDomainId,
+      authorityRootIdentity: filesystemInstance(access.domain.root), databaseIdentity: filesystemInstance(access.domain.database),
+      operationId, worktree: canonicalPath(workspace) };
+    let result: T;
+    try {
+      binding.operationId = store.prepareWorktreeCleanup(workspace, repository, operationId);
+      result = store.withWorktreeCleanup(workspace, () => effect(binding));
+    } finally { store.close(); }
+    finishExecutionTaskWorktreeCleanup(binding);
+    return result;
+  });
+}
+
+/** Recovery uses the pinned authority after the execution path has been removed. */
+export function finishExecutionTaskWorktreeCleanup(binding?: TaskWorktreeCleanupBinding): void {
+  if (!binding) return;
+  const assertCurrent = () => {
+    if (filesystemInstance(binding.domain.root) !== binding.authorityRootIdentity
+      || filesystemInstance(binding.domain.database) !== binding.databaseIdentity) throw new Error('TASK_CLEANUP_AUTHORITY_REPLACED');
+    if (existsSync(binding.worktree)) throw new Error('TASK_CLEANUP_PATH_STILL_EXISTS');
+  };
+  withExecutionTaskBarrier([binding.localDomainId, binding.domain.id], () => {
+    assertCurrent();
+    const store = new TaskSystemStore(binding.domain, undefined, { domain: binding.domain, assertCurrent,
+      resolveRelated: () => { throw new Error('TASK_CLEANUP_READBACK_ONLY'); } });
+    try { store.completeWorktreeCleanup(binding.operationId, binding.worktree); }
+    finally { store.close(); }
+  });
 }

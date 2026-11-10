@@ -185,13 +185,15 @@ describe('checkout writer resource owner',()=>{
  });
  it('serializes competing processes while different native checkouts keep independent writers',async()=>{
   const s=service(),a=s.create('a'),b=s.create('b');const first=worker({id:a.id,generation:a.generation,owner:'first'});
+  const children=[first];
   try {
    expect((await first.ready).ok).toBe(true);
    const contenders=Array.from({length:3},(_,i)=>worker({id:a.id,generation:a.generation,owner:`contender-${i}`}));
-   for(const c of contenders){expect(await c.ready).toMatchObject({ok:false,error:expect.stringContaining('writer_busy')});expect(await c.exit).toBe(0);}
-   const parallel=worker({id:b.id,generation:b.generation,owner:'parallel'});expect((await parallel.ready).ok).toBe(true);parallel.child.stdin.end('release\n');expect(await parallel.exit).toBe(0);
+   children.push(...contenders);
+   for(const c of contenders){const result=await c.ready;expect(result,JSON.stringify(result)).toMatchObject({ok:false,error:expect.stringContaining('writer_busy')});expect(await c.exit).toBe(0);}
+   const parallel=worker({id:b.id,generation:b.generation,owner:'parallel'});children.push(parallel);expect((await parallel.ready).ok).toBe(true);parallel.child.stdin.end('release\n');expect(await parallel.exit).toBe(0);
    first.child.stdin.end('release\n');expect(await first.exit).toBe(0);
-  }finally{if(first.child.exitCode===null)first.child.kill();await first.exit;}
+  }finally{for(const child of children)if(child.child.exitCode===null&&child.child.signalCode===null)child.child.kill();await Promise.all(children.map(child=>child.exit));}
  });
  it('retains a crashed native writer and rejects a new process instead of stealing its lease',async()=>{
   const s=service(),r=s.create('one');const child=worker({id:r.id,generation:r.generation,owner:'crashed',mode:'crash'});

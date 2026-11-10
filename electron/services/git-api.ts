@@ -65,6 +65,7 @@ import {
 } from './permissions-api';
 import { createWorkspacesApi, getActiveWorkspaceProfile } from './workspaces-api';
 import { isPathInsideWorkspace, isPathInsideWorkspaceResolved, requireWorkspace } from './workspace-permissions';
+import { assertGitNativeRoot } from '../../shared/git-native-root';
 
 type ExecResult = {
   exitCode: number | null;
@@ -372,6 +373,7 @@ async function requireRepoContextForWorkspace(workspace: WorkspaceProfile): Prom
     throw new Error(repo.stderr.trim() || 'Active workspace is not a Git repository');
   }
   const repoRoot = resolve(repo.stdout.trim());
+  assertGitNativeRoot(workspaceRoot, repoRoot);
   return { workspace, workspaceRoot, repoRoot };
 }
 

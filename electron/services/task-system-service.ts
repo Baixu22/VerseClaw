@@ -283,7 +283,7 @@ export async function taskSystemCommand(
   command: TaskSystemCommand,
   gateway?: GatewayManager,
 ): Promise<unknown> {
-  const store = await openTaskSystem(workspaceId, true);
+  const store = await openTaskSystem(workspaceId, !['history', 'readRetainedArtifact'].includes(command.action));
   if (!store) throw new Error("TASK_STORE_UNAVAILABLE");
   const generationFor = async (sessionKey: string, bindingWorkspaceId = workspaceId) => {
     if (!gateway) throw new Error("TASK_SESSION_OWNER_UNAVAILABLE");
@@ -302,6 +302,9 @@ export async function taskSystemCommand(
     return { generation: described.session.sessionId, worktree: binding.environment.canonicalRoot };
   };
   try {
+    if (command.action === 'history') return store.history(command.taskNodeId, command.afterSequence, command.limit);
+    if (command.action === 'readRetainedArtifact')
+      return store.readRetainedArtifactPage(command.taskNodeId, command.receiptId, command.offset, command.length);
     if (command.action === "changes") return store.changes(command.consumer, command.limit);
     if (command.action === "acknowledge") {
       store.acknowledge(command.consumer, command.expectedSequence, command.throughSequence);

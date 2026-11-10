@@ -119,6 +119,8 @@ export type TaskDelegationIntent = {
 };
 export type TaskResolution = { kind: "created" | "existing" | "duplicate"; task: TaskView };
 export type TaskSystemCommand =
+  | { action: "history"; taskNodeId: string; afterSequence?: number; limit?: number }
+  | { action: "readRetainedArtifact"; taskNodeId: string; receiptId: string; offset?: number; length?: number }
   | { action: "changes"; consumer: string; limit?: number }
   | { action: "acknowledge"; consumer: string; expectedSequence: number; throughSequence: number }
   | { action: "suggest"; query: string; target?: string; limit?: number }

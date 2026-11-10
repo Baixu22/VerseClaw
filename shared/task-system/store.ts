@@ -1,6 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
-import { mkdirSync, readFileSync, statSync } from "node:fs";
-import { dirname, isAbsolute, relative, resolve } from "node:path";
+import { existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
+import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import type { SessionKey, TaskId } from "../types/identity-scope.js";
 import {
@@ -25,10 +25,15 @@ import type {
 } from "./types.js";
 import { taskSimilarity } from "./recognition.js";
 import { TASK_DELEGATION_DISPATCH_TOOLS } from './types.js';
+import { retainTaskArtifact, readRetainedTaskArtifact, type TaskArtifactReference, type TaskArtifactRetentionReceipt } from './artifact-retention.js';
 
 const MAX_CONTEXT = 12_000;
 const MAX_CHECKPOINT = 24_000;
 const LEASE_MS = 120_000;
+function withinPath(root: string, pathname: string): boolean {
+  const offset = relative(root, process.platform === 'win32' ? pathname.toLowerCase() : pathname);
+  return offset === '' || (offset !== '..' && !offset.startsWith(`..${sep}`) && !isAbsolute(offset));
+}
 type Row = { json: string };
 const digest = (value: unknown) => createHash("sha256").update(JSON.stringify(value)).digest("hex");
 const text = (value: unknown, name: string, max = 2_000): string => {
@@ -118,55 +123,59 @@ export class TaskSystemStore {
         access.domain.worktree !== domain.worktree)
     )
       throw new Error("TASK_AUTHORITY_DOMAIN_MISMATCH");
-    this.assertAuthorityCurrent();
-    mkdirSync(dirname(domain.database), { recursive: true });
-    this.db = new DatabaseSync(domain.database);
-    try {
-      this.db.exec("PRAGMA busy_timeout=3000; PRAGMA foreign_keys=ON;");
-      const version = Number(
-        (this.db.prepare("PRAGMA user_version").get() as { user_version: number }).user_version,
-      );
-      if (version > 6) {
-        this.db.close();
-        throw new Error("TASK_SCHEMA_NEWER_THAN_CLIENT");
-      }
-      this.db.exec("PRAGMA synchronous=FULL;");
-      if (version === 6) return;
-      this.db.exec("PRAGMA journal_mode=WAL; BEGIN IMMEDIATE;");
-      this.db.exec(`
-      CREATE TABLE IF NOT EXISTS task_contracts(id TEXT PRIMARY KEY, fingerprint TEXT NOT NULL, business_key TEXT, state TEXT NOT NULL, revision INTEGER NOT NULL, json TEXT NOT NULL);
-      CREATE INDEX IF NOT EXISTS task_fingerprint ON task_contracts(fingerprint,state);
-      CREATE UNIQUE INDEX IF NOT EXISTS task_business_key ON task_contracts(business_key) WHERE business_key IS NOT NULL;
-      CREATE TABLE IF NOT EXISTS task_claims(task_id TEXT PRIMARY KEY REFERENCES task_contracts(id), session_key TEXT NOT NULL, generation TEXT NOT NULL, epoch INTEGER NOT NULL, state TEXT NOT NULL, json TEXT NOT NULL);
-      CREATE TABLE IF NOT EXISTS task_bindings(session_key TEXT PRIMARY KEY, task_id TEXT NOT NULL REFERENCES task_contracts(id), generation TEXT NOT NULL, epoch INTEGER NOT NULL);
-      CREATE TABLE IF NOT EXISTS task_requests(id TEXT PRIMARY KEY, hash TEXT NOT NULL, result TEXT NOT NULL);
-      CREATE TABLE IF NOT EXISTS task_checkpoints(task_id TEXT PRIMARY KEY REFERENCES task_contracts(id), json TEXT NOT NULL);
-      CREATE TABLE IF NOT EXISTS task_operations(id TEXT PRIMARY KEY, task_id TEXT NOT NULL, epoch INTEGER NOT NULL, kind TEXT NOT NULL, state TEXT NOT NULL, result TEXT);
-      CREATE INDEX IF NOT EXISTS task_operations_pending ON task_operations(task_id,state);
-      CREATE TABLE IF NOT EXISTS task_evidence(id TEXT PRIMARY KEY, task_id TEXT NOT NULL, json TEXT NOT NULL);
-      CREATE TABLE IF NOT EXISTS task_events(seq INTEGER PRIMARY KEY AUTOINCREMENT, task_id TEXT NOT NULL, kind TEXT NOT NULL, at INTEGER NOT NULL, json TEXT NOT NULL);
-      CREATE TABLE IF NOT EXISTS task_submissions(task_id TEXT PRIMARY KEY, candidate TEXT NOT NULL, revision INTEGER NOT NULL, epoch INTEGER NOT NULL);
-      CREATE TABLE IF NOT EXISTS task_operation_owners(id TEXT PRIMARY KEY, pid INTEGER NOT NULL, started_at INTEGER NOT NULL);
-      CREATE TABLE IF NOT EXISTS task_active_runs(task_id TEXT PRIMARY KEY, epoch INTEGER NOT NULL, run_id TEXT NOT NULL);
-      CREATE TABLE IF NOT EXISTS task_delegations(task_id TEXT NOT NULL,epoch INTEGER NOT NULL,request_id TEXT NOT NULL,PRIMARY KEY(task_id,epoch));
-      CREATE TABLE IF NOT EXISTS task_operation_handles(id TEXT PRIMARY KEY,handle TEXT NOT NULL,json TEXT NOT NULL);
-      CREATE TABLE IF NOT EXISTS task_references(session_key TEXT PRIMARY KEY,task_id TEXT NOT NULL,generation TEXT NOT NULL,role TEXT NOT NULL);
-      CREATE TABLE IF NOT EXISTS task_writer_delegations(id TEXT PRIMARY KEY,task_id TEXT NOT NULL,child_session TEXT NOT NULL UNIQUE,json TEXT NOT NULL);
-      CREATE TABLE IF NOT EXISTS task_plan_children(parent_id TEXT NOT NULL REFERENCES task_contracts(id),child_id TEXT NOT NULL UNIQUE REFERENCES task_contracts(id),ordinal INTEGER NOT NULL,PRIMARY KEY(parent_id,child_id));
-      CREATE INDEX IF NOT EXISTS task_event_page ON task_events(task_id,seq);
-      CREATE TABLE IF NOT EXISTS task_event_consumers(id TEXT PRIMARY KEY,sequence INTEGER NOT NULL);
-      CREATE INDEX IF NOT EXISTS task_claim_session ON task_claims(session_key,generation);
-      PRAGMA user_version=6;
-      COMMIT;
-    `);
-    } catch (error) {
+    const initialize = () => {
+      this.assertAuthorityCurrent();
+      mkdirSync(dirname(domain.database), { recursive: true });
+      const db = new DatabaseSync(domain.database);
       try {
-        this.db.close();
-      } catch {
-        /* Preserve the original initialization failure. */
+        db.exec("PRAGMA busy_timeout=3000; PRAGMA foreign_keys=ON;");
+        const version = Number(
+          (db.prepare("PRAGMA user_version").get() as { user_version: number }).user_version,
+        );
+        if (version > 6) {
+          db.close();
+          throw new Error("TASK_SCHEMA_NEWER_THAN_CLIENT");
+        }
+        db.exec("PRAGMA synchronous=FULL;");
+        if (version === 6) return db;
+        db.exec("PRAGMA journal_mode=WAL; BEGIN IMMEDIATE;");
+        db.exec(`
+        CREATE TABLE IF NOT EXISTS task_contracts(id TEXT PRIMARY KEY, fingerprint TEXT NOT NULL, business_key TEXT, state TEXT NOT NULL, revision INTEGER NOT NULL, json TEXT NOT NULL);
+        CREATE INDEX IF NOT EXISTS task_fingerprint ON task_contracts(fingerprint,state);
+        CREATE UNIQUE INDEX IF NOT EXISTS task_business_key ON task_contracts(business_key) WHERE business_key IS NOT NULL;
+        CREATE TABLE IF NOT EXISTS task_claims(task_id TEXT PRIMARY KEY REFERENCES task_contracts(id), session_key TEXT NOT NULL, generation TEXT NOT NULL, epoch INTEGER NOT NULL, state TEXT NOT NULL, json TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS task_bindings(session_key TEXT PRIMARY KEY, task_id TEXT NOT NULL REFERENCES task_contracts(id), generation TEXT NOT NULL, epoch INTEGER NOT NULL);
+        CREATE TABLE IF NOT EXISTS task_requests(id TEXT PRIMARY KEY, hash TEXT NOT NULL, result TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS task_checkpoints(task_id TEXT PRIMARY KEY REFERENCES task_contracts(id), json TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS task_operations(id TEXT PRIMARY KEY, task_id TEXT NOT NULL, epoch INTEGER NOT NULL, kind TEXT NOT NULL, state TEXT NOT NULL, result TEXT);
+        CREATE INDEX IF NOT EXISTS task_operations_pending ON task_operations(task_id,state);
+        CREATE TABLE IF NOT EXISTS task_evidence(id TEXT PRIMARY KEY, task_id TEXT NOT NULL, json TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS task_events(seq INTEGER PRIMARY KEY AUTOINCREMENT, task_id TEXT NOT NULL, kind TEXT NOT NULL, at INTEGER NOT NULL, json TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS task_submissions(task_id TEXT PRIMARY KEY, candidate TEXT NOT NULL, revision INTEGER NOT NULL, epoch INTEGER NOT NULL);
+        CREATE TABLE IF NOT EXISTS task_operation_owners(id TEXT PRIMARY KEY, pid INTEGER NOT NULL, started_at INTEGER NOT NULL);
+        CREATE TABLE IF NOT EXISTS task_active_runs(task_id TEXT PRIMARY KEY, epoch INTEGER NOT NULL, run_id TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS task_delegations(task_id TEXT NOT NULL,epoch INTEGER NOT NULL,request_id TEXT NOT NULL,PRIMARY KEY(task_id,epoch));
+        CREATE TABLE IF NOT EXISTS task_operation_handles(id TEXT PRIMARY KEY,handle TEXT NOT NULL,json TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS task_references(session_key TEXT PRIMARY KEY,task_id TEXT NOT NULL,generation TEXT NOT NULL,role TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS task_writer_delegations(id TEXT PRIMARY KEY,task_id TEXT NOT NULL,child_session TEXT NOT NULL UNIQUE,json TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS task_plan_children(parent_id TEXT NOT NULL REFERENCES task_contracts(id),child_id TEXT NOT NULL UNIQUE REFERENCES task_contracts(id),ordinal INTEGER NOT NULL,PRIMARY KEY(parent_id,child_id));
+        CREATE INDEX IF NOT EXISTS task_event_page ON task_events(task_id,seq);
+        CREATE TABLE IF NOT EXISTS task_event_consumers(id TEXT PRIMARY KEY,sequence INTEGER NOT NULL);
+        CREATE INDEX IF NOT EXISTS task_claim_session ON task_claims(session_key,generation);
+        PRAGMA user_version=6;
+        COMMIT;
+      `);
+      } catch (error) {
+        try {
+          db.close();
+        } catch {
+          /* Preserve the original initialization failure. */
+        }
+        throw error;
       }
-      throw error;
-    }
+      return db;
+    };
+    this.db = access?.withWriteBarrier ? access.withWriteBarrier(initialize) : initialize();
   }
   private assertAuthorityCurrent(): void {
     this.access?.assertCurrent();
@@ -183,6 +192,11 @@ export class TaskSystemStore {
     this.db.close();
   }
   private transaction<T>(fn: () => T): T {
+    return this.transactionDepth === 0 && this.access?.withWriteBarrier
+      ? this.access.withWriteBarrier(() => this.transactionBody(fn))
+      : this.transactionBody(fn);
+  }
+  private transactionBody<T>(fn: () => T): T {
     this.assertAuthorityCurrent();
     const depth = this.transactionDepth++;
     const name = `task_nested_${depth}`;
@@ -817,11 +831,28 @@ export class TaskSystemStore {
       );
   }
   worktreeTaskReferences(worktree: string): string[] {
+    return [...new Set([...this.worktreeLiveTaskReferences(worktree), ...this.worktreeArtifactReferences(worktree).map(ref => ref.taskNodeId)])];
+  }
+  recordedExecutionWorktrees(): string[] {
+    this.assertReadCurrent();
+    const roots = (this.db.prepare('SELECT json FROM task_claims')
+      .all() as Row[]).map(row => (JSON.parse(row.json) as TaskClaim).worktree);
+    for (const row of this.db.prepare('SELECT json FROM task_writer_delegations').all() as Row[]) {
+      const value = JSON.parse(row.json) as TaskWriterDelegation;
+      roots.push(value.parentWorktree, value.childWorktree);
+    }
+    for (const row of this.db.prepare("SELECT json FROM task_events WHERE kind IN ('claimed','handoff','checkpoint')").all() as Row[]) {
+      const value = JSON.parse(row.json) as { worktree?: string };
+      if (value.worktree) roots.push(value.worktree);
+    }
+    return [...new Set(roots)];
+  }
+  private worktreeLiveTaskReferences(worktree: string): string[] {
     this.assertReadCurrent();
     const root = canonicalPath(worktree);
     const rows = this.db
       .prepare(
-        "SELECT c.id,cl.json AS claim FROM task_contracts c LEFT JOIN task_claims cl ON cl.task_id=c.id WHERE c.state NOT IN ('done','cancelled')",
+        "SELECT c.id,cl.json AS claim FROM task_contracts c LEFT JOIN task_claims cl ON cl.task_id=c.id WHERE c.state NOT IN ('done','cancelled') OR cl.state != 'released' OR EXISTS (SELECT 1 FROM task_operations o WHERE o.task_id=c.id AND o.state IN ('started','unknown'))",
       )
       .all() as Array<{ id: string; claim: string | null }>;
     const ids = new Set(
@@ -831,13 +862,142 @@ export class TaskSystemStore {
     );
     for (const row of this.db
       .prepare(
-        "SELECT d.json FROM task_writer_delegations d JOIN task_contracts c ON c.id=d.task_id WHERE c.state NOT IN ('done','cancelled')",
+        "SELECT d.json,c.state FROM task_writer_delegations d JOIN task_contracts c ON c.id=d.task_id",
       )
-      .all() as Row[]) {
+      .all() as Array<Row & { state: string }>) {
       const d = JSON.parse(row.json) as TaskWriterDelegation;
-      if (d.childWorktree === root || d.parentWorktree === root) ids.add(d.taskNodeId);
+      if ((d.phase !== 'returned' || !['done', 'cancelled'].includes(row.state)) && (d.childWorktree === root || d.parentWorktree === root)) ids.add(d.taskNodeId);
     }
     return [...ids];
+  }
+  /** Historical references are resolved against their recorded writer, never the current claim. */
+  worktreeArtifactReferences(worktree: string): TaskArtifactReference[] {
+    this.assertReadCurrent();
+    const root = canonicalPath(worktree), references = new Map<string, TaskArtifactReference>();
+    const writers = new Map<string, string>(), checkpoints = new Set<string>(), evidenceEvents = new Set<string>();
+    type Artifact = { path: string; sha256: string };
+    const retain = (taskNodeId: string, kind: TaskArtifactReference['kind'], key: string, artifacts: Artifact[] | undefined, origin?: string) => {
+      for (const [index, artifact] of (artifacts ?? []).entries()) {
+        if (!isAbsolute(artifact.path) && !origin) throw new Error('TASK_ARTIFACT_ORIGIN_UNKNOWN');
+        const full = resolve(origin ?? root, artifact.path);
+        if (!withinPath(root, full) && !(existsSync(full) && withinPath(root, canonicalPath(full)))) continue;
+        if (!/^[a-f0-9]{64}$/.test(artifact.sha256)) throw new Error('TASK_INVALID_ARTIFACTS');
+        const sourceKey = `${key}:${index}`;
+        references.set(`${taskNodeId}:${sourceKey}`, { taskNodeId, sourceKey, kind, worktree: root,
+          path: (process.platform === 'win32' ? full.toLowerCase() : full).replace(/\\/g, '/'), sha256: artifact.sha256 });
+      }
+    };
+    const evidence = (taskId: string, value: TaskEvidence, origin?: string) => {
+      const artifacts = [...new Map([{ path: value.path, sha256: value.sha256 }, ...(value.inputArtifacts ?? [])]
+        .map(artifact => [JSON.stringify(artifact), artifact])).values()];
+      retain(taskId, 'evidence', `evidence:${value.receiptId}`, artifacts, origin);
+    };
+    for (const row of this.db.prepare("SELECT seq,task_id,kind,json FROM task_events WHERE kind IN ('claimed','handoff','delegation_prepared','writer_returned','checkpoint','evidence','owner_verified') ORDER BY seq")
+      .all() as Array<{ seq: number; task_id: string; kind: string; json: string }>) {
+      const value = JSON.parse(row.json);
+      if ((row.kind === 'claimed' || row.kind === 'handoff') && value.worktree) writers.set(row.task_id, value.worktree);
+      if (row.kind === 'delegation_prepared') {
+        retain(row.task_id, 'delegation_candidate', `delegation:${value.delegationId}`, value.candidateArtifacts, value.parentWorktree);
+        if (value.mode === 'writer' && value.childWorktree) writers.set(row.task_id, value.childWorktree);
+      }
+      if (row.kind === 'writer_returned' && value.to?.worktree) writers.set(row.task_id, value.to.worktree);
+      if (row.kind === 'checkpoint') {
+        checkpoints.add(row.task_id);
+        retain(row.task_id, 'checkpoint', `checkpoint:${row.seq}`, value.artifacts, value.worktree ?? writers.get(row.task_id));
+      }
+      if (row.kind === 'evidence' || row.kind === 'owner_verified') {
+        evidenceEvents.add(`${row.task_id}:${value.receiptId}`);
+        evidence(row.task_id, value, writers.get(row.task_id));
+      }
+    }
+    for (const row of this.db.prepare('SELECT task_id,json FROM task_checkpoints').all() as Array<Row & { task_id: string }>) {
+      if (!checkpoints.has(row.task_id)) retain(row.task_id, 'checkpoint', 'checkpoint:legacy', JSON.parse(row.json).artifacts, writers.get(row.task_id));
+    }
+    for (const row of this.db.prepare('SELECT task_id,json FROM task_evidence').all() as Array<Row & { task_id: string }>) {
+      const value = JSON.parse(row.json) as TaskEvidence;
+      if (!evidenceEvents.has(`${row.task_id}:${value.receiptId}`)) evidence(row.task_id, value, writers.get(row.task_id));
+    }
+    return [...references.values()];
+  }
+  retentionReceipts(taskNodeId: string): TaskArtifactRetentionReceipt[] {
+    this.assertReadCurrent();
+    return (this.db.prepare("SELECT json FROM task_events WHERE task_id=? AND kind='artifact_retained' ORDER BY seq").all(taskNodeId) as Row[])
+      .map(row => JSON.parse(row.json) as TaskArtifactRetentionReceipt);
+  }
+  readRetainedArtifact(taskNodeId: string, receiptId: string): Buffer {
+    const receipt = this.retentionReceipts(taskNodeId).find(item => item.receiptId === receiptId);
+    if (!receipt || receipt.source.taskNodeId !== taskNodeId) throw new Error('TASK_RETENTION_RECEIPT_NOT_FOUND');
+    return readRetainedTaskArtifact(receipt);
+  }
+  readRetainedArtifactPage(taskNodeId: string, receiptId: string, offset = 0, length = 16_384) {
+    if (!Number.isSafeInteger(offset) || offset < 0 || !Number.isSafeInteger(length) || length < 1 || length > 65_536)
+      throw new Error('TASK_ARTIFACT_RANGE_INVALID');
+    const receipt = this.retentionReceipts(taskNodeId).find(item => item.receiptId === receiptId);
+    if (!receipt || receipt.source.taskNodeId !== taskNodeId) throw new Error('TASK_RETENTION_RECEIPT_NOT_FOUND');
+    const bytes = readRetainedTaskArtifact(receipt);
+    if (offset > bytes.length) throw new Error('TASK_ARTIFACT_RANGE_INVALID');
+    const end = Math.min(bytes.length, offset + length);
+    return { receipt, offset, sizeBytes: bytes.length, nextOffset: end < bytes.length ? end : null,
+      encoding: 'base64' as const, content: bytes.subarray(offset, end).toString('base64') };
+  }
+  /** Receipts commit before deletion so a crash cannot erase the only recovery locator. */
+  prepareWorktreeCleanup(worktree: string, repository: string, operationId: string): string {
+    text(operationId, 'CLEANUP_OPERATION', 300);
+    return this.transaction(() => {
+      const root = canonicalPath(worktree);
+      if (withinPath(root, resolve(this.domain.database))) throw new Error('TASK_WORKTREE_CONTAINS_AUTHORITY_DATABASE');
+      if (this.worktreeLiveTaskReferences(root).length) throw new Error('TASK_WORKTREE_HAS_UNFINISHED_TASKS');
+      const references = this.worktreeArtifactReferences(root);
+      const cleanupId = `${operationId}:${digest(references)}`;
+      for (const source of references) {
+        const existing = this.retentionReceipts(source.taskNodeId).find(receipt => receipt.source.sourceKey === source.sourceKey);
+        if (existing) {
+          if (JSON.stringify(existing.source) !== JSON.stringify(source)) throw new Error('TASK_RETENTION_RECEIPT_CONFLICT');
+          readRetainedTaskArtifact(existing);
+        } else {
+          const receipt = retainTaskArtifact(repository, source);
+          this.request(`retain:${source.taskNodeId}:${source.sourceKey}`, source, () => {
+            this.event(source.taskNodeId, 'artifact_retained', receipt);
+            return receipt;
+          });
+        }
+      }
+      for (const taskNodeId of new Set(references.map(ref => ref.taskNodeId))) {
+        const receiptIds = this.retentionReceipts(taskNodeId).filter(receipt => receipt.source.worktree === root).map(receipt => receipt.receiptId);
+        this.request(`cleanup-prepared:${cleanupId}:${taskNodeId}`, { worktree: root, receiptIds }, () => {
+          this.event(taskNodeId, 'worktree_cleanup_prepared', { operationId: cleanupId, worktree: root, receiptIds, actor: 'agent' });
+          return true;
+        });
+      }
+      return cleanupId;
+    });
+  }
+  withWorktreeCleanup<T>(worktree: string, effect: () => T): T {
+    return this.transaction(() => {
+      if (this.worktreeLiveTaskReferences(worktree).length) throw new Error('TASK_WORKTREE_HAS_UNFINISHED_TASKS');
+      for (const source of this.worktreeArtifactReferences(worktree)) {
+        const receipt = this.retentionReceipts(source.taskNodeId).find(item => item.source.sourceKey === source.sourceKey);
+        if (!receipt || JSON.stringify(receipt.source) !== JSON.stringify(source)) throw new Error('TASK_WORKTREE_REFERENCES_RETAINED');
+        readRetainedTaskArtifact(receipt);
+      }
+      const result = effect();
+      if (result && typeof (result as { then?: unknown }).then === 'function') throw new Error('TASK_RETENTION_REQUIRES_SYNC_EFFECT');
+      return result;
+    });
+  }
+  completeWorktreeCleanup(operationId: string, worktree: string): void {
+    this.transaction(() => {
+      if (existsSync(worktree)) throw new Error('TASK_CLEANUP_PATH_STILL_EXISTS');
+      for (const row of this.db.prepare("SELECT task_id,json FROM task_events WHERE kind='worktree_cleanup_prepared'").all() as Array<Row & { task_id: string }>) {
+        const value = JSON.parse(row.json) as { operationId: string; worktree: string; receiptIds: string[] };
+        if (value.operationId !== operationId || value.worktree !== worktree) continue;
+        for (const id of value.receiptIds) this.readRetainedArtifact(row.task_id, id);
+        this.request(`cleanup-completed:${operationId}:${row.task_id}`, value, () => {
+          this.event(row.task_id, 'worktree_cleanup_completed', { ...value, actor: 'agent' });
+          return true;
+        });
+      }
+    });
   }
   delegationForChild(childSessionKey: string): TaskWriterDelegation | null {
     this.assertReadCurrent();
@@ -1169,11 +1329,19 @@ export class TaskSystemStore {
     )
       throw new Error("TASK_INVALID_ARTIFACTS");
     return this.transaction(() => {
-      this.assertOwner(credential);
+      const owner = this.assertOwner(credential);
+      const retained = { ...checked, artifacts: checked.artifacts.map(artifact => {
+        const full = canonicalPath(resolve(owner.claim!.worktree, artifact.path));
+        if (!withinPath(owner.claim!.worktree, full) && this.relatedDomain(dirname(full)).id !== this.domain.id) throw new Error('TASK_ARTIFACT_AUTHORITY_MISMATCH');
+        const info = statSync(full);
+        if (!info.isFile() || info.size > 32 * 1024 * 1024) throw new Error('TASK_EVIDENCE_SIZE_LIMIT');
+        if (createHash('sha256').update(readFileSync(full)).digest('hex') !== artifact.sha256) throw new Error('TASK_EVIDENCE_HASH_MISMATCH');
+        return { ...artifact, path: full };
+      }) };
       this.db
         .prepare("INSERT OR REPLACE INTO task_checkpoints VALUES(?,?)")
-        .run(credential.taskNodeId, JSON.stringify(checked));
-      this.event(credential.taskNodeId, "checkpoint", checked);
+        .run(credential.taskNodeId, JSON.stringify(retained));
+      this.event(credential.taskNodeId, "checkpoint", { ...retained, worktree: owner.claim!.worktree });
       return this.get(credential.taskNodeId);
     });
   }
@@ -1786,10 +1954,10 @@ export class TaskSystemStore {
       criterion.verification.sha256 !== expectedSha256
     )
       throw new Error("TASK_EVIDENCE_CRITERION_MISMATCH");
-    const sha256 = this.hashWorkspaceFile(full).sha256;
-    if (sha256 !== expectedSha256) throw new Error("TASK_EVIDENCE_HASH_MISMATCH");
     return this.transaction(() => {
       this.assertOwner(credential);
+      const sha256 = this.hashWorkspaceFile(full).sha256;
+      if (sha256 !== expectedSha256) throw new Error("TASK_EVIDENCE_HASH_MISMATCH");
       const receipt: TaskEvidence = {
         receiptId: randomUUID(),
         taskNodeId: credential.taskNodeId,
