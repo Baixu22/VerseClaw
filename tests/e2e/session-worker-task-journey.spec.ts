@@ -334,7 +334,9 @@ test(`a real delegated worker receives its own task, reports separately and acce
     });
     expect(readOnly.success, readOnly.error).toBe(true);
     const readOnlyKey = readOnly.receipt!.children[0].childSessionKey!;
-    await expect.poll(() => held, { timeout: 30_000 }).toBe(true);
+    evidence.multiCoordinator = { secondAgent, second, secondTask, readOnly, observerOwnerBefore };
+    await writeFile(testInfo.outputPath('worker-read-only-admission.json'), JSON.stringify(evidence.multiCoordinator, null, 2));
+    await expect.poll(() => held, { timeout: dispatchTimeout }).toBe(true);
     const observerDuringRun = await hostInvoke<{ task: TaskView }>(app, 'taskLedger', 'sessionTask', {
       workspaceId: project.workspaceId, sessionKey: readOnlyKey });
     expect(observerDuringRun.task.referenceOnly).toBe(true);
