@@ -215,11 +215,13 @@ function hardenedGitEnv(): NodeJS.ProcessEnv {
     ...process.env,
     GIT_OPTIONAL_LOCKS: "0",
     GIT_TERMINAL_PROMPT: "0",
-    GIT_CONFIG_COUNT: "2",
+    GIT_CONFIG_COUNT: "3",
     GIT_CONFIG_KEY_0: "core.hooksPath",
     GIT_CONFIG_VALUE_0: process.platform === "win32" ? "NUL" : "/dev/null",
     GIT_CONFIG_KEY_1: "core.fsmonitor",
     GIT_CONFIG_VALUE_1: "false",
+    GIT_CONFIG_KEY_2: "core.longpaths",
+    GIT_CONFIG_VALUE_2: "true",
   };
 }
 

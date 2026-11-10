@@ -128,6 +128,17 @@ afterEach(() => {
 });
 
 describe('task artifact Git retention', () => {
+  it('creates and reads retention refs when native repository paths exceed legacy Windows limits', () => {
+    const anchor = mkdtempSync(join(tmpdir(), 'task-retention-long-')); roots.push(anchor);
+    const repo = join(anchor, 'nested-' + 'a'.repeat(70), 'repository-' + 'b'.repeat(70)); mkdirSync(repo, { recursive: true });
+    git(repo, 'init', '--quiet'); git(repo, 'config', 'user.name', 'Long path fixture'); git(repo, 'config', 'user.email', 'fixture@example.invalid');
+    git(repo, 'config', 'commit.gpgsign', 'false');
+    const bytes = Buffer.from('long-path retained artifact'), source = sourceFor(repo, bytes);
+    git(repo, '-c', 'core.longpaths=true', 'add', '.'); git(repo, '-c', 'core.longpaths=true', 'commit', '-qm', 'retain');
+    const receipt = retainTaskArtifact(repo, source);
+    expect(join(repo, '.git', receipt.retained.ref).length).toBeGreaterThan(260);
+    expect(readRetainedTaskArtifact(receipt)).toEqual(bytes);
+  });
   it.each(['refs/agent-retention/proof', 'refs/worktree/temporary'])('uses the same shared-ref classification as checkout cleanup (%s)', ref => {
     const repo = createRepository(), bytes = Buffer.from('retained through native ref');
     const source = sourceFor(repo, bytes), head = commitArtifact(repo, 'native ref');

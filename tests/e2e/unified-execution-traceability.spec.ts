@@ -365,10 +365,11 @@ test('TF0867: exclusive claim, real writes, durable migration restart, acceptanc
     }
     finally { owner.close(); }
     await call('workspaces', 'switch', { id: b.workspaceId });
-    await call('workspaces', 'delete', { id: a.workspaceId });
-    expect((await profiles()).profiles.some(p => resolve(p.rootPath).toLowerCase() === resolve(sourceRoot).toLowerCase())).toBe(false);
+    const sourceMetadata = (await profiles()).profiles.find(p => p.id === a.workspaceId)!;
+    expect(sourceMetadata.coordinatorBindings?.[a.sessionKey]).toBeUndefined();
+    expect(sourceMetadata.executionMigrations?.[request.operationId]?.phase).toBe('confirmed');
     await record('cleanupInputs', { sourceReferences, originalAuthority, originalHistory,
-      sourceWorkspaceRemoved: true, sourceWriter: service.writer(sourceTree.id), sourceCommit, sourceBranch });
+      sourceExecutionDetached: true, migrationMetadataRetained: true, sourceWriter: service.writer(sourceTree.id), sourceCommit, sourceBranch });
     // 同时校验绝对路径、真实路径、受管 generation；失败时保留 fixture，绝不递归兜底删除。
     const canonicalHub = await realpath(hub), canonicalSource = await realpath(sourceRoot);
     const rel = relative(join(canonicalHub, '.openclaw', 'worktrees'), canonicalSource);

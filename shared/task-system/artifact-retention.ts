@@ -30,10 +30,11 @@ function repositoryIdentity(commonDir: string): string {
 function gitEnv(worktree?: string): NodeJS.ProcessEnv {
   const env: NodeJS.ProcessEnv = {
     ...process.env, GIT_OPTIONAL_LOCKS: "0", GIT_TERMINAL_PROMPT: "0", GIT_PAGER: "cat",
-    GIT_LITERAL_PATHSPECS: "1", GIT_NO_REPLACE_OBJECTS: "1", GIT_CONFIG_COUNT: "3",
+    GIT_LITERAL_PATHSPECS: "1", GIT_NO_REPLACE_OBJECTS: "1", GIT_CONFIG_COUNT: "4",
     GIT_CONFIG_KEY_0: "core.hooksPath", GIT_CONFIG_VALUE_0: process.platform === "win32" ? "NUL" : "/dev/null",
     GIT_CONFIG_KEY_1: "core.fsmonitor", GIT_CONFIG_VALUE_1: "false",
     GIT_CONFIG_KEY_2: "credential.interactive", GIT_CONFIG_VALUE_2: "false",
+    GIT_CONFIG_KEY_3: "core.longpaths", GIT_CONFIG_VALUE_3: "true",
   };
   delete env.GIT_DIR;
   delete env.GIT_COMMON_DIR;
@@ -254,7 +255,7 @@ export function retainTaskArtifact(repository: string, source: TaskArtifactRefer
   const found = findHistoricalBlob(repo, [...new Set([...tips, ...history])].slice(0, MAX_SCANNED_COMMITS), artifactPath, source.sha256);
   if (!found) throw new Error("task_artifact_not_found");
   try { gitText(repo.commonDir, repo.root, ["update-ref", ref, found.commitOid, repo.zeroOid]); }
-  catch { throw new Error("task_artifact_ref_conflict"); }
+  catch (cause) { throw new Error("task_artifact_ref_write_failed", { cause }); }
   if (gitText(repo.commonDir, repo.root, ["rev-parse", "--verify", `${ref}^{commit}`]) !== found.commitOid) throw new Error("task_artifact_ref_conflict");
   return buildReceipt(repo, source, ref, found.commitOid, found.blob);
 }
