@@ -105,6 +105,26 @@ describe('Task evidence retention and original checkout cleanup', () => {
     expect(service.list()[0].status).toBe('active');
   });
 
+  it.each(['before-cleanup', 'after-preparation'] as const)('preserves an external edit inside the declared write set (%s)', phase => {
+    const service = createWorktreeService(repository, { backend: 'git' });
+    const row = service.create('external-edit', { writeSet: ['artifact.txt'] });
+    const { taskId } = accepted(row.root), reader = storeAt(repository), changed = Buffer.from('external bytes after acceptance\n');
+    const edit = () => writeFileSync(path.join(row.root, 'artifact.txt'), changed);
+    if (phase === 'before-cleanup') edit();
+    else {
+      const save = registry.saveWorktreeRegistryScope;
+      vi.spyOn(registry, 'saveWorktreeRegistryScope').mockImplementation(scope => {
+        const result = save(scope);
+        if (scope.records.get(row.id)?.status === 'cleaning') edit();
+        return result;
+      });
+    }
+    expect(() => service.cleanup(row.id)).toThrow(phase === 'before-cleanup' ? 'worktree_cleanup_user_content_present' : /modified|untracked/i);
+    expect(readFileSync(path.join(row.root, 'artifact.txt'))).toEqual(changed);
+    expect(reader.history(taskId).some(event => event.kind === 'worktree_cleanup_completed')).toBe(false);
+    for (const receipt of reader.retentionReceipts(taskId)) expect(reader.readRetainedArtifact(taskId, receipt.receiptId)).toEqual(bytes);
+  });
+
   it('reads cleanup history and retained binary pages through the production task tool', async () => {
     const service = createWorktreeService(repository, { backend: 'git' }), row = service.create('tool-history');
     const { taskId } = accepted(row.root); service.cleanup(row.id);

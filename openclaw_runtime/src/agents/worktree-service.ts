@@ -381,7 +381,10 @@ function requireCleanupAuthorization(input: {
   }
   if (input.record.status === 'cleaned') return { root };
   const allowed = new Set((input.record.writeSet ?? []).map((value) => normalizeWorktreeRelPath(value)));
-  const unexpected = input.changed.files.filter((value) => !allowed.has(normalizeWorktreeRelPath(value)));
+  // A declared write set grants an execution scope, not permission to discard live bytes.
+  const unexpected = input.record.backend === 'git'
+    ? input.changed.files
+    : input.changed.files.filter((value) => !allowed.has(normalizeWorktreeRelPath(value)));
   if (unexpected.length > 0) {
     throw new Error('worktree_cleanup_user_content_present:' + unexpected.slice(0, 8).join(','));
   }
@@ -782,21 +785,8 @@ export function createWorktreeService(
           root: rec.root, incarnation: rec.registration.rootIdentity!, generation: rec.generation,
         }], "cleanup", () => {
           if (rec.backend === "git") {
-            try {
-              git(["worktree", "remove", "--force", ownership.root], resolved);
-            } catch (error) {
-              if (error instanceof Error && error.message.startsWith('GIT_WORKTREE_')) throw error;
-              try {
-                removePathWithRetries(ownership.root);
-              } catch {
-                throw error;
-              }
-              try {
-                git(["worktree", "prune"], resolved);
-              } catch {
-                // ignore
-              }
-            }
+            // Git rechecks live modifications at removal; a refusal retains the checkout.
+            git(["worktree", "remove", ownership.root], resolved);
           } else {
             removePathWithRetries(ownership.root);
           }
