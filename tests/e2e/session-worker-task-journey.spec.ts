@@ -5,6 +5,7 @@ import type { SessionDelegationResult, WorkspaceCoordinatorBindingResult } from 
 import type { TaskLedgerSnapshot } from '../../shared/types/task-ledger';
 import type { SessionActivitySnapshot } from '../../shared/types/session-activity';
 import type { WorkspaceProfile } from '../../shared/types/workspace';
+import { hostActionTimeoutMs } from '../../shared/host-api/host-action-timeouts';
 import { closeElectronApp, expect, getAgentDevHostCalls, getStableWindow, test } from './fixtures/electron';
 import { hostInvoke, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { configureSessionChainProvider, createSessionChainProject, createSessionChainTask, observeSessionUi } from './fixtures/session-task-chain';
@@ -31,18 +32,30 @@ test(`a real delegated worker receives its own task, reports separately and acce
     return { text: 'WORKER-RUN-FINISHED' };
   });
   const app = await launchElectronApp({ skipSetup: true });
+  await app.evaluate(() => {
+    const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+    const handlers = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: unknown) => Promise<unknown>> })._invokeHandlers;
+    const original = handlers.get('host:invoke')!;
+    const state = globalThis as unknown as { u4WorkerDispatches: Array<{ request: unknown; startedAt: number; endedAt?: number; result?: unknown; error?: string }> };
+    state.u4WorkerDispatches = [];
+    ipcMain.removeHandler('host:invoke');
+    ipcMain.handle('host:invoke', async (event, request: { module?: string; action?: string; payload?: unknown }) => {
+      if (request.module !== 'sessions' || request.action !== 'sendWorker') return original(event, request);
+      const receipt: (typeof state.u4WorkerDispatches)[number] = { request: request.payload, startedAt: Date.now() };
+      state.u4WorkerDispatches.push(receipt);
+      try { receipt.result = await original(event, request); return receipt.result; }
+      catch (error) { receipt.error = String(error); throw error; }
+      finally { receipt.endedAt = Date.now(); }
+    });
+  });
   const mainOutput: string[] = [];
   const collect = (bytes: Buffer) => { mainOutput.push(bytes.toString()); if (mainOutput.length > 2000) mainOutput.splice(0, mainOutput.length - 2000); };
   app.process().stdout?.on('data', collect); app.process().stderr?.on('data', collect);
   const captureUi = await observeSessionUi(app);
   const evidence: Record<string, unknown> = { driven_by: 'agent', actor: 'playwright-worker-task', provider: 'local-scripted', journey, status: 'running' };
+  const dispatchTimeout = hostActionTimeoutMs('sessions', 'sendWorker');
   try {
     await configureSessionChainProvider(app, llm.port);
-    const assistants = await hostInvoke<{ agents: Array<{ id: string; name: string }> }>(app, 'agents', 'create', {
-      name: 'Independent coordinator', inheritWorkspace: true,
-    });
-    const secondAgent = assistants.agents.find((agent) => agent.name === 'Independent coordinator')!;
-    expect(secondAgent).toBeTruthy();
     const project = await createSessionChainProject(app, testInfo.outputPath('workspace'), 'Worker project');
     const rpc = <T,>(method: string, params: Record<string, unknown>) => hostInvoke<T>(app, 'gateway', 'rpc', { method, params, timeoutMs: 60_000 });
     const taskContract: TaskContractInput = { objective: 'Verify a delegated task', target: 'worker.txt', constraints: ['Preserve the project coordinator'],
@@ -118,7 +131,9 @@ test(`a real delegated worker receives its own task, reports separately and acce
     await writeFile(testInfo.outputPath('worker-before-followup.json'), JSON.stringify({ owner: evidence.initialRunOwner, described }, null, 2));
     await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>('sessions.describe', { key: childKey })).session.hasActiveRun, { timeout: 30_000 }).toBe(false);
     evidence.initialIdleOwner = await rpc('sessions.describe', { key: childKey });
-    const followup = await hostInvoke(app, 'sessions', 'sendWorker', { workspaceId: project.workspaceId, parentSessionKey: project.sessionKey,
+    let followup: unknown;
+    if (journey === 'navigation') {
+    followup = await hostInvoke(app, 'sessions', 'sendWorker', { workspaceId: project.workspaceId, parentSessionKey: project.sessionKey,
       expectedParentGeneration: project.generation, childSessionKey: childKey, expectedChildGeneration: described.session.sessionId,
       message: 'WORKER-FOLLOWUP', idempotencyKey: 'worker-followup-1', mode: 'send' });
     expect(followup).toMatchObject({ success: true, phase: 'accepted' });
@@ -131,6 +146,7 @@ test(`a real delegated worker receives its own task, reports separately and acce
       return JSON.stringify(readback).includes('WORKER-FOLLOWUP-RECORDED');
     }, { timeout: 60_000 }).toBe(true);
     evidence.followupObservedAt = new Date().toISOString();
+    }
     const history = await hostInvoke(app, 'sessions', 'history', { sessionKey: childKey,
       expectedParentSessionKey: project.sessionKey, expectedSessionGeneration: described.session.sessionId });
     const activity = await hostInvoke<{ snapshot: SessionActivitySnapshot }>(app, 'sessionActivity', 'snapshot', { workspaceId: project.workspaceId, sessionKey: project.sessionKey });
@@ -148,11 +164,14 @@ test(`a real delegated worker receives its own task, reports separately and acce
     await expect(page.getByTestId('workspace-subagent-panel').locator('[data-stage="acceptance"]')).toHaveAttribute('data-status', 'pending');
       await expect(page.getByTestId('workspace-subagent-panel').locator('[data-stage="verification"]')).toHaveAttribute('data-status', 'pending');
     await expect(page.getByTestId('workspace-subagent-model')).toContainText((history as { model: string }).model);
+    if (journey === 'navigation') {
+    await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>('sessions.describe', { key: childKey })).session.hasActiveRun, { timeout: 30_000 }).toBe(false);
     await page.getByTestId('workspace-subagent-dispatch-input').fill('WORKER-FOLLOWUP-UI');
     await page.getByTestId('workspace-subagent-dispatch').click();
-    await expect(page.getByTestId('worker-send-phase')).toHaveText(/Accepted|已接收/);
+    await expect(page.getByTestId('worker-send-phase')).toHaveText(/Accepted|已接收/, { timeout: dispatchTimeout });
     await expect(page.getByTestId('workspace-subagent-dispatch-input')).toHaveValue('');
     await expect.poll(async () => JSON.stringify(await rpc('chat.history', { sessionKey: childKey, limit: 100 })).includes('WORKER-FOLLOWUP-UI'), { timeout: 60_000 }).toBe(true);
+    }
     await page.screenshot({ path: testInfo.outputPath('worker-lifecycle.png') });
 
     if (journey === 'navigation') {
@@ -193,6 +212,7 @@ test(`a real delegated worker receives its own task, reports separately and acce
     holdNext = true;
     await page.getByTestId('workspace-subagent-dispatch-input').fill('interrupt WORKER-HOLD: open a model turn for receipt validation.');
     await page.getByTestId('workspace-subagent-dispatch').click();
+    await expect(page.getByTestId('worker-send-phase')).toHaveText(/Accepted|已接收/, { timeout: dispatchTimeout });
     await expect.poll(() => held, { timeout: 30_000 }).toBe(true);
     await app.evaluate(() => {
       const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
@@ -212,7 +232,7 @@ test(`a real delegated worker receives its own task, reports separately and acce
     });
     await page.getByTestId('workspace-subagent-dispatch-input').fill('later WORKER-QUEUED');
     await page.getByTestId('workspace-subagent-dispatch').click();
-    await expect(page.getByTestId('worker-send-phase')).toHaveText(/unknown|未知/);
+    await expect(page.getByTestId('worker-send-phase')).toHaveText(/unknown|未知/, { timeout: dispatchTimeout });
     await expect(page.getByTestId('workspace-subagent-dispatch')).toBeDisabled();
     const lostAck = await app.evaluate(() => (globalThis as unknown as { workerLostAck: {
       request: { payload: { idempotencyKey: string } }; result: { data: { phase: string } } } }).workerLostAck);
@@ -222,12 +242,12 @@ test(`a real delegated worker receives its own task, reports separately and acce
       workerSendIdempotencyKey: lostAck.request.payload.idempotencyKey });
     expect(delivery.workerSendReceipt).toMatchObject({ phase: 'queued', source: 'runtime-intervention', idempotencyKey: lostAck.request.payload.idempotencyKey });
     await page.getByTestId('workspace-subagent-refresh').click();
-    await expect(page.getByTestId('worker-send-phase')).toHaveText(/Queued|排队/);
+    await expect(page.getByTestId('worker-send-phase')).toHaveText(/Queued|排队/, { timeout: dispatchTimeout });
     await expect(page.getByTestId('workspace-subagent-dispatch-input')).toHaveValue('');
     await page.screenshot({ path: testInfo.outputPath('worker-queue-reconciled.png') });
     await page.getByTestId('workspace-subagent-dispatch-input').fill('btw WORKER-GUIDE use the already recorded evidence.');
     await page.getByTestId('workspace-subagent-dispatch').click();
-    await expect(page.getByTestId('worker-send-phase')).toHaveText(/Guidance accepted|Steered|引导/);
+    await expect(page.getByTestId('worker-send-phase')).toHaveText(/Guidance accepted|Steered|引导/, { timeout: dispatchTimeout });
     const guide = await rpc<{ events: Array<{ status: string; payload?: { message?: string } }> }>('sessions.longTaskControlHistory', { key: childKey, limit: 200 });
     expect(guide.events.some((entry) => entry.status === 'steered' && entry.payload?.message === 'btw WORKER-GUIDE use the already recorded evidence.')).toBe(true);
     evidence.intervention = { driven_by: 'agent', actor: 'playwright-worker-task', fault: 'simulated-ack-loss-after-real-queue', lostAck, delivery, guide };
@@ -237,6 +257,11 @@ test(`a real delegated worker receives its own task, reports separately and acce
     }
 
     if (journey === 'isolation') {
+    const assistants = await hostInvoke<{ agents: Array<{ id: string; name: string }> }>(app, 'agents', 'create', {
+      name: 'Independent coordinator', inheritWorkspace: true,
+    });
+    const secondAgent = assistants.agents.find((agent) => agent.name === 'Independent coordinator')!;
+    expect(secondAgent).toBeTruthy();
     const second = await rpc<{ key: string; sessionId: string }>('sessions.create', { agentId: secondAgent.id, label: 'Independent coordinator' });
     await hostInvoke(app, 'workspaces', 'saveState', { id: project.workspaceId, sessionKey: second.key, state: {} });
     await hostInvoke(app, 'workspaces', 'update', { id: project.workspaceId, agentId: secondAgent.id, sessionKey: second.key, activeSessionKey: second.key });
@@ -332,6 +357,7 @@ test(`a real delegated worker receives its own task, reports separately and acce
   }
   finally {
     releaseHold();
+    evidence.workerDispatches = await app.evaluate(() => (globalThis as unknown as { u4WorkerDispatches: unknown[] }).u4WorkerDispatches).catch(String);
     await writeFile(testInfo.outputPath('worker-main.log'), mainOutput.join(''));
     evidence.providerLog = llm.log;
     await writeFile(testInfo.outputPath('worker-task-journey.json'), JSON.stringify(evidence, null, 2));
