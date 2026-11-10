@@ -1,0 +1,137 @@
+[2026-11-10T09:21:28.593Z] [INFO] Gateway stop requested
+[2026-11-10T09:21:28.593Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)
+Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[2026-11-10T09:21:28.872Z] [INFO] [efficiency] shed state changed {"shedding":false,"reason":null,"activeReasons":[],"transitionCount":2}
+[2026-11-10T09:21:28.873Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T09:21:28.873Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T09:21:28.873Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T09:21:28.873Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[2026-11-10T09:21:28.875Z] [INFO] Gateway auto-start skipped in E2E mode
+Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+Updated models.json for agent "main" provider "custom-sessionc"
+[2026-11-10T09:21:29.185Z] [INFO] Scheduling Gateway reload after saving provider "custom-sessionc" config
+[2026-11-10T09:21:29.185Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)
+Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+[2026-11-10T09:21:29.547Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"default","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\default-7505d64a54\\snapshot.json"}
+[2026-11-10T09:21:29.548Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"default","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\default-7505d64a54\\snapshot.json"}
+[2026-11-10T09:21:29.548Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"default","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\default-7505d64a54\\snapshot.json"}
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+Updated models.json for agent "main" provider "custom-sessionc"
+Updated models.json for agent "main" provider "custom-sessionc"
+[2026-11-10T09:21:29.699Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\tmp\clawx-u4-relay-20261110-01a1c454\u4-final-controls\session-worker-task-journe-00810--scoped-follow-up-controls-\workspace\.verse-claw\harness
+[2026-11-10T09:21:30.141Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:21:30.141Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:21:30.141Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:21:30.141Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:21:30.142Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:21:30.207Z] [INFO] Gateway stop requested
+[2026-11-10T09:21:30.207Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)
+[2026-11-10T09:21:30.235Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)
+[2026-11-10T09:21:30.236Z] [INFO] Gateway start requested (port=63524)
+[2026-11-10T09:21:30.242Z] [DEBUG] Device identity loaded (deviceId=fb2b3b42ff10b97b3c6197aaa7bcbdc58cb9af6c1e0f4482591f5b5a2bb6c4a4)
+[2026-11-10T09:21:30.243Z] [DEBUG] Gateway state changed: stopped -> starting
+[2026-11-10T09:21:30.564Z] [DEBUG] Checking for existing Gateway...
+(node:40020) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[2026-11-10T09:21:30.730Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:21:30.823Z] [DEBUG] No existing Gateway found, starting new process...
+Set OpenClaw default model to "custom-sessionc/mock-coder" for provider "custom-sessionc" (runtime override)
+Saved API key for provider "custom-sessionc" to OpenClaw auth-profiles (agents: main)
+Updated models.json for agent "main" provider "custom-sessionc"
+Updated models.json for agent "main" provider "custom-sessionc"
+[2026-11-10T09:21:31.006Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)
+[2026-11-10T09:21:31.040Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.
+[2026-11-10T09:21:31.048Z] [INFO] [metric] gateway.prelaunch {"settingsMs":1,"defaultProviderRuntimeSyncMs":156,"providerEnvMs":7,"channelStartupPolicyMs":2,"uvEnvMs":8,"mcpEnvMs":20,"runtimeConfigReadMs":1,"verseShellBundleMs":0,"totalMs":217,"maintenance":{},"configuredChannelCount":0}
+[2026-11-10T09:21:31.048Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=63524, entry="D:\ClawX-work\session-chain-u4-runtime-20261109\openclaw_runtime\dist\entry.js", args="gateway --port 63524 --allow-unconfigured", execArgv="", cwd="D:\ClawX-work\session-chain-u4-runtime-20261109\openclaw_runtime", bundledBin=no, providerKeys=2, channels=skipped(no configured channels), proxy=disabled)
+[2026-11-10T09:21:31.144Z] [INFO] Gateway process started (pid=49596)
+[2026-11-10T09:21:31.145Z] [DEBUG] Gateway manager now owns process pid=49596
+[2026-11-10T09:21:31.297Z] [WARN] [Gateway stderr] (node:49596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2026-11-10T09:21:31.297Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)
+[2026-11-10T09:21:33.250Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)
+[2026-11-10T09:21:35.318Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)
+[2026-11-10T09:21:36.240Z] [DEBUG] [Gateway stderr] (node:49596) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+[2026-11-10T09:21:36.240Z] [DEBUG] [Gateway stderr] (node:49596) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.
+[2026-11-10T09:21:36.240Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.
+[2026-11-10T09:21:37.630Z] [INFO] [efficiency] shed state changed {"shedding":true,"reason":"power-saver","activeReasons":["power-saver"],"transitionCount":3}
+[2026-11-10T09:21:39.095Z] [DEBUG] Gateway ready after 28 attempt(s)
+[2026-11-10T09:21:39.095Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:63524/ws)
+[2026-11-10T09:21:39.116Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=a6efaec2-7ada-40a8-9e5b-20eee9666d57 peer=127.0.0.1:62392->127.0.0.1:63524 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:63524 ua=n/a code=1006 reason=n/a[39m
+[2026-11-10T09:21:39.127Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-11-10T09:21:39.128Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-10T09:21:39.129Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-11-10T09:21:39.131Z] [WARN] [Gateway stderr] [36m[ws][39m [33mclosed before connect conn=88056f14-7037-4428-a453-6f49f0b63a53 peer=127.0.0.1:62398->127.0.0.1:63524 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:63524 ua=n/a code=1006 reason=n/a[39m
+[2026-11-10T09:21:39.207Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:63524/ws)
+[2026-11-10T09:21:39.209Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)
+[2026-11-10T09:21:41.086Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...
+[2026-11-10T09:21:41.086Z] [DEBUG] Received connect.challenge, sending handshake
+[2026-11-10T09:21:41.086Z] [DEBUG] Sending connect handshake with challenge nonce
+[2026-11-10T09:21:41.693Z] [DEBUG] Gateway connect handshake completed (protocol=4)
+[2026-11-10T09:21:41.694Z] [DEBUG] Gateway state changed: starting -> running
+[2026-11-10T09:21:41.694Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)
+[2026-11-10T09:21:41.695Z] [INFO] [metric] gateway.startup {"configSyncMs":581,"spawnToReadyMs":7950,"readyToConnectMs":2600,"totalMs":11131}
+[2026-11-10T09:21:41.757Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[auth-profiles] main: sealed 1 legacy plaintext credential field(s)
+[2026-11-10T09:22:17.615Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T09:22:17.616Z] [WARN] [webview-security] deny permission-check: WebView permission "media" denied by default (file:///)
+[2026-11-10T09:22:17.616Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)
+[2026-11-10T09:22:17.616Z] [WARN] [webview-security] deny permission-check: WebView permission "geolocation" denied by default (file:///)
+[2026-11-10T09:22:18.084Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"default","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\default-7505d64a54\\snapshot.json"}
+[2026-11-10T09:22:18.303Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:22:18.304Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:22:18.304Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:22:18.304Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:22:18.304Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:22:18.304Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:22:18.308Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:22:18.308Z] [WARN] [task-ledger] snapshot cache write failed {"workspaceId":"worker-project","error":"AtomicWriteError: Timed out acquiring write lock for D:\\ClawX-work\\session-chain-u4-runtime-20261109\\.tmp\\e2e-runs\\verse-claw-e2e-run-1pg0dk\\verse-claw-e2e-home-etkmAj\\.openclaw\\task-ledgers\\workspaces\\worker-project-8a56cf6dcf\\snapshot.json"}
+[2026-11-10T09:22:28.538Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:28.541Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:28.544Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:28.547Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:28.549Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:28.552Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:28.555Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:28.558Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:28.561Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:28.564Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:29.629Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:29.911Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:29.913Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:29.915Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:29.918Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:29.921Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:29.925Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:29.928Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:29.931Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:29.934Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:29.936Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:29.939Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:30.528Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:31.155Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:31.160Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:31.163Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:31.167Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:31.170Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:31.171Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:31.175Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:31.178Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:31.182Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:31.185Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:31.189Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:31.915Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:32.359Z] [WARN] task-loop: failed to write task ledger lifecycle evidence {"error":"TASK_EVENT_IDEMPOTENCY_CONFLICT"}
+[2026-11-10T09:22:36.980Z] [WARN] [Gateway stderr] [31m[diagnostic][39m [33mliveness warning: reasons=event_loop_delay,cpu interval=31s eventLoopDelayP99Ms=2757.8 eventLoopDelayMaxMs=4336.9 eventLoopUtilization=0 cpuCoreRatio=0.944 active=1 waiting=0 queued=0 recentPhases=post-attach.update-check:3ms,sidecars.session-locks:24ms,sidecars.restart-sentinel:21ms,post-attach.update-sentinel:6ms,post-ready.maintenance:19ms,post-ready.agent-runtime-plugins:3ms work=[active=agent:main:session-1794302489648-workerproject(processing/model_call,q=0,age=9s last=model_call:started)][39m
+[2026-11-10T09:22:39.065Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered
+[2026-11-10T09:22:39.074Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=f2b0a6d4-e0fd-4fff-9931-8bd3469c06f3 sessionKey=agent:main:subagent:5f04da93-3a3a-4e8f-9e27-2b20f2e48640 loadSessionMs=0.736
+[2026-11-10T09:22:39.103Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=f2b0a6d4-e0fd-4fff-9931-8bd3469c06f3 sessionKey=agent:main:subagent:5f04da93-3a3a-4e8f-9e27-2b20f2e48640 attachments=0
+[2026-11-10T09:22:39.104Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=f2b0a6d4-e0fd-4fff-9931-8bd3469c06f3 sessionKey=agent:main:subagent:5f04da93-3a3a-4e8f-9e27-2b20f2e48640
+[2026-11-10T09:23:06.412Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=17a5aa07-cd3f-42ac-9cae-340131ee0018 sessionKey=agent:main:subagent:5f04da93-3a3a-4e8f-9e27-2b20f2e48640 loadSessionMs=1.316
+[2026-11-10T09:23:25.768Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=76d0ac3f-a227-4806-8a2e-ba232b4f3e7f sessionKey=agent:main:subagent:5f04da93-3a3a-4e8f-9e27-2b20f2e48640 loadSessionMs=0.887
+[2026-11-10T09:23:37.254Z] [WARN] [Gateway stderr] [36m[agents/subagent-registry][39m [33mpersistent task writer return requires recovery[39m
+[2026-11-10T09:23:41.219Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=queue_drain_agent:main:subagent:5f04da93-3a3a-4e8f-9e27-2b20f2e48640_1794302621023 sessionKey=agent:main:subagent:5f04da93-3a3a-4e8f-9e27-2b20f2e48640 loadSessionMs=1.174
+[2026-11-10T09:23:41.230Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=queue_drain_agent:main:subagent:5f04da93-3a3a-4e8f-9e27-2b20f2e48640_1794302621023 sessionKey=agent:main:subagent:5f04da93-3a3a-4e8f-9e27-2b20f2e48640 attachments=0
+[2026-11-10T09:23:41.236Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=queue_drain_agent:main:subagent:5f04da93-3a3a-4e8f-9e27-2b20f2e48640_1794302621023 sessionKey=agent:main:subagent:5f04da93-3a3a-4e8f-9e27-2b20f2e48640

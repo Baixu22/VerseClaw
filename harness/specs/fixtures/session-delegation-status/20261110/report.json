@@ -18,7 +18,8 @@
       "result": "commands/u4-merged-unit.result.json",
       "sourceUnchanged": true,
       "deltaToCandidate": [],
-      "tests": "commands/u4-merged-unit.tests.json"
+      "tests": "commands/u4-merged-unit.tests.json",
+      "log": "commands/u4-merged-unit.log.txt"
     },
     {
       "name": "u4-final-owner-unit",
@@ -28,7 +29,8 @@
       "result": "commands/u4-final-owner-unit.result.json",
       "sourceUnchanged": true,
       "deltaToCandidate": [],
-      "tests": "commands/u4-final-owner-unit.tests.json"
+      "tests": "commands/u4-final-owner-unit.tests.json",
+      "log": "commands/u4-final-owner-unit.log.txt"
     },
     {
       "name": "u4-combined-typecheck",
@@ -37,7 +39,8 @@
       "exitCode": 0,
       "result": "commands/u4-combined-typecheck.result.json",
       "sourceUnchanged": true,
-      "deltaToCandidate": []
+      "deltaToCandidate": [],
+      "log": "commands/u4-combined-typecheck.log.txt"
     },
     {
       "name": "u4-combined-runtime",
@@ -46,7 +49,8 @@
       "exitCode": 0,
       "result": "commands/u4-combined-runtime.result.json",
       "sourceUnchanged": true,
-      "deltaToCandidate": []
+      "deltaToCandidate": [],
+      "log": "commands/u4-combined-runtime.log.txt"
     },
     {
       "name": "u4-combined-desktop",
@@ -55,7 +59,8 @@
       "exitCode": 0,
       "result": "commands/u4-combined-desktop.result.json",
       "sourceUnchanged": true,
-      "deltaToCandidate": []
+      "deltaToCandidate": [],
+      "log": "commands/u4-combined-desktop.log.txt"
     },
     {
       "name": "u4-main-contract",
@@ -66,7 +71,8 @@
       "sourceUnchanged": true,
       "deltaToCandidate": [
         "tests/unit/session-handoff-recovery.test.ts"
-      ]
+      ],
+      "log": "commands/u4-main-contract.log.txt"
     },
     {
       "name": "u4-main-i18n",
@@ -77,7 +83,8 @@
       "sourceUnchanged": true,
       "deltaToCandidate": [
         "tests/unit/session-handoff-recovery.test.ts"
-      ]
+      ],
+      "log": "commands/u4-main-i18n.log.txt"
     },
     {
       "name": "u4-main-lint",
@@ -88,7 +95,8 @@
       "sourceUnchanged": true,
       "deltaToCandidate": [
         "tests/unit/session-handoff-recovery.test.ts"
-      ]
+      ],
+      "log": "commands/u4-main-lint.log.txt"
     },
     {
       "name": "u4-main-comms-replay",
@@ -99,7 +107,8 @@
       "sourceUnchanged": true,
       "deltaToCandidate": [
         "tests/unit/session-handoff-recovery.test.ts"
-      ]
+      ],
+      "log": "commands/u4-main-comms-replay.log.txt"
     },
     {
       "name": "u4-main-comms-compare",
@@ -110,7 +119,8 @@
       "sourceUnchanged": true,
       "deltaToCandidate": [
         "tests/unit/session-handoff-recovery.test.ts"
-      ]
+      ],
+      "log": "commands/u4-main-comms-compare.log.txt"
     },
     {
       "name": "u4-main-harness",
@@ -121,7 +131,8 @@
       "sourceUnchanged": true,
       "deltaToCandidate": [
         "tests/unit/session-handoff-recovery.test.ts"
-      ]
+      ],
+      "log": "commands/u4-main-harness.log.txt"
     },
     {
       "name": "u4-final-plan",
@@ -130,7 +141,8 @@
       "exitCode": 0,
       "result": "commands/u4-final-plan.result.json",
       "sourceUnchanged": true,
-      "deltaToCandidate": []
+      "deltaToCandidate": [],
+      "log": "commands/u4-final-plan.log.txt"
     },
     {
       "name": "u4-final-navigation",
@@ -150,7 +162,8 @@
         "unexpected": 0,
         "flaky": 0
       },
-      "tests": "commands/u4-final-navigation.tests.json"
+      "tests": "commands/u4-final-navigation.tests.json",
+      "log": "commands/u4-final-navigation.log.txt"
     },
     {
       "name": "u4-final-controls",
@@ -170,7 +183,8 @@
         "unexpected": 0,
         "flaky": 0
       },
-      "tests": "commands/u4-final-controls.tests.json"
+      "tests": "commands/u4-final-controls.tests.json",
+      "log": "commands/u4-final-controls.log.txt"
     },
     {
       "name": "u4-final-isolation",
@@ -190,7 +204,8 @@
         "unexpected": 0,
         "flaky": 0
       },
-      "tests": "commands/u4-final-isolation.tests.json"
+      "tests": "commands/u4-final-isolation.tests.json",
+      "log": "commands/u4-final-isolation.log.txt"
     },
     {
       "name": "u4-final-acceptance-en",
@@ -210,7 +225,8 @@
         "unexpected": 0,
         "flaky": 0
       },
-      "tests": "commands/u4-final-acceptance-en.tests.json"
+      "tests": "commands/u4-final-acceptance-en.tests.json",
+      "log": "commands/u4-final-acceptance-en.log.txt"
     },
     {
       "name": "u4-final-acceptance-zh",
@@ -230,7 +246,8 @@
         "unexpected": 0,
         "flaky": 0
       },
-      "tests": "commands/u4-final-acceptance-zh.tests.json"
+      "tests": "commands/u4-final-acceptance-zh.tests.json",
+      "log": "commands/u4-final-acceptance-zh.log.txt"
     },
     {
       "name": "u4-final-acceptance-ja",
@@ -250,7 +267,8 @@
         "unexpected": 0,
         "flaky": 0
       },
-      "tests": "commands/u4-final-acceptance-ja.tests.json"
+      "tests": "commands/u4-final-acceptance-ja.tests.json",
+      "log": "commands/u4-final-acceptance-ja.log.txt"
     },
     {
       "name": "u4-final-acceptance-ru",
@@ -270,7 +288,8 @@
         "unexpected": 0,
         "flaky": 0
       },
-      "tests": "commands/u4-final-acceptance-ru.tests.json"
+      "tests": "commands/u4-final-acceptance-ru.tests.json",
+      "log": "commands/u4-final-acceptance-ru.log.txt"
     },
     {
       "name": "u4-final-active-parent",
@@ -290,7 +309,8 @@
         "unexpected": 0,
         "flaky": 0
       },
-      "tests": "commands/u4-final-active-parent.tests.json"
+      "tests": "commands/u4-final-active-parent.tests.json",
+      "log": "commands/u4-final-active-parent.log.txt"
     },
     {
       "name": "u4-final-derivation-retry",
@@ -310,7 +330,8 @@
         "unexpected": 0,
         "flaky": 0
       },
-      "tests": "commands/u4-final-derivation-retry.tests.json"
+      "tests": "commands/u4-final-derivation-retry.tests.json",
+      "log": "commands/u4-final-derivation-retry.log.txt"
     },
     {
       "name": "u4-final-owner-replay",
@@ -330,7 +351,8 @@
         "unexpected": 0,
         "flaky": 0
       },
-      "tests": "commands/u4-final-owner-replay.tests.json"
+      "tests": "commands/u4-final-owner-replay.tests.json",
+      "log": "commands/u4-final-owner-replay.log.txt"
     }
   ],
   "acceptance": [
@@ -880,7 +902,8 @@
   "baseline": {
     "name": "u4-combined-harness-ci",
     "exitCode": 1,
-    "result": "baseline/u4-combined-harness-ci.result.json"
+    "result": "baseline/u4-combined-harness-ci.result.json",
+    "log": "baseline/u4-combined-harness-ci.log.txt"
   },
   "credentialScan": {
     "policy": "literal private keys, common provider key prefixes and bearer credentials",
@@ -889,7 +912,8 @@
   "integrationPreview": {
     "source": "integration-preview/u4-main-overlay.result.json",
     "unitPassed": 100,
-    "sourceUnchanged": true
+    "sourceUnchanged": true,
+    "log": "integration-preview/u4-main-overlay.log.txt"
   },
   "ownerReplay": {
     "source": "journeys/u4-final-owner-replay/long-session-completion-co-12137--fenced-batch-after-restart/completion-continuation-e2e.json",

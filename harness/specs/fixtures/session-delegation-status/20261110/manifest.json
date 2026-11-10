@@ -3,7 +3,7 @@
   "actor": "codex-u4-relay-01a1c454",
   "files": [
     {
-      "path": "baseline/u4-combined-harness-ci.log",
+      "path": "baseline/u4-combined-harness-ci.log.txt",
       "sha256": "910cd4e2c1d43ab0efce0eae77dc3a50b90613860fdcc08fcbb9360f18e93d3c",
       "bytes": 24210
     },
@@ -13,7 +13,7 @@
       "bytes": 45412
     },
     {
-      "path": "commands/u4-combined-desktop.log",
+      "path": "commands/u4-combined-desktop.log.txt",
       "sha256": "c4ef30818f481fcc614e375c7cf148f981852311adae77f5f45fc1341408f2ff",
       "bytes": 56100
     },
@@ -23,7 +23,7 @@
       "bytes": 45407
     },
     {
-      "path": "commands/u4-combined-runtime.log",
+      "path": "commands/u4-combined-runtime.log.txt",
       "sha256": "a6508270227f1ab5fe8cceadcfaf8f463014f0093ffd7f8ef516245c44445ea5",
       "bytes": 3178
     },
@@ -33,7 +33,7 @@
       "bytes": 45347
     },
     {
-      "path": "commands/u4-combined-typecheck.log",
+      "path": "commands/u4-combined-typecheck.log.txt",
       "sha256": "f9d833c807a228f432e60d41b11c7ee7feb4246aebf715a4fa5f80d56d6de703",
       "bytes": 1657
     },
@@ -43,7 +43,7 @@
       "bytes": 45410
     },
     {
-      "path": "commands/u4-final-acceptance-en.log",
+      "path": "commands/u4-final-acceptance-en.log.txt",
       "sha256": "7befc1b4ae54f90b7723e858b5dadf448ec922aea8faf43755b6f52f2ba07bda",
       "bytes": 635
     },
@@ -58,7 +58,7 @@
       "bytes": 3384
     },
     {
-      "path": "commands/u4-final-acceptance-ja.log",
+      "path": "commands/u4-final-acceptance-ja.log.txt",
       "sha256": "8616ead0a52a8f59077d275a5a40fe964adb60122984d93853f67b6c894a745f",
       "bytes": 807
     },
@@ -73,7 +73,7 @@
       "bytes": 3384
     },
     {
-      "path": "commands/u4-final-acceptance-ru.log",
+      "path": "commands/u4-final-acceptance-ru.log.txt",
       "sha256": "e144c87573c45ee881c7f8afe71606d0036d71875c8a170f0a06b050cee24a16",
       "bytes": 635
     },
@@ -88,7 +88,7 @@
       "bytes": 3384
     },
     {
-      "path": "commands/u4-final-acceptance-zh.log",
+      "path": "commands/u4-final-acceptance-zh.log.txt",
       "sha256": "646335b7e59311e061727b771f567b4fb2b17906fa5f14c5dc6b4735c61ecc4b",
       "bytes": 635
     },
@@ -103,7 +103,7 @@
       "bytes": 3392
     },
     {
-      "path": "commands/u4-final-active-parent.log",
+      "path": "commands/u4-final-active-parent.log.txt",
       "sha256": "154960f76450b0ee70da0ec5e5490a1d01dfa3113e63ddd4edaf7b033303defa",
       "bytes": 650
     },
@@ -118,7 +118,7 @@
       "bytes": 3484
     },
     {
-      "path": "commands/u4-final-controls.log",
+      "path": "commands/u4-final-controls.log.txt",
       "sha256": "1e484525164b9d10874fbc18adbd713d091b3897d0b9c3421e612d520724b71d",
       "bytes": 736
     },
@@ -133,7 +133,7 @@
       "bytes": 3717
     },
     {
-      "path": "commands/u4-final-derivation-retry.log",
+      "path": "commands/u4-final-derivation-retry.log.txt",
       "sha256": "a2d7762af9272592b0e6d18876ca7e5fe06f3efbfbd812d1a4720124aaf7b067",
       "bytes": 1048
     },
@@ -148,7 +148,7 @@
       "bytes": 4891
     },
     {
-      "path": "commands/u4-final-isolation.log",
+      "path": "commands/u4-final-isolation.log.txt",
       "sha256": "9567fad6134ebe60a859aef666092f2a8f65050504e8a70176e532b0b8ecf259",
       "bytes": 677
     },
@@ -163,7 +163,7 @@
       "bytes": 3501
     },
     {
-      "path": "commands/u4-final-navigation.log",
+      "path": "commands/u4-final-navigation.log.txt",
       "sha256": "88ffb20a0613970165d718001d2e6dd86bb4021b2a8c0026a91e81ff3c9b0d7b",
       "bytes": 738
     },
@@ -178,7 +178,7 @@
       "bytes": 3729
     },
     {
-      "path": "commands/u4-final-owner-replay.log",
+      "path": "commands/u4-final-owner-replay.log.txt",
       "sha256": "1b34058e7f6d1991da0646433d38d41f8f03d223d03da6940772c817c74bcdf4",
       "bytes": 730
     },
@@ -193,7 +193,7 @@
       "bytes": 5216
     },
     {
-      "path": "commands/u4-final-owner-unit.log",
+      "path": "commands/u4-final-owner-unit.log.txt",
       "sha256": "a492654ac446877b249c7302e9c8b85f170e217ef28603954e02464180bef65d",
       "bytes": 94
     },
@@ -208,7 +208,7 @@
       "bytes": 10420
     },
     {
-      "path": "commands/u4-final-plan.log",
+      "path": "commands/u4-final-plan.log.txt",
       "sha256": "9e9f68cd2cdfa313328db036a54023eb085e0cf0294c460b9e45fc783d25e44f",
       "bytes": 113
     },
@@ -218,7 +218,7 @@
       "bytes": 45416
     },
     {
-      "path": "commands/u4-main-comms-compare.log",
+      "path": "commands/u4-main-comms-compare.log.txt",
       "sha256": "0d62b298e016011e8656c7496c11080f01acd3823021f390566e843af071f834",
       "bytes": 3440
     },
@@ -228,7 +228,7 @@
       "bytes": 45010
     },
     {
-      "path": "commands/u4-main-comms-replay.log",
+      "path": "commands/u4-main-comms-replay.log.txt",
       "sha256": "59789846a5e37afd95689bf569af3d8eb7d285211fb936c727503f7c5ba55b4d",
       "bytes": 115
     },
@@ -238,7 +238,7 @@
       "bytes": 45007
     },
     {
-      "path": "commands/u4-main-contract.log",
+      "path": "commands/u4-main-contract.log.txt",
       "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52",
       "bytes": 23
     },
@@ -248,7 +248,7 @@
       "bytes": 45002
     },
     {
-      "path": "commands/u4-main-harness.log",
+      "path": "commands/u4-main-harness.log.txt",
       "sha256": "71dceed99dd77b1d012c79e856d8b61802cdf928e642f8436a0fdaf1397b218b",
       "bytes": 64
     },
@@ -258,7 +258,7 @@
       "bytes": 45078
     },
     {
-      "path": "commands/u4-main-i18n.log",
+      "path": "commands/u4-main-i18n.log.txt",
       "sha256": "f334befc6ed01128f3c0b03b685520679080d18d5b539033cff69b02d92b95fe",
       "bytes": 18
     },
@@ -268,7 +268,7 @@
       "bytes": 44988
     },
     {
-      "path": "commands/u4-main-lint.log",
+      "path": "commands/u4-main-lint.log.txt",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
     },
@@ -278,7 +278,7 @@
       "bytes": 45485
     },
     {
-      "path": "commands/u4-merged-unit.log",
+      "path": "commands/u4-merged-unit.log.txt",
       "sha256": "b3148b54e122b0d9657a6c8cde9806f40db54c717d849a31924c9e20e023df8c",
       "bytes": 89
     },
@@ -318,7 +318,7 @@
       "bytes": 1903
     },
     {
-      "path": "failures/cleanup-readback-red.log",
+      "path": "failures/cleanup-readback-red.log.txt",
       "sha256": "f9f198f78aef1537da85578e4d7323e8970d8afa90d47e73fb41fa8e22f7aa41",
       "bytes": 95
     },
@@ -333,7 +333,7 @@
       "bytes": 2511
     },
     {
-      "path": "failures/read-budget-red.log",
+      "path": "failures/read-budget-red.log.txt",
       "sha256": "31fe83d088e192422478240285fad2e2f9a9bb612da49e658bd82442a09f8f30",
       "bytes": 90
     },
@@ -423,7 +423,7 @@
       "bytes": 194
     },
     {
-      "path": "failures/u4-final-derivation.log",
+      "path": "failures/u4-final-derivation.log.txt",
       "sha256": "359037e087469da101d0abaa02fa961e49c30e52939596de705efb5269493b3c",
       "bytes": 3849
     },
@@ -438,7 +438,7 @@
       "bytes": 8577
     },
     {
-      "path": "failures/u4-final-harness-ci.log",
+      "path": "failures/u4-final-harness-ci.log.txt",
       "sha256": "570d07c4462be8166f130c0ab390b494b8a7d134d2bb9987c655093d7d700645",
       "bytes": 24049
     },
@@ -448,7 +448,7 @@
       "bytes": 13690
     },
     {
-      "path": "failures/u4-main-unit.log",
+      "path": "failures/u4-main-unit.log.txt",
       "sha256": "f6efed123395f5ffa392527c27b5060672dd2b8afcf7bea9136c1c860ec99149",
       "bytes": 87
     },
@@ -463,7 +463,7 @@
       "bytes": 67083
     },
     {
-      "path": "failures/u4-merged-typecheck.log",
+      "path": "failures/u4-merged-typecheck.log.txt",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0
     },
@@ -473,7 +473,7 @@
       "bytes": 22945
     },
     {
-      "path": "failures/u4-relay-final-fences.log",
+      "path": "failures/u4-relay-final-fences.log.txt",
       "sha256": "8a454de43ca0434bdb226a17a77794c451409751563210a3d7712d23bce9c741",
       "bytes": 96
     },
@@ -488,7 +488,7 @@
       "bytes": 25593
     },
     {
-      "path": "failures/u4-relay-typecheck.log",
+      "path": "failures/u4-relay-typecheck.log.txt",
       "sha256": "471f25aed2405675ec1fb835586e0466b4bf463f940bd6a5bca4cffb3df07062",
       "bytes": 1707
     },
@@ -513,7 +513,7 @@
       "bytes": 95843
     },
     {
-      "path": "integration-preview/u4-main-overlay.log",
+      "path": "integration-preview/u4-main-overlay.log.txt",
       "sha256": "68e156658f2aedce6c700c0356004686a4c306861204f6f698772b9177a503f6",
       "bytes": 90
     },
@@ -858,7 +858,7 @@
       "bytes": 242525
     },
     {
-      "path": "journeys/u4-final-controls/session-worker-task-journe-00810--scoped-follow-up-controls-/worker-main.log",
+      "path": "journeys/u4-final-controls/session-worker-task-journe-00810--scoped-follow-up-controls-/worker-main.log.txt",
       "sha256": "f573076b415c6c526bb46c188c2e4e8ffff945a23f44a6d414b180e13027883c",
       "bytes": 22579
     },
@@ -1013,7 +1013,7 @@
       "bytes": 246611
     },
     {
-      "path": "journeys/u4-final-isolation/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/worker-main.log",
+      "path": "journeys/u4-final-isolation/session-worker-task-journe-72a1d-scoped-follow-up-isolation-/worker-main.log.txt",
       "sha256": "3f534deafc8401a4b4b7ae3f22d00ed67b560e8ead9dd3c14e96774e997859de",
       "bytes": 32725
     },
@@ -1088,7 +1088,7 @@
       "bytes": 244621
     },
     {
-      "path": "journeys/u4-final-navigation/session-worker-task-journe-ca86a-coped-follow-up-navigation-/worker-main.log",
+      "path": "journeys/u4-final-navigation/session-worker-task-journe-ca86a-coped-follow-up-navigation-/worker-main.log.txt",
       "sha256": "7f48b57a579cae047a1047d4f61de85d8b3e928d19fc806ef71f682a8d649f03",
       "bytes": 25790
     },
@@ -1174,8 +1174,8 @@
     },
     {
       "path": "report.json",
-      "sha256": "ba92f912e250952e0e0a45178cc97fd6ab0b200d25995405ebc62241e4e4e4f4",
-      "bytes": 62610
+      "sha256": "4e8e484c248249f175030f574d944cb857f3813365d90034e584977a5a567a17",
+      "bytes": 63905
     },
     {
       "path": "REPORT.md",
@@ -1189,8 +1189,8 @@
     },
     {
       "path": "verify.py",
-      "sha256": "9613856d6a780d8798ee358d2bf5857842b6eeb5f2f2e14f3d7e7fb44a5e72ec",
-      "bytes": 4376
+      "sha256": "1ca019ac68fba48d1c29057ad82afc1e47a9e9945dd0b279445e4aa91a79eafa",
+      "bytes": 5646
     },
     {
       "path": "visual-readback.json",

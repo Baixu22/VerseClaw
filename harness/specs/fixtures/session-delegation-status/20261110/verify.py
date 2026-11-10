@@ -3,6 +3,7 @@ import hashlib
 import json
 from pathlib import Path
 import subprocess
+import sys
 
 root = Path(__file__).resolve().parent
 report = json.loads((root / 'report.json').read_text(encoding='utf-8'))
@@ -67,6 +68,31 @@ assert report['artifacts'], 'Retain the actual worker output files'
 for artifact in report['artifacts']:
     assert hashlib.sha256((root / artifact['path']).read_bytes()).hexdigest() == artifact['sha256']
 repo = next(parent for parent in root.parents if (parent / '.git').exists())
+if '--working-only' not in sys.argv:
+    relative_root = root.relative_to(repo).as_posix()
+    entries = subprocess.check_output(['git', 'ls-files', '-s', '-z', '--', relative_root], cwd=repo).split(b'\0')
+    index = {}
+    for entry in entries:
+        if not entry:
+            continue
+        metadata, name = entry.split(b'\t', 1)
+        mode, oid, stage = metadata.split()
+        assert stage == b'0', name
+        index[name.decode()] = oid.decode()
+    expected_paths = {relative_root + '/' + name for name in listed | {'manifest.json'}}
+    assert expected_paths <= index.keys(), sorted(expected_paths - index.keys())
+    names = sorted(expected_paths)
+    blobs = subprocess.check_output(['git', 'cat-file', '--batch'], cwd=repo,
+        input=('\n'.join(index[name] for name in names) + '\n').encode())
+    offset = 0
+    for name in names:
+        header_end = blobs.index(b'\n', offset)
+        oid, kind, size = blobs[offset:header_end].split()
+        assert kind == b'blob' and oid.decode() == index[name]
+        start = header_end + 1
+        content = blobs[start:start + int(size)]
+        assert hashlib.sha256(content).hexdigest() == hashlib.sha256((repo / name).read_bytes()).hexdigest(), name
+        offset = start + int(size) + 1
 for row in report['sources']:
     content = subprocess.check_output(['git', 'show', report['candidate'] + ':' + row['path']], cwd=repo)
     assert hashlib.sha256(content).hexdigest() == row['sha256'], row['path']
