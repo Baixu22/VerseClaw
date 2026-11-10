@@ -367,7 +367,22 @@ Workspace 删除或 root 变化时：
 - 预览、浏览器、远程 forge 会接触网络；本地 workspace 仍可能产生外发。
 - 生成文件与 build artifact 不能仅凭存在就当成验证结果。
 
-## 14. 当前限制
+## 14. 当前成熟度结论
+
+TF-0782 的当前证据把编码链拆成六个独立结论：
+
+- A1-A10 均映射到 resolved 修复叶，功能门可复跑；
+- 同候选源码门和独立 verifier 分别通过；
+- VG、JJ、VerseShell、STS 与组合评测有真实机制和负例证据；
+- 跨进程恢复覆盖五阶段窗口，重复 undo、旧 epoch 和进程残留均为 0；
+- Windows win-unpacked 在三个 fresh profile 完成 coding、验证、undo 和 VG/JJ/STS 契约；
+- STS selection 未测出稳定速度收益，Windows installer 仍未执行。
+
+默认 off、managed opt-in、未捆绑 Python/独立 JJ 仍是当前真实边界。完整报告见
+`harness/specs/fixtures/coding-evaluation/TF-0782/report.json`。M4、land/admission authority、
+GA、default-on 与发布批准没有因本结论改变。
+
+## 15. 当前限制
 
 - Windows x64 是主验收平台；Linux/macOS 的文件、终端、浏览器与打包路径没有同等覆盖。
 - Workspace panel 的多种预览不是“完整 IDE”；没有任意语言服务器/调试器的统一保证。
@@ -381,7 +396,7 @@ Workspace 删除或 root 变化时：
 - auto verify 可能 skip；skip 不是 pass。
 - browser、remote forge、terminal 和 external tools 的真实效果需要各自运行证据。
 
-## 15. 源码索引
+## 16. 源码索引
 
 - `src/App.tsx`
 - `src/components/file-preview/`

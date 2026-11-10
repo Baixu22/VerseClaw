@@ -59,7 +59,7 @@ Verse Claw 是基于嵌入式 OpenClaw Runtime 的 Electron 桌面应用。它�
 - 记忆反馈与 SEKB 采用计数仅用于诊断；反馈不参与检索排序或保留决策。[RSI 证据与边界](docs/dev/rsi-capability-and-boundaries.md) 区分历史测量与确定性重放。
 - VToken 已退役；旧环境变量/配置不能重新启用生产 assembly 或 sidecar。
 - VerseGit default-off 且 landed-unwired；VerseShell 是 default-off controlled foundation；VerseBrowser 按 live driver snapshot 公布动作，而不是按完整契约数宣称可用。
-- VerseGit 有界编码闭环默认关闭，尚未批准全面可用；当前证据仅在 Windows win32-x64 M1 覆盖 write journal 与 Git apply，M4、land/准入权限和发布仍不可用，liveReady=false、productApproved=false。
+- 当前证据覆盖 A1-A10 修复谱系、源码与包内编码控制、VG/JJ/STS/VerseShell 评测、崩溃恢复，以及三套 fresh Windows win32-x64 win-unpacked profile。STS 选择未测出速度收益并保持 opt-in；Python 与独立 JJ 不随包提供，managed 路径需要显式可用输入。installer 尚未执行；M4、land/准入权限、GA、default-on 和发布仍不可用，liveReady=false、productApproved=false。
 - Dreams 已退役；Image Generation 是开发者/测试门槛，不是正常产品导航。
 - `liveReady=false`、`productApproved=false`、`defaultOn=false` 仍是产品锁。
 

@@ -59,7 +59,7 @@ Important current defaults:
 - Memory feedback and SEKB adoption counts are diagnostic-only; feedback does not affect retrieval ranking or retention decisions. [RSI evidence and boundaries](docs/dev/rsi-capability-and-boundaries.md) distinguish historical measurement from deterministic replay.
 - VToken is retired; its old environment/config names cannot re-enable production assembly or the sidecar.
 - VerseGit is default-off and landed-unwired. VerseShell is a default-off controlled foundation. VerseBrowser advertises actions from a live driver snapshot, not from its full contract.
-The VerseGit bounded coding loop remains default-off and not approved for general availability. Current evidence covers the write journal and Git apply review paths only on Windows win32-x64 M1; M4, landing/admission authority, and release remain unavailable. liveReady=false and productApproved=false.
+Current evidence covers the A1-A10 repair lineage, source and packaged coding controls, VG/JJ/STS/VerseShell evaluation, crash recovery, and three fresh Windows win32-x64 win-unpacked profiles. STS selection shows no measured speed benefit and remains opt-in. Python and standalone JJ are not bundled, so managed paths require explicit availability. The installer is not tested; M4, landing/admission authority, GA, default-on, and release remain unavailable. liveReady=false and productApproved=false.
 - Dreams is retired. Image Generation is developer/test-gated rather than normal product navigation.
 - `liveReady=false`, `productApproved=false` and `defaultOn=false` remain product locks.
 

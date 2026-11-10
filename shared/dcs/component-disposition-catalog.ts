@@ -259,13 +259,17 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
   entry({
     id: 'component.coding-execution-backend', label: 'Coding execution backend', disposition: 'default', owner: 'coding-execution-backend', implementationNodeId: 'TF-0510', currentMode: 'mixed', targetDefaultMode: 'baseline',
     ...user('model tool, shell and file execution'),
-    currentConsumers: ['agent tools', 'DCS coding loop', 'write/edit/exec'], evidenceRefs: [...EXECUTION_EVIDENCE, SETTINGS],
+    currentConsumers: ['agent tools', 'DCS coding loop', 'write/edit/exec'], evidenceRefs: [...EXECUTION_EVIDENCE, SETTINGS, 'harness/specs/fixtures/coding-evaluation/TF-0782/acceptance.json'],
+    verificationArtifact: ['harness/specs/fixtures/coding-evaluation/TF-0782/acceptance.json'],
+    remainingGap: ['Windows win-unpacked is verified; installer, product release and GA remain outside this evidence.'],
     coverage: { authorityComponentIds: ['coding-execution-backend'] },
   }),
   entry({
     id: 'component.verseshell-execution-adapter', label: 'VerseShell execution adapter', disposition: 'internal', owner: 'verseshell-execution-adapter', implementationNodeId: 'TF-0504', currentMode: 'opt-in', targetDefaultMode: 'internal',
     ...internal('Internal execution/evidence substrate; it must not expose a second user-visible executor.'),
-    currentConsumers: ['preview_patch', 'VersedShell governed execution', 'write journal'], evidenceRefs: EXECUTION_EVIDENCE,
+    currentConsumers: ['preview_patch', 'VersedShell governed execution', 'write journal'], evidenceRefs: [...EXECUTION_EVIDENCE, 'harness/specs/fixtures/coding-evaluation/TF-0782/acceptance.json'],
+    verificationArtifact: ['harness/specs/fixtures/coding-evaluation/TF-0782/acceptance.json'],
+    remainingGap: ['VerseShell is evaluated in the Windows win-unpacked path; the installer and public release path remain not-run.'],
     coverage: { authorityComponentIds: ['verseshell-execution-adapter'], runtimeLeafPatterns: ['verseShellFoundation.*'], dcsFlagIds: ['verseshell-patch-preview'] },
   }),
   entry({

@@ -366,7 +366,17 @@ VToken 曾经是可选 token packing/context sidecar，但 TF-0496 用真实 pro
 - Agent-driven evidence 不标 real-human。
 - 产品锁仍由 `docs/dev/first-product-controlled-preview/STATUS.md` 与默认矩阵锁定。
 
-## 7. 当前缺口汇总
+## 7. 编码链成熟度结论
+
+TF-0782 当前将 VG、JJ、VerseShell 和 STS 的结果分开记录：VG/F 的编码观测与候选反馈、JJ
+工作副本和 operation 语义、VerseShell 执行/回执/清理、STS 1.1/2.0 契约均有同候选证据；
+组合与恢复评测也没有新增 P0/P1。STS selection 的 40 个真实项目 pair 没有产生稳定速度收益，
+因此保持 opt-in，`claim=improvement-unproven`。Windows 包只验证 `win-unpacked`，Python 与
+独立 JJ 不随包提供，managed 路径必须显式选择；installer、M4、land/admission authority、
+GA、default-on 和发布批准仍未授权。完整报告见
+`harness/specs/fixtures/coding-evaluation/TF-0782/report.json`。
+
+## 8. 当前缺口汇总
 
 | 组件 | 主要缺口 |
 |---|---|
@@ -375,7 +385,7 @@ VToken 曾经是可选 token packing/context sidecar，但 TF-0496 用真实 pro
 | VerseBrowser | 81/67/28/14 差距；13 source-only 未实现于 desktop；private network 默认 deny；没有无人监督 GA |
 | VToken | retired；低于 materiality bar，不能宣称 token-saving 产品 |
 
-## 8. 源码与证据索引
+## 9. 源码与证据索引
 
 - `docs/dev/versegit-validation-layer/README.md`
 - `docs/dev/versegit-product-integration/TF-0517/`
