@@ -6,7 +6,7 @@
 
 `NormalizedSourceDocument/v1` 只接受已准入的 `OwnerReadSnapshot/v1`。正文保持原始 CRLF、BOM 及 UTF-8 字节；行表记录正文字符范围到原始文件字节与行号的映射。frontmatter 不作为可引用正文，原始行号仍从整个文件起算。无正文、无效编码、NUL、超出 owner 的 2 MiB 输入或篡改的映射均报错。
 
-来源记录 owner revision、source digest、policy epoch，以及 file、directory、GitHub 或 Wiki provenance。文件、目录同步和 GitHub blob 入口使用严格 UTF-8 解码；解码失败保持游标，避免把替换字符当作真实来源。新材料沿用 Inbox → Draft → Review → Proposal → explicit apply 的治理路径。
+来源记录 owner revision、source digest、policy epoch，以及 file、directory、GitHub 或 Wiki provenance。文件、目录同步和 GitHub blob 入口使用严格 UTF-8 解码；空白、超限、NUL 或解码失败会报错并保持游标，修复后按同一来源版本继续同步。新材料沿用 Inbox → Draft → Review → Proposal → explicit apply 的治理路径。
 
 ## 切块与检索文本
 

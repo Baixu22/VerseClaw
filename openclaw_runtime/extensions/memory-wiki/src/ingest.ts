@@ -27,11 +27,16 @@ function resolveSourceTitle(sourcePath: string, explicitTitle?: string): string 
 }
 
 function assertUtf8Text(buffer: Buffer, sourcePath: string): string {
+  if (buffer.length === 0 || buffer.length > 2 * 1024 * 1024) {
+    throw new Error(`Cannot ingest empty or oversized source: ${sourcePath}`);
+  }
   if (buffer.includes(0)) {
     throw new Error(`Cannot ingest binary file as markdown source: ${sourcePath}`);
   }
   try {
-    return new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(buffer);
+    const text = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(buffer);
+    if (!text.trim()) throw new Error("Source has no content");
+    return text;
   } catch (error) {
     throw new Error(`Cannot ingest source with invalid UTF-8: ${sourcePath}`, { cause: error });
   }

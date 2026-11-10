@@ -97,9 +97,9 @@ describe('Project RAG real-owner chunk citations', () => {
 
   it('rejects invalid encoding and late NUL bytes before creating a source page', async () => {
     const inputPath = join(root, 'invalid.txt');
-    for (const bytes of [Buffer.from([0x61, 0xc3, 0x28]), Buffer.concat([Buffer.from('x'.repeat(4097)), Buffer.from([0])])]) {
+    for (const bytes of [Buffer.from(''), Buffer.from('  \r\n'), Buffer.from([0x61, 0xc3, 0x28]), Buffer.concat([Buffer.from('x'.repeat(4097)), Buffer.from([0])])]) {
       await writeFile(inputPath, bytes);
-      await expect(ingestMemoryWikiSource({ config: config(), inputPath, title: 'Must Not Exist' })).rejects.toThrow(/invalid UTF-8|binary/);
+      await expect(ingestMemoryWikiSource({ config: config(), inputPath, title: 'Must Not Exist' })).rejects.toThrow(/empty|invalid UTF-8|binary/);
       await expect(readFile(join(root, 'sources/must-not-exist.md'))).rejects.toMatchObject({ code: 'ENOENT' });
     }
   });

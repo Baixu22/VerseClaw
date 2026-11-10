@@ -34,6 +34,20 @@ function sync(capture: (change: GithubSourceChange) => Promise<void>) {
   running.push(instance); return instance;
 }
 describe('public GitHub continuous connector', () => {
+  it.each(['', '\uFEFF\r\n  '])('rejects an empty source update without advancing its previous Git blob cursor', async body => {
+    vi.useFakeTimers();
+    const remote = setup(), changes: GithubSourceChange[] = [];
+    const connector = sync(async change => { changes.push(change); });
+    await connector.sync();
+    const cursor = await readFile(join(root, 'cursor.json'), 'utf8');
+    changes.splice(0); remote.files.set('docs/a.md', body);
+    expect(await connector.sync()).toMatchObject({ status: 'error', created: 0, updated: 0, withdrawn: 0 });
+    expect(changes).toHaveLength(0);
+    expect(await readFile(join(root, 'cursor.json'), 'utf8')).toBe(cursor);
+    remote.files.set('docs/a.md', 'Repaired source.'); await vi.advanceTimersByTimeAsync(61_000);
+    expect(await connector.sync()).toMatchObject({ status: 'ok', updated: 1 });
+    expect(changes[0].kind).toBe('updated');
+  });
   it('rejects malformed UTF-8 after Git blob verification and retains the unadvanced source cursor', async () => {
     const bytes = Buffer.from([0x23, 0x20, 0xc3, 0x28]);
     const sha = createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
