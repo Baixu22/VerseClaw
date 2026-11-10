@@ -222,8 +222,18 @@ test('TF0867: exclusive claim, real writes, durable migration restart, acceptanc
       const sent = await call<{ success: boolean; error?: string; result?: { runId?: string } }>('chat', 'sendWithMedia', {
         workspaceId, sessionKey: a.sessionKey, message: `TF0867-${phase}: execute the assigned artifact work.`, idempotencyKey: `tf0867-send-${phase}` });
       await record(`send${phase}`, sent); expect(sent.success, sent.error).toBe(true); expect(sent.result?.runId).toBeTruthy();
-      await expect.poll(async () => JSON.stringify(await call('sessions', 'history', { sessionKey: a.sessionKey, limit: 100 })).includes(`TF0867-${phase}-DONE`), { timeout: 90_000 }).toBe(true);
-      await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>('sessions.describe', { key: a.sessionKey })).session.hasActiveRun, { timeout: 30_000 }).toBe(false);
+      const readErrors: Array<{ method: string; at: number; error: string }> = [];
+      const observe = async <T,>(method: string, read: () => Promise<T>, unknown: T): Promise<T> => {
+        try { return await read(); }
+        catch (error) {
+          readErrors.push({ method, at: Date.now(), error: String(error) });
+          await record(`readErrors${phase}`, readErrors);
+          if (!/RPC timeout|DEADLINE_EXCEEDED|GATEWAY_UNAVAILABLE/.test(String(error))) throw error;
+          return unknown;
+        }
+      };
+      await expect.poll(() => observe('sessions.history', async () => JSON.stringify(await call('sessions', 'history', { sessionKey: a.sessionKey, limit: 100 })).includes(`TF0867-${phase}-DONE`), false), { timeout: 90_000 }).toBe(true);
+      await expect.poll(() => observe('sessions.describe', async () => (await rpc<{ session: { hasActiveRun: boolean } }>('sessions.describe', { key: a.sessionKey })).session.hasActiveRun, true), { timeout: 30_000 }).toBe(false);
       (evidence.timings as unknown[]).push({ phase: `tool-run-${phase}`, startedAt, endedAt: Date.now(), durationMs: Date.now() - startedAt });
       return sent.result!.runId!;
     };
