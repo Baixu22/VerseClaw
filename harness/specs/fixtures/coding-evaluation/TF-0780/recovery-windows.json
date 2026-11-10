@@ -1,0 +1,2581 @@
+{
+  "schema": "CodingRecoveryWindows/v2",
+  "driven_by": "agent",
+  "actor": "codex-coding-recovery-evaluator",
+  "realHumanEvidence": false,
+  "windows": [
+    "intent",
+    "effect",
+    "materialized",
+    "validated",
+    "cleanup"
+  ],
+  "repeats": 3,
+  "control": {
+    "jjInit": {
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "run": {
+      "message": {
+        "stage": "returned",
+        "controlled": true,
+        "candidate": "9fc6b08053ec78c1b7b76b98fb84d6ceaeb63800"
+      },
+      "code": 0,
+      "signal": null,
+      "stderr": ""
+    },
+    "inspect": {
+      "message": {
+        "beforeRecovery": {
+          "bytes": "after\n",
+          "treeSha256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919",
+          "states": [
+            "committed"
+          ],
+          "ref": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\control\\.openclaw\\journal\\kill-window#batch=kill-batch&entries=write-journal%3Akill-window%3A1",
+          "git": "",
+          "gitHead": "9fc6b08053ec78c1b7b76b98fb84d6ceaeb63800",
+          "base": "6b22fa43539fa02fb5dbea68378fd33af211db53",
+          "jj": {
+            "code": 0,
+            "stdout": "The working copy has no changes.\nWorking copy  (@) : wtpnnqsn 37f5a274 (empty) (no description set)\nParent commit (@-): zzyntmsu 9fc6b080 main | candidate\n",
+            "stderr": "",
+            "operation": {
+              "code": 0,
+              "stdout": "bf1dfd6c4c96b30ef0b216cf5d488568fccc707118435c032c457b2f9f685c80482614812b165f5f975f70ecd041bb99144b450f26ba3ed7892bd9847d86da9e\n",
+              "stderr": ""
+            }
+          },
+          "vgReceipt": {
+            "path": ".openclaw\\recovery\\vg-receipt.json",
+            "sha256": "5798dba2712bb14a4cc2dbf4f1991820aaf19d2eef96297fec72e3871e16c585",
+            "materialized": true,
+            "candidate": {
+              "commit_oid": "d34790cd4de266d42fab547ffc296bbd256f79fe",
+              "parents": [
+                "6b22fa43539fa02fb5dbea68378fd33af211db53",
+                "9fc6b08053ec78c1b7b76b98fb84d6ceaeb63800"
+              ],
+              "tree_oid": "a28da1b3fabdbc7ce7fc9a43482ca0920b427ba9"
+            }
+          },
+          "stsScope": "full",
+          "ledger": {
+            "schema": "CodingRecoveryTaskLedgerProjection/v1",
+            "rootId": "tlroot_911e014d2b063c41",
+            "eventCount": 4,
+            "eventsPath": ".state\\task-ledgers\\workspaces\\control-2aeede80be\\events.jsonl",
+            "phase": "returned",
+            "status": "doing",
+            "terminal": false,
+            "completionAuthorized": false,
+            "ownerEpoch": "epoch-0fcd568a5cb9bdb4",
+            "latestEventId": "6bb106dd-d113-41f4-84f5-92a846bde87e"
+          },
+          "durableProcess": {
+            "files": {
+              "intent": {
+                "protocolVersion": 1,
+                "runId": "control",
+                "nonce": "8bb24aa5-6313-4004-aea1-18c343b4a3a0",
+                "commandDigest": "d3a886f2db3d9a9aae153b98e22b4d6f3f26b33ca402dbbb8b75223648afe0c1",
+                "policyRevision": "tf0780-cross-process-recovery-v1",
+                "ownerEpoch": "epoch-0fcd568a5cb9bdb4",
+                "createdAt": "2026-11-10T01:41:33.992Z"
+              },
+              "started": {
+                "protocolVersion": 1,
+                "runNonce": "8bb24aa5-6313-4004-aea1-18c343b4a3a0",
+                "helperPid": 37444,
+                "childPid": 37444,
+                "startedAtMs": 1794274894005,
+                "commandDigest": "d3a886f2db3d9a9aae153b98e22b4d6f3f26b33ca402dbbb8b75223648afe0c1"
+              },
+              "exit": {
+                "exitCode": 0,
+                "signal": null,
+                "timedOut": false,
+                "endedAtMs": 1794274906663,
+                "outcomeDigest": "8970165a694c55040fd547438d77a1bbae86ae2b181b0457c213875b16be5013"
+              }
+            },
+            "oldEpochAttempt": {
+              "runId": "control",
+              "state": "lost",
+              "reason": "owner-epoch-mismatch"
+            },
+            "expectedEpochAttempt": {
+              "runId": "control",
+              "state": "terminal",
+              "reason": "exit-observed",
+              "exit": {
+                "exitCode": 0,
+                "signal": null,
+                "timedOut": false,
+                "endedAtMs": 1794274906663,
+                "outcomeDigest": "8970165a694c55040fd547438d77a1bbae86ae2b181b0457c213875b16be5013"
+              }
+            }
+          },
+          "tempRemoved": true
+        },
+        "inspected": true
+      },
+      "code": 0,
+      "signal": null,
+      "stderr": ""
+    },
+    "pass": true
+  },
+  "rows": [
+    {
+      "window": "intent",
+      "repeat": 1,
+      "workspace": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\intent-1",
+      "jjInit": {
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "killed": {
+        "message": {
+          "stage": "intent",
+          "extra": {}
+        },
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": ""
+      },
+      "restarted": {
+        "message": {
+          "beforeRecovery": {
+            "bytes": "before\n",
+            "treeSha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+            "states": [
+              "prepared"
+            ],
+            "ref": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\intent-1\\.openclaw\\journal\\kill-window#batch=kill-batch&entries=write-journal%3Akill-window%3A1",
+            "git": "",
+            "gitHead": "2872fb969e1211ab23f52011c6df0708549640ae",
+            "base": "2872fb969e1211ab23f52011c6df0708549640ae",
+            "jj": {
+              "code": 0,
+              "stdout": "The working copy has no changes.\nWorking copy  (@) : nsswqlwo 65a5ea70 (empty) (no description set)\nParent commit (@-): suzxtqxp 2872fb96 main | base\n",
+              "stderr": "",
+              "operation": {
+                "code": 0,
+                "stdout": "7f53e452d20a1530905fff3fd67e374b9f3e3dd65a56ba7b0291790623d3aae2dfe32bd8b02214c00887e4ce1c663acd8ac8e7bf2a9cf0e7b1562d94d8aa3733\n",
+                "stderr": ""
+              }
+            },
+            "vgReceipt": null,
+            "stsScope": null,
+            "ledger": {
+              "schema": "CodingRecoveryTaskLedgerProjection/v1",
+              "rootId": "tlroot_056e495e75a2d65e",
+              "eventCount": 3,
+              "eventsPath": ".state\\task-ledgers\\workspaces\\intent-1-adc9fa541e\\events.jsonl",
+              "phase": "intent",
+              "status": "doing",
+              "terminal": false,
+              "completionAuthorized": false,
+              "ownerEpoch": "epoch-325142be9eee013b",
+              "latestEventId": "ecc52736-e37c-4bcf-9b8c-427cc3ffe222"
+            },
+            "durableProcess": {
+              "files": {
+                "intent": {
+                  "protocolVersion": 1,
+                  "runId": "intent-1",
+                  "nonce": "8ca49969-582a-4334-a575-9129756aea66",
+                  "commandDigest": "eb20c633a6d56cc39bc6c246a3aeead9cb263f9b72b262357e8fe24fd4f6a016",
+                  "policyRevision": "tf0780-cross-process-recovery-v1",
+                  "ownerEpoch": "epoch-325142be9eee013b",
+                  "createdAt": "2026-11-10T01:41:49.781Z"
+                },
+                "started": {
+                  "protocolVersion": 1,
+                  "runNonce": "8ca49969-582a-4334-a575-9129756aea66",
+                  "helperPid": 9940,
+                  "childPid": 9940,
+                  "startedAtMs": 1794274909790,
+                  "commandDigest": "eb20c633a6d56cc39bc6c246a3aeead9cb263f9b72b262357e8fe24fd4f6a016"
+                }
+              },
+              "oldEpochAttempt": {
+                "runId": "intent-1",
+                "state": "lost",
+                "reason": "owner-epoch-mismatch"
+              },
+              "expectedEpochAttempt": {
+                "runId": "intent-1",
+                "state": "lost",
+                "reason": "started-helper-dead"
+              }
+            },
+            "tempRemoved": true
+          },
+          "first": {
+            "restored": [
+              "a.txt"
+            ],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\intent-1\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "second": {
+            "restored": [],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\intent-1\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "oldEpochRejected": true,
+          "durableProcess": {
+            "files": {
+              "intent": {
+                "protocolVersion": 1,
+                "runId": "intent-1",
+                "nonce": "8ca49969-582a-4334-a575-9129756aea66",
+                "commandDigest": "eb20c633a6d56cc39bc6c246a3aeead9cb263f9b72b262357e8fe24fd4f6a016",
+                "policyRevision": "tf0780-cross-process-recovery-v1",
+                "ownerEpoch": "epoch-325142be9eee013b",
+                "createdAt": "2026-11-10T01:41:49.781Z"
+              },
+              "started": {
+                "protocolVersion": 1,
+                "runNonce": "8ca49969-582a-4334-a575-9129756aea66",
+                "helperPid": 9940,
+                "childPid": 9940,
+                "startedAtMs": 1794274909790,
+                "commandDigest": "eb20c633a6d56cc39bc6c246a3aeead9cb263f9b72b262357e8fe24fd4f6a016"
+              }
+            },
+            "oldEpochAttempt": {
+              "runId": "intent-1",
+              "state": "lost",
+              "reason": "owner-epoch-mismatch"
+            },
+            "expectedEpochAttempt": {
+              "runId": "intent-1",
+              "state": "lost",
+              "reason": "started-helper-dead"
+            }
+          },
+          "finalLedger": {
+            "schema": "CodingRecoveryTaskLedgerProjection/v1",
+            "rootId": "tlroot_056e495e75a2d65e",
+            "eventCount": 4,
+            "eventsPath": ".state\\task-ledgers\\workspaces\\intent-1-adc9fa541e\\events.jsonl",
+            "phase": "recovered",
+            "status": "review",
+            "terminal": true,
+            "completionAuthorized": false,
+            "ownerEpoch": "epoch-325142be9eee013b",
+            "latestEventId": "51fa80e8-1e4f-49f3-821a-7f284b401e3c"
+          },
+          "bytes": "before\n",
+          "tempRemoved": true
+        },
+        "code": 0,
+        "signal": null,
+        "stderr": ""
+      },
+      "pass": true
+    },
+    {
+      "window": "intent",
+      "repeat": 2,
+      "workspace": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\intent-2",
+      "jjInit": {
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "killed": {
+        "message": {
+          "stage": "intent",
+          "extra": {}
+        },
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": ""
+      },
+      "restarted": {
+        "message": {
+          "beforeRecovery": {
+            "bytes": "before\n",
+            "treeSha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+            "states": [
+              "prepared"
+            ],
+            "ref": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\intent-2\\.openclaw\\journal\\kill-window#batch=kill-batch&entries=write-journal%3Akill-window%3A1",
+            "git": "",
+            "gitHead": "37293b0892f816f1d4ef939b2dacba3ee2132ff6",
+            "base": "37293b0892f816f1d4ef939b2dacba3ee2132ff6",
+            "jj": {
+              "code": 0,
+              "stdout": "The working copy has no changes.\nWorking copy  (@) : wtrnxvlv 8eff6f56 (empty) (no description set)\nParent commit (@-): tkkvnrvs 37293b08 main | base\n",
+              "stderr": "",
+              "operation": {
+                "code": 0,
+                "stdout": "bd075b049b9b64e4ad24d46a9ae7893d4ceedb2b8cdccb878aedf2ba29c1625bfa03ea42fe7f108fd32ce121a9355211f98d3941e388057e644ecd9289058ce2\n",
+                "stderr": ""
+              }
+            },
+            "vgReceipt": null,
+            "stsScope": null,
+            "ledger": {
+              "schema": "CodingRecoveryTaskLedgerProjection/v1",
+              "rootId": "tlroot_adfaab173150dc78",
+              "eventCount": 3,
+              "eventsPath": ".state\\task-ledgers\\workspaces\\intent-2-f203800724\\events.jsonl",
+              "phase": "intent",
+              "status": "doing",
+              "terminal": false,
+              "completionAuthorized": false,
+              "ownerEpoch": "epoch-cc1bf9b35239d30e",
+              "latestEventId": "e493ccc6-ee1c-456c-a24d-97fc8ecc3a7c"
+            },
+            "durableProcess": {
+              "files": {
+                "intent": {
+                  "protocolVersion": 1,
+                  "runId": "intent-2",
+                  "nonce": "fdbeb8da-1f46-4e0f-bd59-bcf239fb1b11",
+                  "commandDigest": "d5cdd7db5043566845a0a148a188cf252921db660d5bdbf60c13546fae982013",
+                  "policyRevision": "tf0780-cross-process-recovery-v1",
+                  "ownerEpoch": "epoch-cc1bf9b35239d30e",
+                  "createdAt": "2026-11-10T01:41:52.665Z"
+                },
+                "started": {
+                  "protocolVersion": 1,
+                  "runNonce": "fdbeb8da-1f46-4e0f-bd59-bcf239fb1b11",
+                  "helperPid": 51208,
+                  "childPid": 51208,
+                  "startedAtMs": 1794274912676,
+                  "commandDigest": "d5cdd7db5043566845a0a148a188cf252921db660d5bdbf60c13546fae982013"
+                }
+              },
+              "oldEpochAttempt": {
+                "runId": "intent-2",
+                "state": "lost",
+                "reason": "owner-epoch-mismatch"
+              },
+              "expectedEpochAttempt": {
+                "runId": "intent-2",
+                "state": "lost",
+                "reason": "started-helper-dead"
+              }
+            },
+            "tempRemoved": true
+          },
+          "first": {
+            "restored": [
+              "a.txt"
+            ],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\intent-2\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "second": {
+            "restored": [],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\intent-2\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "oldEpochRejected": true,
+          "durableProcess": {
+            "files": {
+              "intent": {
+                "protocolVersion": 1,
+                "runId": "intent-2",
+                "nonce": "fdbeb8da-1f46-4e0f-bd59-bcf239fb1b11",
+                "commandDigest": "d5cdd7db5043566845a0a148a188cf252921db660d5bdbf60c13546fae982013",
+                "policyRevision": "tf0780-cross-process-recovery-v1",
+                "ownerEpoch": "epoch-cc1bf9b35239d30e",
+                "createdAt": "2026-11-10T01:41:52.665Z"
+              },
+              "started": {
+                "protocolVersion": 1,
+                "runNonce": "fdbeb8da-1f46-4e0f-bd59-bcf239fb1b11",
+                "helperPid": 51208,
+                "childPid": 51208,
+                "startedAtMs": 1794274912676,
+                "commandDigest": "d5cdd7db5043566845a0a148a188cf252921db660d5bdbf60c13546fae982013"
+              }
+            },
+            "oldEpochAttempt": {
+              "runId": "intent-2",
+              "state": "lost",
+              "reason": "owner-epoch-mismatch"
+            },
+            "expectedEpochAttempt": {
+              "runId": "intent-2",
+              "state": "lost",
+              "reason": "started-helper-dead"
+            }
+          },
+          "finalLedger": {
+            "schema": "CodingRecoveryTaskLedgerProjection/v1",
+            "rootId": "tlroot_adfaab173150dc78",
+            "eventCount": 4,
+            "eventsPath": ".state\\task-ledgers\\workspaces\\intent-2-f203800724\\events.jsonl",
+            "phase": "recovered",
+            "status": "review",
+            "terminal": true,
+            "completionAuthorized": false,
+            "ownerEpoch": "epoch-cc1bf9b35239d30e",
+            "latestEventId": "67f7ef5a-dfa9-4719-be63-dd4fe94bb2c7"
+          },
+          "bytes": "before\n",
+          "tempRemoved": true
+        },
+        "code": 0,
+        "signal": null,
+        "stderr": ""
+      },
+      "pass": true
+    },
+    {
+      "window": "intent",
+      "repeat": 3,
+      "workspace": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\intent-3",
+      "jjInit": {
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "killed": {
+        "message": {
+          "stage": "intent",
+          "extra": {}
+        },
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": ""
+      },
+      "restarted": {
+        "message": {
+          "beforeRecovery": {
+            "bytes": "before\n",
+            "treeSha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+            "states": [
+              "prepared"
+            ],
+            "ref": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\intent-3\\.openclaw\\journal\\kill-window#batch=kill-batch&entries=write-journal%3Akill-window%3A1",
+            "git": "",
+            "gitHead": "48bd351f895bdac0c6ea002f9090e173e6d74db1",
+            "base": "48bd351f895bdac0c6ea002f9090e173e6d74db1",
+            "jj": {
+              "code": 0,
+              "stdout": "The working copy has no changes.\nWorking copy  (@) : ltmlokwt e0d17418 (empty) (no description set)\nParent commit (@-): rmoxlots 48bd351f main | base\n",
+              "stderr": "",
+              "operation": {
+                "code": 0,
+                "stdout": "b2e44c16be6997cc8250004be1da40ee21d29de1b3a473e8fa753cc806d76e5dd1b10e279823d7d25565b1c6f3ddbfd246fb4615749e7336cb44622df49d04d2\n",
+                "stderr": ""
+              }
+            },
+            "vgReceipt": null,
+            "stsScope": null,
+            "ledger": {
+              "schema": "CodingRecoveryTaskLedgerProjection/v1",
+              "rootId": "tlroot_777f91bab51affa5",
+              "eventCount": 3,
+              "eventsPath": ".state\\task-ledgers\\workspaces\\intent-3-2f86bd957d\\events.jsonl",
+              "phase": "intent",
+              "status": "doing",
+              "terminal": false,
+              "completionAuthorized": false,
+              "ownerEpoch": "epoch-041272be51027f14",
+              "latestEventId": "8853e783-20ff-4a04-abda-ba2134958fca"
+            },
+            "durableProcess": {
+              "files": {
+                "intent": {
+                  "protocolVersion": 1,
+                  "runId": "intent-3",
+                  "nonce": "fca22f40-89e6-4a54-82cd-828d669fe9d0",
+                  "commandDigest": "495665c2f5c1f11de4ed3a2dd2c65a7e8e6e352d60736007df4659c7b3009250",
+                  "policyRevision": "tf0780-cross-process-recovery-v1",
+                  "ownerEpoch": "epoch-041272be51027f14",
+                  "createdAt": "2026-11-10T01:41:56.101Z"
+                },
+                "started": {
+                  "protocolVersion": 1,
+                  "runNonce": "fca22f40-89e6-4a54-82cd-828d669fe9d0",
+                  "helperPid": 20156,
+                  "childPid": 20156,
+                  "startedAtMs": 1794274916111,
+                  "commandDigest": "495665c2f5c1f11de4ed3a2dd2c65a7e8e6e352d60736007df4659c7b3009250"
+                }
+              },
+              "oldEpochAttempt": {
+                "runId": "intent-3",
+                "state": "lost",
+                "reason": "owner-epoch-mismatch"
+              },
+              "expectedEpochAttempt": {
+                "runId": "intent-3",
+                "state": "lost",
+                "reason": "started-helper-dead"
+              }
+            },
+            "tempRemoved": true
+          },
+          "first": {
+            "restored": [
+              "a.txt"
+            ],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\intent-3\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "second": {
+            "restored": [],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\intent-3\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "oldEpochRejected": true,
+          "durableProcess": {
+            "files": {
+              "intent": {
+                "protocolVersion": 1,
+                "runId": "intent-3",
+                "nonce": "fca22f40-89e6-4a54-82cd-828d669fe9d0",
+                "commandDigest": "495665c2f5c1f11de4ed3a2dd2c65a7e8e6e352d60736007df4659c7b3009250",
+                "policyRevision": "tf0780-cross-process-recovery-v1",
+                "ownerEpoch": "epoch-041272be51027f14",
+                "createdAt": "2026-11-10T01:41:56.101Z"
+              },
+              "started": {
+                "protocolVersion": 1,
+                "runNonce": "fca22f40-89e6-4a54-82cd-828d669fe9d0",
+                "helperPid": 20156,
+                "childPid": 20156,
+                "startedAtMs": 1794274916111,
+                "commandDigest": "495665c2f5c1f11de4ed3a2dd2c65a7e8e6e352d60736007df4659c7b3009250"
+              }
+            },
+            "oldEpochAttempt": {
+              "runId": "intent-3",
+              "state": "lost",
+              "reason": "owner-epoch-mismatch"
+            },
+            "expectedEpochAttempt": {
+              "runId": "intent-3",
+              "state": "lost",
+              "reason": "started-helper-dead"
+            }
+          },
+          "finalLedger": {
+            "schema": "CodingRecoveryTaskLedgerProjection/v1",
+            "rootId": "tlroot_777f91bab51affa5",
+            "eventCount": 4,
+            "eventsPath": ".state\\task-ledgers\\workspaces\\intent-3-2f86bd957d\\events.jsonl",
+            "phase": "recovered",
+            "status": "review",
+            "terminal": true,
+            "completionAuthorized": false,
+            "ownerEpoch": "epoch-041272be51027f14",
+            "latestEventId": "23f42af7-2d7f-4ffc-96bc-3049cb074aaf"
+          },
+          "bytes": "before\n",
+          "tempRemoved": true
+        },
+        "code": 0,
+        "signal": null,
+        "stderr": ""
+      },
+      "pass": true
+    },
+    {
+      "window": "effect",
+      "repeat": 1,
+      "workspace": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\effect-1",
+      "jjInit": {
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "killed": {
+        "message": {
+          "stage": "effect",
+          "extra": {}
+        },
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": ""
+      },
+      "restarted": {
+        "message": {
+          "beforeRecovery": {
+            "bytes": "after\n",
+            "treeSha256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919",
+            "states": [
+              "prepared"
+            ],
+            "ref": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\effect-1\\.openclaw\\journal\\kill-window#batch=kill-batch&entries=write-journal%3Akill-window%3A1",
+            "git": " M a.txt\n",
+            "gitHead": "6f5967f5199600a5e7aed8a77f8b9dcc40c140e6",
+            "base": "6f5967f5199600a5e7aed8a77f8b9dcc40c140e6",
+            "jj": {
+              "code": 0,
+              "stdout": "Working copy changes:\nM ..\\tf0780-formal2-20261110\\recovery\\effect-1\\a.txt\nWorking copy  (@) : rmoyzwpt c53aa87f (no description set)\nParent commit (@-): tszxrwzx 6f5967f5 main | base\n",
+              "stderr": "",
+              "operation": {
+                "code": 0,
+                "stdout": "1a3ec2ca5a8e3a2708495a207fd0b1ece0897dd37179eb9c69c711762af7d41d8c9ca800fbdd552b54a3244e7a3d27974cbd8048351e1d03450776090a44acbc\n",
+                "stderr": ""
+              }
+            },
+            "vgReceipt": null,
+            "stsScope": null,
+            "ledger": {
+              "schema": "CodingRecoveryTaskLedgerProjection/v1",
+              "rootId": "tlroot_97de474ca453dd07",
+              "eventCount": 4,
+              "eventsPath": ".state\\task-ledgers\\workspaces\\effect-1-c5627708d4\\events.jsonl",
+              "phase": "effect",
+              "status": "doing",
+              "terminal": false,
+              "completionAuthorized": false,
+              "ownerEpoch": "epoch-91e625bd191d0a29",
+              "latestEventId": "2bda5da1-7b4e-427d-8956-03212cd2e6ce"
+            },
+            "durableProcess": {
+              "files": {
+                "intent": {
+                  "protocolVersion": 1,
+                  "runId": "effect-1",
+                  "nonce": "3570e971-2e90-4885-8694-cc6a0756dac2",
+                  "commandDigest": "1066bf07a8f681a1087ae7b78965572247fb60e3a169d65bf0860333fb1b64a4",
+                  "policyRevision": "tf0780-cross-process-recovery-v1",
+                  "ownerEpoch": "epoch-91e625bd191d0a29",
+                  "createdAt": "2026-11-10T01:41:59.002Z"
+                },
+                "started": {
+                  "protocolVersion": 1,
+                  "runNonce": "3570e971-2e90-4885-8694-cc6a0756dac2",
+                  "helperPid": 46424,
+                  "childPid": 46424,
+                  "startedAtMs": 1794274919014,
+                  "commandDigest": "1066bf07a8f681a1087ae7b78965572247fb60e3a169d65bf0860333fb1b64a4"
+                }
+              },
+              "oldEpochAttempt": {
+                "runId": "effect-1",
+                "state": "lost",
+                "reason": "owner-epoch-mismatch"
+              },
+              "expectedEpochAttempt": {
+                "runId": "effect-1",
+                "state": "lost",
+                "reason": "started-helper-dead"
+              }
+            },
+            "tempRemoved": true
+          },
+          "first": {
+            "restored": [
+              "a.txt"
+            ],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\effect-1\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "second": {
+            "restored": [],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\effect-1\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "oldEpochRejected": true,
+          "durableProcess": {
+            "files": {
+              "intent": {
+                "protocolVersion": 1,
+                "runId": "effect-1",
+                "nonce": "3570e971-2e90-4885-8694-cc6a0756dac2",
+                "commandDigest": "1066bf07a8f681a1087ae7b78965572247fb60e3a169d65bf0860333fb1b64a4",
+                "policyRevision": "tf0780-cross-process-recovery-v1",
+                "ownerEpoch": "epoch-91e625bd191d0a29",
+                "createdAt": "2026-11-10T01:41:59.002Z"
+              },
+              "started": {
+                "protocolVersion": 1,
+                "runNonce": "3570e971-2e90-4885-8694-cc6a0756dac2",
+                "helperPid": 46424,
+                "childPid": 46424,
+                "startedAtMs": 1794274919014,
+                "commandDigest": "1066bf07a8f681a1087ae7b78965572247fb60e3a169d65bf0860333fb1b64a4"
+              }
+            },
+            "oldEpochAttempt": {
+              "runId": "effect-1",
+              "state": "lost",
+              "reason": "owner-epoch-mismatch"
+            },
+            "expectedEpochAttempt": {
+              "runId": "effect-1",
+              "state": "lost",
+              "reason": "started-helper-dead"
+            }
+          },
+          "finalLedger": {
+            "schema": "CodingRecoveryTaskLedgerProjection/v1",
+            "rootId": "tlroot_97de474ca453dd07",
+            "eventCount": 5,
+            "eventsPath": ".state\\task-ledgers\\workspaces\\effect-1-c5627708d4\\events.jsonl",
+            "phase": "recovered",
+            "status": "review",
+            "terminal": true,
+            "completionAuthorized": false,
+            "ownerEpoch": "epoch-91e625bd191d0a29",
+            "latestEventId": "25894faa-0aa1-4862-aecf-f2092d4df38e"
+          },
+          "bytes": "before\n",
+          "tempRemoved": true
+        },
+        "code": 0,
+        "signal": null,
+        "stderr": ""
+      },
+      "pass": true
+    },
+    {
+      "window": "effect",
+      "repeat": 2,
+      "workspace": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\effect-2",
+      "jjInit": {
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "killed": {
+        "message": {
+          "stage": "effect",
+          "extra": {}
+        },
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": ""
+      },
+      "restarted": {
+        "message": {
+          "beforeRecovery": {
+            "bytes": "after\n",
+            "treeSha256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919",
+            "states": [
+              "prepared"
+            ],
+            "ref": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\effect-2\\.openclaw\\journal\\kill-window#batch=kill-batch&entries=write-journal%3Akill-window%3A1",
+            "git": " M a.txt\n",
+            "gitHead": "766fe119a5d09ace51545a66225e70885673b0bd",
+            "base": "766fe119a5d09ace51545a66225e70885673b0bd",
+            "jj": {
+              "code": 0,
+              "stdout": "Working copy changes:\nM ..\\tf0780-formal2-20261110\\recovery\\effect-2\\a.txt\nWorking copy  (@) : vlukynsw 270d60c3 (no description set)\nParent commit (@-): omzmnltp 766fe119 main | base\n",
+              "stderr": "",
+              "operation": {
+                "code": 0,
+                "stdout": "9c840eb0c65a65196594e58493007fe8607bea996c9c178cf1dcb3ab3666c275f097d2c4f8f996a25d01603f08f48400b0cba7ad9437533baba1f88885bdd6c2\n",
+                "stderr": ""
+              }
+            },
+            "vgReceipt": null,
+            "stsScope": null,
+            "ledger": {
+              "schema": "CodingRecoveryTaskLedgerProjection/v1",
+              "rootId": "tlroot_c901d1d9cdbc1803",
+              "eventCount": 4,
+              "eventsPath": ".state\\task-ledgers\\workspaces\\effect-2-9358a5d463\\events.jsonl",
+              "phase": "effect",
+              "status": "doing",
+              "terminal": false,
+              "completionAuthorized": false,
+              "ownerEpoch": "epoch-b003375c0f1274eb",
+              "latestEventId": "479372b2-5a8d-498e-adb4-1f5632f3474e"
+            },
+            "durableProcess": {
+              "files": {
+                "intent": {
+                  "protocolVersion": 1,
+                  "runId": "effect-2",
+                  "nonce": "963f6be9-3de8-463e-aed4-30bd2fb68fa2",
+                  "commandDigest": "fa3b203af2e8b2d275604a509c3ed6efa67a01a0b2132ccab55f3fb0d9477cef",
+                  "policyRevision": "tf0780-cross-process-recovery-v1",
+                  "ownerEpoch": "epoch-b003375c0f1274eb",
+                  "createdAt": "2026-11-10T01:42:03.004Z"
+                },
+                "started": {
+                  "protocolVersion": 1,
+                  "runNonce": "963f6be9-3de8-463e-aed4-30bd2fb68fa2",
+                  "helperPid": 20748,
+                  "childPid": 20748,
+                  "startedAtMs": 1794274923016,
+                  "commandDigest": "fa3b203af2e8b2d275604a509c3ed6efa67a01a0b2132ccab55f3fb0d9477cef"
+                }
+              },
+              "oldEpochAttempt": {
+                "runId": "effect-2",
+                "state": "lost",
+                "reason": "owner-epoch-mismatch"
+              },
+              "expectedEpochAttempt": {
+                "runId": "effect-2",
+                "state": "lost",
+                "reason": "started-helper-dead"
+              }
+            },
+            "tempRemoved": true
+          },
+          "first": {
+            "restored": [
+              "a.txt"
+            ],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\effect-2\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "second": {
+            "restored": [],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\effect-2\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "oldEpochRejected": true,
+          "durableProcess": {
+            "files": {
+              "intent": {
+                "protocolVersion": 1,
+                "runId": "effect-2",
+                "nonce": "963f6be9-3de8-463e-aed4-30bd2fb68fa2",
+                "commandDigest": "fa3b203af2e8b2d275604a509c3ed6efa67a01a0b2132ccab55f3fb0d9477cef",
+                "policyRevision": "tf0780-cross-process-recovery-v1",
+                "ownerEpoch": "epoch-b003375c0f1274eb",
+                "createdAt": "2026-11-10T01:42:03.004Z"
+              },
+              "started": {
+                "protocolVersion": 1,
+                "runNonce": "963f6be9-3de8-463e-aed4-30bd2fb68fa2",
+                "helperPid": 20748,
+                "childPid": 20748,
+                "startedAtMs": 1794274923016,
+                "commandDigest": "fa3b203af2e8b2d275604a509c3ed6efa67a01a0b2132ccab55f3fb0d9477cef"
+              }
+            },
+            "oldEpochAttempt": {
+              "runId": "effect-2",
+              "state": "lost",
+              "reason": "owner-epoch-mismatch"
+            },
+            "expectedEpochAttempt": {
+              "runId": "effect-2",
+              "state": "lost",
+              "reason": "started-helper-dead"
+            }
+          },
+          "finalLedger": {
+            "schema": "CodingRecoveryTaskLedgerProjection/v1",
+            "rootId": "tlroot_c901d1d9cdbc1803",
+            "eventCount": 5,
+            "eventsPath": ".state\\task-ledgers\\workspaces\\effect-2-9358a5d463\\events.jsonl",
+            "phase": "recovered",
+            "status": "review",
+            "terminal": true,
+            "completionAuthorized": false,
+            "ownerEpoch": "epoch-b003375c0f1274eb",
+            "latestEventId": "70837e05-0c1f-4e3a-a0e2-8dc492e09fdd"
+          },
+          "bytes": "before\n",
+          "tempRemoved": true
+        },
+        "code": 0,
+        "signal": null,
+        "stderr": ""
+      },
+      "pass": true
+    },
+    {
+      "window": "effect",
+      "repeat": 3,
+      "workspace": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\effect-3",
+      "jjInit": {
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "killed": {
+        "message": {
+          "stage": "effect",
+          "extra": {}
+        },
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": ""
+      },
+      "restarted": {
+        "message": {
+          "beforeRecovery": {
+            "bytes": "after\n",
+            "treeSha256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919",
+            "states": [
+              "prepared"
+            ],
+            "ref": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\effect-3\\.openclaw\\journal\\kill-window#batch=kill-batch&entries=write-journal%3Akill-window%3A1",
+            "git": " M a.txt\n",
+            "gitHead": "6005f60e48bbe85dbe5caa6c93a028d6be15c1b1",
+            "base": "6005f60e48bbe85dbe5caa6c93a028d6be15c1b1",
+            "jj": {
+              "code": 0,
+              "stdout": "Working copy changes:\nM ..\\tf0780-formal2-20261110\\recovery\\effect-3\\a.txt\nWorking copy  (@) : qszotkro 4fdd2884 (no description set)\nParent commit (@-): rmrwprsm 6005f60e main | base\n",
+              "stderr": "",
+              "operation": {
+                "code": 0,
+                "stdout": "8a45ad7b0a17cf2f963845572ca99b47204ab95f4859cece189fc16d8f4b71b4546445b6a834cc58d7740dc8e6b155cbefc96e4cb6e00abd620286c2fa12744e\n",
+                "stderr": ""
+              }
+            },
+            "vgReceipt": null,
+            "stsScope": null,
+            "ledger": {
+              "schema": "CodingRecoveryTaskLedgerProjection/v1",
+              "rootId": "tlroot_0cc8790fc6cde29d",
+              "eventCount": 4,
+              "eventsPath": ".state\\task-ledgers\\workspaces\\effect-3-dfe654cd01\\events.jsonl",
+              "phase": "effect",
+              "status": "doing",
+              "terminal": false,
+              "completionAuthorized": false,
+              "ownerEpoch": "epoch-675aa7bf6c3dc50b",
+              "latestEventId": "189bf9b8-4063-4ddd-8fcf-0531fa4d6218"
+            },
+            "durableProcess": {
+              "files": {
+                "intent": {
+                  "protocolVersion": 1,
+                  "runId": "effect-3",
+                  "nonce": "582edf35-9c4c-408f-baaa-f9e833278ee5",
+                  "commandDigest": "361dc68b3f5665bd88d7838d5539f11e0f0ea24de9252f91ac6f3e1222a63527",
+                  "policyRevision": "tf0780-cross-process-recovery-v1",
+                  "ownerEpoch": "epoch-675aa7bf6c3dc50b",
+                  "createdAt": "2026-11-10T01:42:07.481Z"
+                },
+                "started": {
+                  "protocolVersion": 1,
+                  "runNonce": "582edf35-9c4c-408f-baaa-f9e833278ee5",
+                  "helperPid": 40728,
+                  "childPid": 40728,
+                  "startedAtMs": 1794274927492,
+                  "commandDigest": "361dc68b3f5665bd88d7838d5539f11e0f0ea24de9252f91ac6f3e1222a63527"
+                }
+              },
+              "oldEpochAttempt": {
+                "runId": "effect-3",
+                "state": "lost",
+                "reason": "owner-epoch-mismatch"
+              },
+              "expectedEpochAttempt": {
+                "runId": "effect-3",
+                "state": "lost",
+                "reason": "started-helper-dead"
+              }
+            },
+            "tempRemoved": true
+          },
+          "first": {
+            "restored": [
+              "a.txt"
+            ],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\effect-3\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "second": {
+            "restored": [],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\effect-3\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "oldEpochRejected": true,
+          "durableProcess": {
+            "files": {
+              "intent": {
+                "protocolVersion": 1,
+                "runId": "effect-3",
+                "nonce": "582edf35-9c4c-408f-baaa-f9e833278ee5",
+                "commandDigest": "361dc68b3f5665bd88d7838d5539f11e0f0ea24de9252f91ac6f3e1222a63527",
+                "policyRevision": "tf0780-cross-process-recovery-v1",
+                "ownerEpoch": "epoch-675aa7bf6c3dc50b",
+                "createdAt": "2026-11-10T01:42:07.481Z"
+              },
+              "started": {
+                "protocolVersion": 1,
+                "runNonce": "582edf35-9c4c-408f-baaa-f9e833278ee5",
+                "helperPid": 40728,
+                "childPid": 40728,
+                "startedAtMs": 1794274927492,
+                "commandDigest": "361dc68b3f5665bd88d7838d5539f11e0f0ea24de9252f91ac6f3e1222a63527"
+              }
+            },
+            "oldEpochAttempt": {
+              "runId": "effect-3",
+              "state": "lost",
+              "reason": "owner-epoch-mismatch"
+            },
+            "expectedEpochAttempt": {
+              "runId": "effect-3",
+              "state": "lost",
+              "reason": "started-helper-dead"
+            }
+          },
+          "finalLedger": {
+            "schema": "CodingRecoveryTaskLedgerProjection/v1",
+            "rootId": "tlroot_0cc8790fc6cde29d",
+            "eventCount": 5,
+            "eventsPath": ".state\\task-ledgers\\workspaces\\effect-3-dfe654cd01\\events.jsonl",
+            "phase": "recovered",
+            "status": "review",
+            "terminal": true,
+            "completionAuthorized": false,
+            "ownerEpoch": "epoch-675aa7bf6c3dc50b",
+            "latestEventId": "55a06244-6991-4607-b47e-f8177b300bed"
+          },
+          "bytes": "before\n",
+          "tempRemoved": true
+        },
+        "code": 0,
+        "signal": null,
+        "stderr": ""
+      },
+      "pass": true
+    },
+    {
+      "window": "materialized",
+      "repeat": 1,
+      "workspace": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\materialized-1",
+      "jjInit": {
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "killed": {
+        "message": {
+          "stage": "materialized",
+          "extra": {
+            "candidate": "c94e6d5d311db2b49145743b3ac5d1ccb0c8e74c",
+            "receiptSha256": "dc5a9402628b875b92ae79f7e93f044af5ab3d6667fb28a5d61ff28a220b2879",
+            "stsScope": "full"
+          }
+        },
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": ""
+      },
+      "restarted": {
+        "message": {
+          "beforeRecovery": {
+            "bytes": "after\n",
+            "treeSha256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919",
+            "states": [
+              "committed"
+            ],
+            "ref": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\materialized-1\\.openclaw\\journal\\kill-window#batch=kill-batch&entries=write-journal%3Akill-window%3A1",
+            "git": "",
+            "gitHead": "c94e6d5d311db2b49145743b3ac5d1ccb0c8e74c",
+            "base": "ce23d528bcce534c8b2c2e41834270580e54fee7",
+            "jj": {
+              "code": 0,
+              "stdout": "The working copy has no changes.\nWorking copy  (@) : rwzkrzwq fcf0d51d (empty) (no description set)\nParent commit (@-): wxlsywzm c94e6d5d main | candidate\n",
+              "stderr": "",
+              "operation": {
+                "code": 0,
+                "stdout": "fc602c22decd6bf6762eb8562985e37417b9feb46f168610aa2508bf2da699dd37892593733cf75cfcb635fbc3a453b88a7d6301cd0e8ea4748c0f893c0c017f\n",
+                "stderr": ""
+              }
+            },
+            "vgReceipt": {
+              "path": ".openclaw\\recovery\\vg-receipt.json",
+              "sha256": "dc5a9402628b875b92ae79f7e93f044af5ab3d6667fb28a5d61ff28a220b2879",
+              "materialized": true,
+              "candidate": {
+                "commit_oid": "989c838ebd6e3a25b9b37efaccf81968ebf0ea80",
+                "parents": [
+                  "ce23d528bcce534c8b2c2e41834270580e54fee7",
+                  "c94e6d5d311db2b49145743b3ac5d1ccb0c8e74c"
+                ],
+                "tree_oid": "a28da1b3fabdbc7ce7fc9a43482ca0920b427ba9"
+              }
+            },
+            "stsScope": "full",
+            "ledger": {
+              "schema": "CodingRecoveryTaskLedgerProjection/v1",
+              "rootId": "tlroot_7ace22381c7ef3d6",
+              "eventCount": 4,
+              "eventsPath": ".state\\task-ledgers\\workspaces\\materialized-1-f749d91f77\\events.jsonl",
+              "phase": "materialized",
+              "status": "doing",
+              "terminal": false,
+              "completionAuthorized": false,
+              "ownerEpoch": "epoch-806a1b21a2ccd01d",
+              "latestEventId": "7d3bcae5-1830-4587-bc6d-72142930438b"
+            },
+            "durableProcess": {
+              "files": {
+                "intent": {
+                  "protocolVersion": 1,
+                  "runId": "materialized-1",
+                  "nonce": "ee213ebb-96e9-440a-8ea2-e633b1a67b0d",
+                  "commandDigest": "6125efd97b3134ecf01663d1e07aa54b62f79cb254f706a508a3f48d7a7b928f",
+                  "policyRevision": "tf0780-cross-process-recovery-v1",
+                  "ownerEpoch": "epoch-806a1b21a2ccd01d",
+                  "createdAt": "2026-11-10T01:42:11.373Z"
+                },
+                "started": {
+                  "protocolVersion": 1,
+                  "runNonce": "ee213ebb-96e9-440a-8ea2-e633b1a67b0d",
+                  "helperPid": 34240,
+                  "childPid": 34240,
+                  "startedAtMs": 1794274931382,
+                  "commandDigest": "6125efd97b3134ecf01663d1e07aa54b62f79cb254f706a508a3f48d7a7b928f"
+                }
+              },
+              "oldEpochAttempt": {
+                "runId": "materialized-1",
+                "state": "lost",
+                "reason": "owner-epoch-mismatch"
+              },
+              "expectedEpochAttempt": {
+                "runId": "materialized-1",
+                "state": "lost",
+                "reason": "started-helper-dead"
+              }
+            },
+            "tempRemoved": true
+          },
+          "first": {
+            "restored": [
+              "a.txt"
+            ],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\materialized-1\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "second": {
+            "restored": [],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\materialized-1\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "oldEpochRejected": true,
+          "durableProcess": {
+            "files": {
+              "intent": {
+                "protocolVersion": 1,
+                "runId": "materialized-1",
+                "nonce": "ee213ebb-96e9-440a-8ea2-e633b1a67b0d",
+                "commandDigest": "6125efd97b3134ecf01663d1e07aa54b62f79cb254f706a508a3f48d7a7b928f",
+                "policyRevision": "tf0780-cross-process-recovery-v1",
+                "ownerEpoch": "epoch-806a1b21a2ccd01d",
+                "createdAt": "2026-11-10T01:42:11.373Z"
+              },
+              "started": {
+                "protocolVersion": 1,
+                "runNonce": "ee213ebb-96e9-440a-8ea2-e633b1a67b0d",
+                "helperPid": 34240,
+                "childPid": 34240,
+                "startedAtMs": 1794274931382,
+                "commandDigest": "6125efd97b3134ecf01663d1e07aa54b62f79cb254f706a508a3f48d7a7b928f"
+              }
+            },
+            "oldEpochAttempt": {
+              "runId": "materialized-1",
+              "state": "lost",
+              "reason": "owner-epoch-mismatch"
+            },
+            "expectedEpochAttempt": {
+              "runId": "materialized-1",
+              "state": "lost",
+              "reason": "started-helper-dead"
+            }
+          },
+          "finalLedger": {
+            "schema": "CodingRecoveryTaskLedgerProjection/v1",
+            "rootId": "tlroot_7ace22381c7ef3d6",
+            "eventCount": 5,
+            "eventsPath": ".state\\task-ledgers\\workspaces\\materialized-1-f749d91f77\\events.jsonl",
+            "phase": "recovered",
+            "status": "review",
+            "terminal": true,
+            "completionAuthorized": false,
+            "ownerEpoch": "epoch-806a1b21a2ccd01d",
+            "latestEventId": "d4ee684d-51f8-456a-a403-69a144fbc9e0"
+          },
+          "bytes": "before\n",
+          "tempRemoved": true
+        },
+        "code": 0,
+        "signal": null,
+        "stderr": ""
+      },
+      "pass": true
+    },
+    {
+      "window": "materialized",
+      "repeat": 2,
+      "workspace": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\materialized-2",
+      "jjInit": {
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "killed": {
+        "message": {
+          "stage": "materialized",
+          "extra": {
+            "candidate": "dd5f6ad726da441a258e5d044ea87423cb9188b3",
+            "receiptSha256": "da89db24f458863978c11fa8d81259d0e0e8af786144a9beff0ec6ed3b3cbc3c",
+            "stsScope": "full"
+          }
+        },
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": ""
+      },
+      "restarted": {
+        "message": {
+          "beforeRecovery": {
+            "bytes": "after\n",
+            "treeSha256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919",
+            "states": [
+              "committed"
+            ],
+            "ref": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\materialized-2\\.openclaw\\journal\\kill-window#batch=kill-batch&entries=write-journal%3Akill-window%3A1",
+            "git": "",
+            "gitHead": "dd5f6ad726da441a258e5d044ea87423cb9188b3",
+            "base": "6bf75f0be9605bc8747497cf63265e8048003ca8",
+            "jj": {
+              "code": 0,
+              "stdout": "The working copy has no changes.\nWorking copy  (@) : mzvnpoqz 30ae6c7c (empty) (no description set)\nParent commit (@-): nmyyrqmw dd5f6ad7 main | candidate\n",
+              "stderr": "",
+              "operation": {
+                "code": 0,
+                "stdout": "c2b820b7f855876710e15a6368e350d39cbe26f3a6803b60c418c349cca287519cf3a09433979b83c6fd5a6eddbcdc36be54981dbf39c770535756bb8c6efef3\n",
+                "stderr": ""
+              }
+            },
+            "vgReceipt": {
+              "path": ".openclaw\\recovery\\vg-receipt.json",
+              "sha256": "da89db24f458863978c11fa8d81259d0e0e8af786144a9beff0ec6ed3b3cbc3c",
+              "materialized": true,
+              "candidate": {
+                "commit_oid": "7d5db3524288e7c51ca56610552985a63bdced0f",
+                "parents": [
+                  "6bf75f0be9605bc8747497cf63265e8048003ca8",
+                  "dd5f6ad726da441a258e5d044ea87423cb9188b3"
+                ],
+                "tree_oid": "a28da1b3fabdbc7ce7fc9a43482ca0920b427ba9"
+              }
+            },
+            "stsScope": "full",
+            "ledger": {
+              "schema": "CodingRecoveryTaskLedgerProjection/v1",
+              "rootId": "tlroot_71d847e5abc4308d",
+              "eventCount": 4,
+              "eventsPath": ".state\\task-ledgers\\workspaces\\materialized-2-fa2436e91e\\events.jsonl",
+              "phase": "materialized",
+              "status": "doing",
+              "terminal": false,
+              "completionAuthorized": false,
+              "ownerEpoch": "epoch-8c4cb3cd7aa907de",
+              "latestEventId": "5e195244-36c9-4370-b4a1-c9d794fa857a"
+            },
+            "durableProcess": {
+              "files": {
+                "intent": {
+                  "protocolVersion": 1,
+                  "runId": "materialized-2",
+                  "nonce": "b29b248c-c1ef-4d3b-91c2-40a4c91926fc",
+                  "commandDigest": "ea662b22c2a259c2118184dc2048dc163020f7bf9f1a0522d304a506995c4f38",
+                  "policyRevision": "tf0780-cross-process-recovery-v1",
+                  "ownerEpoch": "epoch-8c4cb3cd7aa907de",
+                  "createdAt": "2026-11-10T01:42:28.256Z"
+                },
+                "started": {
+                  "protocolVersion": 1,
+                  "runNonce": "b29b248c-c1ef-4d3b-91c2-40a4c91926fc",
+                  "helperPid": 37080,
+                  "childPid": 37080,
+                  "startedAtMs": 1794274948266,
+                  "commandDigest": "ea662b22c2a259c2118184dc2048dc163020f7bf9f1a0522d304a506995c4f38"
+                }
+              },
+              "oldEpochAttempt": {
+                "runId": "materialized-2",
+                "state": "lost",
+                "reason": "owner-epoch-mismatch"
+              },
+              "expectedEpochAttempt": {
+                "runId": "materialized-2",
+                "state": "lost",
+                "reason": "started-helper-dead"
+              }
+            },
+            "tempRemoved": true
+          },
+          "first": {
+            "restored": [
+              "a.txt"
+            ],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\materialized-2\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "second": {
+            "restored": [],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\materialized-2\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "oldEpochRejected": true,
+          "durableProcess": {
+            "files": {
+              "intent": {
+                "protocolVersion": 1,
+                "runId": "materialized-2",
+                "nonce": "b29b248c-c1ef-4d3b-91c2-40a4c91926fc",
+                "commandDigest": "ea662b22c2a259c2118184dc2048dc163020f7bf9f1a0522d304a506995c4f38",
+                "policyRevision": "tf0780-cross-process-recovery-v1",
+                "ownerEpoch": "epoch-8c4cb3cd7aa907de",
+                "createdAt": "2026-11-10T01:42:28.256Z"
+              },
+              "started": {
+                "protocolVersion": 1,
+                "runNonce": "b29b248c-c1ef-4d3b-91c2-40a4c91926fc",
+                "helperPid": 37080,
+                "childPid": 37080,
+                "startedAtMs": 1794274948266,
+                "commandDigest": "ea662b22c2a259c2118184dc2048dc163020f7bf9f1a0522d304a506995c4f38"
+              }
+            },
+            "oldEpochAttempt": {
+              "runId": "materialized-2",
+              "state": "lost",
+              "reason": "owner-epoch-mismatch"
+            },
+            "expectedEpochAttempt": {
+              "runId": "materialized-2",
+              "state": "lost",
+              "reason": "started-helper-dead"
+            }
+          },
+          "finalLedger": {
+            "schema": "CodingRecoveryTaskLedgerProjection/v1",
+            "rootId": "tlroot_71d847e5abc4308d",
+            "eventCount": 5,
+            "eventsPath": ".state\\task-ledgers\\workspaces\\materialized-2-fa2436e91e\\events.jsonl",
+            "phase": "recovered",
+            "status": "review",
+            "terminal": true,
+            "completionAuthorized": false,
+            "ownerEpoch": "epoch-8c4cb3cd7aa907de",
+            "latestEventId": "d0f96f88-4e9a-4b99-bc2d-a06e8b773fb8"
+          },
+          "bytes": "before\n",
+          "tempRemoved": true
+        },
+        "code": 0,
+        "signal": null,
+        "stderr": ""
+      },
+      "pass": true
+    },
+    {
+      "window": "materialized",
+      "repeat": 3,
+      "workspace": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\materialized-3",
+      "jjInit": {
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "killed": {
+        "message": {
+          "stage": "materialized",
+          "extra": {
+            "candidate": "2dee505a6e64fc269d0416dd4a07da9f9b49d76d",
+            "receiptSha256": "7a02e6c3aa2c865d52ace4272c747d5d1a15df265301da4b906995f232e858cd",
+            "stsScope": "full"
+          }
+        },
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": ""
+      },
+      "restarted": {
+        "message": {
+          "beforeRecovery": {
+            "bytes": "after\n",
+            "treeSha256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919",
+            "states": [
+              "committed"
+            ],
+            "ref": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\materialized-3\\.openclaw\\journal\\kill-window#batch=kill-batch&entries=write-journal%3Akill-window%3A1",
+            "git": "",
+            "gitHead": "2dee505a6e64fc269d0416dd4a07da9f9b49d76d",
+            "base": "a480d9ea13342394ab22bfdbf9d4e0cd349641cc",
+            "jj": {
+              "code": 0,
+              "stdout": "The working copy has no changes.\nWorking copy  (@) : oynknktt 784e2e31 (empty) (no description set)\nParent commit (@-): otloqxmq 2dee505a main | candidate\n",
+              "stderr": "",
+              "operation": {
+                "code": 0,
+                "stdout": "4e007f8e7480a2958650921ed4d0bb7ed50b694f554686138f4bf2966aa6312dd6e8148050e7f7382ca7376e1d21cdc5c5591359d5118a0fbc85c8ed0cff1130\n",
+                "stderr": ""
+              }
+            },
+            "vgReceipt": {
+              "path": ".openclaw\\recovery\\vg-receipt.json",
+              "sha256": "7a02e6c3aa2c865d52ace4272c747d5d1a15df265301da4b906995f232e858cd",
+              "materialized": true,
+              "candidate": {
+                "commit_oid": "57998105acdfc330402a6ab2b657ec64be4cae52",
+                "parents": [
+                  "a480d9ea13342394ab22bfdbf9d4e0cd349641cc",
+                  "2dee505a6e64fc269d0416dd4a07da9f9b49d76d"
+                ],
+                "tree_oid": "a28da1b3fabdbc7ce7fc9a43482ca0920b427ba9"
+              }
+            },
+            "stsScope": "full",
+            "ledger": {
+              "schema": "CodingRecoveryTaskLedgerProjection/v1",
+              "rootId": "tlroot_c5f0de8b3a64a427",
+              "eventCount": 4,
+              "eventsPath": ".state\\task-ledgers\\workspaces\\materialized-3-b105edb48e\\events.jsonl",
+              "phase": "materialized",
+              "status": "doing",
+              "terminal": false,
+              "completionAuthorized": false,
+              "ownerEpoch": "epoch-56f877324ed78de1",
+              "latestEventId": "0d722e73-da87-4255-b47a-e6f576c749d3"
+            },
+            "durableProcess": {
+              "files": {
+                "intent": {
+                  "protocolVersion": 1,
+                  "runId": "materialized-3",
+                  "nonce": "0291e7b2-0354-4c5a-9ace-05a02b2135f8",
+                  "commandDigest": "4592b0db30dc5437a1c77fe14665436097988361f63c47be1fe67d317fb65c1a",
+                  "policyRevision": "tf0780-cross-process-recovery-v1",
+                  "ownerEpoch": "epoch-56f877324ed78de1",
+                  "createdAt": "2026-11-10T01:42:42.536Z"
+                },
+                "started": {
+                  "protocolVersion": 1,
+                  "runNonce": "0291e7b2-0354-4c5a-9ace-05a02b2135f8",
+                  "helperPid": 11588,
+                  "childPid": 11588,
+                  "startedAtMs": 1794274962545,
+                  "commandDigest": "4592b0db30dc5437a1c77fe14665436097988361f63c47be1fe67d317fb65c1a"
+                }
+              },
+              "oldEpochAttempt": {
+                "runId": "materialized-3",
+                "state": "lost",
+                "reason": "owner-epoch-mismatch"
+              },
+              "expectedEpochAttempt": {
+                "runId": "materialized-3",
+                "state": "lost",
+                "reason": "started-helper-dead"
+              }
+            },
+            "tempRemoved": true
+          },
+          "first": {
+            "restored": [
+              "a.txt"
+            ],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\materialized-3\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "second": {
+            "restored": [],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\materialized-3\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "oldEpochRejected": true,
+          "durableProcess": {
+            "files": {
+              "intent": {
+                "protocolVersion": 1,
+                "runId": "materialized-3",
+                "nonce": "0291e7b2-0354-4c5a-9ace-05a02b2135f8",
+                "commandDigest": "4592b0db30dc5437a1c77fe14665436097988361f63c47be1fe67d317fb65c1a",
+                "policyRevision": "tf0780-cross-process-recovery-v1",
+                "ownerEpoch": "epoch-56f877324ed78de1",
+                "createdAt": "2026-11-10T01:42:42.536Z"
+              },
+              "started": {
+                "protocolVersion": 1,
+                "runNonce": "0291e7b2-0354-4c5a-9ace-05a02b2135f8",
+                "helperPid": 11588,
+                "childPid": 11588,
+                "startedAtMs": 1794274962545,
+                "commandDigest": "4592b0db30dc5437a1c77fe14665436097988361f63c47be1fe67d317fb65c1a"
+              }
+            },
+            "oldEpochAttempt": {
+              "runId": "materialized-3",
+              "state": "lost",
+              "reason": "owner-epoch-mismatch"
+            },
+            "expectedEpochAttempt": {
+              "runId": "materialized-3",
+              "state": "lost",
+              "reason": "started-helper-dead"
+            }
+          },
+          "finalLedger": {
+            "schema": "CodingRecoveryTaskLedgerProjection/v1",
+            "rootId": "tlroot_c5f0de8b3a64a427",
+            "eventCount": 5,
+            "eventsPath": ".state\\task-ledgers\\workspaces\\materialized-3-b105edb48e\\events.jsonl",
+            "phase": "recovered",
+            "status": "review",
+            "terminal": true,
+            "completionAuthorized": false,
+            "ownerEpoch": "epoch-56f877324ed78de1",
+            "latestEventId": "74a530d3-d129-4b58-a169-ffcb31b072cf"
+          },
+          "bytes": "before\n",
+          "tempRemoved": true
+        },
+        "code": 0,
+        "signal": null,
+        "stderr": ""
+      },
+      "pass": true
+    },
+    {
+      "window": "validated",
+      "repeat": 1,
+      "workspace": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\validated-1",
+      "jjInit": {
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "killed": {
+        "message": {
+          "stage": "validated",
+          "extra": {
+            "candidate": "e79f98e51ca9269cb73b965218636d063565816d",
+            "vgTarget": null
+          }
+        },
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": ""
+      },
+      "restarted": {
+        "message": {
+          "beforeRecovery": {
+            "bytes": "after\n",
+            "treeSha256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919",
+            "states": [
+              "committed"
+            ],
+            "ref": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\validated-1\\.openclaw\\journal\\kill-window#batch=kill-batch&entries=write-journal%3Akill-window%3A1",
+            "git": "",
+            "gitHead": "e79f98e51ca9269cb73b965218636d063565816d",
+            "base": "dc19f6463698c6167d7af2395a725d8783c47669",
+            "jj": {
+              "code": 0,
+              "stdout": "The working copy has no changes.\nWorking copy  (@) : pxvynznm eecd0fa1 (empty) (no description set)\nParent commit (@-): otryptpn e79f98e5 main | candidate\n",
+              "stderr": "",
+              "operation": {
+                "code": 0,
+                "stdout": "b37a7cdba943e66c65cc1b674a817b2100838c9a7cceffb3cd1710f6f0dde60f98e449328f52866e2fbf5e1fc521b8c52759a55abaae0c3a0407a7b1a60c8197\n",
+                "stderr": ""
+              }
+            },
+            "vgReceipt": {
+              "path": ".openclaw\\recovery\\vg-receipt.json",
+              "sha256": "b8cb677eb3375e1715c3f536b0491e8235dee0b577f11e555796a52bf5819803",
+              "materialized": true,
+              "candidate": {
+                "commit_oid": "a6e7838f231b0dee15fb0f1f49ba7b9e3f591ff6",
+                "parents": [
+                  "dc19f6463698c6167d7af2395a725d8783c47669",
+                  "e79f98e51ca9269cb73b965218636d063565816d"
+                ],
+                "tree_oid": "a28da1b3fabdbc7ce7fc9a43482ca0920b427ba9"
+              }
+            },
+            "stsScope": "full",
+            "ledger": {
+              "schema": "CodingRecoveryTaskLedgerProjection/v1",
+              "rootId": "tlroot_01a1bd518e5b013a",
+              "eventCount": 4,
+              "eventsPath": ".state\\task-ledgers\\workspaces\\validated-1-735a89965d\\events.jsonl",
+              "phase": "validated",
+              "status": "doing",
+              "terminal": false,
+              "completionAuthorized": false,
+              "ownerEpoch": "epoch-ded0e0520cf43ce6",
+              "latestEventId": "29b2ad6c-80fa-4555-8ed9-9cc1172872b1"
+            },
+            "durableProcess": {
+              "files": {
+                "intent": {
+                  "protocolVersion": 1,
+                  "runId": "validated-1",
+                  "nonce": "efc87818-df3c-4f33-9c90-b7e2a5073bf8",
+                  "commandDigest": "2d2480f1927ec0509ca27af33867ca4235cf0155085829503bb993c0300009d3",
+                  "policyRevision": "tf0780-cross-process-recovery-v1",
+                  "ownerEpoch": "epoch-ded0e0520cf43ce6",
+                  "createdAt": "2026-11-10T01:42:54.540Z"
+                },
+                "started": {
+                  "protocolVersion": 1,
+                  "runNonce": "efc87818-df3c-4f33-9c90-b7e2a5073bf8",
+                  "helperPid": 33784,
+                  "childPid": 33784,
+                  "startedAtMs": 1794274974549,
+                  "commandDigest": "2d2480f1927ec0509ca27af33867ca4235cf0155085829503bb993c0300009d3"
+                }
+              },
+              "oldEpochAttempt": {
+                "runId": "validated-1",
+                "state": "lost",
+                "reason": "owner-epoch-mismatch"
+              },
+              "expectedEpochAttempt": {
+                "runId": "validated-1",
+                "state": "lost",
+                "reason": "started-helper-dead"
+              }
+            },
+            "tempRemoved": true
+          },
+          "first": {
+            "restored": [
+              "a.txt"
+            ],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\validated-1\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "second": {
+            "restored": [],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\validated-1\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "oldEpochRejected": true,
+          "durableProcess": {
+            "files": {
+              "intent": {
+                "protocolVersion": 1,
+                "runId": "validated-1",
+                "nonce": "efc87818-df3c-4f33-9c90-b7e2a5073bf8",
+                "commandDigest": "2d2480f1927ec0509ca27af33867ca4235cf0155085829503bb993c0300009d3",
+                "policyRevision": "tf0780-cross-process-recovery-v1",
+                "ownerEpoch": "epoch-ded0e0520cf43ce6",
+                "createdAt": "2026-11-10T01:42:54.540Z"
+              },
+              "started": {
+                "protocolVersion": 1,
+                "runNonce": "efc87818-df3c-4f33-9c90-b7e2a5073bf8",
+                "helperPid": 33784,
+                "childPid": 33784,
+                "startedAtMs": 1794274974549,
+                "commandDigest": "2d2480f1927ec0509ca27af33867ca4235cf0155085829503bb993c0300009d3"
+              }
+            },
+            "oldEpochAttempt": {
+              "runId": "validated-1",
+              "state": "lost",
+              "reason": "owner-epoch-mismatch"
+            },
+            "expectedEpochAttempt": {
+              "runId": "validated-1",
+              "state": "lost",
+              "reason": "started-helper-dead"
+            }
+          },
+          "finalLedger": {
+            "schema": "CodingRecoveryTaskLedgerProjection/v1",
+            "rootId": "tlroot_01a1bd518e5b013a",
+            "eventCount": 5,
+            "eventsPath": ".state\\task-ledgers\\workspaces\\validated-1-735a89965d\\events.jsonl",
+            "phase": "recovered",
+            "status": "review",
+            "terminal": true,
+            "completionAuthorized": false,
+            "ownerEpoch": "epoch-ded0e0520cf43ce6",
+            "latestEventId": "b7975db6-3287-404d-b6a5-44777d5d63a2"
+          },
+          "bytes": "before\n",
+          "tempRemoved": true
+        },
+        "code": 0,
+        "signal": null,
+        "stderr": ""
+      },
+      "pass": true
+    },
+    {
+      "window": "validated",
+      "repeat": 2,
+      "workspace": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\validated-2",
+      "jjInit": {
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "killed": {
+        "message": {
+          "stage": "validated",
+          "extra": {
+            "candidate": "0fcd619b4ad0d7ebc002137aac01183b1d24b860",
+            "vgTarget": null
+          }
+        },
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": ""
+      },
+      "restarted": {
+        "message": {
+          "beforeRecovery": {
+            "bytes": "after\n",
+            "treeSha256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919",
+            "states": [
+              "committed"
+            ],
+            "ref": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\validated-2\\.openclaw\\journal\\kill-window#batch=kill-batch&entries=write-journal%3Akill-window%3A1",
+            "git": "",
+            "gitHead": "0fcd619b4ad0d7ebc002137aac01183b1d24b860",
+            "base": "d63dbdd697e1df3687a4adafca3d10001a10584e",
+            "jj": {
+              "code": 0,
+              "stdout": "The working copy has no changes.\nWorking copy  (@) : kmsxoplt 49fd69ea (empty) (no description set)\nParent commit (@-): ztymxvor 0fcd619b main | candidate\n",
+              "stderr": "",
+              "operation": {
+                "code": 0,
+                "stdout": "cbbfa404d2ff9852afba591dfed0e4efaf32df25cca18e1d644e07759643a4ee4fc82d9783c846beba3251c2dc33ac52908479f1b4a17cdc5dd78fb52ba8b0be\n",
+                "stderr": ""
+              }
+            },
+            "vgReceipt": {
+              "path": ".openclaw\\recovery\\vg-receipt.json",
+              "sha256": "613c49577c7880dd17b66a41e27e59d3d0b10da8ee2fad79dcd56140aa4c1e9f",
+              "materialized": true,
+              "candidate": {
+                "commit_oid": "4405a816a0efceaa597a3c1acd9d0d777b43ac25",
+                "parents": [
+                  "d63dbdd697e1df3687a4adafca3d10001a10584e",
+                  "0fcd619b4ad0d7ebc002137aac01183b1d24b860"
+                ],
+                "tree_oid": "a28da1b3fabdbc7ce7fc9a43482ca0920b427ba9"
+              }
+            },
+            "stsScope": "full",
+            "ledger": {
+              "schema": "CodingRecoveryTaskLedgerProjection/v1",
+              "rootId": "tlroot_fc2c0eea65b27207",
+              "eventCount": 4,
+              "eventsPath": ".state\\task-ledgers\\workspaces\\validated-2-ad79b9af84\\events.jsonl",
+              "phase": "validated",
+              "status": "doing",
+              "terminal": false,
+              "completionAuthorized": false,
+              "ownerEpoch": "epoch-142d948d0dfd523b",
+              "latestEventId": "dd195c10-aa67-4491-ad21-ca500964db88"
+            },
+            "durableProcess": {
+              "files": {
+                "intent": {
+                  "protocolVersion": 1,
+                  "runId": "validated-2",
+                  "nonce": "3497fd1b-bc42-499c-b7f6-539a84200ac2",
+                  "commandDigest": "870ab32f4f698cc9fc6359004b6ce9555afd2302f3e5f7e585db8390234799ff",
+                  "policyRevision": "tf0780-cross-process-recovery-v1",
+                  "ownerEpoch": "epoch-142d948d0dfd523b",
+                  "createdAt": "2026-11-10T01:43:09.964Z"
+                },
+                "started": {
+                  "protocolVersion": 1,
+                  "runNonce": "3497fd1b-bc42-499c-b7f6-539a84200ac2",
+                  "helperPid": 4512,
+                  "childPid": 4512,
+                  "startedAtMs": 1794274989974,
+                  "commandDigest": "870ab32f4f698cc9fc6359004b6ce9555afd2302f3e5f7e585db8390234799ff"
+                }
+              },
+              "oldEpochAttempt": {
+                "runId": "validated-2",
+                "state": "lost",
+                "reason": "owner-epoch-mismatch"
+              },
+              "expectedEpochAttempt": {
+                "runId": "validated-2",
+                "state": "lost",
+                "reason": "started-helper-dead"
+              }
+            },
+            "tempRemoved": true
+          },
+          "first": {
+            "restored": [
+              "a.txt"
+            ],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\validated-2\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "second": {
+            "restored": [],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\validated-2\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "oldEpochRejected": true,
+          "durableProcess": {
+            "files": {
+              "intent": {
+                "protocolVersion": 1,
+                "runId": "validated-2",
+                "nonce": "3497fd1b-bc42-499c-b7f6-539a84200ac2",
+                "commandDigest": "870ab32f4f698cc9fc6359004b6ce9555afd2302f3e5f7e585db8390234799ff",
+                "policyRevision": "tf0780-cross-process-recovery-v1",
+                "ownerEpoch": "epoch-142d948d0dfd523b",
+                "createdAt": "2026-11-10T01:43:09.964Z"
+              },
+              "started": {
+                "protocolVersion": 1,
+                "runNonce": "3497fd1b-bc42-499c-b7f6-539a84200ac2",
+                "helperPid": 4512,
+                "childPid": 4512,
+                "startedAtMs": 1794274989974,
+                "commandDigest": "870ab32f4f698cc9fc6359004b6ce9555afd2302f3e5f7e585db8390234799ff"
+              }
+            },
+            "oldEpochAttempt": {
+              "runId": "validated-2",
+              "state": "lost",
+              "reason": "owner-epoch-mismatch"
+            },
+            "expectedEpochAttempt": {
+              "runId": "validated-2",
+              "state": "lost",
+              "reason": "started-helper-dead"
+            }
+          },
+          "finalLedger": {
+            "schema": "CodingRecoveryTaskLedgerProjection/v1",
+            "rootId": "tlroot_fc2c0eea65b27207",
+            "eventCount": 5,
+            "eventsPath": ".state\\task-ledgers\\workspaces\\validated-2-ad79b9af84\\events.jsonl",
+            "phase": "recovered",
+            "status": "review",
+            "terminal": true,
+            "completionAuthorized": false,
+            "ownerEpoch": "epoch-142d948d0dfd523b",
+            "latestEventId": "3e909077-a673-4de8-bd32-1c4bf23727a8"
+          },
+          "bytes": "before\n",
+          "tempRemoved": true
+        },
+        "code": 0,
+        "signal": null,
+        "stderr": ""
+      },
+      "pass": true
+    },
+    {
+      "window": "validated",
+      "repeat": 3,
+      "workspace": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\validated-3",
+      "jjInit": {
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "killed": {
+        "message": {
+          "stage": "validated",
+          "extra": {
+            "candidate": "123830835d84f12907a9602835138e6ca76ac869",
+            "vgTarget": null
+          }
+        },
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": ""
+      },
+      "restarted": {
+        "message": {
+          "beforeRecovery": {
+            "bytes": "after\n",
+            "treeSha256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919",
+            "states": [
+              "committed"
+            ],
+            "ref": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\validated-3\\.openclaw\\journal\\kill-window#batch=kill-batch&entries=write-journal%3Akill-window%3A1",
+            "git": "",
+            "gitHead": "123830835d84f12907a9602835138e6ca76ac869",
+            "base": "a1bb1008738f0c5ecad6b2b844ed5f8311c0645e",
+            "jj": {
+              "code": 0,
+              "stdout": "The working copy has no changes.\nWorking copy  (@) : xzwyzwry c3a1a51d (empty) (no description set)\nParent commit (@-): qtywutlu 12383083 main | candidate\n",
+              "stderr": "",
+              "operation": {
+                "code": 0,
+                "stdout": "775f91b3b62ec6e437649504851cd3f8537082052497bc2884df1d3ade002831b7988e65e2770bd8561f51c0ca623aeb056109cf0e564fc5971f0a8afa642e9f\n",
+                "stderr": ""
+              }
+            },
+            "vgReceipt": {
+              "path": ".openclaw\\recovery\\vg-receipt.json",
+              "sha256": "ce5b9781b731160e75692c15e3d75510bc2c4dfe187f28f5bfd793bd31fd56a6",
+              "materialized": true,
+              "candidate": {
+                "commit_oid": "fc6a22e1affcd88bf045065d62fa7ae047fe0d9f",
+                "parents": [
+                  "a1bb1008738f0c5ecad6b2b844ed5f8311c0645e",
+                  "123830835d84f12907a9602835138e6ca76ac869"
+                ],
+                "tree_oid": "a28da1b3fabdbc7ce7fc9a43482ca0920b427ba9"
+              }
+            },
+            "stsScope": "full",
+            "ledger": {
+              "schema": "CodingRecoveryTaskLedgerProjection/v1",
+              "rootId": "tlroot_feeee6a6ddb88678",
+              "eventCount": 4,
+              "eventsPath": ".state\\task-ledgers\\workspaces\\validated-3-8733bf7579\\events.jsonl",
+              "phase": "validated",
+              "status": "doing",
+              "terminal": false,
+              "completionAuthorized": false,
+              "ownerEpoch": "epoch-7738c1f507bf749f",
+              "latestEventId": "b6f7b891-efb6-4e5b-9dbb-09b49becbf1a"
+            },
+            "durableProcess": {
+              "files": {
+                "intent": {
+                  "protocolVersion": 1,
+                  "runId": "validated-3",
+                  "nonce": "02731e9d-749d-4775-94d8-adfcb1cec99d",
+                  "commandDigest": "ac4fc6ae2e07334b564bd5c1abc765ea2f9bca5d7c43dc7004561fe24fec272c",
+                  "policyRevision": "tf0780-cross-process-recovery-v1",
+                  "ownerEpoch": "epoch-7738c1f507bf749f",
+                  "createdAt": "2026-11-10T01:43:23.949Z"
+                },
+                "started": {
+                  "protocolVersion": 1,
+                  "runNonce": "02731e9d-749d-4775-94d8-adfcb1cec99d",
+                  "helperPid": 20912,
+                  "childPid": 20912,
+                  "startedAtMs": 1794275003960,
+                  "commandDigest": "ac4fc6ae2e07334b564bd5c1abc765ea2f9bca5d7c43dc7004561fe24fec272c"
+                }
+              },
+              "oldEpochAttempt": {
+                "runId": "validated-3",
+                "state": "lost",
+                "reason": "owner-epoch-mismatch"
+              },
+              "expectedEpochAttempt": {
+                "runId": "validated-3",
+                "state": "lost",
+                "reason": "started-helper-dead"
+              }
+            },
+            "tempRemoved": true
+          },
+          "first": {
+            "restored": [
+              "a.txt"
+            ],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\validated-3\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "second": {
+            "restored": [],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\validated-3\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "oldEpochRejected": true,
+          "durableProcess": {
+            "files": {
+              "intent": {
+                "protocolVersion": 1,
+                "runId": "validated-3",
+                "nonce": "02731e9d-749d-4775-94d8-adfcb1cec99d",
+                "commandDigest": "ac4fc6ae2e07334b564bd5c1abc765ea2f9bca5d7c43dc7004561fe24fec272c",
+                "policyRevision": "tf0780-cross-process-recovery-v1",
+                "ownerEpoch": "epoch-7738c1f507bf749f",
+                "createdAt": "2026-11-10T01:43:23.949Z"
+              },
+              "started": {
+                "protocolVersion": 1,
+                "runNonce": "02731e9d-749d-4775-94d8-adfcb1cec99d",
+                "helperPid": 20912,
+                "childPid": 20912,
+                "startedAtMs": 1794275003960,
+                "commandDigest": "ac4fc6ae2e07334b564bd5c1abc765ea2f9bca5d7c43dc7004561fe24fec272c"
+              }
+            },
+            "oldEpochAttempt": {
+              "runId": "validated-3",
+              "state": "lost",
+              "reason": "owner-epoch-mismatch"
+            },
+            "expectedEpochAttempt": {
+              "runId": "validated-3",
+              "state": "lost",
+              "reason": "started-helper-dead"
+            }
+          },
+          "finalLedger": {
+            "schema": "CodingRecoveryTaskLedgerProjection/v1",
+            "rootId": "tlroot_feeee6a6ddb88678",
+            "eventCount": 5,
+            "eventsPath": ".state\\task-ledgers\\workspaces\\validated-3-8733bf7579\\events.jsonl",
+            "phase": "recovered",
+            "status": "review",
+            "terminal": true,
+            "completionAuthorized": false,
+            "ownerEpoch": "epoch-7738c1f507bf749f",
+            "latestEventId": "c0c39f32-2ac3-48b2-9cbc-211eec4c5a89"
+          },
+          "bytes": "before\n",
+          "tempRemoved": true
+        },
+        "code": 0,
+        "signal": null,
+        "stderr": ""
+      },
+      "pass": true
+    },
+    {
+      "window": "cleanup",
+      "repeat": 1,
+      "workspace": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\cleanup-1",
+      "jjInit": {
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "killed": {
+        "message": {
+          "stage": "cleanup",
+          "extra": {
+            "cleanupPending": true
+          }
+        },
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": ""
+      },
+      "restarted": {
+        "message": {
+          "beforeRecovery": {
+            "bytes": "after\n",
+            "treeSha256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919",
+            "states": [
+              "committed"
+            ],
+            "ref": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\cleanup-1\\.openclaw\\journal\\kill-window#batch=kill-batch&entries=write-journal%3Akill-window%3A1",
+            "git": "",
+            "gitHead": "3cf067e9d3ae980ed8ed54f842eccd0329d9435a",
+            "base": "71799ebfa09c6ab45df9ffc1b431a17b1cd2c892",
+            "jj": {
+              "code": 0,
+              "stdout": "The working copy has no changes.\nWorking copy  (@) : rxxlyxvs ee04f131 (empty) (no description set)\nParent commit (@-): upnxqoqv 3cf067e9 main | candidate\n",
+              "stderr": "",
+              "operation": {
+                "code": 0,
+                "stdout": "34d6fa90036c520a5577e11b9e82c2aab0aa93cfa944632278c81ff15d36818b2c4ecd34310fc3e2eb527943fcee744682a19bdade04165a27099c8ca33756ff\n",
+                "stderr": ""
+              }
+            },
+            "vgReceipt": {
+              "path": ".openclaw\\recovery\\vg-receipt.json",
+              "sha256": "78f25c52561192ed06c48e29083a715cb37750ce24540d2408b6a99d6c3be399",
+              "materialized": true,
+              "candidate": {
+                "commit_oid": "09defb1efc11192ab5c4626976a155cef2ccef85",
+                "parents": [
+                  "71799ebfa09c6ab45df9ffc1b431a17b1cd2c892",
+                  "3cf067e9d3ae980ed8ed54f842eccd0329d9435a"
+                ],
+                "tree_oid": "a28da1b3fabdbc7ce7fc9a43482ca0920b427ba9"
+              }
+            },
+            "stsScope": "full",
+            "ledger": {
+              "schema": "CodingRecoveryTaskLedgerProjection/v1",
+              "rootId": "tlroot_3c67f6ec7551f688",
+              "eventCount": 4,
+              "eventsPath": ".state\\task-ledgers\\workspaces\\cleanup-1-3aa54c7b7c\\events.jsonl",
+              "phase": "cleanup",
+              "status": "doing",
+              "terminal": false,
+              "completionAuthorized": false,
+              "ownerEpoch": "epoch-7fd59306cb10659b",
+              "latestEventId": "1a4decae-1338-4feb-a8ba-56cf86b1095e"
+            },
+            "durableProcess": {
+              "files": {
+                "intent": {
+                  "protocolVersion": 1,
+                  "runId": "cleanup-1",
+                  "nonce": "1739cf04-6ea2-416f-a899-e530a27b558b",
+                  "commandDigest": "c409eecfd327e0a1203617147092aa70758352e1bc1271d8f5e63a9868c243e9",
+                  "policyRevision": "tf0780-cross-process-recovery-v1",
+                  "ownerEpoch": "epoch-7fd59306cb10659b",
+                  "createdAt": "2026-11-10T01:43:38.605Z"
+                },
+                "started": {
+                  "protocolVersion": 1,
+                  "runNonce": "1739cf04-6ea2-416f-a899-e530a27b558b",
+                  "helperPid": 44632,
+                  "childPid": 44632,
+                  "startedAtMs": 1794275018623,
+                  "commandDigest": "c409eecfd327e0a1203617147092aa70758352e1bc1271d8f5e63a9868c243e9"
+                }
+              },
+              "oldEpochAttempt": {
+                "runId": "cleanup-1",
+                "state": "lost",
+                "reason": "owner-epoch-mismatch"
+              },
+              "expectedEpochAttempt": {
+                "runId": "cleanup-1",
+                "state": "lost",
+                "reason": "started-helper-dead"
+              }
+            },
+            "tempRemoved": false
+          },
+          "first": {
+            "restored": [
+              "a.txt"
+            ],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\cleanup-1\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "second": {
+            "restored": [],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\cleanup-1\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "oldEpochRejected": true,
+          "durableProcess": {
+            "files": {
+              "intent": {
+                "protocolVersion": 1,
+                "runId": "cleanup-1",
+                "nonce": "1739cf04-6ea2-416f-a899-e530a27b558b",
+                "commandDigest": "c409eecfd327e0a1203617147092aa70758352e1bc1271d8f5e63a9868c243e9",
+                "policyRevision": "tf0780-cross-process-recovery-v1",
+                "ownerEpoch": "epoch-7fd59306cb10659b",
+                "createdAt": "2026-11-10T01:43:38.605Z"
+              },
+              "started": {
+                "protocolVersion": 1,
+                "runNonce": "1739cf04-6ea2-416f-a899-e530a27b558b",
+                "helperPid": 44632,
+                "childPid": 44632,
+                "startedAtMs": 1794275018623,
+                "commandDigest": "c409eecfd327e0a1203617147092aa70758352e1bc1271d8f5e63a9868c243e9"
+              }
+            },
+            "oldEpochAttempt": {
+              "runId": "cleanup-1",
+              "state": "lost",
+              "reason": "owner-epoch-mismatch"
+            },
+            "expectedEpochAttempt": {
+              "runId": "cleanup-1",
+              "state": "lost",
+              "reason": "started-helper-dead"
+            }
+          },
+          "finalLedger": {
+            "schema": "CodingRecoveryTaskLedgerProjection/v1",
+            "rootId": "tlroot_3c67f6ec7551f688",
+            "eventCount": 5,
+            "eventsPath": ".state\\task-ledgers\\workspaces\\cleanup-1-3aa54c7b7c\\events.jsonl",
+            "phase": "recovered",
+            "status": "review",
+            "terminal": true,
+            "completionAuthorized": false,
+            "ownerEpoch": "epoch-7fd59306cb10659b",
+            "latestEventId": "6fa36483-42c8-4ed3-ac0b-2f0fc205c413"
+          },
+          "bytes": "before\n",
+          "tempRemoved": true
+        },
+        "code": 0,
+        "signal": null,
+        "stderr": ""
+      },
+      "pass": true
+    },
+    {
+      "window": "cleanup",
+      "repeat": 2,
+      "workspace": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\cleanup-2",
+      "jjInit": {
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "killed": {
+        "message": {
+          "stage": "cleanup",
+          "extra": {
+            "cleanupPending": true
+          }
+        },
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": ""
+      },
+      "restarted": {
+        "message": {
+          "beforeRecovery": {
+            "bytes": "after\n",
+            "treeSha256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919",
+            "states": [
+              "committed"
+            ],
+            "ref": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\cleanup-2\\.openclaw\\journal\\kill-window#batch=kill-batch&entries=write-journal%3Akill-window%3A1",
+            "git": "",
+            "gitHead": "ebfc69828a0117d4a8979c6465ac79b043cdb2ca",
+            "base": "0b0a8f036237fbd9d427913d9992976512391250",
+            "jj": {
+              "code": 0,
+              "stdout": "The working copy has no changes.\nWorking copy  (@) : zmxpzmvq 06046c65 (empty) (no description set)\nParent commit (@-): uwvmownx ebfc6982 main | candidate\n",
+              "stderr": "",
+              "operation": {
+                "code": 0,
+                "stdout": "3c9f33ab57da6c3ed03e89f7ff874ef3e535b5c3ac5e8bb7c059b5597e7e858a6cf0ac8950f9194494a547569bb7c58a0b182764edae869528941fc73aac06db\n",
+                "stderr": ""
+              }
+            },
+            "vgReceipt": {
+              "path": ".openclaw\\recovery\\vg-receipt.json",
+              "sha256": "95d1b01926c48a8a37b86b851e8dadde52ff069eaf0ae16249f84a7ab8929c6a",
+              "materialized": true,
+              "candidate": {
+                "commit_oid": "76112a4dec1c8f446eefc3987c851f672fe90c02",
+                "parents": [
+                  "0b0a8f036237fbd9d427913d9992976512391250",
+                  "ebfc69828a0117d4a8979c6465ac79b043cdb2ca"
+                ],
+                "tree_oid": "a28da1b3fabdbc7ce7fc9a43482ca0920b427ba9"
+              }
+            },
+            "stsScope": "full",
+            "ledger": {
+              "schema": "CodingRecoveryTaskLedgerProjection/v1",
+              "rootId": "tlroot_e51f303989449531",
+              "eventCount": 4,
+              "eventsPath": ".state\\task-ledgers\\workspaces\\cleanup-2-4591bd1878\\events.jsonl",
+              "phase": "cleanup",
+              "status": "doing",
+              "terminal": false,
+              "completionAuthorized": false,
+              "ownerEpoch": "epoch-feba841691d5ef30",
+              "latestEventId": "a5797e46-0365-4aec-8b6d-90138d0d9a58"
+            },
+            "durableProcess": {
+              "files": {
+                "intent": {
+                  "protocolVersion": 1,
+                  "runId": "cleanup-2",
+                  "nonce": "fbff3a99-6219-4183-a223-7290ab2fe252",
+                  "commandDigest": "fbedac3ca872e5317bbdff47ae2630beb8058874fd45ae2d328673a7532a194e",
+                  "policyRevision": "tf0780-cross-process-recovery-v1",
+                  "ownerEpoch": "epoch-feba841691d5ef30",
+                  "createdAt": "2026-11-10T01:43:53.939Z"
+                },
+                "started": {
+                  "protocolVersion": 1,
+                  "runNonce": "fbff3a99-6219-4183-a223-7290ab2fe252",
+                  "helperPid": 4468,
+                  "childPid": 4468,
+                  "startedAtMs": 1794275033948,
+                  "commandDigest": "fbedac3ca872e5317bbdff47ae2630beb8058874fd45ae2d328673a7532a194e"
+                }
+              },
+              "oldEpochAttempt": {
+                "runId": "cleanup-2",
+                "state": "lost",
+                "reason": "owner-epoch-mismatch"
+              },
+              "expectedEpochAttempt": {
+                "runId": "cleanup-2",
+                "state": "lost",
+                "reason": "started-helper-dead"
+              }
+            },
+            "tempRemoved": false
+          },
+          "first": {
+            "restored": [
+              "a.txt"
+            ],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\cleanup-2\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "second": {
+            "restored": [],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\cleanup-2\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "oldEpochRejected": true,
+          "durableProcess": {
+            "files": {
+              "intent": {
+                "protocolVersion": 1,
+                "runId": "cleanup-2",
+                "nonce": "fbff3a99-6219-4183-a223-7290ab2fe252",
+                "commandDigest": "fbedac3ca872e5317bbdff47ae2630beb8058874fd45ae2d328673a7532a194e",
+                "policyRevision": "tf0780-cross-process-recovery-v1",
+                "ownerEpoch": "epoch-feba841691d5ef30",
+                "createdAt": "2026-11-10T01:43:53.939Z"
+              },
+              "started": {
+                "protocolVersion": 1,
+                "runNonce": "fbff3a99-6219-4183-a223-7290ab2fe252",
+                "helperPid": 4468,
+                "childPid": 4468,
+                "startedAtMs": 1794275033948,
+                "commandDigest": "fbedac3ca872e5317bbdff47ae2630beb8058874fd45ae2d328673a7532a194e"
+              }
+            },
+            "oldEpochAttempt": {
+              "runId": "cleanup-2",
+              "state": "lost",
+              "reason": "owner-epoch-mismatch"
+            },
+            "expectedEpochAttempt": {
+              "runId": "cleanup-2",
+              "state": "lost",
+              "reason": "started-helper-dead"
+            }
+          },
+          "finalLedger": {
+            "schema": "CodingRecoveryTaskLedgerProjection/v1",
+            "rootId": "tlroot_e51f303989449531",
+            "eventCount": 5,
+            "eventsPath": ".state\\task-ledgers\\workspaces\\cleanup-2-4591bd1878\\events.jsonl",
+            "phase": "recovered",
+            "status": "review",
+            "terminal": true,
+            "completionAuthorized": false,
+            "ownerEpoch": "epoch-feba841691d5ef30",
+            "latestEventId": "e4db6314-2ea7-4bd4-b350-7973492de77a"
+          },
+          "bytes": "before\n",
+          "tempRemoved": true
+        },
+        "code": 0,
+        "signal": null,
+        "stderr": ""
+      },
+      "pass": true
+    },
+    {
+      "window": "cleanup",
+      "repeat": 3,
+      "workspace": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\cleanup-3",
+      "jjInit": {
+        "code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "killed": {
+        "message": {
+          "stage": "cleanup",
+          "extra": {
+            "cleanupPending": true
+          }
+        },
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": ""
+      },
+      "restarted": {
+        "message": {
+          "beforeRecovery": {
+            "bytes": "after\n",
+            "treeSha256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919",
+            "states": [
+              "committed"
+            ],
+            "ref": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\cleanup-3\\.openclaw\\journal\\kill-window#batch=kill-batch&entries=write-journal%3Akill-window%3A1",
+            "git": "",
+            "gitHead": "3c904c330dedb645b0214a3467e50fe6efd908a6",
+            "base": "57ff882d9f601562c9a8edb4c17b2f1cbb30791e",
+            "jj": {
+              "code": 0,
+              "stdout": "The working copy has no changes.\nWorking copy  (@) : xsrmvrnm 904970dd (empty) (no description set)\nParent commit (@-): tuyzqoks 3c904c33 main | candidate\n",
+              "stderr": "",
+              "operation": {
+                "code": 0,
+                "stdout": "c478713715960ae22e1e32e9f38246f180f9011647bcaad8c30cbb670f1172ad0aa4e49fb42fef4fb957d34badc64c6a29d09ddbca02998240acf05ed9f88c24\n",
+                "stderr": ""
+              }
+            },
+            "vgReceipt": {
+              "path": ".openclaw\\recovery\\vg-receipt.json",
+              "sha256": "7132e1372902dc221279fb4b96c7d1b70f593cab1f4263477e7af6265c99f86d",
+              "materialized": true,
+              "candidate": {
+                "commit_oid": "6e78b50b777bf89c5f61cda678834dcd5b29ea22",
+                "parents": [
+                  "57ff882d9f601562c9a8edb4c17b2f1cbb30791e",
+                  "3c904c330dedb645b0214a3467e50fe6efd908a6"
+                ],
+                "tree_oid": "a28da1b3fabdbc7ce7fc9a43482ca0920b427ba9"
+              }
+            },
+            "stsScope": "full",
+            "ledger": {
+              "schema": "CodingRecoveryTaskLedgerProjection/v1",
+              "rootId": "tlroot_ad73949b2a47ffb1",
+              "eventCount": 4,
+              "eventsPath": ".state\\task-ledgers\\workspaces\\cleanup-3-2e2758805b\\events.jsonl",
+              "phase": "cleanup",
+              "status": "doing",
+              "terminal": false,
+              "completionAuthorized": false,
+              "ownerEpoch": "epoch-09f981a9f944cd3e",
+              "latestEventId": "229bea4c-6dc8-4048-b1f1-ee6778cb36ac"
+            },
+            "durableProcess": {
+              "files": {
+                "intent": {
+                  "protocolVersion": 1,
+                  "runId": "cleanup-3",
+                  "nonce": "be534e1d-6b6a-450f-bbf6-56e502efba32",
+                  "commandDigest": "ce7195e3925c1cdd7fa26837249f70d1e4fad96c9be217317bb21361d176b5f5",
+                  "policyRevision": "tf0780-cross-process-recovery-v1",
+                  "ownerEpoch": "epoch-09f981a9f944cd3e",
+                  "createdAt": "2026-11-10T01:44:06.658Z"
+                },
+                "started": {
+                  "protocolVersion": 1,
+                  "runNonce": "be534e1d-6b6a-450f-bbf6-56e502efba32",
+                  "helperPid": 37472,
+                  "childPid": 37472,
+                  "startedAtMs": 1794275046667,
+                  "commandDigest": "ce7195e3925c1cdd7fa26837249f70d1e4fad96c9be217317bb21361d176b5f5"
+                }
+              },
+              "oldEpochAttempt": {
+                "runId": "cleanup-3",
+                "state": "lost",
+                "reason": "owner-epoch-mismatch"
+              },
+              "expectedEpochAttempt": {
+                "runId": "cleanup-3",
+                "state": "lost",
+                "reason": "started-helper-dead"
+              }
+            },
+            "tempRemoved": false
+          },
+          "first": {
+            "restored": [
+              "a.txt"
+            ],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\cleanup-3\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "second": {
+            "restored": [],
+            "errors": [],
+            "journalDir": "D:\\tmp\\tf0780-formal2-20261110\\recovery\\cleanup-3\\.openclaw\\journal\\kill-window",
+            "remainingEntries": 0
+          },
+          "oldEpochRejected": true,
+          "durableProcess": {
+            "files": {
+              "intent": {
+                "protocolVersion": 1,
+                "runId": "cleanup-3",
+                "nonce": "be534e1d-6b6a-450f-bbf6-56e502efba32",
+                "commandDigest": "ce7195e3925c1cdd7fa26837249f70d1e4fad96c9be217317bb21361d176b5f5",
+                "policyRevision": "tf0780-cross-process-recovery-v1",
+                "ownerEpoch": "epoch-09f981a9f944cd3e",
+                "createdAt": "2026-11-10T01:44:06.658Z"
+              },
+              "started": {
+                "protocolVersion": 1,
+                "runNonce": "be534e1d-6b6a-450f-bbf6-56e502efba32",
+                "helperPid": 37472,
+                "childPid": 37472,
+                "startedAtMs": 1794275046667,
+                "commandDigest": "ce7195e3925c1cdd7fa26837249f70d1e4fad96c9be217317bb21361d176b5f5"
+              }
+            },
+            "oldEpochAttempt": {
+              "runId": "cleanup-3",
+              "state": "lost",
+              "reason": "owner-epoch-mismatch"
+            },
+            "expectedEpochAttempt": {
+              "runId": "cleanup-3",
+              "state": "lost",
+              "reason": "started-helper-dead"
+            }
+          },
+          "finalLedger": {
+            "schema": "CodingRecoveryTaskLedgerProjection/v1",
+            "rootId": "tlroot_ad73949b2a47ffb1",
+            "eventCount": 5,
+            "eventsPath": ".state\\task-ledgers\\workspaces\\cleanup-3-2e2758805b\\events.jsonl",
+            "phase": "recovered",
+            "status": "review",
+            "terminal": true,
+            "completionAuthorized": false,
+            "ownerEpoch": "epoch-09f981a9f944cd3e",
+            "latestEventId": "878c1618-7e10-47ea-a3bc-7b51a38b7473"
+          },
+          "bytes": "before\n",
+          "tempRemoved": true
+        },
+        "code": 0,
+        "signal": null,
+        "stderr": ""
+      },
+      "pass": true
+    }
+  ],
+  "pass": true
+}
