@@ -474,14 +474,15 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
     for (const theme of ['light', 'dark'] as const) {
       await hostInvoke(app, 'settings', 'set', { key: 'theme', value: theme });
       await page.reload();
+      await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', project.generation, { timeout: 30_000 });
       for (const width of [1280, 960]) {
         expect(await setSessionChainViewport(app, { width, height: 800 })).toEqual({ width, height: 800 });
         await twoFrames();
         const sidebarToggle = page.getByTestId('sidebar-collapse-toggle');
         if (await sidebarToggle.getAttribute('aria-label') === 'Expand sidebar') await sidebarToggle.click();
+        await chooseProjection('project'); await exposeProjection('project');
         const toggle = page.getByTestId('session-family-toggle-' + project.sessionKey);
-        await expect(toggle).toBeVisible();
-        if (await toggle.getAttribute('aria-expanded') !== 'true') await toggle.click();
+        await expect(toggle).toContainText(String(children.length));
         const dom = await revealChildren();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
         const first = page.locator('.ws-family-row[data-lineage-depth="1"]').first();
