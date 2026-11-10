@@ -342,7 +342,16 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
       await page.reload();
       // The warmup must include this run's persisted user turn. Otherwise an old
       // history read can update the row timestamp inside the token measurement.
-      await expect(page.getByText('FAMILY-HOLD ' + identity, { exact: true })).toBeVisible({ timeout: 30_000 });
+      const currentInput = page.getByText('FAMILY-HOLD ' + identity, { exact: true });
+      const startupError = page.getByTestId('chat-startup-error');
+      await expect(currentInput.or(startupError)).toBeVisible({ timeout: 30_000 });
+      const historyRecovery = [];
+      if (await startupError.isVisible()) {
+        historyRecovery.push({ at: Date.now(), error: await startupError.innerText(), via: 'existing retry-loading action' });
+        await page.screenshot({ path: testInfo.outputPath(`history-retry-${children.length}-${view}-${eventCount}.png`) });
+        await page.getByTestId('chat-startup-retry').click();
+      }
+      await expect(currentInput).toBeVisible({ timeout: 30_000 });
       await chooseProjection(view); await exposeProjection(view); await revealChildren();
       const actualOwner = await hostInvoke<{ session: { sessionId: string; hasActiveRun: boolean } }>(app, 'gateway', 'rpc', {
         method: 'sessions.describe', params: { key: project.sessionKey }, timeoutMs: 30_000,
@@ -379,7 +388,7 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
       const after = await renderer();
       const dom = (await readRows()).filter((row) => children.includes(row.key));
       expect(dom.map((row) => row.key).sort()).toEqual([...children].sort());
-      return { projection: view, sourceIdentity, eventCount, warmupEvents: 1, settledSamples, before, after,
+      return { projection: view, sourceIdentity, eventCount, warmupEvents: 1, settledSamples, historyRecovery, before, after,
         committedRowWork: committedWork(after) - committedWork(before), sequenceSamples, dom, receipt, actualOwner,
         streamInput: 'agent event replay during an actual live Gateway model request' };
     };
