@@ -335,6 +335,9 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
       if (!receipt.success || !runId) throw new Error('Live family probe run was not acknowledged');
       await expect.poll(() => held, { timeout: 30_000 }).toBe(true);
       await page.reload();
+      // The warmup must include this run's persisted user turn. Otherwise an old
+      // history read can update the row timestamp inside the token measurement.
+      await expect(page.getByText('FAMILY-HOLD ' + identity, { exact: true })).toBeVisible({ timeout: 30_000 });
       await chooseProjection(view); await exposeProjection(view); await revealChildren();
       const actualOwner = await hostInvoke<{ session: { sessionId: string; hasActiveRun: boolean } }>(app, 'gateway', 'rpc', {
         method: 'sessions.describe', params: { key: project.sessionKey }, timeoutMs: 30_000,
