@@ -17,11 +17,14 @@ ownedPaths: &paths
   - openclaw_runtime/src/agents/execution-task-barrier.ts
   - openclaw_runtime/src/agents/execution-domain.ts
   - openclaw_runtime/src/agents/worktree-service.ts
+  - openclaw_runtime/src/agents/worktree-writer.ts
+  - openclaw_runtime/src/agents/worktree-merge-files.ts
   - openclaw_runtime/src/agents/tools/persistent-task-tool.ts
   - tests/unit/task-artifact-retention.test.ts
   - tests/unit/task-worktree-retention.test.ts
   - tests/unit/git-api.test.ts
   - tests/unit/ui-worktree-cleanup-conservative.test.ts
+  - tests/unit/worktree-reclamation-preservation.test.ts
   - tests/unit/checkout-writer-ownership.test.ts
   - tests/unit/execution-migration.test.ts
   - tests/unit/fixtures/task-retention-worker.mts
@@ -31,10 +34,12 @@ ownedPaths: &paths
   - tests/e2e/chat-session-fork.spec.ts
   - tests/unit/chat-input.test.tsx
   - harness/specs/tasks/unified-execution-traceability.md
+  - harness/specs/tasks/r4-reclamation-preservation-increment.md
   - harness/specs/rules/durable-task-system-boundary.md
   - harness/specs/rules/session-derivation-ui-contract.md
   - harness/specs/fixtures/unified-execution-traceability/**
   - docs/modules/multi-agent-and-tasks.md
+  - docs/modules/workspace-and-coding.md
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md
@@ -65,6 +70,7 @@ acceptance:
   - Four locales and Electron evidence distinguish source builds, installed packages and owner effects from controlled fixtures; an independent agent reads the final artifacts.
 requiredTests:
   - pnpm exec vitest run tests/unit/task-artifact-retention.test.ts tests/unit/task-worktree-retention.test.ts tests/unit/checkout-writer-ownership.test.ts tests/unit/execution-domain-registry.test.ts --maxWorkers=1 --no-file-parallelism
+  - pnpm exec vitest run tests/unit/ui-worktree-cleanup-conservative.test.ts tests/unit/worktree-reclamation-preservation.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm run typecheck
   - pnpm run typecheck:test
   - pnpm run contract:check

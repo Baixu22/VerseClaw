@@ -1,7 +1,7 @@
 import { existsSync, statSync } from "node:fs";
 import type { WorkspaceProfile } from '../../shared/types/workspace';
 import { canonicalWorktreePath, findManagedWorktreeByRoot, worktreeNativeIdentity } from '../../openclaw_runtime/src/agents/worktree-registry';
-import { assertCleanupCommitRetained } from '../../openclaw_runtime/src/agents/worktree-service';
+import { assertCleanupCommitRetained, assertWorktreeIndexVisible } from '../../openclaw_runtime/src/agents/worktree-service';
 import { checkoutWriterSnapshot } from '../../openclaw_runtime/src/agents/worktree-writer';
 import { resolveExecutionDomain } from '../../openclaw_runtime/src/agents/execution-domain';
 import { TaskSystemStore } from "../../shared/task-system/store";
@@ -45,6 +45,8 @@ export function inspectUiWorktreeRemoval(repositoryRoot: string, target: string,
     try { statSync(domain.authority.database); }
     catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') present = false; else throw error; }
     if (!present) {
+      try { assertWorktreeIndexVisible(root); }
+      catch (error) { return deny('UI_CLEANUP_GIT_INDEX', error instanceof Error ? error.message : String(error), 'Git index / WorktreeService.cleanup'); }
       try { assertCleanupCommitRetained({ backend: "git", root, baseRoot: repositoryRoot }); }
       catch (error) { return deny('UI_CLEANUP_COMMIT_RETENTION', error instanceof Error ? error.message : String(error), 'Git refs / WorktreeService.cleanup'); }
       return { blocked: false, identity };

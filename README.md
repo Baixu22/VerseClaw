@@ -301,6 +301,8 @@ Task Ledger → Persistent tasks saves objectives, constraints and acceptance ch
 
 Managed worktree cleanup preserves historical task artifacts under verified Git references and records the retained bytes in the original task history. Agents can trace acceptance and read those artifacts after the checkout is removed. Active tasks, unresolved effects and artifacts without a matching retained snapshot keep the checkout available.
 
+Cleanup retains ignored files, hidden Git index edits, and in-process files or permissions without a verified retained copy. Git and Storage deletion entries use the same hidden-index check; a confirmed native dirty-file refusal keeps the checkout retryable, while an unknown deletion result retains its execution reservation.
+
 Search and filter the task list, then load further pages. Agents can suggest related tasks and decompose a goal into dependent tasks while retaining the parent goal and constraints. Cancelling a plan waits for in-flight effects to settle. Acceptance and recovery read receipts from the existing runtime owners.
 
 Conversation tasks are managed by the agent. Identified work appears in one task header above the conversation, with verified step progress and a hide/reopen control. The plain canvas keeps the input clear; a small changed-file entry appears below the composer only when files change. Branches and worktree controls remain in its details.
