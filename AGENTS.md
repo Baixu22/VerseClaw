@@ -213,3 +213,14 @@ Stop and ask only for authority the agent does not have: publishing/deploying or
 > **2026-09-27 amendment — see §Human-in-the-loop policy at the top of this file.** `claiming real-human evidence` above still means *never fabricate a human*; but *requiring* human evidence is no longer a valid blocker. Where a node, spec, or runbook expects a human step or human data, build the automated agent-driven equivalent, label it as such, and close.
 
 Full rule: `harness/specs/rules/task-forest-autoclose-and-roles.md`.
+
+## 默认 embedding 服务（所有者指定，2026-11-10）
+
+后续远端 embedding 默认使用 SiliconFlow 的 `Qwen/Qwen3-VL-Embedding-8B`。
+
+- 用户级环境变量：`SILICONFLOW_API_KEY`、`SILICONFLOW_BASE_URL`、`SILICONFLOW_EMBEDDING_MODEL`。
+- `SILICONFLOW_BASE_URL=https://api.siliconflow.cn/v1`，请求路径为 `/embeddings`。
+- `SILICONFLOW_EMBEDDING_MODEL=Qwen/Qwen3-VL-Embedding-8B`。
+- 该模型与 `Qwen/Qwen3-Embedding-8B` 是不同模型；输入格式和 tokenizer 单独绑定。2026-11-10 实测文本数组返回 4096 维向量。
+- 凭据从本地环境变量读取；文档、日志、测试报告和提交中只记录变量名。
+- 更换模型时核对实际维度及 query/document 输入契约，再建立对应的 embedding space。
