@@ -1,0 +1,420 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-reclamation-evidence-reader",
+  "candidate": {
+    "commit": "5540d3f2ebe15bf205645a0d08211ea9793b9c14",
+    "tree": "ef882b537b39e79dd11f55cadacb3eebf9abe702",
+    "dirty": false
+  },
+  "base": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+  "sourceManifestSha256": "b03465c50e7605ba9e0d24e2593f2928c8c8e11e0a39a0095b70ff3ae688ebd4",
+  "scope": "independent-reclamation-preservation",
+  "wholeR4NodeStatus": "in_progress",
+  "suites": [
+    {
+      "file": "C:/Users/27933/.codex/worktrees/autonomy-r4-integration/ClawX/tests/unit/checkout-writer-ownership.test.ts",
+      "cases": [
+        {
+          "name": "checkout writer resource owner shares the same execution owner when the source runtime isolates its session state",
+          "status": "passed",
+          "durationMs": 554.0416
+        },
+        {
+          "name": "checkout writer resource owner uses the same base writer for ordinary effects and maintenance",
+          "status": "passed",
+          "durationMs": 113.09529999999995
+        },
+        {
+          "name": "checkout writer resource owner resolves managed roots back to their persistent generation after restart",
+          "status": "passed",
+          "durationMs": 142.90539999999964
+        },
+        {
+          "name": "checkout writer resource owner does not reinterpret a failed managed registration as an independent checkout",
+          "status": "passed",
+          "durationMs": 92.49710000000005
+        },
+        {
+          "name": "checkout writer resource owner rotates a drained writer without exposing the checkout to a competing task",
+          "status": "passed",
+          "durationMs": 209.92279999999982
+        },
+        {
+          "name": "checkout writer resource owner retains captured task association in the resource identity across reopen",
+          "status": "passed",
+          "durationMs": 147.27100000000019
+        },
+        {
+          "name": "checkout writer resource owner excludes a different writer and preserves exact request/owner/epoch identity",
+          "status": "passed",
+          "durationMs": 186.67999999999984
+        },
+        {
+          "name": "checkout writer resource owner normalizes service aliases and releases only unused claims when multi-root admission fails",
+          "status": "passed",
+          "durationMs": 230.44490000000042
+        },
+        {
+          "name": "checkout writer resource owner persists in-flight and unknown effects across restart until an explicit owner receipt settles them",
+          "status": "passed",
+          "durationMs": 230.72520000000077
+        },
+        {
+          "name": "checkout writer resource owner replays a completed receipt without reauthorizing its effect and rejects operation payload drift",
+          "status": "passed",
+          "durationMs": 122.73900000000049
+        },
+        {
+          "name": "checkout writer resource owner closes expired and draining admission without transferring ownership",
+          "status": "passed",
+          "durationMs": 158.79200000000037
+        },
+        {
+          "name": "checkout writer resource owner rejects a replaced checkout and keeps epochs monotonic after managed recreation",
+          "status": "passed",
+          "durationMs": 161.1848
+        },
+        {
+          "name": "checkout writer resource owner gates real service merge, freeze and cleanup before filesystem effects",
+          "status": "passed",
+          "durationMs": 221.76160000000073
+        },
+        {
+          "name": "checkout writer resource owner retains failed maintenance and does not free or replay an unknown filesystem effect",
+          "status": "passed",
+          "durationMs": 141.08789999999954
+        },
+        {
+          "name": "checkout writer resource owner finishes only its interrupted cleanup after native removal and permits a new incarnation",
+          "status": "passed",
+          "durationMs": 203.02289999999994
+        },
+        {
+          "name": "checkout writer resource owner serializes competing processes while different native checkouts keep independent writers",
+          "status": "passed",
+          "durationMs": 3723.792200000001
+        },
+        {
+          "name": "checkout writer resource owner retains a crashed native writer and rejects a new process instead of stealing its lease",
+          "status": "passed",
+          "durationMs": 1147.9696000000004
+        },
+        {
+          "name": "checkout writer resource owner recovers an exited maintenance reservation that never admitted a filesystem operation",
+          "status": "passed",
+          "durationMs": 1181.1970000000001
+        },
+        {
+          "name": "checkout writer resource owner checks managed Git native identity in addition to directory instance",
+          "status": "passed",
+          "durationMs": 1650.8660999999993
+        },
+        {
+          "name": "U5 committed checkout retention retains an unpushed local branch and recreates its checkout after cleanup",
+          "status": "passed",
+          "durationMs": 3931.7178000000004
+        },
+        {
+          "name": "U5 committed checkout retention refuses a detached exclusive commit across owner reopen and lifecycle cleanup then allows a retained branch",
+          "status": "passed",
+          "durationMs": 7013.418699999998
+        },
+        {
+          "name": "U5 committed checkout retention allows detached cleanup when main retains the commit",
+          "status": "passed",
+          "durationMs": 4405.7514999999985
+        },
+        {
+          "name": "U5 committed checkout retention allows detached cleanup when remote-tracking retains the commit",
+          "status": "passed",
+          "durationMs": 4342.881899999997
+        },
+        {
+          "name": "U5 committed checkout retention allows detached cleanup when shared-ref retains the commit",
+          "status": "passed",
+          "durationMs": 4349.650999999998
+        },
+        {
+          "name": "U5 committed checkout retention does not treat a worktree-local ref as persistent retention",
+          "status": "passed",
+          "durationMs": 3384.7618
+        },
+        {
+          "name": "U5 committed checkout retention keeps the dirty-content guard ahead of cleanup even with a retained commit",
+          "status": "passed",
+          "durationMs": 2618.9490000000005
+        },
+        {
+          "name": "U5 committed checkout retention cleans an untouched detached checkout retained by main",
+          "status": "passed",
+          "durationMs": 3664.2377999999953
+        }
+      ]
+    },
+    {
+      "file": "C:/Users/27933/.codex/worktrees/autonomy-r4-integration/ClawX/tests/unit/task-artifact-retention.test.ts",
+      "cases": [
+        {
+          "name": "task artifact Git retention creates and reads retention refs when native repository paths exceed legacy Windows limits",
+          "status": "passed",
+          "durationMs": 2841.4997999999996
+        },
+        {
+          "name": "task artifact Git retention uses the same shared-ref classification as checkout cleanup (refs/agent-retention/proof)",
+          "status": "passed",
+          "durationMs": 3303.2684
+        },
+        {
+          "name": "task artifact Git retention uses the same shared-ref classification as checkout cleanup (refs/worktree/temporary)",
+          "status": "passed",
+          "durationMs": 1302.6066
+        },
+        {
+          "name": "task artifact Git retention resolves canonical lowercase Task paths to historical Git spelling (removed=false)",
+          "status": "passed",
+          "durationMs": 2346.8149000000003
+        },
+        {
+          "name": "task artifact Git retention resolves canonical lowercase Task paths to historical Git spelling (removed=true)",
+          "status": "passed",
+          "durationMs": 2675.4696000000004
+        },
+        {
+          "name": "task artifact Git retention retains a binary artifact larger than the default child-process buffer",
+          "status": "passed",
+          "durationMs": 7067.5151000000005
+        },
+        {
+          "name": "task artifact Git retention retains an older binary blob when the live file already contains different bytes",
+          "status": "passed",
+          "durationMs": 2842.917700000002
+        },
+        {
+          "name": "task artifact Git retention retains historical bytes when the live artifact has already been deleted",
+          "status": "passed",
+          "durationMs": 2436.0472999999984
+        },
+        {
+          "name": "task artifact Git retention reads through the canonical common-dir after a linked checkout is removed",
+          "status": "passed",
+          "durationMs": 2763.358
+        },
+        {
+          "name": "task artifact Git retention reuses the existing ref before scanning identical bytes at a newer commit",
+          "status": "passed",
+          "durationMs": 3626.8924000000006
+        },
+        {
+          "name": "task artifact Git retention rejects a missing ref and a retention ref moved to another commit",
+          "status": "passed",
+          "durationMs": 4103.619599999998
+        },
+        {
+          "name": "task artifact Git retention does not overwrite a conflicting existing retention ref",
+          "status": "passed",
+          "durationMs": 2849.918399999995
+        },
+        {
+          "name": "task artifact Git retention rejects corrupted receipt metadata, blob identity, and source hash mismatches",
+          "status": "passed",
+          "durationMs": 2871.155200000001
+        },
+        {
+          "name": "task artifact Git retention ignores a misbound core.worktree and preserves the live native bytes and config",
+          "status": "passed",
+          "durationMs": 2308.9671000000017
+        },
+        {
+          "name": "task artifact Git retention rejects paths outside the worktree and a different source repository",
+          "status": "passed",
+          "durationMs": 1282.1473000000042
+        },
+        {
+          "name": "task artifact Git retention detects repository replacement at the retained common-dir",
+          "status": "passed",
+          "durationMs": 2079.476499999997
+        },
+        {
+          "name": "task artifact Git retention bounds lookup to 256 ref-tip and historical commits",
+          "status": "passed",
+          "durationMs": 1301.4290000000037
+        }
+      ]
+    },
+    {
+      "file": "C:/Users/27933/.codex/worktrees/autonomy-r4-integration/ClawX/tests/unit/task-worktree-retention.test.ts",
+      "cases": [
+        {
+          "name": "Task evidence retention and original checkout cleanup retains exact old bytes through newer HEAD, deletion, owner reopen and repeated cleanup",
+          "status": "passed",
+          "durationMs": 9709.949799999999
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup retains overwritten legacy checkpoint paths using their historical writer after handoff",
+          "status": "passed",
+          "durationMs": 5667.695300000003
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup keeps a tree when a persisted retention ref is lost and never substitutes another receipt",
+          "status": "passed",
+          "durationMs": 3495.267200000002
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup preserves an external edit inside the declared write set (before-cleanup)",
+          "status": "passed",
+          "durationMs": 5331.1224
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup preserves an external edit inside the declared write set (after-preparation)",
+          "status": "passed",
+          "durationMs": 6529.2052
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup reads cleanup history and retained binary pages through the production task tool",
+          "status": "passed",
+          "durationMs": 8969.906299999995
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup refuses active claims and pending effects before preparing historical receipts",
+          "status": "passed",
+          "durationMs": 1278.0201000000015
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup rejects stale access after the same pathname is replaced",
+          "status": "passed",
+          "durationMs": 556.0288
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup refuses shared core.worktree redirection at admission and cleanup",
+          "status": "passed",
+          "durationMs": 1854.9150000000009
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup uses the registered Task authority while retaining bytes in the source clone",
+          "status": "passed",
+          "durationMs": 7744.608700000004
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup prevents authority reassignment with an external linked checkout reference (done=false)",
+          "status": "passed",
+          "durationMs": 1377.4017000000022
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup prevents authority reassignment with an external linked checkout reference (done=true)",
+          "status": "passed",
+          "durationMs": 1549.972099999999
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup reconciles a real process exit after removal using committed retention receipts",
+          "status": "passed",
+          "durationMs": 9918.304699999993
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup serializes cleanup against a competing process first-open",
+          "status": "passed",
+          "durationMs": 4556.058699999994
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup serializes cleanup against a competing process checkpoint",
+          "status": "passed",
+          "durationMs": 4512.9591999999975
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup serializes cleanup against a competing process claim",
+          "status": "passed",
+          "durationMs": 4818.3128
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup serializes cleanup against a competing process register",
+          "status": "passed",
+          "durationMs": 5737.516499999998
+        }
+      ]
+    },
+    {
+      "file": "C:/Users/27933/.codex/worktrees/autonomy-r4-integration/ClawX/tests/unit/worktree-reclamation-preservation.test.ts",
+      "cases": [
+        {
+          "name": "R4 independent reclamation preservation retains an undeclared inprocess file observed on disk",
+          "status": "passed",
+          "durationMs": 596.2622
+        },
+        {
+          "name": "R4 independent reclamation preservation retains declared inprocess bytes until an exact copy exists in the retained target",
+          "status": "passed",
+          "durationMs": 217.94779999999992
+        },
+        {
+          "name": "R4 independent reclamation preservation retains permission-only inprocess changes",
+          "status": "passed",
+          "durationMs": 146.57169999999996
+        },
+        {
+          "name": "R4 independent reclamation preservation retains ignored Git content even when its path was declared",
+          "status": "passed",
+          "durationMs": 1393.4744
+        },
+        {
+          "name": "R4 independent reclamation preservation rechecks ignored content after admission and settles a known refusal as not-applied",
+          "status": "passed",
+          "durationMs": 2049.1406000000006
+        },
+        {
+          "name": "R4 independent reclamation preservation preserves a path replacement introduced after admission",
+          "status": "passed",
+          "durationMs": 151.78770000000077
+        },
+        {
+          "name": "R4 independent reclamation preservation settles an actual native dirty refusal after the last inventory check as not-applied",
+          "status": "passed",
+          "durationMs": 2737.8498
+        },
+        {
+          "name": "R4 independent reclamation preservation keeps non-dirty native failures unknown with their writer occupied",
+          "status": "passed",
+          "durationMs": 2605.0643
+        },
+        {
+          "name": "R4 independent reclamation preservation uses shared Git refs for committed executable metadata while retaining uncommitted modes",
+          "status": "passed",
+          "durationMs": 3296.6237999999994
+        },
+        {
+          "name": "R4 independent reclamation preservation retains unchanged seeded bytes when the target copy is removed",
+          "status": "passed",
+          "durationMs": 127.09000000000015
+        },
+        {
+          "name": "R4 independent reclamation preservation retains unchanged seeded bytes when the target copy is replaced",
+          "status": "passed",
+          "durationMs": 99.55340000000069
+        },
+        {
+          "name": "R4 independent reclamation preservation retains actual Git bytes hidden by --assume-unchanged",
+          "status": "passed",
+          "durationMs": 1536.509
+        },
+        {
+          "name": "R4 independent reclamation preservation retains actual Git bytes hidden by --skip-worktree",
+          "status": "passed",
+          "durationMs": 1545.8615999999984
+        },
+        {
+          "name": "R4 independent reclamation preservation uses the managed root baseline instead of unrelated repository permissions (changed=false)",
+          "status": "passed",
+          "durationMs": 135.9529999999977
+        },
+        {
+          "name": "R4 independent reclamation preservation uses the managed root baseline instead of unrelated repository permissions (changed=true)",
+          "status": "passed",
+          "durationMs": 152.52219999999943
+        },
+        {
+          "name": "R4 independent reclamation preservation keeps the original no-force Git dirty refusal for declared edits",
+          "status": "passed",
+          "durationMs": 1366.416799999999
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,256 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-reclamation-evidence-reader",
+  "candidate": {
+    "commit": "5540d3f2ebe15bf205645a0d08211ea9793b9c14",
+    "tree": "ef882b537b39e79dd11f55cadacb3eebf9abe702",
+    "dirty": false
+  },
+  "base": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+  "sourceManifestSha256": "b03465c50e7605ba9e0d24e2593f2928c8c8e11e0a39a0095b70ff3ae688ebd4",
+  "scope": "independent-reclamation-preservation",
+  "wholeR4NodeStatus": "in_progress",
+  "checks": {
+    "driven_by": "agent",
+    "actor": "codex-r4-reclamation-independent-checks",
+    "candidate": {
+      "commit": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+      "tree": "65392fbcc031da0cb1aecc67b8d7c2bedfc0b830",
+      "dirty": true
+    },
+    "sourceManifest": "D:/tmp/autonomy-relay-20261109/r4/reclamation-increment/source-manifest-v5.json",
+    "sourceManifestSha256": "b03465c50e7605ba9e0d24e2593f2928c8c8e11e0a39a0095b70ff3ae688ebd4",
+    "records": [
+      {
+        "name": "regressions",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/worktree-reclamation-preservation.test.ts",
+          "tests/unit/task-worktree-retention.test.ts",
+          "tests/unit/task-artifact-retention.test.ts",
+          "tests/unit/checkout-writer-ownership.test.ts",
+          "--maxWorkers=1",
+          "--reporter=default",
+          "--reporter=json",
+          "--outputFile.json=D:/tmp/autonomy-relay-20261109/r4/reclamation-increment/checks-v4/regressions.json"
+        ],
+        "cwd": "C:/Users/27933/.codex/worktrees/autonomy-r4-integration/ClawX",
+        "pid": 11572,
+        "startedAt": "2026-11-10T17:29:41.036Z",
+        "endedAt": "2026-11-10T17:33:08.243Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "lint",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/eslint/bin/eslint.js",
+          "openclaw_runtime/src/agents/worktree-service.ts",
+          "openclaw_runtime/src/agents/worktree-writer.ts",
+          "openclaw_runtime/src/agents/worktree-merge-files.ts",
+          "tests/unit/worktree-reclamation-preservation.test.ts",
+          "--max-warnings",
+          "0"
+        ],
+        "cwd": "C:/Users/27933/.codex/worktrees/autonomy-r4-integration/ClawX",
+        "pid": 27836,
+        "startedAt": "2026-11-10T17:33:08.291Z",
+        "endedAt": "2026-11-10T17:33:11.383Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "ext-bridge",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "scripts/generate-ext-bridge.mjs"
+        ],
+        "cwd": "C:/Users/27933/.codex/worktrees/autonomy-r4-integration/ClawX",
+        "pid": 29196,
+        "startedAt": "2026-11-10T17:33:11.403Z",
+        "endedAt": "2026-11-10T17:33:11.483Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "node-types",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/@typescript/native-preview/bin/tsgo.js",
+          "--noEmit",
+          "-p",
+          "tsconfig.node.json",
+          "--composite",
+          "false"
+        ],
+        "cwd": "C:/Users/27933/.codex/worktrees/autonomy-r4-integration/ClawX",
+        "pid": 23808,
+        "startedAt": "2026-11-10T17:33:11.504Z",
+        "endedAt": "2026-11-10T17:33:31.741Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "test-types",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/@typescript/native-preview/bin/tsgo.js",
+          "--noEmit",
+          "-p",
+          "tsconfig.test.json",
+          "--composite",
+          "false"
+        ],
+        "cwd": "C:/Users/27933/.codex/worktrees/autonomy-r4-integration/ClawX",
+        "pid": 46088,
+        "startedAt": "2026-11-10T17:33:31.772Z",
+        "endedAt": "2026-11-10T17:34:06.303Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "harness",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "harness/src/cli.mjs",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/r4-reclamation-preservation-increment.md"
+        ],
+        "cwd": "C:/Users/27933/.codex/worktrees/autonomy-r4-integration/ClawX",
+        "pid": 17812,
+        "startedAt": "2026-11-10T17:34:06.330Z",
+        "endedAt": "2026-11-10T17:34:07.350Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "harness-dry-run",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "harness/src/cli.mjs",
+          "run",
+          "--spec",
+          "harness/specs/tasks/r4-reclamation-preservation-increment.md",
+          "--dry-run"
+        ],
+        "cwd": "C:/Users/27933/.codex/worktrees/autonomy-r4-integration/ClawX",
+        "pid": 20184,
+        "startedAt": "2026-11-10T17:34:07.371Z",
+        "endedAt": "2026-11-10T17:34:08.115Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "comms-replay",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "run",
+          "comms:replay"
+        ],
+        "cwd": "C:/Users/27933/.codex/worktrees/autonomy-r4-integration/ClawX",
+        "pid": 45260,
+        "startedAt": "2026-11-10T17:34:08.132Z",
+        "endedAt": "2026-11-10T17:34:09.228Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "comms-compare",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "run",
+          "comms:compare"
+        ],
+        "cwd": "C:/Users/27933/.codex/worktrees/autonomy-r4-integration/ClawX",
+        "pid": 46172,
+        "startedAt": "2026-11-10T17:34:09.245Z",
+        "endedAt": "2026-11-10T17:34:10.215Z",
+        "exitCode": 0,
+        "signal": null
+      }
+    ],
+    "sourceInputsUnchanged": true,
+    "success": true,
+    "tests": {
+      "passed": 77,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "tests": {
+    "passed": 77,
+    "failed": 0,
+    "skipped": 0,
+    "sha256": "a98d85c3171ee06d8203ec98b1f6cb80f34fc273e7d9647449da7a47c57e2d05"
+  },
+  "clean": {
+    "driven_by": "agent",
+    "actor": "codex-r4-committed-reclamation-repeat",
+    "candidate": {
+      "commit": "5540d3f2ebe15bf205645a0d08211ea9793b9c14",
+      "tree": "ef882b537b39e79dd11f55cadacb3eebf9abe702",
+      "dirty": false
+    },
+    "sourceManifest": null,
+    "sourceManifestSha256": null,
+    "records": [
+      {
+        "name": "regressions",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/worktree-reclamation-preservation.test.ts",
+          "--maxWorkers=1",
+          "--reporter=default",
+          "--reporter=json",
+          "--outputFile.json=D:/tmp/autonomy-relay-20261109/r4/reclamation-increment/clean-validation/regressions.json"
+        ],
+        "cwd": "C:/Users/27933/.codex/worktrees/autonomy-r4-integration/ClawX",
+        "pid": 42344,
+        "startedAt": "2026-11-10T17:36:57.035Z",
+        "endedAt": "2026-11-10T17:37:14.130Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "harness",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "harness/src/cli.mjs",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/r4-reclamation-preservation-increment.md"
+        ],
+        "cwd": "C:/Users/27933/.codex/worktrees/autonomy-r4-integration/ClawX",
+        "pid": 10452,
+        "startedAt": "2026-11-10T17:37:14.154Z",
+        "endedAt": "2026-11-10T17:37:14.831Z",
+        "exitCode": 0,
+        "signal": null
+      }
+    ],
+    "sourceInputsUnchanged": true,
+    "success": true,
+    "tests": {
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "cleanTests": {
+    "passed": 16,
+    "failed": 0,
+    "skipped": 0,
+    "sha256": "ec919210575586b4f044a62622f916faa7221be5a6a6da6af146bb6e627ceb40"
+  },
+  "platform": "Windows source checkout",
+  "dependencies": "existing dependency junctions reused",
+  "installedPackageValidation": false
+}

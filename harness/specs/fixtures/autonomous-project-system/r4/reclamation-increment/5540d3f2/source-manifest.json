@@ -1,0 +1,62 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-reclamation-evidence-reader",
+  "candidate": {
+    "commit": "5540d3f2ebe15bf205645a0d08211ea9793b9c14",
+    "tree": "ef882b537b39e79dd11f55cadacb3eebf9abe702",
+    "dirty": false
+  },
+  "base": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+  "sourceManifestSha256": "b03465c50e7605ba9e0d24e2593f2928c8c8e11e0a39a0095b70ff3ae688ebd4",
+  "scope": "independent-reclamation-preservation",
+  "wholeR4NodeStatus": "in_progress",
+  "source": {
+    "driven_by": "agent",
+    "actor": "codex-r4-reclamation-source-v5",
+    "baseCommit": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
+    "sourceRoot": "C:/Users/27933/.codex/worktrees/autonomy-r4-integration/ClawX",
+    "files": [
+      {
+        "path": "docs/modules/workspace-and-coding.md",
+        "sha256": "f9f2141b326ee3545ad468e39c2782cfdfc877b276ff501b62be5802576db3c2",
+        "bytes": 15076
+      },
+      {
+        "path": "harness/specs/tasks/r4-reclamation-preservation-increment.md",
+        "sha256": "f21b59f6c466847391bdc9ab3fdccab5292ea25c623531cdc7b2480f390c6643",
+        "bytes": 2155
+      },
+      {
+        "path": "openclaw_runtime/src/agents/worktree-merge-files.ts",
+        "sha256": "5cb0ebb1126f82a9e07fab6ce881b393249ab2ecfdc8418c55d8a42f3552425f",
+        "bytes": 3304
+      },
+      {
+        "path": "openclaw_runtime/src/agents/worktree-service.ts",
+        "sha256": "33ecacaf678a6e7e67d88a8b9dc9f39ddf76edba923601c5119e0bff6c958a17",
+        "bytes": 47785
+      },
+      {
+        "path": "openclaw_runtime/src/agents/worktree-writer.ts",
+        "sha256": "92b1d5c23437442547b1c9b3fb28476ddce50d1e18cd9822f14b3792ecd59923",
+        "bytes": 19750
+      },
+      {
+        "path": "tests/unit/checkout-writer-ownership.test.ts",
+        "sha256": "b479e3ce923a7cfbf9a245283a4bb6baeead063d6b4438e9efffe02580156d4e",
+        "bytes": 27752
+      },
+      {
+        "path": "tests/unit/task-worktree-retention.test.ts",
+        "sha256": "501eb32b8be878c4e1e81783ac391517bab7b8bd6d98eec0a42293cb381db66e",
+        "bytes": 18550
+      },
+      {
+        "path": "tests/unit/worktree-reclamation-preservation.test.ts",
+        "sha256": "f9358f1f7f25ab856fb9c49eb53deea0dfb2d2bb12a157b2cf7c5408c66d97f4",
+        "bytes": 12671
+      }
+    ],
+    "at": "2026-11-10T17:24:26.109Z"
+  }
+}
