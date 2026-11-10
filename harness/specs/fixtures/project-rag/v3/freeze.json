@@ -1,0 +1,448 @@
+{
+  "schema": "ProjectRagCorpusFreeze/v1",
+  "corpusId": "project-rag-v3",
+  "actor": "codex/project-rag-corpus-author",
+  "driven_by": "agent",
+  "frozenAt": "2026-11-10T04:49:07.401Z",
+  "sourceRevision": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "digest": "sha256:705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "bytes": 8
+    },
+    {
+      "path": "owner/vault/concepts/owner-version-1.md",
+      "digest": "sha256:8000dfb0c37e3d8bd389b78c324e0777432f003cf2b747edbdcba733e6442c18",
+      "bytes": 14752
+    },
+    {
+      "path": "programs/t-code-owner-version.ts",
+      "digest": "sha256:080913ae11c8934660c22e74dc7e24adf250b18e58a36055c49e9da4d4a6fb94",
+      "bytes": 14271
+    },
+    {
+      "path": "owner/vault/concepts/owner-version-2.md",
+      "digest": "sha256:7e265844a91b4a6ccc69d5110ed6b21c09e2b3361e92bfdbfc49c20370687a17",
+      "bytes": 642
+    },
+    {
+      "path": "owner/vault/concepts/wiki-read-policy-1.md",
+      "digest": "sha256:a91b3e2edb0438fa8dece7b0379732de02a6592135957f85bef6b194a2d114cf",
+      "bytes": 10198
+    },
+    {
+      "path": "programs/t-code-wiki-read-policy.ts",
+      "digest": "sha256:775a7cdb7c1099f32a9a5009e193ebcde8777fd41f8f420c191edafb08d2be9b",
+      "bytes": 9718
+    },
+    {
+      "path": "owner/vault/concepts/wiki-read-policy-2.md",
+      "digest": "sha256:a809d98525f184b9e36a8a8334fb3baf6abda95533b686f27e179dd0d740dd6a",
+      "bytes": 54937
+    },
+    {
+      "path": "owner/vault/concepts/host-knowledge-scope-1.md",
+      "digest": "sha256:27a6970aa420e16c475f8d1cf718457d2160aa92743ac72602e730e242d66540",
+      "bytes": 4847
+    },
+    {
+      "path": "programs/t-code-host-knowledge-scope.ts",
+      "digest": "sha256:f336898b938232dd7bd31e117a28b238f9e269b87db07f722dfa516bc722efa4",
+      "bytes": 4398
+    },
+    {
+      "path": "owner/vault/concepts/host-knowledge-scope-2.md",
+      "digest": "sha256:5265c13dea7f60e09fbd4779eca234db5a52c0e240bdd6d567619ce1981e631f",
+      "bytes": 34946
+    },
+    {
+      "path": "owner/vault/concepts/bounded-page-read-1.md",
+      "digest": "sha256:254236d1968db256e6ffbcebe24ff023e78f6eef7f9076642afb89ae907ccefa",
+      "bytes": 18891
+    },
+    {
+      "path": "programs/t-code-bounded-page-read.ts",
+      "digest": "sha256:f6b7cd32837000828152a30297a1251967003f86c8c1a17d36e65169ce17bea6",
+      "bytes": 18427
+    },
+    {
+      "path": "owner/vault/concepts/bounded-page-read-2.md",
+      "digest": "sha256:b3ba41fd910fbcbe77e72321b96e1eb70c6dae97c1cf7edd609114da06808463",
+      "bytes": 7444
+    },
+    {
+      "path": "owner/vault/concepts/source-set-limit-1.md",
+      "digest": "sha256:7f453ee7193e7c389da71ab7d8506bbc05284f096eff771c38958b295a485523",
+      "bytes": 37449
+    },
+    {
+      "path": "programs/t-code-source-set-limit.ts",
+      "digest": "sha256:6f6d7624554b2b86c63cd45fd4155c7096217449a9e3bc6cef71ec30d6a5354e",
+      "bytes": 36984
+    },
+    {
+      "path": "owner/vault/concepts/source-set-limit-2.md",
+      "digest": "sha256:fa0fada4a28653cc201b16c66e59a757c4d4a4ef7b11dc81de49f13b791b73c3",
+      "bytes": 31679
+    },
+    {
+      "path": "owner/vault/concepts/cjk-tokenizer-1.md",
+      "digest": "sha256:d10c778ee1cb5d0f8944de9599b7aee1c05f60a43f8f5cd47b6d0e7106b94279",
+      "bytes": 867
+    },
+    {
+      "path": "programs/t-code-cjk-tokenizer.ts",
+      "digest": "sha256:a59ec75644c0665a10206d12fa8fa1918d3ba6229d3728e6c2b2223fc4e46dda",
+      "bytes": 387
+    },
+    {
+      "path": "owner/vault/concepts/cjk-tokenizer-2.md",
+      "digest": "sha256:7f5277c331126592f4484e2423390a964959c57a7eb8bdfeb954428ca3754316",
+      "bytes": 45963
+    },
+    {
+      "path": "owner/vault/concepts/memory-temporal-1.md",
+      "digest": "sha256:b226f73afc537aee86a02c4192c5c28f8f64a059f7cc0e9aa3a55606cee060d3",
+      "bytes": 12268
+    },
+    {
+      "path": "programs/t-code-memory-temporal.ts",
+      "digest": "sha256:a6cb26b24dbc7f5e3c433a830574d0281bc790381cbd59b68bdfc6ac0982018c",
+      "bytes": 11782
+    },
+    {
+      "path": "owner/vault/concepts/memory-temporal-2.md",
+      "digest": "sha256:c7a6f7cf636fee00fa36607858d9c7a68c7b5ef3535205ba451ad61c4df68bf6",
+      "bytes": 2075
+    },
+    {
+      "path": "owner/vault/concepts/host-deadline-1.md",
+      "digest": "sha256:e5a991a3526c827b48e8575dcb878a316750745caf414011ca9c31cebb43eade",
+      "bytes": 5248
+    },
+    {
+      "path": "programs/t-code-host-deadline.ts",
+      "digest": "sha256:a7cb9c6b4ab8567e21e349adc3d81fc7b478a3b2f7310d1eff10003dc833bbf4",
+      "bytes": 4817
+    },
+    {
+      "path": "owner/vault/concepts/host-deadline-2.md",
+      "digest": "sha256:d592ebe7980aea95cd602208cefc40e0d32f372113395dbedc9b5cdef8d3c3d3",
+      "bytes": 10486
+    },
+    {
+      "path": "owner/vault/concepts/host-action-timeouts-1.md",
+      "digest": "sha256:64917b3b3045979cab0e229e2d4e4b4dfd49d10315334eb06c3609cc54ac27b2",
+      "bytes": 2305
+    },
+    {
+      "path": "programs/t-code-host-action-timeouts.ts",
+      "digest": "sha256:cb4eb142bf2b3fa69badf469f32db5d2490e36d12d12dc095177e0f6f5eea8f9",
+      "bytes": 1854
+    },
+    {
+      "path": "owner/vault/concepts/host-action-timeouts-2.md",
+      "digest": "sha256:6d4d1781caa6521a0f5a88d74e64de863b550f10a64b86e860fdd7dec2abfe08",
+      "bytes": 14040
+    },
+    {
+      "path": "owner/vault/concepts/development-commands-1.md",
+      "digest": "sha256:3f843ec65e794bd349b6c4de67ecbf15177651ed8d6d04806d97dc05f4c0b5cc",
+      "bytes": 13918
+    },
+    {
+      "path": "owner/vault/concepts/development-commands-2.md",
+      "digest": "sha256:7bcbda8622e1d5180f1a9d71bb879331aedc80b1797ec39b4443bdb2d71076ce",
+      "bytes": 2890
+    },
+    {
+      "path": "programs/t-code-development-commands.ts",
+      "digest": "sha256:09f7373ca547e2bd0fb01581ee6a4a1ab7f6a4f763daf079308fea9294659339",
+      "bytes": 2476
+    },
+    {
+      "path": "owner/vault/concepts/session-continuity-1.md",
+      "digest": "sha256:a2f4f3687548fe23a2c83a6caf10fa6c57174d6728ead11bf26efbd3404dbeb0",
+      "bytes": 18448
+    },
+    {
+      "path": "owner/vault/concepts/session-continuity-2.md",
+      "digest": "sha256:525ba7004f802db8889acc6c2c8d9cd3c35405aa028a1d258dac974f6cf47846",
+      "bytes": 2762
+    },
+    {
+      "path": "programs/t-code-session-continuity.ts",
+      "digest": "sha256:8d88fd66c3c2f7fcb27ee9cf3a60901531cac9506861cccb8784d280fa1af01b",
+      "bytes": 2321
+    },
+    {
+      "path": "owner/vault/concepts/workspace-preflight-1.md",
+      "digest": "sha256:2400d3e6021a1fdc502181df19b48f5d912849fd866f9af7660bf8d835da997a",
+      "bytes": 14951
+    },
+    {
+      "path": "owner/vault/concepts/workspace-preflight-2.md",
+      "digest": "sha256:42252eac3b8f6ad99a922d5270321cb1d08a93d8908a226e2a2ce67d2f925650",
+      "bytes": 16176
+    },
+    {
+      "path": "programs/t-code-workspace-preflight.ts",
+      "digest": "sha256:df6ee2641296d1a6296f1b0d9079039f9d56c4243e5738fafdd2e5b1e88d59c5",
+      "bytes": 15738
+    },
+    {
+      "path": "owner/vault/concepts/provider-accounts-1.md",
+      "digest": "sha256:de69269f34252f59b39e5f5d5571609b526ead62e1eea5f9d2944d522771df27",
+      "bytes": 13971
+    },
+    {
+      "path": "owner/vault/concepts/provider-accounts-2.md",
+      "digest": "sha256:ca2550f590f78e389fdbf4cecae0edd86ca817c0b206f06f41d668bcdb1f2e71",
+      "bytes": 12106
+    },
+    {
+      "path": "programs/t-code-provider-accounts.ts",
+      "digest": "sha256:906878ccb22870e438818524dc3bf6504cfd01b2909ba0b32aa50a790d36ff1f",
+      "bytes": 11697
+    },
+    {
+      "path": "owner/vault/concepts/usage-aggregation-1.md",
+      "digest": "sha256:7384d3f99fd12b262cadbae8f7699a440055b29ed848cb0da02d68cc3494b1d4",
+      "bytes": 13527
+    },
+    {
+      "path": "programs/t-code-usage-aggregation.ts",
+      "digest": "sha256:a74d89e1f314aff284ca261233cfb8649f9832b61fc8f327c833129024045bd8",
+      "bytes": 13101
+    },
+    {
+      "path": "owner/vault/concepts/knowledge-governance-1.md",
+      "digest": "sha256:d915fb6d120dea747751c8393d913dd3e0ebdefd8afee43105bda791a69668ac",
+      "bytes": 18406
+    },
+    {
+      "path": "owner/vault/concepts/knowledge-governance-2.md",
+      "digest": "sha256:74e8fec81443c5cee5a38eaa3f3c2f107d1c564fc5d3c561797cd22197502296",
+      "bytes": 258225
+    },
+    {
+      "path": "programs/t-code-knowledge-governance.ts",
+      "digest": "sha256:274b0581ddc9205de8dbd1c7ec8313f88cfa4b4bc752249d3c381f6cea7ffafe",
+      "bytes": 257741
+    },
+    {
+      "path": "owner/vault/concepts/local-embedding-model-1.md",
+      "digest": "sha256:940c86c493babd6aba920d9595d66cee9b293a580b2d641177b4882dd7c2316b",
+      "bytes": 710
+    },
+    {
+      "path": "programs/t-code-local-embedding-model.ts",
+      "digest": "sha256:f307e8baed18785ff37bcc06e59d4c70d25c34bf5b40dce39f168c279cbaffb8",
+      "bytes": 217
+    },
+    {
+      "path": "owner/vault/concepts/existing-semantic-provider-1.md",
+      "digest": "sha256:964b907ce5147d85d795ea82fad61a5173724d1443a852c632db1a77a4d84816",
+      "bytes": 8628
+    },
+    {
+      "path": "programs/t-code-existing-semantic-provider.ts",
+      "digest": "sha256:51a0b7fe277543ef1a185e65a4c3f4735c594db654557a0ecad8901946e52009",
+      "bytes": 8163
+    },
+    {
+      "path": "owner/vault/concepts/role-memory-store-1.md",
+      "digest": "sha256:1f631d66dbcc0b573e806c80e106dd39af52e83cd98cfcf76c8d79fbd97d3a4a",
+      "bytes": 95352
+    },
+    {
+      "path": "programs/t-code-role-memory-store.ts",
+      "digest": "sha256:1982a2b8ce88c781df73cf47d6418334957dafac5cd090c1c11bff8cfd6e304f",
+      "bytes": 94870
+    },
+    {
+      "path": "owner/vault/concepts/file-path-boundary-1.md",
+      "digest": "sha256:20e42905777f78a480bef763c634667e76610f64451b608dd8ced29388b836f7",
+      "bytes": 5158
+    },
+    {
+      "path": "programs/t-code-file-path-boundary.ts",
+      "digest": "sha256:db95e1fc4397e5ac836f74c5f4955b448e220abadfb4f3be881d10fe8eb2bcd5",
+      "bytes": 4685
+    },
+    {
+      "path": "owner/vault/concepts/task-working-context-1.md",
+      "digest": "sha256:fc649febb70c024d27cc67ca305912b1ad9e6d28159b85ee1d579ee448a6e13d",
+      "bytes": 8492
+    },
+    {
+      "path": "programs/t-code-task-working-context.ts",
+      "digest": "sha256:aa2cec28ed105537e094d8be30d87b05898e9e507a82a0c22db00c4606c7c356",
+      "bytes": 8058
+    },
+    {
+      "path": "owner/vault/concepts/dcs-turn-budget-1.md",
+      "digest": "sha256:71d1aaf5d44ea305e60a1b5ccdf99436daf4eb95a96115ca612050888c3a4492",
+      "bytes": 28520
+    },
+    {
+      "path": "owner/vault/concepts/dcs-turn-budget-2.md",
+      "digest": "sha256:5eb1c71e5da3d8b0fe531a35ad901ff852a56ce1e9e5be42132e004ac0fc538e",
+      "bytes": 5208
+    },
+    {
+      "path": "owner/vault/concepts/context-candidates-1.md",
+      "digest": "sha256:e00f1d525bd9ad577cf7d5575556375ba3052cc191b9582f11a2fa8ca6131ff0",
+      "bytes": 18110
+    },
+    {
+      "path": "owner/vault/concepts/context-candidates-2.md",
+      "digest": "sha256:a339a361ea0f5df79833548b0d6c27e00731a86c727fb3841c7eb395fd89db0c",
+      "bytes": 41556
+    },
+    {
+      "path": "owner/vault/concepts/context-resource-contract-1.md",
+      "digest": "sha256:8c96008c0f209514248a8986e3a1f151bc13aa7df644e3e4357fd6f0c739d0ca",
+      "bytes": 18207
+    },
+    {
+      "path": "owner/vault/concepts/context-resource-contract-2.md",
+      "digest": "sha256:62a99f1efac01b0382b7a9528afa1534a775fafe605614b13056b12781db8d63",
+      "bytes": 3487
+    },
+    {
+      "path": "owner/vault/concepts/background-admission-1.md",
+      "digest": "sha256:6404ebf43df51f6fcb3d778bce039af5ce2071d9d55148a244a3659c677d0c77",
+      "bytes": 7578
+    },
+    {
+      "path": "owner/vault/concepts/background-admission-2.md",
+      "digest": "sha256:0406a47d5e2c0fcf464d108e69f7809d57c9a228e15f4014e688ebd43c12ea44",
+      "bytes": 5030
+    },
+    {
+      "path": "owner/vault/concepts/bounded-cache-1.md",
+      "digest": "sha256:ad0e70dda2e88e1a0782d2af4c504ee0109456f94b364be809333f96cba67029",
+      "bytes": 4740
+    },
+    {
+      "path": "owner/vault/concepts/bounded-cache-2.md",
+      "digest": "sha256:4acfb6b872a8af53486efe44e90fc3afb90f9aac2c82b3fce665a9369051fc47",
+      "bytes": 3292
+    },
+    {
+      "path": "owner/vault/concepts/provider-outbound-quota-1.md",
+      "digest": "sha256:fdf5492155d336dd32f628c13f28004944aca959d436473403d30ce8534750c9",
+      "bytes": 23275
+    },
+    {
+      "path": "owner/vault/concepts/provider-outbound-quota-2.md",
+      "digest": "sha256:0adf74008a6e8e1c5f0e739c466e6cbb1a74544445a653f63233666aa45eef87",
+      "bytes": 27615
+    },
+    {
+      "path": "owner/vault/concepts/backup-restore-1.md",
+      "digest": "sha256:b58a7f7c15c9cec3fd6935ae32342cc6e3fb91179268d310dea87fb18ea95acd",
+      "bytes": 14487
+    },
+    {
+      "path": "owner/vault/concepts/backup-restore-2.md",
+      "digest": "sha256:36f2f2b7d74cfa7d1f36abe0fe3ab142e7c121d066b8a359787aeca9d238d0b7",
+      "bytes": 13196
+    },
+    {
+      "path": "owner/vault/concepts/experience-adoption-1.md",
+      "digest": "sha256:e24ea861545589d1b25e9e82a71b5c7a3e80185732a561de1367fc77c85d67de",
+      "bytes": 43938
+    },
+    {
+      "path": "owner/vault/concepts/experience-adoption-2.md",
+      "digest": "sha256:309c57bf192125171d5e5a000ca98faee0a056123d810d527afe1a5b96f4737d",
+      "bytes": 3996
+    },
+    {
+      "path": "owner/vault/concepts/orchestration-capacity-1.md",
+      "digest": "sha256:177ce8dc148b01f0e43d72ab0dde8e0054bc590910ff4add945158a802c5dfff",
+      "bytes": 11148
+    },
+    {
+      "path": "owner/vault/concepts/orchestration-capacity-2.md",
+      "digest": "sha256:79f958dd3cb9d9e556ccba68e3b6f862aaa92260c360ea165f10e189de4dc37c",
+      "bytes": 6440
+    },
+    {
+      "path": "owner/vault/concepts/role-contracts-1.md",
+      "digest": "sha256:c45fa11e3616886c1e534bc588770c11179d4702989eb3c82e1acbda3abff035",
+      "bytes": 19460
+    },
+    {
+      "path": "owner/vault/concepts/role-contracts-2.md",
+      "digest": "sha256:29f94f01c6a72344e40d517fc02a0d66772db4dc5796ba5dbb65ae95e6d3f1a9",
+      "bytes": 3551
+    },
+    {
+      "path": "corpus.json",
+      "digest": "sha256:984c76ff9d81f80b907f6bcda611f07ecd58f2e684e8c2c02fd7c796550bdc46",
+      "bytes": 82328
+    },
+    {
+      "path": "queries.json",
+      "digest": "sha256:afc1d23a73e50ca43038ecbfc3df7b4084db82c5faadfae4a99e55ef49ebdc45",
+      "bytes": 179671
+    },
+    {
+      "path": "tasks.json",
+      "digest": "sha256:f47bf2d770d059f5a3396f4e9751a27ae2b329a736fc088cd93aeb58e0d5dbc3",
+      "bytes": 189499
+    },
+    {
+      "path": "trial-plan.json",
+      "digest": "sha256:9a579fef74e511854f71212236382a57aa064ef18bb48401b0e6182b5a68bf8c",
+      "bytes": 256079
+    },
+    {
+      "path": "promotion-policy.json",
+      "digest": "sha256:5f51a53b8315065fd6b750cc46c66fa6e16e17490402ef68cd88f6b0311bb76f",
+      "bytes": 5944
+    },
+    {
+      "path": "baseline.json",
+      "digest": "sha256:044a88c8249a6e1c7d2c7588b65813bd06935194a0c2280e71c02f4c0f329211",
+      "bytes": 2362
+    },
+    {
+      "path": "oracle/query-gold.json",
+      "digest": "sha256:0a8ca5412cf4a5609ed84636b60e80b2725fe78d12f3dfe6ab136e2ca70e35f2",
+      "bytes": 648391
+    },
+    {
+      "path": "oracle/task-gold.json",
+      "digest": "sha256:9de62c22f1d1409b3a19f627609352288d48056f524d7247e911b60983252f86",
+      "bytes": 877960
+    },
+    {
+      "path": "oracle/negative-cases.json",
+      "digest": "sha256:3f9cb130341de1323a1dba07d63ef5d39ffc00da11d9c99da307ee0b39dc0b85",
+      "bytes": 40770
+    },
+    {
+      "path": "oracle/authoring-catalog.mjs",
+      "digest": "sha256:6a1148858be82d4e92647e639a5cbb40b0bf0bbd68254e208e53d527baa42c34",
+      "bytes": 4614
+    },
+    {
+      "path": "oracle/task-scenarios.mjs",
+      "digest": "sha256:073c645836dab5101d437af26917e2939556cfbb4c64c0550d1020e2217f5271",
+      "bytes": 8844
+    }
+  ],
+  "overwritePolicy": "new-version-only",
+  "oracleFilePaths": [
+    "oracle/query-gold.json",
+    "oracle/task-gold.json",
+    "oracle/negative-cases.json",
+    "oracle/authoring-catalog.mjs",
+    "oracle/task-scenarios.mjs"
+  ]
+}

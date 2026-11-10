@@ -1,15 +1,18 @@
 ---
 lifecycleStatus: active
-implementationStatus: planned
+implementationStatus: partial
 id: project-rag-frozen-evaluation-corpus
 title: 冻结真实语料、独立判据和对照协议
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-02
 intent: 在调参前固定怎样证明完整检索系统有效。
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: 1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0
+integratedMainCommit: ea4bff4423b7c2d2f16fe0c1b1856f850e8ecd15
 touchedAreas:
   - "scripts/knowledge-*.ts"
+  - "scripts/lib/project-rag-*.mjs"
+  - "scripts/lib/project-rag-*.d.mts"
   - "scripts/lib/paired-ablation.mjs"
   - "harness/specs/fixtures/project-rag/**"
   - "shared/dcs/prod-flags-catalog.ts"
@@ -28,8 +31,10 @@ touchedAreas:
   - ".gitignore"
   - "scripts/repository-artifacts.json"
   - "README*.md"
+  - "docs/dev/evidence/project-rag/RAG-02/**"
   - "tests/unit/knowledge-retrieval.test.ts"
   - "tests/unit/project-rag-corpus-integrity.test.ts"
+  - "tests/unit/project-rag-code-oracle.test.ts"
 requiredProfiles:
   - "fast"
   - "comms"
@@ -40,8 +45,11 @@ requiredRules:
   - "project-rag-long-term-boundary"
 requiredTests:
   - "tests/unit/knowledge-retrieval.test.ts"
+  - "tests/unit/project-rag-corpus-integrity.test.ts"
+  - "tests/unit/project-rag-code-oracle.test.ts"
 plannedTests:
   - "tests/unit/project-rag-corpus-integrity.test.ts"
+  - "tests/unit/project-rag-code-oracle.test.ts"
 expectedUserBehavior:
   - "在调参前固定怎样证明完整检索系统有效。"
 acceptance:
@@ -56,6 +64,7 @@ docs:
   files:
     - docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md
     - docs/dev/project-rag/WORK-PACKAGES.md
+    - docs/dev/project-rag/EVALUATION-CONTRACT.md
 ---
 
 # 冻结真实语料、独立判据和对照协议

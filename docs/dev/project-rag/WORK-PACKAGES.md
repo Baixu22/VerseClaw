@@ -10,6 +10,8 @@
 
 交付能力包括：owner读取/版本/权限、结构切块、多语言FTS、持久dense、portable/ANN、RRF、cross-encoder、DCS原子装配、strict/open引用问答、完整UI/配置、Memory/SEKB/代码图/任务线索、Research、索引运维、离线策略晋级及独立验收。
 
+语料、540 槽三臂协议、模型输入隔离、任务判据和费用收据见[独立评测合同](EVALUATION-CONTRACT.md)。
+
 ## 阶段与依赖
 
 | 工作包 | 交付 | 前置 | 实现 owner |

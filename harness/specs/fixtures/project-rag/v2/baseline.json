@@ -1,0 +1,64 @@
+{
+  "schema": "ProjectRagBaseline/v1",
+  "sourceRevision": "1a4cc531ee050794b89dc8d7e49ac7c7a1c71ec0",
+  "sharedSafetyAcrossArms": true,
+  "sharedProviderAcrossArms": true,
+  "sharedEnvelopeAcrossArms": true,
+  "page": {
+    "label": "A1",
+    "semanticEnabled": true,
+    "continuationLines": 80,
+    "continuationMaxLines": 800,
+    "scanMaxChars": 96000,
+    "pipeline": [
+      "owner-read",
+      "readBoundedKnowledgePage",
+      "retrieveSelectedSourceSetEvidence(semanticEnabled=true)",
+      "same-DCS-budget-and-QA-validator"
+    ]
+  },
+  "full": {
+    "label": "B1",
+    "pipeline": "future-full-hybrid-RRF-rerank-with-the-same-owner-and-DCS-controls",
+    "ready": false
+  },
+  "off": {
+    "label": "O1",
+    "backgroundRetrieval": false,
+    "ordinaryTaskTools": "same-tools-and-permission-envelope",
+    "explicitRead": "same-owner-admission"
+  },
+  "missingSemanticProvider": "not-evaluated-never-disable-semantic-to-make-A1-weaker",
+  "inputs": [
+    {
+      "path": "electron/services/knowledge-source-set-answer.ts",
+      "gitBlob": "ede9ac05218cd50985c69b9319b9a7f28c76abe7",
+      "digest": "sha256:2d277d64bf3a05da78bd040ff4341efae6a800df8474bc505e7751eb9b0e1b05"
+    },
+    {
+      "path": "openclaw_runtime/src/context-engine/source-set.ts",
+      "gitBlob": "49eaa218bb3688de18030aabeb1905e534cbd521",
+      "digest": "sha256:0f7fc2147f7c08a2f9282aeb9c4011797835526c815581bec187effda7299579"
+    },
+    {
+      "path": "electron/services/knowledge-embedding-provider.ts",
+      "gitBlob": "a820d6ac7052957aeda9ac2015fa7fd1123c895c",
+      "digest": "sha256:1c3dca66c70565a2b997a52cb95073bbe5fac742abbc1329bffda40438049cae"
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-core/knowledge-owner-read.ts",
+      "gitBlob": "cb4187e72f7027fcc4c3e2af3583af6d38a3117a",
+      "digest": "sha256:ec29e3828d7f1fb43842aef78cf8cb2c15d717db30a00510165b1374c49135c7"
+    },
+    {
+      "path": "openclaw_runtime/extensions/memory-wiki/src/owner-read.ts",
+      "gitBlob": "fdf34be26a66d779fa84b45131183298a97e917e",
+      "digest": "sha256:0149c6bcf71182ff05d2ba893a6997b8ed5d64151fcbd1e2fa21591829b17ad2"
+    },
+    {
+      "path": "electron/services/knowledge-read-scope.ts",
+      "gitBlob": "1405938144e885d650959ddb552cb59cd9428cea",
+      "digest": "sha256:b00b8cf9dcf914b596099696830298e2d6a964fd67dd653daaed3ca89d7c0d20"
+    }
+  ]
+}

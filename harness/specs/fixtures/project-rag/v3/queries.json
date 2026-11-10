@@ -1,0 +1,5042 @@
+[
+  {
+    "id": "q-owner-version-1-en",
+    "baseId": "owner-version-1",
+    "familyId": "owner-version",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "fact",
+    "question": "Which coordinate space must an owner citation use?\nWhich public SDK module supplies the shared owner-read types?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-owner-version-1-zh",
+    "baseId": "owner-version-1",
+    "familyId": "owner-version",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "fact",
+    "question": "owner 引用必须使用哪种坐标空间？\n哪个公开 SDK 模块提供共享 owner-read 类型？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-owner-version-1-ja",
+    "baseId": "owner-version-1",
+    "familyId": "owner-version",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "fact",
+    "question": "owner の引用に必要な座標空間は何ですか？\n共有 owner-read 型を提供する公開 SDK モジュールは何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-owner-version-1-ru",
+    "baseId": "owner-version-1",
+    "familyId": "owner-version",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "fact",
+    "question": "Какую систему координат должна использовать цитата owner?\nКакой публичный SDK-модуль предоставляет shared owner-read types?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-owner-version-2-en",
+    "baseId": "owner-version-2",
+    "familyId": "owner-version",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "research",
+    "question": "Is the ending byte of an owner citation included in its range?\nWhich public SDK module supplies the shared owner-read types?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-owner-version-2-zh",
+    "baseId": "owner-version-2",
+    "familyId": "owner-version",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "research",
+    "question": "owner 引用范围是否包含结束字节？请以 endIsExclusive 表达。\n哪个公开 SDK 模块提供共享 owner-read 类型？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-owner-version-2-ja",
+    "baseId": "owner-version-2",
+    "familyId": "owner-version",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "research",
+    "question": "owner の引用範囲は終了バイトを含みますか？endIsExclusive で示してください。\n共有 owner-read 型を提供する公開 SDK モジュールは何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-owner-version-2-ru",
+    "baseId": "owner-version-2",
+    "familyId": "owner-version",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "research",
+    "question": "Включён ли конечный байт в диапазон цитаты owner? Укажите endIsExclusive.\nКакой публичный SDK-модуль предоставляет shared owner-read types?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-wiki-read-policy-1-en",
+    "baseId": "wiki-read-policy-1",
+    "familyId": "wiki-read-policy",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "ownership",
+    "question": "What owner status applies when Wiki metadata omits status?\nWhich Wiki query entry reads a page and its owner snapshot?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-wiki-read-policy-1-zh",
+    "baseId": "wiki-read-policy-1",
+    "familyId": "wiki-read-policy",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "ownership",
+    "question": "Wiki 元数据缺少 status 时采用什么 owner 状态？\n哪个 Wiki query 入口读取页面及其 owner snapshot？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-wiki-read-policy-1-ja",
+    "baseId": "wiki-read-policy-1",
+    "familyId": "wiki-read-policy",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "ownership",
+    "question": "Wiki のメタデータに status がない場合、どの状態になりますか？\nページと owner snapshot を読み取る Wiki query エントリは何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-wiki-read-policy-1-ru",
+    "baseId": "wiki-read-policy-1",
+    "familyId": "wiki-read-policy",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "ownership",
+    "question": "Какой статус owner используется, если в метаданных Wiki нет status?\nКакой entry Wiki query читает страницу и её owner snapshot?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-wiki-read-policy-2-en",
+    "baseId": "wiki-read-policy-2",
+    "familyId": "wiki-read-policy",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "diagnosis",
+    "question": "How long does a freshly derived Wiki read context remain valid?\nWhich Wiki query entry reads a page and its owner snapshot?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-wiki-read-policy-2-zh",
+    "baseId": "wiki-read-policy-2",
+    "familyId": "wiki-read-policy",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "diagnosis",
+    "question": "新派生的 Wiki 读取上下文有效多久，以毫秒回答？\n哪个 Wiki query 入口读取页面及其 owner snapshot？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-wiki-read-policy-2-ja",
+    "baseId": "wiki-read-policy-2",
+    "familyId": "wiki-read-policy",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "diagnosis",
+    "question": "新規 Wiki 読み取りコンテキストの有効期間をミリ秒で示してください。\nページと owner snapshot を読み取る Wiki query エントリは何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-wiki-read-policy-2-ru",
+    "baseId": "wiki-read-policy-2",
+    "familyId": "wiki-read-policy",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "diagnosis",
+    "question": "Сколько миллисекунд действует новый контекст чтения Wiki?\nКакой entry Wiki query читает страницу и её owner snapshot?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-knowledge-scope-1-en",
+    "baseId": "host-knowledge-scope-1",
+    "familyId": "host-knowledge-scope",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "procedure",
+    "question": "Which Gateway method supplies the physical generation for a Host knowledge read?\nWhich scope preparation helper does Main chat use?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-knowledge-scope-1-zh",
+    "baseId": "host-knowledge-scope-1",
+    "familyId": "host-knowledge-scope",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "procedure",
+    "question": "Host 知识读取通过哪个 Gateway 方法取得物理代次？\nMain chat 使用哪个 scope preparation helper？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-knowledge-scope-1-ja",
+    "baseId": "host-knowledge-scope-1",
+    "familyId": "host-knowledge-scope",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "procedure",
+    "question": "Host の知識読み取りで物理世代を取得する Gateway メソッドは何ですか？\nMain chat が使用する scope preparation helper は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-knowledge-scope-1-ru",
+    "baseId": "host-knowledge-scope-1",
+    "familyId": "host-knowledge-scope",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "procedure",
+    "question": "Какой метод Gateway даёт физическое поколение для чтения знаний Host?\nКакой scope preparation helper использует Main chat?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-knowledge-scope-2-en",
+    "baseId": "host-knowledge-scope-2",
+    "familyId": "host-knowledge-scope",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "procedure",
+    "question": "How does the Host materialize an owned logical session that has no physical generation?\nWhich scope preparation helper does Main chat use?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-knowledge-scope-2-zh",
+    "baseId": "host-knowledge-scope-2",
+    "familyId": "host-knowledge-scope",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "procedure",
+    "question": "已拥有的逻辑会话没有物理代次时，Host 调用哪个方法物化？\nMain chat 使用哪个 scope preparation helper？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-knowledge-scope-2-ja",
+    "baseId": "host-knowledge-scope-2",
+    "familyId": "host-knowledge-scope",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "procedure",
+    "question": "物理世代のない所有済み論理セッションを Host はどのメソッドで実体化しますか？\nMain chat が使用する scope preparation helper は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-knowledge-scope-2-ru",
+    "baseId": "host-knowledge-scope-2",
+    "familyId": "host-knowledge-scope",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "procedure",
+    "question": "Каким методом Host материализует принадлежащую ему логическую сессию без физического поколения?\nКакой scope preparation helper использует Main chat?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-bounded-page-read-1-en",
+    "baseId": "bounded-page-read-1",
+    "familyId": "bounded-page-read",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "What is the existing bounded page reader’s maximum continuation line?\nWhich helper validates the model-only Knowledge QA output?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-bounded-page-read-1-zh",
+    "baseId": "bounded-page-read-1",
+    "familyId": "bounded-page-read",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "现有有界 page reader 最多续读到第几行？\n哪个 helper 校验 model-only Knowledge QA 输出？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-bounded-page-read-1-ja",
+    "baseId": "bounded-page-read-1",
+    "familyId": "bounded-page-read",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "既存の有界 page reader が継続して読む最大行番号は何ですか？\nmodel-only Knowledge QA の出力を検証する helper は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-bounded-page-read-1-ru",
+    "baseId": "bounded-page-read-1",
+    "familyId": "bounded-page-read",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "До какой максимальной строки дочитывает существующий ограниченный page reader?\nКакой helper проверяет вывод model-only Knowledge QA?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-bounded-page-read-2-en",
+    "baseId": "bounded-page-read-2",
+    "familyId": "bounded-page-read",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "At how many accumulated characters does the bounded continuation stop?\nWhich helper validates the model-only Knowledge QA output?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-bounded-page-read-2-zh",
+    "baseId": "bounded-page-read-2",
+    "familyId": "bounded-page-read",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "有界续读累计多少字符时停止？\n哪个 helper 校验 model-only Knowledge QA 输出？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-bounded-page-read-2-ja",
+    "baseId": "bounded-page-read-2",
+    "familyId": "bounded-page-read",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "有界継続読み取りは累計何文字で停止しますか？\nmodel-only Knowledge QA の出力を検証する helper は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-bounded-page-read-2-ru",
+    "baseId": "bounded-page-read-2",
+    "familyId": "bounded-page-read",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "При каком суммарном числе символов останавливается ограниченное дочитывание?\nКакой helper проверяет вывод model-only Knowledge QA?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-source-set-limit-1-en",
+    "baseId": "source-set-limit-1",
+    "familyId": "source-set-limit",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "What is the SourceSet retrieval limit when the caller omits it?\nWhich class owns the DCS assembly entry?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-source-set-limit-1-zh",
+    "baseId": "source-set-limit-1",
+    "familyId": "source-set-limit",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "调用方未提供 limit 时，SourceSet 检索默认返回上限是多少？\n哪个 class 提供 DCS assembly 入口？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-source-set-limit-1-ja",
+    "baseId": "source-set-limit-1",
+    "familyId": "source-set-limit",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "呼び出し側が limit を省略した場合の SourceSet 検索上限は何件ですか？\nDCS assembly エントリを提供する class は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-source-set-limit-1-ru",
+    "baseId": "source-set-limit-1",
+    "familyId": "source-set-limit",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Какой лимит SourceSet используется, если вызывающий код его не указал?\nКакой class предоставляет entry DCS assembly?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-source-set-limit-2-en",
+    "baseId": "source-set-limit-2",
+    "familyId": "source-set-limit",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "What hard result limit does SourceSet enforce?\nWhich class owns the DCS assembly entry?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-source-set-limit-2-zh",
+    "baseId": "source-set-limit-2",
+    "familyId": "source-set-limit",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "SourceSet 强制执行的结果数量硬上限是多少？\n哪个 class 提供 DCS assembly 入口？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-source-set-limit-2-ja",
+    "baseId": "source-set-limit-2",
+    "familyId": "source-set-limit",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "SourceSet が強制する結果数のハード上限は何件ですか？\nDCS assembly エントリを提供する class は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-source-set-limit-2-ru",
+    "baseId": "source-set-limit-2",
+    "familyId": "source-set-limit",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Каков жёсткий верхний предел числа результатов SourceSet?\nКакой class предоставляет entry DCS assembly?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-cjk-tokenizer-1-en",
+    "baseId": "cjk-tokenizer-1",
+    "familyId": "cjk-tokenizer",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "research",
+    "question": "Run the fallback CJK bigram algorithm conceptually on 中文测试. Which grams does it return, in order?\nWhich CJK fallback is consumed by memory hybrid retrieval?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-cjk-tokenizer-1-zh",
+    "baseId": "cjk-tokenizer-1",
+    "familyId": "cjk-tokenizer",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "research",
+    "question": "按当前 CJK bigram 算法处理“中文测试”，依次返回哪些词元？\nmemory hybrid retrieval 使用哪个 CJK fallback？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-cjk-tokenizer-1-ja",
+    "baseId": "cjk-tokenizer-1",
+    "familyId": "cjk-tokenizer",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "research",
+    "question": "現在の CJK bigram アルゴリズムで「中文测试」を処理した結果を順に示してください。\nmemory hybrid retrieval が使用する CJK fallback は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-cjk-tokenizer-1-ru",
+    "baseId": "cjk-tokenizer-1",
+    "familyId": "cjk-tokenizer",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "research",
+    "question": "Какие биграммы, по порядку, даёт текущий CJK-алгоритм для 中文测试?\nКакой CJK fallback использует memory hybrid retrieval?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-cjk-tokenizer-2-en",
+    "baseId": "cjk-tokenizer-2",
+    "familyId": "cjk-tokenizer",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "research",
+    "question": "How many consecutive Han characters are required for the fallback tokenizer to create a run?\nWhich CJK fallback is consumed by memory hybrid retrieval?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-cjk-tokenizer-2-zh",
+    "baseId": "cjk-tokenizer-2",
+    "familyId": "cjk-tokenizer",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "research",
+    "question": "fallback tokenizer 至少需要几个连续汉字才形成 run？\nmemory hybrid retrieval 使用哪个 CJK fallback？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-cjk-tokenizer-2-ja",
+    "baseId": "cjk-tokenizer-2",
+    "familyId": "cjk-tokenizer",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "research",
+    "question": "fallback tokenizer が run を作るには漢字が最低何文字連続する必要がありますか？\nmemory hybrid retrieval が使用する CJK fallback は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-cjk-tokenizer-2-ru",
+    "baseId": "cjk-tokenizer-2",
+    "familyId": "cjk-tokenizer",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "research",
+    "question": "Сколько иероглифов Han подряд нужно fallback tokenizer для создания серии?\nКакой CJK fallback использует memory hybrid retrieval?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-memory-temporal-1-en",
+    "baseId": "memory-temporal-1",
+    "familyId": "memory-temporal",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "diagnosis",
+    "question": "What temporal policy does an empty memory query use?\nWhich function detects a query temporal mode?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-memory-temporal-1-zh",
+    "baseId": "memory-temporal-1",
+    "familyId": "memory-temporal",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "diagnosis",
+    "question": "空记忆查询采用哪种时间策略？\n哪个函数探测 query temporal mode？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-memory-temporal-1-ja",
+    "baseId": "memory-temporal-1",
+    "familyId": "memory-temporal",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "diagnosis",
+    "question": "空のメモリクエリはどの時間ポリシーを使用しますか？\nquery temporal mode を検出する関数は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-memory-temporal-1-ru",
+    "baseId": "memory-temporal-1",
+    "familyId": "memory-temporal",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "diagnosis",
+    "question": "Какую временную политику использует пустой запрос памяти?\nКакая функция определяет query temporal mode?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-memory-temporal-2-en",
+    "baseId": "memory-temporal-2",
+    "familyId": "memory-temporal",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "diagnosis",
+    "question": "Which inclusive year range can the explicit as_of heuristic parse?\nWhich function detects a query temporal mode?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-memory-temporal-2-zh",
+    "baseId": "memory-temporal-2",
+    "familyId": "memory-temporal",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "diagnosis",
+    "question": "显式 as_of 启发式允许解析的年份闭区间是什么？\n哪个函数探测 query temporal mode？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-memory-temporal-2-ja",
+    "baseId": "memory-temporal-2",
+    "familyId": "memory-temporal",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "diagnosis",
+    "question": "明示的 as_of ヒューリスティックが受け付ける年の閉区間は何ですか？\nquery temporal mode を検出する関数は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-memory-temporal-2-ru",
+    "baseId": "memory-temporal-2",
+    "familyId": "memory-temporal",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "diagnosis",
+    "question": "Какой включительный диапазон лет принимает эвристика as_of?\nКакая функция определяет query temporal mode?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-deadline-1-en",
+    "baseId": "host-deadline-1",
+    "familyId": "host-deadline",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "diagnosis",
+    "question": "A layer has a 300 ms local timeout but the logical request has 100 ms remaining. What timeout is enforced?\nWhich deadline factory does the renderer Host client consume?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-deadline-1-zh",
+    "baseId": "host-deadline-1",
+    "familyId": "host-deadline",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "diagnosis",
+    "question": "层内超时为 300 ms，而逻辑请求仅剩 100 ms，实际执行哪个超时？\nrenderer Host client 使用哪个 deadline factory？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-deadline-1-ja",
+    "baseId": "host-deadline-1",
+    "familyId": "host-deadline",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "diagnosis",
+    "question": "ローカル上限が300 msで論理リクエストの残りが100 msの場合、実効タイムアウトは何msですか？\nrenderer Host client が使用する deadline factory は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-deadline-1-ru",
+    "baseId": "host-deadline-1",
+    "familyId": "host-deadline",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "diagnosis",
+    "question": "Локальный таймаут 300 мс, но у логического запроса осталось 100 мс. Какой таймаут применяется?\nКакой deadline factory использует renderer Host client?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-deadline-2-en",
+    "baseId": "host-deadline-2",
+    "familyId": "host-deadline",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "diagnosis",
+    "question": "When now is later than deadlineAtMs, what remaining budget is returned?\nWhich deadline factory does the renderer Host client consume?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-deadline-2-zh",
+    "baseId": "host-deadline-2",
+    "familyId": "host-deadline",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "diagnosis",
+    "question": "now 已超过 deadlineAtMs 时，剩余预算返回多少？\nrenderer Host client 使用哪个 deadline factory？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-deadline-2-ja",
+    "baseId": "host-deadline-2",
+    "familyId": "host-deadline",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "diagnosis",
+    "question": "now が deadlineAtMs を過ぎた場合、残り予算は何msですか？\nrenderer Host client が使用する deadline factory は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-deadline-2-ru",
+    "baseId": "host-deadline-2",
+    "familyId": "host-deadline",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "diagnosis",
+    "question": "Какой остаток бюджета возвращается, когда now позже deadlineAtMs?\nКакой deadline factory использует renderer Host client?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-action-timeouts-1-en",
+    "baseId": "host-action-timeouts-1",
+    "familyId": "host-action-timeouts",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "diagnosis",
+    "question": "What is the default Host action timeout in milliseconds?\nWhich typed IPC channel carries Main Host invocation?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-action-timeouts-1-zh",
+    "baseId": "host-action-timeouts-1",
+    "familyId": "host-action-timeouts",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "diagnosis",
+    "question": "默认 Host action 超时是多少毫秒？\n哪个 typed IPC channel 承载 Main Host invocation？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-action-timeouts-1-ja",
+    "baseId": "host-action-timeouts-1",
+    "familyId": "host-action-timeouts",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "diagnosis",
+    "question": "Host action のデフォルトタイムアウトは何ミリ秒ですか？\nMain Host invocation を運ぶ typed IPC channel は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-action-timeouts-1-ru",
+    "baseId": "host-action-timeouts-1",
+    "familyId": "host-action-timeouts",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "diagnosis",
+    "question": "Каков стандартный таймаут действия Host в миллисекундах?\nКакой typed IPC channel передаёт Main Host invocation?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-action-timeouts-2-en",
+    "baseId": "host-action-timeouts-2",
+    "familyId": "host-action-timeouts",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "diagnosis",
+    "question": "What total timeout applies to an allowlisted long Host action?\nWhich typed IPC channel carries Main Host invocation?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-action-timeouts-2-zh",
+    "baseId": "host-action-timeouts-2",
+    "familyId": "host-action-timeouts",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "diagnosis",
+    "question": "白名单中的长 Host action 总超时是多少毫秒？\n哪个 typed IPC channel 承载 Main Host invocation？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-action-timeouts-2-ja",
+    "baseId": "host-action-timeouts-2",
+    "familyId": "host-action-timeouts",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "diagnosis",
+    "question": "許可リストにある長時間 Host action の総タイムアウトは何ミリ秒ですか？\nMain Host invocation を運ぶ typed IPC channel は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-host-action-timeouts-2-ru",
+    "baseId": "host-action-timeouts-2",
+    "familyId": "host-action-timeouts",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "diagnosis",
+    "question": "Каков общий таймаут длительного действия Host из разрешённого списка, в миллисекундах?\nКакой typed IPC channel передаёт Main Host invocation?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-development-commands-1-en",
+    "baseId": "development-commands-1",
+    "familyId": "development-commands",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "procedure",
+    "question": "Which development command rebuilds the embedded runtime and probes Gateway startup?\nHow many baseline CI stages are declared by the sequential Harness runner?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-development-commands-1-zh",
+    "baseId": "development-commands-1",
+    "familyId": "development-commands",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "procedure",
+    "question": "哪个开发命令重建 embedded runtime 并探测 Gateway 启动？\n顺序 Harness runner 声明多少个 baseline CI stages？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-development-commands-1-ja",
+    "baseId": "development-commands-1",
+    "familyId": "development-commands",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "procedure",
+    "question": "embedded runtime を再ビルドし Gateway 起動を確認する開発コマンドは何ですか？\n順次 Harness runner が宣言する baseline CI stages は何個ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-development-commands-1-ru",
+    "baseId": "development-commands-1",
+    "familyId": "development-commands",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "procedure",
+    "question": "Какая команда пересобирает embedded runtime и проверяет запуск Gateway?\nСколько baseline CI stages объявляет последовательный Harness runner?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-development-commands-2-en",
+    "baseId": "development-commands-2",
+    "familyId": "development-commands",
+    "split": "calibration",
+    "locale": "en",
+    "intent": "procedure",
+    "question": "Which three projects must pass the full typecheck gate?\nHow many baseline CI stages are declared by the sequential Harness runner?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-development-commands-2-zh",
+    "baseId": "development-commands-2",
+    "familyId": "development-commands",
+    "split": "calibration",
+    "locale": "zh",
+    "intent": "procedure",
+    "question": "完整 typecheck 门禁要求哪三个项目通过？\n顺序 Harness runner 声明多少个 baseline CI stages？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-development-commands-2-ja",
+    "baseId": "development-commands-2",
+    "familyId": "development-commands",
+    "split": "calibration",
+    "locale": "ja",
+    "intent": "procedure",
+    "question": "完全な typecheck ゲートで合格が必要な3プロジェクトは何ですか？\n順次 Harness runner が宣言する baseline CI stages は何個ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-development-commands-2-ru",
+    "baseId": "development-commands-2",
+    "familyId": "development-commands",
+    "split": "calibration",
+    "locale": "ru",
+    "intent": "procedure",
+    "question": "Какие три проекта должны пройти полный typecheck?\nСколько baseline CI stages объявляет последовательный Harness runner?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-session-continuity-1-en",
+    "baseId": "session-continuity-1",
+    "familyId": "session-continuity",
+    "split": "validation",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "What is the default main logical session key?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-session-continuity-1-zh",
+    "baseId": "session-continuity-1",
+    "familyId": "session-continuity",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "默认主逻辑会话 key 是什么？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-session-continuity-1-ja",
+    "baseId": "session-continuity-1",
+    "familyId": "session-continuity",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "デフォルトのメイン論理セッションキーは何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-session-continuity-1-ru",
+    "baseId": "session-continuity-1",
+    "familyId": "session-continuity",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Каков ключ основной логической сессии по умолчанию?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-session-continuity-2-en",
+    "baseId": "session-continuity-2",
+    "familyId": "session-continuity",
+    "split": "validation",
+    "locale": "en",
+    "intent": "research",
+    "question": "Report the renderer’s message retention, load batch and simultaneous DOM limits.",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-session-continuity-2-zh",
+    "baseId": "session-continuity-2",
+    "familyId": "session-continuity",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "research",
+    "question": "报告 renderer 的消息保留数、加载批量和同时 DOM 渲染上限。",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-session-continuity-2-ja",
+    "baseId": "session-continuity-2",
+    "familyId": "session-continuity",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "research",
+    "question": "renderer のメッセージ保持数、読み込みバッチ数、同時DOM描画数の上限を示してください。",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-session-continuity-2-ru",
+    "baseId": "session-continuity-2",
+    "familyId": "session-continuity",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "research",
+    "question": "Укажите пределы хранения сообщений, размера загрузки и одновременного DOM-рендеринга renderer.",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-workspace-preflight-1-en",
+    "baseId": "workspace-preflight-1",
+    "familyId": "workspace-preflight",
+    "split": "validation",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "Which permission mode should a non-writable but readable workspace use?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-workspace-preflight-1-zh",
+    "baseId": "workspace-preflight-1",
+    "familyId": "workspace-preflight",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "可读但不可写的 workspace 应使用哪种权限模式？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-workspace-preflight-1-ja",
+    "baseId": "workspace-preflight-1",
+    "familyId": "workspace-preflight",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "読み取り可能でも書き込み不可の workspace はどの権限モードを使いますか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-workspace-preflight-1-ru",
+    "baseId": "workspace-preflight-1",
+    "familyId": "workspace-preflight",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Какой режим разрешений нужен workspace, который можно читать, но нельзя изменять?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-workspace-preflight-2-en",
+    "baseId": "workspace-preflight-2",
+    "familyId": "workspace-preflight",
+    "split": "validation",
+    "locale": "en",
+    "intent": "ownership",
+    "question": "Must a directory be a Git repository before it can become a Workspace?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-workspace-preflight-2-zh",
+    "baseId": "workspace-preflight-2",
+    "familyId": "workspace-preflight",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "ownership",
+    "question": "目录必须是 Git 仓库才能成为 Workspace 吗？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-workspace-preflight-2-ja",
+    "baseId": "workspace-preflight-2",
+    "familyId": "workspace-preflight",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "ownership",
+    "question": "ディレクトリが Workspace になるには Git リポジトリである必要がありますか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-workspace-preflight-2-ru",
+    "baseId": "workspace-preflight-2",
+    "familyId": "workspace-preflight",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "ownership",
+    "question": "Обязан ли каталог быть Git-репозиторием, чтобы стать Workspace?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-provider-accounts-1-en",
+    "baseId": "provider-accounts-1",
+    "familyId": "provider-accounts",
+    "split": "validation",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "Where does the compatibility /models route redirect?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-provider-accounts-1-zh",
+    "baseId": "provider-accounts-1",
+    "familyId": "provider-accounts",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "兼容 /models 路由重定向到哪里？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-provider-accounts-1-ja",
+    "baseId": "provider-accounts-1",
+    "familyId": "provider-accounts",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "互換 /models ルートのリダイレクト先はどこですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-provider-accounts-1-ru",
+    "baseId": "provider-accounts-1",
+    "familyId": "provider-accounts",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Куда перенаправляется совместимый маршрут /models?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-provider-accounts-2-en",
+    "baseId": "provider-accounts-2",
+    "familyId": "provider-accounts",
+    "split": "validation",
+    "locale": "en",
+    "intent": "ownership",
+    "question": "What representation of provider secrets may the renderer see?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-provider-accounts-2-zh",
+    "baseId": "provider-accounts-2",
+    "familyId": "provider-accounts",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "ownership",
+    "question": "renderer 允许看到哪种形式的 provider 密钥？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-provider-accounts-2-ja",
+    "baseId": "provider-accounts-2",
+    "familyId": "provider-accounts",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "ownership",
+    "question": "renderer が参照できる provider の秘密情報の表現は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-provider-accounts-2-ru",
+    "baseId": "provider-accounts-2",
+    "familyId": "provider-accounts",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "ownership",
+    "question": "В каком виде renderer может видеть секреты provider?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-usage-aggregation-1-en",
+    "baseId": "usage-aggregation-1",
+    "familyId": "usage-aggregation",
+    "split": "validation",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "When an aggregate window is absent or invalid, which usage window is selected?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-usage-aggregation-1-zh",
+    "baseId": "usage-aggregation-1",
+    "familyId": "usage-aggregation",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "aggregate window 缺失或非法时采用哪个 usage window？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-usage-aggregation-1-ja",
+    "baseId": "usage-aggregation-1",
+    "familyId": "usage-aggregation",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "aggregate window が欠落または不正の場合、どの usage window が選ばれますか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-usage-aggregation-1-ru",
+    "baseId": "usage-aggregation-1",
+    "familyId": "usage-aggregation",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Какое окно usage выбирается при отсутствующем или неверном aggregate window?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-usage-aggregation-2-en",
+    "baseId": "usage-aggregation-2",
+    "familyId": "usage-aggregation",
+    "split": "validation",
+    "locale": "en",
+    "intent": "fact",
+    "question": "How many prompt-cache risk records may the ledger retain?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-usage-aggregation-2-zh",
+    "baseId": "usage-aggregation-2",
+    "familyId": "usage-aggregation",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "fact",
+    "question": "prompt-cache risk ledger 最多保留多少条记录？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-usage-aggregation-2-ja",
+    "baseId": "usage-aggregation-2",
+    "familyId": "usage-aggregation",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "fact",
+    "question": "prompt-cache risk ledger が保持できるレコード数の上限はいくつですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-usage-aggregation-2-ru",
+    "baseId": "usage-aggregation-2",
+    "familyId": "usage-aggregation",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "fact",
+    "question": "Сколько записей риска prompt-cache может хранить ledger?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-knowledge-governance-1-en",
+    "baseId": "knowledge-governance-1",
+    "familyId": "knowledge-governance",
+    "split": "validation",
+    "locale": "en",
+    "intent": "ownership",
+    "question": "Which two primary Knowledge workbench tabs are documented?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-knowledge-governance-1-zh",
+    "baseId": "knowledge-governance-1",
+    "familyId": "knowledge-governance",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "ownership",
+    "question": "Knowledge workbench 的两个主入口是什么？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-knowledge-governance-1-ja",
+    "baseId": "knowledge-governance-1",
+    "familyId": "knowledge-governance",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "ownership",
+    "question": "Knowledge workbench の2つの主要タブは何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-knowledge-governance-1-ru",
+    "baseId": "knowledge-governance-1",
+    "familyId": "knowledge-governance",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "ownership",
+    "question": "Какие два основных раздела Knowledge workbench документированы?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-knowledge-governance-2-en",
+    "baseId": "knowledge-governance-2",
+    "familyId": "knowledge-governance",
+    "split": "validation",
+    "locale": "en",
+    "intent": "procedure",
+    "question": "List the governance steps from Knowledge Inbox to a durable Wiki page, in order.",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-knowledge-governance-2-zh",
+    "baseId": "knowledge-governance-2",
+    "familyId": "knowledge-governance",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "procedure",
+    "question": "按顺序列出从 Knowledge Inbox 到 durable Wiki page 的治理步骤。",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-knowledge-governance-2-ja",
+    "baseId": "knowledge-governance-2",
+    "familyId": "knowledge-governance",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "procedure",
+    "question": "Knowledge Inbox から永続 Wiki ページまでのガバナンス手順を順に示してください。",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-knowledge-governance-2-ru",
+    "baseId": "knowledge-governance-2",
+    "familyId": "knowledge-governance",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "procedure",
+    "question": "Перечислите по порядку этапы управления от Knowledge Inbox до постоянной страницы Wiki.",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-local-embedding-model-1-en",
+    "baseId": "local-embedding-model-1",
+    "familyId": "local-embedding-model",
+    "split": "validation",
+    "locale": "en",
+    "intent": "fact",
+    "question": "Which local embedding model artifact is the current default?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-local-embedding-model-1-zh",
+    "baseId": "local-embedding-model-1",
+    "familyId": "local-embedding-model",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "fact",
+    "question": "当前默认本地 embedding 模型 artifact 是哪个？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-local-embedding-model-1-ja",
+    "baseId": "local-embedding-model-1",
+    "familyId": "local-embedding-model",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "fact",
+    "question": "現在デフォルトのローカル embedding モデル artifact は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-local-embedding-model-1-ru",
+    "baseId": "local-embedding-model-1",
+    "familyId": "local-embedding-model",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "fact",
+    "question": "Какой artifact локальной embedding-модели используется по умолчанию?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-local-embedding-model-2-en",
+    "baseId": "local-embedding-model-2",
+    "familyId": "local-embedding-model",
+    "split": "validation",
+    "locale": "en",
+    "intent": "research",
+    "question": "Which quantization appears in the default local embedding artifact filename?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-local-embedding-model-2-zh",
+    "baseId": "local-embedding-model-2",
+    "familyId": "local-embedding-model",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "research",
+    "question": "默认本地 embedding artifact 文件名使用哪种量化？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-local-embedding-model-2-ja",
+    "baseId": "local-embedding-model-2",
+    "familyId": "local-embedding-model",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "research",
+    "question": "デフォルトのローカル embedding artifact 名に含まれる量子化は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-local-embedding-model-2-ru",
+    "baseId": "local-embedding-model-2",
+    "familyId": "local-embedding-model",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "research",
+    "question": "Какая квантизация указана в имени стандартного локального embedding artifact?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-existing-semantic-provider-1-en",
+    "baseId": "existing-semantic-provider-1",
+    "familyId": "existing-semantic-provider",
+    "split": "validation",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "What batch-size ceiling does the existing selected-source embedding adapter enforce?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-existing-semantic-provider-1-zh",
+    "baseId": "existing-semantic-provider-1",
+    "familyId": "existing-semantic-provider",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "既有 selected-source embedding adapter 的 batch size 上限是多少？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-existing-semantic-provider-1-ja",
+    "baseId": "existing-semantic-provider-1",
+    "familyId": "existing-semantic-provider",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "既存の selected-source embedding adapter の batch size 上限はいくつですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-existing-semantic-provider-1-ru",
+    "baseId": "existing-semantic-provider-1",
+    "familyId": "existing-semantic-provider",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Каков предел размера batch у существующего embedding adapter выбранных источников?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-existing-semantic-provider-2-en",
+    "baseId": "existing-semantic-provider-2",
+    "familyId": "existing-semantic-provider",
+    "split": "validation",
+    "locale": "en",
+    "intent": "diagnosis",
+    "question": "Distinguish the per-batch timeout from the total embedding-operation deadline, in milliseconds.",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-existing-semantic-provider-2-zh",
+    "baseId": "existing-semantic-provider-2",
+    "familyId": "existing-semantic-provider",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "diagnosis",
+    "question": "分别报告每批超时和完整 embedding operation 期限，单位毫秒。",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-existing-semantic-provider-2-ja",
+    "baseId": "existing-semantic-provider-2",
+    "familyId": "existing-semantic-provider",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "diagnosis",
+    "question": "batch 単位のタイムアウトと embedding operation 全体の期限をミリ秒で区別してください。",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-existing-semantic-provider-2-ru",
+    "baseId": "existing-semantic-provider-2",
+    "familyId": "existing-semantic-provider",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "diagnosis",
+    "question": "Различите таймаут одного batch и общий deadline embedding operation, в миллисекундах.",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-role-memory-store-1-en",
+    "baseId": "role-memory-store-1",
+    "familyId": "role-memory-store",
+    "split": "validation",
+    "locale": "en",
+    "intent": "fact",
+    "question": "What SQLite filename belongs to the structured Role Memory store?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-role-memory-store-1-zh",
+    "baseId": "role-memory-store-1",
+    "familyId": "role-memory-store",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "fact",
+    "question": "结构化 Role Memory store 使用哪个 SQLite 文件名？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-role-memory-store-1-ja",
+    "baseId": "role-memory-store-1",
+    "familyId": "role-memory-store",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "fact",
+    "question": "構造化 Role Memory store の SQLite ファイル名は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-role-memory-store-1-ru",
+    "baseId": "role-memory-store-1",
+    "familyId": "role-memory-store",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "fact",
+    "question": "Какое имя SQLite-файла у структурированного Role Memory store?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-role-memory-store-2-en",
+    "baseId": "role-memory-store-2",
+    "familyId": "role-memory-store",
+    "split": "validation",
+    "locale": "en",
+    "intent": "ownership",
+    "question": "Is the structured role-card store the same authority as memorySearch/QMD/MEMORY.md?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-role-memory-store-2-zh",
+    "baseId": "role-memory-store-2",
+    "familyId": "role-memory-store",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "ownership",
+    "question": "结构化 role-card store 是否与 memorySearch/QMD/MEMORY.md 是同一权威？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-role-memory-store-2-ja",
+    "baseId": "role-memory-store-2",
+    "familyId": "role-memory-store",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "ownership",
+    "question": "構造化 role-card store は memorySearch/QMD/MEMORY.md と同じ authority ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-role-memory-store-2-ru",
+    "baseId": "role-memory-store-2",
+    "familyId": "role-memory-store",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "ownership",
+    "question": "Является ли structured role-card store тем же authority, что memorySearch/QMD/MEMORY.md?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-file-path-boundary-1-en",
+    "baseId": "file-path-boundary-1",
+    "familyId": "file-path-boundary",
+    "split": "validation",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "What maximum input path length does the file broker allow?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-file-path-boundary-1-zh",
+    "baseId": "file-path-boundary-1",
+    "familyId": "file-path-boundary",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "file broker 允许的输入路径最大字符数是多少？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-file-path-boundary-1-ja",
+    "baseId": "file-path-boundary-1",
+    "familyId": "file-path-boundary",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "file broker が許可する入力パスの最大文字数はいくつですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-file-path-boundary-1-ru",
+    "baseId": "file-path-boundary-1",
+    "familyId": "file-path-boundary",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Какова максимальная длина входного пути у file broker, в символах?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-file-path-boundary-2-en",
+    "baseId": "file-path-boundary-2",
+    "familyId": "file-path-boundary",
+    "split": "validation",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "Can a UNC/SMB path pass assertSafeHostFilePath?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-file-path-boundary-2-zh",
+    "baseId": "file-path-boundary-2",
+    "familyId": "file-path-boundary",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "UNC/SMB 路径能通过 assertSafeHostFilePath 吗？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-file-path-boundary-2-ja",
+    "baseId": "file-path-boundary-2",
+    "familyId": "file-path-boundary",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "UNC/SMB パスは assertSafeHostFilePath を通過できますか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-file-path-boundary-2-ru",
+    "baseId": "file-path-boundary-2",
+    "familyId": "file-path-boundary",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Может ли UNC/SMB-путь пройти assertSafeHostFilePath?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-task-working-context-1-en",
+    "baseId": "task-working-context-1",
+    "familyId": "task-working-context",
+    "split": "validation",
+    "locale": "en",
+    "intent": "procedure",
+    "question": "List the canonical Working Context fields in declaration order.",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-task-working-context-1-zh",
+    "baseId": "task-working-context-1",
+    "familyId": "task-working-context",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "procedure",
+    "question": "按声明顺序列出 canonical Working Context 字段。",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-task-working-context-1-ja",
+    "baseId": "task-working-context-1",
+    "familyId": "task-working-context",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "procedure",
+    "question": "canonical Working Context フィールドを宣言順に示してください。",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-task-working-context-1-ru",
+    "baseId": "task-working-context-1",
+    "familyId": "task-working-context",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "procedure",
+    "question": "Перечислите canonical Working Context поля в порядке объявления.",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-task-working-context-2-en",
+    "baseId": "task-working-context-2",
+    "familyId": "task-working-context",
+    "split": "validation",
+    "locale": "en",
+    "intent": "ownership",
+    "question": "Which statuses belong to Task Ledger nodes?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-task-working-context-2-zh",
+    "baseId": "task-working-context-2",
+    "familyId": "task-working-context",
+    "split": "validation",
+    "locale": "zh",
+    "intent": "ownership",
+    "question": "Task Ledger 节点允许哪些状态？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-task-working-context-2-ja",
+    "baseId": "task-working-context-2",
+    "familyId": "task-working-context",
+    "split": "validation",
+    "locale": "ja",
+    "intent": "ownership",
+    "question": "Task Ledger ノードに許可される状態は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-task-working-context-2-ru",
+    "baseId": "task-working-context-2",
+    "familyId": "task-working-context",
+    "split": "validation",
+    "locale": "ru",
+    "intent": "ownership",
+    "question": "Какие статусы допустимы для узлов Task Ledger?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-dcs-turn-budget-1-en",
+    "baseId": "dcs-turn-budget-1",
+    "familyId": "dcs-turn-budget",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "What is the shared turn injection character budget?\nWhich configuration field supplies the turn character limit?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-dcs-turn-budget-1-zh",
+    "baseId": "dcs-turn-budget-1",
+    "familyId": "dcs-turn-budget",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "共享 turn injection 字符预算是多少？\n哪个配置字段提供 turn 字符上限？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-dcs-turn-budget-1-ja",
+    "baseId": "dcs-turn-budget-1",
+    "familyId": "dcs-turn-budget",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "共有 turn injection の文字予算はいくつですか？\nturn の文字上限を指定する設定フィールドは何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-dcs-turn-budget-1-ru",
+    "baseId": "dcs-turn-budget-1",
+    "familyId": "dcs-turn-budget",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Каков общий символьный бюджет turn injection?\nКакое поле конфигурации задаёт символьный лимит turn?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-dcs-turn-budget-2-en",
+    "baseId": "dcs-turn-budget-2",
+    "familyId": "dcs-turn-budget",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "research",
+    "question": "At what dropped-budget ratio does the turn-injection alert threshold start?\nWhich configuration field supplies the turn character limit?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-dcs-turn-budget-2-zh",
+    "baseId": "dcs-turn-budget-2",
+    "familyId": "dcs-turn-budget",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "research",
+    "question": "turn-injection 丢弃预算占比达到多少时触发告警阈值？\n哪个配置字段提供 turn 字符上限？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-dcs-turn-budget-2-ja",
+    "baseId": "dcs-turn-budget-2",
+    "familyId": "dcs-turn-budget",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "research",
+    "question": "turn-injection の drop budget 比率の警告閾値はいくつですか？\nturn の文字上限を指定する設定フィールドは何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-dcs-turn-budget-2-ru",
+    "baseId": "dcs-turn-budget-2",
+    "familyId": "dcs-turn-budget",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "research",
+    "question": "Каков порог предупреждения для доли отброшенного бюджета turn injection?\nКакое поле конфигурации задаёт символьный лимит turn?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-context-candidates-1-en",
+    "baseId": "context-candidates-1",
+    "familyId": "context-candidates",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "fact",
+    "question": "Which schema identifies a Context Orchestrator candidate?\nWhich candidate projector does the orchestrator import?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-context-candidates-1-zh",
+    "baseId": "context-candidates-1",
+    "familyId": "context-candidates",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "fact",
+    "question": "Context Orchestrator 候选使用哪个 schema？\norchestrator 导入哪个 candidate projector？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-context-candidates-1-ja",
+    "baseId": "context-candidates-1",
+    "familyId": "context-candidates",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "fact",
+    "question": "Context Orchestrator candidate の schema は何ですか？\norchestrator がインポートする candidate projector は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-context-candidates-1-ru",
+    "baseId": "context-candidates-1",
+    "familyId": "context-candidates",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "fact",
+    "question": "Какой schema обозначает candidate Context Orchestrator?\nКакой candidate projector импортирует orchestrator?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-context-candidates-2-en",
+    "baseId": "context-candidates-2",
+    "familyId": "context-candidates",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "fact",
+    "question": "Which targets may a context candidate project into?\nWhich candidate projector does the orchestrator import?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-context-candidates-2-zh",
+    "baseId": "context-candidates-2",
+    "familyId": "context-candidates",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "fact",
+    "question": "context candidate 可投影到哪些 target？\norchestrator 导入哪个 candidate projector？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-context-candidates-2-ja",
+    "baseId": "context-candidates-2",
+    "familyId": "context-candidates",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "fact",
+    "question": "context candidate の投影先 target は何ですか？\norchestrator がインポートする candidate projector は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-context-candidates-2-ru",
+    "baseId": "context-candidates-2",
+    "familyId": "context-candidates",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "fact",
+    "question": "В какие target может проецироваться context candidate?\nКакой candidate projector импортирует orchestrator?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-context-resource-contract-1-en",
+    "baseId": "context-resource-contract-1",
+    "familyId": "context-resource-contract",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "What schemaVersion does the PromptBundle type require?\nWhich pipeline superseded the removed orphan codebase index?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-context-resource-contract-1-zh",
+    "baseId": "context-resource-contract-1",
+    "familyId": "context-resource-contract",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "PromptBundle 类型要求哪个 schemaVersion？\n哪个 pipeline 取代了已移除的孤立 codebase index？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-context-resource-contract-1-ja",
+    "baseId": "context-resource-contract-1",
+    "familyId": "context-resource-contract",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "PromptBundle 型が要求する schemaVersion はいくつですか？\n削除された孤立 codebase index を置き換えた pipeline は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-context-resource-contract-1-ru",
+    "baseId": "context-resource-contract-1",
+    "familyId": "context-resource-contract",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Какую schemaVersion требует тип PromptBundle?\nКакой pipeline заменил удалённый изолированный codebase index?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-context-resource-contract-2-en",
+    "baseId": "context-resource-contract-2",
+    "familyId": "context-resource-contract",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "Can CompactView represent expanded claim-support evidence, or is it navigation-only?\nWhich pipeline superseded the removed orphan codebase index?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-context-resource-contract-2-zh",
+    "baseId": "context-resource-contract-2",
+    "familyId": "context-resource-contract",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "CompactView 是否仅用于导航？请用 compactViewsNavigationOnly 表达。\n哪个 pipeline 取代了已移除的孤立 codebase index？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-context-resource-contract-2-ja",
+    "baseId": "context-resource-contract-2",
+    "familyId": "context-resource-contract",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "CompactView は navigation-only ですか？compactViewsNavigationOnly で示してください。\n削除された孤立 codebase index を置き換えた pipeline は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-context-resource-contract-2-ru",
+    "baseId": "context-resource-contract-2",
+    "familyId": "context-resource-contract",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Является ли CompactView только навигационным? Укажите compactViewsNavigationOnly.\nКакой pipeline заменил удалённый изолированный codebase index?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-background-admission-1-en",
+    "baseId": "background-admission-1",
+    "familyId": "background-admission",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "Report the default queue high/low watermarks and minimum dwell time.\nWhich priority denotes foreground background-gate requests?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-background-admission-1-zh",
+    "baseId": "background-admission-1",
+    "familyId": "background-admission",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "报告默认队列高低水位及最小驻留时间。\n哪种 priority 表示 background gate 的前台请求？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-background-admission-1-ja",
+    "baseId": "background-admission-1",
+    "familyId": "background-admission",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "デフォルトのキュー high/low watermarks と最小 dwell 時間を示してください。\nbackground gate で foreground リクエストを表す priority は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-background-admission-1-ru",
+    "baseId": "background-admission-1",
+    "familyId": "background-admission",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Укажите стандартные high/low watermarks очереди и минимальное dwell время.\nКакое значение priority обозначает foreground запросы background gate?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-background-admission-2-en",
+    "baseId": "background-admission-2",
+    "familyId": "background-admission",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "ownership",
+    "question": "Does a shedding BackgroundWorkGate defer foreground work?\nWhich priority denotes foreground background-gate requests?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-background-admission-2-zh",
+    "baseId": "background-admission-2",
+    "familyId": "background-admission",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "ownership",
+    "question": "BackgroundWorkGate 处于 shedding 状态时是否推迟 foreground 工作？\n哪种 priority 表示 background gate 的前台请求？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-background-admission-2-ja",
+    "baseId": "background-admission-2",
+    "familyId": "background-admission",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "ownership",
+    "question": "shedding 状態の BackgroundWorkGate は foreground 作業を遅延させますか？\nbackground gate で foreground リクエストを表す priority は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-background-admission-2-ru",
+    "baseId": "background-admission-2",
+    "familyId": "background-admission",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "ownership",
+    "question": "Откладывает ли BackgroundWorkGate foreground работу при shedding?\nКакое значение priority обозначает foreground запросы background gate?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-bounded-cache-1-en",
+    "baseId": "bounded-cache-1",
+    "familyId": "bounded-cache",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "ownership",
+    "question": "Does getting an entry implicitly refresh its absolute TTL?\nWhich resource primitive coalesces same-key concurrent requests?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-bounded-cache-1-zh",
+    "baseId": "bounded-cache-1",
+    "familyId": "bounded-cache",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "ownership",
+    "question": "读取缓存项会隐式刷新它的绝对 TTL 吗？\n哪个资源原语合并同 key 的并发请求？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-bounded-cache-1-ja",
+    "baseId": "bounded-cache-1",
+    "familyId": "bounded-cache",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "ownership",
+    "question": "キャッシュ項目の get は絶対 TTL を暗黙に更新しますか？\n同じ key の同時リクエストを統合する resource primitive は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-bounded-cache-1-ru",
+    "baseId": "bounded-cache-1",
+    "familyId": "bounded-cache",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "ownership",
+    "question": "Обновляет ли get записи её абсолютный TTL неявно?\nКакой resource primitive объединяет параллельные запросы с одним key?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-bounded-cache-2-en",
+    "baseId": "bounded-cache-2",
+    "familyId": "bounded-cache",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "diagnosis",
+    "question": "At now equal to expiresAt, is a cache entry already expired?\nWhich resource primitive coalesces same-key concurrent requests?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-bounded-cache-2-zh",
+    "baseId": "bounded-cache-2",
+    "familyId": "bounded-cache",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "diagnosis",
+    "question": "now 等于 expiresAt 时，缓存项是否已过期？\n哪个资源原语合并同 key 的并发请求？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-bounded-cache-2-ja",
+    "baseId": "bounded-cache-2",
+    "familyId": "bounded-cache",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "diagnosis",
+    "question": "now が expiresAt と等しい場合、キャッシュ項目は期限切れですか？\n同じ key の同時リクエストを統合する resource primitive は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-bounded-cache-2-ru",
+    "baseId": "bounded-cache-2",
+    "familyId": "bounded-cache",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "diagnosis",
+    "question": "Истекла ли запись cache, когда now равен expiresAt?\nКакой resource primitive объединяет параллельные запросы с одним key?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-provider-outbound-quota-1-en",
+    "baseId": "provider-outbound-quota-1",
+    "familyId": "provider-outbound-quota",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "ownership",
+    "question": "Which owner name governs physical provider request concurrency?\nWhich measured unit does the outbound quota govern?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-provider-outbound-quota-1-zh",
+    "baseId": "provider-outbound-quota-1",
+    "familyId": "provider-outbound-quota",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "ownership",
+    "question": "哪个 owner 名称管理物理 provider 请求并发？\noutbound quota 管理哪个计量单位？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-provider-outbound-quota-1-ja",
+    "baseId": "provider-outbound-quota-1",
+    "familyId": "provider-outbound-quota",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "ownership",
+    "question": "物理 provider リクエストの並行数を管理する owner 名は何ですか？\noutbound quota が管理する計測単位は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-provider-outbound-quota-1-ru",
+    "baseId": "provider-outbound-quota-1",
+    "familyId": "provider-outbound-quota",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "ownership",
+    "question": "Как называется owner, управляющий параллельностью физических provider-запросов?\nКакую измеряемую единицу ограничивает outbound quota?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-provider-outbound-quota-2-en",
+    "baseId": "provider-outbound-quota-2",
+    "familyId": "provider-outbound-quota",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "research",
+    "question": "May an occupied provider quota alias be rebound immediately, or must busy be reported?\nWhich measured unit does the outbound quota govern?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-provider-outbound-quota-2-zh",
+    "baseId": "provider-outbound-quota-2",
+    "familyId": "provider-outbound-quota",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "research",
+    "question": "已占用的 provider quota alias 改绑时必须报告 busy 吗？\noutbound quota 管理哪个计量单位？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-provider-outbound-quota-2-ja",
+    "baseId": "provider-outbound-quota-2",
+    "familyId": "provider-outbound-quota",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "research",
+    "question": "使用中の provider quota alias の再バインド時は busy を返す必要がありますか？\noutbound quota が管理する計測単位は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-provider-outbound-quota-2-ru",
+    "baseId": "provider-outbound-quota-2",
+    "familyId": "provider-outbound-quota",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "research",
+    "question": "Нужно ли возвращать busy при перепривязке занятого alias provider quota?\nКакую измеряемую единицу ограничивает outbound quota?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-backup-restore-1-en",
+    "baseId": "backup-restore-1",
+    "familyId": "backup-restore",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "May a restore overwrite an existing target file?\nWhich archive file describes the backed-up assets?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-backup-restore-1-zh",
+    "baseId": "backup-restore-1",
+    "familyId": "backup-restore",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "恢复流程允许覆盖已有目标文件吗？\n归档中哪个文件描述已备份的 assets？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-backup-restore-1-ja",
+    "baseId": "backup-restore-1",
+    "familyId": "backup-restore",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "restore は既存の対象ファイルを上書きできますか？\nバックアップ assets を記述する archive ファイルは何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-backup-restore-1-ru",
+    "baseId": "backup-restore-1",
+    "familyId": "backup-restore",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Может ли restore перезаписывать существующий целевой файл?\nКакой файл archive описывает сохранённые assets?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-backup-restore-2-en",
+    "baseId": "backup-restore-2",
+    "familyId": "backup-restore",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "procedure",
+    "question": "Which files are rolled back if a later archive entry fails?\nWhich archive file describes the backed-up assets?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-backup-restore-2-zh",
+    "baseId": "backup-restore-2",
+    "familyId": "backup-restore",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "procedure",
+    "question": "后续 archive entry 失败时，回滚哪些文件？\n归档中哪个文件描述已备份的 assets？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-backup-restore-2-ja",
+    "baseId": "backup-restore-2",
+    "familyId": "backup-restore",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "procedure",
+    "question": "後続 archive entry が失敗した場合、どのファイルをロールバックしますか？\nバックアップ assets を記述する archive ファイルは何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-backup-restore-2-ru",
+    "baseId": "backup-restore-2",
+    "familyId": "backup-restore",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "procedure",
+    "question": "Какие файлы откатываются, если последующий archive entry завершился ошибкой?\nКакой файл archive описывает сохранённые assets?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-experience-adoption-1-en",
+    "baseId": "experience-adoption-1",
+    "familyId": "experience-adoption",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "ownership",
+    "question": "What principle status is required before adoption can be recorded?\nWhich environment variable controls the master SEKB gate?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-experience-adoption-1-zh",
+    "baseId": "experience-adoption-1",
+    "familyId": "experience-adoption",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "ownership",
+    "question": "记录 adoption 前，principle 必须处于什么状态？\n哪个环境变量控制 SEKB 总开关？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-experience-adoption-1-ja",
+    "baseId": "experience-adoption-1",
+    "familyId": "experience-adoption",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "ownership",
+    "question": "adoption を記録する前に principle が必要とする状態は何ですか？\nSEKB master gate を制御する環境変数は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-experience-adoption-1-ru",
+    "baseId": "experience-adoption-1",
+    "familyId": "experience-adoption",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "ownership",
+    "question": "В каком статусе должен быть principle перед записью adoption?\nКакая переменная окружения управляет master gate SEKB?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-experience-adoption-2-en",
+    "baseId": "experience-adoption-2",
+    "familyId": "experience-adoption",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "Which disposition outcomes can record_adoption return?\nWhich environment variable controls the master SEKB gate?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-experience-adoption-2-zh",
+    "baseId": "experience-adoption-2",
+    "familyId": "experience-adoption",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "record_adoption 可返回哪些 disposition？\n哪个环境变量控制 SEKB 总开关？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-experience-adoption-2-ja",
+    "baseId": "experience-adoption-2",
+    "familyId": "experience-adoption",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "record_adoption が返せる disposition は何ですか？\nSEKB master gate を制御する環境変数は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-experience-adoption-2-ru",
+    "baseId": "experience-adoption-2",
+    "familyId": "experience-adoption",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Какие disposition может вернуть record_adoption?\nКакая переменная окружения управляет master gate SEKB?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-orchestration-capacity-1-en",
+    "baseId": "orchestration-capacity-1",
+    "familyId": "orchestration-capacity",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "What concurrency cap is used when no measured worker cap is supplied?\nWhich routing mode decomposes a complex task into lead and workers?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-orchestration-capacity-1-zh",
+    "baseId": "orchestration-capacity-1",
+    "familyId": "orchestration-capacity",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "没有提供已测 worker cap 时采用什么并发上限？\n复杂任务拆分为 lead 和 workers 使用哪种 routing mode？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-orchestration-capacity-1-ja",
+    "baseId": "orchestration-capacity-1",
+    "familyId": "orchestration-capacity",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "測定済み worker cap がない場合の並行数上限はいくつですか？\n複雑なタスクを lead と workers に分解する routing mode は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-orchestration-capacity-1-ru",
+    "baseId": "orchestration-capacity-1",
+    "familyId": "orchestration-capacity",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Каков concurrency cap, если измеренный worker cap не задан?\nКакой routing mode разбивает сложную задачу на lead и workers?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-orchestration-capacity-2-en",
+    "baseId": "orchestration-capacity-2",
+    "familyId": "orchestration-capacity",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "configuration",
+    "question": "What planning cost does high effort have in the wave scheduler?\nWhich routing mode decomposes a complex task into lead and workers?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-orchestration-capacity-2-zh",
+    "baseId": "orchestration-capacity-2",
+    "familyId": "orchestration-capacity",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "configuration",
+    "question": "wave scheduler 给 high effort 的规划成本是多少？\n复杂任务拆分为 lead 和 workers 使用哪种 routing mode？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-orchestration-capacity-2-ja",
+    "baseId": "orchestration-capacity-2",
+    "familyId": "orchestration-capacity",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "configuration",
+    "question": "wave scheduler の high effort の計画コストはいくつですか？\n複雑なタスクを lead と workers に分解する routing mode は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-orchestration-capacity-2-ru",
+    "baseId": "orchestration-capacity-2",
+    "familyId": "orchestration-capacity",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "configuration",
+    "question": "Какова плановая стоимость high effort в wave scheduler?\nКакой routing mode разбивает сложную задачу на lead и workers?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-role-contracts-1-en",
+    "baseId": "role-contracts-1",
+    "familyId": "role-contracts",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "fact",
+    "question": "What canonical role name identifies the Reviewer contract?\nWhich verifier role belongs to the built-in Security Audit Team?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-role-contracts-1-zh",
+    "baseId": "role-contracts-1",
+    "familyId": "role-contracts",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "fact",
+    "question": "Reviewer contract 的 canonical role name 是什么？\n内置 Security Audit Team 使用哪个 verifier role？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-role-contracts-1-ja",
+    "baseId": "role-contracts-1",
+    "familyId": "role-contracts",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "fact",
+    "question": "Reviewer contract の canonical role name は何ですか？\n組み込み Security Audit Team の verifier role は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-role-contracts-1-ru",
+    "baseId": "role-contracts-1",
+    "familyId": "role-contracts",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "fact",
+    "question": "Какое canonical role name у контракта Reviewer?\nКакой verifier role у встроенной Security Audit Team?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-role-contracts-2-en",
+    "baseId": "role-contracts-2",
+    "familyId": "role-contracts",
+    "split": "held-out",
+    "locale": "en",
+    "intent": "fact",
+    "question": "What canonical role name identifies the Skeptic contract?\nWhich verifier role belongs to the built-in Security Audit Team?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-role-contracts-2-zh",
+    "baseId": "role-contracts-2",
+    "familyId": "role-contracts",
+    "split": "held-out",
+    "locale": "zh",
+    "intent": "fact",
+    "question": "Skeptic contract 的 canonical role name 是什么？\n内置 Security Audit Team 使用哪个 verifier role？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-role-contracts-2-ja",
+    "baseId": "role-contracts-2",
+    "familyId": "role-contracts",
+    "split": "held-out",
+    "locale": "ja",
+    "intent": "fact",
+    "question": "Skeptic contract の canonical role name は何ですか？\n組み込み Security Audit Team の verifier role は何ですか？",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  },
+  {
+    "id": "q-role-contracts-2-ru",
+    "baseId": "role-contracts-2",
+    "familyId": "role-contracts",
+    "split": "held-out",
+    "locale": "ru",
+    "intent": "fact",
+    "question": "Какое canonical role name у контракта Skeptic?\nКакой verifier role у встроенной Security Audit Team?",
+    "ownerScope": {
+      "workspaceId": "rag-corpus-workspace",
+      "principalId": "operator"
+    },
+    "authorship": {
+      "actor": "codex/project-rag-corpus-author",
+      "driven_by": "agent",
+      "origin": "agent-authored-query-oracle-over-pinned-project-source",
+      "writtenAt": "2026-11-10T04:49:07.401Z",
+      "review": "pending-independent-agent-review",
+      "humanData": false
+    }
+  }
+]
