@@ -1,5 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import { filesystemInstance } from '../../openclaw_runtime/src/agents/worktree-registry';
 import type { TaskContractInput, TaskView } from '../../shared/task-system/types';
 import type { SessionDelegationResult, WorkspaceCoordinatorBindingResult } from '../../shared/host-api/contract';
 import type { TaskLedgerSnapshot } from '../../shared/types/task-ledger';
@@ -142,7 +143,11 @@ test(`a real delegated worker receives its own task, reports separately and acce
     expect(after.snapshot.sessionLinks.some((link) => link.sessionKey === childKey && link.nodeId === childTask!.id)).toBe(true);
     expect(after.snapshot.nodes.find((node) => node.id === rootId)?.status).toBe('todo');
     expect(childTask?.status).toBe('doing');
-    expect(childTask?.evidenceRefs?.some(ref => ref.ref === target)).toBe(true);
+    const artifactReference = childTask?.evidenceRefs?.find(ref => ref.type === 'file' && filesystemInstance(ref.ref) === filesystemInstance(target));
+    expect(artifactReference).toBeDefined();
+    expect(await readFile(artifactReference!.ref, 'utf8')).toBe('agent-driven worker result\n');
+    evidence.retainedWorkerArtifact = { reference: artifactReference, fileIdentity: filesystemInstance(target),
+      sha256: createHash('sha256').update(await readFile(target)).digest('hex') };
     const duplicate = await hostInvoke<SessionDelegationResult>(app, 'sessions', 'delegate', request);
     expect(duplicate.replayed).toBe(true);
     expect(duplicate.receipt?.children[0].childSessionKey).toBe(childKey);
