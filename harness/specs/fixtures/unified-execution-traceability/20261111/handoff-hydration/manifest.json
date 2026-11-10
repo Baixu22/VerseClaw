@@ -3,9 +3,14 @@
   "candidate": "bfd8e37b7d61aa11dcd2c6d9535977d0fece95c2",
   "files": [
     {
-      "path": "build/driver-reuse-manifest.json",
+      "path": "build-provenance/driver-reuse-manifest.json",
       "sha256": "11aaa605039deff050b51a4eb9a8c68717b6057f25787edb36ea4661a5e9d16b",
       "bytes": 1337222
+    },
+    {
+      "path": "build-provenance/manifest.json",
+      "sha256": "4f4fb284e8a4ee84df7dbc26067e6931def35f80ccb4b4ced2358d53688662f6",
+      "bytes": 1336519
     },
     {
       "path": "checks/handoff-hydration-v2-comms-compare.result.json",
@@ -219,8 +224,8 @@
     },
     {
       "path": "raw-index.json",
-      "sha256": "94dac30da70cb6761d9afd38e3983454caeb3fe65e16a56cdbc9a4783ab26ba7",
-      "bytes": 14924
+      "sha256": "38943a8a6d578991c3930552911a49f3b2b7649e2b78d1022916c682a2be67a3",
+      "bytes": 14946
     },
     {
       "path": "report.json",

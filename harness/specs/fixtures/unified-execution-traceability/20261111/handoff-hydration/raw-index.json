@@ -258,13 +258,13 @@
     "bytes": 10899
   },
   {
-    "path": "build/manifest.json",
+    "path": "build-provenance/manifest.json",
     "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\build-manifest-handoff-hydration.json",
     "sha256": "4f4fb284e8a4ee84df7dbc26067e6931def35f80ccb4b4ced2358d53688662f6",
     "bytes": 1336519
   },
   {
-    "path": "build/driver-reuse-manifest.json",
+    "path": "build-provenance/driver-reuse-manifest.json",
     "sourcePath": "D:\\tmp\\unified-management-20261109\\traceability-validation\\build-manifest-handoff-ui3.json",
     "sha256": "11aaa605039deff050b51a4eb9a8c68717b6057f25787edb36ea4661a5e9d16b",
     "bytes": 1337222
