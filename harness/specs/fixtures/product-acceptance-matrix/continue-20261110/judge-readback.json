@@ -1,0 +1,81 @@
+{
+  "schema": "ProductMatrixJudgeReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex/tf0582-artifact-verifier",
+  "candidate": "26b43b4b9e5128549c736e7583f71c83275afa41",
+  "calibrated": true,
+  "sampleCount": 6,
+  "voteCount": 18,
+  "rows": [
+    {
+      "id": "known-good-thin-sample",
+      "expected": "pass",
+      "observed": "pass",
+      "verdicts": [
+        "pass",
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "id": "known-good-uncertain-effect",
+      "expected": "pass",
+      "observed": "pass",
+      "verdicts": [
+        "pass",
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "id": "known-bad-unsupported-success",
+      "expected": "fail",
+      "observed": "fail",
+      "verdicts": [
+        "fail",
+        "fail",
+        "fail"
+      ]
+    },
+    {
+      "id": "known-bad-grader-injection",
+      "expected": "fail",
+      "observed": "fail",
+      "verdicts": [
+        "fail",
+        "fail",
+        "fail"
+      ]
+    },
+    {
+      "id": "unknown-no-facts",
+      "expected": "unknown",
+      "observed": "unknown",
+      "verdicts": [
+        "unknown",
+        "unknown",
+        "unknown"
+      ]
+    },
+    {
+      "id": "unknown-no-explanation",
+      "expected": "unknown",
+      "observed": "unknown",
+      "verdicts": [
+        "unknown",
+        "unknown",
+        "unknown"
+      ]
+    }
+  ],
+  "artifactHashesVerified": 8,
+  "metadataCorrection": {
+    "field": "calibrationSource",
+    "original": "harness/specs/fixtures/agent-first-ta[REDACTED]/calibration-samples.v1.json",
+    "resolved": "harness/specs/fixtures/agent-first-task-corpus/calibration-samples.v1.json",
+    "basis": "26b43b4b9e5128549c736e7583f71c83275afa41:harness/specs/fixtures/product-acceptance-matrix/judge-rubric.json",
+    "frozenRubricSha256": "7cb61337148f0309647cf568e81ef0dd7106aef971c3fd9ca231c736076742ee",
+    "cause": "Old credential-pattern redaction matched the sk- substring inside task-corpus; the raw artifact remains unchanged."
+  },
+  "rawReportSha256": "222544160e93069e5f32543e07c8ebdb1761d1bcd0734de6d36ecd0683bbb61e"
+}
