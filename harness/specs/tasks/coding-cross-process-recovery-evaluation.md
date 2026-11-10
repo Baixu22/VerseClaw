@@ -30,7 +30,7 @@ requiredTests:
   - python -X utf8 -B scripts/coding-evaluation/test_recovery_evidence.py
   - python -X utf8 -B scripts/coding-evaluation/recovery.py --vg <vg.exe> --jj <jj.exe> --python <venv-python.exe> --contracts <vg-sts-contracts> --output <new-evidence-directory>
   - python -X utf8 -B scripts/coding-evaluation/verify-recovery.py <report.json> --candidate <frozen-ClawX-commit> --expected-report-digest <retained-digest> --negative-checks
-  - corepack pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/apply-patch-consistency.test.ts src/agents/tools/write-journal.test.ts src/agents/apply-patch-effect-receipt.test.ts src/agents/subagent-registry.test.ts --maxWorkers=1
+  - corepack pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run src/agents/apply-patch-consistency.test.ts src/agents/tools/write-journal.test.ts src/agents/apply-patch-effect-receipt.test.ts src/agents/subagent-registry-queries.quota.test.ts --maxWorkers=1
   - pnpm harness validate --spec harness/specs/tasks/coding-cross-process-recovery-evaluation.md
   - pnpm run comms:replay
   - pnpm run comms:compare
