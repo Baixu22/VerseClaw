@@ -48,6 +48,7 @@ export type TeamPatchFlowResultSummary = {
 };
 
 export type TeamOrchestrationMetadata = {
+  verifierNoSelfRepair?: boolean;
   orchestrationRunId: string;
   templateId?: string;
   roleName: string;

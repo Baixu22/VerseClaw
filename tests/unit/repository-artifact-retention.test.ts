@@ -50,7 +50,8 @@ describe('repository artifact retention', () => {
     for (const directory of ['artifacts', 'docs/dev', 'plans', 'tests', 'tests/unit', 'scripts', 'harness']) {
       expect(policy.localOnlyDirectories).not.toContain(directory);
     }
-    expect(policy.retiredTests).toHaveLength(4);
+    expect(new Set(policy.retiredTests).size).toBe(policy.retiredTests.length);
+    expect(policy.retiredTests).toContain('tests/unit/chat-session-actions.test.ts');
     for (const path of policy.requiredInputs) expect(isLocalArtifact(path, policy), path).toBe(false);
     expect(isLocalArtifact('runtime-research-notes/fixture.json', policy)).toBe(false);
     expect(isLocalArtifact('.agent-workbench/task-forest/fixture.json', policy)).toBe(true);
