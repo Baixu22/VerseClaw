@@ -55,7 +55,10 @@ for (const theme of ['light', 'dark'] as const) {
       await child.click();
       await expect(child.locator('xpath=ancestor::div[contains(@class,"sidebar-row")][1]')).toHaveClass(/selected/);
       await expect(activeRail).toHaveCSS('opacity', '0');
-      await expect(project.locator('.session-family__connector')).toHaveCount(1);
+      const familyChildren = project.locator('.session-family__children');
+      await expect(familyChildren).toHaveCount(1);
+      await expect(familyChildren).toHaveCSS('border-left-width', '1px');
+      await expect(familyChildren.locator('.ws-family-kind')).toHaveCount(1);
       await parent.hover();
       await expect(hoverRail).toHaveCSS('opacity', '0');
       await project.screenshot({ path: testInfo.outputPath(`${theme}-child-selected.png`) });
