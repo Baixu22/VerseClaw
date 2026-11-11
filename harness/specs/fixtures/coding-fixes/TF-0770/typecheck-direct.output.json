@@ -1,0 +1,4 @@
+{
+  "output": "{\"success\":true,\"results\":[{\"name\":\"bridge\",\"exitCode\":0,\"seconds\":0.08416380000000001},{\"name\":\"node\",\"exitCode\":0,\"seconds\":6.740387000000001},{\"name\":\"web\",\"exitCode\":0,\"seconds\":3.2548028999999996},{\"name\":\"test\",\"exitCode\":0,\"seconds\":13.133494200000001}]}\n",
+  "rawSha256": "8e981efbe77f4d39f4515963fdab3a078e1b249d079482b88f2d0eb0005d4c7d"
+}

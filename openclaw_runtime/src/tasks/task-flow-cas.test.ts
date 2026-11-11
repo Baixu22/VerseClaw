@@ -1,37 +1,37 @@
-import fs from 'node:fs';
-import os from 'node:os';
-import path from 'node:path';
-import { DatabaseSync } from 'node:sqlite';
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { DatabaseSync } from "node:sqlite";
 
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { closeOpenClawStateDatabase } from '../state/openclaw-state-db.js';
-import { deriveTaskFlowStatusFromTask } from './task-flow-registry.js';
-import type { TaskRecord } from './task-registry.types.js';
+import { closeOpenClawStateDatabase } from "../state/openclaw-state-db.js";
+import { deriveTaskFlowStatusFromTask } from "./task-flow-registry.js";
+import type { TaskRecord } from "./task-registry.types.js";
 import {
   CAS_CREATE_SENTINEL,
   isLegalTransition,
   isTerminalFlowStatus,
   TaskFlowCasStore,
-} from './task-flow-cas.js';
+} from "./task-flow-cas.js";
 
 const tempRoots: string[] = [];
-let stateDir = '';
+let stateDir = "";
 
 function options() {
   // Match the env-default path used by registry store functions (which take
   // no options parameter): resolveOpenClawStateSqlitePath = OPENCLAW_STATE_DIR
   // + '/state/openclaw.sqlite', so the CAS/registry round-trip hits one file.
-  return { env: process.env, path: path.join(stateDir, 'state', 'openclaw.sqlite') } as const;
+  return { env: process.env, path: path.join(stateDir, "state", "openclaw.sqlite") } as const;
 }
 
 beforeEach(() => {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'rc06a-taskflow-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "rc06a-taskflow-"));
   tempRoots.push(root);
-  stateDir = path.join(root, 'state');
+  stateDir = path.join(root, "state");
   fs.mkdirSync(stateDir, { recursive: true });
-  fs.mkdirSync(path.join(root, 'home'), { recursive: true });
-  process.env.OPENCLAW_HOME = path.join(root, 'home');
+  fs.mkdirSync(path.join(root, "home"), { recursive: true });
+  process.env.OPENCLAW_HOME = path.join(root, "home");
   process.env.OPENCLAW_STATE_DIR = stateDir;
 });
 
@@ -43,168 +43,274 @@ afterEach(() => {
   for (const root of tempRoots.splice(0)) fs.rmSync(root, { recursive: true, force: true });
 });
 
-describe('RC-06A TaskFlow CAS capability proof', () => {
-  it('legal transition graph allows valid transitions and rejects illegal ones', () => {
-    expect(isLegalTransition('queued', 'running')).toBe(true);
-    expect(isLegalTransition('running', 'waiting')).toBe(true);
-    expect(isLegalTransition('running', 'succeeded')).toBe(true);
-    expect(isLegalTransition('running', 'failed')).toBe(true);
+describe("RC-06A TaskFlow CAS capability proof", () => {
+  it("status and execution phase share a revision, and registry snapshots cannot mutate them", async () => {
+    const store = new TaskFlowCasStore(options());
+    expect(
+      store.casUpsert({
+        flowId: "execution-proof",
+        expectedRevision: -1,
+        status: "running",
+        controllerId: "tool-execution",
+        executionPhase: "dispatched",
+      }).ok,
+    ).toBe(true);
+    expect(
+      store.casUpsert({
+        flowId: "execution-proof",
+        expectedRevision: 0,
+        status: "running",
+        controllerId: "tool-execution",
+        expectedExecutionPhase: "dispatched",
+        executionPhase: "effect_pending",
+      }),
+    ).toMatchObject({ ok: true, revision: 1 });
+    expect(
+      store.casUpsert({
+        flowId: "execution-proof",
+        expectedRevision: 0,
+        status: "failed",
+        controllerId: "tool-execution",
+        executionPhase: "failed",
+      }),
+    ).toMatchObject({ ok: false, reason: "revision-conflict" });
+    expect(
+      store.casUpsert({
+        flowId: "execution-proof",
+        expectedRevision: 1,
+        status: "running",
+        controllerId: "tool-execution",
+        executionPhase: "terminal",
+      }),
+    ).toMatchObject({ ok: false, reason: "illegal-transition" });
+    const registry = await import("./task-flow-registry.store.sqlite.js");
+    expect(registry.loadTaskFlowRegistryStateFromSqlite().flows.has("execution-proof")).toBe(false);
+    registry.saveTaskFlowRegistryStateToSqlite({ flows: new Map() });
+    registry.deleteTaskFlowRegistryRecordFromSqlite("execution-proof");
+    expect(store.getById("execution-proof")).toMatchObject({
+      execution_phase: "effect_pending",
+      revision: 1,
+      status: "running",
+    });
+    expect(() =>
+      registry.upsertTaskFlowRegistryRecordToSqlite({
+        flowId: "execution-proof",
+        syncMode: "managed",
+        ownerKey: "stale",
+        status: "running",
+        revision: 0,
+        notifyPolicy: "done_only",
+        goal: "stale",
+        createdAt: 1,
+        updatedAt: 1,
+      }),
+    ).toThrow("TaskFlow CAS");
+  });
+  it("legal transition graph allows valid transitions and rejects illegal ones", () => {
+    expect(isLegalTransition("queued", "running")).toBe(true);
+    expect(isLegalTransition("running", "waiting")).toBe(true);
+    expect(isLegalTransition("running", "succeeded")).toBe(true);
+    expect(isLegalTransition("running", "failed")).toBe(true);
     // Illegal: succeeded can only stay succeeded (terminal absorbing).
-    expect(isLegalTransition('succeeded', 'running')).toBe(false);
-    expect(isLegalTransition('cancelled', 'running')).toBe(false);
-    expect(isLegalTransition('succeeded', 'failed')).toBe(false);
-    expect(isLegalTransition('lost', 'running')).toBe(false);
-    expect(isLegalTransition('waiting', 'queued')).toBe(false);
-    expect(isLegalTransition('queued', 'waiting')).toBe(true);
-    expect(isTerminalFlowStatus('succeeded')).toBe(true);
-    expect(isTerminalFlowStatus('queued')).toBe(false);
+    expect(isLegalTransition("succeeded", "running")).toBe(false);
+    expect(isLegalTransition("cancelled", "running")).toBe(false);
+    expect(isLegalTransition("succeeded", "failed")).toBe(false);
+    expect(isLegalTransition("lost", "running")).toBe(false);
+    expect(isLegalTransition("waiting", "queued")).toBe(false);
+    expect(isLegalTransition("queued", "waiting")).toBe(true);
+    expect(isTerminalFlowStatus("succeeded")).toBe(true);
+    expect(isTerminalFlowStatus("queued")).toBe(false);
   });
 
-  it('creates a new flow only with the explicit create sentinel (expectedRevision=-1)', () => {
+  it("creates a new flow only with the explicit create sentinel (expectedRevision=-1)", () => {
     const store = new TaskFlowCasStore(options());
     const result = store.casUpsert({
-      flowId: 'flow-1',
+      flowId: "flow-1",
       expectedRevision: CAS_CREATE_SENTINEL,
-      status: 'queued',
-      ownerKey: 'owner-1',
-      deliveryState: 'pending',
+      status: "queued",
+      ownerKey: "owner-1",
+      deliveryState: "pending",
     });
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.revision).toBe(0);
-    expect(result.row.status).toBe('queued');
+    expect(result.row.status).toBe("queued");
     // Delivery state persisted on the same row (never declared-but-dropped).
-    expect(result.row.delivery_state).toBe('pending');
+    expect(result.row.delivery_state).toBe("pending");
   });
 
-  it('rejects creation with any non-sentinel revision (audit counter-example)', () => {
+  it("rejects creation with any non-sentinel revision (audit counter-example)", () => {
     const store = new TaskFlowCasStore(options());
     // The audit counter-example: expectedRevision=999 + initial succeeded +
     // delivered must fail on BOTH dimensions.
     const bogus = store.casUpsert({
-      flowId: 'flow-bogus',
+      flowId: "flow-bogus",
       expectedRevision: 999,
-      status: 'succeeded',
-      deliveryState: 'delivered',
+      status: "succeeded",
+      deliveryState: "delivered",
     });
     expect(bogus.ok).toBe(false);
     if (!bogus.ok) {
-      expect(bogus.reason).toBe('revision-conflict');
+      expect(bogus.reason).toBe("revision-conflict");
     }
 
     // A plain arbitrary revision (0) also cannot create a flow.
-    const arbitrary = store.casUpsert({ flowId: 'flow-arbitrary', expectedRevision: 0, status: 'queued' });
+    const arbitrary = store.casUpsert({
+      flowId: "flow-arbitrary",
+      expectedRevision: 0,
+      status: "queued",
+    });
     expect(arbitrary.ok).toBe(false);
     if (!arbitrary.ok) {
-      expect(arbitrary.reason).toBe('revision-conflict');
+      expect(arbitrary.reason).toBe("revision-conflict");
     }
 
     // A terminal initial status with the correct sentinel is also rejected.
     const terminalInitial = store.casUpsert({
-      flowId: 'flow-terminal-initial',
+      flowId: "flow-terminal-initial",
       expectedRevision: CAS_CREATE_SENTINEL,
-      status: 'succeeded',
+      status: "succeeded",
     });
     expect(terminalInitial.ok).toBe(false);
     if (!terminalInitial.ok) {
-      expect(terminalInitial.reason).toBe('illegal-transition');
+      expect(terminalInitial.reason).toBe("illegal-transition");
     }
 
     // No partial rows were produced.
-    expect(store.getById('flow-bogus')).toBeUndefined();
-    expect(store.getById('flow-arbitrary')).toBeUndefined();
-    expect(store.getById('flow-terminal-initial')).toBeUndefined();
+    expect(store.getById("flow-bogus")).toBeUndefined();
+    expect(store.getById("flow-arbitrary")).toBeUndefined();
+    expect(store.getById("flow-terminal-initial")).toBeUndefined();
   });
 
-  it('a stale revision writer is rejected atomically (SQL-level revision CAS)', () => {
+  it("a stale revision writer is rejected atomically (SQL-level revision CAS)", () => {
     const store = new TaskFlowCasStore(options());
-    const first = store.casUpsert({ flowId: 'flow-cas', expectedRevision: CAS_CREATE_SENTINEL, status: 'queued' });
+    const first = store.casUpsert({
+      flowId: "flow-cas",
+      expectedRevision: CAS_CREATE_SENTINEL,
+      status: "queued",
+    });
     expect(first.ok).toBe(true);
 
     // Writer A advances to running with the current revision 0 -> 1.
-    const advanceA = store.casUpsert({ flowId: 'flow-cas', expectedRevision: 0, status: 'running' });
+    const advanceA = store.casUpsert({
+      flowId: "flow-cas",
+      expectedRevision: 0,
+      status: "running",
+    });
     expect(advanceA.ok).toBe(true);
     if (!advanceA.ok) return;
     expect(advanceA.revision).toBe(1);
 
     // Writer B still holds the old revision 0 -> SQL WHERE revision=? guard rejects.
-    const staleB = store.casUpsert({ flowId: 'flow-cas', expectedRevision: 0, status: 'running' });
+    const staleB = store.casUpsert({ flowId: "flow-cas", expectedRevision: 0, status: "running" });
     expect(staleB.ok).toBe(false);
     if (!staleB.ok) {
-      expect(staleB.reason).toBe('revision-conflict');
+      expect(staleB.reason).toBe("revision-conflict");
     }
     // The row was NOT modified by the stale write.
-    expect(store.getById('flow-cas')?.revision).toBe(1);
+    expect(store.getById("flow-cas")?.revision).toBe(1);
   });
 
-  it('rejects an illegal transition even with the correct revision', () => {
+  it("rejects an illegal transition even with the correct revision", () => {
     const store = new TaskFlowCasStore(options());
     expect(
-      store.casUpsert({ flowId: 'flow-illegal', expectedRevision: CAS_CREATE_SENTINEL, status: 'queued' }).ok,
+      store.casUpsert({
+        flowId: "flow-illegal",
+        expectedRevision: CAS_CREATE_SENTINEL,
+        status: "queued",
+      }).ok,
     ).toBe(true);
     // queued -> succeeded is legal (settled without running), but a flow
     // never goes back: after running, returning to queued is illegal.
-    expect(store.casUpsert({ flowId: 'flow-illegal', expectedRevision: 0, status: 'running' }).ok).toBe(true);
-    const illegal = store.casUpsert({ flowId: 'flow-illegal', expectedRevision: 1, status: 'queued' });
+    expect(
+      store.casUpsert({ flowId: "flow-illegal", expectedRevision: 0, status: "running" }).ok,
+    ).toBe(true);
+    const illegal = store.casUpsert({
+      flowId: "flow-illegal",
+      expectedRevision: 1,
+      status: "queued",
+    });
     expect(illegal.ok).toBe(false);
     if (!illegal.ok) {
-      expect(illegal.reason).toBe('illegal-transition');
+      expect(illegal.reason).toBe("illegal-transition");
     }
-    expect(store.getById('flow-illegal')?.status).toBe('running');
+    expect(store.getById("flow-illegal")?.status).toBe("running");
   });
 
-  it('terminal resurrection is rejected: a terminal flow cannot restart', () => {
+  it("terminal resurrection is rejected: a terminal flow cannot restart", () => {
     const store = new TaskFlowCasStore(options());
     expect(
-      store.casUpsert({ flowId: 'flow-terminal', expectedRevision: CAS_CREATE_SENTINEL, status: 'running' }).ok,
+      store.casUpsert({
+        flowId: "flow-terminal",
+        expectedRevision: CAS_CREATE_SENTINEL,
+        status: "running",
+      }).ok,
     ).toBe(true);
-    expect(store.casUpsert({ flowId: 'flow-terminal', expectedRevision: 0, status: 'succeeded' }).ok).toBe(true);
+    expect(
+      store.casUpsert({ flowId: "flow-terminal", expectedRevision: 0, status: "succeeded" }).ok,
+    ).toBe(true);
     // succeeded -> running is illegal (absorbing terminal).
-    const resurrection = store.casUpsert({ flowId: 'flow-terminal', expectedRevision: 1, status: 'running' });
+    const resurrection = store.casUpsert({
+      flowId: "flow-terminal",
+      expectedRevision: 1,
+      status: "running",
+    });
     expect(resurrection.ok).toBe(false);
     if (!resurrection.ok) {
-      expect(resurrection.reason).toBe('illegal-transition');
+      expect(resurrection.reason).toBe("illegal-transition");
     }
-    expect(store.getById('flow-terminal')?.status).toBe('succeeded');
+    expect(store.getById("flow-terminal")?.status).toBe("succeeded");
   });
 
-  it('flow state, revision, wait, terminal, and delivery state survive restart', () => {
+  it("flow state, revision, wait, terminal, and delivery state survive restart", () => {
     const first = new TaskFlowCasStore(options());
     const created = first.casUpsert({
-      flowId: 'flow-restart',
+      flowId: "flow-restart",
       expectedRevision: CAS_CREATE_SENTINEL,
-      status: 'queued',
-      waitJson: JSON.stringify({ kind: 'waiting-for-operator' }),
-      deliveryState: 'pending',
+      status: "queued",
+      waitJson: JSON.stringify({ kind: "waiting-for-operator" }),
+      deliveryState: "pending",
     });
     expect(created.ok).toBe(true);
-    expect(first.casUpsert({ flowId: 'flow-restart', expectedRevision: 0, status: 'running' }).ok).toBe(true);
-    expect(first.casUpsert({ flowId: 'flow-restart', expectedRevision: 1, status: 'waiting' }).ok).toBe(true);
-    expect(first.casUpsert({ flowId: 'flow-restart', expectedRevision: 2, status: 'running' }).ok).toBe(true);
+    expect(
+      first.casUpsert({ flowId: "flow-restart", expectedRevision: 0, status: "running" }).ok,
+    ).toBe(true);
+    expect(
+      first.casUpsert({ flowId: "flow-restart", expectedRevision: 1, status: "waiting" }).ok,
+    ).toBe(true);
+    expect(
+      first.casUpsert({ flowId: "flow-restart", expectedRevision: 2, status: "running" }).ok,
+    ).toBe(true);
 
     // A REAL restart: close every cached connection, then reopen from disk.
     closeOpenClawStateDatabase();
     const second = new TaskFlowCasStore(options());
-    const row = second.getById('flow-restart');
-    expect(row?.status).toBe('running');
+    const row = second.getById("flow-restart");
+    expect(row?.status).toBe("running");
     expect(row?.revision).toBe(3);
-    expect(row?.wait_json).toContain('waiting-for-operator');
-    expect(row?.delivery_state).toBe('pending');
+    expect(row?.wait_json).toContain("waiting-for-operator");
+    expect(row?.delivery_state).toBe("pending");
 
     // Advance to terminal with the current revision; terminal survives restart.
-    expect(second.casUpsert({ flowId: 'flow-restart', expectedRevision: 3, status: 'succeeded' }).ok).toBe(true);
+    expect(
+      second.casUpsert({ flowId: "flow-restart", expectedRevision: 3, status: "succeeded" }).ok,
+    ).toBe(true);
     closeOpenClawStateDatabase();
     const third = new TaskFlowCasStore(options());
-    expect(third.getById('flow-restart')?.status).toBe('succeeded');
-    expect(third.getById('flow-restart')?.ended_at).not.toBeNull();
+    expect(third.getById("flow-restart")?.status).toBe("succeeded");
+    expect(third.getById("flow-restart")?.ended_at).not.toBeNull();
   });
 
-  it('two REAL independent connections competing for the same flow: only one writer wins', () => {
+  it("two REAL independent connections competing for the same flow: only one writer wins", () => {
     // Create the flow through the store (schema ensured), then close all
     // cached handles so the competition below runs on genuine connections.
     const store = new TaskFlowCasStore(options());
     expect(
-      store.casUpsert({ flowId: 'flow-race', expectedRevision: CAS_CREATE_SENTINEL, status: 'queued' }).ok,
+      store.casUpsert({
+        flowId: "flow-race",
+        expectedRevision: CAS_CREATE_SENTINEL,
+        status: "queued",
+      }).ok,
     ).toBe(true);
     closeOpenClawStateDatabase();
 
@@ -215,8 +321,8 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
     const dbPath = options().path;
     const connA = new DatabaseSync(dbPath);
     const connB = new DatabaseSync(dbPath);
-    connA.exec('PRAGMA busy_timeout = 5000;');
-    connB.exec('PRAGMA busy_timeout = 5000;');
+    connA.exec("PRAGMA busy_timeout = 5000;");
+    connB.exec("PRAGMA busy_timeout = 5000;");
     const now = Date.now();
     const updateA = connA.prepare(
       `UPDATE flow_runs SET status = 'running', revision = revision + 1, updated_at = ? WHERE flow_id = 'flow-race' AND revision = 0`,
@@ -235,18 +341,18 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
     // The row reflects the single winning transition exactly once.
     closeOpenClawStateDatabase();
     const reopened = new TaskFlowCasStore(options());
-    expect(reopened.getById('flow-race')?.revision).toBe(1);
-    expect(reopened.getById('flow-race')?.status).toBe('running');
+    expect(reopened.getById("flow-race")?.revision).toBe(1);
+    expect(reopened.getById("flow-race")?.status).toBe("running");
   });
 
-  it('registry reads project delivery_state back (CAS write -> registry read round-trip)', async () => {
+  it("registry reads project delivery_state back (CAS write -> registry read round-trip)", async () => {
     const store = new TaskFlowCasStore(options());
     expect(
       store.casUpsert({
-        flowId: 'flow-registry-proj',
+        flowId: "flow-registry-proj",
         expectedRevision: CAS_CREATE_SENTINEL,
-        status: 'queued',
-        deliveryState: 'pending',
+        status: "queued",
+        deliveryState: "pending",
       }).ok,
     ).toBe(true);
 
@@ -254,76 +360,74 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
     // delivery_state field (never drop it). Reopen from disk to prove the
     // round-trip is durable, not just cached.
     closeOpenClawStateDatabase();
-    const { loadTaskFlowRegistryStateFromSqlite } = await import(
-      './task-flow-registry.store.sqlite.js'
-    );
+    const { loadTaskFlowRegistryStateFromSqlite } =
+      await import("./task-flow-registry.store.sqlite.js");
     const snapshot = loadTaskFlowRegistryStateFromSqlite();
-    const record = snapshot.flows.get('flow-registry-proj');
+    const record = snapshot.flows.get("flow-registry-proj");
     expect(record).toBeDefined();
-    expect(record?.status).toBe('queued');
-    expect(record?.deliveryState).toBe('pending');
+    expect(record?.status).toBe("queued");
+    expect(record?.deliveryState).toBe("pending");
 
     // Registry writes also round-trip delivery_state.
-    const { upsertTaskFlowRegistryRecordToSqlite } = await import(
-      './task-flow-registry.store.sqlite.js'
-    );
+    const { upsertTaskFlowRegistryRecordToSqlite } =
+      await import("./task-flow-registry.store.sqlite.js");
     upsertTaskFlowRegistryRecordToSqlite({
       ...record!,
-      deliveryState: 'delivered',
+      deliveryState: "delivered",
     });
     const reloaded = loadTaskFlowRegistryStateFromSqlite();
-    expect(reloaded.flows.get('flow-registry-proj')?.deliveryState).toBe('delivered');
+    expect(reloaded.flows.get("flow-registry-proj")?.deliveryState).toBe("delivered");
   });
 
-  it('delivery/lifecycle cannot split: delivery state persists with every transition and never leaves a partial row', () => {
+  it("delivery/lifecycle cannot split: delivery state persists with every transition and never leaves a partial row", () => {
     const store = new TaskFlowCasStore(options());
     expect(
       store.casUpsert({
-        flowId: 'flow-delivery',
+        flowId: "flow-delivery",
         expectedRevision: CAS_CREATE_SENTINEL,
-        status: 'running',
-        deliveryState: 'pending',
+        status: "running",
+        deliveryState: "pending",
       }).ok,
     ).toBe(true);
     // A rejected transition (running -> queued) must not alter lifecycle OR delivery state.
     const rejected = store.casUpsert({
-      flowId: 'flow-delivery',
+      flowId: "flow-delivery",
       expectedRevision: 0,
-      status: 'queued',
-      deliveryState: 'dropped',
+      status: "queued",
+      deliveryState: "dropped",
     });
     expect(rejected.ok).toBe(false);
     if (!rejected.ok) {
-      expect(rejected.reason).toBe('illegal-transition');
+      expect(rejected.reason).toBe("illegal-transition");
     }
-    const afterReject = store.getById('flow-delivery');
-    expect(afterReject?.status).toBe('running');
-    expect(afterReject?.delivery_state).toBe('pending');
+    const afterReject = store.getById("flow-delivery");
+    expect(afterReject?.status).toBe("running");
+    expect(afterReject?.delivery_state).toBe("pending");
 
     // A valid transition carries the new delivery state atomically.
     expect(
       store.casUpsert({
-        flowId: 'flow-delivery',
+        flowId: "flow-delivery",
         expectedRevision: 0,
-        status: 'succeeded',
-        deliveryState: 'delivered',
+        status: "succeeded",
+        deliveryState: "delivered",
       }).ok,
     ).toBe(true);
-    const afterAdvance = store.getById('flow-delivery');
-    expect(afterAdvance?.status).toBe('succeeded');
-    expect(afterAdvance?.delivery_state).toBe('delivered');
+    const afterAdvance = store.getById("flow-delivery");
+    expect(afterAdvance?.status).toBe("succeeded");
+    expect(afterAdvance?.delivery_state).toBe("delivered");
   });
 
-  it('explicit null clears state/wait/delivery fields consistently (documented contract)', () => {
+  it("explicit null clears state/wait/delivery fields consistently (documented contract)", () => {
     const store = new TaskFlowCasStore(options());
     expect(
       store.casUpsert({
-        flowId: 'flow-clear',
+        flowId: "flow-clear",
         expectedRevision: CAS_CREATE_SENTINEL,
-        status: 'queued',
+        status: "queued",
         stateJson: '{"phase":"intake"}',
         waitJson: '{"waitMode":"manual_review"}',
-        deliveryState: 'pending',
+        deliveryState: "pending",
       }).ok,
     ).toBe(true);
 
@@ -332,15 +436,15 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
     // "explicit null clears" contract).
     expect(
       store.casUpsert({
-        flowId: 'flow-clear',
+        flowId: "flow-clear",
         expectedRevision: 0,
-        status: 'running',
+        status: "running",
         stateJson: null,
         waitJson: null,
         deliveryState: null,
       }).ok,
     ).toBe(true);
-    const row = store.getById('flow-clear');
+    const row = store.getById("flow-clear");
     expect(row?.state_json).toBeNull();
     expect(row?.wait_json).toBeNull();
     expect(row?.delivery_state).toBeNull();
@@ -349,145 +453,153 @@ describe('RC-06A TaskFlow CAS capability proof', () => {
   it('creates a controller_id="goal-wake" waiting flow with blocked_task_id and persists both', () => {
     const store = new TaskFlowCasStore(options());
     const result = store.casUpsert({
-      flowId: 'flow-goal-wake',
+      flowId: "flow-goal-wake",
       expectedRevision: CAS_CREATE_SENTINEL,
-      status: 'waiting',
-      controllerId: 'goal-wake',
-      ownerKey: 'agent:agent-a:main',
-      blockedTaskId: 'task-process-1',
-      blockedSummary: 'waiting-for-process',
-      waitJson: JSON.stringify({ v: 1, turnBarrier: 'pending' }),
+      status: "waiting",
+      controllerId: "goal-wake",
+      ownerKey: "agent:agent-a:main",
+      blockedTaskId: "task-process-1",
+      blockedSummary: "waiting-for-process",
+      waitJson: JSON.stringify({ v: 1, turnBarrier: "pending" }),
       stateJson: JSON.stringify({ v: 1 }),
     });
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    expect(result.row.controller_id).toBe('goal-wake');
-    expect(result.row.status).toBe('waiting');
-    expect(result.row.blocked_task_id).toBe('task-process-1');
-    expect(result.row.wait_json).toContain('turnBarrier');
+    expect(result.row.controller_id).toBe("goal-wake");
+    expect(result.row.status).toBe("waiting");
+    expect(result.row.blocked_task_id).toBe("task-process-1");
+    expect(result.row.wait_json).toContain("turnBarrier");
   });
 
-  it('goal-wake transitions follow the legal graph including waiting -> failed', () => {
+  it("goal-wake transitions follow the legal graph including waiting -> failed", () => {
     const store = new TaskFlowCasStore(options());
     expect(
       store.casUpsert({
-        flowId: 'flow-goal-wake-transitions',
+        flowId: "flow-goal-wake-transitions",
         expectedRevision: CAS_CREATE_SENTINEL,
-        status: 'waiting',
-        controllerId: 'goal-wake',
+        status: "waiting",
+        controllerId: "goal-wake",
       }).ok,
     ).toBe(true);
     expect(
       store.casUpsert({
-        flowId: 'flow-goal-wake-transitions',
+        flowId: "flow-goal-wake-transitions",
         expectedRevision: 0,
-        status: 'running',
-        controllerId: 'goal-wake',
+        status: "running",
+        controllerId: "goal-wake",
       }).ok,
     ).toBe(true);
     expect(
       store.casUpsert({
-        flowId: 'flow-goal-wake-transitions',
+        flowId: "flow-goal-wake-transitions",
         expectedRevision: 1,
-        status: 'succeeded',
-        controllerId: 'goal-wake',
+        status: "succeeded",
+        controllerId: "goal-wake",
       }).ok,
     ).toBe(true);
   });
 
-  it('waiting -> failed is now legal and waiting -> succeeded remains illegal', () => {
+  it("waiting -> failed is now legal and waiting -> succeeded remains illegal", () => {
     const store = new TaskFlowCasStore(options());
     expect(
       store.casUpsert({
-        flowId: 'flow-goal-wake-failed',
+        flowId: "flow-goal-wake-failed",
         expectedRevision: CAS_CREATE_SENTINEL,
-        status: 'waiting',
-        controllerId: 'goal-wake',
+        status: "waiting",
+        controllerId: "goal-wake",
       }).ok,
     ).toBe(true);
     expect(
       store.casUpsert({
-        flowId: 'flow-goal-wake-failed',
+        flowId: "flow-goal-wake-failed",
         expectedRevision: 0,
-        status: 'failed',
-        controllerId: 'goal-wake',
+        status: "failed",
+        controllerId: "goal-wake",
       }).ok,
     ).toBe(true);
     expect(
       store.casUpsert({
-        flowId: 'flow-goal-wake-illegal',
+        flowId: "flow-goal-wake-illegal",
         expectedRevision: CAS_CREATE_SENTINEL,
-        status: 'waiting',
-        controllerId: 'goal-wake',
+        status: "waiting",
+        controllerId: "goal-wake",
       }).ok,
     ).toBe(true);
     const illegal = store.casUpsert({
-      flowId: 'flow-goal-wake-illegal',
+      flowId: "flow-goal-wake-illegal",
       expectedRevision: 0,
-      status: 'succeeded',
-      controllerId: 'goal-wake',
+      status: "succeeded",
+      controllerId: "goal-wake",
     });
     expect(illegal.ok).toBe(false);
-    if (!illegal.ok) expect(illegal.reason).toBe('illegal-transition');
+    if (!illegal.ok) expect(illegal.reason).toBe("illegal-transition");
   });
 
-  it('controller ownership is immutable once a flow row exists', () => {
+  it("controller ownership is immutable once a flow row exists", () => {
     const store = new TaskFlowCasStore(options());
     expect(
       store.casUpsert({
-        flowId: 'flow-goal-wake-controller',
+        flowId: "flow-goal-wake-controller",
         expectedRevision: CAS_CREATE_SENTINEL,
-        status: 'waiting',
-        controllerId: 'goal-wake',
+        status: "waiting",
+        controllerId: "goal-wake",
       }).ok,
     ).toBe(true);
     const reassign = store.casUpsert({
-      flowId: 'flow-goal-wake-controller',
+      flowId: "flow-goal-wake-controller",
       expectedRevision: 0,
-      status: 'running',
-      controllerId: 'other-controller',
+      status: "running",
+      controllerId: "other-controller",
     });
     expect(reassign.ok).toBe(false);
-    if (!reassign.ok) expect(reassign.reason).toBe('illegal-transition');
+    if (!reassign.ok) expect(reassign.reason).toBe("illegal-transition");
   });
 
-
-  it('every lifecycle step the legacy task registry produces is a legal CAS transition', () => {
+  it("every lifecycle step the legacy task registry produces is a legal CAS transition", () => {
     // Legacy task steps: start, settle while running, and settle while still
     // queued (cron journal recovery, cancel, maintenance marking it lost).
-    type Step = Pick<TaskRecord, 'status' | 'terminalOutcome'>;
+    type Step = Pick<TaskRecord, "status" | "terminalOutcome">;
     const settled: Step[] = [
-      { status: 'succeeded', terminalOutcome: 'succeeded' },
-      { status: 'succeeded', terminalOutcome: 'blocked' },
-      { status: 'failed' },
-      { status: 'timed_out' },
-      { status: 'cancelled' },
-      { status: 'lost' },
+      { status: "succeeded", terminalOutcome: "succeeded" },
+      { status: "succeeded", terminalOutcome: "blocked" },
+      { status: "failed" },
+      { status: "timed_out" },
+      { status: "cancelled" },
+      { status: "lost" },
     ];
     const steps: Array<[Step, Step]> = [
-      [{ status: 'queued' }, { status: 'running' }],
-      ...settled.map((to): [Step, Step] => [{ status: 'queued' }, to]),
-      ...settled.map((to): [Step, Step] => [{ status: 'running' }, to]),
+      [{ status: "queued" }, { status: "running" }],
+      ...settled.map((to): [Step, Step] => [{ status: "queued" }, to]),
+      ...settled.map((to): [Step, Step] => [{ status: "running" }, to]),
     ];
     const illegal = steps
-      .map(([from, to]) => [deriveTaskFlowStatusFromTask(from), deriveTaskFlowStatusFromTask(to)] as const)
+      .map(
+        ([from, to]) =>
+          [deriveTaskFlowStatusFromTask(from), deriveTaskFlowStatusFromTask(to)] as const,
+      )
       .filter(([from, to]) => !isLegalTransition(from, to))
       .map(([from, to]) => `${from}->${to}`);
     expect(illegal).toEqual([]);
   });
 
-  it('restart can settle an active flow as lost through the CAS writer', () => {
+  it("restart can settle an active flow as lost through the CAS writer", () => {
     const store = new TaskFlowCasStore(options());
-    const created = store.casUpsert({ flowId: 'flow-lost', expectedRevision: CAS_CREATE_SENTINEL, status: 'running' });
+    const created = store.casUpsert({
+      flowId: "flow-lost",
+      expectedRevision: CAS_CREATE_SENTINEL,
+      status: "running",
+    });
     expect(created.ok).toBe(true);
-    const lost = store.casUpsert({ flowId: 'flow-lost', expectedRevision: 0, status: 'lost' });
+    const lost = store.casUpsert({ flowId: "flow-lost", expectedRevision: 0, status: "lost" });
     expect(lost.ok).toBe(true);
     if (!lost.ok) return;
-    expect(lost.row.status).toBe('lost');
-    expect(lost.row.ended_at).toBeTypeOf('number');
-    expect(store.casUpsert({ flowId: 'flow-lost', expectedRevision: 1, status: 'running' })).toMatchObject({
+    expect(lost.row.status).toBe("lost");
+    expect(lost.row.ended_at).toBeTypeOf("number");
+    expect(
+      store.casUpsert({ flowId: "flow-lost", expectedRevision: 1, status: "running" }),
+    ).toMatchObject({
       ok: false,
-      reason: 'illegal-transition',
+      reason: "illegal-transition",
     });
   });
 });

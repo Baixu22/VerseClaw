@@ -69,6 +69,7 @@ function capabilityFromError(error: unknown, checkedAt = Date.now()): GatewayCap
 const UNKNOWN_CAPABILITY: GatewayCapabilityProbe = { state: 'unknown' };
 
 export class GatewayCapabilityMonitor {
+  epoch = 0;
   private openclawHealth: GatewayCapabilityProbe = UNKNOWN_CAPABILITY;
   private openclawStatus: GatewayCapabilityProbe = UNKNOWN_CAPABILITY;
   private presence: GatewayCapabilityProbe = UNKNOWN_CAPABILITY;
@@ -76,6 +77,18 @@ export class GatewayCapabilityMonitor {
   private memory: GatewayCapabilityProbe = UNKNOWN_CAPABILITY;
   private runtimeHandshake: GatewayRuntimeHandshakeSnapshot = {};
   private lastCoreProbe: GatewayCoreProbe | undefined;
+
+  /** Connection-local facts cannot survive a restart or transport replacement. */
+  reset(): void {
+    this.epoch += 1;
+    this.openclawHealth = UNKNOWN_CAPABILITY;
+    this.openclawStatus = UNKNOWN_CAPABILITY;
+    this.presence = UNKNOWN_CAPABILITY;
+    this.channels = UNKNOWN_CAPABILITY;
+    this.memory = UNKNOWN_CAPABILITY;
+    this.runtimeHandshake = {};
+    this.lastCoreProbe = undefined;
+  }
 
   recordOpenClawHealth(payload: GatewayRuntimePayload): void {
     this.openclawHealth = capabilityFromPayload(payload);
@@ -128,7 +141,9 @@ export class GatewayCapabilityMonitor {
       core: {
         process: params.status.state,
         transport: params.transportConnected ? 'connected' : 'disconnected',
-        rpcRouter: this.lastCoreProbe?.ok === false
+        rpcRouter: !params.transportConnected || params.status.state !== 'running'
+          ? 'unknown'
+          : this.lastCoreProbe?.ok === false
           ? 'blocked'
           : params.status.gatewayReady === true || this.lastCoreProbe?.ok === true
             ? 'ready'

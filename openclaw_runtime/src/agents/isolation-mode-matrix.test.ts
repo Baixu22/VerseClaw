@@ -12,10 +12,10 @@ describe("isolation-mode-matrix (C5-3)", () => {
       recommendIsolationMode({ durationMinutes: 15, workerCount: 2, writeDensity: 0.4 }).mode,
     ).toBe("worktree");
   });
-  it("recommends patch-flow for long dense multi-worker", () => {
+  it("recommends worktree for long dense multi-worker", () => {
     expect(
       recommendIsolationMode({ durationMinutes: 45, workerCount: 4, writeDensity: 0.7 }).mode,
-    ).toBe("patch-flow");
+    ).toBe("worktree");
   });
   it("treats high writeSet overlap like write density for multi-worker", () => {
     expect(

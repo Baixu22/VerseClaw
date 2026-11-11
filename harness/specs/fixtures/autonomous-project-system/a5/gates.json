@@ -1,0 +1,223 @@
+{
+  "candidate": {
+    "dirty": false,
+    "tree": "4f46b4dbe314eea6479e64868e07305fae631445",
+    "commit": "9f0c5b07ecbe7f982b5ac111edf772e96158d46e"
+  },
+  "driven_by": "agent",
+  "actor": "codex-a5",
+  "results": [
+    {
+      "id": "unit",
+      "command": "pnpm --config.verify-deps-before-run=false exec vitest run tests/unit/autonomy-host-readiness.test.ts tests/unit/long-session-effective-policy.test.ts tests/unit/gateway-manager-diagnostics.test.ts tests/unit/gateway-manager-restart-recovery.test.ts tests/unit/session-activity-background-read.test.ts tests/unit/workspace-preflight.test.ts tests/unit/config-sync-source-runtime.test.ts tests/unit/gateway-doctor-repair-env.test.ts --maxWorkers=1 --reporter=json --outputFile=D:\\tmp\\autonomy-a5-final-gates-r3/unit.json",
+      "durationMs": 114156,
+      "log": "D:\\tmp\\autonomy-a5-final-gates-r3\\unit.log",
+      "exitCode": 0,
+      "program": "pnpm",
+      "argv": [
+        "--config.verify-deps-before-run=false",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/autonomy-host-readiness.test.ts",
+        "tests/unit/long-session-effective-policy.test.ts",
+        "tests/unit/gateway-manager-diagnostics.test.ts",
+        "tests/unit/gateway-manager-restart-recovery.test.ts",
+        "tests/unit/session-activity-background-read.test.ts",
+        "tests/unit/workspace-preflight.test.ts",
+        "tests/unit/config-sync-source-runtime.test.ts",
+        "tests/unit/gateway-doctor-repair-env.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\autonomy-a5-final-gates-r3/unit.json"
+      ]
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm --config.verify-deps-before-run=false typecheck",
+      "durationMs": 85055,
+      "log": "D:\\tmp\\autonomy-a5-final-gates-r3\\typecheck.log",
+      "exitCode": 0,
+      "program": "pnpm",
+      "argv": [
+        "--config.verify-deps-before-run=false",
+        "typecheck"
+      ]
+    },
+    {
+      "id": "lint",
+      "command": "pnpm --config.verify-deps-before-run=false exec eslint electron/gateway/capability-monitor.ts electron/gateway/manager.ts electron/gateway/session-host-readiness.ts electron/services/session-activity-api.ts shared/types/session-effective-policy.ts tests/unit/autonomy-host-readiness.test.ts tests/unit/long-session-effective-policy.test.ts tests/unit/gateway-manager-diagnostics.test.ts tests/e2e/autonomy-host-readiness.spec.ts tests/e2e/autonomy-runtime-readiness.spec.ts --max-warnings 0",
+      "durationMs": 13276,
+      "log": "D:\\tmp\\autonomy-a5-final-gates-r3\\lint.log",
+      "exitCode": 0,
+      "program": "pnpm",
+      "argv": [
+        "--config.verify-deps-before-run=false",
+        "exec",
+        "eslint",
+        "electron/gateway/capability-monitor.ts",
+        "electron/gateway/manager.ts",
+        "electron/gateway/session-host-readiness.ts",
+        "electron/services/session-activity-api.ts",
+        "shared/types/session-effective-policy.ts",
+        "tests/unit/autonomy-host-readiness.test.ts",
+        "tests/unit/long-session-effective-policy.test.ts",
+        "tests/unit/gateway-manager-diagnostics.test.ts",
+        "tests/e2e/autonomy-host-readiness.spec.ts",
+        "tests/e2e/autonomy-runtime-readiness.spec.ts",
+        "--max-warnings",
+        "0"
+      ]
+    },
+    {
+      "id": "contract",
+      "command": "pnpm --config.verify-deps-before-run=false contract:check",
+      "durationMs": 2104,
+      "log": "D:\\tmp\\autonomy-a5-final-gates-r3\\contract.log",
+      "exitCode": 0,
+      "program": "pnpm",
+      "argv": [
+        "--config.verify-deps-before-run=false",
+        "contract:check"
+      ]
+    },
+    {
+      "id": "semantic-authority",
+      "command": "node scripts/check-semantic-authority.mjs",
+      "durationMs": 794,
+      "log": "D:\\tmp\\autonomy-a5-final-gates-r3\\semantic-authority.log",
+      "exitCode": 0,
+      "program": "node",
+      "argv": [
+        "scripts/check-semantic-authority.mjs"
+      ]
+    },
+    {
+      "id": "evidence-refs",
+      "command": "pnpm --config.verify-deps-before-run=false repo:evidence:check",
+      "durationMs": 1525,
+      "log": "D:\\tmp\\autonomy-a5-final-gates-r3\\evidence-refs.log",
+      "exitCode": 0,
+      "program": "pnpm",
+      "argv": [
+        "--config.verify-deps-before-run=false",
+        "repo:evidence:check"
+      ]
+    },
+    {
+      "id": "artifact-retention",
+      "command": "pnpm --config.verify-deps-before-run=false repo:artifacts:check",
+      "durationMs": 7998,
+      "log": "D:\\tmp\\autonomy-a5-final-gates-r3\\artifact-retention.log",
+      "exitCode": 1,
+      "program": "pnpm",
+      "argv": [
+        "--config.verify-deps-before-run=false",
+        "repo:artifacts:check"
+      ]
+    },
+    {
+      "id": "harness-validate",
+      "command": "pnpm --config.verify-deps-before-run=false harness validate --spec harness/specs/tasks/autonomy-host-readiness.md",
+      "durationMs": 2761,
+      "log": "D:\\tmp\\autonomy-a5-final-gates-r3\\harness-validate.log",
+      "exitCode": 0,
+      "program": "pnpm",
+      "argv": [
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/autonomy-host-readiness.md"
+      ]
+    },
+    {
+      "id": "harness-dry-run",
+      "command": "pnpm --config.verify-deps-before-run=false harness run --spec harness/specs/tasks/autonomy-host-readiness.md --dry-run",
+      "durationMs": 3105,
+      "log": "D:\\tmp\\autonomy-a5-final-gates-r3\\harness-dry-run.log",
+      "exitCode": 0,
+      "program": "pnpm",
+      "argv": [
+        "--config.verify-deps-before-run=false",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/autonomy-host-readiness.md",
+        "--dry-run"
+      ]
+    },
+    {
+      "id": "comms-replay",
+      "command": "pnpm --config.verify-deps-before-run=false comms:replay",
+      "durationMs": 2401,
+      "log": "D:\\tmp\\autonomy-a5-final-gates-r3\\comms-replay.log",
+      "exitCode": 0,
+      "program": "pnpm",
+      "argv": [
+        "--config.verify-deps-before-run=false",
+        "comms:replay"
+      ]
+    },
+    {
+      "id": "comms-compare",
+      "command": "pnpm --config.verify-deps-before-run=false comms:compare",
+      "durationMs": 2227,
+      "log": "D:\\tmp\\autonomy-a5-final-gates-r3\\comms-compare.log",
+      "exitCode": 0,
+      "program": "pnpm",
+      "argv": [
+        "--config.verify-deps-before-run=false",
+        "comms:compare"
+      ]
+    },
+    {
+      "id": "diff",
+      "command": "git diff --check",
+      "durationMs": 184,
+      "log": "D:\\tmp\\autonomy-a5-final-gates-r3\\diff.log",
+      "exitCode": 0,
+      "program": "git",
+      "argv": [
+        "diff",
+        "--check"
+      ]
+    }
+  ],
+  "schema": "AutonomyA5Gates/v1",
+  "readback": {
+    "driven_by": "agent",
+    "actor": "codex-a5",
+    "candidateUnchanged": true,
+    "status": []
+  },
+  "e2e": {
+    "actor": "codex-a5-playwright",
+    "exitCode": 1,
+    "command": "pnpm --config.verify-deps-before-run=false test:e2e:run tests/e2e/autonomy-host-readiness.spec.ts tests/e2e/autonomy-runtime-readiness.spec.ts --workers=1 --reporter=list,json --output=D:/tmp/autonomy-a5-acceptance-final/results",
+    "candidateStatusAfter": [],
+    "driven_by": "agent",
+    "durationMs": 139368,
+    "candidate": "9f0c5b07ecbe7f982b5ac111edf772e96158d46e",
+    "candidateStatusBefore": []
+  },
+  "testCounts": {
+    "total": 89,
+    "passed": 89,
+    "failed": 0,
+    "skipped": 0
+  },
+  "buildObservations": [
+    {
+      "command": "pnpm --config.verify-deps-before-run=false build:runtime",
+      "exitCode": 0,
+      "rawLog": "D:/tmp/autonomy-a5-runtime-build.log",
+      "limitation": "same runtime builder source as final candidate; this is not native Electron execution"
+    },
+    {
+      "command": "pnpm --config.verify-deps-before-run=false build:vite",
+      "exitCode": 0,
+      "rawLog": "D:/tmp/autonomy-a5-vite-build-r2.log"
+    }
+  ]
+}

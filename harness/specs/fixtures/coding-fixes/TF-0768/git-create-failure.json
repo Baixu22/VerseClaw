@@ -1,0 +1,20 @@
+{
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "root": "D:/tmp/s4-git-failure-fFjrcM",
+  "requestedBackend": "git",
+  "result": {
+    "id": "failed-checkout",
+    "root": "D:\\tmp\\s4-git-failure-fFjrcM\\.openclaw\\worktrees\\failed-checkout",
+    "baseRoot": "D:\\tmp\\s4-git-failure-fFjrcM",
+    "createdAtMs": 1793885454265,
+    "status": "active",
+    "backend": "inprocess",
+    "baseOid": "dd9c4dba0200e40f2ab415e51a20fb3adbf60b06",
+    "filesystemIdentity": {
+      "dev": 3325120695,
+      "ino": 844424934340422
+    }
+  },
+  "createdDirectory": true
+}

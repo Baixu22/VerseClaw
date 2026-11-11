@@ -1,0 +1,198 @@
+{
+  "schema": "AutonomyA5RawRunIndex/v1",
+  "driven_by": "agent",
+  "actor": "codex-a5",
+  "generatedAt": "2026-11-02T11:13:09.138Z",
+  "candidate": {
+    "dirty": false,
+    "tree": "4f46b4dbe314eea6479e64868e07305fae631445",
+    "commit": "9f0c5b07ecbe7f982b5ac111edf772e96158d46e"
+  },
+  "retention": "Local raw evidence retained on D:/tmp; no source history, task forest or user files are removed",
+  "artifacts": [
+    {
+      "path": "D:/tmp/autonomy-a5-final-gates-r3/gates.json",
+      "bytes": 7008,
+      "sha256": "3f59fd960f264270d6ff47d290c3affac62fba339f9bb2cd0f201dad7e1bc63a"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-final-gates-r3/candidate-readback.json",
+      "bytes": 102,
+      "sha256": "08b1091767ec7345bcdc15687498f63cda410c114b5f29afb98e1d79c6eb0773"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-final-gates-r3/unit.json",
+      "bytes": 32212,
+      "sha256": "a84b47265e40f0b9d4f11f47e2a2cf3d6431b5c9e531bb49da3057683cb13fdf"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-final-gates-r3/unit.log",
+      "bytes": 68,
+      "sha256": "b8140e9615c665f9c92b4c2dfd69cc3645e8e3529381969522b0f0228f95bbcf"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-final-gates-r3/typecheck.log",
+      "bytes": 1677,
+      "sha256": "5d4c76ed5428a9edb9373201408bc98028087c569c456def6c6186e018c97c9e"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-final-gates-r3/lint.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-final-gates-r3/contract.log",
+      "bytes": 59,
+      "sha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-final-gates-r3/semantic-authority.log",
+      "bytes": 280,
+      "sha256": "50daa6644d8b549d1c3f580a9b8429d678e22ed29fecb1c274fc45edf4e0ecd1"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-final-gates-r3/evidence-refs.log",
+      "bytes": 85,
+      "sha256": "9a6f9f65f81c216293c205632b85231968a65cb983e0d6b303c256f7e728e561"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-final-gates-r3/artifact-retention.log",
+      "bytes": 264,
+      "sha256": "a4fc7f9736b9becaa23e1d8c6a170e11ec8c5e2eea3bcd182cbbdeb09fd5e953"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-final-gates-r3/harness-validate.log",
+      "bytes": 272,
+      "sha256": "a0624c3bd531fb3f125d96674523e1e7bd2191a434c85033474aae3259fdcf0a"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-final-gates-r3/harness-dry-run.log",
+      "bytes": 328,
+      "sha256": "28fe0dbbd535dfb1a441988e9e28cb6b9f12a18b527ca76f3f7c0b112668d160"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-final-gates-r3/comms-replay.log",
+      "bytes": 139,
+      "sha256": "034993f1aaedfbd088f4b65056e1f7df4515cd79b9f940705978818c5531f71b"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-final-gates-r3/comms-compare.log",
+      "bytes": 3519,
+      "sha256": "97b42571825e2b083b73a1285fd515d940f9f4f7840881816ec23dc94ea018d2"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-final-gates-r3/diff.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-acceptance-final/report.json",
+      "bytes": 18178,
+      "sha256": "954da75807f0a389565046416ea34dbc3e5412cff64f5873080bff1af94cd9f9"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-acceptance-final/exit.json",
+      "bytes": 477,
+      "sha256": "c84c5d4c3946794dcef1ef21fa923f8d0ec37d109182a4a4c2b3bb4f5aef1659"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-acceptance-final/run.log",
+      "bytes": 8280,
+      "sha256": "e982812f98facd64467f8fa0910936f200ddc283a805fed15aa41c08ab961df4"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-runtime-build.log",
+      "bytes": 3239,
+      "sha256": "86dcb3ce033257c4cab3c306e953418d77e34a739d07b0464f705198b0dc94dc"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-vite-build-r2.log",
+      "bytes": 47607,
+      "sha256": "8438356ffb254f579b5c8c94a454b7002b5f1ddc6cad4b4bd844aa781b54c086"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-probe-stderr.txt",
+      "bytes": 2011,
+      "sha256": "9e533eca3967d9fefdadc1391457c537edf117c4b4b0865a707df001f0348d17"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-probe-launch-error.txt",
+      "bytes": 3118,
+      "sha256": "f208ce45c673b38029748621c5801324119d20fa90993c9e95ed72c842b4b96a"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-fs-probe-main.cjs",
+      "bytes": 1109,
+      "sha256": "5b6564393a3d924c47af56a7f63fdf2ffa506cd270e1993815b77b1cfd84a6bd"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-launch-probe.cjs",
+      "bytes": 827,
+      "sha256": "888c92b4af6efac8ccd6faa24904698582b654965faac62aff8ab9b4b47de5b8"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-gates.ps1",
+      "bytes": 3369,
+      "sha256": "043f412afa76e3560c33bc0cb357fb80c3ad708c6fa1d72303ef996c4dd99eb5"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-seal.mjs",
+      "bytes": 12222,
+      "sha256": "594f01f46c0646e621ef8a892ecebb58e5c935d35131d07df2268f490b163b32"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-fetch-result.json",
+      "bytes": 72,
+      "sha256": "6ac7b349a00063853c730fbd7fef01710ec18082bc5d056761c0b3c803bfb659"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-task-forest-landing.json",
+      "bytes": 191640,
+      "sha256": "af2ecd54ea8fa79a63f62b7885bc9f6f49b6a7d8830d01434831d081d7f3675a"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-landing-result.json",
+      "bytes": 95,
+      "sha256": "a78f6a72df413a2c7ba5e8dca1ea98ffac226b9545639d83ac2645c7fb4688f3"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-acceptance-final/results/autonomy-host-readiness-TF-b54cc-uation-and-restart-recovery/error-context.md",
+      "bytes": 12894,
+      "sha256": "f5691f74a5784d2270e3f9e9bc2371f04db2ca586b4602a775c3088cda7f924d"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-acceptance-final/results/autonomy-host-readiness-TF-b54cc-uation-and-restart-recovery/trace.zip",
+      "bytes": 21939,
+      "sha256": "64e6f59521d8e45de8eaa84c00510381e0856cbfb55140f0fc6d0a6cc47c389a"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-acceptance-final/results/autonomy-runtime-readiness-4c3c4-ssion-after-runtime-restart/attachments/gateway-runtime-log-b2b3911b5526ca8e465539a5b080a277d8c3ae49.log",
+      "bytes": 5708,
+      "sha256": "3330729e3256e1c2b62bc1f865ab6c03d02c6fb92c6d913d5a7758ca973bccb0"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-acceptance-final/results/autonomy-runtime-readiness-4c3c4-ssion-after-runtime-restart/error-context.md",
+      "bytes": 10667,
+      "sha256": "0a85355512602348c43e1245277e8c25b17e69b13425bc104b60cfdddcddfcd7"
+    },
+    {
+      "path": "D:/tmp/autonomy-a5-acceptance-final/results/autonomy-runtime-readiness-4c3c4-ssion-after-runtime-restart/trace.zip",
+      "bytes": 14328,
+      "sha256": "d16cdaeb5414cca7d5fdafb311260fd6cfa0ba48b565d43ccdcd821d434c0a3c"
+    }
+  ],
+  "previousAttempts": [
+    "D:/tmp/autonomy-a5-final-gates",
+    "D:/tmp/autonomy-a5-final-gates-r2",
+    "D:/tmp/autonomy-a5-e2e-01",
+    "D:/tmp/autonomy-a5-e2e-02",
+    "D:/tmp/autonomy-a5-runtime-integration.log",
+    "D:/tmp/autonomy-a5-runtime-integration-r2.log",
+    "D:/tmp/autonomy-a5-runtime-replay-r3-report.json",
+    "D:/tmp/autonomy-a5-runtime-replay-r4-report.json"
+  ],
+  "notes": [
+    "Previous attempts are not overwritten or re-signed; an early gate-script argument serialization failure and a contradictory test fixture were corrected and rerun.",
+    "A pre-final unit run returned exit 0 with a Vitest worker termination warning; its raw log is retained in the previous-attempt directory."
+  ]
+}

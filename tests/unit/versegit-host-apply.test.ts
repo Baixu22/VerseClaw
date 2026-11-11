@@ -215,21 +215,19 @@ describe('candidate-first host apply', () => {
     expect(journalSteps).toBeGreaterThanOrEqual(2);
     const journalSnapshotFiles = listJournalSnapshotFiles(root, 'session-e3');
     expect(journalSnapshotFiles.length).toBeGreaterThanOrEqual(2);
-    const undone = undoLastWrites({ workspaceRoot: root, sessionId: 'session-e3', steps: journalSteps, workspaceOnly: true });
+    const undone = await undoLastWrites({ workspaceRoot: root, sessionId: 'session-e3', steps: journalSteps, workspaceOnly: true });
     expect(undone.errors).toEqual([]);
     expect(readFileSync(join(root, 'a.txt'), 'utf8')).toBe('one\n');
     expect(readFileSync(join(root, 'b.txt'), 'utf8')).toBe('two\n');
   });
 
-  it('rejects target, candidate, epoch and revocation drift before the first write', async () => {
-    const cases = [
+  it.each([
       { id: 'target-uncommitted', reason: 'state-changed-before-first-write', mutate: (root: string) => writeFileSync(join(root, 'a.txt'), 'user-edit\n', 'utf8') },
       { id: 'candidate-drift', reason: 'state-changed-before-first-write', mutate: (root: string, candidateRoot: string) => writeFileSync(join(candidateRoot, 'a.txt'), 'candidate-edit\n', 'utf8') },
       { id: 'base-head', reason: 'state-changed-before-first-write', mutate: (root: string) => { writeFileSync(join(root, 'base.txt'), 'drift\n', 'utf8'); git(root, ['add', 'base.txt']); git(root, ['commit', '-m', 'drift']); } },
       { id: 'epoch', reason: 'authority-epoch-mismatch', mutate: (_root: string, _candidateRoot: string, control: HostControl) => { control.authority = { ...control.authority!, epoch: 5 }; } },
       { id: 'revoked', reason: 'grant-revoked', mutate: (_root: string, _candidateRoot: string, control: HostControl) => { control.authority = { ...control.authority!, grantStatus: 'revoked' }; } },
-    ] as const;
-    for (const entry of cases) {
+    ] as const)('rejects $id drift before the first write', async (entry) => {
       const root = makeRepo();
       const control: HostControl = {};
       const host = makeHost(control, root);
@@ -249,7 +247,6 @@ describe('candidate-first host apply', () => {
       expect(readFileSync(join(root, 'b.txt'), 'utf8'), entry.id).toBe('two\n');
       if (entry.id === 'target-uncommitted') expect(readFileSync(join(root, 'a.txt'), 'utf8')).toBe('user-edit\n');
       else expect(readFileSync(join(root, 'a.txt'), 'utf8')).toBe('one\n');
-    }
   });
 
   it('does not retry an unknown apply delivery', async () => {

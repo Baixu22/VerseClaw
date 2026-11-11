@@ -1,4 +1,4 @@
-import type { WorkspaceCoordinatorEnvironmentBinding } from './workspace';
+import type { WorkspaceCoordinatorEnvironmentBinding } from './workspace.js';
 
 export const SESSION_DELEGATION_RECEIPT_SCHEMA = 'clawx.session-delegation-receipt/v1' as const;
 export const SESSION_DELEGATION_ADMISSION_SCHEMA = 'clawx.session-delegation-admission/v1' as const;

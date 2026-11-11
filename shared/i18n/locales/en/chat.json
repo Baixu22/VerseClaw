@@ -13,6 +13,9 @@
     "retry": "Retry loading"
   },
   "welcome": {
+    "quickStart": "Quick start",
+    "branchLoading": "Loading branches…",
+    "branchLoadFailed": "Could not load branches",
     "projectSearch": "Search projects",
     "projectEmpty": "No projects found",
     "changeProject": "Change project: {{projectName}}",
@@ -30,7 +33,7 @@
     "brainstormingDesc": "Split work across coordinated agents"
   },
   "sessionActivity": {
-    "title": "Session status",
+    "title": "Session environment",
     "description": "Live runtime, task, Git, goal, process, lineage, agent, and terminal activity for this conversation.",
     "openRecovery": "Open session recovery",
     "createMemoryDraft": "Save session to Knowledge",
@@ -50,9 +53,10 @@
       "lineage": "Lineage",
       "terminals": "Terminals",
       "continuity": "Continuity",
-      "environment": "Environment",
+      "environment": "Changes",
       "plan": "Development tasks",
-      "policy": "Runtime policy"
+      "policy": "Runtime policy",
+      "sources": "Sources"
     },
     "status": {
       "idle": "Idle",
@@ -163,7 +167,14 @@
     },
     "runningCount": "{{count}} running",
     "processes": {
-      "openOutput": "Open the output of {{command}}"
+      "recent": "Completed · {{count}}",
+      "openOutput": "Open the output of {{command}}",
+      "openInWorkspace": "Open in workspace",
+      "noOutput": "No output yet",
+      "showOutput": "Show output",
+      "hideOutput": "Hide output",
+      "duration": "{{seconds}}s",
+      "inWorkspace": "Shown in workspace"
     },
     "policy": {
       "backend": "Configured backend",
@@ -267,6 +278,25 @@
         }
       },
       "unverifiedFacts": "Unverified facts"
+    },
+    "sourceKinds": {
+      "mcp": "MCP",
+      "skill": "Skill"
+    },
+    "moreRows": "Show {{count}} more",
+    "close": "Hide environment",
+    "overview": {
+      "context": "Context",
+      "contextUsed": "Used / window",
+      "cacheRead": "Cache read",
+      "cacheHitRate": "Cache hit rate",
+      "pressure": "Pressure",
+      "connectors": "Connectors",
+      "connectorsValue": "{{count}} in use",
+      "skillsValue": "Skills: {{count}}",
+      "review": "Review",
+      "background": "Background tasks",
+      "backgroundIdle": "Nothing running"
     }
   },
   "noLogs": "(No logs available yet)",
@@ -749,7 +779,8 @@
       "expand": "Expand panel",
       "collapse": "Collapse panel",
       "moveTerminalSide": "Move terminal to side",
-      "moveTerminalBottom": "Move terminal to bottom"
+      "moveTerminalBottom": "Move terminal to bottom",
+      "close": "Close workspace"
     },
     "changes": {
       "heading": "File changes ({{count}})",
@@ -1256,6 +1287,8 @@
     }
   },
   "executionGraph": {
+    "arguments": "Arguments",
+    "result": "Result",
     "title": "Execution Graph",
     "branchLabel": "branch",
     "thinkingLabel": "Thinking",
@@ -1337,6 +1370,13 @@
     "previewUnavailable": "Image preview is temporarily unavailable"
   },
   "session": {
+    "navigation": {
+      "title": "Conversations in this workspace",
+      "search": "Find a conversation",
+      "source": "Source conversation",
+      "from": "From {{session}}",
+      "children": "Show {{count}} related conversations"
+    },
     "derived": {
       "title": "Derived sessions ({{count}})"
     },
@@ -1730,7 +1770,7 @@
     "resumeTooltip": "Resume this paused session.",
     "resumeDisabled": "This session can no longer be resumed here.",
     "startingTooltip": "Starting… Click to cancel the pending send or pause the current run.",
-    "queueTooltip": "Queue this draft for after the current run. Double-click to pause instead.",
+    "queueTooltip": "Queue — send after the current run finishes",
     "gatewayConnected": "connected",
     "gatewayStatus": "gateway {{state}} | port: {{port}} {{pid}}",
     "contextStatusTitle": "Context and token status",
@@ -2088,16 +2128,17 @@
     },
     "workModeRecommendedPermission": "Recommended: {{mode}}",
     "intervention": {
+      "menu": "Delivery options",
       "guide": "Guide",
-      "guideTooltip": "Inject non-interrupting guidance into the active run.",
+      "guideTooltip": "Add to the current run at its next step, without stopping it",
       "longTaskRequired": "Interrupt/guide/queue/revise-goal requires an active /loop long-task context for this session.",
       "reviseGoal": "Revise goal",
-      "reviseGoalTooltip": "Checkpoint the active run and restart from a revised user goal.",
+      "reviseGoalTooltip": "Save a checkpoint and restart with this message as the new goal",
       "queueDefault": "Running: Enter queues this message",
       "queue": "Queue",
-      "queueTooltip": "Keep the active run intact and replay this follow-up later.",
-      "interrupt": "Interrupt",
-      "interruptTooltip": "Abort or steer the active run before risky recovery actions."
+      "queueTooltip": "Send after the current run finishes",
+      "interrupt": "Interrupt & send",
+      "interruptTooltip": "Save a checkpoint, stop the run, and restart from this message"
     },
     "rollbackPlan": {
       "title": "Recovery assist",
@@ -2217,6 +2258,11 @@
       "existingBranch": "Existing branch",
       "defaultPath": "Default path",
       "defaultPathUnavailable": "Enter a branch name to preview its path",
+      "kindBranch": "Branch",
+      "kindWorktree": "Worktree",
+      "kindDetached": "Detached",
+      "mainCheckout": "Main checkout",
+      "linkedWorktree": "Linked worktree",
       "filesChanged": "{{count}} files changed",
       "filesChanged_one": "{{count}} file changed"
     },
@@ -2534,7 +2580,7 @@
   },
   "turnSummary": {
     "codingRun": {
-      "title": "CodingRun evidence",
+      "title": "Run diagnostics",
       "jsonl": "Read-only JSONL projection",
       "copy": "Copy",
       "copied": "Copied"
@@ -2554,6 +2600,7 @@
       "minutesSeconds": "{{minutes}}m {{seconds}}s"
     },
     "badge": {
+      "tools": "{{count}} tool calls",
       "thoughts": "{{count}} thoughts",
       "approvals": "{{count}} approvals",
       "plan": "{{count}} steps",

@@ -42,6 +42,22 @@ describe('artifact panel canonical workspace state', () => {
     expect(state.open).toBe(true);
   });
 
+  it('hides and restores the same tabs and selection until explicitly reset', () => {
+    openWorkspacePanel({ panel: 'review', filePath: 'src/App.tsx' });
+    openWorkspacePanel({ panel: 'subagent', sessionKey: 'agent:worker:child' });
+    useArtifactPanel.getState().setExpanded(true);
+    const before = useArtifactPanel.getState();
+    before.hide();
+    expect(useArtifactPanel.getState().open).toBe(false);
+    useArtifactPanel.getState().toggle();
+    expect(useArtifactPanel.getState()).toMatchObject({
+      open: true, expanded: true, tabs: before.tabs,
+      activeTabId: before.activeTabId, selectedPath: 'src/App.tsx',
+    });
+    useArtifactPanel.getState().close();
+    expect(useArtifactPanel.getState()).toMatchObject({ open: false, tabs: [], selectedPath: null });
+  });
+
   it.each([
     [{ activeTab: 'changes' }, 'review', 'changes'],
     [{ activeTab: 'preview' }, 'files', undefined],

@@ -1,0 +1,251 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-relay",
+  "mode": "live",
+  "records": 96,
+  "providerCalls": 96,
+  "protocolOutputs": 0,
+  "initialPairs": 24,
+  "allInitialPairsByteIdentical": true,
+  "actualInputCountsMatch": true,
+  "modelCallsAndRawUsageMatch": true,
+  "baselineOracleLeaks": 0,
+  "unprojectedHistoryFallbacks": 0,
+  "incompleteResponses": 0,
+  "providerFailures": 96,
+  "retentionOffFinalOracleAbsent": [
+    {
+      "fixtureId": "deploy-token",
+      "repetition": 0,
+      "success": false
+    },
+    {
+      "fixtureId": "deploy-token",
+      "repetition": 1,
+      "success": false
+    },
+    {
+      "fixtureId": "deploy-token",
+      "repetition": 2,
+      "success": false
+    },
+    {
+      "fixtureId": "db-passport",
+      "repetition": 0,
+      "success": false
+    },
+    {
+      "fixtureId": "db-passport",
+      "repetition": 1,
+      "success": false
+    },
+    {
+      "fixtureId": "db-passport",
+      "repetition": 2,
+      "success": false
+    },
+    {
+      "fixtureId": "cache-seed",
+      "repetition": 0,
+      "success": false
+    },
+    {
+      "fixtureId": "cache-seed",
+      "repetition": 1,
+      "success": false
+    },
+    {
+      "fixtureId": "cache-seed",
+      "repetition": 2,
+      "success": false
+    },
+    {
+      "fixtureId": "signing-key",
+      "repetition": 0,
+      "success": false
+    },
+    {
+      "fixtureId": "signing-key",
+      "repetition": 1,
+      "success": false
+    },
+    {
+      "fixtureId": "signing-key",
+      "repetition": 2,
+      "success": false
+    },
+    {
+      "fixtureId": "tenant-id",
+      "repetition": 0,
+      "success": false
+    },
+    {
+      "fixtureId": "tenant-id",
+      "repetition": 1,
+      "success": false
+    },
+    {
+      "fixtureId": "tenant-id",
+      "repetition": 2,
+      "success": false
+    },
+    {
+      "fixtureId": "migration-hash",
+      "repetition": 0,
+      "success": false
+    },
+    {
+      "fixtureId": "migration-hash",
+      "repetition": 1,
+      "success": false
+    },
+    {
+      "fixtureId": "migration-hash",
+      "repetition": 2,
+      "success": false
+    }
+  ],
+  "stats": {
+    "driven_by": "agent",
+    "actor": "codex-inline-spill-benefit-r4-relay",
+    "mode": "live",
+    "records": 96,
+    "allSummaryNumbersRecomputed": true,
+    "stats": {
+      "baseline-no-reference": {
+        "arm": "baseline-no-reference",
+        "runs": 24,
+        "pass": 0,
+        "successRate": 0,
+        "wilson95": [
+          1.3877787807814457e-17,
+          0.13797620467498017
+        ],
+        "evidenceSuccessRate": 0,
+        "controlSuccessRate": 0,
+        "passAtK": 0,
+        "recallAttemptRate": 0,
+        "recallOkRate": 0,
+        "meanTurns": 1,
+        "meanMainContextChars": 1091.25,
+        "meanInputTokens": 0,
+        "meanOutputTokens": 0,
+        "meanTotalTokens": 0,
+        "p50LatencyMs": 1.301,
+        "p95LatencyMs": 2.381,
+        "failureClasses": {
+          "provider_http_error": 24
+        }
+      },
+      "reference-visible": {
+        "arm": "reference-visible",
+        "runs": 24,
+        "pass": 0,
+        "successRate": 0,
+        "wilson95": [
+          1.3877787807814457e-17,
+          0.13797620467498017
+        ],
+        "evidenceSuccessRate": 0,
+        "controlSuccessRate": 0,
+        "passAtK": 0,
+        "recallAttemptRate": 0,
+        "recallOkRate": 0,
+        "meanTurns": 1,
+        "meanMainContextChars": 7027.25,
+        "meanInputTokens": 0,
+        "meanOutputTokens": 0,
+        "meanTotalTokens": 0,
+        "p50LatencyMs": 1.296,
+        "p95LatencyMs": 2.075,
+        "failureClasses": {
+          "provider_http_error": 24
+        }
+      },
+      "recall-stable": {
+        "arm": "recall-stable",
+        "runs": 24,
+        "pass": 0,
+        "successRate": 0,
+        "wilson95": [
+          1.3877787807814457e-17,
+          0.13797620467498017
+        ],
+        "evidenceSuccessRate": 0,
+        "controlSuccessRate": 0,
+        "passAtK": 0,
+        "recallAttemptRate": 0,
+        "recallOkRate": 0,
+        "meanTurns": 1,
+        "meanMainContextChars": 7027.25,
+        "meanInputTokens": 0,
+        "meanOutputTokens": 0,
+        "meanTotalTokens": 0,
+        "p50LatencyMs": 1.251,
+        "p95LatencyMs": 1.898,
+        "failureClasses": {
+          "provider_http_error": 24
+        }
+      },
+      "retention-off": {
+        "arm": "retention-off",
+        "runs": 24,
+        "pass": 0,
+        "successRate": 0,
+        "wilson95": [
+          1.3877787807814457e-17,
+          0.13797620467498017
+        ],
+        "evidenceSuccessRate": 0,
+        "controlSuccessRate": 0,
+        "passAtK": 0,
+        "recallAttemptRate": 0,
+        "recallOkRate": 0,
+        "meanTurns": 1,
+        "meanMainContextChars": 7027.25,
+        "meanInputTokens": 0,
+        "meanOutputTokens": 0,
+        "meanTotalTokens": 0,
+        "p50LatencyMs": 1.323,
+        "p95LatencyMs": 1.682,
+        "failureClasses": {
+          "provider_http_error": 24
+        }
+      }
+    },
+    "comparisons": {
+      "recall-stable_vs_baseline": {
+        "both": 0,
+        "onlyA": 0,
+        "onlyB": 0,
+        "neither": 24,
+        "p": 1
+      },
+      "recall-stable_vs_retention-off": {
+        "both": 0,
+        "onlyA": 0,
+        "onlyB": 0,
+        "neither": 24,
+        "p": 1
+      },
+      "recall-stable_vs_reference-visible": {
+        "both": 0,
+        "onlyA": 0,
+        "onlyB": 0,
+        "neither": 24,
+        "p": 1
+      }
+    },
+    "decisions": {
+      "b1_mechanism_and_autonomy": false,
+      "b2_task_benefit": false,
+      "b3_retention_benefit": false,
+      "b4_non_inferiority": true,
+      "b5_no_fabrication": false,
+      "b6_budget": true,
+      "contextGrowthChars": 0,
+      "tokenGrowthPct": 0
+    },
+    "wire": null
+  }
+}

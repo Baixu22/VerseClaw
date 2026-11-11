@@ -53,16 +53,6 @@ describe('TF-0510 coding control dispositions', () => {
     expect(codingControlComplete()).toBe(blocked.length === 0);
   });
 
-  it('patch-flow can reach a real gate outcome instead of a permanent keep-off', () => {
-    const source = read('openclaw_runtime/src/agents/patch-flow-graduation.ts');
-    // The old hard-coded gate is gone; the decision surface can report a real verdict.
-    expect(source).not.toContain('meetsGate: false, // hard');
-    expect(source).toContain('meetsGate,');
-    expect(source).toContain('recommendation,');
-    // It still never flips the runtime default.
-    expect(source).toContain('patchFlowDefault: false');
-  });
-
   it('removes the retired patch-flow entry point from the model tool surface', () => {
     const schema = read('openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts');
     // TF-0510 retired patch-flow, so the model can no longer request it by parameter.
@@ -81,8 +71,7 @@ describe('TF-0510 coding control dispositions', () => {
     expect(control.includes("id: 'stale-write-guard'")).toBe(true);
     // TF-0510 retired symbol-lease: its writable switch is gone.
     expect(control.includes("id: 'symbol-lease'")).toBe(false);
-    // patch-flow has no writable control-plane entry: it is reached through the model
-    // tool parameter / operator config, so it can never become a hidden product toggle.
+    // Patch Flow retirement covers model, request and configuration entry points.
     expect(control.includes("id: 'patch-flow'")).toBe(false);
     // The internal execution/evidence substrate stays off the control plane.
     expect(control.includes("id: 'verseshell'")).toBe(false);

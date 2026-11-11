@@ -16,7 +16,11 @@ import {
   clearActiveMcpLoopbackRuntimeByOwnerToken,
   setActiveMcpLoopbackRuntime,
 } from "./mcp-http.loopback-runtime.js";
-import { jsonRpcError, type JsonRpcRequest } from "./mcp-http.protocol.js";
+import {
+  jsonRpcError,
+  MCP_LOOPBACK_SUPPORTED_PROTOCOL_VERSIONS,
+  type JsonRpcRequest,
+} from "./mcp-http.protocol.js";
 import {
   isMcpHttpBodyTooLargeError,
   isMcpHttpBodyTimeoutError,
@@ -143,6 +147,20 @@ export async function startMcpLoopbackServer(port = 0): Promise<{
   const ownerToken = crypto.randomBytes(32).toString("hex");
   const nonOwnerToken = crypto.randomBytes(32).toString("hex");
   const toolCache = new McpLoopbackToolCache();
+  const calls = new Set<AbortController>();
+  // MCP transport sessions distinguish clients that share an agent session and
+  // begin their JSON-RPC ids at the same value. Never evict an active session.
+  const clients = new Map<
+    string,
+    {
+      sessionKey: string;
+      owner: boolean;
+      version: string;
+      lastUsed: number;
+      calls: Map<string, AbortController>;
+      usedIds: Set<string>;
+    }
+  >();
 
   const httpServer = createHttpServer((req, res) => {
     const auth = validateMcpLoopbackRequest({ req, res, ownerToken, nonOwnerToken });
@@ -153,11 +171,122 @@ export async function startMcpLoopbackServer(port = 0): Promise<{
     const requestAbort = createRequestAbortSignal(req, res);
     void (async () => {
       let parsed: JsonRpcRequest | JsonRpcRequest[] | undefined;
+      const cleanupCalls: Array<() => void> = [];
       try {
-        const body = await readMcpHttpBody(req, { timeoutMs: resolveMcpHttpBodyTimeoutMs() });
-        parsed = parseMcpJsonBody(body);
+        if (req.method !== "DELETE") {
+          const body = await readMcpHttpBody(req, { timeoutMs: resolveMcpHttpBodyTimeoutMs() });
+          parsed = parseMcpJsonBody(body);
+        }
         const cfg = getRuntimeConfig();
         const requestContext = resolveMcpRequestContext(req, cfg, auth);
+        const header = req.headers["mcp-session-id"];
+        const clientId = typeof header === "string" ? header : undefined;
+        const now = Date.now();
+        for (const [id, client] of clients) {
+          if (client.calls.size === 0 && now - client.lastUsed > 10 * 60_000) clients.delete(id);
+        }
+        let client = clientId ? clients.get(clientId) : undefined;
+        if (
+          clientId &&
+          (!client ||
+            client.sessionKey !== requestContext.sessionKey ||
+            client.owner !== auth.senderIsOwner)
+        ) {
+          res.writeHead(404, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "unknown_mcp_session" }));
+          return;
+        }
+        if (req.method === "DELETE") {
+          if (!clientId || !client) {
+            res.writeHead(400);
+            res.end();
+            return;
+          }
+          for (const controller of client.calls.values())
+            controller.abort(new Error("MCP session terminated"));
+          clients.delete(clientId);
+          res.writeHead(200);
+          res.end();
+          return;
+        }
+        if (parsed === undefined) {
+          res.writeHead(400);
+          res.end();
+          return;
+        }
+        if (isJsonRpcRequest(parsed) && parsed.method === "initialize") {
+          if (client || clients.size >= 256) {
+            res.writeHead(client ? 400 : 503, { "Content-Type": "application/json" });
+            res.end(
+              JSON.stringify({
+                error: client ? "mcp_session_already_initialized" : "mcp_session_capacity",
+              }),
+            );
+            return;
+          }
+          const offered = parsed.params?.protocolVersion;
+          client = {
+            sessionKey: requestContext.sessionKey,
+            owner: auth.senderIsOwner,
+            version:
+              MCP_LOOPBACK_SUPPORTED_PROTOCOL_VERSIONS.find((version) => version === offered) ??
+              MCP_LOOPBACK_SUPPORTED_PROTOCOL_VERSIONS[0],
+            lastUsed: now,
+            calls: new Map(),
+            usedIds: new Set(),
+          };
+          const id = crypto.randomUUID();
+          clients.set(id, client);
+          res.setHeader("Mcp-Session-Id", id);
+        }
+        const protocolHeader = req.headers["mcp-protocol-version"];
+        if (client && protocolHeader !== undefined && protocolHeader !== client.version) {
+          res.writeHead(400, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "mcp_protocol_version_changed" }));
+          return;
+        }
+        if (client) client.lastUsed = now;
+        const callKey = (id: unknown) =>
+          typeof id === "string" || typeof id === "number"
+            ? crypto.createHash("sha256").update(JSON.stringify(id)).digest("hex")
+            : undefined;
+        const messages = Array.isArray(parsed) ? parsed : [parsed];
+        const pendingCalls = new Map<JsonRpcRequest, AbortController>();
+        const invalidCalls = new Set<JsonRpcRequest>();
+        // Register the whole batch before awaiting its first call so cancellation
+        // and DELETE also cover queued effects.
+        for (const message of messages) {
+          if (!isJsonRpcRequest(message) || message.method !== "tools/call") continue;
+          const key = callKey(message.id);
+          if (!key || (client && (client.usedIds.has(key) || client.usedIds.size >= 4096))) {
+            invalidCalls.add(message);
+            continue;
+          }
+          const controller = new AbortController();
+          const disconnected = () => controller.abort(requestAbort.signal.reason);
+          pendingCalls.set(message, controller);
+          calls.add(controller);
+          client?.calls.set(key, controller);
+          client?.usedIds.add(key);
+          requestAbort.signal.addEventListener("abort", disconnected, { once: true });
+          if (requestAbort.signal.aborted) disconnected();
+          cleanupCalls.push(() => {
+            requestAbort.signal.removeEventListener("abort", disconnected);
+            calls.delete(controller);
+            if (client && client.calls.get(key) === controller) {
+              client.calls.delete(key);
+              client.lastUsed = Date.now();
+            }
+          });
+        }
+        // SDK cancellation is a separate POST and must reach the original call's signal.
+        const notifications = Array.isArray(parsed) ? parsed : [parsed];
+        for (const message of notifications) {
+          if (isJsonRpcRequest(message) && message.method === "notifications/cancelled") {
+            const key = callKey(message.params?.requestId);
+            if (key) client?.calls.get(key)?.abort(new Error("MCP request cancelled"));
+          }
+        }
         const scopedTools = toolCache.resolve({
           cfg,
           sessionKey: requestContext.sessionKey,
@@ -172,7 +301,6 @@ export async function startMcpLoopbackServer(port = 0): Promise<{
           senderIsOwner: requestContext.senderIsOwner,
         });
 
-        const messages = Array.isArray(parsed) ? parsed : [parsed];
         logMcpLoopbackTraffic("request", {
           batchSize: messages.length,
           methods: messages.map((message) =>
@@ -190,6 +318,17 @@ export async function startMcpLoopbackServer(port = 0): Promise<{
             responses.push(jsonRpcError(readJsonRpcRequestId(message), -32600, "Invalid Request"));
             continue;
           }
+          if (invalidCalls.has(message)) {
+            responses.push(
+              jsonRpcError(
+                message.id,
+                -32600,
+                "MCP request id reused or session request limit reached; initialize a new session",
+              ),
+            );
+            continue;
+          }
+          const controller = pendingCalls.get(message);
           const response = await handleMcpJsonRpc({
             message,
             tools: scopedTools.tools,
@@ -199,7 +338,10 @@ export async function startMcpLoopbackServer(port = 0): Promise<{
               config: cfg,
               sessionKey: requestContext.sessionKey,
             },
-            signal: requestAbort.signal,
+            signal: controller?.signal ?? requestAbort.signal,
+            protocolVersion:
+              client?.version ??
+              (typeof protocolHeader === "string" ? protocolHeader : "2024-11-05"),
           });
           if (response !== null) {
             const toolName =
@@ -253,6 +395,7 @@ export async function startMcpLoopbackServer(port = 0): Promise<{
           }
         }
       } finally {
+        for (const cleanup of cleanupCalls) cleanup();
         requestAbort.cleanup();
       }
     })();
@@ -279,8 +422,10 @@ export async function startMcpLoopbackServer(port = 0): Promise<{
     port: address.port,
     close: () =>
       new Promise<void>((resolve, reject) => {
+        for (const controller of calls) controller.abort(new Error("MCP server closing"));
         httpServer.close((error) => {
           if (!error) {
+            clients.clear();
             clearActiveMcpLoopbackRuntimeByOwnerToken(ownerToken);
             if (activeMcpLoopbackServer === server) {
               activeMcpLoopbackServer = undefined;

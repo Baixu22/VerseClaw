@@ -87,6 +87,31 @@ export type SessionPolicyScheduleLimits = {
   sessionRetention: string | null;
 };
 
+export type SessionPolicyTools = {
+  /** Runtime-exposed menu, not adapter health, permission, or effect evidence. */
+  names: readonly string[];
+  digest: string;
+};
+
+export type SessionHostCapabilityFact = {
+  state: 'supported' | 'unsupported' | 'unknown';
+  source: string;
+  observedAt: string | null;
+  reason: string | null;
+};
+
+/** Diagnostic observations only. Every execution still passes its real owner. */
+export type SessionHostReadiness = {
+  owner: 'electron-gateway';
+  observedAt: string;
+  runtimeGeneration: string | null;
+  runtime: SessionHostCapabilityFact;
+  tools: SessionHostCapabilityFact;
+  scheduling: SessionHostCapabilityFact;
+  budget: SessionHostCapabilityFact;
+  unattendedService: SessionHostCapabilityFact;
+};
+
 export type SessionBackendCompatibilityRow = {
   backend: string;
   parameter: string;
@@ -119,6 +144,10 @@ export type SessionEffectivePolicy = {
   queue: SessionPolicyAxis<SessionPolicyQueueLimits>;
   resources: SessionPolicyAxis<SessionPolicyResourceLimits>;
   schedule: SessionPolicyAxis<SessionPolicyScheduleLimits>;
+  /** Absent on older runtimes; absence is unknown, never a tool grant. */
+  tools?: SessionPolicyFact<SessionPolicyTools>;
+  /** Main-owned enrichment of the runtime policy through the existing API. */
+  host?: SessionHostReadiness;
   compatibility: readonly SessionBackendCompatibilityRow[];
   sources: readonly string[];
 };

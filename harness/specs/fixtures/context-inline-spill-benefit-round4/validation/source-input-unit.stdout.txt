@@ -1,0 +1,9 @@
+
+ RUN  v4.1.1 C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX
+
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  12:16:08
+   Duration  2.08s (transform 194ms, setup 898ms, import 83ms, tests 15ms, environment 0ms)
+

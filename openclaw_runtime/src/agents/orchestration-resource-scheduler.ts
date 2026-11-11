@@ -6,11 +6,14 @@ import {
   type OrchestrationTaskNode,
 } from "./orchestration-protocol.js";
 import type { RoleContract } from "./role-contract.js";
+import { isVerifiedGitWorktree, type WorktreeRecord } from "./worktree-service.js";
 
 export type ResourceSchedulerOptions = {
   maxActiveRoles?: number;
   exclusiveToolGroups?: readonly (readonly string[])[];
   roleCost?: Partial<Record<string, number>>;
+  /** Node-to-checkout records issued by the existing worktree owner. */
+  worktreeRecords?: ReadonlyMap<string, WorktreeRecord>;
 };
 
 export type ResourceScheduleDeferReason =
@@ -142,13 +145,17 @@ function writeSetDeferReason(
   candidate: OrchestrationTaskNode,
   chunk: readonly OrchestrationTaskNode[],
   roles: Map<string, RoleContract>,
+  options?: ResourceSchedulerOptions,
 ): ResourceScheduleDeferReason | undefined {
   if (!isWriteCapableNode(candidate, roles)) return undefined;
 
   for (const existing of chunk) {
     if (!isWriteCapableNode(existing, roles)) continue;
-    // Planning precedes checkout creation. Only the execution owner can verify
-    // isolation at dispatch; caller assertions never bypass write-set checks.
+    if (
+      hasIndependentCheckouts(existing, candidate, options)
+    ) {
+      continue;
+    }
     if (!existing.writeSet?.length || !candidate.writeSet?.length) {
       return "insufficient-writeSet-proof";
     }
@@ -157,6 +164,18 @@ function writeSetDeferReason(
     }
   }
   return undefined;
+}
+
+function hasIndependentCheckouts(
+  left: OrchestrationTaskNode,
+  right: OrchestrationTaskNode,
+  options?: ResourceSchedulerOptions,
+): boolean {
+  if (left.isolation !== "worktree" || right.isolation !== "worktree") return false;
+  const a = options?.worktreeRecords?.get(left.taskNodeId);
+  const b = options?.worktreeRecords?.get(right.taskNodeId);
+  return Boolean(a && b && a.id !== b.id && a.root !== b.root && a.baseRoot === b.baseRoot
+    && isVerifiedGitWorktree(a) && isVerifiedGitWorktree(b));
 }
 
 function formatDeferredReasons(reasons: ReadonlySet<ResourceScheduleDeferReason>): string {
@@ -191,7 +210,7 @@ function takeContentionSafeChunk(params: {
       deferredReasons.add("concurrency-cap");
       continue;
     }
-    const writeSetReason = writeSetDeferReason(node, chunk, params.roles);
+    const writeSetReason = writeSetDeferReason(node, chunk, params.roles, params.options);
     if (writeSetReason) {
       deferred += 1;
       deferredTaskNodeIds.push(node.taskNodeId);
@@ -206,6 +225,7 @@ function takeContentionSafeChunk(params: {
       conflictingKeys.every((key) =>
         (usedExclusiveKeys.get(key) ?? []).every(
           (existing) =>
+            hasIndependentCheckouts(existing, node, params.options) ||
             (Boolean(existing.writeSet?.length) &&
               Boolean(node.writeSet?.length) &&
               !writeSetsConflict(existing.writeSet, node.writeSet)),

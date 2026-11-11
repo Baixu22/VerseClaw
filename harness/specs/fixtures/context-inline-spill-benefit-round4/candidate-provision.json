@@ -1,0 +1,3318 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-relay",
+  "candidate": {
+    "root": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\candidate",
+    "commit": "8fa33a84ef8c9eeac3086d168264e77d4560e21d",
+    "tree": "541a95b34245cf442a4b9ebdd7ea8320b35e63aa",
+    "dirty": false
+  },
+  "dependencies": "Reused installed root/runtime node_modules through junctions; copied ignored package builds whose tracked sources match d9d595536; no fresh install.",
+  "reusedPackageBuilds": [
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/errors-B_W4aC5J.mjs",
+      "bytes": 8184,
+      "sha256": "934d9eadf712f5d72311544112a6bad4de20ed8d4acf6ad8a401c6acffac35a1"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/index.mjs",
+      "bytes": 2689,
+      "sha256": "939614926f3cea5dcff0cfb18634dad46a8ffeedcb6bfa987c9a39648c06bfbb"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/meta.mjs",
+      "bytes": 1274,
+      "sha256": "e559be9ecfa84943955fd9d2dd18c94cae97cab181f475bd1ce8f0e9ea3fa7d7"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/normalize-text.mjs",
+      "bytes": 130,
+      "sha256": "f000fa272f23468de0ff24b7f694b55a96f967ccd54cddc2b27305c9bbec40d6"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/numeric-options-BVDMzmcE.mjs",
+      "bytes": 729,
+      "sha256": "aa51f5fbb1537152bb24baf2a7fc5ccf309391565574c4dd0ceb53ea4b20cb3d"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/numeric-options.mjs",
+      "bytes": 109,
+      "sha256": "ac2c395a949b89ecd5c706a7cd6ffe145886c19de0ff081cf8ba8ff9371f6a3c"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/record-shared-CvZ5p3IY.mjs",
+      "bytes": 415,
+      "sha256": "37d0022fa39a87c10612b6f6bfc9e3d6c494d8272b5b8b0ff37ead249fcbfb35"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/record-shared.mjs",
+      "bytes": 111,
+      "sha256": "292eb50afcaf064c1df9c8ae5a952d600ca1ca341b38debaaddc50e70fe442fe"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/session-interaction-mode.mjs",
+      "bytes": 1763,
+      "sha256": "97c47b285777efe1adbffbef7abac59c06d80bfe9754da0dc3cdf04a2a5d7aaa"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/session-lineage-meta.mjs",
+      "bytes": 1814,
+      "sha256": "e640b77af96810277cda73a80177df3c6b0994a0f014568c7d90017e73137d48"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/session.mjs",
+      "bytes": 4701,
+      "sha256": "705c6613294a7eb964dd9a667944c08c6f9f46095c94edd9e035b5caaddfbac8"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/string-coerce-BB-rh2Rz.mjs",
+      "bytes": 938,
+      "sha256": "088434f35b7d382cf10c5027c04620b3a024d688c001cb84821dc2fc91268945"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/types.mjs",
+      "bytes": 465,
+      "sha256": "ad182b8e38a39dd253acfd16a68374593d20977c8e078ab1382d098ff1ee8564"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/runtime/error-text.mjs",
+      "bytes": 1644,
+      "sha256": "3b62f21c977d83454e63f682702472ea51443ee22dcb8e19ef43f7ecefae0584"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/runtime/errors.mjs",
+      "bytes": 326,
+      "sha256": "67b5534c3fcb5590f23ca327d0b5e6dd78d9107ef2133c6d013af0c4600f9665"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/runtime/session-identifiers.mjs",
+      "bytes": 4032,
+      "sha256": "bd5e775e101588edbba77678b390259f06c35f88a1d64d2fcc2691f5736231e5"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/runtime/session-identity.mjs",
+      "bytes": 7156,
+      "sha256": "482ab4ddb9b42df05e929e8f31e35e4a4d60a1ebb4df73600f4cb6f90fa7e1b8"
+    },
+    {
+      "path": "openclaw_runtime/packages/acp-core/dist/runtime/types.mjs",
+      "bytes": 11,
+      "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/agent-loop.js",
+      "bytes": 16996,
+      "sha256": "9f1324a181afb75e37cbc34edff138374ed0ac02c4094c167ea364baf9cdc7c4"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/agent.js",
+      "bytes": 12460,
+      "sha256": "fa92fb2e378b53e6ab650bbe456d36af81785f0c06b6ccfd53744d263b24c65e"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/compaction-eac1i99G.js",
+      "bytes": 75833,
+      "sha256": "8c5583916efb0f42bc6f46ee1ddc7d09134e68a66bdc851bd0215b5bee20b66d"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/file-loader-utils-DuB3y_Ns.js",
+      "bytes": 3082,
+      "sha256": "343aa3a6a585f3e833beb902d7e60cdb829a4faa30720c2e0c0950e00dad1612"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/index.js",
+      "bytes": 4464,
+      "sha256": "3c6caa004ef9fac7c3b30b00f88f140b47b4eae1d074d68d53796ad906bf16cb"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/llm.js",
+      "bytes": 47,
+      "sha256": "c2d34a0638e14aa88464910c5951151ad14251a732146b8ed6c990e211ae8160"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/messages-Bl7iE2TW.js",
+      "bytes": 4285,
+      "sha256": "3b3389efddd6ec111faec0b464af4d45c57a10ff9ad7d796f08496d5e8677ee8"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/node.js",
+      "bytes": 4464,
+      "sha256": "3c6caa004ef9fac7c3b30b00f88f140b47b4eae1d074d68d53796ad906bf16cb"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/prompt-templates-D2wqIh3m.js",
+      "bytes": 6417,
+      "sha256": "9b734ee39103d27d56034e92916342b16180ba45c58d1c6ce21aa26abf2e82f1"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/runtime-deps.js",
+      "bytes": 849,
+      "sha256": "5d2330de83a314e53dae479f7612e127ebbd17b0a8bccfc48dd58fa0033aa567"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/src-zWn8YVUI.js",
+      "bytes": 13761,
+      "sha256": "db3ed036c6ef694288c65ef6fdcc0c25e65623b7d48fb84208ff03b1f0ec54b7"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/storage-base-D3_j5zgg.js",
+      "bytes": 3043,
+      "sha256": "bc2f060abdcda1bd7a1aaa677dd65f522270d73d3804b7b419f927e75b079945"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/types.js",
+      "bytes": 11,
+      "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/validation.js",
+      "bytes": 130,
+      "sha256": "ec8b9a1f181729fd77c83cc708d2e2c4900e7673ee0c98c84e68e3007913fca5"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/agent-harness.js",
+      "bytes": 29574,
+      "sha256": "184b9f078be8d28d9f45761f2f6710465e8713c1d4082f8181ceeaaf9ead7869"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/branch-summarization.js",
+      "bytes": 6463,
+      "sha256": "13c3fadf5e92c616787e1727565109b9e20dc7b391cab9c893ab9c78953f06aa"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/compaction.js",
+      "bytes": 786,
+      "sha256": "e52a8cabcb45d34f36fef45f2a10b3f7e04bfd1a35e4408d4e29ec2f48d01927"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/messages.js",
+      "bytes": 567,
+      "sha256": "060822cb8763cbf381ddbf2a33268847ffc7ba3ff1799f2a7ce5cbc2369fcd22"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/prompt-templates.js",
+      "bytes": 316,
+      "sha256": "ea202237144951e1a3e7e5e75833b4acfe463506c5e8cf81178dcb2ff7546150"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/session.js",
+      "bytes": 6363,
+      "sha256": "77721e0e578c44c58c4f789449bb3e86709e068a561240432adf60a46884c25c"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/skills.js",
+      "bytes": 9618,
+      "sha256": "9ccbbc507dc49dca77493e62d64e9ec770f96233f590717a22bbd99fc3790aa5"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/system-prompt.js",
+      "bytes": 1471,
+      "sha256": "70c4d1dd47a0dd7fb60e39038b1e237036ef4a26e7e11fad3fd1cf3991077f4e"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/types.js",
+      "bytes": 3096,
+      "sha256": "c947ae8990c14c72fddfc3d9dfb2042f9d909444da048b24bb47cfa2f6d79d96"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/env/kill-tree.js",
+      "bytes": 2703,
+      "sha256": "f7231ddb44cc18fe2dbc49a4713f7d29fa29848e4433e6cfc52d8824b8e29ec4"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/session/jsonl-repo.js",
+      "bytes": 4568,
+      "sha256": "e7296cbbfab684446c04aba76ca34b2ab4575f45523657d5c3210eb7dd7d4ef9"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/session/jsonl-storage.js",
+      "bytes": 5953,
+      "sha256": "88f30c34e5a4a8dd6255a771588c6998aade91c963d49925c767d84191cf3ed8"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/session/memory-repo.js",
+      "bytes": 1523,
+      "sha256": "4eb2af1da56e0971cf686b4ec4ebb3f5fc1aa7ceed377842786b651492576322"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/session/memory-storage.js",
+      "bytes": 693,
+      "sha256": "0581246941d271b9e13f09c854e3f5c60b8e6bee72ff015fc84b86ef031aafde"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/session/repo-utils.js",
+      "bytes": 1631,
+      "sha256": "73c99ad120670ec67c9545d19c7834ac763bca9c0aefd7d4d4b83e57c5005bc8"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/session/uuid.js",
+      "bytes": 1666,
+      "sha256": "685fbbb482ce79d5b60edcd16696baf0aeb72e00d932a92cbac408593d7d3445"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/utils/shell-output.js",
+      "bytes": 3958,
+      "sha256": "a963bb7a2ef35109aa3fdbca9d587ea3fe61ea1a61c631b279b1c32833cfa8ea"
+    },
+    {
+      "path": "openclaw_runtime/packages/agent-core/dist/harness/utils/truncate.js",
+      "bytes": 7616,
+      "sha256": "4e0889af545dd7078a771111da0295bb125f7243b218e75913b7ccf6d8e2fe7b"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-client/dist/index.mjs",
+      "bytes": 64155,
+      "sha256": "8af7f635aaf768b0b5fb3d34eefd1052b5d02f9f43eaa2009bfc373ef4e9063c"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-client/dist/readiness-BLII7Ky1.mjs",
+      "bytes": 4033,
+      "sha256": "e9df031379a32cb228de0e96b54b48f22281e834c258ba3620b8df18ff08a86c"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-client/dist/readiness.mjs",
+      "bytes": 239,
+      "sha256": "bb3b3f6e0b22557d60bcdf60834d241a9290beca03190be349925754928b0d14"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-client/dist/timeouts.mjs",
+      "bytes": 4991,
+      "sha256": "b4ee55d3a8392638f21c2a3fb0011fb5b4b7a9df249ef70017feacf8b5f42d66"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/dist/client-info.mjs",
+      "bytes": 2550,
+      "sha256": "b861bb5a83950bf356794f635e6a368f0e49041b99130039686b3c4b69a5889c"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/dist/connect-error-details.mjs",
+      "bytes": 16247,
+      "sha256": "75217224ff28eafd9a1fb1f25eaeb84ee63700b1a3689f55576690cc76b77fcc"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/dist/index.mjs",
+      "bytes": 39374,
+      "sha256": "6b4afc0a9f99b765d02b3f19bdac17a56b8e3000a655c299819d28487153f77c"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/dist/schema-BLhv40Ye.mjs",
+      "bytes": 211886,
+      "sha256": "266faa3517cf1979d21d311c5e3a76f42e9d6ef69353ba5f696a4c415bfa9fdb"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/dist/schema.mjs",
+      "bytes": 23404,
+      "sha256": "17f427a90b9088a07b5bbcb44d592cdd16d3fc84318645a0a418cbc707d0cc71"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/dist/startup-unavailable.mjs",
+      "bytes": 2277,
+      "sha256": "52d9ed6c76f07ca72c8cdddaae970a324f4e5c0ffac61949c538f06ff56d5b62"
+    },
+    {
+      "path": "openclaw_runtime/packages/gateway-protocol/dist/version.mjs",
+      "bytes": 471,
+      "sha256": "19e07d4c41644c91a8089f93074fd1d3de8aa4c01991730a34607e5781112ebe"
+    },
+    {
+      "path": "openclaw_runtime/packages/llm-core/dist/index.mjs",
+      "bytes": 611,
+      "sha256": "68fba3199c399ce22e2dde15239831b4b43decb797abc86d68b3d6dd8e5993cd"
+    },
+    {
+      "path": "openclaw_runtime/packages/llm-core/dist/types.mjs",
+      "bytes": 11,
+      "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+    },
+    {
+      "path": "openclaw_runtime/packages/llm-core/dist/validation.mjs",
+      "bytes": 7362,
+      "sha256": "dfafa3972478f1f241d9400143628e278f4e4222dba7ae1b5be5c3b4f336f09a"
+    },
+    {
+      "path": "openclaw_runtime/packages/llm-core/dist/utils/diagnostics.mjs",
+      "bytes": 1307,
+      "sha256": "79d85022c69cbda6e84d61a440e83d8bd82a2f9d08a6bb1bf2e10249907f7b06"
+    },
+    {
+      "path": "openclaw_runtime/packages/llm-core/dist/utils/event-stream.mjs",
+      "bytes": 1952,
+      "sha256": "27c863467801d3d2748b688b637a0dd98ca54079fc9a8867406b22a4c08eb9ab"
+    },
+    {
+      "path": "openclaw_runtime/packages/llm-runtime/dist/api-registry.mjs",
+      "bytes": 1679,
+      "sha256": "bbfe9a0b894aeb39eb8ae62e76b004ec8613307dbd39ad8193403d14be869f11"
+    },
+    {
+      "path": "openclaw_runtime/packages/llm-runtime/dist/index.mjs",
+      "bytes": 369,
+      "sha256": "74c7603f50b4373b869b2df3d3b68e8a7afb4ea3d50042e2f6312f13342b943a"
+    },
+    {
+      "path": "openclaw_runtime/packages/llm-runtime/dist/stream.mjs",
+      "bytes": 1149,
+      "sha256": "5528c3eea089dc76032c179476f364ad17b5a63d8670f1f13fc023f1ef7205d6"
+    },
+    {
+      "path": "openclaw_runtime/packages/markdown-core/dist/code-spans.mjs",
+      "bytes": 2114,
+      "sha256": "28320a57a1b52b730e1f704b27e1d53771914cf25dcada3cc0891cd04d54c764"
+    },
+    {
+      "path": "openclaw_runtime/packages/markdown-core/dist/fences.mjs",
+      "bytes": 2494,
+      "sha256": "eca97909ea4aa961f7c09af4fcffe1c5d5a532ee4765414af03105662366e8d7"
+    },
+    {
+      "path": "openclaw_runtime/packages/markdown-core/dist/frontmatter.mjs",
+      "bytes": 4069,
+      "sha256": "db958a770aea434fd96ba9b47ddd44121e9f5b3fe8cc1bc61212e2c6f8a92a39"
+    },
+    {
+      "path": "openclaw_runtime/packages/markdown-core/dist/index.mjs",
+      "bytes": 877,
+      "sha256": "91fe2b44dfcb2a3c154de7c3235ef5778a821de2f874dc51e9b689e452c87b0d"
+    },
+    {
+      "path": "openclaw_runtime/packages/markdown-core/dist/ir-C3aEyOz1.mjs",
+      "bytes": 21353,
+      "sha256": "a77149a3aa90ce397d7909e63c709e4edc5bc547b977ecbb9bdfa51df48c5598"
+    },
+    {
+      "path": "openclaw_runtime/packages/markdown-core/dist/ir.mjs",
+      "bytes": 207,
+      "sha256": "2fa2253e3e74b369568afca82f766797542400f4951bbfb61e666a32ba4eaf63"
+    },
+    {
+      "path": "openclaw_runtime/packages/markdown-core/dist/render-aware-chunking.mjs",
+      "bytes": 7395,
+      "sha256": "ee538c155e56f2b22c146801b516444fb435b835f8f44cff64a00d7bea03b764"
+    },
+    {
+      "path": "openclaw_runtime/packages/markdown-core/dist/render.mjs",
+      "bytes": 3447,
+      "sha256": "d51acef6ce85b83465d18e0be8176a6afd585d22e5b7990d035760a4d9fc27fa"
+    },
+    {
+      "path": "openclaw_runtime/packages/markdown-core/dist/tables.mjs",
+      "bytes": 1252,
+      "sha256": "95c77220e1db73c0e95486352edcb9af2474cebf8933fdea1930a5f7867d40e8"
+    },
+    {
+      "path": "openclaw_runtime/packages/markdown-core/dist/types.mjs",
+      "bytes": 11,
+      "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-core/dist/base64.mjs",
+      "bytes": 1607,
+      "sha256": "55c7710738c3abb61c65b0f3584b961f1e67f1d4759e72eda93bfb926d00c7b1"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-core/dist/constants.mjs",
+      "bytes": 1436,
+      "sha256": "e1f11a24b678fc009e0b4b91cf3e7ef6601eaa4baa584de9f802201033b65a71"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-core/dist/content-length.mjs",
+      "bytes": 513,
+      "sha256": "ebc33a64843ba95c0510037a19f60baeabe0fd4adca0bb24de591d9b7c112832"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-core/dist/file-name.mjs",
+      "bytes": 739,
+      "sha256": "cfc16e393e972294079b1db9bb7ce28cca43f98a3b63d128442e698c04087df5"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-core/dist/inbound-path-policy.mjs",
+      "bytes": 3285,
+      "sha256": "8f0f16b1aed61da2bcd81e52dc1782700238e9cb6c1f6f399f9cba6bf1b725a0"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-core/dist/index.mjs",
+      "bytes": 2079,
+      "sha256": "757952536a7adaf68f09be782993626aaa52949a96c049d644c3133ab3310b20"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-core/dist/inline-image-data-url.mjs",
+      "bytes": 4593,
+      "sha256": "5365f1bf77ab7f0a528014b848ca8e83824ecff7a9bf5a6a374af9f6b6ce0563"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-core/dist/media-source-url.mjs",
+      "bytes": 539,
+      "sha256": "9c9853f105245d6ae3f9c392b0f0d9e35c0694d233c176da42cb9a5ebca00ce4"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-core/dist/mime-DQJSICVX.mjs",
+      "bytes": 7161,
+      "sha256": "4b9fc57c7dc87b10e4d37ae302407308fcaffdfb3764400559bd96bd078b34dd"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-core/dist/mime.mjs",
+      "bytes": 534,
+      "sha256": "87b75e17f2f5fec4371ff4f503540a952f0216910013565b5575e68c8cf2f37f"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-core/dist/read-byte-stream-with-limit.mjs",
+      "bytes": 1679,
+      "sha256": "ab0a5d4c98590e1e6155c891b7744a207cea2dbd93546c78f837c7fdb2267215"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-core/dist/read-response-with-limit-CDdRNRnW.mjs",
+      "bytes": 4748,
+      "sha256": "d6b87c287554fd1f6c91fe9ec9894a6077cb0335cd3e14173098eb52e0ad4e93"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-core/dist/read-response-with-limit.mjs",
+      "bytes": 175,
+      "sha256": "4d834e110ed28939bc4428e48f9267161dffb8bff0531f239a29e437012a0c5a"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-generation-core/dist/capability-model-ref.mjs",
+      "bytes": 2042,
+      "sha256": "3edd1e0f1b4374b5ff0490da2b6c047f07726d9d20288abc493c4a4efc14df60"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-generation-core/dist/catalog.mjs",
+      "bytes": 1117,
+      "sha256": "c4fbf6637ee331cc0f15d8e1cc8d04bd717c9fbae7133a11ccd4de26c5d63580"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-generation-core/dist/index.mjs",
+      "bytes": 630,
+      "sha256": "1532be9fcb4c0dc847e566feeeeb421b974826d15c39d06f0635c64e2210625f"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-generation-core/dist/model-ref.mjs",
+      "bytes": 704,
+      "sha256": "8df926d078c31dbd4d1aaacdc74407f8bbd8974645a244fb268ef08004e1a769"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-generation-core/dist/normalization.mjs",
+      "bytes": 410,
+      "sha256": "bb8b6ec60b0cdc4705509c59b9af23c4f85760e132f7dfdaa87e8aedb44d22ae"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-generation-core/dist/string-Z0PCvqf2.mjs",
+      "bytes": 757,
+      "sha256": "b6dd946d4008284fed2adafb1957cc9b2d25679013ebf8a034f4de5aceaafbcf"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-understanding-common/dist/active-model.mjs",
+      "bytes": 11,
+      "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-understanding-common/dist/defaults.mjs",
+      "bytes": 1373,
+      "sha256": "c146a9c1ed45c3fbdcd42dd82d9a9ada37cbe7e555f266ede22ebb0a0562f5b6"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-understanding-common/dist/errors.mjs",
+      "bytes": 585,
+      "sha256": "cff51c1c1437b818cf2576fce99d0b997719f6c00ee1d80cd2ff9786de12a4be"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-understanding-common/dist/format.mjs",
+      "bytes": 2415,
+      "sha256": "e6737691667cbce2666b1b4989b1062c6ae15bb7e945bdf6df3c779735ee869f"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-understanding-common/dist/index.mjs",
+      "bytes": 1586,
+      "sha256": "4faa3a8f20bdfcd9fb8b255b143f049f687175e13c011339a2ab5499080e9d6e"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-understanding-common/dist/openai-compatible-video.mjs",
+      "bytes": 1360,
+      "sha256": "d3d9ef2343c3371b8ea87e4da52764e307c7fd610a00f100bd7d24bb39d14303"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-understanding-common/dist/output-extract.mjs",
+      "bytes": 771,
+      "sha256": "148b4d13e8a5524ec6fb62a54af8e86d36967e360943bf7ee50c63408366dd3f"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-understanding-common/dist/provider-id.mjs",
+      "bytes": 936,
+      "sha256": "6fb31f976b6a708b0d8047e32b08f9cec9a7a70689eb768bedd9942d22ba72c2"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-understanding-common/dist/provider-supports.mjs",
+      "bytes": 474,
+      "sha256": "515c09efc56f37eb5dd91767960e564a12bc9dabd497ea2bdb0e7405e47a7e7c"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-understanding-common/dist/types.mjs",
+      "bytes": 11,
+      "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+    },
+    {
+      "path": "openclaw_runtime/packages/media-understanding-common/dist/video.mjs",
+      "bytes": 550,
+      "sha256": "4d6863964dc4be7e5676034e0d1ffb4c2426ca8073e5977e173acb68d45d87b0"
+    },
+    {
+      "path": "openclaw_runtime/packages/model-catalog-core/dist/configured-model-refs.mjs",
+      "bytes": 4007,
+      "sha256": "9ad432b6578d126eec680f328cc4d0c7ec6a344627d3067efddc9da8b541d1c6"
+    },
+    {
+      "path": "openclaw_runtime/packages/model-catalog-core/dist/index.mjs",
+      "bytes": 2270,
+      "sha256": "46585e76b85d98f4d617d9df2e47ed5e9d6fe3466f68b8922483f852c7857e42"
+    },
+    {
+      "path": "openclaw_runtime/packages/model-catalog-core/dist/model-catalog-normalize.mjs",
+      "bytes": 22243,
+      "sha256": "26e02ee06eb7c11f5bdbe4631d1ae8c810c226464abf0465a1a49a47eaad113c"
+    },
+    {
+      "path": "openclaw_runtime/packages/model-catalog-core/dist/model-catalog-refs.mjs",
+      "bytes": 788,
+      "sha256": "2d7660b7fd1836440f60ca8bf5ac622745163033540e4628ca39237d710edc0f"
+    },
+    {
+      "path": "openclaw_runtime/packages/model-catalog-core/dist/model-catalog-types.mjs",
+      "bytes": 849,
+      "sha256": "0c114527194078f34be6932f32e76a732b44e87067521eb444f2907a173bc463"
+    },
+    {
+      "path": "openclaw_runtime/packages/model-catalog-core/dist/provider-id.mjs",
+      "bytes": 1060,
+      "sha256": "5b46b27523749f3e2642327f9ec5cefb990adefd23d7a215faecaa9903b36ba9"
+    },
+    {
+      "path": "openclaw_runtime/packages/model-catalog-core/dist/provider-model-id-normalization.mjs",
+      "bytes": 7116,
+      "sha256": "fb747dadd877ecf893f0fa0c3ec75f3acedbbac3b8b763b8eb9f5b467f3d6cfa"
+    },
+    {
+      "path": "openclaw_runtime/packages/model-catalog-core/dist/provider-model-id-normalize.mjs",
+      "bytes": 1334,
+      "sha256": "2d37d1c9df636df13a6f7c88353aa126bea75d5bee31019cdcdc73b3cd2686b7"
+    },
+    {
+      "path": "openclaw_runtime/packages/net-policy/dist/index.mjs",
+      "bytes": 1363,
+      "sha256": "8ae33f724f697f3b7ada9a95d10812985d13ade88ebdc366b54edd2938fd2e4c"
+    },
+    {
+      "path": "openclaw_runtime/packages/net-policy/dist/ip.mjs",
+      "bytes": 10417,
+      "sha256": "31a1687551af5d67f53ea027fb7484a55738e121ed0dd646556881defa4174cf"
+    },
+    {
+      "path": "openclaw_runtime/packages/net-policy/dist/ipv4.mjs",
+      "bytes": 461,
+      "sha256": "1a7c329a463e401e34a201a2bdf5db2f61c64370a5e9ea9a9b049050b5cf50d6"
+    },
+    {
+      "path": "openclaw_runtime/packages/net-policy/dist/redact-sensitive-url.mjs",
+      "bytes": 2560,
+      "sha256": "a9625a687d75244c30046c3081884de1530e32a0d9defda4afcfb5252c6c27c6"
+    },
+    {
+      "path": "openclaw_runtime/packages/net-policy/dist/url-userinfo.mjs",
+      "bytes": 410,
+      "sha256": "3ef5dca16803e1d03254c77ee41a9f69fa24cad7523fdd27e761b1b8bd24772e"
+    },
+    {
+      "path": "openclaw_runtime/packages/normalization-core/dist/index.mjs",
+      "bytes": 4110,
+      "sha256": "6e83b933661c102d84eda19cb086284aeaff3377afff6cc00915e4cdbab9b15c"
+    },
+    {
+      "path": "openclaw_runtime/packages/normalization-core/dist/number-coercion.mjs",
+      "bytes": 11601,
+      "sha256": "753294a66442fb2d40b943b418fece372e971e05ed6d6e95199a3b482b3c1730"
+    },
+    {
+      "path": "openclaw_runtime/packages/normalization-core/dist/record-coerce.mjs",
+      "bytes": 1332,
+      "sha256": "842bde30cc2053ddf6d74e57cb9aa8e75eb70eacb4888ed78499f4689b2f53eb"
+    },
+    {
+      "path": "openclaw_runtime/packages/normalization-core/dist/string-coerce.mjs",
+      "bytes": 3683,
+      "sha256": "ffb49e211c9480c2ac882852f3d37615971fc9908cd0b2dfef0125893933466d"
+    },
+    {
+      "path": "openclaw_runtime/packages/normalization-core/dist/string-normalization.mjs",
+      "bytes": 5053,
+      "sha256": "7c225568632406959424469907a91441cde3774998633f1a35085d867481e0f8"
+    },
+    {
+      "path": "openclaw_runtime/packages/speech-core/dist/api.mjs",
+      "bytes": 1201,
+      "sha256": "fbd0413b8d9048df2a1c3b0f33101e678e119c923c5c912657fc6b8ad440d869"
+    },
+    {
+      "path": "openclaw_runtime/packages/speech-core/dist/runtime-api.mjs",
+      "bytes": 51933,
+      "sha256": "8763bb0db7a78e50d53bdee84743b4389b17093968081bbf1d96a27db0e8b61c"
+    },
+    {
+      "path": "openclaw_runtime/packages/speech-core/dist/speaker.mjs",
+      "bytes": 1445,
+      "sha256": "c8e177e59c895c455526162cff7785fc511d1e9a45cdb32c310101762e6661e2"
+    },
+    {
+      "path": "openclaw_runtime/packages/speech-core/dist/voice-models.mjs",
+      "bytes": 6392,
+      "sha256": "52910d63181076f02ccacdca9126d76e37c6ec6ff4925a500f8238596b44ae27"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/ansi.mjs",
+      "bytes": 4402,
+      "sha256": "5d24b90df2a7bc28410d523f8036e872076f15b1b457e23c24a16270861da8c1"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/decorative-emoji.mjs",
+      "bytes": 2310,
+      "sha256": "29b728cc79a3bcfe6a13929f7416213b0b7f46bd791680f05d74e25ad8511ef1"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/health-style.mjs",
+      "bytes": 1315,
+      "sha256": "3164f174fafd3baa37439e7ede3d62f8551de8cd81d27592d0bb8dc3f73c82bf"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/index.mjs",
+      "bytes": 1969,
+      "sha256": "c38b093eade1f74982f9bcd88481fd9e65de49bf73ca4e8f620c884cd7c07dba"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/links.mjs",
+      "bytes": 606,
+      "sha256": "ce338de0eacf87ae829e775e66abb181c87153e9611c434e18e95321d7c9d927"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/note.mjs",
+      "bytes": 5087,
+      "sha256": "d4cf0ab21ca1ddab302382955b9d517e84727e3bd351b8091a854b89fb007f4b"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/osc-progress.mjs",
+      "bytes": 1860,
+      "sha256": "7d7ab7409a87e03f0d3c80bed122f8a6c11dfbbed76fd7bafd5a046daa5ec5b4"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/palette.mjs",
+      "bytes": 281,
+      "sha256": "61ef1c888a43aeb9996869afcab69843124b86be895d34065bf1fa8c40a2457f"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/progress-line.mjs",
+      "bytes": 772,
+      "sha256": "118e6549e8f31595fe9a64369ee6b850ff23b0b24c0e915d49f9ad6523e66757"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/prompt-select-styled-params.mjs",
+      "bytes": 743,
+      "sha256": "82aaeeffbe777e5806804f64c97ab6c71cd0574a933842a8ee3e0236eb84e28e"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/prompt-select-styled.mjs",
+      "bytes": 352,
+      "sha256": "1651bdbefbab88d2d362692892da8d89efe2459c8dfe145bb33d2c7d27d6a49f"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/prompt-style.mjs",
+      "bytes": 622,
+      "sha256": "a891aa8acb66e6c89a23949fdb79d7bd64c91afe447c33962a0bc90da06a5e4a"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/restore.mjs",
+      "bytes": 1387,
+      "sha256": "66ca432d346359b70c7a7998396d45f877bd3a60ac6c28b3470e5b2b788af07e"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/safe-text.mjs",
+      "bytes": 550,
+      "sha256": "393e73dd1a669d25d0dd4b61121c5a11df02ac71a59052c6d9605aedb502e536"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/stream-writer.mjs",
+      "bytes": 1158,
+      "sha256": "6cd9918834788b2de92407c9ede7ff7ea5f24d80702537d0d60c55bd1eb20216"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/string-C1QhuqNX.mjs",
+      "bytes": 324,
+      "sha256": "e77e0f92404315934efea27300a11cf171c352a33a4d07e8c1f5f78c9bd1aebe"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/table-fhRu3BBc.mjs",
+      "bytes": 15491,
+      "sha256": "4d67168b1973f04edd7c5201f99ddfe34a1d15603b79528d396b246130a9db3c"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/table.mjs",
+      "bytes": 153,
+      "sha256": "7e50936834d5987e00f40c87d955c75ea1f7e29ce468f55c8f10222055df3f34"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/terminal-link.mjs",
+      "bytes": 563,
+      "sha256": "b005e77c81da66261d0e30809ab8c0eeee9bd3218bdda2b7b728b0e4b6a27bec"
+    },
+    {
+      "path": "openclaw_runtime/packages/terminal-core/dist/theme.mjs",
+      "bytes": 1224,
+      "sha256": "80ff613518b09b4471175e05d4d98896f7d1ac65dfe71943ddd3b241cc9bb35f"
+    },
+    {
+      "path": "openclaw_runtime/packages/web-content-core/dist/index.mjs",
+      "bytes": 339,
+      "sha256": "cc9ab815ef40fafbee2356547c397fb7631ab4b613b147844bc7f9fbe2a64c1d"
+    },
+    {
+      "path": "openclaw_runtime/packages/web-content-core/dist/provider-runtime-shared.mjs",
+      "bytes": 5441,
+      "sha256": "fed4b5ce394174dbf011c8d6b02f2debe8c9911db50dda6ac6744bf9395e3300"
+    },
+    {
+      "path": "packages/versebrowser/dist/cli.d.ts",
+      "bytes": 407,
+      "sha256": "d6ee56c40a0ef2deeb56b065de5984a474f9ae27f186065383f174f475208f27"
+    },
+    {
+      "path": "packages/versebrowser/dist/cli.d.ts.map",
+      "bytes": 289,
+      "sha256": "926dd1b65fe4a9ef6b194a7a7b35b03e93fea077a6a78c5c659b90e89601647b"
+    },
+    {
+      "path": "packages/versebrowser/dist/cli.js",
+      "bytes": 20194,
+      "sha256": "ed1dd5591deb1f2fe40167f79528b222b33f8143d5eb41245858c940ed9f51f5"
+    },
+    {
+      "path": "packages/versebrowser/dist/cli.js.map",
+      "bytes": 17465,
+      "sha256": "c3c72a770d402793abbfb0d9e19ff164e5ab667dccb3896d4b79f4908748dea2"
+    },
+    {
+      "path": "packages/versebrowser/dist/index.d.ts",
+      "bytes": 2658,
+      "sha256": "dc9fcdf2ccca0a5bffcbbde3bdcc6c004c2d983a55de59a735826da81f2a9e05"
+    },
+    {
+      "path": "packages/versebrowser/dist/index.d.ts.map",
+      "bytes": 1636,
+      "sha256": "dcdcbbd4ccf9a28aaf89599ab0b9784379410df241eba01a28c1f93339313ace"
+    },
+    {
+      "path": "packages/versebrowser/dist/index.js",
+      "bytes": 2588,
+      "sha256": "796d9fa8973e9b87f2ebe4d3e69020749790cfdfe32a1b95cad00e38c57af2ee"
+    },
+    {
+      "path": "packages/versebrowser/dist/index.js.map",
+      "bytes": 1587,
+      "sha256": "b55f46c837bae66009ab59af258b0486c7e8aee5066538eef6413bcad8b14f3d"
+    },
+    {
+      "path": "packages/versebrowser/dist/version.d.ts",
+      "bytes": 75,
+      "sha256": "e532cbf90bbd9a9f56fa4d5d16a3bcdd75323107027ec3e24a3c1eec166c220d"
+    },
+    {
+      "path": "packages/versebrowser/dist/version.d.ts.map",
+      "bytes": 143,
+      "sha256": "cb87e334a9f70bedf693204b1b363730061f8fdee4cd33bae0a305a27b831160"
+    },
+    {
+      "path": "packages/versebrowser/dist/version.js",
+      "bytes": 654,
+      "sha256": "a7f7f3b35425a2120b285cf926467b413d032dcd0de4b28820a69f1b1c0a80c0"
+    },
+    {
+      "path": "packages/versebrowser/dist/version.js.map",
+      "bytes": 393,
+      "sha256": "431671d0d1e60ec3782e97b7c6adda7a30111bcd950fa89aeed380f50a7682ea"
+    },
+    {
+      "path": "packages/versebrowser/dist/collab/multi-agent-boundary.d.ts",
+      "bytes": 2074,
+      "sha256": "db0efdfcdd60894b7fc15c99816179b4378f3a395296c723e69a02148e0f8a61"
+    },
+    {
+      "path": "packages/versebrowser/dist/collab/multi-agent-boundary.d.ts.map",
+      "bytes": 1646,
+      "sha256": "662d9c75a557f6a5ed93f1b6885cfdf0077edbb3d349c6e1e726f2081add9376"
+    },
+    {
+      "path": "packages/versebrowser/dist/collab/multi-agent-boundary.js",
+      "bytes": 7579,
+      "sha256": "a73630b09e8dd95b7c2988c3ded7cef9626f616d7f095594a4a05731679431e1"
+    },
+    {
+      "path": "packages/versebrowser/dist/collab/multi-agent-boundary.js.map",
+      "bytes": 6321,
+      "sha256": "a2e9fdc5dce066bc4939fcd19421e8544d1bea1fbf683b8c72f1f41538ac507b"
+    },
+    {
+      "path": "packages/versebrowser/dist/collab/remote-policy.d.ts",
+      "bytes": 2788,
+      "sha256": "72095e4ed0689b237e568c3ac069ef5472f083a55369d213e9b04098d080a3a3"
+    },
+    {
+      "path": "packages/versebrowser/dist/collab/remote-policy.d.ts.map",
+      "bytes": 2088,
+      "sha256": "40a27b602a7449e24fb18ad137a3f6c114278a70743f4bc7a992be702301e8ce"
+    },
+    {
+      "path": "packages/versebrowser/dist/collab/remote-policy.js",
+      "bytes": 8814,
+      "sha256": "0613cf7ba4bf4b6b81d65f61062c446084d875ef33edfbd5690585341ab129ab"
+    },
+    {
+      "path": "packages/versebrowser/dist/collab/remote-policy.js.map",
+      "bytes": 6792,
+      "sha256": "825822f83a22eabdd4e49544dd9f3c6a9df6d0731517187d0ed76e4967c235b6"
+    },
+    {
+      "path": "packages/versebrowser/dist/contracts/index.d.ts",
+      "bytes": 6263,
+      "sha256": "1ef4974bad2c5577796d406114d2b7a42cc73726db024c856793f341db2416fd"
+    },
+    {
+      "path": "packages/versebrowser/dist/contracts/index.d.ts.map",
+      "bytes": 5451,
+      "sha256": "33a2215c23fe8d1f4d083394d8a676bc77d889f05e48251f7efc5501c3bc803a"
+    },
+    {
+      "path": "packages/versebrowser/dist/contracts/index.js",
+      "bytes": 908,
+      "sha256": "218376021ccd1f91bd463e1a930b9c0dc2f3dd4191f742cb2ec13640af1ffccc"
+    },
+    {
+      "path": "packages/versebrowser/dist/contracts/index.js.map",
+      "bytes": 1281,
+      "sha256": "0561dbe4e0a87bcb79c5f6bdf8298c1db296aed5fe75fd31930c633823880c4a"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/automation-playbook-selector.d.ts",
+      "bytes": 2158,
+      "sha256": "f0513c1c6485d75d07c3e3e72ff82121cf2ca9287686daa00f6c1ec5d37757a5"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/automation-playbook-selector.d.ts.map",
+      "bytes": 935,
+      "sha256": "3eb641b3ba99ba69c12bd43cf6b41d3b1772427c8de16519fdd7751dea66fc51"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/automation-playbook-selector.js",
+      "bytes": 4814,
+      "sha256": "bebf887dd9746d3ddd58cb627e2a2c0ae968404d425cfe2fdbd21e88f165f33c"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/automation-playbook-selector.js.map",
+      "bytes": 3319,
+      "sha256": "eaaaedd2ea2bcb7615b8981151b943bbcdc7dd65834cac34d0e35b21bc322744"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/automation-playbooks.d.ts",
+      "bytes": 2123,
+      "sha256": "f00fd443b49c3cbe9db59292be401bf8c854fa35290881ccaf8d02358a8c3920"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/automation-playbooks.d.ts.map",
+      "bytes": 1281,
+      "sha256": "a1ad74e512403b73f1b995468fc4d94f935dfc44b0a3e65d18246482c9eadbd5"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/automation-playbooks.js",
+      "bytes": 12349,
+      "sha256": "3f72329d0bbd1a834b04134707792ed7452267617d309ae317e7e05b53038e7a"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/automation-playbooks.js.map",
+      "bytes": 6323,
+      "sha256": "509e9c372e276dfdb35567a48a52b0775577cb93377a514ea51aeb13e8a09c34"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/browser-control.d.ts",
+      "bytes": 4266,
+      "sha256": "d24f61b61eeb4414949b3b5eccc25f24cb98ac2e85819418d47651814253e427"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/browser-control.d.ts.map",
+      "bytes": 2517,
+      "sha256": "418b74715aa02f19662fafd6e593cbf8b9ad7f43b34e1e6be9e46123c5e28d4f"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/browser-control.js",
+      "bytes": 2662,
+      "sha256": "0cb951fb239d76cc458676b5c790856c011534909866d4079f0807b6ba5a26e1"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/browser-control.js.map",
+      "bytes": 1314,
+      "sha256": "27ac5c3a15fc2ae5b85329d65860331714edbbcc528cd461bef639ffb8893540"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/filesystem-boundary.d.ts",
+      "bytes": 1344,
+      "sha256": "ef64a130aaaf4d57f2a9fb886094db411f7aecb850484dec1a2f3562cf3ebc59"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/filesystem-boundary.d.ts.map",
+      "bytes": 880,
+      "sha256": "2e5deee52c5f00a3dcfea968dfd32669c402f147dd8d7ea69ee793eb305b98e0"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/filesystem-boundary.js",
+      "bytes": 2983,
+      "sha256": "d0fa6a8fe4eb97c1c9736393718278313da4741828d7527d1e8b9ec9852334a9"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/filesystem-boundary.js.map",
+      "bytes": 2557,
+      "sha256": "8eb1f3df937a9f2652dae0954217d50d7a63e83dbcd3606807575f446d667631"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/index.d.ts",
+      "bytes": 573,
+      "sha256": "37b92fafeef1757bb03cacab292add56384e1fe18b150297eddb07555c854808"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/index.d.ts.map",
+      "bytes": 393,
+      "sha256": "5e6a9bdc3e3aedb5f75ecc0e239a2c8e00e8893898778af3d8f1545124fd73ff"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/index.js",
+      "bytes": 571,
+      "sha256": "c8867c06618a76f6375f863f4d12a213e1186c1015c03f8ddb5cdeb4ffd0c90c"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/index.js.map",
+      "bytes": 391,
+      "sha256": "4517be0c89349cce012d54bca4c328d24a54e4a72ad172106765dbeeb50914eb"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/network-context.d.ts",
+      "bytes": 1235,
+      "sha256": "b164b6c2c1d76c432ac628c3ec77217ca68f1767b7fccf8d7d66bf2d25fc174e"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/network-context.d.ts.map",
+      "bytes": 723,
+      "sha256": "442e252bc6976a4ac106dbd8cf4fb9d89914b6b547a558d855b5098ec1ee7438"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/network-context.js",
+      "bytes": 10847,
+      "sha256": "05efff2ab537c20356055fc19f1ef59dcf4600d339eacae3150878da9014a193"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/network-context.js.map",
+      "bytes": 10340,
+      "sha256": "788f51f289683a2e10f9d3f2bfbe9b954427a986e82a16f62f7a288cacad2046"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/runtime-mode-policy.d.ts",
+      "bytes": 3738,
+      "sha256": "64712fed85eda33c8cb225654cb52d4038966423cfc29a032774bd453c8ceb11"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/runtime-mode-policy.d.ts.map",
+      "bytes": 2585,
+      "sha256": "fd87460a59f1cf7fdb1367423317937e8fcc23f8a16285660ece9edd73307341"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/runtime-mode-policy.js",
+      "bytes": 6181,
+      "sha256": "46330644d4776e8e48faeea757f0ff43871bf0bd5b48db80dd34a9ebaf9bfa52"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/runtime-mode-policy.js.map",
+      "bytes": 5125,
+      "sha256": "b3feeac85e0b5cededf96802d9b52c7a1b78ac9f889839e4c134e44adc78d4df"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/text.d.ts",
+      "bytes": 415,
+      "sha256": "b7096d6440f9e4e72d47c0e666430281acfe27691136ea5052966da14200e600"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/text.d.ts.map",
+      "bytes": 324,
+      "sha256": "39ee4b4a2044352e74611ded2ce7619bd32c678ba6dfd8406c927e72625d68e6"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/text.js",
+      "bytes": 481,
+      "sha256": "0be1ba0737eac487c5eb3a77d945c63925925aca59e97e4b88fe1fe765f8a6a9"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/text.js.map",
+      "bytes": 496,
+      "sha256": "c2592230079e65c9190855426bd76b29c8e2be77b42d80fa7abe6c586e538a10"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/tool-artifacts.d.ts",
+      "bytes": 5428,
+      "sha256": "6a23e65dfefb46469291a66d1e0f14c2dd5ccc5bb92cc42e73351d6b0ac4cddb"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/tool-artifacts.d.ts.map",
+      "bytes": 3156,
+      "sha256": "85ccdf5496d648c5486f4df4e9ae613096210f78629e099d3592bfe6536e60e6"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/tool-artifacts.js",
+      "bytes": 84182,
+      "sha256": "f5279f8f96b0f32c5e9334aef49812779bd052598f0597698a2268dadd6141b1"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/tool-artifacts.js.map",
+      "bytes": 80771,
+      "sha256": "21f15336aa5f79b1feca4833c7d936ef36361d81a1881c3c3b546cba6e31c4f5"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/tool-authorization.d.ts",
+      "bytes": 2770,
+      "sha256": "1b738a727498e6e2d6733b09733fc389885f94586bf0f2dcd5ae5692357090e6"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/tool-authorization.d.ts.map",
+      "bytes": 1978,
+      "sha256": "b1270be7dcbcfd48a9a22327a43a66b4f55bfd0353accc778eb5c5e262f118ea"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/tool-authorization.js",
+      "bytes": 3743,
+      "sha256": "635714385b2070aa7c637b45157adc68a4ba4e8b7c7a11a202fb13a849c7d748"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/tool-authorization.js.map",
+      "bytes": 3618,
+      "sha256": "8a7227834ae1ae60ed3ab4e5f0373ea874a9b754c97b802ffcdbeb182a4540ff"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/tool-classification.d.ts",
+      "bytes": 2469,
+      "sha256": "d128d67bd461a1742ae395f7ec5ab0585da68f926f20fc63b982284fc7093f3a"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/tool-classification.d.ts.map",
+      "bytes": 905,
+      "sha256": "e4503638d73e6054fcdd7cefb425ad7f44275f430820f94cd1aa9a5225641a0e"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/tool-classification.js",
+      "bytes": 3915,
+      "sha256": "b9c527c64a06d516aa81e02c77a65a2a16d25df8a33db5f432f952c6e35d1f35"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/tool-classification.js.map",
+      "bytes": 1306,
+      "sha256": "7b26ab521a9690c452e477314836c72528c1b11f6e708567634d42d6abb88de8"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/tool-registry.d.ts",
+      "bytes": 13019,
+      "sha256": "fc34ec7e807201d27eecb5c9a622b947b1470f4cfd385be52949528596470ba0"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/tool-registry.d.ts.map",
+      "bytes": 5721,
+      "sha256": "ba4441665be45b2823a03cd3717a2d0e0b148f105cefdefe34e521e71fc3cf6c"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/tool-registry.js",
+      "bytes": 73404,
+      "sha256": "8211b175f70ffab0a7f4f3c769b4d1c625638932c9eb39f6ec6d5f06bb577383"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/tool-registry.js.map",
+      "bytes": 38165,
+      "sha256": "5f3623f0145ee7e414e2fb3908503cd922365f42b2732c8a9d4ea607990dfe7e"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/types.d.ts",
+      "bytes": 10698,
+      "sha256": "5b71b60c57954a56bb891c4f11e75ae74b3caa0b0e1731b3a21469464f8e4705"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/types.d.ts.map",
+      "bytes": 9474,
+      "sha256": "4a30d41cb7925b01ae5f4d208ed116b97d35df2699777b0c987c4ce5ceba5a3e"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/types.js",
+      "bytes": 384,
+      "sha256": "a168d55acc845c764284814f3159543133e3b9b53bf5a5736d07b8a930515555"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/types.js.map",
+      "bytes": 126,
+      "sha256": "03520d88047da3a48988bc76d6ab2f8b75eb4d37f6f1e90377b7b10c0f10c971"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/extraction-rules/validation.d.ts",
+      "bytes": 949,
+      "sha256": "cf9c9e03df4d3ae2238b30407c6055fb4f8b556c80ee5e92423577e9feffd985"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/extraction-rules/validation.d.ts.map",
+      "bytes": 634,
+      "sha256": "bb57537611af62fca6413015bec64fde5b1ac0b042269aa40c8562de82c75bab"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/extraction-rules/validation.js",
+      "bytes": 3852,
+      "sha256": "402898ae3fd232d747556f0088efadca55ceda052d87a235a92e6ba30a6426e1"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/extraction-rules/validation.js.map",
+      "bytes": 3992,
+      "sha256": "4ea0f1a960de19a534762fd68d1068d238e4f061f16454b53b4067f47d755acd"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/web-search/tavily.d.ts",
+      "bytes": 699,
+      "sha256": "aa3b27148b6df9994b96a74d4cb75ea4ca87807d1e270b8b1b1f468b2910d509"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/web-search/tavily.d.ts.map",
+      "bytes": 307,
+      "sha256": "0917e19c4a8e5035ba0c15f7476d156779cbf4ff80991d4359a9c621bdf98a41"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/web-search/tavily.js",
+      "bytes": 1976,
+      "sha256": "ced1e26f8c7bebd9f20570cefeb71b371e92a969c2823bb5711d41371a86da1a"
+    },
+    {
+      "path": "packages/versebrowser/dist/core/web-search/tavily.js.map",
+      "bytes": 1631,
+      "sha256": "ac9d5870c87866d98e5f3a15f57dc50ba374426274e014377c8284d24a2c1742"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/api.d.ts",
+      "bytes": 914,
+      "sha256": "511009528f03b5620ff414ade8fd2f74511adfe98f19291da96636d5efb77eb3"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/api.d.ts.map",
+      "bytes": 514,
+      "sha256": "554648019ad6b31bc8f3193b7ecc0c560fe6544b1b645eaa82e7e71bb5bd0aad"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/api.js",
+      "bytes": 13141,
+      "sha256": "5482e48e37e043a39b3cf711b63a6532eeea800161b30fd0229eb6731b19391b"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/api.js.map",
+      "bytes": 11596,
+      "sha256": "a3e34edfa582008b7b138aaca8a522e98a8d3ebbca90caa01ce71e5f5ca76f42"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/cli-runner.d.ts",
+      "bytes": 4023,
+      "sha256": "5f62633ea9dc4f17c30562dc91d32c4958d12ceae09bd936fcd5b0d567380af2"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/cli-runner.d.ts.map",
+      "bytes": 3881,
+      "sha256": "30bc9f821c63f2322c968c0aa49f29fc592305933303172ee81dbeb215f3e8bd"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/cli-runner.js",
+      "bytes": 10355,
+      "sha256": "f066495cfbef9527cb2cbe457a902cd8c7f3950c7f76c9c2e6f34a7ad09ce1b0"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/cli-runner.js.map",
+      "bytes": 10634,
+      "sha256": "5298ae032058e2a04980397bdcb9760e3017ada67eb71271e37f931c4e6682a2"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/diagnose-pack.d.ts",
+      "bytes": 2225,
+      "sha256": "65872ee25427bdb41d49c0162d8d167fe6764058c6aa105a4f4f0b39d687ad7d"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/diagnose-pack.d.ts.map",
+      "bytes": 1304,
+      "sha256": "1f8dc4215e9ec1a6e3d5ef39cb5400852f822ff4fa014b3610a87b1fea038202"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/diagnose-pack.js",
+      "bytes": 7694,
+      "sha256": "89ed95434c783ff4fb722d56eef27c8c41e6c968df2293452a38413843f73c99"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/diagnose-pack.js.map",
+      "bytes": 6420,
+      "sha256": "d7220bf515a43d9d28642036e66f01612d8aba4055fc1c6c017b36d84114b72a"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/driver-availability.d.ts",
+      "bytes": 1421,
+      "sha256": "f5e86b213b07cd566e21b3be0b4fb51a9d45e77f7995c372112125a25553345d"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/driver-availability.d.ts.map",
+      "bytes": 484,
+      "sha256": "5fc057cb23f6d569f1f48448663178ab1927cbbc64aba818b78593b6244e2612"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/driver-availability.js",
+      "bytes": 1530,
+      "sha256": "c84ddab6cec8b74cdafeb5280a5709279456f507426cbc3c732131e5e70e000c"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/driver-availability.js.map",
+      "bytes": 1157,
+      "sha256": "d985a7ef582062e455df975f4d1c712a80f6337e441dbc626fd807fb17693317"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/driver-profile.d.ts",
+      "bytes": 2257,
+      "sha256": "7a8eb5259e338c780ede355bdfbd9a854be12e8ca584c87070c0a11ddf21aabf"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/driver-profile.d.ts.map",
+      "bytes": 981,
+      "sha256": "e7d24b0cb56bc98b08f90983cfd76009e78f010a8ba9196f4755a182714628b0"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/driver-profile.js",
+      "bytes": 5497,
+      "sha256": "fa2fd6e19e3881538ff226c1e8c8e6481e24d0b8226191d872846ecd8e99beec"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/driver-profile.js.map",
+      "bytes": 3316,
+      "sha256": "e869c2387eeefc8e187b528d0114c8bd47afd3d9c468bafa3ed13ccb02b6cc5b"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/electron-attach.d.ts",
+      "bytes": 3339,
+      "sha256": "015463858f1dd1cafed7f25e64ee43fdcea92eaf653328a1283f62f68092352a"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/electron-attach.d.ts.map",
+      "bytes": 2256,
+      "sha256": "f991a6af992c34511f6152a023561f5f872f3dea13bdefd3184cb798835857a5"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/electron-attach.js",
+      "bytes": 5889,
+      "sha256": "d5c73d1eecd0cfec867a64861583f37546aabe9e4d89ed39887fa7291a72fc50"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/electron-attach.js.map",
+      "bytes": 5354,
+      "sha256": "5080421199869faad1056168eb9e6d6548f1217597acbb1675cc4a21b83dba81"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/electron-host-api.d.ts",
+      "bytes": 515,
+      "sha256": "849e7a6d2691b4b0ed92d1aed030c9a643ba0da198b3526181748976c368b7e4"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/electron-host-api.d.ts.map",
+      "bytes": 486,
+      "sha256": "6e65ae0d8d1479a3c773f8c9121b5400ef3979cae8e985626902c6f9752965e7"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/electron-host-api.js",
+      "bytes": 13877,
+      "sha256": "dac83cc55a11eeb6ff562c981967e23aa5178a6659c46161866384fd29690cf1"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/electron-host-api.js.map",
+      "bytes": 12830,
+      "sha256": "d8fbae754fa38ef46795c3c96e71109c729d90f97c8e515d437ac2d20326f341"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/electron-source-map.d.ts",
+      "bytes": 800,
+      "sha256": "70d3ef1238801e62c0318a0966b65cb9f56e9a4f9b51b8b1b74b0bc04d453ecb"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/electron-source-map.d.ts.map",
+      "bytes": 537,
+      "sha256": "74ac7d42e2545a04905965fe42d56999cfe30faadfe331f2bc211ab960c25ecf"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/electron-source-map.js",
+      "bytes": 5267,
+      "sha256": "67645da9f67c9f6c370f1ab7c447719cd2e085ac791aea6fbd53fd7da00cb32c"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/electron-source-map.js.map",
+      "bytes": 5034,
+      "sha256": "17f963d3ec1637e861228cc72997fd64da3d7746c2e287a2140ff00d4adc74fc"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/facade.d.ts",
+      "bytes": 20452,
+      "sha256": "87d3f6619f148d41b53efaa835a29472088931e473f7142727dcb20d5ec37667"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/facade.d.ts.map",
+      "bytes": 9522,
+      "sha256": "56f4ab6fae83ce4a083a23b2749c59ea4a9ff7a8c93deb62011a70ab2ca19e5d"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/facade.js",
+      "bytes": 137495,
+      "sha256": "09290be3d31f1a38cc21a01978d8a7e050e1284c841e328338260a8f857252b8"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/facade.js.map",
+      "bytes": 112040,
+      "sha256": "46724e7db06a54e927328b76aebaea1fd84eb067670a8890fc98789c7ac75d8f"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/hitl-checkpoint.d.ts",
+      "bytes": 4420,
+      "sha256": "05215bdc6a1a66bed664672faa213f566a0fa4a7248660896cf40ce21f158389"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/hitl-checkpoint.d.ts.map",
+      "bytes": 2025,
+      "sha256": "ac5a3527fa38b9d326dc06dd3472aa30b550448dcc26eaae3a7065358760503c"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/hitl-checkpoint.js",
+      "bytes": 10436,
+      "sha256": "d477876ef44b749807ae0862e71b7ae25226231a890338082ef70b19c92fb483"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/hitl-checkpoint.js.map",
+      "bytes": 7512,
+      "sha256": "671866fba212bfafeecb1a81b6a14725bd65960a440ea50510957ebd74681092"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/interactive-snapshot.d.ts",
+      "bytes": 5902,
+      "sha256": "3e48fb82cb8b9592cb16a5095b17b5bb0eac0104135f11b01321a9c6548644ae"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/interactive-snapshot.d.ts.map",
+      "bytes": 2052,
+      "sha256": "5b962a88081429453a8ca2b65f36bf66b66d8b59f03af3fa5fd2f7a97afdfe52"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/interactive-snapshot.js",
+      "bytes": 19382,
+      "sha256": "47b2b93aaca028ddc70759527ea88a70364716fd0781e2a608d29129a05840ea"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/interactive-snapshot.js.map",
+      "bytes": 13092,
+      "sha256": "00fbc7753b9f248a212ab50fc8801c29cc2b3562c4bb2f265963507c81679063"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/navigation-errors.d.ts",
+      "bytes": 487,
+      "sha256": "a2b0368e92c11f4e627509debbf49b7180143480f58b44b8361f072918b261ad"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/navigation-errors.d.ts.map",
+      "bytes": 287,
+      "sha256": "db142d4fa458858210e42a7a28c8039e80b378f734364e5dc344bf56e56cc276"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/navigation-errors.js",
+      "bytes": 2262,
+      "sha256": "44fb6eece1a10610d7a0e6030e5161e5af13fcbc4acbd47a3fc4f7f5ea9312e3"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/navigation-errors.js.map",
+      "bytes": 1885,
+      "sha256": "821cce11bf26b7d0fc91cdf9e3b9acf9c5bb04601491b3afeaa3acc9b9e7ea3e"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/oneshot-verify.d.ts",
+      "bytes": 1404,
+      "sha256": "89981e94ef78bc84bff07423591f5f31b668ebe96f1ad8735410d4449c23f1fe"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/oneshot-verify.d.ts.map",
+      "bytes": 761,
+      "sha256": "c389d30402f84a52306618d6b1044a3880309a540b2d571e2c8f8c5c4d3affe3"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/oneshot-verify.js",
+      "bytes": 1793,
+      "sha256": "b371b3580dc5ed6d4284f89e595d5e943b4832dc681e88a85681e7574c19ada5"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/oneshot-verify.js.map",
+      "bytes": 2018,
+      "sha256": "86c0e17b2027365bb25c090fca97164314bb480fa570187f8b4753d3a7225b8a"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/persistent-sessions.d.ts",
+      "bytes": 4814,
+      "sha256": "28e4b210fda0f966861c85e1003fa7f929c436e8e9e3490a1a12e8b45d22dae1"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/persistent-sessions.d.ts.map",
+      "bytes": 3002,
+      "sha256": "5d1bfc56bff520a9a8459bb6be73a9c82d9e23580ed9dea4807c143d06a6e433"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/persistent-sessions.js",
+      "bytes": 15427,
+      "sha256": "32b6373b2bd86bbb3c19b53df3b27403c71f177583934dd5e692b7eb52c8eeb9"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/persistent-sessions.js.map",
+      "bytes": 13977,
+      "sha256": "7b618b37795326c879c1091456aa48b7deecb846bd64acb9e2d2e2cfe316fa28"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/playwright-host-api.d.ts",
+      "bytes": 2061,
+      "sha256": "a84c2658d5d96e2ce79caa7bd7ac3e0d1b4cf31d7d822db374cdaeb761732707"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/playwright-host-api.d.ts.map",
+      "bytes": 1011,
+      "sha256": "1d710aae5c17fe70867b5d60d6cbb07a825ccf998c2e71924b8c39f4a7592f91"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/playwright-host-api.js",
+      "bytes": 92984,
+      "sha256": "25ca69b82524e2c7240841566e72cff3bd04fb141107e61d18d81ea5947f42a1"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/playwright-host-api.js.map",
+      "bytes": 77010,
+      "sha256": "2303dd9506614494f49304494b948b4338efaf70921ef77d40cc6cb4e185bc52"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/runtime-compatibility.d.ts",
+      "bytes": 287,
+      "sha256": "9a22b9b4b3ee691216b4a0f30b80038c0cd93735f32889d848ecc37a05d2e8dd"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/runtime-compatibility.d.ts.map",
+      "bytes": 314,
+      "sha256": "83416b075e01d02129602c7ea34e29d995e2e4ecef1ed864617b37e103007a74"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/runtime-compatibility.js",
+      "bytes": 795,
+      "sha256": "66db108adb5173185d140ab7fc69f99ba9485afce5fdb36f304216f86785f768"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/runtime-compatibility.js.map",
+      "bytes": 717,
+      "sha256": "b39fd8716a0dd7f034891077efad41eb8b0c5fb7e6d4b7ab18a1c43e38845374"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/semantic-browser.d.ts",
+      "bytes": 2288,
+      "sha256": "6d801714ae8ab44888b9f05bb10a0c0a5a82ce14caebbba67a5836748295ceb6"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/semantic-browser.d.ts.map",
+      "bytes": 1649,
+      "sha256": "afa93ed29aea6e5eef5daddbc5f2049c2ad5247a1c57e81dc45b48e21c8ae1a3"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/semantic-browser.js",
+      "bytes": 13634,
+      "sha256": "7fcf706b847695a40b93e051e5a600f24060f53c812266aae3ccaf65d0a37e4d"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/semantic-browser.js.map",
+      "bytes": 12783,
+      "sha256": "d642f130987c5f2b2b4d028ad624d9557ee7892601db5061cd0adf6b69814f04"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/service.d.ts",
+      "bytes": 19330,
+      "sha256": "64ccdafd43fa4abd5b76b55992193dbbc54c37933c96dabe9350fc84792bccd9"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/service.d.ts.map",
+      "bytes": 9219,
+      "sha256": "6332dfde8a2ed4f568a270518ed08e8711d1757ed85c270fc127943f042b1799"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/service.js",
+      "bytes": 98138,
+      "sha256": "02ee53edd44c918473a991e53d4d22146ad213879f42de6d6ef797c850915662"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/service.js.map",
+      "bytes": 82352,
+      "sha256": "7fa928defe685c27489ca8f54ff5789280797a167006559a80d45f5c24a0b689"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/standalone.d.ts",
+      "bytes": 1696,
+      "sha256": "fe58dc4337393732d29d3f99c8b6f9bdf5555535efd25f24d25df5cb1e1431fc"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/standalone.d.ts.map",
+      "bytes": 939,
+      "sha256": "1076859263a2a9eacdcc12a5dd1258bae5faeace55ab1d1bd4427522a27fae78"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/standalone.js",
+      "bytes": 5896,
+      "sha256": "7c6a6ace86090498887485b98fdfa1a5645a721aa95aed6160870b22cccab72f"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/standalone.js.map",
+      "bytes": 4384,
+      "sha256": "96b2134f39dce414f278a365162e5a2d9ec9d2ea4ce6145c6e32e4e06883e232"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/supervised-task-executor.d.ts",
+      "bytes": 1501,
+      "sha256": "091ae4a390dde4b27ac8ce2bb58eca9b9f377f579169ede66b56644ba1a70271"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/supervised-task-executor.d.ts.map",
+      "bytes": 1291,
+      "sha256": "2c383674fad196434e29a546746ed41afcab5d17eb9378227ff8feb3ed996ca1"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/supervised-task-executor.js",
+      "bytes": 15147,
+      "sha256": "22789ff59b6a66dcfdc37ed8775b2e9de15b560e7f5d9cae8b3372a533ba0f08"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/supervised-task-executor.js.map",
+      "bytes": 12393,
+      "sha256": "72e5dd8b0be1ca7dc98fbcb8e0fba58a65ad970d23ce6bc7b2f8e397bc3c3162"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/task-service.d.ts",
+      "bytes": 5107,
+      "sha256": "54f2f76ffe73cb89fd038b304bf356418b30ccabdad8bca6c376411e5a5922a9"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/task-service.d.ts.map",
+      "bytes": 4258,
+      "sha256": "6d541d99d96abd5705d6fe88a494136e63e0f596c45c1b93747301fb9374feaf"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/task-service.js",
+      "bytes": 22058,
+      "sha256": "79619443c6c4bf981e32383cb306b44db8d27e101662ae5814cdd094eddd8de5"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/task-service.js.map",
+      "bytes": 19479,
+      "sha256": "71b3c651d619f6603d98dd0d99a54df2a09c5867772f7903d362e58dfda011ea"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/upstream-control.d.ts",
+      "bytes": 18120,
+      "sha256": "d75f55fafb0121fe5c694879ffde41f19266694cbbbd47d567ea41766740d90d"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/upstream-control.d.ts.map",
+      "bytes": 3892,
+      "sha256": "8a6e5b325a3ec7438937777e59d62b84699979c4c3793bd92ff49439c530d6be"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/upstream-control.js",
+      "bytes": 93443,
+      "sha256": "8013ef62b3645aa2646cfa9249fd405679354a96d42e14836a1b2acac21b822d"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/upstream-control.js.map",
+      "bytes": 78476,
+      "sha256": "b7617cc34ac7e6ee0323cb86445cd3df56376617cb2ca3970ede2f41e1603d76"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/vault.d.ts",
+      "bytes": 2050,
+      "sha256": "f9ce8061910c8c46382585792544c5613429194cb3016222096f2701435cebc1"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/vault.d.ts.map",
+      "bytes": 1792,
+      "sha256": "f2626ecad8bb5480c53040687b043b856e62e6e6c9ffe210d99f970e8747b3e1"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/vault.js",
+      "bytes": 8844,
+      "sha256": "e5aa86b5076cc686167b8a7ea5a6dd56d17c335214be9637b6043bf6bcf493d9"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/vault.js.map",
+      "bytes": 7842,
+      "sha256": "a56c3ed3d175450fe95cc7236f057aeeba38ec46c2d04f96938a75e0edce067b"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/visual-browser.d.ts",
+      "bytes": 2049,
+      "sha256": "80fb3b7a1a4e7278bdd37a8e170aa7567a2aa741b5da2c93ec192927edd80612"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/visual-browser.d.ts.map",
+      "bytes": 1449,
+      "sha256": "b6fb5d3bd50b112b63eb7a4dddcafdd14c85b6fe8fbe861c8de74ede8e90667d"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/visual-browser.js",
+      "bytes": 6674,
+      "sha256": "dcd4cbc5a1a0d77d716e1c09642aba17183c6d35619f1980fa5bc5d95e9b2ebe"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/visual-browser.js.map",
+      "bytes": 4799,
+      "sha256": "74ac114df391817a1a9b6d1a2f9cf6ea48a3654b7e399be2c03ca1170c065280"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/actions.d.ts",
+      "bytes": 2832,
+      "sha256": "e7baa24c8e4954024dd3359488da588d9f4103b759f44014f7018c371e068b91"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/actions.d.ts.map",
+      "bytes": 1993,
+      "sha256": "ce8465541a7b9404d632622d8238cd3d724adbc28656e683a060f12da9a9b73b"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/actions.js",
+      "bytes": 42416,
+      "sha256": "150dc7c8ed6536ad7f59f3775073f22e9c80468969280bde1a7a818046bb90f8"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/actions.js.map",
+      "bytes": 31743,
+      "sha256": "3dc37f492ecdb73bf9999548840058b594878a6ec5bd2d42590226b578519f0a"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/automation-boundary-detector.d.ts",
+      "bytes": 1597,
+      "sha256": "9c1a3bd7781a223c615a319e75e9f4aa8fc8ad50f579f4b3824161598f1b190f"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/automation-boundary-detector.d.ts.map",
+      "bytes": 1058,
+      "sha256": "2609726c3865806ea3754b2845cd19e90576e67e444f2baacb18ce8d484f4851"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/automation-boundary-detector.js",
+      "bytes": 9357,
+      "sha256": "65a5bf2cb00348752d017d37609b8c040cb8860b307a381a1ed1c8656d17216f"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/automation-boundary-detector.js.map",
+      "bytes": 4824,
+      "sha256": "653d3050295a278c0179ba90e6e1a3d5fafd85a27eab65c8b708bccb93f67a0c"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/boundary-choice-tool-executor.d.ts",
+      "bytes": 2452,
+      "sha256": "f1ab0595358d212fa5a49a573d2b3bbc0a668f5142a009698ac4fa3cb9eddc71"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/boundary-choice-tool-executor.d.ts.map",
+      "bytes": 1098,
+      "sha256": "fc9f30b63f5c151c61ed1053b9e615f34e610aea11514641b7af76a95387169b"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/boundary-choice-tool-executor.js",
+      "bytes": 13634,
+      "sha256": "14656424c5e9c71c50557e8d55fae938412fb571967d8c0ddd4368c9aa414d77"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/boundary-choice-tool-executor.js.map",
+      "bytes": 11720,
+      "sha256": "d82ea2ba52f0fe49d16a0d612ca4f51a80c2d13e97ecc265bb75010f88bae2cb"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/browser-debugger-connection.d.ts",
+      "bytes": 5390,
+      "sha256": "563592f2944b0abf17b3f99a7759d306c9a75f18dcf0e9ca6aabca7290053051"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/browser-debugger-connection.d.ts.map",
+      "bytes": 2709,
+      "sha256": "c8e419c07aa7dfea4d5a64029b415c05184f788e7e3ab2507c961e1f975f1547"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/browser-debugger-connection.js",
+      "bytes": 14815,
+      "sha256": "70ba3a799e4937b6e6d12ae8f0e36494b1f7c583aa4aee6149e0703763bcc3c8"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/browser-debugger-connection.js.map",
+      "bytes": 10264,
+      "sha256": "1bbae7438150be9fc3429472e4359139ccaa6009b1be3ebc77bc14011db68d61"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/console-recorder.d.ts",
+      "bytes": 789,
+      "sha256": "a7822ae2d3a76341ecb1d3539701fc02fa32a92905682fa914bce525396e8ca6"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/console-recorder.d.ts.map",
+      "bytes": 861,
+      "sha256": "51d61599d9512c84134fc4671d2f8080b00d7ee6cbb6a88c788331b09b066e16"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/console-recorder.js",
+      "bytes": 8858,
+      "sha256": "d2a855887d61c788b95252cce0a0563877f64a974eb4380e178153b0b281171a"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/console-recorder.js.map",
+      "bytes": 7504,
+      "sha256": "2660647753ae95b1faca0d8b5ee016de91507a1fd947bbf60a67ba2a90bc3a7a"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/full-access-tool-executor.d.ts",
+      "bytes": 2699,
+      "sha256": "e224876c002d607abb30ca5a85afc2ab514c58944ff042eb001fc0978ed6d5c9"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/full-access-tool-executor.d.ts.map",
+      "bytes": 1870,
+      "sha256": "51d87fedad489531867b6df9dcdcfbd39ffbc577ee3fd8982ce540c096ef343e"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/full-access-tool-executor.js",
+      "bytes": 9354,
+      "sha256": "8a9f12379d289cf8a5b8183e4b73d4928a222b040622242f7895edd5ed68f66f"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/full-access-tool-executor.js.map",
+      "bytes": 7610,
+      "sha256": "1e9218a64c2fe0ce740356505fdb54cd8ec9b5f191938f3ebe3fdb7cb86dffc8"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/js-source-index.d.ts",
+      "bytes": 2149,
+      "sha256": "ce480f3005ec177af52e1a2ad183d6bcefc5b86d6aba38a6fe8c1eb448ece07c"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/js-source-index.d.ts.map",
+      "bytes": 1652,
+      "sha256": "d833a8682fb5d48f6c334dec4677cdafe775bfdb5ade4fce7712c98de548cd07"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/js-source-index.js",
+      "bytes": 9514,
+      "sha256": "7515cc3e5f611f08acd00b0fd6d7cd999a1b19752491b075faf5b83d2963c135"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/js-source-index.js.map",
+      "bytes": 8854,
+      "sha256": "6a5691127b21f5e2e5626564d82ac777b883bba554bfc75aad6b699ff70fc733"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/js-source-tool-executor.d.ts",
+      "bytes": 2936,
+      "sha256": "4d07bf2e7f265f4887fecd855a4198de72828461074e86e341d0fe57fd4ab4cb"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/js-source-tool-executor.d.ts.map",
+      "bytes": 2148,
+      "sha256": "35d1788e0dfd5ba6a1388e211646e25086bc31fd6600bfb7ba4b06cdec3f24f8"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/js-source-tool-executor.js",
+      "bytes": 9452,
+      "sha256": "adc012341eea986ea85160ed8e463e4c3ad1536f38f9b84ab4536bcc62d89358"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/js-source-tool-executor.js.map",
+      "bytes": 9228,
+      "sha256": "4199f29aa52cf8e41ac893e46ae65c66689a174dee028f564847cb1c95a35700"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/network-recorder.d.ts",
+      "bytes": 2642,
+      "sha256": "1f94d93dcc506f2635a6108e39c7994d5638994d34c49c1a28c5792d9947b2a6"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/network-recorder.d.ts.map",
+      "bytes": 2110,
+      "sha256": "6385dd52985a11a0f932212144cb9a8aaef86fa043e51c9bad907074ad54f09d"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/network-recorder.js",
+      "bytes": 14000,
+      "sha256": "33b51de9562d44f74e961e99134cfca16ef171c563eae15f6fef8739cc850ca9"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/network-recorder.js.map",
+      "bytes": 13337,
+      "sha256": "cf46848dad588e95bd2de6965b1fd050d21154fc8331e8ee45b68074a13db5a7"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/page-text-extractor.d.ts",
+      "bytes": 1647,
+      "sha256": "ec98b58ef4dda21f1a56512fee780963728f24a6fffccf6bda12ab6a5f77785e"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/page-text-extractor.d.ts.map",
+      "bytes": 1047,
+      "sha256": "a14c1e72bd0b6d565ec0ff5c89fde0f603940226ccc933dc0db3b774cb040edd"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/page-text-extractor.js",
+      "bytes": 18943,
+      "sha256": "0cbbb42d0ee726621d1efe6f273c2f0471ba0a2893f44e77f56e6c4ad21e9ed1"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/page-text-extractor.js.map",
+      "bytes": 3274,
+      "sha256": "64355403150a6c14d52a4d051f435d6b17113648c5916cddfa8e7d514079b3a1"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/replay-tool-executor.d.ts",
+      "bytes": 1515,
+      "sha256": "9e268591674419cb9814d7e0c3845e8ed28e1b6821019facdafa87dc51fed325"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/replay-tool-executor.d.ts.map",
+      "bytes": 1434,
+      "sha256": "3f9e73f75ed9719a82f6b61c1d58e669847dfe8b50931a61cf6115bc9ead84a8"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/replay-tool-executor.js",
+      "bytes": 17757,
+      "sha256": "6ab42b458009969fa6a0cdd2638de29310102cefa24e851fde8c31a307b3a42b"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/replay-tool-executor.js.map",
+      "bytes": 15491,
+      "sha256": "35275f2b65d9ded26a5fd0109b44e84e298c74f975d6160a19d1f7f55a868c5d"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/runtime-read-tool-executor.d.ts",
+      "bytes": 2654,
+      "sha256": "27ae4221f13ca88c0169b4999b3f62a8a4c4d8f1ee8c67a6f5ff3557fdab0ba5"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/runtime-read-tool-executor.d.ts.map",
+      "bytes": 1292,
+      "sha256": "b27fdbd5adc5d37cb14b66f8099a706af380124475882ad993e67bbaa083c05f"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/runtime-read-tool-executor.js",
+      "bytes": 24226,
+      "sha256": "dfd167849323fe3bfc647fc1c36d61578edf5200a9e59bfd758a163e65fedc28"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/runtime-read-tool-executor.js.map",
+      "bytes": 14371,
+      "sha256": "c2e21f7ee61d5b322c2556add338e0160a450eec383ecd116a178999d7fcfa75"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/same-origin-js-fetcher.d.ts",
+      "bytes": 1130,
+      "sha256": "ac6cbf5994ede7264de3d3caa8fcc5cc680b041c9277fb2527ad266be3cce362"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/same-origin-js-fetcher.d.ts.map",
+      "bytes": 749,
+      "sha256": "9079a70cd1c97b469a2ddfd83ecc14108990911f1bea833d50e42750e960a820"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/same-origin-js-fetcher.js",
+      "bytes": 7224,
+      "sha256": "60f4ae6c25988b0d29683763e2602061030c606167e9786f269023c8b0c12d3b"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/same-origin-js-fetcher.js.map",
+      "bytes": 6474,
+      "sha256": "fd06f43f451841a142d68935304d3e629661273fb203db72e353c11d740b106a"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/same-origin-source-map-fetcher.d.ts",
+      "bytes": 492,
+      "sha256": "16a079999b639ea6fd4e4a950def43e57f778d2cfebd9557a4571d3c5ed78f79"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/same-origin-source-map-fetcher.d.ts.map",
+      "bytes": 619,
+      "sha256": "1c0aab6efea8e72b8f5bc589e55e399b315f390cb0fddc56119bbbfbf7b96b97"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/same-origin-source-map-fetcher.js",
+      "bytes": 6564,
+      "sha256": "ff68fa8b4240f3f63450e46a2b23249d06ae72ca39bbc64e8b44e97fed94b323"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/same-origin-source-map-fetcher.js.map",
+      "bytes": 5628,
+      "sha256": "a2a539208e113376b5de1f10749740ab115d726d60e9f4be14560dd0b826b6e9"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/snapshot-manager.d.ts",
+      "bytes": 1902,
+      "sha256": "d69c9ed9224d64b2ebc54f996815e6198e995c7af34666868125d89f4ab2d04d"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/snapshot-manager.d.ts.map",
+      "bytes": 1066,
+      "sha256": "b7917525edda395c9918c25494a967b9970ec5d967c9b1c38fb2e9098a01d64d"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/snapshot-manager.js",
+      "bytes": 10521,
+      "sha256": "03e228b36687b87e347d0089b661705a14e8d012f29419c64ecf6eb4db6b9ff4"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/snapshot-manager.js.map",
+      "bytes": 9269,
+      "sha256": "3b7dd77ee25c7658198063f6ae058b0a8d462b31cabcdea9ee75218de7bd21bc"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/source-map-fetch-guards.d.ts",
+      "bytes": 781,
+      "sha256": "0e3483f149d134735fa133ca560e8d86aea371b0bcf04aa763cffad9e77693a8"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/source-map-fetch-guards.d.ts.map",
+      "bytes": 558,
+      "sha256": "75b30bc572df50a70adbfb98c76dcc557ab1efeeb0f440625645370377aeb300"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/source-map-fetch-guards.js",
+      "bytes": 2163,
+      "sha256": "89a0305f35275780d10395021965e66454eb9857cc43c3d2720a80ec4e5858a7"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/source-map-fetch-guards.js.map",
+      "bytes": 1988,
+      "sha256": "45b5e6e8d074b914a9897fcc408fbdacf9a433bfcce253dfd7eb68c800c4bb69"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/source-map-tool-executor.d.ts",
+      "bytes": 2947,
+      "sha256": "e08271bd3f413a377cf6ab09c67557d33ac66d194886e6c4c68fa3302d7d22b8"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/source-map-tool-executor.d.ts.map",
+      "bytes": 2527,
+      "sha256": "67f918a84165b20603c203cf382bb957c76af49f370515683acd34af73f00f5e"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/source-map-tool-executor.js",
+      "bytes": 24816,
+      "sha256": "74336d2b26a8f432a2210560eb96dbd35c25fdb82d4b5e126ae407689681382a"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/source-map-tool-executor.js.map",
+      "bytes": 23366,
+      "sha256": "23dbff2220d738dcbb44b7e98b87cc7df74125cd8f09ee95acec2ecc3a254230"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/tab-manager.d.ts",
+      "bytes": 6341,
+      "sha256": "8e4bed6e9829bd74658afeda03b1990da88208605c16a549f3d4d0323ef30b28"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/tab-manager.d.ts.map",
+      "bytes": 2514,
+      "sha256": "f4e115fca122f427f8456e3446cdb8c7efd8ee56b2528b30390109c352101a65"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/tab-manager.js",
+      "bytes": 9744,
+      "sha256": "b176ac4465d5c17dbd989bbcfb020ffe05427d30581910fcc74eddf15662fdb1"
+    },
+    {
+      "path": "packages/versebrowser/dist/engine/browser-control/tab-manager.js.map",
+      "bytes": 6414,
+      "sha256": "96b3ff2d0e710bc3b4d91a68c1e194fe23483cdd60fae557159620ad118c1226"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/diagnosis.d.ts",
+      "bytes": 605,
+      "sha256": "fe9d45d51175ffa5d1a0f13ec0ae6073367c9b35fa57dc3ba8f1da2f6a97154f"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/diagnosis.d.ts.map",
+      "bytes": 587,
+      "sha256": "2ccbed38bd97690f2a0b84056826690eecf2d23042b2760001184e005a87068f"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/diagnosis.js",
+      "bytes": 5154,
+      "sha256": "4dac7f4da371df4fdb6e03d66bb9db03f9ff187362ebe8d29469ac5506a61c21"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/diagnosis.js.map",
+      "bytes": 5339,
+      "sha256": "f47b538f4f89acacf8adb1a5be31d63fc193ed6f64c5fb6e3d1c629f65a293c0"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/index.d.ts",
+      "bytes": 247,
+      "sha256": "2e142582c69da973e844cf41a6a8cb4397e306d0566ac691400031a4c47a0413"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/index.d.ts.map",
+      "bytes": 265,
+      "sha256": "6a5ced3912e5e0f113376a77d3da0d459c33193db497ce24d921eca7ae4235d9"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/index.js",
+      "bytes": 245,
+      "sha256": "d8ed3f47bb46de14f810c626f2031016ce38993a74073197accd82d4704f72b8"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/index.js.map",
+      "bytes": 263,
+      "sha256": "53f0856a0c2ceb9398a6a21da4d42c6459b9af33500c55f8110ea951eb63e612"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/output.d.ts",
+      "bytes": 438,
+      "sha256": "88bbc10c5a39b14136e1cc3a0db2421658755a4a3bbd2abcefb6bb9d13329497"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/output.d.ts.map",
+      "bytes": 460,
+      "sha256": "e8d818c85b630076ad337ec33cc8bb23cb445054eb082eafa89ac584ee44ba8c"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/output.js",
+      "bytes": 1168,
+      "sha256": "a1ed1e1116ba2003e6dc752f662652e6ca4538f2a4382e5b252894a2e673bf81"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/output.js.map",
+      "bytes": 1095,
+      "sha256": "a5efe4fb6cb570909cbf90cfb6def8276179764531fe2be060518040d6bc11b3"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/path-guard.d.ts",
+      "bytes": 806,
+      "sha256": "6a70fc0587325a228ae7d0b46d03e5ee3bb0fdc549d77586cf4528881c739a8c"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/path-guard.d.ts.map",
+      "bytes": 481,
+      "sha256": "988fb669fefd0f5af871a2720ac61dbec8126078095966f3717f605a86ec31ee"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/path-guard.js",
+      "bytes": 3275,
+      "sha256": "a6add1a47ee1e42d091c59d6123ec0328568f5140ffd837ec15b3651e0355e09"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/path-guard.js.map",
+      "bytes": 2119,
+      "sha256": "9150107c768b39621121f5bdecdab994b9d9a1407e96cf1008f55323b560347f"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/pr-comment.d.ts",
+      "bytes": 1166,
+      "sha256": "690efd2217b18d34217c35f084cc6c8d4c711c9d9796e9bb81d1380ca78e83cf"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/pr-comment.d.ts.map",
+      "bytes": 849,
+      "sha256": "634e79788c4651b07a64eac59e15bf8db81aa8ceaac700eabfdfda52d9e093e7"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/pr-comment.js",
+      "bytes": 7395,
+      "sha256": "4b9c2f578064f9a6b3cdb28f705b5115c6dd632f38a6cc97797cd0ccf472cfd6"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/pr-comment.js.map",
+      "bytes": 7840,
+      "sha256": "ece85783da7b9354d92d7701fe844e0018e0a87a79286efddadb06c300b0bc41"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/reader.d.ts",
+      "bytes": 349,
+      "sha256": "fd1749c9f6d10e55b5de5b1839f1f7a437a60996448a151a58d19136cb47a24c"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/reader.d.ts.map",
+      "bytes": 310,
+      "sha256": "db56872808ca522fdf3659625f257248780cf67198b1dc74893ff2d7d06cb7bb"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/reader.js",
+      "bytes": 3593,
+      "sha256": "688acbb6ab16b40e106fcf7ffcea6957b13e08838395243eb9bb8d543c9893d8"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/reader.js.map",
+      "bytes": 3567,
+      "sha256": "9f289d64491a441db2de5a545f75ce9d35138c2be5f758ffa669037118f6e093"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/schema.d.ts",
+      "bytes": 1879,
+      "sha256": "361522a12deb465640bdb2956720376a7a809391c09730c36b26a2ee5f3c2eba"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/schema.d.ts.map",
+      "bytes": 1138,
+      "sha256": "53170a20d6a94360b5c8aa1cd240617cc32a7339b18a9e6cd498cd6da1987b1f"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/schema.js",
+      "bytes": 497,
+      "sha256": "e8d057122287e260eec7074c33bf12aeeac0a64d637fe8408e8ec8672eba6597"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/schema.js.map",
+      "bytes": 474,
+      "sha256": "3cbb65c7cf82062e9623070f576900c5142c96396dcb2e20e22d9851c33601c2"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/timeline.d.ts",
+      "bytes": 1250,
+      "sha256": "82f0710d5aa495095513ad632a627dca7333fd264872e184b37c47a1ba459e76"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/timeline.d.ts.map",
+      "bytes": 1463,
+      "sha256": "24bd16948490cef04d020e1ee15443e3e7d25598603423ed66e78d66e13a6e4f"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/timeline.js",
+      "bytes": 3043,
+      "sha256": "db401ba13db055652d758df6097fb5abfdef408f4bd69d99b7f1b7680d7efc0b"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/timeline.js.map",
+      "bytes": 3472,
+      "sha256": "c6389ae63fe5de6c6bb67c08f0717f5778c2d8a4011276fd0573af08089322ae"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/viewer.d.ts",
+      "bytes": 1125,
+      "sha256": "cf57996f12cc4ed5e9ce2efa38453047252437224a9783fa0442bf4733d024af"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/viewer.d.ts.map",
+      "bytes": 684,
+      "sha256": "34bf67400fecbfbb2f8a93c1f5cba22efaa7f9fecd34a8db00bbe574b2e2728d"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/viewer.js",
+      "bytes": 17794,
+      "sha256": "a5a165dae7cc31d7373702a6f8a2c445538a450503fe018d00cb5375fc34f581"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/viewer.js.map",
+      "bytes": 9542,
+      "sha256": "a8c4aaea61d7861a5a59a50498ab679e51330561a53d8c59344f652c46b1cf69"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/writer.d.ts",
+      "bytes": 1607,
+      "sha256": "b51618b8bbae62bea93c3d74385728c6715cf1eb34a1a33b5846f1c2a3cd2450"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/writer.d.ts.map",
+      "bytes": 1421,
+      "sha256": "72c5a14ce6a96b41a41b80da3e3ddfe1c4a482f88fca15760a9d4e29c751cbdc"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/writer.js",
+      "bytes": 6264,
+      "sha256": "6006b912739ca7f03eb23f36b2c41ba2d683f987e1ac6f06e3d5d9d7c81ac03a"
+    },
+    {
+      "path": "packages/versebrowser/dist/evidence/writer.js.map",
+      "bytes": 6583,
+      "sha256": "8fb7e9d4c5a51e426ecf7d54fdd1a2647f491b6846674214b89f1b71299beb78"
+    },
+    {
+      "path": "packages/versebrowser/dist/gateway/bridge.d.ts",
+      "bytes": 287,
+      "sha256": "56fc5c32a833283e542d067ec27c21caf26f421dd3c64abf250249d10f857c13"
+    },
+    {
+      "path": "packages/versebrowser/dist/gateway/bridge.d.ts.map",
+      "bytes": 293,
+      "sha256": "8847eb35f98e6a9fcf0dcb8e99f7d9089a62f097bb1d164add1f1723de5ae03f"
+    },
+    {
+      "path": "packages/versebrowser/dist/gateway/bridge.js",
+      "bytes": 4192,
+      "sha256": "d5588f82fbd4fd377f06c8cc22d7c4a6961b3ca89bedae4c808f254139fe338e"
+    },
+    {
+      "path": "packages/versebrowser/dist/gateway/bridge.js.map",
+      "bytes": 3750,
+      "sha256": "8dc0ad3b257e7b4cb544d87ba17d361ab2fffa6149acf66deffda471c26dcbf9"
+    },
+    {
+      "path": "packages/versebrowser/dist/gateway/manager.d.ts",
+      "bytes": 621,
+      "sha256": "c4778d8aae3926a64c6901fbd80f54ed2360eb8c7c36e6cbddc25a068d89bbd0"
+    },
+    {
+      "path": "packages/versebrowser/dist/gateway/manager.d.ts.map",
+      "bytes": 522,
+      "sha256": "95712ad05a6399ddd031f0bb9463c82e5157d21b3a8dc2f16742b82f88810df2"
+    },
+    {
+      "path": "packages/versebrowser/dist/gateway/manager.js",
+      "bytes": 46,
+      "sha256": "4170357a941d3bddf65c2fae32c646b34e2f2b5fad29b3501adea0e0d270aa10"
+    },
+    {
+      "path": "packages/versebrowser/dist/gateway/manager.js.map",
+      "bytes": 117,
+      "sha256": "8a4978ab1dde8f6829d426655e90621f7c417507e7a4972072d17a8c24f12981"
+    },
+    {
+      "path": "packages/versebrowser/dist/gateway/protocol.d.ts",
+      "bytes": 365,
+      "sha256": "588be5e66dabb0c44ba2b4d3b8402e79e65a268fa056f518d38ddcfc3b1202ea"
+    },
+    {
+      "path": "packages/versebrowser/dist/gateway/protocol.d.ts.map",
+      "bytes": 354,
+      "sha256": "e3ea7fc91362e644dd599987c7acb582725eac70ecaefe12089e9ad891b5379e"
+    },
+    {
+      "path": "packages/versebrowser/dist/gateway/protocol.js",
+      "bytes": 47,
+      "sha256": "b5ab69287989be4a830cf388cb3030d92eb9659a48f3e37ce718ba7282bd6417"
+    },
+    {
+      "path": "packages/versebrowser/dist/gateway/protocol.js.map",
+      "bytes": 119,
+      "sha256": "284b8dfc77deb953b2ee0b83a82d15b1207f1ef3536e7dc8b0b8026f7a1948f0"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/active-sandbox-high-risk-policy.d.ts",
+      "bytes": 443,
+      "sha256": "aa1f7e60ad1fb77d41bf11e2ecb63578634d29e0524ec7136468503f75d270e9"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/active-sandbox-high-risk-policy.d.ts.map",
+      "bytes": 279,
+      "sha256": "065e1f6e0a263b2a8ada2cc8704a9c48d4b876dfc6954a85fb3d811839b0f661"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/active-sandbox-high-risk-policy.js",
+      "bytes": 2124,
+      "sha256": "3d294f404a9347b7af61cb8f7d84d7f73908f4df17fac17aef9bb200277e09e3"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/active-sandbox-high-risk-policy.js.map",
+      "bytes": 1298,
+      "sha256": "2aae83493916d636f4868fdce31a2600da44340d9797485fb51848df21a7af80"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/electron-optional.d.ts",
+      "bytes": 450,
+      "sha256": "b554730e8d576ae2931e845eb6690f28d558e33cdc397fc3dadb5272849ab9a5"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/electron-optional.d.ts.map",
+      "bytes": 400,
+      "sha256": "5d85ace41fc53b8596d2c47322ecf0479e5d294e6cd5641dca09aeb80e6b3e27"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/electron-optional.js",
+      "bytes": 1013,
+      "sha256": "6f244eb5bcf4ab1bdb9ab439f2b1ae6f6c5a11ef3677f28e56a337b2118827b5"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/electron-optional.js.map",
+      "bytes": 865,
+      "sha256": "0fbbd3e016d78a8da869afcc92aff5da43fd297e10824612e286e0999fb123a5"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/logger.d.ts",
+      "bytes": 417,
+      "sha256": "664a9df7229329b06c8e3e7247f1d13581cee1249b1619069cc40001b4338aeb"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/logger.d.ts.map",
+      "bytes": 264,
+      "sha256": "0b6762b3e468ed1001dd0567a17151c16916934a9b084d1a34734c77d294ff2e"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/logger.js",
+      "bytes": 353,
+      "sha256": "9087f5cb70d3921e7aa7f43d9d66e5a0212058dceb39bd75d6f8f0c22401312e"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/logger.js.map",
+      "bytes": 624,
+      "sha256": "c5f7bafaa8d92d63699fa3a30228fa54054120ffda80f538a13bc54f1dbb53ea"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/paths.d.ts",
+      "bytes": 349,
+      "sha256": "18d6fcbdc92e61ce2bf81b1b8757d3938e381d322f18ae81592ca7a9d1e3e803"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/paths.d.ts.map",
+      "bytes": 284,
+      "sha256": "2064e06ddc2053ea630dd0bc4d7e3e61c73e44ec1b696ab1dff0545d95df82df"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/paths.js",
+      "bytes": 962,
+      "sha256": "e5f5c7b160be84d045c8e1e3dbf50c4f18f56026ea66ce01b7733ffe049f69d2"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/paths.js.map",
+      "bytes": 724,
+      "sha256": "ae1054bce1a129639c0562bd0c830a42d71f59589308c3fb53c19f6b7070d571"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/permissions-hooks.d.ts",
+      "bytes": 821,
+      "sha256": "4d3fa2850a15a24fa4bf8e0158d19fb5a02c8ee5536de27af99847d498ea73bd"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/permissions-hooks.d.ts.map",
+      "bytes": 440,
+      "sha256": "b1b3c686b7a2d4360b64350390eba583e6d41ae0e86774594b61f724e7f478f7"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/permissions-hooks.js",
+      "bytes": 280,
+      "sha256": "504f4ab26dfb82ef804042b38cf134b18925064999e48e10011a5154db79729c"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/permissions-hooks.js.map",
+      "bytes": 406,
+      "sha256": "0cd2f48b461ab3a4281404aa5b7b29ce4f97911e91a28496becad464f5ce09f6"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sandbox-high-risk-gate.d.ts",
+      "bytes": 3430,
+      "sha256": "c34b17677840f92b86183feb3a080dcbe4f6eabb8d10e2d9cc6aaeb9d23e2253"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sandbox-high-risk-gate.d.ts.map",
+      "bytes": 1891,
+      "sha256": "5565398a67ae45ba0721defb8806fc425e95f77e75e4e1b22f6b042df90d2759"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sandbox-high-risk-gate.js",
+      "bytes": 6523,
+      "sha256": "75fcc75e4d3c52ebe04c02539742b9e8ad90bebdbe8d73e8d066d204c45b160f"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sandbox-high-risk-gate.js.map",
+      "bytes": 3991,
+      "sha256": "37c30d7fe48990efe4c698886f7cccb65ad4d60aeb919959abe235c5e6cc1111"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sandbox-policy-resolver.d.ts",
+      "bytes": 682,
+      "sha256": "932e3fe6dd576ed9cea18d05277052a03349490f76992b6017361127306dc4bf"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sandbox-policy-resolver.d.ts.map",
+      "bytes": 596,
+      "sha256": "82bf3cb4c728faf16745cb49810f8ac4578a977dcfbd72cddaf89017e9d36b79"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sandbox-policy-resolver.js",
+      "bytes": 4098,
+      "sha256": "a22374423465fcbd72353904f70a3e6aa69edf00eac0733a3866e84dd4d42c95"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sandbox-policy-resolver.js.map",
+      "bytes": 2979,
+      "sha256": "3fedfca2995ff51a46e6deb20ae276ff7c55beeee232ec727069edf9bbdba23a"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sandbox-provider-detection.d.ts",
+      "bytes": 851,
+      "sha256": "0cb72ef4c2455ba4e5f0fe63c985ef16871c1c21089dad1e57ab6bac0d912f1c"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sandbox-provider-detection.d.ts.map",
+      "bytes": 799,
+      "sha256": "15f5942fbe82ca467cc631cc544d8ffff5d42cff4033d0b8f9ede7d0aba5779e"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sandbox-provider-detection.js",
+      "bytes": 5280,
+      "sha256": "d69e5e9df7c84a1822566cdc7f82d2cedec082f9265141c10276c21107425180"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sandbox-provider-detection.js.map",
+      "bytes": 4230,
+      "sha256": "6375a847be8d63845d443bbda8b752ae02251685f1da7baa5acc66ebd45ce57d"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sensitive-capture-gate.d.ts",
+      "bytes": 320,
+      "sha256": "b01401fb5316a0e2916c8de296bd4fea27ab34f4198342856684879eb0642027"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sensitive-capture-gate.d.ts.map",
+      "bytes": 326,
+      "sha256": "3b8bd90a972041160420823efd61cdd2c76f4bde65ddfac3f35bb578e1dead76"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sensitive-capture-gate.js",
+      "bytes": 581,
+      "sha256": "769fb6c8aed285159462a79588dc507449c79bd45089505d0996522d3eb3f8db"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sensitive-capture-gate.js.map",
+      "bytes": 622,
+      "sha256": "c4d02e674d222fb348404ba8cef1959d42af509bc6107129096cc3fa0edeed19"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sensitive-capture-policy-loader.d.ts",
+      "bytes": 724,
+      "sha256": "ad1cec201c06a77073b479da4851891e5a78da2eaa5e3659fd3a83d99bc8af3c"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sensitive-capture-policy-loader.d.ts.map",
+      "bytes": 422,
+      "sha256": "b0a063a8f646f38d9f8336800bc0e654a9e0a946509c09b85c3b03c9afc6009d"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sensitive-capture-policy-loader.js",
+      "bytes": 678,
+      "sha256": "54620fe201b78a19d9b4ee8a8d6880ff516ed28bfc2cb14e714c6f6e1babd48b"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/sensitive-capture-policy-loader.js.map",
+      "bytes": 447,
+      "sha256": "d7d56c1380a1405c8c17ee509f814c00072ebafea9eb885044e8644dc620b099"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/workspace-hooks.d.ts",
+      "bytes": 820,
+      "sha256": "3cec5a1043f9265da3d5fb91f18ad89a90defdce90ec9079e7d3e2fb73a979cc"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/workspace-hooks.d.ts.map",
+      "bytes": 421,
+      "sha256": "7dda764f9c07cc5b4c90a302ccae2f8e59ce1eb728cd869a82821ee3629510d1"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/workspace-hooks.js",
+      "bytes": 244,
+      "sha256": "f862580cfaa145c78f4448713b2cc39c4670afd6eaca69bddef8773440710dbb"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/workspace-hooks.js.map",
+      "bytes": 351,
+      "sha256": "2f72f526b57544b96a40676980b20d622de351ebf7f3a1a322a1fcad813ceca8"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/workspace-paths.d.ts",
+      "bytes": 1614,
+      "sha256": "f5057acfa4a3036ef618168796908c54222f0731e298a3810383520fc7842216"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/workspace-paths.d.ts.map",
+      "bytes": 984,
+      "sha256": "a2eeffa6e314a5e3032202891055a6be879b643ce0699ad03fb2acf43e1da3aa"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/workspace-paths.js",
+      "bytes": 3061,
+      "sha256": "3962c29d7dd97952a464b1eef7f6dc634e8eff988be88c864297d09f523785a1"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/workspace-paths.js.map",
+      "bytes": 2130,
+      "sha256": "6dffd65b42c4dba6635b46605c83d04a7a23b559ba018076c4be300802388eb2"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/workspace-runtime-permissions.d.ts",
+      "bytes": 1431,
+      "sha256": "7a1065c936bdf61a1bd3acae50b59aaa2b3f41749566c815d53eeb0b8587eb3a"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/workspace-runtime-permissions.d.ts.map",
+      "bytes": 1063,
+      "sha256": "f100361eba4926e01773d30ba55154fc6e7b01a45d05c461a29c1e36c363ca61"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/workspace-runtime-permissions.js",
+      "bytes": 10078,
+      "sha256": "be8a5124468c5bdaf19cc8f3823c7e9b443a0eeebd395c6acc3ce6ef45ef01d9"
+    },
+    {
+      "path": "packages/versebrowser/dist/host/workspace-runtime-permissions.js.map",
+      "bytes": 9165,
+      "sha256": "9654dc1dd464acb5cccf8f2c8a8e8427d403b6f85e1512f6ddcc6aacdf45e3be"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/argument-guard.d.ts",
+      "bytes": 1608,
+      "sha256": "50c32195d0efb11a5ab17906cd648401549fe0ecde0ca7afbe510dc072d3b6bf"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/argument-guard.d.ts.map",
+      "bytes": 525,
+      "sha256": "1b63e7bedb735884834dd8987455dce344a51712c8ba06b90a93ffb947633c42"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/argument-guard.js",
+      "bytes": 1718,
+      "sha256": "6430cab58b04444070e23e3f4c76dbb91d8a962322b810beadea83af2db834f2"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/argument-guard.js.map",
+      "bytes": 783,
+      "sha256": "96ae97b62e412275972e0335d4e5be4f80d9b07094f6782ab72cf1b27aebc466"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/capability-policy.d.ts",
+      "bytes": 2961,
+      "sha256": "4c0984a0fe7c7987eef54278241ea2c76bcab759f3faa7000fe78f8da5ba671c"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/capability-policy.d.ts.map",
+      "bytes": 1728,
+      "sha256": "505a8c0984b58b98a76db17368cb12681f6c2f040d18a4811266e22729126d1f"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/capability-policy.js",
+      "bytes": 10983,
+      "sha256": "aca0cc9138478d83fbcb996bc1032ddd689986bce5c7a3234291a8d6bc60ef39"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/capability-policy.js.map",
+      "bytes": 8324,
+      "sha256": "0d1105fc1d863148a2ba941ebf695146f62bed33bfe3af4cd2f803d83a683ce3"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/explain-error.d.ts",
+      "bytes": 1890,
+      "sha256": "12881fd78f03b58a43dd75ed15185ddfb2a5b5cb56b1d7fb2c4b8db4c5d911d1"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/explain-error.d.ts.map",
+      "bytes": 1543,
+      "sha256": "155d3d298c99b522536a5c4be45f4d9062cfcbf584d69dd0eaedf23091f557be"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/explain-error.js",
+      "bytes": 11704,
+      "sha256": "408f281a2496baf22f4806fc1bade8ffff68e3f23cfb7e8d141f6384a339a5ee"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/explain-error.js.map",
+      "bytes": 11244,
+      "sha256": "a2742eab4f59763ef385d7e0962f72517abb83d04bef65e6d25413d0205d7201"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/result-envelope.d.ts",
+      "bytes": 2015,
+      "sha256": "bb155e44cb325b408b50def72e65739e64854d5e4cd0ecd47ce42fda5096d60f"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/result-envelope.d.ts.map",
+      "bytes": 890,
+      "sha256": "977765e6f3229cbcfa5393ca4cc210e6cb11682a2829ef31bb1f58d5adb4d6a7"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/result-envelope.js",
+      "bytes": 17288,
+      "sha256": "a1e31a0729bf71a77114612d0305be3ca39d0d44880699eaea1d7d7ff0bc14bc"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/result-envelope.js.map",
+      "bytes": 14890,
+      "sha256": "f5c4471fe30931cdf6f34a371d0669a99d5c9dee5a4e415817cceab2f0dfbc74"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/server.d.ts",
+      "bytes": 3053,
+      "sha256": "8f50e5de1700ea2ce223d77cc97082d6568a5a37d6f64912ab8b6396a86ff548"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/server.d.ts.map",
+      "bytes": 1660,
+      "sha256": "6d3b0ab0a461f7a715968f6a4ca7a6d86932b1459161f999bd05218279082b2c"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/server.js",
+      "bytes": 72522,
+      "sha256": "dd708709cc98c2b92976eb138059d40bf626521a3f823d607386d9aeb6eaf539"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/server.js.map",
+      "bytes": 56107,
+      "sha256": "b66313d9dfa350d6161a9910e5a1b9b4ee3487419a4f2c484541e5e1d00a9166"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/tool-availability.d.ts",
+      "bytes": 2248,
+      "sha256": "fcdcd039ebf3e13a6b876658438c1bfdc336f6aa84150a86d17d153487f81260"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/tool-availability.d.ts.map",
+      "bytes": 946,
+      "sha256": "4d7e4b7d1f042db3fcfb2bc7118396f91a46de40ba44774ae5a4a6c2a28f9ac5"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/tool-availability.js",
+      "bytes": 7802,
+      "sha256": "a8d1b7645e840a41db7739161674542402b7bf9f70d48b3fe4f63b7b3a6a5c62"
+    },
+    {
+      "path": "packages/versebrowser/dist/mcp/tool-availability.js.map",
+      "bytes": 5892,
+      "sha256": "f664de3624ab2d0c7d73adb0d4261fd265efbdd179d20935975b7dd107417384"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/automation-event.d.ts",
+      "bytes": 998,
+      "sha256": "87ca76dd67cd7d6aaab7998f9e940984a80b3ba2ab01aa22e12d46b683eda1fd"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/automation-event.d.ts.map",
+      "bytes": 1076,
+      "sha256": "b928a90b1b76795bce679e9cff5373cf866f5929dcb89cd49cc8c57c8c39d0e9"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/automation-event.js",
+      "bytes": 5676,
+      "sha256": "84eea6ffd8b00f112481fe63bf1d6833b7647ffac33d27c653a1326e41f12392"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/automation-event.js.map",
+      "bytes": 6604,
+      "sha256": "366810309fee61ee31ab2a4cb250b92d09e7708c49814955e272eaba4a3eeb6f"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/common.d.ts",
+      "bytes": 2914,
+      "sha256": "d014ef4757591a18475295c98426e95bcb368aa01af65b784f702484d32f16be"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/common.d.ts.map",
+      "bytes": 2306,
+      "sha256": "c9c7d38da7af07f05db53cc4c0bae100b71e15d60c3bf671dc8fd84e97c802d1"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/common.js",
+      "bytes": 1936,
+      "sha256": "d04ca4c6ec673f6e0d8b6ea2f02e2ad5d3662848c1865141b2b0104714091e0c"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/common.js.map",
+      "bytes": 2046,
+      "sha256": "dfcd4a937ac33fc32dacbbce4226c5e8697e4601108819219bb2e9668101fcc6"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/external-access-policy.d.ts",
+      "bytes": 1297,
+      "sha256": "f73708f38742402fe60dda74e47b8ea7261aca65491892a0b14fdf236dc37395"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/external-access-policy.d.ts.map",
+      "bytes": 866,
+      "sha256": "e9aadc59c7158fb03bcb9022963cc570cc39bdf2f8f024d536607e9dde3310b6"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/external-access-policy.js",
+      "bytes": 1777,
+      "sha256": "df95767073c100d44ae9afde638cc47325f6510f22674d3c9975573b8bb7caa6"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/external-access-policy.js.map",
+      "bytes": 1326,
+      "sha256": "bcd4a71279276e96189c1525d7c6352f941d7b6aa9b4ebe1ab14550c110f5d7c"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/param-key.d.ts",
+      "bytes": 257,
+      "sha256": "3856d10aea13baf1789adba07792b769e78f866dfb155f1349161c2e70b25eb4"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/param-key.d.ts.map",
+      "bytes": 335,
+      "sha256": "794f517c219c6277098f7165eebfdb1406d3727a938bca12e3ae6ea57aedbae6"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/param-key.js",
+      "bytes": 884,
+      "sha256": "95a1daede69e70404de61fb7dab86ca66a3cecbeb565b7d16afd0261c84e25c3"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/param-key.js.map",
+      "bytes": 890,
+      "sha256": "d56d8d2cdad05cd5818fde5f223b101e6a2706639eafbaa1e5603c7921173fdc"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/string-coerce.d.ts",
+      "bytes": 2301,
+      "sha256": "2a0990dff92618b1f421216aed50fbbdbe1e049346dfbd6cb283b91454b1265c"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/string-coerce.d.ts.map",
+      "bytes": 1241,
+      "sha256": "53e89aadd8c4589ccad431ba1b417aa88274c1d8d1414e010a00987292921087"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/string-coerce.js",
+      "bytes": 3643,
+      "sha256": "3316129a86bccb2a7bdf5b1b28de0479ad6f287c1fa7252ff44effed38633160"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/string-coerce.js.map",
+      "bytes": 2940,
+      "sha256": "e580955a23c80d1c7b87208c24a442e04535cb10d8f578cb490a0cbf45e0ffe4"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/string-enum.d.ts",
+      "bytes": 690,
+      "sha256": "b389dd57460333dc891e2b63d53c0e5e6d3a92fab2a405e009b4abeea925f495"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/string-enum.d.ts.map",
+      "bytes": 608,
+      "sha256": "493ea26658df435d7806a6c54678f7e72bf51958d82c18c63da2a2d46b5107bb"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/string-enum.js",
+      "bytes": 897,
+      "sha256": "6a877d26e6685e1169008ad0a20c7dbd4d3ed8379410ddff8b92f8f346bf9509"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/string-enum.js.map",
+      "bytes": 850,
+      "sha256": "cec0644cdcafe4c101c41e03a10751ed62ca0b8d843e7df6b918d5ca1eebc586"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/tool-result.d.ts",
+      "bytes": 110,
+      "sha256": "4f0ff43d0bdb721c8622eb4e3d585915f6418ca3231111c6c5ba6c6d9d183e3b"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/tool-result.d.ts.map",
+      "bytes": 183,
+      "sha256": "4335c0286cc0ebdc1e9483908e2f28f10f44d6b3cbcb03f0b7fd6b1d39fabd7e"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/tool-result.js",
+      "bytes": 1144,
+      "sha256": "7fd4d6a5b4d655efec8d7f40c0ab37bd4c0ebfacc0013beea69ed5f57d0b2f0b"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/tool-result.js.map",
+      "bytes": 1004,
+      "sha256": "f4c62f3ab642f9552130b984f6da9355f0a056b6d9a2395bd144aeaa9de108b2"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/tool.d.ts",
+      "bytes": 725,
+      "sha256": "e3720e096495934179c099a2c626c6081cde888c3013dc859964da264a62595f"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/tool.d.ts.map",
+      "bytes": 582,
+      "sha256": "90996e2cee23581204cbe649ba5be75a607155335b0f396e21a75fb31139b524"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/tool.js",
+      "bytes": 14494,
+      "sha256": "02a8322a49978e9d402a6d0afb1ff58ebd8f996a6d2a4eabd813f46e23cb2002"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/tool.js.map",
+      "bytes": 11056,
+      "sha256": "edda528656fdcf6e06cd660fe7958316ff6fdda49c0c219fc4266bcade8d8a65"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway/agent-browser.d.ts",
+      "bytes": 2514,
+      "sha256": "bdd89f6e3e83d2dd4a2c7877998ae3cdb46f19b2518ccc49b94b1cf1f541831b"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway/agent-browser.d.ts.map",
+      "bytes": 1586,
+      "sha256": "84d985417abef08de7b2e7d5b9c1e09a1fd6912cfc8ea2638f26cd1ca378f1d8"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway/agent-browser.js",
+      "bytes": 8126,
+      "sha256": "bef8a279894ace150329c2a10a431d809f5c0abca4a7f94b929c4712d89c2842"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway/agent-browser.js.map",
+      "bytes": 7529,
+      "sha256": "22ba1826f81e4c9131a3b37b46756be13b22c0e6627d2079beff975c7082762a"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway/types.d.ts",
+      "bytes": 1500,
+      "sha256": "a6622a0f3be0a0e0575154a532a30866f117f24a1b6bb7b50a96b2cfc304ce1b"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway/types.d.ts.map",
+      "bytes": 1352,
+      "sha256": "5d603e49b190086194b312979edd96ccff27e752056febc2a902db4e3239ab75"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway/types.js",
+      "bytes": 44,
+      "sha256": "01ae2a5b120382f9a648ced7ee8507493a134f216d100fc61600c6c9738235d2"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway/types.js.map",
+      "bytes": 125,
+      "sha256": "d607cace66b35ce353f81a9965e69bd514bda1fc510915320e64d1ed0679d312"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway-protocol/client-info.d.ts",
+      "bytes": 3998,
+      "sha256": "fdb3da96e0a49d14c9c34a717c98ddd460f4af78e9c6bf593a01273c116219e9"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway-protocol/client-info.d.ts.map",
+      "bytes": 1472,
+      "sha256": "53b43f0a8bd6b446adaaf9a6c81f082a3b4faa1a3a6f3fcb88b58d0d98a80090"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway-protocol/client-info.js",
+      "bytes": 2830,
+      "sha256": "a5baf14bf264bfbc513051c456e1e278c1e0c7f158e9e1f830359469e4187fe0"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway-protocol/client-info.js.map",
+      "bytes": 2035,
+      "sha256": "9a529afdcb34e27dc8b5db1cd18174dde1ccab496ad3e6b762f2482969e846ac"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway-protocol/error-codes.d.ts",
+      "bytes": 1418,
+      "sha256": "2bcbc8498fcf862efe5ae22ac0d60e77ffd4f90fd2181b98883c8ada33477416"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway-protocol/error-codes.d.ts.map",
+      "bytes": 626,
+      "sha256": "79ee872cff6025bbb1ddd84f95428935f2d5413e0e243516412cf0e647713a5e"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway-protocol/error-codes.js",
+      "bytes": 1122,
+      "sha256": "63ed1d3083edc376024efaff09b8fbdc8d07e3e6f3860fb7527925f7627557a0"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway-protocol/error-codes.js.map",
+      "bytes": 574,
+      "sha256": "47c9ff5568cdc5a55586826bc501393ca8f7f3dd8c45e92949253e526df66e77"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway-protocol/index.d.ts",
+      "bytes": 557,
+      "sha256": "47946234788ffb97a645a068912c30291b1dd9f1080e1602dfc3e2f65fa2b972"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway-protocol/index.d.ts.map",
+      "bytes": 428,
+      "sha256": "84ea455c7b4b541068a9cb091b7f6f66cbb331de66fd58eb7758b5731cbc661d"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway-protocol/index.js",
+      "bytes": 376,
+      "sha256": "aa05b65f1f1a22b9c9202b2c80f610c4810c662cee0528f419b93facd932dce2"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway-protocol/index.js.map",
+      "bytes": 283,
+      "sha256": "5aa72d923433f4df061c2ee1418b1f3400034929ae06a43ef131fb4e21bc78f0"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway-protocol/types.d.ts",
+      "bytes": 458,
+      "sha256": "74b90014da7aa109b998dfda7774c8cc1eea3edd58dba0294a12672a3522c2e6"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway-protocol/types.d.ts.map",
+      "bytes": 329,
+      "sha256": "532e724350718f503783406a6644b18622690348a1bb596c66d977a617659bd6"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway-protocol/types.js",
+      "bytes": 44,
+      "sha256": "01ae2a5b120382f9a648ced7ee8507493a134f216d100fc61600c6c9738235d2"
+    },
+    {
+      "path": "packages/versebrowser/dist/openclaw/gateway-protocol/types.js.map",
+      "bytes": 134,
+      "sha256": "3c224d29f88c64afa8a3a72da751012e30a643341ef3fc50f1bb8c2875f77d3f"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/audit-trail.d.ts",
+      "bytes": 2459,
+      "sha256": "ae0d045497f5e513cc0a7a0fa455481b6eaae30dd2dfd43eeb0a56b0407fe11a"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/audit-trail.d.ts.map",
+      "bytes": 2001,
+      "sha256": "ff2bde2080eed8cb591fedc53912c29abd99b92c3e904cecf5a4e61281403034"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/audit-trail.js",
+      "bytes": 4972,
+      "sha256": "7577ce366e6aa10247ce4fc6cda98480b6c1b194838967163c34e6c2c0df3880"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/audit-trail.js.map",
+      "bytes": 4460,
+      "sha256": "a8b921d3f48146052e921375317189792e3a6649eaf7caa26746e87cbd72ab2b"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/content-provenance.d.ts",
+      "bytes": 3960,
+      "sha256": "686c9d3a033c28b32647ca02425881e12b2be1c44d4d969e6c0470f9665584e0"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/content-provenance.d.ts.map",
+      "bytes": 2666,
+      "sha256": "4fb3eef41505123b3f8bb113d806ccaffc7adf6db114cea0047e6222bc3e05e5"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/content-provenance.js",
+      "bytes": 9140,
+      "sha256": "be999ca5ae188d74c95c1706b05cac0770159962a00c8c4f7a901d717a87070b"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/content-provenance.js.map",
+      "bytes": 8398,
+      "sha256": "495bc86e0732548d413a7b019135de9b6669d3b3e3922e46137d1e2578875343"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/markdown.d.ts",
+      "bytes": 517,
+      "sha256": "d26f0d43a21bc488eed64b60f4c03dd23f5c35c59d005353be046ed479dff9e8"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/markdown.d.ts.map",
+      "bytes": 421,
+      "sha256": "f23c14cb26d0a1cd5e0414415c360d10c192929ce98804530131f0b56a384346"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/markdown.js",
+      "bytes": 1268,
+      "sha256": "80de1bf93519038a4110ccf18ae79388abc7c8d0ef43ce2f9bc1d100cf68fdb1"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/markdown.js.map",
+      "bytes": 1612,
+      "sha256": "97f43d66f00d2de5ebc74b1f6fb637965f71793c9a1b1bf35de79d4c4ce84f0e"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/redact-secrets.d.ts",
+      "bytes": 1007,
+      "sha256": "6a8e78804269ff298a741479503014246bece4cf0799ab92328e7a07262c61c7"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/redact-secrets.d.ts.map",
+      "bytes": 749,
+      "sha256": "8ee3df979211a2448be2ac19667effca9e09cfa99827aee257295b1147e55a00"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/redact-secrets.js",
+      "bytes": 6736,
+      "sha256": "b26860b0d202f769a344c1b53ea27927142dbf14b0005d81029b72877d629789"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/redact-secrets.js.map",
+      "bytes": 3988,
+      "sha256": "24917665183286c0d69d8acee36c12eb0d38b2a25ff9f4f2d0690ab55ba46d59"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/redline-policy.d.ts",
+      "bytes": 1198,
+      "sha256": "60690b90de14f56c6ad9f224bdb8699378bfb908e85c0d397996bb5b92f48abf"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/redline-policy.d.ts.map",
+      "bytes": 653,
+      "sha256": "3c44cea17783427b2afc762fe046524b02e7e14dbd8528015c3ed47c8b5b0572"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/redline-policy.js",
+      "bytes": 3401,
+      "sha256": "216596eaa1df8674a7632eb7513ae08170fa6094d23271f611295fc9b1d67105"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/redline-policy.js.map",
+      "bytes": 1858,
+      "sha256": "5d2626204390b80348903cf70504c590d8362cec933de15ceff0abc8fa6b144a"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/secret-names.d.ts",
+      "bytes": 828,
+      "sha256": "4664c9fc71a80f805e8ef1b98cea8dc5f809ce01307c9fc45351da6c43b63384"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/secret-names.d.ts.map",
+      "bytes": 259,
+      "sha256": "706d54d64ecd94f3cfe49a898b41e6ddeb1a4e0ba065cbb9a0868ca66b805aca"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/secret-names.js",
+      "bytes": 2007,
+      "sha256": "621d00d2b54b22537b1f73bd19e9566dee4c6d8bb07fdb1ddabe8cbe65910011"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/secret-names.js.map",
+      "bytes": 472,
+      "sha256": "e99c150788f3aa2070af5836cbd79a6f4fcb2552153863817fdf8b8f7a87a062"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/sensitive-capture-policy.d.ts",
+      "bytes": 1384,
+      "sha256": "6f8b83e1e17eef0b7a843500b75f58dc8a75b2b0a80810e27c13894160afbc9a"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/sensitive-capture-policy.d.ts.map",
+      "bytes": 1291,
+      "sha256": "7d4deee8a96cd9b2aa9d02e7526cabe052e1d7f38a00dec44ebeacd3cacfa54e"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/sensitive-capture-policy.js",
+      "bytes": 5232,
+      "sha256": "ea3e44fd49bff3175175904eefc51229fe8d0a4b0b31b6d6a07f7cc8aca29312"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/sensitive-capture-policy.js.map",
+      "bytes": 4526,
+      "sha256": "81c6ce7975416727e22c31b7bca8f5581f7e914c1405de274c8d5faaa4c761d9"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/url-policy.d.ts",
+      "bytes": 2862,
+      "sha256": "e28b88d80fc3f4ad1330c63fe015715028a4fdac3dc830dbaaba3d857872ba98"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/url-policy.d.ts.map",
+      "bytes": 956,
+      "sha256": "73b52f7c3f71130629ab34a8611234b16be08ee8d96333348b1ab49ceffb139a"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/url-policy.js",
+      "bytes": 6234,
+      "sha256": "9d798b36a685c31ed79701353aab19172181d8fc7e5677ef106b836aae667ddd"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/url-policy.js.map",
+      "bytes": 3586,
+      "sha256": "1d452217bfff16451f5e28f01b3c96a4271a3adad1fc876ee2b01fda04d9652a"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/index.d.ts",
+      "bytes": 165,
+      "sha256": "2ec1323c732fd92afc8d148bc8cdd5d2bba3339757f12b04da21c54c86c69e05"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/index.d.ts.map",
+      "bytes": 216,
+      "sha256": "e04f03acfb05859670756fb97d053832a3232720b51a3f4cfe48a2ec9d47851a"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/index.js",
+      "bytes": 352,
+      "sha256": "76f649e5ee6feb49d3cfd6f3c6b09f1812f85ef87ecc0fc65c3980cbd86c76d6"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/index.js.map",
+      "bytes": 253,
+      "sha256": "8bb49b64446b7cd467fa8b63d1d2250e84458687f8756a9b67b744df6c2c50fc"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/ip-test-fixtures.d.ts",
+      "bytes": 145,
+      "sha256": "930fd8cc3aa9046d875dac42b181609dbd88671ba7263c6eafc24eb6472b3916"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/ip-test-fixtures.d.ts.map",
+      "bytes": 185,
+      "sha256": "e893072b13b4b69a6679e033b808fa53e77fbebc63be7d69bccca7b9c464bbe0"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/ip-test-fixtures.js",
+      "bytes": 190,
+      "sha256": "d628242dd44fc2c9aa3d8e1afce8e9483185aa49637bb5778434ff7de211e659"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/ip-test-fixtures.js.map",
+      "bytes": 234,
+      "sha256": "1ed250b6e9fab86159e9f5d80adf1a1b603c14c460326aaeecd73f1b6e214f7d"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/ip.d.ts",
+      "bytes": 3989,
+      "sha256": "d8b3badc3f61cb644813bdb761fd1c865ca05a0a7d22665be0648305d205be36"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/ip.d.ts.map",
+      "bytes": 1872,
+      "sha256": "37a94fded5a46845f3c1cee0ad269d0c350a5d4646a18be28eae0023ef0ee2be"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/ip.js",
+      "bytes": 12836,
+      "sha256": "69219b087dd054c297fdca0ccc7518862ac57fb89fee211539959f15bbb577c5"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/ip.js.map",
+      "bytes": 12062,
+      "sha256": "0d50d15fe53963618637b9971f481872a4624541281c802b1ee82a5e5ce59ac6"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/ipv4.d.ts",
+      "bytes": 373,
+      "sha256": "08d3009adbd86579cef549f316656aec39e04aaec4c73fb8942cc0710032567c"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/ipv4.d.ts.map",
+      "bytes": 303,
+      "sha256": "fcc7661b43c0e8beec73bde5316eea282dd1d6c7e2542fc98e5e697ca34ce1e3"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/ipv4.js",
+      "bytes": 660,
+      "sha256": "a3e14e1b97d4fd08becb97ec6714dc99f24bc6a9f0dfe5a584e8f684a3c250e9"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/ipv4.js.map",
+      "bytes": 493,
+      "sha256": "6927248c367c723b79be1fd813dce99fcd9a887f90c53fda236668e8fb545a9c"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/redact-sensitive-url.d.ts",
+      "bytes": 1419,
+      "sha256": "afe1c4acda8045fabff6f5fae44cf1e50234752b3ba79219d02b90ae17a63aa5"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/redact-sensitive-url.d.ts.map",
+      "bytes": 630,
+      "sha256": "65013b9efc78628f41105da1dd1727ed840f37649e49e3cb4c258f1d3cb92138"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/redact-sensitive-url.js",
+      "bytes": 3234,
+      "sha256": "6c76c16b7cb16bdc3a13d67dccfa84073a99c795cb2e83f872e2ec7aa174b466"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/redact-sensitive-url.js.map",
+      "bytes": 2524,
+      "sha256": "6e5c622586ee32f9c809a8e9a9204e42dbacc61931ca1748b912b4a1010db7fd"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/url-userinfo.d.ts",
+      "bytes": 184,
+      "sha256": "6e3ca1cd37c3a00fe20132c330385e32189cfe6502cb4eafc71050764d3782bb"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/url-userinfo.d.ts.map",
+      "bytes": 211,
+      "sha256": "1b86aff0b0af55f7d8e4f73d2394e249a6c266cddb26354ae8a31dd28332e31e"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/url-userinfo.js",
+      "bytes": 438,
+      "sha256": "b371db293fcda46f9c1bcd32ea3960dd18ce24c85760c8754b5f0a4a8af05855"
+    },
+    {
+      "path": "packages/versebrowser/dist/security/net-policy/url-userinfo.js.map",
+      "bytes": 522,
+      "sha256": "e57d99eccf629207fcdbd5cd65f9ac3bf0ab8898f5cce9b8569cbb4c26b06e3b"
+    },
+    {
+      "path": "packages/versebrowser/dist/types/host-api.d.ts",
+      "bytes": 40192,
+      "sha256": "b7b6d0e2ca55b8a81b0fd5c6c9fc7229a0b30c0ccd41a4df4318b908306163c8"
+    },
+    {
+      "path": "packages/versebrowser/dist/types/host-api.d.ts.map",
+      "bytes": 31726,
+      "sha256": "ff05c98c88a7057dc515f43880aa6ae6b309ac15565001f626fd3b9ea218c43e"
+    },
+    {
+      "path": "packages/versebrowser/dist/types/host-api.js",
+      "bytes": 326,
+      "sha256": "6c3022e517e5f96f59db9b389b13e4af024fa3ffb119b137a52eeb4953a38faf"
+    },
+    {
+      "path": "packages/versebrowser/dist/types/host-api.js.map",
+      "bytes": 131,
+      "sha256": "a436193370699625cf7682a1d8a2bee123193696b4c996457a9c21073b46436f"
+    },
+    {
+      "path": "packages/versebrowser/dist/types/product-semantics.d.ts",
+      "bytes": 1148,
+      "sha256": "fbed25d9170ecd2405f2f61eb31eafbcca09280b870ae2769330d25274ae9142"
+    },
+    {
+      "path": "packages/versebrowser/dist/types/product-semantics.d.ts.map",
+      "bytes": 1005,
+      "sha256": "1baa9bf764c7d1573b0e0b3cea5f1b1c420fe4be93a19d6eb9437d1dd771b285"
+    },
+    {
+      "path": "packages/versebrowser/dist/types/product-semantics.js",
+      "bytes": 849,
+      "sha256": "6445c2d75ee54e7bcc65e569eb408e915b5d768aa569e1ae772127596c917974"
+    },
+    {
+      "path": "packages/versebrowser/dist/types/product-semantics.js.map",
+      "bytes": 766,
+      "sha256": "abbc806a07d63cb9fd87c1e81ed32ebea7f9a6b66df2931e8d48df27d819998f"
+    },
+    {
+      "path": "packages/versebrowser/dist/types/sandbox.d.ts",
+      "bytes": 2977,
+      "sha256": "0da0e856d91178d2cb0ebb5df9c3a9f31022ccf056d9bfaefbcedecd2dadafa8"
+    },
+    {
+      "path": "packages/versebrowser/dist/types/sandbox.d.ts.map",
+      "bytes": 2641,
+      "sha256": "eca9a2e9cd8d11ecc5086ecc8d38e6de030ea71b38292958ab30e32c77ffae07"
+    },
+    {
+      "path": "packages/versebrowser/dist/types/sandbox.js",
+      "bytes": 46,
+      "sha256": "0ab151abc1379c61394948e674ed5e928369c234b852923964d4a78a0a966fdc"
+    },
+    {
+      "path": "packages/versebrowser/dist/types/sandbox.js.map",
+      "bytes": 115,
+      "sha256": "2ee1a459dc13f49bd7790c2b8f09d710d7df4c9e6ed8586e46b2f5186c5efa5b"
+    },
+    {
+      "path": "packages/versebrowser/dist/types/workspace.d.ts",
+      "bytes": 1138,
+      "sha256": "2931fe3dc8db30a314a33b4a4c24842ab90635d5695684178633a96944c4f3a9"
+    },
+    {
+      "path": "packages/versebrowser/dist/types/workspace.d.ts.map",
+      "bytes": 685,
+      "sha256": "2c00100337f415c3447077b949a4ad3e6f85963ae9f4c75d3c41d54105cc2b37"
+    },
+    {
+      "path": "packages/versebrowser/dist/types/workspace.js",
+      "bytes": 772,
+      "sha256": "a4a649466c63b98b96d6ceb8f0e32f77f00aff03c8461e37c962c6b99cca732f"
+    },
+    {
+      "path": "packages/versebrowser/dist/types/workspace.js.map",
+      "bytes": 510,
+      "sha256": "7abc43764c15807dbf07884cc88fdc52499652ddb1422d873d1409f7fcca8302"
+    }
+  ]
+}

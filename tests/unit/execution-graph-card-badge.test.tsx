@@ -36,6 +36,20 @@ const subagentStep: TaskStep = {
 };
 
 describe('ExecutionGraphCard flat activity rows', () => {
+  it('pairs each tool result with its call while preserving unmatched results', () => {
+    const call = { ...branchStep, id: 'read-1', label: 'read_file', status: 'completed' as const, detail: '{"path":"src/app.ts"}' };
+    const result: TaskStep = { id: 'tool-result-read-1', label: 'Tool Result: read_file', kind: 'system', status: 'completed', depth: 1, detail: 'Retained result\n' };
+    const orphan: TaskStep = { ...result, id: 'tool-result-missing', label: 'Tool Result: missing', detail: 'Unpaired result' };
+    render(<ExecutionGraphCard agentLabel="main" steps={[call, result, orphan]} active={false} />);
+    expect(screen.getAllByTestId('chat-execution-step')).toHaveLength(2);
+    expect(screen.queryByText('Tool Result: read_file')).not.toBeInTheDocument();
+    fireEvent.click(screen.getAllByTestId('chat-execution-step-toggle')[0]);
+    const detail = screen.getByRole('region', { name: 'read_file' });
+    expect(detail).toHaveTextContent('src/app.ts');
+    expect(detail).toHaveTextContent('Retained result');
+    expect(screen.getByText('Tool Result: missing')).toBeVisible();
+  });
+
   it('previews the edit target and reveals complete arguments only on expansion', () => {
     const detail = JSON.stringify({
       file_path: '/workspace/src/components/conversation/Message.tsx',
@@ -89,7 +103,7 @@ describe('ExecutionGraphCard flat activity rows', () => {
     render(<ExecutionGraphCard agentLabel="main" steps={[branchStep]} active />);
 
     const step = screen.getByTestId('chat-execution-step');
-    expect(step).toHaveStyle({ marginLeft: '32px' });
+    expect(step).toHaveStyle({ marginLeft: '24px' });
     expect(screen.queryByText('分支')).toBeNull();
   });
 

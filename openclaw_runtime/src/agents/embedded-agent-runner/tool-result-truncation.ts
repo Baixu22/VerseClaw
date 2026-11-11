@@ -15,6 +15,10 @@ import {
 import type { ArchiveHandle, LifecycleEvent } from "../../../../shared/types/context-family.js";
 import { normalizeArchiveHandle } from "../../../../shared/types/context-item.js";
 import { resolveAgentContextLimits } from "../agent-scope.js";
+import {
+  getRetainedArchiveRecalls,
+  type ArchiveRecallRetentionOptions,
+} from "../archive-recall-retention.js";
 import type { RuntimeIntensityPolicy } from "../intensity-policy.js";
 import type { AgentMessage } from "../runtime/index.js";
 import {
@@ -63,10 +67,28 @@ const XL_CONTEXT_TOOL_RESULT_TOKENS = 200_000;
 const MIN_KEEP_CHARS = 2_000;
 const RECOVERY_MIN_KEEP_CHARS = 0;
 
-type ToolResultTruncationOptions = {
+export type ToolResultTruncationOptions = {
   suffix?: string | ((truncatedChars: number) => string);
   minKeepChars?: number;
 };
+/** A bounded, model-visible pointer back to an archived tool result. */
+export function buildArchiveRecallTruncationSuffix(params: {
+  truncatedChars: number;
+  archiveHandle?: Pick<ArchiveHandle, "uri" | "checksum" | "byteLength">;
+}): string {
+  const truncatedChars = Math.max(1, Math.floor(params.truncatedChars));
+  const handle = params.archiveHandle;
+  if (!handle?.uri || !handle.checksum || !Number.isFinite(handle.byteLength)) {
+    return formatContextLimitTruncationNotice(truncatedChars);
+  }
+  return [
+    "[... " + truncatedChars + " characters truncated; original output archived]",
+    "archive_uri: " + handle.uri,
+    "checksum: " + handle.checksum,
+    "byte_length: " + handle.byteLength,
+    "Recall with context_archive_recall using archive_uri, checksum, byte_length, offset and max_chars.",
+  ].join("\n");
+}
 
 const DEFAULT_SUFFIX = (truncatedChars: number) =>
   formatContextLimitTruncationNotice(truncatedChars);
@@ -359,7 +381,7 @@ export function truncateOversizedToolResultsInMessages(
   contextWindowTokens: number,
   maxCharsOverride?: number,
   aggregateMaxCharsOverride?: number,
-  options: { sessionId?: string } = {},
+  options: { sessionId?: string; archiveRecallRetention?: boolean } = {},
 ): { messages: AgentMessage[]; truncatedCount: number; auditEvents?: LifecycleEvent[] } {
   const maxChars = Math.max(
     1,
@@ -381,6 +403,10 @@ export function truncateOversizedToolResultsInMessages(
     aggregateBudgetChars,
     minKeepChars: RECOVERY_MIN_KEEP_CHARS,
     sessionId: options.sessionId,
+    archiveRecallRetention: {
+      enabled: options.archiveRecallRetention,
+      sessionId: options.sessionId,
+    },
   });
   if (plan.replacements.length === 0) {
     return { messages, truncatedCount: 0 };
@@ -485,6 +511,7 @@ function buildAggregateToolResultReplacements(params: {
   aggregateBudgetChars: number;
   minKeepChars?: number;
   sessionId?: string;
+  retainedEntryIds?: ReadonlySet<string>;
 }): ToolResultReplacement[] {
   const minKeepChars = params.minKeepChars ?? MIN_KEEP_CHARS;
   const candidates = params.branch
@@ -534,6 +561,9 @@ function buildAggregateToolResultReplacements(params: {
     }
     return b.textLength - a.textLength;
   })) {
+    if (params.retainedEntryIds?.has(candidate.entryId)) {
+      continue;
+    }
     if (remainingReduction <= 0) {
       break;
     }
@@ -544,9 +574,18 @@ function buildAggregateToolResultReplacements(params: {
 
     const requestedReduction = Math.min(reducibleChars, remainingReduction);
     const targetChars = Math.max(minTruncatedTextChars, candidate.textLength - requestedReduction);
+    const archiveHandle = archiveOriginalToolResultPayload({
+      sessionId: params.sessionId,
+      entryId: candidate.entryId,
+      message: candidate.message,
+    });
+    const archiveSuffixFactory = archiveHandle
+      ? (truncatedChars: number) => buildArchiveRecallTruncationSuffix({ truncatedChars, archiveHandle })
+      : suffixFactory;
+    const archiveSuffixFits = targetChars >= minKeepChars + archiveSuffixFactory(1).length;
     const truncatedMessage = truncateToolResultMessage(candidate.message, targetChars, {
       minKeepChars,
-      suffix: suffixFactory,
+      suffix: archiveSuffixFits ? archiveSuffixFactory : suffixFactory,
     });
     const newLength = getToolResultTextLength(truncatedMessage);
     const actualReduction = Math.max(0, candidate.textLength - newLength);
@@ -560,11 +599,7 @@ function buildAggregateToolResultReplacements(params: {
       originalChars: candidate.textLength,
       projectedChars: newLength,
       replacementKind: "aggregate",
-      archiveHandle: archiveOriginalToolResultPayload({
-        sessionId: params.sessionId,
-        entryId: candidate.entryId,
-        message: candidate.message,
-      }),
+      archiveHandle,
     });
     remainingReduction -= actualReduction;
   }
@@ -592,8 +627,17 @@ function buildOversizedToolResultReplacements(params: {
     if (getToolResultTextLength(msg) <= params.maxChars) {
       continue;
     }
+    const archiveHandle = archiveOriginalToolResultPayload({
+      sessionId: params.sessionId,
+      entryId: entry.id,
+      message: msg,
+    });
+    const suffix = archiveHandle
+      ? (truncatedChars: number) => buildArchiveRecallTruncationSuffix({ truncatedChars, archiveHandle })
+      : undefined;
     const truncatedMessage = truncateToolResultMessage(msg, params.maxChars, {
       minKeepChars,
+      ...(suffix ? { suffix } : {}),
     });
     replacements.push({
       entryId: entry.id,
@@ -601,11 +645,7 @@ function buildOversizedToolResultReplacements(params: {
       originalChars: getToolResultTextLength(msg),
       projectedChars: getToolResultTextLength(truncatedMessage),
       replacementKind: "oversized",
-      archiveHandle: archiveOriginalToolResultPayload({
-        sessionId: params.sessionId,
-        entryId: entry.id,
-        message: msg,
-      }),
+      archiveHandle,
     });
   }
 
@@ -704,6 +744,7 @@ function buildToolResultReplacementPlan(params: {
   aggregateBudgetChars: number;
   minKeepChars?: number;
   sessionId?: string;
+  archiveRecallRetention?: ArchiveRecallRetentionOptions;
 }): {
   replacements: ToolResultReplacement[];
   oversizedReplacementCount: number;
@@ -712,6 +753,21 @@ function buildToolResultReplacementPlan(params: {
   aggregateReducibleChars: number;
 } {
   const minKeepChars = params.minKeepChars ?? MIN_KEEP_CHARS;
+  const retained = getRetainedArchiveRecalls(
+    params.branch.map((entry) => (entry.type === "message" ? entry.message : undefined)),
+    {
+      ...params.archiveRecallRetention,
+      maxChars: Math.min(
+        params.aggregateBudgetChars,
+        params.archiveRecallRetention?.maxChars ?? params.aggregateBudgetChars,
+      ),
+      maxResultChars: Math.min(
+        params.maxChars,
+        params.archiveRecallRetention?.maxResultChars ?? params.maxChars,
+      ),
+    },
+  );
+  const retainedEntryIds = new Set(retained.map((item) => params.branch[item.index]!.id));
   const oversizedReplacements = buildOversizedToolResultReplacements({
     branch: params.branch,
     maxChars: params.maxChars,
@@ -726,12 +782,28 @@ function buildToolResultReplacementPlan(params: {
     params.branch,
     oversizedReplacements,
   );
-  const aggregateReplacements = buildAggregateToolResultReplacements({
+  const aggregateParams = {
     branch: oversizedTrimmedBranch,
     aggregateBudgetChars: params.aggregateBudgetChars,
     minKeepChars,
     sessionId: params.sessionId,
-  });
+    retainedEntryIds,
+  };
+  let aggregateReplacements = buildAggregateToolResultReplacements(aggregateParams);
+  const aggregateCharsBefore = oversizedTrimmedBranch.reduce(
+    (sum, entry) => sum + (entry.message ? getToolResultTextLength(entry.message) : 0),
+    0,
+  );
+  for (const recall of retained.toReversed()) {
+    if (aggregateCharsBefore - calculateReplacementReduction(oversizedTrimmedBranch, aggregateReplacements)
+      <= params.aggregateBudgetChars) {
+      break;
+    }
+    // Use actual block/suffix sizes, releasing the oldest retained page only
+    // when necessary. The final iteration is the unchanged legacy plan.
+    retainedEntryIds.delete(params.branch[recall.index]!.id);
+    aggregateReplacements = buildAggregateToolResultReplacements(aggregateParams);
+  }
   const aggregateReducibleChars = calculateReplacementReduction(
     oversizedTrimmedBranch,
     aggregateReplacements,
@@ -750,6 +822,7 @@ export function estimateToolResultReductionPotential(params: {
   contextWindowTokens: number;
   maxCharsOverride?: number;
   aggregateMaxCharsOverride?: number;
+  archiveRecallRetention?: ArchiveRecallRetentionOptions;
 }): ToolResultReductionPotential {
   const { messages, contextWindowTokens } = params;
   const maxChars = Math.max(
@@ -785,6 +858,7 @@ export function estimateToolResultReductionPotential(params: {
     maxChars,
     aggregateBudgetChars,
     minKeepChars: RECOVERY_MIN_KEEP_CHARS,
+    archiveRecallRetention: params.archiveRecallRetention,
   });
   const maxReducibleChars = plan.oversizedReducibleChars + plan.aggregateReducibleChars;
 
@@ -805,11 +879,17 @@ function truncateOversizedToolResultsInExistingSessionManager(params: {
   contextWindowTokens: number;
   maxCharsOverride?: number;
   aggregateMaxCharsOverride?: number;
+  archiveRecallRetention?: boolean;
   sessionFile?: string;
   sessionId?: string;
   sessionKey?: string;
   agentId?: string;
-}): { truncated: boolean; truncatedCount: number; reason?: string; auditEvents?: LifecycleEvent[] } {
+}): {
+  truncated: boolean;
+  truncatedCount: number;
+  reason?: string;
+  auditEvents?: LifecycleEvent[];
+} {
   const { sessionManager, contextWindowTokens } = params;
   const maxChars = Math.max(
     1,
@@ -832,6 +912,7 @@ function truncateOversizedToolResultsInExistingSessionManager(params: {
     aggregateBudgetChars,
     minKeepChars: RECOVERY_MIN_KEEP_CHARS,
     sessionId: params.sessionId,
+    archiveRecallRetention: { enabled: params.archiveRecallRetention, sessionId: params.sessionId },
   });
   if (plan.replacements.length === 0) {
     return {
@@ -880,11 +961,17 @@ async function truncateOversizedToolResultsInTranscriptState(params: {
   contextWindowTokens: number;
   maxCharsOverride?: number;
   aggregateMaxCharsOverride?: number;
+  archiveRecallRetention?: boolean;
   sessionId?: string;
   sessionKey?: string;
   agentId?: string;
   config?: SessionWriteLockAcquireTimeoutConfig;
-}): Promise<{ truncated: boolean; truncatedCount: number; reason?: string; auditEvents?: LifecycleEvent[] }> {
+}): Promise<{
+  truncated: boolean;
+  truncatedCount: number;
+  reason?: string;
+  auditEvents?: LifecycleEvent[];
+}> {
   const { state, contextWindowTokens } = params;
   const maxChars = Math.max(
     1,
@@ -907,6 +994,7 @@ async function truncateOversizedToolResultsInTranscriptState(params: {
     aggregateBudgetChars,
     minKeepChars: RECOVERY_MIN_KEEP_CHARS,
     sessionId: params.sessionId,
+    archiveRecallRetention: { enabled: params.archiveRecallRetention, sessionId: params.sessionId },
   });
   if (plan.replacements.length === 0) {
     return {
@@ -959,11 +1047,17 @@ export function truncateOversizedToolResultsInSessionManager(params: {
   contextWindowTokens: number;
   maxCharsOverride?: number;
   aggregateMaxCharsOverride?: number;
+  archiveRecallRetention?: boolean;
   sessionFile?: string;
   sessionId?: string;
   sessionKey?: string;
   agentId?: string;
-}): { truncated: boolean; truncatedCount: number; reason?: string; auditEvents?: LifecycleEvent[] } {
+}): {
+  truncated: boolean;
+  truncatedCount: number;
+  reason?: string;
+  auditEvents?: LifecycleEvent[];
+} {
   try {
     return truncateOversizedToolResultsInExistingSessionManager(params);
   } catch (err) {
@@ -978,11 +1072,17 @@ export async function truncateOversizedToolResultsInSession(params: {
   contextWindowTokens: number;
   maxCharsOverride?: number;
   aggregateMaxCharsOverride?: number;
+  archiveRecallRetention?: boolean;
   sessionId?: string;
   sessionKey?: string;
   agentId?: string;
   config?: SessionWriteLockAcquireTimeoutConfig;
-}): Promise<{ truncated: boolean; truncatedCount: number; reason?: string; auditEvents?: LifecycleEvent[] }> {
+}): Promise<{
+  truncated: boolean;
+  truncatedCount: number;
+  reason?: string;
+  auditEvents?: LifecycleEvent[];
+}> {
   const { sessionFile, contextWindowTokens } = params;
   let sessionLock: Awaited<ReturnType<typeof acquireSessionWriteLock>> | undefined;
 
@@ -997,6 +1097,7 @@ export async function truncateOversizedToolResultsInSession(params: {
       contextWindowTokens,
       maxCharsOverride: params.maxCharsOverride,
       aggregateMaxCharsOverride: params.aggregateMaxCharsOverride,
+      archiveRecallRetention: params.archiveRecallRetention,
       sessionFile,
       sessionId: params.sessionId,
       sessionKey: params.sessionKey,

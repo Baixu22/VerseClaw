@@ -1,0 +1,18 @@
+{
+  "findings": [
+    {
+      "body": "`latestMeta` is taken from only the first restored worker, but the retirement patch is then applied to every `expectedWorkers` entry. With mixed legacy metadata, a pending first worker causes an already-`applied` sibling to be rewritten as `blocked` with `patch_flow_retired`, violating preservation of historical status. If the already-applied worker is first, the guard is skipped and the function can proceed to start a verifier while another worker remains pending. Decide from all worker statuses and patch only pending legacy entries.",
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/agents/subagent-registry.ts",
+        "line": 647
+      },
+      "confidence": 0.99,
+      "priority": "P1",
+      "title": "[P1] Inspect all legacy worker statuses before blocking"
+    }
+  ],
+  "overall_confidence": 0.99,
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The patch removes the retired proposal-only worker path and deferred candidate application, and the catalog/UI retirement projection is aligned. The completion guard is order-dependent for restored metadata with mixed worker statuses, so it can corrupt already-applied records or start verification while a sibling remains pending; this violates the retirement and historical-effect preservation contract."
+}

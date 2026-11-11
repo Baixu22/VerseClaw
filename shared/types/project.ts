@@ -1,4 +1,5 @@
 import type { ProjectId, WorkspaceId } from './identity-scope.js';
+import { resolveProjectIdForWorkspace } from './identity-scope.js';
 
 export type ProjectKnowledgeRef = {
   kind: 'knowledge' | 'task-ledger' | 'document';
@@ -58,7 +59,7 @@ function uniqueTexts(values: readonly string[] | undefined, field: string): stri
 /** Transitional 1:1 mapper; equal bytes do not make Project and Workspace aliases. */
 export function createProjectForWorkspace(input: ProjectProjectionInput): ProjectView {
   return {
-    projectId: requiredText(input.workspaceId, 'workspaceId') as unknown as ProjectId,
+    projectId: resolveProjectIdForWorkspace(input.workspaceId),
     workspaceId: requiredText(input.workspaceId, 'workspaceId') as WorkspaceId,
     name: requiredText(input.workspaceName, 'workspaceName'),
     rootPath: requiredText(input.rootPath, 'rootPath'),

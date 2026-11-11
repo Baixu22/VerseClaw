@@ -1,0 +1,118 @@
+{
+  "schema": "EvidenceRetentionProjection/v1",
+  "driven_by": "agent",
+  "actor": "codex-coding-c0-builder",
+  "reason": "Repository ignores *.log. Preserve exact command bytes under tracked *.txt; only artifact paths were renamed.",
+  "rawReportSha256": "7a994c84afd9a892a4db93f6bf62c695e2bf49537e78377a93104f1f8038697c",
+  "candidatePreserved": {
+    "commit": "27bd9df474236a52da03fd6b63613b66d0cc6af4",
+    "tree": "811915f1ad0bfde40c90d7821878ff4e01d86188",
+    "dirty": false
+  },
+  "renamedArtifacts": {
+    "gates/evidence-reader.stderr.log": {
+      "path": "gates/evidence-reader.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "gates/evidence-reader.stdout.log": {
+      "path": "gates/evidence-reader.stdout.txt",
+      "sha256": "a801e0bae0c37f01f8c25f4e15287bc456e378466c828aae906b08f6625879e2"
+    },
+    "gates/harness.stderr.log": {
+      "path": "gates/harness.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "gates/harness.stdout.log": {
+      "path": "gates/harness.stdout.txt",
+      "sha256": "777611ace9839fc680cb4451bf9a35dbfbb46d061574ca8fc2ca076ba197166f"
+    },
+    "gates/host-contract.stderr.log": {
+      "path": "gates/host-contract.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "gates/host-contract.stdout.log": {
+      "path": "gates/host-contract.stdout.txt",
+      "sha256": "1da8e86468137f802419573013ae77adf92a595f8e982ff4c80fb8c78c35cc52"
+    },
+    "gates/lint.stderr.log": {
+      "path": "gates/lint.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "gates/lint.stdout.log": {
+      "path": "gates/lint.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probe-boundaries.stderr.log": {
+      "path": "probe-boundaries.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probe-boundaries.stdout.log": {
+      "path": "probe-boundaries.stdout.txt",
+      "sha256": "765d8b1f0bd6822c37e3d5ce1bcfdec67888f9a71113ff24c138d64a690b4142"
+    },
+    "probe-journal.stderr.log": {
+      "path": "probe-journal.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probe-journal.stdout.log": {
+      "path": "probe-journal.stdout.txt",
+      "sha256": "c21e74b4311b697ff9611e6aef4dbf4696f4b6823e8dc2a6dcaecb75efb953a1"
+    },
+    "probe-routing.stderr.log": {
+      "path": "probe-routing.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probe-routing.stdout.log": {
+      "path": "probe-routing.stdout.txt",
+      "sha256": "46cf5d4d07a30841993457b342449cb3459e6f0c4b90b14ba130ab55fbf40a71"
+    },
+    "probe-worktrees.stderr.log": {
+      "path": "probe-worktrees.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probe-worktrees.stdout.log": {
+      "path": "probe-worktrees.stdout.txt",
+      "sha256": "e01136ed5f0fb2d900bb3bee3ffeb0b1d18c0cd6e863c05ba5315a8d3ae75a85"
+    },
+    "sts-environment.stderr.log": {
+      "path": "sts-environment.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sts-environment.stdout.log": {
+      "path": "sts-environment.stdout.txt",
+      "sha256": "705fba922a3b6ea72098c6821260e3b0fdd84d89ab6b9be254c7a5e5449fcb51"
+    },
+    "sts-installation.stderr.log": {
+      "path": "sts-installation.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sts-installation.stdout.log": {
+      "path": "sts-installation.stdout.txt",
+      "sha256": "f6787b6b174942edb776c99d92ff3512b297c1232ba4dd8d580c84974a6437d6"
+    },
+    "sts-wheel-binding.stderr.log": {
+      "path": "sts-wheel-binding.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sts-wheel-binding.stdout.log": {
+      "path": "sts-wheel-binding.stdout.txt",
+      "sha256": "c379203821a5bea565efb0a91cd6fc8a167e8abe22e4996ab6ad4e59098624ba"
+    },
+    "vg-capabilities.stderr.log": {
+      "path": "vg-capabilities.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "vg-capabilities.stdout.log": {
+      "path": "vg-capabilities.stdout.txt",
+      "sha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26"
+    },
+    "vs-version.stderr.log": {
+      "path": "vs-version.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "vs-version.stdout.log": {
+      "path": "vs-version.stdout.txt",
+      "sha256": "1465334d5260501196377a50a45bbd96a1b522d7beff4fe0778cd9037966fd14"
+    }
+  }
+}

@@ -11,29 +11,44 @@
  */
 
 import crypto from "node:crypto";
+import type { RecoveryOwnerAdmission } from "../../../shared/recovery-authority/contract.js";
 import { getRuntimeConfig } from "../config/config.js";
 import {
   loadSessionStore,
   resolveAgentIdFromSessionKey,
   resolveStorePath,
   updateSessionStore,
+  updateSessionStoreAtomic,
   type SessionEntry,
 } from "../config/sessions.js";
 import { callGateway } from "../gateway/call.js";
 import { readSessionMessagesAsync } from "../gateway/session-utils.fs.js";
 import { formatErrorMessage } from "../infra/errors.js";
+import { acquireSessionAdmissionPermit } from "../sessions/session-admission-registry.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { resolveInternalSessionEffectsTranscriptPath } from "./internal-session-effects.js";
 import {
   evaluateSubagentRecoveryGate,
   markSubagentRecoveryAttempt,
   markSubagentRecoveryWedged,
+  matchesSubagentRecoveryGeneration,
 } from "./subagent-recovery-state.js";
+import {
+  finishOwnerRecoveryAdmission,
+  isRecoveryAuthorityEnabled,
+  getRecoveryAdmissionIdentity,
+} from "./recovery-authority/owner-admission.js";
 import {
   finalizeInterruptedSubagentRun,
   replaceSubagentRunAfterSteer,
 } from "./subagent-registry-steer-runtime.js";
 import type { SubagentRunRecord } from "./subagent-registry.types.js";
+
+import {
+  admitSubagentRecovery,
+  commitAcceptedSubagentRecovery,
+  reconcileAcceptedOrphanRun,
+} from "./recovery-authority/subagent-adapter.js";
 
 const log = createSubsystemLogger("subagent-interrupted-resume");
 
@@ -121,19 +136,26 @@ async function resumeOrphanedSession(params: {
   configChangeHint?: string;
   originalRunId: string;
   originalRun: SubagentRunRecord;
-}): Promise<{ resumed: boolean; error?: string }> {
+  idempotencyKey?: string;
+  sessionId?: string;
+  admission?: RecoveryOwnerAdmission;
+}): Promise<{ resumed: boolean; runId?: string; error?: string }> {
   let resumeMessage = buildResumeMessage(params.task, params.lastHumanMessage);
   if (params.configChangeHint) {
     resumeMessage += params.configChangeHint;
   }
 
   try {
-    const idempotencyKey = crypto.randomUUID();
+    const idempotencyKey = params.idempotencyKey ?? crypto.randomUUID();
     const result = await callGateway<{ runId: string }>({
       method: "agent",
       params: {
         message: resumeMessage,
         sessionKey: params.sessionKey,
+        sessionId: params.sessionId,
+        ...(params.admission
+          ? { recoveryAdmission: getRecoveryAdmissionIdentity(params.admission) }
+          : {}),
         idempotencyKey,
         deliver: false,
         lane: "subagent",
@@ -143,25 +165,41 @@ async function resumeOrphanedSession(params: {
           sourceChannel: "internal",
           sourceTool: "subagent_interrupted_resume",
         },
-        sessionEffects: "internal",
+        // Admission binds this run to the original session lifecycle. Prompt
+        // persistence is suppressed separately for the synthetic continuation.
+        sessionEffects: params.idempotencyKey ? "visible" : "internal",
         suppressPromptPersistence: true,
       },
       timeoutMs: 10_000,
     });
+    if (!result?.runId || typeof result.runId !== "string") {
+      throw new Error("recovery RPC did not acknowledge a run identity");
+    }
+    if (params.idempotencyKey) return { resumed: true, runId: result.runId };
     const remapped = replaceSubagentRunAfterSteer({
       previousRunId: params.originalRunId,
       nextRunId: result.runId,
       fallback: params.originalRun,
-      transcriptFile: resolveInternalSessionEffectsTranscriptPath(result.runId),
+      transcriptFile: params.idempotencyKey
+        ? undefined
+        : resolveInternalSessionEffectsTranscriptPath(result.runId),
     });
     if (!remapped) {
+      if (params.idempotencyKey) {
+        return {
+          resumed: false,
+          runId: result.runId,
+          error:
+            "recovery accepted but the registry owner could not be remapped; reconciliation required",
+        };
+      }
       log.warn(
         `resumed orphaned session ${params.sessionKey} but remap failed (old run already removed); treating resume as accepted to avoid duplicate restarts`,
       );
-      return { resumed: true };
+      return { resumed: true, runId: result.runId };
     }
     log.info(`resumed orphaned session: ${params.sessionKey}`);
-    return { resumed: true };
+    return { resumed: true, runId: result.runId };
   } catch (err) {
     const error = formatErrorMessage(err);
     log.warn(`failed to resume orphaned session ${params.sessionKey}: ${error}`);
@@ -188,15 +226,23 @@ export async function recoverOrphanedSubagentSessions(params: {
   recovered: number;
   failed: number;
   skipped: number;
-  failedRuns: Array<{ runId: string; childSessionKey: string; error?: string }>;
+  failedRuns: Array<{ runId: string; childSessionKey: string; error?: string; attempts?: number }>;
+  reconciliationRuns: Array<{ runId: string; childSessionKey: string; reason: string }>;
 }> {
   const result = {
     recovered: 0,
     failed: 0,
     skipped: 0,
-    failedRuns: [] as Array<{ runId: string; childSessionKey: string; error?: string }>,
+    failedRuns: [] as Array<{
+      runId: string;
+      childSessionKey: string;
+      error?: string;
+      attempts?: number;
+    }>,
+    reconciliationRuns: [] as Array<{ runId: string; childSessionKey: string; reason: string }>,
   };
   const resumedSessionKeys = params.resumedSessionKeys ?? new Set<string>();
+  const authorityEnabled = isRecoveryAuthorityEnabled();
   const configChangePattern = /openclaw\.json|openclaw gateway restart|config\.patch/i;
 
   try {
@@ -219,6 +265,8 @@ export async function recoverOrphanedSubagentSessions(params: {
         continue;
       }
 
+      let releaseRecoveryPermit: (() => void) | undefined;
+      let preserveRecoveryOwner = authorityEnabled;
       try {
         const agentId = resolveAgentIdFromSessionKey(childSessionKey);
         const storePath = resolveStorePath(cfg.session?.store, { agentId });
@@ -232,6 +280,53 @@ export async function recoverOrphanedSubagentSessions(params: {
         const entry = store[childSessionKey];
         if (!entry) {
           result.skipped++;
+          continue;
+        }
+        const expectedSessionId = entry.sessionId;
+        const expectedLifecycleRunId = entry.lifecycleRunId;
+        const savedAdmission = entry.subagentRecovery?.authority;
+        const admissionMatchesGeneration =
+          savedAdmission && matchesSubagentRecoveryGeneration(entry, savedAdmission);
+        const hasOwnedAdmission =
+          admissionMatchesGeneration &&
+          (runId === savedAdmission.ownerId ||
+            expectedLifecycleRunId === savedAdmission.idempotencyKey);
+        preserveRecoveryOwner ||= Boolean(hasOwnedAdmission);
+        if (authorityEnabled || hasOwnedAdmission) {
+          // Reset/delete must wait for the admission and its acknowledgement;
+          // a closed fence rejects recovery before it can commit or dispatch.
+          releaseRecoveryPermit = acquireSessionAdmissionPermit(
+            {
+              agentId,
+              canonicalSessionKey: childSessionKey,
+              expectedSessionId,
+            },
+            "sessions-steer",
+          );
+          if (expectedLifecycleRunId && expectedLifecycleRunId !== runId) {
+            const adopted = await reconcileAcceptedOrphanRun({
+              entry,
+              storePath,
+              sessionKey: childSessionKey,
+              originalRunId: runId,
+              originalRun: runRecord,
+            });
+            if (adopted) {
+              resumedSessionKeys.add(childSessionKey);
+              result.recovered++;
+            } else result.skipped++;
+            continue;
+          }
+        }
+        if (!authorityEnabled && hasOwnedAdmission && savedAdmission.state !== "settled") {
+          // Rollback stops the new writer. Its uncertain durable reservations
+          // still forbid a fresh legacy replay until the owner reconciles them.
+          result.skipped++;
+          result.reconciliationRuns.push({
+            runId,
+            childSessionKey,
+            reason: "existing recovery admission requires reconciliation before legacy replay",
+          });
           continue;
         }
 
@@ -254,12 +349,16 @@ export async function recoverOrphanedSubagentSessions(params: {
         }
 
         const recoveryGate = evaluateSubagentRecoveryGate(entry, now);
-        if (!recoveryGate.allowed) {
+        if (!recoveryGate.allowed && !authorityEnabled) {
           if (recoveryGate.shouldMarkWedged) {
             try {
               await updateSessionStore(storePath, (currentStore) => {
                 const current = currentStore[childSessionKey];
-                if (current) {
+                if (
+                  current &&
+                  current.sessionId === expectedSessionId &&
+                  current.lifecycleRunId === expectedLifecycleRunId
+                ) {
                   markSubagentRecoveryWedged({
                     entry: current,
                     now,
@@ -314,6 +413,37 @@ export async function recoverOrphanedSubagentSessions(params: {
           return typeof text === "string" && configChangePattern.test(text);
         });
 
+        const admissionResult = authorityEnabled
+          ? await admitSubagentRecovery({
+              storePath,
+              sessionKey: childSessionKey,
+              sessionId: expectedSessionId,
+              lifecycleRunId: expectedLifecycleRunId,
+              originalRunId: runId,
+              messages,
+              now,
+              getCurrentRun: () => params.getActiveRuns().get(runId),
+            })
+          : undefined;
+        if (admissionResult && admissionResult.kind !== "admitted") {
+          result.skipped++;
+          if (admissionResult.kind === "failed")
+            result.failedRuns.push({
+              runId,
+              childSessionKey,
+              error: admissionResult.reason,
+              attempts: admissionResult.attempts,
+            });
+          if (admissionResult.kind === "blocked")
+            result.reconciliationRuns.push({
+              runId,
+              childSessionKey,
+              reason: admissionResult.reason,
+            });
+          continue;
+        }
+        const admission = admissionResult?.kind === "admitted" ? admissionResult.record : undefined;
+
         // Resume the session with the original task context.
         // We intentionally do NOT clear abortedLastRun before attempting
         // the resume — if callGateway fails (e.g. gateway still booting),
@@ -327,26 +457,94 @@ export async function recoverOrphanedSubagentSessions(params: {
             : undefined,
           originalRunId: runId,
           originalRun: runRecord,
+          idempotencyKey: admission?.idempotencyKey,
+          sessionId: admission ? expectedSessionId : undefined,
+          admission,
         });
 
+        if (admission && resumeResult.resumed && resumeResult.runId) {
+          const committed = await commitAcceptedSubagentRecovery({
+            entry: {
+              ...entry,
+              sessionId: expectedSessionId,
+              lifecycleRunId: expectedLifecycleRunId,
+            },
+            storePath,
+            sessionKey: childSessionKey,
+            originalRunId: runId,
+            originalRun: runRecord,
+            admission,
+            runId: resumeResult.runId,
+          });
+          if (!committed) {
+            result.skipped++;
+            result.reconciliationRuns.push({
+              runId,
+              childSessionKey,
+              reason: "recovery acknowledgement requires lifecycle reconciliation",
+            });
+            continue;
+          }
+        }
+
+        if (admission && !resumeResult.resumed) {
+          const expectedAdmission = admission;
+          await updateSessionStoreAtomic(storePath, (currentStore) => {
+            const current = currentStore[childSessionKey];
+            if (
+              !current ||
+              current.sessionId !== expectedSessionId ||
+              (current.lifecycleRunId !== expectedLifecycleRunId &&
+                current.lifecycleRunId !== resumeResult.runId &&
+                current.lifecycleRunId !== expectedAdmission.idempotencyKey)
+            )
+              return;
+            const finished = finishOwnerRecoveryAdmission(
+              current.subagentRecovery?.authority,
+              expectedAdmission,
+              "reconcile",
+            );
+            if (finished) {
+              current.subagentRecovery = { ...current.subagentRecovery, authority: finished };
+              current.updatedAt = finished.updatedAt;
+            }
+          });
+        }
+
+        if (admission && !resumeResult.resumed) {
+          result.reconciliationRuns.push({
+            runId,
+            childSessionKey,
+            reason: resumeResult.error ?? "recovery acknowledgement is unknown",
+          });
+          result.skipped++;
+          continue;
+        }
         if (resumeResult.resumed) {
           resumedSessionKeys.add(childSessionKey);
           // Only clear the aborted flag after confirmed successful resume.
           try {
-            await updateSessionStore(storePath, (currentStore) => {
-              const current = currentStore[childSessionKey];
-              if (current) {
-                current.abortedLastRun = false;
-                markSubagentRecoveryAttempt({
-                  entry: current,
-                  now: Date.now(),
-                  runId,
-                  attempt: recoveryGate.nextAttempt,
-                });
-                current.updatedAt = Date.now();
-                currentStore[childSessionKey] = current;
-              }
-            });
+            if (!admission)
+              await updateSessionStore(storePath, (currentStore) => {
+                const current = currentStore[childSessionKey];
+                if (
+                  current &&
+                  current.sessionId === expectedSessionId &&
+                  (current.lifecycleRunId === expectedLifecycleRunId ||
+                    current.lifecycleRunId === resumeResult.runId)
+                ) {
+                  current.abortedLastRun = false;
+                  if (recoveryGate.allowed)
+                    markSubagentRecoveryAttempt({
+                      entry: current,
+                      now: Date.now(),
+                      runId,
+                      attempt: recoveryGate.nextAttempt,
+                    });
+                  current.updatedAt = Date.now();
+                  currentStore[childSessionKey] = current;
+                }
+              });
           } catch (err) {
             log.warn(
               `resume succeeded but failed to update session store for ${childSessionKey}: ${String(err)}`,
@@ -368,12 +566,15 @@ export async function recoverOrphanedSubagentSessions(params: {
       } catch (err) {
         const error = formatErrorMessage(err);
         log.warn(`error processing orphaned session ${childSessionKey}: ${error}`);
-        result.failed++;
-        result.failedRuns.push({
-          runId,
-          childSessionKey,
-          error,
-        });
+        if (preserveRecoveryOwner) {
+          result.skipped++;
+          result.reconciliationRuns.push({ runId, childSessionKey, reason: error });
+        } else {
+          result.failed++;
+          result.failedRuns.push({ runId, childSessionKey, error });
+        }
+      } finally {
+        releaseRecoveryPermit?.();
       }
     }
   } catch (err) {
@@ -431,7 +632,7 @@ export function scheduleOrphanRecovery(params: {
         resumedSessionKeys,
       })
         .then((result) => {
-          if (result.failed > 0 && attempt < maxRetries) {
+          if ((result.failed > 0 || result.reconciliationRuns.length > 0) && attempt < maxRetries) {
             const nextDelay = delay * RETRY_BACKOFF_MULTIPLIER;
             log.info(
               `orphan recovery had ${result.failed} failure(s); retrying in ${nextDelay}ms (attempt ${attempt + 1}/${maxRetries})`,
@@ -449,7 +650,7 @@ export function scheduleOrphanRecovery(params: {
                 runId: run.runId,
                 childSessionKey: run.childSessionKey,
                 error: buildRecoveryFailureMessage({
-                  attempts,
+                  attempts: run.attempts ?? attempts,
                   error: run.error,
                 }),
               }),

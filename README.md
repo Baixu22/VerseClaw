@@ -36,6 +36,14 @@ Handoff becomes available when the session identity finishes loading. Pending si
 
 Conversations can initialize a Git repository, select an independent worktree, and restore its draft. `/storage` and **Settings → Storage** share a resource page for conversation files, process memory, and worktrees. [Usage and ownership](docs/dev/session-worktree-storage.md).
 
+Composer menus use opaque neutral surfaces in both themes, show model brand icons and complete model names, and identify linked worktrees in conversation status.
+
+Opening a conversation activates its owning workspace and restores its draft. Branch controls refresh the displayed checkout; related conversations expand under their source and appear once in the searchable session menu. [Session navigation](docs/dev/chat-worktree-session-navigation.md).
+
+Session lifecycle views replay raw v2 trajectory events through one assembler. Verifier completion reports route configured repair tasks to the lead for independent re-verification.
+
+Skill choices persist in the runtime configuration, and managed skills can be uninstalled from their details. Agent Dev reports collect normal chat and tool events and deduplicate token usage.
+
 **Chat, code, knowledge and agent execution in one desktop workspace.**
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [Русский](README.ru-RU.md)
@@ -65,7 +73,17 @@ This repository is more than a renderer wrapper. It contains the React UI, Elect
 
 The detailed module documentation is currently maintained in Simplified Chinese; code paths, API names and linked evidence are language-neutral. The root READMEs remain the multilingual entry points.
 
-Chat keeps the final reply visible alongside a collapsible process summary. Long file replacements preview both versions inside the conversation column; unbroken code wraps in the preview and only scrolls inside the diff after expansion. Command previews start at the latest output. Both support expansion; copying includes the complete retained content. The repository change strip shares the composer's centered width, and tool calls appear as compact status chips with their target and timing.
+Chat uses one text column without assistant avatars. Progress and final replies stay visible; execution details and passive tool cards start folded. The current tool retains its progress animation, while errors and approval requests remain directly accessible. Long file replacements preview both versions inside the conversation column; unbroken code wraps in the preview and only scrolls inside the diff after expansion. Command previews start at the latest output. Both support expansion; copying includes the complete retained content. The repository change strip shares the composer's centered width, and tool calls appear as compact status chips with their target and timing.
+
+Session status uses a single surface, with completed processes folded into history. Opening a process uses the same terminal view as the conversation, including output copying and scrolling that respects earlier lines being read. Matched tool calls and results share one disclosure; diagnostics stay at the end.
+
+The session environment appears after actual changes or activity. It groups changes, observed MCP/skill usage and workers into short previews with details on demand. Automatic expansion sits beside the conversation; manual opening uses a compact overlay. Closing the workspace preserves its tabs and selected content.
+
+Empty Chat keeps project and Git branch selection in one quiet row below the composer. Starter actions open through Quick start; branch search and switching reuse the existing Git controls.
+
+Composer model, knowledge and permission menus share a compact surface and the add menu's blur transition. Menus stay within the window, close when another opens, and support Escape and reduced motion.
+
+Choose a model directly from the composer. New chats start with your last available choice; existing chats retain their own model. Switching applies to subsequent messages. Agent defaults are managed in Settings.
 
 Pending runtime approvals replace the owning conversation's input area with the command, working directory and offered choices. The rest of the page stays usable; resolving the requests restores the original input, draft and attachments.
 
@@ -309,4 +327,9 @@ Changing the implicit main agent's model or name preserves its workspace inherit
 
 Search and filter the task list, then load further pages. Agents can suggest related tasks and decompose a goal into dependent tasks while retaining the parent goal and constraints. Cancelling a plan waits for in-flight effects to settle. Acceptance and recovery read receipts from the existing runtime owners.
 
-Conversation tasks are managed by the agent. Identified work appears in one task header above the conversation, with verified step progress and a hide/reopen control. The plain canvas keeps the input clear; a small changed-file entry appears below the composer only when files change. Branches and worktree controls remain in its details.
+Conversation tasks are managed by the agent. A running task docks just above the input — title, a short task ID you can copy, the current step and real step progress — and stays there until it finishes, then folds into a one-line receipt; its menu opens the Task Ledger, expands the steps or hides the dock without touching the task. The session's task scope is a quiet chip in the header instead of a strip over the transcript. The session status panel reads like a short key–value list: context usage, connectors in use, changes with a review action, and background workers and commands. A small changed-file entry appears below the composer only when files change; branches and worktree controls remain in its details.
+
+Recovery implementation and evidence: the opt-in execution writer persists tool lifecycle phases on TaskFlow, claims work before effects, and resumes only owner-authorized work. Both lifecycle and execution writers must explicitly select `taskflow`; defaults remain `legacy`. Unknown effects require reconciliation. Recovery follow-up fixes pending-delivery run ownership and startup recovery ordering; see the [follow-up verification](docs/dev/recovery-contract/FOLLOWUP-20261106.zh-CN.md). The [2026-11-05 evaluation](docs/dev/recovery-contract/FINAL-20261105.zh-CN.md) retains 60 live answers and 30 primary fault windows. Candidate outcome classification improves, while frozen latency gates return FAIL/NO-GO.
+
+Gated subagent recovery (`OPENCLAW_RECOVERY_AUTHORITY_MODE=authority`, with both writers selecting `taskflow`) commits its decision and budget before RPC and preserves unknown outcomes for reconciliation. Recovered tool events enter the current run subscription to update delivery and completion records. See the [recovery admission guide](docs/dev/recovery-contract/GA-READINESS-20261106.md).
+

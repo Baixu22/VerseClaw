@@ -16,6 +16,42 @@ vi.mock('react-i18next', () => ({
 }));
 
 describe('official Tool UI execution payloads', () => {
+  it('shares a bounded process output pane without interrupting a reader reviewing earlier output', () => {
+    const { rerender } = render(<Terminal id="process" command="pnpm test" status="running" stdout="first\n" fill truncated />);
+    const output = screen.getByTestId('terminal-output');
+    Object.defineProperties(output, {
+      scrollHeight: { configurable: true, value: 1000 },
+      clientHeight: { configurable: true, value: 200 },
+    });
+    rerender(<Terminal id="process" command="pnpm test" status="running" stdout="first\nsecond\n" fill truncated />);
+    expect(output.scrollTop).toBe(1000);
+    output.scrollTop = 20;
+    fireEvent.scroll(output);
+    rerender(<Terminal id="process" command="pnpm test" status="failed" exitCode={1} stdout="first\nsecond\nfailed\n" fill truncated />);
+    expect(output.scrollTop).toBe(20);
+    expect(screen.getByText('processPanel.status.failed')).toBeVisible();
+    expect(output).not.toContainElement(screen.getByText('toolUi.terminal.truncated'));
+    expect(screen.getByRole('button', { name: 'toolUi.terminal.copy' })).toBeEnabled();
+  });
+
+  it('folds passive records while failures and decisions stay visible', async () => {
+    render(<AgentInteractionRenderer compactProcess interactions={[
+      { type: 'terminal', id: 'ok', command: 'pnpm test', stdout: 'All tests passed', exitCode: 0 },
+      { type: 'terminal', id: 'failed', command: 'pnpm build', stderr: 'Build failed', exitCode: 1 },
+      { type: 'option-list', id: 'choose', title: 'Choose a target', options: [{ id: 'one', label: 'Target one' }] },
+    ]} />);
+    const details = screen.getByTestId('chat-tool-process-details');
+    expect(details).not.toHaveAttribute('open');
+    expect(screen.queryByText('All tests passed')).not.toBeInTheDocument();
+    expect(screen.getByText('Build failed')).toBeVisible();
+    expect(screen.getByText('Choose a target')).toBeVisible();
+    fireEvent.click(details.querySelector('summary')!);
+    await waitFor(() => expect(screen.getByText('All tests passed')).toBeVisible());
+    fireEvent.click(details.querySelector('summary')!);
+    expect(screen.getByText('All tests passed')).not.toBeVisible();
+    expect(screen.getByText('Build failed')).toBeVisible();
+  });
+
   it('follows the latest output without pulling a reader away from earlier lines', () => {
     const output = Array.from({ length: 30 }, (_, i) => `line ${i + 1}`).join('\n');
     const { rerender } = render(<Terminal id="follow-output" command="pnpm test" stdout={output} maxCollapsedLines={10} truncated />);

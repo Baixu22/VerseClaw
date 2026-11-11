@@ -1,0 +1,4 @@
+* -text
+# Preserve command runners' CRLF and blank final lines.
+validation/*.stdout.txt whitespace=blank-at-eol,space-before-tab,cr-at-eol,-blank-at-eof
+validation/*.stderr.txt whitespace=blank-at-eol,space-before-tab,cr-at-eol,-blank-at-eof

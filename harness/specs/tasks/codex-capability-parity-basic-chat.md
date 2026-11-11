@@ -46,7 +46,7 @@ expectedUserBehavior:
   - Context injected into model-visible messages is bounded, deterministic, and uses untrusted metadata semantics.
 requiredTests:
   - pnpm exec vitest run tests/unit/turn-ledger-recorder.test.ts
-  - pnpm exec vitest run tests/unit/chat-runtime-event-handlers.test.ts
+  - pnpm exec vitest run tests/unit/chat-event-dedupe.test.ts
   - pnpm exec vitest run tests/unit/chat-knowledge-scope.test.ts
   - pnpm exec vitest run tests/unit/task-ledger-service.test.ts
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.agents.config.ts src/agents/agent-tools.directory-listing.test.ts src/agents/sessions/tools/read.test.ts

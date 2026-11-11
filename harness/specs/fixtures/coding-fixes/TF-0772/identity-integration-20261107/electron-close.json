@@ -1,0 +1,33 @@
+{
+  "main": {
+    "pid": 40084,
+    "creationTime": 1794063536488
+  },
+  "closed": {
+    "mainExited": true,
+    "launcherExited": true,
+    "graceful": true,
+    "closeSettled": true,
+    "processes": [
+      {
+        "pid": 40084,
+        "creationTime": 1794063536488,
+        "status": "exited"
+      },
+      {
+        "pid": 42548,
+        "creationTime": 1794063547299,
+        "status": "exited"
+      },
+      {
+        "pid": 15196,
+        "creationTime": 1794063547790,
+        "status": "exited"
+      }
+    ],
+    "errors": []
+  },
+  "launcherPid": 34224,
+  "exitCode": 0,
+  "signalCode": null
+}

@@ -1,0 +1,877 @@
+{
+  "schema": "CodingMcpManagement/v1",
+  "driven_by": "agent",
+  "actor": "codex-coding-p2-01a1b07b",
+  "realHumanEvidence": false,
+  "runtime": "source",
+  "provider": "scripted-local",
+  "workspace": "D:\\ClawX\\.tmp\\coding-relay-01a1b4da\\verse-claw-e2e-run-8bJd3A\\verse-claw-e2e-user-data-x4UW51\\workspace",
+  "runtimeConfig": {
+    "path": "D:\\ClawX\\.tmp\\coding-relay-01a1b4da\\verse-claw-e2e-run-8bJd3A\\verse-claw-e2e-user-data-x4UW51\\openclaw-source-state\\openclaw.json",
+    "mcpServerIds": [
+      "delayed",
+      "slow",
+      "empty",
+      "fixture"
+    ],
+    "agents": {
+      "defaults": {
+        "model": {
+          "primary": "openai/mock-coder",
+          "fallbacks": []
+        },
+        "workspace": "D:\\ClawX\\.tmp\\coding-relay-01a1b4da\\verse-claw-e2e-run-8bJd3A\\verse-claw-e2e-user-data-x4UW51\\workspace",
+        "skipBootstrap": true,
+        "sandbox": {
+          "mode": "off",
+          "backend": "openshell",
+          "workspaceAccess": "none",
+          "scope": "session"
+        },
+        "maxConcurrent": 4,
+        "subagents": {
+          "maxConcurrent": 8,
+          "archiveAfterMinutes": 60
+        }
+      },
+      "list": [
+        {
+          "id": "main",
+          "default": true,
+          "sandbox": {
+            "mode": "off"
+          }
+        }
+      ]
+    }
+  },
+  "activeWorkspace": {
+    "id": "p2-mcp-workspace",
+    "name": "P2 MCP workspace",
+    "rootPath": "D:\\ClawX\\.tmp\\coding-relay-01a1b4da\\verse-claw-e2e-run-8bJd3A\\verse-claw-e2e-user-data-x4UW51\\workspace",
+    "agentId": "main",
+    "selectedAgentId": "main",
+    "activeSessionKey": "agent:main:dashboard:89eb069d-3cb7-40f2-b788-613946c4ab73",
+    "agentBindings": {
+      "main": {
+        "workspaceId": "p2-mcp-workspace",
+        "agentId": "main",
+        "sessionKey": "agent:main:dashboard:89eb069d-3cb7-40f2-b788-613946c4ab73"
+      }
+    },
+    "permissionMode": "fullAccess",
+    "createdAt": 1794063576234,
+    "updatedAt": 1794063612233,
+    "lastOpenedAt": 1794063576234,
+    "state": {},
+    "sessionStates": {
+      "agent:main:main": {
+        "chatFooter": {
+          "contextRangeVisible": true,
+          "tokenUsageVisible": true,
+          "workContextVisible": true
+        },
+        "draftInput": "",
+        "composerRunState": "idle",
+        "activeTopicId": null,
+        "knowledgeScope": "none",
+        "knowledgeMode": "suggest",
+        "artifactPanel": {
+          "open": false,
+          "expanded": false,
+          "tabs": []
+        },
+        "turnSummaryExpanded": {},
+        "turnSummaryStepDetailsExpanded": {}
+      },
+      "agent:main:dashboard:89eb069d-3cb7-40f2-b788-613946c4ab73": {}
+    },
+    "sessionFolders": [],
+    "sessionFolderAssignments": {}
+  },
+  "parent": {
+    "ok": true,
+    "key": "agent:main:dashboard:89eb069d-3cb7-40f2-b788-613946c4ab73",
+    "sessionId": "5ea413c1-3898-4be3-a0b5-8ead815e3013",
+    "entry": {
+      "sessionId": "5ea413c1-3898-4be3-a0b5-8ead815e3013",
+      "sessionFile": "D:\\ClawX\\.tmp\\coding-relay-01a1b4da\\verse-claw-e2e-run-8bJd3A\\verse-claw-e2e-user-data-x4UW51\\openclaw-source-state\\agents\\main\\sessions\\5ea413c1-3898-4be3-a0b5-8ead815e3013.jsonl",
+      "updatedAt": 1794063612129,
+      "label": "P2 bound session"
+    },
+    "runStarted": false
+  },
+  "discovery": [
+    {
+      "success": true,
+      "serverId": "fixture",
+      "tools": [
+        {
+          "name": "echo",
+          "description": "Echo one message",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "additionalProperties": false
+          },
+          "serverId": "fixture"
+        },
+        {
+          "name": "fail",
+          "description": "Return a tool failure",
+          "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "serverId": "fixture"
+        }
+      ],
+      "status": "connected",
+      "catalogRevision": "81fc0bf9d00a373fd4779c5239b44edbf78648eb15823283079f683a4aed2b19",
+      "sessionGeneration": "5ea413c1-3898-4be3-a0b5-8ead815e3013",
+      "latencyMs": 3213
+    }
+  ],
+  "call": {
+    "success": true,
+    "serverId": "fixture",
+    "toolName": "echo",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "main-sdk-round-trip"
+        }
+      ],
+      "isError": false
+    }
+  },
+  "heartbeat": {
+    "success": true,
+    "serverId": "fixture",
+    "status": "connected",
+    "latencyMs": 551,
+    "server": {
+      "id": "fixture",
+      "name": "Fixture",
+      "localAddress": "clawx://mcp/fixture",
+      "transport": "http",
+      "canonicalTransport": "streamable-http",
+      "url": "http://127.0.0.1:61514/mcp",
+      "enabled": true,
+      "scope": "global",
+      "networkPolicy": "localOnly",
+      "runtimeStatus": "connected",
+      "toolCount": 2,
+      "createdAt": 1794063576459,
+      "updatedAt": 1794063616919,
+      "lastHeartbeatAt": 1794063616918,
+      "lastHeartbeatMs": 551
+    }
+  },
+  "delayedCall": {
+    "success": true,
+    "serverId": "delayed",
+    "toolName": "echo",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "six-second-effect"
+        }
+      ],
+      "isError": false
+    }
+  },
+  "delayedCallMs": 6531,
+  "empty": {
+    "success": true,
+    "serverId": "empty",
+    "tools": [],
+    "status": "connected",
+    "catalogRevision": "81fc0bf9d00a373fd4779c5239b44edbf78648eb15823283079f683a4aed2b19",
+    "sessionGeneration": "5ea413c1-3898-4be3-a0b5-8ead815e3013",
+    "latencyMs": 238
+  },
+  "timeout": {
+    "success": false,
+    "serverId": "slow",
+    "error": "McpError: MCP error -32001: Request timed out",
+    "errorCode": "TIMEOUT",
+    "status": "error",
+    "tools": []
+  },
+  "hostNative": {
+    "success": true,
+    "serverId": "clawx-git",
+    "status": "registered",
+    "latencyMs": 0,
+    "message": "Verse Claw Git tools are host-native: served by the host Git service, not an MCP server.",
+    "server": {
+      "id": "clawx-git",
+      "name": "Verse Claw Git",
+      "localAddress": "clawx://mcp/clawx-git",
+      "transport": "stdio",
+      "canonicalTransport": "stdio",
+      "enabled": true,
+      "scope": "workspace",
+      "ownerId": "*",
+      "networkPolicy": "disabled",
+      "runtimeStatus": "registered",
+      "toolCount": 36,
+      "createdAt": 1,
+      "updatedAt": 1
+    }
+  },
+  "modelRun": {
+    "runId": "p2-model-1794063625580",
+    "sessionKey": "agent:main:dashboard:89eb069d-3cb7-40f2-b788-613946c4ab73",
+    "status": "accepted",
+    "acceptedAt": 1794063625674
+  },
+  "modelTerminal": {
+    "runId": "p2-model-1794063625580",
+    "status": "ok",
+    "startedAt": 1794063630930,
+    "endedAt": 1794063631379,
+    "stopReason": "stop",
+    "livenessState": "working"
+  },
+  "configEffects": [
+    {
+      "surface": "management",
+      "result": {
+        "success": true,
+        "serverId": "fixture",
+        "toolName": "echo",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "after-effect-management"
+            }
+          ],
+          "isError": false
+        }
+      },
+      "applied": "after-effect-management",
+      "thinkingDefault": "medium"
+    },
+    {
+      "surface": "tools.invoke",
+      "result": {
+        "ok": true,
+        "toolName": "fixture__echo",
+        "output": {
+          "content": [
+            {
+              "type": "text",
+              "text": "after-effect-invoke"
+            }
+          ],
+          "details": {
+            "mcpServer": "fixture",
+            "mcpTool": "echo"
+          }
+        },
+        "source": "mcp"
+      },
+      "applied": "after-effect-invoke",
+      "thinkingDefault": "high"
+    }
+  ],
+  "denials": [
+    {
+      "success": false,
+      "serverId": "fixture",
+      "error": "data/message must be string",
+      "errorCode": "VALIDATION",
+      "toolName": "echo",
+      "blocked": true,
+      "reason": "data/message must be string"
+    },
+    {
+      "success": false,
+      "serverId": "fixture",
+      "toolName": "echo",
+      "blocked": true,
+      "reason": "MCP session is not bound to the active workspace",
+      "error": "MCP session is not bound to the active workspace",
+      "errorCode": "VALIDATION"
+    },
+    {
+      "success": false,
+      "serverId": "fixture",
+      "toolName": "echo",
+      "blocked": true,
+      "reason": "MCP request differs from the active workspace or assistant",
+      "error": "MCP request differs from the active workspace or assistant",
+      "errorCode": "VALIDATION"
+    },
+    {
+      "success": false,
+      "serverId": "fixture",
+      "toolName": "echo",
+      "blocked": true,
+      "reason": "The bound MCP session generation changed",
+      "error": "The bound MCP session generation changed",
+      "errorCode": "VALIDATION"
+    },
+    {
+      "success": false,
+      "serverId": "missing",
+      "tools": [],
+      "status": "error",
+      "error": "MCP server \"missing\" not found",
+      "errorCode": "INTERNAL"
+    }
+  ],
+  "readOnly": {
+    "success": false,
+    "blocked": true,
+    "error": "Read-only mode does not allow Gateway mutations",
+    "serverId": "fixture",
+    "toolName": "echo"
+  },
+  "waiting": {
+    "success": false,
+    "blocked": true,
+    "approvalRequired": true,
+    "approval": {
+      "id": "approval-mw6j6183-21lso3",
+      "workspaceId": "p2-mcp-workspace",
+      "sessionKey": "agent:main:dashboard:89eb069d-3cb7-40f2-b788-613946c4ab73",
+      "runId": null,
+      "mode": "acceptEdits",
+      "source": "gateway",
+      "requestedAt": 1794063636147,
+      "status": "pending",
+      "risk": "destructive",
+      "command": "mcp.callTool",
+      "requestHash": "mcp.callTool:{\"agentId\":\"main\",\"args\":{\"message\":\"approved-once\"},\"expectedSessionGeneration\":\"5ea413c1-3898-4be3-a0b5-8ead815e3013\",\"serverId\":\"fixture\",\"sessionKey\":\"agent:main:dashboard:89eb069d-3cb7-40f2-b788-613946c4ab73\",\"toolName\":\"echo\",\"workspaceDir\":\"D:\\\\ClawX\\\\.tmp\\\\coding-relay-01a1b4da\\\\verse-claw-e2e-run-8bJd3A\\\\verse-claw-e2e-user-data-x4UW51\\\\workspace\",\"workspaceId\":\"p2-mcp-workspace\"}",
+      "paramsPreview": "{\"agentId\":\"main\",\"args\":{\"message\":\"approved-once\"},\"expectedSessionGeneration\":\"5ea413c1-3898-4be3-a0b5-8ead815e3013\",\"serverId\":\"fixture\",\"sessionKey\":\"agent:main:dashboard:89eb069d-3cb7-40f2-b788-613946c4ab73\",\"toolName\":\"echo\",\"workspaceDir\":\"D:\\\\ClawX\\\\.tmp\\\\coding-relay-01a1b4da\\\\verse-claw-e2e-run-8bJd3A\\\\verse-claw-e2e-user-data-x4UW51\\\\workspace\",\"workspaceId\":\"p2-mcp-workspace\"}",
+      "reason": "Gateway mutations require approval"
+    },
+    "error": "Gateway mutations require approval",
+    "serverId": "fixture",
+    "toolName": "echo",
+    "approvalId": "approval-mw6j6183-21lso3"
+  },
+  "approved": {
+    "success": true,
+    "serverId": "fixture",
+    "toolName": "echo",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "approved-once"
+        }
+      ],
+      "isError": false
+    }
+  },
+  "consumed": {
+    "success": false,
+    "blocked": true,
+    "approvalRequired": true,
+    "approval": {
+      "id": "approval-mw6j61jg-8t8iy0",
+      "workspaceId": "p2-mcp-workspace",
+      "sessionKey": "agent:main:dashboard:89eb069d-3cb7-40f2-b788-613946c4ab73",
+      "runId": null,
+      "mode": "acceptEdits",
+      "source": "gateway",
+      "requestedAt": 1794063636556,
+      "status": "pending",
+      "risk": "destructive",
+      "command": "mcp.callTool",
+      "requestHash": "mcp.callTool:{\"agentId\":\"main\",\"args\":{\"message\":\"approved-once\"},\"expectedSessionGeneration\":\"5ea413c1-3898-4be3-a0b5-8ead815e3013\",\"serverId\":\"fixture\",\"sessionKey\":\"agent:main:dashboard:89eb069d-3cb7-40f2-b788-613946c4ab73\",\"toolName\":\"echo\",\"workspaceDir\":\"D:\\\\ClawX\\\\.tmp\\\\coding-relay-01a1b4da\\\\verse-claw-e2e-run-8bJd3A\\\\verse-claw-e2e-user-data-x4UW51\\\\workspace\",\"workspaceId\":\"p2-mcp-workspace\"}",
+      "paramsPreview": "{\"agentId\":\"main\",\"args\":{\"message\":\"approved-once\"},\"expectedSessionGeneration\":\"5ea413c1-3898-4be3-a0b5-8ead815e3013\",\"serverId\":\"fixture\",\"sessionKey\":\"agent:main:dashboard:89eb069d-3cb7-40f2-b788-613946c4ab73\",\"toolName\":\"echo\",\"workspaceDir\":\"D:\\\\ClawX\\\\.tmp\\\\coding-relay-01a1b4da\\\\verse-claw-e2e-run-8bJd3A\\\\verse-claw-e2e-user-data-x4UW51\\\\workspace\",\"workspaceId\":\"p2-mcp-workspace\"}",
+      "reason": "Gateway mutations require approval"
+    },
+    "error": "Gateway mutations require approval",
+    "serverId": "fixture",
+    "toolName": "echo",
+    "approvalId": "approval-mw6j61jg-8t8iy0"
+  },
+  "staleCatalog": {
+    "success": false,
+    "serverId": "fixture",
+    "error": "MCP catalog revision changed; list tools again",
+    "errorCode": "VALIDATION",
+    "toolName": "echo",
+    "blocked": true,
+    "reason": "MCP catalog revision changed; list tools again"
+  },
+  "restoredCatalogs": [
+    {
+      "success": true,
+      "serverId": "fixture",
+      "tools": [
+        {
+          "name": "fail",
+          "description": "Return a tool failure",
+          "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "serverId": "fixture"
+        }
+      ],
+      "status": "connected",
+      "catalogRevision": "f65bbd32afdaeeb08b8caea5eb739a985d03fa0e5df5fe119cc7c68677664ae3",
+      "sessionGeneration": "5ea413c1-3898-4be3-a0b5-8ead815e3013",
+      "latencyMs": 246
+    },
+    {
+      "success": true,
+      "serverId": "fixture",
+      "tools": [
+        {
+          "name": "echo",
+          "description": "Echo one message",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "additionalProperties": false
+          },
+          "serverId": "fixture"
+        },
+        {
+          "name": "fail",
+          "description": "Return a tool failure",
+          "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "serverId": "fixture"
+        }
+      ],
+      "status": "connected",
+      "catalogRevision": "a2609646af9e7fdd4e542bbaed5ef70cd12ca3dd4d343010f2a1fad78b5f44eb",
+      "sessionGeneration": "5ea413c1-3898-4be3-a0b5-8ead815e3013",
+      "latencyMs": 2293
+    }
+  ],
+  "networkDenied": {
+    "success": false,
+    "serverId": "fixture",
+    "toolName": "echo",
+    "blocked": true,
+    "reason": "MCP network policy is disabled; remote MCP I/O is blocked",
+    "error": "MCP network policy is disabled; remote MCP I/O is blocked",
+    "errorCode": "VALIDATION"
+  },
+  "status": "pass",
+  "requests": {
+    "normal": [
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "tools/call",
+        "params": {
+          "name": "echo",
+          "arguments": {
+            "message": "main-sdk-round-trip"
+          }
+        }
+      },
+      {
+        "method": "ping"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "tools/call",
+        "params": {
+          "name": "echo",
+          "arguments": {
+            "message": "model-sdk-round-trip"
+          }
+        }
+      },
+      {
+        "method": "tools/call",
+        "params": {
+          "name": "echo",
+          "arguments": {
+            "message": "after-effect-management"
+          }
+        }
+      },
+      {
+        "method": "tools/call",
+        "params": {
+          "name": "echo",
+          "arguments": {
+            "message": "after-effect-invoke"
+          }
+        }
+      },
+      {
+        "method": "tools/call",
+        "params": {
+          "name": "echo",
+          "arguments": {
+            "message": "approved-once"
+          }
+        }
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      }
+    ],
+    "empty": [
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      }
+    ],
+    "slow": [
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      }
+    ],
+    "delayed": [
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "tools/call",
+        "params": {
+          "name": "echo",
+          "arguments": {
+            "message": "six-second-effect"
+          }
+        }
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      },
+      {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "openclaw-bundle-mcp",
+            "version": "0.0.0"
+          }
+        }
+      },
+      {
+        "method": "notifications/initialized"
+      },
+      {
+        "method": "tools/list"
+      }
+    ]
+  },
+  "providerLog": [
+    {
+      "turn": "[Sat 2026-11-07 23:00 GMT+8] P2-MODEL: call fixture__echo wi",
+      "toolResults": {},
+      "issued": "sdk_echo"
+    },
+    {
+      "turn": "[Sat 2026-11-07 23:00 GMT+8] P2-MODEL: call fixture__echo wi",
+      "toolResults": {
+        "sdkecho": "model-sdk-round-trip"
+      },
+      "issued": "text:P2-MODEL-DONE"
+    }
+  ],
+  "providerAnomalies": [],
+  "wrapperPid": 21684,
+  "gatewayAfterStop": {
+    "state": "stopped",
+    "port": 61576,
+    "reconnectAttempts": 0
+  },
+  "appCleanup": {
+    "mainExited": true,
+    "launcherExited": true,
+    "graceful": false,
+    "closeSettled": false,
+    "processes": [
+      {
+        "pid": 29768,
+        "creationTime": 1794063569260,
+        "status": "exited"
+      },
+      {
+        "pid": 30168,
+        "creationTime": 1794063575800,
+        "status": "exited"
+      },
+      {
+        "pid": 5412,
+        "creationTime": 1794063575999,
+        "status": "exited"
+      }
+    ],
+    "errors": [
+      "Error: Playwright close after launcher exit timed out after 2000ms"
+    ]
+  },
+  "repeatedAppCleanup": {
+    "mainExited": true,
+    "launcherExited": true,
+    "graceful": true,
+    "closeSettled": true,
+    "processes": [
+      {
+        "pid": 29768,
+        "creationTime": 1794063569260,
+        "status": "exited"
+      },
+      {
+        "pid": 30168,
+        "creationTime": 1794063575800,
+        "status": "exited"
+      },
+      {
+        "pid": 5412,
+        "creationTime": 1794063575999,
+        "status": "exited"
+      }
+    ],
+    "errors": [],
+    "snapshotError": "Error: electronApplication.evaluate: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> \"D:\\ClawX\\.tmp\\coding-relay-01a1b4da\\electron-40.8.4\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\ClawX\\.tmp\\coding-relay-01a1b4da\\verse-claw-e2e-run-8bJd3A\\verse-claw-e2e-user-data-x4UW51\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"D:\\tmp\\coding-relay-01a1b425\\p2-private\\dist-electron\\main\\index.js\" \n<launched> pid=21684\n[pid=21684][out] \n[pid=21684][err] Debugger listening on ws://127.0.0.1:61521/24e62565-3085-4e3e-b6ce-b315262b38dd\n[pid=21684][err] For help, see: https://nodejs.org/en/docs/inspector\n[pid=21684][err] Debugger attached.\n[pid=21684][out] [2026-11-07T14:59:35.739Z] [DEBUG] [extensions] No clawx-extensions.json found, loading all builtin extensions\n[pid=21684][out] [2026-11-07T14:59:35.742Z] [DEBUG] [extensions] Registered extension \"builtin/clawhub-marketplace\"\n[pid=21684][out] [2026-11-07T14:59:35.742Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/clawhub-marketplace\"\n[pid=21684][out] [2026-11-07T14:59:35.742Z] [DEBUG] [extensions] Registered extension \"builtin/diagnostics\"\n[pid=21684][out] [2026-11-07T14:59:35.742Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/diagnostics\"\n[pid=21684][err] (node:29768) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n[pid=21684][err] (Use `electron --trace-warnings ...` to show where the warning was created)\n[pid=21684][err] (node:29768) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\n[pid=21684][err] \n[pid=21684][err] DevTools listening on ws://127.0.0.1:61520/devtools/browser/89d70660-256e-40c2-b01b-8bba126b7463\n[pid=21684][out] [2026-11-07T14:59:35.844Z] [INFO] === Verse Claw Application Starting ===\n[pid=21684][out] [2026-11-07T14:59:35.883Z] [INFO] [efficiency-sampler] started {\"intervalMs\":5000,\"maxSamples\":720}\n[pid=21684][out] [2026-11-07T14:59:35.900Z] [INFO] [efficiency] runtime efficiency sampling started {\"intervalMs\":5000,\"platform\":\"win32\"}\n[pid=21684][err] [29768:1107/225935.906:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\n[pid=21684][out] [2026-11-07T14:59:35.947Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n[pid=21684][out] [2026-11-07T14:59:35.947Z] [INFO] [ResourceTracker] Started heartbeat interval\n[pid=21684][out] [2026-11-07T14:59:35.947Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=29768, ppid=21684\n[pid=21684][out] [2026-11-07T14:59:35.947Z] [INFO] Running in E2E mode: startup side effects minimized\n[pid=21684][out] [2026-11-07T14:59:35.985Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":1}\n[pid=21684][err] [2026-11-07T14:59:35.992Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[pid=21684][err] [2026-11-07T14:59:35.992Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[pid=21684][err] [2026-11-07T14:59:35.992Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[pid=21684][err] [2026-11-07T14:59:35.992Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n[pid=21684][out] [2026-11-07T14:59:36.026Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n[pid=21684][out] [2026-11-07T14:59:36.027Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n[pid=21684][err] [29768:1107/225936.037:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\n[pid=21684][err] [29768:1107/225936.037:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\n[pid=21684][out] [2026-11-07T14:59:36.209Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n[pid=21684][out] [2026-11-07T14:59:36.210Z] [INFO] Gateway auto-start skipped in E2E mode\n[pid=21684][err] [2026-11-07T14:59:36.211Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[pid=21684][err] [2026-11-07T14:59:36.211Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[pid=21684][err] [2026-11-07T14:59:36.211Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[pid=21684][err] [2026-11-07T14:59:36.211Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n[pid=21684][out] [2026-11-07T14:59:36.285Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\ClawX\\.tmp\\coding-relay-01a1b4da\\verse-claw-e2e-run-8bJd3A\\verse-claw-e2e-user-data-x4UW51\\workspace\\.verse-claw\\harness\n[pid=21684][out] [2026-11-07T14:59:36.645Z] [INFO] [provider-sync] Seeded provider account \"openai\" from openclaw.json\n[pid=21684][out] [2026-11-07T14:59:37.138Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)\n[pid=21684][out] [2026-11-07T14:59:37.139Z] [INFO] Gateway start requested (port=61576)\n[pid=21684][out] [2026-11-07T14:59:37.180Z] [DEBUG] Device identity loaded (deviceId=7e567fcb966bf7dc7a66f8006632447f50ec503b0b541444eeb26207b69d78b1)\n[pid=21684][out] [2026-11-07T14:59:37.180Z] [DEBUG] Gateway state changed: stopped -> starting\n[pid=21684][out] [2026-11-07T14:59:37.599Z] [DEBUG] Checking for existing Gateway...\n[pid=21684][err] (node:29768) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n[pid=21684][out] [2026-11-07T14:59:37.925Z] [DEBUG] No existing Gateway found, starting new process...\n[pid=21684][out] [2026-11-07T14:59:37.963Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n[pid=21684][err] [2026-11-07T14:59:37.984Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n[pid=21684][out] [2026-11-07T14:59:37.988Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":1,\"providerEnvMs\":10,\"channelStartupPolicyMs\":3,\"uvEnvMs\":15,\"mcpEnvMs\":5,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":1,\"totalMs\":54,\"maintenance\":{},\"configuredChannelCount\":0}\n[pid=21684][out] [2026-11-07T14:59:37.989Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=61576, entry=\"D:\\tmp\\coding-relay-01a1b425\\p2-private\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 61576 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\tmp\\coding-relay-01a1b425\\p2-private\\openclaw_runtime\", bundledBin=no, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n[pid=21684][out] [2026-11-07T14:59:38.052Z] [INFO] Gateway process started (pid=48724)\n[pid=21684][out] [2026-11-07T14:59:38.052Z] [DEBUG] Gateway manager now owns process pid=48724\n[pid=21684][err] [2026-11-07T14:59:38.390Z] [WARN] [Gateway stderr] (node:48724) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n[pid=21684][err] [2026-11-07T14:59:38.391Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n[pid=21684][out] [2026-11-07T14:59:40.300Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n[pid=21684][out] [2026-11-07T14:59:42.483Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n[pid=21684][out] [2026-11-07T14:59:44.677Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n[pid=21684][out] [2026-11-07T14:59:45.004Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n[pid=21684][out] [2026-11-07T14:59:46.810Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)\n[pid=21684][out] [2026-11-07T14:59:48.960Z] [DEBUG] Still waiting for Gateway... (attempt 51/2400)\n[pid=21684][out] [2026-11-07T14:59:51.130Z] [DEBUG] Still waiting for Gateway... (attempt 61/2400)\n[pid=21684][out] [2026-11-07T14:59:52.978Z] [DEBUG] [Gateway stderr] (node:48724) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n[pid=21684][err] [2026-11-07T14:59:52.978Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n[pid=21684][out] [2026-11-07T14:59:53.279Z] [DEBUG] Still waiting for Gateway... (attempt 71/2400)\n[pid=21684][out] [2026-11-07T14:59:59.287Z] [DEBUG] Gateway ready after 78 attempt(s)\n[pid=21684][out] [2026-11-07T14:59:59.288Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:61576/ws)\n[pid=21684][err] [2026-11-07T14:59:59.346Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=38cb24c2-5774-4a46-b55b-18826b35da25 peer=127.0.0.1:62311->127.0.0.1:61576 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:61576 ua=n/a code=1006 reason=n/a\u001b[39m\n[pid=21684][err] [2026-11-07T14:59:59.351Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=01a35d01-b538-4aa5-b4c6-9ebee305fbed peer=127.0.0.1:65473->127.0.0.1:61576 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:61576 ua=n/a code=1006 reason=n/a\u001b[39m\n[pid=21684][out] [2026-11-07T14:59:59.359Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n[pid=21684][out] [2026-11-07T14:59:59.360Z] [DEBUG] Received connect.challenge, sending handshake\n[pid=21684][out] [2026-11-07T14:59:59.360Z] [DEBUG] Sending connect handshake with challenge nonce\n[pid=21684][err] [2026-11-07T14:59:59.373Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=2294b3bc-f203-429c-9898-ae02a7090be4 peer=127.0.0.1:62314->127.0.0.1:61576 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:61576 ua=n/a code=1006 reason=n/a\u001b[39m\n[pid=21684][out] [2026-11-07T14:59:59.465Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:61576/ws)\n[pid=21684][err] [2026-11-07T14:59:59.466Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n[pid=21684][out] [2026-11-07T15:00:04.299Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n[pid=21684][out] [2026-11-07T15:00:04.299Z] [DEBUG] Received connect.challenge, sending handshake\n[pid=21684][out] [2026-11-07T15:00:04.300Z] [DEBUG] Sending connect handshake with challenge nonce\n[pid=21684][out] [2026-11-07T15:00:05.050Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n[pid=21684][out] [2026-11-07T15:00:05.050Z] [DEBUG] Gateway state changed: starting -> running\n[pid=21684][out] [2026-11-07T15:00:05.059Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n[pid=21684][out] [2026-11-07T15:00:05.063Z] [INFO] [metric] gateway.startup {\"configSyncMs\":453,\"spawnToReadyMs\":21235,\"readyToConnectMs\":5774,\"totalMs\":27462}\n[pid=21684][err] [2026-11-07T15:00:15.241Z] [WARN] [Gateway stderr] \u001b[34m[bundle-mcp]\u001b[39m \u001b[33mfailed to start server \"slow\" (http://127.0.0.1:61516/mcp): McpError: MCP error -32001: Request timed out\u001b[39m\n[pid=21684][err] [2026-11-07T15:00:26.373Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\ClawX\\.tmp\\coding-relay-01a1b4da\\verse-claw-e2e-run-8bJd3A\\verse-claw-e2e-user-data-x4UW51\\openclaw-source-state\\plugin-skills\\browser-automation\" → \"D:\\tmp\\coding-relay-01a1b425\\p2-private\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation\": Error: EPERM: operation not permitted, symlink 'D:\\tmp\\coding-relay-01a1b425\\p2-private\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation' -> 'D:\\ClawX\\.tmp\\coding-relay-01a1b4da\\verse-claw-e2e-run-8bJd3A\\verse-claw-e2e-user-data-x4UW51\\openclaw-source-state\\plugin-skills\\browser-automation'\u001b[39m\n[pid=21684][err] [2026-11-07T15:00:26.379Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\ClawX\\.tmp\\coding-relay-01a1b4da\\verse-claw-e2e-run-8bJd3A\\verse-claw-e2e-user-data-x4UW51\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff\" → \"D:\\tmp\\coding-relay-01a1b425\\p2-private\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff\": Error: EPERM: operation not permitted, symlink 'D:\\tmp\\coding-relay-01a1b425\\p2-private\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff' -> 'D:\\ClawX\\.tmp\\coding-relay-01a1b4da\\verse-claw-e2e-run-8bJd3A\\verse-claw-e2e-user-data-x4UW51\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff'\u001b[39m\n[pid=21684][err] [2026-11-07T15:00:44.879Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[pid=21684][err] [2026-11-07T15:00:44.880Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[pid=21684][err] [2026-11-07T15:00:44.881Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[pid=21684][err] [2026-11-07T15:00:44.881Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n[pid=21684][out] [2026-11-07T15:00:54.838Z] [INFO] Gateway stop requested\n[pid=21684][out] [2026-11-07T15:00:54.839Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n[pid=21684][out] [2026-11-07T15:00:54.844Z] [INFO] Sending kill to Gateway process (pid=48724)\n[pid=21684][err] [2026-11-07T15:00:54.856Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n[pid=21684][out] [2026-11-07T15:00:54.859Z] [DEBUG] Gateway state changed: running -> stopped\n[pid=21684][out] [2026-11-07T15:00:54.978Z] [INFO] Gateway process exited (code=1, expected=yes)\n[pid=21684][out] [2026-11-07T15:00:54.980Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n[pid=21684][out] [2026-11-07T15:00:55.240Z] [INFO] Gateway stop requested\n[pid=21684][out] [2026-11-07T15:00:55.241Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (stop)"
+  },
+  "wrapperExitCode": null,
+  "wrapperSignalCode": "SIGKILL",
+  "endpointCleanup": [
+    {
+      "listening": false,
+      "sessions": 0,
+      "connections": 0
+    },
+    {
+      "listening": false,
+      "sessions": 0,
+      "connections": 0
+    },
+    {
+      "listening": false,
+      "sessions": 0,
+      "connections": 0
+    },
+    {
+      "listening": false,
+      "sessions": 0,
+      "connections": 0
+    }
+  ]
+}

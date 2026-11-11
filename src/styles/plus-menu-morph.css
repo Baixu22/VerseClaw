@@ -1,4 +1,4 @@
-/* Compact composer add button that expands from its lower-right anchor. */
+/* Compact composer add button that expands from its lower-left anchor. */
 .pm-morph-slot {
   position: relative;
   display: inline-block;
@@ -13,15 +13,15 @@
   bottom: 0;
   width: 32px;
   height: 32px;
-  border: 1px solid var(--pm-border, var(--color-border));
+  border: 0;
   border-radius: var(--pm-r-closed);
   overflow: hidden;
   z-index: var(--z-dropdown);
   transform-origin: left bottom;
   will-change: width, height, border-radius;
-  background: var(--pm-surface, var(--color-background-elevated-primary));
+  background: var(--pm-surface, var(--color-background-control-panel));
   color: var(--pm-ink, var(--color-text-foreground));
-  box-shadow: var(--pm-shadow, var(--shadow-sm));
+  box-shadow: 0 0 0 1px var(--pm-border, var(--color-border)), var(--pm-shadow, var(--shadow-sm));
   transition:
     width var(--pm-close-dur) var(--pm-close-ease),
     height var(--pm-close-dur) var(--pm-close-ease),

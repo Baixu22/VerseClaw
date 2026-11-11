@@ -104,7 +104,8 @@ export function ChatToolbar({
   const [memoryInjectionOpen, setMemoryInjectionOpen] = useState(false);
   const openWorkspacePanel = useArtifactPanel((state) => state.openWorkspacePanel);
   const panelOpen = useArtifactPanel((state) => state.open);
-  const closePanel = useArtifactPanel((state) => state.close);
+  const togglePanel = useArtifactPanel((state) => state.toggle);
+  const hasPanelTabs = useArtifactPanel((state) => state.tabs.length > 0);
   const { t } = useTranslation('chat');
   const currentAgent = useMemo(
     () => (agents ?? []).find((agent) => agent.id === currentAgentId) ?? null,
@@ -169,7 +170,8 @@ export function ChatToolbar({
                 'h-8 w-8 hover:bg-foreground/5 hover:text-foreground',
                 browserActive && 'bg-foreground/10 text-foreground',
               )}
-              onClick={() => (browserActive ? closePanel() : openWorkspacePanel({ panel: 'files' }))}
+              aria-expanded={browserActive}
+              onClick={() => (browserActive || hasPanelTabs ? togglePanel() : openWorkspacePanel({ panel: 'files' }))}
               disabled={!currentAgent?.workspace}
               aria-label={t('toolbar.workspace')}
             >

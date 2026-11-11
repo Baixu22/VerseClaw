@@ -1,4 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
+import { spawnSync } from 'node:child_process';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { projectTaskLoopCodingRun } from '../../shared/types/coding-run';
 import {
   createCodingRunView,
   parseCodingRunJsonl,
@@ -19,6 +24,14 @@ const sessionKey = 'session-a' as SessionKey;
 const secondSessionKey = 'session-b' as SessionKey;
 const taskId = 'task-root-a' as TaskId;
 const scope: RunScope = { workspaceId, projectId, sessionKey };
+const cliRoots: string[] = [];
+afterEach(() => { for (const root of cliRoots.splice(0)) rmSync(root, { recursive: true, force: true }); });
+
+function cli(input: string) {
+  const root = mkdtempSync(join(tmpdir(), 'coding-run-cli-')); cliRoots.push(root);
+  const file = join(root, 'export.jsonl'); writeFileSync(file, input);
+  return spawnSync(process.execPath, ['scripts/coding-run-summary.mjs', file], { cwd: process.cwd(), encoding: 'utf8', windowsHide: true, timeout: 20_000 });
+}
 
 function scopedRun(runId: string, runScope: RunScope = scope): ScopedRunId {
   return { runId: runId as ScopedRunId['runId'], scope: runScope };
@@ -29,6 +42,63 @@ function view(input: Partial<Parameters<typeof createCodingRunView>[0]> & { codi
 }
 
 describe('CodingRun read-only contract', () => {
+  it.each([
+    ['complete', true, 'completed'], ['complete', false, 'unavailable'],
+    ['cancelled', false, 'aborted'], ['aborted', false, 'aborted'], ['error', false, 'error'], ['blocked', false, 'unavailable'],
+  ] as const)('runs the real CLI for Task Loop %s (gate=%s) without inventing completion', (status, gate, expected) => {
+    const projection = projectTaskLoopCodingRun({ loopRunId: 'loop', phase: 'verify', status,
+      ...(gate ? { evidenceGate: { status: 'pass' } } : {}), testsRun: ['pnpm test'] });
+    const jsonl = serializeCodingRunJsonl(projection.codingRun, projection.events);
+    expect(parseCodingRunJsonl(jsonl).status).toBe('ok');
+    const result = cli(jsonl);
+    expect(result.status, result.stderr).toBe(0);
+    expect(JSON.parse(result.stdout).finalStatus).toBe(expected);
+    expect(projection.codingRun.completion?.completionAuthority).not.toBe('task-ledger');
+  });
+
+  it.each(['cross-run', 'empty-scope', 'numeric-run', 'bad-completion', 'bad-event', 'bad-iteration', 'bad-sequence', 'bad-version'])(
+    'rejects %s in the actual CLI', (kind) => {
+      const projection = projectTaskLoopCodingRun({ loopRunId: 'negative', phase: 'verify', status: 'complete', evidenceGate: { status: 'pass' } });
+      const rows = serializeCodingRunJsonl(projection.codingRun, projection.events).split('\n').map((line) => JSON.parse(line));
+      if (kind === 'cross-run') rows[2].payload.codingRunId = 'different-run';
+      if (kind === 'empty-scope') rows[0].payload.scope = {};
+      if (kind === 'numeric-run') rows[0].payload.runIds = [42];
+      if (kind === 'bad-completion') rows[0].payload.completion.taskStatus = 'invented';
+      if (kind === 'bad-event') rows[2].payload.status = 'invented';
+      if (kind === 'bad-iteration') rows[1].payload.iteration = -1;
+      if (kind === 'bad-sequence') rows[1].sequence = 9;
+      if (kind === 'bad-version') rows[0].schema = 'coding-run/v2';
+      const result = cli(rows.map((row) => JSON.stringify(row)).join('\n'));
+      expect(result.status).toBe(1);
+      expect(result.stdout).toBe('');
+      expect(JSON.parse(result.stderr)).toMatchObject({ status: 'error' });
+    },
+  );
+
+  it('round-trips optional loop and run warnings when omitted', () => {
+    const jsonl = serializeCodingRunJsonl(view({ codingRunId: 'optional' }), [
+      { type: 'run', codingRunId: 'optional', event: 'projected', runIds: [] },
+      { type: 'loop', codingRunId: 'optional', phase: 'verify', status: 'complete', iteration: null },
+    ]);
+    expect(parseCodingRunJsonl(jsonl).status).toBe('ok');
+  });
+
+  it('rejects another run verification before it can become a passed summary', () => {
+    const jsonl = serializeCodingRunJsonl(view({ codingRunId: 'run-A' }), [
+      { type: 'verification', codingRunId: 'run-B', status: 'passed', authority: 'task-loop-verification' },
+    ]);
+    expect(summarizeCodingRunJsonl(jsonl)).toMatchObject({ status: 'error', field: 'codingRunId' });
+  });
+
+  it.each([
+    ['scope', {}], ['runIds', [42]], ['taskLedgerRootId', 42],
+    ['completion', { turnStatus: 'completed', runStatus: 'completed', verification: 'passed', taskStatus: 'made-up', completionAuthority: 'task-ledger' }],
+  ])('rejects invalid nested %s', (field, invalid) => {
+    const record = JSON.parse(serializeCodingRunJsonl(view({ codingRunId: 'nested' })));
+    record.payload[String(field)] = invalid;
+    expect(parseCodingRunJsonl(JSON.stringify(record))).toMatchObject({ status: 'error' });
+  });
+
   it('keeps every optional association null or empty when the owner has not supplied it', () => {
     const codingRun = view({ codingRunId: 'cr-1' });
 

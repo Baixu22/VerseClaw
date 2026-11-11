@@ -249,6 +249,8 @@
   --color-background-editor-opaque: var(--gray-75);
   --color-background-elevated-primary: color-mix(in oklab, var(--gray-0) 70%, transparent);
   --color-background-elevated-primary-opaque: var(--gray-0);
+  --color-background-control-panel: var(--gray-75);
+  --color-background-effort-progress: color-mix(in oklab, var(--orange-400) 65%, var(--gray-300));
   --color-background-elevated-secondary: color-mix(in oklab, var(--codex-ink) 2%, transparent);
   --color-background-elevated-secondary-opaque: var(--gray-75);
 
@@ -334,6 +336,8 @@
   --color-background-editor-opaque: var(--gray-800);
   --color-background-elevated-primary: color-mix(in oklab, var(--gray-800) 96%, transparent);
   --color-background-elevated-primary-opaque: var(--gray-750);
+  --color-background-control-panel: color-mix(in oklab, var(--gray-600) 70%, var(--gray-700));
+  --color-background-effort-progress: color-mix(in oklab, var(--orange-300) 65%, var(--gray-550));
   --color-background-elevated-secondary: color-mix(in oklab, var(--gray-0) 3%, transparent);
   --color-background-elevated-secondary-opaque: var(--gray-800);
 

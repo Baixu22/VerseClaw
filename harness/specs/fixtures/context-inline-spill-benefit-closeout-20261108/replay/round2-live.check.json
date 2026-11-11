@@ -1,0 +1,28 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b90a",
+  "name": "round2-live",
+  "cwd": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+  "command": [
+    "node",
+    "harness/specs/fixtures/context-inline-spill-benefit/recompute.mjs",
+    "harness/specs/fixtures/context-inline-spill-benefit/live",
+    "harness/specs/fixtures/context-inline-spill-benefit/live/provider-wire.jsonl.gz",
+    "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\round2-live.json"
+  ],
+  "started_at": "2026-11-08T02:47:51.684015+00:00",
+  "duration_seconds": 0.422,
+  "exit_code": 0,
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\round2-live.stdout.txt",
+      "bytes": 320,
+      "sha256": "e4782b2fcd9f7a22b2c27fb3dfda6acd65740840cd9c3c73daf16c199f9781fd"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\round2-live.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

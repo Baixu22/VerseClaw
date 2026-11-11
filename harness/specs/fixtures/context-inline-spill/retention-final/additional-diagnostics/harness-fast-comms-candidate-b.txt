@@ -1,0 +1,3039 @@
+$ pnpm --filter @verse-claw/harness start -- "run" "--spec" "harness/specs/tasks/context-inline-spill-default-path.md"
+$ node src/cli.mjs "--" "run" "--spec" "harness/specs/tasks/context-inline-spill-default-path.md"
+(node:2740) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+$ node scripts/generate-ext-bridge.mjs
+[ext-bridge] No external extensions configured — empty stubs up to date.
+$ node scripts/check-no-bom.mjs && eslint . --max-warnings 120 && pnpm run lint:dcs && pnpm run lint:artifact-completion-class
+check-no-bom: ok
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\electron\main\index.ts
+  1309:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\electron\services\knowledge-api.ts
+  5905:35   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5908:32   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5919:50   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5919:79   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5925:39   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5925:77   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5926:45   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5926:89   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5943:41   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5944:47   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5944:100  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5945:52   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5946:54   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5961:38   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5962:44   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5963:49   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5964:51   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5979:36   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5980:42   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5981:47   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5982:49   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5996:38   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5997:44   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5997:91   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5997:115  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5998:53   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5998:77   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5999:55   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5999:79   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\electron\services\orchestration-presets-api.ts
+  42:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\openclaw_runtime\extensions\browser\src\browser\server-context.test-harness.ts
+  66:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\openclaw_runtime\extensions\signal\src\monitor\event-handler.test-harness.ts
+  8:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\openclaw_runtime\extensions\whatsapp\src\auto-reply.test-harness.ts
+  26:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\openclaw_runtime\extensions\whatsapp\src\monitor-inbox.test-harness.ts
+  16:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\openclaw_runtime\src\agents\embedded-agent-runner\sekb-runtime.ts
+  113:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  113:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  113:59  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  114:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  114:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\openclaw_runtime\src\agents\openai-transport-stream.ts
+  933:75  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\openclaw_runtime\src\channels\plugins\types.plugin.ts
+  65:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\openclaw_runtime\src\test-utils\vitest-mock-fn.ts
+  5:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5:66  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5:76  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\packages\versebrowser\tests\semantic-browser.test.ts
+  110:71  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\packages\versebrowser\tests\upstream-files.test.ts
+  48:51  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:85  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\packages\versebrowser\tests\upstream-viewport.test.ts
+   47:77  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  264:71  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\ai-elements\stack-trace.tsx
+  50:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\assistant-render\GitHubCard.tsx
+  79:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  88:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\assistant-render\KnowledgeDirectiveChip.tsx
+  58:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  76:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\assistant-ui\attachment.tsx
+  26:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\assistant-ui\dot-matrix.tsx
+  366:21  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\chat\ChatAgentEffortPopover.tsx
+  40:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\chat\ChatContextPressure.tsx
+  40:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\file-preview\panel-tab-meta.tsx
+   30:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  106:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\layout\ui-overlay-context.tsx
+  29:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\magicui\dia-text-reveal.tsx
+  189:6  warning  React Hook useEffect has missing dependencies: 'isMulti' and 'texts'. Either include them or remove the dependency array                  react-hooks/exhaustive-deps
+  189:7  warning  React Hook useEffect has a complex expression in the dependency array. Extract it to a separate variable so it can be statically checked  react-hooks/exhaustive-deps
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\runtime-approvals\RuntimeApprovalPrompt.tsx
+  30:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\settings\primitives\SettingsControls.tsx
+  496:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\tool-ui\approval-card\_adapter.tsx
+  1:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\tool-ui\code-diff\_adapter.tsx
+  1:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\tool-ui\code-diff\code-diff.tsx
+  149:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  297:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  347:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  425:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  461:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\tool-ui\progress-tracker\progress-tracker.tsx
+   91:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  143:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  165:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  239:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  342:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\tool-ui\shared\_adapter.tsx
+  1:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\tool-ui\terminal\_adapter.tsx
+  1:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\tool-ui\terminal\terminal.tsx
+   62:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  122:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  208:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+  217:10  warning  Fast refresh only works when a file only exports components. Move your component(s) to a separate file. If all exports are HOCs, add them to the `extraHOCs` option  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\tool-ui\weather-widget\weather-data-overlay.tsx
+  118:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\components\ui\overlay-portal.tsx
+  21:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\pages\Agents\index.tsx
+  421:9  warning  The 'publications' logical expression could make the dependencies of useMemo Hook (at line 428) change on every render. To fix this, wrap the initialization of 'publications' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  443:7  warning  React Hook useMemo has a missing dependency: 'publications'. Either include it or remove the dependency array                                                                                             react-hooks/exhaustive-deps
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\pages\Chat\ChatInput.tsx
+  1769:28  warning  The ref value 'sessionGenerationRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'sessionGenerationRef.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
+  2893:6   warning  React Hook useCallback has missing dependencies: 'allReady', 'capabilityExecuting', 'inputDisabled', and 'sending'. Either include them or remove the dependency array                                                                                                                   react-hooks/exhaustive-deps
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\pages\Chat\index.tsx
+   293:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components                                                                                                                        react-refresh/only-export-components
+   336:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components                                                                                                                        react-refresh/only-export-components
+  1399:9   warning  The 'graphStepCache' logical expression could make the dependencies of useMemo Hook (at line 2658) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'graphStepCache' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\pages\Knowledge\index.tsx
+  411:60  warning  Unexpected any. Specify a different type                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  494:9   warning  The 'okfConcepts' logical expression could make the dependencies of useCallback Hook (at line 912) change on every render. To fix this, wrap the initialization of 'okfConcepts' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  780:35  warning  Unexpected any. Specify a different type                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  781:38  warning  Unexpected any. Specify a different type                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  787:45  warning  Unexpected any. Specify a different type                                                                                                                                                                    @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\src\pages\Observability\index.tsx
+  1201:6  warning  React Hook useMemo has a missing dependency: 'phaseOrder'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\tests\unit\agent-first-transcript-review.test.ts
+  24:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  25:26  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  25:77  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  71:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  87:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\tests\unit\versegit-mc2-fingerprint.test.ts
+    8:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   11:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  104:47  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\tests\unit\versegit-mc3-delivery.test.ts
+  120:66  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\tests\unit\versegit-planning-correction.test.ts
+  39:64  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  62:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  80:32  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\tests\unit\versegit-product-acceptance.test.ts
+  26:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  27:82  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 116 problems (0 errors, 116 warnings)
+
+$ pnpm --dir openclaw_runtime exec oxlint --type-aware --type-check --tsconfig=tsconfig.json --deny-warnings src/context-engine/block.ts src/context-engine/block.test.ts src/context-engine/block-store.ts src/context-engine/block-store.test.ts src/context-engine/handlers/working-memory-handler.ts src/context-engine/handlers/working-memory-handler.test.ts src/context-engine/handlers/task-loop-handler.ts src/context-engine/handlers/task-loop-handler.test.ts src/context-engine/handlers/tool-registry-handler.ts src/context-engine/handlers/tool-registry-handler.test.ts src/context-engine/handlers/compass-handler.ts src/context-engine/handlers/compass-handler.test.ts src/context-engine/handlers/role-memory-handler.ts src/context-engine/handlers/role-memory-handler.test.ts src/context-engine/assembler.ts src/context-engine/assembler.test.ts src/context-engine/dcs-observability.ts src/context-engine/dcs-observability.test.ts src/context-engine/workspace-fingerprint.ts src/context-engine/workspace-fingerprint.test.ts src/context-engine/tools/context-search-tool.ts src/context-engine/tools/context-search-tool.test.ts src/context-engine/tools/context-write-tool.ts src/context-engine/tools/context-write-tool.test.ts src/context-engine/tools/context-read-tool.ts src/context-engine/tools/context-read-tool.test.ts src/agents/tools/context-agent-tools.ts src/agents/tools/context-agent-tools.test.ts src/agents/agent-bundle-mcp-runtime.ts src/agents/agent-bundle-mcp-runtime.test.ts src/agents/agent-tools.ts src/agents/tool-catalog.ts src/agents/harness/dcs-stage0-hooks.test.ts src/agents/harness/hook-context.ts src/agents/harness/lifecycle-hook-helpers.ts src/agents/embedded-agent-runner/extensions.ts src/agents/embedded-agent-runner/extensions.working-memory.test.ts src/agents/embedded-agent-runner/extensions.task-state.test.ts src/agents/embedded-agent-runner/dcs-extension-deps.ts src/agents/embedded-agent-runner/dcs-extension-deps.test.ts src/agents/task-loop-controller.ts src/agents/task-loop-controller.dcs-phase-producer.test.ts src/agents/embedded-agent-runner/extensions.tool-registry.test.ts src/agents/embedded-agent-runner/extensions.knowledge.test.ts src/agents/embedded-agent-runner/run/attempt.ts src/agents/dcs-producer-envelope.test.ts src/agents/tools/context-agent-tools.test.ts src/agents/sessions/tools/edit.ts src/agents/sessions/tools/write.ts src/agents/sessions/tools/tool-contracts.ts src/agents/apply-patch.ts src/config/types.openclaw.ts src/config/zod-schema.ts src/config/runtime-feature-leaves.ts src/config/schema.labels.ts src/config/schema.help.ts src/config/runtime-context-block-working-memory.test.ts src/config/runtime-context-block-tool-registry.test.ts src/config/runtime-context-block-compass.test.ts src/config/runtime-context-block-role-memory.test.ts src/plugins/hook-types.ts src/plugins/hooks.ts src/sessions/session-key-utils.ts src/knowledge/sekb/experience-block-bridge.ts src/knowledge/sekb/experience-block-bridge.test.ts src/knowledge/sekb/distillation-tool.ts src/knowledge/sekb/harness-integration.test.ts src/knowledge/sekb/harness-integration.ts src/agents/embedded-agent-runner/sekb-runtime.ts src/agents/embedded-agent-runner/sekb-runtime.test.ts src/config/runtime-context-block-sekb.test.ts
+$ node scripts/lint-artifact-completion-class.mjs
+fatal: path 'artifacts/harness/latest.json' exists on disk, but not in 'HEAD'
+artifact completionClass lint: files=1 new=0 historicalIgnored=0
+artifact completionClass lint: OK
+$ node scripts/typecheck-agent-dev.mjs
+[ext-bridge] No external extensions configured — empty stubs up to date.
+$ tsgo --noEmit -p tsconfig.node.json --composite false
+$ tsgo --noEmit -p tsconfig.web.json --composite false
+{
+  "success": true,
+  "mode": "parallel",
+  "testTypes": {
+    "commandLine": "pnpm run typecheck:test",
+    "exitCode": 0,
+    "durationMs": 23540,
+    "observationMode": false,
+    "errorCount": 0,
+    "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+  },
+  "cache": {
+    "enabled": false,
+    "status": "disabled",
+    "key": "209fd265a4146bc8ded47534ecad4507d93cf3723e35bee391b60f8991b4b535",
+    "inputCount": 13005,
+    "report": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX\\artifacts\\typecheck-cache\\report.json"
+  },
+  "totalDurationMs": 29366,
+  "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 85
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "durationMs": 16957
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "durationMs": 9875
+    },
+    {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 23540,
+      "observationMode": false,
+      "errorCount": 0,
+      "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    }
+  ]
+}
+$ vitest run --maxWorkers=2 --exclude tests/unit/gateway-permissions-api.test.ts --exclude tests/unit/files-permissions-api.test.ts --exclude tests/unit/runtime-memory-operator-inspection.test.ts && vitest run tests/unit/gateway-permissions-api.test.ts tests/unit/files-permissions-api.test.ts tests/unit/runtime-memory-operator-inspection.test.ts --maxWorkers=1 && pnpm run test:dcs
+
+ RUN  v4.1.1 C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX
+
+(node:36796) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [process]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ tests/unit/openclaw-auth.test.ts (73 tests | 1 failed) 3508ms
+     × preserves user config (memory, agents, channels) when enforcing tools settings 36ms
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ❯ tests/unit/host-services.test.ts (40 tests | 1 failed) 6229ms
+     × sends staged media through the typed chat service with gateway attachments 354ms
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+ ❯ tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts (3 tests | 2 failed) 30ms
+     × accepts Phase 33 readiness gates while keeping the Phase 32 controlled corpus path readonly and non-authoritative 11ms
+     × keeps accepted readiness with an empty controlled corpus as a safe no-op 2ms
+ ❯ tests/unit/runtime-grounding-shadow-consumers.test.ts (7 tests | 1 failed) 39ms
+     × keeps diagnostics metadata invariants aligned across Registry, Trace, Symbol, AgentMap, and Runtime Memory 12ms
+(node:3052) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [process]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts (11 tests | 8 failed | 3 skipped) 146ms
+     × retention_at_checkpoints_100_500_1000_turns 26ms
+     × noise_accumulation_rate_at_1000_turns 19ms
+     × fifo_eviction_at_512_boundary_1000_turns 18ms
+     × retention_degradation_monotonic 18ms
+     × fifo_preserves_recent_512_at_1000_turns 21ms
+     × no_active_gc_at_1000_turns 19ms
+     × useful_vs_noise_eviction_ratio_at_1000_turns 12ms
+     × domain_distribution_at_1000_turns 12ms
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts (10 tests | 7 failed | 3 skipped) 75ms
+     × write_read_consistency_immediate_query 9ms
+     × invalidation_effective_removes_from_accepted 2ms
+     × recall_degradation_over_1000_turns 19ms
+     × fifo_preserves_recent_512_interleaved 35ms
+     × interleaved_invalidation_accumulation 4ms
+     × write_read_query_during_interleaved_run 3ms
+     × consumer_conflict_resolution_during_interleaved_run 1ms
+ ❯ tests/unit/runtime-memory-persistence.test.ts (6 tests | 4 failed) 20ms
+     × migrates the SQLite schema idempotently and persists only sanitized bounded records 7ms
+     × trims persisted episodes, facts, and invalidations with the same bounded-store policy 2ms
+     × returns bounded diagnostics without creating a missing database or table 2ms
+     × lists sanitized episode summaries through a readonly no-mutation inspection helper 2ms
+ ❯ tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts (3 tests | 2 failed) 28ms
+     × runs explicit readonly diagnostics without changing TaskLoop decisions or prompts 9ms
+     × keeps explicit empty DB no-op diagnostics safe 2ms
+ ❯ tests/unit/runtime-memory-useless-content-judge.test.ts (8 tests | 2 failed | 6 skipped) 51ms
+     × stratified_sample_balanced_from_surviving_facts 28ms
+     × useless_content_ratio_after_1000_turns 20ms
+ ❯ tests/unit/runtime-memory-runtime-integration.test.ts (7 tests | 5 failed) 20ms
+     × delegates enabled writes and loads a store snapshot through explicit memory records 6ms
+     × inspects persisted sanitized episode summaries without raw rows or fact authority 2ms
+     × rejects raw retention markers at the adapter write boundary 1ms
+     × keeps adapter candidates non-durable without promotion fields 1ms
+     × hydrates provider context only through explicit extra-provider injection from a loaded store 2ms
+(node:8284) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ❯ tests/unit/runtime-memory-read-hydration-shadow-command.test.ts (8 tests | 4 failed) 3223ms
+     × does not open or create sqlite unless persist, read-shadow, and database are explicit 563ms
+     × does not create runtime memory tables in unrelated existing databases 290ms
+     × prints sanitized bounded JSON and text for explicit existing runtime memory databases 4ms
+     × keeps package script invocation no-open and no-create until all explicit flags are provided 1435ms
+ ❯ tests/unit/runtime-memory-compass-completion.test.ts (21 tests | 1 failed) 33ms
+     × rolls back to a previous version and truncates history 4ms
+ ❯ tests/unit/runtime-memory-relations.test.ts (14 tests | 6 failed) 20ms
+       × migrate is idempotent and relation table is created 5ms
+       × persistRelation writes and loadStore reads relations back 1ms
+       × AUDN UPDATE disabled — refinement candidate is skipped, no relation generated (project_memory.md constraint) 1ms
+       × AUDN SUPERSEDE generates supersedes (1.0) + contradicts (0.8) relations 1ms
+       × expands matched facts with 1-hop related facts 1ms
+       × zero regression: no queryRelations callback → behaves as before 1ms
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts (12 tests | 12 failed) 17ms
+     × useful_fact_persists_through_4_layers 4ms
+     × raw_chat_log_rejected_at_persistence 1ms
+     × secret_rejected_at_persistence 1ms
+     × prompt_dump_rejected_at_persistence 1ms
+     × field_truncation_preserves_semantic_core 1ms
+     × duplicate_fact_id_not_merged 1ms
+     × episode_dedupe_merges_evidence 1ms
+     × semantic_noise_fact_NOT_rejected 0ms
+     × semantic_noise_travel_fact_NOT_rejected 1ms
+     × invalidation_marks_not_deletes 1ms
+     × fifo_eviction_at_maxFacts_boundary 1ms
+     × fifo_eviction_preserves_invalidated_facts_equally 1ms
+ ❯ tests/unit/runtime-memory-retention-llm-judge.test.ts (5 tests | 1 failed | 4 skipped) 10ms
+     × probes_physically_retained_after_mixed_write 8ms
+ ❯ tests/unit/runtime-memory-write-path-llm-judge.test.ts (4 tests | 1 failed | 3 skipped) 10ms
+     × eval_set_l1_classification_matches_expected 9ms
+ ❯ tests/unit/runtime-memory-self-edit-persistence.test.ts (8 tests | 4 failed) 16ms
+     × memory_update persists supersede + invalidation across calls 9ms
+     × memory_update writes rows into SQLite (fact, invalidation, relation) 2ms
+     × memory_forget persists invalidation across calls 1ms
+     × memory_strengthen persists usage across restart (SQLite row assertion) 1ms
+Preparing worktree (detached HEAD d869673)
+Preparing worktree (detached HEAD d869673)
+Preparing worktree (detached HEAD d869673)
+Preparing worktree (detached HEAD d869673)
+Preparing worktree (detached HEAD a965547)
+Preparing worktree (detached HEAD a965547)
+(node:25848) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [process]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts (10 tests | 10 failed) 52ms
+     × retention_after_100_turns_programming 12ms
+     × retention_after_300_turns_mixed_domains 7ms
+     × noise_accumulation_rate_100_turns 3ms
+     × noise_accumulation_rate_300_turns 6ms
+     × fifo_eviction_critical_point 5ms
+     × fifo_eviction_does_not_prioritize_useful 5ms
+     × topic_drift_recall_decay 2ms
+     × invalidation_accumulation 1ms
+     × episode_retention_vs_fact_retention 7ms
+     × long_term_no_active_gc 2ms
+ ❯ tests/unit/dcs-preview-switch.test.ts (15 tests | 4 failed) 17ms
+     × is exactly the declared first-product set — exclusions stay excluded 6ms
+     × enable writes all four combo flags (store + config + env) and nothing else 1ms
+     × applied only via a complete current-generation child ack covering the combo 1ms
+     × off / partial / on are derived from the combo store keys 1ms
+Preparing worktree (detached HEAD 82215a8)
+Preparing worktree (detached HEAD 4a47dd6)
+Preparing worktree (detached HEAD 9f06811)
+Preparing worktree (detached HEAD d47c125)
+Preparing worktree (detached HEAD 656e6b4)
+Preparing worktree (detached HEAD b97e339)
+Preparing worktree (detached HEAD 7019d37)
+Preparing worktree (detached HEAD a99341a)
+ ❯ tests/unit/runtime-memory-taxonomy-persistence.test.ts (6 tests | 6 failed) 67ms
+     × persists and reloads a fact with memoryType: procedural 10ms
+     × persists and reloads a fact with memoryType: episodic 2ms
+     × defaults memoryType to semantic in record_json when omitted 2ms
+     × writes the memory_type column for all three types 1ms
+     × migrates a pre-Phase-4.1 database by adding memory_type column 49ms
+     × is idempotent: migrating twice does not error or duplicate columns 1ms
+ ❯ tests/unit/harness-codex-active-verification.test.ts (9 tests | 1 failed) 904ms
+     × checks the tracked matrix receipt and every retained evidence path 26ms
+stdout | tests/unit/r0-2-sessions-delete-fail.test.ts > R0-2 sessions.delete partial failures > succeeds without a legacy sessions.json instead of failing the committed delete
+[2026-11-03T13:56:52.884Z] [INFO] [session:delete] key=agent:main:abc123 agentId=main
+[2026-11-03T13:56:52.884Z] [INFO] [session:delete] sessionsJson=D:\tmp\clawx-r0-2-sessions-YdjNUr\agents\main\sessions\sessions.json
+
+ ❯ tests/unit/r0-2-sessions-delete-fail.test.ts (8 tests | 1 failed) 890ms
+     × succeeds without a legacy sessions.json instead of failing the committed delete 7ms
+stderr | tests/unit/r0-2-sessions-delete-fail.test.ts > R0-2 sessions.delete partial failures > succeeds without a legacy sessions.json instead of failing the committed delete
+[2026-11-03T13:56:52.884Z] [WARN] [session:delete] Could not read sessions.json: Error: ENOENT: no such file or directory, open 'D:\tmp\clawx-r0-2-sessions-YdjNUr\agents\main\sessions\sessions.json'
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+ ❯ tests/unit/versegit-product-acceptance.test.ts (7 tests | 2 failed) 7115ms
+     × recomputes all product criteria and the independent P0/P1/P2 verdict from current retained evidence 3568ms
+     × requires all three README languages, the controlled-preview lock and explicit M4 boundaries 5ms
+Preparing worktree (detached HEAD eb7830e)
+Preparing worktree (detached HEAD eb7830e)
+Preparing worktree (detached HEAD c036e71)
+Preparing worktree (detached HEAD c036e71)
+Preparing worktree (detached HEAD c036e71)
+Preparing worktree (detached HEAD c036e71)
+Preparing worktree (detached HEAD 21cc183)
+Preparing worktree (detached HEAD 21cc183)
+ ❯ tests/unit/gateway-ready-fallback.test.ts (8 tests | 1 failed) 670ms
+     × marks gatewayReady after handshake advertises the Verse Claw required runtime surface 18ms
+ ❯ tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts (5 tests | 3 failed) 14ms
+     × loads without breakthroughInjection when breakthrough not enabled 7ms
+     × records breakthroughInjection summary when breakthrough is enabled 1ms
+     × marks truncatedByTokenBudget when tokens exceed the cap 1ms
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+ ❯ tests/unit/runtime-memory-embedding-integration.test.ts (9 tests | 3 failed) 19ms
+     × persists and retrieves embeddings through the persistence store 6ms
+     × context provider uses embedding path when enabled 1ms
+     × context provider falls back to 3-gram when embedding enabled but provider unavailable 1ms
+fatal: path 'artifacts/ignored/report.json' exists on disk, but not in 'HEAD'
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+ ❯ tests/unit/cron-api-browser-automation.test.ts (4 tests | 1 failed) 114ms
+     × creates browser automation cron jobs as isolated agent turns with agent_browser allowlist 108ms
+ ❯ tests/unit/ke-integration-full-chain.test.ts (4 tests | 1 failed) 10ms
+     × ① candidate -> confirm -> persist (SQLite) -> shadow retrieval hit -> receipt 4ms
+ ❯ tests/unit/versegit-sidecar-delivery.test.ts (5 tests | 4 failed) 23ms
+     × resolves the development package without provider checkout or target/debug fallback 7ms
+     × loads host diagnostic identity from the package and fails closed when it is absent 2ms
+     × rejects missing, schema, profile, platform and artifact identity mismatches 8ms
+     × rejects a binary whose observed version or capabilities differ from the manifest 2ms
+ ❯ tests/unit/sandbox-api.test.ts (6 tests | 1 failed) 27ms
+     × reports lightweight default sandbox status without requiring Docker 19ms
+ ❯ tests/unit/verseshell-manifest.test.ts (7 tests | 7 failed) 103ms
+     × accepts the qualified ordered patch-stack bundle in development and packaging modes 17ms
+     × rejects a tampered corresponding-source patch 18ms
+     × rejects source-input manifest digest drift 12ms
+     × rejects a silently reintroduced recovered-source inventory at the pinned upstream 15ms
+     × verifies the existing artifact size and SHA-256 values 12ms
+     × rejects missing source-input provenance payload 13ms
+     × rejects facade operation order drift 13ms
+ ❯ tests/unit/first-product-claims.test.ts (5 tests | 1 failed) 40ms
+     × keeps forbidden graduation terms out of every current product surface 33ms
+ ❯ tests/unit/harness-spec-portability.test.ts (6 tests | 1 failed) 833ms
+     × finds no machine-specific user path in any checked-in spec 303ms
+ ❯ tests/unit/cross-layer-closed-loop.v01.test.ts (2 tests | 1 failed) 11ms
+     × re-runs the controlled paired ablation with the verdict unchanged (no regression) 6ms
+ ❯ tests/unit/versegit-host-api.test.ts (0 test)
+Runtime performance gate failed:
+- large-history: no samples collected (zero-sample is not healthy)
+Runtime performance gate failed:
+- burst: work error: boom
+Runtime performance gate failed:
+- single-task: undeclared measurement scope
+- single-task: scope note must disclaim whole-machine coverage
+Runtime performance gate failed:
+- report must state the provider-stub limitation
+Runtime performance gate failed:
+- report claims a network call; provider stub must not use the network
+ ❯ tests/unit/uas-05-verseshell-process-lifecycle.test.ts (4 tests | 1 failed) 11ms
+     × pins the lifecycle binary, frozen source commit, and 32-operation catalog 5ms
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+ ❯ tests/unit/rsi-decision-check.test.ts (5 tests | 2 failed) 15290ms
+     × passes on the checked-in record and agrees with the decisions file 3047ms
+     × only warns when a declared non-judged registry moves 2647ms
+ ❯ tests/unit/ke-p1-1-candidate-wiring.test.ts (5 tests | 3 failed) 9ms
+     × flag on => fact evidence flows through the proposeFacts shadow as proposalOnly/readonly candidates 4ms
+     × never auto-persists: acceptedFacts empty for every enabled run (zero-write guard) 1ms
+     × rejects an unsupported fact source (fail-closed, not silent) 0ms
+ ❯ tests/unit/versegit-wp2-profile.test.ts (3 tests | 1 failed) 96ms
+     × keeps single-worktree calls at zero and records observed/partial/unavailable facts 55ms
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+ ❯ tests/unit/app-version-rollback.test.ts (2 tests | 1 failed) 7ms
+     × forces every writable DCS config flag off without dropping ordinary data 4ms
+(node:37752) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/versegit-host-api.test.ts [ tests/unit/versegit-host-api.test.ts ]
+Error: ENOENT: no such file or directory, open 'C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\resources\bin\win32-x64\vg.exe'
+ ❯ tests/unit/versegit-host-api.test.ts:12:50
+     10| const workspacePath = process.env.VERSEGIT_PROVIDER_ROOT ?? process.cw…
+     11| const sidecarManifest = JSON.parse(readFileSync(join(process.cwd(), 'r…
+     12| const binaryDigest = createHash('sha256').update(readFileSync(binaryPa…
+       |                                                  ^
+     13| const version = spawnSync(binaryPath, ['--version'], { cwd: workspaceP…
+     14| const caps = spawnSync(binaryPath, ['capabilities', '--json'], { cwd: …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/119]⎯
+
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 118 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/app-version-rollback.test.ts > app version rollback protection > forces every writable DCS config flag off without dropping ordinary data
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/app-version-rollback.test.ts:38:76
+     36|     expect(getConfigPathValue(next, 'runtime.contextBlock.tool-registr…
+     37|     expect(getConfigPathValue(next, 'runtime.coding.staleWriteGuard.en…
+     38|     expect(getConfigPathValue(next, 'runtime.coding.symbolLease.enable…
+       |                                                                            ^
+     39|     expect(getConfigPathValue(next, 'runtime.coding.routingMemo.shadow…
+     40|     // TF-0137: this leaf is API-only and is not a rollback surface.
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/119]⎯
+
+ FAIL  tests/unit/cron-api-browser-automation.test.ts > createCronApi browser automation tasks > creates browser automation cron jobs as isolated agent turns with agent_browser allowlist
+Error: Coordinator follow-up requires workspaceId, coordinatorSessionKey, expectedSessionId, intent and notificationPolicy
+ ❯ assertCoordinatorBindingCurrent electron/services/cron-api.ts:544:11
+    542|   const scope = normalizeCronCoordinatorScope(rawScope);
+    543|   if (!scope) {
+    544|     throw new Error(
+       |           ^
+    545|       'Coordinator follow-up requires workspaceId, coordinatorSessionK…
+    546|     );
+ ❯ Object.create electron/services/cron-api.ts:749:33
+ ❯ tests/unit/cron-api-browser-automation.test.ts:36:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/119]⎯
+
+ FAIL  tests/unit/cross-layer-closed-loop.v01.test.ts > V01 cross-layer closed loop > re-runs the controlled paired ablation with the verdict unchanged (no regression)
+AssertionError: expected 'insufficient-sample' to be 'component-helps' // Object.is equality
+
+Expected: "component-helps"
+Received: "insufficient-sample"
+
+ ❯ tests/unit/cross-layer-closed-loop.v01.test.ts:106:28
+    104|       preRegistered: { primaryMetric: "retention", k: 3, minCases: 20,…
+    105|     });
+    106|     expect(result.verdict).toBe("component-helps");
+       |                            ^
+    107|     expect(result.effect.meanDiff).toBe(1);
+    108|     expect(result.treatment.falseBlocks).toBe(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/119]⎯
+
+ FAIL  tests/unit/dcs-preview-switch.test.ts > FP-P1-03 combo definition > is exactly the declared first-product set — exclusions stay excluded
+AssertionError: expected [ 'context-view-tools', …(2) ] to deeply equal [ 'context-view-tools', …(3) ]
+
+- Expected
++ Received
+
+  [
+    "context-view-tools",
+    "working-memory",
+    "tool-registry",
+-   "stale-write-guard",
+  ]
+
+ ❯ tests/unit/dcs-preview-switch.test.ts:117:45
+    115| describe('FP-P1-03 combo definition', () => {
+    116|   it('is exactly the declared first-product set — exclusions stay excl…
+    117|     expect([...DCS_PREVIEW_COMBO_FLAG_IDS]).toEqual([
+       |                                             ^
+    118|       'context-view-tools',
+    119|       'working-memory',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/119]⎯
+
+ FAIL  tests/unit/dcs-preview-switch.test.ts > FP-P1-03 setDcsPreview > enable writes all four combo flags (store + config + env) and nothing else
+AssertionError: expected [ 'dcsContextViewToolsEnabled', …(2) ] to deeply equal [ 'dcsContextViewToolsEnabled', …(3) ]
+
+- Expected
++ Received
+
+  [
+    "dcsContextViewToolsEnabled",
+-   "dcsStaleWriteGuardEnabled",
+    "dcsToolRegistryEnabled",
+    "dcsWorkingMemoryEnabled",
+  ]
+
+ ❯ tests/unit/dcs-preview-switch.test.ts:173:60
+    171|     expect(result.success).toBe(true);
+    172|     expect(result.status).toBe('pending-restart'); // no restart reque…
+    173|     expect(state.settingWrites.map(([key]) => key).sort()).toEqual([..…
+       |                                                            ^
+    174|     // Config leaves for the three config-kind flags:
+    175|     const written = JSON.stringify(state.config);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/119]⎯
+
+ FAIL  tests/unit/dcs-preview-switch.test.ts > FP-P1-03 setDcsPreview > applied only via a complete current-generation child ack covering the combo
+AssertionError: expected [ …(3) ] to deeply equal [ …(4) ]
+
+- Expected
++ Received
+
+  [
+    "OPENCLAW_DCS_CONTEXT_VIEW_TOOLS",
+-   "runtime.coding.staleWriteGuard.enabled",
+    "runtime.contextBlock.tool-registry.enabled",
+    "runtime.contextBlock.working-memory.enabled",
+  ]
+
+ ❯ tests/unit/dcs-preview-switch.test.ts:213:49
+    211|     ]);
+    212|     // One ack covers every combo flag:
+    213|     expect(Object.keys(requested ?? {}).sort()).toEqual([
+       |                                                 ^
+    214|       'OPENCLAW_DCS_CONTEXT_VIEW_TOOLS',
+    215|       'runtime.coding.staleWriteGuard.enabled',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/119]⎯
+
+ FAIL  tests/unit/dcs-preview-switch.test.ts > FP-P1-03 getDcsPreviewState > off / partial / on are derived from the combo store keys
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/dcs-preview-switch.test.ts:262:29
+    260|     state.settings.dcsContextViewToolsEnabled = true;
+    261|     const partial = await getDcsPreviewState();
+    262|     expect(partial.enabled).toBe(false);
+       |                             ^
+    263|     expect(partial.partial).toBe(true);
+    264|     for (const key of COMBO_STORE_KEYS) state.settings[key] = true;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/119]⎯
+
+ FAIL  tests/unit/first-product-claims.test.ts > FP-P1-08 first-product claim boundary > keeps forbidden graduation terms out of every current product surface
+AssertionError: expected [ …(4) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "filePath": "README.md",
++     "matches": [
++       {
++         "count": 1,
++         "line": 19,
++         "term": "ga-abbreviation",
++       },
++       {
++         "count": 1,
++         "line": 47,
++         "term": "ga-abbreviation",
++       },
++       {
++         "count": 1,
++         "line": 58,
++         "term": "default-on",
++       },
++     ],
++   },
++   {
++     "filePath": "README.zh-CN.md",
++     "matches": [
++       {
++         "count": 1,
++         "line": 19,
++         "term": "live-ready-field",
++       },
++       {
++         "count": 1,
++         "line": 19,
++         "term": "product-approved-field",
++       },
++       {
++         "count": 1,
++         "line": 19,
++         "term": "ga-abbreviation",
++       },
++       {
++         "count": 1,
++         "line": 47,
++         "term": "ga-abbreviation",
++       },
++     ],
++   },
++   {
++     "filePath": "README.ja-JP.md",
++     "matches": [
++       {
++         "count": 1,
++         "line": 19,
++         "term": "live-ready-field",
++       },
++       {
++         "count": 1,
++         "line": 19,
++         "term": "product-approved-field",
++       },
++       {
++         "count": 1,
++         "line": 19,
++         "term": "ga-abbreviation",
++       },
++       {
++         "count": 1,
++         "line": 47,
++         "term": "ga-abbreviation",
++       },
++       {
++         "count": 1,
++         "line": 58,
++         "term": "default-on",
++       },
++     ],
++   },
++   {
++     "filePath": "README.ru-RU.md",
++     "matches": [
++       {
++         "count": 1,
++         "line": 19,
++         "term": "live-ready-field",
++       },
++       {
++         "count": 1,
++         "line": 19,
++         "term": "product-approved-field",
++       },
++       {
++         "count": 1,
++         "line": 19,
++         "term": "ga-abbreviation",
++       },
++       {
++         "count": 1,
++         "line": 47,
++         "term": "ga-abbreviation",
++       },
++       {
++         "count": 1,
++         "line": 58,
++         "term": "default-on",
++       },
++     ],
++   },
++ ]
+
+ ❯ tests/unit/first-product-claims.test.ts:33:24
+     31|       if (matches.length > 0) violations.push({ filePath, matches });
+     32|     }
+     33|     expect(violations).toEqual([]);
+       |                        ^
+     34|   });
+     35|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/119]⎯
+
+ FAIL  tests/unit/gateway-ready-fallback.test.ts > GatewayManager gatewayReady fallback > marks gatewayReady after handshake advertises the Verse Claw required runtime surface
+AssertionError: expected undefined to be defined
+ ❯ tests/unit/gateway-ready-fallback.test.ts:204:64
+    202|     });
+    203|
+    204|     expect(statusUpdates.find((u) => u.gatewayReady === true)).toBeDef…
+       |                                                                ^
+    205|     expect(manager.getCapabilitySnapshot().core.rpcRouter).toBe('ready…
+    206|     expect(manager.getCapabilitySnapshot().presence.state).toBe('healt…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/119]⎯
+
+ FAIL  tests/unit/harness-codex-active-verification.test.ts > TF-0570 active verification matrix > checks the tracked matrix receipt and every retained evidence path
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/harness-codex-active-verification.test.ts:165:64
+    163|     expect(matrix.scenarios).toHaveLength(11);
+    164|     expect(matrix.scenarios.filter((entry) => entry.id === "S11")).toH…
+    165|     expect(validateMatrixStructure(matrix, { root: ROOT }).ok).toBe(tr…
+       |                                                                ^
+    166|     const result = verifyActiveMatrixArtifacts({ root: ROOT });
+    167|     expect(result.issues, result.issues.join("\n")).toEqual([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/119]⎯
+
+ FAIL  tests/unit/harness-spec-portability.test.ts > harness spec portability > finds no machine-specific user path in any checked-in spec
+AssertionError: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/guides/session-lifecycle-worktree-and-node-development.md: Windows user profile path C:\\Users\\27933",
++ ]
+
+ ❯ tests/unit/harness-spec-portability.test.ts:41:22
+     39|     }
+     40|
+     41|     expect(offences).toEqual([]);
+       |                      ^
+     42|   });
+     43|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/119]⎯
+
+ FAIL  tests/unit/host-services.test.ts > host services > sends staged media through the typed chat service with gateway attachments
+AssertionError: expected "vi.fn()" to be called with arguments: [ 'chat.send', { …(5) }, 120000 ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -13,7 +13,7 @@
+      "message": "inspect this
+
+  [media attached: D:\\tmp\\verse-claw-host-services-media-1793713622784.png (image/png) | D:\\tmp\\verse-claw-host-services-media-1793713622784.png]",
+      "sessionKey": "agent:main:main",
+    },
+-   120000,
++   900000,
+  ]
+
+
+Number of calls: 1
+
+ ❯ tests/unit/host-services.test.ts:1007:32
+    1005|     })).resolves.toEqual({ success: true, result: { runId: 'run-123' }…
+    1006|
+    1007|     expect(gatewayManager.rpc).toHaveBeenCalledWith(
+       |                                ^
+    1008|       'chat.send',
+    1009|       {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/119]⎯
+
+ FAIL  tests/unit/ke-integration-full-chain.test.ts > KE integration: full chain > ① candidate -> confirm -> persist (SQLite) -> shadow retrieval hit -> receipt
+AssertionError: expected 0 to be greater than 0
+ ❯ tests/unit/ke-integration-full-chain.test.ts:52:50
+     50|     const gen = runKeCandidateGeneration(GEN_ON, factEvidence());
+     51|     expect(gen.enabled).toBe(true);
+     52|     expect(gen.proposalShadow.candidates.length).toBeGreaterThan(0);
+       |                                                  ^
+     53|     const candidate = gen.proposalShadow.candidates[0]!;
+     54|     expect(candidate.verificationStatus).toBe("candidate");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/119]⎯
+
+ FAIL  tests/unit/ke-p1-1-candidate-wiring.test.ts > KE-P1-1 proposeFacts wiring > flag on => fact evidence flows through the proposeFacts shadow as proposalOnly/readonly candidates
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/ke-p1-1-candidate-wiring.test.ts:40:40
+     38|     const run = runKeCandidateGeneration(ENABLED, evidence());
+     39|     expect(run.enabled).toBe(true);
+     40|     expect(run.proposalShadow.enabled).toBe(true);
+       |                                        ^
+     41|     expect(run.proposalShadow.proposalOnly).toBe(true);
+     42|     expect(run.proposalShadow.readonly).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/119]⎯
+
+ FAIL  tests/unit/ke-p1-1-candidate-wiring.test.ts > KE-P1-1 proposeFacts wiring > never auto-persists: acceptedFacts empty for every enabled run (zero-write guard)
+AssertionError: expected 0 to be greater than 0
+ ❯ tests/unit/ke-p1-1-candidate-wiring.test.ts:56:50
+     54|       ],
+     55|     }));
+     56|     expect(run.proposalShadow.candidates.length).toBeGreaterThan(0);
+       |                                                  ^
+     57|     // The single write authority (appendFact) is only reachable after…
+     58|     // promotion; the shadow must never surface an accepted fact by it…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/119]⎯
+
+ FAIL  tests/unit/ke-p1-1-candidate-wiring.test.ts > KE-P1-1 proposeFacts wiring > rejects an unsupported fact source (fail-closed, not silent)
+AssertionError: expected 0 to be greater than 0
+ ❯ tests/unit/ke-p1-1-candidate-wiring.test.ts:82:54
+     80|     }));
+     81|     expect(run.proposalShadow.candidates).toHaveLength(0);
+     82|     expect(run.proposalShadow.rejectedInputs.length).toBeGreaterThan(0…
+       |                                                      ^
+     83|     expect(run.proposalShadow.rejectedInputs[0]!.reason).toBe("unsuppo…
+     84|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/119]⎯
+
+ FAIL  tests/unit/openclaw-auth.test.ts > sanitizeOpenClawConfig > preserves user config (memory, agents, channels) when enforcing tools settings
+AssertionError: expected { …(2) } to deeply equal { …(2) }
+
+- Expected
++ Received
+
+@@ -4,8 +4,8 @@
+    },
+    "sandbox": {
+      "backend": "openshell",
+      "mode": "off",
+      "scope": "session",
+-     "workspaceAccess": "none",
++     "workspaceAccess": "ro",
+    },
+  }
+
+ ❯ tests/unit/openclaw-auth.test.ts:525:65
+    523|     expect(result.memory).toEqual({ enabled: true, limit: 100 });
+    524|     expect(result.channels).toEqual({ discord: { token: 'tok', enabled…
+    525|     expect((result.agents as Record<string, unknown>).defaults).toEqua…
+       |                                                                 ^
+    526|       model: { primary: 'openai/gpt-4' },
+    527|       sandbox: {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/119]⎯
+
+ FAIL  tests/unit/r0-2-sessions-delete-fail.test.ts > R0-2 sessions.delete partial failures > succeeds without a legacy sessions.json instead of failing the committed delete
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/r0-2-sessions-delete-fail.test.ts:163:28
+    161|     const result = await createSessionsApi().delete({ sessionKey: 'age…
+    162|
+    163|     expect(result.success).toBe(true);
+       |                            ^
+    164|     await expect(access(join(sessionsDir, 'sessions.json'))).rejects.t…
+    165|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/119]⎯
+
+ FAIL  tests/unit/rsi-decision-check.test.ts > rsi decision acceptance readback > passes on the checked-in record and agrees with the decisions file
+AssertionError: expected [ …(3) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "code": "bound-file-drift",
++     "message": "README.ja-JP.md",
++   },
++   {
++     "code": "bound-file-drift",
++     "message": "README.md",
++   },
++   {
++     "code": "bound-file-drift",
++     "message": "README.zh-CN.md",
++   },
++ ]
+
+ ❯ tests/unit/rsi-decision-check.test.ts:20:27
+     18|     const result = validateDecisionAcceptance(readAcceptance(), ROOT, …
+     19|
+     20|     expect(result.errors).toEqual([]);
+       |                           ^
+     21|     expect(result.passed).toBe(true);
+     22|     expect(result.decisions).toEqual({ D1: 'C', D2: 'B', D3: 'A', D4: …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/119]⎯
+
+ FAIL  tests/unit/rsi-decision-check.test.ts > rsi decision acceptance readback > only warns when a declared non-judged registry moves
+AssertionError: expected [ 'bound-file-drift', …(2) ] to not include 'bound-file-drift'
+ ❯ tests/unit/rsi-decision-check.test.ts:44:31
+     42|     const result = validateDecisionAcceptance(acceptance, ROOT, { allo…
+     43|
+     44|     expect(codes(result)).not.toContain('bound-file-drift');
+       |                               ^
+     45|     expect(result.warnings.map((entry) => entry.code)).toContain('non-…
+     46|     expect(result.passed).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/119]⎯
+
+ FAIL  tests/unit/runtime-grounding-shadow-consumers.test.ts > grounding shadow consumer summaries > keeps diagnostics metadata invariants aligned across Registry, Trace, Symbol, AgentMap, and Runtime Memory
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/unit/runtime-grounding-shadow-consumers.test.ts:370:39
+    368|     expect(symbolResult.contextItems).toHaveLength(1);
+    369|     expect(agentMapResult.contextItems.length).toBeGreaterThan(0);
+    370|     expect(memoryResult.contextItems).toHaveLength(1);
+       |                                       ^
+    371|   });
+    372|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/119]⎯
+
+ FAIL  tests/unit/runtime-memory-compass-completion.test.ts > ConfigVersionTree > rolls back to a previous version and truncates history
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/runtime-memory-compass-completion.test.ts:424:61
+    422|     const rolledBack = rollbackConfigVersion(tree, "1.0.1");
+    423|     expect(rolledBack).toBeDefined();
+    424|     expect(rolledBack!.featureFlags.enableSessionStatePage).toBe(true);
+       |                                                             ^
+    425|     expect(tree.currentVersion).toBe("1.0.1");
+    426|     expect(tree.history).toEqual(["1.0.0", "1.0.1"]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/119]⎯
+
+ FAIL  tests/unit/runtime-memory-embedding-integration.test.ts > runtime memory embedding integration > persists and retrieves embeddings through the persistence store
+AssertionError: expected 'skipped' to be 'migrated' // Object.is equality
+
+Expected: "migrated"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-embedding-integration.test.ts:169:36
+    167|       now: () => 1000,
+    168|     });
+    169|     expect(store.migrate().status).toBe("migrated");
+       |                                    ^
+    170|
+    171|     const seedFact = buildRuntimeMemoryTemporalFactFixture({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/119]⎯
+
+ FAIL  tests/unit/runtime-memory-embedding-integration.test.ts > runtime memory embedding integration > context provider uses embedding path when enabled
+AssertionError: expected 'fallback' to be 'success' // Object.is equality
+
+Expected: "success"
+Received: "fallback"
+
+ ❯ tests/unit/runtime-memory-embedding-integration.test.ts:252:27
+    250|     }) as { status: string; contextItems: unknown[] };
+    251|
+    252|     expect(result.status).toBe("success");
+       |                           ^
+    253|     expect(result.contextItems.length).toBeGreaterThan(0);
+    254|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/119]⎯
+
+ FAIL  tests/unit/runtime-memory-embedding-integration.test.ts > runtime memory embedding integration > context provider falls back to 3-gram when embedding enabled but provider unavailable
+AssertionError: expected 'fallback' to be 'success' // Object.is equality
+
+Expected: "success"
+Received: "fallback"
+
+ ❯ tests/unit/runtime-memory-embedding-integration.test.ts:273:27
+    271|     }) as { status: string; contextItems: unknown[] };
+    272|
+    273|     expect(result.status).toBe("success");
+       |                           ^
+    274|     expect(result.contextItems.length).toBeGreaterThan(0);
+    275|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/119]⎯
+
+ FAIL  tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > write_read_consistency_immediate_query
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-interleaved-read-write.test.ts:62:11
+     60|   const migrateResult = persistence.migrate();
+     61|   if (migrateResult.status !== "migrated") {
+     62|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     63|   }
+     64|   return {
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts:173:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/119]⎯
+
+ FAIL  tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > invalidation_effective_removes_from_accepted
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-interleaved-read-write.test.ts:62:11
+     60|   const migrateResult = persistence.migrate();
+     61|   if (migrateResult.status !== "migrated") {
+     62|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     63|   }
+     64|   return {
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts:195:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/119]⎯
+
+ FAIL  tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > recall_degradation_over_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-interleaved-read-write.test.ts:62:11
+     60|   const migrateResult = persistence.migrate();
+     61|   if (migrateResult.status !== "migrated") {
+     62|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     63|   }
+     64|   return {
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts:230:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/119]⎯
+
+ FAIL  tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > fifo_preserves_recent_512_interleaved
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-interleaved-read-write.test.ts:62:11
+     60|   const migrateResult = persistence.migrate();
+     61|   if (migrateResult.status !== "migrated") {
+     62|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     63|   }
+     64|   return {
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts:274:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/119]⎯
+
+ FAIL  tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > interleaved_invalidation_accumulation
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-interleaved-read-write.test.ts:62:11
+     60|   const migrateResult = persistence.migrate();
+     61|   if (migrateResult.status !== "migrated") {
+     62|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     63|   }
+     64|   return {
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts:297:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/119]⎯
+
+ FAIL  tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > write_read_query_during_interleaved_run
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-interleaved-read-write.test.ts:62:11
+     60|   const migrateResult = persistence.migrate();
+     61|   if (migrateResult.status !== "migrated") {
+     62|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     63|   }
+     64|   return {
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts:324:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/119]⎯
+
+ FAIL  tests/unit/runtime-memory-interleaved-read-write.test.ts > Layer 7: interleaved read-write — local (no LLM) > consumer_conflict_resolution_during_interleaved_run
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-interleaved-read-write.test.ts:62:11
+     60|   const migrateResult = persistence.migrate();
+     61|   if (migrateResult.status !== "migrated") {
+     62|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     63|   }
+     64|   return {
+ ❯ tests/unit/runtime-memory-interleaved-read-write.test.ts:362:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > retention_at_checkpoints_100_500_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-long-conversation-real.test.ts:60:11
+     58|   const migrateResult = persistence.migrate();
+     59|   if (migrateResult.status !== "migrated") {
+     60|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     61|   }
+     62|   return {
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts:228:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > noise_accumulation_rate_at_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-long-conversation-real.test.ts:60:11
+     58|   const migrateResult = persistence.migrate();
+     59|   if (migrateResult.status !== "migrated") {
+     60|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     61|   }
+     62|   return {
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts:260:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > fifo_eviction_at_512_boundary_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-long-conversation-real.test.ts:60:11
+     58|   const migrateResult = persistence.migrate();
+     59|   if (migrateResult.status !== "migrated") {
+     60|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     61|   }
+     62|   return {
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts:274:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > retention_degradation_monotonic
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-long-conversation-real.test.ts:60:11
+     58|   const migrateResult = persistence.migrate();
+     59|   if (migrateResult.status !== "migrated") {
+     60|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     61|   }
+     62|   return {
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts:301:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > fifo_preserves_recent_512_at_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-long-conversation-real.test.ts:60:11
+     58|   const migrateResult = persistence.migrate();
+     59|   if (migrateResult.status !== "migrated") {
+     60|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     61|   }
+     62|   return {
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts:334:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[38/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > no_active_gc_at_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-long-conversation-real.test.ts:60:11
+     58|   const migrateResult = persistence.migrate();
+     59|   if (migrateResult.status !== "migrated") {
+     60|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     61|   }
+     62|   return {
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts:352:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > useful_vs_noise_eviction_ratio_at_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-long-conversation-real.test.ts:60:11
+     58|   const migrateResult = persistence.migrate();
+     59|   if (migrateResult.status !== "migrated") {
+     60|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     61|   }
+     62|   return {
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts:375:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[40/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-conversation-real.test.ts > Layer 6: long-conversation simulation — local (no LLM) > domain_distribution_at_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-long-conversation-real.test.ts:60:11
+     58|   const migrateResult = persistence.migrate();
+     59|   if (migrateResult.status !== "migrated") {
+     60|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     61|   }
+     62|   return {
+ ❯ tests/unit/runtime-memory-long-conversation-real.test.ts:396:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[41/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > retention_after_100_turns_programming
+Error: seedCorpusToDb: migration failed
+ ❯ seedCorpusToDb tests/unit/runtime-memory-long-term-accumulation.test.ts:49:11
+     47|   });
+     48|   if (persistence.migrate().status !== "migrated") {
+     49|     throw new Error("seedCorpusToDb: migration failed");
+       |           ^
+     50|   }
+     51|   for (const fact of corpus.facts) {
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:141:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[42/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > retention_after_300_turns_mixed_domains
+Error: seedCorpusToDb: migration failed
+ ❯ seedCorpusToDb tests/unit/runtime-memory-long-term-accumulation.test.ts:49:11
+     47|   });
+     48|   if (persistence.migrate().status !== "migrated") {
+     49|     throw new Error("seedCorpusToDb: migration failed");
+       |           ^
+     50|   }
+     51|   for (const fact of corpus.facts) {
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:156:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[43/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > noise_accumulation_rate_100_turns
+Error: seedCorpusToDb: migration failed
+ ❯ seedCorpusToDb tests/unit/runtime-memory-long-term-accumulation.test.ts:49:11
+     47|   });
+     48|   if (persistence.migrate().status !== "migrated") {
+     49|     throw new Error("seedCorpusToDb: migration failed");
+       |           ^
+     50|   }
+     51|   for (const fact of corpus.facts) {
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:175:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[44/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > noise_accumulation_rate_300_turns
+Error: seedCorpusToDb: migration failed
+ ❯ seedCorpusToDb tests/unit/runtime-memory-long-term-accumulation.test.ts:49:11
+     47|   });
+     48|   if (persistence.migrate().status !== "migrated") {
+     49|     throw new Error("seedCorpusToDb: migration failed");
+       |           ^
+     50|   }
+     51|   for (const fact of corpus.facts) {
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:188:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[45/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > fifo_eviction_critical_point
+Error: seedCorpusToDb: migration failed
+ ❯ seedCorpusToDb tests/unit/runtime-memory-long-term-accumulation.test.ts:49:11
+     47|   });
+     48|   if (persistence.migrate().status !== "migrated") {
+     49|     throw new Error("seedCorpusToDb: migration failed");
+       |           ^
+     50|   }
+     51|   for (const fact of corpus.facts) {
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:201:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[46/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > fifo_eviction_does_not_prioritize_useful
+Error: seedCorpusToDb: migration failed
+ ❯ seedCorpusToDb tests/unit/runtime-memory-long-term-accumulation.test.ts:49:11
+     47|   });
+     48|   if (persistence.migrate().status !== "migrated") {
+     49|     throw new Error("seedCorpusToDb: migration failed");
+       |           ^
+     50|   }
+     51|   for (const fact of corpus.facts) {
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:222:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[47/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > topic_drift_recall_decay
+Error: seedCorpusToDb: migration failed
+ ❯ seedCorpusToDb tests/unit/runtime-memory-long-term-accumulation.test.ts:49:11
+     47|   });
+     48|   if (persistence.migrate().status !== "migrated") {
+     49|     throw new Error("seedCorpusToDb: migration failed");
+       |           ^
+     50|   }
+     51|   for (const fact of corpus.facts) {
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:240:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[48/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > invalidation_accumulation
+Error: migration failed
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:268:13
+    266|     });
+    267|     if (persistence.migrate().status !== "migrated") {
+    268|       throw new Error("migration failed");
+       |             ^
+    269|     }
+    270|     for (const fact of corpus.facts) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[49/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > episode_retention_vs_fact_retention
+Error: migration failed
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:312:13
+    310|     });
+    311|     if (persistence.migrate().status !== "migrated") {
+    312|       throw new Error("migration failed");
+       |             ^
+    313|     }
+    314|     // Write 50 episodes.
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[50/119]⎯
+
+ FAIL  tests/unit/runtime-memory-long-term-accumulation.test.ts > Layer 4: long-term accumulation — retention, noise, FIFO > long_term_no_active_gc
+Error: seedCorpusToDb: migration failed
+ ❯ seedCorpusToDb tests/unit/runtime-memory-long-term-accumulation.test.ts:49:11
+     47|   });
+     48|   if (persistence.migrate().status !== "migrated") {
+     49|     throw new Error("seedCorpusToDb: migration failed");
+       |           ^
+     50|   }
+     51|   for (const fact of corpus.facts) {
+ ❯ tests/unit/runtime-memory-long-term-accumulation.test.ts:341:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[51/119]⎯
+
+ FAIL  tests/unit/runtime-memory-persistence.test.ts > runtime memory default-off local persistence proof > migrates the SQLite schema idempotently and persists only sanitized bounded records
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated', …(2) }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "owner": "openclaw_runtime.runtime-core.memory-persistence",
+-   "schemaVersion": 1,
+-   "status": "migrated",
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-persistence.test.ts:77:35
+     75|     });
+     76|
+     77|     expect(persistence.migrate()).toMatchObject({
+       |                                   ^
+     78|       status: "migrated",
+     79|       owner: RUNTIME_MEMORY_PERSISTENCE_OWNER,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[52/119]⎯
+
+ FAIL  tests/unit/runtime-memory-persistence.test.ts > runtime memory default-off local persistence proof > trims persisted episodes, facts, and invalidations with the same bounded-store policy
+AssertionError: expected { episodes: +0, facts: +0, …(4) } to match object { episodes: 1, facts: 1, …(4) }
+
+- Expected
++ Received
+
+  {
+-   "episodes": 1,
+-   "facts": 1,
+-   "invalidations": 1,
++   "episodes": 0,
++   "facts": 0,
++   "invalidations": 0,
+    "maxEpisodes": 1,
+    "maxFacts": 1,
+    "maxInvalidations": 1,
+  }
+
+ ❯ tests/unit/runtime-memory-persistence.test.ts:291:34
+    289|
+    290|     const loaded = persistence.loadStore();
+    291|     expect(loaded.store.stats()).toMatchObject({
+       |                                  ^
+    292|       episodes: 1,
+    293|       facts: 1,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[53/119]⎯
+
+ FAIL  tests/unit/runtime-memory-persistence.test.ts > runtime memory default-off local persistence proof > returns bounded diagnostics without creating a missing database or table
+AssertionError: expected { status: 'skipped', …(4) } to match object { status: 'skipped', …(3) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "episodes": [],
+-   "reason": "database_missing",
+-   "stats": {
++   "reason": "flag_disabled",
++   "stats": ObjectContaining {
+      "inspectedAt": 7100,
+    },
+    "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-persistence.test.ts:358:9
+    356|       database: { path: missingPath },
+    357|       now: () => 7_100,
+    358|     })).toMatchObject({
+       |         ^
+    359|       status: "skipped",
+    360|       reason: "database_missing",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[54/119]⎯
+
+ FAIL  tests/unit/runtime-memory-persistence.test.ts > runtime memory default-off local persistence proof > lists sanitized episode summaries through a readonly no-mutation inspection helper
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-persistence.test.ts:411:53
+    409|     const sourceEpisodeRefs = [sourceEpisodeRef(firstEpisode)];
+    410|
+    411|     expect(persistence.appendEpisode(firstEpisode)).toMatchObject({
+       |                                                     ^
+    412|       status: "persisted",
+    413|       stored: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[55/119]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts > runtime memory read hydration limited production opt-in readiness > accepts Phase 33 readiness gates while keeping the Phase 32 controlled corpus path readonly and non-authoritative
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ persistReplay tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts:967:48
+    965|
+    966|   for (const episode of episodes) {
+    967|     expect(persistence.appendEpisode(episode)).toMatchObject({
+       |                                                ^
+    968|       status: "persisted",
+    969|       stored: true,
+ ❯ seedControlledReadinessCorpus tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts:914:3
+ ❯ tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts:241:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[56/119]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts > runtime memory read hydration limited production opt-in readiness > keeps accepted readiness with an empty controlled corpus as a safe no-op
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated', migrated: true }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "migrated": true,
+-   "status": "migrated",
++   "migrated": false,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-limited-production-opt-in-readiness.test.ts:464:35
+    462|       now: () => 1_000,
+    463|     });
+    464|     expect(persistence.migrate()).toMatchObject({
+       |                                   ^
+    465|       status: "migrated",
+    466|       migrated: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[57/119]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-shadow-command.test.ts > runtime memory readonly read hydration shadow command proof > does not open or create sqlite unless persist, read-shadow, and database are explicit
+AssertionError: expected { status: 'skipped', …(6) } to match object { status: 'skipped', …(3) }
+(17 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "episodes": [],
+    "facts": [],
+-   "reason": "read_shadow_disabled",
++   "reason": "flag_disabled",
+    "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-shadow-command.test.ts:92:45
+     90|     ]);
+     91|     expect(noReadShadow.status).toBe(0);
+     92|     expect(JSON.parse(noReadShadow.stdout)).toMatchObject({
+       |                                             ^
+     93|       status: "skipped",
+     94|       reason: "read_shadow_disabled",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[58/119]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-shadow-command.test.ts > runtime memory readonly read hydration shadow command proof > does not create runtime memory tables in unrelated existing databases
+AssertionError: expected { status: 'skipped', …(6) } to match object { status: 'skipped', …(3) }
+(17 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "episodes": [],
+    "facts": [],
+-   "reason": "table_missing",
++   "reason": "flag_disabled",
+    "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-shadow-command.test.ts:149:39
+    147|
+    148|     expect(result.status).toBe(0);
+    149|     expect(JSON.parse(result.stdout)).toMatchObject({
+       |                                       ^
+    150|       status: "skipped",
+    151|       reason: "table_missing",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[59/119]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-shadow-command.test.ts > runtime memory readonly read hydration shadow command proof > prints sanitized bounded JSON and text for explicit existing runtime memory databases
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-shadow-command.test.ts:179:53
+    177|     });
+    178|
+    179|     expect(persistence.appendEpisode(firstEpisode)).toMatchObject({
+       |                                                     ^
+    180|       status: "persisted",
+    181|       stored: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[60/119]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-shadow-command.test.ts > runtime memory readonly read hydration shadow command proof > keeps package script invocation no-open and no-create until all explicit flags are provided
+AssertionError: expected { status: 'skipped', …(6) } to match object { status: 'skipped', …(3) }
+(17 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "episodes": [],
+    "facts": [],
+-   "reason": "read_shadow_disabled",
++   "reason": "flag_disabled",
+    "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-shadow-command.test.ts:395:45
+    393|     ]);
+    394|     expect(noReadShadow.status).toBe(0);
+    395|     expect(JSON.parse(noReadShadow.stdout)).toMatchObject({
+       |                                             ^
+    396|       status: "skipped",
+    397|       reason: "read_shadow_disabled",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[61/119]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts > runtime memory read hydration TaskLoop shadow-only explicit opt-in > runs explicit readonly diagnostics without changing TaskLoop decisions or prompts
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ persistReplay tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts:515:48
+    513|
+    514|   for (const episode of episodes) {
+    515|     expect(persistence.appendEpisode(episode)).toMatchObject({
+       |                                                ^
+    516|       status: "persisted",
+    517|       stored: true,
+ ❯ seedTaskLoopHydrationReplay tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts:470:3
+ ❯ tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts:107:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[62/119]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts > runtime memory read hydration TaskLoop shadow-only explicit opt-in > keeps explicit empty DB no-op diagnostics safe
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated', migrated: true }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "migrated": true,
+-   "status": "migrated",
++   "migrated": false,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-read-hydration-taskloop-shadow-only-explicit-opt-in.test.ts:261:35
+    259|       now: () => 1_000,
+    260|     });
+    261|     expect(persistence.migrate()).toMatchObject({
+       |                                   ^
+    262|       status: "migrated",
+    263|       migrated: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[63/119]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts > testResearchOnly breakthrough injection gate > loads without breakthroughInjection when breakthrough not enabled
+AssertionError: expected 'skipped' to be 'loaded' // Object.is equality
+
+Expected: "loaded"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts:82:27
+     80|       },
+     81|     });
+     82|     expect(result.status).toBe("loaded");
+       |                           ^
+     83|     expect(result.breakthroughInjection).toBeUndefined();
+     84|     expect(result.authority.noPromptContextModelMessageInjection).toBe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[64/119]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts > testResearchOnly breakthrough injection gate > records breakthroughInjection summary when breakthrough is enabled
+AssertionError: expected 'skipped' to be 'loaded' // Object.is equality
+
+Expected: "loaded"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts:132:27
+    130|       },
+    131|     });
+    132|     expect(result.status).toBe("loaded");
+       |                           ^
+    133|     expect(result.breakthroughInjection).toBeDefined();
+    134|     expect(result.breakthroughInjection).toMatchObject({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[65/119]⎯
+
+ FAIL  tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts > testResearchOnly breakthrough injection gate > marks truncatedByTokenBudget when tokens exceed the cap
+AssertionError: expected 'skipped' to be 'loaded' // Object.is equality
+
+Expected: "loaded"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-read-hydration-test-research-breakthrough.test.ts:181:27
+    179|       },
+    180|     });
+    181|     expect(result.status).toBe("loaded");
+       |                           ^
+    182|     expect(result.breakthroughInjection?.truncatedByTokenBudget).toBe(…
+    183|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[66/119]⎯
+
+ FAIL  tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > persistence > migrate is idempotent and relation table is created
+AssertionError: expected 'skipped' to be 'migrated' // Object.is equality
+
+Expected: "migrated"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-relations.test.ts:166:30
+    164|
+    165|       const result1 = store.migrate();
+    166|       expect(result1.status).toBe("migrated");
+       |                              ^
+    167|       const result2 = store.migrate();
+    168|       expect(result2.status).toBe("migrated");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[67/119]⎯
+
+ FAIL  tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > persistence > persistRelation writes and loadStore reads relations back
+AssertionError: expected 'skipped' to be 'loaded' // Object.is equality
+
+Expected: "loaded"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-relations.test.ts:190:29
+    188|
+    189|       const loaded = store.loadStore();
+    190|       expect(loaded.status).toBe("loaded");
+       |                             ^
+    191|       const relations = loaded.store.queryRelations("f2");
+    192|       expect(relations).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[68/119]⎯
+
+ FAIL  tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > AUDN auto-generates relations > AUDN UPDATE disabled — refinement candidate is skipped, no relation generated (project_memory.md constraint)
+AssertionError: expected 'skipped' to be 'loaded' // Object.is equality
+
+Expected: "loaded"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-relations.test.ts:237:29
+    235|
+    236|       const loaded = integration.loadStore();
+    237|       expect(loaded.status).toBe("loaded");
+       |                             ^
+    238|       const relations = loaded.store.queryRelations("new_fact");
+    239|       const supersedes = relations.filter((r) => r.relationType === "s…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[69/119]⎯
+
+ FAIL  tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > AUDN auto-generates relations > AUDN SUPERSEDE generates supersedes (1.0) + contradicts (0.8) relations
+AssertionError: expected 'skipped' to be 'persisted' // Object.is equality
+
+Expected: "persisted"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-relations.test.ts:272:112
+    270|
+    271|       const result = integration.appendFact(candidate);
+    272|       expect((result as { status?: string; contextItems?: Array<{ meta…
+       |                                                                                                                ^
+    273|
+    274|       const loaded = integration.loadStore();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[70/119]⎯
+
+ FAIL  tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > context provider 1-hop expansion > expands matched facts with 1-hop related facts
+AssertionError: expected [] to include 'f1'
+ ❯ tests/unit/runtime-memory-relations.test.ts:419:23
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[71/119]⎯
+
+ FAIL  tests/unit/runtime-memory-relations.test.ts > Phase 6: Relation chain > context provider 1-hop expansion > zero regression: no queryRelations callback → behaves as before
+AssertionError: expected 'fallback' to be 'success' // Object.is equality
+
+Expected: "success"
+Received: "fallback"
+
+ ❯ tests/unit/runtime-memory-relations.test.ts:478:112
+    476|       }, {});
+    477|
+    478|       expect((result as { status?: string; contextItems?: Array<{ meta…
+       |                                                                                                                ^
+    479|       expect((result as { status?: string; contextItems: Array<{ metad…
+    480|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[72/119]⎯
+
+ FAIL  tests/unit/runtime-memory-retention-llm-judge.test.ts > CV4: LLM-judge L4 retention cross-validation — local (no LLM) > probes_physically_retained_after_mixed_write
+Error: migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-retention-llm-judge.test.ts:57:11
+     55|   const migrateResult = persistence.migrate();
+     56|   if (migrateResult.status !== "migrated") {
+     57|     throw new Error(`migration failed: ${migrateResult.status}`);
+       |           ^
+     58|   }
+     59|   return {
+ ❯ tests/unit/runtime-memory-retention-llm-judge.test.ts:150:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[73/119]⎯
+
+ FAIL  tests/unit/runtime-memory-runtime-integration.test.ts > runtime memory runtime integration adapter > delegates enabled writes and loads a store snapshot through explicit memory records
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "migrated",
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-runtime-integration.test.ts:93:35
+     91|     });
+     92|
+     93|     expect(integration.migrate()).toMatchObject({ status: "migrated" }…
+       |                                   ^
+     94|     expect(integration.appendEpisode(episode)).toMatchObject({
+     95|       status: "persisted",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[74/119]⎯
+
+ FAIL  tests/unit/runtime-memory-runtime-integration.test.ts > runtime memory runtime integration adapter > inspects persisted sanitized episode summaries without raw rows or fact authority
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-runtime-integration.test.ts:162:48
+    160|     });
+    161|
+    162|     expect(integration.appendEpisode(episode)).toMatchObject({
+       |                                                ^
+    163|       status: "persisted",
+    164|       stored: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[75/119]⎯
+
+ FAIL  tests/unit/runtime-memory-runtime-integration.test.ts > runtime memory runtime integration adapter > rejects raw retention markers at the adapter write boundary
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'rejected', …(2) }
+
+- Expected
++ Received
+
+  {
+    "persisted": false,
+-   "reason": "raw_transcript",
+-   "status": "rejected",
++   "reason": "flag_disabled",
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-runtime-integration.test.ts:305:9
+    303|       ...episode,
+    304|       boundedSummary: "session transcript stored as .jsonl",
+    305|     })).toMatchObject({
+       |         ^
+    306|       status: "rejected",
+    307|       reason: "raw_transcript",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[76/119]⎯
+
+ FAIL  tests/unit/runtime-memory-runtime-integration.test.ts > runtime memory runtime integration adapter > keeps adapter candidates non-durable without promotion fields
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-runtime-integration.test.ts:352:48
+    350|     });
+    351|
+    352|     expect(integration.appendEpisode(episode)).toMatchObject({
+       |                                                ^
+    353|       status: "persisted",
+    354|       stored: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[77/119]⎯
+
+ FAIL  tests/unit/runtime-memory-runtime-integration.test.ts > runtime memory runtime integration adapter > hydrates provider context only through explicit extra-provider injection from a loaded store
+AssertionError: expected 'skipped' to be 'loaded' // Object.is equality
+
+Expected: "loaded"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-runtime-integration.test.ts:420:27
+    418|     integration.appendFact(fact);
+    419|     const loaded = integration.loadStore();
+    420|     expect(loaded.status).toBe("loaded");
+       |                           ^
+    421|     expect(loaded.store.queryFacts({
+    422|       subject: "ProviderHydration",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[78/119]⎯
+
+ FAIL  tests/unit/runtime-memory-self-edit-persistence.test.ts > P0-B: memory self-edit durable persistence > memory_update persists supersede + invalidation across calls
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "migrated",
++   "status": "skipped",
+  }
+
+ ❯ seedFact tests/unit/runtime-memory-self-edit-persistence.test.ts:69:33
+     67|     now: () => 100,
+     68|   });
+     69|   expect(integration.migrate()).toMatchObject({ status: "migrated" });
+       |                                 ^
+     70|   expect(integration.appendFact(fact)).toMatchObject({
+     71|     status: "persisted",
+ ❯ tests/unit/runtime-memory-self-edit-persistence.test.ts:100:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[79/119]⎯
+
+ FAIL  tests/unit/runtime-memory-self-edit-persistence.test.ts > P0-B: memory self-edit durable persistence > memory_update writes rows into SQLite (fact, invalidation, relation)
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "migrated",
++   "status": "skipped",
+  }
+
+ ❯ seedFact tests/unit/runtime-memory-self-edit-persistence.test.ts:69:33
+     67|     now: () => 100,
+     68|   });
+     69|   expect(integration.migrate()).toMatchObject({ status: "migrated" });
+       |                                 ^
+     70|   expect(integration.appendFact(fact)).toMatchObject({
+     71|     status: "persisted",
+ ❯ tests/unit/runtime-memory-self-edit-persistence.test.ts:130:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[80/119]⎯
+
+ FAIL  tests/unit/runtime-memory-self-edit-persistence.test.ts > P0-B: memory self-edit durable persistence > memory_forget persists invalidation across calls
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "migrated",
++   "status": "skipped",
+  }
+
+ ❯ seedFact tests/unit/runtime-memory-self-edit-persistence.test.ts:69:33
+     67|     now: () => 100,
+     68|   });
+     69|   expect(integration.migrate()).toMatchObject({ status: "migrated" });
+       |                                 ^
+     70|   expect(integration.appendFact(fact)).toMatchObject({
+     71|     status: "persisted",
+ ❯ tests/unit/runtime-memory-self-edit-persistence.test.ts:170:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[81/119]⎯
+
+ FAIL  tests/unit/runtime-memory-self-edit-persistence.test.ts > P0-B: memory self-edit durable persistence > memory_strengthen persists usage across restart (SQLite row assertion)
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "migrated",
++   "status": "skipped",
+  }
+
+ ❯ seedFact tests/unit/runtime-memory-self-edit-persistence.test.ts:69:33
+     67|     now: () => 100,
+     68|   });
+     69|   expect(integration.migrate()).toMatchObject({ status: "migrated" });
+       |                                 ^
+     70|   expect(integration.appendFact(fact)).toMatchObject({
+     71|     status: "persisted",
+ ❯ tests/unit/runtime-memory-self-edit-persistence.test.ts:287:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[82/119]⎯
+
+ FAIL  tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > persists and reloads a fact with memoryType: procedural
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'persisted', stored: true }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "persisted",
+-   "stored": true,
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-taxonomy-persistence.test.ts:54:42
+     52|       memoryType: "procedural",
+     53|     });
+     54|     expect(persistence.appendFact(fact)).toMatchObject({
+       |                                          ^
+     55|       status: "persisted",
+     56|       stored: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[83/119]⎯
+
+ FAIL  tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > persists and reloads a fact with memoryType: episodic
+AssertionError: expected 'skipped' to be 'loaded' // Object.is equality
+
+Expected: "loaded"
+Received: "skipped"
+
+ ❯ tests/unit/runtime-memory-taxonomy-persistence.test.ts:89:27
+     87|
+     88|     const loaded = persistence.loadStore();
+     89|     expect(loaded.status).toBe("loaded");
+       |                           ^
+     90|     if (loaded.status !== "loaded") return;
+     91|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[84/119]⎯
+
+ FAIL  tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > defaults memoryType to semantic in record_json when omitted
+Error: unable to open database file
+ ❯ tests/unit/runtime-memory-taxonomy-persistence.test.ts:118:16
+    116|
+    117|     // Verify the DB column has the default.
+    118|     const db = new DatabaseSync(dbPath, { readOnly: true });
+       |                ^
+    119|     try {
+    120|       const row = db
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[85/119]⎯
+
+ FAIL  tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > writes the memory_type column for all three types
+Error: unable to open database file
+ ❯ tests/unit/runtime-memory-taxonomy-persistence.test.ts:153:16
+    151|     }
+    152|
+    153|     const db = new DatabaseSync(dbPath, { readOnly: true });
+       |                ^
+    154|     try {
+    155|       for (const memoryType of types) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[86/119]⎯
+
+ FAIL  tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > migrates a pre-Phase-4.1 database by adding memory_type column
+AssertionError: expected { status: 'skipped', …(2) } to match object { status: 'migrated' }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "status": "migrated",
++   "status": "skipped",
+  }
+
+ ❯ tests/unit/runtime-memory-taxonomy-persistence.test.ts:296:27
+    294|
+    295|     const migrateResult = persistence.migrate();
+    296|     expect(migrateResult).toMatchObject({ status: "migrated" });
+       |                           ^
+    297|
+    298|     // Verify the column was added.
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[87/119]⎯
+
+ FAIL  tests/unit/runtime-memory-taxonomy-persistence.test.ts > Phase 4.1 persistence: memoryType round-trip > is idempotent: migrating twice does not error or duplicate columns
+Error: unable to open database file
+ ❯ tests/unit/runtime-memory-taxonomy-persistence.test.ts:338:16
+    336|     persistence.migrate();
+    337|
+    338|     const db = new DatabaseSync(dbPath, { readOnly: true });
+       |                ^
+    339|     try {
+    340|       const columns = db
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[88/119]⎯
+
+ FAIL  tests/unit/runtime-memory-useless-content-judge.test.ts > Layer 8: useless content judge — local (no LLM) > stratified_sample_balanced_from_surviving_facts
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-useless-content-judge.test.ts:68:11
+     66|   const migrateResult = persistence.migrate();
+     67|   if (migrateResult.status !== "migrated") {
+     68|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     69|   }
+     70|   return {
+ ❯ tests/unit/runtime-memory-useless-content-judge.test.ts:186:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[89/119]⎯
+
+ FAIL  tests/unit/runtime-memory-useless-content-judge.test.ts > Layer 8: useless content judge — local (no LLM) > useless_content_ratio_after_1000_turns
+Error: streaming writer migration failed: skipped
+ ❯ createStreamingWriter tests/unit/runtime-memory-useless-content-judge.test.ts:68:11
+     66|   const migrateResult = persistence.migrate();
+     67|   if (migrateResult.status !== "migrated") {
+     68|     throw new Error(`streaming writer migration failed: ${migrateResul…
+       |           ^
+     69|   }
+     70|   return {
+ ❯ tests/unit/runtime-memory-useless-content-judge.test.ts:223:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[90/119]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-llm-judge.test.ts > CV1: LLM-judge L1 cross-validation — local (no LLM) > eval_set_l1_classification_matches_expected
+AssertionError: expected 'reject' to be 'accept' // Object.is equality
+
+Expected: "accept"
+Received: "reject"
+
+ ❯ tests/unit/runtime-memory-write-path-llm-judge.test.ts:247:25
+    245|     for (const item of evalSet) {
+    246|       const l1Verdict = getL1Verdict(item, dbPath);
+    247|       expect(l1Verdict).toBe(item.expectedVerdict);
+       |                         ^
+    248|     }
+    249|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[91/119]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — useful facts persist through 4 layers > useful_fact_persists_through_4_layers
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:83:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[92/119]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — syntactic noise rejected > raw_chat_log_rejected_at_persistence
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:106:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[93/119]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — syntactic noise rejected > secret_rejected_at_persistence
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:120:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[94/119]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — syntactic noise rejected > prompt_dump_rejected_at_persistence
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:138:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[95/119]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — field truncation > field_truncation_preserves_semantic_core
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:154:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[96/119]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — deduplication > duplicate_fact_id_not_merged
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:183:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[97/119]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — deduplication > episode_dedupe_merges_evidence
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:217:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[98/119]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — semantic noise NOT rejected (real finding) > semantic_noise_fact_NOT_rejected
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:253:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[99/119]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — semantic noise NOT rejected (real finding) > semantic_noise_travel_fact_NOT_rejected
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:276:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[100/119]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — invalidation marks not deletes > invalidation_marks_not_deletes
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:299:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[101/119]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — FIFO eviction at boundary > fifo_eviction_at_maxFacts_boundary
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:341:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[102/119]⎯
+
+ FAIL  tests/unit/runtime-memory-write-path-semantic-real.test.ts > Layer 1: write-path real filtering — FIFO eviction at boundary > fifo_eviction_preserves_invalidated_facts_equally
+Error: migration failed: {"status":"skipped","reason":"flag_disabled","migrated":false}
+ ❯ makePersistence tests/unit/runtime-memory-write-path-semantic-real.test.ts:44:11
+     42|   const migration = persistence.migrate();
+     43|   if (migration.status !== "migrated") {
+     44|     throw new Error(`migration failed: ${JSON.stringify(migration)}`);
+       |           ^
+     45|   }
+     46|   return persistence;
+ ❯ tests/unit/runtime-memory-write-path-semantic-real.test.ts:372:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[103/119]⎯
+
+ FAIL  tests/unit/sandbox-api.test.ts > sandbox api > reports lightweight default sandbox status without requiring Docker
+AssertionError: expected 'ro' to be 'none' // Object.is equality
+
+Expected: "none"
+Received: "ro"
+
+ ❯ tests/unit/sandbox-api.test.ts:77:75
+     75|     expect(status.docker).toEqual({ cli: false, daemon: false, image: …
+     76|     expect(status.openClawConfig.agents.defaults.sandbox.mode).toBe('o…
+     77|     expect(status.openClawConfig.agents.defaults.sandbox.workspaceAcce…
+       |                                                                           ^
+     78|     expect(status.openClawConfig.tools.exec.security).toBe('allowlist'…
+     79|     expect(status.openClawConfig.tools.exec.host).toBe('gateway');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[104/119]⎯
+
+ FAIL  tests/unit/uas-05-verseshell-process-lifecycle.test.ts > UAS-05 VerseShell process lifecycle boundary > pins the lifecycle binary, frozen source commit, and 32-operation catalog
+Error: ENOENT: no such file or directory, open 'C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\resources\bin\win32-x64\ae.exe'
+ ❯ sha256 tests/unit/uas-05-verseshell-process-lifecycle.test.ts:10:38
+      8|
+      9| function sha256(path: string): string {
+     10|   return createHash("sha256").update(readFileSync(path)).digest("hex");
+       |                                      ^
+     11| }
+     12|
+ ❯ tests/unit/uas-05-verseshell-process-lifecycle.test.ts:42:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[105/119]⎯
+
+ FAIL  tests/unit/versegit-product-acceptance.test.ts > VerseGit product integration acceptance > recomputes all product criteria and the independent P0/P1/P2 verdict from current retained evidence
+AssertionError: expected [ …(18) ] to deeply equal [ …(17) ]
+
+- Expected
++ Received
+
+@@ -10,10 +10,11 @@
+    "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: shared/dcs/component-disposition-catalog.ts",
+    "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: tests/unit/orchestration-worktree-merge.test.ts",
+    "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: tests/unit/versegit-product-acceptance.test.ts",
+    "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: tests/unit/versegit-wp6-closeout.test.ts",
+    "source input differs from evidence source fb57c050137b6bbabc0c77bd1660e01b31612f6a: tests/unit/versegit-wp9-global-acceptance.test.ts",
++   "live criterion failed: docs-capability-authority",
+    "criterion index candidate differs from live source inputs",
+    "global report candidate differs from live source inputs",
+    "criterion evidence index diverges from live replay",
+    "independent verdict candidate mismatch",
+  ]
+
+ ❯ tests/unit/versegit-product-acceptance.test.ts:54:27
+     52|     ));
+     53|     const rebuildable = pendingCommandIssues.length > 0 || pendingRebi…
+     54|     expect(result.issues).toEqual(rebuildable ? [...pendingSourceIssue…
+       |                           ^
+     55|     if (!rebuildable) {
+     56|       expect(result.state.ok).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[106/119]⎯
+
+ FAIL  tests/unit/versegit-product-acceptance.test.ts > VerseGit product integration acceptance > requires all three README languages, the controlled-preview lock and explicit M4 boundaries
+AssertionError: expected '<p align="center">\n  <img src="src/a…' to contain 'M4'
+
+- Expected
++ Received
+
+- M4
++ <p align="center">
++   <img src="src/assets/logo.png" width="96" height="96" alt="Verse Claw logo" />
++ </p>
++
++ Review Center includes a collapsed, opt-in Change Context view for four comparison modes, digest-anchored comments and explicit review verdicts. Pull Changes uses the existing approval, Git and Coding journal owners; review approval never completes a task or merges code. See [Workspace and coding](docs/modules/workspace-and-coding.md). The Windows source-host acceptance and feature-gate rollback are documented in [Controlled rollout](docs/dev/change-context-review-loop/rollout.md).
++
++ # Verse Claw
++
++ **Chat, code, knowledge and agent execution in one desktop workspace.**
++
++ [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [Русский](README.ru-RU.md)
++
++ [Module deep dives](docs/modules/README.md) · [Getting started](#getting-started) · [Architecture](#architecture) · [Development](#development) · [Troubleshooting](#troubleshooting) · [Documentation](#documentation)
++
++ Verse Claw is an Electron desktop application built on an embedded OpenClaw runtime. It combines conversation, project workspaces, coding tools, knowledge review, memory, multi-agent orchestration, messaging channels, schedules and runtime diagnostics in one local desktop product.
++
++ This repository is more than a renderer wrapper. It contains the React UI, Electron Main host, typed cross-process contracts, the vendored OpenClaw runtime, VerseBrowser, the VerseShell execution foundation, retired VToken source, executable Harness specifications and the build/evidence/release pipeline.
++
++ > **Current status:** `0.4.9-alpha.0`, controlled preview. Windows x64 local workflows are the primary acceptance target. macOS/Linux have build targets, but platform-specific runtime validation is separate. Release, GA, live readiness and product approval are not implied by component graduation or agent-driven evidence.
++
++ ## What is in the product
++
++ | Area | Current product shape | Deep dive |
++ |---|---|---|
++ | LLM and models | Account-based provider configuration, OAuth/API key/local auth, protocol adapters, model fallback, turn/session model overrides, streaming, tool loops, reasoning effort, usage and estimated cost | [LLM and models](docs/modules/llm-and-models.md) |
++ | Conversations and sessions | JSONL append-only session trees, runs, abort/stop/archive/delete, checkpoints, compaction, handoff/fork, searchable sidebar, persisted folders and long-session coordinator binding | [Sessions](docs/modules/sessions.md) |
++ | Context and memory | Context Orchestrator, 6,000-character turn budget, Workspace Context, context health, recallable truncation references with opt-in bounded recall retention, one reviewable Memory product over separate Role/Runtime stores | [Context and memory](docs/modules/context-and-memory.md) |
++ | Workspaces and coding | Workspace preflight, four permission modes, file preview, PTY terminals, web previews, Git operations, review panel, write journal, stale-write guard and auto verification | [Workspace and coding](docs/modules/workspace-and-coding.md) |
++ | Knowledge | Markdown/wiki-first library, Inbox → Draft → Steward → Proposal → explicit apply, Source Sets, OKF, Runtime Lessons/SEKB, provenance and governance | [Knowledge base](docs/modules/knowledge-base.md) |
++ | Multi-agent and tasks | Agent/Persona/Role separation, nine built-in roles, routing, team templates, resource-aware waves, subagent admission, Task Ledger, Task Loop and ClawGraph | [Multi-agent and tasks](docs/modules/multi-agent-and-tasks.md) |
++ | Verse components | VerseGit repository/evidence control plane, VerseShell governed execution, VerseBrowser drivers, and retired VToken | [Verse tools](docs/modules/verse-tools.md) |
++ | Resources and observability | Cooperative ResourceFabric, background shedding, process/port tracking, token/cost limits, traces, issues, Problems, session activity and recovery | [Resources and observability](docs/modules/resources-and-observability.md) |
++ | Integrations and other surfaces | 15 channel types, schedules, Skills/MCP, Inbox, remote tasks, Code Review, VerseConf documents, media, Billing and Agent Dev | [Integrations and surfaces](docs/modules/integrations-and-surfaces.md) |
++
++ The detailed module documentation is currently maintained in Simplified Chinese; code paths, API names and linked evidence are language-neutral. The root READMEs remain the multilingual entry points.
++
++ Chat keeps the final reply visible alongside a collapsible process summary. Long file replacements preview both versions inside the conversation column; unbroken code wraps in the preview and only scrolls inside the diff after expansion. Command previews start at the latest output. Both support expansion; copying includes the complete retained content. The repository change strip shares the composer's centered width, and tool calls appear as compact status chips with their target and timing.
++
++ Pending runtime approvals replace the owning conversation's input area with the command, working directory and offered choices. The rest of the page stays usable; resolving the requests restores the original input, draft and attachments.
++
++ Conversations show what a turn produced, whichever tool produced it. Audio and video play in place with native controls, and say so if a file is missing, too large or unplayable. Images from any source share one viewer; remote images and media are never loaded automatically and offer an open action instead. Charts draw their declared type with a data table available, standalone links become link cards, and any other structured resource gets a labelled fallback card.
++
++ ## Current maturity boundaries
++
++ | Label | Meaning |
++ |---|---|
++ | `default` / `advanced` | A current product surface, within the stated controlled-preview boundary. Not a GA claim. |
++ | `internal` | Implemented or exposed internally without an independent user product entry. |
++ | `shadow` / `experiment` | Observation or bounded experiment; it does not own routing, writes or approval. |
++ | `retired` | Kept only for compatibility, provenance or rollback inspection. |
++ | `agent-driven` | Evidence produced by an agent and labeled as such. It is not real-human evidence. |
++
++ The current machine-readable component catalog contains 54 rows: 13 default, 12 advanced, 24 internal, 5 retired and 0 experiment. Classification is not runtime proof. See the [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md).
++
++ Important current defaults:
++
++ - Workspace Context and read-only DCS context tools are on under their declared health and permission gates.
++ - Runtime Memory injection, SEKB automatic writeback and browser private-network access are not default-on.
++ - Memory feedback and SEKB adoption counts are diagnostic-only; feedback does not affect retrieval ranking or retention decisions. [RSI evidence and boundaries](docs/dev/rsi-capability-and-boundaries.md) distinguish historical measurement from deterministic replay.
++ - VToken is retired; its old environment/config names cannot re-enable production assembly or the sidecar.
++ - VerseGit is default-off and landed-unwired. VerseShell is a default-off controlled foundation. VerseBrowser advertises actions from a live driver snapshot, not from its full contract.
++ - Dreams is retired. Image Generation is developer/test-gated rather than normal product navigation.
++ - `liveReady=false`, `productApproved=false` and `defaultOn=false` remain product locks.
++
++ See the [default configuration matrix](docs/dev/default-config-matrix.md), [product semantics](docs/clawx-product-semantics.md) and [capability claims](shared/capability-claims.ts) before changing a default or making a release claim.
++
++ ## Inside the app
++
++ The screenshots below were captured from the Windows Electron source build on 2026-10-05. The header now uses the later B2 identity. The Knowledge capture explicitly enables `memory-wiki`; no model account or model request was used.
++
++ | **Chat and task entry**<br>[![Chat and task entry](resources/readme/2026-10-05/en/chat.png)](resources/readme/2026-10-05/en/chat.png) | **Knowledge library and review entry**<br>[![Knowledge library and review entry](resources/readme/2026-10-05/en/knowledge.png)](resources/readme/2026-10-05/en/knowledge.png) |
++ | --- | --- |
++ | **Task Ledger**<br>[![Task Ledger](resources/readme/2026-10-05/en/tasks.png)](resources/readme/2026-10-05/en/tasks.png) | **Models and provider settings**<br>[![Models and provider settings](resources/readme/2026-10-05/en/settings.png)](resources/readme/2026-10-05/en/settings.png) |
++
++ See [visual provenance](resources/readme/2026-10-05/README.md) for capture conditions and hashes.
++
++ <a id="getting-started"></a>
++
++ ## Getting started
++
++ Prerequisites:
++
++ - **Node.js 24.16.0 or later in the 24.x line** and Git. Earlier Windows Node 24 releases can crash in TCP connections.
++ - **pnpm 11.2.2**, pinned in `package.json`.
++ - Network access for dependencies, Electron, uv and agent-browser.
++ - A provider account or a compatible local model service.
++
++ Run from the repository root:
++
++ ```sh
++ git clone https://github.com/Baixu22/VerseClaw.git
++ cd VerseClaw
++ corepack enable
++ corepack prepare pnpm@11.2.2 --activate
++ pnpm run init
++ pnpm --dir openclaw_runtime install --frozen-lockfile --ignore-scripts
++ node node_modules/electron/install.js
++ pnpm dev
++ ```
++
++ `pnpm dev` builds VerseBrowser, the embedded runtime and bundled skills before opening Vite and Electron. The Gateway normally needs 10–30 seconds to become ready. A Vite page alone does not provide the full Electron Host services.
++
++ First session:
++
++ 1. Complete Setup.
++ 2. Configure and validate a provider/model.
++ 3. Choose a project directory, permission mode and workspace.
++ 4. Send a scoped conversation and inspect the workspace panel.
++ 5. Resolve approvals in Inbox.
++ 6. Use Knowledge or Memory only through their review surfaces.
++ 7. Manage a conversation from its row: hovering shows Pin and ⋯ (rename, move to a workgroup, mark unread, fork, hand off, copy, archive with Undo, delete); right-click opens the same menu, and long titles scroll while hovered.
++ 8. The sidebar bell shows activity: a ring while a conversation runs (amber when one needs you), a list of running conversations with elapsed time, and completion, error and approval events. System alerts can be toggled there or in Settings → Session & Recovery.
++
++ Configured packages are listed in Releases. A build target does not guarantee a downloadable package for the current version.
++
++ | Platform | Configured artifacts | Validation scope |
++ |---|---|---|
++ | Windows x64 | NSIS | Primary controlled local acceptance target |
++ | macOS x64 / arm64 | DMG, ZIP | Build targets; capability-specific validation required |
++ | Linux x64 / arm64 | AppImage, DEB; RPM x64 | Build targets; graphical runtime required |
++
++ <a id="architecture"></a>
++
++ ## Architecture
++
++ The ordinary request path is:
++
++ ```text
++ React renderer
++   -> typed host facade (src/lib/host-api.ts)
++   -> preload IPC
++   -> Electron Main (authorization + dispatch)
++   -> Host service and/or Main-owned Gateway WebSocket RPC
++   -> embedded OpenClaw runtime
++ ```
++
++ Runtime events return through Main and `host-events.ts` to renderer stores. Local files, terminals and Git can complete in Main without traversing Gateway.
++
++ This is not a universal `WS -> HTTP -> IPC fallback` chain. Renderer pages must not open direct Gateway connections or add direct Electron IPC calls. `shared/host-api/contract.ts` is the typed shared boundary.
++
++ ```mermaid
++ flowchart LR
++   UI["React renderer"] --> HOST["Typed host facade"]
++   HOST --> IPC["Preload IPC"]
++   IPC --> MAIN["Electron Main"]
++   MAIN --> SERVICES["Desktop host services"]
++   MAIN --> GW["Gateway WebSocket RPC"]
++   GW --> RUNTIME["Embedded OpenClaw runtime"]
++   RUNTIME --> EVENTS["Runtime events"]
++   EVENTS --> MAIN --> UI
++ ```
++
++ Main repository layers:
++
++ - `src/`: renderer, pages, components, Zustand stores, Host facade, i18n and styles.
++ - `electron/`: Main services, IPC security, Gateway supervision, preload and desktop utilities.
++ - `shared/`: Host API/events, domain types, i18n resources, authority/default manifests.
++ - `openclaw_runtime/`: vendored runtime, Gateway, agents, tools, channels, packages and extensions.
++ - `packages/` and `resources/`: VerseBrowser, VToken, VerseShell, skills, plugins and native assets.
++ - `harness/`, `tests/`, `scripts/`: executable policy, tests, automation and evidence tooling.
++
++ See the [architecture guide](docs/architecture-overview.md) and [repository layout](docs/dev/repository-layout.md).
++
++ ## Local data and privacy
++
++ No separate database server is required.
++
++ - Desktop settings and exports live under Electron `userData`.
++ - Runtime configuration normally lives under `~/.openclaw`, with `OPENCLAW_CONFIG_DIR` support.
++ - Sessions use JSONL transcripts; runtime state also uses SQLite.
++ - Token history is aggregated from structured session usage records. Costs are estimates.
++ - Knowledge uses a `memory-wiki` vault plus local governance metadata.
++ - Logs, traces, screenshots, Task Forest state and handoffs are local working data unless explicitly curated.
++
++ Local storage does not mean offline execution. Content sent to online models, channels, browsers or external tools reaches those services under their configured credentials and network policy. Keep secrets and private transcripts out of commits and public issue reports.
++
++ VerseBrowser: install/dev/build compile the embedded module automatically. The 81-method contract is not 81 implemented Electron capabilities; see [invocation and driver limits](packages/README.md#versebrowser-integration-and-invocation). Private-network navigation requires a Main-owned approval bound to the session and origin. Agent-driven verification performs that approval in Main; caller-supplied approval markers grant no access.
++
++ <a id="development"></a>
++
++ ## Development and validation
++
++ Common commands:
++
++ | Command | Purpose |
++ |---|---|
++ | `pnpm dev` | Prepare resources/runtime and start Electron development |
++ | `pnpm run build:vite` | Build renderer and Electron bundles |
++ | `pnpm run build:runtime` | Build embedded runtime and smoke-test Gateway startup |
++ | `pnpm run typecheck` | Full node/web/test typecheck |
++ | `pnpm run lint:check` | Lint without modifying files |
++ | `pnpm test` | Root test groups and selected regressions |
++ | `pnpm run test:e2e` | Build and run Electron Playwright |
++ | `pnpm contract:check` / `pnpm i18n:lint` | Host contract and four-language coverage |
++ | `pnpm run harness:ci` | Repository Harness baseline |
++ | `pnpm run repo:artifacts:check` | Source/evidence/archive boundaries |
++ | `pnpm run docs:policy:validate` | Durable documentation policy |
++
++ For task-spec work:
++
++ ```bash
++ pnpm harness context --spec <task-spec>
++ pnpm harness validate --spec <task-spec>
++ pnpm harness run --spec <task-spec> --dry-run
++ ```
++
++ UI changes should include Electron E2E and en/zh/ja/ru strings. Communication changes also require `pnpm run comms:replay` and `pnpm run comms:compare`. Packaging success, installer success and release authorization are separate facts.
++
++ The [personal-agent QA pack](openclaw_runtime/qa/README.md) runs ten Gateway scenarios with a scripted provider and deterministic final-state checks. Its source-host evidence covers control flow, denial and recovery; live-model quality and packaged behavior have separate acceptance gates.
++
++ The [Responses acceptance contract](harness/specs/tasks/product-acceptance-space-bunny.md) covers text after reasoning, one tool round trip, session isolation, cancellation and provider failures on a configured local service. An interrupted Responses stream cannot finish a turn successfully or dispatch an incomplete tool call. These checks do not approve a model or a release.
++
++ See [development and validation](docs/modules/development-and-validation.md) for the full gate map and evidence rules.
++
++ <a id="troubleshooting"></a>
++
++ ## Troubleshooting
++
++ | Symptom | What to check |
++ |---|---|
++ | Knowledge shows `unknown method: wiki.status` | Enable and load `memory-wiki`, then initialize the vault. Gateway readiness alone is insufficient. |
++ | Wrong pnpm version / install failure | Check Node.js 24.x, pinned pnpm, both dependency workspaces and lockfiles. |
++ | Missing Electron executable | Run `node node_modules/electron/install.js` and check download connectivity. |
++ | Gateway stays unavailable | Inspect Settings → System & Runtime and logs; run Doctor before Doctor Fix. |
++ | Provider or channel unavailable | Check auth, model, plugin enablement, account status, proxy and real request/delivery evidence. |
++ | Tool write or command is blocked | Check workspace root, permission mode, path boundary and Inbox approvals. |
++ | E2E reports stale runtime | Run `pnpm run build:runtime`; rebuild the app as well if app sources changed. |
++ | Electron fails on headless Linux | Provide a display server, for example `xvfb-run -a pnpm run test:e2e`. |
++ | VerseConf PPTX export fails | Check plugin activation and the three-record template limit; use Markdown for longer outlines. |
++
++ <a id="documentation"></a>
++
++ ## Documentation
++
++ | Topic | Entry points |
++ |---|---|
++ | Module-by-module current implementation | [Module deep dives](docs/modules/README.md) |
++ | Architecture and data flow | [Architecture guide](docs/architecture-overview.md) · [Runtime control planes](docs/dev/runtime-control-planes.md) |
++ | Product boundaries and defaults | [Product semantics](docs/clawx-product-semantics.md) · [Default configuration](docs/dev/default-config-matrix.md) · [Component matrix](docs/dev/component-disposition-matrix-20261021.md) |
++ | Knowledge and context | [Knowledge system](docs/enhancements/knowledge-persistence/README.md) · [Context Runtime Kit](docs/context-runtime-kit/README.md) · [Context orchestrator](docs/dev/context-orchestrator.md) · [Memory control plane](docs/dev/memory-control-plane.md) |
++ | Agents and tasks | [Role-first design](docs/role-first-design.md) · [Multi-agent orchestration](docs/multi-agent-orchestration/README.md) |
++ | VerseGit / VerseShell / VerseBrowser | [VerseGit control plane](docs/dev/versegit-validation-layer/README.md) · [VerseShell status](docs/dev/verseshell-foundation/STATUS.md) · [VerseBrowser integration](packages/README.md) |
++ | Development and evidence | [Development docs](docs/README.md) · [Agent Dev](docs/agent-dev-control-plane.md) · [Repository layout](docs/dev/repository-layout.md) · [Harness](harness/specs/) |
++
++ Historical plans and acceptance snapshots have their own dates and candidates. Current behavior should be established from source, default manifests and fresh evidence, not from the age or length of a design document.
++
++ ## Contributing and license
++
++ Keep changes scoped, provide relevant validation and update all four root READMEs when behavior changes. For a functional or architecture change, also update the relevant module document under `docs/modules/`, the product semantics/default matrix when applicable, and reusable Harness specifications.
++
++ Verse Claw builds on [OpenClaw](https://github.com/openclaw/openclaw) and the ClawX work by the ValueCell team. The repository uses the [MIT license](LICENSE). Bundled components retain their own licenses and source obligations, including [VerseShell notices](resources/verseshell/SOURCE.md). Compact conversation/workspace interactions, including web-search source cards, adapted from [Rare UI](https://rareui.com) by Swami Malode retain attribution under `src/components/rareui`.
++
+
+ ❯ tests/unit/versegit-product-acceptance.test.ts:186:20
+    184|       expect(text).toContain('liveReady=false');
+    185|       expect(text).toContain('productApproved=false');
+    186|       expect(text).toContain('M4');
+       |                    ^
+    187|       expect(text).toContain('win32-x64');
+    188|       expect(text).toContain('M1');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[107/119]⎯
+
+ FAIL  tests/unit/versegit-sidecar-delivery.test.ts > F3 VerseGit sidecar package identity > resolves the development package without provider checkout or target/debug fallback
+AssertionError: expected { ok: false, …(4) } to match object { ok: true, code: 'verified', …(2) }
+(3 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "code": "verified",
+-   "manifest": {
+-     "artifact": {
+-       "arch": "x64",
+-       "platform": "win32",
+-       "sha256": StringMatching /^[a-f0-9]{64}$/u,
+-       "version": "vg 0.1.0",
+-     },
+-     "profiles": [
+-       "M1",
+-     ],
+-     "provider": {
+-       "capabilitiesSchema": "versegit.capabilities/v1",
+-       "capabilitiesSha256": StringMatching /^[a-f0-9]{64}$/u,
+-     },
+-     "schema": "clawx.versegit.sidecar-package/v1",
+-   },
+-   "ok": true,
+-   "version": "vg 0.1.0",
++   "code": "artifact_missing",
++   "ok": false,
+  }
+
+ ❯ tests/unit/versegit-sidecar-delivery.test.ts:56:22
+     54|   it('resolves the development package without provider checkout or ta…
+     55|     const resolved = resolveVerseGitSidecar({ appPath: root, platform:…
+     56|     expect(resolved).toMatchObject({
+       |                      ^
+     57|       ok: true,
+     58|       code: 'verified',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[108/119]⎯
+
+ FAIL  tests/unit/versegit-sidecar-delivery.test.ts > F3 VerseGit sidecar package identity > loads host diagnostic identity from the package and fails closed when it is absent
+AssertionError: expected { enabled: true, …(10) } to match object { …(6) }
+(17 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "binaryPath": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX\\resources\\bin\\win32-x64\\vg.exe",
++   "binaryPath": null,
+    "binaryResolution": {
+-     "ok": true,
++     "ok": false,
+    },
+-   "contractDigest": "77471d662b10f49d2e5b0f95ff13599df378ea79a0ab74b709dda42475768df3",
+-   "expectedBinarySha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
+-   "expectedCapabilitiesDigest": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+-   "expectedVersion": "vg 0.1.0",
++   "contractDigest": null,
++   "expectedBinarySha256": null,
++   "expectedCapabilitiesDigest": null,
++   "expectedVersion": null,
+  }
+
+ ❯ tests/unit/versegit-sidecar-delivery.test.ts:85:20
+     83|       CLAWX_VERSGIT_PROVIDER_ROOT: root,
+     84|     });
+     85|     expect(loaded).toMatchObject({
+       |                    ^
+     86|       binaryPath,
+     87|       expectedBinarySha256: manifest.artifact.sha256,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[109/119]⎯
+
+ FAIL  tests/unit/versegit-sidecar-delivery.test.ts > F3 VerseGit sidecar package identity > rejects missing, schema, profile, platform and artifact identity mismatches
+Error: ENOENT: no such file or directory, copyfile 'C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\resources\bin\win32-x64\vg.exe' -> 'D:\tmp\versegit-f3-resolver-XN1Yff\resources\bin\win32-x64\vg.exe'
+ ❯ fixtureRoot tests/unit/versegit-sidecar-delivery.test.ts:30:3
+     28|   mkdirSync(join(temp, 'resources/versegit'), { recursive: true });
+     29|   mkdirSync(join(temp, 'resources/bin/win32-x64'), { recursive: true }…
+     30|   copyFileSync(binaryPath, join(temp, manifest.artifact.devPath));
+       |   ^
+     31|   copyFileSync(licensePath, join(temp, manifest.license.path));
+     32|   writeFileSync(join(temp, 'resources/versegit/manifest.json'), JSON.s…
+ ❯ tests/unit/versegit-sidecar-delivery.test.ts:102:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[110/119]⎯
+
+ FAIL  tests/unit/versegit-sidecar-delivery.test.ts > F3 VerseGit sidecar package identity > rejects a binary whose observed version or capabilities differ from the manifest
+Error: ENOENT: no such file or directory, copyfile 'C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\resources\bin\win32-x64\vg.exe' -> 'D:\tmp\versegit-f3-resolver-SOSywC\resources\bin\win32-x64\vg.exe'
+ ❯ fixtureRoot tests/unit/versegit-sidecar-delivery.test.ts:30:3
+     28|   mkdirSync(join(temp, 'resources/versegit'), { recursive: true });
+     29|   mkdirSync(join(temp, 'resources/bin/win32-x64'), { recursive: true }…
+     30|   copyFileSync(binaryPath, join(temp, manifest.artifact.devPath));
+       |   ^
+     31|   copyFileSync(licensePath, join(temp, manifest.license.path));
+     32|   writeFileSync(join(temp, 'resources/versegit/manifest.json'), JSON.s…
+ ❯ tests/unit/versegit-sidecar-delivery.test.ts:119:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[111/119]⎯
+
+ FAIL  tests/unit/versegit-wp2-profile.test.ts > WP2 concurrency-aux diagnostic profile > keeps single-worktree calls at zero and records observed/partial/unavailable facts
+AssertionError: expected { Object (caseCount, eligibleCount, ...) } to match object { Object (caseCount, eligibleCount, ...) }
+(4 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "caseCount": 3,
+    "eligibleCount": 2,
+-   "processCalls": 3,
++   "processCalls": 0,
+  }
+
+ ❯ tests/unit/versegit-wp2-profile.test.ts:14:34
+     12|     expect(built.report.schema).toBe(WP2_SCHEMA);
+     13|     expect(built.report.profile).toBe('concurrency-aux');
+     14|     expect(built.report.summary).toMatchObject({ caseCount: 3, eligibl…
+       |                                  ^
+     15|     expect(built.report.cases.find((entry: { caseId: string }) => entr…
+     16|     expect(built.report.cases.find((entry: { caseId: string }) => entr…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[112/119]⎯
+
+ FAIL  tests/unit/verseshell-manifest.test.ts > VerseShell v2 manifest validation > accepts the qualified ordered patch-stack bundle in development and packaging modes
+AssertionError: expected { ok: false, mode: 'dev', …(2) } to deeply equal { ok: true, mode: 'dev', …(2) }
+
+- Expected
++ Received
+
+  {
+-   "issues": [],
++   "issues": [
++     "VerseShell ae.exe is missing: C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX\\resources\\bin\\win32-x64\\ae.exe",
++   ],
+    "mode": "dev",
+-   "ok": true,
++   "ok": false,
+    "platform": "win32-x64",
+  }
+
+ ❯ tests/unit/verseshell-manifest.test.ts:49:67
+     47|     expect(manifestText).toContain('pinned-commit-plus-ordered-patches…
+     48|     expect(manifestText).toContain(expectedCombinedSha);
+     49|     await expect(validateVerseShellManifest({ root, mode: 'dev' })).re…
+       |                                                                   ^
+     50|       ok: true,
+     51|       mode: 'dev',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[113/119]⎯
+
+ FAIL  tests/unit/verseshell-manifest.test.ts > VerseShell v2 manifest validation > rejects a tampered corresponding-source patch
+Error: ENOENT: no such file or directory, lstat 'C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\resources\bin\win32-x64\ae.exe'
+ ❯ fixtureRoot tests/unit/verseshell-manifest.test.ts:27:5
+     25|     const destination = join(directory, relative);
+     26|     await mkdir(dirname(destination), { recursive: true });
+     27|     await cp(join(root, relative), destination);
+       |     ^
+     28|   }
+     29|   return directory;
+ ❯ tests/unit/verseshell-manifest.test.ts:64:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[114/119]⎯
+
+ FAIL  tests/unit/verseshell-manifest.test.ts > VerseShell v2 manifest validation > rejects source-input manifest digest drift
+Error: ENOENT: no such file or directory, lstat 'C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\resources\bin\win32-x64\ae.exe'
+ ❯ fixtureRoot tests/unit/verseshell-manifest.test.ts:27:5
+     25|     const destination = join(directory, relative);
+     26|     await mkdir(dirname(destination), { recursive: true });
+     27|     await cp(join(root, relative), destination);
+       |     ^
+     28|   }
+     29|   return directory;
+ ❯ tests/unit/verseshell-manifest.test.ts:72:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[115/119]⎯
+
+ FAIL  tests/unit/verseshell-manifest.test.ts > VerseShell v2 manifest validation > rejects a silently reintroduced recovered-source inventory at the pinned upstream
+Error: ENOENT: no such file or directory, lstat 'C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\resources\bin\win32-x64\ae.exe'
+ ❯ fixtureRoot tests/unit/verseshell-manifest.test.ts:27:5
+     25|     const destination = join(directory, relative);
+     26|     await mkdir(dirname(destination), { recursive: true });
+     27|     await cp(join(root, relative), destination);
+       |     ^
+     28|   }
+     29|   return directory;
+ ❯ tests/unit/verseshell-manifest.test.ts:82:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[116/119]⎯
+
+ FAIL  tests/unit/verseshell-manifest.test.ts > VerseShell v2 manifest validation > verifies the existing artifact size and SHA-256 values
+Error: ENOENT: no such file or directory, lstat 'C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\resources\bin\win32-x64\ae.exe'
+ ❯ fixtureRoot tests/unit/verseshell-manifest.test.ts:27:5
+     25|     const destination = join(directory, relative);
+     26|     await mkdir(dirname(destination), { recursive: true });
+     27|     await cp(join(root, relative), destination);
+       |     ^
+     28|   }
+     29|   return directory;
+ ❯ tests/unit/verseshell-manifest.test.ts:96:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[117/119]⎯
+
+ FAIL  tests/unit/verseshell-manifest.test.ts > VerseShell v2 manifest validation > rejects missing source-input provenance payload
+Error: ENOENT: no such file or directory, lstat 'C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\resources\bin\win32-x64\ae.exe'
+ ❯ fixtureRoot tests/unit/verseshell-manifest.test.ts:27:5
+     25|     const destination = join(directory, relative);
+     26|     await mkdir(dirname(destination), { recursive: true });
+     27|     await cp(join(root, relative), destination);
+       |     ^
+     28|   }
+     29|   return directory;
+ ❯ tests/unit/verseshell-manifest.test.ts:103:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[118/119]⎯
+
+ FAIL  tests/unit/verseshell-manifest.test.ts > VerseShell v2 manifest validation > rejects facade operation order drift
+Error: ENOENT: no such file or directory, lstat 'C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\resources\bin\win32-x64\ae.exe'
+ ❯ fixtureRoot tests/unit/verseshell-manifest.test.ts:27:5
+     25|     const destination = join(directory, relative);
+     26|     await mkdir(dirname(destination), { recursive: true });
+     27|     await cp(join(root, relative), destination);
+       |     ^
+     28|   }
+     29|   return directory;
+ ❯ tests/unit/verseshell-manifest.test.ts:110:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[119/119]⎯
+
+
+ Test Files  40 failed | 1087 passed | 5 skipped (1132)
+      Tests  118 failed | 9801 passed | 55 skipped (9974)
+   Start at  21:41:01
+   Duration  2117.92s (transform 71.81s, setup 83.19s, import 494.71s, tests 829.93s, environment 475.70s)
+
+[ELIFECYCLE] Test failed. See above for more details.
+Harness report: C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\artifacts\harness\latest.md
+Harness result: fail
+- Unit tests failed with exit code 1
+C:\Users\27933\.codex\worktrees\context-inline-spill\ClawX\harness:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @verse-claw/harness@0.0.0 start: `node src/cli.mjs "--" "run" "--spec" "harness/specs/tasks/context-inline-spill-default-path.md"`
+Exit status 1
+[WARN]  Local package.json exists, but node_modules missing, did you mean to install?
+[ELIFECYCLE] Command failed with exit code 1.

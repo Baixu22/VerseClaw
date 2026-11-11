@@ -1,0 +1,3 @@
+$ pnpm --filter @verse-claw/harness start -- "run" "--spec" "harness/specs/tasks/inline-spill-real-benefit-eval.md" "--dry-run"
+$ node src/cli.mjs "--" "run" "--spec" "harness/specs/tasks/inline-spill-real-benefit-eval.md" "--dry-run"
+- harness\specs\tasks\inline-spill-real-benefit-eval.md: changed files are not covered by touchedAreas or ownedPaths: scripts/inline-spill-benefit-eval.mts, scripts/inline-spill-benefit-scoring.ts, tests/unit/inline-spill-benefit-eval.test.ts, tests/unit/zz-probe5.test.ts

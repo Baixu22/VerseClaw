@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_confidence": 0.96,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "The lifecycle fix synchronously removes failed HTTP sessions so the original request error reaches its caller without waiting for DELETE cleanup, while tracking asynchronous disposal promises and draining them during runtime disposal. The existing close path uses the same tracked scheduler, and the updated regression test covers immediate rejection, replacement survival after a delayed 404, and disposal waiting. No actionable defect was found in the two-file change."
+}

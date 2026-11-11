@@ -94,6 +94,7 @@ test.describe('Verse Claw chat run state events', () => {
           }
         }, { runId, sessionKey: MAIN_SESSION_KEY });
         await expect(send).toHaveAttribute('aria-label', /Stop|停止/);
+        await page.getByTestId('chat-turn-summary-toggle').click();
         const step = page.getByTestId('chat-execution-step').filter({ hasText: 'exec' }).first();
         await expect(step).toBeVisible();
         await step.getByTestId('chat-execution-step-toggle').click();
@@ -140,7 +141,7 @@ test.describe('Verse Claw chat run state events', () => {
     });
   }
 
-  test('anchors the live thinking matrix to the latest assistant output and clears it after completion', async ({ launchElectronApp }, testInfo) => {
+  test('keeps one compact live status and settles it after completion', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -240,11 +241,12 @@ test.describe('Verse Claw chat run state events', () => {
 
       const activityToggle = page.getByTestId('chat-turn-summary-toggle');
       await expect(activityToggle).toBeVisible();
-      await expect(activityToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(activityToggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(page.getByTestId('chat-turn-current-activity')).toBeVisible();
+      await expect(page.getByTestId('assistant-stream-status')).toHaveCount(0);
       await expect(activityToggle).toContainText(/Working|处理中/);
 
-      // The reply bubble is only promoted once no tool is still running, so
-      // settle the read tool before streaming the assistant text.
+      // Completing a tool keeps the process folded as the reply arrives.
       await app.evaluate(({ BrowserWindow }, payload) => {
         for (const win of BrowserWindow.getAllWindows()) {
           win.webContents.send('chat:runtime-event', {
@@ -533,6 +535,35 @@ test.describe('Verse Claw chat run state events', () => {
             success: true,
             result: { runId: 'run-composer-state' },
           },
+          // A /loop session: its checkpoint carries the Task Ledger root that
+          // chat.send requires before accepting explicit guide/queue/interrupt.
+          [stableStringify(['sessions', 'longTaskControlStatus', null])]: {
+            success: true,
+            available: true,
+            queueCount: 0,
+            latestCheckpoint: {
+              id: 'ltcp-composer-state',
+              sessionKey: MAIN_SESSION_KEY,
+              taskLedgerRootId: 'ledger-root-composer-state',
+              trigger: 'guide',
+              status: 'active',
+              checkpoint: {
+                schemaVersion: 1,
+                trigger: 'guide',
+                openBlockers: [],
+                decisions: [],
+                deviations: [],
+                filesTouched: [],
+                testsRun: [],
+                reviewNeededItems: [],
+                evidenceRefs: [],
+                createdAt: new Date(1).toISOString(),
+              },
+              createdAt: 1,
+              updatedAt: 1,
+            },
+            warnings: [],
+          },
         },
       });
 
@@ -566,8 +597,9 @@ test.describe('Verse Claw chat run state events', () => {
       await expect(primary).toHaveAttribute('data-send-state', 'running');
 
       await input.fill('Keep the test evidence.');
-      await expect(page.getByTestId('chat-intervention-controls')).toBeVisible();
+      await expect(page.getByTestId('chat-composer-stop')).toBeVisible();
       for (const mode of ['guide', 'queue', 'interrupt'] as const) {
+        await page.getByTestId('chat-intervention-menu-trigger').click();
         await page.getByTestId(`chat-intervention-${mode}`).click();
         await expect.poll(async () => app.evaluate((_context, expectedMode) => {
           const calls = (globalThis as typeof globalThis & {
@@ -732,9 +764,13 @@ test.describe('Verse Claw chat run state events', () => {
       await expect(graph.getByText('read', { exact: true })).toBeVisible();
       await expect(graph.getByText('edit', { exact: true })).toBeVisible();
       await expect(graph.getByText('exec', { exact: true })).toBeVisible();
-      await expect(graph.getByText('Tool Result: read', { exact: true })).toBeVisible();
-      await expect(graph.getByText('Tool Result: edit', { exact: true })).toBeVisible();
-      await expect(graph.getByText('Tool Result: exec', { exact: true })).toBeVisible();
+      await expect(graph.getByText(/^Tool Result:/)).toHaveCount(0);
+      await expect(readStep.getByTestId('chat-execution-step-detail')).toContainText('Read src/math.js');
+      for (const [tool, result] of [['edit', 'Updated subtract implementation'], ['exec', 'math tests passed']]) {
+        const step = graph.getByTestId('chat-execution-step').filter({ has: page.getByText(tool, { exact: true }) });
+        await step.getByTestId('chat-execution-step-toggle').click();
+        await expect(step.getByTestId('chat-execution-step-detail')).toContainText(result);
+      }
       await expect(graph.getByText('Assistant Final', { exact: true })).toHaveCount(0);
       await expect(graph.getByText('Fixed subtract and tests now pass.', { exact: true })).toHaveCount(0);
       await expect(page.getByTestId('chat-message-2').getByText('Fixed subtract and tests now pass.')).toBeVisible();

@@ -8,6 +8,7 @@ import {
   closeSync,
   chmodSync,
   existsSync,
+  fsyncSync,
   mkdirSync,
   openSync,
   readdirSync,
@@ -23,6 +24,7 @@ import {
   writeJsonlEntriesSync,
 } from "../../config/sessions/transcript-jsonl.js";
 import { CURRENT_SESSION_VERSION } from "../../config/sessions/version.js";
+import { recoveryEvalProbe } from "../../infra/recovery-eval-probe.js";
 import type { ImageContent, Message, TextContent } from "../../llm/types.js";
 import { getAgentDir as getDefaultAgentDir, getSessionsDir } from "../config.js";
 import {
@@ -32,10 +34,7 @@ import {
   uuidv7,
 } from "../runtime/index.js";
 import type { BashExecutionMessage, CustomMessage } from "./messages.js";
-import {
-  readModelCallObservation,
-  type ModelCallObservation,
-} from "../model-call-observations.js";
+import { readModelCallObservation, type ModelCallObservation } from "../model-call-observations.js";
 
 export { CURRENT_SESSION_VERSION };
 
@@ -934,7 +933,8 @@ export class SessionManager {
     const hasAssistant = this.fileEntries.some(
       (e) => e.type === "message" && e.message.role === "assistant",
     );
-    if (!hasAssistant) {
+    const isUserIntent = entry.type === "message" && entry.message.role === "user";
+    if (!hasAssistant && !isUserIntent) {
       // Mark as not flushed so when assistant arrives, all entries get written
       this.flushed = false;
       return;
@@ -976,6 +976,34 @@ export class SessionManager {
       ...(modelCall ? { modelCall } : {}),
     };
     this.appendEntry(entry);
+    if (
+      (message.role === "user" || message.role === "assistant" || message.role === "toolResult") &&
+      this.shouldPersist &&
+      this.sessionFile
+    ) {
+      // Intent, assistant dispatch and real results must reach stable storage
+      // before the executor or phase owner acknowledges the next boundary.
+      const fd = openSync(this.sessionFile, "r+");
+      try {
+        fsyncSync(fd);
+      } finally {
+        closeSync(fd);
+      }
+    }
+    if (message.role === "user" && this.shouldPersist && this.sessionFile) {
+      recoveryEvalProbe("user-intent-durable", {
+        sessionId: this.sessionId,
+        sessionFile: this.sessionFile,
+        entryId: entry.id,
+        messageText:
+          typeof message.content === "string"
+            ? message.content
+            : message.content
+                .filter((block) => block.type === "text")
+                .map((block) => block.text)
+                .join("\n"),
+      });
+    }
     return entry.id;
   }
 

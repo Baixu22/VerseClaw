@@ -11,12 +11,15 @@ import { DEFAULT_SUBAGENT_MAX_CHILDREN_PER_AGENT } from "../../config/agent-limi
 import { getRuntimeConfig } from "../../config/config.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { createOrchestratorPlan } from "../orchestrator.js";
+import { resolveOrchestrationContext } from "../orchestration-workspace-context.js";
+import { stringEnum } from "../schema/string-enum.js";
 import {
   runOrchestrationObserved,
   type ObservedOrchestrationRunRequest,
 } from "../orchestrator-run-observed.js";
 import {
   normalizeQualityPolicy,
+  normalizeIsolationMode,
   normalizeGraphMode,
   normalizeRepairPolicy,
   normalizeWorkerCommunication,
@@ -55,6 +58,7 @@ const defaultDeps: TeamOrchestrateDeps = {
 
 type TeamOrchestrateToolOptions = {
   agentSessionKey?: string;
+  expectedSessionGeneration?: string;
   completionOwnerKey?: string;
   agentChannel?: string;
   agentAccountId?: string;
@@ -132,6 +136,7 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
       "Plan and start a stable role-first multi-agent workflow. Uses existing subagent completion events; after accepted spawns, call sessions_yield instead of polling.",
     parameters: Type.Object({
       task: Type.String(),
+      isolation: Type.Optional(stringEnum(["shared", "worktree"])),
       templateId: Type.Optional(Type.String()),
       teamTemplateId: Type.Optional(Type.String()),
       runbookId: Type.Optional(Type.String()),
@@ -190,8 +195,15 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         );
       }
       const workerCommunication = requestedWorkerCommunication;
+      const parentContext = resolveOrchestrationContext({
+        sessionKey: opts?.agentSessionKey,
+        agentId: opts?.requesterAgentIdOverride,
+        workspaceDir: opts?.workspaceDir,
+        expectedSessionGeneration: opts?.expectedSessionGeneration,
+      }, () => opts?.config ?? getRuntimeConfig());
       const request: ObservedOrchestrationRunRequest = {
         task,
+        isolation: normalizeIsolationMode(params.isolation),
         fileHints: readStringArray(params.fileHints),
         important: readBoolean(params.important) ?? false,
         includeVerifier: readBoolean(params.includeVerifier) ?? true,
@@ -220,13 +232,13 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
         // Area 3 §3.1: workspace dir enables routing memo recall/record.
         // Undefined when the caller has no workspace context → memo pilot
         // degrades to no-op (today's routing unchanged).
-        workspaceDir: opts?.workspaceDir,
+        workspaceDir: parentContext.workspaceDir,
       };
       const plan = createOrchestratorPlan(request);
       const result = await deps.runObserved(
         request,
         {
-          agentSessionKey: opts?.agentSessionKey,
+          ...parentContext,
           completionOwnerKey: opts?.completionOwnerKey,
           agentChannel: opts?.agentChannel,
           agentAccountId: opts?.agentAccountId,
@@ -236,8 +248,6 @@ export function createTeamOrchestrateTool(opts?: TeamOrchestrateToolOptions): An
           agentGroupChannel: opts?.agentGroupChannel,
           agentGroupSpace: opts?.agentGroupSpace,
           agentMemberRoleIds: opts?.agentMemberRoleIds,
-          requesterAgentIdOverride: opts?.requesterAgentIdOverride,
-          workspaceDir: opts?.workspaceDir,
           inheritedToolAllowlist: opts?.inheritedToolAllowlist,
           inheritedToolDenylist: opts?.inheritedToolDenylist,
         },

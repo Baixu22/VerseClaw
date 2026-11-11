@@ -88,14 +88,12 @@ export const GENERIC_SEGMENTS = new Set([
  * regression test asserts the subtree cannot come back silently.
  *
  * What remains are heuristics-blind spots, not proven-dead leaves:
- * `coding.verifier.noSelfRepair` and
  * `contextFamily.observationMasking.preserveNewestObservationCount` are read
  * through paths this textual scan cannot see. Pinning them keeps today's tree
  * green without asserting they are unwired — if their readers become visible,
  * the check reports them as informational and stays green.
  */
 export const FEATURE_LEAF_CONSUMER_BASELINE = Object.freeze([
-  'coding.verifier.noSelfRepair',
   'contextFamily.observationMasking.preserveNewestObservationCount',
   // Retained only as a compatibility gate for the code path retired by TF-0510;
   // the runtime resolver is intentionally unreachable, so this is a pinned

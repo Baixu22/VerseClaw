@@ -1,0 +1,9 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-coding-p1",
+  "exitCode": 0,
+  "command": "pnpm --filter @verse-claw/versebrowser install --offline --frozen-lockfile --ignore-scripts",
+  "elapsedReportedSeconds": 5.1,
+  "rootCause": "retained VerseBrowser node_modules junction pointed to shared checkout; relative links resolved at a different root",
+  "previousJunctionPreserved": ".audit/TF-0771/versebrowser-shared-node-modules"
+}

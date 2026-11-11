@@ -97,7 +97,16 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
               agentId: request.payload?.agentId as string | undefined,
               effort: request.payload?.reasoningEffort as string | undefined,
             });
-            return makeResponse({ success: true });
+            return makeResponse({
+              success: true,
+              agents: [{
+                id: 'main', name: 'Main', modelRef: 'test/model', modelDisplay: 'test/model',
+                mainSessionKey: 'agent:main:main', reasoningEffort: request.payload?.reasoningEffort,
+                channelTypes: [],
+              }],
+              defaultAgentId: 'main', defaultModelRef: 'test/model',
+              configuredChannelTypes: [], channelOwners: {}, channelAccountOwners: {},
+            });
           }
           if (request.module === 'workspaces' && request.action === 'list') {
             return makeResponse(WORKSPACE_SNAPSHOT);
@@ -146,7 +155,7 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       // Open the shared menu directly to its reasoning section.
       await effortButton.click();
       await expect(page.getByTestId('chat-model-picker-menu')).toBeVisible();
-      await expect(page.getByTestId('chat-model-scope-selector')).toBeVisible();
+      await expect(page.getByTestId('chat-model-scope-selector')).toHaveCount(0);
       await expect(page.getByTestId('chat-agent-effort-popover')).toBeVisible();
 
       // The slider should have 7 stops (0..6)
@@ -183,9 +192,7 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       const settingsMenu = page.getByTestId('chat-model-picker-menu');
       await expect(settingsMenu).toBeVisible();
       const settingRows = settingsMenu.locator('.codex-execution-settings__row');
-      await expect(settingRows).toHaveCount(2);
-      await expect(page.getByTestId('chat-model-options')).toHaveCount(0);
-      await settingRows.first().click();
+      await expect(settingRows).toHaveCount(1);
       await expect(page.getByTestId('chat-model-options')).toBeVisible();
       const screenshotPath = testInfo.outputPath('combined-model-effort-menu.png');
       await page.screenshot({ path: screenshotPath, animations: 'disabled' });

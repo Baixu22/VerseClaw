@@ -23,6 +23,7 @@ import { SUBAGENT_ENDED_REASON_ERROR } from "./subagent-lifecycle-events.js";
 import { shouldUpdateRunOutcome } from "./subagent-registry-completion.js";
 import type { SubagentRunRecord } from "./subagent-registry.types.js";
 import { isStaleUnendedSubagentRun } from "./subagent-run-liveness.js";
+import { hasReservedSubagentRecovery } from "./subagent-recovery-state.js";
 import {
   getSubagentSessionRuntimeMs,
   getSubagentSessionStartedAt,
@@ -191,6 +192,8 @@ export function resolveSubagentRunOrphanReason(params: {
     if (typeof sessionEntry.sessionId !== "string" || !sessionEntry.sessionId.trim()) {
       return "missing-session-id";
     }
+    // A retained recovery boundary owns this row before startup's stale sweep.
+    if (hasReservedSubagentRecovery(sessionEntry, params.entry.runId)) return null;
     if (
       params.includeStaleUnended === true &&
       sessionEntry.abortedLastRun !== true &&

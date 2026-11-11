@@ -14,6 +14,14 @@
 6. **对 task-forest 收口的直接影响**：产出自动化等价物并如实标注后即可收口；"还差真人 verdict"不再是保持节点 open 的合法理由。原 §Task Forest closure policy 中 `claiming real-human evidence` 仍属于必须停手的越权项（它约束的是*声称*，不是*要求*）。
 7. **新写 spec / 节点 / runbook 时**：不要新增任何以"真人操作或真人数据"为前置的验收条件。若确需人机交互入口，写成自动可执行的模拟步骤，并把模拟产物标为 agent 驱动。
 
+## Subagent model default（仓库级）
+
+所有 Codex 子代理默认使用 `ccs-workbuddy/deepseek-v4.1-flash`。
+
+- 调用 `spawn_agent` 时显式传入 `model: "ccs-workbuddy/deepseek-v4.1-flash"`，不要省略 `model` 依赖继承。
+- 该默认适用于本仓库的所有 agent role、任务类型和重试。
+- 仅当当前用户明确要求某个子代理使用其他模型时覆盖；不得静默替换为其他模型。
+
 ## Cursor Cloud specific instructions
 
 ### Overview
@@ -213,3 +221,14 @@ Stop and ask only for authority the agent does not have: publishing/deploying or
 > **2026-09-27 amendment — see §Human-in-the-loop policy at the top of this file.** `claiming real-human evidence` above still means *never fabricate a human*; but *requiring* human evidence is no longer a valid blocker. Where a node, spec, or runbook expects a human step or human data, build the automated agent-driven equivalent, label it as such, and close.
 
 Full rule: `harness/specs/rules/task-forest-autoclose-and-roles.md`.
+
+## 默认 embedding 服务（所有者指定，2026-11-10）
+
+后续远端 embedding 默认使用 SiliconFlow 的 `Qwen/Qwen3-VL-Embedding-8B`。
+
+- 用户级环境变量：`SILICONFLOW_API_KEY`、`SILICONFLOW_BASE_URL`、`SILICONFLOW_EMBEDDING_MODEL`。
+- `SILICONFLOW_BASE_URL=https://api.siliconflow.cn/v1`，请求路径为 `/embeddings`。
+- `SILICONFLOW_EMBEDDING_MODEL=Qwen/Qwen3-VL-Embedding-8B`。
+- 该模型与 `Qwen/Qwen3-Embedding-8B` 是不同模型；输入格式和 tokenizer 单独绑定。2026-11-10 实测文本数组返回 4096 维向量。
+- 凭据从本地环境变量读取；文档、日志、测试报告和提交中只记录变量名。
+- 更换模型时核对实际维度及 query/document 输入契约，再建立对应的 embedding space。

@@ -28,8 +28,12 @@ import {
 import type { DelegationAdmissionContext } from "../../agents/delegation-admission.js";
 import { buildDelegationReceipt } from "../../agents/long-session-delegation-receipt.js";
 import { synthesizeOrchestrationResult } from "../../agents/orchestration-synthesizer.js";
+import { withSessionTaskRequesterReference } from "../../agents/session-task-scope.js";
+import { resolveOrchestrationContext } from "../../agents/orchestration-workspace-context.js";
+import type { RoleSpawnContext } from "../../agents/role-spawn.js";
 import {
   normalizeQualityPolicy,
+  normalizeIsolationMode,
   normalizeGraphMode,
   normalizeRepairPolicy,
   normalizeWorkerCommunication,
@@ -406,19 +410,21 @@ function readExplicitWorkers(
       return undefined;
     }
     const writeSet = readStringArray(rawWorker.writeSet);
-    const isolation =
-      rawWorker.isolation === "worktree"
-        ? "worktree"
-        : rawWorker.isolation === "shared"
-          ? "shared"
-          : undefined;
+    let isolation: OrchestratorWorkerPlan["isolation"];
+    try {
+      isolation = rawWorker.isolation === undefined ? undefined : normalizeIsolationMode(rawWorker.isolation);
+    } catch (error) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, String(error)));
+      return undefined;
+    }
     workers.push({
       roleName,
       task,
       ...(readString(rawWorker.label) ? { label: readString(rawWorker.label) } : {}),
       ...(readString(rawWorker.modelRef) ? { modelRef: readString(rawWorker.modelRef) } : {}),
-      ...(Array.isArray(rawWorker.writeSet) ? { writeSet } : {}),
+      ...(writeSet.length > 0 ? { writeSet } : {}),
       ...(isolation ? { isolation } : {}),
+      ...(readString(rawWorker.worktreeId) ? { worktreeId: readString(rawWorker.worktreeId) } : {}),
     });
   }
   return workers;
@@ -501,8 +507,18 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     if (Object.prototype.hasOwnProperty.call(params, "workers") && !workers) {
       return;
     }
+    let spawnContext: RoleSpawnContext;
+    let isolation: ReturnType<typeof normalizeIsolationMode>;
+    try {
+      isolation = normalizeIsolationMode(params.isolation);
+      spawnContext = resolveOrchestrationContext(params, () => context.getRuntimeConfig());
+    } catch (error) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, String(error)));
+      return;
+    }
     const plan = createOrchestratorPlan({
       task,
+      isolation,
       agentId: readString(params.agentId),
       fileHints: readStringArray(params.fileHints),
       important: readBoolean(params.important) ?? false,
@@ -523,7 +539,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       repairPolicy: normalizeRepairPolicy(params.repairPolicy),
       workerCommunication: readWorkerCommunication(params.workerCommunication),
       allowFollowupPlanning: readBoolean(params.allowFollowupPlanning) ?? false,
-      workspaceDir: readString(params.workspaceDir),
+      workspaceDir: spawnContext.workspaceDir,
       qualityAuthority: resolveQualityAuthority(params),
     });
     respond(
@@ -617,6 +633,15 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
       );
       return;
     }
+    let spawnContext: RoleSpawnContext;
+    let isolation: ReturnType<typeof normalizeIsolationMode>;
+    try {
+      isolation = normalizeIsolationMode(params.isolation);
+      spawnContext = resolveOrchestrationContext(params, () => context.getRuntimeConfig(), delegationAdmission);
+    } catch (error) {
+      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, String(error)));
+      return;
+    }
     const orchestrationRunId = `orch_${crypto.randomUUID()}`;
     // Capture actor identity for the audit log (enterprise: who/which/when).
     const actor = resolveControlPlaneActor(client ?? null);
@@ -650,6 +675,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
         runOrchestrationObserved(
           {
             task,
+            isolation,
             fileHints: readStringArray(params.fileHints),
             important: readBoolean(params.important) ?? false,
             includeVerifier: readBoolean(params.includeVerifier) ?? true,
@@ -675,22 +701,17 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
             allowFollowupPlanning: readBoolean(params.allowFollowupPlanning) ?? false,
             orchestrationRunId,
             patchRegistryMetadata: true,
-            workspaceDir: readString(params.workspaceDir),
+            workspaceDir: spawnContext.workspaceDir,
             qualityAuthority: resolveQualityAuthority(params, sessionKey),
             ...(delegationAdmission ? { delegationAdmission } : {}),
           },
-          {
-            agentSessionKey: sessionKey,
-            workspaceDir: readString(params.workspaceDir),
-            ...(readString(params.agentId)
-              ? { requesterAgentIdOverride: readString(params.agentId) }
-              : {}),
-          },
+          spawnContext,
           { spawn: spawnSubagentDirect },
           { sessionKey, runId: orchestrationRunId },
           broadcastLifecycle,
         ),
       );
+      spawnContext.assertWorkspaceCurrent?.();
       const delegationReceipt = delegationAdmission
         ? buildDelegationReceipt({
             admission: {
@@ -710,7 +731,7 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
                   : delegationAdmission.taskRef.nodeId,
               parentEnvironment: {
                 kind: "local",
-                canonicalRoot: readString(params.workspaceDir) ?? process.cwd(),
+                canonicalRoot: spawnContext.workspaceDir!,
                 backend: "local-workspace",
                 branch: null,
                 detachedHead: false,
@@ -1995,4 +2016,3 @@ export const roleOrchestrationHandlers: GatewayRequestHandlers = {
     }
   },
 };
-import { withSessionTaskRequesterReference } from "../../agents/session-task-scope.js";

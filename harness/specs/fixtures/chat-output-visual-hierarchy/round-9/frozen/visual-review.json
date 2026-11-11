@@ -1,0 +1,19 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-session-environment-relay",
+  "reviewedFiles": [
+    "environment-inline-light.png",
+    "environment-overlay-light.png",
+    "environment-overlay-dark.png",
+    "environment-narrow.png",
+    "workspace-expanded.png",
+    "workspace-hidden.png"
+  ],
+  "checks": [
+    "Bounded change/source/worker groups in light and dark",
+    "Manual overlay remains within the narrow conversation",
+    "Automatic panel sits beside the conversation",
+    "Workspace restores the conversation width when hidden"
+  ],
+  "realHumanEvidence": false
+}

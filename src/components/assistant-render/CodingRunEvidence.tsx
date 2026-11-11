@@ -1,4 +1,4 @@
-import { Check, Copy } from 'lucide-react';
+import { Check, ChevronRight, Copy } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { CodingRunEvidenceEvent, CodingRunView } from '@shared/product-semantics';
@@ -24,14 +24,15 @@ export function CodingRunEvidence({
 
   return (
     <details
-      className="rounded-lg border border-border/60 bg-surface-input"
+      className="group/diagnostics min-w-0 border-t border-border/50 pt-1"
       data-testid="chat-coding-run-evidence"
       data-coding-run-id={codingRun.codingRunId}
     >
-      <summary className="cursor-pointer select-none px-2.5 py-1.5 text-2xs font-medium text-muted-foreground">
+      <summary className="flex cursor-pointer list-none items-center gap-1.5 rounded py-1.5 text-xs text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+        <ChevronRight className="size-3 shrink-0 transition-transform duration-150 group-open/diagnostics:rotate-90 motion-reduce:transition-none" aria-hidden="true" />
         {t('turnSummary.codingRun.title')}
       </summary>
-      <div className="border-t border-border/60 p-2.5">
+      <div className="min-w-0 pb-2 pl-4">
         <div className="mb-1.5 flex items-center justify-between gap-2">
           <span className="text-2xs text-muted-foreground">
             {t('turnSummary.codingRun.jsonl')}

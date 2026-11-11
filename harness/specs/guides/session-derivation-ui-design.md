@@ -14,7 +14,7 @@ type: guide
 | --- | --- | --- |
 | `src/components/layout/SessionFolderTree.tsx`、`docs/dev/session-workstreams-design.md` | 项目内单层工作线、全局时间平铺；生产未调用 lineage helper | 工作线是整理方式，血缘是关系；时间视图继续平铺，项目内按需展开家族 |
 | `src/components/layout/session-buckets.ts` | `threadSessionsByLineage` 只在测试调用，将多代压成一级，并对循环防丢行 | 优先复用和扩展，不能把 helper 存在说成界面已完成 |
-| `shared/chat/types.ts`、`src/stores/chat/session-actions.ts` | ChatSession 与列表映射没有保留 `spawnedBy` | 先补齐字段流，不在页面猜 worker 来源 |
+| `shared/chat/types.ts`、`src/stores/chat.ts` | ChatSession 与列表映射没有保留 `spawnedBy` | 先补齐字段流，不在页面猜 worker 来源 |
 | `shared/types/session-derivation.ts`、`session.activitySnapshot` | 已有 fork/handoff/spawn 的只读逐跳来源与缺失/循环/深度上限状态 | 共用分类和诊断，不新建血缘数据库或全量快照轮询 |
 | `src/pages/Chat/index.tsx`、`ChatMessage.tsx` | 下拉派生会话、普通 Fork 与用户消息 Fork 已存在 | 消费同一关系投影；新问题入口扩展现有 Fork，而非另造派生协议 |
 | `openclaw_runtime/src/auto-reply/reply/session-fork.runtime.ts` | 用户消息 fork 的有效 leaf 是最近 assistant 祖先；非法 leaf 不降级 tip | 预览文案说明“此提问之前的上下文”，不承诺复制该用户消息 |

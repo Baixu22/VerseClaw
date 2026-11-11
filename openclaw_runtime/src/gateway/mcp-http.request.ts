@@ -12,6 +12,7 @@ import { normalizeMessageChannel } from "../utils/message-channel.js";
 import { getHeader } from "./http-utils.js";
 import { isLoopbackAddress } from "./net.js";
 import { checkBrowserOrigin } from "./origin-check.js";
+import { MCP_LOOPBACK_SUPPORTED_PROTOCOL_VERSIONS } from "./mcp-http.protocol.js";
 
 const MAX_MCP_BODY_BYTES = 1_048_576;
 const DEFAULT_MCP_BODY_TIMEOUT_MS = 30_000;
@@ -139,13 +140,13 @@ export function validateMcpLoopbackRequest(params: {
     return null;
   }
 
-  if (params.req.method !== "POST") {
+  if (params.req.method !== "POST" && params.req.method !== "DELETE") {
     logMcpLoopbackHttp("reject", {
       reason: "method_not_allowed",
       method: params.req.method ?? "",
       path: url.pathname,
     });
-    params.res.writeHead(405, { Allow: "POST" });
+    params.res.writeHead(405, { Allow: "POST, DELETE" });
     params.res.end();
     return null;
   }
@@ -177,7 +178,16 @@ export function validateMcpLoopbackRequest(params: {
   }
 
   const contentType = getHeader(params.req, "content-type") ?? "";
-  if (!contentType.startsWith("application/json")) {
+  const protocolVersion = getHeader(params.req, "mcp-protocol-version");
+  if (
+    protocolVersion &&
+    !MCP_LOOPBACK_SUPPORTED_PROTOCOL_VERSIONS.some((version) => version === protocolVersion)
+  ) {
+    params.res.writeHead(400, { "Content-Type": "application/json" });
+    params.res.end(JSON.stringify({ error: "unsupported_protocol_version" }));
+    return null;
+  }
+  if (params.req.method === "POST" && !contentType.startsWith("application/json")) {
     logMcpLoopbackHttp("reject", {
       reason: "unsupported_media_type",
       method: params.req.method ?? "",

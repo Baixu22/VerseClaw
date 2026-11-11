@@ -1194,6 +1194,9 @@ function mapLongTaskCheckpointRecord(value: unknown): LongTaskCheckpointRecord |
     sessionKey,
     ...(typeof value.agentId === 'string' ? { agentId: value.agentId } : {}),
     ...(typeof value.workspaceId === 'string' ? { workspaceId: value.workspaceId } : {}),
+    // The /loop root is what chat.send checks before it accepts an explicit
+    // inputMode; Chat reads it here to decide whether to offer those modes.
+    ...(typeof value.taskLedgerRootId === 'string' ? { taskLedgerRootId: value.taskLedgerRootId } : {}),
     ...(typeof value.runId === 'string' ? { runId: value.runId } : {}),
     ...(typeof value.traceId === 'string' ? { traceId: value.traceId } : {}),
     ...(typeof value.clawGraphRunId === 'string' ? { clawGraphRunId: value.clawGraphRunId } : {}),

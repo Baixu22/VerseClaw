@@ -6,18 +6,13 @@ import {
 } from "./helpers/context-provider-registry";
 import {
   createRuntimeMemoryContextProvider,
-  createRuntimeMemoryProviderResult,
   RUNTIME_MEMORY_CONTEXT_PROVIDER_ID,
 } from "../../openclaw_runtime/src/context-engine/memory-context-provider";
 import {
   buildGroundingRefFixture,
-  buildRuntimeMemoryTemporalFactCandidateFixture,
   buildRuntimeMemoryTemporalFactFixture,
-  isContextItem,
   isRuntimeContextProviderManifest,
   isRuntimeContextProviderResult,
-  isRuntimeMemoryContextProviderResult,
-  isRuntimeRegistryDiagnostic,
   type RuntimeContextProviderResult,
   type RuntimeMemoryQueryableFact,
 } from "../../openclaw_runtime/src/runtime-core";
@@ -29,9 +24,6 @@ const enabledConfig = {
     },
   },
 };
-
-const RAW_GROUNDING_SENTINEL =
-  "RAW_RUNTIME_MEMORY_GROUNDING_DIAGNOSTIC_SHOULD_NOT_SURVIVE";
 
 describe("runtime memory context provider", () => {
   it("keeps registration optional, default-off, and shadow-only", () => {
@@ -180,24 +172,6 @@ function fact(
         kind: "verifier_summary",
         idempotencyKey: "task_memory:verifier:summary",
         reference_time: overrides.reference_time ?? 10,
-      },
-    ],
-    evidenceRefs: [{ type: "test", ref: "tests/unit/runtime-memory-context-provider.test.ts" }],
-    ...overrides,
-  });
-}
-
-function candidate(
-  overrides: Partial<RuntimeMemoryQueryableFact> = {},
-): RuntimeMemoryQueryableFact {
-  return buildRuntimeMemoryTemporalFactCandidateFixture({
-    sourceEpisodeRefs: [
-      {
-        episodeId: "episode_candidate",
-        taskId: "task_memory",
-        kind: "verifier_summary",
-        idempotencyKey: "task_memory:verifier:candidate",
-        reference_time: 10,
       },
     ],
     evidenceRefs: [{ type: "test", ref: "tests/unit/runtime-memory-context-provider.test.ts" }],

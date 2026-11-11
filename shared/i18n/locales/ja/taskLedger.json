@@ -185,6 +185,19 @@
     "stepsProgress": "{{completed}} / {{total}} ステップ",
     "waitingForPlan": "次の手順を準備しています。",
     "accepted": "タスクの検証が完了しました。",
-    "viewChanges": "変更を表示"
+    "viewChanges": "変更を表示",
+    "plan": "実行計画",
+    "current": "実行中",
+    "next": "次",
+    "more": "タスクの操作",
+    "copyId": "タスク ID をコピー",
+    "copyIdNamed": "タスク ID {{id}} をコピー",
+    "idCopied": "タスク ID #{{id}} をコピーしました",
+    "copyFailed": "タスク ID をコピーできませんでした",
+    "openInLedger": "タスク台帳で開く",
+    "openStep": "「{{title}}」をタスク台帳で開く",
+    "showSteps": "ステップを表示",
+    "hideSteps": "ステップを隠す",
+    "updated": "{{time}}に更新"
   }
 }

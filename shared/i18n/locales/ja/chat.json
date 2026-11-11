@@ -13,6 +13,9 @@
     "retry": "再読み込み"
   },
   "welcome": {
+    "quickStart": "クイックスタート",
+    "branchLoading": "ブランチを読み込み中…",
+    "branchLoadFailed": "ブランチを読み込めませんでした",
     "projectSearch": "プロジェクトを検索",
     "projectEmpty": "プロジェクトが見つかりません",
     "changeProject": "プロジェクトを変更: {{projectName}}",
@@ -30,7 +33,7 @@
     "brainstormingDesc": "複数のエージェントで作業を分担します"
   },
   "sessionActivity": {
-    "title": "セッション状態",
+    "title": "セッション環境",
     "description": "この会話のランタイム、タスク、Git、ゴール、プロセス、系統、サブエージェント、ターミナルのリアルタイム状態。",
     "openRecovery": "セッション復旧を開く",
     "createMemoryDraft": "メモリ草案として保存",
@@ -50,9 +53,10 @@
       "lineage": "系統",
       "terminals": "ターミナル",
       "continuity": "継続性",
-      "environment": "環境",
+      "environment": "変更",
       "plan": "開発タスク",
-      "policy": "実行ポリシー"
+      "policy": "実行ポリシー",
+      "sources": "ソース"
     },
     "status": {
       "idle": "待機中",
@@ -163,7 +167,14 @@
     },
     "runningCount": "実行中 {{count}} 件",
     "processes": {
-      "openOutput": "{{command}} の出力を開く"
+      "recent": "完了 · {{count}}",
+      "openOutput": "{{command}} の出力を開く",
+      "openInWorkspace": "ワークスペースで開く",
+      "noOutput": "まだ出力がありません",
+      "showOutput": "出力を表示",
+      "hideOutput": "出力を隠す",
+      "duration": "{{seconds}} 秒",
+      "inWorkspace": "ワークスペースで表示中"
     },
     "policy": {
       "backend": "設定済みバックエンド",
@@ -267,6 +278,25 @@
         }
       },
       "unverifiedFacts": "未検証の項目"
+    },
+    "sourceKinds": {
+      "mcp": "MCP",
+      "skill": "スキル"
+    },
+    "moreRows": "残り {{count}} 件を表示",
+    "close": "環境を閉じる",
+    "overview": {
+      "context": "コンテキスト",
+      "contextUsed": "使用量 / 上限",
+      "cacheRead": "キャッシュ読み取り",
+      "cacheHitRate": "キャッシュヒット率",
+      "pressure": "負荷",
+      "connectors": "コネクタ",
+      "connectorsValue": "{{count}} 件使用中",
+      "skillsValue": "スキル {{count}} 件",
+      "review": "レビュー",
+      "background": "バックグラウンドタスク",
+      "backgroundIdle": "実行中なし"
     }
   },
   "noLogs": "（ログはまだありません）",
@@ -749,7 +779,8 @@
       "expand": "パネルを展開",
       "collapse": "パネルを折りたたむ",
       "moveTerminalSide": "ターミナルを右側へ移動",
-      "moveTerminalBottom": "ターミナルを下部へ移動"
+      "moveTerminalBottom": "ターミナルを下部へ移動",
+      "close": "ワークスペースを閉じる"
     },
     "changes": {
       "heading": "ファイルの変更（{{count}} 件）",
@@ -1256,6 +1287,8 @@
     }
   },
   "executionGraph": {
+    "arguments": "引数",
+    "result": "実行結果",
     "title": "実行グラフ",
     "branchLabel": "branch",
     "thinkingLabel": "考え中",
@@ -1337,6 +1370,13 @@
     "previewUnavailable": "画像プレビューを一時的に表示できません"
   },
   "session": {
+    "navigation": {
+      "title": "このワークスペースの会話",
+      "search": "会話を検索",
+      "source": "元の会話",
+      "from": "{{session}} から",
+      "children": "関連する会話 {{count}} 件を表示"
+    },
     "derived": {
       "title": "派生セッション（{{count}}）"
     },
@@ -1716,7 +1756,7 @@
     "resumeTooltip": "一時停止したセッションを再開します。",
     "resumeDisabled": "このセッションはここでは再開できません。",
     "startingTooltip": "起動中…クリックで送信をキャンセルするか、現在の実行を一時停止します。",
-    "queueTooltip": "この下書きをキューに入れ、現在の実行後に送信します。ダブルクリックで一時停止に切り替えます。",
+    "queueTooltip": "キュー：現在の実行が終わったら送信",
     "gatewayConnected": "接続済み",
     "gatewayStatus": "ゲートウェイ {{state}} | ポート: {{port}} {{pid}}",
     "contextMenu": {
@@ -2074,16 +2114,17 @@
     },
     "workModeRecommendedPermission": "推奨: {{mode}}",
     "intervention": {
+      "menu": "送信方法",
       "guide": "誘導",
-      "guideTooltip": "実行中のランに非中断のガイダンスを注入します。",
+      "guideTooltip": "実行を止めずに、次のステップで現在の実行に追加",
       "longTaskRequired": "中断/ガイド/キュー/目標修正には、このセッションでアクティブな /loop 長タスクコンテキストが必要です。",
       "reviseGoal": "目標を修正",
-      "reviseGoalTooltip": "実行中ランをチェックポイントし、修正後のユーザー目標から再開します。",
+      "reviseGoalTooltip": "チェックポイントを保存し、このメッセージを新しい目標として再開",
       "queueDefault": "実行中: Enter でキュー",
       "queue": "キュー",
-      "queueTooltip": "現在のランを保ち、この追加入力を後で再生します。",
-      "interrupt": "中断",
-      "interruptTooltip": "リスクのある復旧操作の前に現在のランを止めるか誘導します。"
+      "queueTooltip": "現在の実行が終わってから送信",
+      "interrupt": "中断して送信",
+      "interruptTooltip": "チェックポイントを保存して実行を止め、このメッセージから再開"
     },
     "rollbackPlan": {
       "title": "復旧支援",
@@ -2217,6 +2258,11 @@
       "existingBranch": "既存のブランチ",
       "defaultPath": "既定のパス",
       "defaultPathUnavailable": "ブランチ名を入力してパスを確認",
+      "kindBranch": "ブランチ",
+      "kindWorktree": "ワークツリー",
+      "kindDetached": "分離",
+      "mainCheckout": "メインのチェックアウト",
+      "linkedWorktree": "リンクされたワークツリー",
       "filesChanged": "{{count}} ファイルを変更",
       "filesChanged_one": "{{count}} ファイルを変更"
     },
@@ -2534,7 +2580,7 @@
   },
   "turnSummary": {
     "codingRun": {
-      "title": "CodingRun 証跡",
+      "title": "実行の診断",
       "jsonl": "読み取り専用 JSONL 投影",
       "copy": "コピー",
       "copied": "コピー済み"
@@ -2554,6 +2600,7 @@
       "minutesSeconds": "{{minutes}} 分 {{seconds}} 秒"
     },
     "badge": {
+      "tools": "ツール呼び出し {{count}} 件",
       "thoughts": "思考 {{count}} 件",
       "approvals": "承認待ち {{count}} 件",
       "plan": "計画 {{count}} ステップ",

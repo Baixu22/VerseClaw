@@ -653,6 +653,7 @@ export class GatewayManager extends EventEmitter {
    * Stop Gateway process
    */
   async stop(): Promise<void> {
+    this.capabilityMonitor.reset();
     logger.info('Gateway stop requested');
     this.lifecycleController.bump('stop');
     // Disable auto-reconnect
@@ -1080,6 +1081,7 @@ export class GatewayManager extends EventEmitter {
     // NET-E (TF-0442): never exceed the caller's logical deadline. The ambient
     // deadline is set by the Main host dispatcher for the current host action,
     // so this RPC cannot outlive the budget the renderer granted.
+    const capabilityEpoch = this.capabilityMonitor.epoch;
     const ambientDeadline = getHostDeadline();
     const effectiveTimeoutMs = ambientDeadline
       ? clampHostTimeoutToDeadline(timeoutMs, ambientDeadline)
@@ -1141,6 +1143,7 @@ export class GatewayManager extends EventEmitter {
         rejectPendingGatewayRequest(this.pendingRequests, id, new Error(`Failed to send RPC request: ${error}`));
       }
     }).then((result) => {
+      if (capabilityEpoch !== this.capabilityMonitor.epoch) return result;
       if (method === 'chat.send') {
         logger.info(`[gateway-rpc] chat.send response id received durationMs=${Date.now() - startedAt}`);
       }
@@ -1162,6 +1165,7 @@ export class GatewayManager extends EventEmitter {
       }
       return result;
     }).catch((error) => {
+      if (capabilityEpoch !== this.capabilityMonitor.epoch) throw error;
       const capability = classifyCapabilityMethod(method);
       if (capability) {
         this.capabilityMonitor.recordCapabilityFailure(capability, error, Date.now() - startedAt);
@@ -1214,6 +1218,7 @@ export class GatewayManager extends EventEmitter {
   }
 
   async checkHealth(options?: { probe?: boolean }): Promise<GatewayHealthReport> {
+    const capabilityEpoch = this.capabilityMonitor.epoch;
     const transport = await this.checkTransportHealth();
     if (transport.ok && this.status.state === 'running' && this.status.gatewayReady !== false) {
       const timeoutMs = options?.probe ? 8_000 : 3_000;
@@ -1222,10 +1227,10 @@ export class GatewayManager extends EventEmitter {
         this.rpc('status', {}, timeoutMs),
       ]);
 
-      if (healthResult.status === 'fulfilled') {
+      if (capabilityEpoch === this.capabilityMonitor.epoch && healthResult.status === 'fulfilled') {
         this.capabilityMonitor.recordOpenClawHealth(healthResult.value as GatewayRuntimePayload);
       }
-      if (statusResult.status === 'fulfilled') {
+      if (capabilityEpoch === this.capabilityMonitor.epoch && statusResult.status === 'fulfilled') {
         this.capabilityMonitor.recordOpenClawStatus(statusResult.value as GatewayRuntimePayload);
       }
     }
@@ -1349,6 +1354,7 @@ export class GatewayManager extends EventEmitter {
    * Connect WebSocket to Gateway
    */
   private async connect(port: number, _externalToken?: string): Promise<void> {
+    this.capabilityMonitor.reset();
     const isReconnect = this.status.connectedAt !== undefined || this.reconnectAttempts > 0;
     this.ws = await connectGatewaySocket({
       port,
@@ -1390,6 +1396,7 @@ export class GatewayManager extends EventEmitter {
         this.emit('gateway:resubscribe', { reason: 'reconnect' });
       },
       onCloseAfterHandshake: (closeCode) => {
+        this.capabilityMonitor.reset();
         this.connectionMonitor.clear();
         clearPendingGatewayRequests(this.pendingRequests, new Error('Gateway connection closed'));
         this.recordSocketClose(closeCode);

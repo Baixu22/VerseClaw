@@ -1,0 +1,205 @@
+{
+  "schema": "CodingFixAcceptance/v1",
+  "taskId": "TF-0766",
+  "driven_by": "agent",
+  "actor": "codex-coding-s2",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "57632e8880550c6b1377b580a75f7db9341cbe30",
+    "tree": "95823638f9c0e289f976575eb69ca14f296e0cbd",
+    "dirty": false
+  },
+  "finding": "A2",
+  "status": "resolved",
+  "unit": {
+    "files": 6,
+    "passed": 103,
+    "failed": 0,
+    "skipped": 0
+  },
+  "before": {
+    "passed": 20,
+    "failed": 3,
+    "reason": "junction create/modify undo and hardlink restore accepted unsafe targets"
+  },
+  "coverage": [
+    "actual tool undo create/modify external junction negatives",
+    "hardlinked target and snapshot rejection",
+    "checkpoint restore uses same workspace boundary",
+    "async journal tail change refuses instead of consuming a new entry",
+    "normal undo/restart/partial failure/preview/Git host rollback"
+  ],
+  "sourceHashes": {
+    "docs/modules/workspace-and-coding.md": "bdf34ab68a2d00e7a5899f17078bb676e9bf61a3fb29417bb15b74d14233a351",
+    "harness/specs/rules/coding-mutation-consistency-boundary.md": "fd9db06e1e5ee005494ee0a733c344dfcb6e30fe1406f9aa603f72c4c0ca6894",
+    "harness/specs/tasks/coding-undo-path-boundary.md": "74f8a095fc277ffedf67a572025f2205123118b81dc4e5bc42dc0ace868cd7f5",
+    "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts": "244da97867ba45881868cd34481a96b5fb1d5c8bb231f00491fd02b82cd505ca",
+    "openclaw_runtime/src/agents/apply-patch-preview-binding.test.ts": "2a8b810f523eaade1d487799b1d3cd9053aa5097e7f006bfed4b573b7699b3c9",
+    "openclaw_runtime/src/agents/checkpoint-rollback-executor.test.ts": "fbb372e69ddd08a72685172029976760aa00a200038cc1a769e9d1152a51ed0d",
+    "openclaw_runtime/src/agents/checkpoint-rollback-executor.ts": "6c87a42e08bed034633ecc6e8d36fd7b2511a465ffdfcf5d66c6ce379419cf73",
+    "openclaw_runtime/src/agents/parity-audit/parity-audit.test.ts": "22e0fbf315e5cfb8ade03892e514579ef86c8710bceb003ef14f33a82f836f07",
+    "openclaw_runtime/src/agents/tools/write-journal-core.ts": "515a8523e9cbbb2ddfaf25938554cefce2e0e3def86c14550bab171866ba6c33",
+    "openclaw_runtime/src/agents/tools/write-journal.test.ts": "0a1a1a013a667852c03ba7e2080cb65ec5eab05c88975adcedd36af1d84df61f",
+    "openclaw_runtime/src/agents/tools/write-journal.ts": "64717c11443677a4541385e152fb0dae8cf26d4ad7e5af0f306142ebdded4f96",
+    "openclaw_runtime/src/plugin-sdk/journaled-git-apply.ts": "256980a79e7b99d0d95bf94d00115d1cc68f8a09c42dbee18f3900f427febfd7",
+    "scripts/versegit-candidate-apply-probe.mts": "a8fe40194b8ebb424124e490be5fd9a67d37539cd46bbe27ef67f6e69e5e7fd4",
+    "tests/unit/versegit-host-apply.test.ts": "4add57ff16d0a67d9c3ef6fcd2b07ee9c7813a41fc0da7e8e27c04f2e95a0029"
+  },
+  "limitations": [
+    "A3-A10 remain separate unresolved nodes",
+    "Node dependencies reused; no packaged or live-model claim",
+    "Rooted filesystem protection is cooperative host enforcement, not a kernel sandbox"
+  ],
+  "commands": [
+    {
+      "name": "units",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.agents.config.ts",
+        "src/agents/agent-tools.workspace-boundary.test.ts",
+        "src/agents/tools/write-journal.test.ts",
+        "src/agents/checkpoint-rollback-executor.test.ts",
+        "src/agents/apply-patch-preview-binding.test.ts",
+        "src/agents/parity-audit/parity-audit.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\tf0766\\final\\unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 47.83940100669861
+    },
+    {
+      "name": "vg-host",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/versegit-host-apply.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\tf0766\\final\\vg-host-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 23.358859300613403
+    },
+    {
+      "name": "typecheck-node",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 15.872976779937744
+    },
+    {
+      "name": "typecheck-web",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 7.467677116394043
+    },
+    {
+      "name": "typecheck-test",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 19.621245861053467
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/agents/agent-tools.ts",
+        "openclaw_runtime/src/agents/tools/write-journal.ts",
+        "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts",
+        "scripts/coding-baseline/verify.d.mts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 9.91201400756836
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 3.919614791870117
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/coding-undo-path-boundary.md"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 2.8102200031280518
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.5552816390991211
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.2547268867492676
+    },
+    {
+      "name": "boundary-probe",
+      "argv": [
+        "node",
+        "--import",
+        "file:///D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+        "scripts/coding-baseline/probes/boundaries.mts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 13.423815965652466
+    }
+  ]
+}

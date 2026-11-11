@@ -4,7 +4,7 @@ const alphaModelRef = 'custom-alpha123/model-alpha';
 const betaModelRef = 'custom-beta5678/provider/model-beta';
 
 test.describe('Verse Claw chat model picker', () => {
-  test('switches the current agent model without requesting a gateway refresh', async ({ launchElectronApp }) => {
+  test('selects a model directly and preserves the previous choice on save failure', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -163,22 +163,21 @@ test.describe('Verse Claw chat model picker', () => {
       await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-alpha');
       await page.getByTestId('chat-model-picker-button').click();
       await expect(page.getByTestId('chat-model-picker-menu')).toBeVisible();
-      // The picker menu is a collapsed accordion (Model / Reasoning effort rows);
-      // expand the Model section before the configured models are listed.
-      await page.getByTestId('chat-model-picker-menu').locator('.codex-execution-settings__row').first().click();
+      await expect(page.getByTestId('chat-model-scope-selector')).toHaveCount(0);
       await expect(page.getByTestId('chat-model-options')).toBeVisible();
-      await expect(page.getByTestId('chat-model-options')).toContainText('provider/model-beta');
+      await expect(page.getByTestId('chat-model-options')).toContainText('model-beta');
       await page.getByTestId('chat-model-options').getByRole('button', { name: 'provider/model-beta' }).click();
-      await expect(page.getByTestId('chat-model-picker-button')).toContainText('provider/model-beta');
+      await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-beta');
 
       const requests = await app.evaluate(() => (
         (globalThis as typeof globalThis & { __chatModelPickerRequests?: Array<{ path: string; method: string; body: unknown }> }).__chatModelPickerRequests ?? []
       ));
       expect(requests).toContainEqual({
-        path: '/api/agents/main/model',
-        method: 'PUT',
-        body: { modelRef: betaModelRef },
+        path: 'sessions:patchRuntimeModel',
+        method: 'HOST',
+        body: { sessionKey: 'agent:main:main', modelRef: betaModelRef },
       });
+      expect(requests.some((request) => request.path === '/api/agents/main/model')).toBe(false);
       expect(requests.some((request) =>
         request.path === '/api/gateway/restart'
         || request.path === '/api/gateway/start'
@@ -187,16 +186,11 @@ test.describe('Verse Claw chat model picker', () => {
         || request.path === 'gateway:config.patch'
       )).toBe(false);
 
-      await page.getByTestId('chat-model-picker-button').click();
-      await page.getByTestId('chat-model-scope-turn').click();
-      await page.getByTestId('chat-model-options').getByRole('button', { name: 'provider/model-beta' }).click();
-      await expect(page.getByTestId('chat-turn-model-chip')).toBeVisible();
       await app.evaluate(() => { (globalThis as typeof globalThis & { __failModelReset?: boolean }).__failModelReset = true; });
       await page.getByTestId('chat-model-picker-button').click();
-      await page.getByTestId('chat-model-scope-persistent').click();
       await page.getByTestId('chat-model-options').getByRole('button', { name: 'model-alpha', exact: true }).click();
-      await expect(page.getByText(/Default model saved, but this session could not be reset/)).toBeVisible();
-      await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-alpha');
+      await expect(page.getByText(/Gateway disconnected during reset/)).toBeVisible();
+      await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-beta');
       await expect(page.getByTestId('chat-turn-model-chip')).toHaveCount(0);
     } finally {
       await closeElectronApp(app);

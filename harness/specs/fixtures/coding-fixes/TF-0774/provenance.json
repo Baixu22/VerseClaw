@@ -1,0 +1,150 @@
+{
+  "rawDirectory": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774",
+  "archive": {
+    "driven_by": "agent",
+    "actor": "codex-01a1b68a",
+    "realHumanEvidence": false,
+    "candidate": "3be783eac6a4e2aae35558dbee705f47cf3caeb1",
+    "projection": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac",
+    "archiveSha256": "34ebdb2945e1d8e89db5180843b3dff64a950493cb6a1f73ac46e26bb64f7f7c",
+    "filesVerified": 20885,
+    "errors": [],
+    "gitlinks": [],
+    "dependencies": "Installed root/runtime/VerseBrowser dependency links",
+    "observedAt": "2026-11-08T01:56:14.481541+00:00"
+  },
+  "retainedSources": {
+    "projection-units.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\projection-units.json",
+      "sha256": "62a227b3225c2d571f48a73d282b40986d1deffa6c5550ac44720729e980e89b"
+    },
+    "projection-runtime.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\projection-runtime.json",
+      "sha256": "0367e0178500f4865b5d86c9e640839d7fce14c93c5f18d5bfd1b25cbd887448"
+    },
+    "projection-gates.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\projection-gates.json",
+      "sha256": "2cee4d096c09acf39f2d4cf8dbbee8099a5fd299cefd34fd96637c54e1fe70ab"
+    },
+    "fast-gates.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\fast-gates.json",
+      "sha256": "c0f1e462b3a333825d2eeb0a7dc62ad899a62475fd6bbb21f9c82a6f6b3fb101"
+    },
+    "source-verification.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-verification.json",
+      "sha256": "8b26d84843dd6442aff4658afcfbc5800d88db032a3eba867419086ce1d7247e"
+    },
+    "electron/playwright.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\electron-3be783eac.json",
+      "sha256": "79e00e1964dd2500f274679db0afa202951e62d7d1cb4b02282c184bf2ba3f04"
+    },
+    "electron/command.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\electron-3be783eac-command.json",
+      "sha256": "2a974e5e08db220f218ba5ebdeca1884a36ef0f952ce0b93cabf4bf5527acb04"
+    },
+    "electron/coding-retirement.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\electron-3be783eac\\coding-retired-controls-TF-e71bc--retirement-in-four-locales\\coding-retirement.json",
+      "sha256": "2efe2fc93ab45e1a11bb06e9eb979f39fac2bb8855a4a2daa23d4b69166c8ea5"
+    },
+    "electron/electron-process-cleanup.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\electron-3be783eac\\electron-process-cleanup.json",
+      "sha256": "f7883d6e58b360a1e5bb1b5053195612c6ee360754997927c28233f2b9befeb4"
+    },
+    "electron/electron-process-run.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\electron-3be783eac\\electron-process-run.json",
+      "sha256": "cf31fec4a8a74c8f2cbe4cb9cbb530ba07627fb8e7ec7247aabab4d08c981155"
+    },
+    "electron/source-mutation-guard.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\electron-3be783eac\\source-mutation-guard.json",
+      "sha256": "c1693877b2194ef88cfd994c83b5f58da7078c3ef67d1953de0c4d1a8447bb35"
+    },
+    "electron/retired-en.png": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\electron-3be783eac\\coding-retired-controls-TF-e71bc--retirement-in-four-locales\\retired-en.png",
+      "sha256": "a489125ae0d7a4646798fbe9e7cb7f57981c67a2ff18995a7102293ac7a2444e"
+    },
+    "electron/retired-zh.png": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\electron-3be783eac\\coding-retired-controls-TF-e71bc--retirement-in-four-locales\\retired-zh.png",
+      "sha256": "b3e378ec6275fa82320b07a73e39efba3a03ec14659dba940d870740a2195e08"
+    },
+    "electron/retired-ja.png": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\electron-3be783eac\\coding-retired-controls-TF-e71bc--retirement-in-four-locales\\retired-ja.png",
+      "sha256": "19e7e8517e815d3093e539f45fbf53cc771cc4ad77e343805901b3e855abc89f"
+    },
+    "electron/retired-ru.png": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\electron-3be783eac\\coding-retired-controls-TF-e71bc--retirement-in-four-locales\\retired-ru.png",
+      "sha256": "26e074387bdbfe5386f15202d603cd6b7864b29414a6cb8a5f3b1e4c9ee4288c"
+    },
+    "review.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\review-followup.json",
+      "sha256": "713eb3983ab0ff4d8345e0ca723f26f5f28db5f3fbd3f1af63f9227c4cb08498"
+    },
+    "review-command.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\review-followup-exit.json",
+      "sha256": "0db48154868d0ad9d200b627e8aa2b92cc4dea7a105cfc9841de81611efd315a"
+    },
+    "build-command.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\builds-mixed.json",
+      "sha256": "35df46d595c422def9018653c227986e2b834d9b2bad7c47d0a2d870b979dc42"
+    },
+    "historical/entry-before.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\entry-before.json",
+      "sha256": "8ec532c26ecc45866153ec1bf455ab561a16fc466b8d8448bfe32278d350eb80"
+    },
+    "historical/deferred-before-live.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\deferred-before-live.json",
+      "sha256": "f23df3fae98f88b8d54f73b0005aafe4a094e9166a465980689c6dbc8d34235c"
+    },
+    "historical/graduation-before.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\graduation-before.json",
+      "sha256": "8d132993e1610d4d3b198dcfb0a03a051a3662f069b7d783d2400075646bc986"
+    },
+    "historical/mixed-before.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\mixed-before.json",
+      "sha256": "b2a3cbad8bf4d4a6d21d52d92d5233839323b1c2eb6160e65cf74e6f71dad2ec"
+    },
+    "historical/review.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\review.json",
+      "sha256": "54a139e3f401a34947ec8d79d3f5b0a859375cdb91de40611da7b3cbe16729ff"
+    },
+    "historical/e2e-debug-command.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\e2e-debug-command.json",
+      "sha256": "887d88d39656e09dba952cbf21fa41296b50366971cc7c5efca40dbbd1b4de83"
+    },
+    "historical/e2e-accepted-command.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\e2e-accepted-command.json",
+      "sha256": "78a5d5acb3e2e311efc31b503de8399b7d4e3971ccf87bc4bf93e9819d57fae0"
+    },
+    "historical/e2e-sealed-command.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\e2e-sealed-command.json",
+      "sha256": "02d9bff8b5c0e29b0dba5b948162577d670207a14cc8e3dca45ba445d7c5dfae"
+    },
+    "historical/harness-ci-final-command.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\harness-ci-final-command.json",
+      "sha256": "afe92f6e1704b053556f8066948504b63eab99e82d63068ea8a78a1dd1d01774"
+    },
+    "historical/harness-ci-catalogs-command.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\harness-ci-catalogs-command.json",
+      "sha256": "465d38c7050b417e23ebe92f3f072821ea072f94f90208b2ab2198dc4ab63f45"
+    },
+    "historical/electron-model-config-failed.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\e2e-debug\\coding-retired-controls-TF-e71bc--retirement-in-four-locales\\coding-retirement.json",
+      "sha256": "109e26f7668f6fd23140176189560822fb44b326b9d5a147aca9589764040d40"
+    },
+    "historical/electron-navigation-failed.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\e2e-accepted\\coding-retired-controls-TF-e71bc--retirement-in-four-locales\\coding-retirement.json",
+      "sha256": "e817d193647ccaa98554b33f71d08bdf846283f82f9777f8a9ea8cc6758f1f93"
+    },
+    "historical/electron-cleanup-check-failed.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\e2e-sealed\\coding-retired-controls-TF-e71bc--retirement-in-four-locales\\coding-retirement.json",
+      "sha256": "9cfc2080d40379d97847d8afeb377261af46686d0f1e43f997ff3f44c50a3b5a"
+    },
+    "historical/electron-cleanup-later-readback.json": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\e2e-sealed\\electron-process-cleanup.json",
+      "sha256": "3c42105aeba88e84992082c0bf6e66fe67dc0e8d5336919577cd4f1e0d0d172a"
+    },
+    "historical/frozen-a10-routing.json": {
+      "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\harness\\specs\\fixtures\\coding-vg-sts-jj-baseline\\acceptance\\routing\\routing-results.json",
+      "sha256": "6d180b074ec8a368104d60d147089e845c980ee674c401a20bf29161c6bd9f1b"
+    }
+  }
+}

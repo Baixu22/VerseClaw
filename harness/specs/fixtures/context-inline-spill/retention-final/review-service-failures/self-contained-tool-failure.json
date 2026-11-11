@@ -1,0 +1,9 @@
+{
+  "schema": "ContextInlineSpillReviewRecovery/v1",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "candidate": "16da6fdf22b0bda023becffa4272373be610ab54",
+  "status": "superseded-tool-interface-failure",
+  "reason": "MCP node_repl call used unsupported description argument despite complete supplied source; final retry isolates user-config MCP services.",
+  "clean_review_claimed": false
+}

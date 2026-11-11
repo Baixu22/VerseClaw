@@ -724,6 +724,8 @@ async function clearPendingFinalDeliveryAfterSuccess(params: {
       return {
         pendingFinalDelivery: undefined,
         pendingFinalDeliveryText: undefined,
+        pendingFinalDeliveryRunId: undefined,
+        pendingFinalDeliveryRecoveryRunId: undefined,
         pendingFinalDeliveryCreatedAt: undefined,
         pendingFinalDeliveryLastAttemptAt: undefined,
         pendingFinalDeliveryAttemptCount: undefined,

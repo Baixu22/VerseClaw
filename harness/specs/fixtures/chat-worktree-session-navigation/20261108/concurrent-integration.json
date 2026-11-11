@@ -1,0 +1,18 @@
+{
+  "src/pages/Chat/index.tsx": {
+    "accepted": "0b9155063687f9cb20c96b6755ad29c9401c44caa8cab2ddac7bf590ddfc7666",
+    "integrated": "d2e46f904a143151007818bd219f149398f02ba4b2e67eddc3ecc367fc68da78"
+  },
+  "README.md": {
+    "accepted": "cea1ab62d62887865804c1ee49ee2a1a104ccec100b1071a0aecd946841c0448",
+    "integrated": "6f71418a5f28f3fb36036ad8c2e90b98c66b961e995f3e6316cc41a139a55d3d"
+  },
+  "README.zh-CN.md": {
+    "accepted": "4094973d2d81f45940fb5ec48d99bcb8ea85aab993931cf5f97a91efaff186e7",
+    "integrated": "c761b771074e98a6c062df154ac97846396ec2dd2e5e535164cd26818fa51e84"
+  },
+  "README.ja-JP.md": {
+    "accepted": "e26ee7c997ad4cf91ea967d83f4d73e41bc3511ae2a1bd5d09d88eebff3de368",
+    "integrated": "964672cb36530db7ca04f348cd708517929376083c0d7122c17d8d70914f1167"
+  }
+}

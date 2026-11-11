@@ -1,0 +1,398 @@
+{
+  "schema": "CommittedBranchIntegration/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "date": "2026-11-09",
+  "candidate": "8aa2ab3593ee5bd2b4a9d0c1631845d6426f3aee",
+  "candidateTree": "5a1a3a489a406ff200de249e8a4293e9d9c1ceaf",
+  "sourceMain": "dee28c8a2ea24e1c4abf1260bbd5dee156bec4a4",
+  "integratedConcurrentMain": "eeb4578ecab8dab1bca285907c652ba3287170a7",
+  "remoteBase": "d8d1691a281b14d74096d50b4da16eb0148ffe87",
+  "integrated": [
+    {
+      "branch": "codex/audit-wiring-quick-fixes-20261106",
+      "head": "1ac356e989686ed5fd6e6e5a3cdc794d025e60f1"
+    },
+    {
+      "branch": "codex/audit-wiring-remainder-20261107",
+      "head": "a07768997cfe9da8fe4e38ebd82f317080b4cde6"
+    },
+    {
+      "branch": "codex/autonomy-host-readiness",
+      "head": "5e4369660b983061520ac664051bf7a3b45bf735"
+    },
+    {
+      "branch": "codex/coding-p2-effect-result-20261107",
+      "head": "7542e809cfd8e9cffd7725627fb282cdfe5a784a"
+    },
+    {
+      "branch": "codex/coding-vg-sts-jj-20261104",
+      "head": "2fa1e4e2c4b193899477d05c8816015f0c345d9b"
+    },
+    {
+      "branch": "codex/context-inline-spill",
+      "head": "102ec80d860b9a8d453d76f090872f1190f50182"
+    },
+    {
+      "branch": "codex/execution-phase-20261103",
+      "head": "4b1f615805bda17fc097f6d307ee347ce2ec2cd4"
+    },
+    {
+      "branch": "codex/gateway-startup-candidate-20261105",
+      "head": "5c91a6f25ffd908d579116cd188e5fd8d949b835"
+    },
+    {
+      "branch": "codex/mixed-resource-acceptance-20261108",
+      "head": "b940713f6430578dafb0ace4d1b0fa1c297e368d"
+    },
+    {
+      "branch": "codex/recovery-authority-20261103",
+      "head": "bf3c987f171a33092ecbbaa10ab33dc4dd3c39b7"
+    },
+    {
+      "branch": "codex/recovery-eval-20261103",
+      "head": "3331ada708ca974909ed12aef6071acd85afb528"
+    },
+    {
+      "branch": "codex/recovery-integration-20261103",
+      "head": "51817f6b94e2b1a5b23b74aaf02d8020ff5d3f9d"
+    },
+    {
+      "branch": "codex/rsi-measurement-0857-20261108",
+      "head": "ccbb9605cd0c94a963c3cf71326218c3e01d5295"
+    },
+    {
+      "branch": "codex/rsi-remediation-20261107",
+      "head": "0a91909293ec209ee2764f935aaa16dbca760892"
+    },
+    {
+      "branch": "codex/session-task-scope-admission-20261107",
+      "head": "dab184890db19cf974007bf165e01bc48f2a0e39"
+    },
+    {
+      "branch": "codex/session-task-scope-derivation-20261107",
+      "head": "08994b02ebb07aec3fe373fca97b598fff1c0e9a"
+    },
+    {
+      "branch": "codex/skill-mcp-closeout-20261106",
+      "head": "398375b65c62fb4092faf293479eb1ffe72e4b18"
+    },
+    {
+      "branch": "codex/terminal-resource-ownership-20261109",
+      "head": "10cf9f95370cf59a41cfda366d100b5136821902"
+    },
+    {
+      "branch": "codex/unified-execution-registry-20261108",
+      "head": "10cf9f95370cf59a41cfda366d100b5136821902"
+    }
+  ],
+  "historicalBranchesRetained": [
+    {
+      "branch": "backup/rsi-pre-linearize-26b664c5c",
+      "head": "26b664c5c976383d7b3bd515293dec2f3775abea"
+    },
+    {
+      "branch": "codex/autonomous-project-system",
+      "head": "039f2bf472d9ad2d7d8eb6aafe98c4f84b7b8e96"
+    },
+    {
+      "branch": "codex/knowledge-governance-20261105",
+      "head": "a42f325f08506526b891d55e8dcf5da6736d1bf1"
+    },
+    {
+      "branch": "codex/long-session-merge-20261024",
+      "head": "7d177176313e40765a7bd19f15d04c08f52d9bfd"
+    },
+    {
+      "branch": "codex/ontology-contracts",
+      "head": "22c275811bcfb7c9c953db2595a80a300d03f0a4"
+    },
+    {
+      "branch": "codex/performance-resource-integration-20261107",
+      "head": "8789bc4d7fb2ae405ad31f786a1d5a8e09ad2de6"
+    },
+    {
+      "branch": "codex/performance-resource-lifecycle-acceptance-20261107",
+      "head": "e6155185dbfc488080ee432f37e20929080a8b27"
+    },
+    {
+      "branch": "codex/recover-long-session-39e-20261024",
+      "head": "ed84e69ed5a54231a62008b10e8c97cb7aebd5bb"
+    },
+    {
+      "branch": "codex/recover-long-session-merge-20261024",
+      "head": "7d177176313e40765a7bd19f15d04c08f52d9bfd"
+    },
+    {
+      "branch": "codex/resource-waiting-recovery-20261107",
+      "head": "9e1a6f5666f60fdc4d3fd0579e446889a1af5747"
+    },
+    {
+      "branch": "codex/tf0604-rsi-baseline",
+      "head": "4645efc486ab5053171807ce0f0cd1caf0c27e3b"
+    },
+    {
+      "branch": "codex/tf0650-0652-admission-convergence",
+      "head": "6e757e43db1672526c1963ac3e1d87d4abeb72f5"
+    },
+    {
+      "branch": "codex/tf0652-a6-final",
+      "head": "defe92a84457748351b07abf1c2eba2ecdb091fd"
+    },
+    {
+      "branch": "codex/tf0652-a6-final-candidate",
+      "head": "12c1e7a452921436a6043955ddabc0dc703ce8f9"
+    },
+    {
+      "branch": "codex/tf0679-source-20261108",
+      "head": "54e1457b0cf54f198472ab1dc875bf8fd2a93cee"
+    },
+    {
+      "branch": "codex/tf0741-memory-provenance",
+      "head": "90afc0736050d907f7365c191c2aa9d7dc884999"
+    }
+  ],
+  "policy": "Integrate current valid committed changes; retain historical backups and superseded experiments, as selected by the owner.",
+  "mergeRepairs": [
+    "Keep generation fences and SQLite ownership while applying worktree changes through the Coding journal.",
+    "Persist file baselines and the latest verified merge receipt; hold the existing root mutex through asynchronous journal application.",
+    "Retain recovery budget accounting, incomplete-evidence rejection, queued subagent ownership and retired patch-flow enforcement.",
+    "Make repeated fork lineage records deterministic; reject unreadable handoff ancestry before activation.",
+    "Preserve untracked files, worker commits and replaced checkout identities during cleanup.",
+    "Reconcile Electron native identity cleanup, test fixtures, declaration types and retained log exceptions."
+  ],
+  "validation": {
+    "suites": [
+      {
+        "file": "final-critical.json",
+        "passed": 281,
+        "failed": 0,
+        "suites": [
+          {
+            "path": "tests/unit/gateway-supervisor.test.ts",
+            "status": "passed",
+            "passed": 13
+          },
+          {
+            "path": "tests/unit/host-services.test.ts",
+            "status": "passed",
+            "passed": 45
+          },
+          {
+            "path": "tests/unit/long-session-delegation-admission.test.ts",
+            "status": "passed",
+            "passed": 19
+          },
+          {
+            "path": "tests/unit/orchestration-resource-scheduler.test.ts",
+            "status": "passed",
+            "passed": 15
+          },
+          {
+            "path": "tests/unit/orchestration-worktree-merge.test.ts",
+            "status": "passed",
+            "passed": 33
+          },
+          {
+            "path": "tests/unit/recovery-authority-contract.test.ts",
+            "status": "passed",
+            "passed": 14
+          },
+          {
+            "path": "tests/unit/recovery-contract-eval.test.ts",
+            "status": "passed",
+            "passed": 17
+          },
+          {
+            "path": "tests/unit/resource-mixed-measurement.test.ts",
+            "status": "passed",
+            "passed": 8
+          },
+          {
+            "path": "tests/unit/rsi-campaign-budget.test.ts",
+            "status": "passed",
+            "passed": 9
+          },
+          {
+            "path": "tests/unit/task-loop-controller.test.ts",
+            "status": "passed",
+            "passed": 69
+          },
+          {
+            "path": "tests/unit/terminal-resource-ownership.test.ts",
+            "status": "passed",
+            "passed": 5
+          },
+          {
+            "path": "tests/unit/terminal-session-manager.test.ts",
+            "status": "passed",
+            "passed": 16
+          },
+          {
+            "path": "tests/unit/web-preview-owner-api.test.ts",
+            "status": "passed",
+            "passed": 3
+          },
+          {
+            "path": "tests/unit/web-preview-startup-recovery.test.ts",
+            "status": "passed",
+            "passed": 2
+          },
+          {
+            "path": "tests/unit/worktree-registry-restart.test.ts",
+            "status": "passed",
+            "passed": 13
+          }
+        ]
+      },
+      {
+        "file": "runtime-verified.json",
+        "passed": 52,
+        "failed": 0,
+        "suites": [
+          {
+            "path": "openclaw_runtime/src/agents/checkpoint-rollback-executor.test.ts",
+            "status": "passed",
+            "passed": 21
+          },
+          {
+            "path": "openclaw_runtime/src/agents/worktree-service.test.ts",
+            "status": "passed",
+            "passed": 31
+          }
+        ]
+      },
+      {
+        "file": "native-final.json",
+        "passed": 7,
+        "failed": 0,
+        "suites": [
+          {
+            "path": "tests/unit/electron-process-identity.test.ts",
+            "status": "passed",
+            "passed": 2
+          },
+          {
+            "path": "tests/unit/versegit-fact-adapter.test.ts",
+            "status": "passed",
+            "passed": 5
+          }
+        ]
+      }
+    ],
+    "passedTests": 340,
+    "electron": {
+      "passed": 3,
+      "failed": 0,
+      "flaky": 0,
+      "specs": [
+        "tests/e2e/skills-runtime-config.spec.ts",
+        "tests/e2e/workspace-terminal-panel.spec.ts"
+      ]
+    },
+    "types": {
+      "node": "passed",
+      "web": "passed",
+      "test": "passed",
+      "mode": "uncached direct native TypeScript CLI"
+    },
+    "builds": {
+      "versebrowser": "passed",
+      "viteRendererAndElectron": "passed"
+    },
+    "contract": "passed",
+    "commsReplay": "passed",
+    "commsCompare": "passed",
+    "i18n": "passed",
+    "retention": "passed",
+    "harness": "passed",
+    "syntax": {
+      "candidate": "8aa2ab3593ee5bd2b4a9d0c1631845d6426f3aee",
+      "files": 338,
+      "errors": []
+    }
+  },
+  "priorAttempts": [
+    "The initial expanded regression exposed merge and fixture errors; corrections were verified in the recorded focused reruns.",
+    "The final broad parallel batch was interrupted after a worker teardown timeout with approximately 300 MB available memory. Its result is incomplete.",
+    "Electron and VerseGit could not write medium-integrity temporary roots. Native tests and Electron acceptance passed using a new dedicated directory under the existing writable D:/ClawX/.tmp.",
+    "Inherited trailing whitespace in retained historical reports remains unchanged to preserve their hashes."
+  ],
+  "workingCopy": {
+    "primary": "D:/ClawX",
+    "primaryTrackedDirtyPaths": 2375,
+    "overlappingPaths": 104,
+    "action": "Preserve the primary files and index; push the clean independent integration checkout to origin/main.",
+    "integration": "D:\\ClawX-work\\merge-committed-20261109",
+    "noResetStashCleanOrForcePush": true
+  },
+  "rawEvidence": {
+    "localDirectory": "D:/tmp/clawx-merge-committed-20261109",
+    "files": [
+      {
+        "file": "final-critical.json",
+        "sha256": "bad6c13737e7e93905e076dc2c720a602b17faa86a68e4d77ccf709540ecc3d5"
+      },
+      {
+        "file": "runtime-verified.json",
+        "sha256": "cd09d043b1dae6405c5cf57f9e730ca56c53ed7e9cd28cf9932ca37d36087add"
+      },
+      {
+        "file": "native-final.json",
+        "sha256": "888ed275efc3740890404117106cb9f3dba153755f11d7667dacdeceefc7c361"
+      },
+      {
+        "file": "e2e-combined.json",
+        "sha256": "eaffa748e4366800e2a2d750449a7a43416a111ea3de98bcee16f0f36108bf84"
+      },
+      {
+        "file": "types-node-final.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "file": "types-web-final.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "file": "types-test-final.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "file": "build-vite-final.log",
+        "sha256": "eafd0ee530f28cccd42a98b0ea5e3eea394688570b8d5a54a9ba62b72e4b41e1"
+      },
+      {
+        "file": "browser-build-second.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "file": "contract-check-final.log",
+        "sha256": "934212edaaa4da875edce79057ad1a402c935b6da181e5e400ad9e96e0cabf10"
+      },
+      {
+        "file": "comms-replay-final.log",
+        "sha256": "bbc9f49eac11890cfa345e249f49b262425d4277dad59268d7fda7d01d3200f0"
+      },
+      {
+        "file": "comms-compare-final.log",
+        "sha256": "89ee969dd216b4604c6fe458339184a3a2185f121e5d6dc6a627fc9ac6ba5ddb"
+      },
+      {
+        "file": "i18n-final.log",
+        "sha256": "04fe1f40258bd17febac82ae99a106d852ff2961909d5e91dd88023cf3056f69"
+      },
+      {
+        "file": "retention-verified.log",
+        "sha256": "7d8fde5a8d1b0883c7afb72fbfc90e20c2b8c50d0d435e2957f19299a8ae00b4"
+      },
+      {
+        "file": "harness-verified.log",
+        "sha256": "e43a2036b28abd7529b2254c635124754aafb8318f2305713865573ca23ad22c"
+      },
+      {
+        "file": "syntax-check.json",
+        "sha256": "fbd7861eea45660ca063138f73bcd78a5bed84e36e4b51de00abd1f2a24c3538"
+      }
+    ]
+  }
+}

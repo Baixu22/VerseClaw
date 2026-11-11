@@ -10,13 +10,11 @@ import { closeOpenClawStateDatabaseForTest } from "../../openclaw_runtime/src/st
 import { closeRuntimeMemoryHydrationShadowDatabasesForTest } from "../../openclaw_runtime/src/runtime-core/memory-read-hydration-shadow";
 import {
   buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics,
-  type TaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics,
 } from "../../openclaw_runtime/src/agents/task-loop-runtime-memory-read-hydration-shadow";
 import {
   buildBudgetPressureScenario,
   evaluateBudgetPressure,
   type BudgetLevel,
-  type BudgetPressureScenario,
 } from "../../openclaw_runtime/src/agents/runtime-memory-eval/budget-pressure-eval";
 import {
   appendFactToDb,
@@ -108,42 +106,4 @@ function tryInitializeDb(dbPath: string): string {
   });
   const result = persistence.migrate();
   return result.status === "skipped" ? result.reason : result.status;
-}
-
-function runBudgetDiagnostics(
-  scenario: BudgetPressureScenario,
-  dbPath: string,
-): TaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics[] {
-  const results: TaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics[] = [];
-  for (let i = 0; i < scenario.queries.length; i += 1) {
-    const query = scenario.queries[i];
-    const diag = buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics({
-      config: CONFIG,
-      loopRunId: `budget_pressure_${i}`,
-      sessionKey: "agent:main:budget-pressure",
-      iteration: i,
-      options: {
-        explicitOptIn: true,
-        testResearchOnly: true,
-        databasePath: dbPath,
-        limit: 50,
-        maxFacts: 200,
-        now: () => REFERENCE_TIME,
-        queries: [
-          {
-            queryId: query.queryId,
-            taskId: query.taskId,
-            subject: query.subject,
-            predicate: query.predicate,
-            referenceTime: query.referenceTime,
-            tokenBudget: query.tokenBudget,
-            limit: query.limit,
-            expectedFactIds: [...query.expectedFactIds],
-          },
-        ],
-      },
-    });
-    results.push(diag);
-  }
-  return results;
 }

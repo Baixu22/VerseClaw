@@ -11,21 +11,54 @@ import { useWorkspacesStore } from '@/stores/workspaces';
 let navigationTail: Promise<unknown> = Promise.resolve();
 let navigationIntent = 0;
 
-/** Select an explicitly associated session; serialize project switches and ignore older intents. */
-export function activateWorkspaceScopedSession(workspaceId: string, sessionKey: string, isCurrentIntent: () => boolean = () => true): Promise<boolean> {
+export function workspaceOwnsSession(workspace: WorkspaceProfile | null | undefined, sessionKey: string): boolean {
+  return Boolean(workspace && (workspace.activeSessionKey === sessionKey
+    || Object.hasOwn(workspace.sessionStates ?? {}, sessionKey)
+    || Object.hasOwn(workspace.coordinatorBindings ?? {}, sessionKey)
+    || Object.values(workspace.agentBindings ?? {}).some((binding) => binding.sessionKey === sessionKey)));
+}
+
+/** Resolve a legacy session-only selection through the same scoped navigation queue. */
+export function activateWorkspaceSession(sessionKey: string): Promise<boolean> {
+  return activateWorkspaceScopedSession(null, sessionKey);
+}
+
+/** Serialize selections; a null workspace resolves explicit ownership before recorded parents. */
+export function activateWorkspaceScopedSession(workspaceId: string | null, sessionKey: string, isCurrentIntent: () => boolean = () => true): Promise<boolean> {
   const intent = ++navigationIntent;
   const operation = navigationTail.catch(() => undefined).then(async () => {
     if (intent !== navigationIntent || !isCurrentIntent()) return false;
     const state = useWorkspacesStore.getState();
-    const workspace = state.profiles.find((profile) => profile.id === workspaceId);
-    const associated = workspace && (workspace.activeSessionKey === sessionKey
-      || Object.hasOwn(workspace.sessionStates ?? {}, sessionKey)
-      || Object.hasOwn(workspace.coordinatorBindings ?? {}, sessionKey)
-      || Object.values(workspace.agentBindings ?? {}).some((binding) => binding.sessionKey === sessionKey));
-    if (!workspace || !associated) throw new Error('SESSION_WORKSPACE_ASSOCIATION_MISSING');
-    if (state.activeWorkspaceId !== workspaceId) await state.switchWorkspace(workspaceId);
-    if (intent !== navigationIntent || !isCurrentIntent()) return false;
-    await useWorkspacesStore.getState().saveWorkspaceState({ id: workspaceId, activeSessionKey: sessionKey, sessionKey });
+    let workspace = workspaceId === null
+      ? state.profiles.find((profile) => workspaceOwnsSession(profile, sessionKey))
+      : state.profiles.find((profile) => profile.id === workspaceId);
+    if (workspaceId === null && !workspace) {
+      const byKey = new Map((useChatStore.getState().sessions ?? []).map((session) => [session.key, session]));
+      const seen = new Set([sessionKey]);
+      let parent = byKey.get(sessionKey)?.parentSessionKey;
+      while (!workspace && parent && !seen.has(parent)) {
+        seen.add(parent);
+        workspace = state.profiles.find((profile) => workspaceOwnsSession(profile, parent!));
+        parent = byKey.get(parent)?.parentSessionKey;
+      }
+    }
+    if (workspaceId !== null && !workspaceOwnsSession(workspace, sessionKey)) {
+      throw new Error('SESSION_WORKSPACE_ASSOCIATION_MISSING');
+    }
+    if (workspace) {
+      const inherited = !workspaceOwnsSession(workspace, sessionKey);
+      if (state.activeWorkspaceId !== workspace.id) {
+        const active = await state.switchWorkspace(workspace.id);
+        if (intent !== navigationIntent || !isCurrentIntent()) return false;
+        if (!active || active.id !== workspace.id) throw new Error('Workspace activation did not return the selected workspace');
+      }
+      if (intent !== navigationIntent || !isCurrentIntent()) return false;
+      await useWorkspacesStore.getState().saveWorkspaceState({
+        id: workspace.id, activeSessionKey: sessionKey, sessionKey,
+        // An unfiled child starts with its own UI state; an existing child draft is merged unchanged.
+        ...(inherited ? { state: {} } : {}),
+      });
+    }
     if (intent !== navigationIntent || !isCurrentIntent()) return false;
     useChatStore.getState().switchSession(sessionKey);
     return true;
@@ -77,6 +110,10 @@ export function getWorkspaceAgentSessionKey(
   agentId: string,
 ): { sessionKey: string; isFresh: boolean } {
   const normalizedAgentId = agentId.trim() || 'main';
+  const activeSessionKey = workspace.activeSessionKey;
+  if (activeSessionKey && getAgentIdFromSessionKey(activeSessionKey) === normalizedAgentId) {
+    return { sessionKey: activeSessionKey, isFresh: false };
+  }
   const boundSessionKey = workspace.agentBindings?.[normalizedAgentId]?.sessionKey;
   if (boundSessionKey && getAgentIdFromSessionKey(boundSessionKey) === normalizedAgentId) {
     return { sessionKey: boundSessionKey, isFresh: false };

@@ -27,7 +27,7 @@ touchedAreas:
   - src/components/file-preview/WorkspaceAgentsPanel.tsx
   - src/stores/session-activity.ts
   - src/lib/workspace-session.ts
-  - src/stores/chat/runtime-send-actions.ts
+  - src/stores/chat.ts
   - src/lib/host-api.ts
   - electron/services/sessions-api.ts
   - electron/services/workspaces-api.ts

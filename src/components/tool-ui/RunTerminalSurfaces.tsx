@@ -19,6 +19,7 @@ export function RunTerminalSurfaces({ surfaces }: { surfaces: RunTerminalSurface
             command={surface.command}
             cwd={surface.cwd}
             stdout={surface.output}
+            status={surface.status}
             // The projection merges stdout/stderr into one stream, and the card
             // signals failure through exitCode. A still-running command has no
             // exit code yet, so leave it undefined rather than faking a 0.

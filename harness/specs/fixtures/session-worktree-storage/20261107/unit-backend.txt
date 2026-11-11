@@ -1,0 +1,21 @@
+
+ RUN  v4.1.1 D:/ClawX
+
+Preparing worktree (new branch 'clean')
+Preparing worktree (new branch 'dirty')
+Preparing worktree (new branch 'locked')
+Preparing worktree (new branch 'clean')
+Preparing worktree (new branch 'dirty')
+Preparing worktree (new branch 'locked')
+Preparing worktree (new branch 'clean')
+Preparing worktree (new branch 'dirty')
+Preparing worktree (new branch 'locked')
+Preparing worktree (new branch 'clean')
+Preparing worktree (new branch 'dirty')
+Preparing worktree (new branch 'locked')
+
+ Test Files  2 passed (2)
+      Tests  58 passed (58)
+   Start at  01:20:05
+   Duration  17.08s (transform 604ms, setup 786ms, import 355ms, tests 8.90s, environment 6.29s)
+

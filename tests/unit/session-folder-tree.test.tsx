@@ -55,6 +55,8 @@ const SESSIONS: SidebarSessionEntry[] = [
 ] as SidebarSessionEntry[];
 
 async function renderTree(overrides?: {
+  sessions?: SidebarSessionEntry[];
+  currentSessionKey?: string;
   onRenameFolder?: (workspaceId: string, folderId: string, name: string) => Promise<void>;
   onDeleteFolder?: (workspaceId: string, folderId: string) => Promise<void>;
   onDropSession?: (workspaceId: string, sourceSessionKey: string, targetSessionKey: string, autoGroupName: string) => Promise<void>;
@@ -70,7 +72,8 @@ async function renderTree(overrides?: {
   const view = render(
     <SessionFolderTree
       workspace={WORKSPACE}
-      sessions={SESSIONS}
+      sessions={overrides?.sessions ?? SESSIONS}
+      currentSessionKey={overrides?.currentSessionKey}
       collapsedFolders={{}}
       sessionSort="newest"
       sessionStatusKinds={{}}
@@ -91,6 +94,33 @@ async function renderTree(overrides?: {
 }
 
 describe('SessionFolderTree folder mutation dispatch', () => {
+  it('discloses multiple children without duplicating them or filing them in a different group', async () => {
+    const sessions = [
+      { session: { key: 'parent', displayName: 'Parent' }, activityMs: 1 },
+      { session: { key: 'child-a', displayName: 'Child A', parentSessionKey: 'parent' }, activityMs: 3 },
+      { session: { key: 'child-b', displayName: 'Child B', parentSessionKey: 'parent' }, activityMs: 2 },
+      { session: { key: 'agent:main:nested', displayName: 'Other group', parentSessionKey: 'parent' }, activityMs: 4 },
+    ];
+    await renderTree({ sessions, currentSessionKey: 'parent' });
+    const toggle = screen.getByTestId('session-family-toggle-parent');
+    expect(screen.getByTestId('sidebar-session-family-parent')).toHaveTextContent('2');
+    expect(screen.queryByTestId('session-row-child-a')).toBeNull();
+    fireEvent.click(toggle);
+    expect(screen.getAllByTestId('session-row-child-a')).toHaveLength(1);
+    expect(screen.getAllByTestId('session-row-child-b')).toHaveLength(1);
+    expect(screen.getByTestId('sidebar-folder-grandchild-a2')).toContainElement(screen.getByTestId('session-row-agent:main:nested'));
+    fireEvent.click(toggle);
+    expect(screen.queryByTestId('session-row-child-a')).toBeNull();
+  });
+
+  it('reveals the selected child when its family initially mounts', async () => {
+    await renderTree({ currentSessionKey: 'child', sessions: [
+      { session: { key: 'parent', displayName: 'Parent' }, activityMs: 1 },
+      { session: { key: 'child', displayName: 'Child', parentSessionKey: 'parent' }, activityMs: 2 },
+    ] });
+    expect(screen.getByTestId('session-family-toggle-parent')).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByTestId('session-row-child')).toBeVisible();
+  });
   it('renders the full nesting depth', async () => {
     await renderTree();
     for (const id of ['root-a', 'child-a1', 'grandchild-a2', 'root-b']) {

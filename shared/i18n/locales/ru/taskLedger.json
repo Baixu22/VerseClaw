@@ -185,6 +185,19 @@
     "stepsProgress": "{{completed}} из {{total}} этапов",
     "waitingForPlan": "Подготовка следующих шагов.",
     "accepted": "Задача проверена и завершена.",
-    "viewChanges": "Просмотреть изменения"
+    "viewChanges": "Просмотреть изменения",
+    "plan": "План",
+    "current": "Сейчас",
+    "next": "Далее",
+    "more": "Действия с задачей",
+    "copyId": "Скопировать ID задачи",
+    "copyIdNamed": "Скопировать ID задачи {{id}}",
+    "idCopied": "ID задачи #{{id}} скопирован",
+    "copyFailed": "Не удалось скопировать ID задачи",
+    "openInLedger": "Открыть в журнале задач",
+    "openStep": "Открыть «{{title}}» в журнале задач",
+    "showSteps": "Показать шаги",
+    "hideSteps": "Скрыть шаги",
+    "updated": "Обновлено {{time}}"
   }
 }

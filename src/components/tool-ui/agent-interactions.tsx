@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useCallback, useMemo, useState } from 'react';
-import { Check, CheckCircle2, ChevronLeft, Clipboard, Copy, HelpCircle, Table as TableIcon, Info, AlertTriangle, BookOpen, Loader2, LayoutGrid, KeyRound, BarChart3, Image as ImageIcon, Code2, ExternalLink } from 'lucide-react';
+import { Check, CheckCircle2, ChevronLeft, ChevronRight, Clipboard, Copy, HelpCircle, Table as TableIcon, Info, AlertTriangle, BookOpen, Loader2, LayoutGrid, KeyRound, BarChart3, Image as ImageIcon, Code2, ExternalLink } from 'lucide-react';
 import { SlidersHorizontal } from '@/components/icons/codex-icons';
 import { useTranslation } from 'react-i18next';
 import { ConversationImage } from '@/components/assistant-render/resources/ConversationImage';
@@ -421,6 +421,7 @@ type ToolUseLike = {
 
 type AgentInteractionRendererProps = {
   interactions: ToolUiInteraction[];
+  compactProcess?: boolean;
   canSubmit?: boolean;
   onSubmitResponse?: (text: string) => void;
   onDraftResponse?: (text: string) => void;
@@ -3242,17 +3243,58 @@ function CodeBlockCard({ interaction }: { interaction: CodeBlockInteraction }) {
 
 export function AgentInteractionRenderer({
   interactions,
+  compactProcess = false,
   canSubmit,
   onSubmitResponse,
   onDraftResponse,
   onOpenFilePath,
 }: AgentInteractionRendererProps) {
+  const { t } = useTranslation('chat');
+  const [processOpened, setProcessOpened] = useState(false);
   if (interactions.length === 0) return null;
 
+  // Only passive records fold. Keep the output list mounted in the same place
+  // when a record fails, so a question already being answered keeps its state.
+  const process = compactProcess ? interactions.filter((item) => {
+      switch (item.type) {
+        case 'terminal': return item.exitCode == null || item.exitCode === 0;
+        case 'test-results': return item.summary.failed === 0;
+        case 'progress-tracker': return !item.steps.some((step) => step.status === 'failed')
+          && item.choice?.outcome !== 'failed' && item.choice?.outcome !== 'partial';
+        case 'code-diff':
+        case 'plan': return true;
+        default: return false;
+      }
+    }) : [];
+  const output = interactions.filter((item) => !process.includes(item));
+
   return (
-    <div className="w-full space-y-3" data-testid="chat-tool-ui-interactions">
-      {interactions.map((interaction, index) => {
-        const key = `${interaction.type}-${interaction.id}-${index}`;
+    <div className="w-full min-w-0 space-y-3" data-testid="chat-tool-ui-interactions">
+      {process.length > 0 && (
+          <details
+            className="group/process min-w-0"
+            data-testid="chat-tool-process-details"
+            onToggle={(event) => { if (event.currentTarget.open) setProcessOpened(true); }}
+          >
+            <summary className="flex w-fit max-w-full cursor-pointer list-none items-center gap-2 rounded-md py-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+              <Code2 className="size-3.5 shrink-0" aria-hidden="true" />
+              <span>{t('turnSummary.workDetails')}</span>
+              <span className="tabular-nums text-muted-foreground/70">{process.length}</span>
+              <ChevronRight className="size-3 shrink-0 transition-transform duration-150 group-open/process:rotate-90 motion-reduce:transition-none" aria-hidden="true" />
+            </summary>
+            <div className="min-w-0 border-l border-border/60 py-2 pl-3">
+              {processOpened && <AgentInteractionRenderer
+                interactions={process}
+                canSubmit={canSubmit}
+                onSubmitResponse={onSubmitResponse}
+                onDraftResponse={onDraftResponse}
+                onOpenFilePath={onOpenFilePath}
+              />}
+            </div>
+          </details>
+      )}
+      {output.map((interaction) => {
+        const key = `${interaction.type}-${interaction.id}`;
         switch (interaction.type) {
           case 'plan':
             return <PlanCard key={key} interaction={interaction} />;
@@ -3296,6 +3338,7 @@ export function AgentInteractionRenderer({
             return (
               <div key={key} data-testid="chat-tool-ui-web-search">
                 <WebSearch
+                  defaultOpen={!compactProcess || interaction.status === 'error'}
                   sources={interaction.sources}
                   status={interaction.status}
                   query={interaction.query}

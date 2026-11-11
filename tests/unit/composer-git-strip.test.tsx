@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { toast } from 'sonner';
 import { ComposerGitStrip } from '@/pages/Chat/ComposerGitStrip';
@@ -140,6 +140,22 @@ describe('ComposerGitStrip', () => {
     fireEvent.click(screen.getByTestId('composer-git-trigger'));
     expect(await screen.findByTestId('composer-git-menu')).toHaveTextContent('feature/current');
     expect(screen.getByTestId('composer-git-menu')).toHaveTextContent('ahead 2 / behind 1');
+  });
+
+  it('ignores a late Git response from the previous workspace', async () => {
+    const original = await hostApiMock.git.status();
+    let complete!: (value: typeof original) => void;
+    hostApiMock.git.status.mockReturnValueOnce(new Promise((resolve) => { complete = resolve; }));
+    hostApiMock.git.status.mockResolvedValue({ ...original, status: {
+      ...original.status, workspaceRoot: '/workspace/next', repoRoot: '/workspace/next',
+      changes: [...original.status.changes, { ...original.status.changes[0], path: 'next.ts' }],
+    } });
+    const props = { onOpenGitPanel: vi.fn(), onSwitchWorktreeWorkspace: vi.fn() };
+    const view = render(<ComposerGitStrip {...props} workspace={workspace()} />);
+    view.rerender(<ComposerGitStrip {...props} workspace={{ ...workspace(), id: 'next-workspace', rootPath: '/workspace/next' }} />);
+    expect(await screen.findByTestId('composer-git-trigger')).toHaveTextContent('4 files changed');
+    await act(async () => { complete({ ...original, status: { ...original.status, branch: 'old-workspace-branch' } }); });
+    expect(screen.getByTestId('composer-git-trigger')).toHaveTextContent('4 files changed');
   });
 
   it('hides when the active workspace is not a repository', async () => {

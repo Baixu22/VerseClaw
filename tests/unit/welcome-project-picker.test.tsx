@@ -6,6 +6,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import type { WorkspaceProfile } from '@shared/types/workspace';
 
 const switchWorkspace = vi.fn();
+vi.mock('@/lib/user-error', () => ({ toastUserError: vi.fn() }));
 
 type PickerState = {
   profiles: WorkspaceProfile[];
@@ -88,6 +89,15 @@ describe('WelcomeProjectPicker', () => {
 
     expect(switchWorkspace).not.toHaveBeenCalled();
     expect(screen.queryByTestId('welcome-project-menu')).toBeNull();
+  });
+
+  it('uses the owning conversation switch handler when supplied', () => {
+    const onSelect = vi.fn();
+    renderPicker(<WelcomeProjectPicker onSelect={onSelect} />);
+    fireEvent.click(screen.getByTestId('welcome-project-trigger'));
+    fireEvent.click(screen.getAllByTestId('welcome-project-item')[1]);
+    expect(onSelect).toHaveBeenCalledWith('ws-verse');
+    expect(switchWorkspace).not.toHaveBeenCalled();
   });
 
   it('shows the workspace path in each shared dropdown row', () => {

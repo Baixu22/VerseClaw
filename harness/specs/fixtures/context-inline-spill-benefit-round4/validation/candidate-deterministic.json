@@ -1,0 +1,39 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "candidate-deterministic",
+  "cwd": "D:/tmp/inline-spill-benefit-r4-20261108-01a1b934/candidate",
+  "command": [
+    "node",
+    "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+    "scripts/context-inline-spill-benefit-loop-eval.mts",
+    "--mode",
+    "deterministic",
+    "--out",
+    "D:/tmp/inline-spill-benefit-r4-20261108-01a1b934/deterministic",
+    "--repeats",
+    "1",
+    "--max-turns",
+    "8"
+  ],
+  "started_at": "2026-11-08T05:04:17.042454+00:00",
+  "duration_seconds": 8.797,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": "warn"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-deterministic.stdout.txt",
+      "bytes": 1503,
+      "sha256": "b2d46f78f11510fcd33a4a020767704ce3f9fa2bae5b68bccf158187c295f32b"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-deterministic.stderr.txt",
+      "bytes": 7001,
+      "sha256": "7ac2479f1e27bf6a346591be7e29b95d551623d25c2f195ea2ad9a670834eb65"
+    }
+  }
+}

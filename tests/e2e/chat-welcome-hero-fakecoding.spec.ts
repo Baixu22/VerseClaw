@@ -3,6 +3,7 @@ import {
   expect,
   getStableWindow,
   installIpcMocks,
+  publishGatewayStatus,
   test,
 } from './fixtures/electron';
 
@@ -41,7 +42,7 @@ const WORKSPACES = [
  * overridden by later blocks, so the source and the screen disagree. See the
  * header of src/styles/codex-welcome-hero.css. */
 test.describe('FakeCoding chat welcome hero alignment', () => {
-  test('names the workspace as a context-row token and opens the shared picker upward', async ({ launchElectronApp }) => {
+  test('names the workspace as a context-row token and opens the shared picker upward', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true, visualMode: true, theme: 'dark' });
 
     try {
@@ -158,10 +159,13 @@ test.describe('FakeCoding chat welcome hero alignment', () => {
           display: style.display,
         };
       });
-      expect(Math.abs(triggerBox.height - 26)).toBeLessThanOrEqual(1);
+      expect(Math.abs(triggerBox.height - 32)).toBeLessThanOrEqual(1);
       expect(triggerBox.paddingLeft).toBe('8px');
       expect(triggerBox.paddingRight).toBe('8px');
       expect(triggerBox.display).toBe('flex');
+      await expect(page.getByTestId('chat-welcome-environment-group')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      await expect(page.getByTestId('composer-git-strip')).toHaveCount(0);
+      await expect(page.locator('.codex-welcome-chip:visible')).toHaveCount(0);
 
       await trigger.click();
 
@@ -210,13 +214,80 @@ test.describe('FakeCoding chat welcome hero alignment', () => {
       const branchTrigger = page.getByTestId('welcome-branch-trigger');
       await expect(branchTrigger).toBeVisible();
       await branchTrigger.click();
-      await expect(page.getByTestId('welcome-branch-menu')).toBeVisible();
-      await expect(page.getByTestId('welcome-branch-item-feature-ui-polish')).toBeVisible();
-
-      // Escape closes without changing the workspace.
-      await page.keyboard.press('Escape');
       await expect(menu).toHaveCount(0);
-      await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      const branchMenu = page.getByTestId('welcome-branch-menu');
+      await expect(branchMenu).toBeVisible();
+      await expect(page.getByTestId('welcome-branch-item-feature-ui-polish')).toBeVisible();
+      await expect(page.getByTestId('welcome-branch-item-main')).toBeDisabled();
+      await page.getByRole('textbox', { name: 'Search branches' }).fill('feature');
+      await expect(page.getByTestId('welcome-branch-item-main')).toHaveCount(0);
+      await page.keyboard.press('Escape');
+      await expect(branchMenu).toHaveCount(0);
+      await expect(branchTrigger).toBeFocused();
+
+      // Preserve real host routing, but change only this isolated profile's
+      // Git response. This must never check out the developer's repository.
+      await app.evaluate(() => {
+        const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+        const handlers = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: { id?: string; module: string; action: string; payload?: { name?: string } }) => Promise<unknown>> })._invokeHandlers;
+        const original = handlers.get('host:invoke')!;
+        let selected = 'main';
+        ipcMain.removeHandler('host:invoke');
+        ipcMain.handle('host:invoke', async (event, request) => {
+          if (request.module === 'git' && request.action === 'checkoutBranch') {
+            selected = request.payload.name;
+            return { id: request.id, ok: true, data: { success: true } };
+          }
+          const response = await original(event, request) as { data?: { status?: { branch: string }; branches?: Array<{ name: string; current: boolean }> } };
+          if (request.module === 'git' && request.action === 'status' && response.data?.status) {
+            return { ...response, data: { ...response.data, status: { ...response.data.status, branch: selected } } };
+          }
+          if (request.module === 'git' && request.action === 'branches' && response.data?.branches) {
+            return { ...response, data: { ...response.data, branches: response.data.branches.map(entry => ({ ...entry, current: entry.name === selected })) } };
+          }
+          return response;
+        });
+      });
+      await branchTrigger.click();
+      await page.getByTestId('welcome-branch-item-feature-ui-polish').click();
+      await expect(branchMenu).toHaveCount(0);
+      await expect(branchTrigger).toContainText('feature/ui-polish');
+
+      const shortcuts = page.getByTestId('welcome-quick-start-trigger');
+      await shortcuts.press('Enter');
+      await expect(page.locator('.codex-welcome-chip:visible')).toHaveCount(3);
+      await page.keyboard.press('Escape');
+      await expect(page.locator('.codex-welcome-chip:visible')).toHaveCount(0);
+      await expect(shortcuts).toBeFocused();
+      await page.getByTestId('chat-welcome-context').click({ position: { x: 1, y: 1 } });
+      for (const theme of ['dark', 'light']) {
+        await page.evaluate(dark => {
+          document.documentElement.classList.toggle('dark', dark);
+          document.documentElement.classList.toggle('light', !dark);
+        }, theme === 'dark');
+        await page.screenshot({ path: testInfo.outputPath(`welcome-context-${theme}.png`), animations: 'disabled' });
+      }
+      await page.setViewportSize({ width: 600, height: 820 });
+      await expect(branchTrigger).toBeVisible();
+      await branchTrigger.click();
+      await expect(page.getByTestId('welcome-branch-item-feature-ui-polish')).toBeDisabled();
+      const bounds = await branchMenu.boundingBox();
+      expect(bounds!.x).toBeGreaterThanOrEqual(0);
+      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(600);
+      await page.screenshot({ path: testInfo.outputPath('welcome-branch-narrow.png'), animations: 'disabled' });
+      await page.keyboard.press('Escape');
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      const input = page.locator('[data-testid="chat-composer-shell"] textarea').first();
+      await input.fill('Keep this draft');
+      await expect(shortcuts).toBeHidden();
+      await input.fill('');
+      await expect(shortcuts).toBeVisible();
+      await publishGatewayStatus(app, { state: 'stopped', gatewayReady: false, port: 18789 });
+      await expect(trigger).toBeEnabled();
+      await expect(branchTrigger).toBeEnabled();
+      await branchTrigger.click();
+      await expect(branchMenu).toBeVisible();
+      await page.keyboard.press('Escape');
     } finally {
       await closeElectronApp(app);
     }

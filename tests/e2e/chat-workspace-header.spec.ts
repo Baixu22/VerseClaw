@@ -165,7 +165,8 @@ test.describe('Verse Claw chat workspace header', () => {
       }, SESSION_KEY);
       await expect(page.getByTestId(`sidebar-session-status-${SESSION_KEY}`)).toHaveAttribute('data-state', 'running');
       await expect(page.getByTestId('chat-current-session-status')).toHaveAttribute('data-state', 'streaming');
-      await expect(page.getByTestId('assistant-stream-status-dot')).toHaveAttribute('data-state', 'thinking');
+      await expect(page.getByTestId('chat-turn-summary-orb')).toBeVisible();
+      await expect(page.getByTestId('assistant-stream-status')).toHaveCount(0);
       await expect(page.getByTestId('assistant-status-dot-matrix')).toHaveCount(0);
 
       const screenshotPath = testInfo.outputPath('chat-dot-matrix-running-status.png');

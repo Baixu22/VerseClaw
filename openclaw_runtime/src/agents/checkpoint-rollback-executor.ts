@@ -90,7 +90,7 @@ export async function validateCheckpointRecord(
  * `applyCheckpointToWorktree`, but on the journal (host-agnostic, no git repo
  * requirement) — and additionally restores created files (journal hadPrior=false).
  */
-export function applyCheckpointToJournal(params: {
+export async function applyCheckpointToJournal(params: {
   workspaceRoot: string;
   checkpoint: LongTaskCheckpointRecord;
   /**
@@ -100,7 +100,7 @@ export function applyCheckpointToJournal(params: {
    */
   sessionId?: string;
   now?: () => number;
-}): { restored: string[]; errors: string[]; journalDir: string } {
+}): Promise<{ restored: string[]; errors: string[]; journalDir: string }> {
   const journalSessionId = params.sessionId?.trim();
   if (!journalSessionId) {
     // #176: this used to fall back to `checkpoint.sessionKey` (e.g.
@@ -184,11 +184,11 @@ export function selectCheckpointUndoEntries(params: {
  * `entries` is the oldest-first selection; it is reversed here because the undo
  * pops newest-first. An empty selection is a no-op, never "undo one".
  */
-export function undoCheckpointWrites(params: {
+export async function undoCheckpointWrites(params: {
   workspaceRoot: string;
   sessionId: string;
   entries: readonly { seq: number; relPath: string }[];
-}): { restored: string[]; errors: string[]; journalDir: string } {
+}): Promise<{ restored: string[]; errors: string[]; journalDir: string }> {
   const newestFirst = [...params.entries].reverse();
   if (newestFirst.length === 0) {
     return {
@@ -197,11 +197,12 @@ export function undoCheckpointWrites(params: {
       journalDir: journalDirFor(params.workspaceRoot, params.sessionId),
     };
   }
-  const outcome = undoLastWrites({
+  const outcome = await undoLastWrites({
     workspaceRoot: params.workspaceRoot,
     sessionId: params.sessionId,
     steps: newestFirst.length,
     expectedEntries: newestFirst,
+    workspaceOnly: true,
   });
   return {
     restored: outcome.restored,
@@ -284,7 +285,7 @@ export function createCheckpointRollbackDeps(
       const releaseLocks = await acquirePatchBatchLocks(lockTargets);
       let outcome: { restored: string[]; errors: string[]; journalDir: string };
       try {
-        outcome = applyCheckpointToJournal({
+        outcome = await applyCheckpointToJournal({
           workspaceRoot: journalRoot,
           checkpoint: record,
           sessionId: options.sessionId,

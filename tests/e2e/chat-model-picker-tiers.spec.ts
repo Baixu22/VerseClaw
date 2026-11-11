@@ -4,12 +4,13 @@ const alphaModelRef = 'custom-alpha123/model-alpha';
 const betaModelRef = 'custom-beta5678/provider/model-beta';
 
 /**
- * Area 2 §8 E2E: three-tier model picker (turn / session / persistent).
+ * Direct model selection: sends use the displayed choice and conversations
+ * remember it without exposing persistence scope in the picker.
  * Mocks `host:invoke` at the Main boundary so renderer-side `hostApi.chat.sendWithMedia`
  * and `hostApi.sessions.patchRuntimeModel` are captured without requiring a real Gateway.
  */
-test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
-  test('turn scope: sets chip and forwards modelRef in send payload', async ({ launchElectronApp }) => {
+test.describe('Verse Claw direct chat model selection', () => {
+  test('selects directly and forwards the displayed model in the send payload', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -154,20 +155,21 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
       await page.getByTestId('chat-model-picker-button').click();
       await expect(page.getByTestId('chat-model-picker-menu')).toBeVisible();
 
-      // Switch to "This message" scope (turn tier)
-      await page.getByTestId('chat-model-scope-turn').click();
+      await expect(page.getByTestId('chat-model-scope-selector')).toHaveCount(0);
 
       // Select the beta model
       await page.getByTestId('chat-model-picker-menu').getByRole('button', { name: 'provider/model-beta' }).click();
 
-      // Verify the turn chip appears
-      await expect(page.getByTestId('chat-turn-model-chip')).toBeVisible();
-      await expect(page.getByTestId('chat-turn-model-chip')).toContainText('model-beta');
+      await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-beta');
+      await expect(page.getByTestId('chat-turn-model-chip')).toHaveCount(0);
 
       // Type and send
       await page.getByTestId('chat-composer-input').fill('Turn override message');
       await page.getByTestId('chat-composer-send').click();
 
+      await expect.poll(() => app.evaluate(() =>
+        (globalThis as typeof globalThis & { __area2TurnSendParams?: unknown }).__area2TurnSendParams
+      )).toBeTruthy();
       // Verify the send payload contains modelRef
       const sendParams = await app.evaluate(() =>
         (globalThis as typeof globalThis & { __area2TurnSendParams?: unknown }).__area2TurnSendParams
@@ -177,14 +179,15 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
         modelRef: betaModelRef,
       });
 
-      // Verify the chip is cleared after send
+      // The visible model remains selected for the following message.
+      await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-beta');
       await expect(page.getByTestId('chat-turn-model-chip')).toHaveCount(0);
     } finally {
       await closeElectronApp(app);
     }
   });
 
-  test('session scope: calls sessions.patchRuntimeModel with modelRef', async ({ launchElectronApp }) => {
+  test('restores the saved model and remembers explicit choices for new chats', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -323,10 +326,9 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
         win?.webContents.send('gateway:status-changed', { state: 'running', port: 18789, pid: 12345, gatewayReady: true });
       });
 
-      await expect(page.getByTestId('chat-model-picker-button')).toContainText('provider/model-beta');
-      // Re-selecting the existing persistent default must settle optimistic state.
+      await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-beta');
+      // A previous conversation override is displayed when the conversation opens.
       await page.getByTestId('chat-model-picker-button').click();
-      await page.getByTestId('chat-model-scope-persistent').click();
       await page.getByTestId('chat-model-options').getByRole('button', { name: 'model-alpha', exact: true }).click();
       await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-alpha');
 
@@ -334,13 +336,12 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
       await page.getByTestId('chat-model-picker-button').click();
       await expect(page.getByTestId('chat-model-picker-menu')).toBeVisible();
 
-      // Switch to "This session" scope
-      await page.getByTestId('chat-model-scope-session').click();
+      await expect(page.getByTestId('chat-model-scope-selector')).toHaveCount(0);
 
       // Select the beta model
       await page.getByTestId('chat-model-picker-menu').getByRole('button', { name: 'provider/model-beta' }).click();
 
-      await expect(page.getByTestId('chat-model-picker-button')).toContainText('provider/model-beta');
+      await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-beta');
 
       // Verify sessions.patchRuntimeModel was called with the model override
       const patchParams = await app.evaluate(() =>
@@ -351,23 +352,14 @@ test.describe('Verse Claw chat model picker tiers (Area 2)', () => {
         modelRef: betaModelRef,
       });
 
-      // Verify no additional persistent model update was written (session tier must not
-      // touch Agent.modelRef — Area 2 §3.3).
+      // The picker does not change Agent defaults.
       const requests = await app.evaluate(() =>
         (globalThis as typeof globalThis & { __chatModelPickerTiersRequests?: Array<{ path: string; method: string; body: unknown }> }).__chatModelPickerTiersRequests ?? []
       );
-      expect(requests.filter((r) => r.path === '/api/agents/main/model')).toHaveLength(1);
-
-      // Promoting the same currently selected session model still changes scope.
-      await page.getByTestId('chat-model-picker-button').click();
-      await page.getByTestId('chat-model-scope-persistent').click();
-      await page.getByTestId('chat-model-options').getByRole('button', { name: 'provider/model-beta' }).click();
-      await expect.poll(() => app.evaluate(() => (
-        (globalThis as typeof globalThis & { __chatModelPickerTiersRequests?: Array<{ path: string }> }).__chatModelPickerTiersRequests ?? []
-      ).filter((request) => request.path === '/api/agents/main/model').length)).toBe(2);
-      await expect.poll(() => app.evaluate(() => (
-        (globalThis as typeof globalThis & { __area2SessionPatchParams?: unknown }).__area2SessionPatchParams
-      ))).toMatchObject({ sessionKey: 'agent:main:main', modelRef: null });
+      expect(requests.filter((r) => r.path === '/api/agents/main/model')).toHaveLength(0);
+      expect(await page.evaluate(() => JSON.parse(localStorage.getItem('verse-claw-settings')!).state.lastChatModelRef)).toBe(betaModelRef);
+      await page.getByRole('button', { name: 'New task', exact: true }).click();
+      await expect(page.getByTestId('chat-model-picker-button')).toContainText('model-beta');
     } finally {
       await closeElectronApp(app);
     }

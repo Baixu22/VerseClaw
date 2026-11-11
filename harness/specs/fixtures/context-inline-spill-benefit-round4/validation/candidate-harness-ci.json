@@ -1,0 +1,32 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "candidate-harness-ci",
+  "cwd": "D:/tmp/inline-spill-benefit-r4-20261108-01a1b934/ci-candidate",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+    "run",
+    "harness:ci"
+  ],
+  "started_at": "2026-11-08T05:43:26.468830+00:00",
+  "duration_seconds": 199.36,
+  "exit_code": 1,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": "warn"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-harness-ci.stdout.txt",
+      "bytes": 19234,
+      "sha256": "b7fc3f42ba05cc4a795a7d2fac6171c78ea4f4fcfbb3555977465f54cfe60e87"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-harness-ci.stderr.txt",
+      "bytes": 1762,
+      "sha256": "7926864688263608ce182cb4a4512bdf6153ab8b9faddf8b08e4a478e241b119"
+    }
+  }
+}

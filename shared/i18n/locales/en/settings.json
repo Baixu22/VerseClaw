@@ -647,6 +647,11 @@
       "rollbackLabel": "Rollback",
       "riskLabel": "Risk",
       "readOnlyNote": "This row is documentation-only (api/request/baseline). Use the switch rows for writable opt-in flags, or advanced env/config as documented in docs/dcs-production-p0-runbook.md.",
+      "retired": {
+        "label": "Retired",
+        "description": "This feature is retired. Configuration, legacy request parameters, and restored records cannot enable it.",
+        "alternative": "Use ordinary coding tools and the write journal; explicitly choose worktree isolation for concurrent changes."
+      },
       "enableViaSettings": "Use the switch above (Settings control plane). Advanced: env/config as in runbook.",
       "rollbackViaSettings": "Turn the switch off (Settings). Gateway restarts when running.",
       "toggleLabel": "Enable (opt-in)",

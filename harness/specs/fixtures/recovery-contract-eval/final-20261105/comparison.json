@@ -1,0 +1,428 @@
+{
+  "schema": "RecoveryContractComparison/v1",
+  "candidateSources": {
+    "runtimeCommit": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+    "qualitySampler": {
+      "commit": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "tree": "ad18e2b8b535a94bac883345332b29741b7b8828",
+      "dirty": false,
+      "driven_by": "agent",
+      "actor": "recovery-acceptance",
+      "realHumanEvidence": false
+    },
+    "windowSampler": {
+      "schema": "RecoverySamplerCandidate/v1",
+      "sampler": {
+        "commit": "1909dfd0c0e0d8fe8e2e3ebb0ae49e1b565a776f",
+        "tree": "dd2159bbd3082a3f28a1eeb0adfc4ef0705c463b",
+        "dirty": false
+      },
+      "runtimeBase": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "runtimeSourcesEqual": true,
+      "qualityOrigin": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+      "driven_by": "agent",
+      "actor": "recovery-window-observer-v2",
+      "realHumanEvidence": false
+    },
+    "runtimeSourcesEqual": true,
+    "evaluator": {
+      "commit": "c0184e62e2ea7c3dcfddbe47258bd552ae8f0c1b",
+      "dirty": false
+    }
+  },
+  "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+  "rows": [
+    {
+      "metric": "duplicateEffects",
+      "baseline": 0,
+      "candidate": 0,
+      "delta": 0,
+      "samplesPerArm": 15,
+      "domain": "fault-windows",
+      "threshold": "= 0",
+      "candidatePass": true
+    },
+    {
+      "metric": "lostTasks",
+      "baseline": 0,
+      "candidate": 0,
+      "delta": 0,
+      "samplesPerArm": 15,
+      "domain": "fault-windows",
+      "threshold": "= 0",
+      "candidatePass": true
+    },
+    {
+      "metric": "terminalCorrectness",
+      "baseline": 0.6,
+      "candidate": 1,
+      "delta": 0.4,
+      "samplesPerArm": 15,
+      "domain": "fault-windows",
+      "threshold": "= 1",
+      "candidatePass": true
+    },
+    {
+      "metric": "unknownClassifiableRate",
+      "baseline": 0.4,
+      "candidate": 0,
+      "delta": -0.4,
+      "samplesPerArm": 15,
+      "domain": "fault-windows",
+      "threshold": "<= 0.02",
+      "candidatePass": true
+    },
+    {
+      "metric": "mustPreserveFidelity",
+      "baseline": 1,
+      "candidate": 1,
+      "delta": 0,
+      "samplesPerArm": 30,
+      "domain": "post-boundary-live-answer",
+      "threshold": "= 1",
+      "candidatePass": true
+    },
+    {
+      "metric": "falseCompletionClaims",
+      "baseline": 0,
+      "candidate": 0,
+      "delta": 0,
+      "samplesPerArm": 30,
+      "domain": "post-boundary-live-answer",
+      "threshold": "= 0",
+      "candidatePass": true
+    },
+    {
+      "metric": "nextActionAccuracy",
+      "baseline": 1,
+      "candidate": 1,
+      "delta": 0,
+      "samplesPerArm": 30,
+      "domain": "post-boundary-live-answer",
+      "threshold": ">= 0.95",
+      "candidatePass": true
+    },
+    {
+      "metric": "recoveryLatencyP50",
+      "baseline": 30114,
+      "candidate": 32007,
+      "delta": 1893,
+      "samplesPerArm": 45,
+      "domain": "combined-frozen-latency",
+      "threshold": "<= 5000ms",
+      "candidatePass": false
+    },
+    {
+      "metric": "recoveryLatencyP95",
+      "baseline": 116443.39999999992,
+      "candidate": 86786.39999999992,
+      "delta": -29657,
+      "samplesPerArm": 45,
+      "domain": "combined-frozen-latency",
+      "threshold": "<= 15000ms",
+      "candidatePass": false
+    }
+  ],
+  "faultWindowLatency": {
+    "samplesPerArm": 15,
+    "baselineP50": 33225,
+    "candidateP50": 27996,
+    "baselineP95": 179712.39999999997,
+    "candidateP95": 112635.69999999998,
+    "p95Ratio": 0.6267553045866618,
+    "relativeCriterionPass": true
+  },
+  "baselineStatus": "FAIL",
+  "candidateStatus": "FAIL",
+  "decision": "NO-GO",
+  "qualityClaimAllowed": false,
+  "judgeVersion": "recovery-readback/v4",
+  "readbackCorrections": {
+    "legacy": {
+      "samples": 30,
+      "originalMatched": 112,
+      "judgedMatched": 120,
+      "originalNext": 29,
+      "judgedNext": 30,
+      "requestedArrayShape": 17,
+      "corrections": [
+        "ls-fork-02",
+        "ls-fork-05",
+        "ls-handoff-02"
+      ]
+    },
+    "candidate": {
+      "samples": 30,
+      "originalMatched": 104,
+      "judgedMatched": 120,
+      "originalNext": 29,
+      "judgedNext": 30,
+      "requestedArrayShape": 20,
+      "corrections": [
+        "ls-compression-06",
+        "ls-fork-06",
+        "ls-restart-04",
+        "ls-restart-05",
+        "ls-revocation-03"
+      ]
+    }
+  },
+  "baselineRepeat": {
+    "status": "INCOMPLETE_REPEAT",
+    "targetSamplesPerRun": 15,
+    "primaryCompleteSamples": 15,
+    "repeatCompleteSamples": 14,
+    "repeatIncompleteSamples": 1,
+    "samplesPerRun": 15,
+    "matched": 12,
+    "primaryHash": "e93c6eed8bb871fab3d45955c279908848c2bde3c972401776784da33df425da",
+    "repeatHash": "6f18999493f61d41c9c9c9b269a7f606950094ee92dbf2cdf328375544ae9c9e",
+    "mismatches": [
+      {
+        "windowId": "effect-before-receipt-kill",
+        "index": 1,
+        "primary": {
+          "windowId": "effect-before-receipt-kill",
+          "trialIndex": 1,
+          "injectionPoint": "after the external effect commits, before its effect receipt is persisted",
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "terminalCorrect": false,
+          "unknownClassifiable": true,
+          "diskEvidenceComplete": true,
+          "rerunOutsideAllowedRegion": false,
+          "crashPoints": [
+            "tool-return-before-receipt"
+          ],
+          "crashCount": 1,
+          "sameCrashSession": true,
+          "distinctCrashPids": true,
+          "childCount": 0,
+          "realResult": false,
+          "reconciliation": false,
+          "duplicateIntents": 0,
+          "effectsCount": 1,
+          "decisionActions": [],
+          "shadowKindsAndOutcomes": [],
+          "observationTimedOut": true,
+          "storeWriteError": null,
+          "storeWriteUnchanged": null,
+          "storeRetryApplied": null
+        },
+        "repeat": {
+          "windowId": "effect-before-receipt-kill",
+          "trialIndex": 1,
+          "injectionPoint": "after the external effect commits, before its effect receipt is persisted",
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "terminalCorrect": false,
+          "unknownClassifiable": true,
+          "diskEvidenceComplete": true,
+          "rerunOutsideAllowedRegion": false,
+          "crashPoints": [
+            "tool-return-before-receipt"
+          ],
+          "crashCount": 1,
+          "sameCrashSession": true,
+          "distinctCrashPids": true,
+          "childCount": 0,
+          "realResult": false,
+          "reconciliation": false,
+          "duplicateIntents": 0,
+          "effectsCount": 1,
+          "decisionActions": [
+            "resume"
+          ],
+          "shadowKindsAndOutcomes": [
+            {
+              "kind": "reconcile",
+              "outcome": "resumed",
+              "drift": true
+            }
+          ],
+          "observationTimedOut": false,
+          "storeWriteError": null,
+          "storeWriteUnchanged": null,
+          "storeRetryApplied": null
+        }
+      },
+      {
+        "windowId": "intent-after-persist-kill",
+        "index": 2,
+        "primary": {
+          "windowId": "intent-after-persist-kill",
+          "trialIndex": 2,
+          "injectionPoint": "after the turn-intent journal record is appended and fsynced, before provider dispatch",
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "terminalCorrect": true,
+          "unknownClassifiable": false,
+          "diskEvidenceComplete": true,
+          "rerunOutsideAllowedRegion": true,
+          "crashPoints": [
+            "user-intent-durable"
+          ],
+          "crashCount": 1,
+          "sameCrashSession": true,
+          "distinctCrashPids": true,
+          "childCount": 0,
+          "realResult": true,
+          "reconciliation": false,
+          "duplicateIntents": 1,
+          "effectsCount": 1,
+          "decisionActions": [
+            "resume"
+          ],
+          "shadowKindsAndOutcomes": [
+            {
+              "kind": "deliver",
+              "outcome": "resumed",
+              "drift": true
+            }
+          ],
+          "observationTimedOut": false,
+          "storeWriteError": null,
+          "storeWriteUnchanged": null,
+          "storeRetryApplied": null
+        },
+        "repeat": {
+          "windowId": "intent-after-persist-kill",
+          "trialIndex": 2,
+          "injectionPoint": "after the turn-intent journal record is appended and fsynced, before provider dispatch",
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "terminalCorrect": true,
+          "unknownClassifiable": false,
+          "diskEvidenceComplete": true,
+          "rerunOutsideAllowedRegion": true,
+          "crashPoints": [
+            "user-intent-durable"
+          ],
+          "crashCount": 1,
+          "sameCrashSession": true,
+          "distinctCrashPids": true,
+          "childCount": 0,
+          "realResult": true,
+          "reconciliation": false,
+          "duplicateIntents": 1,
+          "effectsCount": 1,
+          "decisionActions": [
+            "resume"
+          ],
+          "shadowKindsAndOutcomes": [
+            {
+              "kind": "reconcile",
+              "outcome": "resumed",
+              "drift": true
+            }
+          ],
+          "observationTimedOut": false,
+          "storeWriteError": null,
+          "storeWriteUnchanged": null,
+          "storeRetryApplied": null
+        }
+      },
+      {
+        "windowId": "repeated-restart",
+        "index": 2,
+        "primary": {
+          "windowId": "repeated-restart",
+          "trialIndex": 2,
+          "injectionPoint": "restart at least three times while the same recovery boundary is pending",
+          "duplicateEffects": 0,
+          "lostTasks": 0,
+          "terminalCorrect": true,
+          "unknownClassifiable": false,
+          "diskEvidenceComplete": true,
+          "rerunOutsideAllowedRegion": true,
+          "crashPoints": [
+            "user-intent-durable",
+            "recovery-before-dispatch",
+            "recovery-before-dispatch"
+          ],
+          "crashCount": 3,
+          "sameCrashSession": true,
+          "distinctCrashPids": true,
+          "childCount": 0,
+          "realResult": true,
+          "reconciliation": false,
+          "duplicateIntents": 1,
+          "effectsCount": 1,
+          "decisionActions": [
+            "resume",
+            "resume",
+            "resume"
+          ],
+          "shadowKindsAndOutcomes": [
+            {
+              "kind": "deliver",
+              "outcome": "resumed",
+              "drift": true
+            },
+            {
+              "kind": "deliver",
+              "outcome": "resumed",
+              "drift": true
+            },
+            {
+              "kind": "deliver",
+              "outcome": "resumed",
+              "drift": true
+            }
+          ],
+          "observationTimedOut": false,
+          "storeWriteError": null,
+          "storeWriteUnchanged": null,
+          "storeRetryApplied": null
+        },
+        "repeat": {
+          "windowId": "repeated-restart",
+          "trialIndex": 2,
+          "injectionPoint": "restart at least three times while the same recovery boundary is pending",
+          "duplicateEffects": null,
+          "lostTasks": null,
+          "terminalCorrect": false,
+          "unknownClassifiable": true,
+          "diskEvidenceComplete": false,
+          "rerunOutsideAllowedRegion": null,
+          "crashPoints": [
+            "user-intent-durable"
+          ],
+          "crashCount": 1,
+          "sameCrashSession": true,
+          "distinctCrashPids": true,
+          "childCount": null,
+          "realResult": null,
+          "reconciliation": null,
+          "duplicateIntents": null,
+          "effectsCount": 0,
+          "decisionActions": [],
+          "shadowKindsAndOutcomes": [],
+          "observationTimedOut": true,
+          "storeWriteError": null,
+          "storeWriteUnchanged": null,
+          "storeRetryApplied": null
+        }
+      }
+    ]
+  },
+  "uncertainty": {
+    "status": "EVIDENCE_INSUFFICIENT_FOR_CAUSAL_OR_UNIVERSAL_GUARANTEES",
+    "note": "descriptive comparison of one frozen Windows workload; no confidence interval or SLA/generalization claim"
+  },
+  "limits": [
+    "Windows x64 and installed dependency reuse only",
+    "fault decisions use scripted provider; quality answers use the authorized live relay",
+    "accepted handoff consumption is tested, automatic handoff extraction is not",
+    "restarts and live-provider waits remain in the frozen latency metric",
+    "unknownClassifiableRate is the frozen misnamed fraction of still-unclassified outcomes; lower is better",
+    "TaskFlow/main-session integration does not complete TF-0715 other four recovery owners",
+    "explicit reconciliation is a classified no-replay state, not proof the original task successfully finished",
+    "independent repeat retained 14 complete trials and one incomplete post-kill K5 attempt; no successful replacement",
+    "global harness:ci failed at stale Agent Dev evidence, not a passing release gate"
+  ],
+  "driven_by": "agent",
+  "actor": "recovery-comparison-verifier",
+  "realHumanEvidence": false
+}

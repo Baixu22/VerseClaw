@@ -1,0 +1,461 @@
+{
+  "schema": "AutonomyA1ContractNegatives/v1",
+  "driven_by": "agent",
+  "actor": "codex/autonomous-project-system",
+  "candidate": {
+    "commit": "a7ce35fde61a87afd5a7d87ee73b8b74479fae4a",
+    "tree": "16377fc717671d22be6e5dbd2fff2966bf8743af",
+    "dirty": false
+  },
+  "oracle": "Executed assertions in tests-summary.json, raw Vitest JSON retained in raw-run-index.json",
+  "total": 89,
+  "passed": 89,
+  "cases": [
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects changed workspaceId against the current owner",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects changed projectId against the current owner",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects changed sessionKey against the current owner",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects changed sessionGeneration against the current owner",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects absent workspaceId rather than inventing scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects absent projectId rather than inventing scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects absent sessionKey rather than inventing scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects absent sessionGeneration rather than inventing scope",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects malformed scope: null",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects malformed scope: undefined",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects malformed scope: {}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects malformed scope: {\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\",\"sessionGeneration\":\"\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects malformed scope: {\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\",\"sessionGeneration\":\"generation-A\",\"workspaceKey\":\"other\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects malformed scope: {}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract does not invent an owner when the current owner is unavailable",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects mixed, forged or unscoped reference: {\"kind\":\"action\",\"owner\":\"task-ledger\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\",\"sessionGeneration\":\"generation-A\"},\"actionId\":\"a\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects mixed, forged or unscoped reference: {\"kind\":\"resource\",\"owner\":\"task-loop\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\",\"sessionGeneration\":\"generation-A\"},\"resourceId\":\"r\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects mixed, forged or unscoped reference: {\"kind\":\"task\",\"owner\":\"runtime\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\",\"sessionGeneration\":\"generation-A\"},\"taskId\":\"bare\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects mixed, forged or unscoped reference: {\"kind\":\"toString\",\"owner\":\"runtime\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\",\"sessionGeneration\":\"generation-A\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects mixed, forged or unscoped reference: {\"kind\":\"action\",\"owner\":\"host-api\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\",\"sessionGeneration\":\"generation-A\"},\"actionId\":\" action-A \",\"allowed\":true}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects mixed, forged or unscoped reference: {\"kind\":\"action\",\"owner\":\"host-api\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\",\"sessionGeneration\":\"generation-A\"},\"actionId\":\" action-A \",\"grant\":\"fullAccess\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects mixed, forged or unscoped reference: {\"kind\":\"effect\",\"owner\":\"coding-execution-backend\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\",\"sessionGeneration\":\"generation-A\"},\"effectId\":\" effect-A \",\"run\":{\"runId\":\"run-A\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\"}},\"taskStatus\":\"done\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects mixed, forged or unscoped reference: {\"kind\":\"evidence\",\"owner\":\"task-loop\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\",\"sessionGeneration\":\"generation-A\"},\"evidenceRef\":\" evidence-A \",\"passed\":true}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects mixed, forged or unscoped reference: {\"kind\":\"resource\",\"owner\":\"resource-tracker\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\",\"sessionGeneration\":\"generation-A\"},\"resourceId\":\" resource-A \",\"leaseState\":\"idle\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects mixed, forged or unscoped reference: {\"kind\":\"run\",\"owner\":\"runtime\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\",\"sessionGeneration\":\"generation-A\"},\"run\":{\"runId\":\"run-A\",\"scope\":{\"workspaceId\":\"other\",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\"}}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects mixed, forged or unscoped reference: {\"kind\":\"effect\",\"owner\":\"coding-execution-backend\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\",\"sessionGeneration\":\"generation-A\"},\"effectId\":\" effect-A \",\"run\":{\"runId\":\"run-A\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\"other\",\"sessionKey\":\"agent:main:conversation\"}}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects mixed, forged or unscoped reference: {\"kind\":\"run\",\"owner\":\"runtime\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\",\"sessionGeneration\":\"generation-A\"},\"run\":{\"runId\":\"run-A\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \"}}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects mixed, forged or unscoped reference: {\"kind\":\"run\",\"owner\":\"runtime\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\",\"sessionGeneration\":\"generation-A\"},\"run\":{\"runId\":\"run-A\",\"scope\":{\"workspaceId\":\" workspace-A \",\"projectId\":\" workspace-A \",\"sessionKey\":\"agent:main:conversation\",\"workspaceKey\":\" workspace-A \"}}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract static owner/allow mutations do not change actual Main write or Gateway permissions",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "name": "autonomous object owner contract rejects static grant metadata and keeps Run completion distinct from Task acceptance",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/component-authority-manifest.test.ts",
+      "name": "component authority manifest rejects a second accepted-memory writer",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/component-authority-manifest.test.ts",
+      "name": "component authority manifest rejects a second context assembly owner",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/component-authority-manifest.test.ts",
+      "name": "component authority manifest rejects a second domain executor",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/component-authority-manifest.test.ts",
+      "name": "component authority manifest rejects permission escalation and unauthorized cross-domain writes",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":null}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":[]}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"sessionKey\":\"session\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"sessionId\":\"physical-session\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"projectId\":\"project\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"workspaceId\":\"\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\"run\",\"scope\":{\"workspaceKey\":42}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a run without valid explicit workspace scope: {\"runId\":\" \",\"scope\":{\"workspaceId\":\"workspace\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects conflicting legacy and canonical workspace identities",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a task reference without a declared owner: null",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a task reference without a declared owner: undefined",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a task reference without a declared owner: {}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a task reference without a declared owner: {\"taskId\":\"bare\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a task reference without a declared owner: {\"kind\":\"toString\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/identity-scope.test.ts",
+      "name": "identity and scope boundary rejects a task reference without a declared owner: {\"kind\":\"unknown\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"cross-session-quality-as-same-session-scorecard\" via rule cross-session-quality on field authorityBoundary",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"duplicate-relation-chat-projects-task-ledger\" via rule duplicate-relation on field relation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"forged-grant-field-grants\" via rule forged-grant-field on field relation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"forged-grant-field-inverse-transitive-bidirectional\" via rule forged-grant-field on field relation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"forged-grant-field-permission\" via rule forged-grant-field on field relation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"forged-grant-field-run-success-as-task-completion\" via rule forged-grant-field on field relation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"kind-boundary-mismatch-projects-advisory-only\" via rule kind-boundary-mismatch on field authorityBoundary",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"kind-boundary-mismatch-references-one-way-task-ledger-authority\" via rule kind-boundary-mismatch on field authorityBoundary",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"missing-evidence-absent-field\" via rule missing-evidence on field evidenceRefs",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"missing-evidence-blank-ref\" via rule missing-evidence on field evidenceRefs",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"missing-evidence-empty-array\" via rule missing-evidence on field evidenceRefs",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"reverse-task-authority-boundary-on-workboard\" via rule reverse-task-authority on field authorityBoundary",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"reverse-task-authority-task-ledger-references-workboard\" via rule reverse-task-authority on field from",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"self-loop-chat-projects-chat\" via rule self-loop on field to",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"unknown-authority-boundary-full-authority\" via rule unknown-authority-boundary on field authorityBoundary",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"unknown-endpoint-non-object-candidate\" via rule unknown-endpoint on field relation",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"unknown-endpoint-run-as-task\" via rule unknown-endpoint on field from",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"unknown-endpoint-session-as-workspace\" via rule unknown-endpoint on field from",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"unknown-endpoint-workspace-target\" via rule unknown-endpoint on field to",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"unknown-kind-mirrors\" via rule unknown-kind on field kind",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects negative fixture \"unsupported-contract-version-v2\" via rule unsupported-contract-version on field contractVersion",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/product-semantics.test.ts",
+      "name": "ClawX product semantic relation contract (ProductSemanticRelations/v1) rejects the individually legal but mismatched combination, not only unknown enum members",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/project-projection.test.ts",
+      "name": "Project read-only projection rejects duplicate projection identities",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "TaskLedgerReference contract rejects empty Task Ledger node ids",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects an ambiguous, stale or completing task reference: {\"owner\":\"task-ledger\",\"taskId\":\"bare\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects an ambiguous, stale or completing task reference: {\"owner\":\"task-forest\",\"taskNodeId\":\"TF-0670\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"status\":\"done\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects an ambiguous, stale or completing task reference: {\"owner\":\"runtime\",\"taskNodeId\":\"runtime-A\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects an ambiguous, stale or completing task reference: {\"taskNodeId\":\"ledger-A\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects an ambiguous, stale or completing task reference: {\"owner\":\"task-ledger\",\"taskNodeId\":\"\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects an ambiguous, stale or completing task reference: {\"owner\":\"task-ledger\",\"taskNodeId\":\"ledger-A\",\"scope\":{\"workspaceId\":\"other\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects an ambiguous, stale or completing task reference: {\"owner\":\"task-ledger\",\"taskNodeId\":\"ledger-A\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"old\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects reverse authority or mirrored completion: {\"owner\":\"task-ledger\",\"taskNodeId\":\" ledger-A \",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"externalRef\":{\"owner\":\"task-forest\",\"taskNodeId\":\"TF-0670\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"direction\":\"execution-to-task-forest\"},\"status\":\"done\"}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects reverse authority or mirrored completion: {\"owner\":\"task-ledger\",\"taskNodeId\":\" ledger-A \",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"externalRef\":{\"owner\":\"task-forest\",\"taskNodeId\":\"TF-0670\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"direction\":\"execution-to-task-forest\"},\"progress\":100}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects reverse authority or mirrored completion: {\"owner\":\"task-forest\",\"taskNodeId\":\" ledger-A \",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"externalRef\":{\"owner\":\"task-forest\",\"taskNodeId\":\"TF-0670\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"direction\":\"execution-to-task-forest\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects reverse authority or mirrored completion: {\"owner\":\"task-ledger\",\"taskNodeId\":\" ledger-A \",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"externalRef\":{\"owner\":\"task-forest\",\"taskNodeId\":\"TF-0670\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"direction\":\"task-forest-to-execution\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects reverse authority or mirrored completion: {\"owner\":\"task-ledger\",\"taskNodeId\":\" ledger-A \",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"externalRef\":{\"owner\":\"task-ledger\",\"taskNodeId\":\"TF-0670\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"direction\":\"execution-to-task-forest\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects reverse authority or mirrored completion: {\"owner\":\"task-ledger\",\"taskNodeId\":\" ledger-A \",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"externalRef\":{\"owner\":\"task-forest\",\"taskNodeId\":\"TF-0670\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"direction\":\"execution-to-task-forest\",\"completedAt\":\"2026-11-02\"}}",
+      "status": "passed"
+    },
+    {
+      "file": "tests/unit/task-ledger-reference.test.ts",
+      "name": "Task Forest execution anchor contract rejects reverse authority or mirrored completion: {\"owner\":\"task-ledger\",\"taskNodeId\":\" ledger-A \",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"workspace-A\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"externalRef\":{\"owner\":\"task-forest\",\"taskNodeId\":\"TF-0670\",\"scope\":{\"workspaceId\":\"workspace-A\",\"projectId\":\"other\",\"sessionKey\":\"session-A\",\"sessionGeneration\":\"generation-A\"},\"direction\":\"execution-to-task-forest\"}}",
+      "status": "passed"
+    }
+  ],
+  "runtimeSideEffects": "not-run; contract rejection and actual Main permission functions measured only"
+}

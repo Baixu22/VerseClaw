@@ -1,0 +1,81 @@
+{
+  "schema": "session-family-connectors-audit/v1",
+  "date": "2026-11-08",
+  "driven_by": "agent",
+  "actor": "codex",
+  "change": "Family projects use their existing static hierarchy connectors and selected row backgrounds; dynamic project hooks no longer overlap disclosure buttons or child connectors. Plain projects retain hook behavior.",
+  "validation": {
+    "unit": {
+      "files": 2,
+      "passed": 17
+    },
+    "electron": {
+      "startTime": "2026-11-08T11:46:53.576Z",
+      "duration": 58598.841,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "build": "passed",
+    "web_typecheck": "passed",
+    "test_typecheck": "passed",
+    "lint": "passed",
+    "harness_task_diff": "passed",
+    "source_unchanged": true,
+    "source_guard": true
+  },
+  "visual_audit": {
+    "status": "reviewed",
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "states": [
+      "parent selected",
+      "child selected",
+      "collapsed by keyboard",
+      "ordinary row selected within family project"
+    ],
+    "count": 8
+  },
+  "screenshots": [
+    {
+      "path": "screenshots/dark-child-selected.png",
+      "sha256": "188b61195e76917721d9d0db6119fecbfac9c05fa6ab21c9dc582e2770e8c9c7"
+    },
+    {
+      "path": "screenshots/dark-collapsed.png",
+      "sha256": "1d559e6b35fa08a0a896431d3054ed18f13bcf6885d62c4b28c5ca66706386a8"
+    },
+    {
+      "path": "screenshots/dark-ordinary-selected.png",
+      "sha256": "f51091e08f780a06fb6ce15b20c8bcedd00e84f130cb90a27d6f53a89a917119"
+    },
+    {
+      "path": "screenshots/dark-parent-selected.png",
+      "sha256": "da6438524ba608f025b5cd87dd1118cdf11f32c6385634565a4355af5ccd80ef"
+    },
+    {
+      "path": "screenshots/light-child-selected.png",
+      "sha256": "a1e06e053a55c1e56e20716bb208dadbbcab2179ece54002ba89f626eb2e8877"
+    },
+    {
+      "path": "screenshots/light-collapsed.png",
+      "sha256": "45902bc5bb03f19222e87723f52d1294f155e558f46f9ac00aea1f39d8f73c91"
+    },
+    {
+      "path": "screenshots/light-ordinary-selected.png",
+      "sha256": "4bcddd8947031648eb94cccf9473cd82870cc849b4e0396e86335cb3d359ef45"
+    },
+    {
+      "path": "screenshots/light-parent-selected.png",
+      "sha256": "a44a1d0c9b5a356e12209ea9a298e9c83319b7fe0500427d3a665e4f5cc7d821"
+    }
+  ],
+  "task_forest": {
+    "node": "TF-0861",
+    "proposal": "D:/tmp/session-line-overlap-20261108/proposal.json",
+    "status": "pending; another session holds the export lock"
+  }
+}

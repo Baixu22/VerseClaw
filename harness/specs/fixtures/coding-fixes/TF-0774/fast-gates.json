@@ -1,0 +1,76 @@
+{
+  "candidate": "3be783eac6a4e2aae35558dbee705f47cf3caeb1",
+  "driven_by": "agent",
+  "actor": "codex-01a1b68a",
+  "realHumanEvidence": false,
+  "finishedAt": "2026-11-08T01:58:38.774752+00:00",
+  "commands": [
+    {
+      "name": "contract",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 1.9210000000020955
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 2.437999999994645
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.2970000000059372
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/coding-retired-control-admission.md"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 1.639999999999418
+    },
+    {
+      "name": "harness-selection",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/coding-retired-control-admission.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 1.312999999994645
+    },
+    {
+      "name": "artifact-policy",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 9.14100000000326
+    }
+  ]
+}

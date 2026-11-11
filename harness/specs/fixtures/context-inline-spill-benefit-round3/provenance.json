@@ -1,0 +1,48 @@
+{
+  "schema": "ContextInlineSpillRound3Provenance/v1",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r3",
+  "candidate": {
+    "commit": "491a957ad93e0c9f81d580e693de147d4e2cd49d",
+    "tree": "ef66954e73faacc5277186f54f0ea2cc0eee04ef",
+    "dirty": false
+  },
+  "sourceRuns": {
+    "deterministic": "D:\\tmp\\context-inline-spill-benefit-r3\\2026-11-04T09-10-06-349Z-deterministic",
+    "live": "D:\\tmp\\context-inline-spill-benefit-r3\\2026-11-04T09-12-17-278Z-live"
+  },
+  "candidateSourceSha256": {
+    "scripts/context-inline-spill-benefit-loop-eval.mts": "4cccb534cfe3d4c7abb064c3c25c974359151952972da07eb45a24a465e87c85",
+    "scripts/context-inline-spill-benefit-input.mts": "c0658927dc9944a5180d3a5fe339385ef771813d842b2a8dc54249d7dba12cbd",
+    "scripts/context-inline-spill-benefit-scoring.mts": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+    "tests/unit/context-inline-spill-benefit-input.test.ts": "d5bd3439f81f89c8d55c29e7d2d55c5e3b5b7a1053485b79909411ed712ca3cd",
+    "harness/specs/tasks/inline-spill-real-benefit-eval-round3.md": "f8dcf833bd5f343b9c7539fdf3cfba386010954171bb950330f974f1d69f06e4",
+    "harness/specs/rules/inline-spill-eval-projected-input.md": "6b3ee56e1a4b5abf414b42e924d3606da2729dbbdbb3a42b74f84d4b86da305e",
+    "harness/specs/rules/inline-spill-benefit-quantification.md": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f"
+  },
+  "frozenInputsSha256": {
+    "scripts/inline-spill-benefit-eval.mts": "d5fd4cef5f0c6e9ea1f902a664992e9148bff3e331fb57412cd507330a7dcfcc",
+    "scripts/inline-spill-benefit-scoring.ts": "355c8bebc3de817d66c9b1e9371a1d51438ab63c30ab95a9df1f1e6dd3b099eb",
+    "tests/unit/inline-spill-benefit-eval.test.ts": "7edfec3c189b031b28c87ca00fd782aefd442e270378efcacfdb24e1a604dd5f",
+    "tests/unit/zz-probe5.test.ts": "d0c8e11e03a6fa394421116d12f668bdbb81fb97b80d305743ffca17b417ede8",
+    "scripts/context-inline-spill-benefit-scoring.mts": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+    "harness/specs/rules/inline-spill-benefit-quantification.md": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f",
+    "harness/specs/fixtures/context-inline-spill-benefit/SHA256SUMS": "88542d63e053bf37d466d722c1dc8964b4930b86ff3a1fd292a6184ddbcd8bd0",
+    "harness/specs/fixtures/context-inline-spill/SHA256SUMS": "5f436c49c12197b2870ef0c00b3694a1cdfecdef25a83c406518000eef4227a2"
+  },
+  "archiveCounts": {
+    "deterministic": 104,
+    "live": 525
+  },
+  "provider": {
+    "kind": "openai-compatible-responses",
+    "endpoint_origin": "http://127.0.0.1:3065",
+    "model": "space-bunny",
+    "credential_persisted": false
+  },
+  "credentialHeadersCaptured": false,
+  "sourceOfRequests": "providerCalls[].request is the exact object serialized and sent; its SHA256, input/request characters and UTF8 bytes are recorded per call",
+  "sourceOfProjectedOutputs": "providerCalls[].projected_tool_outputs; protocol outputs must match this production projection",
+  "dependencies": "Node modules and ignored local runtime package builds reused; see checks/reused-package-builds.json",
+  "createdAt": "2026-11-04T09:56:51.374Z"
+}

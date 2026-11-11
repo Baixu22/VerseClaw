@@ -1,0 +1,199 @@
+{
+  "schema": "CodingHistoricalBaseline/v1",
+  "candidate": "d8d1691a281b14d74096d50b4da16eb0148ffe87",
+  "driven_by": "agent",
+  "source": "2026-11-04 private audit; retained values are historical, never current-run evidence",
+  "auditManifestSha256": "c85a185a7ea7915b528d4c48583b067217c47d986731f2ba77b2e57404069b41",
+  "sourceStamps": {
+    "README.md": {
+      "gitBlobAtCandidate": "ae738bf177f911169cce1fd68cc1a54c2d80900a",
+      "sha256": "6166df7491aa770a1dca16780bc8be54bc6e6903d5d373f9b6a9965db4e6ebaa",
+      "bytes": 19390
+    },
+    "docs/dev/coding-parity-introduce-assessment.md": {
+      "gitBlobAtCandidate": "0664df9f402c6c2207d6bce3ec71ff0857a83744",
+      "sha256": "768c31e453fd1e93a5dc5776c629df91048e891d917f13325016490bea4ce956",
+      "bytes": 10576
+    },
+    "docs/dev/coding-run-protocol.md": {
+      "gitBlobAtCandidate": "e9c1e76f2739ab1b1c30389ccbe5070a426dc6b7",
+      "sha256": "7b48bd9bd850a8f7bcf7979b98fcf437bb8331dabbba17d2a55188b9a9f65656",
+      "bytes": 2407
+    },
+    "docs/dev/unified-agent-system/runtime-convergence/STATUS.md": {
+      "gitBlobAtCandidate": "d3acb92f2882af4c1d054915cbaaea0b85d642a9",
+      "sha256": "542791309ca076f64948e83ebb5858a5b2c137aabe78d02a9bb155278a9907a6",
+      "bytes": 2546
+    },
+    "docs/dev/versegit-product-integration/TF-0517/verified-glm-20261025/acceptance.json": {
+      "gitBlobAtCandidate": "18230b28948a224ea25fd2c439204af31c1ab477",
+      "sha256": "3f7b8607d0319301f25d575458e10b86b431b2c1c25bb616342b0438d9c4ae69",
+      "bytes": 66106
+    },
+    "docs/modules/workspace-and-coding.md": {
+      "gitBlobAtCandidate": "389a33f476009c62c41b09f106ee0c021aac4335",
+      "sha256": "6df199bda1a30d4ff80ef2284ec35050686f1dcae0c3790b53ef9b1451886b0f",
+      "bytes": 14514
+    },
+    "electron/services/mcp-api.ts": {
+      "gitBlobAtCandidate": "9b21e9e668710b123fb186d51a666342ee93346f",
+      "sha256": "d155dca01548a332df6617e18ef0994bfb141042c1b6ab5c100b8902b90e88c2",
+      "bytes": 67446
+    },
+    "electron/services/tool-protocol-shadow.ts": {
+      "gitBlobAtCandidate": "cac10ac7dc881a733676f9466b880f278895853e",
+      "sha256": "d2de0c2c0f7c720020567ac0c1dc6e00afa0a213f6313711de1352da2f4f8433",
+      "bytes": 11845
+    },
+    "harness/specs/fixtures/agent-first-system/mainline/candidate-report.v1.json": {
+      "gitBlobAtCandidate": "99d65a78e213c8ccc07521e5a82fdcac307ea123",
+      "sha256": "0e2cf6c367d331481938ffa00b7149f4db0f97ead9b66ccb96daa278f16653cf",
+      "bytes": 19177
+    },
+    "openclaw_runtime/src/agents/agent-bundle-mcp-materialize.ts": {
+      "gitBlobAtCandidate": "09a6826d9e3ca9147df874b06bbbc72b4d8c77f5",
+      "sha256": "c6576c2ec40b5b2db76f172a07b5a84f4cc59d80cbbf045b79ad5624334e3a4d",
+      "bytes": 17459
+    },
+    "openclaw_runtime/src/agents/agent-tools.ts": {
+      "gitBlobAtCandidate": "aadadef9092ed2a9ac814672aeba458354d02d2b",
+      "sha256": "7db3c579ccba7ca33221b3b5d63436dea00fb5430e63bef08bd2abb37dbfb7a2",
+      "bytes": 64535
+    },
+    "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts": {
+      "gitBlobAtCandidate": "7cbd3e18a56f5a71b5fe161d6bd0faf66d86a11b",
+      "sha256": "d406769bef60ff050c13dbfeff0048fbf06e8051e334fc2b1a2d6b79ec8bf8f9",
+      "bytes": 14908
+    },
+    "openclaw_runtime/src/agents/apply-patch-preflight.ts": {
+      "gitBlobAtCandidate": "b1b6a9d5418d1b5932e6d54b10355890d2a8d2f9",
+      "sha256": "cb802f8393d375ecbfc07b6a2abd893e9d2c4f8d22e70d8562a0904c1a5b03cf",
+      "bytes": 14624
+    },
+    "openclaw_runtime/src/agents/orchestration-protocol.ts": {
+      "gitBlobAtCandidate": "a032d7bc2b32257e96be7837b91d7ae8faeaba3d",
+      "sha256": "d531488619c4163652e8520cb64d34967c3218b0cc08e59aaa2f8611d36c5f5c",
+      "bytes": 37409
+    },
+    "openclaw_runtime/src/agents/orchestration-worktree-merge.ts": {
+      "gitBlobAtCandidate": "e956db69042035e9c7ac5fa0eaffb7f865df3ba1",
+      "sha256": "a725cf7a11eb9ae95b2cccbc66ca25937f4e12dc5401a801ea52bf1fb4de16e0",
+      "bytes": 4645
+    },
+    "openclaw_runtime/src/agents/orchestrator-run-observed.ts": {
+      "gitBlobAtCandidate": "92e8e9110c7afb970045787effd4c3498c920904",
+      "sha256": "2a821f3c745350f2724c12dbfad6b07bd08c2f8f4635cbc80d31f96be817f396",
+      "bytes": 45795
+    },
+    "openclaw_runtime/src/agents/orchestrator.ts": {
+      "gitBlobAtCandidate": "690fe6368e989d81f7cedefc9a2014639c1f5ec6",
+      "sha256": "b03f55e3bad9b6e690c9a5f54bee301f6a46fb68e4d7b0f261d91f4e745925d5",
+      "bytes": 27740
+    },
+    "openclaw_runtime/src/agents/path-policy.ts": {
+      "gitBlobAtCandidate": "5819f9bd1b566774e896ed4702db2008af53564c",
+      "sha256": "59fa54fe4c4c821260dca370bd6d4f45d256f0ead57d25be3603b206c1b90e85",
+      "bytes": 5167
+    },
+    "openclaw_runtime/src/agents/subagent-registry.ts": {
+      "gitBlobAtCandidate": "50f7d1e2f5723b8daf25f620403a32a237ff46c6",
+      "sha256": "3484169bf3d488c2e39f436adacf3fa7f8382e7b673632425fda01936647caf6",
+      "bytes": 65954
+    },
+    "openclaw_runtime/src/agents/tools/write-journal-core.ts": {
+      "gitBlobAtCandidate": "e5751659c62ef78de4986b4906e980ed38c57d5c",
+      "sha256": "8ef63c67cce5fdf356cc56c2d657b584b52704342125808e924db059954582ac",
+      "bytes": 14859
+    },
+    "openclaw_runtime/src/agents/tools/write-journal.ts": {
+      "gitBlobAtCandidate": "90bc941f00892d0a5c06cd45bb64326a68a1e142",
+      "sha256": "b8abcc9dda4ed98f62941930bb0fc2bba43aab83920db04fab4970bd1112a72f",
+      "bytes": 11967
+    },
+    "openclaw_runtime/src/agents/verseshell-foundation-flags.ts": {
+      "gitBlobAtCandidate": "add917038c81cdf49e9d298c684921b35cc04e1c",
+      "sha256": "be873ef9d520e2b4bb6b7478752ad3ead9770bc1aaf7beab9a50c5b59cc9d340",
+      "bytes": 6216
+    },
+    "openclaw_runtime/src/agents/workspace-external-write-provenance-policy.ts": {
+      "gitBlobAtCandidate": "0976139281a9eb6aba2e6155f7ece10f8e136c09",
+      "sha256": "79124f66fb05890063f0ede7c10f7e1dbb7b67cabe840a1a433aabfb5de46212",
+      "bytes": 5013
+    },
+    "openclaw_runtime/src/agents/worktree-service.ts": {
+      "gitBlobAtCandidate": "421cf8db3f4097db5b26f6c99d1b48e90e873672",
+      "sha256": "d5f360aa8ac08646e0dfe0d1fa67e45ca9c2957202f674ef60ee9dec92e50f7b",
+      "bytes": 23440
+    },
+    "openclaw_runtime/src/context-engine/coding-runtime-flags.ts": {
+      "gitBlobAtCandidate": "94bc0e5828b7ce2954f09bf6f95fcab44302e8ae",
+      "sha256": "bb85b3045648c7839fc904369c9838355f0a4457046b6891c306c399441e5701",
+      "bytes": 10641
+    },
+    "openclaw_runtime/src/gateway/mcp-http.handlers.ts": {
+      "gitBlobAtCandidate": "67bf2559a2fa6b198612551cd848b88ee205e154",
+      "sha256": "bc2c827ed3feec27b3ee2d32b91ab390dcd5a98e6531580c70d88f1b8c3603f5",
+      "bytes": 4691
+    },
+    "openclaw_runtime/src/gateway/mcp-http.protocol.ts": {
+      "gitBlobAtCandidate": "5245d2e47222cb4078c9575390583fc228599183",
+      "sha256": "4017ac8dcd3b18b6177332649dee02495f91d1409be28b0f2fdc829b794d248c",
+      "bytes": 1216
+    },
+    "openclaw_runtime/src/gateway/methods/core-descriptors.ts": {
+      "gitBlobAtCandidate": "39e0922999d73c31d77430a8dfbb0997ae336b39",
+      "sha256": "8b8aba68ebadb1c22a3241987f9b2ec4262b4c3b34e42afa958c43e02489c0c3",
+      "bytes": 23161
+    },
+    "openclaw_runtime/src/gateway/server-methods-list.ts": {
+      "gitBlobAtCandidate": "e9f8c2ff74cc6b80702be343249695a55933b23c",
+      "sha256": "33fc9e1f1adeaba29a5277129fb1b45d5069c72c1e36d744714b6b52abe55384",
+      "bytes": 2233
+    },
+    "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts": {
+      "gitBlobAtCandidate": "d5f7375376d383c7a868d5c81e1782f9d75cb11f",
+      "sha256": "bfa7bed5fb78a3949c215c46026447d20373b86fcdf0466e732cf3394e2a806b",
+      "bytes": 63703
+    },
+    "openclaw_runtime/src/runtime-core/ast-edit-plan-controlled-apply-pilot.ts": {
+      "gitBlobAtCandidate": "12b0e1ed515b2edad32f76a43e3fe1f22bac85da",
+      "sha256": "8f0dfb9984e65d6a866f1694e8b5a06c8882e6100a71a9c3a62b92f5629dcdb2",
+      "bytes": 35733
+    },
+    "scripts/coding-run-summary.mjs": {
+      "gitBlobAtCandidate": "7f2b63b3d67cd471a1dc9c523a4b59895df00cb6",
+      "sha256": "82758e106445c2ce8d425c010241d495cf21bd744543a7118c51f390c2b5caf3",
+      "bytes": 988
+    },
+    "shared/dcs/component-disposition-catalog.ts": {
+      "gitBlobAtCandidate": "4986142c980612aebf9f6da34c31ca476f094dd9",
+      "sha256": "9a31fb00bc1de641197c3cbdca835f804d38943270c443014f29fc6ff7d01a7c",
+      "bytes": 48122
+    },
+    "shared/dcs/prod-flags-catalog.ts": {
+      "gitBlobAtCandidate": "a4deaba707b36d7807affa3e6e832630a3252f2e",
+      "sha256": "f377723bb962b38b02592baca5f3c1c588dc19465ab413da718e9082b7daac74",
+      "bytes": 21470
+    },
+    "shared/types/coding-run.ts": {
+      "gitBlobAtCandidate": "9d80d518656040f25a3f646046e3b5d5b00bfd3b",
+      "sha256": "1c5b30f8163c820a06351ec740fd444b3b1dab4923a40b228c7424bd9314d686",
+      "bytes": 17799
+    },
+    "src/components/agents/RolesOrchestrationPanel.tsx": {
+      "gitBlobAtCandidate": "9a9827a672f8917427a1c4679f204a470e6518b8",
+      "sha256": "1a3a47d2c3cf97a1d25772d3f5b1e96c6b2810eb780f108c9036ed32c0401320",
+      "bytes": 202427
+    },
+    "src/components/settings/DcsProdFlagsPanel.tsx": {
+      "gitBlobAtCandidate": "3e2832387721ad865a79ecf3eb5b0ce3f6954783",
+      "sha256": "a70c241fe50d88287966ccab0d125ecc4b70bce4e6ba7c7e956b6280a984c9b3",
+      "bytes": 32562
+    },
+    "tests/unit/coding-controls-tf0510-patchflow-trigger.test.ts": {
+      "gitBlobAtCandidate": "ef3e62f3e18f65aa70b10e2d8602011fc51e5633",
+      "sha256": "27cf6f3675d39ac51356c88597f070b400c6807a9906a26ec92ac9d161108157",
+      "bytes": 3270
+    }
+  }
+}

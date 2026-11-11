@@ -1,0 +1,18 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-coding-p1",
+  "realHumanEvidence": false,
+  "boundary": "Electron UI with injected host RPC",
+  "withGate": true,
+  "exitCode": 0,
+  "summary": {
+    "codingRunId": "task-loop:loop-e2e",
+    "records": 4,
+    "turns": 0,
+    "approvals": 0,
+    "files": 0,
+    "tests": 1,
+    "verification": "passed",
+    "finalStatus": "completed"
+  }
+}

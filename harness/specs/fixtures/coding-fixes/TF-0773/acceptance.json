@@ -1,0 +1,86 @@
+{
+  "schema": "CodingFixAcceptance/v1",
+  "taskId": "TF-0773",
+  "finding": "A9",
+  "actor": "codex-01a1b4da",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "70dc369531824c1aca1a129ede9de5e46da69134",
+    "tree": "b04d3fa3f92b71b6c6370bfaa409105499e2d47d",
+    "dirty": false
+  },
+  "status": "resolved",
+  "tests": {
+    "units": 52,
+    "runtime": 45,
+    "projection-units": 52
+  },
+  "review": {
+    "actionableFindings": 0,
+    "report": "review.json"
+  },
+  "sourceSha256": {
+    "docs/modules/integrations-and-surfaces.md": "1482d4f7c6ec1c57eafac47b3a35a80ad6e6cd546744e8a98b4d3772ef42160b",
+    "electron/services/tool-protocol-shadow.ts": "212443c1f0bc3acc2be9cd53a0a374d434d9661c19610914d6881822fb03b7a6",
+    "harness/specs/tasks/coding-mcp-result-fidelity.md": "200f4fbf6d3854156068c706ad3e1115c7892a5efc3db8cde8c7c556c9aff75d",
+    "openclaw_runtime/src/agents/agent-bundle-mcp-materialize.ts": "6a8183d6e9473155ff7f1bdbc5128453a9ffc5c01371086280d535d74ada0ef1",
+    "openclaw_runtime/src/agents/agent-bundle-mcp-runtime.ts": "6be8d43e049164faadb2a8ede44c7bd28f69284675f625af823c4fa9f9c833ef",
+    "openclaw_runtime/src/agents/agent-bundle-mcp-types.ts": "a97b7432550c314ab40988e54dcb16165119986c6565f3d9b1a921303cb3b66b",
+    "openclaw_runtime/src/agents/agent-tools.before-tool-call.ts": "b399899505bcbec8c4e239df8248e888520b789f2198c6dec276da38c1ca352e",
+    "openclaw_runtime/src/gateway/mcp-http.handlers.ts": "e22f3e2dcdf53bd1156aad90ec215f07ff12af02704ab4a29b2aac7bdb55da9e",
+    "openclaw_runtime/src/gateway/mcp-http.request.ts": "c5adeef250c1332be56adffcdec32c6139b424997d738c300d014d4c662c709d",
+    "openclaw_runtime/src/gateway/mcp-http.ts": "45d6d7fd399cdcfb45a0b7d40cde9463a60f2d9d87e871a5635b7991693396c2",
+    "openclaw_runtime/src/mcp/plugin-tools-handlers.ts": "ba34f1f41fbe5209c5c0552a7b6c54e988e295347a14ed84632614da4e57737d",
+    "openclaw_runtime/src/mcp/tools-stdio-server.ts": "01939d4587f50cd5940b68e7e7d1fe7fd7d64fbd3b26a8a86acb21b7b2254758",
+    "openclaw_runtime/src/shared/mcp-tool-result.ts": "0f22dd16f862335d63fa8a88b3ff5bfe7ec4a08fd5f10b3d097157a836d6c6c7",
+    "tests/fixtures/mcp-result-server.mts": "8b7aef5c728d39656f70f198c0620e7c93306a080d474ed3560badaf2e04a2d8",
+    "tests/fixtures/mcp-result-tools.ts": "8c715b23e44882fbaf1489058a4bc8de679e35f06806b056a6d5dc24e9dd4b90",
+    "tests/integration/mcp-result-sdk.test.ts": "e6e124cbd7d083487a2e66346912cd6eb7d7bc847bde29015f15543336898212",
+    "tests/unit/mcp-approval-fidelity.test.ts": "4a154d65b945ce32aedde1cc153368af2060892c903ee87a3994442c292c55dd",
+    "tests/unit/mcp-result-fidelity.test.ts": "5269bacde59319221ddee7ec254488b34e867b4fc1ea934423445002b4527ffb",
+    "tests/unit/tool-protocol-shadow.test.ts": "7a0021ba07adc2b30f74c5cf61495c3b9949cd6e551acd5afa17c363c0793833"
+  },
+  "buildSha256": {
+    "dist/index.html": "73f37763fdbf86c7210b6114716e01bc91f5ea3f8796c20d823c4b171666adeb",
+    "dist-electron/main/index.js": "a7357706e94811d424bd9f36ac6e427d18b4c68267b55205845af9b06e6ed33c",
+    "openclaw_runtime/dist/entry.js": "5b6d6ed551bd28fc1360bc022fe4e9dd0aac563c20b07bee0b45897f526526f8"
+  },
+  "criteria": [
+    "Actual SDK HTTP and stdio round trips preserve supported media and structured values; negotiated older versions get legal text with loss metadata.",
+    "Tool errors, thrown failures, real approval outcomes, caller cancellation, timeouts and partial results retain terminal semantics in transport, model and Main shadow adapters.",
+    "Transport session identity isolates equal request ids between clients; replays, foreign sessions and protocol changes are rejected before effects.",
+    "Cancellation and DELETE reach queued batch calls before effects; expiry rejects the first attempt and explicit subsequent calls reconnect without automatic tool replay.",
+    "Late failures retire only their captured connection and cannot alter replacement backoff; original errors return before bounded cleanup, runtime disposal drains retired work.",
+    "Current candidate has clean source projection, uncached typecheck, communication gates, runtime boot smoke, build outputs and actual child-exit readback."
+  ],
+  "protocols": {
+    "http": [
+      "2025-03-26",
+      "2024-11-05"
+    ],
+    "legacyFidelityEvidence": [
+      "sdk/sdk-version-2024-11-05.json",
+      "sdk/sdk-version-2025-03-26.json"
+    ]
+  },
+  "evidenceMode": "Real SDK transports and hooks; deterministic tool registry and HTTP session lookup injection. Concurrent404 test controls the transport failure/retirement window while real handshakes and successful calls run.",
+  "dependencies": "Reused installed root, runtime and VerseBrowser dependencies through explicit directory junctions.",
+  "baselineFailure": {
+    "gate": "harness:ci",
+    "exitCode": 1,
+    "reason": "Agent Dev workbench, deep-test, history and quality evidence exceeded the existing24h freshness window;59 harness tests, structural/policy and catalog checks passed before failure.",
+    "file": "historical/harness-ci-output.json"
+  },
+  "historicalEvidenceNotes": [
+    "adapter-before.json includes one incorrect initialize-version expectation retained as a test error; the media/error failures remain product counterexamples.",
+    "expiry-race-before.json passed and was insufficient; tf0773-expiry-barrier-before.json adds a controlled retirement barrier and demonstrates the old replacement-retirement failure.",
+    "Prior failures retain original candidate and status; final outcomes come from this candidate and source projection."
+  ],
+  "readmeReview": [
+    "README.md",
+    "README.zh-CN.md",
+    "README.ja-JP.md"
+  ],
+  "documentation": "docs/modules/integrations-and-surfaces.md"
+}

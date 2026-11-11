@@ -5,9 +5,10 @@ import { cn } from '@/lib/utils';
 import { basenameFromPath } from '@/lib/git-ui';
 import { useWorkspacesStore } from '@/stores/workspaces';
 import { WorkspacePickerMenu } from './WorkspacePickerMenu';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { toastUserError } from '@/lib/user-error';
 import { SessionWorkspacePicker } from './SessionWorkspacePicker';
 import type { GitWorktree } from '@shared/types/git';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 /**
  * The active project token in the chat empty state, plus the workspace picker
@@ -16,8 +17,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
  * Ported from the FakeCoding reference empty state, where the active project
  * doubles as the project switcher. The reference names it inline in a hero
  * heading; this build has no heading (the watermark is the display type), so
- * the trigger is the pill in the context row under the composer, shaped to
- * match the branch token beside it. The shared header menu shell
+ * the trigger is an unboxed control in the context row under the composer,
+ * beside the branch selector. The shared header menu shell
  * carries the measured geometry — see styles/codex-welcome-hero.css.
  *
  * The reference's menu also offers "new project" and "work without a project".
@@ -27,11 +28,12 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 export type WelcomeProjectPickerProps = {
   /** Opens the native directory chooser. Wired to Chat's handlePickWorkspaceFolder. */
   onPickFolder?: () => void | Promise<unknown>;
-  onSelectWorktree?: (tree: GitWorktree) => Promise<void>;
+  onSelect?: (workspaceId: string) => void | Promise<unknown>;
   disabled?: boolean;
+  onSelectWorktree?: (tree: GitWorktree) => Promise<void>;
 };
 
-export function WelcomeProjectPicker({ disabled = false, onPickFolder, onSelectWorktree }: WelcomeProjectPickerProps) {
+export function WelcomeProjectPicker({ disabled = false, onPickFolder, onSelect, onSelectWorktree }: WelcomeProjectPickerProps) {
   const { t } = useTranslation('chat');
   const profiles = useWorkspacesStore((state) => state.profiles);
   const activeWorkspace = useWorkspacesStore((state) => state.activeWorkspace);
@@ -40,6 +42,7 @@ export function WelcomeProjectPicker({ disabled = false, onPickFolder, onSelectW
 
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLSpanElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   // Same expression the composer header uses, so both surfaces always agree on
   // what this workspace is called.
@@ -63,7 +66,10 @@ export function WelcomeProjectPicker({ disabled = false, onPickFolder, onSelectW
   useEffect(() => {
     if (!open) return;
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') close();
+      if (event.key === 'Escape') {
+        close();
+        triggerRef.current?.focus();
+      }
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
@@ -72,7 +78,7 @@ export function WelcomeProjectPicker({ disabled = false, onPickFolder, onSelectW
   const handleSelect = (id: string) => {
     close();
     if (id === activeWorkspaceId) return;
-    void switchWorkspace(id);
+    void Promise.resolve((onSelect ?? switchWorkspace)(id)).catch(toastUserError);
   };
 
   return (
@@ -80,6 +86,7 @@ export function WelcomeProjectPicker({ disabled = false, onPickFolder, onSelectW
       <Tooltip>
         <TooltipTrigger asChild>
       <button
+        ref={triggerRef}
         type="button"
         className="codex-welcome-context__subcontrol codex-welcome-context__subcontrol--project codex-welcome-project-token"
         aria-expanded={open}

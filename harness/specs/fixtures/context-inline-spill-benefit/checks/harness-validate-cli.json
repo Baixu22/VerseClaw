@@ -1,0 +1,10 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r2",
+  "workspace": "D:/tmp/inline-spill-benefit-r2/validation-candidate",
+  "command": "node harness/src/cli.mjs validate --spec harness/specs/tasks/inline-spill-real-benefit-eval.md",
+  "exitCode": 0,
+  "noDiff": false,
+  "base": "ddd66ced9f3d389bd03a476fcbdccfc2de759f33",
+  "evidence": "harness-validate-cli.stdout.txt contains Spec is valid; execution returned exit code 0."
+}

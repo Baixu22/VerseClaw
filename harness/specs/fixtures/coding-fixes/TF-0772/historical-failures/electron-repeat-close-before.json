@@ -1,0 +1,152 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/coding-vg-sts-jj-20261104/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/coding-relay-01a1ab23-20261107/TF-0772/close-repeat-before/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/coding-vg-sts-jj-20261104/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "coding-mcp-management.spec.ts",
+      "file": "coding-mcp-management.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "closes the real Electron Main and its Windows launcher before returning",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 11633,
+                  "error": {
+                    "message": "TypeError: Cannot read properties of undefined (reading '_object')",
+                    "stack": "TypeError: Cannot read properties of undefined (reading '_object')\n    at closeElectronApp (D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:311:24)\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-mcp-management.spec.ts:20:25",
+                    "location": {
+                      "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts",
+                      "column": 24,
+                      "line": 311
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mfixtures\\electron.ts:311\n\n  309 | async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Promise<void> {\n  310 |   // Playwright drops the server-side Electron object on close; retain its launcher now.\n> 311 |   const launcher = app.process();\n      |                        ^\n  312 |   // app.close() also disconnects the Node inspector. Killing the Windows shell\n  313 |   // first can emit close while the real Electron process still waits for that debugger.\n  314 |   let timer: ReturnType<typeof setTimeout> | undefined;"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts",
+                        "column": 24,
+                        "line": 311
+                      },
+                      "message": "TypeError: Cannot read properties of undefined (reading '_object')\n\n   at fixtures\\electron.ts:311\n\n  309 | async function closeElectronApp(app: ElectronApplication, timeoutMs = 5_000): Promise<void> {\n  310 |   // Playwright drops the server-side Electron object on close; retain its launcher now.\n> 311 |   const launcher = app.process();\n      |                        ^\n  312 |   // app.close() also disconnects the Node inspector. Killing the Windows shell\n  313 |   // first can emit close while the real Electron process still waits for that debugger.\n  314 |   let timer: ReturnType<typeof setTimeout> | undefined;\n    at closeElectronApp (D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:311:24)\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-mcp-management.spec.ts:20:25"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-07T08:18:42.724Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\close-repeat-before\\results\\coding-mcp-management-clos-010e6-s-launcher-before-returning\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\close-repeat-before\\results\\coding-mcp-management-clos-010e6-s-launcher-before-returning\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\coding-relay-01a1ab23-20261107\\TF-0772\\close-repeat-before\\results\\coding-mcp-management-clos-010e6-s-launcher-before-returning\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts",
+                    "column": 24,
+                    "line": 311
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "14b72c6a1648c69c8d54-9b0934bd2a9d1927c02f",
+          "file": "coding-mcp-management.spec.ts",
+          "line": 10,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-07T08:18:40.897Z",
+    "duration": 16263.383000000002,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

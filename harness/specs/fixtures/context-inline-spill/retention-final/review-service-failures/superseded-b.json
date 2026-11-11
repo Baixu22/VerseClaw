@@ -1,0 +1,9 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "candidate": "3fd7fd92d202c6b0276081ed0fc97a98f6205f81",
+  "stopped_pid": 5244,
+  "reason": "Superseded by a verified missing-id/invalid-offset lineage defect requiring a new source candidate.",
+  "process_was_active": true,
+  "clean_review_claimed": false
+}

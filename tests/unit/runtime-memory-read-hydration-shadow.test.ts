@@ -5,13 +5,10 @@ import { DatabaseSync } from "node:sqlite";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   buildRuntimeMemoryEpisodeFixture,
-  buildRuntimeMemoryTemporalFactCandidateFixture,
-  buildRuntimeMemoryTemporalFactFixture,
   closeRuntimeMemoryHydrationShadowDatabasesForTest,
   hydrateRuntimeMemoryShadowContext,
   readRuntimeMemoryHydrationShadow,
   type RuntimeMemoryEpisodeRecord,
-  type RuntimeMemorySourceEpisodeRef,
 } from "../../openclaw_runtime/src/runtime-core";
 import { createRuntimeMemoryPersistenceStore } from "../../openclaw_runtime/src/runtime-core/memory-persistence";
 import { closeOpenClawStateDatabaseForTest } from "../../openclaw_runtime/src/state/openclaw-state-db";
@@ -203,18 +200,6 @@ function buildEpisode(
   });
 }
 
-function sourceEpisodeRef(
-  episode: RuntimeMemoryEpisodeRecord,
-): RuntimeMemorySourceEpisodeRef {
-  return {
-    episodeId: episode.episodeId,
-    taskId: episode.taskId,
-    kind: episode.kind,
-    idempotencyKey: episode.idempotencyKey,
-    reference_time: episode.reference_time,
-  };
-}
-
 function createTempDbPath(): string {
   return path.join(createTempDir(), "openclaw.sqlite");
 }
@@ -225,30 +210,9 @@ function createTempDir(): string {
   return dir;
 }
 
-function sqlCount(db: DatabaseSync, tableName: string): number {
-  const row = db.prepare(`SELECT COUNT(*) AS count FROM ${tableName}`).get() as
-    | { count?: number | bigint }
-    | undefined;
-  return Number(row?.count ?? 0);
-}
-
 function tableExists(db: DatabaseSync, tableName: string): boolean {
   const row = db
     .prepare("SELECT 1 AS ok FROM sqlite_master WHERE type = 'table' AND name = ?")
     .get(tableName) as { ok?: unknown } | undefined;
   return row?.ok === 1;
-}
-
-function inspectPersistenceTables(dbPath: string): Record<string, unknown> {
-  const db = new DatabaseSync(dbPath, { readOnly: true });
-  try {
-    return {
-      episodes: sqlCount(db, "runtime_memory_episodes"),
-      facts: sqlCount(db, "runtime_memory_facts"),
-      invalidations: sqlCount(db, "runtime_memory_invalidations"),
-      meta: sqlCount(db, "runtime_memory_meta"),
-    };
-  } finally {
-    db.close();
-  }
 }

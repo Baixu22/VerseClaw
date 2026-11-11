@@ -27,7 +27,7 @@ touchedAreas:
   - src/pages/Observability/**
   - src/stores/agents.ts
   - src/stores/chat.ts
-  - src/stores/chat/internal.ts
+  - src/stores/chat.ts
   - openclaw_runtime/src/agents/**
   - openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts
   - shared/i18n/locales/**/agents.json

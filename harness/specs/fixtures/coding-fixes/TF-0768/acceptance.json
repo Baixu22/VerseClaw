@@ -1,0 +1,395 @@
+{
+  "schema": "CodingFixAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-coding-TF-0768-relay",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "c8e10fb894406c4498e4cb99266fefe3d201e411",
+    "tree": "4b7a82acf70172517c12843728b4de076c90cc59",
+    "dirty": false
+  },
+  "taskId": "TF-0768",
+  "finding": "A6",
+  "status": "resolved",
+  "unitCounts": {
+    "focused-unit.json": 131,
+    "runtime-unit.json": 39
+  },
+  "e2e": {
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "provider": "scripted-local",
+    "scope": "Windows Electron and source Gateway; real tool exec and session persistence"
+  },
+  "criteria": [
+    "Top-level worktree inheritance and shared overrides use the parent Session Store workspace and generation.",
+    "Missing, foreign, stale and mismatched parent identities reject before spawn; Git creation failures create no simulated worker directory.",
+    "Native spawn checks generation after async preparation, rolls back prepared context and deletes the provisional child on rejection.",
+    "Scheduler consumes live owner-issued independent Git checkout records; booleans, copied records and inprocess directories cannot prove checkout isolation.",
+    "Gateway and team_orchestrate share the same workspace resolver; actual worker cwd and persisted spawnedWorkspaceDir match receipts."
+  ],
+  "sourceHashes": {
+    "docs/modules/workspace-and-coding.md": "7aa45e498d970cdaef9d8a5d7b3c847ae3ff800c833ad763519abd0a1765f9c1",
+    "harness/specs/tasks/coding-orchestration-workspace-authority.md": "350d1f6b3a679f68f1bc288f61d7a994b1039d192f8e087ae3d1a859f48ec705",
+    "openclaw_runtime/src/agents/coding-control-dispositions.ts": "bbcf41c76b53e182fb5009060eaaaf7fac48ea94b4f58ce5e23d8a3b41db08da",
+    "openclaw_runtime/src/agents/openclaw-tools.ts": "2501378370afa1756a9f187dd68da9f6145f572bbaadfdbfc222419b6d02036c",
+    "openclaw_runtime/src/agents/orchestration-protocol.ts": "c72072b8f5b6087995c6472dff87e92008dc62f5e50a6450d572259e18b90ac2",
+    "openclaw_runtime/src/agents/orchestration-resource-scheduler.ts": "1d4c0f03a642ed5664fe1b84b9d63cd574d527fe8701e609a7a7408366e87666",
+    "openclaw_runtime/src/agents/orchestration-workspace-context.ts": "7c19749f39701d6c152824837072ba0ab701cb7ea54f22389f12e9da610c87f3",
+    "openclaw_runtime/src/agents/orchestrator-run-observed.ts": "ab91bb0fbffacc60a4371e644f68b100f5c354d61bfe776429d41f9b78ee55ba",
+    "openclaw_runtime/src/agents/role-spawn.ts": "e27652fa85d82e7bc08ca0ad7f58a1f0500956a9c3ee6f279d0466d1dc292eac",
+    "openclaw_runtime/src/agents/subagent-spawn.test.ts": "aec5e6bb953e1642c80c81468888bce21c0a81ace23c26afe99a04216c3d8f60",
+    "openclaw_runtime/src/agents/subagent-spawn.ts": "7fb40b91c16e1328408aa9012ad44ba1e15280410d67eae8c6d26363b70f6422",
+    "openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts": "813c87cc78373bdd849e682a5cdd7541d20134bd7d3c11b9a330c87508e40415",
+    "openclaw_runtime/src/agents/worktree-service.test.ts": "745410562e3b8a24e6363223da84cd8356fed2d5318acc4259e1738d25123e49",
+    "openclaw_runtime/src/agents/worktree-service.ts": "3d17f985eb66206d520e5509e12200eb0cab1689169187541ef3076a92ea8f38",
+    "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts": "6d830ea5449fa0a36431c5e9590144018d57c248c6a34384351185e28b0297f7",
+    "tests/e2e/coding-orchestration-workspace-authority.spec.ts": "76ab9428c73bf0b29576f2bc368c0d247d0d4a8a34c78cb8d5c2f068da217869",
+    "tests/unit/orchestration-resource-scheduler.test.ts": "97943555ee1da4c75917af973006bc883e8e46731ae79accfa4f8073aec7fab4",
+    "tests/unit/role-orchestration-methods.test.ts": "2ea97165c0624e5b16dff294b8e42f9dfb610e97e265a864a724e97582e75799",
+    "tests/unit/role-spawn.test.ts": "1e03bc2120552fc9475ae8ec0c2b5eae4fb4622734c534807e5f520debd7ed1b"
+  },
+  "commands": [
+    {
+      "name": "focused-units",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/orchestration-resource-scheduler.test.ts",
+        "tests/unit/role-spawn.test.ts",
+        "tests/unit/versegit-runtime-bindings.test.ts",
+        "tests/unit/orchestration-protocol-v3.test.ts",
+        "tests/unit/orchestration-task-graph.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\focused-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T13:35:48.269719+00:00",
+      "seconds": 386.8811047077179,
+      "exitCode": 1
+    },
+    {
+      "name": "focused-units",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/orchestration-resource-scheduler.test.ts",
+        "tests/unit/role-spawn.test.ts",
+        "tests/unit/versegit-runtime-bindings.test.ts",
+        "tests/unit/orchestration-protocol-v3.test.ts",
+        "tests/unit/orchestration-task-graph.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\focused-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\projection-c8e10fb89",
+      "env": {},
+      "startedAt": "2026-11-05T13:46:17.518570+00:00",
+      "seconds": 30.904414653778076,
+      "exitCode": 1
+    },
+    {
+      "name": "focused-units",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/orchestration-resource-scheduler.test.ts",
+        "tests/unit/role-spawn.test.ts",
+        "tests/unit/versegit-runtime-bindings.test.ts",
+        "tests/unit/orchestration-protocol-v3.test.ts",
+        "tests/unit/orchestration-task-graph.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\focused-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\projection-c8e10fb89",
+      "env": {},
+      "startedAt": "2026-11-05T15:01:40.269336+00:00",
+      "seconds": 48.003785848617554,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "runtime-units",
+      "argv": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "src/agents/subagent-spawn.test.ts",
+        "src/agents/worktree-service.test.ts",
+        "src/agents/worktree-pnpm-install.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\runtime-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime",
+      "env": {},
+      "startedAt": "2026-11-05T15:02:28.383863+00:00",
+      "seconds": 40.470189571380615,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "typecheck-direct",
+      "argv": [
+        "node",
+        ".audit/TF-0768/typecheck-direct.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:09.007035+00:00",
+      "seconds": 29.795355558395386,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "runtime-test-types",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        ".audit/TF-0768/runtime-test-types.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:39.054540+00:00",
+      "seconds": 6.278460502624512,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/agents/coding-control-dispositions.ts",
+        "openclaw_runtime/src/agents/openclaw-tools.ts",
+        "openclaw_runtime/src/agents/orchestration-protocol.ts",
+        "openclaw_runtime/src/agents/orchestration-resource-scheduler.ts",
+        "openclaw_runtime/src/agents/orchestration-workspace-context.ts",
+        "openclaw_runtime/src/agents/orchestrator-run-observed.ts",
+        "openclaw_runtime/src/agents/role-spawn.ts",
+        "openclaw_runtime/src/agents/subagent-spawn.test.ts",
+        "openclaw_runtime/src/agents/subagent-spawn.ts",
+        "openclaw_runtime/src/agents/tools/team-orchestrate-tool.ts",
+        "openclaw_runtime/src/agents/worktree-service.test.ts",
+        "openclaw_runtime/src/agents/worktree-service.ts",
+        "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+        "tests/e2e/coding-orchestration-workspace-authority.spec.ts",
+        "tests/unit/orchestration-resource-scheduler.test.ts",
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/role-spawn.test.ts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:45.491702+00:00",
+      "seconds": 4.827089071273804,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:50.441221+00:00",
+      "seconds": 0.30298566818237305,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/coding-orchestration-workspace-authority.md"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:50.868134+00:00",
+      "seconds": 0.6701581478118896,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "harness-dry-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/coding-orchestration-workspace-authority.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:51.690166+00:00",
+      "seconds": 0.5439975261688232,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:52.336921+00:00",
+      "seconds": 0.24963021278381348,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:52.694132+00:00",
+      "seconds": 0.1974184513092041,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "runtime-build",
+      "argv": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:03:52.999099+00:00",
+      "seconds": 43.55049157142639,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "electron-build",
+      "argv": [
+        "node",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:04:36.682639+00:00",
+      "seconds": 41.37315917015076,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "electron-e2e",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/coding-orchestration-workspace-authority.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e-results"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {
+        "PLAYWRIGHT_JSON_OUTPUT_FILE": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e.json",
+        "CLAWX_E2E_RUN_ROOT_BASE": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e-runs",
+        "CLAWX_E2E_APP_LOGS": "1"
+      },
+      "startedAt": "2026-11-05T15:05:18.241980+00:00",
+      "seconds": 91.84024381637573,
+      "exitCode": 1,
+      "timedOut": false
+    },
+    {
+      "name": "electron-e2e",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/coding-orchestration-workspace-authority.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e-results"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {
+        "PLAYWRIGHT_JSON_OUTPUT_FILE": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e.json",
+        "CLAWX_E2E_APP_LOGS": "1",
+        "CLAWX_E2E_KEEP_TEMP": "1",
+        "CLAWX_E2E_STARTUP_TRACE": "1"
+      },
+      "startedAt": "2026-11-05T15:14:07.781052+00:00",
+      "seconds": 103.30704808235168,
+      "exitCode": 1,
+      "timedOut": false
+    },
+    {
+      "name": "electron-e2e",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/coding-orchestration-workspace-authority.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e-results"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {
+        "PLAYWRIGHT_JSON_OUTPUT_FILE": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\e2e.json",
+        "CLAWX_E2E_APP_LOGS": "1",
+        "CLAWX_E2E_KEEP_TEMP": "1",
+        "CLAWX_E2E_STARTUP_TRACE": "1",
+        "CLAWX_E2E_RUN_ROOT_BASE": "D:\\ClawX\\.tmp\\coding-s4-01a1ab23-final",
+        "TEMP": "D:\\ClawX\\.tmp\\coding-s4-01a1ab23-final\\tmp",
+        "TMP": "D:\\ClawX\\.tmp\\coding-s4-01a1ab23-final\\tmp"
+      },
+      "startedAt": "2026-11-05T15:17:33.049192+00:00",
+      "seconds": 154.8396406173706,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "artifact-retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T15:20:08.006433+00:00",
+      "seconds": 4.592906713485718,
+      "exitCode": 0,
+      "timedOut": false
+    }
+  ],
+  "limitations": [
+    "Scripted local provider only; no live-model quality, packaged build, GA or release approval claim.",
+    "Initial cwd marker test failed once then passed unchanged; original failure and later runs are retained, not counted as a clean stability series.",
+    "typecheck-agent-dev wrapper timed out at 600 seconds; direct uncached bridge and node/web/test compiler projects are the type evidence.",
+    "Worktree merge content and journal terminal persistence remain TF-0769 and TF-0770 work.",
+    "Dependencies reused or installed from local cache; no claim of a clean network install.",
+    "Electron profiles under this implementation worktree failed with EPERM/firstWindow timeout. Successful E2E used D:/ClawX/.tmp for test-owned profiles and TEMP, matching the prior successful environment."
+  ]
+}

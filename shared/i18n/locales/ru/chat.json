@@ -13,6 +13,9 @@
     "retry": "Повторить загрузку"
   },
   "welcome": {
+    "quickStart": "Быстрый старт",
+    "branchLoading": "Загрузка веток…",
+    "branchLoadFailed": "Не удалось загрузить ветки",
     "projectSearch": "Поиск проектов",
     "projectEmpty": "Проекты не найдены",
     "changeProject": "Сменить проект: {{projectName}}",
@@ -30,7 +33,7 @@
     "brainstormingDesc": "Разделить работу между агентами"
   },
   "sessionActivity": {
-    "title": "Состояние сессии",
+    "title": "Окружение чата",
     "description": "Активность выполнения, задач, Git, целей, процессов, родословной, субагентов и терминалов этого диалога в реальном времени.",
     "openRecovery": "Открыть восстановление сессии",
     "createMemoryDraft": "Сохранить как черновик памяти",
@@ -50,9 +53,10 @@
       "lineage": "Родословная",
       "terminals": "Терминалы",
       "continuity": "Непрерывность",
-      "environment": "Окружение",
+      "environment": "Изменения",
       "plan": "Задачи разработки",
-      "policy": "Политика выполнения"
+      "policy": "Политика выполнения",
+      "sources": "Источники"
     },
     "status": {
       "idle": "Ожидание",
@@ -163,7 +167,14 @@
     },
     "runningCount": "Выполняется: {{count}}",
     "processes": {
-      "openOutput": "Открыть вывод {{command}}"
+      "recent": "Завершено · {{count}}",
+      "openOutput": "Открыть вывод {{command}}",
+      "openInWorkspace": "Открыть в рабочей области",
+      "noOutput": "Пока нет вывода",
+      "showOutput": "Показать вывод",
+      "hideOutput": "Скрыть вывод",
+      "duration": "{{seconds}} с",
+      "inWorkspace": "Открыто в рабочей области"
     },
     "policy": {
       "backend": "Настроенный бэкенд",
@@ -267,6 +278,25 @@
         }
       },
       "unverifiedFacts": "Непроверенные факты"
+    },
+    "sourceKinds": {
+      "mcp": "MCP",
+      "skill": "Навык"
+    },
+    "moreRows": "Ещё {{count}}",
+    "close": "Скрыть окружение",
+    "overview": {
+      "context": "Контекст",
+      "contextUsed": "Использовано / окно",
+      "cacheRead": "Чтение из кэша",
+      "cacheHitRate": "Попадания в кэш",
+      "pressure": "Нагрузка",
+      "connectors": "Коннекторы",
+      "connectorsValue": "Используется: {{count}}",
+      "skillsValue": "Навыки: {{count}}",
+      "review": "Просмотр",
+      "background": "Фоновые задачи",
+      "backgroundIdle": "Ничего не выполняется"
     }
   },
   "noLogs": "(Журналы ещё недоступны)",
@@ -749,7 +779,8 @@
       "expand": "Развернуть панель",
       "collapse": "Свернуть панель",
       "moveTerminalSide": "Переместить терминал вправо",
-      "moveTerminalBottom": "Переместить терминал вниз"
+      "moveTerminalBottom": "Переместить терминал вниз",
+      "close": "Закрыть рабочую область"
     },
     "changes": {
       "heading": "Изменения файлов ({{count}})",
@@ -1256,6 +1287,8 @@
     }
   },
   "executionGraph": {
+    "arguments": "Аргументы",
+    "result": "Результат",
     "title": "Граф выполнения",
     "branchLabel": "ветвь",
     "thinkingLabel": "Думаю",
@@ -1337,6 +1370,13 @@
     "previewUnavailable": "Предпросмотр изображения временно недоступен"
   },
   "session": {
+    "navigation": {
+      "title": "Беседы рабочего пространства",
+      "search": "Найти беседу",
+      "source": "Исходная беседа",
+      "from": "Из {{session}}",
+      "children": "Показать связанные беседы: {{count}}"
+    },
     "derived": {
       "title": "Производные сессии ({{count}})"
     },
@@ -1716,7 +1756,7 @@
     "resumeTooltip": "Продолжить приостановленный сеанс.",
     "resumeDisabled": "Этот сеанс больше нельзя продолжить здесь.",
     "startingTooltip": "Запуск… Нажмите, чтобы отменить отправку или приостановить текущий запуск.",
-    "queueTooltip": "Поставить черновик в очередь после текущего запуска. Двойной клик — приостановить.",
+    "queueTooltip": "В очередь — отправить после текущего запуска",
     "gatewayConnected": "подключён",
     "gatewayStatus": "шлюз {{state}} | порт: {{port}} {{pid}}",
     "contextMenu": {
@@ -2074,16 +2114,17 @@
     },
     "workModeRecommendedPermission": "Рекомендуется: {{mode}}",
     "intervention": {
+      "menu": "Способ отправки",
       "guide": "Направить",
-      "guideTooltip": "Добавить ненарушающую подсказку в активный запуск.",
+      "guideTooltip": "Добавить в текущий запуск на следующем шаге, не останавливая его",
       "longTaskRequired": "Для прерывания/направления/очереди/изменения цели требуется активный контекст /loop для этого сеанса.",
       "reviseGoal": "Изменить цель",
-      "reviseGoalTooltip": "Зафиксировать контрольную точку активного запуска и перезапустить с изменённой целью пользователя.",
+      "reviseGoalTooltip": "Сохранить контрольную точку и начать заново с этим сообщением как новой целью",
       "queueDefault": "Запуск активен: Enter ставит в очередь",
       "queue": "В очередь",
-      "queueTooltip": "Не прерывать запуск и воспроизвести это сообщение позже.",
-      "interrupt": "Прервать",
-      "interruptTooltip": "Остановить или направить активный запуск перед рискованными действиями восстановления."
+      "queueTooltip": "Отправить после завершения текущего запуска",
+      "interrupt": "Прервать и отправить",
+      "interruptTooltip": "Сохранить контрольную точку, остановить запуск и начать заново с этого сообщения"
     },
     "rollbackPlan": {
       "title": "Помощь восстановления",
@@ -2217,6 +2258,11 @@
       "existingBranch": "Существующая ветка",
       "defaultPath": "Путь по умолчанию",
       "defaultPathUnavailable": "Введите имя ветки для просмотра пути",
+      "kindBranch": "Ветка",
+      "kindWorktree": "Рабочее дерево",
+      "kindDetached": "Отделён",
+      "mainCheckout": "Основная копия",
+      "linkedWorktree": "Связанное рабочее дерево",
       "filesChanged": "Изменено файлов: {{count}}",
       "filesChanged_one": "Изменён {{count}} файл"
     },
@@ -2534,7 +2580,7 @@
   },
   "turnSummary": {
     "codingRun": {
-      "title": "Доказательства CodingRun",
+      "title": "Диагностика выполнения",
       "jsonl": "Только для чтения JSONL",
       "copy": "Копировать",
       "copied": "Скопировано"
@@ -2554,6 +2600,7 @@
       "minutesSeconds": "{{minutes}} мин {{seconds}} сек"
     },
     "badge": {
+      "tools": "{{count}} вызовов инструментов",
       "thoughts": "{{count}} мыслей",
       "approvals": "{{count}} запросов",
       "plan": "{{count}} шагов",

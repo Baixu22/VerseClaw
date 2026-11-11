@@ -1,0 +1,397 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-session-environment",
+  "createdAt": "2026-11-05T12:39:29.719680+00:00",
+  "origin": "D:\\ClawX",
+  "target": "D:\\tmp\\chat-environment-r9-20261105\\validation",
+  "head": "5accfbddbf46839bf7999c70eed31b1b045b640b",
+  "originDiffSha256": "ac8c0e54ce6b9df982db2842afd63bdc2d674d8fae24d01eba22032ce220331d",
+  "copiedFiles": [
+    {
+      "path": "README.ja-JP.md",
+      "sha256": "46f9fc262646953694c3d05b0c5eaac8397bfc197f187507c4b407e476bbd6a0"
+    },
+    {
+      "path": "README.md",
+      "sha256": "0bc876800418a160ff5f0eb6a37d56aecbb67efd47777031ad07fc34028c4f7f"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "sha256": "5cff3b6f81f5e8506beae82ffc52b2cf9f757a9113025aedafe542a532e0ded3"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "990be5713527caae7574f8af8e2ffd5b14fec1e02c591401dd9d6ed12c2bb3a4"
+    },
+    {
+      "path": "docs/modules/workspace-and-coding.md",
+      "sha256": "bbecf140504735683be2717af0d913f608e72c81eab1cce8b9063659bd56ebb8"
+    },
+    {
+      "path": "electron/gateway/ws-client.ts",
+      "sha256": "2b7bbed9cfc06829c2ec75d22e5c63ccea446e31253dad72759ac1b809449986"
+    },
+    {
+      "path": "electron/services/session-delegation-admission.ts",
+      "sha256": "a47eebbc19a90997440d0e1345073be096b562879cc6264b9fb5e0ee98a9be01"
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "sha256": "a8b887d72a816ca4e8f8d40ca60a225662129bd3a9424cec1453ca4b80a86de2"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-7/README.md",
+      "sha256": "56beb36070e7cd1a17ebc1e7698386d4afbb4e40868b37e0e4f8d1c336676b7e"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-7/SHA256SUMS",
+      "sha256": "1952872bd3d7c67f999a66f736563f4946f18a1a3f40e6644a7a6baf71e2392b"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-7/compact-output-completed.png",
+      "sha256": "55dcf36075a7a6633e258b4c8735e04ec05ba60539cf4c9529204c4b5d813bfc"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-7/compact-output-dark.png",
+      "sha256": "e3b7ab0ee5bf29c435af8ee097c19fec9db567d39f9a2eff0dc965b2b2ea08e0"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-7/compact-output-light.png",
+      "sha256": "938e3406f3fe6cd8005a9d4b138d196f5fe32348b05ed686f8696d31a29ba62b"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-7/compact-output-narrow.png",
+      "sha256": "bcf62133fe27cb547e5eac5cd8ce80eae14019662e6ad10edf414b37baca6115"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-7/credential-scan.json",
+      "sha256": "162b9a2630bb128e97a0ded166df017571c3e4986a9634bfb5d345cd851def7d"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-7/electron-core.json",
+      "sha256": "e38f6cd4cff31b7f37d9ce09597c741b2a65167f472260efb17e788fbc2b0731"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-7/electron-integration.json",
+      "sha256": "4c4334bce072b26632320144c7196155c6127fbcf48e3ae76fa371030cf37a4b"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-7/electron-regression.json",
+      "sha256": "321b19714d4f739c70cc6920501fbdd487e5f5b03d8c2f03b66539cd4393bb1e"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-7/electron-states.json",
+      "sha256": "3803a2d88dbc31482e8f3a5c834959be0d8c13f326d2aaad83695a4a03f2f01f"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-7/report.json",
+      "sha256": "4c3aeed5a6b099db0c6f5c9b2819f74266739c77c212d912d659989e143dabc5"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-7/unit.json",
+      "sha256": "4476d0aa9d9cf5d74680dc2ed929626eedb089b31c39ea55643e87dac4d08279"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/README.md",
+      "sha256": "57c2fb9a253c101174861352ede928be82683abb4c811bf0cc92553e7aa89ba6"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/SHA256SUMS",
+      "sha256": "0f5c5731c5f70adadadb53cc346038891b12ff7c761e75fed998adb4890c1281"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/compact-output-completed.png",
+      "sha256": "146406511f813d4213642a0d839336ba4358e9923d9ae05c775470d932c5f47e"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/credential-scan.json",
+      "sha256": "379b2883bb779e926ea714711824bb1456b6cadb80b4d74f03bfdf97b699108d"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/electron-background.json",
+      "sha256": "e0f9791da1cabcd58e133a9030c5462ce08d4482d7d0820e27d190cdb1f037f6"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/electron-completed.json",
+      "sha256": "802064a639db62bd9de6edd8dfdc5eee4254fe29c2bef2a432a81f7fd8d0b104"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/electron-history.json",
+      "sha256": "298b281395fd621357546a26ee8b78094de0ca646aaaf71a5cc4e46eb7ab7583"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/electron-live.json",
+      "sha256": "bda68cc97999e89004fc2cf3831bec7b395fa1179567ca008d1b1d2d13ba43dc"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/electron-process.json",
+      "sha256": "71eae1a912c4ca71bfeab687103fb26784917333a9ac74f5179b49ef3e0e91eb"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/electron-short.json",
+      "sha256": "7aeb34ccb654ce873d4860ee4a2bf49341b615708cc8fe6b06d3d03cda21c5e8"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/electron-tools.json",
+      "sha256": "5c595c7538050e7ee4f0a56bfefbe70335be1e6d230ccc4432854b87a215039b"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/electron-turns-initial.json",
+      "sha256": "740d76d4d6c2953ddc3fba72316f7436eb4c691e97d2ea8658bb92c4053b9617"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/process-output-dark.png",
+      "sha256": "090253d5bd16739b2f73e4e222254ecad9f330d8321dcb7b57a74db5a79cc40f"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/process-output-light.png",
+      "sha256": "07e90f939696c0c5dc5e81c53a9e8b204cbb07242b18d4f67774b80f002c60a3"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/process-output-narrow.png",
+      "sha256": "e9cf5a7c3cd5b122485a2bc8d7cf717b7ff81640f1a477d29e6ca51e38af78cd"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/report.json",
+      "sha256": "545db5cf7868a73790dbbf853ee32153385acdaf151057444a16bd14c7295168"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/session-status-dark.png",
+      "sha256": "a076b795a141e067daf5f02639cbb5eeaf5fbb195d1ad21573518e239a43b50f"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/session-status-light.png",
+      "sha256": "d5043c2ba3adb3177935f2070e1d6132a3913c372b9d0ca66751966f05f80441"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/turn-process-expanded.png",
+      "sha256": "89246545ba3dcb57ddb39bcbcf58ec344204549b89230f60a3f1ae35cd1de800"
+    },
+    {
+      "path": "harness/specs/fixtures/chat-output-visual-hierarchy/round-8/unit.json",
+      "sha256": "0aaf24e99623df0d5a15e8b7d6b73149ff6b69dc44d7942402363bf3098f494f"
+    },
+    {
+      "path": "harness/specs/rules/ui-motion-material-system.md",
+      "sha256": "3e2adfc037de83a6808293b4706bdd15791567cdc217b434f440d461c8fbd1c9"
+    },
+    {
+      "path": "harness/specs/scenarios/gateway-startup-diagnostics.md",
+      "sha256": "f958187aa08738d8ac469749b310d439b6a9876f7e8c5ab1faedb23bee167631"
+    },
+    {
+      "path": "harness/specs/scenarios/windows-ui-v2.md",
+      "sha256": "22c7b56e8357a5a1db10791a3dbe89ecfce603a55e374ac3060ee307b6ba0057"
+    },
+    {
+      "path": "harness/specs/tasks/chat-output-visual-hierarchy.md",
+      "sha256": "9553b13faa6112dc5425211bea4c48fa1e0a4c7195221c238efa7e491fb53ff3"
+    },
+    {
+      "path": "harness/specs/tasks/coding-vg-sts-jj-convergence-plan.md",
+      "sha256": "a5b4b29e61c0bad92d70dbd3a814838ad6f1546c7894555e993e21b59e5e9fcd"
+    },
+    {
+      "path": "harness/specs/tasks/gateway-startup-performance.md",
+      "sha256": "454343da5ac6cbeb082d7fcaa77281b7cd446ba5fe7acd977d6b3dcaf0701e12"
+    },
+    {
+      "path": "openclaw_runtime/scripts/profile-extension-memory.mjs",
+      "sha256": "ee4569c9ff4c2b167565006ffa20404fd47075e02b0d19ae4651baa0fb806c7f"
+    },
+    {
+      "path": "openclaw_runtime/src/plugins/doctor-contract-registry.ts",
+      "sha256": "8ab3f767a2869f6409349f7e988bd1895412c513ae1705eaf879861ff9697b7b"
+    },
+    {
+      "path": "scripts/measure-gateway-startup.mjs",
+      "sha256": "ec1ad642ba692b2d404f3385345025694aa15b075d72eafe2545c47a153ddf4d"
+    },
+    {
+      "path": "shared/i18n/locales/en/chat.json",
+      "sha256": "589d1572a9ad3fbdfda4906eb4256b6a60a8af4bae9f944303a802d9ee9614e5"
+    },
+    {
+      "path": "shared/i18n/locales/ja/chat.json",
+      "sha256": "809bce7043be10e411fad7b19e835ad1f7cad21fdfb5f87ade54da5907c55a4e"
+    },
+    {
+      "path": "shared/i18n/locales/ru/chat.json",
+      "sha256": "09699e4caba8bc46d8d6ce70c97b95cb97cb04e8a5d6bd3e2fb24846879bfebe"
+    },
+    {
+      "path": "shared/i18n/locales/zh/chat.json",
+      "sha256": "c5825578aa969f37876bb6ef32f9481136d275af868a26473f10222bb9df7b7c"
+    },
+    {
+      "path": "src/components/assistant-render/CodingRunEvidence.tsx",
+      "sha256": "d13747fca3e7422118072dcf827a8f202c2da56ebb6b79110e39183956448d8b"
+    },
+    {
+      "path": "src/components/assistant-render/TurnSummaryCard.tsx",
+      "sha256": "6379595865b5f0b7b8df761704a8e9ae2540887d0fdb59544188a94443d529da"
+    },
+    {
+      "path": "src/components/file-preview/ArtifactPanel.tsx",
+      "sha256": "16dd366c7f0d6522a824930998306fbc4df9090620bbcfc07fed5603ecd26c8c"
+    },
+    {
+      "path": "src/components/file-preview/WorkspaceProcessPanel.tsx",
+      "sha256": "42e79d30b2826c654ba64dd42f2f6f9d189290af2f1bedb1c293cbb400cff0f3"
+    },
+    {
+      "path": "src/components/file-preview/panel-tab-meta.tsx",
+      "sha256": "4cea8559bb178ef39e4da58ecff05915c8a61d3d8ca8792f4f96f4986ebc32f0"
+    },
+    {
+      "path": "src/components/tool-ui/RunTerminalSurfaces.tsx",
+      "sha256": "5edd6a0327b781c9807b8fc345f1eef903182221d4b632882786ef7097cfc037"
+    },
+    {
+      "path": "src/components/tool-ui/agent-interactions.tsx",
+      "sha256": "be000a4ab1c1c80cda69ff5780f7a4e2448d459c41ee17e10f1bc23e660c6cce"
+    },
+    {
+      "path": "src/components/tool-ui/shared/call-chip.tsx",
+      "sha256": "9d96e94c396b0a99093986b974be5acdc85e0c3c21f23ba4479f4b9d349f04ec"
+    },
+    {
+      "path": "src/components/tool-ui/terminal/terminal.tsx",
+      "sha256": "96f7a1b763c5849c7c44c8f87eba8ef090484f8127ab92c82958df663e8bed69"
+    },
+    {
+      "path": "src/pages/Chat/ChatMessage.tsx",
+      "sha256": "0d7e1dae038166cdf61d1597c7c1468575a4af6763f26c3326786f3c9415e518"
+    },
+    {
+      "path": "src/pages/Chat/ChatToolbar.tsx",
+      "sha256": "381444320e446d43fb377d8259511e2a46aa3aad46bbf7c95ca576c3b5d49e3f"
+    },
+    {
+      "path": "src/pages/Chat/ExecutionGraphCard.tsx",
+      "sha256": "aa2d076ae1a7ae5a30225d9f9ce2330e333015fa4004995764f8a8a029ebaffe"
+    },
+    {
+      "path": "src/pages/Chat/SessionActivityPanel.tsx",
+      "sha256": "d8aca2f364ea6b272edf0f0a97fd10c4172d8a44e1cbc8afeffdd3d12f7381cf"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "sha256": "dc3c8fc02c9aeca23c0875bf1726297b72a107632c38877c5766b50e2f19e4fa"
+    },
+    {
+      "path": "src/pages/Chat/session-environment.ts",
+      "sha256": "f756b9ead07f1d1bbf2a674f50ff5f89ed7a2ee76679cdd1f6297dfb64e228f0"
+    },
+    {
+      "path": "src/stores/artifact-panel.ts",
+      "sha256": "7712201de42c3bc430f1fc928d2b24d0af5638c6ce90aae265ac449d6dcd8585"
+    },
+    {
+      "path": "src/styles/codex-session-activity.css",
+      "sha256": "69adb60dea66cc1f31419d43557b21d403e5305339dd9fda7bc512bac311434a"
+    },
+    {
+      "path": "src/styles/codex-workspace-panel.css",
+      "sha256": "bad1a49e42a6acd3b73a5a228c14a7484a1b174500ce5c1b4e4b501631eaf7d7"
+    },
+    {
+      "path": "tests/e2e/chat-artifact-panel.spec.ts",
+      "sha256": "43a089a50ed56aa7c62b273bed8a3945089dabc742fad8431bca5d37e26a4434"
+    },
+    {
+      "path": "tests/e2e/chat-run-state-events.spec.ts",
+      "sha256": "fdceefd76ab041a865464e144ccd0feebb3b593539e8db1985048202a1640179"
+    },
+    {
+      "path": "tests/e2e/chat-tool-ui-execution-surfaces.spec.ts",
+      "sha256": "461ba1b81c2bb67ca5585397eff71f423b9b663c797e5536eea59b954c823684"
+    },
+    {
+      "path": "tests/e2e/chat-turn-summary-collapse.spec.ts",
+      "sha256": "da7d15166ae32e464c7c5d851cfd73e1e8076407f47149d6688ec564e3e5b360"
+    },
+    {
+      "path": "tests/e2e/chat-workspace-header.spec.ts",
+      "sha256": "64c179415da474fe8616e901a37ed82fb8eacfe05ba563f96b40d86e6e558ddf"
+    },
+    {
+      "path": "tests/e2e/fixtures/electron.ts",
+      "sha256": "370310a5c839086a69f5fb0cffd754be5159ab9f4f010d877ed05581686d36bf"
+    },
+    {
+      "path": "tests/e2e/gateway-startup-performance.spec.ts",
+      "sha256": "0d046d5145e003c48155d0026ea783e711071042ffbb95e76d32442b386dd702"
+    },
+    {
+      "path": "tests/e2e/product-acceptance-space-bunny.spec.ts",
+      "sha256": "5707a3afcf1d8deb20d62c8d673594fdc73e487820d156ddf57b3e8968af5f59"
+    },
+    {
+      "path": "tests/e2e/session-activity-background-read.spec.ts",
+      "sha256": "657de6c0a2fc59b95a52abec31b0890281b987adacc3a772681d49864d058170"
+    },
+    {
+      "path": "tests/unit/artifact-panel-store.test.ts",
+      "sha256": "91985e69a1a8da3ca35289e7f894a3e85a671657540a48653162032747700a7f"
+    },
+    {
+      "path": "tests/unit/artifact-panel.test.tsx",
+      "sha256": "d19774e0a97aacc90d300b6b6b395d6b4619fde947a095d678e44e55d3af64c5"
+    },
+    {
+      "path": "tests/unit/chat-message.test.tsx",
+      "sha256": "fb31462ccf8610f8b7faf59795c69a7f2e310cb230a724daab909e2cbcf1c1f1"
+    },
+    {
+      "path": "tests/unit/chat-page-execution-graph.test.tsx",
+      "sha256": "ca6a51f642d2f04efd3bd81f0e51f9b405737f348b4dbe4c8a3e748278754b40"
+    },
+    {
+      "path": "tests/unit/chat-render-reachability.test.tsx",
+      "sha256": "9a20686d6b4466132d4a26f8282aeace46b75b0b8d0bd07d3072deb89cfa5093"
+    },
+    {
+      "path": "tests/unit/chat-session-status-rail.test.tsx",
+      "sha256": "39d1d9f48a749e4504b94ea11618e81bd81c4eb67237657838536e4f5d4bd11c"
+    },
+    {
+      "path": "tests/unit/chat-tool-card-suppression.test.tsx",
+      "sha256": "1668bc0ebdfce4feb99c4ea2d153ad4aef6e551ff38b1f88a99f7c57bdc331e9"
+    },
+    {
+      "path": "tests/unit/execution-graph-card-badge.test.tsx",
+      "sha256": "8ad6d2d3d3322d2f3ee17ee49092e09a81ead670971629295ff7a55152aba18e"
+    },
+    {
+      "path": "tests/unit/gateway-doctor-contract-loading.test.ts",
+      "sha256": "26f4d834023e72a613ebde29653b6a9f87781b8a1bbea779b31c7a22c6cb5833"
+    },
+    {
+      "path": "tests/unit/gateway-loopback-connect.test.ts",
+      "sha256": "11cb6ad5316e4b7fa77bd1b5a38d9fc48f117167ea378e8b375ae8e60dddefc7"
+    },
+    {
+      "path": "tests/unit/gateway-ready-fallback.test.ts",
+      "sha256": "edd09cdd1dec27b9f6981ade71c2438cb1e240731152465a757da6088590660e"
+    },
+    {
+      "path": "tests/unit/long-session-delegation-admission.test.ts",
+      "sha256": "bd2c275fa9b740d9e8815cdee3d54fa024a6ef2397c9a3d4a6caeb878ff99e29"
+    },
+    {
+      "path": "tests/unit/session-activity-panel-sections.test.tsx",
+      "sha256": "5ae2d07242b41687b1e08ae428e3dd35a4cde381ed932eeaa414f3b5da282c6f"
+    },
+    {
+      "path": "tests/unit/session-environment.test.ts",
+      "sha256": "382478e51257169a4317711d6c5524a19ee800d5d9e109113ebbbde0adb84e13"
+    },
+    {
+      "path": "tests/unit/tool-ui-execution-surfaces.test.tsx",
+      "sha256": "99f25da03a638bb814ca0dd3ed4728811a1178d31a856af0bd90c1b995ba4e8c"
+    }
+  ],
+  "runtimeEntrySha256": "64ba15ddd6cc5085be5191c4a466dbfc3f92bcac95dfe37a12888bfa5cf3b84a",
+  "dependencyPolicy": "Share installed node_modules; copy source and compiled runtime artifacts."
+}

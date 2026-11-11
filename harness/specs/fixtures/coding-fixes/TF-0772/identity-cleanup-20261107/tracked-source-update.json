@@ -1,0 +1,22 @@
+{
+  "candidate": "d60e5821f8a95c4d15a6620b05d1f8fcd1d7d35e",
+  "tree": "0fc345eb5bb32a0ee4943326c388d55d52ba6ca7",
+  "projection": "D:\\tmp\\coding-relay-01a1b4da\\tracked-source-ca51f0970",
+  "baseProjectionReport": "tracked-source-readback.json",
+  "baseCandidate": "ca51f0970c1bfa17175d108a44dc645358776a63",
+  "unchangedFiles": 20697,
+  "updatedFiles": [
+    {
+      "path": "electron/gateway/supervisor.ts",
+      "sha256": "d25176dd5b0325643936c3e5bd0840c0cb43c5b9c2e5ebd7d840352e8cb94cea",
+      "matchesCurrentCommit": true
+    },
+    {
+      "path": "tests/unit/gateway-supervisor.test.ts",
+      "sha256": "3df9a8f03729adaeef5a9defe2a8ec3a811a6bb425117439ea48eadedf3a728b",
+      "matchesCurrentCommit": true
+    }
+  ],
+  "actor": "codex-01a1b4da",
+  "driven_by": "agent"
+}

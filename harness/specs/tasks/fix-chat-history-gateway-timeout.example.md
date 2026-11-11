@@ -7,7 +7,7 @@ taskType: runtime-bridge
 intent: Adjust backend communication behavior for chat history loading.
 touchedAreas:
   - src/lib/host-api-client.ts
-  - src/stores/chat/history-actions.ts
+  - src/stores/chat.ts
 expectedUserBehavior:
   - Chat history loads through the existing host API boundary.
   - Gateway timeout does not leave the visible chat in a stale state.
@@ -15,7 +15,7 @@ requiredProfiles:
   - fast
   - comms
 requiredTests:
-  - tests/unit/chat-history-actions.test.ts
+  - tests/unit/chat-store-history-retry.test.ts
 acceptance:
   - Renderer does not add direct IPC calls.
   - Renderer does not fetch Gateway HTTP directly.

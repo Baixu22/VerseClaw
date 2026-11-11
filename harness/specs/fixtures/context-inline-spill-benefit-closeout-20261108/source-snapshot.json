@@ -1,0 +1,532 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b90a",
+  "created_at": "2026-11-08T02:46:51.929784+00:00",
+  "snapshots": {
+    "worktree": {
+      "root": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+      "commit": "8ad73dd4b552c2fd2465034eb2b06d51dc7a4388",
+      "tree": "d64922fab010a20300744a1e121256ce6c6f99d9",
+      "branch": "codex/context-inline-spill",
+      "dirty": true,
+      "status_sha256": "1512d4ef223bf07285f41b6a38b389aba46f0561310b46d9c505cd363719b261",
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\source-snapshots\\worktree\\untracked.zip",
+      "archive_sha256": "14944e185eeb16bd241d1110dbf41d0cad881f8899e599d39077602849910643",
+      "entries": [
+        {
+          "path": "scripts/inline-spill-benefit-eval.mts",
+          "bytes": 32931,
+          "sha256": "d5fd4cef5f0c6e9ea1f902a664992e9148bff3e331fb57412cd507330a7dcfcc"
+        },
+        {
+          "path": "scripts/inline-spill-benefit-scoring.ts",
+          "bytes": 6797,
+          "sha256": "355c8bebc3de817d66c9b1e9371a1d51438ab63c30ab95a9df1f1e6dd3b099eb"
+        },
+        {
+          "path": "tests/unit/inline-spill-benefit-eval.test.ts",
+          "bytes": 2826,
+          "sha256": "7edfec3c189b031b28c87ca00fd782aefd442e270378efcacfdb24e1a604dd5f"
+        },
+        {
+          "path": "tests/unit/zz-probe5.test.ts",
+          "bytes": 4496,
+          "sha256": "d0c8e11e03a6fa394421116d12f668bdbb81fb97b80d305743ffca17b417ede8"
+        }
+      ],
+      "archive_readback_matches": true,
+      "source_readback_matches": true
+    },
+    "round3-candidate": {
+      "root": "D:\\tmp\\inline-spill-benefit-r3\\candidate",
+      "commit": "491a957ad93e0c9f81d580e693de147d4e2cd49d",
+      "tree": "ef66954e73faacc5277186f54f0ea2cc0eee04ef",
+      "branch": null,
+      "dirty": true,
+      "status_sha256": "d9904d46812a61d05ee4b276bda119ab93378723aebba07c26609d4486a57c52",
+      "tracked_diff_sha256": "0db445eaacdf2bcf8592a133dbf2427d7e413295a2a07bf502ba1f84b91a02f8",
+      "archive": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\source-snapshots\\round3-candidate\\untracked.zip",
+      "archive_sha256": "6150466cda6cf0dd48e7e1af02820d2c26c5109387dd41b4c52418653c52b645",
+      "entries": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/.gitattributes",
+          "bytes": 69,
+          "sha256": "4e123dd17d54a388f555fbdd9340d4805d1ee7259694dad43a9330835c273054"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/DELIVERY.md",
+          "bytes": 8234,
+          "sha256": "290cbf685ab2df91a4989c614f1354a994b8099ce404dfee5adf5b252eae599c"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/SHA256SUMS",
+          "bytes": 3434,
+          "sha256": "0d705e0e36c0f3d766b078c095ea1cc3ae7643e9cd27293b67578e61ef835ea1"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/checks/contract-check.stderr.txt",
+          "bytes": 35,
+          "sha256": "a006794f8f6773f95c36b9779832a07c5f0f6c4eca3d0064fdc353defbb8126f"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/checks/contract-check.stdout.txt",
+          "bytes": 24,
+          "sha256": "934212edaaa4da875edce79057ad1a402c935b6da181e5e400ad9e96e0cabf10"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/checks/harness-validate-candidate.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/checks/harness-validate-candidate.stdout.txt",
+          "bytes": 76,
+          "sha256": "bbd2f7f374a23afd74c1c99bb9d65c9091d7b45e37b213abfe19f6a88cc717cb"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/checks/harness-validate-source.stderr.txt",
+          "bytes": 518,
+          "sha256": "d2f47f92390cef52d15bfe8ed9cffb193162b602bab2b355bd02eb98ff06aa9a"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/checks/harness-validate-source.stdout.txt",
+          "bytes": 395,
+          "sha256": "48b579ab7432a9ca34f468c57ca37e1ddaeef9243781ae45400de6b2429a2a4f"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/checks/live-exit.json",
+          "bytes": 88,
+          "sha256": "9da067019ed0df6b9ae476135f17eae963cd6dda311b94fd96e5b2ae646d4c3c"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/checks/retention-provider-unit.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/checks/retention-provider-unit.stdout.txt",
+          "bytes": 257,
+          "sha256": "91466746e3eab04b3fa3ad43e85e360fe87b4d9e5f746741690f43dae8d4aedc"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/checks/reused-package-builds.json",
+          "bytes": 1218,
+          "sha256": "c0ac67fe324bcb41f193ef2aa95a4955d021d3004e8fa69b1951460dcdcc0f02"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/checks/source-gates.json",
+          "bytes": 1100,
+          "sha256": "e7c40521466c15a45fa6f264016c5ddffb779e616d1b1516b9883befe891fe71"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/checks/typecheck.stderr.txt",
+          "bytes": 153,
+          "sha256": "2fdfb0ce5659a08878e80165eb724e6109725ad22b5ef1a7c8ddccf2ede35cd9"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/checks/typecheck.stdout.txt",
+          "bytes": 1597,
+          "sha256": "f8e62b7a3596fb55e29b7f45bd482afdbfd74dda131e16d1ea6aff79abd01509"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/checks/unit.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/checks/unit.stdout.txt",
+          "bytes": 251,
+          "sha256": "996030a0221a4a984751d9cac20edda529edd57f0219a88be29b866f1f96cdcb"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/credential-scan.json",
+          "bytes": 222,
+          "sha256": "0cfa83eb1cf735ec1162a15531841fe4e6667edceffbe60cd0f7b7b455415775"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/deterministic/archives.jsonl.gz",
+          "bytes": 23495,
+          "sha256": "ef0219bab3f657be6b9af50206fb5558854b7099b2cecda721a7b431af80fff7"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/deterministic/credential-scan.json",
+          "bytes": 182,
+          "sha256": "cccf1554893b09f2f24671b19800883ec921882b06be26b75ee221ab1a998afe"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/deterministic/diagnostics.json",
+          "bytes": 1046,
+          "sha256": "89b1aa6313d8503cdac11026b2af274b645b3aceeec3068824ec9c5996fa12f2"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/deterministic/recomputed.json",
+          "bytes": 3365,
+          "sha256": "d65411593cdfe14879ca043ecdc220f581d8dbc0600685686166e771940839e5"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/deterministic/result.json",
+          "bytes": 7962,
+          "sha256": "649ca860a8b7754eed242f574d0ffe154f3b8574696b360b67daded86c0bd556"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/deterministic/runs.json",
+          "bytes": 2410277,
+          "sha256": "c4f8a810ac964f5e4b7ef2cea16b8c0200c020d379d59ca2a404fe2d88539608"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/deterministic/verified.json",
+          "bytes": 4492,
+          "sha256": "d3dde64717d0ebf44ae1aa622f1e3281811a4aea96285862aca6657c1b6fd998"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/diagnose-run.mjs",
+          "bytes": 2401,
+          "sha256": "45e94b436550e58d16f4a47ca7b9f2cb96fa4db28958a10afd6b8da12bc1823f"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/live/archives.jsonl.gz",
+          "bytes": 115611,
+          "sha256": "63795e287b0db92b2753252f40ae6ec3019afafe2944ff8be927f8daf1468699"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/live/credential-scan.json",
+          "bytes": 182,
+          "sha256": "cccf1554893b09f2f24671b19800883ec921882b06be26b75ee221ab1a998afe"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/live/diagnostics.json",
+          "bytes": 1838,
+          "sha256": "6e0916f6ef5cd1f46a7cad290716ddbd9eb85d3bcbbb2cfe9dc1dbbb70917fd1"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/live/recomputed.json",
+          "bytes": 4004,
+          "sha256": "5af5226b9e9bc36f69c47e3d42dd1b4734301f6878465076beaafa6a39fa9b47"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/live/result.json",
+          "bytes": 13266,
+          "sha256": "9dbe29c6a5743fa42a764b29ca3f6b63c3c35d908acbb8aa14a245993912dc1f"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/live/runs.json",
+          "bytes": 12314738,
+          "sha256": "4bf5c359089a2b23e244eb2aeb6cb2cbf8ef96cc26153f785cb14c8e482fb4f4"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/live/verified.json",
+          "bytes": 6442,
+          "sha256": "3628850485c9dee3172411c61311e089b186f4dbccbcdb34a82fd9815b726919"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/provenance.json",
+          "bytes": 3173,
+          "sha256": "1784a749ac23c973afb13d76f5f8b2a4d992209887983856f686c1f9b22c5faa"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/recompute-stats.mjs",
+          "bytes": 7940,
+          "sha256": "f39fc052c31deec24fede6e6ebfb1fef82bd9027cc564c2cba3de46531379e19"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/verify-evidence.mjs",
+          "bytes": 2896,
+          "sha256": "7982965df9cfa34fc4b1023162d6a8c24d616445f4e2cd600b710b56e07a64dd"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/verify-run.mjs",
+          "bytes": 6405,
+          "sha256": "0fc9352b467e51d951513bcab2ff3305d432cf597d62858a1f6d11610bba096b"
+        }
+      ],
+      "archive_readback_matches": true,
+      "source_readback_matches": true
+    },
+    "round2-candidate": {
+      "root": "D:\\tmp\\inline-spill-benefit-r2\\validation-candidate",
+      "commit": "ddd66ced9f3d389bd03a476fcbdccfc2de759f33",
+      "tree": "cbcd93f60b96d40bd2161a0481c8971f8485de29",
+      "branch": null,
+      "dirty": true,
+      "status_sha256": "683619c08875ec27417755a41ee094b5fe6477107594b29bfe6f05e37d1403c8",
+      "tracked_diff_sha256": "f96c1cb6da488199a1417a5994bec65890a85704b4f15d2c25a5c0d7b6a433b0",
+      "archive": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\source-snapshots\\round2-candidate\\untracked.zip",
+      "archive_sha256": "84b27f901d8570fa38ed3b752f3687f66ab997fe9c50225c651e870041fddc94",
+      "entries": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/.gitattributes",
+          "bytes": 84,
+          "sha256": "0e1796d89ca123fe76ef0beab1454ec6040d6931416f8507c122b5c955b54682"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/DELIVERY.md",
+          "bytes": 11155,
+          "sha256": "2b3886d2d4f4a0ed5ad31794f3fcccf3a9bf944179631f71459c763efb946735"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/SHA256SUMS",
+          "bytes": 4498,
+          "sha256": "b097806c645f02d46aaa7c0aab17a2a3d6c77b6595f116c2217b13881c870665"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/contract-check.stderr.txt",
+          "bytes": 35,
+          "sha256": "a006794f8f6773f95c36b9779832a07c5f0f6c4eca3d0064fdc353defbb8126f"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/contract-check.stdout.txt",
+          "bytes": 24,
+          "sha256": "934212edaaa4da875edce79057ad1a402c935b6da181e5e400ad9e96e0cabf10"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/deterministic-default-exit.json",
+          "bytes": 263,
+          "sha256": "bf765c1b63f8e0dd858fa40db1f0e967e764c5ee4df94ac52e3bef3983afb6ad"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/deterministic-default/credential-scan.json",
+          "bytes": 179,
+          "sha256": "99c9336cb3f858cee0bda7e0d50c39ccebcd0301e402e1a15d8c4f4fdee3d63b"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/deterministic-default/result.json",
+          "bytes": 5399,
+          "sha256": "1f5781ac11b1a8491a89b56fe43c577caa740ac5090aa56ac2f6e5da42814e5b"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/deterministic-default/runs.json",
+          "bytes": 235105,
+          "sha256": "652e247be37578ff71d4ece147c5808bda5295a5c2a7da55b01752fa0b6c1021"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/diff-check.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/diff-check.stdout.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/gates-source.json",
+          "bytes": 3981,
+          "sha256": "0da947330f5980c06e162c2ca7645090535b19db048f5b7ba6ce1934e1aa6962"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/harness-dry-run-cli.json",
+          "bytes": 359,
+          "sha256": "c1caafb651fadae6b0e4ebc26f49f0353f3e617ca6b218927b41fdd014818ce9"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/harness-dry-run-cli.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/harness-dry-run-cli.stdout.txt",
+          "bytes": 117,
+          "sha256": "95142dfee8520c03808a7a2933c0bfa6883bd9f0e0d3604bbfef4351fd94274d"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/harness-dry-run.stderr.txt",
+          "bytes": 511,
+          "sha256": "6969d0436c7fa56a20e8ad8397506e98c81b405e9794730d97359f11108e805d"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/harness-dry-run.stdout.txt",
+          "bytes": 521,
+          "sha256": "a6f9de9f5ba7890cb068904295516ea509526d05fa769fd491146e611f976e5c"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/harness-validate-cli.json",
+          "bytes": 447,
+          "sha256": "c3f8acac3c0e38ec7171a14949ee5d48f164d0758daff87c64ed5d11e11dddb0"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/harness-validate-cli.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/harness-validate-cli.stdout.txt",
+          "bytes": 69,
+          "sha256": "57f858e5730ab77e6c14732a5b0cecc369c6a2296faaa35c37ec75f037840fd5"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/harness-validate.stderr.txt",
+          "bytes": 497,
+          "sha256": "74bea21765f1fc1ec0ce2dbdcec84f0e06669f42a8c66bf5c0ebb18094417652"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/harness-validate.stdout.txt",
+          "bytes": 388,
+          "sha256": "c23b973e5b9de61d3d7dd02cf6ecb0477fe9e0676d29e98e73b252b9b861bf32"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/live-exit.json",
+          "bytes": 190,
+          "sha256": "fbd8d7320620ef8ed81d0dbdaad0ddcaa5aede7a1b29e6d54f1ab3cb3c89299a"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/original-mechanism-pack.json",
+          "bytes": 194,
+          "sha256": "56a40a6d9519dbb740e3d473ae71b386b4435087677d88917401bbc76e9a64bf"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/retention-provider-unit.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/retention-provider-unit.stdout.txt",
+          "bytes": 259,
+          "sha256": "2021470901c2a5ab234de2766b5743dd1df5436fbab68f1834fe101a5ec86038"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/scope-before-doc-correction.json",
+          "bytes": 1145,
+          "sha256": "bcab23fddedb7c5945a3b5c00794fe80522cb0fa5c560382dbc752dbb24b69d6"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/scoring-unit.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/scoring-unit.stdout.txt",
+          "bytes": 250,
+          "sha256": "86cde6bff9c886a0c701cf43fd5f7d57234f95c89a5b98598f4e82c0a33e062d"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/typecheck.stderr.txt",
+          "bytes": 153,
+          "sha256": "351307f20e41fd6c6476899af82572f149bdee203aebe18d9ba9a4cfe5cccd4d"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/typecheck.stdout.txt",
+          "bytes": 1598,
+          "sha256": "77ef17135c3800d90cceb226c457763e6397fb534a25d55a93e6c34f56c4044a"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/convergence-check.mjs",
+          "bytes": 1406,
+          "sha256": "44b5218457e311b091184c57bdf610f72b1ad49fe09c23432fb8cda0ad9b06b8"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/credential-scan.json",
+          "bytes": 222,
+          "sha256": "3be6be963b96cfbfc372605873c24694bceebb3e519d1322c4b70308254c68ea"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/design-diagnostics.json",
+          "bytes": 1144,
+          "sha256": "0644e6630cf94bd1e94645105d4606b56452ceab0b82d50b70ff8593ba1ee359"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/deterministic/archives.jsonl.gz",
+          "bytes": 32949,
+          "sha256": "8d502a0d383c0686d523c7c1aa97058441449714de415317ae696dffeb0ab330"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/deterministic/credential-scan.json",
+          "bytes": 179,
+          "sha256": "99c9336cb3f858cee0bda7e0d50c39ccebcd0301e402e1a15d8c4f4fdee3d63b"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/deterministic/recomputed.json",
+          "bytes": 3371,
+          "sha256": "c664563f393c338a4520f3a1de15df3c1eeebe69dcba81bc1472a34e9bead5cf"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/deterministic/result.json",
+          "bytes": 5361,
+          "sha256": "cdc60d977311938f2e8147d4913e49e7d00f692d08c7bcd9046d6dd17f60419a"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/deterministic/runs.json",
+          "bytes": 78462,
+          "sha256": "e90a361ff1148853c81752a37643b42d9be5fbe056b4bd65abeb57bc17d46678"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/live/archives.jsonl.gz",
+          "bytes": 169820,
+          "sha256": "d34ffe845d6dc3ba69161943217cdf2d8bc297c31a1c69f41b7540f455270bd1"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/live/credential-scan.json",
+          "bytes": 179,
+          "sha256": "99c9336cb3f858cee0bda7e0d50c39ccebcd0301e402e1a15d8c4f4fdee3d63b"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/live/provider-wire.jsonl.gz",
+          "bytes": 610542,
+          "sha256": "4ad12d6317ad7838263d3026522681bcc9c4350bdbfb7ab676a4b7d41753861a"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/live/recomputed.json",
+          "bytes": 41204,
+          "sha256": "8160fc3e097480de2a8a0422f3b101f0378975a8daf19c7974b4f6602596a2d5"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/live/result.json",
+          "bytes": 5968,
+          "sha256": "48dbf0e85aeb59bd1c4420704a3214f73f7acb0ca9438e615374addc6a8b8805"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/live/runs.json",
+          "bytes": 427710,
+          "sha256": "0599996b67c7cadeda504e12e1f312c27b2565d3947ea5a3f5d3d44f59ff8e05"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/provenance.json",
+          "bytes": 2207,
+          "sha256": "e0705de791e5d35c478ff43da6b06ac2581c8521e01fe31ac19786050ae68fd0"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/recompute.mjs",
+          "bytes": 8055,
+          "sha256": "cad35ea133f475f11054e984baab9367db4a55459ddb0a5b9ab829d680a41702"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/verify-evidence.mjs",
+          "bytes": 2896,
+          "sha256": "940dd71e9994252b480b5faa5fb15680a461f6d09cd300f4671e36d0df9174d7"
+        },
+        {
+          "path": "harness/specs/rules/inline-spill-benefit-quantification.md",
+          "bytes": 4952,
+          "sha256": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f"
+        },
+        {
+          "path": "harness/specs/tasks/inline-spill-real-benefit-eval.md",
+          "bytes": 5437,
+          "sha256": "a41c2d469eac76310ce1353c488b421057a6a1f7d32d3de894ece70cfcc15065"
+        },
+        {
+          "path": "scripts/context-inline-spill-benefit-loop-eval.mts",
+          "bytes": 30211,
+          "sha256": "051209dea4f2a8065e5fa3421ce25f3e545667de7579d85e18bf7dbbcf1e5bbe"
+        },
+        {
+          "path": "scripts/context-inline-spill-benefit-scoring.mts",
+          "bytes": 1850,
+          "sha256": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276"
+        },
+        {
+          "path": "tests/unit/context-inline-spill-benefit-scoring.test.ts",
+          "bytes": 1553,
+          "sha256": "e4ce05755953667522e58bd020a801d74f77346841d8f7c8a20777870e03a27c"
+        }
+      ],
+      "archive_readback_matches": true,
+      "source_readback_matches": true
+    }
+  },
+  "main": {
+    "commit": "b3e52a1cb045cf18b21d062b5b76da2499219a8c",
+    "branch": "main",
+    "status_sha256": "042f747476f9beb6d7b5a6798b57f41e941aaccfdcf404e3c65054c91ae0c41d"
+  }
+}

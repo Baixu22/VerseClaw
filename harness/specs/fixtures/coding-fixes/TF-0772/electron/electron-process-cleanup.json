@@ -1,0 +1,39 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\ClawX\\.tmp\\coding-p2-01a1ab23-final\\verse-claw-e2e-run-fW8RV5",
+  "ledgerEntries": 4,
+  "reaped": [
+    {
+      "pid": 47192,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 33472,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 30440,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 35592,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    }
+  ],
+  "survivors": [],
+  "sweep": {
+    "status": "ok",
+    "runRoot": "D:\\ClawX\\.tmp\\coding-p2-01a1ab23-final\\verse-claw-e2e-run-fW8RV5\\",
+    "owned": [],
+    "remaining": []
+  }
+}

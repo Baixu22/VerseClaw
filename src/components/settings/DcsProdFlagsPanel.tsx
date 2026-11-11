@@ -9,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
 import { hostApi } from '@/lib/host-api';
 import { toUserMessage } from '@/lib/error-message';
+import { COMPONENT_DISPOSITION_ENTRIES } from '@shared/dcs/component-disposition-catalog';
 import {
   DCS_PROD_FLAGS,
   type DcsProdFlagEntry,
@@ -37,6 +38,11 @@ const PREVIEW_EFFECTIVE_KEYS = [
 ] as const;
 
 const VIEW_TOOLS_FLAG_ID = 'context-view-tools';
+const RETIRED_FLAG_IDS = new Set(
+  COMPONENT_DISPOSITION_ENTRIES
+    .filter((entry) => entry.disposition === 'retired')
+    .flatMap((entry) => entry.coverage.dcsFlagIds ?? []),
+);
 const VIEW_TOOL_NAMES = [
   'context_understand',
   'context_impact',
@@ -57,6 +63,8 @@ const MEMORY_FLAG_IDS = [
 
 function riskTone(risk: DcsProdFlagRisk): string {
   switch (risk) {
+    case 'read-only':
+      return 'border-black/10 text-muted-foreground dark:border-white/15';
     case 'baseline-on':
       return 'border-emerald-500/20 text-emerald-700 dark:text-emerald-400';
     case 'shadow-only':
@@ -191,11 +199,13 @@ function FlagRow({
   onSelect: () => void;
 }) {
   const { t } = useTranslation('settings');
+  const retired = RETIRED_FLAG_IDS.has(entry.id);
   return (
     <button
       type="button"
       onClick={onSelect}
       data-testid={`settings-dcs-prod-flag-${entry.id}`}
+      data-retired={retired || undefined}
       className={cn(
         'w-full rounded-lg border px-3 py-2.5 text-left transition-colors',
         selected
@@ -206,12 +216,12 @@ function FlagRow({
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-sm font-medium text-foreground">{entry.key}</span>
         <Badge variant="outline" className={cn('text-tiny font-normal', riskTone(entry.risk))}>
-          {t(`developer.dcsProdFlags.risk.${entry.risk}`)}
+          {retired ? t('developer.dcsProdFlags.retired.label') : t(`developer.dcsProdFlags.risk.${entry.risk}`)}
         </Badge>
         <Badge variant="outline" className="text-tiny font-normal text-muted-foreground">
           {entry.wave}
         </Badge>
-        {state?.writable ? (
+        {state?.writable && !retired ? (
           <Badge
             variant="outline"
             className={cn('text-tiny font-normal', statusTone(state.status))}
@@ -222,8 +232,8 @@ function FlagRow({
         ) : null}
       </div>
       <p className="mt-1 text-meta text-muted-foreground">
-        {t('developer.dcsProdFlags.defaultLabel')}: {entry.defaultDisplay}
-        {state?.writable
+        {t('developer.dcsProdFlags.defaultLabel')}: {retired ? t('developer.dcsProdFlags.retired.label') : entry.defaultDisplay}
+        {state?.writable && !retired
           ? ` · ${state.enabled ? t('developer.dcsProdFlags.on') : t('developer.dcsProdFlags.off')}`
           : ''}
       </p>
@@ -515,6 +525,7 @@ export function DcsProdFlagsPanel() {
   }, [snapshot]);
 
   const selectedState = selected ? stateById.get(selected.id) : undefined;
+  const selectedRetired = selected ? RETIRED_FLAG_IDS.has(selected.id) : false;
   // R7-1 T4: reuse the R3-2 unavailableReason field (no new state shape) and
   // scope the memory-channel boundary note to the three memory switches.
   const selectedUnavailableReason = selected
@@ -547,6 +558,7 @@ export function DcsProdFlagsPanel() {
 
   const onToggle = useCallback(
     async (id: string, enabled: boolean) => {
+      if (RETIRED_FLAG_IDS.has(id)) return;
       setBusyId(id);
       try {
         const result = await hostApi.dcsProdFlags.setFlag({
@@ -782,7 +794,7 @@ export function DcsProdFlagsPanel() {
               </p>
             ) : null}
 
-            {selectedState?.writable ? (
+            {selectedState?.writable && !selectedRetired ? (
               <div
                 className="flex items-center justify-between gap-3 rounded-md border border-black/10 px-3 py-2 dark:border-white/10"
                 data-testid="settings-dcs-prod-flags-toggle-row"
@@ -808,7 +820,7 @@ export function DcsProdFlagsPanel() {
                 className="text-tiny text-muted-foreground"
                 data-testid="settings-dcs-prod-flags-readonly-hint"
               >
-                {t('developer.dcsProdFlags.readOnlyNote')}
+                {t(selectedRetired ? 'developer.dcsProdFlags.retired.description' : 'developer.dcsProdFlags.readOnlyNote')}
               </p>
             )}
 
@@ -820,6 +832,11 @@ export function DcsProdFlagsPanel() {
               />
             ) : null}
 
+            {selectedRetired ? (
+              <p className="text-meta text-muted-foreground" data-testid="settings-dcs-prod-flag-retired-detail">
+                {t('developer.dcsProdFlags.retired.alternative')}
+              </p>
+            ) : (
             <div className="space-y-2 text-meta text-muted-foreground">
               <p>
                 <span className="font-medium text-foreground/80">
@@ -850,6 +867,7 @@ export function DcsProdFlagsPanel() {
                 {selected.riskNote}
               </p>
             </div>
+            )}
           </div>
         )}
       </div>

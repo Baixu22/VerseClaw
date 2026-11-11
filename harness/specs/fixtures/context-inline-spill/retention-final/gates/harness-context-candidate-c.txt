@@ -1,0 +1,24 @@
+$ pnpm --filter @verse-claw/harness start -- "context" "--spec" "harness/specs/tasks/context-inline-spill-default-path.md"
+$ node src/cli.mjs "--" "context" "--spec" "harness/specs/tasks/context-inline-spill-default-path.md"
+Context for: harness\specs\tasks\context-inline-spill-default-path.md
+Intent: 补齐默认 tool-result 截断的 ArchiveHandle 引用，并在显式 opt-in 下为已校验的 archive recall 结果提供有界短期保留；通过带 retention-off 负例的确定性和第三方模型 paired eval 验证回读稳定性、质量、预算与证据边界，不改变既有产品默认值。
+
+Read order:
+- context-inline-spill-default-path (task): harness\specs\tasks\context-inline-spill-default-path.md
+- context-family (context-family-boundary): harness\specs\scenarios\context-family.md
+- agent-engineering-acceptance-boundary (ai-coding-rule): harness\specs\rules\agent-engineering-acceptance-boundary.md
+- backend-communication-boundary (ai-coding-rule): harness\specs\rules\backend-communication-boundary.md
+- context-family-boundary (ai-coding-rule): harness\specs\rules\context-family-boundary.md
+- context-runtime-kit-boundary (ai-coding-rule): harness\specs\rules\context-runtime-kit-boundary.md
+- disk-temp-policy (ai-coding-rule): harness\specs\rules\disk-temp-policy.md
+- docs-sync (ai-coding-rule): harness\specs\rules\docs-sync.md
+- workspace-harness-single-source (ai-coding-rule): harness\specs\rules\workspace-harness-single-source.md
+- agent-first-acceptance (guide): harness\specs\guides\agent-first-acceptance.md
+- agent-harness-routing (guide): harness\specs\guides\agent-harness-routing.md
+- pretext-text-measurement-integration (guide): harness\specs\guides\pretext-text-measurement-integration.md
+- product-acceptance-strategy (guide): harness\specs\guides\product-acceptance-strategy.md
+- scoped-development-validation (guide): harness\specs\guides\scoped-development-validation.md
+- spec-update (guide): harness\specs\guides\spec-update.md
+- sustained-development-continuity (guide): harness\specs\guides\sustained-development-continuity.md
+- harness (layer-spec): harness\specs\layers\harness.md
+- openclaw-runtime (layer-spec): harness\specs\layers\openclaw-runtime.md

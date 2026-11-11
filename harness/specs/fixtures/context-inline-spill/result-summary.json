@@ -1,0 +1,1205 @@
+{
+  "schema": "ContextInlineSpillEvidence/v2",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "generated_at": "2026-11-03T17:27:09.418Z",
+  "candidate": {
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf",
+    "dirty": false
+  },
+  "deterministic": {
+    "passed": true,
+    "run_ref": "retention-final/deterministic/result.json",
+    "arms": [
+      {
+        "name": "baseline",
+        "sample_count": 1,
+        "repetitions": 1,
+        "negative_control": true,
+        "quality": {
+          "exact_value_available": false,
+          "score": 0,
+          "expected_answerable": false,
+          "expected_behavior_matched": true
+        },
+        "main_context_chars": 40334,
+        "main_context_tokens_proxy": 10084,
+        "model_input_chars": 40720,
+        "total_tokens_proxy": 10180,
+        "actual_total_tokens": null,
+        "token_estimate_kind": "weighted-characters/4 proxy; live usage is separately observed",
+        "latency_ms": {
+          "projection": 23.93,
+          "shared_fixture_recall": 0,
+          "provider": null
+        },
+        "cost": {
+          "status": "not-run",
+          "reason": "Provider billing rates were not supplied; no billing estimate is claimed."
+        },
+        "evidence_refs": {
+          "present": false,
+          "resolved": false,
+          "resolution_rate": null
+        },
+        "scope": {
+          "sessionId": "01a1a1fa-2a5b-7643-86c3-10c9c052faa6",
+          "stale": false,
+          "retention_enabled": false,
+          "max_turns": 4,
+          "max_retained_chars": 16000
+        },
+        "retained": [],
+        "production_projection": {
+          "path": "guarded transcript write -> disk reload -> sanitizeSessionHistory -> pruner -> internal precheck -> eligible-source selection -> convertToLlm -> final provider truncation -> strip details -> stream projection",
+          "persisted_session_ref": "sessions/baseline.jsonl",
+          "persisted_session_id": "01a1a1fa-2a5b-7643-86c3-10c9c052faa6",
+          "persisted_leaf_id": "d5fa487d",
+          "internal_replay_retained": 0,
+          "provider_details_stripped": true
+        },
+        "failure_class": "archive_reference_missing",
+        "live": {
+          "status": "not-run",
+          "reason": "Deterministic oracle; no provider invoked."
+        },
+        "transcript_ref": "transcript.json"
+      },
+      {
+        "name": "reference-visible",
+        "sample_count": 1,
+        "repetitions": 1,
+        "negative_control": false,
+        "quality": {
+          "exact_value_available": true,
+          "score": 1,
+          "expected_answerable": true,
+          "expected_behavior_matched": true
+        },
+        "main_context_chars": 50727,
+        "main_context_tokens_proxy": 12682,
+        "model_input_chars": 51113,
+        "total_tokens_proxy": 12779,
+        "actual_total_tokens": null,
+        "token_estimate_kind": "weighted-characters/4 proxy; live usage is separately observed",
+        "latency_ms": {
+          "projection": 20.7,
+          "shared_fixture_recall": 0.758,
+          "provider": null
+        },
+        "cost": {
+          "status": "not-run",
+          "reason": "Provider billing rates were not supplied; no billing estimate is claimed."
+        },
+        "evidence_refs": {
+          "present": true,
+          "resolved": true,
+          "resolution_rate": 1
+        },
+        "scope": {
+          "sessionId": "01a1a1fa-2a5b-7643-86c3-10c9c052faa6",
+          "stale": false,
+          "retention_enabled": false,
+          "max_turns": 4,
+          "max_retained_chars": 16000
+        },
+        "retained": [],
+        "production_projection": {
+          "path": "guarded transcript write -> disk reload -> sanitizeSessionHistory -> pruner -> internal precheck -> eligible-source selection -> convertToLlm -> final provider truncation -> strip details -> stream projection",
+          "persisted_session_ref": "sessions/reference-visible.jsonl",
+          "persisted_session_id": "01a1a1fa-2a5b-7643-86c3-10c9c052faa6",
+          "persisted_leaf_id": "2edb25e1",
+          "internal_replay_retained": 0,
+          "provider_details_stripped": true
+        },
+        "failure_class": null,
+        "live": {
+          "status": "not-run",
+          "reason": "Deterministic oracle; no provider invoked."
+        },
+        "transcript_ref": "transcript.json"
+      },
+      {
+        "name": "recall-stable",
+        "sample_count": 1,
+        "repetitions": 1,
+        "negative_control": false,
+        "quality": {
+          "exact_value_available": true,
+          "score": 1,
+          "expected_answerable": true,
+          "expected_behavior_matched": true
+        },
+        "main_context_chars": 50727,
+        "main_context_tokens_proxy": 12682,
+        "model_input_chars": 51113,
+        "total_tokens_proxy": 12779,
+        "actual_total_tokens": null,
+        "token_estimate_kind": "weighted-characters/4 proxy; live usage is separately observed",
+        "latency_ms": {
+          "projection": 15.904,
+          "shared_fixture_recall": 0.758,
+          "provider": null
+        },
+        "cost": {
+          "status": "not-run",
+          "reason": "Provider billing rates were not supplied; no billing estimate is claimed."
+        },
+        "evidence_refs": {
+          "present": true,
+          "resolved": true,
+          "resolution_rate": 1
+        },
+        "scope": {
+          "sessionId": "01a1a1fa-2a5b-7643-86c3-10c9c052faa6",
+          "stale": false,
+          "retention_enabled": true,
+          "max_turns": 4,
+          "max_retained_chars": 16000
+        },
+        "retained": [
+          {
+            "index": 4,
+            "chars": 8438,
+            "recalledTurn": 2,
+            "ageTurns": 3,
+            "archiveUri": "context-archive://01a1a1fa-2a5b-7643-86c3-10c9c052faa6/context-inline-spill-eval-observation-30a1349b459465f3.context-archive.json",
+            "checksum": "sha256:30a1349b459465f3fc10df7ccf68e9dc3db398f3d35d9083416e6f8d920daf10",
+            "toolCallId": "callevalrecall855cac4cb3"
+          }
+        ],
+        "production_projection": {
+          "path": "guarded transcript write -> disk reload -> sanitizeSessionHistory -> pruner -> internal precheck -> eligible-source selection -> convertToLlm -> final provider truncation -> strip details -> stream projection",
+          "persisted_session_ref": "sessions/recall-stable.jsonl",
+          "persisted_session_id": "01a1a1fa-2a5b-7643-86c3-10c9c052faa6",
+          "persisted_leaf_id": "9aec12a1",
+          "internal_replay_retained": 1,
+          "provider_details_stripped": true
+        },
+        "failure_class": null,
+        "live": {
+          "status": "not-run",
+          "reason": "Deterministic oracle; no provider invoked."
+        },
+        "transcript_ref": "transcript.json"
+      },
+      {
+        "name": "retention-off",
+        "sample_count": 1,
+        "repetitions": 1,
+        "negative_control": true,
+        "quality": {
+          "exact_value_available": false,
+          "score": 0,
+          "expected_answerable": false,
+          "expected_behavior_matched": true
+        },
+        "main_context_chars": 45375,
+        "main_context_tokens_proxy": 11344,
+        "model_input_chars": 45761,
+        "total_tokens_proxy": 11441,
+        "actual_total_tokens": null,
+        "token_estimate_kind": "weighted-characters/4 proxy; live usage is separately observed",
+        "latency_ms": {
+          "projection": 16.083,
+          "shared_fixture_recall": 0.758,
+          "provider": null
+        },
+        "cost": {
+          "status": "not-run",
+          "reason": "Provider billing rates were not supplied; no billing estimate is claimed."
+        },
+        "evidence_refs": {
+          "present": true,
+          "resolved": true,
+          "resolution_rate": 1
+        },
+        "scope": {
+          "sessionId": "01a1a1fa-2a5b-7643-86c3-10c9c052faa6",
+          "stale": false,
+          "retention_enabled": false,
+          "max_turns": 4,
+          "max_retained_chars": 16000
+        },
+        "retained": [],
+        "production_projection": {
+          "path": "guarded transcript write -> disk reload -> sanitizeSessionHistory -> pruner -> internal precheck -> eligible-source selection -> convertToLlm -> final provider truncation -> strip details -> stream projection",
+          "persisted_session_ref": "sessions/retention-off.jsonl",
+          "persisted_session_id": "01a1a1fa-2a5b-7643-86c3-10c9c052faa6",
+          "persisted_leaf_id": "8162a1e6",
+          "internal_replay_retained": 0,
+          "provider_details_stripped": true
+        },
+        "failure_class": "recalled_text_pruned",
+        "live": {
+          "status": "not-run",
+          "reason": "Deterministic oracle; no provider invoked."
+        },
+        "transcript_ref": "transcript.json"
+      }
+    ],
+    "controls": {
+      "aggregate_block_budget": {
+        "budget_chars": 8576,
+        "on_chars": 8576,
+        "off_chars": 8576,
+        "legacy_plan_used": true,
+        "passed": true
+      },
+      "expiry": {
+        "age_turns": 4,
+        "evidence_available": false,
+        "old_path_restored": true,
+        "passed": true
+      },
+      "rejected": [
+        {
+          "name": "checksum-mismatch",
+          "failed_closed": true,
+          "details": {
+            "ok": false,
+            "diagnostics": [
+              {
+                "code": "checksum_mismatch",
+                "message": "Archive recall failed: checksum_mismatch"
+              }
+            ]
+          }
+        },
+        {
+          "name": "cross-session",
+          "failed_closed": true,
+          "details": {
+            "ok": false,
+            "diagnostics": [
+              {
+                "code": "session_mismatch",
+                "message": "Archive handle belongs to another session."
+              }
+            ]
+          }
+        },
+        {
+          "name": "archive-missing",
+          "failed_closed": true,
+          "details": {
+            "ok": false,
+            "diagnostics": [
+              {
+                "code": "missing",
+                "message": "Archive recall failed: missing"
+              }
+            ]
+          }
+        }
+      ],
+      "off_mode_parity": {
+        "baseline_ref": "off-mode-baseline.json",
+        "baseline_sha256": "54b54cbab66404e371510e29e9706e28ce7ae9abb0bcd824cad647a0f8260ef5",
+        "tool_result": true,
+        "pruner": true,
+        "truncation": true,
+        "reduction": true,
+        "compaction": true
+      },
+      "repeat_projection_soak": {
+        "status": "executed",
+        "iterations": 5000,
+        "elapsed_ms": 76.859,
+        "heap_before_bytes": 146629112,
+        "heap_after_bytes": 146442176,
+        "heap_growth_bytes": -186936,
+        "heap_growth_limit_bytes": 2097152,
+        "same_array": true,
+        "messages_unchanged": true,
+        "message_count": 11,
+        "passed": true
+      },
+      "context_growth": {
+        "chars": 5352,
+        "limit": 16000,
+        "passed": true
+      }
+    }
+  },
+  "live_provider": {
+    "status": "paired-pass",
+    "provider": {
+      "kind": "openai-compatible-responses",
+      "endpoint_origin": "http://127.0.0.1:3065",
+      "model": "space-bunny",
+      "credential_persisted": false
+    },
+    "sample_count": 4,
+    "successes": 4,
+    "success_rate": 1,
+    "run_ref": "retention-final/live/result.json",
+    "arms": [
+      {
+        "name": "baseline",
+        "sample_count": 1,
+        "repetitions": 1,
+        "negative_control": true,
+        "quality": {
+          "exact_value_available": false,
+          "score": 0,
+          "expected_answerable": false,
+          "expected_behavior_matched": true
+        },
+        "main_context_chars": 40334,
+        "main_context_tokens_proxy": 10084,
+        "model_input_chars": 40720,
+        "total_tokens_proxy": 10180,
+        "actual_total_tokens": 10388,
+        "token_estimate_kind": "weighted-characters/4 proxy; live usage is separately observed",
+        "latency_ms": {
+          "projection": 18.442,
+          "shared_fixture_recall": 0,
+          "provider": 3085.868
+        },
+        "cost": {
+          "status": "not-run",
+          "reason": "Provider billing rates were not supplied; no billing estimate is claimed."
+        },
+        "evidence_refs": {
+          "present": false,
+          "resolved": false,
+          "resolution_rate": null
+        },
+        "scope": {
+          "sessionId": "01a1a1fb-06c5-7271-8ecf-47a9debd04e3",
+          "stale": false,
+          "retention_enabled": false,
+          "max_turns": 4,
+          "max_retained_chars": 16000
+        },
+        "retained": [],
+        "production_projection": {
+          "path": "guarded transcript write -> disk reload -> sanitizeSessionHistory -> pruner -> internal precheck -> eligible-source selection -> convertToLlm -> final provider truncation -> strip details -> stream projection",
+          "persisted_session_ref": "sessions/baseline.jsonl",
+          "persisted_session_id": "01a1a1fb-06c5-7271-8ecf-47a9debd04e3",
+          "persisted_leaf_id": "700a4f82",
+          "internal_replay_retained": 0,
+          "provider_details_stripped": true
+        },
+        "failure_class": "archive_reference_missing",
+        "live": {
+          "status": "executed",
+          "elapsed_ms": 3085.868,
+          "http_status": 200,
+          "answer": {
+            "answerable": false,
+            "value": null,
+            "reason": "The supplied context does not contain the exact private_evidence value; the archived tool output is truncated."
+          },
+          "usage": {
+            "input_tokens": 10327,
+            "output_tokens": 61,
+            "output_tokens_details": {
+              "reasoning_tokens": 25
+            },
+            "total_tokens": 10388
+          },
+          "expected_behavior_matched": true,
+          "failure_class": null,
+          "raw_response": "{\"background\":false,\"completed_at\":1793718948,\"created_at\":1793718946,\"error\":null,\"id\":\"01a1a1fb07a37671aeed35a0946044d1\",\"incomplete_details\":null,\"instructions\":null,\"max_output_tokens\":800,\"max_tool_calls\":null,\"metadata\":{},\"model\":\"space-bunny\",\"object\":\"response\",\"output\":[{\"id\":\"rs_6bf09e1427637bddf18713bb4e5e77a1\",\"summary\":[{\"text\":\"We need only context. It says tool result truncated, then Evidence read but no value. Unanswerable. JSON only.\",\"type\":\"summary_text\"}],\"type\":\"reasoning\"},{\"content\":[{\"annotations\":[],\"logprobs\":[],\"text\":\"{\\\"answerable\\\":false,\\\"value\\\":null,\\\"reason\\\":\\\"The supplied context does not contain the exact private_evidence value; the archived tool output is truncated.\\\"}\",\"type\":\"output_text\"}],\"id\":\"msg_e5d7905d9779fed447a3e64a62b7788e\",\"role\":\"assistant\",\"status\":\"completed\",\"type\":\"message\"}],\"output_text\":\"{\\\"answerable\\\":false,\\\"value\\\":null,\\\"reason\\\":\\\"The supplied context does not contain the exact private_evidence value; the archived tool output is truncated.\\\"}\",\"parallel_tool_calls\":true,\"previous_response_id\":null,\"reasoning\":{\"effort\":null,\"summary\":null},\"status\":\"completed\",\"store\":false,\"temperature\":0,\"text\":{\"format\":{\"type\":\"text\"}},\"tool_choice\":\"auto\",\"tools\":[],\"top_logprobs\":0,\"top_p\":1,\"truncation\":\"disabled\",\"usage\":{\"input_tokens\":10327,\"output_tokens\":61,\"output_tokens_details\":{\"reasoning_tokens\":25},\"total_tokens\":10388},\"user\":null}"
+        },
+        "transcript_ref": "transcript.json"
+      },
+      {
+        "name": "reference-visible",
+        "sample_count": 1,
+        "repetitions": 1,
+        "negative_control": false,
+        "quality": {
+          "exact_value_available": true,
+          "score": 1,
+          "expected_answerable": true,
+          "expected_behavior_matched": true
+        },
+        "main_context_chars": 50727,
+        "main_context_tokens_proxy": 12682,
+        "model_input_chars": 51113,
+        "total_tokens_proxy": 12779,
+        "actual_total_tokens": 12421,
+        "token_estimate_kind": "weighted-characters/4 proxy; live usage is separately observed",
+        "latency_ms": {
+          "projection": 20.862,
+          "shared_fixture_recall": 0.896,
+          "provider": 4407.303
+        },
+        "cost": {
+          "status": "not-run",
+          "reason": "Provider billing rates were not supplied; no billing estimate is claimed."
+        },
+        "evidence_refs": {
+          "present": true,
+          "resolved": true,
+          "resolution_rate": 1
+        },
+        "scope": {
+          "sessionId": "01a1a1fb-06c5-7271-8ecf-47a9debd04e3",
+          "stale": false,
+          "retention_enabled": false,
+          "max_turns": 4,
+          "max_retained_chars": 16000
+        },
+        "retained": [],
+        "production_projection": {
+          "path": "guarded transcript write -> disk reload -> sanitizeSessionHistory -> pruner -> internal precheck -> eligible-source selection -> convertToLlm -> final provider truncation -> strip details -> stream projection",
+          "persisted_session_ref": "sessions/reference-visible.jsonl",
+          "persisted_session_id": "01a1a1fb-06c5-7271-8ecf-47a9debd04e3",
+          "persisted_leaf_id": "54c4f15d",
+          "internal_replay_retained": 0,
+          "provider_details_stripped": true
+        },
+        "failure_class": null,
+        "live": {
+          "status": "executed",
+          "elapsed_ms": 4407.303,
+          "http_status": 200,
+          "answer": {
+            "answerable": true,
+            "value": "ARCHIVE_PRIVATE_EVIDENCE_7f31",
+            "reason": "The exact private_evidence value is explicitly present in the supplied tool output."
+          },
+          "usage": {
+            "input_tokens": 12343,
+            "input_tokens_details": {
+              "cached_tokens": 128
+            },
+            "output_tokens": 78,
+            "output_tokens_details": {
+              "reasoning_tokens": 40
+            },
+            "total_tokens": 12421
+          },
+          "expected_behavior_matched": true,
+          "failure_class": null,
+          "raw_response": "{\"background\":false,\"completed_at\":1793718953,\"created_at\":1793718952,\"error\":null,\"id\":\"01a1a1fb13987f87b16ac18ba671297a\",\"incomplete_details\":null,\"instructions\":null,\"max_output_tokens\":800,\"max_tool_calls\":null,\"metadata\":{},\"model\":\"space-bunny\",\"object\":\"response\",\"output\":[{\"id\":\"rs_024534b6aa5d74e8e2303eb3434e8da1\",\"summary\":[{\"text\":\"We need answer JSON exact value from visible context. It's ARCHIVE_PRIVATE_EVIDENCE_7f31. Need value string perhaps exact private_evidence value. Quote exact. JSON only.\",\"type\":\"summary_text\"}],\"type\":\"reasoning\"},{\"content\":[{\"annotations\":[],\"logprobs\":[],\"text\":\"{\\\"answerable\\\":true,\\\"value\\\":\\\"ARCHIVE_PRIVATE_EVIDENCE_7f31\\\",\\\"reason\\\":\\\"The exact private_evidence value is explicitly present in the supplied tool output.\\\"}\",\"type\":\"output_text\"}],\"id\":\"msg_268eced34d2914361706a437ea57e858\",\"role\":\"assistant\",\"status\":\"completed\",\"type\":\"message\"}],\"output_text\":\"{\\\"answerable\\\":true,\\\"value\\\":\\\"ARCHIVE_PRIVATE_EVIDENCE_7f31\\\",\\\"reason\\\":\\\"The exact private_evidence value is explicitly present in the supplied tool output.\\\"}\",\"parallel_tool_calls\":true,\"previous_response_id\":null,\"reasoning\":{\"effort\":null,\"summary\":null},\"status\":\"completed\",\"store\":false,\"temperature\":0,\"text\":{\"format\":{\"type\":\"text\"}},\"tool_choice\":\"auto\",\"tools\":[],\"top_logprobs\":0,\"top_p\":1,\"truncation\":\"disabled\",\"usage\":{\"input_tokens\":12343,\"input_tokens_details\":{\"cached_tokens\":128},\"output_tokens\":78,\"output_tokens_details\":{\"reasoning_tokens\":40},\"total_tokens\":12421},\"user\":null}"
+        },
+        "transcript_ref": "transcript.json"
+      },
+      {
+        "name": "recall-stable",
+        "sample_count": 1,
+        "repetitions": 1,
+        "negative_control": false,
+        "quality": {
+          "exact_value_available": true,
+          "score": 1,
+          "expected_answerable": true,
+          "expected_behavior_matched": true
+        },
+        "main_context_chars": 50727,
+        "main_context_tokens_proxy": 12682,
+        "model_input_chars": 51113,
+        "total_tokens_proxy": 12779,
+        "actual_total_tokens": 12416,
+        "token_estimate_kind": "weighted-characters/4 proxy; live usage is separately observed",
+        "latency_ms": {
+          "projection": 17.666,
+          "shared_fixture_recall": 0.896,
+          "provider": 4094.98
+        },
+        "cost": {
+          "status": "not-run",
+          "reason": "Provider billing rates were not supplied; no billing estimate is claimed."
+        },
+        "evidence_refs": {
+          "present": true,
+          "resolved": true,
+          "resolution_rate": 1
+        },
+        "scope": {
+          "sessionId": "01a1a1fb-06c5-7271-8ecf-47a9debd04e3",
+          "stale": false,
+          "retention_enabled": true,
+          "max_turns": 4,
+          "max_retained_chars": 16000
+        },
+        "retained": [
+          {
+            "index": 4,
+            "chars": 8438,
+            "recalledTurn": 2,
+            "ageTurns": 3,
+            "archiveUri": "context-archive://01a1a1fb-06c5-7271-8ecf-47a9debd04e3/context-inline-spill-eval-observation-30a1349b459465f3.context-archive.json",
+            "checksum": "sha256:30a1349b459465f3fc10df7ccf68e9dc3db398f3d35d9083416e6f8d920daf10",
+            "toolCallId": "callevalrecall855cac4cb3"
+          }
+        ],
+        "production_projection": {
+          "path": "guarded transcript write -> disk reload -> sanitizeSessionHistory -> pruner -> internal precheck -> eligible-source selection -> convertToLlm -> final provider truncation -> strip details -> stream projection",
+          "persisted_session_ref": "sessions/recall-stable.jsonl",
+          "persisted_session_id": "01a1a1fb-06c5-7271-8ecf-47a9debd04e3",
+          "persisted_leaf_id": "6fcd8a99",
+          "internal_replay_retained": 1,
+          "provider_details_stripped": true
+        },
+        "failure_class": null,
+        "live": {
+          "status": "executed",
+          "elapsed_ms": 4094.98,
+          "http_status": 200,
+          "answer": {
+            "answerable": true,
+            "value": "ARCHIVE_PRIVATE_EVIDENCE_7f31",
+            "reason": "The exact private_evidence value is explicitly present in the supplied archived tool output."
+          },
+          "usage": {
+            "input_tokens": 12343,
+            "input_tokens_details": {
+              "cached_tokens": 12288
+            },
+            "output_tokens": 73,
+            "output_tokens_details": {
+              "reasoning_tokens": 34
+            },
+            "total_tokens": 12416
+          },
+          "expected_behavior_matched": true,
+          "failure_class": null,
+          "raw_response": "{\"background\":false,\"completed_at\":1793718957,\"created_at\":1793718956,\"error\":null,\"id\":\"01a1a1fb24f57825b92e99115973f944\",\"incomplete_details\":null,\"instructions\":null,\"max_output_tokens\":800,\"max_tool_calls\":null,\"metadata\":{},\"model\":\"space-bunny\",\"object\":\"response\",\"output\":[{\"id\":\"rs_b1f569a184d2c8fcc9aeed4239d561c6\",\"summary\":[{\"text\":\"We need answer JSON exact value from context. It is visible: private_evidence=ARCHIVE_PRIVATE_EVIDENCE_7f31. Need reason concise.\",\"type\":\"summary_text\"}],\"type\":\"reasoning\"},{\"content\":[{\"annotations\":[],\"logprobs\":[],\"text\":\"{\\\"answerable\\\":true,\\\"value\\\":\\\"ARCHIVE_PRIVATE_EVIDENCE_7f31\\\",\\\"reason\\\":\\\"The exact private_evidence value is explicitly present in the supplied archived tool output.\\\"}\",\"type\":\"output_text\"}],\"id\":\"msg_264931ad13db9a3f0087adf9b37f1643\",\"role\":\"assistant\",\"status\":\"completed\",\"type\":\"message\"}],\"output_text\":\"{\\\"answerable\\\":true,\\\"value\\\":\\\"ARCHIVE_PRIVATE_EVIDENCE_7f31\\\",\\\"reason\\\":\\\"The exact private_evidence value is explicitly present in the supplied archived tool output.\\\"}\",\"parallel_tool_calls\":true,\"previous_response_id\":null,\"reasoning\":{\"effort\":null,\"summary\":null},\"status\":\"completed\",\"store\":false,\"temperature\":0,\"text\":{\"format\":{\"type\":\"text\"}},\"tool_choice\":\"auto\",\"tools\":[],\"top_logprobs\":0,\"top_p\":1,\"truncation\":\"disabled\",\"usage\":{\"input_tokens\":12343,\"input_tokens_details\":{\"cached_tokens\":12288},\"output_tokens\":73,\"output_tokens_details\":{\"reasoning_tokens\":34},\"total_tokens\":12416},\"user\":null}"
+        },
+        "transcript_ref": "transcript.json"
+      },
+      {
+        "name": "retention-off",
+        "sample_count": 1,
+        "repetitions": 1,
+        "negative_control": true,
+        "quality": {
+          "exact_value_available": false,
+          "score": 0,
+          "expected_answerable": false,
+          "expected_behavior_matched": true
+        },
+        "main_context_chars": 45375,
+        "main_context_tokens_proxy": 11344,
+        "model_input_chars": 45761,
+        "total_tokens_proxy": 11441,
+        "actual_total_tokens": 11451,
+        "token_estimate_kind": "weighted-characters/4 proxy; live usage is separately observed",
+        "latency_ms": {
+          "projection": 18.24,
+          "shared_fixture_recall": 0.896,
+          "provider": 5619.545
+        },
+        "cost": {
+          "status": "not-run",
+          "reason": "Provider billing rates were not supplied; no billing estimate is claimed."
+        },
+        "evidence_refs": {
+          "present": true,
+          "resolved": true,
+          "resolution_rate": 1
+        },
+        "scope": {
+          "sessionId": "01a1a1fb-06c5-7271-8ecf-47a9debd04e3",
+          "stale": false,
+          "retention_enabled": false,
+          "max_turns": 4,
+          "max_retained_chars": 16000
+        },
+        "retained": [],
+        "production_projection": {
+          "path": "guarded transcript write -> disk reload -> sanitizeSessionHistory -> pruner -> internal precheck -> eligible-source selection -> convertToLlm -> final provider truncation -> strip details -> stream projection",
+          "persisted_session_ref": "sessions/retention-off.jsonl",
+          "persisted_session_id": "01a1a1fb-06c5-7271-8ecf-47a9debd04e3",
+          "persisted_leaf_id": "d0836539",
+          "internal_replay_retained": 0,
+          "provider_details_stripped": true
+        },
+        "failure_class": "recalled_text_pruned",
+        "live": {
+          "status": "executed",
+          "elapsed_ms": 5619.545,
+          "http_status": 200,
+          "answer": {
+            "answerable": false,
+            "value": null,
+            "reason": "The supplied model-visible context contains only head/tail filler content and no explicit private_evidence value; the archive URI alone does not establish its contents."
+          },
+          "usage": {
+            "input_tokens": 11352,
+            "input_tokens_details": {
+              "cached_tokens": 14
+            },
+            "output_tokens": 99,
+            "output_tokens_details": {
+              "reasoning_tokens": 53
+            },
+            "total_tokens": 11451
+          },
+          "expected_behavior_matched": true,
+          "failure_class": null,
+          "raw_response": "{\"background\":false,\"completed_at\":1793718962,\"created_at\":1793718958,\"error\":null,\"id\":\"01a1a1fb34f271aaaec8b3e7ab879cc7\",\"incomplete_details\":null,\"instructions\":null,\"max_output_tokens\":800,\"max_tool_calls\":null,\"metadata\":{},\"model\":\"space-bunny\",\"object\":\"response\",\"output\":[{\"id\":\"rs_5625ce57f7fad26ff47a58dad324698f\",\"summary\":[{\"text\":\"We need answer JSON. Context only shows head/tail huge chars, no private_evidence label/value. Archive URI alone doesn't supply contents. Tool recall output displayed content only x/y/tail, no exact private evidence. Cannot infer. answerable false null reason.\",\"type\":\"summary_text\"}],\"type\":\"reasoning\"},{\"content\":[{\"annotations\":[],\"logprobs\":[],\"text\":\"{\\\"answerable\\\":false,\\\"value\\\":null,\\\"reason\\\":\\\"The supplied model-visible context contains only head/tail filler content and no explicit private_evidence value; the archive URI alone does not establish its contents.\\\"}\",\"type\":\"output_text\"}],\"id\":\"msg_9dce2a5609525a7e55db739c9062d353\",\"role\":\"assistant\",\"status\":\"completed\",\"type\":\"message\"}],\"output_text\":\"{\\\"answerable\\\":false,\\\"value\\\":null,\\\"reason\\\":\\\"The supplied model-visible context contains only head/tail filler content and no explicit private_evidence value; the archive URI alone does not establish its contents.\\\"}\",\"parallel_tool_calls\":true,\"previous_response_id\":null,\"reasoning\":{\"effort\":null,\"summary\":null},\"status\":\"completed\",\"store\":false,\"temperature\":0,\"text\":{\"format\":{\"type\":\"text\"}},\"tool_choice\":\"auto\",\"tools\":[],\"top_logprobs\":0,\"top_p\":1,\"truncation\":\"disabled\",\"usage\":{\"input_tokens\":11352,\"input_tokens_details\":{\"cached_tokens\":14},\"output_tokens\":99,\"output_tokens_details\":{\"reasoning_tokens\":53},\"total_tokens\":11451},\"user\":null}"
+        },
+        "transcript_ref": "transcript.json"
+      }
+    ],
+    "controls": {
+      "aggregate_block_budget": {
+        "budget_chars": 8576,
+        "on_chars": 8576,
+        "off_chars": 8576,
+        "legacy_plan_used": true,
+        "passed": true
+      },
+      "expiry": {
+        "age_turns": 4,
+        "evidence_available": false,
+        "old_path_restored": true,
+        "passed": true
+      },
+      "rejected": [
+        {
+          "name": "checksum-mismatch",
+          "failed_closed": true,
+          "details": {
+            "ok": false,
+            "diagnostics": [
+              {
+                "code": "checksum_mismatch",
+                "message": "Archive recall failed: checksum_mismatch"
+              }
+            ]
+          }
+        },
+        {
+          "name": "cross-session",
+          "failed_closed": true,
+          "details": {
+            "ok": false,
+            "diagnostics": [
+              {
+                "code": "session_mismatch",
+                "message": "Archive handle belongs to another session."
+              }
+            ]
+          }
+        },
+        {
+          "name": "archive-missing",
+          "failed_closed": true,
+          "details": {
+            "ok": false,
+            "diagnostics": [
+              {
+                "code": "missing",
+                "message": "Archive recall failed: missing"
+              }
+            ]
+          }
+        }
+      ],
+      "off_mode_parity": {
+        "baseline_ref": "off-mode-baseline.json",
+        "baseline_sha256": "54b54cbab66404e371510e29e9706e28ce7ae9abb0bcd824cad647a0f8260ef5",
+        "tool_result": true,
+        "pruner": true,
+        "truncation": true,
+        "reduction": true,
+        "compaction": true
+      },
+      "repeat_projection_soak": {
+        "status": "executed",
+        "iterations": 5000,
+        "elapsed_ms": 74.174,
+        "heap_before_bytes": 147048104,
+        "heap_after_bytes": 147222872,
+        "heap_growth_bytes": 174768,
+        "heap_growth_limit_bytes": 2097152,
+        "same_array": true,
+        "messages_unchanged": true,
+        "message_count": 11,
+        "passed": true
+      },
+      "context_growth": {
+        "chars": 5352,
+        "limit": 16000,
+        "passed": true
+      }
+    }
+  },
+  "gates": [
+    {
+      "name": "reference-family-candidate-c",
+      "command": "pnpm",
+      "args": [
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/context-inline-spill-truncation.test.ts",
+        "tests/unit/native-raw-output-archive-reuse.test.ts",
+        "tests/unit/context-archive-recall.test.ts",
+        "tests/unit/context-item-registry.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:/tmp/context-inline-spill-closeout-20261103/reference-family-candidate-c-vitest.json"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 32620,
+      "report_ref": "retention-final/gates/reference-family-candidate-c.json",
+      "log_ref": "retention-final/gates/reference-family-candidate-c.txt",
+      "log_sha256": "0631ade2c6dc72f802f1d806967014da77a5b5c2d8dec852603c5b791cc0deeb"
+    },
+    {
+      "name": "retention-candidate-c",
+      "command": "pnpm",
+      "args": [
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/context-inline-spill-retention.test.ts",
+        "tests/unit/context-inline-spill-eval-provider.test.ts",
+        "tests/unit/context-pruning-would-trim.test.ts",
+        "tests/unit/config-schema-parity.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:/tmp/context-inline-spill-closeout-20261103/retention-candidate-c-vitest.json"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 34053,
+      "report_ref": "retention-final/gates/retention-candidate-c.json",
+      "log_ref": "retention-final/gates/retention-candidate-c.txt",
+      "log_sha256": "fb62c97f30d43427f0503993e0789e34d944b9ead56bae4a70c285ce15715b15"
+    },
+    {
+      "name": "memory-cleanup-candidate-c",
+      "command": "pnpm",
+      "args": [
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/runtime-memory-context-provider.test.ts",
+        "tests/unit/runtime-memory-eval-budget-pressure.test.ts",
+        "tests/unit/runtime-memory-eval-conflict-resolution.test.ts",
+        "tests/unit/runtime-memory-eval-temporal-evolution.test.ts",
+        "tests/unit/runtime-memory-eval-topic-drift.test.ts",
+        "tests/unit/runtime-memory-locomo-benchmark.test.ts",
+        "tests/unit/runtime-memory-proposal-shadow.test.ts",
+        "tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts",
+        "tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts",
+        "tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts",
+        "tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts",
+        "tests/unit/runtime-memory-read-hydration-shadow-opt-in-evaluation.test.ts",
+        "tests/unit/runtime-memory-read-hydration-shadow.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:/tmp/context-inline-spill-closeout-20261103/memory-cleanup-candidate-c-vitest.json"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 41835,
+      "report_ref": "retention-final/gates/memory-cleanup-candidate-c.json",
+      "log_ref": "retention-final/gates/memory-cleanup-candidate-c.txt",
+      "log_sha256": "7c99a1ebb536a35cc1d7fab080d0011ae56ea2a61fb48976ff5dbe28fcfeba3c"
+    },
+    {
+      "name": "typecheck-candidate-c",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 35445,
+      "report_ref": "retention-final/gates/typecheck-candidate-c.json",
+      "log_ref": "retention-final/gates/typecheck-candidate-c.txt",
+      "log_sha256": "4163cc00708309c7236fdd4061d7d1954de451d0aeff252a093396d95a8447ed"
+    },
+    {
+      "name": "contract-candidate-c",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "contract:check"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 1183,
+      "report_ref": "retention-final/gates/contract-candidate-c.json",
+      "log_ref": "retention-final/gates/contract-candidate-c.txt",
+      "log_sha256": "c77b5191ba37c52bbb7bcebd7fc78f999e4beef0c56275413515407a8123c6b0"
+    },
+    {
+      "name": "comms-replay-candidate-c",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "comms:replay"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 1075,
+      "report_ref": "retention-final/gates/comms-replay-candidate-c.json",
+      "log_ref": "retention-final/gates/comms-replay-candidate-c.txt",
+      "log_sha256": "a114bc39c9bce600d6ebdecc4392ea121380adabe018e5644a2546473d9361b6"
+    },
+    {
+      "name": "comms-compare-candidate-c",
+      "command": "pnpm",
+      "args": [
+        "run",
+        "comms:compare"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 938,
+      "report_ref": "retention-final/gates/comms-compare-candidate-c.json",
+      "log_ref": "retention-final/gates/comms-compare-candidate-c.txt",
+      "log_sha256": "aca981aa2141407bd2532afb7b3f587924d6944c679ee10e7021aeb1e2b755c9"
+    },
+    {
+      "name": "harness-context-candidate-c",
+      "command": "pnpm",
+      "args": [
+        "harness",
+        "context",
+        "--spec",
+        "harness/specs/tasks/context-inline-spill-default-path.md"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 1361,
+      "report_ref": "retention-final/gates/harness-context-candidate-c.json",
+      "log_ref": "retention-final/gates/harness-context-candidate-c.txt",
+      "log_sha256": "04b42d6eacd1ec0bc5c6345787b3de6428ceed8d3f65ee2038dc52fff2879d62"
+    },
+    {
+      "name": "harness-validate-candidate-c",
+      "command": "pnpm",
+      "args": [
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/context-inline-spill-default-path.md"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 2199,
+      "report_ref": "retention-final/gates/harness-validate-candidate-c.json",
+      "log_ref": "retention-final/gates/harness-validate-candidate-c.txt",
+      "log_sha256": "0f81f6e4e1c0eaf52f9963ca5d3b71ae8eb490cd54217b3d3b96d7ef27a617df"
+    },
+    {
+      "name": "harness-dry-run-candidate-c",
+      "command": "pnpm",
+      "args": [
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/context-inline-spill-default-path.md",
+        "--dry-run"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 2151,
+      "report_ref": "retention-final/gates/harness-dry-run-candidate-c.json",
+      "log_ref": "retention-final/gates/harness-dry-run-candidate-c.txt",
+      "log_sha256": "f7c41ac50f935e6e095b7829aadbb1d7dc3304420dbe90887f1103a42f121d0d"
+    },
+    {
+      "name": "changed-source-lint-candidate-c",
+      "command": "pnpm",
+      "args": [
+        "exec",
+        "eslint",
+        "openclaw_runtime/src/agents/agent-hooks/context-pruning/extension.ts",
+        "openclaw_runtime/src/agents/agent-hooks/context-pruning/pruner.ts",
+        "openclaw_runtime/src/agents/agent-hooks/context-pruning/runtime.ts",
+        "openclaw_runtime/src/agents/agent-hooks/context-pruning/would-trim.ts",
+        "openclaw_runtime/src/agents/agent-tools.ts",
+        "openclaw_runtime/src/agents/archive-recall-retention.ts",
+        "openclaw_runtime/src/agents/embedded-agent-helpers/openai.ts",
+        "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts",
+        "openclaw_runtime/src/agents/embedded-agent-runner/replay-history.ts",
+        "openclaw_runtime/src/agents/embedded-agent-runner/run.ts",
+        "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.llm-boundary.ts",
+        "openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.ts",
+        "openclaw_runtime/src/agents/embedded-agent-runner/run/preemptive-compaction.ts",
+        "openclaw_runtime/src/agents/embedded-agent-runner/tool-result-context-guard.ts",
+        "openclaw_runtime/src/agents/embedded-agent-runner/tool-result-truncation.ts",
+        "openclaw_runtime/src/agents/session-transcript-repair.ts",
+        "openclaw_runtime/src/agents/tool-call-id.ts",
+        "openclaw_runtime/src/agents/tools/context-agent-tools.ts",
+        "openclaw_runtime/src/config/runtime-feature-leaves.ts",
+        "openclaw_runtime/src/config/types.openclaw.ts",
+        "openclaw_runtime/src/config/zod-schema.ts",
+        "scripts/context-inline-spill-eval.mts",
+        "tests/unit/context-inline-spill-eval-provider.test.ts",
+        "tests/unit/context-inline-spill-retention.test.ts",
+        "tests/unit/runtime-memory-context-provider.test.ts",
+        "tests/unit/runtime-memory-eval-budget-pressure.test.ts",
+        "tests/unit/runtime-memory-eval-conflict-resolution.test.ts",
+        "tests/unit/runtime-memory-eval-temporal-evolution.test.ts",
+        "tests/unit/runtime-memory-eval-topic-drift.test.ts",
+        "tests/unit/runtime-memory-locomo-benchmark.test.ts",
+        "tests/unit/runtime-memory-proposal-shadow.test.ts",
+        "tests/unit/runtime-memory-read-hydration-controlled-db-replay-regression.test.ts",
+        "tests/unit/runtime-memory-read-hydration-controlled-internal-shadow-pilot.test.ts",
+        "tests/unit/runtime-memory-read-hydration-controlled-real-db-evaluation.test.ts",
+        "tests/unit/runtime-memory-read-hydration-limited-production-opt-in-implementation.test.ts",
+        "tests/unit/runtime-memory-read-hydration-shadow-opt-in-evaluation.test.ts",
+        "tests/unit/runtime-memory-read-hydration-shadow.test.ts",
+        "--max-warnings",
+        "120"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 10378,
+      "report_ref": "retention-final/gates/changed-source-lint-candidate-c.json",
+      "log_ref": "retention-final/gates/changed-source-lint-candidate-c.txt",
+      "log_sha256": "d8a7437e475991994e0605022ebbea69109a746e97dc0afa0edc0c03124eb948"
+    },
+    {
+      "name": "eval-typecheck-candidate-c-rooted",
+      "command": "pnpm",
+      "args": [
+        "exec",
+        "tsgo",
+        "--noEmit",
+        "-p",
+        "D:/tmp/context-inline-spill-closeout-20261103/tsconfig-eval.json",
+        "--composite",
+        "false"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 7427,
+      "report_ref": "retention-final/gates/eval-typecheck-candidate-c-rooted.json",
+      "log_ref": "retention-final/gates/eval-typecheck-candidate-c-rooted.txt",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "deterministic-candidate-c",
+      "command": "openclaw_runtime/node_modules/.bin/tsx.cmd",
+      "args": [
+        "--expose-gc",
+        "scripts/context-inline-spill-eval.mts",
+        "--mode",
+        "deterministic",
+        "--out",
+        "D:/tmp/context-inline-spill-closeout-20261103/final-evals"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 7501,
+      "report_ref": "retention-final/gates/deterministic-candidate-c.json",
+      "log_ref": "retention-final/gates/deterministic-candidate-c.txt",
+      "log_sha256": "a9dc9f40ed4de7c2cba107204977eaf301b7aff1a9f88350450d34b65c8ae318"
+    },
+    {
+      "name": "live-provider-candidate-c",
+      "command": "openclaw_runtime/node_modules/.bin/tsx.cmd",
+      "args": [
+        "--expose-gc",
+        "scripts/context-inline-spill-eval.mts",
+        "--mode",
+        "live",
+        "--out",
+        "D:/tmp/context-inline-spill-closeout-20261103/final-evals"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 21795,
+      "report_ref": "retention-final/gates/live-provider-candidate-c.json",
+      "log_ref": "retention-final/gates/live-provider-candidate-c.txt",
+      "log_sha256": "bd1697ec3d04bef6cae6dd3350675bea2aa399e46bfb373c885260ce51d8060f"
+    },
+    {
+      "name": "artifact-replay-candidate-c",
+      "command": "node",
+      "args": [
+        "D:/tmp/context-inline-spill-closeout-20261103/curate-final.mjs",
+        "--validate-evals-only"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 352,
+      "report_ref": "retention-final/gates/artifact-replay-candidate-c.json",
+      "log_ref": "retention-final/gates/artifact-replay-candidate-c.txt",
+      "log_sha256": "9ce265d874ecf59dc5ea043a233ec7ea660deacd2319e0e3fb5b4ffd6bc90577"
+    },
+    {
+      "name": "autoreview-final-isolated",
+      "command": "python",
+      "args": [
+        "-X",
+        "utf8",
+        "D:/tmp/context-inline-spill-closeout-20261103/autoreview-owner-provider.py",
+        "--mode",
+        "commit",
+        "--commit",
+        "HEAD",
+        "--engine",
+        "codex",
+        "--model",
+        "codex=space-bunny",
+        "--codex-bin",
+        "C:/Users/27933/AppData/Local/OpenAI/Codex/bin/b6c7fc9497179c98/codex.exe",
+        "--no-web-search",
+        "--prompt-file",
+        "D:/tmp/context-inline-spill-closeout-20261103/review-final-self-contained.md",
+        "--output",
+        "D:/tmp/context-inline-spill-closeout-20261103/autoreview-final-isolated.txt",
+        "--json-output",
+        "D:/tmp/context-inline-spill-closeout-20261103/autoreview-final-isolated.review.json",
+        "--stream-engine-output"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 23782,
+      "report_ref": "retention-final/gates/autoreview-final-isolated.json",
+      "log_ref": "retention-final/gates/autoreview-final-isolated.txt",
+      "log_sha256": "5e57a6f2ab419a373bfee49e1ee6eccfd1d9689b27efa7f2e824c92fa61977bc"
+    },
+    {
+      "name": "malformed-lineage-readback-candidate-c",
+      "command": "openclaw_runtime/node_modules/.bin/tsx.cmd",
+      "args": [
+        "D:/tmp/context-inline-spill-closeout-20261103/verify-malformed-lineage.mts"
+      ],
+      "exit_code": 0,
+      "elapsed_ms": 578,
+      "report_ref": "retention-final/gates/malformed-lineage-readback-candidate-c.json",
+      "log_ref": "retention-final/gates/malformed-lineage-readback-candidate-c.txt",
+      "log_sha256": "6a298fd5fd350009a21007738024c31b36a2bd8aa6f18f0a1ea76ae132dcb8dd"
+    }
+  ],
+  "tests": [
+    {
+      "file": "D:/tmp/context-inline-spill-closeout-20261103/reference-family-candidate-c-vitest.json",
+      "counts": {
+        "passed": 20,
+        "failed": 0,
+        "skipped": 0,
+        "total": 20
+      },
+      "expected_skips": []
+    },
+    {
+      "file": "D:/tmp/context-inline-spill-closeout-20261103/retention-candidate-c-vitest.json",
+      "counts": {
+        "passed": 175,
+        "failed": 0,
+        "skipped": 0,
+        "total": 175
+      },
+      "expected_skips": []
+    },
+    {
+      "file": "D:/tmp/context-inline-spill-closeout-20261103/memory-cleanup-candidate-c-vitest.json",
+      "counts": {
+        "passed": 41,
+        "failed": 0,
+        "skipped": 1,
+        "total": 42
+      },
+      "expected_skips": [
+        "L11: LoCoMo benchmark — full LLM evaluation runs full LoCoMo benchmark: retrieve + generate + score"
+      ]
+    }
+  ],
+  "review": {
+    "ref": "retention-final/review.json",
+    "accepted_findings": 0,
+    "engine": "codex",
+    "model": "space-bunny",
+    "endpoint_origin": "http://127.0.0.1:3065",
+    "scope": "final commit 16da6fdf22b0bda023becffa4272373be610ab54; whole-branch attempt has no verdict",
+    "source_context": "full current retention authority and ID-rewrite caller supplied",
+    "shell_feature_disabled": true,
+    "user_config_ignored_for_child": true,
+    "formal_acceptance": false
+  },
+  "scope_authority": {
+    "task": "Original owner handoff completed gate list and scoped-development-validation guide",
+    "original_handoff_sha256": "c303293a464edbd6b67131eda879ec127d942b31890b05eb6595f7eed8fa9c16",
+    "guide": "harness/specs/guides/scoped-development-validation.md",
+    "formal_release_requested": false
+  },
+  "additional_diagnostics": [
+    {
+      "counts": {
+        "passed": 9801,
+        "failed": 118,
+        "skipped": 55,
+        "total": 9974
+      },
+      "test_files": {
+        "passed": 1087,
+        "failed": 40,
+        "skipped": 5,
+        "total": 1132
+      },
+      "omissions": [
+        "pnpm test second isolated group",
+        "test:dcs",
+        "profile comms steps (scoped replay and compare ran separately)"
+      ],
+      "candidate": {
+        "commit": "3fd7fd92d202c6b0276081ed0fc97a98f6205f81",
+        "status": "",
+        "dirty": false,
+        "tree": "15314175fb6e2818ca2e0fdf18d5622a88056f24"
+      },
+      "exit_code": 1,
+      "command": "pnpm",
+      "args": [
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/context-inline-spill-default-path.md"
+      ],
+      "report_ref": "retention-final/additional-diagnostics/harness-fast-comms-candidate-b.json",
+      "log_ref": "retention-final/additional-diagnostics/harness-fast-comms-candidate-b.txt",
+      "log_sha256": "ddcdee0350537b66ceaa1cd7cfa6f85b57124d120890771ede41796f7294d80d"
+    },
+    {
+      "failure": "Agent Dev Workbench, deep-test, history and quality evidence exceeded the 24-hour freshness limit.",
+      "candidate": {
+        "tree": "15314175fb6e2818ca2e0fdf18d5622a88056f24",
+        "dirty": false,
+        "commit": "3fd7fd92d202c6b0276081ed0fc97a98f6205f81",
+        "status": ""
+      },
+      "exit_code": 1,
+      "command": "pnpm",
+      "args": [
+        "run",
+        "harness:ci"
+      ],
+      "report_ref": "retention-final/additional-diagnostics/harness-ci-candidate-b.json",
+      "log_ref": "retention-final/additional-diagnostics/harness-ci-candidate-b.txt",
+      "log_sha256": "f558d1c76e13fc14085337b4a70d74df7e92424f6c0ae13956cf7588ebcb1cbe"
+    }
+  ],
+  "original_reproduction": {
+    "source_commit": "10dd6c472419437800bde7a07ff8e3440929bfc2",
+    "source_status": "?? tests/unit/context-inline-spill-retention.test.ts\n",
+    "command": "pnpm",
+    "args": [
+      "exec",
+      "vitest",
+      "run",
+      "tests/unit/context-inline-spill-retention.test.ts",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/context-inline-spill-retention-20261103-0804/default-pruner-vitest.json"
+    ],
+    "ref": "retention-final/pre-implementation/reproduction-default-pruner-artifact.json",
+    "sha256": "c6f2167943e0f2f3b993201d634d947c3e87519b3ae06344cccbaea776f11053",
+    "baseline_ref": "off-mode-baseline.json",
+    "baseline_sha256": "54b54cbab66404e371510e29e9706e28ce7ae9abb0bcd824cad647a0f8260ef5"
+  },
+  "boundaries": [
+    "One fixture and one provider request per arm; this is not a statistical product-quality benchmark.",
+    "Recall is agent-driven through the real tool. Autonomous model tool selection and full agent-loop continuation are not claimed.",
+    "Retention protects budget-fitting pruner/replacement projections; full summarization and hard overflow remain with their existing owners.",
+    "Actual provider usage is reported when supplied; deterministic token figures are proxies and billing cost is not-run.",
+    "Windows development gates only; no cross-platform runtime acceptance is claimed.",
+    "This is task-level evidence, not the separate two-role Agent Engineering Acceptance orchestrator."
+  ],
+  "decision": {
+    "task_criteria_verified": true,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  }
+}

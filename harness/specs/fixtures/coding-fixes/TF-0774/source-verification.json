@@ -1,0 +1,13 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-01a1b68a",
+  "realHumanEvidence": false,
+  "candidate": "3be783eac6a4e2aae35558dbee705f47cf3caeb1",
+  "projection": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac",
+  "archiveSha256": "34ebdb2945e1d8e89db5180843b3dff64a950493cb6a1f73ac46e26bb64f7f7c",
+  "filesVerified": 20885,
+  "errors": [],
+  "gitlinks": [],
+  "dependencies": "Installed root/runtime/VerseBrowser dependency links",
+  "observedAt": "2026-11-08T01:56:14.481541+00:00"
+}

@@ -1,0 +1,8 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-coding-p1",
+  "candidate": "8b42b1351307c3c607c8971d5447d647daabdc83",
+  "trackedFiles": 20629,
+  "errors": [],
+  "dependencies": "reused root and frozen private runtime installation"
+}

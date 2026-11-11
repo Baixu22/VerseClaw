@@ -1,0 +1,82 @@
+{
+  "finalRows": [
+    {
+      "file": "fakecoding-inbox-navigation.spec.ts",
+      "title": "keeps four top-level entries and redirects the legacy Remote Tasks route",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "durationMs": 60438,
+      "source": "electron-verified.json"
+    },
+    {
+      "file": "fakecoding-inbox-navigation.spec.ts",
+      "title": "aggregates all sources, runs real decisions, and refreshes the pending count",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "durationMs": 76350,
+      "source": "electron-inbox-retained.json"
+    },
+    {
+      "file": "observability-trace-graph.spec.ts",
+      "title": "renders graph, details, and timeline from traceGraph host API",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "durationMs": 83641,
+      "source": "electron-verified.json"
+    },
+    {
+      "file": "observability-trace-graph.spec.ts",
+      "title": "shows each source health and diagnostic reason when no trace is available",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "durationMs": 12028,
+      "source": "electron-verified.json"
+    },
+    {
+      "file": "session-activity-trajectory.spec.ts",
+      "title": "raw v2 lifecycle drives visible errors while delayed legacy events cannot restore them",
+      "status": "passed",
+      "expectedStatus": "passed",
+      "durationMs": 49134,
+      "source": "electron-trajectory.json"
+    }
+  ],
+  "passed": 5,
+  "failed": 0,
+  "mode": "Final per-scenario results after fixture corrections; the initial multi-scenario run is retained with its failures. The Inbox final run uses the existing CLAWX_E2E_KEEP_TEMP=1 option to retain D: profile evidence; assertions and timeouts are unchanged.",
+  "rawRuns": [
+    {
+      "file": "electron-verified.json",
+      "stats": {
+        "startTime": "2026-11-07T04:51:36.453Z",
+        "duration": 329654.15499999997,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 2,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "electron-trajectory.json",
+      "stats": {
+        "startTime": "2026-11-07T04:59:33.384Z",
+        "duration": 53071.187,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "file": "electron-inbox-retained.json",
+      "stats": {
+        "startTime": "2026-11-07T06:22:19.060Z",
+        "duration": 147005.078,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  ]
+}

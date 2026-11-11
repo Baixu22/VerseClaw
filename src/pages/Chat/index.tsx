@@ -12,11 +12,10 @@ import { classifyDerivation } from '@shared/types/session-derivation';
 import { SessionFamilyNavigation } from '@/components/chat/SessionFamilyNavigation';
 import { ExecutionMigrationControl } from './ExecutionMigrationControl';
 import { TaskLedgerSummaryPanel } from '@/components/task-ledger/TaskLedgerSummaryPanel';
-import { activateWorkspaceScopedSession } from '@/lib/workspace-session';
 import { useSessionReadingPosition } from './use-session-reading-position';
 import { getTranscriptEntryId } from '@/lib/session-read-model';
 import { handoffFirstSendKey, type SessionHandoffOperation } from '@shared/types/session-handoff';
-import { AlertTriangle, ArrowDownToLine, ArrowLeft, Check, ChevronDown, GitBranchPlus, Loader2, Pencil, RefreshCw, Users, Workflow, X } from 'lucide-react';
+import { CornerUpLeft, MessagesSquare, Search, AlertTriangle, ArrowDownToLine, ArrowLeft, Check, ChevronDown, GitBranchPlus, Loader2, Pencil, RefreshCw, Users, Workflow, X } from 'lucide-react';
 import { FileText, ListChecks, Sparkles } from '@/components/icons/codex-icons';
 import {
   AssistantRuntimeProvider,
@@ -33,10 +32,11 @@ import type { KnowledgeErrorGuardAdvisory, KnowledgeErrorGuardSignal, SessionHan
 import type { GitWorktree } from '@shared/types/git';
 import { ComposerGitStrip } from './ComposerGitStrip';
 import { SessionTaskDock } from './SessionTaskDock';
+import { resolveContextPressure } from '@/components/chat/ChatContextPressure';
 const CheckpointsDialog = lazy(() => import('@/components/chat/CheckpointsDialog').then((m) => ({ default: m.CheckpointsDialog })));
 const CompactionArtifactViewer = lazy(() => import('./CompactionArtifactViewer').then((m) => ({ default: m.CompactionArtifactViewer })));
 import type { LongTaskControlStatus } from '@shared/types/long-task-control';
-import { classifySessionActivity, retainRecentSessionActivity } from '@shared/types/session-activity';
+import { classifySessionActivity, createEmptySessionActivitySnapshot, retainRecentSessionActivity } from '@shared/types/session-activity';
 import type { TaskLoopUpgradeSuggestion } from '@shared/product-semantics';
 import { useChatStore, type RawMessage } from '@/stores/chat';
 import { isInternalMessage } from '@/stores/chat/helpers';
@@ -61,6 +61,7 @@ import { SketchBlock } from '@/components/loading/StructuralSketch';
 import { Badge } from '@/components/ui/badge';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
+import { resolveChatModelRef } from '@/lib/chat-model-selection';
 import { ExecutionGraphCard } from './ExecutionGraphCard';
 import { TeamOrchestrationCard } from './TeamOrchestrationCard';
 import { ChatToolbar } from './ChatToolbar';
@@ -68,7 +69,8 @@ import { MessageNavRail, type MessageNavRailItem } from './MessageNavRail';
 import { HookSidebar } from '@/components/rareui/HookSidebar';
 import { buildCompletionActivity } from '@/components/rareui/completion-activity';
 import { useCompletionActivityStore } from '@/components/rareui/completion-activity-store';
-import { SessionActivityPanel } from './SessionActivityPanel';
+import { SessionActivityPanel, type ActiveWorkspaceSubject } from './SessionActivityPanel';
+import { collectSessionEnvironmentSources, hasSessionEnvironmentActivity } from './session-environment';
 import { useSessionActivityStore, selectSessionActivitySnapshot } from '@/stores/session-activity';
 import {
   classifySessionContinuityError,
@@ -77,7 +79,7 @@ import {
   type SessionContinuityRecommendation,
 } from './session-continuity';
 import { startTaskLoopUpgradeRun } from './task-loop-upgrade';
-import { extractText, normalizeMessageRole, splitThinkingIntoSegments } from './message-utils';
+import { extractText, isInternalProcessNarration, normalizeMessageRole, splitThinkingIntoSegments } from './message-utils';
 import { mediaKindOf } from './conversation-resources';
 import { projectMessageRender } from './message-render-projection';
 import { parseSubagentCompletionInfo } from './task-visualization';
@@ -101,6 +103,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { buildConfiguredModelOptions } from '@/lib/model-options';
 import {
+  activateWorkspaceSession,
+  workspaceOwnsSession,
   createFreshWorkspaceSessionKey,
   createWorkspaceScopedForkSession,
   createWorkspaceScopedHandoffSession,
@@ -119,12 +123,12 @@ import { extractAssistantReasoning, type AssistantReasoning } from '@/components
 import { PendingRunApprovals } from '@/components/tool-ui/PendingRunApprovals';
 import { RunMutationDiffs } from '@/components/tool-ui/RunMutationDiffs';
 import { RunTerminalSurfaces } from '@/components/tool-ui/RunTerminalSurfaces';
+import { CallChip } from '@/components/tool-ui/shared/call-chip';
 import { ToolUiPlanView } from '@/components/tool-ui/plan-view';
 import { mergeProcessSurfaces, processFromTerminalSurface, projectGeneratedFileDiff, projectRunProcesses, type RunCodeDiffSurface } from '@/components/tool-ui/run-surfaces';
 import { promoteRunSurfaces } from './run-surface-promotion';
 import { useRunApprovals } from './use-run-approvals';
 import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
-import { SessionWorkspacePicker } from '@/components/chat/SessionWorkspacePicker';
 import { WorkspacePickerMenu } from '@/components/chat/WorkspacePickerMenu';
 import { GeneratedFilesPanel } from '@/components/file-preview/GeneratedFilesPanel';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -307,31 +311,15 @@ export function resolveWorkspaceHeaderSessions({
     && allowedSessionKeys.has(session.key)
   ));
   const hasCurrent = workspaceSessions.some((session) => session.key === currentSessionKey);
-  return (hasCurrent ? workspaceSessions : [{ key: currentSessionKey, displayName: formatNewSessionDisplayName(currentSessionKey) }, ...workspaceSessions])
-    .slice(-12)
-    .reverse();
-}
-
-/** #180: the lineage line shows the fork point as a short date+time. */
-function formatLineageTimestamp(value: number): string {
-  try {
-    return new Intl.DateTimeFormat(undefined, {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(new Date(value));
-  } catch {
-    return new Date(value).toLocaleString();
-  }
+  const result: ChatSession[] = hasCurrent ? workspaceSessions : [{ key: currentSessionKey, displayName: formatNewSessionDisplayName(currentSessionKey) }, ...workspaceSessions];
+  return result
+    .sort((left, right) => Number(right.key === currentSessionKey) - Number(left.key === currentSessionKey)
+      || (right.updatedAt ?? 0) - (left.updatedAt ?? 0));
 }
 
 function formatNewSessionDisplayName(sessionKey: string): string {
   const rawId = sessionKey.split(':').pop() || sessionKey;
-  if (rawId.startsWith('session-')) {
-    return `new session ${rawId.slice('session-'.length)}`;
-  }
-  return rawId;
+  return rawId.startsWith('session-') ? `new session ${rawId.slice('session-'.length)}` : rawId;
 }
 
 export function resolveWorkspaceSessionTarget(workspace: WorkspaceProfile, currentAgentId = 'main'): {
@@ -399,7 +387,6 @@ function ProjectSessionHeader({
   workspaceProfiles,
   switchWorkspace,
   pickWorkspaceFolder,
-  onSelectWorktree,
   onOpenTaskLedger,
   onOpenClawGraph,
   sessions,
@@ -429,7 +416,6 @@ function ProjectSessionHeader({
   workspaceProfiles: Array<{ id: string; name: string; rootPath: string; lastOpenedAt?: number }>;
   switchWorkspace: (id: string) => Promise<unknown>;
   pickWorkspaceFolder: () => Promise<void>;
-  onSelectWorktree: (tree: GitWorktree) => Promise<void>;
   onOpenTaskLedger: () => void;
   onOpenClawGraph: () => void;
   sessions: ChatSession[];
@@ -457,6 +443,7 @@ function ProjectSessionHeader({
   const [open, setOpen] = useState<'workspace' | 'session' | null>(null);
   const [editingSession, setEditingSession] = useState(false);
   const [sessionDraft, setSessionDraft] = useState('');
+  const [sessionSearch, setSessionSearch] = useState('');
   const [renaming, setRenaming] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const sessionName = getSessionDisplayName(currentSessionKey, sessions, sessionLabels);
@@ -473,6 +460,11 @@ function ProjectSessionHeader({
   const recentSessions = useMemo(() => {
     return resolveWorkspaceHeaderSessions({ currentSessionKey, sessions, workspaceSessionKeys });
   }, [currentSessionKey, sessions, workspaceSessionKeys]);
+  const currentEntry = sessions.find((session) => session.key === currentSessionKey);
+  const currentSource = currentEntry ? classifyDerivation(currentEntry).parentSessionKey : null;
+  const sourceSession = sessions.find((session) => session.key === currentSource);
+  const derivedKeys = new Set(derivedSessions.map((session) => session.key));
+  const matchesSearch = (session: ChatSession) => getSessionDisplayName(session.key, sessions, sessionLabels).toLocaleLowerCase().includes(sessionSearch.trim().toLocaleLowerCase());
   const recommendedContinuityAction = continuityRecommendation?.disabled ? null : continuityRecommendation?.action;
 
   useEffect(() => {
@@ -482,8 +474,10 @@ function ProjectSessionHeader({
       if (target instanceof Node && rootRef.current?.contains(target)) return;
       setOpen(null);
     };
+    const handleKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { setOpen(null); rootRef.current?.querySelector<HTMLButtonElement>('[data-testid="chat-header-session-name"]')?.focus(); } };
     document.addEventListener('pointerdown', handlePointerDown);
-    return () => document.removeEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKey);
+    return () => { document.removeEventListener('pointerdown', handlePointerDown); document.removeEventListener('keydown', handleKey); };
   }, [open]);
 
   const startRenameSession = () => {
@@ -507,6 +501,24 @@ function ProjectSessionHeader({
     } finally {
       setRenaming(false);
     }
+  };
+
+  const renderNavigationRow = (session: ChatSession, derived: boolean) => {
+    const source = classifyDerivation(session).parentSessionKey;
+    const dotState = getHeaderSessionDotState({ sessionKey: session.key, currentSessionKey, runtimeRuns, activeRunId, sending, pendingFinal, runError });
+    return <button key={session.key} type="button" className="codex-header-menu__item chat-session-navigation-row" data-hook-key={session.key}
+      data-testid={derived ? `chat-session-derived-${session.key}` : `chat-session-item-${session.key}`}
+      aria-current={session.key === currentSessionKey ? 'page' : undefined}
+      onClick={() => { setOpen(null); setSessionSearch(''); switchSession(session.key); }}>
+      {dotState ? <OrbStatus state={dotState} className="size-4 shrink-0" /> : <MessagesSquare className="h-4 w-4 shrink-0 opacity-60" aria-hidden="true" />}
+      <span className="min-w-0 flex-1">
+        <span className="block break-words text-xs font-medium">{getSessionDisplayName(session.key, sessions, sessionLabels)}</span>
+        {source && <span className="block truncate text-2xs text-muted-foreground" data-testid="chat-session-lineage">
+          {t('session.navigation.from', { session: getSessionDisplayName(source, sessions, sessionLabels) })}
+        </span>}
+      </span>
+      {session.key === currentSessionKey && <Check className="h-3.5 w-3.5 shrink-0" aria-label={t('composer.git.current')} />}
+    </button>;
   };
 
   return (
@@ -543,7 +555,6 @@ function ProjectSessionHeader({
             className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 motion-reduce:animate-none"
             extraActions={(
               <>
-                <SessionWorkspacePicker embedded disabled={sending || pendingFinal} onSelect={async tree => { await onSelectWorktree(tree); setOpen(null); }} />
                 <button type="button" className="codex-header-menu__item codex-header-menu__item--muted" onClick={() => { setOpen(null); onOpenTaskLedger(); }}>
                   <ListChecks className="h-4 w-4" />
                   {t('workspace.actions.openTaskLedger')}
@@ -582,7 +593,7 @@ function ProjectSessionHeader({
             <TooltipTrigger asChild>
           <button
             type="button"
-            className="inline-flex max-w-[460px] items-center gap-1 rounded-md px-1.5 py-1 font-medium text-foreground transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+            className="inline-flex max-w-[360px] items-center gap-1.5 rounded-md px-1.5 py-1 text-sm font-medium text-foreground transition-colors hover:bg-black/5 dark:hover:bg-white/10"
             onClick={() => setOpen((current) => current === 'session' ? null : 'session')}
             onDoubleClick={(event) => {
               event.preventDefault();
@@ -590,7 +601,7 @@ function ProjectSessionHeader({
             }}
             data-testid="chat-header-session-name"
           >
-            <span className="chat-header-session-label text-xs font-normal text-muted-foreground">{t("session.manage")}</span>
+            <span className="chat-header-session-label truncate">{sessionName}</span>
             <ChevronDown className="chat-header-session-chevron h-3.5 w-3.5 shrink-0 text-muted-foreground" />
           </button>
             </TooltipTrigger>
@@ -598,7 +609,7 @@ function ProjectSessionHeader({
           </Tooltip>
         )}
         {open === 'session' && (
-            <div className="codex-header-menu motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 motion-reduce:animate-none">
+            <div className="codex-header-menu chat-session-navigation-menu" data-testid="chat-session-navigation-menu" role="dialog" aria-label={t('session.navigation.title')}>
             <button
               type="button"
               className="codex-header-menu__item codex-header-menu__item--muted"
@@ -615,7 +626,7 @@ function ProjectSessionHeader({
               onClick={() => { setOpen(null); onCheckpoints(); }}
             >
               <ListChecks className="h-4 w-4" />
-              {t('checkpoints.title')}
+              {t('filePreview.checkpoints.title')}
             </button>
             <button
               type="button"
@@ -665,95 +676,27 @@ function ProjectSessionHeader({
               )}
             </button>
             <hr className="codex-header-menu__sep" />
+            <label className="codex-composer-search mx-1 mb-1">
+              <Search className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <input value={sessionSearch} onChange={(event) => setSessionSearch(event.target.value)} aria-label={t('session.navigation.search')} placeholder={t('session.navigation.search')} className="min-w-0 flex-1 bg-transparent text-xs outline-none" data-testid="chat-session-navigation-search" />
+            </label>
+            {sourceSession && <button type="button" className="codex-header-menu__item chat-session-source" data-testid="chat-session-source" onClick={() => { setOpen(null); switchSession(sourceSession.key); }}>
+              <CornerUpLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
+              <span className="min-w-0"><span className="block text-2xs text-muted-foreground">{t('session.navigation.source')}</span><span className="block truncate text-xs">{getSessionDisplayName(sourceSession.key, sessions, sessionLabels)}</span></span>
+            </button>}
+            <div className="chat-session-navigation-list">
             <HookSidebar activeKey={currentSessionKey}>
-            {recentSessions.map((session) => {
-              const relation = classifyDerivation(session);
-              const forkSourceSessionKey = relation.kind === 'fork' ? relation.parentSessionKey : null;
-              const dotState = getHeaderSessionDotState({
-                sessionKey: session.key,
-                currentSessionKey,
-                runtimeRuns,
-                activeRunId,
-                sending,
-                pendingFinal,
-                runError,
-              });
-              return (
-                <button
-                  key={session.key}
-                  type="button"
-                  className="codex-header-menu__item"
-                  data-hook-key={session.key}
-                  onClick={() => {
-                    setOpen(null);
-                    switchSession(session.key);
-                  }}
-                >
-                  {dotState ? (
-                    <OrbStatus state={dotState} className="size-4 shrink-0" />
-                  ) : (
-                    <span className="size-4 shrink-0" />
-                  )}
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-xs font-medium text-foreground">
-                      {getSessionDisplayName(session.key, sessions, sessionLabels)}
-                    </span>
-                    <span className="block truncate font-mono text-2xs text-muted-foreground">{session.key}</span>
-                    {forkSourceSessionKey && (
-                      <span
-                        className="block truncate text-2xs text-muted-foreground"
-                        data-testid="chat-session-lineage"
-                      >
-                        {(() => {
-                          const forkTimestamp = session.forkedFromTimestamp;
-                          return typeof forkTimestamp === 'number'
-                            ? t('session.lineage.forkedFromAt', {
-                                session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
-                                time: formatLineageTimestamp(forkTimestamp),
-                              })
-                            : t('session.lineage.forkedFrom', {
-                                session: getSessionDisplayName(forkSourceSessionKey, sessions, sessionLabels),
-                              });
-                        })()}
-                      </span>
-                    )}
-                  </span>
-                </button>
-              );
-            })}
+            {recentSessions.filter((session) => !derivedKeys.has(session.key) && session.key !== sourceSession?.key && matchesSearch(session)).map((session) => renderNavigationRow(session, false))}
             </HookSidebar>
             {derivedSessions.length > 0 && (
               <>
-                <hr className="codex-header-menu__sep" />
-                <div
-                  className="px-2 py-1 text-2xs font-medium text-muted-foreground"
-                  data-testid="chat-derived-sessions-title"
-                >
+                <div className="codex-composer-menu__label codex-composer-menu__label--divider" data-testid="chat-derived-sessions-title">
                   {t('session.derived.title', { count: derivedSessions.length })}
                 </div>
-                {derivedSessions.map((session) => (
-                  <button
-                    key={`derived-${session.key}`}
-                    type="button"
-                    className="codex-header-menu__item"
-                    data-testid={`chat-session-derived-${session.key}`}
-                    onClick={() => {
-                      setOpen(null);
-                      switchSession(session.key);
-                    }}
-                  >
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-xs font-medium text-foreground">
-                        {getSessionDisplayName(session.key, sessions, sessionLabels)}
-                      </span>
-                      <span className="block truncate font-mono text-2xs text-muted-foreground">
-                        {session.key}
-                      </span>
-                    </span>
-                  </button>
-                ))}
+                {derivedSessions.filter(matchesSearch).map((session) => renderNavigationRow(session, true))}
               </>
             )}
+            </div>
           </div>
         )}
       </div>
@@ -937,12 +880,19 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     () => (agentsList ?? []).find((a) => a.id === currentAgentId) ?? null,
     [agentsList, currentAgentId],
   );
-  const fallbackModelRef = useMemo(
-    () => buildConfiguredModelOptions(providerAccounts, providerStatuses, providerDefaultAccountId)[0]?.modelRef ?? null,
+  const composerModelOptions = useMemo(
+    () => buildConfiguredModelOptions(providerAccounts, providerStatuses, providerDefaultAccountId),
     [providerAccounts, providerDefaultAccountId, providerStatuses],
   );
-  const currentModelRef = sessions.find((session) => session.key === currentSessionKey)?.modelRefOverride
-    || currentAgent?.modelRef || defaultModelRef || fallbackModelRef || null;
+  const lastChatModelRef = useSettingsStore((state) => state.lastChatModelRef);
+  const currentModelRef = resolveChatModelRef({
+    session: sessions.find((session) => session.key === currentSessionKey),
+    hasMessages: messages.length > 0,
+    lastModelRef: lastChatModelRef,
+    modelOptions: composerModelOptions,
+    agentModelRef: currentAgent?.modelRef,
+    defaultModelRef,
+  });
   const sessionPolicyRefreshKey = useMemo(() => JSON.stringify({
     agentId: currentAgentId,
     modelRef: currentModelRef,
@@ -987,6 +937,14 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const skipNextWorkspaceStateSaveRef = useRef(false);
   const draftSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingWorkspaceSaveRef = useRef<{ id: string; sessionKey: string; state: WorkspaceUiState } | null>(null);
+  const pendingViewSaveRef = useRef<(() => Promise<void>) | null>(null);
+  const [gitRevision, setGitRevision] = useState(0);
+  const handleGitChanged = useCallback(() => {
+    setGitRevision((value) => value + 1);
+    const workspace = useWorkspacesStore.getState().activeWorkspace;
+    const key = useChatStore.getState().currentSessionKey;
+    if (workspace) void useSessionActivityStore.getState().refreshGit(workspace.id, key);
+  }, []);
   const lastKnowledgeAdvisorySignalKeyRef = useRef<string | null>(null);
   const knowledgeAdvisorySourceRef = useRef<KnowledgeAdvisorySource | null>(null);
   const [childTranscripts, setChildTranscripts] = useState<Record<string, RawMessage[]>>({});
@@ -1020,8 +978,12 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(updatePanelDensity) : null;
     observer?.observe(container);
     if (chatToolbarRef.current) observer?.observe(chatToolbarRef.current);
+    window.addEventListener('resize', updatePanelDensity);
     updatePanelDensity();
-    return () => observer?.disconnect();
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener('resize', updatePanelDensity);
+    };
   }, [currentSessionKey, panelOpen, setArtifactPanelExpanded, setTerminalPlacement]);
   const [compactionStatus, setCompactionStatus] = useState<SessionCompactionStatus | null>(null);
   const uiDepthMode = useSettingsStore((s) => s.uiDepthMode);
@@ -1150,15 +1112,11 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         return;
       }
     }
-    const owners = workspaceProfiles.filter((profile) => profile.activeSessionKey === sessionKey
-      || Object.hasOwn(profile.sessionStates ?? {}, sessionKey) || Object.hasOwn(profile.coordinatorBindings ?? {}, sessionKey)
-      || Object.values(profile.agentBindings ?? {}).some((binding) => binding.sessionKey === sessionKey));
-    if (owners.length !== 1) { toast.error(t('projectEntry.unavailable')); return; }
     try {
       await persistCurrentWorkspaceSessionState();
-      if (await activateWorkspaceScopedSession(owners[0].id, sessionKey)) navigate('/');
+      if (await activateWorkspaceSession(sessionKey)) navigate('/');
     } catch { toast.error(t('projectEntry.unavailable')); }
-  }, [sessions, currentSessionKey, openWorkspacePanel, workspaceProfiles, persistCurrentWorkspaceSessionState, navigate, t]);
+  }, [sessions, currentSessionKey, openWorkspacePanel, persistCurrentWorkspaceSessionState, navigate, t]);
 
   const handleSwitchWorkspace = useCallback(async (workspaceId: string) => {
     await persistCurrentWorkspaceSessionState({
@@ -1360,12 +1318,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   useEffect(() => {
     const previousSessionKey = lastObservedSessionKeyRef.current;
     if (previousSessionKey !== currentSessionKey) {
-      const pending = pendingWorkspaceSaveRef.current;
-      if (pending) { pendingWorkspaceSaveRef.current = null; void saveWorkspaceState(pending); }
-      if (draftSaveTimerRef.current) clearTimeout(draftSaveTimerRef.current);
       lastObservedSessionKeyRef.current = currentSessionKey;
     }
-  }, [currentSessionKey, persistCurrentWorkspaceSessionState, saveWorkspaceState]);
+  }, [currentSessionKey]);
   const graphStepCache = graphStepCacheStore.get(currentSessionKey) ?? EMPTY_GRAPH_STEP_CACHE;
 
   /**
@@ -1493,6 +1448,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     if (!activeWorkspace?.id) return;
     const restored = workspaceStateRestoreRef.current;
     if (restored.workspaceId === activeWorkspace.id && restored.sessionKey === currentSessionKey) return;
+    if (!workspaceOwnsSession(activeWorkspace, currentSessionKey)) return;
     const sessionState = getWorkspaceSessionState(activeWorkspace, currentSessionKey);
     skipNextWorkspaceStateSaveRef.current = true;
     workspaceStateRestoreRef.current = {
@@ -1518,6 +1474,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
 
   useEffect(() => {
     if (!activeWorkspace?.id || activeWorkspace.activeSessionKey === currentSessionKey) return;
+    if (!workspaceOwnsSession(activeWorkspace, currentSessionKey)) return;
     const restoreTarget = workspaceSessionRestoreTargetRef.current;
     if (restoreTarget?.workspaceId === activeWorkspace.id) {
       if (restoreTarget.sessionKey === currentSessionKey) {
@@ -1529,7 +1486,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       id: activeWorkspace.id,
       activeSessionKey: currentSessionKey,
     });
-  }, [activeWorkspace?.id, activeWorkspace?.activeSessionKey, currentSessionKey, saveWorkspaceState]);
+  }, [activeWorkspace, currentSessionKey, saveWorkspaceState]);
 
   const handleComposerDraftChange = useCallback((value: string) => {
     composerDraftRevision.current += 1;
@@ -1797,6 +1754,15 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     const nodeId = longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId;
     navigate(nodeId ? `/task-ledger?nodeId=${encodeURIComponent(nodeId)}` : '/task-ledger');
   }, [longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId, navigate]);
+  /** The task dock's ledger link: carries workspace and session, like the scope list. */
+  const handleOpenSessionTask = useCallback((taskNodeId: string) => {
+    const query = new URLSearchParams({
+      ...(activeWorkspaceId ? { workspaceId: activeWorkspaceId } : {}),
+      sessionKey: currentSessionKey,
+      nodeId: taskNodeId,
+    });
+    navigate(`/task-ledger?${query}`);
+  }, [activeWorkspaceId, currentSessionKey, navigate]);
   const handleOpenClawGraph = useCallback(() => {
     const runId = longTaskControlStatus?.latestCheckpoint?.clawGraphRunId;
     navigate(runId ? `/clawgraph?runId=${encodeURIComponent(runId)}` : '/clawgraph');
@@ -1920,25 +1886,39 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
 
   useEffect(() => {
     if (!activeWorkspace?.id) return;
+    if (!workspaceOwnsSession(activeWorkspace, currentSessionKey)) return;
     if (skipNextWorkspaceStateSaveRef.current) {
       skipNextWorkspaceStateSaveRef.current = false;
       return;
     }
-    const timer = setTimeout(() => {
-      void saveWorkspaceState({
+    const captured = captureCurrentWorkspaceSessionState();
+    const save = () => saveWorkspaceState({
         id: activeWorkspace.id,
         sessionKey: currentSessionKey,
-        state: captureCurrentWorkspaceSessionState(),
+        state: captured,
       });
+    pendingViewSaveRef.current = save;
+    const timer = setTimeout(() => {
+      pendingViewSaveRef.current = null;
+      void save();
     }, 300);
     return () => clearTimeout(timer);
-  }, [activeWorkspace?.id, artifactActiveTabId, artifactTabs, captureCurrentWorkspaceSessionState, currentSessionKey, panelOpen, runActivityExpandedOverrides, saveWorkspaceState]);
+  }, [activeWorkspace, artifactActiveTabId, artifactTabs, captureCurrentWorkspaceSessionState, currentSessionKey, panelOpen, runActivityExpandedOverrides, saveWorkspaceState]);
 
-  useEffect(() => () => {
-    if (draftSaveTimerRef.current) clearTimeout(draftSaveTimerRef.current);
-    const pending = pendingWorkspaceSaveRef.current;
-    if (pending) { pendingWorkspaceSaveRef.current = null; void useWorkspacesStore.getState().saveWorkspaceState(pending); }
-  }, []);
+  useEffect(() => {
+    const draft = pendingWorkspaceSaveRef;
+    const view = pendingViewSaveRef;
+    const timer = draftSaveTimerRef;
+    return () => {
+      if (timer.current) clearTimeout(timer.current);
+      // Pending data and closures retain the original workspace/session.
+      const pending = draft.current;
+      if (pending) void useWorkspacesStore.getState().saveWorkspaceState(pending);
+      else void view.current?.();
+      draft.current = null;
+      view.current = null;
+    };
+  }, [activeWorkspace?.id, currentSessionKey]);
 
   const contextRangeRef = useRef(contextRange);
   contextRangeRef.current = contextRange;
@@ -2611,9 +2591,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   );
   const {
     streamTimestamp,
+    streamText,
     streamTools,
     hasStreamText,
-    hasRunningStreamToolStatus,
     shouldRenderStreaming,
     hasAnyStreamContent,
   } = streamState;
@@ -2728,10 +2708,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const hasRunningRuntimeToolStatus = executionProjection.hasRunningRuntimeToolStatus;
   const handlePauseComposerSession = useCallback(async () => {
     if (!inputRunActive) return;
-    const visit = useChatStore.getState().viewRevision;
-    await abortRun();
-    const current = useChatStore.getState();
-    if (!isCurrentControlScope() || current.viewRevision !== visit || current.sending || current.activeRunId || current.error) return;
+    setComposerPaused(true);
     if (activeWorkspace?.id) {
       await saveWorkspaceState({
         id: activeWorkspace.id,
@@ -2739,8 +2716,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         state: { composerRunState: 'paused' },
       });
     }
-    if (isCurrentControlScope() && useChatStore.getState().viewRevision === visit) setComposerPaused(true);
-  }, [abortRun, activeWorkspace?.id, currentSessionKey, inputRunActive, isCurrentControlScope, saveWorkspaceState]);
+    await abortRun();
+  }, [abortRun, activeWorkspace?.id, currentSessionKey, inputRunActive, saveWorkspaceState]);
 
   const handleResumeComposerSession = useCallback(async () => {
     if (!composerPaused) return;
@@ -2902,6 +2879,30 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     sessionActivityRuns.flatMap((run) => projectRunProcesses(run)),
     userRunCards.flatMap((card) => card.surfaces.terminals.map(processFromTerminalSurface)),
   ), [sessionActivityRuns, userRunCards]);
+  const activeWorkspaceSubject = useMemo<ActiveWorkspaceSubject | null>(() => {
+    if (!panelOpen) return null;
+    const tab = artifactTabs.find((entry) => entry.id === artifactActiveTabId);
+    if (!tab) return null;
+    if (tab.kind === 'review') return { kind: 'review' };
+    if ((tab.kind === 'process' || tab.kind === 'subagent') && tab.subject) return { kind: tab.kind, subject: tab.subject };
+    return null;
+  }, [artifactActiveTabId, artifactTabs, panelOpen]);
+  /* The status card's Context row reads the same resolved facts as the
+   * composer's pressure readout, so the two can never disagree. */
+  const sessionContextUsage = useMemo(() => {
+    const pressure = resolveContextPressure({ liveUsage, contextRange });
+    return {
+      usedTokens: pressure.usedTokens,
+      maxTokens: pressure.maxTokens,
+      utilisation: pressure.utilisation,
+      cacheReadTokens: pressure.cacheReadTokens,
+      warmTurnHitRate: pressure.warmTurnHitRate,
+    };
+  }, [contextRange, liveUsage]);
+  const sessionEnvironmentSources = useMemo(
+    () => collectSessionEnvironmentSources(messages, sessionActivityRuns, currentSessionKey, activeRunId),
+    [messages, sessionActivityRuns, currentSessionKey, activeRunId],
+  );
 
   /**
    * Is the owning turn summary currently showing its full plan?
@@ -2916,24 +2917,25 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     const cardApprovals = approvalsByRunKey.get(card.runKey) ?? [];
     const defaultExpanded = card.status === 'error'
       || card.status === 'aborted'
+      || card.steps.some((step) => step.status === 'error')
+      || card.surfaces.terminals.some((terminal) => terminal.status === 'failed')
       || (card.status === 'completed' && runActivityKeepExpandedOnComplete)
-      || (card.active && card.streamingReplyText == null)
-      || !card.hasVisibleReply;
+      || (!card.active && !card.hasVisibleReply);
     return cardApprovals.length > 0
       || (runActivityExpandedOverrides[turnDisclosureKey(currentSessionKey, card)] ?? defaultExpanded);
   }, [approvalsByRunKey, currentSessionKey, runActivityExpandedOverrides, runActivityKeepExpandedOnComplete]);
 
 
-  const visibleSessionActivitySnapshot = useMemo(() => {
-    if (!sessionActivitySnapshot) return undefined;
+  const [visibleSessionActivitySnapshot, sessionActivitySnapshotPending] = useMemo(() => {
+    if (!sessionActivitySnapshot) return [createEmptySessionActivitySnapshot(currentSessionKey), true] as const;
     const policyScope = sessionActivitySnapshot.policy?.scope;
     if (policyScope && (
       policyScope.sessionKey !== currentSessionKey
       || (activeWorkspaceId != null && policyScope.workspaceId !== activeWorkspaceId)
     )) {
-      return undefined;
+      return [createEmptySessionActivitySnapshot(currentSessionKey), true] as const;
     }
-    return retainRecentSessionActivity(sessionActivitySnapshot, sessionActivityRetentionMinutes, sessionActivityRetentionClock);
+    return [retainRecentSessionActivity(sessionActivitySnapshot, sessionActivityRetentionMinutes, sessionActivityRetentionClock), false] as const;
   }, [
     activeWorkspaceId,
     currentSessionKey,
@@ -2947,19 +2949,11 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       showCommands: sessionActivityShowCommands,
     })
     : 'none';
-  /**
-   * Does the card have anything to render?
-   *
-   * `classifySessionActivity` only sees the snapshot, but two of the card's four
-   * sections are fed from the runtime run state instead, and it also shows a
-   * clean repository (which the classifier scores as nothing to report). Gating
-   * on the classifier alone therefore both hid the toggle over a card that had a
-   * plan to show, and offered a toggle onto a card that rendered nothing.
-   */
-  const sessionActivityHasContent = sessionActivityLevel !== 'none'
-    || Boolean(visibleSessionActivitySnapshot?.policy)
-    || Boolean(sessionActivityShowGit && visibleSessionActivitySnapshot?.git?.isRepository)
-    || (sessionActivityPlan?.todos.length ?? 0) > 0
+  const sessionActivityHasContent = hasSessionEnvironmentActivity(visibleSessionActivitySnapshot, {
+    showGit: sessionActivityShowGit,
+    showCommands: sessionActivityShowCommands,
+  })
+    || sessionEnvironmentSources.length > 0
     || (sessionActivityShowCommands && sessionActivityProcesses.length > 0);
   const hasSessionActivityEntry = canShowChatSideRail
     && sessionActivityPanelEnabled
@@ -2971,9 +2965,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const sessionActivityPassive = false;
   const sessionActivityOverride = sessionActivityOpenOverrides[currentSessionKey];
   const sessionActivityRailOpen = (sessionActivityOverride ?? sessionActivityPassive)
-    && Boolean(visibleSessionActivitySnapshot)
-    && sessionActivityPanelEnabled
-    && !isEmpty;
+    && hasSessionActivityEntry;
   const sessionActivityRailLayer = sessionActivityOverride === true ? 'overlay' : 'inline';
   // Explicit status requests leave the transcript width unchanged.
   const handleToggleSessionActivity = useCallback(() => {
@@ -2992,6 +2984,34 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     sessionActivityOpenOverrides,
     sessionActivityPassive,
   ]);
+
+  const handleCloseSessionActivity = useCallback(() => {
+    setSessionActivityOpenOverrides((current) => ({ ...current, [currentSessionKey]: false }));
+  }, [currentSessionKey]);
+
+  useEffect(() => {
+    if (!sessionActivityRailOpen || sessionActivityRailLayer !== 'overlay') return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.target instanceof Element && !event.target.closest(
+        '[data-testid="chat-session-status-rail"], [data-testid="chat-session-activity-control"]',
+      )) handleCloseSessionActivity();
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      const withinEnvironment = event.target instanceof Element && event.target.closest(
+        '[data-testid="chat-session-status-rail"], [data-testid="chat-session-activity-control"]',
+      );
+      // A tooltip on this surface may already have consumed Escape.
+      if (event.key !== 'Escape' || (event.defaultPrevented && !withinEnvironment)) return;
+      handleCloseSessionActivity();
+      document.querySelector<HTMLButtonElement>('[data-testid="chat-session-activity-toggle"]')?.focus();
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [handleCloseSessionActivity, sessionActivityRailLayer, sessionActivityRailOpen]);
 
   useEffect(() => {
     if (!shouldClearStoreLifecycleFromHistory) return;
@@ -3013,6 +3033,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     [messages, userRunCards],
   );
   const streamingReplyText = executionProjection.streamingReplyText;
+  const visibleStreamingText = streamingReplyText
+    ?? (hasStreamText && streamTools.length === 0 && !isInternalProcessNarration(streamText) ? streamText : null);
   const userRunCardsByTriggerIndex = useMemo(
     () => groupRunCardsByTriggerIndex(userRunCards),
     [userRunCards],
@@ -3061,7 +3083,13 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const messageWorkspaceRoot = activeWorkspace?.rootPath || currentAgent?.workspace || null;
   const messageRenderRows = useMemo<ChatMessageRenderRow[]>(() => messages.map((msg, idx) => {
     const hasUserFacingMedia = hasUserFacingMediaAttachments(msg);
-    const suppressAssistantText = foldedNarrationIndices.has(idx);
+    // User-facing progress stays in the transcript; internal narration stays
+    // in the process log. Folding a tool must never swallow its explanation.
+    const repeatsLiveReply = visibleStreamingText != null
+      && extractText(msg).trim() === visibleStreamingText.trim()
+      && userRunCards.some((card) => card.active && idx > card.triggerIndex);
+    const suppressAssistantText = foldedNarrationIndices.has(idx)
+      && (isInternalProcessNarration(extractText(msg)) || repeatsLiveReply);
     const suppressToolCards = runSegmentMessageIndices.has(idx);
     const suppressReasoning = runCardReasoning.adoptedIndices.has(idx);
     const textOverride = replyTextOverrides.get(idx);
@@ -3108,6 +3136,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     runCardReasoning,
     runSegmentMessageIndices,
     userRunCardsByTriggerIndex,
+    userRunCards,
+    visibleStreamingText,
   ]);
   const visibleMessageRows = useMemo(() => messageRenderRows.filter(row => !row.hidden), [messageRenderRows]);
   const getMessageScrollElement = useCallback(() => scrollElementRef.current, []);
@@ -3247,7 +3277,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
           : 'thinking') as 'thinking' | 'streaming' | 'syncing',
     }
     : null;
-  const showStandaloneStreamStatus = inputRunActive && streamingReplyText == null && !pendingImageGeneration;
   /**
    * While a run is live its thinking belongs to the active card, not to the
    * streaming bubble. An active card always clears `hasActivity` (`card.active`
@@ -3258,6 +3287,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     () => userRunCards.some((card) => card.active),
     [userRunCards],
   );
+  const showStandaloneStreamStatus = inputRunActive && streamingReplyText == null
+    && !pendingImageGeneration && !streamReasoningAdopted;
 
 
   // Cache generated files per run so the activity receipt and artifact panel share one projection.
@@ -3374,7 +3405,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     <div
       ref={splitContainerRef}
       data-testid="chat-page"
-      data-session-generation={controlGeneration ?? ''}
       data-project-workspace={projectWorkspaceId}
       className={cn(
         'relative flex min-h-0 overflow-hidden transition-colors duration-180 motion-reduce:transition-none',
@@ -3400,9 +3430,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       )}
       >
         <div data-testid="chat-toolbar-drag-region" className="drag-region absolute inset-0 z-0" aria-hidden="true" />
-        <div className="no-drag relative z-10 min-w-0">
+        <div className="no-drag relative z-10 flex min-w-0 items-center gap-1">
           {!isEmpty && (
-            <div className="flex items-center gap-1.5">
+            <div className="flex min-w-0 items-center gap-1.5">
               <ProjectSessionHeader
                 workspaceId={activeWorkspaceId}
                 projectName={activeWorkspace?.name || basenameFromPath(activeWorkspace?.rootPath) || 'clawx'}
@@ -3410,7 +3440,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                 workspaceProfiles={workspaceProfiles}
                 switchWorkspace={handleSwitchWorkspace}
                  pickWorkspaceFolder={handlePickWorkspaceFolder}
-                onSelectWorktree={handleSwitchWorktreeWorkspace}
                  onOpenTaskLedger={handleOpenTaskLedger}
                  onOpenClawGraph={handleOpenClawGraph}
                 sessions={sessions}
@@ -3436,6 +3465,20 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
               />
             </div>
           )}
+          {/* Lineage rides in the header row as quiet chips (source link,
+            * descendants picker) instead of a strip pinned over the transcript;
+            * it stays outside the `isEmpty` gate so a derived session that has
+            * not spoken yet still shows where it came from. */}
+          <SessionFamilyNavigation session={currentSession} sessions={sessions} derivation={sessionActivitySnapshot?.derivation}
+            onNavigate={(key) => { void openFamilySession(key); }} onRefresh={() => { void loadSessions(); }} />
+          {/* The session's task container rides in the same row as a quiet
+            * chip: always present (empty / unavailable / stale stay distinct),
+            * but no longer a strip announcing "0 tasks" over the transcript.
+            * The running task itself is docked above the composer. */}
+          <TaskLedgerSummaryPanel workspaceId={activeWorkspace?.id} session={currentSession}
+            binding={activeWorkspace?.coordinatorBindings?.[currentSessionKey]} mode="bar" projectWide={Boolean(projectWorkspaceId)}
+            onTaskSelected={async () => { await fetchWorkspaces(); await loadSessions({ force: true }); }}
+            refreshKey={`${activeRunId ?? ''}:${sending}:${pendingFinal}`} />
         </div>
         <div data-testid="chat-toolbar-actions" className="no-drag relative z-10 flex items-center gap-2">
           {showSyncStatus && (
@@ -3468,8 +3511,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       {projectWorkspaceId && <div data-testid="project-coordinator-entry" className="relative px-4 pt-1 text-xs text-muted-foreground">
         {t('projectEntry.coordinator', { name: activeWorkspace?.name ?? '' })}
       </div>}
-      <SessionFamilyNavigation session={currentSession} sessions={sessions} derivation={sessionActivitySnapshot?.derivation}
-        onNavigate={(key) => { void openFamilySession(key); }} onRefresh={() => { void loadSessions(); }} />
       {handoffOperation && handoffOperation.phase !== 'sent' && <section data-testid="handoff-recovery" data-phase={handoffOperation.phase}
         className="relative flex min-w-0 flex-wrap items-center gap-2 border-b border-border/40 px-4 py-1 text-xs">
         <span role="status">{t(`handoffRecovery.phase.${handoffOperation.phase}`)}</span>
@@ -3487,10 +3528,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         {handoffOperation.sessionKey !== currentSessionKey && handoffOperation.sessionGeneration && <button type="button" className="underline"
           onClick={() => { void openFamilySession(handoffOperation.sessionKey); }}>{t('handoffRecovery.openChild')}</button>}
       </section>}
-      <TaskLedgerSummaryPanel workspaceId={activeWorkspace?.id} session={currentSession}
-        binding={activeWorkspace?.coordinatorBindings?.[currentSessionKey]} mode="bar" projectWide={Boolean(projectWorkspaceId)}
-        onTaskSelected={async () => { await fetchWorkspaces(); await loadSessions({ force: true }); }}
-        refreshKey={`${activeRunId ?? ''}:${sending}:${pendingFinal}`} />
 
       {/*
         * Session status rail — the surface the recovery panel used to occupy.
@@ -3510,8 +3547,13 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         >
           <SessionActivityPanel
             snapshot={visibleSessionActivitySnapshot}
+            statusPending={sessionActivitySnapshotPending}
+            sources={sessionEnvironmentSources}
+            workspaceName={activeWorkspace?.name}
+            onClose={handleCloseSessionActivity}
             plan={null}
             processes={sessionActivityProcesses}
+            activeWorkspaceSubject={activeWorkspaceSubject}
             compact
             className="!w-full"
             showGit={sessionActivityShowGit}
@@ -3523,11 +3565,10 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             onOpenSubagent={handleOpenSubagentTranscript}
             onOpenProcess={handleOpenProcess}
             onRetryStatus={() => void loadSessionActivity({ workspaceId: activeWorkspaceId, sessionKey: currentSessionKey })}
+            context={sessionContextUsage}
           />
         </aside>
       )}
-
-      <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty} plan={sessionActivityPlan} />
 
       {/* Messages Area */}
       <div ref={messageAreaRef} className="relative min-h-0 flex-1 overflow-hidden px-4 py-3">
@@ -3622,6 +3663,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                         textOverride={row.textOverride}
                         suppressAssistantText={row.suppressAssistantText}
                         suppressToolCards={row.suppressToolCards}
+                        showActions={!foldedNarrationIndices.has(row.index)}
                         suppressProcessAttachments={row.suppressToolCards}
                         suppressReasoning={row.suppressReasoning}
                         onOpenFile={handleOpenAttachedFile}
@@ -3633,8 +3675,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                         onResendUserMessage={getResendUserMessageHandler(row.message.id, row.index)}
                         onForkFromMessage={handleForkFromMessage}
                         onCompactRange={handleCompactMessageRange}
-                        compactDisabledReason={!controlGeneration ? t('operationGenerationUnavailable')
-                          : inputRunActive ? t('composer.compaction.activeRun') : compactionBusy ? t('composer.compaction.inProgress') : undefined}
                       />
                       {row.runCards.map((card) => {
                         const runKey = card.runKey;
@@ -3659,6 +3699,12 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                         // `isTurnSummaryExpanded`) so both surfaces agree on
                         // when the plan's full view is on screen.
                         const expanded = isTurnSummaryExpanded(card);
+                        const activeTool = card.active
+                          ? card.steps.findLast((step) => step.kind === 'tool' && step.status === 'running')
+                          : undefined;
+                        const activeTerminal = card.active
+                          ? card.surfaces.terminals.findLast((terminal) => terminal.status === 'running')
+                          : undefined;
                         /* Reasoning counts as activity: a pure-thinking turn (no
                          * tools, no files — the common DeepSeek shape) otherwise
                          * had no card at all, and its thinking would have had
@@ -3681,9 +3727,15 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                               startedAt={card.startedAt}
                               endedAt={card.endedAt}
                               expanded={expanded}
+                              activity={activeTool ? (
+                                <ExecutionGraphCard agentLabel={card.agentLabel} steps={[activeTool]} active compact />
+                              ) : activeTerminal ? (
+                                <CallChip name={activeTerminal.command} icon="terminal" status="running" showTimer={false} />
+                              ) : undefined}
                               reasoning={cardReasoning}
                               reasoningStreaming={card.active && assistantStreamStatus?.state === 'thinking'}
                               summary={{
+                                tools: card.steps.filter((step) => step.kind === 'tool').length,
                                 thoughts: cardReasoning.length,
                                 plan: card.surfaces.plan?.todos.length ?? 0,
                                 files: generatedFiles.length,
@@ -3699,9 +3751,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                                 }))
                               }
                             >
-                              {card.codingRunView && (
-                                <CodingRunEvidence codingRun={card.codingRunView} />
-                              )}
                               {/* Pending approvals first — the run is blocked on them. */}
                               {cardApprovals.length > 0 && (
                                 <PendingRunApprovals
@@ -3747,7 +3796,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                                 agentLabel={card.agentLabel}
                                 steps={card.steps}
                                 active={card.active}
-                                suppressThinking={card.suppressThinking}
+                                suppressThinking={card.suppressThinking || cardReasoning.length > 0 || Boolean(activeTool || activeTerminal)}
                                 traceId={card.traceId}
                                 expandedStepIds={new Set(
                                   Object.entries(runActivityStepDetailsExpanded[runKey] ?? {})
@@ -3772,6 +3821,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                                   embedded
                                 />
                               ))}
+                              {card.codingRunView && (
+                                <CodingRunEvidence codingRun={card.codingRunView} />
+                              )}
                             </TurnSummaryCard>
                           </div>
                         );
@@ -3807,7 +3859,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                         timestamp: activeRuntimeRunStartedAt ?? Date.now(),
                       }}
                       isStreaming
-                      streamStatus={assistantStreamStatus}
+                      streamStatus={streamReasoningAdopted ? null : assistantStreamStatus}
                       reasoningOverride={streamingReasoning}
                       suppressReasoning={streamReasoningAdopted}
                       liveUsage={liveUsage}
@@ -3818,7 +3870,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                   {shouldRenderAssistantStreamMessage && (
                     streamingReplyText != null
                     || !hasActiveExecutionGraph
-                    || (hasStreamText && streamTools.length === 0 && !hasRunningStreamToolStatus && !hasRunningRuntimeToolStatus)
+                    || visibleStreamingText != null
                   ) && (
                     <ChatMessage
                       agent={currentAgent}
@@ -3830,7 +3882,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                       })}
                       textOverride={streamingReplyText ?? undefined}
                       isStreaming
-                      streamStatus={assistantStreamStatus}
+                      streamStatus={streamReasoningAdopted ? null : assistantStreamStatus}
                       reasoningOverride={streamingReasoning}
                       suppressReasoning={streamReasoningAdopted}
                       streamingTools={streamingToolsForMessage}
@@ -3909,6 +3961,15 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
           </Button>
         </div>
       )}
+      {/* Task tray: the running task stays docked beside the input until it
+        * finishes (then folds to a one-line receipt); nothing renders while the
+        * session has neither a durable task nor a live plan. */}
+      {!isEmpty && (
+        <div className="relative mx-auto w-full max-w-[768px] px-4" data-testid="chat-task-tray">
+          <SessionTaskDock workspaceId={activeWorkspaceId ?? null} sessionKey={currentSessionKey} hasConversation={!isEmpty}
+            plan={sessionActivityPlan} runActive={inputRunActive} onOpenTask={handleOpenSessionTask} />
+        </div>
+      )}
       <ChatInput
         onSend={handleSendMessage}
         disabled={!isGatewayRunning}
@@ -3939,7 +4000,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         onKnowledgeModeChange={handleKnowledgeModeChange}
         compactionStatus={compactionStatus}
         compactionBusy={compactionBusy}
-        compactionUnavailableReason={!controlGeneration ? t('operationGenerationUnavailable') : undefined}
         onManualCompact={handleManualCompact}
         longTaskControlStatus={longTaskControlStatus}
         queueDrainBusy={queueDrainBusy}
@@ -3951,7 +4011,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       />
       {activeWorkspace && !isEmpty && (
         <div className="relative mx-auto w-full max-w-[768px] px-4">
-          <ComposerGitStrip key={activeWorkspace.id} workspace={activeWorkspace} active={!isEmpty} sessionKey={currentSessionKey} disabled={inputRunActive} onOpenGitPanel={handleOpenEnvironment} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} />
+          <ComposerGitStrip key={activeWorkspace.id} workspace={activeWorkspace} active={!isEmpty} sessionKey={currentSessionKey} disabled={inputRunActive} onOpenGitPanel={handleOpenEnvironment} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} refreshSignal={gitRevision} onChanged={handleGitChanged} />
         </div>
       )}
       {/* Reference stacking under the stage is composer → context → chips, then
@@ -3962,8 +4022,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
           <div className={cn('relative', sendingAnimation && 'codex-welcome-context--sending')}>
             <WelcomeScreen
               onPickFolder={handlePickWorkspaceFolder}
+              onSelectProject={handleSwitchWorkspace}
               onSelectWorktree={handleSwitchWorktreeWorkspace}
-              disabled={!isGatewayRunning}
+              disabled={inputRunActive}
             />
           </div>
           <div className={cn('codex-welcome-chips-host relative', sendingAnimation && 'codex-welcome-chips--sending')}>
@@ -3977,7 +4038,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         </>
       )}
       <Suspense fallback={null}>
-        {checkpointsOpen && <CheckpointsDialog open onOpenChange={setCheckpointsOpen} sessionKey={currentSessionKey} agentId={currentAgentId} generation={controlGeneration} />}
+        {checkpointsOpen && <CheckpointsDialog open onOpenChange={setCheckpointsOpen} sessionKey={currentSessionKey} agentId={currentAgentId} />}
         {compressionEvidence && <CompactionArtifactViewer
           open onOpenChange={(open) => { if (!open) setCompressionEvidence(null); }}
           sessionKey={currentSessionKey} checkpointId={compressionEvidence.checkpointId}
@@ -4088,15 +4149,18 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       </div>
 
       {/* Right column: artifact / file preview panel (WorkBuddy-style) */}
-      {panelOpen && (
+      {(panelOpen || artifactTabs.length > 0) && (
         <>
-          {!terminalBottomOpen && panelExpanded && (
+          {panelOpen && !terminalBottomOpen && panelExpanded && (
             <Suspense fallback={null}>
               <PanelResizeDividerLazy containerRef={splitContainerRef} />
             </Suspense>
           )}
           <aside
             data-testid="artifact-panel-aside"
+            data-open={panelOpen ? 'true' : 'false'}
+            hidden={!panelOpen}
+            inert={!panelOpen}
             data-expanded={panelExpanded ? 'true' : 'false'}
             data-placement={terminalBottomOpen ? 'bottom' : 'side'}
             className={cn(
@@ -4124,6 +4188,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                 : 'relative border-l border-black/5 dark:border-white/10',
               !terminalBottomOpen && 'codex-workspace-sweep',
               'no-drag',
+              !panelOpen && 'hidden',
             )}
             style={terminalBottomOpen
               ? { width: '100%', height: terminalBottomHeight }
@@ -4343,9 +4408,10 @@ function ChatStartupError({ message, onRetry }: { message: string | null; onRetr
 // ── Welcome Screen ──────────────────────────────────────────────
 
 type WelcomeScreenProps = {
-  onSelectWorktree?: (tree: GitWorktree) => Promise<void>;
   onSend: (text: string) => void | Promise<unknown>;
   onPickFolder?: () => void | Promise<unknown>;
+  onSelectProject?: (workspaceId: string) => void | Promise<unknown>;
+  onSelectWorktree?: (tree: GitWorktree) => Promise<void>;
   disabled?: boolean;
 };
 
@@ -4416,28 +4482,39 @@ function WelcomeSuggestionScope({ children, suggestions }: Omit<WelcomeSuggestio
 }
 
 /** The empty conversation names its project without exposing Git configuration. */
-function WelcomeScreen({ disabled = false, onPickFolder, onSelectWorktree }: Omit<WelcomeScreenProps, 'onSend'>) {
+function WelcomeScreen({ disabled = false, onPickFolder, onSelectProject, onSelectWorktree }: Omit<WelcomeScreenProps, 'onSend'>) {
   const activeWorkspace = useWorkspacesStore(state=>state.activeWorkspace);
   if (!activeWorkspace) return null;
-  return <div className="codex-welcome-stage"><div className="codex-welcome-context" data-testid="chat-welcome-context"><WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder} onSelectWorktree={onSelectWorktree}/></div></div>;
+  return <div className="codex-welcome-stage"><div className="codex-welcome-context" data-testid="chat-welcome-context"><WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder} onSelect={onSelectProject} onSelectWorktree={onSelectWorktree}/></div></div>;
 }
 
-/**
- * Quick-action chips. Rendered *below* the composer to match the reference
- * ordering — above, a row of suggestions reads as a menu the input belongs to;
- * below, it reads as shortcuts you may ignore.
- *
- * They retract while the composer holds text: once you have said what you want,
- * three canned openers are noise sitting between you and the send button. The
- * retraction is staggered left-to-right and reverses on the way back, and the
- * row keeps its height throughout so the composer never moves.
- */
+/** Optional starters share one disclosure; its reserved row keeps drafting stable. */
 function WelcomeChips({
   disabled = false,
   onSend,
   retracted = false,
 }: Pick<WelcomeScreenProps, 'disabled' | 'onSend'> & { retracted?: boolean }) {
   const { t } = useTranslation('chat');
+  const menuRef = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    if (retracted && menuRef.current) menuRef.current.open = false;
+  }, [retracted]);
+  useEffect(() => {
+    const closeOutside = (event: PointerEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) menuRef.current.open = false;
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || !menuRef.current?.open) return;
+      menuRef.current.open = false;
+      menuRef.current.querySelector('summary')?.focus();
+    };
+    document.addEventListener('pointerdown', closeOutside);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, []);
   const quickActions = useMemo<SuggestionConfig[]>(() => [
     {
       title: t('welcome.askQuestions'),
@@ -4468,14 +4545,22 @@ function WelcomeChips({
         // concerned; `inert` is what keeps a mid-fade chip from being clicked.
         inert={retracted || undefined}
       >
-        <ThreadPrimitive.Suggestions>
+        <details className="codex-welcome-quick-start" ref={menuRef}>
+          <summary data-testid="welcome-quick-start-trigger">
+            {t('welcome.quickStart')}
+            <ChevronDown className="h-3 w-3" aria-hidden="true" />
+          </summary>
+          <div className="codex-header-menu codex-welcome-quick-start__menu" data-testid="welcome-quick-start-menu">
+          <ThreadPrimitive.Suggestions>
           {({ suggestion }) => {
             const index = quickActions.findIndex((action) => (
               typeof action === 'string' ? action === suggestion.title : action.title === suggestion.title
             ));
             return <SuggestionItem disabled={disabled} Icon={actionIcons[index] ?? ListChecks} />;
           }}
-        </ThreadPrimitive.Suggestions>
+          </ThreadPrimitive.Suggestions>
+          </div>
+        </details>
       </div>
     </WelcomeSuggestionRuntime>
   );

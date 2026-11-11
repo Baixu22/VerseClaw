@@ -75,6 +75,7 @@ export type McpToolCatalogDiagnostic = {
   safeServerName: string;
   launchSummary: string;
   message: string;
+  errorCode?: number;
 };
 
 /** Live MCP runtime bound to one session/workspace. */
@@ -88,11 +89,17 @@ export type SessionMcpRuntime = {
   activeLeases?: number;
   acquireLease?: () => () => void;
   /** Lists tools if needed and may connect MCP transports. */
-  getCatalog: () => Promise<McpToolCatalog>;
+  getCatalog: (options?: { refresh?: boolean }) => Promise<McpToolCatalog>;
   /** Returns the cached catalog only; must not start runtimes, connect transports, or issue tools/list. */
   peekCatalog: () => McpToolCatalog | null;
   markUsed: () => void;
-  callTool: (serverName: string, toolName: string, input: unknown) => Promise<CallToolResult>;
+  callTool: (
+    serverName: string,
+    toolName: string,
+    input: unknown,
+    signal?: AbortSignal,
+  ) => Promise<CallToolResult>;
+  ping?: (serverName: string) => Promise<void>;
   listResources?: (serverName: string) => Promise<unknown>;
   readResource?: (serverName: string, uri: string) => Promise<unknown>;
   listPrompts?: (serverName: string) => Promise<unknown>;

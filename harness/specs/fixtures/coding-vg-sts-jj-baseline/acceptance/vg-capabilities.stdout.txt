@@ -1,0 +1,176 @@
+{
+  "compat": {
+    "git_only": "preserved",
+    "next": "preserved",
+    "package_names": [
+      "smart-test-sorter",
+      "smart_sorter"
+    ],
+    "sts_protocols": [
+      "1.1",
+      "2.0"
+    ]
+  },
+  "mcp_tools": [
+    "vg_capabilities",
+    "verdict",
+    "integration_status",
+    "who_touches",
+    "explain_conflict",
+    "declare_intent",
+    "basis_status",
+    "basis_watermark"
+  ],
+  "read": [
+    "workspace.root",
+    "change.status",
+    "change.log",
+    "verify.status",
+    "conflicts",
+    "basis.status",
+    "report",
+    "verdict",
+    "doctor"
+  ],
+  "safety": {
+    "default_enable": false,
+    "evidence_land_present": true,
+    "managed_opt_in": true,
+    "strict_admission_present": true
+  },
+  "schema": "versegit.capabilities/v1",
+  "verdict": {
+    "dimensions": [
+      "candidate",
+      "execution",
+      "evidence",
+      "freshness",
+      "risk",
+      "trial"
+    ],
+    "note": "六维各自独立呈现；admitted 是它们的合取，selected 不覆盖全集",
+    "read_surface": {
+      "observed_channels": [
+        "read",
+        "grep",
+        "glob",
+        "write",
+        "edit"
+      ],
+      "unobserved_channels": [
+        "bash",
+        "other-mcp",
+        "network",
+        "direct-fs"
+      ]
+    },
+    "schema": "versegit.verdict/v1",
+    "single_green_light": false
+  },
+  "workflows": [
+    {
+      "entries": [
+        "workspace.init",
+        "workspace.root",
+        "doctor"
+      ],
+      "evidence": [
+        "crates/vg-cli/tests/jj_workspace_lifecycle.rs",
+        "crates/vg-cli/tests/jj_public_surface.rs"
+      ],
+      "id": "workspace",
+      "status": "verified"
+    },
+    {
+      "entries": [
+        "change.new",
+        "change.file",
+        "change.describe",
+        "change.snapshot",
+        "change.diffedit"
+      ],
+      "evidence": [
+        "crates/vg-cli/tests/jj_change_lifecycle.rs",
+        "crates/vg-cli/tests/jj_diffedit.rs"
+      ],
+      "id": "change.edit",
+      "status": "verified"
+    },
+    {
+      "entries": [
+        "change.log",
+        "op.restore",
+        "op.undo"
+      ],
+      "evidence": [
+        "crates/vg-cli/tests/jj_operation_restore.rs",
+        "crates/vg-cli/tests/jj_op_undo_redo.rs",
+        "crates/vg-cli/tests/jj_backup_restore.rs"
+      ],
+      "id": "history.recover",
+      "status": "verified"
+    },
+    {
+      "entries": [
+        "verify.status",
+        "verdict",
+        "basis.status"
+      ],
+      "evidence": [
+        "crates/vg-cli/tests/jj_managed_plan.rs",
+        "crates/vg-cli/tests/jj_evidence_land.rs",
+        "crates/vg-cli/tests/jj_verdict.rs"
+      ],
+      "id": "validation.admit",
+      "status": "verified"
+    },
+    {
+      "entries": [
+        "change.materialize",
+        "land",
+        "report"
+      ],
+      "evidence": [
+        "crates/vg-cli/tests/jj_managed_candidate.rs",
+        "crates/vg-cli/tests/jj_closed_loop.rs",
+        "crates/vg-cli/tests/land_concurrency.rs"
+      ],
+      "id": "candidate.land",
+      "status": "verified"
+    },
+    {
+      "entries": [
+        "git.fetch",
+        "git.push",
+        "gerrit.upload"
+      ],
+      "evidence": [
+        "crates/vg-cli/tests/jj_git_ref_sync.rs",
+        "crates/vg-cli/tests/jj_gerrit_upload.rs"
+      ],
+      "id": "external.publish",
+      "status": "controlled"
+    }
+  ],
+  "write": [
+    "workspace.init",
+    "change.new",
+    "change.file",
+    "change.describe",
+    "change.snapshot",
+    "change.diffedit",
+    "change.materialize",
+    "change.duplicate",
+    "change.abandon",
+    "change.rebase",
+    "change.squash",
+    "change.split",
+    "op.restore",
+    "op.undo",
+    "land",
+    "admit.check",
+    "git.fetch",
+    "git.push",
+    "gerrit.upload"
+  ]
+}

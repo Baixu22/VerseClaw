@@ -1,0 +1,1 @@
+{"mode":"live","records":96,"allSummaryNumbersRecomputed":true,"providerCalls":358,"decisions":{"b1_mechanism_and_autonomy":true,"b2_task_benefit":true,"b3_retention_benefit":false,"b4_non_inferiority":false,"b5_no_fabrication":true,"b6_budget":false,"contextGrowthChars":-481.375,"tokenGrowthPct":0.38616644966528013}}

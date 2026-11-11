@@ -1,0 +1,26 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b90a",
+  "name": "round3-evidence",
+  "cwd": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+  "command": [
+    "node",
+    "harness/specs/fixtures/context-inline-spill-benefit-round3/verify-evidence.mjs",
+    "harness/specs/fixtures/context-inline-spill-benefit-round3"
+  ],
+  "started_at": "2026-11-08T02:47:51.641052+00:00",
+  "duration_seconds": 0.578,
+  "exit_code": 0,
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\round3-evidence.stdout.txt",
+      "bytes": 151,
+      "sha256": "8ae5c8c7594b8cca8ffc65354b8afe85227ce1fae480a0c438d517c3a93bacda"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\round3-evidence.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

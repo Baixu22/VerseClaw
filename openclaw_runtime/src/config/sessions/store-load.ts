@@ -132,6 +132,12 @@ function normalizePendingFinalDeliveryFields(entry: SessionEntry): SessionEntry 
   };
 
   assign("pendingFinalDelivery", entry.pendingFinalDelivery === true ? true : undefined);
+  assign("pendingFinalDeliveryRunId", normalizeOptionalString(entry.pendingFinalDeliveryRunId));
+  assign(
+    "pendingFinalDeliveryRecoveryRunId",
+    normalizeOptionalString(entry.pendingFinalDeliveryRecoveryRunId),
+  );
+  assign("lifecycleRunId", normalizeOptionalString(entry.lifecycleRunId));
   assign("pendingFinalDeliveryText", normalizeOptionalStringOrNull(entry.pendingFinalDeliveryText));
   assign(
     "pendingFinalDeliveryCreatedAt",

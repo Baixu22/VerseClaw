@@ -11,21 +11,24 @@ import type {
   McpCallToolPayload,
   McpHeartbeatPayload,
   McpListToolsPayload,
+  McpManagementContext,
   McpReloadRuntimePayload,
   McpServerCreatePayload,
   McpServerUpdatePayload,
 } from '@shared/host-api/contract';
+import type { HostErrorCode } from '../main/ipc/host-contract';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { GatewayManager } from '../gateway/manager';
 import { isRecord } from './payload-utils';
 import { listResourceEnvelopeEntries, recordResourceEnvelopeEntry, removeResourceEnvelopeEntry } from './resource-envelope';
-import { readAgentBootstrapTools } from '../utils/agent-config';
+import { listConfiguredAgentIds, readAgentBootstrapTools } from '../utils/agent-config';
 import { proxyAwareFetch } from '../utils/proxy-fetch';
-import { readOpenClawConfig, writeOpenClawConfig } from '../utils/channel-config';
+import { readOpenClawConfig, syncSourceRuntimeMcpConfig, writeOpenClawConfig } from '../utils/channel-config';
 import { withConfigLock } from '../utils/config-mutex';
 import { getDataDir } from '../utils/paths';
-import { getActiveWorkspaceProfile } from './workspaces-api';
+import { getActiveWorkspaceProfile, getWorkspaceRootPathById } from './workspaces-api';
 import { createGitApi } from './git-api';
+import { resolveWorkspaceSessionRoot } from './workspace-permissions';
 import type { RemoteForgeApi } from './remote-forge-api';
 import {
   createMcpToolCallRequestShadow,
@@ -68,6 +71,7 @@ type StoredMcpServer = Omit<McpServerConfig, 'env'> & {
 
 type McpApiContext = {
   gatewayManager?: GatewayManager;
+  gatewayRpc?: CompleteHostServiceRegistry['gateway']['rpc'];
   remoteForgeApi?: RemoteForgeApi;
   runtime?: {
     toolProtocol?: {
@@ -641,11 +645,11 @@ function normalizeStringArray(value: unknown): string[] | undefined {
 function normalizeExposure(value: unknown): McpServerConfig['exposure'] {
   if (!isRecord(value)) return undefined;
   const exposure = {
-    agents: normalizeStringArray(value.agents),
-    workspaces: normalizeStringArray(value.workspaces),
-    roles: normalizeStringArray(value.roles),
+    ...(value.agents !== undefined ? { agents: normalizeStringArray(value.agents) ?? [] } : {}),
+    ...(value.workspaces !== undefined ? { workspaces: normalizeStringArray(value.workspaces) ?? [] } : {}),
+    ...(value.roles !== undefined ? { roles: normalizeStringArray(value.roles) ?? [] } : {}),
   };
-  return exposure.agents || exposure.workspaces || exposure.roles ? exposure : undefined;
+  return Object.keys(exposure).length > 0 ? exposure : undefined;
 }
 
 function normalizeEnv(value: unknown): Record<string, string> | undefined {
@@ -895,12 +899,33 @@ async function toRuntimeServer(
   };
 }
 
-function projectServerToRuntimeConfig(
+async function projectServerToRuntimeConfig(
   server: McpServerConfig,
   current: Record<string, unknown> | undefined,
-): Record<string, unknown> {
+  selectedAgentIds: string[],
+): Promise<Record<string, unknown>> {
   const next: Record<string, unknown> = { ...(current ?? {}) };
   next.enabled = server.enabled !== false;
+  // Rebuild grants from their owners. The runtime projection can contain revoked scope grants.
+  const exposure: NonNullable<McpServerConfig['exposure']> = { ...server.exposure };
+  if (exposure.workspaces) {
+    exposure.workspaces = await Promise.all(exposure.workspaces.map(async (value) => await getWorkspaceRootPathById(value) ?? value));
+  }
+  if (server.scope === 'agent') {
+    exposure.agents = server.ownerId
+      ? withMembership(exposure.agents, server.ownerId, true)
+      : exposure.agents ?? [];
+  }
+  if (server.scope === 'workspace') {
+    const root = server.ownerId ? await getWorkspaceRootPathById(server.ownerId) : undefined;
+    exposure.workspaces = root ? withMembership(normalizeStringArray(exposure.workspaces), root, true) : [];
+  }
+  if (Object.keys(exposure).length > 0 || server.scope !== 'global') {
+    for (const agentId of selectedAgentIds) exposure.agents = withMembership(exposure.agents, agentId, true);
+    next.exposure = exposure;
+  } else {
+    delete next.exposure;
+  }
   if (server.transport === 'stdio') {
     next.command = server.command;
     next.args = server.args;
@@ -936,45 +961,7 @@ export async function syncAgentMcpExposureToOpenClawConfig(
   agentId: string,
   defaultMcpServerIds: string[],
 ): Promise<void> {
-  const selectedIds = new Set(defaultMcpServerIds);
-  selectedIds.delete(VERSE_CLAW_GIT_MCP_SERVER_ID);
-  const servers = await readServers();
-  await withConfigLock(async () => {
-    const config = await readOpenClawConfig();
-    const mcp = isRecord(config.mcp) ? { ...config.mcp } as Record<string, unknown> : {};
-    const currentServers = isRecord(mcp.servers)
-      ? { ...(mcp.servers as Record<string, unknown>) }
-      : {};
-    for (const server of servers) {
-      const selected = selectedIds.has(server.id);
-      const existing = isRecord(currentServers[server.id])
-        ? { ...(currentServers[server.id] as Record<string, unknown>) }
-        : undefined;
-      if (!selected && !existing) {
-        continue;
-      }
-      const vault = await readEnvVault();
-      const runtimeServer = selected ? await toRuntimeServer(server, vault) : (server as McpServerConfig);
-      const next = selected
-        ? projectServerToRuntimeConfig(runtimeServer, existing)
-        : { ...(existing ?? {}) };
-      const exposure = isRecord(next.exposure) ? { ...next.exposure } as Record<string, unknown> : {};
-      const agents = withMembership(normalizeStringArray(exposure.agents), agentId, selected);
-      if (agents) {
-        exposure.agents = agents;
-      } else {
-        delete exposure.agents;
-      }
-      if (!selected && Object.keys(exposure).length === 0) {
-        exposure.agents = [];
-      }
-      next.exposure = exposure;
-      currentServers[server.id] = next;
-    }
-    mcp.servers = currentServers;
-    config.mcp = mcp;
-    await writeOpenClawConfig(config);
-  });
+  await syncAllMcpServersToOpenClawConfig({ agentId, defaultMcpServerIds });
 }
 
 /**
@@ -985,7 +972,7 @@ export async function syncAgentMcpExposureToOpenClawConfig(
  * method. Built-in ClawX bridge servers (`clawx://` localAddress) are
  * Main-process-local and intentionally not mirrored.
  */
-export async function syncAllMcpServersToOpenClawConfig(): Promise<void> {
+export async function syncAllMcpServersToOpenClawConfig(selection?: { agentId: string; defaultMcpServerIds: string[] }): Promise<void> {
   const servers = (await readServers()).filter((server) => !isClawxBridgeServer(server));
   await withConfigLock(async () => {
     const config = await readOpenClawConfig();
@@ -994,14 +981,21 @@ export async function syncAllMcpServersToOpenClawConfig(): Promise<void> {
       ? { ...(mcp.servers as Record<string, unknown>) }
       : {};
     const vault = await readEnvVault();
+    const agentIds = new Set(await listConfiguredAgentIds());
+    if (selection) agentIds.add(selection.agentId);
+    const selections = await Promise.all([...agentIds].map(async (id) => ({
+      id,
+      serverIds: id === selection?.agentId ? selection.defaultMcpServerIds : (await readAgentBootstrapTools(id)).defaultMcpServerIds,
+    })));
     const nextServers: Record<string, unknown> = {};
     for (const server of servers) {
       const runtimeServer = await toRuntimeServer(server, vault);
-      nextServers[server.id] = projectServerToRuntimeConfig(
+      nextServers[server.id] = await projectServerToRuntimeConfig(
         runtimeServer,
         isRecord(currentServers[server.id])
           ? (currentServers[server.id] as Record<string, unknown>)
           : undefined,
+        selections.filter((entry) => entry.serverIds.includes(server.id)).map((entry) => entry.id),
       );
     }
     const activeIds = new Set(servers.filter((server) => server.enabled !== false).map((server) => server.id));
@@ -1030,6 +1024,7 @@ export async function syncAllMcpServersToOpenClawConfig(): Promise<void> {
     mcp.servers = nextServers;
     config.mcp = mcp;
     await writeOpenClawConfig(config);
+    await syncSourceRuntimeMcpConfig(config.mcp);
   });
 }
 
@@ -1055,12 +1050,16 @@ export async function listMcpServersForCapabilityPublication(input: {
   });
 }
 
-function matchesContext(server: McpServerConfig, workspaceId?: string | null, agentId?: string | null): boolean {
+function matchesContext(server: McpServerConfig, workspaceId?: string | null, agentId?: string | null, workspaceRoot?: string): boolean {
   if (!server.enabled) return false;
-  if (server.scope === 'global') return true;
-  if (server.scope === 'agent') return Boolean(agentId && server.ownerId === agentId);
-  if (server.scope === 'workspace') return Boolean(workspaceId && server.ownerId === workspaceId);
-  return false;
+  if (server.scope === 'global' && !server.exposure) return true;
+  return Boolean(
+    (server.scope === 'agent' && agentId && server.ownerId === agentId)
+    || (server.scope === 'workspace' && workspaceId && server.ownerId === workspaceId)
+    || (agentId && server.exposure?.agents?.includes(agentId))
+    || (workspaceId && server.exposure?.workspaces?.includes(workspaceId))
+    || (workspaceRoot && server.exposure?.workspaces?.includes(workspaceRoot))
+  );
 }
 
 function orderResolvedServers(servers: McpServerConfig[], defaultIdSet = new Set<string>()): McpServerConfig[] {
@@ -1091,8 +1090,9 @@ export async function resolveMcpServersForContext(input: {
     ? (await readAgentBootstrapTools(input.agentId).catch(() => ({ defaultMcpServerIds: [] }))).defaultMcpServerIds
     : [];
   const defaultIdSet = new Set(defaultMcpServerIds);
+  const workspaceRoot = input.workspaceId ? await getWorkspaceRootPathById(input.workspaceId) : undefined;
   const resolved = servers.filter((server) => (
-    matchesContext(server as McpServerConfig, input.workspaceId, input.agentId)
+    matchesContext(server as McpServerConfig, input.workspaceId, input.agentId, workspaceRoot)
     || (server.enabled && defaultIdSet.has(server.id))
   ));
   const ordered = orderResolvedServers(resolved as McpServerConfig[], defaultIdSet) as StoredMcpServer[];
@@ -1390,17 +1390,67 @@ async function callClawxGitTool(
   }
 }
 
-async function tryGatewayMcpRpc<T>(
-  gatewayManager: GatewayManager | undefined,
+function mcpFailure(error: unknown): { error: string; errorCode: HostErrorCode } {
+  const message = error instanceof Error ? error.message : String(error);
+  const code = isRecord(error) ? error.code : undefined;
+  const errorCode: HostErrorCode = code === 'VALIDATION' || code === 'UNSUPPORTED' || code === 'TIMEOUT' || code === 'INTERNAL'
+    ? code
+    : /timeout|timed out/i.test(message) ? 'TIMEOUT'
+      : /unknown method|method not found/i.test(message) ? 'UNSUPPORTED' : 'INTERNAL';
+  return { error: message, errorCode };
+}
+
+async function resolveMcpManagementContext(ctx: McpApiContext, body: McpManagementContext, serverId: string): Promise<Record<string, unknown>> {
+  if (ctx.gatewayManager?.getStatus().state !== 'running') throw new Error('MCP Gateway is unavailable');
+  const workspace = await getActiveWorkspaceProfile();
+  if (!workspace) throw Object.assign(new Error('MCP management requires an active workspace'), { code: 'VALIDATION' });
+  const sessionKey = normalizeString(body.sessionKey) ?? workspace.activeSessionKey;
+  const binding = Object.values(workspace.agentBindings ?? {}).find((entry) => entry.sessionKey === sessionKey);
+  if (!binding && sessionKey !== workspace.activeSessionKey) {
+    throw Object.assign(new Error('MCP session is not bound to the active workspace'), { code: 'VALIDATION' });
+  }
+  const agentId = binding?.agentId ?? workspace.selectedAgentId ?? workspace.agentId;
+  const workspaceDir = resolveWorkspaceSessionRoot(workspace, sessionKey, agentId);
+  if (!workspaceDir) throw Object.assign(new Error('MCP coordinator binding is not active for this session'), { code: 'VALIDATION' });
+  if ((body.workspaceId && body.workspaceId !== workspace.id) || (body.agentId && body.agentId !== agentId)) {
+    throw Object.assign(new Error('MCP request differs from the active workspace or assistant'), { code: 'VALIDATION' });
+  }
+  const servers = await resolveMcpServersForContext({ workspaceId: workspace.id, agentId });
+  if (!servers.some((server) => server.id === serverId)) {
+    throw Object.assign(new Error(`MCP server "${serverId}" is not exposed to the active workspace or assistant`), { code: 'VALIDATION' });
+  }
+  const described = await gatewayMcpRpc<{ session?: { key?: string; sessionId?: string } | null }>(ctx, 'sessions.describe', {
+    key: sessionKey, includeDerivedTitles: false, includeLastMessage: false,
+  });
+  const sessionGeneration = normalizeString(described.session?.sessionId);
+  if (!sessionGeneration || described.session?.key !== sessionKey) {
+    throw Object.assign(new Error('The bound MCP session is not materialized in Gateway'), { code: 'VALIDATION' });
+  }
+  const boundGeneration = workspace.coordinatorBindings?.[sessionKey]?.sessionGeneration;
+  if ((boundGeneration && boundGeneration !== sessionGeneration)
+    || (body.expectedSessionGeneration !== undefined && body.expectedSessionGeneration !== sessionGeneration)) {
+    throw Object.assign(new Error('The bound MCP session generation changed'), { code: 'VALIDATION' });
+  }
+  return {
+    sessionKey,
+    agentId,
+    workspaceId: workspace.id,
+    workspaceDir,
+    expectedSessionGeneration: sessionGeneration,
+    ...(body.catalogRevision ? { catalogRevision: body.catalogRevision } : {}),
+  };
+}
+
+async function gatewayMcpRpc<T>(
+  ctx: McpApiContext,
   method: string,
   params: Record<string, unknown>,
-): Promise<T | null> {
-  if (gatewayManager?.getStatus().state !== 'running') return null;
-  try {
-    return await gatewayManager.rpc(method, params, 5000) as T;
-  } catch {
-    return null;
-  }
+  approvalId?: string,
+): Promise<T> {
+  if (ctx.gatewayManager?.getStatus().state !== 'running') throw new Error('MCP Gateway is unavailable');
+  if (!ctx.gatewayRpc) throw new Error('MCP Gateway permission route is unavailable');
+  // GatewayManager clamps this budget to the ambient Host deadline.
+  return await ctx.gatewayRpc({ method, params, timeoutMs: method === 'sessions.describe' ? 5000 : 60_000, ...(approvalId ? { approvalId } : {}) }) as T;
 }
 
 export function createMcpApi(): CompleteHostServiceRegistry['mcp'] {
@@ -1460,7 +1510,6 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
         agentId,
       };
     }
-    ctx.gatewayManager?.debouncedReload?.();
     return {
       ok: true,
       hotReloaded: true,
@@ -1589,7 +1638,6 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
       const body = parsePayload<McpHeartbeatPayload>(payload);
       const id = normalizeString(body.serverId);
       if (!id) throw new Error('serverId is required');
-      const server = await findServer(id);
       if (id === VERSE_CLAW_GIT_MCP_SERVER_ID) {
         return {
           success: true,
@@ -1597,51 +1645,42 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
           status: 'registered',
           latencyMs: 0,
           message: 'Verse Claw Git tools are host-native: served by the host Git service, not an MCP server.',
-          server: toRendererServer(server),
+          server: toRendererServer(VERSE_CLAW_GIT_MCP_SERVER),
         };
       }
-      const runtime = await tryGatewayMcpRpc<McpHeartbeatResult>(ctx.gatewayManager, 'mcp.heartbeat', { serverId: id });
-      if (runtime?.success) {
+      try {
+        const server = await findServer(id);
+        assertMcpNetworkPolicyAllows(server);
+        const binding = await resolveMcpManagementContext(ctx, body, id);
+        const runtime = await gatewayMcpRpc<McpHeartbeatResult>(ctx, 'mcp.heartbeat', { serverId: id, ...binding });
+        if (runtime.success && (runtime.serverId !== id || runtime.status !== 'connected')) {
+          throw Object.assign(new Error('MCP heartbeat returned an unbound connection result'), { code: 'VALIDATION' });
+        }
         const updated = await updateServerRuntimeFields(id, {
-          runtimeStatus: runtime.status,
+          runtimeStatus: runtime.success ? runtime.status : 'error',
           lastHeartbeatAt: Date.now(),
           lastHeartbeatMs: runtime.latencyMs,
-          lastHeartbeatError: undefined,
-        });
-        return { ...runtime, server: toRendererServer((updated ?? server) as McpServerConfig) };
-      }
-      try {
-        const runtimeServer = await toRuntimeServer(server, await readEnvVault());
-        // Only an MCP initialize handshake (the runtime answer above) proves
-        // 'connected'; a config check or HTTP reachability leaves it 'registered'.
-        const heartbeat = await checkMcpHeartbeat(runtimeServer);
-        const updated = await updateServerRuntimeFields(id, {
-          runtimeStatus: 'registered',
-          lastHeartbeatAt: Date.now(),
-          lastHeartbeatMs: heartbeat.latencyMs,
-          lastHeartbeatError: undefined,
+          lastHeartbeatError: runtime.success ? undefined : runtime.error,
         });
         return {
-          success: true,
+          ...runtime,
           serverId: id,
-          status: 'registered',
-          latencyMs: heartbeat.latencyMs,
-          message: heartbeat.message,
+          status: runtime.success ? runtime.status : 'error',
           server: toRendererServer((updated ?? server) as McpServerConfig),
         };
       } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
+        const failure = mcpFailure(error);
         const updated = await updateServerRuntimeFields(id, {
           runtimeStatus: 'error',
           lastHeartbeatAt: Date.now(),
-          lastHeartbeatError: message,
+          lastHeartbeatError: failure.error,
         });
         return {
           success: false,
           serverId: id,
           status: 'error',
-          error: message,
-          server: toRendererServer((updated ?? server) as McpServerConfig),
+          ...failure,
+          ...(updated ? { server: toRendererServer(updated as McpServerConfig) } : {}),
         };
       }
     },
@@ -1649,20 +1688,6 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
       const body = parsePayload<McpListToolsPayload>(payload);
       const id = normalizeString(body.serverId);
       if (!id) throw new Error('serverId is required');
-      const server = await findServer(id);
-      if (id !== VERSE_CLAW_GIT_MCP_SERVER_ID) {
-        try {
-          assertMcpNetworkPolicyAllows(server);
-        } catch (error) {
-          return {
-            success: false,
-            serverId: id,
-            tools: [],
-            status: 'error' as const,
-            error: error instanceof Error ? error.message : String(error),
-          };
-        }
-      }
       if (id === VERSE_CLAW_GIT_MCP_SERVER_ID) {
         return {
           success: true,
@@ -1672,31 +1697,30 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
           message: 'Verse Claw Git host-native tools',
         };
       }
-      const runtime = await tryGatewayMcpRpc<McpListToolsResult>(ctx.gatewayManager, 'mcp.listTools', { serverId: id });
-      if (runtime?.success) {
-        const filtered = filterToolsWithValidSchemas(runtime.tools ?? []);
+      try {
+        const server = await findServer(id);
+        assertMcpNetworkPolicyAllows(server);
+        const binding = await resolveMcpManagementContext(ctx, body, id);
+        const runtime = await gatewayMcpRpc<McpListToolsResult>(ctx, 'mcp.listTools', { serverId: id, ...binding });
+        if (!runtime.success) {
+          await updateServerRuntimeFields(id, { runtimeStatus: 'error', toolCount: undefined });
+          return { ...runtime, success: false, serverId: id, tools: [], status: 'error' as const };
+        }
+        if (runtime.serverId !== id || runtime.status !== 'connected') throw Object.assign(new Error('MCP runtime returned an unbound tool catalog'), { code: 'VALIDATION' });
+        if (!Array.isArray(runtime.tools)) throw Object.assign(new Error('MCP runtime returned an invalid tool catalog'), { code: 'VALIDATION' });
+        const filtered = filterToolsWithValidSchemas(runtime.tools);
         if (filtered.rejected.length > 0) {
-          return {
-            success: false,
-            serverId: id,
-            tools: [],
-            status: 'error' as const,
-            error: `Rejected invalid tool schema(s): ${filtered.rejected.map((entry) => `${entry.name} (${entry.reason})`).join('; ')}`,
-          };
+          throw Object.assign(new Error(`Rejected invalid tool schema(s): ${filtered.rejected.map((entry) => `${entry.name} (${entry.reason})`).join('; ')}`), { code: 'VALIDATION' });
         }
         await updateServerRuntimeFields(id, {
           runtimeStatus: runtime.status,
           toolCount: filtered.tools.length,
         });
         return { ...runtime, tools: filtered.tools };
+      } catch (error) {
+        await updateServerRuntimeFields(id, { runtimeStatus: 'error', toolCount: undefined });
+        return { success: false, serverId: id, tools: [], status: 'error' as const, ...mcpFailure(error) };
       }
-      return {
-        success: true,
-        serverId: id,
-        tools: [],
-        status: server.runtimeStatus ?? 'registered',
-        message: 'MCP 服务已注册；当前 OpenClaw Runtime 尚未返回工具目录',
-      };
     },
     callTool: async (payload) => {
       const body = parsePayload<McpCallToolPayload>(payload);
@@ -1739,17 +1763,15 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
           assertMcpNetworkPolicyAllows(remoteServer);
         } catch (error) {
           const message = error instanceof Error ? error.message : String(error);
-          // Unknown server ids fall through to Gateway (legacy). Policy failures fail closed.
-          if (!message.toLowerCase().includes('not found')) {
-            return {
+          return {
               success: false,
               serverId,
               toolName,
               blocked: true,
               reason: message,
               error: message,
+              errorCode: 'VALIDATION' as const,
             };
-          }
         }
       }
 
@@ -1803,24 +1825,21 @@ export function createMcpApiWithContext(ctx: McpApiContext = {}): CompleteHostSe
       }
 
       const gatewayRunning = ctx.gatewayManager?.getStatus().state === 'running';
-      const result = await tryGatewayMcpRpc<McpCallToolResult>(ctx.gatewayManager, 'mcp.callTool', {
-        serverId,
-        toolName,
-        args,
-        approvalId,
-        workspaceId,
-        agentId,
-      });
-      if (result) return finish(result);
-      return finish({
-        success: false,
-        serverId,
-        toolName,
-        blocked: true,
-        reason: '当前 OpenClaw Runtime 尚未暴露 MCP 工具调用 RPC；Verse Claw 已保留配置、心跳、权限与审计入口',
-      }, {
-        blockedReasonCode: gatewayRunning ? 'tool/blocked' : 'gateway/unavailable',
-      });
+      try {
+        const binding = await resolveMcpManagementContext(ctx, body, serverId);
+        const result = await gatewayMcpRpc<McpCallToolResult>(ctx, 'mcp.callTool', { serverId, toolName, args, ...binding }, approvalId);
+        if (result.success && (result.serverId !== serverId || result.toolName !== toolName)) {
+          throw Object.assign(new Error('MCP runtime returned an unbound tool result'), { code: 'VALIDATION' });
+        }
+        if (result.serverId === serverId && result.toolName === toolName) return finish(result);
+        const approval = isRecord(result) && isRecord(result.approval) ? result.approval : undefined;
+        return finish({ ...result, serverId, toolName, ...(typeof approval?.id === 'string' ? { approvalId: approval.id } : {}) });
+      } catch (error) {
+        const failure = mcpFailure(error);
+        return finish({ success: false, serverId, toolName, blocked: true, reason: failure.error, ...failure }, {
+          blockedReasonCode: gatewayRunning ? 'tool/blocked' : 'gateway/unavailable',
+        });
+      }
       } catch (error) {
         const thrownShadow = createMcpToolCallThrownErrorShadow(requestShadow, error);
         emitToolProtocolShadow(ctx, thrownShadow);

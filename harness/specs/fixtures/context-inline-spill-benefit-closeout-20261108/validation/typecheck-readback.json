@@ -1,0 +1,52 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b934",
+  "source_log": "validation/candidate-typecheck-sdk.stdout.txt",
+  "source_log_sha256": "dc0159d1ab3db54949b38cd5f87ff5701075633c1a5b9099997f6836af337339",
+  "observed_report": {
+    "success": true,
+    "mode": "parallel",
+    "testTypes": {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 33250,
+      "observationMode": false,
+      "errorCount": 0,
+      "errorLog": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\validation-candidate\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    },
+    "cache": {
+      "enabled": false,
+      "status": "disabled",
+      "key": "dd644527609cd7eb085d626cbc45fa7f62fcb42f566774afa7ddee1cb197b810",
+      "inputCount": 13007,
+      "report": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\validation-candidate\\artifacts\\typecheck-cache\\report.json"
+    },
+    "totalDurationMs": 65617,
+    "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+    "results": [
+      {
+        "commandLine": "node scripts/generate-ext-bridge.mjs",
+        "exitCode": 0,
+        "durationMs": 214
+      },
+      {
+        "commandLine": "pnpm run typecheck:node",
+        "exitCode": 0,
+        "durationMs": 25902
+      },
+      {
+        "commandLine": "pnpm run typecheck:web",
+        "exitCode": 0,
+        "durationMs": 16042
+      },
+      {
+        "commandLine": "pnpm run typecheck:test",
+        "exitCode": 0,
+        "durationMs": 33250,
+        "observationMode": false,
+        "errorCount": 0,
+        "errorLog": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\validation-candidate\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+      }
+    ]
+  }
+}

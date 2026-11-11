@@ -1,0 +1,174 @@
+{
+  "candidate": "e1361f6a0b79c079bd6f39f172ba2ef15015acb5",
+  "driven_by": "agent",
+  "actor": "codex-01a1b68a",
+  "realHumanEvidence": false,
+  "commands": [
+    {
+      "name": "provider",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "--tsconfig",
+        "tsconfig.node.json",
+        "scripts/coding-evaluation/versegit.mts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 3.9059999999954016
+    },
+    {
+      "name": "units",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/versegit-fact-adapter.test.ts",
+        "tests/unit/versegit-mc4-adapter.test.ts",
+        "tests/unit/versegit-runtime-bindings.test.ts",
+        "tests/unit/versegit-observation-basis.test.ts",
+        "tests/unit/versegit-feedback-delivery.test.ts",
+        "tests/unit/versegit-candidate-freeze.test.ts",
+        "tests/unit/versegit-candidate-receipts.test.ts",
+        "tests/unit/versegit-receipt-authority.test.ts",
+        "tests/unit/versegit-host-apply.test.ts",
+        "tests/unit/coding-versegit-evaluation.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0775\\final-e1361f6a0\\units.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 109.01600000000326
+    },
+    {
+      "name": "type-node",
+      "argv": [
+        "D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@typescript+native-preview-win32-x64@7.0.0-dev.20260527.2/node_modules/@typescript/native-preview-win32-x64/lib/tsgo.exe",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 13.60899999999674
+    },
+    {
+      "name": "type-web",
+      "argv": [
+        "D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@typescript+native-preview-win32-x64@7.0.0-dev.20260527.2/node_modules/@typescript/native-preview-win32-x64/lib/tsgo.exe",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 5.35899999999674
+    },
+    {
+      "name": "type-test",
+      "argv": [
+        "D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@typescript+native-preview-win32-x64@7.0.0-dev.20260527.2/node_modules/@typescript/native-preview-win32-x64/lib/tsgo.exe",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 28.171000000002095
+    },
+    {
+      "name": "type-drivers",
+      "argv": [
+        "D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@typescript+native-preview-win32-x64@7.0.0-dev.20260527.2/node_modules/@typescript/native-preview-win32-x64/lib/tsgo.exe",
+        "--noEmit",
+        "-p",
+        "D:/tmp/coding-relay-01a1b68a-20261107/TF-0775/tsconfig-drivers.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 14.219000000004598
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.4219999999986612
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.48399999999674037
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.3440000000045984
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/coding-versegit-evaluation.md"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 1.5939999999973224
+    },
+    {
+      "name": "harness-selection",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/coding-versegit-evaluation.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 1.0930000000007567
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "electron/services/versegit-fact-adapter.ts",
+        "tests/unit/versegit-fact-adapter.test.ts",
+        "tests/unit/coding-versegit-evaluation.test.ts",
+        "scripts/coding-evaluation/verify-versegit.mjs",
+        "--max-warnings=0"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 7.421999999998661
+    }
+  ]
+}

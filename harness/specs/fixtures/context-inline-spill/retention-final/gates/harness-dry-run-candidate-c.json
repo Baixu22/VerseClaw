@@ -1,0 +1,35 @@
+{
+  "schema": "ContextInlineSpillGate/v2",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "name": "harness-dry-run-candidate-c",
+  "command": "pnpm",
+  "args": [
+    "harness",
+    "run",
+    "--spec",
+    "harness/specs/tasks/context-inline-spill-default-path.md",
+    "--dry-run"
+  ],
+  "workspace": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+  "started_at": "2026-11-03T15:13:27.0647529+00:00",
+  "finished_at": "2026-11-03T15:13:29.4118367+00:00",
+  "elapsed_ms": 2151,
+  "exit_code": 0,
+  "command_exit_code": 0,
+  "candidate": {
+    "dirty": false,
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "status": "",
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf"
+  },
+  "candidate_after": {
+    "dirty": false,
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "status": "",
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf"
+  },
+  "source_status_unchanged": true,
+  "log_file": "D:\\tmp\\context-inline-spill-closeout-20261103\\gates\\harness-dry-run-candidate-c.log",
+  "log_sha256": "f7c41ac50f935e6e095b7829aadbb1d7dc3304420dbe90887f1103a42f121d0d"
+}

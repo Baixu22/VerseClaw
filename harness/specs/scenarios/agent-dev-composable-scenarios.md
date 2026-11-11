@@ -13,6 +13,10 @@ pathPatterns:
 
 # Agent Dev Composable Scenarios
 
+Runtime trace collection includes normal chat and tool channels. A request timeline joins
+events sharing the same observed run ID. Repeated messages and run-end usage must not
+double count tokens; reported model cost remains available when a final run supplies tokens only.
+
 ## Purpose
 
 Agent-authored features should be reproducible through composable `devScenario` seeds instead of scattered hardcoded fixtures.

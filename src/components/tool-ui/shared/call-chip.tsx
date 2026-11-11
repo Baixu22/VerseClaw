@@ -146,7 +146,7 @@ export function CallChip({
     statusLabel,
   ].filter(Boolean).join(', ');
   const fillBackground = isDone
-    ? 'color-mix(in srgb, #22c55e 15%, transparent)'
+    ? 'transparent'
     : isError
       ? 'color-mix(in srgb, #ef4444 14%, transparent)'
       : 'color-mix(in srgb, currentColor 8%, transparent)';
@@ -173,10 +173,9 @@ export function CallChip({
       data-testid="chat-call-chip"
       className={cn(
         'group relative inline-flex h-8 min-w-0 max-w-full items-center gap-2 overflow-hidden rounded-lg border px-2.5 text-xs leading-none text-foreground',
-        'border-border/60 bg-surface-input',
+        isDone ? 'border-transparent bg-transparent' : 'border-border/60 bg-surface-input',
         'transition-[border-color,background-color,transform] duration-150',
         isRunning && 'border-primary/20',
-        isDone && 'border-emerald-600/20 dark:border-emerald-400/20',
         isError && 'border-destructive/30',
         className,
       )}
@@ -184,7 +183,8 @@ export function CallChip({
     >
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 origin-left"
+        data-testid="chat-call-chip-progress"
+        className="pointer-events-none absolute inset-0 origin-left motion-reduce:!transition-none"
         style={{
           backgroundColor: fillBackground,
           transform: `scaleX(${progress})`,
@@ -204,7 +204,7 @@ export function CallChip({
       >
         {leading}
       </span>
-      <span className="relative max-w-[12rem] shrink-0 truncate font-medium" aria-hidden="true">
+      <span className="relative min-w-0 max-w-[12rem] truncate font-medium" title={name} aria-hidden="true">
         {name}
       </span>
       {argument ? (

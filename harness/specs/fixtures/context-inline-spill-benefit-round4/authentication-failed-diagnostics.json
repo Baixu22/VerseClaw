@@ -1,0 +1,89 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-relay",
+  "pageArgumentCounts": {},
+  "responseStatuses": {},
+  "incompleteReasons": {},
+  "returnedModels": {},
+  "completedMessageTextIgnoredByAdapter": [],
+  "byArm": {
+    "baseline-no-reference": {
+      "rawOracleHits": 0,
+      "overProjectionBudgetCalls": 0,
+      "oracleDroppedBeforeNextRequest": 0,
+      "modelRecalls": 0
+    },
+    "reference-visible": {
+      "rawOracleHits": 0,
+      "overProjectionBudgetCalls": 0,
+      "oracleDroppedBeforeNextRequest": 0,
+      "modelRecalls": 0
+    },
+    "recall-stable": {
+      "rawOracleHits": 0,
+      "overProjectionBudgetCalls": 0,
+      "oracleDroppedBeforeNextRequest": 0,
+      "modelRecalls": 0
+    },
+    "retention-off": {
+      "rawOracleHits": 0,
+      "overProjectionBudgetCalls": 0,
+      "oracleDroppedBeforeNextRequest": 0,
+      "modelRecalls": 0
+    }
+  },
+  "retentionPairs": {
+    "evidence": {
+      "pairs": 18,
+      "both": 0,
+      "onlyStable": 0,
+      "onlyOff": 0,
+      "neither": 18
+    },
+    "control": {
+      "pairs": 6,
+      "both": 0,
+      "onlyStable": 0,
+      "onlyOff": 0,
+      "neither": 6
+    }
+  },
+  "pageContract": {
+    "allToolDefinitionsIdentical": true,
+    "validSizeCalls": 0,
+    "invalidSizeCalls": 0,
+    "invalidSizeDiagnostics": 0,
+    "maxSerializedResultChars": 0
+  },
+  "archiveSelection": {
+    "baseline-no-reference": {
+      "originalArchive": 0,
+      "otherArchive": 0,
+      "missingArchive": 0,
+      "successfulOriginal": 0,
+      "successfulOther": 0
+    },
+    "reference-visible": {
+      "originalArchive": 0,
+      "otherArchive": 0,
+      "missingArchive": 0,
+      "successfulOriginal": 0,
+      "successfulOther": 0
+    },
+    "recall-stable": {
+      "originalArchive": 0,
+      "otherArchive": 0,
+      "missingArchive": 0,
+      "successfulOriginal": 0,
+      "successfulOther": 0
+    },
+    "retention-off": {
+      "originalArchive": 0,
+      "otherArchive": 0,
+      "missingArchive": 0,
+      "successfulOriginal": 0,
+      "successfulOther": 0
+    }
+  },
+  "note": "Observed request sizes and raw/projection differences; these diagnostics do not change scoring or frozen thresholds."
+}

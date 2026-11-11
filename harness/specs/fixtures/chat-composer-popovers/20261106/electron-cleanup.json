@@ -1,0 +1,63 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-fqNECo",
+  "ledgerEntries": 8,
+  "reaped": [
+    {
+      "pid": 12756,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 11500,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 44824,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 40320,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 20540,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 23032,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 36288,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    },
+    {
+      "pid": 17060,
+      "aliveBefore": false,
+      "nodeKill": false,
+      "taskkill": false
+    }
+  ],
+  "survivors": [],
+  "sweep": {
+    "status": "ok",
+    "runRoot": "D:\\ClawX\\.tmp\\e2e-runs\\verse-claw-e2e-run-fqNECo\\",
+    "owned": [],
+    "remaining": []
+  }
+}

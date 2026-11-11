@@ -1,0 +1,119 @@
+[
+  {
+    "name": "unit",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/welcome-project-picker.test.tsx",
+      "tests/unit/welcome-branch-picker.test.tsx",
+      "tests/unit/composer-git-strip.test.tsx",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-welcome-r10-20261106/unit.json"
+    ],
+    "candidate": "bfe2f3c467d386a79a0249f447876032abda7ad0",
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "exitCode": 0,
+    "signal": null,
+    "startedAt": "2026-11-06T03:59:20.140Z",
+    "durationMs": 10986,
+    "dirtyBefore": false,
+    "dirtyAfter": false
+  },
+  {
+    "name": "web",
+    "args": [
+      "node_modules/@typescript/native-preview/bin/tsgo.js",
+      "--noEmit",
+      "-p",
+      "tsconfig.web.json",
+      "--composite",
+      "false"
+    ],
+    "candidate": "bfe2f3c467d386a79a0249f447876032abda7ad0",
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "exitCode": 0,
+    "signal": null,
+    "startedAt": "2026-11-06T03:59:31.256Z",
+    "durationMs": 3709,
+    "dirtyBefore": false,
+    "dirtyAfter": false
+  },
+  {
+    "name": "lint",
+    "args": [
+      "node_modules/eslint/bin/eslint.js",
+      "src/pages/Chat/index.tsx",
+      "src/components/chat/WelcomeProjectPicker.tsx",
+      "src/components/chat/WelcomeBranchPicker.tsx",
+      "tests/e2e/chat-welcome-hero-fakecoding.spec.ts",
+      "tests/e2e/chat-welcome-hero-verse-shot.spec.ts",
+      "tests/unit/welcome-project-picker.test.tsx",
+      "tests/e2e/chat-composer-git-strip.spec.ts",
+      "tests/unit/welcome-branch-picker.test.tsx",
+      "-f",
+      "json",
+      "--output-file",
+      "D:/tmp/chat-welcome-r10-20261106/lint.json"
+    ],
+    "candidate": "bfe2f3c467d386a79a0249f447876032abda7ad0",
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "exitCode": 0,
+    "signal": null,
+    "startedAt": "2026-11-06T03:59:35.101Z",
+    "durationMs": 7465,
+    "dirtyBefore": false,
+    "dirtyAfter": false
+  },
+  {
+    "name": "i18n",
+    "args": [
+      "scripts/i18n-lint.mjs"
+    ],
+    "candidate": "bfe2f3c467d386a79a0249f447876032abda7ad0",
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "exitCode": 0,
+    "signal": null,
+    "startedAt": "2026-11-06T03:59:42.684Z",
+    "durationMs": 570,
+    "dirtyBefore": false,
+    "dirtyAfter": false
+  },
+  {
+    "name": "build",
+    "args": [
+      "--max-old-space-size=4096",
+      "node_modules/vite/bin/vite.js",
+      "build"
+    ],
+    "candidate": "bfe2f3c467d386a79a0249f447876032abda7ad0",
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "exitCode": 0,
+    "signal": null,
+    "startedAt": "2026-11-06T03:59:43.374Z",
+    "durationMs": 54628,
+    "dirtyBefore": false,
+    "dirtyAfter": false
+  },
+  {
+    "name": "electron",
+    "args": [
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "tests/e2e/chat-welcome-hero-fakecoding.spec.ts",
+      "tests/e2e/chat-welcome-hero-verse-shot.spec.ts",
+      "tests/e2e/chat-composer-git-strip.spec.ts",
+      "--reporter=line,json",
+      "--output=D:/tmp/chat-welcome-r10-20261106/electron"
+    ],
+    "candidate": "bfe2f3c467d386a79a0249f447876032abda7ad0",
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "exitCode": 0,
+    "signal": null,
+    "startedAt": "2026-11-06T04:00:38.135Z",
+    "durationMs": 100516,
+    "dirtyBefore": false,
+    "dirtyAfter": false
+  }
+]

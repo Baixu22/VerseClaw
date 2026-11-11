@@ -78,6 +78,8 @@ const rendererEntryUrl = pathToFileURL(join(repoRoot, 'dist', 'index.html')).toS
 // If any src file is newer than dist/entry.js, fail-fast with a readable hint.
 const runtimeSrcDir = join(repoRoot, 'openclaw_runtime', 'src');
 const runtimeDistEntry = join(repoRoot, 'openclaw_runtime', 'dist', 'entry.js');
+// On this Windows host app.process() can be the launcher wrapper. The main
+// process owns the Gateway/renderer tree and must be tracked before shutdown.
 
 let freshnessChecked = false;
 async function assertRuntimeDistFresh(): Promise<void> {

@@ -1,0 +1,32 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b934",
+  "name": "tf-export-readback",
+  "cwd": "D:\\ClawX",
+  "command": [
+    "python",
+    "-X",
+    "utf8",
+    "D:\\tmp\\inline-spill-closeout-20261108-01a1b934\\readback-task-forest.py"
+  ],
+  "started_at": "2026-11-08T03:43:03.140032+00:00",
+  "duration_seconds": 135.984,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": null
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b934\\checks\\tf-export-readback.stdout.txt",
+      "bytes": 234,
+      "sha256": "ff8e622eee3452678f4cf08634a0578483307565b4dbdecf324983f9416d2ab3"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b934\\checks\\tf-export-readback.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

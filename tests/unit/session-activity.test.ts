@@ -39,12 +39,9 @@ describe('session activity projection', () => {
     expect(lateRunning.terminals[0].status).toBe('completed');
   });
 
-  it('keeps a newer completed run when an older start event arrives late', () => {
+  it('keeps projected run state when an older runtime notification arrives', () => {
     const initial = createEmptySessionActivitySnapshot('session-a', 1);
-    const completed = reduceSessionActivity(initial, {
-      channel: 'runtime',
-      payload: { type: 'run.ended', runId: 'run-a', sessionKey: 'session-a', status: 'completed', ts: 20 },
-    });
+    const completed = { ...initial, session: { ...initial.session, runId: 'run-a', status: 'completed' as const, updatedAt: 20 } };
     const lateStart = reduceSessionActivity(completed, {
       channel: 'runtime',
       payload: { type: 'run.started', runId: 'run-a', sessionKey: 'session-a', ts: 10 },
@@ -54,13 +51,13 @@ describe('session activity projection', () => {
     expect(lateStart.session.status).toBe('completed');
   });
 
-  it('does not invent percentage progress for a normal chat run', () => {
+  it('does not infer lifecycle or percentage progress from a runtime notification', () => {
     const next = reduceSessionActivity(createEmptySessionActivitySnapshot('session-a', 1), {
       channel: 'runtime',
       payload: { type: 'run.started', runId: 'run-a', sessionKey: 'session-a', ts: 2 },
     });
 
-    expect(next.session.status).toBe('running');
+    expect(next.session.status).toBe('idle');
     expect(next.tasks).toEqual([]);
   });
 

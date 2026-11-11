@@ -13,6 +13,9 @@
     "retry": "重新加载"
   },
   "welcome": {
+    "quickStart": "快捷开始",
+    "branchLoading": "正在读取分支…",
+    "branchLoadFailed": "无法读取分支",
     "projectSearch": "搜索项目",
     "projectEmpty": "未找到项目",
     "changeProject": "切换项目：{{projectName}}",
@@ -30,7 +33,7 @@
     "brainstormingDesc": "让多个智能体协同拆分任务"
   },
   "sessionActivity": {
-    "title": "会话状态",
+    "title": "会话环境",
     "description": "当前会话的实时运行、任务、Git、目标、进程、谱系、子 Agent 和终端状态。",
     "openRecovery": "打开会话恢复",
     "createMemoryDraft": "存为记忆草稿",
@@ -50,9 +53,10 @@
       "lineage": "谱系",
       "terminals": "终端",
       "continuity": "连续性",
-      "environment": "环境",
+      "environment": "变更",
       "plan": "开发任务",
-      "policy": "运行策略"
+      "policy": "运行策略",
+      "sources": "来源"
     },
     "status": {
       "idle": "空闲",
@@ -163,7 +167,14 @@
     },
     "runningCount": "{{count}} 个运行中",
     "processes": {
-      "openOutput": "查看 {{command}} 的输出"
+      "recent": "已完成 · {{count}}",
+      "openOutput": "查看 {{command}} 的输出",
+      "openInWorkspace": "在工作空间中打开",
+      "noOutput": "暂无输出",
+      "showOutput": "展开输出",
+      "hideOutput": "收起输出",
+      "duration": "{{seconds}} 秒",
+      "inWorkspace": "已在工作空间打开"
     },
     "policy": {
       "backend": "配置的后端",
@@ -267,6 +278,25 @@
         }
       },
       "unverifiedFacts": "未验证事实"
+    },
+    "sourceKinds": {
+      "mcp": "MCP",
+      "skill": "Skill"
+    },
+    "moreRows": "查看其余 {{count}} 项",
+    "close": "收起环境",
+    "overview": {
+      "context": "上下文",
+      "contextUsed": "已用 / 窗口",
+      "cacheRead": "缓存读取",
+      "cacheHitRate": "缓存命中率",
+      "pressure": "压力",
+      "connectors": "连接器",
+      "connectorsValue": "{{count}} 个在用",
+      "skillsValue": "{{count}} 个技能",
+      "review": "审阅",
+      "background": "后台任务",
+      "backgroundIdle": "暂无运行"
     }
   },
   "noLogs": "（暂无日志）",
@@ -749,7 +779,8 @@
       "expand": "展开面板",
       "collapse": "收起面板",
       "moveTerminalSide": "将终端移到右侧",
-      "moveTerminalBottom": "将终端移到底部"
+      "moveTerminalBottom": "将终端移到底部",
+      "close": "关闭工作空间"
     },
     "changes": {
       "heading": "文件变更（{{count}} 个）",
@@ -1256,6 +1287,8 @@
     }
   },
   "executionGraph": {
+    "arguments": "调用参数",
+    "result": "执行结果",
     "title": "执行关系图",
     "branchLabel": "分支",
     "thinkingLabel": "思考中",
@@ -1337,6 +1370,13 @@
     "previewUnavailable": "图片预览暂时不可用"
   },
   "session": {
+    "navigation": {
+      "title": "当前工作区的会话",
+      "search": "查找会话",
+      "source": "来源会话",
+      "from": "来自 {{session}}",
+      "children": "展开 {{count}} 个子会话"
+    },
     "derived": {
       "title": "派生会话（{{count}}）"
     },
@@ -1716,7 +1756,7 @@
     "resumeTooltip": "继续这个已暂停的会话。",
     "resumeDisabled": "此会话当前无法在这里继续。",
     "startingTooltip": "正在启动…点击可取消本次发送，或暂停当前运行。",
-    "queueTooltip": "将这条草稿排队，待当前运行结束后发送。双击改为暂停。",
+    "queueTooltip": "排队：当前运行结束后发送",
     "gatewayConnected": "已连接",
     "gatewayStatus": "gateway {{state}} | port: {{port}} {{pid}}",
     "contextMenu": {
@@ -2074,16 +2114,17 @@
     },
     "workModeRecommendedPermission": "建议：{{mode}}",
     "intervention": {
+      "menu": "发送方式",
       "guide": "引导",
-      "guideTooltip": "向当前运行注入非打断式指导。",
+      "guideTooltip": "不停止运行，在下一步加入当前运行",
       "longTaskRequired": "打断/引导/排队/修改目标需要当前会话存在有效的 /loop 长任务上下文。",
       "reviseGoal": "修改目标",
-      "reviseGoalTooltip": "记录检查点并从修改后的用户目标重新开始。",
+      "reviseGoalTooltip": "保存检查点，并以这条消息作为新目标重新开始",
       "queueDefault": "运行中：Enter 默认排队",
       "queue": "排队",
-      "queueTooltip": "保持当前运行不变，稍后重放这条后续输入。",
-      "interrupt": "打断",
-      "interruptTooltip": "在高风险恢复动作前中止或引导当前运行。"
+      "queueTooltip": "当前运行结束后再发送",
+      "interrupt": "打断并发送",
+      "interruptTooltip": "保存检查点，停止当前运行并从这条消息重新开始"
     },
     "rollbackPlan": {
       "title": "恢复辅助",
@@ -2217,6 +2258,11 @@
       "existingBranch": "已有分支",
       "defaultPath": "默认路径",
       "defaultPathUnavailable": "输入分支名称以预览路径",
+      "kindBranch": "分支",
+      "kindWorktree": "工作树",
+      "kindDetached": "分离",
+      "mainCheckout": "主检出",
+      "linkedWorktree": "独立工作树",
       "filesChanged": "已修改 {{count}} 个文件",
       "filesChanged_one": "已修改 {{count}} 个文件"
     },
@@ -2534,7 +2580,7 @@
   },
   "turnSummary": {
     "codingRun": {
-      "title": "CodingRun 证据",
+      "title": "运行诊断",
       "jsonl": "只读 JSONL 投影",
       "copy": "复制",
       "copied": "已复制"
@@ -2554,6 +2600,7 @@
       "minutesSeconds": "{{minutes}} 分 {{seconds}} 秒"
     },
     "badge": {
+      "tools": "{{count}} 次工具调用",
       "thoughts": "{{count}} 段思考",
       "approvals": "{{count}} 项待批准",
       "plan": "{{count}} 步计划",

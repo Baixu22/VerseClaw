@@ -1958,15 +1958,20 @@ export type McpServerDeletePayload = { id: string };
 export type McpServerTestPayload = { id?: string; server?: McpServerCreatePayload };
 export type McpServerResolvePayload = { workspaceId?: string | null; agentId?: string | null };
 export type McpServerResolveResult = HostSuccess & McpResolvedConfig;
-export type McpListToolsPayload = { serverId: string };
-export type McpHeartbeatPayload = { serverId: string };
-export type McpCallToolPayload = {
+export type McpManagementContext = {
+  sessionKey?: string;
+  expectedSessionGeneration?: string;
+  catalogRevision?: string;
+  workspaceId?: string | null;
+  agentId?: string | null;
+};
+export type McpListToolsPayload = McpManagementContext & { serverId: string };
+export type McpHeartbeatPayload = McpManagementContext & { serverId: string };
+export type McpCallToolPayload = McpManagementContext & {
   serverId: string;
   toolName: string;
   args?: Record<string, unknown>;
   approvalId?: string;
-  workspaceId?: string | null;
-  agentId?: string | null;
 };
 export type McpReloadRuntimePayload = { workspaceId?: string | null; agentId?: string | null };
 

@@ -41,7 +41,7 @@ import {
 import { getActiveWorkspaceProfile } from './workspaces-api';
 import { createWorkspacePermissionDecisionEvent } from './permission-decision-audit';
 import { createSandboxDenialDetails, type SandboxDenialDetails } from '@shared/sandbox/errors';
-import { decideGatewayRpc, isApprovalRisk } from './workspace-permissions';
+import { decideGatewayRpc, isApprovalRisk, resolveWorkspaceSessionRoot } from './workspace-permissions';
 import {
   classifyGatewayMethodForSandboxGate,
   composeWithSandboxHighRiskGate,
@@ -435,7 +435,7 @@ export function createGatewayApi(
       return { success: true };
     },
     rpc: async (payload) => {
-      const body = isRecord(payload) ? payload as RpcPayload : {};
+      let body = isRecord(payload) ? payload as RpcPayload : {};
       const method = typeof body.method === 'string' ? body.method.trim() : '';
       if (!method) {
         throw new Error('Invalid gateway RPC method');
@@ -456,6 +456,36 @@ export function createGatewayApi(
         }
         return runRpcAndCaptureKnowledge(method, body.params, timeoutMs, workspace);
       };
+
+      if (method === 'tools.invoke' && workspace) {
+        const params = isRecord(body.params) ? { ...body.params } : {};
+        const sessionKey = typeof params.sessionKey === 'string' ? params.sessionKey : workspace.activeSessionKey;
+        const binding = Object.values(workspace.agentBindings ?? {}).find((entry) => entry.sessionKey === sessionKey);
+        const agentId = binding?.agentId ?? workspace.selectedAgentId ?? workspace.agentId;
+        const expectedSessionGeneration = params.expectedSessionGeneration ?? workspace.coordinatorBindings?.[sessionKey]?.sessionGeneration;
+        const workspaceDir = resolveWorkspaceSessionRoot(workspace, sessionKey, agentId, expectedSessionGeneration);
+        if (!workspaceDir || (!binding && sessionKey !== workspace.activeSessionKey) || (params.agentId !== undefined && params.agentId !== agentId)
+          || (params.workspaceDir !== undefined && params.workspaceDir !== workspaceDir)) {
+          return { success: false, blocked: true, errorCode: 'VALIDATION', error: 'Tool invocation differs from the active workspace binding' };
+        }
+        body = { ...body, params: { ...params, sessionKey, agentId, workspaceDir,
+          ...(expectedSessionGeneration ? { expectedSessionGeneration } : {}) } };
+      }
+
+      if (method === 'mcp.listTools' || method === 'mcp.heartbeat' || method === 'mcp.callTool') {
+        const params = isRecord(body.params) ? body.params : {};
+        const sessionKey = typeof params.sessionKey === 'string' ? params.sessionKey : '';
+        const binding = Object.values(workspace?.agentBindings ?? {}).find((entry) => entry.sessionKey === sessionKey);
+        const agentId = binding?.agentId ?? workspace?.selectedAgentId ?? workspace?.agentId;
+        const workspaceDir = workspace && agentId ? resolveWorkspaceSessionRoot(workspace, sessionKey, agentId, params.expectedSessionGeneration) : undefined;
+        // Recheck the Main owner at the permission gate so a queued request cannot
+        // borrow another workspace's permission after the UI context changes.
+        if (!workspace || !workspaceDir || params.workspaceId !== workspace.id || params.workspaceDir !== workspaceDir
+          || !sessionKey || (!binding && sessionKey !== workspace.activeSessionKey) || params.agentId !== agentId
+          || typeof params.expectedSessionGeneration !== 'string' || !params.expectedSessionGeneration.trim()) {
+          return { success: false, blocked: true, errorCode: 'VALIDATION', error: 'MCP request is not bound to the active workspace and assistant' };
+        }
+      }
 
       if (workspace) {
         let decision = decideGatewayRpc(method, workspace.permissionMode, body.params);

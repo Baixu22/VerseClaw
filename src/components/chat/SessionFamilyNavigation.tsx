@@ -1,7 +1,16 @@
 import { useTranslation } from 'react-i18next';
-import { CornerUpLeft } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ChevronRight, GitFork } from 'lucide-react';
 import type { ChatSession } from '@shared/chat/types';
 import { classifyDerivation, deriveSessionLineage, type SessionDerivation } from '@shared/types/session-derivation';
+
+/*
+ * Lineage lives inline in the chat header as quiet chips instead of a strip
+ * pinned over the transcript: a source link for derived sessions, a picker
+ * when there are descendants, and relation details only where the direct
+ * parent is not the whole story (multi-generation chains or broken links).
+ * Healthy roots without children render nothing.
+ */
+const CHIP = 'inline-flex h-7 min-w-0 shrink-0 items-center gap-1.5 rounded-md px-1.5 text-xs leading-none text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10';
 
 export function SessionFamilyNavigation({ session, sessions, derivation, onNavigate, onRefresh }: {
   session: ChatSession;
@@ -19,27 +28,36 @@ export function SessionFamilyNavigation({ session, sessions, derivation, onNavig
     readEntry: (key) => sessions.find((entry) => entry.key === key) ?? null })).hops;
   if (!relation.parentSessionKey && !relation.diagnostics?.length && !children.length) return null;
   const name = (entry: ChatSession) => entry.displayName || entry.label || entry.derivedTitle || entry.key;
+  const kind = t(`sessionFamily.kind.${relation.kind}`);
+  const showRelations = hops.length > 1 || Boolean(problem);
   return <nav aria-label={t('sessionFamily.navigation')} data-testid="session-family-navigation"
-    className="relative flex min-w-0 shrink-0 items-center gap-2 border-b border-border/40 px-4 py-1 text-xs text-muted-foreground">
-    {relation.parentSessionKey && <>
-      <span className="shrink-0">{t(`sessionFamily.kind.${relation.kind}`)}</span>
-      {parent ? <button type="button" data-testid="session-family-source" onClick={() => onNavigate(parent.key)}
-        className="flex min-w-0 items-center gap-1 truncate rounded px-1 py-1 hover:bg-black/5 dark:hover:bg-white/10">
-        <CornerUpLeft className="size-3 shrink-0" /><span className="truncate">{name(parent)}</span>
-      </button> : <button type="button" data-testid="session-family-source-unloaded" onClick={onRefresh} className="underline underline-offset-2">
-        {t(problem === 'parent-missing' ? 'sessionFamily.missing' : 'sessionFamily.unloaded')}
-      </button>}
-    </>}
-    {relation.diagnostics?.length ? <span data-testid="session-family-conflict">{t('sessionFamily.conflict')}</span> : null}
-    {problem && problem !== 'parent-missing' && <span>{t(`sessionFamily.${problem}`)}</span>}
-    {hops.length > 0 && <details className="relative shrink-0" data-testid="session-family-relations">
-      <summary className="cursor-pointer rounded px-1 py-1">{t('sessionFamily.relations')}</summary>
-      <ol className="absolute left-0 top-full z-40 mt-1 max-h-60 w-72 max-w-[80vw] space-y-2 overflow-auto rounded border border-border bg-surface-modal p-3 shadow-lg">
+    className="session-family-nav flex min-w-0 items-center">
+    {relation.parentSessionKey && (parent
+      ? <button type="button" data-testid="session-family-source" onClick={() => onNavigate(parent.key)}
+          title={`${kind} · ${name(parent)}`} className={CHIP}>
+          <ArrowLeft className="size-3.5 shrink-0" aria-hidden="true" />
+          <span className="session-family-nav__name max-w-[128px] truncate">{name(parent)}</span>
+        </button>
+      : <button type="button" data-testid="session-family-source-unloaded" onClick={onRefresh} className={CHIP}>
+          <AlertTriangle className="size-3.5 shrink-0" aria-hidden="true" />
+          <span className="truncate">{t(problem === 'parent-missing' ? 'sessionFamily.missing' : 'sessionFamily.unloaded')}</span>
+        </button>)}
+    {relation.diagnostics?.length ? <span data-testid="session-family-conflict" className={CHIP}>
+      <AlertTriangle className="size-3.5 shrink-0" aria-hidden="true" />{t('sessionFamily.conflict')}
+    </span> : null}
+    {problem && problem !== 'parent-missing' && <span className={CHIP}>
+      <AlertTriangle className="size-3.5 shrink-0" aria-hidden="true" />{t(`sessionFamily.${problem}`)}
+    </span>}
+    {showRelations && hops.length > 0 && <details className="relative shrink-0" data-testid="session-family-relations">
+      <summary className={`${CHIP} cursor-pointer list-none [&::-webkit-details-marker]:hidden`}>
+        {t('sessionFamily.relations')}<ChevronRight className="size-3 shrink-0" aria-hidden="true" />
+      </summary>
+      <ol className="absolute left-0 top-full z-40 mt-1 max-h-60 w-80 max-w-[80vw] space-y-1 overflow-auto rounded-lg border border-border bg-surface-modal p-2 text-xs text-muted-foreground shadow-lg">
         {hops.map((hop) => {
           const child = sessions.find((entry) => entry.key === hop.childSessionKey);
           const source = sessions.find((entry) => entry.key === hop.parentSessionKey);
-          return <li key={hop.childSessionKey} className="flex min-w-0 flex-wrap items-center gap-1">
-            <span className="max-w-full truncate" title={hop.childSessionKey}>{child ? name(child) : hop.childSessionKey}</span>
+          return <li key={hop.childSessionKey} className="flex min-w-0 flex-wrap items-center gap-1 rounded-md px-1.5 py-1">
+            <span className="max-w-full truncate text-foreground" title={hop.childSessionKey}>{child ? name(child) : hop.childSessionKey}</span>
             <span>→ {t(`sessionFamily.kind.${hop.kind}`)} →</span>
             {source ? <button type="button" className="max-w-full truncate underline underline-offset-2" title={source.key}
               onClick={() => onNavigate(source.key)}>{name(source)}</button>
@@ -49,11 +67,15 @@ export function SessionFamilyNavigation({ session, sessions, derivation, onNavig
         })}
       </ol>
     </details>}
-    {children.length > 0 && <select aria-label={t('sessionFamily.children', { count: children.length })} value=""
-      data-testid="session-family-children" className="ml-auto min-w-0 max-w-48 rounded bg-surface-input px-2 py-1 text-foreground"
-      onChange={(event) => { if (event.target.value) onNavigate(event.target.value); }}>
-      <option value="">{t('sessionFamily.children', { count: children.length })}</option>
-      {children.map((entry) => <option key={entry.key} value={entry.key}>{name(entry)}</option>)}
-    </select>}
+    {children.length > 0 && <span className="relative inline-flex min-w-0 shrink-0 items-center" title={t('sessionFamily.children', { count: children.length })}>
+      <GitFork className="pointer-events-none absolute left-1.5 size-3.5" aria-hidden="true" />
+      <select aria-label={t('sessionFamily.children', { count: children.length })} value=""
+        data-testid="session-family-children"
+        className={`${CHIP} session-family-nav__children w-7 max-w-7 cursor-pointer appearance-none bg-transparent px-0 outline-none focus-visible:ring-2 focus-visible:ring-ring`}
+        onChange={(event) => { if (event.target.value) onNavigate(event.target.value); }}>
+        <option value="">{t('sessionFamily.children', { count: children.length })}</option>
+        {children.map((entry) => <option key={entry.key} value={entry.key}>{name(entry)}</option>)}
+      </select>
+    </span>}
   </nav>;
 }

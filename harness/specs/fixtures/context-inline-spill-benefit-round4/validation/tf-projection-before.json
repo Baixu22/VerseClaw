@@ -1,0 +1,33 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "tf-projection-before",
+  "cwd": "D:/ClawX",
+  "command": [
+    "python",
+    "-X",
+    "utf8",
+    "D:/tmp/inline-spill-benefit-r4-20261108-01a1b934/readback-task-forest.py",
+    "in_progress"
+  ],
+  "started_at": "2026-11-08T05:57:32.411740+00:00",
+  "duration_seconds": 6.0,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": null
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\tf-projection-before.stdout.txt",
+      "bytes": 236,
+      "sha256": "903cfa2123f629f66a74eac006cd3b12d6f0d01e755fd5195c99d05c79cf93da"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\tf-projection-before.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

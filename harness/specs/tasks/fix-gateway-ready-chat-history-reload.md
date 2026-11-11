@@ -10,7 +10,7 @@ touchedAreas:
   - electron/gateway/manager.ts
   - src/components/layout/Sidebar.tsx
   - src/stores/chat.ts
-  - src/stores/chat/history-actions.ts
+  - src/stores/chat.ts
   - src/pages/Chat/ChatInput.tsx
   - src/pages/Settings/index.tsx
   - src/pages/Setup/index.tsx

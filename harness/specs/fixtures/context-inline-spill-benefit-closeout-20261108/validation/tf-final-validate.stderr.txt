@@ -1,0 +1,1 @@
+错误：无法获得锁：D:\ClawX\.agent-workbench\task-forest\lock；当前锁信息：<无法读取锁文件>

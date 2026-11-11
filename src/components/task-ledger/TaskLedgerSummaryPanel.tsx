@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, CheckSquare, GitBranch, RefreshCw } from 'lucide-react';
+import { AlertTriangle, CheckSquare, ChevronDown, ExternalLink, GitBranch, Loader2, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { useOverlayPortalContainer } from '@/components/ui/overlay-portal';
+import { useDismissOnOutside, usePopover } from '@/components/settings/primitives/usePopover';
 import { hostApi } from '@/lib/host-api';
 import { normalizeAppError, type AppErrorCode } from '@/lib/error-model';
 import { cn } from '@/lib/utils';
@@ -45,6 +48,117 @@ function NodeLine({ node, t }: { node: TaskLedgerNode; t: ReturnType<typeof useT
       </div>
       <p className="mt-1 truncate text-2xs text-muted-foreground">{t(`kind.${node.kind}`)}</p>
     </li>
+  );
+}
+
+const SCOPE_CHIP = 'inline-flex h-7 min-w-0 shrink-0 items-center gap-1 rounded-md px-1.5 text-xs text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10';
+
+/**
+ * The session's task container as a quiet header chip.
+ *
+ * It used to be a full-width strip pinned over every transcript, which made a
+ * conversation with no business task announce "0 tasks" in the most prominent
+ * slot on the page. The container is still always present — empty, unavailable
+ * and stale stay distinguishable (`data-state`, the status line) — but only the
+ * states that ask something of the user are spelled out; refresh and the ledger
+ * link surface on hover/focus. The list opens as an anchored popover (a bottom
+ * sheet on narrow windows), so opening it never reflows the conversation.
+ */
+function SessionTaskScopeChip({
+  className,
+  state,
+  attention,
+  loading,
+  narrow,
+  expanded,
+  setExpanded,
+  title,
+  count,
+  statusText,
+  ledgerPath,
+  onRefresh,
+  list,
+  t,
+}: {
+  className?: string;
+  state: string;
+  attention: boolean;
+  loading: boolean;
+  narrow: boolean;
+  expanded: boolean;
+  setExpanded: (next: boolean | ((value: boolean) => boolean)) => void;
+  title: string;
+  count: number;
+  statusText: string;
+  ledgerPath: string;
+  onRefresh: () => void;
+  list: React.ReactNode;
+  t: ReturnType<typeof useTranslation<'taskLedger'>>['t'];
+}) {
+  const popover = usePopover<HTMLButtonElement>({ align: 'left', gap: 6 });
+  const overlayContainer = useOverlayPortalContainer();
+  const open = expanded && !narrow;
+  useDismissOnOutside({ open, onDismiss: () => setExpanded(false), refs: [popover.triggerRef, popover.layerRef] });
+  const { setOpen } = popover;
+  useEffect(() => { setOpen(open); }, [open, setOpen]);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') popover.triggerRef.current?.focus();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open, popover.triggerRef]);
+  const toggle = <button ref={popover.triggerRef} type="button" data-testid="session-tasks-toggle" aria-expanded={expanded}
+    aria-haspopup="dialog" onClick={narrow ? undefined : () => setExpanded((value) => !value)} title={statusText}
+    className={cn(SCOPE_CHIP, expanded && 'bg-black/5 text-foreground dark:bg-white/10', attention && 'text-amber-700 dark:text-amber-400')}>
+    {attention
+      ? <AlertTriangle className="size-3.5 shrink-0" aria-hidden="true" />
+      : state === 'loading'
+        ? <Loader2 className="size-3.5 shrink-0 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+        : <CheckSquare className="size-3.5 shrink-0" aria-hidden="true" />}
+    <span className="hidden truncate sm:inline">{title}</span><span className="tabular-nums">{count}</span>
+    <ChevronDown className={cn('size-3 shrink-0 opacity-70 transition-transform', expanded && 'rotate-180')} aria-hidden="true" />
+  </button>;
+  return (
+    <section data-testid="session-task-container" data-state={state} aria-label={title}
+      className={cn('group/task-scope relative inline-flex min-w-0 shrink items-center gap-0.5 text-xs', className)}>
+      {narrow ? <Sheet open={expanded} onOpenChange={setExpanded}>
+        <SheetTrigger asChild>{toggle}</SheetTrigger>
+        <SheetContent side="bottom" aria-describedby={undefined} data-testid="session-task-drawer">
+          <SheetTitle>{title}</SheetTitle>
+          {list}
+        </SheetContent>
+      </Sheet> : toggle}
+      <span className={cn('min-w-0 truncate', attention ? 'max-w-[220px] text-amber-700 dark:text-amber-400' : state === 'loading' ? 'max-w-[160px] text-muted-foreground' : 'sr-only')} role="status">
+        {statusText}
+      </span>
+      {/* Secondary actions stay reachable for pointer and keyboard but only
+        * claim attention when the scope needs it. */}
+      <span className={cn('inline-flex items-center transition-opacity duration-150',
+        attention ? 'opacity-100' : 'opacity-0 group-hover/task-scope:opacity-100 group-focus-within/task-scope:opacity-100')}>
+        <button type="button" aria-label={t('summary.refresh')} title={t('summary.refresh')} onClick={onRefresh} disabled={loading}
+          className="inline-flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 dark:hover:bg-white/10">
+          <RefreshCw className={cn('size-3.5', loading && 'animate-spin motion-reduce:animate-none')} aria-hidden="true" />
+        </button>
+        <Link data-testid="session-task-ledger-open" to={ledgerPath} title={t('summary.open')}
+          className="inline-flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10">
+          <ExternalLink className="size-3.5" aria-hidden="true" />
+          <span className="sr-only">{t('summary.open')}</span>
+        </Link>
+      </span>
+      {open && createPortal(
+        <div ref={popover.layerRef} style={popover.style} role="dialog" aria-label={title} data-testid="session-task-popover"
+          className="w-[min(380px,calc(100vw-16px))] rounded-xl border border-border/70 bg-surface-modal p-1.5 text-xs shadow-lg motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:duration-150">
+          <div className="flex min-w-0 items-center gap-2 px-2 pb-1 pt-1">
+            <span className="shrink-0 font-medium text-foreground">{title}</span>
+            <span className="min-w-0 flex-1 truncate text-muted-foreground">{statusText}</span>
+            <Link to={ledgerPath} className="shrink-0 text-muted-foreground hover:text-foreground hover:underline">{t('summary.open')}</Link>
+          </div>
+          {list}
+        </div>, overlayContainer ?? document.body,
+      )}
+    </section>
   );
 }
 
@@ -128,17 +242,15 @@ export function TaskLedgerSummaryPanel({
     const status = projectReadable ? nodes.length ? 'ready' : 'empty' : container.status;
     const statusText = loading && !snapshot ? t('summary.loading')
       : status === 'unavailable' ? unavailableText : t(`summary.scope.${status}`);
-    const toggle = <button type="button" data-testid="session-tasks-toggle" aria-expanded={expanded}
-      onClick={narrow ? undefined : () => setExpanded((value) => !value)}
-      className="flex min-w-0 items-center gap-1.5 rounded px-1 py-1 hover:bg-black/5 dark:hover:bg-white/10">
-      <CheckSquare className="size-3.5 shrink-0" />
-      <span>{t(projectWide ? 'summary.projectTasks' : 'summary.sessionTasks')}</span><span>{nodes.length}</span>
-    </button>;
-    const list = <ul className={cn('space-y-1 overflow-y-auto py-1', narrow ? 'max-h-[70vh]' : 'max-h-36')} data-testid="session-task-list">
-      {nodes.map((node) => <li key={node.id} className="flex min-w-0 items-center gap-2 rounded bg-surface-input px-2 py-1.5">
-        <Link to={`${ledgerPath}&nodeId=${encodeURIComponent(node.id)}`} className="min-w-0 flex-1 truncate">{node.title}</Link>
+    const scopeTitle = t(projectWide ? 'summary.projectTasks' : 'summary.sessionTasks');
+    /* Only states that ask something of the user are spelled out on the chip;
+     * a linked or still-empty scope reads from its count alone. */
+    const attention = !(loading && !snapshot) && (status === 'unavailable' || status === 'stale');
+    const list = <ul className={cn('space-y-0.5 overflow-y-auto overscroll-contain py-1', narrow ? 'max-h-[70vh]' : 'max-h-64')} data-testid="session-task-list">
+      {nodes.map((node) => <li key={node.id} className="flex min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-black/5 dark:hover:bg-white/5">
+        <Link to={`${ledgerPath}&nodeId=${encodeURIComponent(node.id)}`} className="min-w-0 flex-1 truncate text-foreground hover:underline">{node.title}</Link>
         <span className={cn('shrink-0 text-2xs', nodeTone(node))}>{t('summary.recordedStatus', { status: t(`status.${node.status}`) })}</span>
-        <button type="button" className="shrink-0 rounded px-1.5 py-1 hover:bg-black/5 disabled:opacity-50 dark:hover:bg-white/10"
+        <button type="button" className="shrink-0 rounded-md px-1.5 py-0.5 text-muted-foreground hover:bg-black/5 hover:text-foreground disabled:opacity-50 dark:hover:bg-white/10"
           data-testid={`session-task-select-${node.id}`} aria-label={t('summary.useTask', { title: node.title })}
           disabled={status !== 'ready' || Boolean(selectingTask) || session.hasActiveRun === true || binding?.activeTaskNodeId === node.id}
           onClick={() => {
@@ -157,29 +269,25 @@ export function TaskLedgerSummaryPanel({
             });
           }}>{t(binding?.activeTaskNodeId === node.id ? 'summary.selected' : 'summary.select')}</button>
       </li>)}
-      {!nodes.length && <li className="px-1 py-2 text-muted-foreground">{statusText}</li>}
+      {!nodes.length && <li className="px-2 py-2 text-muted-foreground">{statusText}</li>}
     </ul>;
     return (
-      <section data-testid="session-task-container" data-state={loading && !snapshot ? 'loading' : status}
-        className={cn('relative shrink-0 border-b border-border/50 bg-material-panel px-4 py-1 text-xs', className)}>
-        <div className="flex min-w-0 items-center gap-2">
-          {narrow ? <Sheet open={expanded} onOpenChange={setExpanded}>
-            <SheetTrigger asChild>{toggle}</SheetTrigger>
-            <SheetContent side="bottom" aria-describedby={undefined} data-testid="session-task-drawer">
-              <SheetTitle>{t(projectWide ? 'summary.projectTasks' : 'summary.sessionTasks')}</SheetTitle>
-              {list}
-            </SheetContent>
-          </Sheet> : toggle}
-          <span className="min-w-0 flex-1 truncate text-muted-foreground" role="status">
-            {statusText}
-          </span>
-          <button type="button" aria-label={t('summary.refresh')} onClick={() => void load()} disabled={loading} className="rounded p-1">
-            <RefreshCw className={cn('size-3.5', loading && 'animate-spin motion-reduce:animate-none')} />
-          </button>
-          <Link data-testid="session-task-ledger-open" to={ledgerPath} className="shrink-0 underline underline-offset-2">{t('summary.open')}</Link>
-        </div>
-        {expanded && !narrow && list}
-      </section>
+      <SessionTaskScopeChip
+        className={className}
+        state={loading && !snapshot ? 'loading' : status}
+        attention={attention}
+        loading={loading}
+        narrow={narrow}
+        expanded={expanded}
+        setExpanded={setExpanded}
+        title={scopeTitle}
+        count={nodes.length}
+        statusText={statusText}
+        ledgerPath={ledgerPath}
+        onRefresh={() => void load()}
+        list={list}
+        t={t}
+      />
     );
   }
 

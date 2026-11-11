@@ -1,0 +1,2 @@
+# Keep content-addressed evidence byte-identical across platform checkouts.
+* -text

@@ -58,6 +58,7 @@ interface SettingsState {
    */
   runActivityKeepExpandedOnComplete: boolean;
   uiDepthMode: UiDepthMode;
+  lastChatModelRef: string | null;
   workProviders: WorkProviderConfig;
   sessionActivityPanelEnabled: boolean;
   sessionActivityAutoExpand: SessionActivityAutoExpand;
@@ -96,6 +97,7 @@ interface SettingsState {
   setDevModeUnlocked: (value: boolean) => void;
   setRunActivityKeepExpandedOnComplete: (value: boolean) => void;
   setUiDepthMode: (value: UiDepthMode) => void;
+  rememberChatModel: (modelRef: string) => void;
   setWorkProviderEnabled: (providerId: WorkProviderId, enabled: boolean) => void;
   setSessionActivityPanelEnabled: (value: boolean) => void;
   setSessionActivityAutoExpand: (value: SessionActivityAutoExpand) => void;
@@ -132,6 +134,7 @@ const defaultSettings = {
   devModeUnlocked: false,
   runActivityKeepExpandedOnComplete: false,
   uiDepthMode: 'basic' as UiDepthMode,
+  lastChatModelRef: null as string | null,
   workProviders: {} as WorkProviderConfig,
   sessionActivityPanelEnabled: true,
   sessionActivityAutoExpand: 'active' as SessionActivityAutoExpand,
@@ -235,6 +238,7 @@ export const useSettingsStore = create<SettingsState>()(
         void hostApi.settings.set('runActivityKeepExpandedOnComplete', runActivityKeepExpandedOnComplete).catch(() => { });
       },
       setUiDepthMode: (uiDepthMode) => set({ uiDepthMode }),
+      rememberChatModel: (lastChatModelRef) => set({ lastChatModelRef }),
       setWorkProviderEnabled: (providerId, enabled) => {
         set((state) => {
           const workProviders = {

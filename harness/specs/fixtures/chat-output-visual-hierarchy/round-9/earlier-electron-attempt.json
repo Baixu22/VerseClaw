@@ -1,0 +1,369 @@
+{
+  "config": {
+    "configFile": "D:\\tmp\\chat-environment-r9-20261105\\validation\\playwright.config.ts",
+    "rootDir": "D:/tmp/chat-environment-r9-20261105/validation/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\tmp\\chat-environment-r9-20261105\\validation\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/chat-environment-r9-20261105/relay-electron",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/tmp/chat-environment-r9-20261105/validation/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-artifact-panel.spec.ts",
+      "file": "chat-artifact-panel.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "keeps the conversation column in place until the workspace panel expands",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 26920,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T15:43:08.608Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7297becb7cb35fdd7249-330dd653a82a5b89d62a",
+          "file": "chat-artifact-panel.spec.ts",
+          "line": 265,
+          "column": 5
+        },
+        {
+          "title": "reaps an owned Windows child before closing the Electron pipe",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 26043,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T15:43:35.562Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7297becb7cb35fdd7249-01f3ab4db41e8d5f4ab1",
+          "file": "chat-artifact-panel.spec.ts",
+          "line": 366,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "session-activity-background-read.spec.ts",
+      "file": "session-activity-background-read.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "opens an environment only after observed sources and respects a manual dismissal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8918,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T15:45:35.957Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "573055d04b7f3ac516ff-48bdba63f7b5a673f448",
+          "file": "session-activity-background-read.spec.ts",
+          "line": 326,
+          "column": 5
+        },
+        {
+          "title": "keeps environment summaries bounded and opens a worker only on demand",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 43678,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Keep the background read honest')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Keep the background read honest')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Keep the background read honest')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Keep the background read honest')\u001b[22m\n\n    at D:\\tmp\\chat-environment-r9-20261105\\validation\\tests\\e2e\\session-activity-background-read.spec.ts:407:69",
+                    "location": {
+                      "file": "D:\\tmp\\chat-environment-r9-20261105\\validation\\tests\\e2e\\session-activity-background-read.spec.ts",
+                      "column": 69,
+                      "line": 407
+                    },
+                    "snippet": "  405 |     const page = await getStableWindow(app);\n  406 |     await page.setViewportSize({ width: 1600, height: 1000 });\n> 407 |     await expect(page.getByText('Keep the background read honest')).toBeVisible();\n      |                                                                     ^\n  408 |     await expect(page.getByTestId('artifact-panel-aside')).toHaveCount(0);\n  409 |     await app.evaluate(({ BrowserWindow }, sessionKey) => {\n  410 |       for (const win of BrowserWindow.getAllWindows()) {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\tmp\\chat-environment-r9-20261105\\validation\\tests\\e2e\\session-activity-background-read.spec.ts",
+                        "column": 69,
+                        "line": 407
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Keep the background read honest')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Keep the background read honest')\u001b[22m\n\n\n  405 |     const page = await getStableWindow(app);\n  406 |     await page.setViewportSize({ width: 1600, height: 1000 });\n> 407 |     await expect(page.getByText('Keep the background read honest')).toBeVisible();\n      |                                                                     ^\n  408 |     await expect(page.getByTestId('artifact-panel-aside')).toHaveCount(0);\n  409 |     await app.evaluate(({ BrowserWindow }, sessionKey) => {\n  410 |       for (const win of BrowserWindow.getAllWindows()) {\n    at D:\\tmp\\chat-environment-r9-20261105\\validation\\tests\\e2e\\session-activity-background-read.spec.ts:407:69"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T15:45:44.897Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\chat-environment-r9-20261105\\relay-electron\\session-activity-backgroun-fe5a7-ens-a-worker-only-on-demand\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\chat-environment-r9-20261105\\relay-electron\\session-activity-backgroun-fe5a7-ens-a-worker-only-on-demand\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\tmp\\chat-environment-r9-20261105\\validation\\tests\\e2e\\session-activity-background-read.spec.ts",
+                    "column": 69,
+                    "line": 407
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "573055d04b7f3ac516ff-aa3cb279cc23b2c25cc0",
+          "file": "session-activity-background-read.spec.ts",
+          "line": 382,
+          "column": 5
+        }
+      ],
+      "suites": [
+        {
+          "title": "Session activity background read state",
+          "file": "session-activity-background-read.spec.ts",
+          "line": 174,
+          "column": 6,
+          "specs": [
+            {
+              "title": "unifies session process rows and the opened output pane",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 44373,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-05T15:44:01.987Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "573055d04b7f3ac516ff-20fe8b440390b15ad1c9",
+              "file": "session-activity-background-read.spec.ts",
+              "line": 175,
+              "column": 7
+            },
+            {
+              "title": "shows the unknown state and its retry when the background read failed",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 32001,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-05T15:44:46.476Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "573055d04b7f3ac516ff-4bd39e9420f98cf42598",
+              "file": "session-activity-background-read.spec.ts",
+              "line": 257,
+              "column": 7
+            },
+            {
+              "title": "does not report a successful empty read as a failure",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 17339,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-05T15:45:18.587Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "573055d04b7f3ac516ff-047167ce5684c2ab0663",
+              "file": "session-activity-background-read.spec.ts",
+              "line": 292,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-05T15:43:07.067Z",
+    "duration": 276391.542,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

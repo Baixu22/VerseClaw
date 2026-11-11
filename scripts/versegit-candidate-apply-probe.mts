@@ -756,7 +756,7 @@ async function main(): Promise<void> {
     };
     const journalSteps = success.results.reduce((sum, result) => sum + (result.journal?.snapshotIds.length ?? 0), 0);
     const journalSnapshotFiles = listJournalSnapshotFiles(repo, 'session-e3-success');
-    const undone = undoLastWrites({ workspaceRoot: repo, sessionId: 'session-e3-success', steps: journalSteps, workspaceOnly: true });
+    const undone = await undoLastWrites({ workspaceRoot: repo, sessionId: 'session-e3-success', steps: journalSteps, workspaceOnly: true });
     const afterUndo = state(repo);
     if (undone.errors.length > 0) throw new Error('journal recovery failed: ' + undone.errors.join(';'));
     if (afterUndo.status !== '' || afterUndo.head !== mainBefore.head || afterUndo.refs !== mainBefore.refs) throw new Error('journal recovery did not restore base');

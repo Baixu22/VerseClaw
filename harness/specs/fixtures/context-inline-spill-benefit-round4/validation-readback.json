@@ -1,0 +1,94 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-relay",
+  "checks": {
+    "candidate-unit": {
+      "exit_code": 0,
+      "duration_seconds": 64.313,
+      "receipt_sha256": "63f12fa542bce4ca3e3667597d57042b016e0bf0d9657a628458ec4660211461",
+      "logs_match": true
+    },
+    "candidate-contract": {
+      "exit_code": 0,
+      "duration_seconds": 0.359,
+      "receipt_sha256": "a3d8a2171f6700f0b46d1c74a695f2f7ee9756a682ea3803e90c4eb24756d932",
+      "logs_match": true
+    },
+    "candidate-harness-validate": {
+      "exit_code": 0,
+      "duration_seconds": 3.015,
+      "receipt_sha256": "95be7f6b2815181b1a92eb6c3b6b78e12dcc570d72df4dd0ca9a08943093c0a2",
+      "logs_match": true
+    },
+    "candidate-harness-dry-run": {
+      "exit_code": 0,
+      "duration_seconds": 3.078,
+      "receipt_sha256": "402966569cd7bd66250e1b98aec158ee03d2ca92d5d6c25f1ec04834cf99903b",
+      "logs_match": true
+    },
+    "candidate-types-node-serial": {
+      "exit_code": 0,
+      "duration_seconds": 22.547,
+      "receipt_sha256": "b11a405197669448d8aac9976b21ec5a4f60f3cd0240b00a7dbd33315ebdbbe2",
+      "logs_match": true
+    },
+    "candidate-types-web-serial": {
+      "exit_code": 0,
+      "duration_seconds": 46.656,
+      "receipt_sha256": "e9ee30be3f716d6db394bf35220b68b2921f0687f3d9ae91bcc53f843384f027",
+      "logs_match": true
+    },
+    "candidate-types-test-serial": {
+      "exit_code": 0,
+      "duration_seconds": 96.547,
+      "receipt_sha256": "a55feb4207cefc61e6a8432b09d2efe1ddee308f6751021ad18408fb4aca5a18",
+      "logs_match": true
+    },
+    "candidate-retention": {
+      "exit_code": 0,
+      "duration_seconds": 6.297,
+      "receipt_sha256": "1dddac4334bfafbb95b3b02510d50020ac3d27b24cbaa2722e9eb171e23c2001",
+      "logs_match": true
+    }
+  },
+  "unitTests": 50,
+  "parallelTypecheck": {
+    "status": "environment-failed",
+    "reason": "Go runtime cannot allocate memory",
+    "receipt": "missing after interrupted tool process; no observed receipt exit code",
+    "logs": {
+      "stdout": {
+        "file": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-typecheck.stdout.txt",
+        "bytes": 474,
+        "sha256": "9a600733a9e77bd03047c08b696a21eb26dd75fe97fe020723c017184f0e2297"
+      },
+      "stderr": {
+        "file": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-typecheck.stderr.txt",
+        "bytes": 6524160,
+        "sha256": "bbd0641afd08db8a15b65d1a491f7a906a8ff6e9fe897379e8da8c77e275dc58"
+      }
+    }
+  },
+  "serialTypecheckEnvironment": {
+    "GOMAXPROCS": "2",
+    "GOMEMLIMIT": "2GiB",
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "cache": false
+  },
+  "dependencyCaveat": "Installed node_modules do not match the patchedDependencies setting; existing installations and verified package builds reused.",
+  "fullHarnessCI": {
+    "status": "failed",
+    "exit_code": 1,
+    "passedUnitTests": [
+      59
+    ],
+    "reason": "Four Agent Dev evidence files exceed the 24-hour freshness window.",
+    "skippedAfterFailure": [
+      "repo:evidence:check",
+      "repo:test-coverage:check"
+    ],
+    "receiptSha256": "3589b15cf587e3d2b7d98ca694e8fee8b4e1b8ec7b737208264b7bb6793dce5a",
+    "logs_match": true
+  }
+}

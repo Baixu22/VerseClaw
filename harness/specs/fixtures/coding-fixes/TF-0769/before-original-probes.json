@@ -1,0 +1,165 @@
+{
+  "schema": "CodingAuditProbe/v1",
+  "driven_by": "agent",
+  "actor": "codex-coding-audit",
+  "realHumanEvidence": false,
+  "recordedAt": "2026-11-05T15:36:19.937Z",
+  "candidate": "99ba8836d74fa7943c2d52cccee91b871c52660b",
+  "fixtureRoot": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0769\\before\\fixtures-fex2Pe",
+  "rows": [
+    {
+      "id": "coding-run-optional-warning-roundtrip",
+      "expected": "status=ok for a valid typed event without optional warning",
+      "actual": {
+        "status": "error",
+        "code": "MISSING_FIELD",
+        "line": 2,
+        "message": "Missing loop.warning",
+        "field": "warning"
+      },
+      "reproduced": true
+    },
+    {
+      "id": "coding-run-cross-run-verification",
+      "expected": "reject verification associated with run-B",
+      "actual": {
+        "codingRunId": "run-A",
+        "records": 2,
+        "turns": 0,
+        "approvals": 0,
+        "files": 0,
+        "tests": 0,
+        "verification": "passed",
+        "finalStatus": null
+      },
+      "reproduced": true
+    },
+    {
+      "id": "coding-run-nested-schema-validation",
+      "expected": "reject malformed scope/runIds/taskLedgerRootId/completion",
+      "actual": {
+        "status": "ok",
+        "records": [
+          {
+            "schema": "coding-run/v1",
+            "sequence": 0,
+            "recordType": "coding-run",
+            "payload": {
+              "codingRunId": "run-A",
+              "objective": null,
+              "acceptanceContractRef": null,
+              "sessionIds": [],
+              "scope": {},
+              "runIds": [
+                42
+              ],
+              "attemptIds": [],
+              "taskLedgerRootId": 42,
+              "traceId": null,
+              "permissionEnvelopeRef": null,
+              "contextFingerprint": null,
+              "completion": {
+                "taskStatus": "invented-status"
+              }
+            }
+          }
+        ]
+      },
+      "reproduced": true
+    },
+    {
+      "id": "worktree-deletion-silently-not-merged",
+      "expected": "delete a.txt in base or report a failure",
+      "actual": {
+        "result": [
+          {
+            "taskNodeId": "delete-worker",
+            "worktreeId": "delete-worker",
+            "changedFiles": [
+              "a.txt"
+            ],
+            "changedFilesSource": "declared-writeSet",
+            "writeSetMismatch": [],
+            "status": "merged"
+          }
+        ],
+        "baseFileStillExists": true
+      },
+      "reproduced": true
+    },
+    {
+      "id": "worktree-overwrites-concurrent-base-edit",
+      "expected": "conflict and preserve concurrent-owner-change",
+      "actual": {
+        "result": [
+          {
+            "taskNodeId": "stale-worker",
+            "worktreeId": "stale-worker",
+            "changedFiles": [
+              "a.txt"
+            ],
+            "changedFilesSource": "declared-writeSet",
+            "writeSetMismatch": [],
+            "status": "merged"
+          }
+        ],
+        "baseContents": "worker-change"
+      },
+      "reproduced": true
+    },
+    {
+      "id": "git-worktree-delete",
+      "expected": "delete a.txt or report failure",
+      "actual": {
+        "backend": "git",
+        "result": [
+          {
+            "taskNodeId": "git-delete",
+            "worktreeId": "git-delete",
+            "changedFiles": [
+              "a.txt"
+            ],
+            "changedFilesSource": "git-status",
+            "writeSetMismatch": [],
+            "status": "merged"
+          }
+        ],
+        "contents": "baseline"
+      },
+      "reproduced": true
+    },
+    {
+      "id": "git-worktree-stale",
+      "expected": "preserve concurrent base edit and report conflict",
+      "actual": {
+        "backend": "git",
+        "result": [
+          {
+            "taskNodeId": "git-stale",
+            "worktreeId": "git-stale",
+            "changedFiles": [
+              "a.txt"
+            ],
+            "changedFilesSource": "git-status",
+            "writeSetMismatch": [],
+            "status": "merged"
+          }
+        ],
+        "contents": "worker-change"
+      },
+      "reproduced": true
+    },
+    {
+      "id": "worktree-dotdot-id-deletes-control-directory",
+      "expected": "reject reserved id before any mutation",
+      "actual": {
+        "result": {
+          "error": "Error: unsafe_worktree_id"
+        },
+        "markerPreserved": true,
+        "fixtureBoundary": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0769\\before\\fixtures-fex2Pe\\reserved-id"
+      },
+      "reproduced": false
+    }
+  ]
+}

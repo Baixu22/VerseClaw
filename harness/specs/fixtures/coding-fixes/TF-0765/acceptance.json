@@ -1,0 +1,191 @@
+{
+  "schema": "CodingFixAcceptance/v1",
+  "taskId": "TF-0765",
+  "driven_by": "agent",
+  "actor": "codex-coding-s1",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "ff525cd5d1dbc5aa9ef5a176e914a50ceac1632e",
+    "tree": "ba78a8b3be79a916f2138ed896e646fb79fd229b",
+    "dirty": false
+  },
+  "finding": "A1",
+  "status": "resolved",
+  "unit": {
+    "files": 2,
+    "passed": 39,
+    "failed": 0,
+    "skipped": 0
+  },
+  "before": {
+    "passed": 18,
+    "failed": 2,
+    "reason": "rejected write/edit produced .pre files"
+  },
+  "matrix": {
+    "tools": [
+      "write",
+      "edit"
+    ],
+    "provenance": [
+      "trusted-user",
+      "external",
+      "unknown"
+    ],
+    "paths": [
+      "absolute",
+      "junction",
+      "hardlink"
+    ],
+    "negativeCombinations": 18,
+    "positive": "journal write/edit/undo plus existing unrestricted writes"
+  },
+  "sourceHashes": {
+    "docs/modules/workspace-and-coding.md": "2ebd70d10faec75e11fc0133a337e73ad4ec9edad6706afd22f160c825c6cbc1",
+    "harness/specs/rules/coding-mutation-consistency-boundary.md": "3b8e9b8f359fe1e7fafc2f50cc2b117723bf253b48eff79ab3139ba444295caa",
+    "harness/specs/tasks/coding-journal-preimage-boundary.md": "0dd3f58238cc35c83267563af96069717c248606bd4f30ce825b96f658e77985",
+    "openclaw_runtime/src/agents/agent-tools.ts": "07e95c948c95a2b2cd026724147e22268a35181ce7876b128ce27fc5d103a102",
+    "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts": "bdc220d93a2d31a064292a2357766ee2e70051c52bd68e0798cae5808505c63c",
+    "openclaw_runtime/src/agents/tools/write-journal.ts": "4c8e8dac81681a88b008f91e660274df2719ac97d7082e6334671628c9b31473",
+    "scripts/coding-baseline/verify.d.mts": "ad14aec93bb8ba12c54c694ce68222b5ac07f03a98e9e89b956585bfd677597b"
+  },
+  "limitations": [
+    "A2 undo alias vulnerability remains reproduced and belongs to TF-0766",
+    "Additional standalone runtime-core typecheck returned 41 diagnostics in cross-area/UI/shared NodeNext imports and an output-cache permission failure; no diagnostic names the changed production paths. It is not claimed as a passing gate; required node/web/test gates all passed after generating local build inputs.",
+    "Dependencies reused; generated extension bridge and VerseBrowser declarations built in this worktree; no package/live-provider claim"
+  ],
+  "commands": [
+    {
+      "name": "units",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.agents.config.ts",
+        "src/agents/agent-tools.workspace-boundary.test.ts",
+        "src/agents/tools/write-journal.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\tf0765\\final\\unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 83.3123083114624
+    },
+    {
+      "name": "typecheck-node",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 33.11112928390503
+    },
+    {
+      "name": "typecheck-web",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 18.949379920959473
+    },
+    {
+      "name": "typecheck-test",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 41.00097370147705
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/agents/agent-tools.ts",
+        "openclaw_runtime/src/agents/tools/write-journal.ts",
+        "openclaw_runtime/src/agents/agent-tools.workspace-boundary.test.ts",
+        "scripts/coding-baseline/verify.d.mts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 5.488526105880737
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.5141723155975342
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/coding-journal-preimage-boundary.md"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 1.1039178371429443
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.40460777282714844
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.2774538993835449
+    },
+    {
+      "name": "boundary-probe",
+      "argv": [
+        "node",
+        "--import",
+        "file:///D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+        "scripts/coding-baseline/probes/boundaries.mts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 70.54030179977417
+    }
+  ]
+}

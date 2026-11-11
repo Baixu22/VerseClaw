@@ -81,6 +81,39 @@ function runRecord(params: {
 }
 
 describe('agent steering team result bundles', () => {
+  it.each([true, false])('routes verifier failure to the lead only when configured (%s)', (noSelfRepair) => {
+    const runs = new Map<string, SubagentRunRecord>();
+    const meta = { verifierStartedRunId: 'run_verifier', verifierNoSelfRepair: noSelfRepair };
+    for (const [runId, roleName] of [['run_worker_1', 'implementer'], ['run_worker_2', 'tester']]) {
+      runs.set(runId, runRecord({ runId, roleName, meta,
+        resultText: 'Implemented and verified tests/unit/agent-steering-team-bundle.test.ts passed.' }));
+    }
+    runs.set('run_verifier', runRecord({ runId: 'run_verifier', roleName: 'reviewer', phase: 'verifier',
+      meta: { ...meta, verificationVerdict: 'fail' }, resultText: 'verificationVerdict: fail' }));
+    const prompt = leasePendingAgentSteeringItemsFromSubagentRuns({ runs,
+      requesterSessionKey: 'agent:main:abc', leaseId: `discipline-${noSelfRepair}` })?.prompt;
+    expect(prompt).toContain('verifierGate: fail');
+    const leadNode = 'taskNodeId: lead-fix-orch_bundle-1; roleName: planner; action: repair';
+    if (noSelfRepair) expect(prompt).toContain(leadNode);
+    else expect(prompt).not.toContain(leadNode);
+    expect(prompt).not.toContain('roleName: reviewer; action: repair');
+    if (noSelfRepair) expect(prompt).toContain('status: skipped');
+  });
+  it.each([1, 2])('keeps lead repair inside the existing attempt budget (%s)', (attempt) => {
+    const runs = new Map<string, SubagentRunRecord>();
+    const meta = { verifierStartedRunId: 'run_verifier', verifierNoSelfRepair: true, attempt };
+    for (const [runId, roleName] of [['run_worker_1', 'implementer'], ['run_worker_2', 'tester']]) {
+      runs.set(runId, runRecord({ runId, roleName, meta,
+        resultText: 'Implemented and verified tests/unit/agent-steering-team-bundle.test.ts passed.' }));
+    }
+    runs.set('run_verifier', runRecord({ runId: 'run_verifier', roleName: 'reviewer', phase: 'verifier',
+      meta: { ...meta, verificationVerdict: 'repair_required' }, resultText: 'verificationVerdict: repair_required' }));
+    const prompt = leasePendingAgentSteeringItemsFromSubagentRuns({ runs,
+      requesterSessionKey: 'agent:main:abc', leaseId: `budget-${attempt}` })?.prompt;
+    expect(prompt).toContain('taskNodeId: lead-fix-orch_bundle-1; roleName: planner; action: repair');
+    expect(prompt).toContain(attempt === 1 ? 'repair: action=repair; allowed=true' : 'allowed=false');
+    expect(prompt).not.toContain('roleName: reviewer; action: repair');
+  });
   afterEach(() => {
     clearMemoryCards();
   });

@@ -1171,6 +1171,7 @@ describe('host services', () => {
     const checkpoint = {
       id: 'ltcp-1',
       sessionKey: 'agent:main:main',
+      taskLedgerRootId: 'ledger-root-1',
       trigger: 'queue_drain',
       status: 'active',
       checkpoint: {
@@ -1219,7 +1220,8 @@ describe('host services', () => {
         success: true,
         available: true,
         queueCount: 1,
-        latestCheckpoint: { id: 'ltcp-1' },
+        // Chat offers explicit long-task modes only when this root survives mapping.
+        latestCheckpoint: { id: 'ltcp-1', taskLedgerRootId: 'ledger-root-1' },
         latestIntervention: { id: 'ltie-1' },
       });
     await expect(sessionsApi.longTaskControlHistory({ sessionKey: 'agent:main:main', limit: 3 }))

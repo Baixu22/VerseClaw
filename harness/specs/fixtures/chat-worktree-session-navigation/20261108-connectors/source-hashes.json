@@ -1,0 +1,8 @@
+{
+  "src/components/rareui/HookSidebar.tsx": "c38c1e7dcd7b530ee3fafecb28ced547429d865e3a9740b6fd776f644974d5ba",
+  "src/components/layout/SessionFolderTree.tsx": "40b6a398de7e8f8fe8202f6243c1c351fec1c406efb378ad3e8995be894b2559",
+  "tests/e2e/sidebar-session-family-connectors.spec.ts": "893ac7dd00a5e77103b241a365ad5fdc5efc81adb1597983b278d887ba1a114e",
+  "harness/specs/tasks/chat-worktree-session-navigation.md": "1a6f514f1ef9b33413bcbcfd6afd17cfacb94e111fd575c23d7901beeb5e0b17",
+  "harness/specs/rules/sidebar-session-row-controls.md": "92818daa7ee57c7215bbb8c548769625e93b1b8a6ce65e5549eaf6b310b7ccc0",
+  "docs/dev/chat-worktree-session-navigation.md": "6ad143bb8570d25dbff68483a7598ef38f68cbee9e2a275ab091a8b6fa1d250b"
+}

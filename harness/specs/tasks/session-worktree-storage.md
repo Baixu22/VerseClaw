@@ -4,7 +4,7 @@ title: Session worktrees and storage management
 lifecycleStatus: active
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 5ad905b44c2822caf6037df9278a8a260a27d3f9
+diffBase: c7573ec11
 intent: Bind Git checkouts to independent conversations and provide scoped storage and process management through existing owners.
 expectedUserBehavior:
   - A working-directory menu creates Git repositories and opens isolated worktrees with independent conversations and restored drafts.
@@ -19,10 +19,6 @@ touchedAreas:
   - electron/services/git-api.ts
   - shared/types/session-storage.ts
   - src/components/chat/SessionWorkspacePicker.tsx
-  - src/components/chat/ComposerPopover.tsx
-  - src/styles/codex-composer-menu.css
-  - scripts/repository-artifacts.json
-  - .gitignore
   - src/pages/Settings/sections/StorageSection.tsx
   - tests/unit/session-storage-api.test.ts
   - tests/e2e/session-worktree-storage.spec.ts

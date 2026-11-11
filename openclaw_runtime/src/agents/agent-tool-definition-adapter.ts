@@ -8,7 +8,13 @@ import { logDebug, logError } from "../logger.js";
 import { redactToolDetail } from "../logging/redact.js";
 import { isPlainObject } from "../utils.js";
 import { awaitWithAbort } from "../utils/await-with-abort.js";
+import { recoveryEvalProbe } from "../infra/recovery-eval-probe.js";
 import type { HookContext } from "./agent-tools.before-tool-call.js";
+import {
+  beginToolExecution,
+  completeToolExecution,
+  failToolExecution,
+} from "./execution-phase/tool-boundary.js";
 import {
   buildBlockedToolResult,
   isToolWrappedWithBeforeToolCallHook,
@@ -381,6 +387,7 @@ export function toToolDefinitions(
         const { toolCallId, params, onUpdate, signal } = splitToolExecuteArgs(args);
         let executeParams = params;
         let updatesOpen = true;
+        let phaseKey: string | null = null;
         const guardedOnUpdate: AgentToolUpdateCallback | undefined = onUpdate
           ? (update) => {
               if (updatesOpen && !signal?.aborted) onUpdate(update);
@@ -438,20 +445,36 @@ export function toToolDefinitions(
           }
           // Raw tools need the same terminal boundary as tools with the policy wrapper.
           signal?.throwIfAborted();
+          phaseKey = beginToolExecution({
+            ...(toolCallId ? { toolCallId } : {}),
+            toolName: name,
+            args: params,
+            sessionKey: hookContext?.sessionKey,
+            sessionId: hookContext?.sessionId,
+            ...(hookContext?.runId ? { runId: hookContext.runId } : {}),
+          });
           const { executeManagedTaskTool } = await import("./execution-checkout-tools.js");
+          const executeTool = () => tool.execute(toolCallId, executeParams, signal, guardedOnUpdate);
           const rawResult = beforeHookWrapped
-            ? await tool.execute(toolCallId, executeParams, signal, guardedOnUpdate)
-            : await executeManagedTaskTool(hookContext, taskGuard, toolCallId, normalizedName, executeParams, signal, () =>
-                tool.execute(toolCallId, executeParams, signal, guardedOnUpdate),
-              );
+            ? await executeTool()
+            : await executeManagedTaskTool(hookContext, taskGuard, toolCallId, normalizedName, executeParams, signal, executeTool);
+          recoveryEvalProbe("tool-return-before-receipt", {
+            toolName: name,
+            toolCallId,
+            sessionId: hookContext?.sessionId,
+            sessionKey: hookContext?.sessionKey,
+            phaseKey,
+          });
           updatesOpen = false;
           signal?.throwIfAborted();
           const result = normalizeToolExecutionResult({
             toolName: normalizedName,
             result: rawResult,
           });
+          completeToolExecution(phaseKey);
           return result;
         } catch (err) {
+          failToolExecution(phaseKey);
           if (signal?.aborted) {
             signal.throwIfAborted();
           }

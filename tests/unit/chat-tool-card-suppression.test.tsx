@@ -1,6 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { Chat } from '@/pages/Chat/index';
+import { useChatStore } from '@/stores/chat';
 
 const { gatewayState, agentsState } = vi.hoisted(() => ({
   gatewayState: {
@@ -141,12 +143,7 @@ vi.mock('@/pages/Chat/ChatInput', () => ({
 }));
 
 describe('Chat tool card suppression', () => {
-  beforeEach(() => {
-    vi.resetModules();
-  });
-
   it('does not render standalone tool cards for messages inside a user run segment', async () => {
-    const { useChatStore } = await import('@/stores/chat');
     useChatStore.setState({
       messages: [
         { role: 'user', content: 'Generate assets' },
@@ -190,7 +187,6 @@ describe('Chat tool card suppression', () => {
       thinkingLevel: null,
     });
 
-    const { Chat } = await import('@/pages/Chat/index');
     render(<MemoryRouter><Chat /></MemoryRouter>);
 
     await waitFor(() => {

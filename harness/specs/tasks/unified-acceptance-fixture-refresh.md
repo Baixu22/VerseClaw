@@ -4,7 +4,7 @@ id: unified-acceptance-fixture-refresh
 title: Keep unified acceptance and activity reads bound to the current session generation
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-diffBase: 395d3070e67c5af3cf24b197d5fa531884f88f9e
+diffBase: d96679ab6ac2279b8435eecb7e52f300c5407bec
 intent: Refresh the original U6 aggregate fixtures while retaining its 64 criteria and the five TF-0867 criteria.
 ownedPaths: &paths
   - openclaw_runtime/src/gateway/session-utils.ts

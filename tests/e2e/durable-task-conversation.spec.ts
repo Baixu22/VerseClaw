@@ -193,11 +193,23 @@ test("normal conversation shows one task header and reveals file changes below t
     const dock = page.getByTestId("session-task-dock");
     await expect(dock).toContainText("Fix and verify the export");
     await expect(dock).toBeInViewport();
-    await expect(dock).toHaveAttribute('data-placement','header');
-    const headerBox=await dock.boundingBox();const inputBox=await page.locator('.codex-composer-shell').boundingBox();
-    expect(headerBox!.y).toBeLessThan(180);expect(headerBox!.y+headerBox!.height).toBeLessThan(inputBox!.y);
+    // Docked beside the input, the way the reference keeps a running task in view.
+    await expect(dock).toHaveAttribute('data-placement','composer');
+    const dockBox=await dock.boundingBox();const inputBox=await page.locator('.codex-composer-shell').boundingBox();
+    expect(dockBox!.y+dockBox!.height).toBeLessThanOrEqual(inputBox!.y+1);
+    expect(inputBox!.y-(dockBox!.y+dockBox!.height)).toBeLessThan(48);
+    // The scope container is a quiet header chip now, not a strip over the transcript.
+    const scope=page.getByTestId('session-task-container');
+    await expect(scope).toBeVisible();
+    expect((await scope.boundingBox())!.height).toBeLessThan(40);
     await expect(page.getByText('Fix and verify the export',{exact:true})).toHaveCount(1);
     await expect(dock.getByRole('progressbar')).toHaveCount(0);
+    // The task's own handle: a short ID that carries the full one.
+    const idChip=page.getByTestId('session-task-id');
+    const taskNodeId=String(started.contract.taskNodeId);
+    await expect(idChip).toHaveText(`#${/^[0-9a-f]{8}-/i.test(taskNodeId)?taskNodeId.slice(0,8):taskNodeId}`);
+    await expect(idChip).toHaveAttribute('title',new RegExp(taskNodeId));
+    await expect(page.getByTestId('session-task-current')).toContainText('Run checks');
     await writeFile(join(root,'export.ts'),'export const verified = true;\n');await sendUpdate();
     const fileChip=page.getByTestId('composer-git-trigger');await expect(fileChip).toContainText('1 file changed');
     const fileBox=await fileChip.boundingBox();
@@ -212,6 +224,15 @@ test("normal conversation shows one task header and reveals file changes below t
     await expect(page.getByTestId('session-task-steps')).toContainText('Run checks');
     await expect(page.getByText('Fix and verify the export',{exact:true})).toHaveCount(1);
     await page.screenshot({path:info.outputPath('conversation-task-expanded.png'),animations:'disabled'});
+    const menu=page.getByTestId('session-task-menu');
+    await menu.focus();await page.keyboard.press('Enter');
+    await expect(page.getByTestId('session-task-menu-list')).toBeVisible();
+    await expect(page.getByTestId('session-task-menu-copy')).toBeVisible();
+    await expect(page.getByTestId('session-task-menu-open')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('session-task-menu-list')).toHaveCount(0);
+    await expect(menu).toBeFocused();
+    await menu.click();
     await page.getByTestId("session-task-close").click();
     await expect(page.getByTestId("session-task-panel")).toHaveCount(0);
     await expect(page.getByTestId("session-task-reopen")).toBeVisible();
@@ -234,7 +255,10 @@ test("normal conversation shows one task header and reveals file changes below t
     await page.screenshot({ path: info.outputPath("conversation-task.png") });
     await page.setViewportSize({ width: 920, height: 720 });
     await expect(dock).toBeInViewport();
+    await expect(page.getByTestId("session-task-menu")).toBeInViewport();
+    await page.getByTestId("session-task-menu").click();
     await expect(page.getByTestId("session-task-close")).toBeInViewport();
+    await page.keyboard.press('Escape');
     await page.screenshot({ path: info.outputPath("conversation-task-narrow.png") });
     await page.setViewportSize({width:1440,height:900});
     for (const language of ['zh','ja','ru']) {
@@ -242,11 +266,18 @@ test("normal conversation shows one task header and reveals file changes below t
       await page.getByTestId('sidebar-nav-settings').click();await page.getByTestId('settings-nav-general').click();await page.getByTestId('settings-language-select').click();
       await page.getByRole('option',{name:({zh:'中文',ja:'日本語',ru:'Русский'} as Record<string,string>)[language],exact:true}).click();
       await expect(page.locator('html')).toHaveAttribute('lang',language);await page.getByTestId('settings-back-button').click();
+      await page.getByTestId('session-task-menu').click();
       await expect(page.getByTestId('session-task-close')).toHaveAttribute('aria-label',labels.conversation.hide);
+      await expect(page.getByTestId('session-task-menu-open')).toHaveAttribute('aria-label',labels.conversation.openInLedger);
+      await page.keyboard.press('Escape');
       await expect(dock).toBeInViewport();
       await expect(page.locator('[data-sonner-toast]')).toHaveCount(0);
       await page.screenshot({path:info.outputPath(`conversation-task-${language}.png`)});
     }
+    await page.getByTestId('session-task-menu').click();
+    await page.getByTestId('session-task-menu-open').click();
+    await expect(page).toHaveURL(new RegExp(`nodeId=${encodeURIComponent(taskNodeId)}`));
+    await expect(page).toHaveURL(new RegExp(`sessionKey=${encodeURIComponent(session.key)}`));
     await writeFile(
       info.outputPath("task-ui-readback.json"),
       JSON.stringify(
@@ -259,7 +290,8 @@ test("normal conversation shows one task header and reveals file changes below t
           hiddenPersists: true,
           hidePreservesClaim: true,
           languages:['en','zh','ja','ru'],keyboardToggle:true,
-          layout:'single task header above transcript; changed-file chip below composer; plain canvas',
+          idChip:true,ledgerLinkCarriesTaskId:true,
+          layout:'task dock above composer; task scope chip in header row; changed-file chip below composer; plain canvas',
         },
         null,
         2,

@@ -1,0 +1,47 @@
+{
+  "schema": "RecoveryRawEvidence/v2",
+  "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+  "windowSamples": 30,
+  "qualitySamples": 60,
+  "baselineRepeatSamples": 15,
+  "baselineRepeatCompleteSamples": 14,
+  "baselineRepeatIncompleteSamples": 1,
+  "rawArtifacts": 343,
+  "rawReceipts": 105,
+  "metadataArtifacts": 442,
+  "bundleSha256": "3fca0c2a2b37772b0d9b95e4a7c51f01bbd0867e2d98947f0d59239c99ecfc04",
+  "candidate": {
+    "runtimeCommit": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+    "qualitySampler": {
+      "commit": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "tree": "ad18e2b8b535a94bac883345332b29741b7b8828",
+      "dirty": false,
+      "driven_by": "agent",
+      "actor": "recovery-acceptance",
+      "realHumanEvidence": false
+    },
+    "windowSampler": {
+      "schema": "RecoverySamplerCandidate/v1",
+      "sampler": {
+        "commit": "1909dfd0c0e0d8fe8e2e3ebb0ae49e1b565a776f",
+        "tree": "dd2159bbd3082a3f28a1eeb0adfc4ef0705c463b",
+        "dirty": false
+      },
+      "runtimeBase": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "runtimeSourcesEqual": true,
+      "qualityOrigin": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+      "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+      "driven_by": "agent",
+      "actor": "recovery-window-observer-v2",
+      "realHumanEvidence": false
+    },
+    "runtimeSourcesEqual": true,
+    "evaluator": {
+      "commit": "c0184e62e2ea7c3dcfddbe47258bd552ae8f0c1b",
+      "dirty": false
+    }
+  },
+  "driven_by": "agent",
+  "actor": "recovery-evidence-sealer",
+  "realHumanEvidence": false
+}

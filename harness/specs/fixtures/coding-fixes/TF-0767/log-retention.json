@@ -1,0 +1,4 @@
+{
+  "reason": "Lossless JSON encoding for raw output with trailing blank lines",
+  "renames": {}
+}

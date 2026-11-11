@@ -41,7 +41,7 @@ export function terminateOwnedGatewayProcess(child: Electron.UtilityProcess): Pr
   const terminateWindowsProcessTree = async (pid: number): Promise<void> => {
     const cp = await import('child_process');
     await new Promise<void>((resolve, reject) => {
-      cp.exec(`taskkill /F /PID ${pid} /T`, { timeout: 5000, windowsHide: true }, (error) => error ? reject(error) : resolve());
+      cp.execFile('taskkill.exe', ['/F', '/PID', String(pid), '/T'], { timeout: 5000, windowsHide: true }, (error) => error ? reject(error) : resolve());
     });
   };
 
@@ -49,28 +49,40 @@ export function terminateOwnedGatewayProcess(child: Electron.UtilityProcess): Pr
     let exited = false;
     let forced = false;
     let timeout: ReturnType<typeof setTimeout>;
+    let forcePidTimer: ReturnType<typeof setTimeout> | undefined;
     const forceTerminate = () => {
       if (gatewayExitReceipts.has(child)) { onExit(); return; }
       if (exited || forced) return;
       forced = true;
       clearTimeout(timeout);
-      // Tree enumeration can stall. Force the original PID and wait for its
-      // native exit event; UtilityProcess.kill() requests graceful termination.
+      // Give Electron's owned handle a brief chance to reap the child, then
+      // force the original PID if it still has not produced its exit receipt.
       timeout = setTimeout(() => {
         if (gatewayExitReceipts.has(child)) { onExit(); return; }
         child.removeListener('exit', onExit);
         reject(new Error(`Owned Gateway process did not exit (pid=${child.pid ?? 'unknown'})`));
       }, 5000);
-      try {
-        if (child.pid) process.kill(child.pid, 'SIGKILL');
-        else child.kill();
-      } catch (error) {
-        // The PID may be gone before Electron delivers its original exit event.
-        if ((error as NodeJS.ErrnoException).code === 'ESRCH') return;
-        clearTimeout(timeout);
-        child.removeListener('exit', onExit);
-        reject(error);
+      const forcePid = () => {
+        if (exited || gatewayExitReceipts.has(child)) return;
+        try {
+          if (child.pid) process.kill(child.pid, 'SIGKILL');
+          else child.kill();
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code === 'ESRCH') return;
+          clearTimeout(timeout);
+          child.removeListener('exit', onExit);
+          reject(error);
+        }
+      };
+      if (process.platform === 'win32') {
+        try {
+          if (child.kill()) {
+            forcePidTimer = setTimeout(forcePid, 250);
+            return;
+          }
+        } catch { /* The native PID path still needs to confirm termination. */ }
       }
+      forcePid();
     };
 
     // Register a single exit listener before any kill attempt to avoid
@@ -78,6 +90,7 @@ export function terminateOwnedGatewayProcess(child: Electron.UtilityProcess): Pr
     const onExit = () => {
       exited = true;
       clearTimeout(timeout);
+      clearTimeout(forcePidTimer);
       resolve();
     };
     child.once('exit', onExit);

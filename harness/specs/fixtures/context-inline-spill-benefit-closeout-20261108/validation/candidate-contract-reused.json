@@ -1,0 +1,32 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b90a",
+  "name": "candidate-contract-reused",
+  "cwd": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\validation-candidate",
+  "command": [
+    "node",
+    "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+    "run",
+    "contract:check"
+  ],
+  "started_at": "2026-11-08T03:08:53.849812+00:00",
+  "duration_seconds": 4.485,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": "warn"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\candidate-contract-reused.stdout.txt",
+      "bytes": 141,
+      "sha256": "8f494fd5499bffbadb694799b23580db7b537f0f3b0900e8109ddadcbef436f9"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\candidate-contract-reused.stderr.txt",
+      "bytes": 34,
+      "sha256": "74e12c0e69cc5cc8e941bffd3a7dcf199d278d3656f6cdee4ebcbc8ba3cbdd26"
+    }
+  }
+}

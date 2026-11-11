@@ -1,0 +1,105 @@
+{
+  "build": {
+    "exitCode": 0,
+    "command": "node --max-old-space-size=6144 node_modules/vite/bin/vite.js build",
+    "artifact": "build.txt"
+  },
+  "typecheckWeb": {
+    "exitCode": 0,
+    "command": "node node_modules/@typescript/native-preview/bin/tsgo.js --noEmit -p tsconfig.web.json --composite false"
+  },
+  "unit": {
+    "exitCode": 0,
+    "passed": 87,
+    "failed": 0,
+    "artifact": "unit.json"
+  },
+  "electron": {
+    "finalPassed": 8,
+    "tests": [
+      {
+        "title": "opens the reasoning section in the shared menu, slides to max, and commits max",
+        "status": "passed",
+        "durationMs": 35876,
+        "source": "electron-effort-rerun.json"
+      },
+      {
+        "title": "keeps the reasoning slider inside the shared dropdown surface",
+        "status": "passed",
+        "durationMs": 14801,
+        "source": "electron-main.json"
+      },
+      {
+        "title": "does not commit when slider stays at the current value",
+        "status": "passed",
+        "durationMs": 10281,
+        "source": "electron-main.json"
+      },
+      {
+        "title": "composer menus share motion, stay in bounds and dismiss accessibly (light)",
+        "status": "passed",
+        "durationMs": 23053,
+        "source": "electron-main.json"
+      },
+      {
+        "title": "composer menus share motion, stay in bounds and dismiss accessibly (dark)",
+        "status": "passed",
+        "durationMs": 22855,
+        "source": "electron-main.json"
+      },
+      {
+        "title": "selects directly and forwards the displayed model in the send payload",
+        "status": "passed",
+        "durationMs": 10041,
+        "source": "electron-main.json"
+      },
+      {
+        "title": "restores the saved model and remembers explicit choices for new chats",
+        "status": "passed",
+        "durationMs": 10797,
+        "source": "electron-main.json"
+      },
+      {
+        "title": "selects a model directly and preserves the previous choice on save failure",
+        "status": "passed",
+        "durationMs": 10471,
+        "source": "electron-main.json"
+      }
+    ],
+    "mainRun": {
+      "exitCode": 1,
+      "passed": 7,
+      "failed": 1
+    },
+    "rerun": {
+      "exitCode": 0,
+      "passed": 1,
+      "failed": 0
+    },
+    "correction": "The reasoning fixture returned only success instead of the Agent snapshot. Corrected the mock contract and reran the failed test; production code is identical across these two runs."
+  },
+  "scopedHarness": {
+    "exitCode": 0,
+    "files": 24
+  },
+  "i18n": {
+    "exitCode": 0
+  },
+  "comms": {
+    "replayExitCode": 0,
+    "compareExitCode": 0
+  },
+  "diffCheck": {
+    "exitCode": 0
+  },
+  "testTypes": {
+    "exitCode": 2,
+    "artifact": "test-types.txt",
+    "note": "Existing runtime diagnostics and long-session admission test type errors."
+  },
+  "workspaceHarness": {
+    "exitCode": 1,
+    "artifact": "harness-workspace.txt",
+    "note": "Other dirty work is outside this task ownership; task-path validation passed."
+  }
+}

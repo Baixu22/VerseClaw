@@ -33,7 +33,7 @@ touchedAreas:
   - shared/host-api/contract.ts
   - shared/i18n/locales/*/browser.json
   - src/lib/host-api.ts
-  - src/pages/Browser/**
+  - src/components/settings/BrowserSettingsPanel.tsx
   - tests/unit/**
   - tests/e2e/agent-browser-workbench.spec.ts
   - tests/e2e/dcs-prod-p0-settings.spec.ts

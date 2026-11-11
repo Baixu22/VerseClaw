@@ -1,0 +1,869 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\playwright.config.ts",
+    "rootDir": "D:/ClawX-work/coding-vg-sts-jj-20261104/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/ClawX-work/coding-vg-sts-jj-20261104/.audit/TF-0769/final/e2e-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX-work/coding-vg-sts-jj-20261104/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "coding-worktree-merge-integrity.spec.ts",
+      "file": "coding-worktree-merge-integrity.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "TF-0769 inprocess merges deletion and rename",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 103195,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"merged\"\u001b[39m\nReceived: \u001b[31mundefined\u001b[39m\n\nCall Log:\n- Timeout 45000ms exceeded while waiting on the predicate",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"merged\"\u001b[39m\nReceived: \u001b[31mundefined\u001b[39m\n\nCall Log:\n- Timeout 45000ms exceeded while waiting on the predicate\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-worktree-merge-integrity.spec.ts:74:9",
+                    "location": {
+                      "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-worktree-merge-integrity.spec.ts",
+                      "column": 9,
+                      "line": 74
+                    },
+                    "snippet": "  72 |           catch { return undefined; }\n  73 |         };\n> 74 |         await expect.poll(() => readRun()?.orchestration?.worktreeMergeStatus, { timeout: 45_000 }).toBe(concurrent ? 'conflict' : 'merged');\n     |         ^\n  75 |         evidence.persistedRun = readRun();\n  76 |         evidence.parentFiles = { a: existsSync(join(workspace, 'a.txt')) ? readFileSync(join(workspace, 'a.txt'), 'utf8') : null,\n  77 |           b: existsSync(join(workspace, 'b.txt')) ? readFileSync(join(workspace, 'b.txt'), 'utf8') : null,"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-worktree-merge-integrity.spec.ts",
+                        "column": 9,
+                        "line": 74
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"merged\"\u001b[39m\nReceived: \u001b[31mundefined\u001b[39m\n\nCall Log:\n- Timeout 45000ms exceeded while waiting on the predicate\n\n  72 |           catch { return undefined; }\n  73 |         };\n> 74 |         await expect.poll(() => readRun()?.orchestration?.worktreeMergeStatus, { timeout: 45_000 }).toBe(concurrent ? 'conflict' : 'merged');\n     |         ^\n  75 |         evidence.persistedRun = readRun();\n  76 |         evidence.parentFiles = { a: existsSync(join(workspace, 'a.txt')) ? readFileSync(join(workspace, 'a.txt'), 'utf8') : null,\n  77 |           b: existsSync(join(workspace, 'b.txt')) ? readFileSync(join(workspace, 'b.txt'), 'utf8') : null,\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-worktree-merge-integrity.spec.ts:74:9"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [startup-trace] 2026-11-05T16:59:57.637Z initialize-version-reconcile-done pid=25696 type=browser\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:57.640Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:57.640Z] [INFO] [ResourceTracker] Started heartbeat interval\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:57.640Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=25696, ppid=11008\n[2026-11-05T16:59:57.640Z] [INFO] Running in E2E mode: startup side effects minimized\n[startup-trace] 2026-11-05T16:59:57.640Z initialize-main-window-create-start pid=25696 type=browser\n"
+                    },
+                    {
+                      "text": "[app:out] [startup-trace] 2026-11-05T16:59:57.640Z create-window-enter pid=25696 type=browser\n[startup-trace] 2026-11-05T16:59:57.640Z create-window-theme-start pid=25696 type=browser\n"
+                    },
+                    {
+                      "text": "[app:out] [startup-trace] 2026-11-05T16:59:57.641Z create-window-theme-done:dark pid=25696 type=browser\n"
+                    },
+                    {
+                      "text": "[app:out] [startup-trace] 2026-11-05T16:59:57.641Z create-window-browser-window-start pid=25696 type=browser\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:57.758Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":1}\n"
+                    },
+                    {
+                      "text": "[app:out] [startup-trace] 2026-11-05T16:59:57.759Z create-window-browser-window-done pid=25696 type=browser\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:59:57.761Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:59:57.761Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-05T16:59:57.761Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-05T16:59:57.761Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [startup-trace] 2026-11-05T16:59:57.804Z initialize-main-window-create-done pid=25696 type=browser\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:57.821Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:57.822Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [25696:1106/005957.925:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[25696:1106/005957.925:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:58.240Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:58.241Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:59:58.242Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-05T16:59:58.242Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:59:58.242Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-05T16:59:58.242Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:58.282Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-e8fjt4\\verse-claw-e2e-user-data-iZT34h\\workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:58.467Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:58.468Z] [INFO] Gateway start requested (port=52256)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:58.473Z] [DEBUG] Device identity loaded (deviceId=fd656ab5c65cb523be5617440cfc5f32ae1df4c38ffd5caf1610f86a77361537)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:58.473Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:58.805Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:25696) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:59.178Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:59.223Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:59.248Z] [INFO] [provider-sync] Seeded provider account \"openai\" from openclaw.json\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:59:59.304Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:59.308Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":1,\"defaultProviderRuntimeSyncMs\":0,\"providerEnvMs\":11,\"channelStartupPolicyMs\":11,\"uvEnvMs\":13,\"mcpEnvMs\":59,\"runtimeConfigReadMs\":1,\"verseShellBundleMs\":0,\"totalMs\":122,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:59.309Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=52256, entry=\"D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 52256 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\", bundledBin=yes, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:59.387Z] [INFO] Gateway process started (pid=48188)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T16:59:59.388Z] [DEBUG] Gateway manager now owns process pid=48188\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:59:59.418Z] [WARN] [Gateway stderr] [1106/005959.415:ERROR:ui\\base\\resource\\resource_bundle.cc:1100] Failed to load D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\chrome_100_percent.pak\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:59:59.419Z] [WARN] [Gateway stderr] Some features may not be available.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:59:59.612Z] [WARN] [Gateway stderr] (node:48188) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T16:59:59.613Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:01.538Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:05.357Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:09.131Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:11.244Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:11.296Z] [DEBUG] [Gateway stderr] (node:48188) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:00:11.297Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:14.275Z] [DEBUG] Gateway ready after 44 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:14.275Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:52256/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:00:14.313Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=770c402b-8e6a-460c-8784-ca9ef5e28646 peer=127.0.0.1:57560->127.0.0.1:52256 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:52256 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:14.318Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:14.319Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-05T17:00:14.319Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:00:14.321Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=3a3d0cbc-5b2f-4fdf-839c-aa4b178581cc peer=127.0.0.1:51616->127.0.0.1:52256 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:52256 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:14.426Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:52256/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:00:14.427Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:16.334Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:17.184Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:17.185Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-05T17:00:17.185Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:17.736Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:17.736Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:17.737Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:00:17.738Z] [INFO] [metric] gateway.startup {\"configSyncMs\":584,\"spawnToReadyMs\":14887,\"readyToConnectMs\":3463,\"totalMs\":18934}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:00:23.904Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-e8fjt4\\verse-claw-e2e-user-data-iZT34h\\openclaw-source-state\\plugin-skills\\browser-automation\" → \"D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation\": Error: EPERM: operation not permitted, symlink 'D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation' -> 'D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-e8fjt4\\verse-claw-e2e-user-data-iZT34h\\openclaw-source-state\\plugin-skills\\browser-automation'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:00:23.906Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-e8fjt4\\verse-claw-e2e-user-data-iZT34h\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff\" → \"D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff\": Error: EPERM: operation not permitted, symlink 'D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff' -> 'D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-e8fjt4\\verse-claw-e2e-user-data-iZT34h\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:24.612Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:24.613Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:24.613Z] [INFO] Sending kill to Gateway process (pid=48188)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:01:24.619Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:24.619Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:24.704Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:24.705Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:24.725Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:24.725Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-05T17:01:24.725Z] [INFO] [efficiency-sampler] stopped\n[2026-11-05T17:01:24.725Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    },
+                    {
+                      "text": "[app:err] Waiting for the debugger to disconnect...\r\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-05T16:59:46.580Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0769\\final\\e2e-results\\coding-worktree-merge-inte-745fa--merges-deletion-and-rename\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0769\\final\\e2e-results\\coding-worktree-merge-inte-745fa--merges-deletion-and-rename\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-worktree-merge-integrity.spec.ts",
+                    "column": 9,
+                    "line": 74
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2e0399ea92a178dc1002-bc4b564fa5adab93d521",
+          "file": "coding-worktree-merge-integrity.spec.ts",
+          "line": 11,
+          "column": 9
+        },
+        {
+          "title": "TF-0769 inprocess rejects concurrent edits",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 151994,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"conflict\"\u001b[39m\nReceived: \u001b[31mundefined\u001b[39m\n\nCall Log:\n- Timeout 45000ms exceeded while waiting on the predicate",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"conflict\"\u001b[39m\nReceived: \u001b[31mundefined\u001b[39m\n\nCall Log:\n- Timeout 45000ms exceeded while waiting on the predicate\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-worktree-merge-integrity.spec.ts:74:9",
+                    "location": {
+                      "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-worktree-merge-integrity.spec.ts",
+                      "column": 9,
+                      "line": 74
+                    },
+                    "snippet": "  72 |           catch { return undefined; }\n  73 |         };\n> 74 |         await expect.poll(() => readRun()?.orchestration?.worktreeMergeStatus, { timeout: 45_000 }).toBe(concurrent ? 'conflict' : 'merged');\n     |         ^\n  75 |         evidence.persistedRun = readRun();\n  76 |         evidence.parentFiles = { a: existsSync(join(workspace, 'a.txt')) ? readFileSync(join(workspace, 'a.txt'), 'utf8') : null,\n  77 |           b: existsSync(join(workspace, 'b.txt')) ? readFileSync(join(workspace, 'b.txt'), 'utf8') : null,"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-worktree-merge-integrity.spec.ts",
+                        "column": 9,
+                        "line": 74
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"conflict\"\u001b[39m\nReceived: \u001b[31mundefined\u001b[39m\n\nCall Log:\n- Timeout 45000ms exceeded while waiting on the predicate\n\n  72 |           catch { return undefined; }\n  73 |         };\n> 74 |         await expect.poll(() => readRun()?.orchestration?.worktreeMergeStatus, { timeout: 45_000 }).toBe(concurrent ? 'conflict' : 'merged');\n     |         ^\n  75 |         evidence.persistedRun = readRun();\n  76 |         evidence.parentFiles = { a: existsSync(join(workspace, 'a.txt')) ? readFileSync(join(workspace, 'a.txt'), 'utf8') : null,\n  77 |           b: existsSync(join(workspace, 'b.txt')) ? readFileSync(join(workspace, 'b.txt'), 'utf8') : null,\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-worktree-merge-integrity.spec.ts:74:9"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [startup-trace] 2026-11-05T17:01:49.237Z initialize-version-reconcile-done pid=30520 type=browser\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:49.241Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:49.241Z] [INFO] [ResourceTracker] Started heartbeat interval\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:49.241Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=30520, ppid=29612\n[2026-11-05T17:01:49.241Z] [INFO] Running in E2E mode: startup side effects minimized\n[startup-trace] 2026-11-05T17:01:49.241Z initialize-main-window-create-start pid=30520 type=browser\n"
+                    },
+                    {
+                      "text": "[app:out] [startup-trace] 2026-11-05T17:01:49.242Z create-window-enter pid=30520 type=browser\n[startup-trace] 2026-11-05T17:01:49.242Z create-window-theme-start pid=30520 type=browser\n"
+                    },
+                    {
+                      "text": "[app:out] [startup-trace] 2026-11-05T17:01:49.242Z create-window-theme-done:dark pid=30520 type=browser\n[startup-trace] 2026-11-05T17:01:49.242Z create-window-browser-window-start pid=30520 type=browser\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:49.401Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":1}\n"
+                    },
+                    {
+                      "text": "[app:out] [startup-trace] 2026-11-05T17:01:49.405Z create-window-browser-window-done pid=30520 type=browser\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:01:49.410Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:01:49.410Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-05T17:01:49.411Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-05T17:01:49.411Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [startup-trace] 2026-11-05T17:01:49.478Z initialize-main-window-create-done pid=30520 type=browser\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:49.496Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:49.497Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [30520:1106/010149.618:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:err] [30520:1106/010149.618:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:50.026Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:50.028Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:01:50.028Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:01:50.028Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-05T17:01:50.029Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-05T17:01:50.029Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:50.088Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-e8fjt4\\verse-claw-e2e-user-data-IIxSWO\\workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:50.368Z] [INFO] [provider-sync] Seeded provider account \"openai\" from openclaw.json\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:50.409Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:50.410Z] [INFO] Gateway start requested (port=53168)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:50.422Z] [DEBUG] Device identity loaded (deviceId=1d1bf0be307fac0c783d18876f8c8dd0bffcf72a332b6f43905fc97d8c13bcd8)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:50.423Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:50.669Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:30520) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:50.832Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:50.897Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:01:50.950Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:50.964Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":1,\"providerEnvMs\":9,\"channelStartupPolicyMs\":26,\"uvEnvMs\":18,\"mcpEnvMs\":29,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":0,\"totalMs\":124,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:50.965Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=53168, entry=\"D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 53168 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\", bundledBin=yes, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:51.018Z] [INFO] Gateway process started (pid=43780)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:51.018Z] [DEBUG] Gateway manager now owns process pid=43780\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:01:51.048Z] [WARN] [Gateway stderr] [1106/010151.047:ERROR:ui\\base\\resource\\resource_bundle.cc:1100] Failed to load D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\chrome_100_percent.pak\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:01:51.048Z] [WARN] [Gateway stderr] Some features may not be available.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:01:51.221Z] [WARN] [Gateway stderr] (node:43780) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:01:51.221Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:53.250Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:55.408Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:57.617Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:57.671Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:01:59.746Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:01.874Z] [DEBUG] Still waiting for Gateway... (attempt 51/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:03.954Z] [DEBUG] Still waiting for Gateway... (attempt 61/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:06.149Z] [DEBUG] Still waiting for Gateway... (attempt 71/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:08.364Z] [DEBUG] Still waiting for Gateway... (attempt 81/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:10.666Z] [DEBUG] Still waiting for Gateway... (attempt 91/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:12.810Z] [DEBUG] Still waiting for Gateway... (attempt 101/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:15.126Z] [DEBUG] Still waiting for Gateway... (attempt 111/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:17.114Z] [DEBUG] [Gateway stderr] (node:43780) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:02:17.115Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:17.406Z] [DEBUG] Still waiting for Gateway... (attempt 121/2400)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:02:24.120Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=4505a548-be3b-4ad8-be1c-1f37e803d4cc peer=127.0.0.1:65370->127.0.0.1:53168 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:53168 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:02:24.122Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=2123fcef-341e-4d10-8816-fccc5532070f peer=127.0.0.1:65327->127.0.0.1:53168 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:53168 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:02:24.123Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=b6113eab-3bf6-4d5a-b44d-7e2bb31f66fa peer=127.0.0.1:54156->127.0.0.1:53168 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:53168 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:24.176Z] [DEBUG] Gateway ready after 127 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:24.178Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:53168/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:02:24.180Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=9ebbd070-5ab7-40f6-b03e-0cf91e1263c5 peer=127.0.0.1:65371->127.0.0.1:53168 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:53168 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:24.182Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:24.183Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-05T17:02:24.183Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:24.228Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:53168/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:02:24.230Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:02:34.235Z] [ERROR] Gateway connect.challenge not received within timeout\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:02:34.327Z] [ERROR] Gateway WebSocket error: Error: WebSocket was closed before the connection was established\nError: WebSocket was closed before the connection was established\n    at WebSocket.close (D:\\ClawX\\node_modules\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\websocket.js:300:7)\n    at Timeout.<anonymous> (D:\\ClawX-work\\coding-vg-sts-jj-20261104\\dist-electron\\main\\index-Dp_zYVM3.js:80:8494)\n    at listOnTimeout (node:internal/timers:605:17)\n    at process.processTimers (node:internal/timers:541:7)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:02:34.328Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n[2026-11-05T17:02:34.331Z] [WARN] Transient start error: Error: Timed out waiting for connect.challenge from Gateway. Retrying... (1/3)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:35.332Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:37.340Z] [DEBUG] Found existing Gateway on port 53168\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:37.340Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:53168/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:02:37.343Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=ac12cb8d-485e-48a9-9a2e-e1da9cac6373 peer=127.0.0.1:65373->127.0.0.1:53168 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:53168 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:37.802Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:37.803Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-05T17:02:37.803Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:02:37.806Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=7cecb9c4-7483-42d7-95ed-3ec2329be99a peer=127.0.0.1:49675->127.0.0.1:53168 remote=127.0.0.1 fwd=n/a origin=n/a host=localhost:53168 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:38.269Z] [DEBUG] Connecting Gateway WebSocket (ws://localhost:53168/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:02:38.270Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:38.546Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:38.547Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-05T17:02:38.547Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:38.576Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:38.594Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:02:38.599Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:02:44.942Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-e8fjt4\\verse-claw-e2e-user-data-IIxSWO\\openclaw-source-state\\plugin-skills\\browser-automation\" → \"D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation\": Error: EPERM: operation not permitted, symlink 'D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation' -> 'D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-e8fjt4\\verse-claw-e2e-user-data-IIxSWO\\openclaw-source-state\\plugin-skills\\browser-automation'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:02:44.944Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-e8fjt4\\verse-claw-e2e-user-data-IIxSWO\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff\" → \"D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff\": Error: EPERM: operation not permitted, symlink 'D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff' -> 'D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-e8fjt4\\verse-claw-e2e-user-data-IIxSWO\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:03:03.414Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":4}\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:03:13.447Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":5}\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #3\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:03:52.243Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:03:52.252Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:03:52.269Z] [INFO] Sending kill to Gateway process (pid=43780)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-05T17:03:52.299Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:03:52.304Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:03:52.531Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:03:52.622Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:03:52.935Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:03:52.936Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:03:52.938Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-05T17:03:52.942Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    },
+                    {
+                      "text": "[app:err] Waiting for the debugger to disconnect...\r\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-05T17:01:30.500Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0769\\final\\e2e-results\\coding-worktree-merge-inte-3278a-ss-rejects-concurrent-edits\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0769\\final\\e2e-results\\coding-worktree-merge-inte-3278a-ss-rejects-concurrent-edits\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-worktree-merge-integrity.spec.ts",
+                    "column": 9,
+                    "line": 74
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2e0399ea92a178dc1002-15bc0b307406ba573fec",
+          "file": "coding-worktree-merge-integrity.spec.ts",
+          "line": 11,
+          "column": 9
+        },
+        {
+          "title": "TF-0769 git merges deletion and rename",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 153764,
+                  "error": {
+                    "message": "TimeoutError: electron.launch: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - <launching> \"D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-e8fjt4\\verse-claw-e2e-user-data-yRFyyh\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"D:\\ClawX-work\\coding-vg-sts-jj-20261104\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=23796\u001b[22m\n\u001b[2m  - [pid=23796][out]\u001b[22m\n\u001b[2m  - [pid=23796][err] Debugger listening on ws://127.0.0.1:58562/6bd42095-9406-4b42-a5b8-4de7891116ba\u001b[22m\n\u001b[2m  - [pid=23796][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:58562/6bd42095-9406-4b42-a5b8-4de7891116ba\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:58562/6bd42095-9406-4b42-a5b8-4de7891116ba\u001b[22m\n\u001b[2m  - [pid=23796][err] Debugger attached.\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:05:59.026Z main-module-loaded pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][err] (node:5556) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\u001b[22m\n\u001b[2m  - [pid=23796][err] (Use `electron --trace-warnings ...` to show where the warning was created)\u001b[22m\n\u001b[2m  - [pid=23796][err] (node:5556) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:05:59.088Z] [DEBUG] [extensions] No clawx-extensions.json found, loading all builtin extensions\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:05:59.094Z] [DEBUG] [extensions] Registered extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:05:59.095Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:05:59.095Z] [DEBUG] [extensions] Registered extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:05:59.095Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=23796][err] [5556:1106/010559.407:ERROR:ui\\base\\resource\\resource_bundle.cc:1100] Failed to load D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\chrome_100_percent.pak\u001b[22m\n\u001b[2m  - [pid=23796][err] Some features may not be available.\u001b[22m\n\u001b[2m  - [pid=23796][err]\u001b[22m\n\u001b[2m  - [pid=23796][err] DevTools listening on ws://127.0.0.1:58561/devtools/browser/a2163cc0-19c7-4c41-914e-6d439e467f51\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:58561/devtools/browser/a2163cc0-19c7-4c41-914e-6d439e467f51\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:05:59.695Z app-ready-callback pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:00.000Z initialize-enter pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:00.009Z initialize-logger-ready pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:00.009Z] [INFO] === Verse Claw Application Starting ===\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:00.011Z initialize-version-reconcile-start pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:00.802Z] [INFO] [efficiency-sampler] started {\"intervalMs\":5000,\"maxSamples\":720}\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:01.091Z] [INFO] [efficiency] runtime efficiency sampling started {\"intervalMs\":5000,\"platform\":\"win32\"}\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:58561/devtools/browser/a2163cc0-19c7-4c41-914e-6d439e467f51\u001b[22m\n\u001b[2m  - [pid=23796][err] [5556:1106/010602.523:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.034Z initialize-version-reconcile-done pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:04.972Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:04.977Z] [INFO] [ResourceTracker] Started heartbeat interval\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:04.979Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=5556, ppid=23796\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:04.981Z] [INFO] Running in E2E mode: startup side effects minimized\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.981Z initialize-main-window-create-start pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.983Z create-window-enter pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.983Z create-window-theme-start pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.986Z create-window-theme-done:dark pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.988Z create-window-browser-window-start pid=5556 type=browser\u001b[22m\n",
+                    "stack": "TimeoutError: electron.launch: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - <launching> \"D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-e8fjt4\\verse-claw-e2e-user-data-yRFyyh\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"D:\\ClawX-work\\coding-vg-sts-jj-20261104\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=23796\u001b[22m\n\u001b[2m  - [pid=23796][out]\u001b[22m\n\u001b[2m  - [pid=23796][err] Debugger listening on ws://127.0.0.1:58562/6bd42095-9406-4b42-a5b8-4de7891116ba\u001b[22m\n\u001b[2m  - [pid=23796][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:58562/6bd42095-9406-4b42-a5b8-4de7891116ba\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:58562/6bd42095-9406-4b42-a5b8-4de7891116ba\u001b[22m\n\u001b[2m  - [pid=23796][err] Debugger attached.\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:05:59.026Z main-module-loaded pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][err] (node:5556) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\u001b[22m\n\u001b[2m  - [pid=23796][err] (Use `electron --trace-warnings ...` to show where the warning was created)\u001b[22m\n\u001b[2m  - [pid=23796][err] (node:5556) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:05:59.088Z] [DEBUG] [extensions] No clawx-extensions.json found, loading all builtin extensions\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:05:59.094Z] [DEBUG] [extensions] Registered extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:05:59.095Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:05:59.095Z] [DEBUG] [extensions] Registered extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:05:59.095Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=23796][err] [5556:1106/010559.407:ERROR:ui\\base\\resource\\resource_bundle.cc:1100] Failed to load D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\chrome_100_percent.pak\u001b[22m\n\u001b[2m  - [pid=23796][err] Some features may not be available.\u001b[22m\n\u001b[2m  - [pid=23796][err]\u001b[22m\n\u001b[2m  - [pid=23796][err] DevTools listening on ws://127.0.0.1:58561/devtools/browser/a2163cc0-19c7-4c41-914e-6d439e467f51\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:58561/devtools/browser/a2163cc0-19c7-4c41-914e-6d439e467f51\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:05:59.695Z app-ready-callback pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:00.000Z initialize-enter pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:00.009Z initialize-logger-ready pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:00.009Z] [INFO] === Verse Claw Application Starting ===\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:00.011Z initialize-version-reconcile-start pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:00.802Z] [INFO] [efficiency-sampler] started {\"intervalMs\":5000,\"maxSamples\":720}\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:01.091Z] [INFO] [efficiency] runtime efficiency sampling started {\"intervalMs\":5000,\"platform\":\"win32\"}\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:58561/devtools/browser/a2163cc0-19c7-4c41-914e-6d439e467f51\u001b[22m\n\u001b[2m  - [pid=23796][err] [5556:1106/010602.523:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.034Z initialize-version-reconcile-done pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:04.972Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:04.977Z] [INFO] [ResourceTracker] Started heartbeat interval\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:04.979Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=5556, ppid=23796\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:04.981Z] [INFO] Running in E2E mode: startup side effects minimized\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.981Z initialize-main-window-create-start pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.983Z create-window-enter pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.983Z create-window-theme-start pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.986Z create-window-theme-done:dark pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.988Z create-window-browser-window-start pid=5556 type=browser\u001b[22m\n\n    at launchVerseClawElectron (D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:406:15)\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:534:21\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-worktree-merge-integrity.spec.ts:46:15",
+                    "location": {
+                      "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts",
+                      "column": 15,
+                      "line": 406
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mfixtures\\electron.ts:406\n\n  404 |     }\n  405 |     : {};\n> 406 |   const app = await electron.launch({\n      |               ^\n  407 |     executablePath: options.executablePath ?? String(electronBinaryPath),\n  408 |     args: [\n  409 |       // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context."
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts",
+                        "column": 15,
+                        "line": 406
+                      },
+                      "message": "TimeoutError: electron.launch: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - <launching> \"D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-e8fjt4\\verse-claw-e2e-user-data-yRFyyh\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"D:\\ClawX-work\\coding-vg-sts-jj-20261104\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=23796\u001b[22m\n\u001b[2m  - [pid=23796][out]\u001b[22m\n\u001b[2m  - [pid=23796][err] Debugger listening on ws://127.0.0.1:58562/6bd42095-9406-4b42-a5b8-4de7891116ba\u001b[22m\n\u001b[2m  - [pid=23796][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:58562/6bd42095-9406-4b42-a5b8-4de7891116ba\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:58562/6bd42095-9406-4b42-a5b8-4de7891116ba\u001b[22m\n\u001b[2m  - [pid=23796][err] Debugger attached.\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:05:59.026Z main-module-loaded pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][err] (node:5556) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\u001b[22m\n\u001b[2m  - [pid=23796][err] (Use `electron --trace-warnings ...` to show where the warning was created)\u001b[22m\n\u001b[2m  - [pid=23796][err] (node:5556) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:05:59.088Z] [DEBUG] [extensions] No clawx-extensions.json found, loading all builtin extensions\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:05:59.094Z] [DEBUG] [extensions] Registered extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:05:59.095Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:05:59.095Z] [DEBUG] [extensions] Registered extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:05:59.095Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=23796][err] [5556:1106/010559.407:ERROR:ui\\base\\resource\\resource_bundle.cc:1100] Failed to load D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\chrome_100_percent.pak\u001b[22m\n\u001b[2m  - [pid=23796][err] Some features may not be available.\u001b[22m\n\u001b[2m  - [pid=23796][err]\u001b[22m\n\u001b[2m  - [pid=23796][err] DevTools listening on ws://127.0.0.1:58561/devtools/browser/a2163cc0-19c7-4c41-914e-6d439e467f51\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:58561/devtools/browser/a2163cc0-19c7-4c41-914e-6d439e467f51\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:05:59.695Z app-ready-callback pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:00.000Z initialize-enter pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:00.009Z initialize-logger-ready pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:00.009Z] [INFO] === Verse Claw Application Starting ===\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:00.011Z initialize-version-reconcile-start pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:00.802Z] [INFO] [efficiency-sampler] started {\"intervalMs\":5000,\"maxSamples\":720}\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:01.091Z] [INFO] [efficiency] runtime efficiency sampling started {\"intervalMs\":5000,\"platform\":\"win32\"}\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:58561/devtools/browser/a2163cc0-19c7-4c41-914e-6d439e467f51\u001b[22m\n\u001b[2m  - [pid=23796][err] [5556:1106/010602.523:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.034Z initialize-version-reconcile-done pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:04.972Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:04.977Z] [INFO] [ResourceTracker] Started heartbeat interval\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:04.979Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=5556, ppid=23796\u001b[22m\n\u001b[2m  - [pid=23796][out] [2026-11-05T17:06:04.981Z] [INFO] Running in E2E mode: startup side effects minimized\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.981Z initialize-main-window-create-start pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.983Z create-window-enter pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.983Z create-window-theme-start pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.986Z create-window-theme-done:dark pid=5556 type=browser\u001b[22m\n\u001b[2m  - [pid=23796][out] [startup-trace] 2026-11-05T17:06:04.988Z create-window-browser-window-start pid=5556 type=browser\u001b[22m\n\n\n   at fixtures\\electron.ts:406\n\n  404 |     }\n  405 |     : {};\n> 406 |   const app = await electron.launch({\n      |               ^\n  407 |     executablePath: options.executablePath ?? String(electronBinaryPath),\n  408 |     args: [\n  409 |       // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context.\n    at launchVerseClawElectron (D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:406:15)\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:534:21\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-worktree-merge-integrity.spec.ts:46:15"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T17:04:33.412Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0769\\final\\e2e-results\\coding-worktree-merge-inte-245a6--merges-deletion-and-rename\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0769\\final\\e2e-results\\coding-worktree-merge-inte-245a6--merges-deletion-and-rename\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts",
+                    "column": 15,
+                    "line": 406
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2e0399ea92a178dc1002-3169f1bc89afc229d674",
+          "file": "coding-worktree-merge-integrity.spec.ts",
+          "line": 11,
+          "column": 9
+        },
+        {
+          "title": "TF-0769 git rejects concurrent edits",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 107949,
+                  "error": {
+                    "message": "TimeoutError: electron.launch: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - <launching> \"D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-e8fjt4\\verse-claw-e2e-user-data-hLJDT7\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"D:\\ClawX-work\\coding-vg-sts-jj-20261104\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=26660\u001b[22m\n\u001b[2m  - [pid=26660][out]\u001b[22m\n\u001b[2m  - [pid=26660][err] Debugger listening on ws://127.0.0.1:64376/c5d56b9d-95a5-4b9a-be2d-7077eb0ecfb7\u001b[22m\n\u001b[2m  - [pid=26660][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:64376/c5d56b9d-95a5-4b9a-be2d-7077eb0ecfb7\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:64376/c5d56b9d-95a5-4b9a-be2d-7077eb0ecfb7\u001b[22m\n\u001b[2m  - [pid=26660][err] Debugger attached.\u001b[22m\n",
+                    "stack": "TimeoutError: electron.launch: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - <launching> \"D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-e8fjt4\\verse-claw-e2e-user-data-hLJDT7\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"D:\\ClawX-work\\coding-vg-sts-jj-20261104\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=26660\u001b[22m\n\u001b[2m  - [pid=26660][out]\u001b[22m\n\u001b[2m  - [pid=26660][err] Debugger listening on ws://127.0.0.1:64376/c5d56b9d-95a5-4b9a-be2d-7077eb0ecfb7\u001b[22m\n\u001b[2m  - [pid=26660][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:64376/c5d56b9d-95a5-4b9a-be2d-7077eb0ecfb7\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:64376/c5d56b9d-95a5-4b9a-be2d-7077eb0ecfb7\u001b[22m\n\u001b[2m  - [pid=26660][err] Debugger attached.\u001b[22m\n\n    at launchVerseClawElectron (D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:406:15)\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:534:21\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-worktree-merge-integrity.spec.ts:46:15",
+                    "location": {
+                      "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts",
+                      "column": 15,
+                      "line": 406
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mfixtures\\electron.ts:406\n\n  404 |     }\n  405 |     : {};\n> 406 |   const app = await electron.launch({\n      |               ^\n  407 |     executablePath: options.executablePath ?? String(electronBinaryPath),\n  408 |     args: [\n  409 |       // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context."
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts",
+                        "column": 15,
+                        "line": 406
+                      },
+                      "message": "TimeoutError: electron.launch: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - <launching> \"D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-e8fjt4\\verse-claw-e2e-user-data-hLJDT7\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"D:\\ClawX-work\\coding-vg-sts-jj-20261104\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=26660\u001b[22m\n\u001b[2m  - [pid=26660][out]\u001b[22m\n\u001b[2m  - [pid=26660][err] Debugger listening on ws://127.0.0.1:64376/c5d56b9d-95a5-4b9a-be2d-7077eb0ecfb7\u001b[22m\n\u001b[2m  - [pid=26660][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:64376/c5d56b9d-95a5-4b9a-be2d-7077eb0ecfb7\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:64376/c5d56b9d-95a5-4b9a-be2d-7077eb0ecfb7\u001b[22m\n\u001b[2m  - [pid=26660][err] Debugger attached.\u001b[22m\n\n\n   at fixtures\\electron.ts:406\n\n  404 |     }\n  405 |     : {};\n> 406 |   const app = await electron.launch({\n      |               ^\n  407 |     executablePath: options.executablePath ?? String(electronBinaryPath),\n  408 |     args: [\n  409 |       // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context.\n    at launchVerseClawElectron (D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:406:15)\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts:534:21\n    at D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\coding-worktree-merge-integrity.spec.ts:46:15"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T17:07:26.515Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0769\\final\\e2e-results\\coding-worktree-merge-inte-97d95-it-rejects-concurrent-edits\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0769\\final\\e2e-results\\coding-worktree-merge-inte-97d95-it-rejects-concurrent-edits\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\tests\\e2e\\fixtures\\electron.ts",
+                    "column": 15,
+                    "line": 406
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2e0399ea92a178dc1002-a5f5ab056b7b2c57d95c",
+          "file": "coding-worktree-merge-integrity.spec.ts",
+          "line": 11,
+          "column": 9
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-05T16:59:45.490Z",
+    "duration": 584732.4040000001,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  }
+}
