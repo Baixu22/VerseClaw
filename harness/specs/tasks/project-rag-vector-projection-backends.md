@@ -48,6 +48,7 @@ touchedAreas:
   - "docs/clawx-design-overview.md"
   - "docs/dev/runtime-control-planes.md"
   - "docs/dev/evidence/project-rag-longterm-20261109/**"
+  - "docs/dev/evidence/project-rag/RAG-06/**"
   - "harness/specs/tasks/project-rag-*.md"
   - "harness/specs/rules/project-rag-long-term-boundary.md"
   - ".gitignore"
