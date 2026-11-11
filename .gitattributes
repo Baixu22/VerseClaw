@@ -49,6 +49,10 @@ artifacts/runtime-test-integrity/credential-scan.json -text whitespace=blank-at-
 artifacts/runtime-test-integrity/SHA256SUMS -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 
 # Current desktop acceptance evidence is byte-addressed on every checkout.
+harness/specs/fixtures/chat-output-visual-hierarchy/round-7/** -text whitespace=-trailing-space,-blank-at-eof
+harness/specs/fixtures/chat-output-visual-hierarchy/round-8/** -text whitespace=-trailing-space,-blank-at-eof
+harness/specs/fixtures/chat-output-visual-hierarchy/round-9/** -text whitespace=-trailing-space,-blank-at-eof
+harness/specs/fixtures/chat-output-visual-hierarchy/round-10/** -text whitespace=-trailing-space,-blank-at-eof
 artifacts/desktop-acceptance-followups/* -text
 artifacts/frozen-windows-acceptance-20261007/* -text
 artifacts/windows-delivery-blocker-fixes/* -text

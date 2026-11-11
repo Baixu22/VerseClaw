@@ -1,0 +1,142 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/Desktop/clawx/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/chat-output-r8-verified-tools",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/Desktop/clawx/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-tool-ui-execution-surfaces.spec.ts",
+      "file": "chat-tool-ui-execution-surfaces.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Tool UI execution surfaces",
+          "file": "D:/ClawX/tests/e2e/chat-tool-ui-execution-surfaces.spec.ts",
+          "line": 107,
+          "column": 6,
+          "specs": [
+            {
+              "title": "renders official execution surfaces in light, dark, and narrow layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 57880,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T16:52:31.215Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "tool-ui-execution-light",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\chat-output-r8-verified-tools\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\attachments\\tool-ui-execution-light-9d00512460498d5d7871eabd139745a7f9d900e3.png"
+                        },
+                        {
+                          "name": "tool-ui-execution-dark",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\chat-output-r8-verified-tools\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\attachments\\tool-ui-execution-dark-17badc7c97e6bd650a9be3869417f473ad425292.png"
+                        },
+                        {
+                          "name": "tool-ui-execution-narrow",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\chat-output-r8-verified-tools\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\attachments\\tool-ui-execution-narrow-c90760326b2cede5f137e120016dc718463d3493.png"
+                        },
+                        {
+                          "name": "tool-ui-execution-640",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\chat-output-r8-verified-tools\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\attachments\\tool-ui-execution-640-958e0d8f2a07dfa473980c649c488438d8f6e239.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fbdc74cf16e7047c807a-5368bbec17e918a4037a",
+              "file": "D:/ClawX/tests/e2e/chat-tool-ui-execution-surfaces.spec.ts",
+              "line": 108,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-04T16:52:26.859Z",
+    "duration": 70101.33200000001,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

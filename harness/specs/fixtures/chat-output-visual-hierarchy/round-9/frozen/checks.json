@@ -1,0 +1,120 @@
+[
+  {
+    "name": "build",
+    "args": [
+      "--max-old-space-size=4096",
+      "node_modules/vite/bin/vite.js",
+      "build"
+    ],
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "commit": "2bfa639a31d20b5a3ce3d184271bb2c818f54e5a",
+    "dirtyBefore": false,
+    "dirtyAfter": false,
+    "exitCode": 0,
+    "signal": null,
+    "startedAt": "2026-11-05T16:53:53.878Z",
+    "durationMs": 75509
+  },
+  {
+    "name": "electron",
+    "args": [
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "tests/e2e/chat-artifact-panel.spec.ts",
+      "tests/e2e/session-activity-background-read.spec.ts",
+      "--grep",
+      "conversation column|owned Windows child|Session activity background read state|opens an environment|keeps environment summaries",
+      "--reporter=line,json",
+      "--output=D:/tmp/chat-environment-r9-20261105/frozen/electron"
+    ],
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "commit": "2bfa639a31d20b5a3ce3d184271bb2c818f54e5a",
+    "dirtyBefore": false,
+    "dirtyAfter": false,
+    "exitCode": 0,
+    "signal": null,
+    "startedAt": "2026-11-05T16:55:09.582Z",
+    "durationMs": 86882
+  },
+  {
+    "name": "unit",
+    "args": [
+      "D:/tmp/chat-environment-r9-20261105/relay-unit-isolated.mjs",
+      "frozen-unit"
+    ],
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "commit": "2bfa639a31d20b5a3ce3d184271bb2c818f54e5a",
+    "dirtyBefore": false,
+    "dirtyAfter": false,
+    "exitCode": 0,
+    "signal": null,
+    "startedAt": "2026-11-05T16:56:36.661Z",
+    "durationMs": 169138
+  },
+  {
+    "name": "web-types",
+    "args": [
+      "node_modules\\@typescript\\native-preview\\bin\\tsgo.js",
+      "--noEmit",
+      "-p",
+      "tsconfig.web.json",
+      "--composite",
+      "false"
+    ],
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "commit": "2bfa639a31d20b5a3ce3d184271bb2c818f54e5a",
+    "dirtyBefore": false,
+    "dirtyAfter": false,
+    "exitCode": 0,
+    "signal": null,
+    "startedAt": "2026-11-05T16:59:26.041Z",
+    "durationMs": 3247
+  },
+  {
+    "name": "i18n",
+    "args": [
+      "scripts/i18n-lint.mjs"
+    ],
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "commit": "2bfa639a31d20b5a3ce3d184271bb2c818f54e5a",
+    "dirtyBefore": false,
+    "dirtyAfter": false,
+    "exitCode": 0,
+    "signal": null,
+    "startedAt": "2026-11-05T16:59:29.458Z",
+    "durationMs": 586
+  },
+  {
+    "name": "lint",
+    "args": [
+      "node_modules/eslint/bin/eslint.js",
+      "src/components/file-preview/ArtifactPanel.tsx",
+      "src/components/file-preview/panel-tab-meta.tsx",
+      "src/pages/Chat/ChatToolbar.tsx",
+      "src/pages/Chat/index.tsx",
+      "src/pages/Chat/SessionActivityPanel.tsx",
+      "src/stores/artifact-panel.ts",
+      "tests/e2e/chat-artifact-panel.spec.ts",
+      "tests/e2e/fixtures/electron.ts",
+      "tests/e2e/session-activity-background-read.spec.ts",
+      "tests/unit/artifact-panel-store.test.ts",
+      "tests/unit/artifact-panel.test.tsx",
+      "tests/unit/chat-session-status-rail.test.tsx",
+      "tests/unit/session-activity-panel-sections.test.tsx",
+      "src/pages/Chat/session-environment.ts",
+      "tests/unit/session-environment.test.ts",
+      "-f",
+      "json",
+      "--output-file",
+      "D:/tmp/chat-environment-r9-20261105/frozen/lint.json"
+    ],
+    "cwd": "D:/tmp/chat-environment-r9-20261105/validation",
+    "commit": "2bfa639a31d20b5a3ce3d184271bb2c818f54e5a",
+    "dirtyBefore": false,
+    "dirtyAfter": false,
+    "exitCode": 0,
+    "signal": null,
+    "startedAt": "2026-11-05T16:59:30.246Z",
+    "durationMs": 8739
+  }
+]

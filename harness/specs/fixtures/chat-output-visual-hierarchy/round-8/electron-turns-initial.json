@@ -1,0 +1,194 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/Desktop/clawx/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/chat-output-r8-e2e-turns",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/Desktop/clawx/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-turn-summary-collapse.spec.ts",
+      "file": "chat-turn-summary-collapse.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat turn summary collapse",
+          "file": "D:/ClawX/tests/e2e/chat-turn-summary-collapse.spec.ts",
+          "line": 149,
+          "column": 6,
+          "specs": [
+            {
+              "title": "keeps live activity compact, animated and readable without assistant avatars",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 52819,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T16:44:12.092Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8431e429a3efaf24759e-d93ce219608a2379a486",
+              "file": "D:/ClawX/tests/e2e/chat-turn-summary-collapse.spec.ts",
+              "line": 150,
+              "column": 7
+            },
+            {
+              "title": "collapses completed long task process and expands details on demand",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 38140,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T16:45:04.985Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8431e429a3efaf24759e-4313b82ec5dc9a3673ec",
+              "file": "D:/ClawX/tests/e2e/chat-turn-summary-collapse.spec.ts",
+              "line": 211,
+              "column": 7
+            },
+            {
+              "title": "leaves short conversations unwrapped",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 46559,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T16:45:43.155Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8431e429a3efaf24759e-202f5033f3cb39b39ee0",
+              "file": "D:/ClawX/tests/e2e/chat-turn-summary-collapse.spec.ts",
+              "line": 287,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mWorker teardown timeout of 90000ms exceeded.\u001b[39m\n\n\u001b[31mFailed worker ran 3 tests:\u001b[39m\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:150:7 › Verse Claw chat turn summary collapse › keeps live activity compact, animated and readable without assistant avatars\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:211:7 › Verse Claw chat turn summary collapse › collapses completed long task process and expands details on demand\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:287:7 › Verse Claw chat turn summary collapse › leaves short conversations unwrapped",
+      "stack": "\u001b[31mWorker teardown timeout of 90000ms exceeded.\u001b[39m\n\n\u001b[31mFailed worker ran 3 tests:\u001b[39m\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:150:7 › Verse Claw chat turn summary collapse › keeps live activity compact, animated and readable without assistant avatars\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:211:7 › Verse Claw chat turn summary collapse › collapses completed long task process and expands details on demand\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:287:7 › Verse Claw chat turn summary collapse › leaves short conversations unwrapped"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-11-04T16:44:07.995Z",
+    "duration": 237663.975,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

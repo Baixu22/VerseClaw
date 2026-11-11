@@ -1,0 +1,5 @@
+{
+  "path": "tests/e2e/fixtures/electron.ts",
+  "reason": "Keep the direct-kill fallback bound to the owned ChildProcess handle.",
+  "sha256": "94cb84c23133d1ea8ce56d03582501e559c6ec694e526a7bbf2571b67bfe1b70"
+}

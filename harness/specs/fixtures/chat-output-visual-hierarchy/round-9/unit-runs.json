@@ -1,0 +1,359 @@
+[
+  {
+    "file": "tests/unit/artifact-panel-store.test.ts",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/artifact-panel-store.test.ts",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/01.json"
+    ],
+    "startedAt": "2026-11-05T16:26:48.137Z",
+    "durationMs": 10799,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-01.json",
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "success": true
+  },
+  {
+    "file": "tests/unit/artifact-panel-subject-tabs.test.ts",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/artifact-panel-subject-tabs.test.ts",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/02.json"
+    ],
+    "startedAt": "2026-11-05T16:26:58.937Z",
+    "durationMs": 12964,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-02.json",
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "success": true
+  },
+  {
+    "file": "tests/unit/artifact-panel.test.tsx",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/artifact-panel.test.tsx",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/03.json"
+    ],
+    "startedAt": "2026-11-05T16:27:11.902Z",
+    "durationMs": 45777,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-03.json",
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "success": true
+  },
+  {
+    "file": "tests/unit/chat-artifact-panel-layout.test.tsx",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/chat-artifact-panel-layout.test.tsx",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/04.json"
+    ],
+    "startedAt": "2026-11-05T16:27:57.692Z",
+    "durationMs": 132900,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-04.json",
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "success": true
+  },
+  {
+    "file": "tests/unit/chat-input.test.tsx",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/chat-input.test.tsx",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/05.json"
+    ],
+    "startedAt": "2026-11-05T16:30:10.624Z",
+    "durationMs": 22170,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-05.json",
+    "passed": 72,
+    "failed": 0,
+    "total": 72,
+    "success": true
+  },
+  {
+    "file": "tests/unit/chat-message.test.tsx",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/chat-message.test.tsx",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/06.json"
+    ],
+    "startedAt": "2026-11-05T16:30:32.795Z",
+    "durationMs": 15179,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-06.json",
+    "passed": 35,
+    "failed": 0,
+    "total": 35,
+    "success": true
+  },
+  {
+    "file": "tests/unit/chat-page-execution-graph.test.tsx",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/chat-page-execution-graph.test.tsx",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/07.json"
+    ],
+    "startedAt": "2026-11-05T16:30:47.974Z",
+    "durationMs": 27940,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-07.json",
+    "passed": 22,
+    "failed": 0,
+    "total": 22,
+    "success": true
+  },
+  {
+    "file": "tests/unit/chat-render-reachability.test.tsx",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/chat-render-reachability.test.tsx",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/08.json"
+    ],
+    "startedAt": "2026-11-05T16:31:15.915Z",
+    "durationMs": 20308,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-08.json",
+    "passed": 25,
+    "failed": 0,
+    "total": 25,
+    "success": true
+  },
+  {
+    "file": "tests/unit/chat-session-status-rail.test.tsx",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/chat-session-status-rail.test.tsx",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/09.json"
+    ],
+    "startedAt": "2026-11-05T16:31:36.225Z",
+    "durationMs": 27282,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-09.json",
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "success": true
+  },
+  {
+    "file": "tests/unit/chat-tool-card-suppression.test.tsx",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/chat-tool-card-suppression.test.tsx",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/10.json"
+    ],
+    "startedAt": "2026-11-05T16:32:03.514Z",
+    "durationMs": 12135,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-10.json",
+    "passed": 1,
+    "failed": 0,
+    "total": 1,
+    "success": true
+  },
+  {
+    "file": "tests/unit/composer-git-strip.test.tsx",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/composer-git-strip.test.tsx",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/11.json"
+    ],
+    "startedAt": "2026-11-05T16:32:15.652Z",
+    "durationMs": 8867,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-11.json",
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "success": true
+  },
+  {
+    "file": "tests/unit/execution-graph-card-badge.test.tsx",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/execution-graph-card-badge.test.tsx",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/12.json"
+    ],
+    "startedAt": "2026-11-05T16:32:24.520Z",
+    "durationMs": 5905,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-12.json",
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "success": true
+  },
+  {
+    "file": "tests/unit/runtime-approval-prompt.test.tsx",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/runtime-approval-prompt.test.tsx",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/13.json"
+    ],
+    "startedAt": "2026-11-05T16:32:30.426Z",
+    "durationMs": 4333,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-13.json",
+    "passed": 13,
+    "failed": 0,
+    "total": 13,
+    "success": true
+  },
+  {
+    "file": "tests/unit/session-activity-panel-sections.test.tsx",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/session-activity-panel-sections.test.tsx",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/14.json"
+    ],
+    "startedAt": "2026-11-05T16:32:34.760Z",
+    "durationMs": 3461,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-14.json",
+    "passed": 12,
+    "failed": 0,
+    "total": 12,
+    "success": true
+  },
+  {
+    "file": "tests/unit/session-activity-panel.test.tsx",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/session-activity-panel.test.tsx",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/15.json"
+    ],
+    "startedAt": "2026-11-05T16:32:38.233Z",
+    "durationMs": 3371,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-15.json",
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "success": true
+  },
+  {
+    "file": "tests/unit/session-environment.test.ts",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/session-environment.test.ts",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/16.json"
+    ],
+    "startedAt": "2026-11-05T16:32:41.605Z",
+    "durationMs": 2752,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-16.json",
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "success": true
+  },
+  {
+    "file": "tests/unit/tool-ui-execution-surfaces.test.tsx",
+    "args": [
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "tests/unit/tool-ui-execution-surfaces.test.tsx",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=D:/tmp/chat-environment-r9-20261105/relay-unit-isolated/17.json"
+    ],
+    "startedAt": "2026-11-05T16:32:44.359Z",
+    "durationMs": 15466,
+    "exitCode": 0,
+    "signal": null,
+    "report": "unit-17.json",
+    "passed": 14,
+    "failed": 0,
+    "total": 14,
+    "success": true
+  }
+]

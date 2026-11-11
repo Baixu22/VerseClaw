@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-06",
+  "createdAt": "2026-11-06T04:10:05.038075+00:00",
+  "driven_by": "agent",
+  "actor": "codex-chat-welcome-polish",
+  "realHumanEvidence": false,
+  "verdict": "pass-development-scope",
+  "releaseReady": false,
+  "candidate": {
+    "commit": "bfe2f3c467d386a79a0249f447876032abda7ad0",
+    "tree": "75917578888e60391016554fc2485af047e5abe5",
+    "dirty": false,
+    "path": "D:\\tmp\\chat-environment-r9-20261105\\validation",
+    "branch": "codex/chat-welcome-polish-20261106"
+  },
+  "sourceMatch": {
+    "passed": 21,
+    "total": 21,
+    "manifest": "sources.json",
+    "deltaFromPriorTurn": "changes.patch"
+  },
+  "unit": {
+    "files": 3,
+    "passed": 21,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0
+  },
+  "electron": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "exitCode": 0,
+    "sourceGuard": true
+  },
+  "checks": {
+    "unit": 0,
+    "web": 0,
+    "lint": 0,
+    "i18n": 0,
+    "build": 0,
+    "electron": 0
+  },
+  "harness": {
+    "validate": 0,
+    "dryRun": 0,
+    "since": "7927b17b65648bacff65867e08762d93d4199d9c"
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 3
+  },
+  "behavior": [
+    "Unboxed project / branch row replaces the capsule and duplicate welcome Git strip.",
+    "Three starter cards are behind one keyboard-accessible Quick start disclosure; typing hides it without moving the composer.",
+    "Branch search, guarded checkout, refreshed selected branch, failure/retry, detached HEAD and Gateway-offline access are covered.",
+    "Project selection uses the existing owning conversation handler to persist the current session before switching.",
+    "Existing conversation Git strip and worktree interactions remain covered."
+  ],
+  "limits": [
+    "Electron host responses and branch switching are agent-driven isolated fixtures; no checkout was performed on the developer repository.",
+    "Only scoped UI development acceptance is claimed. Existing TF-0783 full-project residuals are unchanged.",
+    "The validation repository reuses the preceding fixed source context and independently installed dependencies; it is not a clean installation test."
+  ]
+}

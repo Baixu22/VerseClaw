@@ -1,0 +1,60 @@
+{
+  "errors": 0,
+  "warnings": 5,
+  "messages": [
+    {
+      "file": "D:\\tmp\\chat-environment-r9-20261105\\validation\\src\\components\\file-preview\\panel-tab-meta.tsx",
+      "ruleId": "react-refresh/only-export-components",
+      "severity": 1,
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+      "line": 30,
+      "column": 14,
+      "messageId": "namedExport",
+      "endLine": 30,
+      "endColumn": 64
+    },
+    {
+      "file": "D:\\tmp\\chat-environment-r9-20261105\\validation\\src\\components\\file-preview\\panel-tab-meta.tsx",
+      "ruleId": "react-refresh/only-export-components",
+      "severity": 1,
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+      "line": 106,
+      "column": 14,
+      "messageId": "namedExport",
+      "endLine": 106,
+      "endColumn": 57
+    },
+    {
+      "file": "D:\\tmp\\chat-environment-r9-20261105\\validation\\src\\pages\\Chat\\index.tsx",
+      "ruleId": "react-refresh/only-export-components",
+      "severity": 1,
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+      "line": 295,
+      "column": 17,
+      "messageId": "namedExport",
+      "endLine": 295,
+      "endColumn": 47
+    },
+    {
+      "file": "D:\\tmp\\chat-environment-r9-20261105\\validation\\src\\pages\\Chat\\index.tsx",
+      "ruleId": "react-refresh/only-export-components",
+      "severity": 1,
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+      "line": 338,
+      "column": 17,
+      "messageId": "namedExport",
+      "endLine": 338,
+      "endColumn": 46
+    },
+    {
+      "file": "D:\\tmp\\chat-environment-r9-20261105\\validation\\src\\pages\\Chat\\index.tsx",
+      "ruleId": "react-hooks/exhaustive-deps",
+      "severity": 1,
+      "message": "The 'graphStepCache' logical expression could make the dependencies of useMemo Hook (at line 2666) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'graphStepCache' in its own useMemo() Hook.",
+      "line": 1407,
+      "column": 9,
+      "endLine": 1407,
+      "endColumn": 111
+    }
+  ]
+}

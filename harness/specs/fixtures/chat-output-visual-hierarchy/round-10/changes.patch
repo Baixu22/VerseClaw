@@ -1,0 +1,1222 @@
+--- a/src/pages/Chat/index.tsx
++++ b/src/pages/Chat/index.tsx
+@@ -3969,7 +3969,7 @@
+           </Button>
+         </div>
+       )}
+-      {activeWorkspace && (
++      {activeWorkspace && !isEmpty && (
+         <div className="relative mx-auto w-full max-w-[768px] px-4">
+           <ComposerGitStrip workspace={activeWorkspace} disabled={inputRunActive} onOpenGitPanel={handleOpenEnvironment} onSwitchWorktreeWorkspace={handleSwitchWorktreeWorkspace} />
+         </div>
+@@ -4022,7 +4022,8 @@
+           <div className={cn('relative', sendingAnimation && 'codex-welcome-context--sending')}>
+             <WelcomeScreen
+               onPickFolder={handlePickWorkspaceFolder}
+-              disabled={!isGatewayRunning}
++              onSelectProject={handleSwitchWorkspace}
++              disabled={inputRunActive}
+             />
+           </div>
+           <div className={cn('codex-welcome-chips-host relative', sendingAnimation && 'codex-welcome-chips--sending')}>
+@@ -4390,6 +4391,7 @@
+ type WelcomeScreenProps = {
+   onSend: (text: string) => void | Promise<unknown>;
+   onPickFolder?: () => void | Promise<unknown>;
++  onSelectProject?: (workspaceId: string) => void | Promise<unknown>;
+   disabled?: boolean;
+ };
+ 
+@@ -4471,26 +4473,13 @@
+  * That leaves the context row as the only place the workspace can be switched
+  * from, so the project token is the picker rather than a static label.
+  */
+-function WelcomeScreen({ disabled = false, onPickFolder }: Omit<WelcomeScreenProps, 'onSend'>) {
++function WelcomeScreen({ disabled = false, onPickFolder, onSelectProject }: Omit<WelcomeScreenProps, 'onSend'>) {
+   const activeWorkspace = useWorkspacesStore((s) => s.activeWorkspace);
+   const hasWorkspace = Boolean(activeWorkspace);
+   const [gitStatus, setGitStatus] = useState<
+     { workspaceId: string; branch: string; detached: boolean } | null
+   >(null);
+-
+-  const refreshGitStatus = useCallback(async () => {
+-    const workspaceId = activeWorkspace?.id;
+-    if (!workspaceId) return;
+-    try {
+-      const result = await hostApi.git.status();
+-      const status = result.status;
+-      setGitStatus(status?.isRepository && status.branch
+-        ? { workspaceId, branch: status.branch, detached: status.detached ?? false }
+-        : null);
+-    } catch {
+-      setGitStatus(null);
+-    }
+-  }, [activeWorkspace?.id]);
++  const [gitRevision, setGitRevision] = useState(0);
+ 
+   useEffect(() => {
+     let cancelled = false;
+@@ -4501,8 +4490,8 @@
+         const result = await hostApi.git.status();
+         const status = result.status;
+         if (!cancelled) {
+-          setGitStatus(status?.isRepository && status.branch
+-            ? { workspaceId, branch: status.branch, detached: status.detached ?? false }
++          setGitStatus(status?.isRepository
++            ? { workspaceId, branch: status.branch ?? '', detached: status.detached ?? false }
+             : null);
+         }
+       } catch {
+@@ -4513,7 +4502,7 @@
+     return () => {
+       cancelled = true;
+     };
+-  }, [activeWorkspace?.id]);
++  }, [activeWorkspace?.id, activeWorkspace?.rootPath, gitRevision]);
+ 
+   /* A result from the workspace we just left is dropped here rather than
+    * cleared in the effect body: clearing it there is a synchronous setState
+@@ -4527,15 +4516,17 @@
+       {hasWorkspace && (
+         <div className="codex-welcome-context" data-testid="chat-welcome-context">
+           <div className="codex-welcome-context__group" data-testid="chat-welcome-environment-group">
+-            <WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder} />
+-            {branch && (
++            <WelcomeProjectPicker disabled={disabled} onPickFolder={onPickFolder} onSelect={onSelectProject} />
++            {branch && (<>
++              <span className="codex-welcome-context__separator" aria-hidden="true">/</span>
+               <WelcomeBranchPicker
++                key={`${activeWorkspace?.id}:${activeWorkspace?.rootPath}`}
+                 branch={branch.branch}
+                 detached={branch.detached}
+                 disabled={disabled}
+-                onChanged={refreshGitStatus}
++                onChanged={() => setGitRevision((value) => value + 1)}
+               />
+-            )}
++            </>)}
+           </div>
+         </div>
+       )}
+@@ -4543,22 +4534,33 @@
+   );
+ }
+ 
+-/**
+- * Quick-action chips. Rendered *below* the composer to match the reference
+- * ordering — above, a row of suggestions reads as a menu the input belongs to;
+- * below, it reads as shortcuts you may ignore.
+- *
+- * They retract while the composer holds text: once you have said what you want,
+- * three canned openers are noise sitting between you and the send button. The
+- * retraction is staggered left-to-right and reverses on the way back, and the
+- * row keeps its height throughout so the composer never moves.
+- */
++/** Optional starters share one disclosure; its reserved row keeps drafting stable. */
+ function WelcomeChips({
+   disabled = false,
+   onSend,
+   retracted = false,
+ }: Pick<WelcomeScreenProps, 'disabled' | 'onSend'> & { retracted?: boolean }) {
+   const { t } = useTranslation('chat');
++  const menuRef = useRef<HTMLDetailsElement>(null);
++  useEffect(() => {
++    if (retracted && menuRef.current) menuRef.current.open = false;
++  }, [retracted]);
++  useEffect(() => {
++    const closeOutside = (event: PointerEvent) => {
++      if (menuRef.current && !menuRef.current.contains(event.target as Node)) menuRef.current.open = false;
++    };
++    const closeOnEscape = (event: KeyboardEvent) => {
++      if (event.key !== 'Escape' || !menuRef.current?.open) return;
++      menuRef.current.open = false;
++      menuRef.current.querySelector('summary')?.focus();
++    };
++    document.addEventListener('pointerdown', closeOutside);
++    document.addEventListener('keydown', closeOnEscape);
++    return () => {
++      document.removeEventListener('pointerdown', closeOutside);
++      document.removeEventListener('keydown', closeOnEscape);
++    };
++  }, []);
+   const quickActions = useMemo<SuggestionConfig[]>(() => [
+     {
+       title: t('welcome.askQuestions'),
+@@ -4589,14 +4591,22 @@
+         // concerned; `inert` is what keeps a mid-fade chip from being clicked.
+         inert={retracted || undefined}
+       >
+-        <ThreadPrimitive.Suggestions>
++        <details className="codex-welcome-quick-start" ref={menuRef}>
++          <summary data-testid="welcome-quick-start-trigger">
++            {t('welcome.quickStart')}
++            <ChevronDown className="h-3 w-3" aria-hidden="true" />
++          </summary>
++          <div className="codex-header-menu codex-welcome-quick-start__menu" data-testid="welcome-quick-start-menu">
++          <ThreadPrimitive.Suggestions>
+           {({ suggestion }) => {
+             const index = quickActions.findIndex((action) => (
+               typeof action === 'string' ? action === suggestion.title : action.title === suggestion.title
+             ));
+             return <SuggestionItem disabled={disabled} Icon={actionIcons[index] ?? ListChecks} />;
+           }}
+-        </ThreadPrimitive.Suggestions>
++          </ThreadPrimitive.Suggestions>
++          </div>
++        </details>
+       </div>
+     </WelcomeSuggestionRuntime>
+   );
+--- a/src/components/chat/WelcomeProjectPicker.tsx
++++ b/src/components/chat/WelcomeProjectPicker.tsx
+@@ -6,6 +6,7 @@
+ import { useWorkspacesStore } from '@/stores/workspaces';
+ import { WorkspacePickerMenu } from './WorkspacePickerMenu';
+ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
++import { toastUserError } from '@/lib/user-error';
+ 
+ /**
+  * The active project token in the chat empty state, plus the workspace picker
+@@ -14,8 +15,8 @@
+  * Ported from the FakeCoding reference empty state, where the active project
+  * doubles as the project switcher. The reference names it inline in a hero
+  * heading; this build has no heading (the watermark is the display type), so
+- * the trigger is the pill in the context row under the composer, shaped to
+- * match the branch token beside it. The shared header menu shell
++ * the trigger is an unboxed control in the context row under the composer,
++ * beside the branch selector. The shared header menu shell
+  * carries the measured geometry — see styles/codex-welcome-hero.css.
+  *
+  * The reference's menu also offers "new project" and "work without a project".
+@@ -25,10 +26,11 @@
+ export type WelcomeProjectPickerProps = {
+   /** Opens the native directory chooser. Wired to Chat's handlePickWorkspaceFolder. */
+   onPickFolder?: () => void | Promise<unknown>;
++  onSelect?: (workspaceId: string) => void | Promise<unknown>;
+   disabled?: boolean;
+ };
+ 
+-export function WelcomeProjectPicker({ disabled = false, onPickFolder }: WelcomeProjectPickerProps) {
++export function WelcomeProjectPicker({ disabled = false, onPickFolder, onSelect }: WelcomeProjectPickerProps) {
+   const { t } = useTranslation('chat');
+   const profiles = useWorkspacesStore((state) => state.profiles);
+   const activeWorkspace = useWorkspacesStore((state) => state.activeWorkspace);
+@@ -37,6 +39,7 @@
+ 
+   const [open, setOpen] = useState(false);
+   const rootRef = useRef<HTMLSpanElement>(null);
++  const triggerRef = useRef<HTMLButtonElement>(null);
+ 
+   // Same expression the composer header uses, so both surfaces always agree on
+   // what this workspace is called.
+@@ -60,7 +63,10 @@
+   useEffect(() => {
+     if (!open) return;
+     const handleKeyDown = (event: KeyboardEvent) => {
+-      if (event.key === 'Escape') close();
++      if (event.key === 'Escape') {
++        close();
++        triggerRef.current?.focus();
++      }
+     };
+     document.addEventListener('keydown', handleKeyDown);
+     return () => document.removeEventListener('keydown', handleKeyDown);
+@@ -69,7 +75,7 @@
+   const handleSelect = (id: string) => {
+     close();
+     if (id === activeWorkspaceId) return;
+-    void switchWorkspace(id);
++    void Promise.resolve((onSelect ?? switchWorkspace)(id)).catch(toastUserError);
+   };
+ 
+   return (
+@@ -77,6 +83,7 @@
+       <Tooltip>
+         <TooltipTrigger asChild>
+       <button
++        ref={triggerRef}
+         type="button"
+         className="codex-welcome-context__subcontrol codex-welcome-context__subcontrol--project codex-welcome-project-token"
+         aria-expanded={open}
+--- a/src/components/chat/WelcomeBranchPicker.tsx
++++ b/src/components/chat/WelcomeBranchPicker.tsx
+@@ -1,4 +1,4 @@
+-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
++import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+ import { Check, ChevronDown, GitBranch, Loader2, Search } from 'lucide-react';
+ import { useTranslation } from 'react-i18next';
+ import { cn } from '@/lib/utils';
+@@ -20,20 +20,13 @@
+   const [search, setSearch] = useState('');
+   const [branches, setBranches] = useState<GitBranchInfo[]>([]);
+   const [loading, setLoading] = useState(false);
++  const [switching, setSwitching] = useState(false);
++  const [loadFailed, setLoadFailed] = useState(false);
++  const [retry, setRetry] = useState(0);
+   const rootRef = useRef<HTMLSpanElement>(null);
++  const triggerRef = useRef<HTMLButtonElement>(null);
+   const searchRef = useRef<HTMLInputElement>(null);
+-
+-  const refresh = useCallback(async () => {
+-    setLoading(true);
+-    try {
+-      const result = await hostApi.git.branches();
+-      setBranches(result.branches ?? []);
+-    } catch {
+-      setBranches([]);
+-    } finally {
+-      setLoading(false);
+-    }
+-  }, []);
++  const menuId = useId();
+ 
+   const close = useCallback(() => {
+     setOpen(false);
+@@ -42,13 +35,30 @@
+ 
+   useEffect(() => {
+     if (!open) return;
+-    void refresh();
++    let cancelled = false;
++    void hostApi.git.branches().then((result) => {
++      if (cancelled) return;
++      setBranches(result.success ? result.branches ?? [] : []);
++      setLoadFailed(!result.success);
++    }).catch(() => {
++      if (!cancelled) setLoadFailed(true);
++    }).finally(() => {
++      if (!cancelled) setLoading(false);
++    });
++    return () => { cancelled = true; };
++  }, [open, retry]);
++
++  useEffect(() => {
++    if (!open) return;
+     searchRef.current?.focus();
+     const onPointerDown = (event: PointerEvent) => {
+       if (!rootRef.current?.contains(event.target as Node)) close();
+     };
+     const onKeyDown = (event: KeyboardEvent) => {
+-      if (event.key === 'Escape') close();
++      if (event.key === 'Escape') {
++        close();
++        triggerRef.current?.focus();
++      }
+     };
+     document.addEventListener('pointerdown', onPointerDown);
+     document.addEventListener('keydown', onKeyDown);
+@@ -56,7 +66,7 @@
+       document.removeEventListener('pointerdown', onPointerDown);
+       document.removeEventListener('keydown', onKeyDown);
+     };
+-  }, [close, open, refresh]);
++  }, [close, open]);
+ 
+   const filteredBranches = useMemo(() => {
+     const query = search.trim().toLowerCase();
+@@ -64,12 +74,12 @@
+   }, [branches, search]);
+ 
+   const checkout = async (entry: GitBranchInfo) => {
+-    if (entry.current || loading || disabled) return;
+-    setLoading(true);
++    if (entry.current || loading || switching || disabled) return;
++    setSwitching(true);
+     try {
+       const result = await hostApi.git.checkoutBranch({ name: entry.name });
+       if (!result.success) {
+-        toast.error(t('welcome.branchSwitchFailed', { error: result.reason || branch }));
++        toast.error(t('welcome.branchSwitchFailed', { error: result.reason || result.stderr || entry.name }));
+         return;
+       }
+       close();
+@@ -77,48 +87,69 @@
+     } catch (error) {
+       toast.error(t('welcome.branchSwitchFailed', { error: error instanceof Error ? error.message : String(error) }));
+     } finally {
+-      setLoading(false);
++      setSwitching(false);
+     }
+   };
+ 
+-  const label = detached ? t('composer.git.detached') : branch;
++  const label = detached ? t('composer.git.detached') : branch || t('composer.git.unknownBranch');
+ 
+   return (
+-    <span className="relative min-w-0" ref={rootRef}>
++    <span className="codex-welcome-branch-wrap" ref={rootRef}>
+       <Tooltip>
+         <TooltipTrigger asChild>
+       <button
++        ref={triggerRef}
+         type="button"
+         className={cn('codex-welcome-context__subcontrol', open && 'is-open')}
+-        aria-haspopup="listbox"
++        aria-haspopup="dialog"
++        aria-controls={open ? menuId : undefined}
+         aria-expanded={open}
+         aria-label={t('welcome.branchPickerTitle')}
+-        disabled={disabled}
++        disabled={disabled || switching}
+         data-testid="welcome-branch-trigger"
+-        onClick={() => setOpen((value) => !value)}
++        onClick={() => {
++          if (open) { close(); return; }
++          setLoading(true);
++          setLoadFailed(false);
++          setBranches([]);
++          setOpen(true);
++        }}
+       >
+         <GitBranch className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+         <span className="codex-welcome-context__branch-name">{label}</span>
+-        {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ChevronDown className={cn('h-3.5 w-3.5 shrink-0 transition-transform', open && 'rotate-180')} />}
++        {loading || switching ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : <ChevronDown className={cn('h-3.5 w-3.5 shrink-0 transition-transform', open && 'rotate-180')} aria-hidden="true" />}
+       </button>
+         </TooltipTrigger>
+         <TooltipContent side="top" collisionPadding={8}>{label}</TooltipContent>
+       </Tooltip>
+       {open && (
+-        <div className="codex-composer-menu codex-composer-menu--welcome-branch" role="listbox" data-testid="welcome-branch-menu">
++        <div id={menuId} className="codex-composer-menu codex-composer-menu--welcome-branch" role="dialog" aria-label={t('welcome.branchPickerTitle')} data-testid="welcome-branch-menu">
+           <div className="codex-welcome-project-search">
+             <Search aria-hidden="true" />
+-            <input ref={searchRef} value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t('welcome.branchSearch')} />
++            <input ref={searchRef} aria-label={t('welcome.branchSearch')} value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t('welcome.branchSearch')} onKeyDown={(event) => {
++              if (event.key !== 'ArrowDown') return;
++              event.preventDefault();
++              rootRef.current?.querySelector<HTMLButtonElement>('[data-branch-option]:not(:disabled)')?.focus();
++            }} />
+           </div>
+           <div className="codex-welcome-project-list">
+             {filteredBranches.map((entry) => (
+-              <button key={entry.name} type="button" role="option" aria-selected={entry.current} className="codex-composer-menu__item" disabled={entry.current || loading} onClick={() => void checkout(entry)} data-testid={`welcome-branch-item-${entry.name.replace(/[^a-zA-Z0-9_-]/g, '-')}`}>
++              <button key={entry.name} type="button" data-branch-option aria-current={entry.current || undefined} title={entry.name} className="codex-composer-menu__item" disabled={entry.current || loading || switching || disabled} onClick={() => void checkout(entry)} data-testid={`welcome-branch-item-${entry.name.replace(/[^a-zA-Z0-9_-]/g, '-')}`}>
+                 <span className="codex-composer-menu__icon"><GitBranch aria-hidden="true" /></span>
+                 <span className="codex-welcome-project-name">{entry.name}</span>
+                 {entry.current ? <Check className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> : null}
+               </button>
+             ))}
+-            {filteredBranches.length === 0 && <div className="codex-welcome-project-empty">{t('welcome.branchEmpty')}</div>}
++            {loading ? <div className="codex-welcome-project-empty" role="status">{t('welcome.branchLoading')}</div>
++              : loadFailed ? <div className="codex-welcome-project-empty" role="alert">
++                {t('welcome.branchLoadFailed')}
++                <button type="button" className="codex-composer-menu__item" onClick={() => {
++                  setLoading(true);
++                  setLoadFailed(false);
++                  setRetry((value) => value + 1);
++                }}>{t('retry')}</button>
++              </div>
++                : filteredBranches.length === 0 && <div className="codex-welcome-project-empty">{t('welcome.branchEmpty')}</div>}
+           </div>
+         </div>
+       )}
+--- a/src/styles/codex-welcome-hero.css
++++ b/src/styles/codex-welcome-hero.css
+@@ -287,7 +287,9 @@
+   align-items: center;
+   justify-content: center;
+   gap: 8px;
+-  margin-top: 14px;
++  margin-top: 18px;
++  padding: 0 16px;
++  max-width: 100%;
+   flex-wrap: wrap;
+   font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+   font-size: 12.5px;
+@@ -298,17 +300,18 @@
+ 
+ .codex-welcome-context__group {
+   display: inline-flex;
+-  align-items: stretch;
++  align-items: center;
++  gap: 4px;
+   min-width: 0;
+-  max-width: min(620px, calc(100vw - 40px));
++  max-width: 100%;
+   height: 32px;
+-  padding: 2px;
+-  border: 1px solid var(--color-border);
+-  border-radius: var(--radius-lg);
+-  background: color-mix(in oklab, var(--color-background-elevated-primary) 84%, transparent);
+-  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-text-foreground) 5%, transparent);
+-  -webkit-backdrop-filter: blur(var(--blur-sm));
+-  backdrop-filter: blur(var(--blur-sm));
++}
++
++.codex-welcome-context__separator {
++  flex: none;
++  margin: 0 3px;
++  color: var(--color-text-foreground-tertiary);
++  font-size: 15px;
+ }
+ 
+ .codex-welcome-context__subcontrol {
+@@ -316,7 +319,7 @@
+   min-width: 0;
+   align-items: center;
+   gap: 6px;
+-  height: 26px;
++  height: 32px;
+   margin: 0;
+   padding: 0 8px;
+   border: 0;
+@@ -327,13 +330,6 @@
+   letter-spacing: 0;
+   cursor: pointer;
+   transition: background-color var(--transition-duration-basic) var(--ease-out), color var(--transition-duration-basic) var(--ease-out);
+-}
+-
+-.codex-welcome-context__subcontrol + .codex-welcome-context__subcontrol,
+-.codex-welcome-context__group > * + * .codex-welcome-context__subcontrol {
+-  border-left: 1px solid var(--color-border);
+-  border-top-left-radius: 0;
+-  border-bottom-left-radius: 0;
+ }
+ 
+ .codex-welcome-context__subcontrol:hover:not(:disabled),
+@@ -442,182 +438,77 @@
+ }
+ 
+ .codex-welcome-chips {
++  position: relative;
+   display: flex;
+-  flex-wrap: wrap;
+   justify-content: center;
+-  gap: 10px;
+   width: 100%;
+-  max-width: var(--cws-width);
+-  margin: 30px auto 0;
+-  padding: 0 var(--cws-gutter);
+-  opacity: 0;
+-  animation: codex-welcome-chips-in 600ms cubic-bezier(0.16, 1, 0.3, 1) 600ms forwards;
+-}
+-
+-.codex-welcome-chips-host {
+-  container: welcome-chips / inline-size;
+-  min-width: 0;
++  margin: 8px auto 0;
++  min-height: 28px;
++  font-family: var(--font-sans);
++}
++
++.codex-welcome-chips-host { min-width: 0; width: 100%; }
++.codex-welcome-quick-start { position: relative; }
++.codex-welcome-quick-start > summary {
++  display: flex;
++  align-items: center;
++  gap: 5px;
++  height: 28px;
++  padding: 0 8px;
++  border-radius: var(--radius-md);
++  color: var(--color-text-foreground-tertiary);
++  font-size: 12px;
++  list-style: none;
++  cursor: pointer;
++}
++.codex-welcome-quick-start > summary::-webkit-details-marker { display: none; }
++.codex-welcome-quick-start > summary:hover,
++.codex-welcome-quick-start[open] > summary {
++  background: var(--color-background-row-hover);
++  color: var(--color-text-foreground);
++}
++.codex-welcome-quick-start > summary:focus-visible,
++.codex-welcome-chip:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 2px; }
++.codex-welcome-quick-start[open] > summary svg { rotate: 180deg; }
++.codex-welcome-quick-start:not([open]) > .codex-welcome-quick-start__menu { display: none; }
++.codex-welcome-quick-start__menu {
++  top: calc(100% + 6px);
++  left: 50%;
++  translate: -50% 0;
++  width: min(260px, calc(100vw - 32px));
++  text-align: left;
++}
++.codex-welcome-chip {
++  display: flex;
++  align-items: center;
++  gap: 9px;
+   width: 100%;
+-}
+-
+-@container welcome-chips (max-width: 620px) {
+-  .codex-welcome-chips > *:nth-child(n + 3) {
+-    display: none;
+-  }
+-}
+-
+-@container welcome-chips (max-width: 440px) {
+-  .codex-welcome-chips > *:nth-child(n + 2) {
+-    display: none;
+-  }
+-}
+-
+-@keyframes codex-welcome-chips-in {
+-  from {
+-    opacity: 0;
+-    transform: translateY(12px);
+-  }
+-  to {
+-    opacity: 1;
+-    transform: translateY(0);
+-  }
+-}
+-
+-/* Pill, not card. The reference chip is a single line: an accent glyph, the
+- * label, and nothing else competing for the row. The old 82px two-line cards
+- * in a 2-up grid read as three primary choices; these read as shortcuts. */
+-.codex-welcome-chip {
+-  display: inline-flex;
+-  align-items: center;
+-  gap: 8px;
+-  max-width: 100%;
+-  padding: 9px 14px;
+-  border: 1px solid var(--color-border);
+-  border-radius: var(--radius-full);
+-  background: var(--color-background-elevated-secondary);
+-  color: var(--color-text-foreground);
++  min-height: 36px;
++  padding: 7px 9px;
++  border: 0;
++  border-radius: var(--radius-md);
++  background: transparent;
++  color: var(--color-text-foreground-secondary);
+   font-size: 13px;
+-  font-weight: 500;
+-  line-height: 1.2;
++  text-align: left;
+   cursor: pointer;
+-  /* Property order is load-bearing: the retraction rules below address these
+-   * six positionally through `transition-delay`. Keep the hover trio first so
+-   * their delays stay at zero while the retraction staggers the rest. */
+-  transition:
+-    background-color var(--transition-duration-basic) var(--ease-out),
+-    border-color var(--transition-duration-basic) var(--ease-out),
+-    box-shadow var(--transition-duration-basic) var(--ease-out),
+-    transform 260ms cubic-bezier(0.16, 1, 0.3, 1),
+-    opacity 260ms cubic-bezier(0.16, 1, 0.3, 1),
+-    visibility 0s;
+-}
+-
+-.codex-welcome-chip:hover:not(:disabled) {
+-  border-color: var(--color-border-heavy);
+-  background: var(--color-background-row-hover);
+-  transform: translateY(-1px);
+-  box-shadow: var(--shadow-lg);
+-}
+-
+-.codex-welcome-chip:active:not(:disabled) {
+-  transform: translateY(0);
+-}
+-
+-.codex-welcome-chip:focus-visible {
+-  outline: 2px solid var(--color-border-focus);
+-  outline-offset: 2px;
+-}
+-
+-.codex-welcome-chip:disabled {
+-  cursor: not-allowed;
+-  opacity: 0.6;
+-}
+-
+-/* The accent is the only colour on the stage; it marks these as actionable. */
+-.codex-welcome-chip__icon {
+-  flex: 0 0 auto;
+-  width: 15px;
+-  height: 15px;
+-  color: var(--color-icon-accent);
+-  stroke-width: 1.8;
+-}
+-
+-.codex-welcome-chip__label {
+-  min-width: 0;
+-  overflow: hidden;
+-  text-overflow: ellipsis;
+-  white-space: nowrap;
+-}
+-
+-/* Visually hidden, not removed: see the note at the call site. */
+-.codex-welcome-chip__desc {
+-  position: absolute;
+-  width: 1px;
+-  height: 1px;
+-  margin: -1px;
+-  padding: 0;
+-  border: 0;
+-  overflow: hidden;
+-  clip-path: inset(50%);
+-  white-space: nowrap;
+-}
+-
+-/* ────────────────────────────────────────────────────────────────────────
+- * Retraction — chips leave while the composer holds text
+- *
+- * Once there is a draft, three canned openers are noise between the user and
+- * the send button. They leave in sequence and come back in reverse when the
+- * draft is cleared.
+- *
+- * The row keeps its box: `visibility` and `opacity` animate, `display` and
+- * height do not, so the composer above never shifts. Chips are also `inert`
+- * from the component, which is what actually takes them out of the tab order —
+- * `visibility: hidden` alone would leave a mid-fade chip clickable.
+- *
+- * The stagger is per-child `transition-delay` rather than an animation, so an
+- * interrupted retraction reverses from wherever it got to instead of snapping.
+- * The delays are positional against `.codex-welcome-chip`'s six-property
+- * `transition` above — the last three (transform, opacity, visibility) are the
+- * ones that move here; the first three stay at 0 so hover feedback is instant
+- * whether or not a retraction is in flight.
+- * ──────────────────────────────────────────────────────────────────────── */
+-
+-/* Returning: left-to-right, so the row rebuilds in reading order. */
+-.codex-welcome-chips > *:nth-child(1) { transition-delay: 0ms, 0ms, 0ms, 0ms, 0ms, 0ms; }
+-.codex-welcome-chips > *:nth-child(2) { transition-delay: 0ms, 0ms, 0ms, 55ms, 55ms, 55ms; }
+-.codex-welcome-chips > *:nth-child(n + 3) { transition-delay: 0ms, 0ms, 0ms, 110ms, 110ms, 110ms; }
+-
+-.codex-welcome-chips--retracted > * {
+-  visibility: hidden;
+-  opacity: 0;
+-  transform: translateY(6px) scale(0.96);
+-}
+-
+-/* Leaving: right-to-left, so the row collapses towards the send button rather
+- * than away from it. Visibility flips only after its chip has finished fading,
+- * hence the 260ms floor on that channel. */
+-.codex-welcome-chips--retracted > *:nth-child(1) { transition-delay: 0ms, 0ms, 0ms, 110ms, 110ms, 370ms; }
+-.codex-welcome-chips--retracted > *:nth-child(2) { transition-delay: 0ms, 0ms, 0ms, 55ms, 55ms, 315ms; }
+-.codex-welcome-chips--retracted > *:nth-child(n + 3) { transition-delay: 0ms, 0ms, 0ms, 0ms, 0ms, 260ms; }
+-
++  transition: background-color 140ms var(--ease-out);
++}
++.codex-welcome-chip:hover:not(:disabled) { background: var(--color-background-row-hover); color: var(--color-text-foreground); }
++.codex-welcome-chip:disabled { opacity: .5; cursor: default; }
++.codex-welcome-chip__icon { width: 15px; height: 15px; flex: none; color: var(--color-text-foreground-tertiary); }
++.codex-welcome-chip__label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
++.codex-welcome-chip__desc { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
++.codex-welcome-chips > details { transition: opacity 140ms var(--ease-out); }
++.codex-welcome-chips--retracted > details { visibility: hidden; opacity: 0; }
+ @media (prefers-reduced-motion: reduce) {
+-  .codex-welcome-chips > *,
+-  .codex-welcome-chips--retracted > * {
+-    transition-delay: 0s;
+-  }
+-}
+-
+-@media (prefers-reduced-motion: reduce) {
+-  .codex-welcome-chip { transition: none; }
+-  .codex-welcome-chip:hover:not(:disabled) { transform: none; }
+-}
+-
+-@media (max-width: 640px) {
+-  .codex-welcome-chips { gap: 8px; }
++  .codex-welcome-chip,
++  .codex-welcome-chips > details { transition: none; }
+ }
+ 
+ /* Anchor for the absolutely-positioned picker. */
+-.codex-welcome-project-wrap {
++.codex-welcome-project-wrap,
++.codex-welcome-branch-wrap {
+   position: relative;
+   display: inline-flex;
+   max-width: 100%;
+@@ -676,8 +567,9 @@
+ }
+ 
+ .codex-composer-menu--welcome-branch {
+-  top: calc(100% + 8px);
+-  bottom: auto;
++  background: var(--color-background-elevated-primary);
++  top: auto;
++  bottom: calc(100% + 8px);
+   right: 0;
+   left: auto;
+   width: 280px;
+@@ -694,8 +586,8 @@
+     font-size: clamp(86px, 26vw, 150px);
+   }
+ 
+-  .codex-welcome-context__subcontrol--project { max-width: 180px; }
+-  .codex-welcome-context__branch-name { max-width: 120px; }
++  .codex-welcome-context__subcontrol--project { max-width: 145px; }
++  .codex-welcome-context__branch-name { max-width: 100px; }
+   .codex-composer-menu--welcome-branch { right: -2px; width: min(288px, calc(100vw - 32px)); }
+ }
+ 
+--- a/tests/e2e/chat-welcome-hero-fakecoding.spec.ts
++++ b/tests/e2e/chat-welcome-hero-fakecoding.spec.ts
+@@ -3,6 +3,7 @@
+   expect,
+   getStableWindow,
+   installIpcMocks,
++  publishGatewayStatus,
+   test,
+ } from './fixtures/electron';
+ 
+@@ -41,7 +42,7 @@
+  * overridden by later blocks, so the source and the screen disagree. See the
+  * header of src/styles/codex-welcome-hero.css. */
+ test.describe('FakeCoding chat welcome hero alignment', () => {
+-  test('names the workspace as a context-row token and opens the shared picker upward', async ({ launchElectronApp }) => {
++  test('names the workspace as a context-row token and opens the shared picker upward', async ({ launchElectronApp }, testInfo) => {
+     const app = await launchElectronApp({ skipSetup: true, visualMode: true, theme: 'dark' });
+ 
+     try {
+@@ -158,10 +159,13 @@
+           display: style.display,
+         };
+       });
+-      expect(Math.abs(triggerBox.height - 26)).toBeLessThanOrEqual(1);
++      expect(Math.abs(triggerBox.height - 32)).toBeLessThanOrEqual(1);
+       expect(triggerBox.paddingLeft).toBe('8px');
+       expect(triggerBox.paddingRight).toBe('8px');
+       expect(triggerBox.display).toBe('flex');
++      await expect(page.getByTestId('chat-welcome-environment-group')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
++      await expect(page.getByTestId('composer-git-strip')).toHaveCount(0);
++      await expect(page.locator('.codex-welcome-chip:visible')).toHaveCount(0);
+ 
+       await trigger.click();
+ 
+@@ -210,13 +214,80 @@
+       const branchTrigger = page.getByTestId('welcome-branch-trigger');
+       await expect(branchTrigger).toBeVisible();
+       await branchTrigger.click();
+-      await expect(page.getByTestId('welcome-branch-menu')).toBeVisible();
++      await expect(menu).toHaveCount(0);
++      const branchMenu = page.getByTestId('welcome-branch-menu');
++      await expect(branchMenu).toBeVisible();
+       await expect(page.getByTestId('welcome-branch-item-feature-ui-polish')).toBeVisible();
+-
+-      // Escape closes without changing the workspace.
+-      await page.keyboard.press('Escape');
+-      await expect(menu).toHaveCount(0);
+-      await expect(trigger).toHaveAttribute('aria-expanded', 'false');
++      await expect(page.getByTestId('welcome-branch-item-main')).toBeDisabled();
++      await page.getByRole('textbox', { name: 'Search branches' }).fill('feature');
++      await expect(page.getByTestId('welcome-branch-item-main')).toHaveCount(0);
++      await page.keyboard.press('Escape');
++      await expect(branchMenu).toHaveCount(0);
++      await expect(branchTrigger).toBeFocused();
++
++      // Preserve real host routing, but change only this isolated profile's
++      // Git response. This must never check out the developer's repository.
++      await app.evaluate(() => {
++        const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
++        const handlers = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: { id?: string; module: string; action: string; payload?: { name?: string } }) => Promise<unknown>> })._invokeHandlers;
++        const original = handlers.get('host:invoke')!;
++        let selected = 'main';
++        ipcMain.removeHandler('host:invoke');
++        ipcMain.handle('host:invoke', async (event, request) => {
++          if (request.module === 'git' && request.action === 'checkoutBranch') {
++            selected = request.payload.name;
++            return { id: request.id, ok: true, data: { success: true } };
++          }
++          const response = await original(event, request) as { data?: { status?: { branch: string }; branches?: Array<{ name: string; current: boolean }> } };
++          if (request.module === 'git' && request.action === 'status' && response.data?.status) {
++            return { ...response, data: { ...response.data, status: { ...response.data.status, branch: selected } } };
++          }
++          if (request.module === 'git' && request.action === 'branches' && response.data?.branches) {
++            return { ...response, data: { ...response.data, branches: response.data.branches.map(entry => ({ ...entry, current: entry.name === selected })) } };
++          }
++          return response;
++        });
++      });
++      await branchTrigger.click();
++      await page.getByTestId('welcome-branch-item-feature-ui-polish').click();
++      await expect(branchMenu).toHaveCount(0);
++      await expect(branchTrigger).toContainText('feature/ui-polish');
++
++      const shortcuts = page.getByTestId('welcome-quick-start-trigger');
++      await shortcuts.press('Enter');
++      await expect(page.locator('.codex-welcome-chip:visible')).toHaveCount(3);
++      await page.keyboard.press('Escape');
++      await expect(page.locator('.codex-welcome-chip:visible')).toHaveCount(0);
++      await expect(shortcuts).toBeFocused();
++      await page.getByTestId('chat-welcome-context').click({ position: { x: 1, y: 1 } });
++      for (const theme of ['dark', 'light']) {
++        await page.evaluate(dark => {
++          document.documentElement.classList.toggle('dark', dark);
++          document.documentElement.classList.toggle('light', !dark);
++        }, theme === 'dark');
++        await page.screenshot({ path: testInfo.outputPath(`welcome-context-${theme}.png`), animations: 'disabled' });
++      }
++      await page.setViewportSize({ width: 600, height: 820 });
++      await expect(branchTrigger).toBeVisible();
++      await branchTrigger.click();
++      await expect(page.getByTestId('welcome-branch-item-feature-ui-polish')).toBeDisabled();
++      const bounds = await branchMenu.boundingBox();
++      expect(bounds!.x).toBeGreaterThanOrEqual(0);
++      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(600);
++      await page.screenshot({ path: testInfo.outputPath('welcome-branch-narrow.png'), animations: 'disabled' });
++      await page.keyboard.press('Escape');
++      await page.emulateMedia({ reducedMotion: 'reduce' });
++      const input = page.locator('[data-testid="chat-composer-shell"] textarea').first();
++      await input.fill('Keep this draft');
++      await expect(shortcuts).toBeHidden();
++      await input.fill('');
++      await expect(shortcuts).toBeVisible();
++      await publishGatewayStatus(app, { state: 'stopped', gatewayReady: false, port: 18789 });
++      await expect(trigger).toBeEnabled();
++      await expect(branchTrigger).toBeEnabled();
++      await branchTrigger.click();
++      await expect(branchMenu).toBeVisible();
++      await page.keyboard.press('Escape');
+     } finally {
+       await closeElectronApp(app);
+     }
+--- a/tests/e2e/chat-welcome-hero-verse-shot.spec.ts
++++ b/tests/e2e/chat-welcome-hero-verse-shot.spec.ts
+@@ -207,7 +207,7 @@
+ 
+     // Stagger is 110ms + a 260ms fade; settle past both before reading.
+     await page.waitForTimeout(700);
+-    const firstChip = page.getByTestId('chat-welcome-suggestions').locator('button').first();
++    const firstChip = page.getByTestId('welcome-quick-start-trigger');
+     await expect(firstChip).toBeHidden();
+ 
+     // The row keeps its box, so the composer above it must not have moved.
+@@ -221,10 +221,15 @@
+     expect(Math.abs((await composerTop()) - restingTop)).toBeLessThanOrEqual(1);
+ 
+     await page.setViewportSize({ width: 600, height: 820 });
+-    await expect(chips.locator('button:visible')).toHaveCount(2);
++    await expect(firstChip).toBeVisible();
++    await firstChip.click();
++    await expect(chips.locator('button:visible')).toHaveCount(3);
++    await page.keyboard.press('Escape');
+ 
+     await page.setViewportSize({ width: 400, height: 820 });
+-    await expect(chips.locator('button:visible')).toHaveCount(1);
++    await expect(firstChip).toBeVisible();
++    await firstChip.click();
++    await expect(chips.locator('button:visible')).toHaveCount(3);
+   } finally {
+     await closeElectronApp(app);
+   }
+--- a/tests/unit/welcome-project-picker.test.tsx
++++ b/tests/unit/welcome-project-picker.test.tsx
+@@ -6,6 +6,7 @@
+ import type { WorkspaceProfile } from '@shared/types/workspace';
+ 
+ const switchWorkspace = vi.fn();
++vi.mock('@/lib/user-error', () => ({ toastUserError: vi.fn() }));
+ 
+ type PickerState = {
+   profiles: WorkspaceProfile[];
+@@ -90,6 +91,15 @@
+     expect(screen.queryByTestId('welcome-project-menu')).toBeNull();
+   });
+ 
++  it('uses the owning conversation switch handler when supplied', () => {
++    const onSelect = vi.fn();
++    renderPicker(<WelcomeProjectPicker onSelect={onSelect} />);
++    fireEvent.click(screen.getByTestId('welcome-project-trigger'));
++    fireEvent.click(screen.getAllByTestId('welcome-project-item')[1]);
++    expect(onSelect).toHaveBeenCalledWith('ws-verse');
++    expect(switchWorkspace).not.toHaveBeenCalled();
++  });
++
+   it('shows the workspace path in each shared dropdown row', () => {
+     renderPicker(<WelcomeProjectPicker />);
+ 
+--- a/harness/specs/tasks/chat-output-visual-hierarchy.md
++++ b/harness/specs/tasks/chat-output-visual-hierarchy.md
+@@ -5,6 +5,13 @@
+ scenario: windows-ui-v2
+ intent: Make turn summaries, tool details, file diffs and command output readable at desktop and narrow widths using the existing renderers and disclosure controls.
+ touchedAreas:
++  - src/components/chat/WelcomeProjectPicker.tsx
++  - src/components/chat/WelcomeBranchPicker.tsx
++  - src/styles/codex-welcome-hero.css
++  - tests/unit/welcome-project-picker.test.tsx
++  - tests/unit/welcome-branch-picker.test.tsx
++  - tests/e2e/chat-welcome-hero-fakecoding.spec.ts
++  - tests/e2e/chat-welcome-hero-verse-shot.spec.ts
+   - src/pages/Chat/session-environment.ts
+   - src/pages/Chat/ChatToolbar.tsx
+   - src/stores/artifact-panel.ts
+@@ -70,6 +77,8 @@
+   - README.ja-JP.md
+   - README.ru-RU.md
+ expectedUserBehavior:
++  - Empty Chat shows a plain project / branch row beneath the composer, without a duplicate Git strip. Project and branch selection remain local controls independent of Gateway connectivity. The three starter actions are kept behind one keyboard-accessible Quick start disclosure, hidden while drafting without moving the composer.
++  - Branch selection reuses hostApi.git.branches and checkoutBranch under gateway-backend-communication. Search and keyboard focus work; failed reads offer retry, blocked checkouts preserve the current label, detached HEAD still exposes selection, and switching projects resets branch options. Project selection uses the owning conversation state-preservation handler.
+   - Session environment stays absent for a clean repository, a policy snapshot or a running reply alone. Observed changes, MCP calls, skill reads or worker/process activity reveal its entry. Automatic disclosure follows the existing preference beside the conversation; manual disclosure is a dismissible overlay.
+   - Environment sources show only observed call identities and skill names, with tool names behind disclosure. Groups preview at most three rows and retain overflow on demand. Active workers precede completed history; clicking a worker opens its own workspace tab.
+   - Workspace expand/collapse changes its width; closing hides it while preserving mounted tabs and selected content. Reopening restores the current tab. Workers are entered through the environment rather than the workspace launcher.
+@@ -94,6 +103,8 @@
+   - fast
+   - e2e
+ requiredTests:
++  - pnpm exec vitest run tests/unit/welcome-project-picker.test.tsx tests/unit/welcome-branch-picker.test.tsx
++  - pnpm run test:e2e:run tests/e2e/chat-welcome-hero-fakecoding.spec.ts tests/e2e/chat-welcome-hero-verse-shot.spec.ts tests/e2e/chat-composer-git-strip.spec.ts
+   - pnpm exec vitest run tests/unit/session-environment.test.ts tests/unit/artifact-panel-store.test.ts tests/unit/artifact-panel.test.tsx tests/unit/artifact-panel-subject-tabs.test.ts tests/unit/chat-artifact-panel-layout.test.tsx
+   - pnpm run test:e2e:run tests/e2e/chat-artifact-panel.spec.ts --grep "conversation column"
+   - pnpm run test:e2e:run tests/e2e/chat-artifact-panel.spec.ts --grep "owned Windows child"
+@@ -108,6 +119,7 @@
+   - pnpm run test:e2e:run tests/e2e/chat-turn-summary-collapse.spec.ts tests/e2e/chat-tool-ui-execution-surfaces.spec.ts tests/e2e/chat-file-changes.spec.ts tests/e2e/runtime-approval-bridge.spec.ts tests/e2e/chat-composer-git-strip.spec.ts
+   - pnpm run test:e2e:run tests/e2e/chat-task-visualizer.spec.ts --grep "internal yield"
+ acceptance:
++  - Agent-driven Electron evidence covers the welcome project and branch row, successful branch switching, the three actions behind disclosure, light/dark/narrow layouts, and stable composer placement when drafting. Existing conversation Git worktree actions remain available after a turn starts.
+   - A successful empty status read shows no environment entry; an actual failed status read keeps its warning and retry. Sources do not leak across session keys, do not list configured-but-unused integrations, and never render raw tool arguments or environment values.
+   - Dismissing the environment persists through later events in that session. Manual reopening uses an overlay without transcript inset; Escape, outside click and the close button dismiss it. Narrow windows keep the card within the conversation bounds.
+   - Source and worker overflow remains keyboard-accessible. Agent-driven light/dark/narrow Electron captures show the two layers and source/worker hierarchy. A worker never opens a workspace tab automatically.
+--- a/harness/specs/scenarios/windows-ui-v2.md
++++ b/harness/specs/scenarios/windows-ui-v2.md
+@@ -36,6 +36,12 @@
+ 
+ ## Validation
+ 
++Empty Chat uses one unboxed project / branch row below the composer. Branch selection
++uses the existing governed Git host routes, with search, explicit read failures and
++retry, detached HEAD support, and refreshed identity after checkout. The three
++starter actions live in a single Quick start disclosure; drafting hides this entry
++without shifting the composer. Conversation mode retains its full Git strip.
++
+ Chat's assistant output has no avatar gutter. Progress text and the final answer
+ share one reading column; active process details start folded and show only the
+ current tool's existing progress animation. Completed passive tool records open
+--- a/harness/specs/rules/ui-motion-material-system.md
++++ b/harness/specs/rules/ui-motion-material-system.md
+@@ -36,6 +36,7 @@
+ - Motion is purposeful, interruptible where user-driven, and removed or reduced for high-frequency keyboard navigation.
+ - Chat keeps the existing tool progress animation in its compact current-tool row. Expanded details and the compact row must not animate duplicate copies of the same tool. A settled tool must not force the full process open; approvals and errors remain directly reachable.
+ - Session status uses one surface with section separators rather than nested cards. Open process output reuses the conversation terminal; status color and emphasis must not introduce a separate badge system. Log updates must preserve a reader's earlier scroll position.
++- Empty Chat context uses unboxed project and branch controls with restrained hover/focus feedback. Starter actions stay behind an explicit disclosure; all three remain reachable at narrow widths.
+ - Session environment is triggered by observed activity, not configured inventory. Auto-expanded summaries share the conversation plane; manually opened cards use the existing overlay material. Preview groups are bounded, explicit dismissal survives updates, and workspace visibility changes retain mounted tabs and selection.
+ - An outgoing animated Setup control or delayed installation completion can only advance its own active step. Leaving a step cancels its pending visual transition; it cannot bypass Provider, Model or Workspace verification.
+ - Setup verification results remain bound to the current Provider/Model selection and component instance. Obsolete completions cannot initiate subsequent writes or restore readiness for a different selection.
+--- a/docs/modules/workspace-and-coding.md
++++ b/docs/modules/workspace-and-coding.md
+@@ -400,3 +400,5 @@
+ [受控启用与回滚](../dev/change-context-review-loop/rollout.md)。
+ 
+ 延伸阅读：[Verse 系列组件](verse-tools.md)、[资源与可观测性](resources-and-observability.md)、[默认配置矩阵](../dev/default-config-matrix.md)。
++
++空会话输入框下方使用轻量“项目 / 分支”行。分支菜单支持搜索、切换和读取失败重试，沿用 Git 权限及工作区保护；项目切换先保存当前会话。三个快捷操作收进“快捷开始”，开始输入时收起且不移动输入框。已有对话仍保留完整 Git 操作条。
+--- a/README.md
++++ b/README.md
+@@ -40,6 +40,8 @@
+ 
+ The session environment appears after actual changes or activity. It groups changes, observed MCP/skill usage and workers into short previews with details on demand. Automatic expansion sits beside the conversation; manual opening uses a compact overlay. Closing the workspace preserves its tabs and selected content.
+ 
++Empty Chat keeps project and Git branch selection in one quiet row below the composer. Starter actions open through Quick start; branch search and switching reuse the existing Git controls.
++
+ Pending runtime approvals replace the owning conversation's input area with the command, working directory and offered choices. The rest of the page stays usable; resolving the requests restores the original input, draft and attachments.
+ 
+ Conversations show what a turn produced, whichever tool produced it. Audio and video play in place with native controls, and say so if a file is missing, too large or unplayable. Images from any source share one viewer; remote images and media are never loaded automatically and offer an open action instead. Charts draw their declared type with a data table available, standalone links become link cards, and any other structured resource gets a labelled fallback card.
+@@ -54,7 +56,7 @@
+ | `retired` | Kept only for compatibility, provenance or rollback inspection. |
+ | `agent-driven` | Evidence produced by an agent and labeled as such. It is not real-human evidence. |
+ 
+-The current machine-readable component catalog contains 54 rows: 13 default, 12 advanced, 24 internal, 5 retired and 0 experiment. Classification is not runtime proof. See the [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md).
++The current machine-readable component catalog contains 54 rows: 13 default, 12 advanced, 23 internal, 6 retired and 0 experiment. Classification is not runtime proof. See the [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md).
+ 
+ Important current defaults:
+ 
+--- a/README.zh-CN.md
++++ b/README.zh-CN.md
+@@ -40,6 +40,8 @@
+ 
+ 会话环境在发生实际变更或活动后出现，将变更、已观察到的 MCP/Skill 使用和子代理收进简短摘要，详情按需展开。自动展开与会话并排，手动打开使用浮层卡片；关闭工作空间会保留页签和当前选中内容。
+ 
++空会话在输入框下方集中显示项目与 Git 分支选择；三个快捷操作收进“快捷开始”，分支搜索和切换沿用现有 Git 控制。
++
+ 运行时权限请求覆盖所属会话的输入区，显示命令、工作目录和允许的选项，页面其余部分仍可操作。处理完请求后恢复原输入框、草稿和附件。
+ 
+ 会话会展示本轮产生的资源，无论它来自哪个工具。音频和视频可直接用原生控件播放；文件缺失、过大或无法播放时会明确提示。各种来源的图片共用同一个查看器；远程图片和媒体不会自动载入，而是提供打开操作。图表按声明的类型绘制，并可查看数据表；独立成段的链接显示为链接卡片；其他结构化资源显示为带标注的兜底卡片。
+@@ -54,7 +56,7 @@
+ | `retired` | 仅为兼容、来源追溯或回滚检查保留 |
+ | `agent-driven` | agent 生成并如实标注的证据，不是 real-human evidence |
+ 
+-当前机器可读组件目录有 54 条：13 default、12 advanced、24 internal、5 retired、0 experiment。分类不等于运行时证明。详见[组件处置矩阵](docs/dev/component-disposition-matrix-20261021.md)。
++当前机器可读组件目录有 54 条：13 default、12 advanced、23 internal、6 retired、0 experiment。分类不等于运行时证明。详见[组件处置矩阵](docs/dev/component-disposition-matrix-20261021.md)。
+ 
+ 当前重要默认值：
+ 
+--- a/README.ja-JP.md
++++ b/README.ja-JP.md
+@@ -40,6 +40,8 @@
+ 
+ セッション環境は実際の変更や活動が発生した後に表示されます。変更、確認された MCP・スキルの使用、サブエージェントを短いプレビューにまとめ、詳細は必要に応じて展開できます。自動展開は会話の隣に、手動表示は小さな浮動カードとして開きます。ワークスペースを閉じてもタブと選択内容は保持されます。
+ 
++空のチャットでは入力欄の下にプロジェクトと Git ブランチの選択をまとめます。開始アクションはクイックスタートから開き、ブランチの検索と切り替えは既存の Git 制御を使用します。
++
+ ランタイムの承認要求は該当会話の入力欄を置き換え、コマンド、作業ディレクトリと選択肢を表示します。ページの他の部分は操作でき、承認処理が終わると元の入力欄、下書きと添付ファイルが復元されます。
+ 
+ 会話には、どのツールが生成したかにかかわらず、そのターンの成果物が表示されます。音声と動画はネイティブコントロールでその場で再生でき、ファイルの欠落、サイズ超過、再生不能の場合は明示されます。画像は取得元を問わず同じビューアーで表示します。リモートの画像とメディアは自動で読み込まれず、開く操作を提供します。グラフは宣言された種類で描画され、データ表も確認できます。単独の段落のリンクはリンクカードになり、その他の構造化リソースはラベル付きの代替カードで表示されます。
+@@ -54,7 +56,7 @@
+ | `retired` | compatibility、provenance、rollback inspection のためだけに保持。 |
+ | `agent-driven` | agent が生成し、そのように表示した evidence。real-human evidence ではありません。 |
+ 
+-現在の machine-readable component catalog は 54 行です：13 default、12 advanced、24 internal、5 retired、0 experiment。分類は runtime proof ではありません。詳細は [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md)。
++現在の machine-readable component catalog は 54 行です：13 default、12 advanced、23 internal、6 retired、0 experiment。分類は runtime proof ではありません。詳細は [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md)。
+ 
+ 重要な default：
+ 
+--- a/README.ru-RU.md
++++ b/README.ru-RU.md
+@@ -40,6 +40,8 @@
+ 
+ Окружение чата появляется после фактических изменений или активности. Изменения, наблюдаемые вызовы MCP, чтение навыков и субагенты показываются короткими списками с раскрываемыми подробностями. Автоматическое раскрытие занимает место рядом с чатом, ручное открывает компактную плавающую карточку. Закрытие рабочей области сохраняет вкладки и выбранное содержимое.
+ 
++В пустом чате выбор проекта и ветки Git расположен в одной строке под полем ввода. Начальные действия доступны через «Быстрый старт», а поиск и переключение веток используют существующие средства Git.
++
+ Запросы разрешений временно заменяют поле ввода соответствующего диалога, показывая команду, рабочий каталог и доступные решения. Остальная страница остаётся доступной; после обработки запросов восстанавливаются поле ввода, черновик и вложения.
+ 
+ В разговоре отображается то, что создал ход, каким бы инструментом это ни было сделано. Аудио и видео воспроизводятся на месте с помощью стандартных элементов управления, а если файл отсутствует, слишком велик или не воспроизводится, об этом сообщается. Изображения из любых источников открываются в одном просмотрщике; удалённые изображения и медиа не загружаются автоматически, вместо этого предлагается открыть их. Диаграммы строятся в объявленном типе и дополняются таблицей данных, отдельные ссылки становятся карточками, а прочие структурированные ресурсы показываются в подписанной резервной карточке.
+@@ -54,7 +56,7 @@
+ | `retired` | Сохранено только для compatibility, provenance или rollback inspection. |
+ | `agent-driven` | Evidence создано агентом и помечено как такое. Это не real-human evidence. |
+ 
+-Текущий machine-readable component catalog содержит 54 строки: 13 default, 12 advanced, 24 internal, 5 retired, 0 experiment. Классификация не является runtime proof. См. [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md).
++Текущий machine-readable component catalog содержит 54 строки: 13 default, 12 advanced, 23 internal, 6 retired, 0 experiment. Классификация не является runtime proof. См. [component disposition matrix](docs/dev/component-disposition-matrix-20261021.md).
+ 
+ Важные defaults:
+ 
+--- a/shared/i18n/locales/en/chat.json
++++ b/shared/i18n/locales/en/chat.json
+@@ -12,6 +12,9 @@
+     "retry": "Retry loading"
+   },
+   "welcome": {
++    "quickStart": "Quick start",
++    "branchLoading": "Loading branches…",
++    "branchLoadFailed": "Could not load branches",
+     "projectSearch": "Search projects",
+     "projectEmpty": "No projects found",
+     "changeProject": "Change project: {{projectName}}",
+--- a/shared/i18n/locales/zh/chat.json
++++ b/shared/i18n/locales/zh/chat.json
+@@ -12,6 +12,9 @@
+     "retry": "重新加载"
+   },
+   "welcome": {
++    "quickStart": "快捷开始",
++    "branchLoading": "正在读取分支…",
++    "branchLoadFailed": "无法读取分支",
+     "projectSearch": "搜索项目",
+     "projectEmpty": "未找到项目",
+     "changeProject": "切换项目：{{projectName}}",
+--- a/shared/i18n/locales/ja/chat.json
++++ b/shared/i18n/locales/ja/chat.json
+@@ -12,6 +12,9 @@
+     "retry": "再読み込み"
+   },
+   "welcome": {
++    "quickStart": "クイックスタート",
++    "branchLoading": "ブランチを読み込み中…",
++    "branchLoadFailed": "ブランチを読み込めませんでした",
+     "projectSearch": "プロジェクトを検索",
+     "projectEmpty": "プロジェクトが見つかりません",
+     "changeProject": "プロジェクトを変更: {{projectName}}",
+--- a/shared/i18n/locales/ru/chat.json
++++ b/shared/i18n/locales/ru/chat.json
+@@ -12,6 +12,9 @@
+     "retry": "Повторить загрузку"
+   },
+   "welcome": {
++    "quickStart": "Быстрый старт",
++    "branchLoading": "Загрузка веток…",
++    "branchLoadFailed": "Не удалось загрузить ветки",
+     "projectSearch": "Поиск проектов",
+     "projectEmpty": "Проекты не найдены",
+     "changeProject": "Сменить проект: {{projectName}}",
+--- a/tests/e2e/chat-composer-git-strip.spec.ts
++++ b/tests/e2e/chat-composer-git-strip.spec.ts
+@@ -78,7 +78,7 @@
+ 
+ async function installComposerGitMocks(
+   app: Parameters<typeof installIpcMocks>[0],
+-  messages: Array<Record<string, unknown>> = [],
++  messages: Array<Record<string, unknown>> = [{ role: 'user', content: 'Review the current repository', timestamp: fixedTimestamp }],
+ ) {
+   await installIpcMocks(app, {
+     gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+--- a/tests/unit/welcome-branch-picker.test.tsx
++++ b/tests/unit/welcome-branch-picker.test.tsx
+@@ -0,0 +1,85 @@
++import { beforeEach, describe, expect, it, vi } from 'vitest';
++import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
++import { WelcomeBranchPicker } from '@/components/chat/WelcomeBranchPicker';
++import { TooltipProvider } from '@/components/ui/tooltip';
++
++const mocks = vi.hoisted(() => ({ branches: vi.fn(), checkoutBranch: vi.fn(), error: vi.fn() }));
++vi.mock('@/lib/host-api', () => ({ hostApi: { git: mocks } }));
++vi.mock('sonner', () => ({ toast: { error: mocks.error } }));
++vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
++
++function picker(props: Partial<React.ComponentProps<typeof WelcomeBranchPicker>> = {}) {
++  return render(<TooltipProvider><WelcomeBranchPicker branch="main" {...props} /></TooltipProvider>);
++}
++
++beforeEach(() => {
++  vi.clearAllMocks();
++  mocks.branches.mockResolvedValue({ success: true, branches: [{ name: 'main', current: true }, { name: 'feature/layout', current: false }] });
++  mocks.checkoutBranch.mockResolvedValue({ success: true });
++});
++
++describe('WelcomeBranchPicker', () => {
++  it('loads only on demand, searches and checks out through the existing host route', async () => {
++    const onChanged = vi.fn();
++    picker({ onChanged });
++    expect(mocks.branches).not.toHaveBeenCalled();
++    fireEvent.click(screen.getByTestId('welcome-branch-trigger'));
++    const search = screen.getByRole('textbox', { name: 'welcome.branchSearch' });
++    expect(search).toHaveFocus();
++    expect(await screen.findByTestId('welcome-branch-item-main')).toBeDisabled();
++    fireEvent.change(search, { target: { value: 'layout' } });
++    expect(screen.queryByTestId('welcome-branch-item-main')).toBeNull();
++    fireEvent.keyDown(search, { key: 'ArrowDown' });
++    const branch = screen.getByTestId('welcome-branch-item-feature-layout');
++    expect(branch).toHaveFocus();
++    fireEvent.click(branch);
++    await waitFor(() => expect(onChanged).toHaveBeenCalledOnce());
++    expect(mocks.checkoutBranch).toHaveBeenCalledWith({ name: 'feature/layout' });
++    expect(screen.queryByRole('dialog')).toBeNull();
++  });
++
++  it('shows a failed branch read with retry instead of an empty list', async () => {
++    mocks.branches.mockRejectedValueOnce(new Error('offline'));
++    picker();
++    fireEvent.click(screen.getByTestId('welcome-branch-trigger'));
++    expect(await screen.findByRole('alert')).toHaveTextContent('welcome.branchLoadFailed');
++    expect(screen.queryByText('welcome.branchEmpty')).toBeNull();
++    fireEvent.click(screen.getByRole('button', { name: 'retry' }));
++    expect(await screen.findByTestId('welcome-branch-item-feature-layout')).toBeEnabled();
++  });
++
++  it('keeps the current branch and menu when checkout is blocked', async () => {
++    mocks.checkoutBranch.mockResolvedValue({ success: false, blocked: true, reason: 'Working tree has changes' });
++    const onChanged = vi.fn();
++    picker({ onChanged });
++    fireEvent.click(screen.getByTestId('welcome-branch-trigger'));
++    fireEvent.click(await screen.findByTestId('welcome-branch-item-feature-layout'));
++    await waitFor(() => expect(mocks.error).toHaveBeenCalledOnce());
++    expect(onChanged).not.toHaveBeenCalled();
++    expect(screen.getByTestId('welcome-branch-trigger')).toHaveTextContent('main');
++    expect(screen.getByRole('dialog')).toBeVisible();
++  });
++
++  it('does not accept a late branch response after closing and reopening', async () => {
++    let finish!: (value: unknown) => void;
++    mocks.branches.mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
++    picker();
++    const trigger = screen.getByTestId('welcome-branch-trigger');
++    fireEvent.click(trigger);
++    fireEvent.keyDown(screen.getByRole('textbox'), { key: 'Escape' });
++    expect(trigger).toHaveFocus();
++    fireEvent.click(trigger);
++    expect(await screen.findByTestId('welcome-branch-item-feature-layout')).toBeVisible();
++    await act(async () => finish({ success: true, branches: [{ name: 'stale', current: false }] }));
++    expect(screen.queryByTestId('welcome-branch-item-stale')).toBeNull();
++  });
++
++  it('keeps branch selection available for detached HEAD and honors disabled state', () => {
++    picker({ branch: '', detached: true, disabled: true });
++    const trigger = screen.getByTestId('welcome-branch-trigger');
++    expect(trigger).toHaveTextContent('composer.git.detached');
++    expect(trigger).toBeDisabled();
++    fireEvent.click(trigger);
++    expect(mocks.branches).not.toHaveBeenCalled();
++  });
++});

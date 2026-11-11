@@ -1,0 +1,228 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-04",
+  "iteration": 7,
+  "driven_by": "agent",
+  "actor": "codex-chat-output",
+  "realHumanEvidence": false,
+  "scope": "Avatar-free assistant column, compact live process, preserved particle and tool-fill animations, on-demand passive Tool UI records.",
+  "candidate": {
+    "commit": "32236f49295fc73b7f63e1cbcb9216042f2ec359",
+    "dirty": true
+  },
+  "status": "implemented-and-targeted-verified-with-workspace-gate-residuals",
+  "localTracking": {
+    "node": "TF-0783",
+    "status": "review_needed",
+    "progress": 95,
+    "proposalApplied": true,
+    "validateExitCode": 0,
+    "htmlExport": "Interrupted after persisted graph update; prior 551 MB export remains stale. Graph and proposal read back through CLI."
+  },
+  "unit": {
+    "command": "pnpm exec vitest run tests/unit/chat-message.test.tsx tests/unit/chat-page-execution-graph.test.tsx tests/unit/chat-render-reachability.test.tsx tests/unit/chat-tool-card-suppression.test.tsx tests/unit/tool-ui-execution-surfaces.test.tsx tests/unit/execution-graph-card-badge.test.tsx tests/unit/runtime-approval-prompt.test.tsx tests/unit/chat-input.test.tsx tests/unit/composer-git-strip.test.tsx --maxWorkers=1",
+    "exitCode": 0,
+    "passed": 198,
+    "failed": 0,
+    "total": 198
+  },
+  "electron": {
+    "core": {
+      "exitCode": 0,
+      "stats": {
+        "startTime": "2026-11-04T14:28:05.457Z",
+        "duration": 188062.677,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "errors": []
+    },
+    "regression": {
+      "exitCode": 1,
+      "stats": {
+        "startTime": "2026-11-04T14:40:23.055Z",
+        "duration": 633645.661,
+        "expected": 12,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "errors": [
+        "\u001b[31mWorker teardown timeout of 90000ms exceeded.\u001b[39m\n\n\u001b[31mFailed worker ran 12 tests, last 10 tests were:\u001b[39m\nD:\\ClawX\\tests\\e2e\\chat-file-changes.spec.ts:125:7 › Verse Claw chat file changes › shows line stats on generated file cards\nD:\\ClawX\\tests\\e2e\\chat-file-changes.spec.ts:219:7 › Verse Claw chat file changes › opens html files from chat as rendered previews\nD:\\ClawX\\tests\\e2e\\chat-file-changes.spec.ts:328:7 › Verse Claw chat file changes › keeps an attached file selected after switching through workspace\nD:\\ClawX\\tests\\e2e\\chat-tool-ui-execution-surfaces.spec.ts:108:7 › Tool UI execution surfaces › renders official execution surfaces in light, dark, and narrow layouts\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:150:7 › Verse Claw chat turn summary collapse › keeps live activity compact, animated and readable without assistant avatars\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:211:7 › Verse Claw chat turn summary collapse › collapses completed long task process and expands details on demand\nD:\\ClawX\\tests\\e2e\\chat-turn-summary-collapse.spec.ts:279:7 › Verse Claw chat turn summary collapse › leaves short conversations unwrapped\nD:\\ClawX\\tests\\e2e\\runtime-approval-bridge.spec.ts:29:7 › Runtime approval bridge › covers the composer without a modal and restores its draft after approval\nD:\\ClawX\\tests\\e2e\\runtime-approval-bridge.spec.ts:153:7 › Runtime approval bridge › answers a pending runtime approval from the conversation input area\nD:\\ClawX\\tests\\e2e\\runtime-approval-bridge.spec.ts:204:7 › Runtime approval bridge › offers only the decisions the runtime listed for the request"
+      ]
+    },
+    "states": {
+      "exitCode": 0,
+      "stats": {
+        "startTime": "2026-11-04T14:55:04.869Z",
+        "duration": 73072.175,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "errors": []
+    },
+    "integration": {
+      "exitCode": 0,
+      "stats": {
+        "startTime": "2026-11-04T14:56:20.176Z",
+        "duration": 36125.058,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "errors": []
+    },
+    "uniqueScenarios": 17,
+    "commands": [
+      "pnpm exec playwright test tests/e2e/chat-turn-summary-collapse.spec.ts tests/e2e/chat-tool-ui-execution-surfaces.spec.ts",
+      "pnpm exec playwright test tests/e2e/chat-turn-summary-collapse.spec.ts tests/e2e/chat-tool-ui-execution-surfaces.spec.ts tests/e2e/chat-file-changes.spec.ts tests/e2e/runtime-approval-bridge.spec.ts tests/e2e/chat-composer-git-strip.spec.ts",
+      "pnpm exec playwright test tests/e2e/chat-run-state-events.spec.ts --grep \"foreground exec output|compact live status\"",
+      "pnpm exec playwright test tests/e2e/chat-workspace-header.spec.ts tests/e2e/chat-task-visualizer.spec.ts --grep \"shows workspace and conversation|internal yield\""
+    ]
+  },
+  "checks": {
+    "typecheckWeb": 0,
+    "typecheckTest": 2,
+    "i18nLint": 0,
+    "eslint": {
+      "exitCode": 0,
+      "warnings": 3
+    },
+    "buildVite": 0,
+    "buildRuntime": 0,
+    "harnessSinceHead": 1,
+    "scopedChangedPathOwnership": {
+      "failures": [],
+      "sourceCount": 27
+    }
+  },
+  "screenshots": [
+    "compact-output-light.png",
+    "compact-output-dark.png",
+    "compact-output-narrow.png",
+    "compact-output-completed.png"
+  ],
+  "visualReview": "Agent inspected light/dark/narrow screenshots. No assistant avatar gutter; compact current-tool wash, consistent text alignment and no horizontal overflow. Completed screenshot includes the pre-existing side rail snapshot warning from the mock environment.",
+  "sourceHashes": [
+    {
+      "file": "src/pages/Chat/ChatMessage.tsx",
+      "sha256": "0d7e1dae038166cdf61d1597c7c1468575a4af6763f26c3326786f3c9415e518"
+    },
+    {
+      "file": "src/pages/Chat/index.tsx",
+      "sha256": "2b000e5de40909b8839854a72d5687f764b069b2d8450ed9c97579c966dbeb1f"
+    },
+    {
+      "file": "src/pages/Chat/ExecutionGraphCard.tsx",
+      "sha256": "a41ec3aa791d572ffc6319be1c379d59778fb4c33b8e1177f9857d659727dae2"
+    },
+    {
+      "file": "src/components/assistant-render/TurnSummaryCard.tsx",
+      "sha256": "02200d8694503482e59c8478dd60f7661f9513b93396ec31eb9888e0a8c0dcaa"
+    },
+    {
+      "file": "src/components/tool-ui/agent-interactions.tsx",
+      "sha256": "be000a4ab1c1c80cda69ff5780f7a4e2448d459c41ee17e10f1bc23e660c6cce"
+    },
+    {
+      "file": "src/components/tool-ui/shared/call-chip.tsx",
+      "sha256": "8afca377e3d4be8481aff65613d62f215863b5763ae7d797e9b63e67f5b1bf9c"
+    },
+    {
+      "file": "tests/unit/chat-message.test.tsx",
+      "sha256": "fb31462ccf8610f8b7faf59795c69a7f2e310cb230a724daab909e2cbcf1c1f1"
+    },
+    {
+      "file": "tests/unit/chat-page-execution-graph.test.tsx",
+      "sha256": "ca6a51f642d2f04efd3bd81f0e51f9b405737f348b4dbe4c8a3e748278754b40"
+    },
+    {
+      "file": "tests/unit/chat-render-reachability.test.tsx",
+      "sha256": "ec5162fd6e7b9cdb69901135584a1f69d2abe1177cbe6d84450ae21ef91bf916"
+    },
+    {
+      "file": "tests/unit/chat-tool-card-suppression.test.tsx",
+      "sha256": "1668bc0ebdfce4feb99c4ea2d153ad4aef6e551ff38b1f88a99f7c57bdc331e9"
+    },
+    {
+      "file": "tests/unit/tool-ui-execution-surfaces.test.tsx",
+      "sha256": "918f5bf67dac218e1337cf2f8b2a4efda7a54462ee3ef46a6afc4db862e96d46"
+    },
+    {
+      "file": "tests/e2e/chat-turn-summary-collapse.spec.ts",
+      "sha256": "67a5b7a4e582543bfb4e6c24b1e95e004d9bf8652a83b0f11b89bf8a32152a88"
+    },
+    {
+      "file": "tests/e2e/chat-tool-ui-execution-surfaces.spec.ts",
+      "sha256": "461ba1b81c2bb67ca5585397eff71f423b9b663c797e5536eea59b954c823684"
+    },
+    {
+      "file": "tests/e2e/chat-run-state-events.spec.ts",
+      "sha256": "47b07648658aea646a83988d44e0ab7e9c3051079cce7230bd017bacce8fb09c"
+    },
+    {
+      "file": "tests/e2e/chat-workspace-header.spec.ts",
+      "sha256": "64c179415da474fe8616e901a37ed82fb8eacfe05ba563f96b40d86e6e558ddf"
+    },
+    {
+      "file": "tests/e2e/product-acceptance-space-bunny.spec.ts",
+      "sha256": "5707a3afcf1d8deb20d62c8d673594fdc73e487820d156ddf57b3e8968af5f59"
+    },
+    {
+      "file": "shared/i18n/locales/en/chat.json",
+      "sha256": "3e6e0c734b65f851a8d67929dcd8a7b43c32bae4848cc8c7fe6f3e3cf11810c9"
+    },
+    {
+      "file": "shared/i18n/locales/zh/chat.json",
+      "sha256": "02d983ceede53c47d460afb658ed6b7683edc50f27ca4604b16c6178b9599163"
+    },
+    {
+      "file": "shared/i18n/locales/ja/chat.json",
+      "sha256": "3e05f83c0a698c14d3fcdfc432d5b787ca249479dacbc7b19e876b79bc14ef8c"
+    },
+    {
+      "file": "shared/i18n/locales/ru/chat.json",
+      "sha256": "408323395d32576ed937c1a1b3a7a61f73790bd7f47e9cb7767cade08be8df31"
+    },
+    {
+      "file": "README.md",
+      "sha256": "367b1767ea1fbbe08253f180a32ad2cb2b9a565e3296834fd5a2af2720dd8225"
+    },
+    {
+      "file": "README.zh-CN.md",
+      "sha256": "bcfe2f2575ffb6ede681c2b4283fcc87a1c79c099ddf9892e4cc385d33ea9762"
+    },
+    {
+      "file": "README.ja-JP.md",
+      "sha256": "e74a0534a8637fb65eb3b892524804b527f6febcbc691346e321874c9f742329"
+    },
+    {
+      "file": "README.ru-RU.md",
+      "sha256": "8fd9fee93d330ac0c2d13f5f6a944927f06014439c52bdf7d33737d61c148be5"
+    },
+    {
+      "file": "harness/specs/tasks/chat-output-visual-hierarchy.md",
+      "sha256": "24a6a69a7592384523dd6b7e7782b42859bb7063f9d15b9c51b3c6ae2a02f074"
+    },
+    {
+      "file": "harness/specs/scenarios/windows-ui-v2.md",
+      "sha256": "66996f4093514b7846f4cd75e970d31978708c1270adc82768e973688a47187f"
+    },
+    {
+      "file": "harness/specs/rules/ui-motion-material-system.md",
+      "sha256": "fcbb733e771b1518f858bc3dffa317802d4f9671f77df54a1145d78520080dab"
+    }
+  ],
+  "limitations": [
+    "12 regression test bodies passed, but that batch exited 1 because worker teardown exceeded 90000ms. Core four and two additional batches exited 0; no gate was weakened.",
+    "typecheck:test fails in pre-existing session-delegation/session-api changes; no UI-file diagnostics. See typecheck-test.log.",
+    "Full changed-path Harness fails on unrelated dirty files; scoped changed-path ownership is checked with the actual Harness validator, without --no-diff.",
+    "Dirty source checkout, no frozen-candidate/release acceptance. Evidence uses seeded agent-driven histories and runtime events, not a live provider or human.",
+    "Live-provider product acceptance was not rerun; its two avatar-dependent locators were migrated to the assistant Markdown body."
+  ]
+}

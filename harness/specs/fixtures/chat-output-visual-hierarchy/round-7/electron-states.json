@@ -1,0 +1,195 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/Desktop/clawx/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\Desktop\\clawx\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/chat-output-e2e-states",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/Desktop/clawx/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-run-state-events.spec.ts",
+      "file": "chat-run-state-events.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat run state events",
+          "file": "D:/ClawX/tests/e2e/chat-run-state-events.spec.ts",
+          "line": 58,
+          "column": 6,
+          "specs": [
+            {
+              "title": "preserves foreground exec output and releases the composer after error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 27373,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:55:06.990Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "02a546ac0d9b65152818-ecada5e3b81142b31daf",
+              "file": "D:/ClawX/tests/e2e/chat-run-state-events.spec.ts",
+              "line": 60,
+              "column": 9
+            },
+            {
+              "title": "preserves foreground exec output and releases the composer after aborted",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 20393,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:55:34.392Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "02a546ac0d9b65152818-79ee130d1e248631e7c8",
+              "file": "D:/ClawX/tests/e2e/chat-run-state-events.spec.ts",
+              "line": 60,
+              "column": 9
+            },
+            {
+              "title": "keeps one compact live status and settles it after completion",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19890,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-04T14:55:54.800Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "assistant-stream-status-inline",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\chat-output-e2e-states\\chat-run-state-events-Vers-a2b2f-settles-it-after-completion\\attachments\\assistant-stream-status-inline-6e2e5cc1fa19b1ad81c2a8f29536e5dbe92b635d.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "02a546ac0d9b65152818-5a94d3afeb7d0ac7a22b",
+              "file": "D:/ClawX/tests/e2e/chat-run-state-events.spec.ts",
+              "line": 144,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-04T14:55:04.869Z",
+    "duration": 73072.175,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
