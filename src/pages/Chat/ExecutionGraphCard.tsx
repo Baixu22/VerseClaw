@@ -14,19 +14,24 @@ interface ExecutionGraphCardProps {
   steps: TaskStep[];
   active: boolean;
   suppressThinking?: boolean;
+  compact?: boolean;
   traceId?: string;
   expandedStepIds?: ReadonlySet<string>;
   onStepExpandedChange?: (stepId: string, expanded: boolean) => void;
 }
 
-const TOOL_ROW_EXTRA_INDENT_PX = 8;
+const TOOL_ROW_EXTRA_INDENT_PX = 0;
 
 function StepDetailRow({
   step,
+  result,
+  compact = false,
   expanded: controlledExpanded,
   onExpandedChange,
 }: {
   step: TaskStep;
+  result?: TaskStep;
+  compact?: boolean;
   expanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
 }) {
@@ -34,7 +39,7 @@ function StepDetailRow({
   const detailId = useId();
   const [localExpanded, setLocalExpanded] = useState(false);
   const expanded = controlledExpanded ?? localExpanded;
-  const hasDetail = Boolean(step.detail);
+  const hasDetail = Boolean(step.detail || result?.detail);
   const isNarration = step.kind === 'message';
   const isTool = step.kind === 'tool';
   const isSystem = step.kind === 'system';
@@ -45,7 +50,7 @@ function StepDetailRow({
   let detailPreview = step.detail?.replace(/\s+/g, ' ').trim();
   const summary = isNarration && detailPreview ? detailPreview : displayLabel;
   const showRunning = step.status === 'running' && (isTool || isSystem);
-  const showError = step.status === 'error';
+  const showError = step.status === 'error' || result?.status === 'error';
 
   let formattedDetail = step.detail;
   if (formattedDetail && (isTool || isSystem)) {
@@ -71,18 +76,22 @@ function StepDetailRow({
     onExpandedChange?.(nextExpanded);
   };
 
-  const statusLabel = step.status === 'error'
+  const statusLabel = showError
     ? t('taskPanel.stepStatus.error')
     : step.status === 'running'
       ? t('taskPanel.stepStatus.running')
       : t('taskPanel.stepStatus.completed');
-  const chipStatus = step.status === 'error'
+  const chipStatus = showError
     ? 'error' as const
     : step.status === 'running'
       ? 'running' as const
       : 'done' as const;
 
-  const detail = formattedDetail && expanded ? (
+  let resultDetail = result?.detail;
+  if (resultDetail) {
+    try { resultDetail = JSON.stringify(JSON.parse(resultDetail), null, 2); } catch { /* Preserve plain output. */ }
+  }
+  const detail = hasDetail && expanded ? (
     <div
       id={detailId}
       role="region"
@@ -91,9 +100,18 @@ function StepDetailRow({
       className="mt-1 max-h-72 overflow-auto rounded-r-md border-l border-border/70 bg-surface-input px-3 py-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
       data-testid="chat-execution-step-detail"
     >
-      <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-5 text-foreground/85 [overflow-wrap:anywhere]">
-        {formattedDetail}
-      </pre>
+      {formattedDetail && (
+        <>
+          {resultDetail && <p className="mb-1 text-xs text-muted-foreground">{t('executionGraph.arguments')}</p>}
+          <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-5 text-foreground/85 [overflow-wrap:anywhere]">{formattedDetail}</pre>
+        </>
+      )}
+      {resultDetail && (
+        <div className={cn(formattedDetail && 'mt-3 border-t border-border/60 pt-2')}>
+          <p className="mb-1 text-xs text-muted-foreground">{t('executionGraph.result')}</p>
+          <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-5 text-foreground/85 [overflow-wrap:anywhere]">{resultDetail}</pre>
+        </div>
+      )}
     </div>
   ) : null;
 
@@ -144,6 +162,7 @@ function StepDetailRow({
               icon={inferCallChipIcon(displayLabel)}
               startedAt={step.startedAt}
               durationMs={step.durationMs}
+              showTimer={!compact}
               statusLabel={statusLabel}
               trailing={<ChevronRight className={cn('h-3.5 w-3.5 text-muted-foreground/60 transition-transform', expanded && 'rotate-90')} />}
             />
@@ -214,6 +233,7 @@ export function ExecutionGraphCard({
   steps,
   active,
   suppressThinking = false,
+  compact = false,
   traceId,
   expandedStepIds,
   onStepExpandedChange,
@@ -221,6 +241,18 @@ export function ExecutionGraphCard({
   const { t } = useTranslation('chat');
   const shouldShowTrailingThinking = active && !suppressThinking;
   const traceHref = traceId ? `#/observability?traceId=${encodeURIComponent(traceId)}` : null;
+
+  if (compact) {
+    const step = steps[0];
+    return step ? <StepDetailRow key={step.id} step={step} compact /> : null;
+  }
+  // History carries a call and a separate Tool Result row. One disclosure owns
+  // both; unmatched results stay visible so incomplete histories lose nothing.
+  const toolIds = new Set(steps.filter((step) => step.kind === 'tool').map((step) => step.id));
+  const pairedResults = new Map(steps
+    .filter((step) => step.kind === 'system' && step.id.startsWith('tool-result-') && toolIds.has(step.id.slice(12)))
+    .map((step) => [step.id.slice(12), step]));
+  const visibleSteps = steps.filter((step) => !pairedResults.has(step.id.slice(12)) || step.kind !== 'system' || !step.id.startsWith('tool-result-'));
 
   // A run whose rows were all promoted to rich cards (a plan-only or
   // command-only turn) has nothing left to draw. Rendering anyway leaves a bare
@@ -236,29 +268,11 @@ export function ExecutionGraphCard({
     <div
       data-testid="chat-execution-graph"
       data-collapsed="false"
+      aria-label={t('executionGraph.agentRun', { agent: agentLabel })}
       className="w-full min-w-0 text-muted-foreground"
     >
-      <div className="group/execution-header flex min-w-0 items-center gap-1.5 py-0.5">
-        <GitBranch className="h-3.5 w-3.5 shrink-0" />
-        <span className="min-w-0 flex-1 truncate text-xs font-medium">
-          {t('executionGraph.agentRun', { agent: agentLabel })}
-        </span>
-        {traceHref && (
-          <Button asChild variant="ghost" size="icon" className="h-6 w-6 shrink-0 opacity-0 transition-opacity group-hover/execution-header:opacity-100 focus-within:opacity-100">
-            <a
-              href={traceHref}
-              aria-label={t('executionGraph.viewTrace')}
-              title={t('executionGraph.viewTrace')}
-              data-testid="chat-view-trace-link"
-            >
-              <Activity className="h-3.5 w-3.5" />
-            </a>
-          </Button>
-        )}
-      </div>
-
       <div className="mt-0.5">
-        {steps.map((step) => {
+        {visibleSteps.map((step) => {
           const alignedIndentOffset = (
             step.kind === 'tool'
             || step.kind === 'message'
@@ -285,6 +299,7 @@ export function ExecutionGraphCard({
                 )}
                 <StepDetailRow
                   step={step}
+                  result={pairedResults.get(step.id)}
                   expanded={expandedStepIds?.has(step.id)}
                   onExpandedChange={(expanded) => onStepExpandedChange?.(step.id, expanded)}
                 />
@@ -305,6 +320,14 @@ export function ExecutionGraphCard({
           </div>
         )}
       </div>
+      {traceHref && (
+        <Button asChild variant="ghost" size="sm" className="mt-1 h-7 gap-1.5 px-1.5 text-xs font-normal text-muted-foreground">
+          <a href={traceHref} data-testid="chat-view-trace-link">
+            <Activity className="size-3.5" aria-hidden="true" />
+            {t('executionGraph.viewTrace')}
+          </a>
+        </Button>
+      )}
     </div>
   );
 }

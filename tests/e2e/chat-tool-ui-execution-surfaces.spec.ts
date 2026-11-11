@@ -149,10 +149,18 @@ test.describe('Tool UI execution surfaces', () => {
       const webSearch = page.getByTestId('chat-tool-ui-web-search');
       await expect(approval).toBeVisible({ timeout: 30_000 });
       await expect(approval).toContainText('no automatic rollback');
+      const processDetails = page.getByTestId('chat-tool-process-details');
+      await expect(processDetails).not.toHaveAttribute('open');
+      await expect(terminal).toHaveCount(0);
+      await processDetails.locator('summary').press('Enter');
+      await expect(terminal).toBeVisible();
       await expect(terminal).toContainText('22 tests passed');
       await expect(terminal.locator('input')).toHaveCount(0);
       await expect(codeDiff).toContainText('agent.ts');
       await expect(progress).toContainText('Execution surfaces verified');
+      const searchToggle = webSearch.getByTestId('chat-web-search-trigger');
+      await expect(searchToggle).toHaveAttribute('aria-expanded', 'false');
+      await searchToggle.press('Enter');
       await expect(webSearch).toContainText('ReactBits CallChip');
       const webSearchProgress = webSearch.getByTestId('chat-web-search-progress');
       await expect(webSearchProgress).toHaveAttribute('data-progress-mode', 'horizontal');

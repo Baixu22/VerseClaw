@@ -398,7 +398,7 @@ test.describe('space-bunny Responses acceptance', () => {
         expect(providerCalls(proxy.observations.slice(isolatedStart))).toHaveLength(0);
         expect(finalText(isolated)).toContain('NO_PRIOR_TOOL_RESULT');
         expect((isolated.messages ?? []).some(message => terminalFailure([message]))).toBe(false);
-        await expect(page.getByTestId('chat-assistant-avatar').locator('..').last()).toContainText('NO_PRIOR_TOOL_RESULT');
+        await expect(page.locator('.codex-markdown').last()).toContainText('NO_PRIOR_TOOL_RESULT');
         receipt.isolation = { sessionKey: isolatedSessionKey, history: isolated, previousResultInProviderInput: false };
         expect(await readFile(join(workspace, 'probe.txt'), 'utf8')).toBe(marker + '\n');
         expect(await trajectoryTools(userDataDir)).toEqual(tools);
@@ -506,7 +506,7 @@ test.describe('space-bunny Responses acceptance', () => {
         await expect.poll(() => proxy.observations.slice(recoveryStart).some(observation => observation.events
           .some(event => (event.response as Json | undefined)?.text?.toString().includes(recovered))), { timeout: 120_000 }).toBe(true);
         await idle(page);
-        await expect(page.getByTestId('chat-assistant-avatar').locator('..').last()).toContainText(recovered);
+        await expect(page.locator('.codex-markdown').last()).toContainText(recovered);
         const recoverySessionKey = await latestSession(page);
         if (type === 'cancel') expect(recoverySessionKey).toBe(sessionKey);
         const recoveryHistory = await waitForFinal(page, recoverySessionKey, recovered);

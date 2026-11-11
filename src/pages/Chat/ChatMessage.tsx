@@ -28,7 +28,6 @@ import { OrbStatus } from '@/components/assistant-ui/orb-status';
 import { Shimmer } from '@/components/ai-elements/shimmer';
 import { NumberRoll } from '@/components/assistant-ui/number-roll';
 import { AttachmentName, AttachmentRoot, AttachmentThumb, DIRECTORY_MIME_TYPE, FileIcon, formatFileSize } from '@/components/assistant-ui/attachment';
-import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import { ConversationImage } from '@/components/assistant-render/resources/ConversationImage';
 import { ConversationMediaCard } from '@/components/assistant-render/resources/ConversationMediaCard';
 import { ConversationResourceList } from '@/components/assistant-render/resources/ResourceCards';
@@ -50,6 +49,7 @@ interface ChatMessageProps {
   agent?: Pick<AgentSummary, 'id' | 'name' | 'avatar'> | null;
   textOverride?: string;
   suppressToolCards?: boolean;
+  showActions?: boolean;
   suppressProcessAttachments?: boolean;
   /**
    * When true, hides the assistant text bubble (and any thinking block that
@@ -216,9 +216,9 @@ const EMPTY_REASONING: AssistantReasoning[] = [];
 
 export const ChatMessage = memo(function ChatMessage({
   message,
-  agent,
   textOverride,
   suppressToolCards = false,
+  showActions = true,
   suppressProcessAttachments = false,
   suppressAssistantText = false,
   suppressReasoning = false,
@@ -381,7 +381,7 @@ export const ChatMessage = memo(function ChatMessage({
     }
     void hostApi.shell.openPath(filePath);
   }, [onOpenFile]);
-  const showAssistantHoverBar = !isUser && (hasText || imageCopyTarget != null);
+  const showAssistantHoverBar = showActions && !isUser && (hasText || imageCopyTarget != null);
   const showUserHoverBar = isUser && hasText;
   const [isEditingUserMessage, setIsEditingUserMessage] = useState(false);
   const [userEditDraft, setUserEditDraft] = useState(text);
@@ -442,27 +442,10 @@ export const ChatMessage = memo(function ChatMessage({
   return (
     <div
       className={cn(
-        'flex gap-3 group',
+        'flex min-w-0 group',
         isUser ? 'flex-row-reverse' : 'flex-row',
       )}
     >
-      {/* Avatar — vertical center aligned with the first line of the reply.
-          The outer slot is sized to one prose-sm line (h-6 = 24px) so its
-          midpoint coincides with the first text line's midpoint; the 32px
-          avatar inside is centered within that slot and intentionally
-          overflows ±4px above/below the line, which mirrors how chat avatars
-          sit alongside a single line of text. */}
-      {!isUser && (
-        <div className="mt-0.5 h-8 w-8 shrink-0 overflow-hidden rounded-full" data-testid="chat-assistant-avatar">
-          <AgentAvatar
-            agentId={agent?.id ?? 'main'}
-            name={agent?.name ?? 'Verse'}
-            avatar={agent?.avatar ?? { kind: 'brand', source: 'default', revision: 'verse-brand-v1' }}
-            size={32}
-          />
-        </div>
-      )}
-
       {/* Content */}
       <div
         className={cn(
@@ -572,6 +555,7 @@ export const ChatMessage = memo(function ChatMessage({
         {!isUser && toolUiInteractions.length > 0 && (
           <AgentInteractionRenderer
             interactions={toolUiInteractions}
+            compactProcess
             canSubmit={canSubmitInteractionResponse}
             onSubmitResponse={onSubmitInteractionResponse}
             onDraftResponse={onDraftInteractionResponse}
