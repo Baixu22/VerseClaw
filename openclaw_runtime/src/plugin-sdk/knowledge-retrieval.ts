@@ -1,13 +1,27 @@
 /** Owner-bound source normalization, structural projection and citation verification. */
 export { normalizeKnowledgeSourceDocument } from "../knowledge/retrieval/source-document.js";
 export { chunkKnowledgeDocument } from "../knowledge/retrieval/chunker.js";
+export { VectorStore, validateVectorRow } from "../knowledge/retrieval/vector-store.js";
+export { createPortableVectorSearch } from "../knowledge/retrieval/vector-worker.js";
+export { ProjectionStore } from "../knowledge/retrieval/projection-store.js";
+export type {
+  VectorBackendId,
+  VectorGenerationV1,
+  VectorHit,
+  VectorProjectionBackend,
+  VectorProjectionV1,
+  VectorSearchV1,
+  IndexBackendCapabilitiesV1,
+} from "../knowledge/retrieval/vector-contracts.js";
 export {
   KnowledgeEmbeddingSession,
+  waitForRetrievalOperation,
   type EmbeddingJobV1,
 } from "../knowledge/retrieval/embedding-session.js";
 export {
   createEmbeddingSpace,
   assertSameEmbeddingSpace,
+  validateEmbeddingVector,
   type EmbeddingSpaceV1,
   type ProviderCapabilitySnapshotV1,
 } from "../knowledge/retrieval/embedding-space.js";

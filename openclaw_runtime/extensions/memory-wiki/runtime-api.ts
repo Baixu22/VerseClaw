@@ -4,6 +4,11 @@ export { ingestMemoryWikiSource } from "./src/ingest.js";
 export { createMemoryWikiProjectionService } from "./src/retrieval-index.js";
 export { createMemoryWikiEmbeddingService } from "./src/retrieval-embeddings.js";
 export {
+  createPortableVectorBackend,
+  createLanceVectorBackend,
+} from "./src/retrieval/vector-backends.js";
+export { createMemoryWikiVectorService } from "./src/retrieval/vector-service.js";
+export {
   readMemoryWikiRetrievalChunks,
   readMemoryWikiChunkCitation,
 } from "./src/retrieval-document.js";

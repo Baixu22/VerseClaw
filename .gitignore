@@ -2991,6 +2991,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/evidence/project-rag/RAG-05/20261111-4f6da3aab/typecheck.log
 !/docs/dev/evidence/project-rag/RAG-05/20261111-4f6da3aab/verification-environment.json
 !/docs/dev/evidence/project-rag/RAG-05/20261111-4f6da3aab/visual-checks.json
+!/docs/dev/project-rag/VECTOR-BACKEND-CONTRACT.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

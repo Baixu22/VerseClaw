@@ -1036,5 +1036,26 @@
       "unavailable": "利用不可",
       "cancelled": "キャンセル済み"
     }
+  },
+  "vector": {
+    "title": "プロジェクトのベクトル索引",
+    "description": "埋め込みモデルの準備後に、許可されたプロジェクト資料の索引を構築します。",
+    "backend": "索引の方式",
+    "portable": "移植可能な厳密検索",
+    "ann": "ネイティブ ANN 検索",
+    "nativeUnavailable": "ネイティブ ANN を利用できません。移植可能な検索を利用できます。",
+    "configure": "索引を構築",
+    "rebuild": "再構築",
+    "optimize": "最適化",
+    "disable": "無効化",
+    "status": "状態",
+    "failed": "ベクトル索引を利用できません。モデルとプラットフォーム容量を確認してください。",
+    "states": {
+      "disabled": "無効",
+      "building": "構築中",
+      "ready": "準備完了",
+      "unavailable": "利用不可",
+      "cancelled": "キャンセル済み"
+    }
   }
 }

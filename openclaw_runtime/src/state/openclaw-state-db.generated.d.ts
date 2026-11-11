@@ -811,6 +811,43 @@ export interface KnowledgeOwnerLinks {
   updated_at: string;
 }
 
+export interface KnowledgeVectorGenerations {
+  backend: string;
+  created_at: number;
+  generation_id: string;
+  intent_sequence: number;
+  namespace_id: string;
+  row_count: number;
+  space_id: string;
+  state: string;
+  vector_revision: Generated<number>;
+  workspace_id: string;
+}
+
+export interface KnowledgeVectorNamespaces {
+  active_generation_id: string | null;
+  desired_backend: string;
+  desired_space_id: string;
+  intent_sequence: number;
+  namespace_id: string;
+  updated_at: number;
+  workspace_id: string;
+}
+
+export interface KnowledgeVectorRows {
+  chunk_digest: string;
+  chunk_id: string;
+  dimensions: number;
+  generation_id: string;
+  id: string;
+  namespace_id: string;
+  source_generation: string;
+  source_ref_json: string;
+  space_id: string;
+  vector: Uint8Array;
+  workspace_id: string;
+}
+
 export interface LongTaskCheckpoints {
   agent_id: string | null;
   checkpoint_json: string;
@@ -1529,6 +1566,9 @@ export interface DB {
   knowledge_index_jobs: KnowledgeIndexJobs;
   knowledge_index_sources: KnowledgeIndexSources;
   knowledge_owner_links: KnowledgeOwnerLinks;
+  knowledge_vector_generations: KnowledgeVectorGenerations;
+  knowledge_vector_namespaces: KnowledgeVectorNamespaces;
+  knowledge_vector_rows: KnowledgeVectorRows;
   long_task_checkpoints: LongTaskCheckpoints;
   long_task_intervention_events: LongTaskInterventionEvents;
   long_task_user_queue: LongTaskUserQueue;

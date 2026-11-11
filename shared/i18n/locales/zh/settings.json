@@ -1036,5 +1036,26 @@
       "unavailable": "不可用",
       "cancelled": "已取消"
     }
+  },
+  "vector": {
+    "title": "项目向量索引",
+    "description": "向量模型就绪后，为获准的项目来源构建派生索引。",
+    "backend": "索引后端",
+    "portable": "可移植精确检索",
+    "ann": "原生 ANN 检索",
+    "nativeUnavailable": "原生 ANN 不可用，可使用可移植检索。",
+    "configure": "构建此索引",
+    "rebuild": "重建",
+    "optimize": "优化",
+    "disable": "禁用",
+    "status": "状态",
+    "failed": "向量索引不可用，请检查所选模型与平台容量。",
+    "states": {
+      "disabled": "已禁用",
+      "building": "构建中",
+      "ready": "已就绪",
+      "unavailable": "不可用",
+      "cancelled": "已取消"
+    }
   }
 }

@@ -43,6 +43,7 @@ import { readBoundedKnowledgePage, retrieveSelectedSourceSetEvidence } from './k
 import { prepareKnowledgeReadScope, assertKnowledgeReadScopeCurrent } from './knowledge-read-scope';
 import { normalizeSourceRefV2, isOwnerReadSnapshotV1, evaluateOwnerReadSnapshot } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
 import type { KnowledgeEmbeddingSelection, KnowledgeEmbeddingStatus, KnowledgeEmbeddingStatusResult } from '../../shared/knowledge/embedding';
+import type { KnowledgeVectorStatus, KnowledgeVectorStatusResult } from '../../shared/knowledge/vector';
 import { createKnowledgeSourceSync } from './knowledge-source-sync';
 import { createKnowledgeGithubConnector, validateGithubConnector } from './knowledge-github-connector';
 import { boundedKnowledgeHistory, buildKnowledgeQaPrompt, runKnowledgeModel, validateKnowledgeQaOutput, type KnowledgeConversationTurn, type KnowledgeQaEvidence } from './knowledge-evidence-qa';
@@ -3717,7 +3718,22 @@ export function createKnowledgeApi({
     }
   };
 
+  const vectorOperation = async (operation: string, payload?: { backend: 'sqlite-flat' | 'lancedb-ann' }): Promise<KnowledgeVectorStatusResult> => {
+    try {
+      if (payload && !['sqlite-flat', 'lancedb-ann'].includes(payload.backend)) throw new Error('Invalid vector backend');
+      const scope = await prepareKnowledgeReadScope(gatewayManager, {});
+      const vector = await rpc<KnowledgeVectorStatus>(`wiki.vector.${operation}`, { ...(payload ?? {}), readIdentity: scope.identity }, 30_000);
+      await assertKnowledgeReadScopeCurrent(gatewayManager, scope);
+      return { success: true, vector };
+    } catch (error) { return { success: false, error: sanitizeUiErrorText(error) }; }
+  };
+
   return {
+    vectorStatus: () => vectorOperation('status'),
+    vectorConfigure: payload => vectorOperation('start', payload),
+    vectorDisable: () => vectorOperation('stop'),
+    vectorRebuild: () => vectorOperation('rebuild'),
+    vectorOptimize: () => vectorOperation('optimize'),
     embeddingStatus: () => embeddingOperation('status'),
     embeddingConfigure: payload => embeddingOperation('configure', payload),
     embeddingCancel: () => embeddingOperation('cancel'),

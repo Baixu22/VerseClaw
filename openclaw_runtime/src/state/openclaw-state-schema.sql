@@ -1996,3 +1996,50 @@ CREATE INDEX IF NOT EXISTS idx_knowledge_index_chunks_source
 
 CREATE INDEX IF NOT EXISTS idx_knowledge_index_chunks_namespace
   ON knowledge_index_chunks(namespace_id, generation_id, ordinal);
+
+-- RAG-06 SQLite owns backend/generation activation and portable derived vectors.
+CREATE TABLE IF NOT EXISTS knowledge_vector_namespaces (
+  namespace_id TEXT NOT NULL PRIMARY KEY,
+  workspace_id TEXT NOT NULL,
+  intent_sequence INTEGER NOT NULL CHECK (intent_sequence >= 1),
+  desired_backend TEXT NOT NULL CHECK (desired_backend IN ('sqlite-flat', 'lancedb-ann')),
+  desired_space_id TEXT NOT NULL,
+  active_generation_id TEXT,
+  updated_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS knowledge_vector_generations (
+  generation_id TEXT NOT NULL PRIMARY KEY,
+  namespace_id TEXT NOT NULL,
+  workspace_id TEXT NOT NULL,
+  space_id TEXT NOT NULL,
+  backend TEXT NOT NULL CHECK (backend IN ('sqlite-flat', 'lancedb-ann')),
+  intent_sequence INTEGER NOT NULL CHECK (intent_sequence >= 1),
+  state TEXT NOT NULL CHECK (state IN ('building', 'active', 'retired', 'failed')),
+  row_count INTEGER NOT NULL CHECK (row_count >= 0),
+  vector_revision INTEGER NOT NULL DEFAULT 0 CHECK (vector_revision >= 0),
+  created_at INTEGER NOT NULL,
+  FOREIGN KEY (namespace_id) REFERENCES knowledge_vector_namespaces(namespace_id)
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_knowledge_vector_generation_active
+  ON knowledge_vector_generations(namespace_id) WHERE state = 'active';
+
+CREATE TABLE IF NOT EXISTS knowledge_vector_rows (
+  id TEXT NOT NULL,
+  generation_id TEXT NOT NULL,
+  namespace_id TEXT NOT NULL,
+  workspace_id TEXT NOT NULL,
+  space_id TEXT NOT NULL,
+  chunk_id TEXT NOT NULL,
+  chunk_digest TEXT NOT NULL,
+  source_generation TEXT NOT NULL,
+  source_ref_json TEXT NOT NULL,
+  dimensions INTEGER NOT NULL CHECK (dimensions > 0),
+  vector BLOB NOT NULL,
+  PRIMARY KEY (generation_id, id),
+  FOREIGN KEY (generation_id) REFERENCES knowledge_vector_generations(generation_id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_vector_rows_source
+  ON knowledge_vector_rows(namespace_id, generation_id, source_generation, chunk_id);

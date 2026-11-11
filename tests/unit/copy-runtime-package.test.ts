@@ -121,6 +121,29 @@ it('rejects missing installed dependencies even when a user-level copy is availa
   expect(() => copyRuntimeDependencies(source, output)).toThrow('Missing installed dependency sdk');
 });
 
+it('ships owner dependencies from its managed node_modules junction without copying the host peer', () => {
+  const root = fixture(), installation = join(root, 'runtime'), source = join(installation, 'extensions', 'wiki');
+  const store = join(root, 'installed-store', 'node_modules'), output = join(root, 'output');
+  pkg(installation, 'openclaw', '1');
+  pkg(source, '@openclaw/wiki', '1', { vector: '1' });
+  writeFileSync(join(source, 'package.json'), JSON.stringify({
+    name: '@openclaw/wiki', version: '1', dependencies: { vector: '1' },
+    peerDependencies: { openclaw: '1' }, peerDependenciesMeta: { openclaw: { optional: true } },
+  }));
+  pkg(join(store, 'vector'), 'vector', '1', { native: '1' });
+  pkg(join(store, 'native'), 'native', '1');
+  pkg(join(store, 'openclaw'), 'openclaw', '1', { 'host-only': '1' });
+  symlinkSync(store, join(installation, 'node_modules'), 'junction');
+  const packages = collectRuntimeDependencyPackages(source, installation);
+  expect([...packages.values()].map(row => row.name).sort()).toEqual(['native', 'vector']);
+  pkg(output, '@openclaw/wiki', '1');
+  expect(copyRuntimeDependencies(source, output, installation)).toBe(2);
+  rmSync(installation, { recursive: true, force: true });
+  rmSync(store, { recursive: true, force: true });
+  expect(createRequire(join(output, 'index.js'))('vector')).toBe('1');
+  expect(createRequire(join(output, 'node_modules', 'vector', 'index.js'))('native')).toBe('1');
+});
+
 it('loads Main dependencies and their children from the complete packaged graph', () => {
   const root = fixture();
   const main = join(root, 'app.asar', 'dist-electron', 'main', 'index.js');

@@ -1,6 +1,7 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, realpathSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { dirname, isAbsolute, join, relative, sep } from 'node:path';
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { parse as parseYaml } from 'yaml';
 
 // Each emitted Main chunk resolves external packages from the complete copied
 // graph before electron-builder's partial ASAR dependency collection.
@@ -29,6 +30,19 @@ if (process.type === 'browser' && require('electron').app.isPackaged && !globalT
 function isInside(root, file) {
   const rel = relative(root, file);
   return !isAbsolute(rel) && rel !== '..' && !rel.startsWith('..' + sep);
+}
+
+function installationRoots(root) {
+  const roots = [root], modules = join(root, 'node_modules');
+  if (existsSync(modules)) roots.push(realpathSync(modules));
+  const metadata = join(modules, '.modules.yaml');
+  if (existsSync(metadata)) {
+    const store = parseYaml(readFileSync(metadata, 'utf8'))?.virtualStoreDir;
+    if (typeof store === 'string' && existsSync(resolve(modules, store))) {
+      roots.push(realpathSync(resolve(modules, store)));
+    }
+  }
+  return roots;
 }
 
 // Node 24's native recursive copy can preserve nested Windows junctions despite
@@ -65,6 +79,9 @@ function packageAt(importer, name) {
 // is the resolved realpath rather than the bare package name.
 export function collectRuntimeDependencyPackages(source, installationRoot = source) {
   installationRoot = realpathSync(installationRoot);
+  // Admit the workspace's declared pnpm store, never unrelated parent packages.
+  const ownedRoots = installationRoots(installationRoot);
+  const hostName = JSON.parse(readFileSync(join(installationRoot, 'package.json'), 'utf8')).name;
   const collected = new Map();
   const queue = [{ importer: source, destination: source, packageName: null }];
   const visited = new Set();
@@ -83,8 +100,10 @@ export function collectRuntimeDependencyPackages(source, installationRoot = sour
     const manifest = JSON.parse(readFileSync(join(current.importer, 'package.json'), 'utf8'));
     const dependencies = { ...manifest.peerDependencies, ...manifest.dependencies, ...manifest.optionalDependencies };
     for (const name of Object.keys(dependencies)) {
+      if (name === hostName && name in (manifest.peerDependencies ?? {}) &&
+          !(name in (manifest.dependencies ?? {})) && !(name in (manifest.optionalDependencies ?? {}))) continue;
       const resolved = packageAt(current.importer, name);
-      const installed = resolved && isInside(installationRoot, resolved) ? resolved : null;
+      const installed = resolved && ownedRoots.some(root => isInside(root, resolved)) ? resolved : null;
       if (!installed) {
         if (name in (manifest.optionalDependencies ?? {}) || manifest.peerDependenciesMeta?.[name]?.optional) continue;
         throw new Error(`Missing installed dependency ${name} of ${current.importer}`);
@@ -103,6 +122,8 @@ export function collectRuntimeDependencyPackages(source, installationRoot = sour
 // versions; conflicts get normal nested node_modules, without development links.
 export function copyRuntimeDependencies(source, destination, installationRoot = source) {
   installationRoot = realpathSync(installationRoot);
+  const ownedRoots = installationRoots(installationRoot);
+  const hostName = JSON.parse(readFileSync(join(installationRoot, 'package.json'), 'utf8')).name;
   const queue = [{ source, destination }];
   const visited = new Set();
   let copied = 0;
@@ -113,8 +134,10 @@ export function copyRuntimeDependencies(source, destination, installationRoot = 
     const manifest = JSON.parse(readFileSync(join(current.source, 'package.json'), 'utf8'));
     const dependencies = { ...manifest.peerDependencies, ...manifest.dependencies, ...manifest.optionalDependencies };
     for (const name of Object.keys(dependencies)) {
+      if (name === hostName && name in (manifest.peerDependencies ?? {}) &&
+          !(name in (manifest.dependencies ?? {})) && !(name in (manifest.optionalDependencies ?? {}))) continue;
       const resolved = packageAt(current.source, name);
-      const installed = resolved && isInside(installationRoot, resolved) ? resolved : null;
+      const installed = resolved && ownedRoots.some(root => isInside(root, resolved)) ? resolved : null;
       if (!installed) {
         if (name in (manifest.optionalDependencies ?? {}) || manifest.peerDependenciesMeta?.[name]?.optional) continue;
         throw new Error(`Missing installed dependency ${name} of ${current.source}`);

@@ -1,5 +1,6 @@
 import type { RawMessage } from '../chat/types';
 import type { KnowledgeEmbeddingSelection, KnowledgeEmbeddingStatusResult } from '../knowledge/embedding';
+import type { KnowledgeVectorStatusResult } from '../knowledge/vector';
 import type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
 export type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
 import type { SessionHandoffOperation } from '../types/session-handoff';
@@ -6243,6 +6244,11 @@ export type HostApiContract = {
     validateArtifact: (payload: WorkProviderValidateArtifactPayload) => WorkProviderValidateArtifactResult;
   };
   knowledge: {
+    vectorStatus: () => KnowledgeVectorStatusResult;
+    vectorConfigure: (payload: { backend: 'sqlite-flat' | 'lancedb-ann' }) => KnowledgeVectorStatusResult;
+    vectorDisable: () => KnowledgeVectorStatusResult;
+    vectorRebuild: () => KnowledgeVectorStatusResult;
+    vectorOptimize: () => KnowledgeVectorStatusResult;
     embeddingStatus: () => KnowledgeEmbeddingStatusResult;
     embeddingConfigure: (payload: KnowledgeEmbeddingSelection) => KnowledgeEmbeddingStatusResult;
     embeddingCancel: () => KnowledgeEmbeddingStatusResult;

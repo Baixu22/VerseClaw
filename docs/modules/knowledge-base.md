@@ -263,6 +263,8 @@ workspace、credential generation、模型空间、输入类型与来源 pin 隔
 
 输入格式、tokenizer、凭据及恢复约定见[embedding 生命周期](../dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md)。
 
+设置中的“项目向量索引”可显式构建 SQLite 精确检索或库级 LanceDB ANN。索引跟随当前合格片段增量更新，来源撤销立即取消查询资格，引用仍经 owner 按 pin 复读。generation 发布、后端切换、重启和容量约定见[向量后端合同](../dev/project-rag/VECTOR-BACKEND-CONTRACT.md)。
+
 ## 8. OKF
 
 OKF 是知识 bundle 的导入/兼容格式。

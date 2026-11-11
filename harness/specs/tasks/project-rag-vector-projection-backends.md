@@ -7,13 +7,33 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-06
 intent: 用统一契约覆盖普通项目与大语料，并明确平台能力。
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: d491594941b811a917bb0646d50197039072dc81
 touchedAreas:
+  - "electron/services/knowledge-api.ts"
+  - "electron/services/gateway-api.ts"
+  - "electron/services/workspace-permissions.ts"
+  - "shared/host-api/contract.ts"
+  - "shared/knowledge/vector.ts"
+  - "src/lib/host-api/knowledge/**"
+  - "src/components/settings/KnowledgeVectorSettings.tsx"
+  - "src/pages/Models/index.tsx"
+  - "shared/i18n/locales/*/settings.json"
+  - "scripts/contract-check.mjs"
+  - "scripts/knowledge-rag-vector-probe.ts"
+  - "scripts/knowledge-rag-vector-capacity.ts"
   - "openclaw_runtime/src/knowledge/retrieval/**"
   - "openclaw_runtime/src/state/openclaw-state-*"
   - "openclaw_runtime/package.json"
+  - "openclaw_runtime/tsdown.config.ts"
+  - "openclaw_runtime/pnpm-lock.yaml"
+  - "openclaw_runtime/src/plugin-sdk/knowledge-retrieval.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/retrieval-*.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/gateway.ts"
+  - "openclaw_runtime/extensions/memory-wiki/index.ts"
   - "pnpm-lock.yaml"
   - "scripts/bundle-openclaw-runtime.mjs"
+  - "scripts/copy-runtime-package.mjs"
+  - "tests/unit/copy-runtime-package.test.ts"
   - "openclaw_runtime/extensions/memory-wiki/package.json"
   - "openclaw_runtime/extensions/memory-wiki/runtime-api.ts"
   - "openclaw_runtime/extensions/memory-wiki/src/retrieval/**"
@@ -36,6 +56,10 @@ touchedAreas:
   - "tests/unit/knowledge-retrieval.test.ts"
   - "tests/unit/project-rag-vector-backends.test.ts"
   - "tests/unit/project-rag-vector-generation.test.ts"
+  - "tests/unit/project-rag-vector-service.test.ts"
+  - "tests/unit/project-rag-embedding-lifecycle.test.ts"
+  - "tests/unit/knowledge-vector-settings.test.tsx"
+  - "tests/e2e/project-rag-vector-backends.spec.ts"
 requiredProfiles:
   - "fast"
   - "comms"
@@ -45,10 +69,19 @@ requiredRules:
   - "knowledge-source-set-read-admission"
   - "project-rag-long-term-boundary"
 requiredTests:
+  - "tests/unit/knowledge-vector-settings.test.tsx"
+  - "tests/unit/project-rag-embedding-lifecycle.test.ts"
+  - "tests/unit/copy-runtime-package.test.ts"
   - "tests/unit/knowledge-retrieval.test.ts"
+  - "tests/unit/project-rag-vector-backends.test.ts"
+  - "tests/unit/project-rag-vector-generation.test.ts"
+  - "tests/unit/project-rag-vector-service.test.ts"
+  - "tests/e2e/project-rag-vector-backends.spec.ts"
 plannedTests:
   - "tests/unit/project-rag-vector-backends.test.ts"
   - "tests/unit/project-rag-vector-generation.test.ts"
+plannedE2E:
+  - "tests/e2e/project-rag-vector-backends.spec.ts"
 expectedUserBehavior:
   - "用统一契约覆盖普通项目与大语料，并明确平台能力。"
 acceptance:
@@ -60,10 +93,11 @@ acceptance:
   - "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
 docs:
   required: true
-  readmeTranslations: not-required
+  readmeTranslations: required
   files:
     - docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md
     - docs/dev/project-rag/WORK-PACKAGES.md
+    - docs/dev/project-rag/VECTOR-BACKEND-CONTRACT.md
 ---
 
 # 交付可移植向量检索与规模化 ANN

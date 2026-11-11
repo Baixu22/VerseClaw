@@ -29,6 +29,7 @@ import { initializeMemoryWikiVault } from "./vault.js";
 import type { MemoryWikiReadIdentity } from "./owner-read.js";
 import type { MemoryWikiProjectionService } from "./retrieval-index.js";
 import type { MemoryWikiEmbeddingService } from "./retrieval-embeddings.js";
+import type { MemoryWikiVectorService } from "./retrieval/vector-service.js";
 
 const READ_SCOPE = "operator.read" as const;
 const WRITE_SCOPE = "operator.write" as const;
@@ -128,8 +129,56 @@ export function registerMemoryWikiGatewayMethods(params: {
   appConfig?: OpenClawConfig;
   projection?: MemoryWikiProjectionService;
   embedding?: MemoryWikiEmbeddingService;
+  vector?: MemoryWikiVectorService;
 }) {
   const { api, config, appConfig } = params;
+  if (params.vector) {
+    const vector = params.vector;
+    for (const operation of [
+      "start",
+      "stop",
+      "status",
+      "idle",
+      "rebuild",
+      "optimize",
+      "search",
+    ] as const) {
+      api.registerGatewayMethod(
+        `wiki.vector.${operation}`,
+        async ({ params: request, respond, client }) => {
+          try {
+            const identity = readIdentity(request, client);
+            if (!identity) throw new Error("Vector operations require a backend-owned identity");
+            let result: unknown;
+            if (operation === "start") {
+              const backend = readEnumParam(request, "backend", [
+                "sqlite-flat",
+                "lancedb-ann",
+              ] as const);
+              if (!backend) throw new Error("Vector backend is required");
+              await vector.enable(identity, backend);
+              result = await vector.status(identity);
+            } else if (operation === "search") {
+              result = await vector.search(
+                identity,
+                readStringParam(request, "query", { required: true }),
+                readPositiveIntegerParam(request, "limit"),
+              );
+            } else if (operation === "status") result = await vector.status(identity);
+            else {
+              if (operation === "stop") await vector.disable(identity);
+              else await vector[operation](identity);
+              result = await vector.status(identity);
+            }
+            respond(true, result);
+          } catch (error) {
+            respondError(respond, error);
+          }
+        },
+        { scope: ["status", "search"].includes(operation) ? READ_SCOPE : WRITE_SCOPE },
+      );
+    }
+  }
 
   if (params.embedding) {
     const embedding = params.embedding;

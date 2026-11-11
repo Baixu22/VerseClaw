@@ -1044,6 +1044,12 @@ importers:
       '@huggingface/tokenizers':
         specifier: 0.2.0
         version: 0.2.0
+      '@lancedb/lancedb':
+        specifier: 0.30.0
+        version: 0.30.0(apache-arrow@21.1.0)
+      apache-arrow:
+        specifier: 21.1.0
+        version: 21.1.0
       typebox:
         specifier: 1.1.39
         version: 1.1.39

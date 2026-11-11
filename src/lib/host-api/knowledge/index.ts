@@ -10,8 +10,10 @@ import { knowledgeProvenanceApi } from './provenance';
 import { knowledgeRoutingApi } from './routing';
 import { knowledgeConnectorsApi } from './connectors';
 import { knowledgeEmbeddingApi } from './embedding';
+import { knowledgeVectorApi } from './vector';
 
 export const knowledgeHostApi = {
+  ...knowledgeVectorApi,
   ...knowledgeEmbeddingApi,
   ...knowledgeConnectorsApi,
   ...knowledgeLibraryApi,

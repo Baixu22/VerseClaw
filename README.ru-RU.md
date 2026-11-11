@@ -185,6 +185,8 @@ flowchart LR
 - Наблюдаемые папки сверяют добавления, изменения и удаления с версиями кандидатов на проверку, включая изменения во время остановки приложения.
 - Librarian передаёт допущенные источники и ограниченную историю настроенной модели Gateway, проверяет точные цитаты и версии, явно показывает неполные чтения, конфликты и ошибки модели. Studio сохраняет выдержки как черновики для проверки.
 - Реализованы китайский лексический поиск, ограниченное продолжение чтения, кеш embedding с изоляцией provider и выводы Steward с привязкой к версии. Необязательный коннектор публичного каталога GitHub отправляет изменения и отзывы в Inbox; другие SaaS-коннекторы не реализованы.
+- В разделе «Настройки > Модели и провайдеры» можно выбрать локальную EmbeddingGemma или настроенный удалённый сервис Qwen VL для поиска по проекту, установить и проверить модель, отменить подготовку и обновить учётные данные. См. [жизненный цикл эмбеддингов](docs/dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md).
+- Векторный индекс проекта использует переносимый точный поиск SQLite или библиотечный LanceDB ANN, переключает поколения и проверяет отзыв доступа и цитаты у владельца источника. См. [механизмы векторного поиска](docs/dev/project-rag/VECTOR-BACKEND-CONTRACT.md).
 - Logs, traces, screenshots, Task Forest и handoffs являются local working data, пока явно не curated.
 
 Локальное хранение не означает offline execution. Online models, channels, browsers и external tools получают данные согласно конфигурации. Не коммитьте credentials, private transcripts и raw logs.
@@ -207,7 +209,6 @@ flowchart LR
 | `pnpm run typecheck` | Full node/web/test typecheck |
 | `pnpm run lint:check` | Lint без изменения файлов |
 | `pnpm test` | Root test groups и selected regressions |
-- В разделе «Настройки > Модели и провайдеры» можно выбрать локальную EmbeddingGemma или настроенный удалённый сервис Qwen VL для поиска по проекту, установить и проверить модель, отменить подготовку и обновить учётные данные. См. [жизненный цикл эмбеддингов](docs/dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md).
 | `pnpm run test:e2e` | Build и Electron Playwright |
 | `pnpm contract:check` / `pnpm i18n:lint` | Host contract и покрытие четырёх языков |
 | `pnpm run harness:ci` | Repository Harness baseline |

@@ -208,6 +208,7 @@ No separate database server is required.
 - Librarian questions and bounded follow-ups use admitted evidence through the configured Gateway model; exact quotations and source versions are checked. Partial reads, conflicts and model failures remain visible. Studio keeps review-only excerpts.
 - Chinese lexical retrieval, bounded long-document continuation, a provider-scoped embedding cache and version-bound Steward findings share the same admission boundary. An opt-in public GitHub directory connector sends updates and withdrawals to Inbox; other SaaS connectors are not implemented.
 - Settings > Models & Providers selects a local EmbeddingGemma model or the configured remote Qwen VL embedding service for project search, with installation, verification, warmup, cancellation and credential refresh. See [embedding lifecycle](docs/dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md).
+- The project vector index offers portable SQLite exact search and library-level LanceDB ANN, with explicit generation switching, source revocation and owner-bound citations. See [vector backends](docs/dev/project-rag/VECTOR-BACKEND-CONTRACT.md).
 - Logs, traces, screenshots, Task Forest state and handoffs are local working data unless explicitly curated.
 
 Local storage does not mean offline execution. Content sent to online models, channels, browsers or external tools reaches those services under their configured credentials and network policy. Keep secrets and private transcripts out of commits and public issue reports.

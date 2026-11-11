@@ -1036,5 +1036,26 @@
       "unavailable": "Unavailable",
       "cancelled": "Cancelled"
     }
+  },
+  "vector": {
+    "title": "Project vector index",
+    "description": "Build a derived vector index from permitted project sources after the embedding model is ready.",
+    "backend": "Index backend",
+    "portable": "Portable exact search",
+    "ann": "Native ANN search",
+    "nativeUnavailable": "Native ANN is unavailable. Portable search can be used instead.",
+    "configure": "Build this index",
+    "rebuild": "Rebuild",
+    "optimize": "Optimize",
+    "disable": "Disable",
+    "status": "Status",
+    "failed": "The vector index is unavailable. Check the selected model and platform capacity.",
+    "states": {
+      "disabled": "Disabled",
+      "building": "Building",
+      "ready": "Ready",
+      "unavailable": "Unavailable",
+      "cancelled": "Cancelled"
+    }
   }
 }

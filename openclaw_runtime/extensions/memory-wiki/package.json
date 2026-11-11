@@ -8,7 +8,9 @@
     "typebox": "1.1.39",
     "yaml": "2.9.0",
     "zod": "4.4.3",
-    "@huggingface/tokenizers": "0.2.0"
+    "@huggingface/tokenizers": "0.2.0",
+    "@lancedb/lancedb": "0.30.0",
+    "apache-arrow": "21.1.0"
   },
   "devDependencies": {
     "@openclaw/plugin-sdk": "workspace:*",

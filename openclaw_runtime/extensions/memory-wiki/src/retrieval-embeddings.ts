@@ -39,6 +39,7 @@ type Saved = {
   identity: MemoryWikiReadIdentity;
   credentialEpoch: number;
   suspended: boolean;
+  space?: EmbeddingSpaceV1;
 };
 type Status = {
   mode: "disabled" | "local" | "remote";
@@ -236,15 +237,35 @@ export function createMemoryWikiEmbeddingService(options: {
           query: "Retrieve relevant documents for the query.\n{text}",
           document: "{text}",
         };
-        // The hosted endpoint exposes no immutable weight revision. A measured
-        // warmup fingerprint identifies this capability generation explicitly.
-        const fingerprint = await provider.embedBatch(
-          ["Project RAG embedding capability query.", "Project RAG embedding capability document."],
-          { inputType: "query", signal },
-        );
-        modelRevision =
-          "provider-unversioned/fingerprint-v1:" +
-          digestOwnerReadContent(JSON.stringify(fingerprint));
+        const previous = selection.space;
+        const canReusePreviousSpace =
+          previous?.providerRef === providerRef &&
+          previous.model === provider.model &&
+          previous.dimensions === (provider.dimensions ?? 4096) &&
+          previous.maxInputTokens === maxInputTokens &&
+          previous.tokenizerId === tokenizer.id &&
+          previous.tokenizerDigest === tokenizer.digest &&
+          previous.inputFormat.id === inputFormat.id &&
+          previous.inputFormat.query === inputFormat.query &&
+          previous.inputFormat.document === inputFormat.document &&
+          previous.normalization === "l2";
+        if (canReusePreviousSpace) {
+          // The provider exposes no immutable weight revision. Persist the
+          // observed capability identity so a restart does not turn a stable
+          // selection into a new vector space when warmup output drifts.
+          modelRevision = previous.modelRevision;
+        } else {
+          const fingerprint = await provider.embedBatch(
+            [
+              "Project RAG embedding capability query.",
+              "Project RAG embedding capability document.",
+            ],
+            { inputType: "query", signal },
+          );
+          modelRevision =
+            "provider-unversioned/fingerprint-v1:" +
+            digestOwnerReadContent(JSON.stringify(fingerprint));
+        }
       }
       signal.throwIfAborted();
       space = createEmbeddingSpace({
@@ -309,8 +330,10 @@ export function createMemoryWikiEmbeddingService(options: {
           space,
         },
       };
+      saved = { ...selection, space };
+      await state().register(key, saved);
       provider = undefined;
-    } catch {
+    } catch (error) {
       await provider?.close?.();
       await session?.close();
       session = undefined;
@@ -321,7 +344,9 @@ export function createMemoryWikiEmbeddingService(options: {
         status: signal.aborted ? "cancelled" : "unavailable",
         error: signal.aborted
           ? "Embedding operation cancelled"
-          : "Embedding initialization failed; verify provider availability, credentials, model artifacts, and resource budgets",
+          : `Embedding initialization failed: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
       };
     }
   };
@@ -329,6 +354,7 @@ export function createMemoryWikiEmbeddingService(options: {
     selection: Selection,
     identity: MemoryWikiReadIdentity,
     replacing = false,
+    resumeSpace?: EmbeddingSpaceV1,
   ) => {
     assertScope(identity, replacing);
     await stop();
@@ -342,6 +368,7 @@ export function createMemoryWikiEmbeddingService(options: {
       identity: structuredClone(identity),
       credentialEpoch: (saved?.credentialEpoch ?? 0) + 1,
       suspended: false,
+      ...(resumeSpace ? { space: resumeSpace } : {}),
     };
     await state().register(key, saved);
     controller = new AbortController();
@@ -364,7 +391,7 @@ export function createMemoryWikiEmbeddingService(options: {
           return;
         }
         try {
-          await activate(previous.selection, previous.identity);
+          await activate(previous.selection, previous.identity, false, previous.space);
         } catch {
           status = {
             mode: previous.selection.mode,
@@ -375,8 +402,17 @@ export function createMemoryWikiEmbeddingService(options: {
         }
       });
     },
-    status(identity: MemoryWikiReadIdentity) {
-      assertScope(identity);
+    status(identity: MemoryWikiReadIdentity): Status {
+      assertScope(identity, true);
+      if (
+        saved &&
+        ["workspaceId", "workspaceDir", "agentSessionKey", "sessionId"].some(
+          (field) =>
+            identity[field as keyof MemoryWikiReadIdentity] !==
+            saved!.identity[field as keyof MemoryWikiReadIdentity],
+        )
+      )
+        return { mode: "disabled" as const, status: "disabled" as const, credentialEpoch: 0 };
       return structuredClone(status);
     },
     configure(selection: Selection, identity: MemoryWikiReadIdentity) {
@@ -425,6 +461,7 @@ export function createMemoryWikiEmbeddingService(options: {
       input: ({ kind: "query"; text: string } | { kind: "document"; sources: SourceRefV2[] }) & {
         expectedSpaceId?: string;
         deadlineAt?: number;
+        signal?: AbortSignal;
       },
     ) {
       assertScope(identity);

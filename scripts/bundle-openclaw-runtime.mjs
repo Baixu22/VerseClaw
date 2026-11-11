@@ -271,9 +271,8 @@ echo`   Skipped ${skippedDevCount} dev-only package references`;
 // Plugin entrypoints resolve bare imports from their package root. A flattened
 // runtime node_modules is not enough for Codex's app-server binary.
 const extensionDependencyPackages = new Map();
-// Keep this list explicit while packaging support is being graduated. Codex is
-// the native-runtime case that needs its dependency tree beside the plugin.
-const PACKAGED_EXTENSION_DEPENDENCY_IDS = new Set(['codex']);
+// Native plugin dependencies retain their owner-local dependency trees.
+const PACKAGED_EXTENSION_DEPENDENCY_IDS = new Set(['codex', 'memory-wiki']);
 for (const extensionDir of listExtensionPackageDirs()) {
   const pluginId = path.basename(extensionDir);
   if (!PACKAGED_EXTENSION_DEPENDENCY_IDS.has(pluginId)) continue;

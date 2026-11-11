@@ -1155,6 +1155,37 @@ export class ProjectionStore {
       };
     }
   }
+  currentChunks(
+    namespaceId: string,
+    offset = 0,
+    limit = 512,
+  ): Array<{ generationId: string; chunk: KnowledgeChunkV2 }> {
+    requiredString(namespaceId, "namespaceId");
+    if (
+      !Number.isSafeInteger(offset) ||
+      offset < 0 ||
+      !Number.isSafeInteger(limit) ||
+      limit < 1 ||
+      limit > 512
+    )
+      throw new Error("Invalid projection chunk page");
+    const database = openOpenClawStateDatabase(this.#database),
+      sql = getNodeSqliteKysely<ProjectionDatabase>(database.db);
+    return executeSqliteQuerySync(
+      database.db,
+      sql
+        .selectFrom("knowledge_index_chunks as c")
+        .innerJoin("knowledge_index_sources as s", "s.source_key", "c.source_key")
+        .selectAll("c")
+        .where("s.namespace_id", "=", namespaceId)
+        .where("s.eligible", "=", 1)
+        .whereRef("s.active_generation_id", "=", "c.generation_id")
+        .orderBy("c.chunk_id")
+        .offset(offset)
+        .limit(limit),
+    ).rows.map((row) => ({ generationId: row.generation_id, chunk: chunkFromRow(row) }));
+  }
+
   cleanup(sourceKey: string): number {
     requiredString(sourceKey, "sourceKey");
     const database = openOpenClawStateDatabase(this.#database);

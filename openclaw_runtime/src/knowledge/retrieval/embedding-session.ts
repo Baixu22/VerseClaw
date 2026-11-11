@@ -39,7 +39,10 @@ type SessionOptions = {
 };
 
 /** Cancel the caller's wait even when an adapter ignores its signal. Late values stay detached. */
-function waitForEmbeddingOperation<T>(operation: Promise<T>, signal: AbortSignal): Promise<T> {
+export function waitForRetrievalOperation<T>(
+  operation: Promise<T>,
+  signal: AbortSignal,
+): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const aborted = () => reject(signal.reason);
     if (signal.aborted) {
@@ -176,7 +179,7 @@ export class KnowledgeEmbeddingSession {
     const read = async (source: SourceRefV2) => {
       signal.throwIfAborted();
       assertCurrentContext();
-      const snapshot = await waitForEmbeddingOperation(this.options.read(source, signal), signal);
+      const snapshot = await waitForRetrievalOperation(this.options.read(source, signal), signal);
       if (snapshot.content.length > 96_000)
         throw new Error("Embedding document exceeds the character budget");
       assertCurrentContext();
@@ -212,7 +215,7 @@ export class KnowledgeEmbeddingSession {
                 ),
               );
         for (const text of texts) {
-          await waitForEmbeddingOperation(
+          await waitForRetrievalOperation(
             checkEmbeddingInputBudget(this.options.space, text, this.options.tokenizer, signal),
             signal,
           );
@@ -235,7 +238,7 @@ export class KnowledgeEmbeddingSession {
         const missing = keys.flatMap((key, index) => (this.cache.has(key) ? [] : [index]));
         job.cacheHits += keys.length - missing.length;
         const fetched = missing.length
-          ? await waitForEmbeddingOperation(
+          ? await waitForRetrievalOperation(
               this.options.provider.embedBatch(
                 missing.map((index) => texts[index]),
                 {

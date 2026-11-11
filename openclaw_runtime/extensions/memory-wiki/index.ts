@@ -11,6 +11,7 @@ import {
 import { createWikiPromptSectionBuilder } from "./src/prompt-section.js";
 import { createMemoryWikiProjectionService } from "./src/retrieval-index.js";
 import { createMemoryWikiEmbeddingService } from "./src/retrieval-embeddings.js";
+import { createMemoryWikiVectorService } from "./src/retrieval/vector-service.js";
 import {
   configureMemoryWikiSourceSyncStateStore,
   createMemoryWikiSourceSyncStateStore,
@@ -62,7 +63,26 @@ export default definePluginEntry({
       start: () => embedding.start(),
       stop: () => embedding.stop(),
     });
-    registerMemoryWikiGatewayMethods({ api, config, appConfig: api.config, projection, embedding });
+    const vector = createMemoryWikiVectorService({
+      config,
+      appConfig: api.config,
+      projection,
+      embedding,
+      openKeyedStore: api.runtime.state.openKeyedStore,
+    });
+    api.registerService({
+      id: "wiki-vector-projection",
+      start: () => vector.start(),
+      stop: () => vector.stop(),
+    });
+    registerMemoryWikiGatewayMethods({
+      api,
+      config,
+      appConfig: api.config,
+      projection,
+      embedding,
+      vector,
+    });
     api.registerTool(createWikiStatusTool(config, api.config), { name: "wiki_status" });
     api.registerTool(createWikiLintTool(config, api.config), { name: "wiki_lint" });
     if (config.tools.allowAgentApply) {
