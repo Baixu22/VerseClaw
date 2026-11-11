@@ -1,6 +1,6 @@
 {
   "schema": "clawx.agent-dev.quality-report.v1",
-  "generatedAt": "2026-11-10T19:00:42.377Z",
+  "generatedAt": "2026-11-11T14:05:36.559Z",
   "success": true,
   "buildReuse": {
     "mode": "reuse",
@@ -11,15 +11,15 @@
     "artifacts": [
       {
         "path": "dist/index.html",
-        "mtimeMs": 1794336564256.1687
+        "mtimeMs": 1794404609590.5771
       },
       {
         "path": "dist-electron/main/index.js",
-        "mtimeMs": 1794336569592.3413
+        "mtimeMs": 1794404616041.223
       },
       {
         "path": "dist-electron/preload/index.js",
-        "mtimeMs": 1794336570117.9292
+        "mtimeMs": 1794404617240.5664
       }
     ],
     "requiredArtifacts": [
@@ -46,23 +46,22 @@
     "budgetStatus": "watch",
     "fastPathModes": [
       "reuse-build",
-      "cached-typecheck"
+      "cached-typecheck",
+      "smoke-e2e"
     ],
     "requiredFullGates": [
       "pnpm run build:vite",
-      "pnpm run typecheck"
+      "pnpm run typecheck",
+      "pnpm test:e2e:agent-dev-quality"
     ],
     "watchSteps": [
-      "typecheck",
-      "contract",
-      "i18n",
-      "harness-agent-dev"
+      "contract"
     ],
     "limitSteps": []
   },
   "unitMode": "full",
   "typecheckMode": "cached",
-  "e2eMode": "full",
+  "e2eMode": "smoke",
   "build": {
     "ok": true,
     "durationMs": 1,
@@ -73,38 +72,23 @@
   },
   "playwright": {
     "ok": true,
-    "durationMs": 23429,
-    "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
+    "durationMs": 12969,
+    "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
     "spec": "tests/e2e/agent-dev-quality.spec.ts",
-    "mode": "full",
-    "expectedTests": 4,
+    "mode": "smoke",
+    "expectedTests": 1,
     "diagnostics": {
       "kind": "playwright",
-      "passed": 4,
-      "reportedDurationMs": 21500,
+      "passed": 1,
+      "reportedDurationMs": 11700,
       "tests": [
         {
-          "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
-          "durationMs": 11600
-        },
-        {
-          "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
-          "durationMs": 11500
-        },
-        {
-          "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
-          "durationMs": 7700
-        },
-        {
           "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
-          "durationMs": 7700
+          "durationMs": 9400
         }
       ]
     },
     "evidence": [
-      "seeded scenario accessibility report",
-      "assistant-ui welcome suggestions visual artifact",
-      "seeded scenario visual artifact",
       "Settings > Developer Agent Dev Workbench host-api record path"
     ]
   }
