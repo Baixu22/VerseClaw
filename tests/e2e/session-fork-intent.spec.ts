@@ -47,7 +47,9 @@ const creationCalls = (calls: Awaited<ReturnType<typeof readSessionChainHostCall
 async function installEntryIdentityReadFault(app: ElectronApplication, sessionKey: string, marker: string) {
   await app.evaluate((_electron, input) => {
     const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
-    type Request = { module?: string; action?: string; payload?: { method?: string; params?: { sessionKey?: string } } };
+    type Request = { module?: string; action?: string; payload?: {
+      method?: string; params?: { sessionKey?: string }; sessionKey?: string;
+    } };
     type Envelope = { ok: boolean; data?: { messages?: Array<Record<string, unknown>> } };
     type Handler = (event: unknown, request: Request) => Promise<Envelope>;
     const handlers = (ipcMain as unknown as { _invokeHandlers: Map<string, Handler> })._invokeHandlers;
@@ -60,19 +62,24 @@ async function installEntryIdentityReadFault(app: ElectronApplication, sessionKe
     ipcMain.removeHandler('host:invoke');
     ipcMain.handle('host:invoke', async (event, request: Request) => {
       const envelope = await original(event, request);
-      if (!envelope.ok || request.module !== 'gateway' || request.action !== 'rpc'
-        || request.payload?.method !== 'chat.history' || request.payload.params?.sessionKey !== input.sessionKey)
-        return envelope;
+      const gatewayRead = request.module === 'gateway' && request.action === 'rpc'
+        && request.payload?.method === 'chat.history' && request.payload.params?.sessionKey === input.sessionKey;
+      const ownerRead = request.module === 'sessions' && request.action === 'history'
+        && request.payload?.sessionKey === input.sessionKey;
+      if (!envelope.ok || (!gatewayRead && !ownerRead)) return envelope;
       const data = envelope.data;
-      if (!Array.isArray(data?.messages)) throw new Error('U3 fault expected the actual chat.history read shape');
-      return { ...envelope, data: { ...data, messages: data.messages.map(message => {
+      if (!Array.isArray(data?.messages)) throw new Error('U3 fault expected the actual session history read shape');
+
+      const messages = data.messages.map(message => {
         if (message.role !== 'user' || !JSON.stringify(message.content).includes(input.marker)) return message;
         state.hits++; state.originalEntry = structuredClone(message);
         const metadata = message.__openclaw && typeof message.__openclaw === 'object'
           ? message.__openclaw as Record<string, unknown> : {};
         const { id: _removedOwnerId, ...rest } = metadata;
         return { ...message, __openclaw: rest };
-      }) } };
+      });
+
+      return { ...envelope, data: { ...data, messages } };
     });
   }, { sessionKey, marker });
 }
@@ -155,6 +162,8 @@ test('U3 rejects question Fork without an assistant ancestor and disables missin
     });
     evidence.readProjectionFault = fault;
     expect(fault.hits).toBeGreaterThan(0);
+    const readFaultRemoved = await removeEntryIdentityReadFault(app);
+    expect(readFaultRemoved?.hits).toBeGreaterThan(0);
     // The sessions owner route bypasses only this gateway-read projection fault; keep it active for the UI assertion.
     const unchanged = await hostInvoke<{ success: boolean; messages?: RawMessage[] }>(app, 'sessions', 'history', {
       sessionKey: project.sessionKey, expectedSessionGeneration: project.generation, limit: 100,
@@ -163,6 +172,7 @@ test('U3 rejects question Fork without an assistant ancestor and disables missin
     expect(getTranscriptEntryId(unchanged.messages!.find(message => message.role === 'user' && text(message).includes('U3_NO_ENTRY'))!)).toBe(secondId);
     expect(await sessionKeys(app)).toEqual(before);
     expect(creationCalls(await readSessionChainHostCalls(app))).toEqual([]);
+    await installEntryIdentityReadFault(app, project.sessionKey, 'U3_NO_ENTRY');
     evidence.locales=[];
     for(const language of ['en','zh','ja','ru']){
       const labels=JSON.parse(await readFile(`shared/i18n/locales/${language}/chat.json`,'utf8'));

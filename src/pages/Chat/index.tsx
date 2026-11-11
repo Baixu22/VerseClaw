@@ -1060,7 +1060,9 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   }, [controlScope]);
   const [composerDraft, setComposerDraft] = useState('');
   const composerDraftRevision = useRef(0);
+  const draftEditedSessionsRef = useRef(new Set<string>());
   const [composerPaused, setComposerPaused] = useState(false);
+  const pauseComposerPendingRef = useRef(false);
   const messageAreaRef = useRef<HTMLDivElement | null>(null);
   const [runActivityExpandedOverrides, setRunActivityExpandedOverrides] = useState<Record<string, boolean>>({});
   const [runActivityStepDetailsExpanded, setRunActivityStepDetailsExpanded] = useState<Record<string, Record<string, boolean>>>({});
@@ -1072,7 +1074,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const captureCurrentWorkspaceSessionState = useCallback((draft = composerDraft): WorkspaceUiState => {
     const previousArtifactPanel = getWorkspaceSessionState(activeWorkspace, currentSessionKey).artifactPanel ?? {};
     return {
-      draftInput: draft,
+      ...(draft || draftEditedSessionsRef.current.has(currentSessionKey) ? { draftInput: draft } : {}),
       composerRunState: composerPaused ? 'paused' : 'idle',
       activeTopicId: null,
       knowledgeScope,
@@ -1489,6 +1491,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   }, [activeWorkspace, currentSessionKey, saveWorkspaceState]);
 
   const handleComposerDraftChange = useCallback((value: string) => {
+    draftEditedSessionsRef.current.add(currentSessionKey);
     composerDraftRevision.current += 1;
     setComposerDraft(value);
     if (!activeWorkspace?.id) return;
@@ -1887,6 +1890,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   useEffect(() => {
     if (!activeWorkspace?.id) return;
     if (!workspaceOwnsSession(activeWorkspace, currentSessionKey)) return;
+    const restored = workspaceStateRestoreRef.current;
+    if (restored.workspaceId !== activeWorkspace.id || restored.sessionKey !== currentSessionKey) return;
     if (skipNextWorkspaceStateSaveRef.current) {
       skipNextWorkspaceStateSaveRef.current = false;
       return;
@@ -2707,16 +2712,22 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const inputRunActive = executionProjection.inputRunActive;
   const hasRunningRuntimeToolStatus = executionProjection.hasRunningRuntimeToolStatus;
   const handlePauseComposerSession = useCallback(async () => {
-    if (!inputRunActive) return;
-    setComposerPaused(true);
-    if (activeWorkspace?.id) {
-      await saveWorkspaceState({
-        id: activeWorkspace.id,
-        sessionKey: currentSessionKey,
-        state: { composerRunState: 'paused' },
-      });
+    if ((!inputRunActive && !useChatStore.getState().sending) || pauseComposerPendingRef.current) return;
+    pauseComposerPendingRef.current = true;
+    try {
+      const stopped = await abortRun();
+      if (!stopped) { setComposerPaused(false); return; }
+      setComposerPaused(true);
+      if (activeWorkspace?.id) {
+        void saveWorkspaceState({
+          id: activeWorkspace.id,
+          sessionKey: currentSessionKey,
+          state: { composerRunState: 'paused' },
+        });
+      }
+    } finally {
+      pauseComposerPendingRef.current = false;
     }
-    await abortRun();
   }, [abortRun, activeWorkspace?.id, currentSessionKey, inputRunActive, saveWorkspaceState]);
 
   const handleResumeComposerSession = useCallback(async () => {
@@ -3406,6 +3417,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       ref={splitContainerRef}
       data-testid="chat-page"
       data-project-workspace={projectWorkspaceId}
+      data-session-generation={currentSession.sessionId}
       className={cn(
         'relative flex min-h-0 overflow-hidden transition-colors duration-180 motion-reduce:transition-none',
         '-m-5 rounded-tl-xl bg-background',

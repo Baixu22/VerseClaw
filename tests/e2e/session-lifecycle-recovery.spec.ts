@@ -261,7 +261,8 @@ test('U5 current-run Stop retries without its old error and reconciles a lost re
   await expect(c.page.getByText('Could not confirm the stop. Refresh the session to check its status.', { exact: true })).toBeVisible();
   await expect(input).toHaveValue('U5 unsent A'); await expect(stop).not.toHaveAttribute('data-send-state', 'paused');
   c.facts.rejection = await fault(c);
-  await input.fill(''); await arm(c, 'chat.abort', 'before'); await stop.focus(); await stop.press('Enter'); await held(c, 'before');
+  await c.page.waitForTimeout(100);
+  await input.fill(''); await expect(stop).toHaveAttribute('data-send-state', 'running'); await arm(c, 'chat.abort', 'before'); await stop.focus(); await stop.press('Enter'); await held(c, 'before');
   await expect(c.page.getByTestId('chat-error')).toHaveCount(0);
   await expect(stop).not.toHaveAttribute('data-send-state', 'paused');
   await input.fill('U5 unsent A'); await release(c, 'pass');

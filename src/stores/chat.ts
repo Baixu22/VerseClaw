@@ -4737,10 +4737,10 @@ export const useChatStore = create<ChatState>((set, get, api) => {
         set({ error: String(err), sending });
         toast.warning(i18n.t('chat:composer.abortFailed'));
       }
-      return;
+      return false;
     }
 
-    if (!stopConfirmed) return;
+    if (!stopConfirmed) return false;
 
     // Use the Gateway's acknowledged run identity; retain a result that arrived
     // while the abort request was pending.
@@ -4757,7 +4757,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
         && getCachedSessionRunState(currentSessionKey).activeRunId === activeRunId) {
         captureSessionRunState(currentSessionKey, DEFAULT_SESSION_RUN_STATE);
       }
-      return;
+      return true;
     }
     // Release all in-flight UI/run resources (P5-004 A3).
     set({
@@ -4772,6 +4772,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       streamingTools: [],
     });
     captureSessionRunState(currentSessionKey, DEFAULT_SESSION_RUN_STATE);
+    return true;
   },
 
   // ── Handle incoming chat events from Gateway ──

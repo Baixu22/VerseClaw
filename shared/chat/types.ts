@@ -333,7 +333,7 @@ export interface ChatState {
    * run-finalization paths that clear `sending`.
    */
   drainPendingMessages: () => void;
-  abortRun: () => Promise<void>;
+  abortRun: () => Promise<boolean>;
   handleChatEvent: (event: Record<string, unknown>) => void;
   handleRuntimeEvent: (event: ChatRuntimeEvent) => void;
   refresh: () => Promise<void>;

@@ -43,7 +43,7 @@ async function reading(page: Page, wantedKey?: string) {
       .map(row => ({ row, box: row.getBoundingClientRect(), marker: row.innerText.match(/U2-READ-\d{2}/)?.[0] }));
     const found = key
       ? rows.find(item => item.row.dataset.viewportKey === key)
-      : rows.find(item => item.marker && item.box.top >= viewport.top + 8 && item.box.top < viewport.bottom - 60);
+      : rows.find(item => item.marker && item.box.bottom > viewport.top + 8 && item.box.top < viewport.bottom - 60);
     return {
       top: scroller.scrollTop, height: scroller.clientHeight,
       bottomGap: scroller.scrollHeight - scroller.clientHeight - scroller.scrollTop,
@@ -284,7 +284,7 @@ test('U2 background child creation, failure and completion preserve parent selec
     evidence.newChildOwner = childOwner;
     // Existing rows keep their geometry during pointer/keyboard interaction.
     // New membership is published on leaving the list; owner execution continues.
-    await expect(disclosure).toContainText('3');
+    await expect(disclosure.locator('xpath=..').locator('.session-family__count')).toHaveText('3');
     const successRun = await send(app, project.workspaceId, successChild, 'U2_CHILD_SUCCESS');
     await expect.poll(() => successRequested).toBeGreaterThan(0);
     releaseSuccess();

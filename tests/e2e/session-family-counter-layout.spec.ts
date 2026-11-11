@@ -25,7 +25,7 @@ test('family counters keep a separate visible area from the title at 2, 20 and 1
           const sidebar = page.getByTestId('sidebar-collapse-toggle');
           if (await sidebar.getAttribute('aria-label') === 'Expand sidebar') await sidebar.click();
           const toggle = page.getByTestId(`session-family-toggle-${project.sessionKey}`);
-          await expect(toggle).toContainText(String(count)); await toggle.scrollIntoViewIfNeeded();
+          await expect(toggle.locator('xpath=..').locator('.session-family__count')).toHaveText(String(count)); await toggle.scrollIntoViewIfNeeded();
           const sample = await toggle.evaluate(element => {
             const row = element.closest('.ws-family-row')!;
             const title = row.querySelector('.task-title__clip')!;
