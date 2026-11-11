@@ -11,7 +11,19 @@ ownedPaths:
   - .gitignore
   - .gitattributes
   - harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json
+  - harness/specs/fixtures/harness-codex-active-verification/acceptance.json
+  - harness/specs/fixtures/harness-codex-active-verification/SHA256SUMS
+  - artifacts/agent-dev-workbench/evidence.json
+  - artifacts/agent-dev-deep-test/history.json
+  - artifacts/agent-dev-deep-test/report.json
+  - artifacts/agent-dev-deep-test/report.md
+  - artifacts/agent-dev-quality/report.json
+  - openclaw_runtime/extensions/amazon-bedrock-mantle/npm-shrinkwrap.json
+  - openclaw_runtime/extensions/amazon-bedrock/npm-shrinkwrap.json
+  - openclaw_runtime/extensions/diagnostics-otel/npm-shrinkwrap.json
   - tests/unit/channels-page.test.tsx
+  - scripts/lib/agent-engineering-acceptance.mjs
+  - docs/dev/handoffs/CODING-VG-STS-JJ-RELAY-20261111-01A1BE4A.md
   - scripts/coding-evaluation/package-evaluation.py
   - scripts/coding-evaluation/final_evaluation.py
   - scripts/coding-evaluation/verify_final_evaluation.py
@@ -47,7 +59,19 @@ touchedAreas:
   - .gitignore
   - .gitattributes
   - harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json
+  - harness/specs/fixtures/harness-codex-active-verification/acceptance.json
+  - harness/specs/fixtures/harness-codex-active-verification/SHA256SUMS
+  - artifacts/agent-dev-workbench/evidence.json
+  - artifacts/agent-dev-deep-test/history.json
+  - artifacts/agent-dev-deep-test/report.json
+  - artifacts/agent-dev-deep-test/report.md
+  - artifacts/agent-dev-quality/report.json
+  - openclaw_runtime/extensions/amazon-bedrock-mantle/npm-shrinkwrap.json
+  - openclaw_runtime/extensions/amazon-bedrock/npm-shrinkwrap.json
+  - openclaw_runtime/extensions/diagnostics-otel/npm-shrinkwrap.json
   - tests/unit/channels-page.test.tsx
+  - scripts/lib/agent-engineering-acceptance.mjs
+  - docs/dev/handoffs/CODING-VG-STS-JJ-RELAY-20261111-01A1BE4A.md
   - scripts/coding-evaluation/package-evaluation.py
   - scripts/coding-evaluation/final_evaluation.py
   - scripts/coding-evaluation/verify_final_evaluation.py
