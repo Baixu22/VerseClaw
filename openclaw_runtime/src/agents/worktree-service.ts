@@ -559,7 +559,7 @@ export function createWorktreeService(
     writer: id => checkoutWriterSnapshot(id === null ? resolved : findRecord(id).root),
     withFrozenWorktrees: (workers, freeze) => withWorktreeLock(resolved, () =>
       withCheckoutMaintenance([baseBasis(), ...workers.map(worker => basisFor(findRecord(worker.worktreeId, worker.worktreeGeneration)))], "freeze", freeze, () => {
-        assertWorktreeIndexVisible(resolved);
+        if (backend === 'git') assertWorktreeIndexVisible(resolved);
         for (const worker of workers) {
           const record = findRecord(worker.worktreeId, worker.worktreeGeneration);
           if (record.backend === 'git') assertWorktreeIndexVisible(record.root);
