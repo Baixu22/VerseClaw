@@ -553,9 +553,7 @@ function SessionFolderTreeInner({
           ) : row.originKey ? (
             <>
               <CornerDownRight className="session-family__connector" aria-hidden="true" />
-              {relation?.kind !== 'unknown' && (
-                <span className="ws-family-kind" title={t(`chat:sessionFamily.kind.${relation?.kind ?? 'unknown'}`)}><Icon /></span>
-              )}
+              <span className="ws-family-kind" title={t(`chat:sessionFamily.kind.${relation?.kind ?? 'unknown'}`)}><Icon /></span>
             </>
           ) : relation?.kind !== 'unknown' || row.sourceStatus === 'source-unavailable' ? (
             <span className="ws-family-kind" title={t(`chat:sessionFamily.kind.${relation?.kind ?? 'unknown'}`)}><Icon /></span>

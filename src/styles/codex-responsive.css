@@ -41,11 +41,7 @@
     gap: 0;
   }
 
-  /* Lineage chips keep their icon and source name; the relation word goes
-   * first because the tooltip still carries it. */
-  .session-family-nav__kind {
-    display: none;
-  }
+  .session-family-nav__name { max-width: 112px; }
 }
 
 @container chat-toolbar (max-width: 560px) {
@@ -98,6 +94,10 @@
     display: none;
   }
   .chat-header-session-label { max-width: 100px; }
+  .session-family-nav__name { max-width: 72px; }
+}
+
+@container chat-toolbar (max-width: 320px) {
   .session-family-nav__name { display: none; }
 }
 
