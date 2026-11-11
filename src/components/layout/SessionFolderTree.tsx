@@ -20,7 +20,6 @@ import {
   Check,
   X,
   ChevronRight,
-  ChevronDown,
   GitFork,
   CornerDownRight,
   Bot,
@@ -510,12 +509,19 @@ function SessionFolderTreeInner({
   ]);
 
   const toRenderedRows = useCallback((rows: LineageRow[]): RenderedSessionRow[] => {
-    return rows.map((row) => {
+    const childrenByOrigin = new Map<string, LineageRow[]>();
+    for (const row of rows) {
+      if (!row.originKey) continue;
+      const children = childrenByOrigin.get(row.originKey) ?? [];
+      children.push(row);
+      childrenByOrigin.set(row.originKey, children);
+    }
+    const renderRow = (row: LineageRow) => {
       const { entry, relation } = row;
       const key = entry.session.key;
+      if (!visibleKeys.has(key)) return null;
       const count = familyCounts.get(key) ?? 0;
       const expanded = expandedFamilies[key] === true;
-      const visible = visibleKeys.has(key);
       const Icon = relation?.kind === 'fork' ? GitFork : relation?.kind === 'spawn' ? Bot : CornerDownRight;
       const toggle = (open = !expanded) => {
         if (open) setInteractionOrder(current => {
@@ -532,22 +538,48 @@ function SessionFolderTreeInner({
         });
         setExpandedFamilies(current => ({ ...current, [key]: open }));
       };
-      return { entry, rendered: visible ? (
-        <div key={key} className="ws-family-row" data-lineage-depth={row.lineageDepth} data-source-status={row.sourceStatus}>
+      return (
+        <div key={key} className={cn('ws-family-row', count > 0 && 'session-family__parent', row.originKey && 'session-family__child')}
+          data-lineage-depth={row.lineageDepth} data-source-status={row.sourceStatus}
+          data-parent-session={row.originKey ? relation?.parentSessionKey : undefined}>
           {count > 0 ? (
-            <button type="button" className="ws-family-toggle" data-testid={`session-family-toggle-${key}`}
+            <button type="button" className="session-family__toggle" data-testid={`session-family-toggle-${key}`}
               aria-expanded={expanded} aria-label={t('chat:sessionFamily.toggle', { count })}
               onClick={() => toggle()} onKeyDown={(event) => {
                 if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); toggle(event.key === 'ArrowRight'); }
               }}>
-              {expanded ? <ChevronDown /> : <ChevronRight />}<span>{count}</span>
+              <ChevronRight aria-hidden="true" /><span>{count}</span>
             </button>
+          ) : row.originKey ? (
+            <>
+              <CornerDownRight className="session-family__connector" aria-hidden="true" />
+              {relation?.kind !== 'unknown' && (
+                <span className="ws-family-kind" title={t(`chat:sessionFamily.kind.${relation?.kind ?? 'unknown'}`)}><Icon /></span>
+              )}
+            </>
           ) : relation?.kind !== 'unknown' || row.sourceStatus === 'source-unavailable' ? (
             <span className="ws-family-kind" title={t(`chat:sessionFamily.kind.${relation?.kind ?? 'unknown'}`)}><Icon /></span>
           ) : null}
           {renderDraggableSession(entry)}
         </div>
-      ) : null };
+      );
+    };
+    return rows.map((row) => {
+      const key = row.entry.session.key;
+      // Keep every entry for group counts, but render each descendant once under its existing origin.
+      if (row.originKey) return { entry: row.entry, rendered: null };
+      const children = childrenByOrigin.get(key);
+      if (!children?.length) return { entry: row.entry, rendered: renderRow(row) };
+      const visibleChildren = children.filter((child) => visibleKeys.has(child.entry.session.key));
+      if (!visibleKeys.has(key)) return { entry: row.entry, rendered: null };
+      return { entry: row.entry, rendered: (
+        <div key={key} className="session-family" data-hook-static data-testid={`sidebar-session-family-${key}`}>
+          {renderRow(row)}
+          {expandedFamilies[key] === true && visibleChildren.length > 0 && (
+            <div className="session-family__children">{visibleChildren.map(renderRow)}</div>
+          )}
+        </div>
+      ) };
     });
   }, [expandedFamilies, renderDraggableSession, visibleKeys, t, familyCounts, liveRowGroups]);
 

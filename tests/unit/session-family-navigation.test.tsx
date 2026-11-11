@@ -44,7 +44,7 @@ describe('family navigation', () => {
     expect(screen.getByText('Child')).toBeVisible();
     expect(Array.from(view.container.querySelectorAll('[data-order-key]')).map(row => row.getAttribute('data-order-key')))
       .toEqual(['parent', 'child', 'other']);
-    fireEvent.keyDown(toggle, { key: 'ArrowLeft' });
+    fireEvent.keyDown(screen.getByTestId('session-family-toggle-parent'), { key: 'ArrowLeft' });
     expect(screen.queryByText('Child')).not.toBeInTheDocument();
   });
   it('keeps interacted rows ordered while live status and child counts update', () => {
@@ -120,7 +120,8 @@ it('does not show a late Task Ledger response from another project', async () =>
   view.rerender(<MemoryRouter><TaskLedgerSummaryPanel workspaceId="workspace-b" session={sessions[0]} mode="bar" /></MemoryRouter>);
   await waitFor(() => expect(screen.getByTestId('session-task-container')).toHaveAttribute('data-state', 'ready'));
   fireEvent.click(screen.getByTestId('session-tasks-toggle'));
-  expect(screen.getByText('Task B')).toBeVisible();
+  // The scope list is an anchored popover, shown once it is measured.
+  await waitFor(() => expect(screen.getByText('Task B')).toBeVisible());
   await act(async () => { resolveFirst({ success: true, snapshot: ledger('Task A') }); });
   expect(screen.queryByText('Task A')).not.toBeInTheDocument();
   expect(screen.getByTestId('session-task-ledger-open')).toHaveAttribute('href', '/task-ledger?workspaceId=workspace-b&sessionKey=parent');

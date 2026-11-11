@@ -71,7 +71,7 @@ describe('resolveWorkspaceSessionTarget', () => {
     });
   });
 
-  it('creates a fresh workspace-scoped session when the current agent has no binding', async () => {
+  it('restores the selected conversation even without an agent binding', async () => {
     vi.spyOn(Date, 'now').mockReturnValue(12345);
     vi.spyOn(Math, 'random').mockReturnValue(0.123456);
     const { resolveWorkspaceSessionTarget } = await import('@/pages/Chat');
@@ -82,13 +82,21 @@ describe('resolveWorkspaceSessionTarget', () => {
       agentBindings: {},
     }), 'main')).toEqual({
       agentId: 'main',
-      sessionKey: 'agent:main:session-12345-4fzyo8',
-      isFresh: true,
+      sessionKey: 'agent:main:a-session',
+      isFresh: false,
     });
   });
 });
 
 describe('resolveWorkspaceHeaderSessions', () => {
+  it('keeps the current conversation and more than twelve searchable entries', async () => {
+    const { resolveWorkspaceHeaderSessions } = await import('@/pages/Chat');
+    const sessions = Array.from({ length: 20 }, (_, index) => ({ key: `agent:main:item-${index}`, updatedAt: index }));
+    const result = resolveWorkspaceHeaderSessions({ currentSessionKey: sessions[0].key, workspaceSessionKeys: sessions.map((session) => session.key), sessions });
+    expect(result).toHaveLength(20);
+    expect(result[0].key).toBe(sessions[0].key);
+    expect(result[1].key).toBe(sessions[19].key);
+  });
   it('only shows sessions that belong to the active workspace and current agent', async () => {
     const { resolveWorkspaceHeaderSessions } = await import('@/pages/Chat');
 
@@ -104,8 +112,8 @@ describe('resolveWorkspaceHeaderSessions', () => {
     });
 
     expect(result.map((session) => session.key)).toEqual([
-      'agent:main:workspace-b-older',
       'agent:main:workspace-b',
+      'agent:main:workspace-b-older',
     ]);
   });
 

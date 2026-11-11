@@ -79,7 +79,7 @@ import { CalendarDays, FileText, Inbox as CodexInbox, Laptop, ListChecks, PenLin
 import { toast } from 'sonner';
 import i18n from 'i18next';
 import { useSessionIntentStore } from '@/stores/session-intent';
-import { activateWorkspaceScopedSession, createFreshWorkspaceSessionKey, createWorkspaceScopedForkSession } from '@/lib/workspace-session';
+import { activateWorkspaceScopedSession, activateWorkspaceSession, createFreshWorkspaceSessionKey, createWorkspaceScopedForkSession } from '@/lib/workspace-session';
 
 interface NavItemProps {
   to: string;
@@ -587,7 +587,6 @@ export function Sidebar() {
     runError: s.runError,
     startupPhase: s.startupPhase,
   })));
-  const switchSession = useChatStore((s) => s.switchSession);
   const deleteSession = useChatStore((s) => s.deleteSession);
   const archiveSession = useChatStore((s) => s.archiveSession);
   const restoreSession = useChatStore((s) => s.restoreSession);
@@ -852,13 +851,12 @@ export function Sidebar() {
     const workspace = findWorkspaceForSession(sessionKey);
     try {
       if (workspace) return await activateWorkspaceScopedSession(workspace.id, sessionKey);
-      switchSession(sessionKey);
-      return true;
+      return await activateWorkspaceSession(sessionKey);
     } catch {
       toast.error(i18n.t('chat:projectEntry.unavailable'));
       return false;
     }
-  }, [findWorkspaceForSession, switchSession]);
+  }, [findWorkspaceForSession]);
 
   const updateSessionListState = useCallback((sessionKey: string, patch: WorkspaceSessionListState) => {
     const workspace = findWorkspaceForSession(sessionKey);
@@ -985,11 +983,11 @@ export function Sidebar() {
    * session, then park a one-shot intent the chat page picks up once the switch
    * has landed (src/stores/session-intent.ts).
    */
-  const handleHandoffSessionFromMenu = useCallback((sessionKey: string) => {
+  const handleHandoffSessionFromMenu = useCallback(async (sessionKey: string) => {
+    if (currentSessionKey !== sessionKey && !await selectSidebarSession(sessionKey)) return;
     requestSessionIntent('handoff', sessionKey);
-    if (currentSessionKey !== sessionKey) switchSession(sessionKey);
     navigate('/');
-  }, [currentSessionKey, navigate, requestSessionIntent, switchSession]);
+  }, [currentSessionKey, navigate, requestSessionIntent, selectSidebarSession]);
 
   /**
    * Archive is reversible (Settings › Archived, or the toast's Undo), so it is a

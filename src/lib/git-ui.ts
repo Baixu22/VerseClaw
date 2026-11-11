@@ -55,3 +55,14 @@ export function formatRelativeTime(timestamp: number | undefined, locale?: strin
     return new Date(timestamp).toLocaleDateString();
   }
 }
+
+/**
+ * `git worktree list` always reports the main checkout first; any later entry
+ * is a linked worktree. True when `path` is one of those linked entries.
+ */
+export function isLinkedWorktreePath(
+  worktrees: ReadonlyArray<{ path: string }>,
+  path: string | null | undefined,
+): boolean {
+  return worktrees.some((worktree, index) => index > 0 && pathEquals(worktree.path, path));
+}

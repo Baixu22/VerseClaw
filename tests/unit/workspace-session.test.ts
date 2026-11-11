@@ -8,6 +8,7 @@ const chatState = vi.hoisted(() => ({
   resetSessionView: vi.fn(),
   switchSession: vi.fn(),
   loadSessions: vi.fn(),
+  sessions: [] as Array<{ key: string; parentSessionKey?: string }>,
 }));
 
 const workspaceState = vi.hoisted(() => ({
@@ -106,6 +107,7 @@ describe('workspace session helpers', () => {
     chatState.currentAgentId = 'reviewer';
     chatState.currentSessionKey = 'agent:reviewer:old';
     chatState.viewRevision = 1;
+    chatState.sessions = [];
     workspaceState.activeWorkspace = {
       ...baseWorkspace,
       id: 'workspace-a',
@@ -114,6 +116,13 @@ describe('workspace session helpers', () => {
     };
     workspaceState.activeWorkspaceId = 'workspace-a';
     workspaceState.profiles = [workspaceState.activeWorkspace];
+    workspaceState.switchWorkspace.mockImplementation(async (id: string) => {
+      const target = workspaceState.profiles.find((profile) => (profile as { id: string }).id === id) as typeof workspaceState.activeWorkspace | undefined;
+      if (!target) return null;
+      workspaceState.activeWorkspaceId = id;
+      workspaceState.activeWorkspace = target;
+      return target;
+    });
     chatState.switchSession.mockImplementation((key: string) => { chatState.currentSessionKey = key; chatState.viewRevision += 1; });
     hostApiMock.workspaces.saveState.mockImplementation(async (payload: { sessionKey?: string; state?: Record<string, unknown> }) => {
       if (payload.sessionKey && payload.state) workspaceState.activeWorkspace.sessionStates = {
@@ -205,6 +214,102 @@ describe('workspace session helpers', () => {
     await expect(created).resolves.toBeNull();
     expect(chatState.currentSessionKey).toBe('agent:reviewer:old');
     expect(chatState.resetSessionView).not.toHaveBeenCalled();
+  });
+
+  it('activates the owning workspace before loading the selected transcript', async () => {
+    const { activateWorkspaceSession } = await import('@/lib/workspace-session');
+    const target = { ...baseWorkspace, id: 'workspace-b', activeSessionKey: 'agent:reviewer:recent', sessionStates: { 'agent:reviewer:selected': {} } };
+    workspaceState.profiles = [target];
+    await expect(activateWorkspaceSession('agent:reviewer:selected')).resolves.toBe(true);
+    expect(workspaceState.switchWorkspace).toHaveBeenCalledWith('workspace-b');
+    expect(hostApiMock.workspaces.saveState).toHaveBeenCalledWith({ id: 'workspace-b', activeSessionKey: 'agent:reviewer:selected', sessionKey: 'agent:reviewer:selected' });
+    expect(chatState.switchSession).toHaveBeenCalledWith('agent:reviewer:selected');
+    expect(workspaceState.switchWorkspace.mock.invocationCallOrder[0]).toBeLessThan(hostApiMock.workspaces.saveState.mock.invocationCallOrder[0]);
+    expect(hostApiMock.workspaces.saveState.mock.invocationCallOrder[0]).toBeLessThan(chatState.switchSession.mock.invocationCallOrder[0]);
+  });
+
+  it('keeps the original transcript when workspace activation fails', async () => {
+    const { activateWorkspaceSession } = await import('@/lib/workspace-session');
+    workspaceState.profiles = [{ ...baseWorkspace, id: 'workspace-b', activeSessionKey: 'agent:reviewer:target' }];
+    workspaceState.switchWorkspace.mockRejectedValueOnce(new Error('workspace offline'));
+    await expect(activateWorkspaceSession('agent:reviewer:target')).rejects.toThrow('workspace offline');
+    expect(chatState.switchSession).not.toHaveBeenCalled();
+    expect(workspaceState.saveWorkspaceState).not.toHaveBeenCalled();
+  });
+
+  it('settles a rapid sequence on the newest requested conversation', async () => {
+    const { activateWorkspaceSession } = await import('@/lib/workspace-session');
+    workspaceState.profiles = [];
+    expect(await Promise.all([activateWorkspaceSession('first'), activateWorkspaceSession('latest')])).toEqual([false, true]);
+    expect(chatState.switchSession.mock.calls).toEqual([['latest']]);
+  });
+
+  it('associates an unfiled child with its recorded parent before opening it', async () => {
+    const { activateWorkspaceSession } = await import('@/lib/workspace-session');
+    workspaceState.activeWorkspace = { ...baseWorkspace, activeSessionKey: 'parent', sessionStates: { parent: { draftInput: 'parent draft' } } } as never;
+    workspaceState.profiles = [workspaceState.activeWorkspace];
+    chatState.sessions = [{ key: 'child', parentSessionKey: 'parent' }, { key: 'parent' }];
+    await expect(activateWorkspaceSession('child')).resolves.toBe(true);
+    expect(hostApiMock.workspaces.saveState).toHaveBeenCalledWith({ id: 'workspace-a', activeSessionKey: 'child', sessionKey: 'child', state: {} });
+    expect(workspaceState.activeWorkspace).toMatchObject({ activeSessionKey: 'child', sessionStates: { parent: { draftInput: 'parent draft' }, child: {} } });
+    expect(chatState.switchSession).toHaveBeenCalledWith('child');
+  });
+
+  it('keeps an explicitly filed child in its own worktree', async () => {
+    const { activateWorkspaceSession } = await import('@/lib/workspace-session');
+    workspaceState.profiles = [{ ...baseWorkspace, activeSessionKey: 'parent' }, { ...baseWorkspace, id: 'workspace-b', activeSessionKey: 'child' }];
+    chatState.sessions = [{ key: 'child', parentSessionKey: 'parent' }];
+    await expect(activateWorkspaceSession('child')).resolves.toBe(true);
+    expect(workspaceState.switchWorkspace).toHaveBeenCalledExactlyOnceWith('workspace-b');
+    expect(workspaceState.saveWorkspaceState).toHaveBeenCalledWith({ id: 'workspace-b', activeSessionKey: 'child', sessionKey: 'child' });
+  });
+
+  it.each(['legacy', 'scoped'] as const)('shares the newest intent when the first navigation uses the %s entry', async (firstEntry) => {
+    const { activateWorkspaceSession, activateWorkspaceScopedSession } = await import('@/lib/workspace-session');
+    const target = { ...baseWorkspace, id: 'workspace-b', activeSessionKey: 'agent:reviewer:target' };
+    workspaceState.profiles = [workspaceState.activeWorkspace, target];
+    const first = firstEntry === 'legacy' ? activateWorkspaceSession(target.activeSessionKey)
+      : activateWorkspaceScopedSession(target.id, target.activeSessionKey);
+    const latest = firstEntry === 'legacy' ? activateWorkspaceScopedSession('workspace-a', 'agent:reviewer:old')
+      : activateWorkspaceSession('agent:reviewer:old');
+    expect(await Promise.all([first, latest])).toEqual([false, true]);
+    expect(workspaceState.switchWorkspace).not.toHaveBeenCalled();
+    expect(chatState.switchSession.mock.calls).toEqual([['agent:reviewer:old']]);
+  });
+
+  it('prefers the saved active session when reopening the same agent in a worktree', async () => {
+    const { getWorkspaceAgentSessionKey } = await import('@/lib/workspace-session');
+    expect(getWorkspaceAgentSessionKey({ ...baseWorkspace, activeSessionKey: 'agent:reviewer:recent' } as never, 'reviewer'))
+      .toEqual({ sessionKey: 'agent:reviewer:recent', isFresh: false });
+  });
+
+  it('resolves an explicit coordinator-only child before following its parent', async () => {
+    const { activateWorkspaceSession, workspaceOwnsSession } = await import('@/lib/workspace-session');
+    const target = { ...baseWorkspace, id: 'workspace-b', activeSessionKey: 'agent:reviewer:other', agentBindings: {},
+      coordinatorBindings: { 'agent:reviewer:child': { workspaceId: 'workspace-b', agentId: 'reviewer', sessionKey: 'agent:reviewer:child' } } };
+    workspaceState.profiles = [workspaceState.activeWorkspace, target];
+    chatState.sessions = [{ key: 'agent:reviewer:child', parentSessionKey: 'agent:reviewer:old' }];
+    expect(workspaceOwnsSession(target as never, 'agent:reviewer:child')).toBe(true);
+    await expect(activateWorkspaceSession('agent:reviewer:child')).resolves.toBe(true);
+    expect(workspaceState.switchWorkspace).toHaveBeenCalledExactlyOnceWith('workspace-b');
+  });
+
+  it.each(['cycle', 'missing'] as const)('does not infer workspace ownership from a %s parent chain', async (kind) => {
+    const { activateWorkspaceSession } = await import('@/lib/workspace-session');
+    chatState.sessions = kind === 'cycle' ? [{ key: 'child', parentSessionKey: 'parent' }, { key: 'parent', parentSessionKey: 'child' }]
+      : [{ key: 'child', parentSessionKey: 'absent' }];
+    await expect(activateWorkspaceSession('child')).resolves.toBe(true);
+    expect(workspaceState.switchWorkspace).not.toHaveBeenCalled();
+    expect(workspaceState.saveWorkspaceState).not.toHaveBeenCalled();
+    expect(chatState.switchSession).toHaveBeenCalledWith('child');
+  });
+
+  it('keeps explicit scoped selection strict when only a parent belongs to the workspace', async () => {
+    const { activateWorkspaceScopedSession } = await import('@/lib/workspace-session');
+    chatState.sessions = [{ key: 'child', parentSessionKey: 'agent:reviewer:old' }];
+    await expect(activateWorkspaceScopedSession('workspace-a', 'child')).rejects.toThrow('SESSION_WORKSPACE_ASSOCIATION_MISSING');
+    expect(workspaceState.saveWorkspaceState).not.toHaveBeenCalled();
+    expect(chatState.switchSession).not.toHaveBeenCalled();
   });
 
   it('creates new sessions inside the active workspace and current agent binding', async () => {
