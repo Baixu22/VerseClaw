@@ -1,7 +1,7 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import type { ElectronApplication } from '@playwright/test';
 import type { TaskView } from '../../shared/task-system/types';
-import { configureSessionChainProvider, createSessionChainTask } from './fixtures/session-task-chain';
+import { configureSessionChainProvider, createSessionChainProject, createSessionChainTask } from './fixtures/session-task-chain';
 import { startScriptedLlm } from './fixtures/fp-p1-harness';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 
@@ -16,7 +16,6 @@ test.afterEach(async () => {
 
 type HostResponse<T> = { ok: boolean; data?: T; error?: { code?: string; message?: string } };
 type GatewayStatus = { state?: string; gatewayReady?: boolean };
-type CreatedSession = { key?: string; sessionKey?: string; entry?: { sessionId?: string } };
 type LedgerSnapshot = { snapshot: { nodes: Array<{ id: string; title: string; status: string }> } };
 type BindingResult = {
   success: boolean;
@@ -119,19 +118,6 @@ async function ensureGatewayReady(app: ElectronApplication): Promise<void> {
   throw new Error('Gateway did not become ready for delegation admission E2E');
 }
 
-async function activeWorkspace(app: ElectronApplication): Promise<{ id: string; rootPath: string }> {
-  const active = await hostInvoke<{ activeWorkspace?: { id?: string; rootPath?: string }; id?: string; rootPath?: string }>(
-    app,
-    'workspaces',
-    'getActive',
-  );
-  const workspace = active.activeWorkspace ?? active;
-  if (!workspace.id || !workspace.rootPath) throw new Error('Active workspace is incomplete');
-  await mkdir(workspace.rootPath, { recursive: true });
-  await hostInvoke(app, 'workspaces', 'update', { id: workspace.id, permissionMode: 'fullAccess' });
-  return { id: workspace.id, rootPath: workspace.rootPath };
-}
-
 test('delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts', async ({ launchElectronApp }, testInfo) => {
   test.setTimeout(360_000);
   const provider = await startScriptedLlm(() => ({ text: 'Delegation review recorded for task verification.' }));
@@ -151,33 +137,12 @@ test('delegates through the real Host, Gateway, scheduler, and role-spawn owners
   try {
     await getStableWindow(first);
     await configureSessionChainProvider(first, provider.port);
-    await ensureGatewayReady(first);
-    const workspace = await activeWorkspace(first);
-    workspaceId = workspace.id;
-    rootPath = workspace.rootPath;
-    const created = await hostInvoke<CreatedSession>(first, 'gateway', 'rpc', {
-      method: 'sessions.create',
-      params: { agentId: 'main', label: `delegation-${Date.now()}` },
-      timeoutMs: 60_000,
-    });
-    sessionKey = created.key ?? created.sessionKey ?? '';
-    if (!sessionKey) throw new Error('sessions.create returned no key');
-    sessionGeneration = created.entry?.sessionId ?? '';
-    if (!sessionGeneration) {
-      const described = await hostInvoke<{ session?: { sessionId?: string } }>(first, 'gateway', 'rpc', {
-        method: 'sessions.describe',
-        params: { key: sessionKey },
-        timeoutMs: 30_000,
-      });
-      sessionGeneration = described.session?.sessionId ?? '';
-    }
-    if (!sessionGeneration) throw new Error('Coordinator session has no generation');
-    await hostInvoke(first, 'workspaces', 'update', {
-      id: workspaceId,
-      agentId: 'main',
-      activeSessionKey: sessionKey,
-      sessionKey,
-    });
+    const project = await createSessionChainProject(first, testInfo.outputPath('workspace'), 'Delegation admission');
+    workspaceId = project.workspaceId;
+    rootPath = project.rootPath;
+    sessionKey = project.sessionKey;
+    sessionGeneration = project.generation;
+    expect(sessionGeneration).toBeTruthy();
     const managedTask = await createSessionChainTask(first, workspaceId, `delegation-task-${Date.now()}`, {
       objective: 'Exercise long-session delegation admission',
       target: 'docs/delegation-note.md',

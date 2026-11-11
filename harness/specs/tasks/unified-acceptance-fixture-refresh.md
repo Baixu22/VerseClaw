@@ -41,7 +41,7 @@ expectedUserBehavior:
 acceptance:
   - All original 73 aggregate Electron cases are retained, with failures and skipped cases reported separately.
   - Positive context and Handoff fixtures provide a current session generation and verify the scoped request.
-  - Delegation fixtures create and claim a real task before admission and preserve restart, rejection and completion-batch assertions.
+  - Delegation fixtures create and claim a real task in an isolated project before admission and preserve restart, rejection and completion-batch assertions.
   - Archive fixtures identify a real assigned workspace; delete transport failures reuse the persisted operationId.
   - Visual fixtures wait for measured viewport dimensions; response-loss injection occurs only after committed Handoff creation.
   - Continuation verifies the public run-terminal receipt and a successful tool receipt before Handoff; missing or rejected effects cannot count as success.

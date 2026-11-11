@@ -1,6 +1,5 @@
 import type { ElectronApplication } from '@playwright/test';
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
-import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
@@ -178,13 +177,13 @@ test('real Host and Gateway archive/restore preserves history and rotates the ph
     await closeElectronApp(app);
   }
 });
-test('real Host and Gateway owner receipts reclaim a generation-scoped terminal and preserve archive', async ({ launchElectronApp, homeDir }, testInfo) => {
+test('real Host and Gateway owner receipts reclaim a generation-scoped terminal and preserve archive', async ({ launchElectronApp }, testInfo) => {
   test.setTimeout(240_000);
   const app = await launchElectronApp({ skipSetup: true });
   try {
     await getStableWindow(app);
     await ensureGatewayReady(app);
-    const workloadRoot = join(homeDir, 'resource-workload');
+    const workloadRoot = testInfo.outputPath('resource-workload');
     await mkdir(workloadRoot, { recursive: true });
     await hostInvoke(app, 'workspaces', 'create', {
       name: 'E2 resource workload',

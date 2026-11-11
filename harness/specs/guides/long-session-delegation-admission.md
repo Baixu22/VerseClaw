@@ -84,7 +84,7 @@ The C2 fixture directory contains the curated E2E receipt and the permission/iso
 harness/specs/fixtures/long-session-development/c2/
 ```
 
-The built Electron E2E uses isolated `userData` and run roots, launches actual Main/Gateway/runtime owners, verifies the child session, repeats the same admission within the owner and after restart, and checks stale-generation rejection.
+The built Electron E2E uses isolated project directories, task authorities, `userData` and run roots, launches actual Main/Gateway/runtime owners, verifies the child session, repeats the same admission within the owner and after restart, and checks stale-generation rejection.
 ## Completion batches
 
 The session activity owner derives a read-only completion batch from the persisted subagent registry rows that share one `orchestrationRunId`. A batch remains `collecting` until every expected worker is terminal. It then produces one deterministic consolidated receipt ID and counts completed, failed, cancelled, and unknown workers separately. Delivery remains owned by the existing durable subagent delivery state, so a pending or suspended intent is never reported as delivered.
