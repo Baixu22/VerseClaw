@@ -86,6 +86,7 @@ acceptance:
   - Memory relevance uses the current query without rendering that query as task-state content; callers that explicitly supply task state retain their existing display behavior.
   - Explicit Knowledge configuration enables plugin loading and the memory-wiki entry while preserving the existing allowlist, denylist, unrelated entries and source-runtime defaults.
   - Knowledge setup evaluates the intended state through the runtime activation policy and returns a failure without writing configuration when existing policy blocks memory-wiki; slot precedence remains runtime-owned.
+  - Knowledge search normalizes the runtime's result array into the host results field, preserves role ranking, and exposes those rows to context routing and retrieval diagnostics.
 docs:
   required: true
   files:

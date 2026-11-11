@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
-import { writeFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import type { ElectronApplication } from '@playwright/test';
 import { closeElectronApp, expect, test } from './fixtures/electron';
 import {
@@ -128,6 +129,7 @@ async function waitForAssistantText(
 test.describe('TF-0582 product matrix memory acceptance', () => {
   test('accepted workspace memory reaches the next real chat while rejected and cross-session memory stay out', async ({
     launchElectronApp,
+    userDataDir,
   }, testInfo) => {
     test.setTimeout(300_000);
 
@@ -476,6 +478,18 @@ test.describe('TF-0582 product matrix memory acceptance', () => {
         : String(error);
     } finally {
       if (app) {
+        try {
+          const sessionKey = (evidence.workspace as { sessionKey?: string } | undefined)?.sessionKey;
+          if (sessionKey) {
+            evidence.finalInjectionReadback = await hostInvoke(app, 'gateway', 'rpc', {
+              method: 'memory.explainInjection', params: { sessionKey, roleName: 'main', limit: 20 }, timeoutMs: 15_000,
+            });
+          }
+          const discarded = await readFile(join(userDataDir, 'openclaw-source-state', 'context-discards.jsonl'), 'utf8');
+          evidence.contextDiscards = discarded.split(/\r?\n/).filter(Boolean).map(line => JSON.parse(line));
+        } catch (error) {
+          evidence.diagnosticReadError = String(error);
+        }
         try {
           await hostInvoke(app, 'gateway', 'stop');
         } catch (error) {

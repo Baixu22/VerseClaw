@@ -17,6 +17,10 @@ const filesystemInstance = (pathname: string) => {
   return `${stat.dev}:${stat.ino}:${stat.birthtimeNs}`;
 };
 
+function ownerRequestId(prefix: string, sessionKey: string): string {
+  return `${prefix}:${sessionKey}`;
+}
+
 for (const journey of ['navigation', 'controls', 'isolation'] as const) {
 test(`a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (${journey})`, async ({ launchElectronApp }, testInfo) => {
   test.setTimeout(420_000);
@@ -85,10 +89,11 @@ test(`a real delegated worker receives its own task, reports separately and acce
     if (journey === 'isolation') expect(secondAgent).toBeTruthy();
     const project = await createSessionChainProject(app, testInfo.outputPath('workspace'), 'Worker project');
     const rpc = <T,>(method: string, params: Record<string, unknown>) => hostInvoke<T>(app, 'gateway', 'rpc', { method, params, timeoutMs: 60_000 });
-    const taskContract: TaskContractInput = { objective: 'Verify a delegated task', target: 'worker.txt', constraints: ['Preserve the project coordinator'],
-      acceptance: [{ id: 'worker-artifact', description: 'Exact assigned output', verification: { kind: 'file-sha256',
-        path: 'worker.txt', sha256: createHash('sha256').update('agent-driven worker result\n').digest('hex') } }] };
-    const rootTask = await createSessionChainTask(app, project.workspaceId, 'worker-root-task', taskContract);
+    const rootRequestId = ownerRequestId('worker-root-task', project.sessionKey);
+    const taskContract: TaskContractInput = { objective: 'Verify a delegated task', target: 'worker.txt', businessKey: rootRequestId,
+      constraints: ['Preserve the project coordinator'], acceptance: [{ id: 'worker-artifact', description: 'Exact assigned output',
+        verification: { kind: 'file-sha256', path: 'worker.txt', sha256: createHash('sha256').update('agent-driven worker result\n').digest('hex') } }] };
+    const rootTask = await createSessionChainTask(app, project.workspaceId, rootRequestId, taskContract);
     const rootId = rootTask.contract.taskNodeId;
     await hostInvoke(app, 'taskLedger', 'linkSession', { workspaceId: project.workspaceId, sessionKey: project.sessionKey,
       sessionGeneration: project.generation, nodeId: rootId, agentId: 'main' });
@@ -97,12 +102,12 @@ test(`a real delegated worker receives its own task, reports separately and acce
       taskLedgerNodeIds: [rootId], environment: { kind: 'local', rootPath: project.rootPath }, archiveRestorePolicy: 'restore',
     });
     const rootClaim = await hostInvoke<{ result: TaskView }>(app, 'taskLedger', 'command', {
-      workspaceId: project.workspaceId, command: { action: 'claim', taskNodeId: rootId, sessionKey: project.sessionKey, requestId: 'worker-root-claim' },
+      workspaceId: project.workspaceId, command: { action: 'claim', taskNodeId: rootId, sessionKey: project.sessionKey, requestId: ownerRequestId('worker-root-claim', project.sessionKey) },
     });
     Object.assign(evidence, { project, initialBinding: binding, rootClaim });
     expect(rootClaim.result, JSON.stringify(rootClaim)).toBeDefined();
     const plan = await hostInvoke<{ result: TaskView[] }>(app, 'taskLedger', 'command', { workspaceId: project.workspaceId,
-      command: { action: 'decompose', credential: rootClaim.result.claim, requestId: 'worker-plan',
+      command: { action: 'decompose', credential: rootClaim.result.claim, requestId: ownerRequestId('worker-plan', project.sessionKey),
         children: [{ key: 'worker-output', contract: { ...taskContract, objective: 'Produce the assigned worker artifact' } }] } });
     const task = { id: plan.result[0].contract.taskNodeId, title: plan.result[0].contract.objective };
     const workerBinding = await hostInvoke<WorkspaceCoordinatorBindingResult>(app, 'workspaces', 'bindCoordinator', {
@@ -110,7 +115,7 @@ test(`a real delegated worker receives its own task, reports separately and acce
       taskLedgerNodeIds: [task.id], environment: { kind: 'local', rootPath: project.rootPath }, archiveRestorePolicy: 'restore',
     });
     await hostInvoke(app, 'taskLedger', 'command', { workspaceId: project.workspaceId,
-      command: { action: 'claim', taskNodeId: task.id, sessionKey: project.sessionKey, requestId: 'worker-task-claim' } });
+      command: { action: 'claim', taskNodeId: task.id, sessionKey: project.sessionKey, requestId: ownerRequestId('worker-task-claim', project.sessionKey) } });
     await hostInvoke(app, 'taskLedger', 'linkSession', { workspaceId: project.workspaceId, sessionKey: project.sessionKey,
       sessionGeneration: project.generation, nodeId: task.id, agentId: 'main' });
     const models = await hostInvoke<{ defaultModelRef: string }>(app, 'agents', 'list');
@@ -323,8 +328,9 @@ test(`a real delegated worker receives its own task, reports separately and acce
     const second = await rpc<{ key: string; sessionId: string }>('sessions.create', { agentId: secondAgent.id, label: 'Independent coordinator' });
     await hostInvoke(app, 'workspaces', 'saveState', { id: project.workspaceId, sessionKey: second.key, state: {} });
     await hostInvoke(app, 'workspaces', 'update', { id: project.workspaceId, agentId: secondAgent.id, sessionKey: second.key, activeSessionKey: second.key });
-    const secondContract = await createSessionChainTask(app, project.workspaceId, 'observer-task', {
-      ...taskContract, objective: 'Independent coordinator task', target: 'Read the recorded transcript',
+    const observerRequestId = ownerRequestId('observer-task', second.key);
+    const secondContract = await createSessionChainTask(app, project.workspaceId, observerRequestId, {
+      ...taskContract, objective: 'Independent coordinator task', target: 'Read the recorded transcript', businessKey: observerRequestId,
     });
     const secondTask = { id: secondContract.contract.taskNodeId, title: secondContract.contract.objective };
     await hostInvoke(app, 'taskLedger', 'linkSession', { workspaceId: project.workspaceId, sessionKey: second.key,
@@ -334,7 +340,7 @@ test(`a real delegated worker receives its own task, reports separately and acce
       taskLedgerNodeIds: [secondTask.id], environment: { kind: 'local', rootPath: project.rootPath }, archiveRestorePolicy: 'restore',
     });
     await hostInvoke(app, 'taskLedger', 'command', { workspaceId: project.workspaceId,
-      command: { action: 'claim', taskNodeId: secondTask.id, sessionKey: second.key, requestId: 'observer-task-claim' } });
+      command: { action: 'claim', taskNodeId: secondTask.id, sessionKey: second.key, requestId: ownerRequestId('observer-task-claim', second.key) } });
     const observerOwnerBefore = await hostInvoke<{ task: TaskView }>(app, 'taskLedger', 'sessionTask', {
       workspaceId: project.workspaceId, sessionKey: second.key });
     held = false;
@@ -465,8 +471,9 @@ for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
     try {
       await configureSessionChainProvider(app, llm.port);
       const project = await createSessionChainProject(app, testInfo.outputPath('accepted-worker-workspace'), 'Accepted worker');
-      const task = await createSessionChainTask(app, project.workspaceId, 'accepted-worker-task', {
-        objective: 'Produce and verify the worker artifact', target: 'accepted.txt', constraints: ['Preserve the coordinator'],
+      const acceptedTaskRequestId = ownerRequestId('accepted-worker-task', project.sessionKey);
+      const task = await createSessionChainTask(app, project.workspaceId, acceptedTaskRequestId, {
+        objective: 'Produce and verify the worker artifact', target: 'accepted.txt', businessKey: acceptedTaskRequestId, constraints: ['Preserve the coordinator'],
         acceptance: [{ id: 'file', description: 'Exact worker artifact', verification: { kind: 'file-sha256', path: 'accepted.txt', sha256: hash } },
           { id: 'owner', description: 'Existing verifier accepts the evidence', verification: { kind: 'owner-receipt', owner: 'evidence-verifier', requires: ['file'] } }],
       });
@@ -475,7 +482,7 @@ for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
         taskLedgerNodeIds: [task.contract.taskNodeId], environment: { kind: 'local', rootPath: project.rootPath }, archiveRestorePolicy: 'restore',
       });
       await hostInvoke(app, 'taskLedger', 'command', { workspaceId: project.workspaceId,
-        command: { action: 'claim', taskNodeId: task.contract.taskNodeId, sessionKey: project.sessionKey, requestId: 'accepted-worker-claim' } });
+        command: { action: 'claim', taskNodeId: task.contract.taskNodeId, sessionKey: project.sessionKey, requestId: ownerRequestId('accepted-worker-claim', project.sessionKey) } });
       const admitted = await hostInvoke<SessionDelegationResult>(app, 'sessions', 'delegate', {
         workspaceId: project.workspaceId, sessionKey: project.sessionKey, agentId: 'main', taskRef: task.contract.taskNodeId,
         expectedBindingRevision: binding.binding!.bindingRevision, expectedSessionGeneration: project.generation,
@@ -639,12 +646,13 @@ test('a child writes under the canonical transfer while its parent turn remains 
   const target = testInfo.outputPath('active-parent-workspace', 'child.txt');
   let started = false, spawned = false, wrote = false, parentHeld = false, childHeld = false;
   let releaseParent = () => {}, releaseChild = () => {};
+  let activeParentRequestId = '';
   const llm = await startScriptedLlm(async text => {
     if (text.includes('ACTIVE-PARENT-DELEGATE')) {
       if (!started) {
         started = true;
-        return { toolCall: { id: 'active-parent-task', name: 'task_control', args: { action: 'start', requestId: 'active-parent-task',
-          contract: { objective: 'Produce the delegated child artifact', target: 'child.txt', constraints: ['Preserve the parent turn'],
+        return { toolCall: { id: 'active-parent-task', name: 'task_control', args: { action: 'start', requestId: activeParentRequestId,
+          contract: { objective: 'Produce the delegated child artifact', target: 'child.txt', businessKey: activeParentRequestId, constraints: ['Preserve the parent turn'],
             acceptance: [{ id: 'child-artifact', description: 'Exact child output', verification: { kind: 'file-sha256',
               path: 'child.txt', sha256: createHash('sha256').update('active-parent child result\n').digest('hex') } }] } } } };
       }
@@ -674,6 +682,7 @@ test('a child writes under the canonical transfer while its parent turn remains 
   try {
     await configureSessionChainProvider(app, llm.port);
     const project = await createSessionChainProject(app, testInfo.outputPath('active-parent-workspace'), 'Active parent');
+    activeParentRequestId = ownerRequestId('active-parent-task', project.sessionKey);
     const receipt = await hostInvoke(app, 'chat', 'sendWithMedia', { workspaceId: project.workspaceId, sessionKey: project.sessionKey,
       message: 'ACTIVE-PARENT-DELEGATE', idempotencyKey: 'active-parent-turn' });
     await expect.poll(() => parentHeld && childHeld, { timeout: 90_000 }).toBe(true);

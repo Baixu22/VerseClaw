@@ -1220,6 +1220,41 @@ describe('knowledge host API', () => {
     expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
   });
 
+  it('normalizes runtime search arrays for search and context routing', async () => {
+    const rows = [{
+      corpus: 'wiki', path: 'sources/imported.md', title: 'Imported project knowledge',
+      kind: 'source', snippet: 'The imported project fact.', score: 0.9,
+    }];
+    const gatewayManager = { rpc: vi.fn(async () => rows) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    const result = await api.search({ query: 'imported project knowledge', corpus: 'wiki' });
+    expect(result.success).toBe(true);
+    expect(result.results).toEqual(rows);
+    expect(result).not.toHaveProperty('0');
+    expect(result.retrievalDiagnostics).toMatchObject({ resultCount: 1, selectedCount: 1 });
+    const routed = await api.routeContext({
+      message: 'Find the imported project knowledge', scope: 'wiki', mode: 'suggest',
+    });
+    expect(routed).toMatchObject({
+      success: true, decision: 'suggest', candidates: [{ lookup: 'sources/imported.md' }],
+    });
+  });
+
+  it('ranks runtime search arrays by role while retaining other matches', async () => {
+    const rows = [
+      { path: 'sources/other.md', title: 'Other role', score: 0.9, roleTags: ['reviewer'] },
+      { path: 'sources/main.md', title: 'Main role', score: 0.8, roleTags: ['main'] },
+    ];
+    const gatewayManager = { rpc: vi.fn(async () => rows) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    const result = await api.search({ query: 'project knowledge', corpus: 'wiki', roleTag: 'main' });
+    expect(result.results?.map(row => row.path)).toEqual(['sources/main.md', 'sources/other.md']);
+    expect(result.retrievalDiagnostics).toMatchObject({ resultCount: 2, selectedCount: 2 });
+    expect(result).not.toHaveProperty('0');
+  });
+
   it('adds retrieval diagnostics to search without replacing legacy results', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {

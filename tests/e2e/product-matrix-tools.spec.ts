@@ -175,7 +175,7 @@ test('TF-0582 VerseShell starts, reads input, exits, and cancels through the pro
   const toolOutputs: Array<{ id: string; content: string }> = [];
   const positivePolls: string[] = [];
   const cancelPolls: string[] = [];
-  let phase = 'start';
+  let phase = 'task-start';
   let positiveSessionId = '';
   let positivePid: number | null = null;
   let cancelSessionId = '';
@@ -209,7 +209,39 @@ test('TF-0582 VerseShell starts, reads input, exits, and cancels through the pro
       return content;
     };
 
-    if (phase === 'start') {
+    if (phase === 'task-start') {
+      phase = 'task-claim';
+      return call('vstaskstart', 'task_control', {
+        action: 'start',
+        requestId: 'vstaskstart',
+        contract: {
+          objective: 'Exercise the real VerseShell background process owner',
+          target: workspace,
+          constraints: [
+            'Use the product task claim before process side effects',
+            'Keep the fixture processes inside its workspace',
+          ],
+          acceptance: [{
+            id: 'process-owner',
+            description: 'The fixture exercises process start, poll, write, and kill',
+            verification: {
+              kind: 'owner-receipt',
+              owner: 'verseshell.process-owner',
+              requires: ['process.start', 'process.poll', 'process.write', 'process.kill'],
+              files: ['interactive.js', 'hold.js'],
+            },
+          }],
+        },
+      });
+    }
+
+    if (phase === 'task-claim') {
+      const content = remember('vstaskstart');
+      const task = asRecord(parsedResult(results, 'vstaskstart'));
+      const claim = asRecord(task?.claim);
+      if (!claim?.taskNodeId || !claim.sessionKey || !claim.generation) {
+        throw new Error(`task_control.start did not return an execution claim: ${content}`);
+      }
       phase = 'positive-start';
       return call('vsstart', 'exec', {
         command: 'node interactive.js',
@@ -462,7 +494,7 @@ test('TF-0582 Tool Search expands a real schema and rejects absent or denied too
     messages: ScriptedLlmRequest['messages'];
   }> = [];
   const toolOutputs: Array<{ id: string; content: string }> = [];
-  let phase = 'search';
+  let phase = 'task-start';
   let searchedProcess: Record<string, unknown> | undefined;
   let describedSchema: Record<string, unknown> | undefined;
   let missingRefusal = '';
@@ -484,6 +516,47 @@ test('TF-0582 Tool Search expands a real schema and rejects absent or denied too
       if (content) toolOutputs.push({ id, content });
       return content;
     };
+
+    if (phase === 'task-start') {
+      phase = 'task-claim';
+      return {
+        toolCall: {
+          id: 'tstaskstart',
+          name: 'task_control',
+          args: {
+            action: 'start',
+            requestId: 'tstaskstart',
+            contract: {
+              objective: 'Expand a process tool schema and verify denied tool boundaries',
+              target: '.',
+              constraints: [
+                'Use the product task claim before implicit tool-search dispatch',
+                'Treat absent and denied tools as refusals',
+              ],
+              acceptance: [{
+                id: 'tool-search-contract',
+                description: 'Tool Search expands process and rejects absent or denied tools',
+                verification: {
+                  kind: 'owner-receipt',
+                  owner: 'openclaw.tool-search',
+                  requires: ['search', 'describe', 'call'],
+                  files: ['.'],
+                },
+              }],
+            },
+          },
+        },
+      };
+    }
+
+    if (phase === 'task-claim') {
+      const task = asRecord(parsedResult(results, 'tstaskstart'));
+      const claim = asRecord(task?.claim);
+      if (!claim?.taskNodeId || !claim.sessionKey || !claim.generation) {
+        throw new Error(`task_control.start did not return an execution claim: ${results['tstaskstart']}`);
+      }
+      phase = 'search';
+    }
 
     if (phase === 'search') {
       phase = 'describe';

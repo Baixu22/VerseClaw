@@ -2972,6 +2972,8 @@ function shouldRouteKnowledge(message: string, scope: 'none' | 'memory' | 'wiki'
 }
 
 function getRouteSearchRows(value: unknown): Record<string, unknown>[] {
+  // memory-wiki returns an array; host projections require named result rows.
+  if (Array.isArray(value)) return value.filter(isRecord);
   const record = isRecord(value) ? value : {};
   const results = record.results;
   if (Array.isArray(results)) return results.filter(isRecord) as Record<string, unknown>[];
@@ -3893,20 +3895,21 @@ export function createKnowledgeApi({
         const roleTag = typeof body.roleTag === 'string' ? body.roleTag.trim() : undefined;
         const corpus = body.corpus === 'memory' || body.corpus === 'all' || body.corpus === 'wiki' ? body.corpus : 'wiki';
         const mode = typeof body.mode === 'string' && body.mode ? body.mode : 'keyword';
-        const result = await rpc<Record<string, unknown>>('wiki.search', {
+        const result = await rpc<unknown>('wiki.search', {
           query,
           maxResults: clampPositiveInt(body.maxResults, 10, 50),
           corpus,
           ...(mode !== 'keyword' ? { mode } : {}),
         }, 30_000);
         const rows = getRouteSearchRows(result);
+        const response = isRecord(result) ? result : {};
         // Area 5 §3.4 — best-effort ranking shaping. Compiled wiki pages may
         // carry `roleTags` forward from their source drafts; when present and
         // a roleTag filter was requested, results matching the tag rank first.
         // Results without roleTags metadata remain visible (ranking-only).
-        if (roleTag && Array.isArray(result.results)) {
+        if (roleTag) {
           const ranked = rankByRoleTag(
-            (result.results as Array<Record<string, unknown>>).map((entry) => ({
+            rows.map((entry) => ({
               ...entry,
               roleTags: Array.isArray((entry as { roleTags?: unknown }).roleTags)
                 ? ((entry as { roleTags: unknown[] }).roleTags as string[])
@@ -3916,7 +3919,7 @@ export function createKnowledgeApi({
           );
           return {
             success: true,
-            ...result,
+            ...response,
             results: ranked,
             retrievalDiagnostics: buildRetrievalDiagnostics({
               query,
@@ -3929,7 +3932,8 @@ export function createKnowledgeApi({
         }
         return {
           success: true,
-          ...result,
+          ...response,
+          results: rows,
           retrievalDiagnostics: buildRetrievalDiagnostics({
             query,
             corpus,

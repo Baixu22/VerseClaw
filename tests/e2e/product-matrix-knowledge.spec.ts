@@ -193,6 +193,7 @@ test('Matrix knowledge imports, indexes, searches, cites, and deletes through is
       maxFiles: 1,
       maxBytesPerFile: 16 * 1024,
     });
+    evidence.imported = imported;
     expect(imported).toMatchObject({ success: true, imported: 1, failed: 0, truncated: false });
     const importedItem = imported.items.find(item => item.inputPath === sourcePath);
     expect(importedItem).toMatchObject({ title, created: true });
@@ -203,6 +204,7 @@ test('Matrix knowledge imports, indexes, searches, cites, and deletes through is
     await expect(access(sourcePageAbsolutePath)).resolves.toBeUndefined();
 
     const compiled = await hostInvoke<KnowledgeCompileResult>(runningApp, 'knowledge', 'compile');
+    evidence.compiled = compiled;
     expect(compiled.success).toBe(true);
     const rootIndexPath = join(vaultPath, 'index.md');
     const sourceIndexPath = join(vaultPath, 'sources', 'index.md');
@@ -226,6 +228,7 @@ test('Matrix knowledge imports, indexes, searches, cites, and deletes through is
       maxResults: 10,
       corpus: 'wiki',
     });
+    evidence.searchBeforeDelete = search;
     expect(search.success).toBe(true);
     const searchRow = (search.results ?? []).find(row => JSON.stringify(row).includes(marker));
     expect(searchRow).toBeTruthy();

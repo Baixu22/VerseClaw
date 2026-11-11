@@ -3,18 +3,17 @@ import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
-import { closeElectronApp, expect, test } from './fixtures/electron';
+import { expect, test } from './fixtures/electron';
 
 const execFileAsync = promisify(execFile);
 const binaryPath = join(process.cwd(), 'resources/bin/win32-x64/ae.exe');
 const tempRoot = process.env.VERSEGIT_E3_TMP_ROOT ?? (process.platform === 'win32' ? 'D:/tmp' : tmpdir());
 
 test.describe('verified candidate host apply', () => {
-  test('runs completion, candidate verification, permission gate and journaled apply in order', async ({ launchElectronApp }) => {
+  test('runs completion, candidate verification, permission gate and journaled apply in order', async () => {
     test.skip(!existsSync(binaryPath), 'requires the qualified ae.exe');
     const root = mkdtempSync(join(tempRoot, 'versegit-e3-e2e-'));
     const reportPath = join(root, 'report.json');
-    const app = await launchElectronApp({ skipSetup: true });
     try {
       await execFileAsync(process.execPath, [
         join(process.cwd(), 'openclaw_runtime/node_modules/tsx/dist/cli.mjs'),
@@ -62,7 +61,6 @@ test.describe('verified candidate host apply', () => {
         vg_landing_authority: false,
       });
     } finally {
-      await closeElectronApp(app);
       rmSync(root, { recursive: true, force: true, maxRetries: 8, retryDelay: 50 });
     }
   });

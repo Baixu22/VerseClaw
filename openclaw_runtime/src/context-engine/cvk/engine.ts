@@ -140,6 +140,19 @@ function formatPromptAddition(params: {
   });
   const toolNames = activeToolNames(params.input);
   const diagnostics = toolGateDiagnostics(params.artifact, toolNames, params.toolCallGateMode);
+  const requiredSelectors = toolNames.flatMap((toolName) =>
+    collectRequiredToolSelectors(params.artifact, RUNTIME_TOOLSET_RESOURCE_ID, toolName),
+  );
+  // Navigation needs one resolvable example per family, not a second copy of
+  // every tool field and project-rule line already available to the runtime.
+  const selectorExamples = requiredSelectors.filter((entry, index, all) =>
+    all.findIndex((candidate) => candidate.family === entry.family) === index,
+  );
+  const diagnosticCounts: Record<string, number> = {};
+  for (const diagnostic of diagnostics) {
+    const key = `${diagnostic.severity}:${diagnostic.family}`;
+    diagnosticCounts[key] = (diagnosticCounts[key] ?? 0) + 1;
+  }
   const lines = [
     ...(params.contextStatusLines ?? []),
     "[Context Runtime Kit]",
@@ -154,11 +167,13 @@ function formatPromptAddition(params: {
       .slice(0, 40)
       .map(
         (entry) =>
-          `- ${entry.resourceId} (${entry.kind}): ${entry.title}; compact=${entry.compactViewAvailable}; hints=${entry.triggerHints.slice(0, 6).join(", ")}`,
+          `- ${entry.resourceId} (${entry.kind}): ${entry.kind === "project_rule" ? entry.title.replaceAll("\\", "/").split("/").at(-1) : entry.title}; compact=${entry.compactViewAvailable}`,
       ),
     "",
     "compact selectors:",
+    "Project rules remain in the supplied context files; expand their registered selectors for exact references.",
     ...viewProjection.compactViews
+      .filter((view) => view.kind === "skill")
       .slice(0, 30)
       .flatMap((view) => [
         `- ${view.resourceId}: ${view.title}`,
@@ -166,20 +181,13 @@ function formatPromptAddition(params: {
       ]),
     "",
     "required tool selectors:",
-    ...toolNames.flatMap((toolName) =>
-      collectRequiredToolSelectors(params.artifact, RUNTIME_TOOLSET_RESOURCE_ID, toolName).map(
-        (required) => `- ${toolName} ${required.family}: ${required.selector}`,
-      ),
+    `${toolNames.length} tools; ${requiredSelectors.length} required selectors. Examples by family; expand all required selectors before a gated call:`,
+    ...selectorExamples.map(
+      (required) => `- ${required.family}: ${required.selector} ${params.artifact.selectorIndex[RUNTIME_TOOLSET_RESOURCE_ID]?.[required.selector]?.checksum}`,
     ),
     "",
     "diagnostics:",
-    ...(diagnostics.length > 0
-      ? diagnostics
-          .slice(0, 60)
-          .map(
-            (diagnostic) => `- ${diagnostic.severity} ${diagnostic.family}: ${diagnostic.selector}`,
-          )
-      : ["- none"]),
+    formatCountMap(diagnosticCounts),
   ];
   return boundedLines(lines, params.maxChars);
 }
