@@ -34,6 +34,7 @@ C2 does not introduce another executor, scheduler, Task Ledger writer, or role r
 - the C1 coordinator binding is active and ready;
 - the caller's binding revision and session generation still match;
 - `taskRef` is present in the binding;
+- when the workspace has managed task storage, the task has a live claim owned by the same session and physical generation;
 - the existing Gateway permission owner authorizes the call;
 - the backend is `subagent`;
 - the requested worker role exists.
@@ -54,6 +55,8 @@ An expired or revoked approval is not cached as authority. A retry after the per
 - bounded process and subagent/background-terminal facts.
 
 An accepted child uses `runState: "accepted-not-completed"` and `completionObserved: false`. A successful spawn receipt is acceptance evidence only. Completion must arrive later from the existing subagent completion owner.
+
+Claiming a managed task puts it in `doing`. Spawn acknowledgement and worker completion preserve the separate business-task acceptance checks.
 
 A role missing either the child session key or child run ID is rejected even if the lower spawn layer said `accepted`.
 

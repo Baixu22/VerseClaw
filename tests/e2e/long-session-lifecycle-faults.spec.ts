@@ -121,6 +121,14 @@ test('real Host and Gateway archive/restore preserves history and rotates the ph
         : sessionsBeforeCreate.sessions?.find((session) => typeof session.key === 'string')?.key;
     if (!createdKey) throw new Error(`sessions.create returned no usable key: ${JSON.stringify(created)}`);
     expect(createdKey).toMatch(/^agent:main:/);
+    const workspaceRoot = testInfo.outputPath('lifecycle-workspace');
+    await mkdir(workspaceRoot, { recursive: true });
+    const workspace = await hostInvoke<{ activeWorkspace: { id: string } }>(app, 'workspaces', 'create', {
+      name: 'Lifecycle history fixture', rootPath: workspaceRoot, agentId: 'main',
+      activeSessionKey: createdKey, permissionMode: 'fullAccess',
+    });
+    const workspaceId = workspace.activeWorkspace.id;
+    expect(workspaceId).toBeTruthy();
     const before = sessionsBeforeCreate.sessions?.find((session) => session.key === createdKey) ??
       (await listSessions(app)).sessions?.find((session) => session.key === createdKey);
     expect(before?.sessionId).toBeTruthy();
@@ -131,7 +139,7 @@ test('real Host and Gateway archive/restore preserves history and rotates the ph
 
     const archived = await hostInvoke<{ success: boolean; error?: string }>(app, 'sessions', 'archive', {
       id: createdKey,
-      originalWorkspaceId: 'workspace-e2e',
+      originalWorkspaceId: workspaceId,
     });
     expect(archived.success, archived.error).toBe(true);
 
@@ -141,7 +149,7 @@ test('real Host and Gateway archive/restore preserves history and rotates the ph
     expect(archivedIndex.entries).toEqual(expect.arrayContaining([
       expect.objectContaining({
         sessionKey: createdKey,
-        originalWorkspaceId: 'workspace-e2e',
+        originalWorkspaceId: workspaceId,
       }),
     ]));
     const archivePath = archivedIndex.entries.find(entry => entry.sessionKey === createdKey)!.transcriptPath;
@@ -209,6 +217,9 @@ test('real Host and Gateway owner receipts reclaim a generation-scoped terminal 
         ? created.sessionKey
         : null;
     if (!sessionKey) throw new Error(`sessions.create returned no key: ${JSON.stringify(created)}`);
+    await hostInvoke(app, 'workspaces', 'update', {
+      id: workspaceId, activeSessionKey: sessionKey, sessionKey, agentId: 'main',
+    });
 
     const listed = await listSessions(app);
     const sessionId = listed.sessions?.find((session) => session.key === sessionKey)?.sessionId;
@@ -328,7 +339,7 @@ test('real Host and Gateway owner receipts reclaim a generation-scoped terminal 
       resourceReclamation?: { action: string; recoveryRequired: boolean; keptOnLeave: number };
     }>(app, 'sessions', 'archive', {
       id: sessionKey,
-      originalWorkspaceId: 'workspace-e2e',
+      originalWorkspaceId: workspaceId,
     });
     expect(archived.success, archived.error).toBe(true);
     expect(archived.resourceReclamation?.action).toBe('session-archive');

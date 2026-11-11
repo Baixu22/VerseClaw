@@ -654,7 +654,16 @@ test.describe('Verse Claw chat session handoff', () => {
   test('keeps the editable draft and session when creation rejects changed ancestry', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
     try {
-      await installIpcMocks(app, { hostApi: baseHostApiMocks(), gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true } });
+      await installIpcMocks(app, {
+        gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        gatewayRpc: {
+          [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
+            success: true,
+            result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'main-generation', displayName: 'main' }] },
+          },
+        },
+        hostApi: baseHostApiMocks(),
+      });
       await app.evaluate(() => {
         const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
         const original = (ipcMain as unknown as { _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>> })._invokeHandlers?.get('host:invoke');
@@ -669,6 +678,7 @@ test.describe('Verse Claw chat session handoff', () => {
       });
       const page = await getStableWindow(app);
       await page.reload();
+      await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', 'main-generation', { timeout: 30_000 });
       await expect(page.getByTestId('chat-project-session-header')).toBeVisible({ timeout: 30_000 });
       await page.getByTestId('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click();
       await page.getByTestId('chat-session-handoff').click();

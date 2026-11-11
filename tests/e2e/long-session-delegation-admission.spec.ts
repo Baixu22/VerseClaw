@@ -1,6 +1,18 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import type { ElectronApplication } from '@playwright/test';
+import type { TaskView } from '../../shared/task-system/types';
+import { configureSessionChainProvider, createSessionChainTask } from './fixtures/session-task-chain';
+import { startScriptedLlm } from './fixtures/fp-p1-harness';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
+
+let scriptedProvider: Awaited<ReturnType<typeof startScriptedLlm>> | undefined;
+test.afterEach(async () => {
+  const provider = scriptedProvider;
+  scriptedProvider = undefined;
+  if (!provider) return;
+  provider.server.closeAllConnections();
+  await new Promise<void>((resolve) => provider.server.close(() => resolve()));
+});
 
 type HostResponse<T> = { ok: boolean; data?: T; error?: { code?: string; message?: string } };
 type GatewayStatus = { state?: string; gatewayReady?: boolean };
@@ -122,6 +134,8 @@ async function activeWorkspace(app: ElectronApplication): Promise<{ id: string; 
 
 test('delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts', async ({ launchElectronApp }, testInfo) => {
   test.setTimeout(360_000);
+  const provider = await startScriptedLlm(() => ({ text: 'Delegation review recorded for task verification.' }));
+  scriptedProvider = provider;
   const first = await launchElectronApp({ skipSetup: true });
   let workspaceId: string;
   let rootPath: string;
@@ -136,6 +150,7 @@ test('delegates through the real Host, Gateway, scheduler, and role-spawn owners
   let taskLedgerStatusAfter: string;
   try {
     await getStableWindow(first);
+    await configureSessionChainProvider(first, provider.port);
     await ensureGatewayReady(first);
     const workspace = await activeWorkspace(first);
     workspaceId = workspace.id;
@@ -163,13 +178,14 @@ test('delegates through the real Host, Gateway, scheduler, and role-spawn owners
       activeSessionKey: sessionKey,
       sessionKey,
     });
-    const led = await hostInvoke<LedgerSnapshot>(first, 'taskLedger', 'createNode', {
-      workspaceId,
-      node: { title: `Delegation task ${Date.now()}`, kind: 'task', status: 'todo' },
-      idempotencyKey: `delegation-task-${Date.now()}`,
+    const managedTask = await createSessionChainTask(first, workspaceId, `delegation-task-${Date.now()}`, {
+      objective: 'Exercise long-session delegation admission',
+      target: 'docs/delegation-note.md',
+      constraints: ['Worker completion does not accept the business task'],
+      acceptance: [{ id: 'owner-review', description: 'Review the recorded delegation result',
+        verification: { kind: 'owner-receipt', owner: 'delegation-review', files: ['docs/delegation-note.md'] } }],
     });
-    const node = led.snapshot.nodes.at(-1);
-    if (!node) throw new Error('Task Ledger did not return the admission task');
+    const node = { id: managedTask.contract.taskNodeId };
     taskRef = node.id;
     await hostInvoke(first, 'taskLedger', 'linkSession', {
       workspaceId,
@@ -190,7 +206,15 @@ test('delegates through the real Host, Gateway, scheduler, and role-spawn owners
     });
     expect(bound.recovery.state).toBe('ready');
     expect(bound.binding?.sessionGeneration).toBe(sessionGeneration);
+    const claimed = await hostInvoke<{ result: TaskView }>(first, 'taskLedger', 'command', {
+      workspaceId,
+      command: { action: 'claim', taskNodeId: taskRef, sessionKey, requestId: `delegation-claim-${taskRef}` },
+    });
+    expect(claimed.result?.claim, JSON.stringify(claimed)).toMatchObject({ sessionKey, generation: sessionGeneration });
+    expect(claimed.result.contract.state).toBe('doing');
 
+    const models = await hostInvoke<{ defaultModelRef: string }>(first, 'agents', 'list');
+    expect(models.defaultModelRef).toBeTruthy();
     it = `delegation-admission-${Date.now()}`;
     request = {
       sessionKey,
@@ -204,6 +228,7 @@ test('delegates through the real Host, Gateway, scheduler, and role-spawn owners
       backend: 'subagent',
       worker: {
         roleName: 'architect',
+        modelRef: models.defaultModelRef,
         task: 'Review the admission boundary and report findings',
         isolation: 'shared',
         writeSet: ['docs/delegation-note.md'],
@@ -212,7 +237,7 @@ test('delegates through the real Host, Gateway, scheduler, and role-spawn owners
     };
 
     const firstResult = await hostInvoke<DelegationResult>(first, 'sessions', 'delegate', request);
-    expect(firstResult.success).toBe(true);
+    expect(firstResult.success, firstResult.error).toBe(true);
     expect(firstResult.status).toBe('accepted');
     expect(firstResult.replayed).not.toBe(true);
     firstReceipt = firstResult.receipt;
@@ -242,7 +267,7 @@ test('delegates through the real Host, Gateway, scheduler, and role-spawn owners
     expect(firstReceipt?.children[0]?.childRunId).toBeTruthy();
     const ledgerAfter = await hostInvoke<LedgerSnapshot>(first, 'taskLedger', 'snapshot', { workspaceId });
     taskLedgerStatusAfter = ledgerAfter.snapshot.nodes.find((candidate) => candidate.id === taskRef)?.status ?? '';
-    expect(taskLedgerStatusAfter).toBe('todo');
+    expect(taskLedgerStatusAfter).toBe('doing');
 
     const describedChild = await hostInvoke<{ session?: { sessionId?: string; key?: string } }>(first, 'gateway', 'rpc', {
       method: 'sessions.describe',
@@ -287,6 +312,7 @@ test('delegates through the real Host, Gateway, scheduler, and role-spawn owners
     await closeElectronApp(first);
   }
 
+  const modelCallsBeforeRestart = provider.log.length;
   const second = await launchElectronApp({ skipSetup: true });
   try {
     await getStableWindow(second);
@@ -297,6 +323,8 @@ test('delegates through the real Host, Gateway, scheduler, and role-spawn owners
     expect(restarted).toMatchObject({ success: true, status: 'accepted', replayed: true });
     expect(restarted.receipt?.orchestrationRunId).toBe(firstReceipt.orchestrationRunId);
     expect(restarted.receipt?.admissionId).toBe(firstReceipt.admissionId);
+    const modelCallsAfterReplay = provider.log.length;
+    expect(modelCallsAfterReplay).toBe(modelCallsBeforeRestart);
 
     await hostInvoke(second, 'gateway', 'rpc', {
       method: 'sessions.reset',
@@ -316,6 +344,9 @@ test('delegates through the real Host, Gateway, scheduler, and role-spawn owners
       schema: 'clawx.long-session.delegation-admission-e2e/v1',
       driven_by: 'agent',
       actor: process.env.COMPASS_AGENT_NAME ?? 'clawx-e2e-agent',
+      provider: 'local-scripted',
+      modelCallsBeforeRestart,
+      modelCallsAfterReplay,
       workspaceId,
       rootPath,
       sessionKey,
