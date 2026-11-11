@@ -1,0 +1,4 @@
+
+> verse-claw@0.4.9-alpha.0 typecheck:test D:\ClawX-work\coding-vg-sts-jj-20261104
+> tsgo --noEmit -p tsconfig.test.json --composite false
+

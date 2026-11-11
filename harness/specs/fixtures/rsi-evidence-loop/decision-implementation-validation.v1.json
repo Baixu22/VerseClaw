@@ -48,9 +48,9 @@
     },
     "gitBlobHashes": {
       ".gitignore": "bb6994ab0dca515a832d911e1f45391f8533fc98",
-      "README.ja-JP.md": "892cabf3fb93bb23661faa0ae4ce98e246762aa5",
-      "README.md": "20f5e70e58756d3675df00e1ebc39dd1d4e7c1c1",
-      "README.zh-CN.md": "bc3bbad70e304983d7912aba3a16d9fc7319d151",
+      "README.ja-JP.md": "58a765be06e0e1940098589e51492e7df03fd027",
+      "README.md": "fb361e5d9016188fb3a2533f16d80a4b630dc73c",
+      "README.zh-CN.md": "3bbcd6f8dc00ea8b3286e1ba600881b0bca53372",
       "docs/dev/rsi-capability-and-boundaries.md": "9793630ddd2b4c683c87f09384a72bc949bc518a",
       "docs/dev/rsi-decision-implementation.md": "431dab97e7f085dc21e9acad7aa80fd1817bd700",
       "harness/specs/fixtures/agent-first-framework/loop-validation-report.json": "a368708d02860efa95da56af21112592b8fc5357",

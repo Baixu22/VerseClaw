@@ -31,6 +31,17 @@ ownedPaths:
   - shared/dcs/component-disposition-catalog.ts
   - shared/host-api/host-action-timeouts.ts
   - tests/unit/host-action-timeouts.test.ts
+  - tests/unit/agent-engineering-acceptance.test.ts
+  - tests/unit/first-product-claims.test.ts
+  - tests/unit/versegit-wp2-profile.test.ts
+  - harness/specs/fixtures/versegit-planning-correction/mc0-evidence/baseline.json
+  - harness/specs/fixtures/versegit-planning-correction/wp2-diagnostic-profile-fixture.json
+  - scripts/versegit-wp2-profile.mjs
+  - openclaw_runtime/src/context-engine/coding-tool-navigation.ts
+  - openclaw_runtime/src/context-engine/coding-tool-navigation.test.ts
+  - openclaw_runtime/src/context-engine/dcs-prod-flags-catalog.test.ts
+  - openclaw_runtime/src/context-engine/runtime-flag-attribution.test.ts
+  - openclaw_runtime/src/context-engine/assembler.ts
 touchedAreas:
   - harness/specs/tasks/coding-vg-sts-jj-maturity-closeout.md
   - .gitignore
@@ -56,6 +67,17 @@ touchedAreas:
   - shared/dcs/component-disposition-catalog.ts
   - shared/host-api/host-action-timeouts.ts
   - tests/unit/host-action-timeouts.test.ts
+  - tests/unit/agent-engineering-acceptance.test.ts
+  - tests/unit/first-product-claims.test.ts
+  - tests/unit/versegit-wp2-profile.test.ts
+  - harness/specs/fixtures/versegit-planning-correction/mc0-evidence/baseline.json
+  - harness/specs/fixtures/versegit-planning-correction/wp2-diagnostic-profile-fixture.json
+  - scripts/versegit-wp2-profile.mjs
+  - openclaw_runtime/src/context-engine/coding-tool-navigation.ts
+  - openclaw_runtime/src/context-engine/coding-tool-navigation.test.ts
+  - openclaw_runtime/src/context-engine/dcs-prod-flags-catalog.test.ts
+  - openclaw_runtime/src/context-engine/runtime-flag-attribution.test.ts
+  - openclaw_runtime/src/context-engine/assembler.ts
 requiredRules:
   - backend-communication-boundary
   - comms-regression
@@ -76,6 +98,8 @@ expectedUserBehavior:
 requiredTests:
   - python -X utf8 -B scripts/coding-evaluation/test_final_evaluation.py
   - python -X utf8 -B scripts/coding-evaluation/final_evaluation.py --check-inputs
+  - node scripts/validate-release-baseline.mjs --ref codex/coding-vg-sts-jj-tf0782-final
+  # The frozen product-acceptance contract anchors this consumer for final entry.
   - pnpm docs:policy:validate
   - pnpm harness validate --spec harness/specs/tasks/coding-vg-sts-jj-maturity-closeout.md --since c00e5ae3ca7f0c745b60b1b611dff64859116abe
   - git diff --check

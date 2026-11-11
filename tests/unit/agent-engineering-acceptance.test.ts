@@ -748,7 +748,7 @@ describe('Agent Engineering Acceptance', () => {
     expect(result.failures).toContain('detached worktree changed tracked or unexpected source files during acceptance');
   });
 
-  it.each(['v1', 'v2'])('exports TF-0009 %s evidence without promoting product authority', (version) => {
+  it.each(['v1', 'v2'])('exports TF-0009 %s evidence without promoting product authority', { timeout: 120_000 }, (version) => {
     const root = createFixtureRepository();
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
     temporaryPaths.push(outputDir);

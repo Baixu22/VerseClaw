@@ -58,8 +58,8 @@ Verse Claw は、組み込み OpenClaw Runtime 上に構築された Electron �
 - Runtime Memory injection、SEKB automatic writeback、Browser private network は default-on ではありません。
 - メモリのフィードバックと SEKB 採用回数は診断専用です。フィードバックは検索順位や保持判断に影響しません。[RSI の証拠と境界](docs/dev/rsi-capability-and-boundaries.md) では過去の測定と決定的なリプレイを区別します。
 - VToken は retired。旧 env/config では production assembly / sidecar を再有効化できません。
-- VerseGit は default-off / landed-unwired。VerseShell は default-off controlled foundation。VerseBrowser は live driver snapshot の action のみ advertise します。
-- 現行 evidence は A1-A10 の修正系譜、source と packaged coding control、VG/JJ/STS/VerseShell 評価、crash recovery、三つの fresh Windows win32-x64 win-unpacked profile を対象とします。STS selection は速度 benefit を示さず opt-in のままです。Python と standalone JJ は同梱されず、managed path は明示的な利用可能入力が必要です。installer は未実行で、M4、landing/admission authority、GA、default-on、release は利用不可です。liveReady=false、productApproved=false。
+- VerseGit の境界付きコーディングループは既定で無効で、一般提供は未承認です。現行の evidence は Windows win32-x64 M1 の write journal と Git apply の review path のみを対象とします。VerseShell は default-off controlled foundation。VerseBrowser は live driver snapshot の action のみ advertise します。
+- TF-0782 はさらに A1-A10 の修正系譜、source と packaged coding control、VG/JJ/STS/VerseShell 評価、crash recovery、三つの fresh Windows win32-x64 M1 win-unpacked profile を対象とします。STS selection は速度 benefit を示さず opt-in のままです。Python と standalone JJ は同梱されず、managed path は明示的な利用可能入力が必要です。installer は未実行で、M4 と landing/admission authority は利用不可のままで、利用範囲の拡大や release は承認されていません。liveReady=false、productApproved=false。
 - Dreams は retired。Image Generation は developer/test gate で、通常の製品 navigation ではありません。
 - `liveReady=false`、`productApproved=false`、`defaultOn=false` は product lock として維持されます。
 

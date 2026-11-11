@@ -1,0 +1,27 @@
+{
+  "protocol_version": "2.0",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+  "refusal_code": "unsupported-input",
+  "reason": "2.0 计划升格失败：环境不匹配：python 声明 '0.0.0'，实际 '3.10.3'",
+  "target_confirmable": true,
+  "conservative_full_available": false,
+  "target_identity": "candidate@ff63114",
+  "attempted_collection": {
+    "succeeded": false,
+    "collected_count": 1
+  },
+  "refusal_kind": "unsupported",
+  "content_confirmed": false,
+  "unconfirmed": [
+    {
+      "what": "content_identity",
+      "detail": "2.0 计划升格失败：环境不匹配：python 声明 '0.0.0'，实际 '3.10.3'"
+    }
+  ]
+}
+
+[plan_request] 目标确认：候选目录 HEAD tree 与 candidate_tree_oid 一致（ff63114aeee8）
+[plan_request] 目标确认：base=8640f63182 ours=35b73a886b theirs=34020923fd tree=ff63114 union_files=2 candidate_extra_files=0 changed=2
+[plan_request] 2.0 升格失败：环境不匹配：python 声明 '0.0.0'，实际 '3.10.3'
+[plan_request] 无法规划：unsupported — 2.0 计划升格失败：环境不匹配：python 声明 '0.0.0'，实际 '3.10.3'

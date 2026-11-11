@@ -1,0 +1,39 @@
+{
+  "ok": true,
+  "plan": {
+    "argv": [
+      "python",
+      "-m",
+      "pytest",
+      "tests/test_calc.py::test_add"
+    ],
+    "covered_full_suite": true,
+    "fallback": [
+      "非 Python 文件改动：notes.txt"
+    ],
+    "nodeids": [
+      "tests/test_calc.py::test_add"
+    ],
+    "selection_scope": "full",
+    "supported_run_modes": [
+      "pytest-nodeids"
+    ]
+  },
+  "protocol": "1.1",
+  "result": {
+    "covered_full_suite": true,
+    "executed": [
+      "tests/test_calc.py::test_add"
+    ],
+    "failed": [],
+    "not_executed": [],
+    "raw_exit_code": 0,
+    "reasons": [],
+    "selection_scope": "full",
+    "usable": true,
+    "verdict": "passed"
+  },
+  "schema": "versegit.sts-bridge/v1",
+  "spawned": false
+}
+

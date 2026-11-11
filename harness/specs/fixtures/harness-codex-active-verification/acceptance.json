@@ -1,16 +1,16 @@
 {
   "schemaVersion": "HarnessActiveVerificationAcceptance/v1",
-  "generatedAt": "2026-11-10T15:13:58.975Z",
+  "generatedAt": "2026-11-11T00:05:40.093Z",
   "driven_by": "agent",
   "actor": "codex-harness-active-verification-20261026",
   "node": "TF-0570",
   "source": {
-    "commit": "4b1f5033398c4963983f1e05420b17557c75eca6",
-    "tree": "745ae3d663934a325d9d6c727824f69269edb173",
+    "commit": "e90dac4b21d67d05606ffe9fd1480c2d12922f35",
+    "tree": "68e4cb487d612b68524ce35d6bf292409b6b03b7",
     "dirty": false,
     "matrix": "harness/specs/fixtures/harness-codex-active-verification/matrix.json",
     "matrixSha256": "2d319d3ee8c2c15bc994e3cfce8b473de293de2acd2765e5a1ec1caf1f0a6528",
-    "inputsDigest": "f2e81aea145211dbcba8e12791073bf1919c97c14245cb97acff3da7d48fab8d"
+    "inputsDigest": "9c20f5c96593f8dc2d83cf5cce87d1352380965c1123e7d725371984860c3ea8"
   },
   "sourceInputs": [
     {
@@ -201,7 +201,7 @@
       "path": "release/win-unpacked/Verse Claw.exe",
       "exists": true,
       "kind": "file",
-      "sha256": "6fc66786b69529a72887a51150ddf39be188a726a3a8a05e0e225b713c2b4b3f",
+      "sha256": "a428e316e383f599973c331d1b28ce829415625db9a5ca2ca5c72a96a7ced3a1",
       "bytes": 213919744,
       "files": 1
     },
@@ -268,7 +268,7 @@
       "harness/specs/fixtures/harness-codex-verse-collaboration/verse-shell-real-process.txt",
       "harness/specs/fixtures/harness-codex-verse-collaboration/verse-git-candidate-apply-report.json"
     ],
-    "checkedAt": "2026-11-10T15:13:58.974Z"
+    "checkedAt": "2026-11-11T00:04:41.469Z"
   },
   "environment": {
     "platform": "win32",

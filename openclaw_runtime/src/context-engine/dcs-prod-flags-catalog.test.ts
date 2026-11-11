@@ -10,7 +10,7 @@ import {
   resolveCodingAutoVerifyConfig,
   resolveWorktreeBackend,
 } from "./coding-runtime-flags.js";
-import { DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS } from "./assembler.js";
+import { DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS, DISABLED_CONTEXT_BLOCK_FEATURE_FLAGS } from "./assembler.js";
 import { isDcsContextViewToolsEnabled } from "./dcs-context-tools-flags.js";
 import { normalizeIsolationMode } from "../agents/orchestration-protocol.js";
 
@@ -68,9 +68,8 @@ describe("dcs prod p0 safe defaults", () => {
     ).toBe(false);
   });
 
-  it("TASK-P1-02: working-memory assembler default remains off", () => {
-    expect(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS["runtime.contextBlock.working_memory.enabled"]).toBe(
-      false,
-    );
+  it("TASK-P1-02: Workspace Context enables working memory by default while the kill-switch copy stays off", () => {
+    expect(DEFAULT_CONTEXT_BLOCK_FEATURE_FLAGS["runtime.contextBlock.working_memory.enabled"]).toBe(true);
+    expect(DISABLED_CONTEXT_BLOCK_FEATURE_FLAGS["runtime.contextBlock.working_memory.enabled"]).toBe(false);
   });
 });

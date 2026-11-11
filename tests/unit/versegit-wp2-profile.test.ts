@@ -13,7 +13,7 @@ describe('WP2 concurrency-aux diagnostic profile', () => {
     expect(built.report.profile).toBe('concurrency-aux');
     expect(built.report.summary).toMatchObject({ caseCount: 3, eligibleCount: 2, processCalls: 3 });
     expect(built.report.cases.find((entry: { caseId: string }) => entry.caseId === 'single-worktree')?.usage.processesStarted).toBe(0);
-    expect(built.report.cases.find((entry: { caseId: string }) => entry.caseId === 'multi-worktree')?.status).toBe('degraded');
+    expect(built.report.cases.find((entry: { caseId: string }) => entry.caseId === 'multi-worktree')?.status).toBe('partial');
     expect(built.report.cases.find((entry: { caseId: string }) => entry.caseId === 'missing-binary')?.status).toBe('unavailable');
     expect(validateWp2Report(built.report).issues).toEqual([]);
   });

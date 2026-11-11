@@ -1,0 +1,33 @@
+{
+  "protocol_version": "1.1",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+  "plan_id": "plan-34e7af84afc83ccd",
+  "target_identity": "candidate@ff63114",
+  "rules_id": "smart-select/v2",
+  "selection_scope": "full",
+  "collected": [
+    "tests/test_calc.py::test_add"
+  ],
+  "selected": [
+    "tests/test_calc.py::test_add"
+  ],
+  "excluded": [],
+  "order": [
+    "tests/test_calc.py::test_add"
+  ],
+  "reasons": {
+    "tests/test_calc.py::test_add": "full: 全量回退（见 fallback）"
+  },
+  "supported_run_modes": [
+    "pytest-nodeids"
+  ],
+  "fallback": [
+    "非 Python 文件改动：notes.txt"
+  ]
+}
+
+[plan_request] 目标确认：候选目录 HEAD tree 与 candidate_tree_oid 一致（ff63114aeee8）
+[plan_request] 目标确认：base=8640f63182 ours=35b73a886b theirs=34020923fd tree=ff63114 union_files=2 candidate_extra_files=0 changed=2
+[plan_request] 已写出 D:\tmp\vg sts installed 0t231om7\plan-1.1.json
+[plan_request] request=vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18 target=candidate@ff63114 plan=plan-34e7af84afc83ccd collected=1 selected=1 scope=full
