@@ -531,7 +531,13 @@ export function createWorktreeService(
     }),
     writer: id => checkoutWriterSnapshot(id === null ? resolved : findRecord(id).root),
     withFrozenWorktrees: (workers, freeze) => withWorktreeLock(resolved, () =>
-      withCheckoutMaintenance([baseBasis(), ...workers.map(worker => basisFor(findRecord(worker.worktreeId, worker.worktreeGeneration)))], "freeze", freeze)),
+      withCheckoutMaintenance([baseBasis(), ...workers.map(worker => basisFor(findRecord(worker.worktreeId, worker.worktreeGeneration)))], "freeze", freeze, () => {
+        if (backend === 'git') assertWorktreeIndexVisible(resolved);
+        for (const worker of workers) {
+          const record = findRecord(worker.worktreeId, worker.worktreeGeneration);
+          if (record.backend === 'git') assertWorktreeIndexVisible(record.root);
+        }
+      })),
     create(id, createOptions) {
       const owner = createOptions?.owner;
       const safeId = safeWorktreeId(id);
