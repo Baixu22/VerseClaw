@@ -1,12 +1,12 @@
 {
   "schemaVersion": "HarnessActiveVerificationAcceptance/v1",
-  "generatedAt": "2026-11-11T00:05:40.093Z",
+  "generatedAt": "2026-11-11T04:22:47.640Z",
   "driven_by": "agent",
   "actor": "codex-harness-active-verification-20261026",
   "node": "TF-0570",
   "source": {
-    "commit": "e90dac4b21d67d05606ffe9fd1480c2d12922f35",
-    "tree": "68e4cb487d612b68524ce35d6bf292409b6b03b7",
+    "commit": "67c215fd82f9dd7e14c33f71e86b59f66842d29b",
+    "tree": "387308845fa7cf586b4d297a99f23b303bc64667",
     "dirty": false,
     "matrix": "harness/specs/fixtures/harness-codex-active-verification/matrix.json",
     "matrixSha256": "2d319d3ee8c2c15bc994e3cfce8b473de293de2acd2765e5a1ec1caf1f0a6528",
@@ -268,7 +268,7 @@
       "harness/specs/fixtures/harness-codex-verse-collaboration/verse-shell-real-process.txt",
       "harness/specs/fixtures/harness-codex-verse-collaboration/verse-git-candidate-apply-report.json"
     ],
-    "checkedAt": "2026-11-11T00:04:41.469Z"
+    "checkedAt": "2026-11-11T04:22:47.640Z"
   },
   "environment": {
     "platform": "win32",

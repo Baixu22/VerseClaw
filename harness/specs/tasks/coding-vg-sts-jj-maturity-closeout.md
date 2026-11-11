@@ -37,6 +37,7 @@ ownedPaths:
   - openclaw_runtime/extensions/diagnostics-otel/npm-shrinkwrap.json
   - tests/unit/channels-page.test.tsx
   - scripts/lib/agent-engineering-acceptance.mjs
+  - scripts/rc00-acceptance-bootstrap.mjs
   - docs/dev/handoffs/CODING-VG-STS-JJ-RELAY-20261111-01A1BE4A.md
   - scripts/coding-evaluation/package-evaluation.py
   - scripts/coding-evaluation/final_evaluation.py
@@ -99,6 +100,7 @@ touchedAreas:
   - openclaw_runtime/extensions/diagnostics-otel/npm-shrinkwrap.json
   - tests/unit/channels-page.test.tsx
   - scripts/lib/agent-engineering-acceptance.mjs
+  - scripts/rc00-acceptance-bootstrap.mjs
   - docs/dev/handoffs/CODING-VG-STS-JJ-RELAY-20261111-01A1BE4A.md
   - scripts/coding-evaluation/package-evaluation.py
   - scripts/coding-evaluation/final_evaluation.py
@@ -182,3 +184,8 @@ default-on 和发布批准不属于本节点的自动授权范围。
 构建 win-unpacked 并执行三个 fresh profile。`final_evaluation.py` 只消费磁盘上的
 acceptance、SHA256SUMS、门报告和包报告；`verify_final_evaluation.py` 从这些输入重新
 推导并在隔离 worktree 中执行反例矩阵。
+
+干净检出在全量单测之前准备 VG 侧车和 active verification 所需的三个包输入；
+输入的路径、字节数与 SHA-256 随执行计划固定，复制前后都校验。VerseShell 仍按
+冻结源码和有序补丁重建。WP2 单测在隔离目录重放 MC0 捕获的三个输出，并覆盖
+二进制变更时零调用拒绝；显式历史 replay 继续校验 MC0 原始二进制摘要。

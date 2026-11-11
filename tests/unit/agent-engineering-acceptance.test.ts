@@ -104,13 +104,17 @@ function createFixtureRepository() {
   writeFileSync(join(root, 'package.json'), '{"name":"fixture","version":"1.0.0"}\n', 'utf8');
   writeFileSync(join(root, 'pnpm-lock.yaml'), 'lockfileVersion: 9\n', 'utf8');
   writeFileSync(join(root, '.npmrc'), 'strict-peer-dependencies=false\n', 'utf8');
-  writeFileSync(join(root, '.gitignore'), 'artifacts/\nnode_modules/\nresources/bin/\nopenclaw_runtime/apps/\n', 'utf8');
+  writeFileSync(join(root, '.gitignore'), 'artifacts/\nnode_modules/\nresources/bin/\nopenclaw_runtime/apps/\nrelease/\n', 'utf8');
   writeFileSync(join(root, '.gitattributes'), '*.md text\n', 'utf8');
   writeFileSync(join(root, 'harness', 'specs', 'tasks', 'fixture.md'), '# fixture\n', 'utf8');
   mkdirSync(join(root, 'harness', 'src'), { recursive: true });
   writeFileSync(join(root, 'harness', 'src', 'profiles.mjs'), readFileSync('harness/src/profiles.mjs'));
   const fixtureFiles = {
     'resources/verseshell/manifest.json': JSON.stringify({ artifacts: { 'win32-x64': { sha256: sha256('fixture'), bytes: 7 } } }),
+    'resources/bin/win32-x64/vg.exe': 'fixture-vg',
+    'release/win-unpacked/Verse Claw.exe': 'fixture-electron',
+    'release/win-unpacked/resources/openclaw-runtime/extensions/codex/package.json': '{"name":"codex"}',
+    'release/win-unpacked/resources/openclaw-runtime/extensions/codex/node_modules/@openai/codex/node_modules/@openai/codex-win32-x64/vendor/x86_64-pc-windows-msvc/bin/codex.exe': 'fixture-codex',
     'artifacts/uas-06-single-local-exec-canary/live-observations.json': '{}',
     'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json': '{}',
     'openclaw_runtime/apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json': '{}',
@@ -2154,7 +2158,7 @@ describe('Agent Engineering Acceptance', () => {
     expect(validateAcceptanceManifest(manifest).ok).toBe(false);
   });
 
-  it('rejects requiredTests that drift from the candidate spec or hide --fix in commandLine', () => {
+  it('rejects requiredTests that drift from the candidate spec or hide --fix in commandLine', { timeout: 60_000 }, () => {
     const root = createFixtureRepository();
     const comparisonBase = repositoryIdentity(root).commit;
     writeFileSync(join(root, 'harness', 'specs', 'tasks', 'fixture.md'), `---
@@ -2203,6 +2207,12 @@ requiredTests:
       expect.arrayContaining([
         expect.objectContaining({
           path: 'artifacts/uas-06-single-local-exec-canary/live-observations.json',
+          exists: true,
+          bytes: expect.any(Number),
+          sha256: expect.stringMatching(/^[a-f0-9]{64}$/u),
+        }),
+        expect.objectContaining({
+          path: 'release/win-unpacked/Verse Claw.exe',
           exists: true,
           bytes: expect.any(Number),
           sha256: expect.stringMatching(/^[a-f0-9]{64}$/u),
@@ -2273,6 +2283,10 @@ requiredTests:
       expect.arrayContaining([
         'provision-verseshell-resources: provision copy digest mismatch: artifacts/uas-06-single-local-exec-canary/live-observations.json',
       ]),
+    );
+    writeFileSync(join(root, 'release/win-unpacked/Verse Claw.exe'), 'changed package bytes');
+    expect(validateAcceptanceManifest(plan, { root, requireClean: true, requireFull: true }).errors).toContain(
+      'provision-verseshell-resources: provision copy digest mismatch: release/win-unpacked/Verse Claw.exe',
     );
   });
 

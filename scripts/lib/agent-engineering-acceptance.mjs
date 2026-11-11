@@ -580,7 +580,7 @@ function buildGates(profiles, options = {}) {
   add({
     id: 'provision-verseshell-resources',
     profile: 'environment',
-    name: 'Reconstruct VerseShell resources (ae.exe + canary stub)',
+    name: 'Reconstruct VerseShell and provision locked runtime inputs',
     command: 'internal',
     args: [
       '--manifest', 'resources/verseshell/manifest.json',
@@ -588,6 +588,10 @@ function buildGates(profiles, options = {}) {
       '--copy', 'artifacts/uas-06-single-local-exec-canary/live-observations.json',
       '--copy', 'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json',
       '--copy', 'openclaw_runtime/apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json',
+      '--copy', 'resources/bin/win32-x64/vg.exe',
+      '--copy', 'release/win-unpacked/Verse Claw.exe',
+      '--copy', 'release/win-unpacked/resources/openclaw-runtime/extensions/codex/package.json',
+      '--copy', 'release/win-unpacked/resources/openclaw-runtime/extensions/codex/node_modules/@openai/codex/node_modules/@openai/codex-win32-x64/vendor/x86_64-pc-windows-msvc/bin/codex.exe',
       '--electron',
     ],
   }, { kind: 'provision-verseshell' });
