@@ -1,10 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { Chat } from '@/pages/Chat';
+import { useWorkspacesStore } from '@/stores/workspaces';
 
+// The page renders without a router, so `Link` (used by the task-ledger
+// summary) is a plain anchor here rather than the context-bound original.
 vi.mock('react-router-dom', () => ({
   useNavigate: () => vi.fn(),
   useLocation: () => ({ pathname: '/', search: '', hash: '', state: null }),
+  Link: ({ to, children, ...props }: { to: string; children?: ReactNode } & Record<string, unknown>) => (
+    <a href={typeof to === 'string' ? to : '#'} {...props}>{children}</a>
+  ),
 }));
 
 vi.mock('react-i18next', () => ({
@@ -47,6 +54,8 @@ const chatState = {
   refresh: vi.fn(),
   refreshTaskLedger: vi.fn(),
   cleanupEmptySession: vi.fn(),
+  // Called when the active workspace restores its session on mount.
+  resetSessionView: vi.fn(),
   lastUserMessageAt: null,
 };
 
@@ -116,6 +125,19 @@ describe('Chat artifact panel layout', () => {
   beforeEach(() => {
     Element.prototype.scrollTo = vi.fn();
     artifactPanelState.open = true;
+    // A session always belongs to a workspace once the app is up; with one
+    // active the header shows the session's tasks as a quiet chip, not a panel.
+    useWorkspacesStore.setState({
+      activeWorkspaceId: 'workspace-1',
+      activeWorkspace: {
+        id: 'workspace-1',
+        name: 'Project',
+        rootPath: 'C:/project',
+        activeSessionKey: 'main:test',
+        sessionStates: {},
+      } as never,
+      fetchWorkspaces: vi.fn(async () => {}),
+    });
   });
 
   it('keeps the chat toolbar background draggable while actions remain clickable', async () => {
@@ -187,6 +209,8 @@ describe('Chat artifact panel layout', () => {
     expect(screen.queryByTestId('chat-assistive-rail')).not.toBeInTheDocument();
     expect(screen.queryByTestId('work-mode-summary-panel')).not.toBeInTheDocument();
     expect(screen.queryByTestId('task-ledger-summary')).not.toBeInTheDocument();
+    // The session's tasks stay reachable from the header chip, not a rail.
+    expect(within(screen.getByTestId('chat-toolbar-shell')).getByTestId('session-tasks-toggle')).toBeInTheDocument();
   });
 
   it('does not show the chat assistive rail before work starts', async () => {
@@ -199,5 +223,7 @@ describe('Chat artifact panel layout', () => {
     expect(screen.queryByTestId('chat-assistive-rail')).not.toBeInTheDocument();
     expect(screen.queryByTestId('work-mode-summary-panel')).not.toBeInTheDocument();
     expect(screen.queryByTestId('task-ledger-summary')).not.toBeInTheDocument();
+    // The session's tasks stay reachable from the header chip, not a rail.
+    expect(within(screen.getByTestId('chat-toolbar-shell')).getByTestId('session-tasks-toggle')).toBeInTheDocument();
   });
 });

@@ -270,6 +270,43 @@ const DEMO_ACCOUNT = {
   updatedAt: new Date(NOW).toISOString(),
 } as const;
 
+/**
+ * `?models=rich` adds accounts across model families so the composer's model
+ * picker can be audited with brand marks and long router refs. Opt-in so the
+ * default fixture keeps its single Anthropic model.
+ */
+const RICH_MODEL_ACCOUNTS = [
+  { id: 'acc-deepseek', vendorId: 'deepseek', label: 'DeepSeek', model: 'deepseek-reasoner' },
+  { id: 'acc-xai', vendorId: 'xai', label: 'xAI', model: 'grok-4-fast-reasoning' },
+  { id: 'acc-openrouter', vendorId: 'openrouter', label: 'OpenRouter', model: 'qwen/qwen3-coder-480b-a35b-instruct:free' },
+  { id: 'acc-moonshot', vendorId: 'moonshot', label: 'Moonshot', model: 'kimi-k2-0905-preview' },
+  { id: 'acc-google', vendorId: 'google', label: 'Google', model: 'gemini-2.5-pro' },
+].map((account, index) => ({
+  ...account,
+  authMode: 'api_key',
+  enabled: true,
+  isDefault: false,
+  createdAt: new Date(NOW).toISOString(),
+  updatedAt: new Date(NOW - (index + 1) * 60_000).toISOString(),
+}));
+
+function mockProviderAccounts() {
+  return stickyMockParam('models') === 'rich' ? [DEMO_ACCOUNT, ...RICH_MODEL_ACCOUNTS] : [DEMO_ACCOUNT];
+}
+
+/** `?git=worktree` makes the demo workspace a linked worktree of a main checkout. */
+function demoWorktrees() {
+  const root = DEMO_WORKSPACE.rootPath;
+  if (stickyMockParam('git') !== 'worktree') {
+    return [{ path: root, branch: 'codex/ui-polish', head: 'a1b2c3d4e5f6' }];
+  }
+  return [
+    { path: `${root}-main`, branch: 'main', head: '9f8e7d6c5b4a' },
+    { path: root, branch: 'codex/ui-polish', head: 'a1b2c3d4e5f6' },
+    { path: `${root}-session-rail`, branch: 'codex/session-rail', head: '0badc0ffee11' },
+  ];
+}
+
 const DEMO_AGENT = {
   id: 'main',
   name: 'Main',
@@ -325,9 +362,9 @@ function demoGitStatus() {
     clean: false,
     hasConflicts: false,
     changes: DEMO_GIT_CHANGES,
-    stagedCount: DEMO_GIT_CHANGES.filter((change) => change.staged).length,
-    unstagedCount: DEMO_GIT_CHANGES.filter((change) => change.unstaged).length,
-    untrackedCount: DEMO_GIT_CHANGES.filter((change) => change.untracked).length,
+    stagedCount: DEMO_GIT_CHANGES.filter((change) => change.bucket === 'staged').length,
+    unstagedCount: DEMO_GIT_CHANGES.filter((change) => change.bucket === 'unstaged').length,
+    untrackedCount: DEMO_GIT_CHANGES.filter((change) => change.bucket === 'untracked').length,
     conflictedCount: 0,
   };
 }
@@ -415,6 +452,9 @@ function demoTaskLedgerSnapshot() {
   return {
     schemaVersion: 1,
     workspaceId: DEMO_WORKSPACE.id,
+    /* The session task container rejects a snapshot whose owner workspace does
+     * not match, so without this the header chip could only show "unavailable". */
+    sourceWorkspaceId: DEMO_WORKSPACE.id,
     generatedAt: new Date(NOW).toISOString(),
     nodes,
     edges: [],
@@ -427,6 +467,40 @@ function demoTaskLedgerSnapshot() {
     recentDecisions: [],
     eventsCount: nodes.length,
     warnings: [],
+  };
+}
+
+/** A durable parent task with three children — the shape `task_control decompose` leaves. */
+function demoSessionTask() {
+  const at = NOW - 4 * 60_000;
+  const view = (id: string, objective: string, state: string, parent?: string) => ({
+    contract: {
+      taskNodeId: id,
+      objective,
+      state,
+      target: '.',
+      constraints: [],
+      acceptance: [],
+      revision: 1,
+      digest: `digest-${id.slice(0, 8)}`,
+      domain: 'code',
+      createdAt: at,
+      updatedAt: at,
+      origin: { source: 'mock', requestId: id },
+    },
+    claim: null,
+    checkpoint: { nextAction: '', completed: [], unresolved: [], artifacts: [] },
+    pendingOperations: 0,
+    ...(parent ? { parentTaskNodeId: parent } : {}),
+  });
+  const parent = '3f9a2c71-5b0e-4d2a-9c11-8e4b6a7d0f21';
+  return {
+    task: view(parent, '收敛任务面板并对齐会话状态卡', 'doing'),
+    children: [
+      view('a18c4e02-77d1-4f3b-b0a9-2c6d9e1f5a34', '把任务托盘移到输入框上方', 'done', parent),
+      view('c42d9b18-0e6a-4c55-8f27-91b3d4e6a7c8', '补任务 ID、账本链接与菜单', 'doing', parent),
+      view('e7f10a53-2b9c-4e86-a1d4-5c3b8f0e2d19', '会话状态卡改为键值行', 'ready', parent),
+    ],
   };
 }
 
@@ -804,13 +878,14 @@ const FIXTURES: Record<string, (req: HostRequest) => unknown> = {
     return { success: true, result: { runId } };
   },
 
-  'providers.accounts': () => [DEMO_ACCOUNT],
+  'providers.accounts': () => mockProviderAccounts(),
   'providers.vendors': () => [],
   'providers.list': () => [],
   'providers.getDefaultAccount': () => ({ accountId: DEMO_ACCOUNT.id }),
-  'providers.accountKeyInfo': () => [
-    { accountId: DEMO_ACCOUNT.id, hasKey: true, keyMasked: 'sk-••••mock' },
-  ],
+  'providers.accountKeyInfo': () => mockProviderAccounts().map((account) => (
+    { accountId: account.id, hasKey: true, keyMasked: 'sk-••••mock' }
+  )),
+  'git.worktrees': () => ({ success: true, worktrees: demoWorktrees() }),
   'providers.getAccount': () => DEMO_ACCOUNT,
   'providers.hasAccountApiKey': () => true,
 
@@ -824,6 +899,41 @@ const FIXTURES: Record<string, (req: HostRequest) => unknown> = {
   }),
 
   'taskLedger.snapshot': () => ({ success: true, snapshot: demoTaskLedgerSnapshot() }),
+  /* `?task=demo` gives the active session a durable task with child tasks so the
+   * composer task dock (ID chip, child IDs, ledger links) can be walked in the
+   * browser; without it the dock only appears for a live run plan. */
+  'taskLedger.sessionTask': (req) => {
+    const payload = (req.payload ?? {}) as { sessionKey?: string };
+    if (stickyMockParam('task') !== 'demo' || (payload.sessionKey && payload.sessionKey !== ACTIVE_SESSION_KEY)) {
+      return { success: true, task: null, children: [] };
+    }
+    return { success: true, ...demoSessionTask() };
+  },
+  /* The composer persists a per-session model choice before the first send. */
+  'sessions.patchRuntimeModel': () => ({ success: true }),
+  /* Context readings for the composer pressure readout and the status card's
+   * Context row (~23% of a 200k window, warm cache). */
+  'usage.live': (req) => ({
+    usage: {
+      sessionKey: (req.payload as { sessionKey?: string } | undefined)?.sessionKey ?? ACTIVE_SESSION_KEY,
+      inputTokens: 41_800,
+      outputTokens: 4_400,
+      cacheReadTokens: 31_200,
+      cacheWriteTokens: 2_100,
+      warmTurnHitRate: 0.82,
+      totalTokens: 46_200,
+      updatedAt: NOW,
+      status: 'final',
+    },
+  }),
+  'usage.contextRange': (req) => ({
+    range: {
+      sessionKey: (req.payload as { sessionKey?: string } | undefined)?.sessionKey ?? ACTIVE_SESSION_KEY,
+      maxTokens: 200_000,
+      usedTokens: 46_200,
+      status: 'bestEffort',
+    },
+  }),
 
   /* The session status rail reads these three. Without them the rail renders
    * its "not a repository" / "no terminal" arms and the whole column is

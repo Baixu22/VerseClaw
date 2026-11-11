@@ -110,7 +110,6 @@ export const LAUNCHER_TAB_KINDS: readonly PanelTabKind[] = [
   'files',
   'artifact',
   'audit',
-  'agents',
 ];
 
 /** `+` menu order mirrors the launcher so the two never feel unrelated. */

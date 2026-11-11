@@ -8,6 +8,9 @@ import type { SessionActivitySnapshot } from '@shared/types/session-activity';
 import type { RunProcessSurface } from '@/components/tool-ui/run-surfaces';
 import type { RunPlanSurface } from '@/pages/Chat/run-surface-promotion';
 
+const worktreesMock = vi.hoisted(() => vi.fn().mockResolvedValue({ success: true, worktrees: [] }));
+vi.mock('@/lib/host-api', () => ({ hostApi: { git: { worktrees: worktreesMock } } }));
+
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string, opts?: Record<string, unknown>) => {
     if (opts && typeof opts.count === 'number') return `${key}:${opts.count}`;
@@ -45,6 +48,86 @@ const RUNTIME_PROCESS: RunProcessSurface = {
 };
 
 describe('SessionActivityPanel', () => {
+  it('shows linked checkout identity and drops it when the snapshot root changes', async () => {
+    worktreesMock.mockResolvedValueOnce({ success: true, worktrees: [{ path: 'C:/main' }, { path: 'C:/linked' }] });
+    const git = { isRepository: true, workspaceRoot: 'C:/linked', repoRoot: 'C:/linked', branch: 'feature/cards', ahead: 0, behind: 0,
+      clean: true, hasConflicts: false, stagedCount: 0, unstagedCount: 0, untrackedCount: 0, conflictedCount: 0, changes: [] };
+    const view = render(<SessionActivityPanel snapshot={snapshotWith({ git })} />);
+    expect(await screen.findByTestId('session-activity-worktree-kind')).toHaveTextContent('composer.git.kindWorktree');
+    view.rerender(<SessionActivityPanel snapshot={snapshotWith({ git: { ...git, repoRoot: 'C:/another', workspaceRoot: 'C:/another' } })} />);
+    expect(screen.queryByTestId('session-activity-worktree-kind')).toBeNull();
+  });
+  it('summarises sources as one Connectors row and keeps the list and tool names behind disclosure', () => {
+    render(<SessionActivityPanel
+      snapshot={snapshotWith({})}
+      statusPending
+      sources={[
+        ...Array.from({ length: 5 }, (_, index) => ({
+          id: `mcp:source-${index}`, kind: 'mcp' as const,
+          name: `source-${index}`, tools: [`tool-${index}`],
+        })),
+        { id: 'skill:review', kind: 'skill' as const, name: 'review', tools: [] },
+      ]}
+    />);
+    const toggle = screen.getByTestId('session-activity-sources-toggle');
+    expect(toggle).toHaveTextContent('sessionActivity.overview.connectors');
+    expect(toggle).toHaveTextContent('sessionActivity.overview.connectorsValue:5');
+    expect(toggle).toHaveTextContent('sessionActivity.overview.skillsValue:1');
+    expect(screen.getByText('source-0')).not.toBeVisible();
+    expect(screen.queryByTestId('session-activity-alert')).not.toBeInTheDocument();
+    fireEvent.click(toggle);
+    expect(screen.getByText('source-0')).toBeVisible();
+    expect(screen.getByText('tool-0')).not.toBeVisible();
+    expect(screen.getByText('source-3')).not.toBeVisible();
+    fireEvent.click(screen.getByText('source-0'));
+    expect(screen.getByText('tool-0')).toBeVisible();
+    fireEvent.click(screen.getByTestId('session-activity-more-sources').querySelector('summary')!);
+    expect(screen.getByText('source-4')).toBeVisible();
+  });
+
+  it('draws the Context row only from a real reading, with a meter when the window is known', () => {
+    const git = { isRepository: true, workspaceRoot: 'C:/w', branch: 'main', ahead: 0, behind: 0, clean: false, hasConflicts: false,
+      stagedCount: 1, unstagedCount: 0, untrackedCount: 0, conflictedCount: 0,
+      changes: [{ path: 'a.ts', absolutePath: 'C:/w/a.ts', status: 'M', staged: true, unstaged: false, untracked: false, conflicted: false, bucket: 'staged' as const, additions: 1, deletions: 1 }] };
+    const view = render(<SessionActivityPanel snapshot={snapshotWith({ git })}
+      context={{ usedTokens: null, maxTokens: 200_000, utilisation: null }} />);
+    expect(screen.queryByTestId('session-activity-context')).toBeNull();
+    view.rerender(<SessionActivityPanel snapshot={snapshotWith({ git })}
+      context={{ usedTokens: 46_200, maxTokens: 200_000, utilisation: 0.231, cacheReadTokens: 31_200, warmTurnHitRate: 0.82 }} />);
+    const toggle = screen.getByTestId('session-activity-context-toggle');
+    expect(toggle).toHaveTextContent('23%');
+    expect(screen.getByRole('meter')).toHaveAttribute('aria-valuenow', '23');
+    fireEvent.click(toggle);
+    expect(screen.getByTestId('session-activity-context')).toHaveTextContent('46k / 200k');
+    expect(screen.getByTestId('session-activity-context')).toHaveTextContent('82%');
+    view.rerender(<SessionActivityPanel snapshot={snapshotWith({ git })}
+      context={{ usedTokens: 12_000, maxTokens: null, utilisation: null }} />);
+    expect(screen.getByTestId('session-activity-context-toggle')).toHaveTextContent('12k');
+    expect(screen.queryByRole('meter')).toBeNull();
+  });
+
+  it('tints the Context meter from the owner pressure, not only from the percentage', () => {
+    render(<SessionActivityPanel
+      snapshot={snapshotWith({ continuity: { queueCount: 0, contextPressure: 'high' }, subagents: [
+        { id: 'n1', status: 'started', updatedAt: 1, source: 'event' },
+      ] })}
+      context={{ usedTokens: 40_000, maxTokens: 200_000, utilisation: 0.2 }} />);
+    expect(screen.getByRole('meter')).toHaveAttribute('data-state', 'error');
+  });
+
+  it('keeps active workers ahead of completed history and retains all workers on demand', () => {
+    const snapshot = snapshotWith({ subagents: Array.from({ length: 8 }, (_, index) => ({
+      id: `worker-${index}`, childSessionKey: `agent:worker:child-${index}`,
+      status: index === 0 ? 'started' as const : 'completed' as const,
+      updatedAt: index, source: 'event' as const,
+    })) });
+    render(<SessionActivityPanel snapshot={snapshot} />);
+    expect(screen.getByTestId('session-activity-subagent-worker-0')).toBeVisible();
+    expect(screen.getByTestId('session-activity-subagent-worker-1')).not.toBeVisible();
+    fireEvent.click(screen.getByTestId('session-activity-more-subagents').querySelector('summary')!);
+    expect(screen.getByTestId('session-activity-subagent-worker-1')).toBeVisible();
+  });
+
   it('renders configured policy without dressing it up as effective', () => {
     render(
       <SessionActivityPanel
@@ -222,6 +305,35 @@ describe('SessionActivityPanel', () => {
     const delta = screen.getByTestId('session-activity-git-delta');
     expect(delta).toHaveTextContent('+1,210');
     expect(delta).toHaveTextContent('−47');
+    expect(screen.getByTestId('session-activity-git-branch')).toHaveTextContent('main');
+    expect(screen.getByTestId('session-activity-git-branch')).toHaveTextContent('sessionActivity.git.changes:2');
+  });
+
+  it('opens the review from the Changes row and marks it while the review tab is on screen', () => {
+    const onOpenEnvironment = vi.fn();
+    const git = { isRepository: true, workspaceRoot: 'C:/w', branch: 'main', ahead: 0, behind: 0, clean: false, hasConflicts: false,
+      stagedCount: 1, unstagedCount: 0, untrackedCount: 0, conflictedCount: 0,
+      changes: [{ path: 'a.ts', absolutePath: 'C:/w/a.ts', status: 'M', staged: true, unstaged: false, untracked: false, conflicted: false, bucket: 'staged' as const, additions: 3, deletions: 1 }] };
+    const view = render(<SessionActivityPanel snapshot={snapshotWith({ git })} onOpenEnvironment={onOpenEnvironment} />);
+    fireEvent.click(screen.getByTestId('session-activity-review'));
+    expect(onOpenEnvironment).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('session-activity-review')).toHaveAttribute('aria-pressed', 'false');
+    view.rerender(<SessionActivityPanel snapshot={snapshotWith({ git })} onOpenEnvironment={onOpenEnvironment}
+      activeWorkspaceSubject={{ kind: 'review' }} />);
+    expect(screen.getByTestId('session-activity-review')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('session-activity-git-delta')).toHaveClass('is-active');
+  });
+
+  it('groups workers and commands under Background tasks with the running total', () => {
+    render(<SessionActivityPanel
+      snapshot={snapshotWith({ subagents: [{ id: 'n1', role: 'explorer', status: 'started', updatedAt: 1, source: 'event' }] })}
+      processes={[{ ...RUNTIME_PROCESS, id: 'call-live', status: 'running', startedAt: Date.now() - 65_000 }]}
+    />);
+    const group = screen.getByTestId('session-activity-background');
+    expect(group).toContainElement(screen.getByTestId('session-activity-subagents'));
+    expect(group).toContainElement(screen.getByTestId('session-activity-processes'));
+    expect(group).toHaveTextContent('sessionActivity.runningCount:2');
+    expect(screen.getByTestId('session-activity-process-elapsed-call-live')).toHaveTextContent('1m');
   });
 
   it('opens a sub-agent by its child session, and only when it has one', () => {
@@ -256,8 +368,40 @@ describe('SessionActivityPanel', () => {
       />,
     );
 
-    fireEvent.click(screen.getByTestId('session-activity-process-call-1'));
+    expect(screen.getByTestId('session-activity-process-call-1')).not.toBeVisible();
+    fireEvent.click(screen.getByTestId('session-activity-recent-processes').querySelector('summary')!);
+    fireEvent.click(screen.getByTestId('session-activity-process-open-call-1'));
     expect(onOpenProcess).toHaveBeenCalledWith('call-1', 'pnpm vitest run');
+  });
+
+  it('expands a process in place to show the tail of its output', () => {
+    render(
+      <SessionActivityPanel
+        snapshot={snapshotWith({})}
+        processes={[{ ...RUNTIME_PROCESS, output: 'line one\nline two\n' }]}
+        onOpenProcess={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId('session-activity-recent-processes').querySelector('summary')!);
+    expect(screen.queryByTestId('session-activity-process-output-call-1')).toBeNull();
+    fireEvent.click(screen.getByTestId('session-activity-process-toggle-call-1'));
+    expect(screen.getByTestId('session-activity-process-output-call-1')).toHaveTextContent('line two');
+  });
+
+  it('marks the process whose page is the active workspace tab', () => {
+    render(
+      <SessionActivityPanel
+        snapshot={snapshotWith({})}
+        processes={[{ ...RUNTIME_PROCESS, status: 'running', exitCode: undefined }]}
+        activeWorkspaceSubject={{ kind: 'process', subject: 'call-1' }}
+        onOpenProcess={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId('session-activity-process-call-1')).toHaveClass('is-active');
+    // The newest running process opens its console without a click.
+    expect(screen.getByTestId('session-activity-process-output-call-1')).toBeInTheDocument();
   });
 
   it('leaves host-projected processes inert — they are redacted, with no output to open', () => {
@@ -273,6 +417,20 @@ describe('SessionActivityPanel', () => {
     const section = screen.getByTestId('session-activity-processes');
     expect(section.querySelectorAll('button')).toHaveLength(0);
     expect(screen.getByTestId('session-activity-snapshot-process-bash-1').tagName).toBe('DIV');
+  });
+
+  it('keeps running and failed processes visible even after many completed commands', () => {
+    render(<SessionActivityPanel snapshot={snapshotWith({})} processes={[
+      { ...RUNTIME_PROCESS, id: 'active', status: 'running', exitCode: undefined },
+      { ...RUNTIME_PROCESS, id: 'failed', status: 'failed', exitCode: 1 },
+      ...Array.from({ length: 10 }, (_, index) => ({ ...RUNTIME_PROCESS, id: `done-${index}` })),
+    ]} />);
+    expect(screen.getByTestId('session-activity-process-active')).toBeVisible();
+    expect(screen.getByTestId('session-activity-process-failed')).toBeVisible();
+    expect(screen.getByTestId('session-activity-process-done-0')).not.toBeVisible();
+    fireEvent.click(screen.getByTestId('session-activity-recent-processes').querySelector('summary')!);
+    expect(screen.getByTestId('session-activity-process-done-0')).toBeVisible();
+    expect(screen.getByTestId('session-activity-process-done-9')).toBeVisible();
   });
 
   it('prefers the runtime row when both sources describe one process', () => {

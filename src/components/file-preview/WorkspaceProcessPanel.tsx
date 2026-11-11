@@ -14,30 +14,16 @@
  * them, so this page reads from there. No new IPC, and the redaction contract on
  * the snapshot stays intact.
  */
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Loader2 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
-import { projectRunProcesses, type RunProcessSurface } from '@/components/tool-ui/run-surfaces';
+import { Terminal } from '@/components/tool-ui/terminal';
+import { projectRunProcesses } from '@/components/tool-ui/run-surfaces';
 import { useChatStore } from '@/stores/chat';
-
-function formatDuration(durationMs: number | undefined): string | null {
-  if (durationMs == null || !Number.isFinite(durationMs)) return null;
-  if (durationMs < 1000) return `${Math.round(durationMs)}ms`;
-  return `${(durationMs / 1000).toFixed(2)}s`;
-}
-
-function statusVariant(status: RunProcessSurface['status']): 'default' | 'outline' | 'destructive' {
-  if (status === 'failed') return 'destructive';
-  return 'outline';
-}
 
 export function WorkspaceProcessPanel({ processId }: { processId: string }) {
   const { t } = useTranslation('chat');
   const sessionKey = useChatStore((s) => s.currentSessionKey);
   const runtimeRuns = useChatStore((s) => s.runtimeRuns);
-  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   /* Scan this session's runs for the process. Keyed by the launching tool call,
    * which is unique per run, so the first match is the right one. */
@@ -50,14 +36,6 @@ export function WorkspaceProcessPanel({ processId }: { processId: string }) {
     return null;
   }, [processId, runtimeRuns, sessionKey]);
 
-  /* Pin to the bottom while it streams — a running command's interesting line is
-   * the last one. Depends on the output length, not the object, so a re-render
-   * that changed nothing does not yank the user's scroll position. */
-  useEffect(() => {
-    const node = scrollRef.current;
-    if (node) node.scrollTop = node.scrollHeight;
-  }, [process?.output.length]);
-
   if (!process) {
     return (
       <div
@@ -69,57 +47,20 @@ export function WorkspaceProcessPanel({ processId }: { processId: string }) {
     );
   }
 
-  const duration = formatDuration(process.durationMs);
-
   return (
-    <div className="flex h-full min-h-0 flex-col p-3" data-testid="workspace-process-panel">
-      <div className="mb-2 min-w-0">
-        <div className="flex items-start gap-2">
-          <p
-            className="min-w-0 flex-1 break-all font-mono text-xs text-foreground"
-            data-testid="workspace-process-command"
-          >
-            {process.command}
-          </p>
-          <Badge variant={statusVariant(process.status)} className="shrink-0">
-            {process.status === 'running'
-              ? <Loader2 className="mr-1 h-3 w-3 animate-spin" aria-hidden="true" />
-              : null}
-            {t(`processPanel.status.${process.status}`)}
-          </Badge>
-        </div>
-        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground">
-          {process.cwd && <span className="truncate font-mono">{process.cwd}</span>}
-          {process.exitCode != null && (
-            <span
-              className={cn('tabular-nums', process.exitCode !== 0 && 'text-destructive')}
-              data-testid="workspace-process-exit"
-            >
-              {t('processPanel.exitCode', { code: process.exitCode })}
-            </span>
-          )}
-          {duration && <span className="tabular-nums">{duration}</span>}
-        </div>
-      </div>
-
-      <div
-        ref={scrollRef}
-        className="min-h-0 flex-1 overflow-auto rounded-md border border-black/10 bg-surface-input p-2.5 dark:border-white/10"
-        data-testid="workspace-process-output"
-      >
-        {process.truncated && (
-          <p className="mb-1.5 text-[11px] text-muted-foreground">{t('processPanel.truncated')}</p>
-        )}
-        {process.output ? (
-          <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-relaxed text-foreground">
-            {process.output}
-          </pre>
-        ) : (
-          <p className="text-xs text-muted-foreground">
-            {process.status === 'running' ? t('processPanel.waiting') : t('processPanel.noOutput')}
-          </p>
-        )}
-      </div>
+    <div className="h-full min-h-0 min-w-0 p-3" data-testid="workspace-process-panel">
+      <Terminal
+        key={process.id}
+        id={process.id}
+        command={process.command}
+        cwd={process.cwd}
+        stdout={process.output}
+        status={process.status}
+        exitCode={process.exitCode}
+        durationMs={process.durationMs}
+        truncated={process.truncated}
+        fill
+      />
     </div>
   );
 }

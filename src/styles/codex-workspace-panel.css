@@ -734,33 +734,23 @@
   color: hsl(var(--foreground));
 }
 
-/* ── Workspace sweep ────────────────────────────────────────────────────────
- *
- * The panel enters by wiping in from the right edge, like a squeegee crossing
- * the toolbar it was opened from. Two rules make that read as one motion rather
- * than two unrelated animations:
- *
- *   1. The panel itself translates in from its own full width, so its leading
- *      edge travels across the toolbar controls instead of fading in on top of
- *      them. It takes real layout width the whole time (see the `aside` in
- *      Chat/index.tsx) — this is a transform, not a float.
- *   2. The controls the edge passes over wipe out in place. They are NOT
- *      unmounted and re-laid-out, because that would slide the surviving button
- *      sideways as its neighbours vanished; they collapse their own width to
- *      zero from the right, so the leftmost control never moves.
- *
- * The result: 刷新 goes first, 会话状态 next, and the workspace toggle — the
- * leftmost of the three — is left standing exactly where it was, now reading as
- * the panel's own open/close switch.
- */
+/* Workspace visibility keeps mounted content and uses a short, reversible entrance. */
 .codex-workspace-sweep {
-  animation: codex-workspace-sweep-in 260ms var(--ease-enter);
-  will-change: transform;
+  opacity: 1;
+  transform: none;
+  transition: opacity 160ms var(--ease-enter), transform 160ms var(--ease-enter), display 160ms allow-discrete;
 }
 
-@keyframes codex-workspace-sweep-in {
-  from { transform: translateX(100%); }
-  to { transform: none; }
+.codex-workspace-sweep[data-open='false'] {
+  opacity: 0;
+  transform: translateX(12px);
+}
+
+@starting-style {
+  .codex-workspace-sweep {
+    opacity: 0;
+    transform: translateX(12px);
+  }
 }
 
 /* Wipe target. Width and opacity collapse together so the row closes up from
@@ -795,6 +785,6 @@
 .codex-toolbar-wipe[data-wiped='false'][data-wipe-order='2'] { transition-delay: 0ms; }
 
 @media (prefers-reduced-motion: reduce) {
-  .codex-workspace-sweep { animation: none; }
+  .codex-workspace-sweep { transition: none; }
   .codex-toolbar-wipe { transition: none; }
 }

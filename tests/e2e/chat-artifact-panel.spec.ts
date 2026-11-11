@@ -62,6 +62,17 @@ function baseHostApiMocks() {
       activeWorkspaceId: WORKSPACE.id,
       activeWorkspace: WORKSPACE,
     },
+    [stableStringify(['workspaces', 'getActive', null])]: {
+      success: true,
+      activeWorkspaceId: WORKSPACE.id,
+      activeWorkspace: WORKSPACE,
+    },
+    [stableStringify(['agents', 'list', null])]: {
+      success: true,
+      agents: [{ id: 'main', name: 'main', canonicalSessionKey: SESSION_KEY, workspace: WORKSPACE.rootPath }],
+      defaultAgentId: 'main',
+      defaultModelRef: null,
+    },
     [stableStringify(['settings', 'getAll', null])]: {
       success: true,
       data: {},
@@ -251,7 +262,7 @@ test.describe('Chat artifact panel', () => {
   });
 });
 
-test('keeps the conversation column in place until the workspace panel expands', async ({ launchElectronApp }) => {
+test('keeps the conversation column in place until the workspace panel expands', async ({ launchElectronApp }, testInfo) => {
   const app = await launchElectronApp({ skipSetup: true });
 
   try {
@@ -319,7 +330,75 @@ test('keeps the conversation column in place until the workspace panel expands',
     });
     // Expanding takes even more width from the conversation column.
     expect(expandedWidths).toBeLessThan(collapsedWidths.conversation - 100);
+    await page.screenshot({ path: testInfo.outputPath('workspace-expanded.png'), animations: 'disabled' });
+
+    const artifactTab = page.getByTestId('artifact-panel-tab-artifact');
+    await artifactTab.evaluate(element => { element.setAttribute('data-retained-tab', 'yes'); });
+    await page.getByTestId('artifact-panel-close').click();
+    await expect(panel).toBeHidden();
+    await expect(page.getByTestId('chat-workspace-toggle')).toBeFocused();
+    await page.screenshot({ path: testInfo.outputPath('workspace-hidden.png'), animations: 'disabled' });
+    await page.getByTestId('chat-workspace-toggle').click();
+    await expect(panel).toBeVisible();
+    await expect(panel).toHaveAttribute('data-expanded', 'true');
+    await expect(artifactTab).toHaveAttribute('data-retained-tab', 'yes');
+    await expect(artifactTab).toHaveAttribute('aria-selected', 'true');
+    await page.getByTestId('artifact-panel-expand').click();
+    await expect(panel).toHaveAttribute('data-expanded', 'false');
+    await page.getByTestId('chat-workspace-toggle').click();
+    await expect(panel).toBeHidden();
+    await page.getByTestId('chat-workspace-toggle').click();
+    await expect(artifactTab).toHaveAttribute('aria-selected', 'true');
+    await page.getByTestId('artifact-panel-new-tab').click();
+    await expect(page.getByTestId('artifact-panel-new-tab-menu')).toBeVisible();
+    await page.getByTestId('chat-workspace-toggle').focus();
+    await page.getByTestId('chat-workspace-toggle').press('Enter');
+    await expect(panel).toBeHidden();
+    await expect(page.getByTestId('artifact-panel-new-tab-menu')).toHaveCount(0);
+    await page.getByTestId('chat-workspace-toggle').click();
+    await expect(artifactTab).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByTestId('artifact-panel-new-tab-menu')).toHaveCount(0);
   } finally {
     await closeElectronApp(app);
+  }
+});
+
+test('reaps an owned Windows child before closing the Electron pipe', async ({ launchElectronApp }) => {
+  test.skip(process.platform !== 'win32', 'Exercises the Windows taskkill process-tree path.');
+  const app = await launchElectronApp({ skipSetup: true });
+  let childPid: number | undefined;
+  let childReaped = false;
+  let appClosed = false;
+  const alive = (pid: number) => {
+    try { process.kill(pid, 0); return true; }
+    catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ESRCH') return false;
+      throw error;
+    }
+  };
+  try {
+    childPid = await app.evaluate(async () => {
+      const { spawn } = process.mainModule!.require('node:child_process') as typeof import('node:child_process');
+      const child = spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], {
+        env: { ...process.env, ELECTRON_RUN_AS_NODE: '1' },
+        stdio: 'inherit', windowsHide: true,
+      });
+      await new Promise<void>((resolve, reject) => {
+        child.once('spawn', resolve);
+        child.once('error', reject);
+      });
+      if (!child.pid) throw new Error('Owned child did not start');
+      return child.pid;
+    });
+    expect(alive(childPid)).toBe(true);
+    await closeElectronApp(app);
+    appClosed = true;
+    await expect.poll(() => alive(childPid!)).toBe(false);
+    childReaped = true;
+  } finally {
+    if (childPid && !childReaped) {
+      try { process.kill(childPid, 'SIGKILL'); } catch { /* already exited */ }
+    }
+    if (!appClosed) await closeElectronApp(app);
   }
 });

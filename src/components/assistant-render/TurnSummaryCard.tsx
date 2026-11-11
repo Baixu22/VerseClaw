@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import type { UserRunStatus } from '@/pages/Chat/execution-projection';
 import { OrbStatus } from '@/components/assistant-ui/orb-status';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ThinkingReasoning } from './ThinkingReasoning';
 import type { AssistantReasoning } from './model';
 
@@ -28,8 +27,8 @@ function formatDuration(
     : t('turnSummary.duration.minutes', { count: minutes });
 }
 
-/** Run lifecycle → orb state (thinking-orbs shape) + semantic dot. */
 export type TurnSummaryCounts = {
+  tools?: number;
   thoughts?: number;
   plan?: number;
   files?: number;
@@ -40,7 +39,7 @@ export type TurnSummaryCounts = {
 };
 
 /** Order is deliberate: the most consequential artifact leads. */
-const BADGE_ORDER = ['approvals', 'plan', 'agents', 'diffs', 'files', 'terminals', 'thoughts'] as const;
+const BADGE_ORDER = ['approvals', 'diffs', 'files', 'agents', 'tools', 'terminals', 'plan'] as const;
 
 /**
  * Collapsed turns used to say only "Worked for 12s", so a plan, three
@@ -52,7 +51,8 @@ function TurnSummaryBadges({ counts }: { counts: TurnSummaryCounts }) {
   const { t } = useTranslation('chat');
   const entries = BADGE_ORDER
     .map((key) => ({ key, value: counts[key] ?? 0 }))
-    .filter((entry) => entry.value > 0);
+    .filter((entry) => entry.value > 0)
+    .slice(0, 2);
   if (entries.length === 0) return null;
 
   return (
@@ -96,6 +96,7 @@ export function TurnSummaryCard({
   now,
   expanded,
   summary,
+  activity,
   reasoning,
   reasoningStreaming = false,
   onExpandedChange,
@@ -108,6 +109,8 @@ export function TurnSummaryCard({
   now?: number;
   expanded: boolean;
   summary?: TurnSummaryCounts;
+  /** Only the current tool stays visible while the full process is folded. */
+  activity?: ReactNode;
   /** Reasoning adopted from the turn's reply message (or the live run). */
   reasoning?: AssistantReasoning[];
   /** True while thinking is still arriving — keeps the stream open + shimmering. */
@@ -119,7 +122,7 @@ export function TurnSummaryCard({
   const detailsId = useId();
   // Tick locally while the turn is live so the elapsed-time label advances
   // without forcing the whole Chat page to re-render every second.
-  const tickingNow = useTickingNow(endedAt == null);
+  const tickingNow = useTickingNow(status === 'running');
   const effectiveNow = now ?? tickingNow;
   const duration = formatDuration(startedAt, endedAt, effectiveNow, t);
   const label = status === 'running'
@@ -137,33 +140,16 @@ export function TurnSummaryCard({
           : t('turnSummary.workDetails');
   return (
     <section
-      className="group/run-activity min-w-0 text-sm text-muted-foreground"
+      className="group/run-activity min-w-0 border-b border-border/50 pb-2 text-sm text-muted-foreground"
       data-testid="chat-turn-summary-card"
       data-status={status}
     >
-      <div className="flex min-w-0 items-start gap-2">
-        {status === 'running' && (
-          <Tooltip delayDuration={0}>
-            <TooltipTrigger asChild>
-              <span
-                className="shrink-0"
-                data-testid="chat-turn-summary-orb"
-                data-status={status}
-              >
-                <OrbStatus state="working" size="md" dotSize="lg" label={label} />
-              </span>
-            </TooltipTrigger>
-            <TooltipContent side="right" align="start">
-              {label}
-            </TooltipContent>
-          </Tooltip>
-        )}
-
+      <div className="flex min-w-0 items-start">
         <div className="min-w-0 flex-1">
           <button
             type="button"
             className={cn(
-              'flex w-full min-w-0 items-start gap-2 rounded-md px-1.5 py-1.5 text-left text-xs leading-5',
+              'flex w-full min-w-0 items-start gap-2 rounded-md py-1.5 text-left text-[13px] leading-5',
               'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2',
               'transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10',
               status === 'error' && 'text-destructive hover:text-destructive',
@@ -182,10 +168,25 @@ export function TurnSummaryCard({
               aria-hidden="true"
             />
             <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1">
-              <span className="font-medium">{label}</span>
+              {status === 'running' && !activity && !expanded ? (
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="shrink-0" data-testid="chat-turn-summary-orb">
+                    <OrbStatus state="working" size={20} label={label} />
+                  </span>
+                  <span>{label}</span>
+                </span>
+              ) : (
+                <span>{label}</span>
+              )}
               {!expanded && summary && <TurnSummaryBadges counts={summary} />}
             </span>
           </button>
+
+          {!expanded && activity && (
+            <div className="mt-1 min-w-0 pl-5" data-testid="chat-turn-current-activity">
+              {activity}
+            </div>
+          )}
 
           {expanded && (
             <div

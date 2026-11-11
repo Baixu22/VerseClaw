@@ -185,6 +185,19 @@
     "stepsProgress": "{{completed}} of {{total}} steps",
     "waitingForPlan": "Preparing the next steps.",
     "accepted": "The task has been verified and completed.",
-    "viewChanges": "View changes"
+    "viewChanges": "View changes",
+    "plan": "Plan",
+    "current": "Now",
+    "next": "Next",
+    "more": "Task actions",
+    "copyId": "Copy task ID",
+    "copyIdNamed": "Copy task ID {{id}}",
+    "idCopied": "Task ID #{{id}} copied",
+    "copyFailed": "Couldn't copy the task ID",
+    "openInLedger": "Open in Task Ledger",
+    "openStep": "Open \"{{title}}\" in Task Ledger",
+    "showSteps": "Show steps",
+    "hideSteps": "Hide steps",
+    "updated": "Updated {{time}}"
   }
 }

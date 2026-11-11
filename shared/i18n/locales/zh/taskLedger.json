@@ -185,6 +185,19 @@
     "stepsProgress": "{{completed}} / {{total}} 步",
     "waitingForPlan": "正在整理下一步。",
     "accepted": "任务已核验完成。",
-    "viewChanges": "查看改动"
+    "viewChanges": "查看改动",
+    "plan": "执行计划",
+    "current": "当前",
+    "next": "下一步",
+    "more": "任务操作",
+    "copyId": "复制任务 ID",
+    "copyIdNamed": "复制任务 ID {{id}}",
+    "idCopied": "已复制任务 ID #{{id}}",
+    "copyFailed": "无法复制任务 ID",
+    "openInLedger": "在任务账本中打开",
+    "openStep": "在任务账本中打开「{{title}}」",
+    "showSteps": "展开步骤",
+    "hideSteps": "收起步骤",
+    "updated": "{{time}}更新"
   }
 }

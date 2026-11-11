@@ -1,51 +1,20 @@
 /**
- * Session status card — the chat toolbar's 会话状态 dropdown.
- *
- * ## What it shows, and why only this
- *
- * Four sections, in this order, because that is the order you ask the questions
- * in: what state is the workspace in, what is the plan, who is working, what is
- * running.
- *
- *   环境      — the workspace's Git state: branch, changed lines, conflicts.
- *   开发任务  — the run's own plan.
- *   子 Agent  — the workers this run spawned, each openable.
- *   进程      — the shell processes this run launched, each openable.
- *
- * Everything is live host state. There is no fixture path and no section that
- * renders a placeholder: a section with nothing to report is absent, because an
- * empty section spends vertical space to say nothing.
- *
- * ## Sourcing
- *
- * Git comes from the session-activity snapshot (`git.status()`). The plan and the
- * processes come from the chat runtime run state — the same event stream the
- * transcript reads — via `promoteRunSurfaces` and `projectRunProcesses`, so the
- * plan here and the plan in the conversation cannot drift, and a process row and
- * its output page are the same object. Sub-agents come from
- * `agent:subagent-lifecycle` through the snapshot.
- *
- * Processes deliberately do NOT come from `SessionActivitySnapshot.processes`:
- * that projection is redacted by contract ("Never carries raw argv, command,
- * cwd, or env text"), so it can list a process but never show one.
- *
- * ## Styling
- *
- * All of it is in styles/codex-session-activity.css, which resolves its colour
- * through the semantic roles in codex-tokens.css like every other panel in the
- * app. Inline Tailwind colour/spacing utilities are what made this card read as
- * foreign next to the composer menus; there are none here. Read that file's
- * header for the layout contract before adding a row.
+ * Session environment: changes, observed sources, plan, workers and processes.
+ * Runtime calls and the host snapshot supply the same facts used by the chat.
+ * Compact previews disclose detail on demand; policy and lineage stay secondary.
  */
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight, FilePlus2, GitBranch, GitCommitHorizontal, Loader2, RotateCcw, Target, TerminalSquare } from 'lucide-react';
+import { BookOpen, ChevronRight, FilePlus2, FolderGit2, FolderOpen, GitBranch, GitCommitHorizontal, Loader2, PanelRightOpen, Plug, RotateCcw, Target, TerminalSquare } from 'lucide-react';
+import { X } from '@/components/icons/codex-icons';
 import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ToolUiPlanView } from '@/components/tool-ui/plan-view';
 import type { RunProcessSurface } from '@/components/tool-ui/run-surfaces';
 import type { RunPlanSurface } from '@/pages/Chat/run-surface-promotion';
 import { cn } from '@/lib/utils';
+import { hostApi } from '@/lib/host-api';
+import { isLinkedWorktreePath, pathEquals } from '@/lib/git-ui';
 import { subagentIdentity } from '@shared/subagent-identity';
 import { backgroundReadFailed } from '@shared/types/session-activity';
 import type {
@@ -53,6 +22,7 @@ import type {
   SessionActivitySubagent,
 } from '@shared/types/session-activity';
 import type { SessionPolicyFactStatus } from '@shared/types/session-effective-policy';
+import type { SessionEnvironmentSource } from './session-environment';
 
 type SessionActivityPanelProps = {
   snapshot: SessionActivitySnapshot;
@@ -60,6 +30,11 @@ type SessionActivityPanelProps = {
   plan?: RunPlanSurface | null;
   /** Shell processes this run launched, running ones included. */
   processes?: RunProcessSurface[];
+  sources?: SessionEnvironmentSource[];
+  workspaceName?: string;
+  onClose?: () => void;
+  /** The card can receive live sources before its first host snapshot. */
+  statusPending?: boolean;
   compact?: boolean;
   className?: string;
   onOpenRecovery?: () => void;
@@ -76,7 +51,50 @@ type SessionActivityPanelProps = {
   showCommands?: boolean;
   /** View-only row retention; transcript/resource TTLs remain owner facts. */
   activityRetentionMinutes?: 0 | 5 | 15;
+  /** The workspace tab currently on screen, so the matching row can mark itself. */
+  activeWorkspaceSubject?: ActiveWorkspaceSubject | null;
+  /**
+   * Context-window reading for the Context row: the same `LiveTokenUsage` /
+   * `WorkspaceContextRange` facts the composer's pressure readout resolves.
+   * Absent or unmeasured → the row is not drawn (no invented percentage).
+   */
+  context?: SessionContextUsage | null;
 };
+
+export type SessionContextUsage = {
+  usedTokens: number | null;
+  maxTokens: number | null;
+  utilisation: number | null;
+  cacheReadTokens?: number | null;
+  warmTurnHitRate?: number | null;
+};
+
+export type ActiveWorkspaceSubject =
+  | { kind: 'process' | 'subagent'; subject: string }
+  | { kind: 'review' };
+
+const PROCESS_PREVIEW_LINES = 8;
+
+function outputTail(output: string): string {
+  const lines = output.replace(/\r\n?/g, '\n').replace(/\n+$/, '').split('\n');
+  return lines.slice(-PROCESS_PREVIEW_LINES).join('\n');
+}
+
+function formatTokens(value: number): string {
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(value >= 10_000_000 ? 0 : 1)}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(value >= 10_000 ? 0 : 1)}k`;
+  return String(Math.round(value));
+}
+
+/** "12s", "4m", "1h 5m" — the elapsed figure a running background row carries. */
+function formatElapsed(ms: number): string {
+  const seconds = Math.max(0, Math.floor(ms / 1000));
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  return minutes % 60 ? `${hours}h ${minutes % 60}m` : `${hours}h`;
+}
 
 /**
  * Five visual states, one attribute. The stylesheet owns the colours, so a new
@@ -189,6 +207,7 @@ function Row({
   title,
   onOpen,
   testId,
+  active,
 }: {
   icon?: React.ReactNode;
   label: React.ReactNode;
@@ -200,6 +219,7 @@ function Row({
   title?: string;
   onOpen?: () => void;
   testId?: string;
+  active?: boolean;
 }) {
   const body = (
     <>
@@ -223,14 +243,99 @@ function Row({
     tall && 'is-tall',
     stacked && 'is-stacked',
     onOpen && 'is-interactive',
+    active && 'is-active',
   );
   if (!onOpen) {
     return <div className={className} data-testid={testId} title={title}>{body}</div>;
   }
   return (
-    <button type="button" className={className} onClick={onOpen} data-testid={testId} title={title}>
+    <button type="button" className={className} onClick={onOpen} data-testid={testId} title={title} aria-current={active || undefined}>
       {body}
     </button>
+  );
+}
+
+/**
+ * A process as a small console: the head row toggles a live tail of its output
+ * in place, and a separate action opens the full page in the workspace.
+ */
+function ProcessItem({
+  entry,
+  expanded,
+  active,
+  onToggle,
+  onOpenInWorkspace,
+}: {
+  entry: RunProcessSurface;
+  expanded: boolean;
+  active: boolean;
+  onToggle: () => void;
+  onOpenInWorkspace?: () => void;
+}) {
+  const { t } = useTranslation('chat');
+  const state = rowState(entry.status);
+  const safeId = entry.id.replace(/[^a-zA-Z0-9_-]/g, '-');
+  const tail = expanded ? outputTail(entry.output) : '';
+  const meta = [
+    entry.cwd,
+    entry.durationMs != null ? t('sessionActivity.processes.duration', { seconds: (entry.durationMs / 1000).toFixed(1) }) : null,
+  ].filter(Boolean).join(' · ');
+  return (
+    <div
+      className={cn('codex-session-activity__process', expanded && 'is-expanded', active && 'is-active')}
+      data-state={state}
+      data-testid={`session-activity-process-${safeId}`}
+    >
+      <div className="codex-session-activity__process-head">
+        <button
+          type="button"
+          className="codex-session-activity__process-toggle"
+          onClick={onToggle}
+          aria-expanded={expanded}
+          title={expanded ? t('sessionActivity.processes.hideOutput') : t('sessionActivity.processes.showOutput')}
+          data-testid={`session-activity-process-toggle-${safeId}`}
+        >
+          <span className="codex-session-activity__process-dot" data-state={state} aria-hidden="true" />
+          <span className="codex-session-activity__process-command" title={entry.command}>
+            {commandDigest(entry.command)}
+          </span>
+          <span className="codex-session-activity__row-value" data-state={state}>
+            {entry.status === 'running'
+              ? (
+                <span className="codex-session-activity__elapsed">
+                  {entry.startedAt != null ? <span data-testid={`session-activity-process-elapsed-${safeId}`}>{formatElapsed(Date.now() - entry.startedAt)}</span> : null}
+                  <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+                </span>
+              )
+              : entry.exitCode != null && entry.exitCode !== 0
+                ? t('processPanel.exitCode', { code: entry.exitCode })
+                : t(`processPanel.status.${entry.status}`)}
+          </span>
+          <ChevronRight className="codex-session-activity__collapse-icon h-3 w-3" aria-hidden="true" />
+        </button>
+        {onOpenInWorkspace ? (
+          <button
+            type="button"
+            className="codex-session-activity__action"
+            aria-label={active ? t('sessionActivity.processes.inWorkspace') : t('sessionActivity.processes.openInWorkspace')}
+            title={active ? t('sessionActivity.processes.inWorkspace') : t('sessionActivity.processes.openInWorkspace')}
+            aria-pressed={active}
+            onClick={onOpenInWorkspace}
+            data-testid={`session-activity-process-open-${safeId}`}
+          >
+            <PanelRightOpen className="h-3.5 w-3.5" />
+          </button>
+        ) : null}
+      </div>
+      {expanded ? (
+        <div className="codex-session-activity__console" data-testid={`session-activity-process-output-${safeId}`}>
+          <pre className="codex-session-activity__console-output">
+            {tail || <span className="codex-session-activity__console-empty">{t('sessionActivity.processes.noOutput')}</span>}
+          </pre>
+          {meta ? <div className="codex-session-activity__console-meta" title={meta}>{meta}</div> : null}
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -282,6 +387,23 @@ function PolicyNote({
 
 function subagentTestId(agent: SessionActivitySubagent): string {
   return `session-activity-subagent-${agent.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
+}
+
+/** Keep the first three rows readable; the remaining rows stay keyboard-accessible. */
+function PreviewRows({ children, testId }: { children: React.ReactNode[]; testId: string }) {
+  const { t } = useTranslation('chat');
+  return <>
+    {children.slice(0, 3)}
+    {children.length > 3 && (
+      <details className="codex-session-activity__recent" data-testid={testId}>
+        <summary>
+          <ChevronRight className="size-3 shrink-0" aria-hidden="true" />
+          {t('sessionActivity.moreRows', { count: children.length - 3 })}
+        </summary>
+        <div className="codex-session-activity__overflow" tabIndex={0}>{children.slice(3)}</div>
+      </details>
+    )}
+  </>;
 }
 
 /** The command's leading word or two — a chip label, not the whole invocation. */
@@ -345,6 +467,10 @@ export function SessionActivityPanel({
   snapshot,
   plan,
   processes = [],
+  sources = [],
+  workspaceName,
+  onClose,
+  statusPending = false,
   compact = false,
   className,
   onOpenRecovery,
@@ -356,13 +482,39 @@ export function SessionActivityPanel({
   showGit = true,
   showCommands = true,
   activityRetentionMinutes = 5,
+  activeWorkspaceSubject = null,
+  context = null,
 }: SessionActivityPanelProps) {
   const { t } = useTranslation('chat');
+  /* `undefined` = the user has not chosen yet, so the newest running process is open. */
+  const [expandedProcessId, setExpandedProcessId] = useState<string | null | undefined>(undefined);
+  const isActiveSubject = (kind: 'process' | 'subagent', subject: string) =>
+    activeWorkspaceSubject?.kind === kind && activeWorkspaceSubject.subject === subject;
+  const reviewActive = activeWorkspaceSubject?.kind === 'review';
 
   const git = showGit ? snapshot.git : null;
-  const hasGit = Boolean(git && git.isRepository);
+  const repoRoot = git?.isRepository ? git.repoRoot : undefined;
+  const [checkout, setCheckout] = useState<{ root: string; linked: boolean } | null>(null);
+  useEffect(() => {
+    if (!repoRoot) return;
+    let cancelled = false;
+    void hostApi.git.worktrees().then((result) => {
+      // The route follows the active workspace. Bind its answer to this
+      // snapshot's root so a workspace switch cannot relabel an older card.
+      if (!cancelled && result.success && result.worktrees.some((tree) => pathEquals(tree.path, repoRoot))) {
+        setCheckout({ root: repoRoot, linked: isLinkedWorktreePath(result.worktrees, repoRoot) });
+      }
+    }).catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [repoRoot]);
+  const linkedWorktree = checkout?.root === repoRoot && checkout?.linked;
+  const hasGit = Boolean(git?.isRepository && (!git.clean || git.hasConflicts));
   const hasPlan = (plan?.todos.length ?? 0) > 0;
   const hasSubagents = snapshot.subagents.length > 0;
+  const orderedSubagents = useMemo(() => {
+    const priority = (agent: SessionActivitySubagent) => ({ error: 0, running: 1, warn: 2, idle: 3, ok: 4 })[rowState(agent.status)];
+    return [...snapshot.subagents].reverse().sort((left, right) => priority(left) - priority(right));
+  }, [snapshot.subagents]);
   const visibleProcesses = useMemo(
     () => (showCommands ? processes : []),
     [processes, showCommands],
@@ -450,8 +602,8 @@ export function SessionActivityPanel({
     || Boolean(snapshot.continuity.checkpoint)
     || Boolean(snapshot.continuity.blockedReason);
   const availabilityErrors = [
-    showGit && !snapshot.availability.git ? t('sessionRail.git.unavailable') : null,
-    showCommands && !snapshot.availability.terminals ? t('sessionRail.terminal.unavailable') : null,
+    !statusPending && showGit && !snapshot.availability.git ? t('sessionRail.git.unavailable') : null,
+    !statusPending && showCommands && !snapshot.availability.terminals ? t('sessionRail.terminal.unavailable') : null,
   ].filter(Boolean);
   /**
    * "The background read failed" is not "there is no background activity".
@@ -482,8 +634,49 @@ export function SessionActivityPanel({
   const runningSubagents = snapshot.subagents.filter((agent) => agent.status === 'started').length;
   const runningProcesses = visibleProcesses.filter((entry) => entry.status === 'running').length;
   const runningTotal = runningSubagents + runningProcesses;
+  /* Context: a percentage only when both the used count and the window are
+   * known; otherwise the used count alone, and no row at all when neither is. */
+  const contextPercent = context?.utilisation != null && Number.isFinite(context.utilisation)
+    ? Math.min(100, Math.max(0, Math.round(context.utilisation * 100)))
+    : null;
+  /* A zero count with no known window is "not measured yet", not a reading. */
+  const showContext = Boolean(context && (contextPercent != null || (context.usedTokens ?? 0) > 0));
+  const contextPressure = snapshot.continuity.contextPressure;
+  const contextState: RowState = contextPressure === 'high' || (contextPercent ?? 0) >= 90
+    ? 'error'
+    : contextPressure === 'medium' || (contextPercent ?? 0) >= 70 ? 'warn' : 'idle';
+  const skillSources = sources.filter((source) => source.kind === 'skill').length;
+  const connectorSources = sources.length - skillSources;
 
-  if (!hasGit && !hasPlan && !hasSubagents && !hasProcesses && !policy
+  const defaultExpandedProcessId = [...visibleProcesses].reverse().find((entry) => entry.status === 'running')?.id ?? null;
+  const effectiveExpandedProcessId = expandedProcessId === undefined ? defaultExpandedProcessId : expandedProcessId;
+  const renderRuntimeProcess = (entry: RunProcessSurface) => (
+    <ProcessItem
+      key={entry.id}
+      entry={entry}
+      expanded={effectiveExpandedProcessId === entry.id}
+      active={isActiveSubject('process', entry.id)}
+      onToggle={() => setExpandedProcessId(effectiveExpandedProcessId === entry.id ? null : entry.id)}
+      onOpenInWorkspace={onOpenProcess ? () => onOpenProcess(entry.id, entry.command) : undefined}
+    />
+  );
+  const renderSnapshotProcess = (entry: SessionActivitySnapshot['processes'][number]) => (
+    <Row
+      key={entry.id}
+      testId={`session-activity-snapshot-process-${entry.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`}
+      icon={<TerminalSquare className="h-3.5 w-3.5" aria-hidden="true" />}
+      label={`${t(`sessionActivity.processKinds.${entry.kind}`, { defaultValue: entry.kind })} ${entry.label}`}
+      sublabel={entry.digest}
+      value={t(`sessionActivity.processStatus.${entry.status}`, { defaultValue: entry.status })}
+      state={rowState(entry.status)}
+      title={entry.pid != null ? `PID ${entry.pid}` : entry.label}
+    />
+  );
+  const recentProcesses = visibleProcesses.filter((entry) => entry.status === 'completed');
+  const recentSnapshotProcesses = snapshotOnlyProcesses.filter((entry) => entry.status === 'completed' || entry.status === 'exited');
+  const recentCount = recentProcesses.length + recentSnapshotProcesses.length;
+
+  if (!hasGit && !hasPlan && !hasSubagents && !hasProcesses && !policy && sources.length === 0
     && snapshot.goals.length === 0 && snapshot.lineage.length === 0 && !alert && !backgroundUnknown) return null;
 
   return (
@@ -498,11 +691,31 @@ export function SessionActivityPanel({
          * actions used to live on the Git section head, so a session outside a
          * repository could never reach recovery or the memory draft. */}
         <header className="codex-session-activity__head">
-          <span className="codex-session-activity__head-title">{t('sessionActivity.title')}</span>
+          <span className="codex-session-activity__head-icon" aria-hidden="true">
+            <FolderOpen className="h-3.5 w-3.5" />
+          </span>
+          <span className="codex-session-activity__head-text">
+            <span className="codex-session-activity__head-title" title={workspaceName}>{workspaceName || t('sessionActivity.title')}</span>
+            {git?.isRepository ? (
+              <span className="codex-session-activity__head-meta" data-testid="session-activity-head-branch" data-git-kind={linkedWorktree ? 'worktree' : 'branch'} title={git.repoRoot}>
+                {linkedWorktree ? <FolderGit2 className="h-3 w-3 shrink-0" aria-hidden="true" /> : <GitBranch className="h-3 w-3 shrink-0" aria-hidden="true" />}
+                {linkedWorktree && <span className="shrink-0" data-testid="session-activity-worktree-kind">{t('composer.git.kindWorktree')}</span>}
+                <span className="codex-session-activity__mono" title={git.branch}>{git.detached ? t('sessionActivity.git.detached') : git.branch ?? t('composer.git.unknownBranch')}</span>
+              </span>
+            ) : null}
+          </span>
           {runningTotal > 0 ? (
-            <span className="codex-session-activity__pill" data-state="running" data-testid="session-activity-running">
+            /* A dot and a figure, not a sentence: the Background group below
+             * spells the count out, and the workspace name needs the width. */
+            <span
+              className="codex-session-activity__pill"
+              data-state="running"
+              data-testid="session-activity-running"
+              title={t('sessionActivity.runningCount', { count: runningTotal })}
+              aria-label={t('sessionActivity.runningCount', { count: runningTotal })}
+            >
               <span className="codex-session-activity__pulse" aria-hidden="true" />
-              {t('sessionActivity.runningCount', { count: runningTotal })}
+              <span aria-hidden="true">{runningTotal}</span>
             </span>
           ) : null}
           <span className="codex-session-activity__section-actions">
@@ -522,11 +735,22 @@ export function SessionActivityPanel({
                 testId="session-activity-open-recovery"
               />
             ) : null}
+            {onClose ? (
+              <HeaderAction
+                label={t('sessionActivity.close')}
+                icon={<X className="h-3.5 w-3.5" />}
+                onClick={() => {
+                  onClose();
+                  document.querySelector<HTMLButtonElement>('[data-testid="chat-session-activity-toggle"]')?.focus();
+                }}
+                testId="session-activity-close"
+              />
+            ) : null}
           </span>
         </header>
 
         {alert || backgroundUnknown ? (
-          <div className="codex-session-activity__alerts" role="status">
+          <div className="codex-session-activity__alerts" data-state={alert ? 'error' : 'warn'} role="status">
             {/* A failure must not be silently dropped just because it has no section
              * of its own. It leads the card — a scrolled-away error is a hidden one —
              * and it only renders when present, so a healthy run has no empty slot. */}
@@ -538,7 +762,7 @@ export function SessionActivityPanel({
             {backgroundUnknown ? (
               <p
                 className="codex-session-activity__empty"
-                data-state="error"
+                data-state="warn"
                 data-testid="session-activity-background-unknown"
               >
                 {t('sessionActivity.background.unknown')}
@@ -566,43 +790,153 @@ export function SessionActivityPanel({
           </div>
         ) : null}
 
-        {/* ── 环境 ─────────────────────────────────────────────────────── */}
+        {/* ── Overview: 上下文 / 连接器 ───────────────────────────────────
+         * Key–value rows in the reference client's shape: the label leads,
+         * the reading sits on the right edge, and the detail folds open under
+         * the row. Each row exists only when it has a real reading. */}
+        {showContext || sources.length > 0 ? (
+          <section className="codex-session-activity__section codex-session-activity__overview" data-testid="session-activity-overview">
+            {showContext && context ? (
+              <details className="codex-session-activity__kv" data-testid="session-activity-context" data-state={contextState}>
+                <summary className="codex-session-activity__kv-head" data-testid="session-activity-context-toggle">
+                  <span className="codex-session-activity__kv-label">{t('sessionActivity.overview.context')}</span>
+                  <ChevronRight className="codex-session-activity__collapse-icon h-3 w-3" aria-hidden="true" />
+                  <span className="codex-session-activity__kv-value" data-state={contextState}>
+                    {contextPercent != null ? `${contextPercent}%` : formatTokens(context.usedTokens ?? 0)}
+                    {contextPercent != null ? (
+                      <span
+                        className="codex-session-activity__meter"
+                        role="meter"
+                        aria-label={t('sessionActivity.overview.context')}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={contextPercent}
+                        data-state={contextState}
+                      >
+                        <span style={{ width: `${Math.max(contextPercent, 2)}%` }} />
+                      </span>
+                    ) : null}
+                  </span>
+                </summary>
+                <div className="codex-session-activity__kv-body">
+                  <div className="codex-session-activity__kv-line">
+                    <span>{t('sessionActivity.overview.contextUsed')}</span>
+                    <span className="codex-session-activity__mono">
+                      {context.usedTokens != null
+                        ? context.maxTokens != null
+                          ? `${formatTokens(context.usedTokens)} / ${formatTokens(context.maxTokens)}`
+                          : formatTokens(context.usedTokens)
+                        : '—'}
+                    </span>
+                  </div>
+                  {context.cacheReadTokens != null ? (
+                    <div className="codex-session-activity__kv-line">
+                      <span>{t('sessionActivity.overview.cacheRead')}</span>
+                      <span className="codex-session-activity__mono">{formatTokens(context.cacheReadTokens)}</span>
+                    </div>
+                  ) : null}
+                  {context.warmTurnHitRate != null ? (
+                    <div className="codex-session-activity__kv-line">
+                      <span>{t('sessionActivity.overview.cacheHitRate')}</span>
+                      <span className="codex-session-activity__mono">{Math.round(context.warmTurnHitRate * 100)}%</span>
+                    </div>
+                  ) : null}
+                  {contextPressure ? (
+                    <div className="codex-session-activity__kv-line">
+                      <span>{t('sessionActivity.overview.pressure')}</span>
+                      <span data-state={contextState}>{t(`sessionActivity.continuity.pressure.${contextPressure}`)}</span>
+                    </div>
+                  ) : null}
+                </div>
+              </details>
+            ) : null}
+            {sources.length > 0 ? (
+              <details className="codex-session-activity__kv" data-testid="session-activity-sources">
+                <summary className="codex-session-activity__kv-head" data-testid="session-activity-sources-toggle">
+                  <span className="codex-session-activity__kv-label">{t('sessionActivity.overview.connectors')}</span>
+                  <ChevronRight className="codex-session-activity__collapse-icon h-3 w-3" aria-hidden="true" />
+                  <span className="codex-session-activity__kv-value">
+                    {[
+                      connectorSources > 0 ? t('sessionActivity.overview.connectorsValue', { count: connectorSources }) : null,
+                      skillSources > 0 ? t('sessionActivity.overview.skillsValue', { count: skillSources }) : null,
+                    ].filter(Boolean).join(' · ')}
+                  </span>
+                </summary>
+                <div className="codex-session-activity__kv-body is-list">
+                  <PreviewRows testId="session-activity-more-sources">
+                    {sources.map((source) => source.kind === 'skill' ? (
+                      <Row
+                        key={source.id}
+                        icon={<BookOpen className="h-3.5 w-3.5" aria-hidden="true" />}
+                        label={source.name}
+                        title={source.name}
+                        value={t('sessionActivity.sourceKinds.skill')}
+                      />
+                    ) : (
+                      <details className="codex-session-activity__source" key={source.id}>
+                        <summary className="codex-session-activity__row is-interactive">
+                          <Plug className="h-3.5 w-3.5 codex-session-activity__row-icon" aria-hidden="true" />
+                          <span className="codex-session-activity__row-label" title={source.name}>{source.name}</span>
+                          <span className="codex-session-activity__row-value">{t('sessionActivity.sourceKinds.mcp')}</span>
+                          <ChevronRight className="h-3.5 w-3.5 codex-session-activity__collapse-icon" aria-hidden="true" />
+                        </summary>
+                        <div className="codex-session-activity__source-tools">
+                          {source.tools.map((tool) => <code key={tool}>{tool}</code>)}
+                        </div>
+                      </details>
+                    ))}
+                  </PreviewRows>
+                </div>
+              </details>
+            ) : null}
+          </section>
+        ) : null}
+
+        {/* ── 变更 ─────────────────────────────────────────────────────────
+         * One line: the signed delta with branch and file count beneath it,
+         * and the review action on the right edge (the reference client's
+         * "Changes … Create PR" row). */}
         {hasGit && gitStats ? (
           <Section
             title={t('sessionActivity.sections.environment')}
             testId="session-activity-environment"
             summary={git?.hasConflicts ? t('sessionActivity.git.conflicts') : undefined}
           >
-            <Row
-              icon={<GitBranch className="h-3.5 w-3.5" aria-hidden="true" />}
-              label={(
-                <span className="codex-session-activity__mono">
-                  {git?.branch ?? t('sessionActivity.git.detached')}
+            <div
+              className={cn('codex-session-activity__change', reviewActive && 'is-active')}
+              data-testid="session-activity-git-delta"
+              data-state={git?.hasConflicts ? 'error' : undefined}
+            >
+              <span className="codex-session-activity__row-icon">
+                <GitCommitHorizontal className="h-3.5 w-3.5" aria-hidden="true" />
+              </span>
+              <span className="codex-session-activity__row-stack">
+                <span className="codex-session-activity__delta">
+                  <span className="codex-session-activity__delta-add">+{formatCount(gitStats.additions)}</span>
+                  <span className="codex-session-activity__delta-remove">−{formatCount(gitStats.deletions)}</span>
                 </span>
-              )}
-              title={git?.branch ?? t('sessionActivity.git.detached')}
-              value={git?.clean
-                ? t('sessionActivity.git.clean')
-                : t('sessionActivity.git.changes', { count: gitStats.changes })}
-              state={git?.hasConflicts ? 'error' : 'idle'}
-              onOpen={onOpenEnvironment}
-              testId="session-activity-git-branch"
-            />
-            {!git?.clean ? (
-              <Row
-                icon={<GitCommitHorizontal className="h-3.5 w-3.5" aria-hidden="true" />}
-                label={(
-                  <span className="codex-session-activity__delta">
-                    <span className="codex-session-activity__delta-add">+{formatCount(gitStats.additions)}</span>
-                    <span className="codex-session-activity__delta-remove">−{formatCount(gitStats.deletions)}</span>
-                  </span>
-                )}
-                value={git?.hasConflicts ? t('sessionActivity.git.conflicts') : undefined}
-                state={git?.hasConflicts ? 'error' : undefined}
-                onOpen={onOpenEnvironment}
-                testId="session-activity-git-delta"
-              />
-            ) : null}
+                <span
+                  className="codex-session-activity__row-sublabel"
+                  data-testid="session-activity-git-branch"
+                  title={git?.branch ?? t('sessionActivity.git.detached')}
+                >
+                  <span className="codex-session-activity__mono">{git?.branch ?? t('sessionActivity.git.detached')}</span>
+                  {' · '}
+                  {git?.hasConflicts ? t('sessionActivity.git.conflicts') : t('sessionActivity.git.changes', { count: gitStats.changes })}
+                </span>
+              </span>
+              {onOpenEnvironment ? (
+                <button
+                  type="button"
+                  className="codex-session-activity__chip-button"
+                  onClick={onOpenEnvironment}
+                  aria-pressed={reviewActive}
+                  data-testid="session-activity-review"
+                >
+                  {t('sessionActivity.overview.review')}
+                </button>
+              ) : null}
+            </div>
           </Section>
         ) : null}
 
@@ -617,7 +951,7 @@ export function SessionActivityPanel({
               <ToolUiPlanView
                 title={t('sessionActivity.sections.plan')}
                 todos={plan.todos}
-                maxVisibleTodos={6}
+                maxVisibleTodos={3}
                 compact
                 showTitle
                 testId="session-activity-plan-view"
@@ -625,6 +959,21 @@ export function SessionActivityPanel({
             </div>
           </Section>
         ) : null}
+
+        {/* ── 后台任务 ─────────────────────────────────────────────────────
+         * Workers and the commands this run launched, under one heading the
+         * way the reference client lists background tasks; each keeps its
+         * own sub-list, its open action and its "finished" disclosure. */}
+        {hasSubagents || hasProcesses ? (
+          <div className="codex-session-activity__group" data-testid="session-activity-background">
+            <div className="codex-session-activity__section-head codex-session-activity__group-head">
+              <span className="codex-session-activity__section-title">{t('sessionActivity.overview.background')}</span>
+              <span className="codex-session-activity__section-summary" data-state={runningTotal > 0 ? 'running' : undefined}>
+                {runningTotal > 0
+                  ? t('sessionActivity.runningCount', { count: runningTotal })
+                  : t('sessionActivity.overview.backgroundIdle')}
+              </span>
+            </div>
 
         {/* ── 子 Agent ─────────────────────────────────────────────────── */}
         {hasSubagents ? (
@@ -635,7 +984,8 @@ export function SessionActivityPanel({
               : formatCount(snapshot.subagents.length)}
             testId="session-activity-subagents"
           >
-            {snapshot.subagents.slice(-6).map((agent) => {
+            <PreviewRows testId="session-activity-more-subagents">
+            {orderedSubagents.map((agent) => {
               const childSessionKey = agent.childSessionKey;
               const identity = subagentIdentity(childSessionKey ?? agent.agentId ?? agent.id);
               const state = rowState(agent.status);
@@ -660,6 +1010,7 @@ export function SessionActivityPanel({
                     ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
                     : t(`sessionActivity.subagentStatus.${agent.status}`, { defaultValue: agent.status })}
                   state={state}
+                  active={Boolean(childSessionKey && isActiveSubject('subagent', childSessionKey))}
                   title={childSessionKey
                     ? t('sessionActivity.subagents.openTranscript', { role: identity.name })
                     : agent.task || identity.name}
@@ -669,6 +1020,7 @@ export function SessionActivityPanel({
                 />
               );
             })}
+            </PreviewRows>
           </Section>
         ) : null}
 
@@ -681,41 +1033,27 @@ export function SessionActivityPanel({
               : formatCount(visibleProcesses.length + snapshotOnlyProcesses.length)}
             testId="session-activity-processes"
           >
-            {visibleProcesses.slice(-6).map((entry) => (
-              <Row
-                key={entry.id}
-                testId={`session-activity-process-${entry.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`}
-                icon={<TerminalSquare className="h-3.5 w-3.5" aria-hidden="true" />}
-                label={<span className="codex-session-activity__mono">{commandDigest(entry.command)}</span>}
-                value={entry.status === 'running'
-                  ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
-                  : entry.exitCode != null
-                    ? t('processPanel.exitCode', { code: entry.exitCode })
-                    : t(`processPanel.status.${entry.status}`)}
-                state={rowState(entry.status)}
-                title={onOpenProcess
-                  ? t('sessionActivity.processes.openOutput', { command: entry.command })
-                  : entry.command}
-                onOpen={onOpenProcess ? () => onOpenProcess(entry.id, entry.command) : undefined}
-              />
-            ))}
-            {/* Host-projected processes. Deliberately INERT: this projection is
-             * redacted by contract, so the row can report that a process exists
-             * but there is no output behind it to open. Offering a chevron here
-             * would promise a pane that cannot be filled. */}
-            {snapshotOnlyProcesses.slice(-6).map((entry) => (
-              <Row
-                key={entry.id}
-                testId={`session-activity-snapshot-process-${entry.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`}
-                icon={<TerminalSquare className="h-3.5 w-3.5" aria-hidden="true" />}
-                label={`${t(`sessionActivity.processKinds.${entry.kind}`, { defaultValue: entry.kind })} ${entry.label}`}
-                sublabel={entry.digest}
-                value={t(`sessionActivity.processStatus.${entry.status}`, { defaultValue: entry.status })}
-                state={rowState(entry.status)}
-                title={entry.pid != null ? `PID ${entry.pid}` : entry.label}
-              />
-            ))}
+            <PreviewRows testId="session-activity-more-processes">
+              {[
+                ...visibleProcesses.filter((entry) => entry.status !== 'completed').map(renderRuntimeProcess),
+                ...snapshotOnlyProcesses.filter((entry) => entry.status !== 'completed' && entry.status !== 'exited').map(renderSnapshotProcess),
+              ]}
+            </PreviewRows>
+            {recentCount > 0 && (
+              <details className="codex-session-activity__recent" data-testid="session-activity-recent-processes">
+                <summary>
+                  <ChevronRight className="size-3 shrink-0" aria-hidden="true" />
+                  {t('sessionActivity.processes.recent', { count: recentCount })}
+                </summary>
+                <div className="codex-session-activity__overflow" tabIndex={0}>
+                  {recentProcesses.map(renderRuntimeProcess)}
+                  {recentSnapshotProcesses.map(renderSnapshotProcess)}
+                </div>
+              </details>
+            )}
           </Section>
+        ) : null}
+          </div>
         ) : null}
 
         {/* ── Host-projected read models ────────────────────────────────────
@@ -726,7 +1064,7 @@ export function SessionActivityPanel({
          * them, which is why they are below the four sections the card is
          * organised around rather than interleaved with them. */}
         {snapshot.goals.length > 0 ? (
-          <Section
+          <CollapsibleSection
             title={t('sessionActivity.sections.goals')}
             summary={formatCount(snapshot.goals.length)}
             testId="session-activity-goals"
@@ -742,11 +1080,11 @@ export function SessionActivityPanel({
                 state={rowState(goal.status)}
               />
             ))}
-          </Section>
+          </CollapsibleSection>
         ) : null}
 
         {snapshot.lineage.length > 0 ? (
-          <Section
+          <CollapsibleSection
             title={t('sessionActivity.sections.lineage')}
             summary={formatCount(snapshot.lineage.length)}
             testId="session-activity-lineage"
@@ -763,7 +1101,7 @@ export function SessionActivityPanel({
                 title={entry.sessionKey}
               />
             ))}
-          </Section>
+          </CollapsibleSection>
         ) : null}
 
         {/* ── 运行策略 / 生命周期边界 ─────────────────────────────────────

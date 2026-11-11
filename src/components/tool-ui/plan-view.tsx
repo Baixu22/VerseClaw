@@ -37,6 +37,11 @@ export type ToolUiPlanTodo = {
   description?: string;
 };
 
+/** Exported so the conversation task dock draws the same tri-state step glyphs. */
+export function ToolUiPlanItemIcon({ status }: { status: ToolUiPlanTodoStatus }) {
+  return <ItemIcon status={status} />;
+}
+
 function ItemIcon({ status }: { status: ToolUiPlanTodoStatus }) {
   const common = 'absolute inset-0 h-4 w-4 transition-opacity duration-300';
   return (
