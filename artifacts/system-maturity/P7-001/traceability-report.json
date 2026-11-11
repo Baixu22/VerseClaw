@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "task": "P7-001",
-  "evaluatedAt": "2026-07-31T07:44:46.000Z",
+  "evaluatedAt": "2026-11-11T01:44:14.000Z",
   "ok": false,
   "summary": {
     "findingCount": 35,
     "taskCount": 38,
     "testCount": 35,
-    "freshCount": 24,
-    "staleCount": 11,
-    "failureCount": 11,
+    "freshCount": 16,
+    "staleCount": 19,
+    "failureCount": 22,
     "warningCount": 0
   },
   "policy": {
@@ -152,13 +152,13 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d",
+          "sha256": "41c49266c5ff14b4b3321969ae0fe3e28fa48256f697b294ac6a267f5eaf1d12",
           "taskId": "P1-001",
           "kind": "task"
         },
         {
           "path": "src/lib/host-api.ts",
-          "sha256": "e45f55707ecd8a7c097798f5debf8cbbf446b7f0ad50a9a6a6a20beba30a5722",
+          "sha256": "9917b8934ec48fc904275c592ee5573351e22482f54b6c79058c7a3ee1aafa04",
           "taskId": "P1-001",
           "kind": "task"
         },
@@ -218,13 +218,13 @@
         },
         {
           "path": "artifacts/system-maturity/P8-001/residual-audit-report.json",
-          "sha256": "793963668d829ef6dccc2b3858159853462859ed4fcd0e6383fcf09b9d719b84",
+          "sha256": "7e4acfc6e0c9a44de82d1e452ee5c9cbd84627e0694fc95f83184e231a5c343d",
           "taskId": "P8-001",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P8-001/residual-audit-dry-run.json",
-          "sha256": "3e2299001131961bdb8fc94cd2c6da5ea76bd5aebdd2b124e0f795702592ca0e",
+          "sha256": "6aee181b8725245d842908ba33d3d081f2b6e4b67bc8fd95f45d1c944000f732",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -242,7 +242,7 @@
         },
         {
           "path": "plans/system-maturity/residual-register.json",
-          "sha256": "e3e6ca705fbea46180487859b22902b5d3fbf703ad1659c82dc34e0a4d739199",
+          "sha256": "e1c0410dace5a50b46d040c983c315491298fe4dd638f0a68cf0941661931b2b",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -266,7 +266,7 @@
         },
         {
           "path": "tests/unit/system-maturity-residual-p8-001.test.ts",
-          "sha256": "308c3f5500fedabc1e00927c7a05e5186e25490d8eab597e2fad60b9285f76b8",
+          "sha256": "29258d48f0c765b29713ff1cf66b17ff77729235935ab8313b9e3c438c98fd84",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -278,25 +278,25 @@
         },
         {
           "path": "tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
-          "sha256": "32fb987793694b77e9c8f1ff850b0870b4cc98da42d3c1c818d945cab2346c27",
+          "sha256": "3ca93f513122530299b43049a59227425b932b18e041cb05a64bba8a2269ca36",
           "taskId": "P8-001",
           "kind": "task"
         },
         {
           "path": "electron/utils/channel-config.ts",
-          "sha256": "45cb19479deeafc1cf33cf54bc13f0f9e975066a25af8872957cb2426cf18a3d",
+          "sha256": "065ff29157e0f8c49872365c2a08930a43da57b38d77c1167939960237f49f14",
           "taskId": "P8-001",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
+          "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
           "taskId": "P8-001",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/findings-registry.json",
-          "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178",
+          "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -314,7 +314,19 @@
         },
         {
           "path": "plans/system-maturity/INDEX.md",
-          "sha256": "1d72a4b5b08d92d65ae5f649cb18d917f1780fd46cc44af6781af62ef378e3ef",
+          "sha256": "1bf49b5e0f6c53ce82c3d5a5a92ad70349d24e065b6e595d04682840f8920194",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-001/residual-revalidation-20261111.json",
+          "sha256": "8fea93ed0f3e3c58d28d49f2813602c35f3b9e7595d27787bda31629c34f3097",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-001/residual-revalidation-20261111.stdout.txt",
+          "sha256": "798c8dde98fe8535903cc57211eec17b67cc1ee89dc6feef233a8659ba5b4295",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -332,13 +344,13 @@
         },
         {
           "path": "electron/services/providers/store-instance.ts",
-          "sha256": "4f07effe490536bc9426e706d6c12747f77b32a989da120500b1b46a902e1aa1",
+          "sha256": "855afc3354854fcb9de84ccdc8258b75ee288a8144970ab7d2a5517db1d56ccb",
           "taskId": "P8-002",
           "kind": "task"
         },
         {
           "path": "electron/utils/channel-config.ts",
-          "sha256": "45cb19479deeafc1cf33cf54bc13f0f9e975066a25af8872957cb2426cf18a3d",
+          "sha256": "065ff29157e0f8c49872365c2a08930a43da57b38d77c1167939960237f49f14",
           "taskId": "P8-002",
           "kind": "task"
         },
@@ -350,13 +362,13 @@
         },
         {
           "path": "plans/system-maturity/residual-register.json",
-          "sha256": "e3e6ca705fbea46180487859b22902b5d3fbf703ad1659c82dc34e0a4d739199",
+          "sha256": "e1c0410dace5a50b46d040c983c315491298fe4dd638f0a68cf0941661931b2b",
           "taskId": "P8-002",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/findings-registry.json",
-          "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178",
+          "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46",
           "taskId": "P8-002",
           "kind": "task"
         },
@@ -392,11 +404,13 @@
         }
       ],
       "reviewCycleDays": 14,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
-      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
-      "nextReviewAt": "2026-08-14T07:42:04.000Z",
+      "latestSourceAt": "2026-11-07T06:51:09.000Z",
+      "latestEvidenceAt": "2026-11-11T02:54:26.769Z",
+      "nextReviewAt": "2026-11-25T02:54:26.769Z",
       "freshness": "fresh",
-      "failures": []
+      "failures": [
+        "task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json"
+      ]
     },
     {
       "id": "F-SEC-002",
@@ -477,13 +491,13 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d",
+          "sha256": "41c49266c5ff14b4b3321969ae0fe3e28fa48256f697b294ac6a267f5eaf1d12",
           "taskId": "P1-001",
           "kind": "task"
         },
         {
           "path": "src/lib/host-api.ts",
-          "sha256": "e45f55707ecd8a7c097798f5debf8cbbf446b7f0ad50a9a6a6a20beba30a5722",
+          "sha256": "9917b8934ec48fc904275c592ee5573351e22482f54b6c79058c7a3ee1aafa04",
           "taskId": "P1-001",
           "kind": "task"
         },
@@ -519,13 +533,11 @@
         }
       ],
       "reviewCycleDays": 14,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
-      "latestEvidenceAt": "2026-07-29T03:49:51.000Z",
-      "nextReviewAt": "2026-08-12T03:49:51.000Z",
-      "freshness": "stale",
-      "failures": [
-        "stale evidence: linked source is newer than evidence"
-      ]
+      "latestSourceAt": "2026-11-06T13:38:55.000Z",
+      "latestEvidenceAt": "2026-11-06T13:38:55.000Z",
+      "nextReviewAt": "2026-11-20T13:38:55.000Z",
+      "freshness": "fresh",
+      "failures": []
     },
     {
       "id": "F-SEC-003",
@@ -590,9 +602,7 @@
         "tests/e2e/chat-plan-mode-write-challenge.spec.ts",
         ".github/workflows/system-maturity-security.yml",
         "harness/specs/rules/system-maturity-security-regression.md",
-        "harness/specs/tasks/system-maturity-security-regression.md",
-        "tests/unit/agent-browser-cdp-lifecycle.test.ts",
-        "tests/unit/agent-browser-tab-manager.test.ts"
+        "harness/specs/tasks/system-maturity-security-regression.md"
       ],
       "evidence": [
         {
@@ -615,7 +625,7 @@
         },
         {
           "path": "shared/security/url-policy.ts",
-          "sha256": "b39c676620af5841b2f7991b0a06d19f7fcfb080fef1e351d59a6c6889681495",
+          "sha256": "b11c8d42f6189f2b07b5495a4e443b96473d0aedbd1e67e443d252714f47a49c",
           "taskId": "P1-004",
           "kind": "task"
         },
@@ -687,7 +697,7 @@
         },
         {
           "path": "plans/system-maturity/security-regression-suite.json",
-          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "sha256": "9cbbc093b7f709cd0336ccee6d5618a73fe533917915819cdfedeb77a195ac9c",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -711,13 +721,13 @@
         },
         {
           "path": "harness/specs/tasks/system-maturity-security-regression.md",
-          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "sha256": "ead99d2bb256dbe86bf501c808ce88467735885fd647c9543c3ddcd80a2efdd9",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": ".github/workflows/system-maturity-security.yml",
-          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "sha256": "7f20569ee913273b85e7bc30f01c532b1710925327610b8f0adbb82425ee1f62",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -758,9 +768,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
-      "latestEvidenceAt": "2026-07-29T02:29:22.000Z",
-      "nextReviewAt": "2026-08-28T02:29:22.000Z",
+      "latestSourceAt": "2026-11-06T13:38:55.000Z",
+      "latestEvidenceAt": "2026-10-16T04:04:24.000Z",
+      "nextReviewAt": "2026-11-15T04:04:24.000Z",
       "freshness": "stale",
       "failures": [
         "stale evidence: linked source is newer than evidence"
@@ -826,13 +836,13 @@
         },
         {
           "path": "electron/services/files-api.ts",
-          "sha256": "6cbb73f53dd7efabdcf868a7791390ccc2c5a09e9b8a36494d3dfb7552c51b6f",
+          "sha256": "99f5dcdd3d2fa9d240b656bf6b97b6f3937923ba0c17e869f53b916637835d08",
           "taskId": "P1-003",
           "kind": "task"
         },
         {
           "path": "electron/services/workspace-permissions.ts",
-          "sha256": "fe62bd3150c4476f6e6f0edee680e87862c800af3f748f802f4545ff4084de43",
+          "sha256": "909cdf6a2ae875a7c75ef4e53a17f510ab7708d6593942f9eb690f1a2c7f1685",
           "taskId": "P1-003",
           "kind": "task"
         },
@@ -862,9 +872,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
-      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
-      "nextReviewAt": "2026-08-30T07:42:04.000Z",
+      "latestSourceAt": "2026-11-07T06:51:09.000Z",
+      "latestEvidenceAt": "2026-11-07T06:51:09.000Z",
+      "nextReviewAt": "2026-12-07T06:51:09.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -922,7 +932,7 @@
         },
         {
           "path": "electron/main/ipc/host-invoke.ts",
-          "sha256": "1b431bf5f2bb8888370c92630d38f08c3a812064a8f6b5644ba7ced606d442c0",
+          "sha256": "69cd38549db89ed6a55ed99f4fd6da163652d9354ef3839765d26f7a921e438a",
           "taskId": "P1-002",
           "kind": "task"
         },
@@ -934,7 +944,7 @@
         },
         {
           "path": "electron/main/ipc-handlers.ts",
-          "sha256": "c76f0db63d653a5755b8f0b4c6bda53914f81e35f3917bceedaeaf3eb4eb7f27",
+          "sha256": "0d6966ed92d79d459e3fd46c6a6876e06ad844eb39244b79e3b5aa54f3a0cc56",
           "taskId": "P1-002",
           "kind": "task"
         },
@@ -964,9 +974,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
-      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
-      "nextReviewAt": "2026-08-30T07:42:04.000Z",
+      "latestSourceAt": "2026-11-06T13:38:55.000Z",
+      "latestEvidenceAt": "2026-11-06T13:38:55.000Z",
+      "nextReviewAt": "2026-12-06T13:38:55.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -1010,9 +1020,7 @@
         "electron/services/git-api.ts",
         "shared/agent-browser/browser-control.ts",
         "tests/unit/url-policy.test.ts",
-        "tests/unit/html-preview-security.test.tsx",
-        "tests/unit/agent-browser-cdp-lifecycle.test.ts",
-        "tests/unit/agent-browser-tab-manager.test.ts"
+        "tests/unit/html-preview-security.test.tsx"
       ],
       "evidence": [
         {
@@ -1035,7 +1043,7 @@
         },
         {
           "path": "shared/security/url-policy.ts",
-          "sha256": "b39c676620af5841b2f7991b0a06d19f7fcfb080fef1e351d59a6c6889681495",
+          "sha256": "b11c8d42f6189f2b07b5495a4e443b96473d0aedbd1e67e443d252714f47a49c",
           "taskId": "P1-004",
           "kind": "task"
         },
@@ -1071,9 +1079,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-27T16:42:10.000Z",
+      "latestSourceAt": "2026-11-06T13:38:55.000Z",
+      "latestEvidenceAt": "2026-10-13T22:43:50.000Z",
+      "nextReviewAt": "2026-11-12T22:43:50.000Z",
       "freshness": "stale",
       "failures": [
         "stale evidence: linked source is newer than evidence"
@@ -1172,12 +1180,12 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
+      "latestSourceAt": "2026-11-10T15:11:50.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-09-26T16:42:10.000Z",
       "freshness": "stale",
       "failures": [
-        "stale evidence: linked source is newer than evidence"
+        "stale evidence: linked source is newer than evidence, review cycle expired"
       ]
     },
     {
@@ -1270,12 +1278,12 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
+      "latestSourceAt": "2026-11-10T15:11:50.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-08-27T16:42:10.000Z",
       "freshness": "stale",
       "failures": [
-        "stale evidence: linked source is newer than evidence"
+        "stale evidence: linked source is newer than evidence, review cycle expired"
       ]
     },
     {
@@ -1344,25 +1352,25 @@
         },
         {
           "path": "shared/types/workspace.ts",
-          "sha256": "32536334d593bc0b50ce8ab461247a24b4f6e2dc95d3cce8651e6d01e8b2154c",
+          "sha256": "f024191a56bc91f84a6434f0d99cd4dfcb0a3496a0d66ec44416bc05e26058f2",
           "taskId": "P2-001",
           "kind": "task"
         },
         {
           "path": "electron/services/workspaces-api.ts",
-          "sha256": "46c44a861293b3f97500639a71837c805e24feef40996a3294c6013d046eba2a",
+          "sha256": "5d92c41a77d7c42ad8020e7f861e91bb952495f6d456e3172a0570337d7931f8",
           "taskId": "P2-001",
           "kind": "task"
         },
         {
           "path": "electron/services/workspace-permissions.ts",
-          "sha256": "fe62bd3150c4476f6e6f0edee680e87862c800af3f748f802f4545ff4084de43",
+          "sha256": "909cdf6a2ae875a7c75ef4e53a17f510ab7708d6593942f9eb690f1a2c7f1685",
           "taskId": "P2-001",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
-          "sha256": "29cba9bf2d6299078ebe759e3e22dc5591b334cafd2b0707ec4adb5a253d571f",
+          "sha256": "ed167cab96a8a7bbf336b170e0f0aa4f99c9321aafb3c9e4feac1184da359f16",
           "taskId": "P2-001",
           "kind": "task"
         },
@@ -1386,13 +1394,11 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-27T16:42:10.000Z",
-      "freshness": "stale",
-      "failures": [
-        "stale evidence: linked source is newer than evidence"
-      ]
+      "latestSourceAt": "2026-11-07T06:51:09.000Z",
+      "latestEvidenceAt": "2026-11-07T06:51:09.000Z",
+      "nextReviewAt": "2026-12-07T06:51:09.000Z",
+      "freshness": "fresh",
+      "failures": []
     },
     {
       "id": "F-AUTH-002",
@@ -1456,19 +1462,19 @@
         },
         {
           "path": "openclaw_runtime/src/agents/role-contract.ts",
-          "sha256": "691aeb78d20282a1815e9f8d3957ac152000b41f8176a15522b080a353369ad6",
+          "sha256": "2c795e993a9693afd7d418fa7406b3485d54d8d9bde325d9cbaa5a4a007a7d29",
           "taskId": "P2-003",
           "kind": "task"
         },
         {
           "path": "openclaw_runtime/src/agents/role-permissions-policy.ts",
-          "sha256": "3caae086de53b130b0f9dee357e1969867c26b140c40db861d47fa2e4d9413c8",
+          "sha256": "946d6e1594dd88d6d45084feb04cbef7fb398c58561631bf7c89dbbae39116e7",
           "taskId": "P2-003",
           "kind": "task"
         },
         {
           "path": "openclaw_runtime/src/agents/role-spawn.ts",
-          "sha256": "736bc67630a38432d3d2c95b97f698354d275e54f43d57cd8ab64b86813a86d2",
+          "sha256": "e27652fa85d82e7bc08ca0ad7f58a1f0500956a9c3ee6f279d0466d1dc292eac",
           "taskId": "P2-003",
           "kind": "task"
         },
@@ -1480,7 +1486,7 @@
         },
         {
           "path": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
-          "sha256": "29cba9bf2d6299078ebe759e3e22dc5591b334cafd2b0707ec4adb5a253d571f",
+          "sha256": "ed167cab96a8a7bbf336b170e0f0aa4f99c9321aafb3c9e4feac1184da359f16",
           "taskId": "P2-003",
           "kind": "task"
         },
@@ -1504,15 +1510,15 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
-      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
-      "nextReviewAt": "2026-08-30T07:42:04.000Z",
+      "latestSourceAt": "2026-11-05T12:41:35.000Z",
+      "latestEvidenceAt": "2026-11-05T12:41:35.000Z",
+      "nextReviewAt": "2026-12-05T12:41:35.000Z",
       "freshness": "fresh",
       "failures": []
     },
     {
       "id": "F-AUTH-003",
-      "status": "Fixed",
+      "status": "Partial",
       "severity": "High",
       "owner": "runtime-auth",
       "owners": [
@@ -1592,11 +1598,13 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T18:39:44.000Z",
+      "latestSourceAt": "2026-11-07T17:43:37.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-08-27T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence, review cycle expired"
+      ]
     },
     {
       "id": "F-AUTH-004",
@@ -1680,11 +1688,13 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-18T18:39:44.000Z",
+      "latestSourceAt": "2026-11-07T17:43:37.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-08-27T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence, review cycle expired"
+      ]
     },
     {
       "id": "F-AUTH-005",
@@ -1769,11 +1779,13 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-18T18:39:44.000Z",
+      "latestSourceAt": "2026-11-07T17:43:37.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-09-26T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence, review cycle expired"
+      ]
     },
     {
       "id": "F-DATA-001",
@@ -1864,11 +1876,13 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T00:33:18.000Z",
+      "latestSourceAt": "2026-10-23T02:18:02.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-08-27T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence, review cycle expired"
+      ]
     },
     {
       "id": "F-DATA-002",
@@ -1956,12 +1970,12 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-29T02:34:58.000Z",
+      "latestSourceAt": "2026-11-06T13:38:55.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-09-26T16:42:10.000Z",
       "freshness": "stale",
       "failures": [
-        "stale evidence: linked source is newer than evidence"
+        "stale evidence: linked source is newer than evidence, review cycle expired"
       ]
     },
     {
@@ -2041,12 +2055,12 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
+      "latestSourceAt": "2026-10-23T07:50:52.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-09-26T16:42:10.000Z",
       "freshness": "stale",
       "failures": [
-        "stale evidence: linked source is newer than evidence"
+        "stale evidence: linked source is newer than evidence, review cycle expired"
       ]
     },
     {
@@ -2294,7 +2308,7 @@
         },
         {
           "path": "plans/system-maturity/privacy-data-flow-inventory.json",
-          "sha256": "75c97f10101fe60d5df4a95f1005bf24053936441a6600f86ea6f9d78dfd573b",
+          "sha256": "ca55a14ce9f0e80b639f720f8463286d4d3136e97ca77d7f365b35a8d3fa69fd",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -2330,7 +2344,7 @@
         },
         {
           "path": "scripts/collect-p7-003-evidence.mjs",
-          "sha256": "710a293fa078d0210869d6be2c9a73289c95a12135a81d95d16461c17275acb9",
+          "sha256": "08aa12d0341e162d90f125944b7bae6fc8229c4ae4283d7da0ad4dff9ade0f35",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -2342,7 +2356,7 @@
         },
         {
           "path": "harness/specs/tasks/system-maturity-privacy-controls.md",
-          "sha256": "51b9e4b274dfbd121c6756b6d03d0341965432a620d25e0f0fd2c21e075e48c5",
+          "sha256": "7121335fbf0b2b1f57000f383305446c2ea766c9cfd6d6940dbffee1745142fb",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -2354,43 +2368,43 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d",
+          "sha256": "41c49266c5ff14b4b3321969ae0fe3e28fa48256f697b294ac6a267f5eaf1d12",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/services/agent-browser-api.ts",
-          "sha256": "94dfcf70eb5dd6a7110d634f7c6afc573f228bc8b008e330e06ca6f13fbc439b",
+          "sha256": "04b080fc06ebe7f1bd09bde9254b0fdf05c79280c28e6a6f4e7353da1a7b2fb1",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/services/remote-control-api.ts",
-          "sha256": "a5ca5203b80c1f4d2c314485990bb67f1b3798540d088407ae93ec19528d3915",
+          "sha256": "d59b260cc1d35c4e27a7e00082cb4747c941d627cec40aeb5c9fdefa0d354fa6",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/services/gateway-api.ts",
-          "sha256": "8415d663c01b7fa22092b792420390b314673f1c0d2d8d396d542d4c89e9227c",
+          "sha256": "0298b9d6fc3ba4fe9ed50f9744d48fe44443e4b1e3b2216c8ca22ab70665a70a",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/utils/store.ts",
-          "sha256": "1c3e05efcc0e722394c38960ec60f8f2bdecd925980d30487e92d7521047c4af",
+          "sha256": "c683385a9b76cb75cb61ecf08068c74fb1c82ec1afafb2b904f5019be0acc88a",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
+          "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/findings-registry.json",
-          "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178",
+          "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -2444,13 +2458,13 @@
         },
         {
           "path": "plans/system-maturity/INDEX.md",
-          "sha256": "1d72a4b5b08d92d65ae5f649cb18d917f1780fd46cc44af6781af62ef378e3ef",
+          "sha256": "1bf49b5e0f6c53ce82c3d5a5a92ad70349d24e065b6e595d04682840f8920194",
           "taskId": "P8-004",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/residual-register.json",
-          "sha256": "e3e6ca705fbea46180487859b22902b5d3fbf703ad1659c82dc34e0a4d739199",
+          "sha256": "e1c0410dace5a50b46d040c983c315491298fe4dd638f0a68cf0941661931b2b",
           "taskId": "P8-004",
           "kind": "task"
         },
@@ -2462,7 +2476,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
+          "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
           "taskId": "P8-004",
           "kind": "task"
         },
@@ -2486,9 +2500,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
-      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
-      "nextReviewAt": "2026-08-30T07:42:04.000Z",
+      "latestSourceAt": "2026-11-06T13:38:55.000Z",
+      "latestEvidenceAt": "2026-11-11T02:53:37.139Z",
+      "nextReviewAt": "2026-12-11T02:53:37.139Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -2634,7 +2648,7 @@
         },
         {
           "path": "plans/system-maturity/security-regression-suite.json",
-          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "sha256": "9cbbc093b7f709cd0336ccee6d5618a73fe533917915819cdfedeb77a195ac9c",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -2658,13 +2672,13 @@
         },
         {
           "path": "harness/specs/tasks/system-maturity-security-regression.md",
-          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "sha256": "ead99d2bb256dbe86bf501c808ce88467735885fd647c9543c3ddcd80a2efdd9",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": ".github/workflows/system-maturity-security.yml",
-          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "sha256": "7f20569ee913273b85e7bc30f01c532b1710925327610b8f0adbb82425ee1f62",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -2705,11 +2719,13 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T15:58:34.000Z",
-      "latestEvidenceAt": "2026-07-29T02:29:22.000Z",
-      "nextReviewAt": "2026-08-28T02:29:22.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "latestSourceAt": "2026-11-10T15:11:50.000Z",
+      "latestEvidenceAt": "2026-10-16T04:04:24.000Z",
+      "nextReviewAt": "2026-11-15T04:04:24.000Z",
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence"
+      ]
     },
     {
       "id": "F-REL-002",
@@ -2791,12 +2807,12 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
+      "latestSourceAt": "2026-11-07T06:51:09.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-09-26T16:42:10.000Z",
       "freshness": "stale",
       "failures": [
-        "stale evidence: linked source is newer than evidence"
+        "stale evidence: linked source is newer than evidence, review cycle expired"
       ]
     },
     {
@@ -2901,11 +2917,13 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-17T08:41:38.000Z",
+      "latestSourceAt": "2026-10-16T04:04:24.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-09-26T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence, review cycle expired"
+      ]
     },
     {
       "id": "F-REL-004",
@@ -3043,7 +3061,7 @@
         },
         {
           "path": "plans/system-maturity/security-regression-suite.json",
-          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "sha256": "9cbbc093b7f709cd0336ccee6d5618a73fe533917915819cdfedeb77a195ac9c",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -3067,13 +3085,13 @@
         },
         {
           "path": "harness/specs/tasks/system-maturity-security-regression.md",
-          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "sha256": "ead99d2bb256dbe86bf501c808ce88467735885fd647c9543c3ddcd80a2efdd9",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": ".github/workflows/system-maturity-security.yml",
-          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "sha256": "7f20569ee913273b85e7bc30f01c532b1710925327610b8f0adbb82425ee1f62",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -3085,13 +3103,13 @@
         },
         {
           "path": "artifacts/system-maturity/P8-001/residual-audit-report.json",
-          "sha256": "793963668d829ef6dccc2b3858159853462859ed4fcd0e6383fcf09b9d719b84",
+          "sha256": "7e4acfc6e0c9a44de82d1e452ee5c9cbd84627e0694fc95f83184e231a5c343d",
           "taskId": "P8-001",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P8-001/residual-audit-dry-run.json",
-          "sha256": "3e2299001131961bdb8fc94cd2c6da5ea76bd5aebdd2b124e0f795702592ca0e",
+          "sha256": "6aee181b8725245d842908ba33d3d081f2b6e4b67bc8fd95f45d1c944000f732",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -3109,7 +3127,7 @@
         },
         {
           "path": "plans/system-maturity/residual-register.json",
-          "sha256": "e3e6ca705fbea46180487859b22902b5d3fbf703ad1659c82dc34e0a4d739199",
+          "sha256": "e1c0410dace5a50b46d040c983c315491298fe4dd638f0a68cf0941661931b2b",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -3133,7 +3151,7 @@
         },
         {
           "path": "tests/unit/system-maturity-residual-p8-001.test.ts",
-          "sha256": "308c3f5500fedabc1e00927c7a05e5186e25490d8eab597e2fad60b9285f76b8",
+          "sha256": "29258d48f0c765b29713ff1cf66b17ff77729235935ab8313b9e3c438c98fd84",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -3145,25 +3163,25 @@
         },
         {
           "path": "tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
-          "sha256": "32fb987793694b77e9c8f1ff850b0870b4cc98da42d3c1c818d945cab2346c27",
+          "sha256": "3ca93f513122530299b43049a59227425b932b18e041cb05a64bba8a2269ca36",
           "taskId": "P8-001",
           "kind": "task"
         },
         {
           "path": "electron/utils/channel-config.ts",
-          "sha256": "45cb19479deeafc1cf33cf54bc13f0f9e975066a25af8872957cb2426cf18a3d",
+          "sha256": "065ff29157e0f8c49872365c2a08930a43da57b38d77c1167939960237f49f14",
           "taskId": "P8-001",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
+          "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
           "taskId": "P8-001",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/findings-registry.json",
-          "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178",
+          "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -3181,7 +3199,19 @@
         },
         {
           "path": "plans/system-maturity/INDEX.md",
-          "sha256": "1d72a4b5b08d92d65ae5f649cb18d917f1780fd46cc44af6781af62ef378e3ef",
+          "sha256": "1bf49b5e0f6c53ce82c3d5a5a92ad70349d24e065b6e595d04682840f8920194",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-001/residual-revalidation-20261111.json",
+          "sha256": "8fea93ed0f3e3c58d28d49f2813602c35f3b9e7595d27787bda31629c34f3097",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-001/residual-revalidation-20261111.stdout.txt",
+          "sha256": "798c8dde98fe8535903cc57211eec17b67cc1ee89dc6feef233a8659ba5b4295",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -3223,25 +3253,25 @@
         },
         {
           "path": "plans/system-maturity/security-regression-suite.json",
-          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "sha256": "9cbbc093b7f709cd0336ccee6d5618a73fe533917915819cdfedeb77a195ac9c",
           "taskId": "P8-003",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/residual-register.json",
-          "sha256": "e3e6ca705fbea46180487859b22902b5d3fbf703ad1659c82dc34e0a4d739199",
+          "sha256": "e1c0410dace5a50b46d040c983c315491298fe4dd638f0a68cf0941661931b2b",
           "taskId": "P8-003",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/findings-registry.json",
-          "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178",
+          "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46",
           "taskId": "P8-003",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
+          "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
           "taskId": "P8-003",
           "kind": "task"
         },
@@ -3282,11 +3312,13 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T15:58:34.000Z",
-      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
-      "nextReviewAt": "2026-08-30T07:42:04.000Z",
+      "latestSourceAt": "2026-10-25T15:31:05.000Z",
+      "latestEvidenceAt": "2026-11-11T02:54:26.769Z",
+      "nextReviewAt": "2026-12-11T02:54:26.769Z",
       "freshness": "fresh",
-      "failures": []
+      "failures": [
+        "task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json"
+      ]
     },
     {
       "id": "F-SUPPLY-001",
@@ -3540,7 +3572,7 @@
         },
         {
           "path": "plans/system-maturity/security-regression-suite.json",
-          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "sha256": "9cbbc093b7f709cd0336ccee6d5618a73fe533917915819cdfedeb77a195ac9c",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -3564,13 +3596,13 @@
         },
         {
           "path": "harness/specs/tasks/system-maturity-security-regression.md",
-          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "sha256": "ead99d2bb256dbe86bf501c808ce88467735885fd647c9543c3ddcd80a2efdd9",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": ".github/workflows/system-maturity-security.yml",
-          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "sha256": "7f20569ee913273b85e7bc30f01c532b1710925327610b8f0adbb82425ee1f62",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -3611,9 +3643,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T15:58:34.000Z",
-      "latestEvidenceAt": "2026-07-29T02:29:22.000Z",
-      "nextReviewAt": "2026-08-28T02:29:22.000Z",
+      "latestSourceAt": "2026-10-10T08:02:53.000Z",
+      "latestEvidenceAt": "2026-10-16T04:04:24.000Z",
+      "nextReviewAt": "2026-11-15T04:04:24.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -3696,7 +3728,7 @@
         },
         {
           "path": "plans/system-maturity/gates.json",
-          "sha256": "8f9231e617d12679ccdd92d7b03a84bfa66267fe68b4f9111a59be5843976b9a",
+          "sha256": "937803ebb0e3e7b3dda3102ffe913d766b997124c20a4de0ba023a266bf619a4",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -3708,7 +3740,7 @@
         },
         {
           "path": "vitest.config.ts",
-          "sha256": "5769c39dca93afd4e0fad651978bb730feab2a4ce3712c56467f31290dd829f3",
+          "sha256": "9fc0c29daa2b0751cb64a7099792db229333855765fded8e2836c5b314021e0a",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -3719,26 +3751,20 @@
           "kind": "task"
         },
         {
-          "path": "vitest.runtime-effectiveness.config.ts",
-          "sha256": "6fa0a6ae54be9e6ce165d79cdc17956b40ed9eda73d607e5c7bf5a8e21535c6a",
-          "taskId": "P0-003",
-          "kind": "task"
-        },
-        {
           "path": "src/lib/host-api.ts",
-          "sha256": "e45f55707ecd8a7c097798f5debf8cbbf446b7f0ad50a9a6a6a20beba30a5722",
+          "sha256": "9917b8934ec48fc904275c592ee5573351e22482f54b6c79058c7a3ee1aafa04",
           "taskId": "P0-003",
           "kind": "task"
         },
         {
           "path": "tests/unit/host-api-facade.test.ts",
-          "sha256": "05cbe23d8592c59f7f9b1577397074d8a05cb4e29fdbc2c69a924aa1de933b2b",
+          "sha256": "6df457d1ce4cfb44fec4de66810130d50c10d99dca7596a6b197c0e8f76224fc",
           "taskId": "P0-003",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
+          "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -3828,13 +3854,13 @@
         },
         {
           "path": "tests/unit/system-maturity-traceability-p7-001.test.ts",
-          "sha256": "d7c5c951749aeef2538c201982e6dcc7fd1dd26d1c2a6b2dc9ea64f93d9a31c5",
+          "sha256": "f81eb9592427d6bf8724c2c50289f2bb682109b23692996edf9528a8981db833",
           "taskId": "P7-001",
           "kind": "task"
         },
         {
           "path": "harness/specs/tasks/system-maturity-traceability.md",
-          "sha256": "675bac97e59dc189955734614eaad6d4266f5dd30e79b88c11c1781ab7e01aa0",
+          "sha256": "15e14bd31c31f1dbe121f8d33a4d2a5b05feda6a72d5eb81f50aca763e8fd63b",
           "taskId": "P7-001",
           "kind": "task"
         },
@@ -3894,7 +3920,7 @@
         },
         {
           "path": "plans/system-maturity/security-regression-suite.json",
-          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "sha256": "9cbbc093b7f709cd0336ccee6d5618a73fe533917915819cdfedeb77a195ac9c",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -3918,13 +3944,13 @@
         },
         {
           "path": "harness/specs/tasks/system-maturity-security-regression.md",
-          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "sha256": "ead99d2bb256dbe86bf501c808ce88467735885fd647c9543c3ddcd80a2efdd9",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": ".github/workflows/system-maturity-security.yml",
-          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "sha256": "7f20569ee913273b85e7bc30f01c532b1710925327610b8f0adbb82425ee1f62",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -3965,9 +3991,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T15:58:34.000Z",
-      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
-      "nextReviewAt": "2026-08-30T07:42:04.000Z",
+      "latestSourceAt": "2026-10-10T08:02:53.000Z",
+      "latestEvidenceAt": "2026-11-11T02:51:37.086Z",
+      "nextReviewAt": "2026-12-11T02:51:37.086Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -4113,13 +4139,13 @@
         },
         {
           "path": "plans/system-maturity/BASELINE.json",
-          "sha256": "e8fa256feba4f29aa1f78e761599d5f238c5acc4f24884a912c4301d9e1f0379",
+          "sha256": "aa0b3c1c35c5d490cfeb98b867be2a96c6c5693aca0c8495a36c5a41d30a28f0",
           "taskId": "P0-001",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/findings-registry.json",
-          "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178",
+          "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46",
           "taskId": "P0-001",
           "kind": "task"
         },
@@ -4131,7 +4157,7 @@
         },
         {
           "path": "plans/system-maturity/EXECUTION-ORDER.md",
-          "sha256": "fb497ea8cba7d66e673f47a7e9de2631bb1a65966652fea172713e0a8f94f495",
+          "sha256": "1e2d0285ae25fadd1c49ece9386086d59da3ba358ceb93733828b9a04eea8fe1",
           "taskId": "P0-001",
           "kind": "task"
         },
@@ -4155,13 +4181,13 @@
         },
         {
           "path": "scripts/validate-system-maturity-plan.mjs",
-          "sha256": "44a7e14a592efe461baaab5c13737d4abc95ac3bdb92ddb85bd5cafa93f50c14",
+          "sha256": "d8359b937c361d9f24ddf7bf31e57295adaef627febbb72935793b0d349b0b3a",
           "taskId": "P0-002",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/README.md",
-          "sha256": "2c8c315d7daec6f33fda86d0ef1b9bd3b71c41a88100b6968a1355bd6bf40f87",
+          "sha256": "710dc994c98402e90b8d383a81a4eaebc2b6be249f35f30beb4e1cf25de2c974",
           "taskId": "P0-002",
           "kind": "task"
         },
@@ -4179,7 +4205,7 @@
         },
         {
           "path": "plans/system-maturity/gates.json",
-          "sha256": "8f9231e617d12679ccdd92d7b03a84bfa66267fe68b4f9111a59be5843976b9a",
+          "sha256": "937803ebb0e3e7b3dda3102ffe913d766b997124c20a4de0ba023a266bf619a4",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -4191,7 +4217,7 @@
         },
         {
           "path": "vitest.config.ts",
-          "sha256": "5769c39dca93afd4e0fad651978bb730feab2a4ce3712c56467f31290dd829f3",
+          "sha256": "9fc0c29daa2b0751cb64a7099792db229333855765fded8e2836c5b314021e0a",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -4202,26 +4228,20 @@
           "kind": "task"
         },
         {
-          "path": "vitest.runtime-effectiveness.config.ts",
-          "sha256": "6fa0a6ae54be9e6ce165d79cdc17956b40ed9eda73d607e5c7bf5a8e21535c6a",
-          "taskId": "P0-003",
-          "kind": "task"
-        },
-        {
           "path": "src/lib/host-api.ts",
-          "sha256": "e45f55707ecd8a7c097798f5debf8cbbf446b7f0ad50a9a6a6a20beba30a5722",
+          "sha256": "9917b8934ec48fc904275c592ee5573351e22482f54b6c79058c7a3ee1aafa04",
           "taskId": "P0-003",
           "kind": "task"
         },
         {
           "path": "tests/unit/host-api-facade.test.ts",
-          "sha256": "05cbe23d8592c59f7f9b1577397074d8a05cb4e29fdbc2c69a924aa1de933b2b",
+          "sha256": "6df457d1ce4cfb44fec4de66810130d50c10d99dca7596a6b197c0e8f76224fc",
           "taskId": "P0-003",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
+          "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
           "taskId": "P0-003",
           "kind": "task"
         },
@@ -4263,19 +4283,19 @@
         },
         {
           "path": "scripts/validate-system-maturity-evidence.mjs",
-          "sha256": "afd81298c58bfa3c9d08ccd2fefb906f27d82cfb841caacae0f56c89e4c00e34",
+          "sha256": "86041babf3bb616410eae40007638196cd0a1b00c2074112a61faab8c1dccd35",
           "taskId": "P0-004",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
+          "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
           "taskId": "P0-004",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/BASELINE.json",
-          "sha256": "e8fa256feba4f29aa1f78e761599d5f238c5acc4f24884a912c4301d9e1f0379",
+          "sha256": "aa0b3c1c35c5d490cfeb98b867be2a96c6c5693aca0c8495a36c5a41d30a28f0",
           "taskId": "P0-004",
           "kind": "task"
         },
@@ -4306,6 +4326,12 @@
         {
           "path": "artifacts/system-maturity/P0-004/harness.stdout.txt",
           "sha256": "3bd743790cabfa618a256ba8ead3a362182c2a286389365462d836b08ed32319",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
+          "path": "harness/specs/rules/repository-artifact-retention.md",
+          "sha256": "94608e81ffeb6e4da9283d4ba23b741db747ec02c1f230af515fcab89f76bc6f",
           "taskId": "P0-004",
           "kind": "task"
         },
@@ -4359,13 +4385,13 @@
         },
         {
           "path": "tests/unit/system-maturity-traceability-p7-001.test.ts",
-          "sha256": "d7c5c951749aeef2538c201982e6dcc7fd1dd26d1c2a6b2dc9ea64f93d9a31c5",
+          "sha256": "f81eb9592427d6bf8724c2c50289f2bb682109b23692996edf9528a8981db833",
           "taskId": "P7-001",
           "kind": "task"
         },
         {
           "path": "harness/specs/tasks/system-maturity-traceability.md",
-          "sha256": "675bac97e59dc189955734614eaad6d4266f5dd30e79b88c11c1781ab7e01aa0",
+          "sha256": "15e14bd31c31f1dbe121f8d33a4d2a5b05feda6a72d5eb81f50aca763e8fd63b",
           "taskId": "P7-001",
           "kind": "task"
         },
@@ -4425,7 +4451,7 @@
         },
         {
           "path": "plans/system-maturity/security-regression-suite.json",
-          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "sha256": "9cbbc093b7f709cd0336ccee6d5618a73fe533917915819cdfedeb77a195ac9c",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -4449,13 +4475,13 @@
         },
         {
           "path": "harness/specs/tasks/system-maturity-security-regression.md",
-          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "sha256": "ead99d2bb256dbe86bf501c808ce88467735885fd647c9543c3ddcd80a2efdd9",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": ".github/workflows/system-maturity-security.yml",
-          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "sha256": "7f20569ee913273b85e7bc30f01c532b1710925327610b8f0adbb82425ee1f62",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -4587,49 +4613,49 @@
         },
         {
           "path": "scripts/sync-system-maturity-index.mjs",
-          "sha256": "73de77627da9d2117d63a34dc6faf15f15dbbfd57d47c72817ea79c3edd0ab2e",
+          "sha256": "14d8075d485649635c401855797a9decc75730e825ad5f59d18b2cbfed7abddb",
           "taskId": "P7-004",
           "kind": "task"
         },
         {
           "path": "scripts/validate-system-maturity-plan.mjs",
-          "sha256": "44a7e14a592efe461baaab5c13737d4abc95ac3bdb92ddb85bd5cafa93f50c14",
+          "sha256": "d8359b937c361d9f24ddf7bf31e57295adaef627febbb72935793b0d349b0b3a",
           "taskId": "P7-004",
           "kind": "task"
         },
         {
           "path": "tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
-          "sha256": "32fb987793694b77e9c8f1ff850b0870b4cc98da42d3c1c818d945cab2346c27",
+          "sha256": "3ca93f513122530299b43049a59227425b932b18e041cb05a64bba8a2269ca36",
           "taskId": "P7-004",
           "kind": "task"
         },
         {
           "path": "harness/specs/tasks/system-maturity-quarterly-audit.md",
-          "sha256": "7010ea25f4397a674147399ebabe5739b7e60d396ab2c2e8ae74e320f4e19302",
+          "sha256": "bec66f3cbf0f3dcfef5bd11d2dde4364b28a5bb7241cb1ddaf4d5e900740f050",
           "taskId": "P7-004",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
+          "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
           "taskId": "P7-004",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/findings-registry.json",
-          "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178",
+          "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46",
           "taskId": "P7-004",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/risk-acceptance.json",
-          "sha256": "323089048338a1b07232898a6e1e6e087f551369cd8a50e4610e360f376f3e29",
+          "sha256": "ace5cec594927b5a21123c2c5db40214c2e8b7a04e81cbcdb2109f282cb749bd",
           "taskId": "P7-004",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/README.md",
-          "sha256": "2c8c315d7daec6f33fda86d0ef1b9bd3b71c41a88100b6968a1355bd6bf40f87",
+          "sha256": "710dc994c98402e90b8d383a81a4eaebc2b6be249f35f30beb4e1cf25de2c974",
           "taskId": "P7-004",
           "kind": "task"
         },
@@ -4641,7 +4667,7 @@
         },
         {
           "path": "plans/system-maturity/INDEX.md",
-          "sha256": "1d72a4b5b08d92d65ae5f649cb18d917f1780fd46cc44af6781af62ef378e3ef",
+          "sha256": "1bf49b5e0f6c53ce82c3d5a5a92ad70349d24e065b6e595d04682840f8920194",
           "taskId": "P7-004",
           "kind": "task"
         },
@@ -4659,13 +4685,13 @@
         },
         {
           "path": "artifacts/system-maturity/P8-001/residual-audit-report.json",
-          "sha256": "793963668d829ef6dccc2b3858159853462859ed4fcd0e6383fcf09b9d719b84",
+          "sha256": "7e4acfc6e0c9a44de82d1e452ee5c9cbd84627e0694fc95f83184e231a5c343d",
           "taskId": "P8-001",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P8-001/residual-audit-dry-run.json",
-          "sha256": "3e2299001131961bdb8fc94cd2c6da5ea76bd5aebdd2b124e0f795702592ca0e",
+          "sha256": "6aee181b8725245d842908ba33d3d081f2b6e4b67bc8fd95f45d1c944000f732",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -4683,7 +4709,7 @@
         },
         {
           "path": "plans/system-maturity/residual-register.json",
-          "sha256": "e3e6ca705fbea46180487859b22902b5d3fbf703ad1659c82dc34e0a4d739199",
+          "sha256": "e1c0410dace5a50b46d040c983c315491298fe4dd638f0a68cf0941661931b2b",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -4707,7 +4733,7 @@
         },
         {
           "path": "tests/unit/system-maturity-residual-p8-001.test.ts",
-          "sha256": "308c3f5500fedabc1e00927c7a05e5186e25490d8eab597e2fad60b9285f76b8",
+          "sha256": "29258d48f0c765b29713ff1cf66b17ff77729235935ab8313b9e3c438c98fd84",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -4719,25 +4745,25 @@
         },
         {
           "path": "tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
-          "sha256": "32fb987793694b77e9c8f1ff850b0870b4cc98da42d3c1c818d945cab2346c27",
+          "sha256": "3ca93f513122530299b43049a59227425b932b18e041cb05a64bba8a2269ca36",
           "taskId": "P8-001",
           "kind": "task"
         },
         {
           "path": "electron/utils/channel-config.ts",
-          "sha256": "45cb19479deeafc1cf33cf54bc13f0f9e975066a25af8872957cb2426cf18a3d",
+          "sha256": "065ff29157e0f8c49872365c2a08930a43da57b38d77c1167939960237f49f14",
           "taskId": "P8-001",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
+          "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
           "taskId": "P8-001",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/findings-registry.json",
-          "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178",
+          "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -4755,7 +4781,19 @@
         },
         {
           "path": "plans/system-maturity/INDEX.md",
-          "sha256": "1d72a4b5b08d92d65ae5f649cb18d917f1780fd46cc44af6781af62ef378e3ef",
+          "sha256": "1bf49b5e0f6c53ce82c3d5a5a92ad70349d24e065b6e595d04682840f8920194",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-001/residual-revalidation-20261111.json",
+          "sha256": "8fea93ed0f3e3c58d28d49f2813602c35f3b9e7595d27787bda31629c34f3097",
+          "taskId": "P8-001",
+          "kind": "task"
+        },
+        {
+          "path": "artifacts/system-maturity/P8-001/residual-revalidation-20261111.stdout.txt",
+          "sha256": "798c8dde98fe8535903cc57211eec17b67cc1ee89dc6feef233a8659ba5b4295",
           "taskId": "P8-001",
           "kind": "task"
         },
@@ -4797,13 +4835,13 @@
         },
         {
           "path": "plans/system-maturity/INDEX.md",
-          "sha256": "1d72a4b5b08d92d65ae5f649cb18d917f1780fd46cc44af6781af62ef378e3ef",
+          "sha256": "1bf49b5e0f6c53ce82c3d5a5a92ad70349d24e065b6e595d04682840f8920194",
           "taskId": "P8-004",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/residual-register.json",
-          "sha256": "e3e6ca705fbea46180487859b22902b5d3fbf703ad1659c82dc34e0a4d739199",
+          "sha256": "e1c0410dace5a50b46d040c983c315491298fe4dd638f0a68cf0941661931b2b",
           "taskId": "P8-004",
           "kind": "task"
         },
@@ -4815,7 +4853,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
+          "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
           "taskId": "P8-004",
           "kind": "task"
         },
@@ -4856,11 +4894,13 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-28T17:00:20.681Z",
-      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
-      "nextReviewAt": "2026-09-29T07:42:04.000Z",
+      "latestSourceAt": "2026-11-11T00:06:27.000Z",
+      "latestEvidenceAt": "2026-11-11T02:54:26.769Z",
+      "nextReviewAt": "2027-01-10T02:54:26.769Z",
       "freshness": "fresh",
-      "failures": []
+      "failures": [
+        "task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json"
+      ]
     },
     {
       "id": "F-GOV-003",
@@ -4889,28 +4929,18 @@
         "pnpm harness validate --spec harness/specs/tasks/agent-dev-ecosystem-regularization.md",
         "node scripts/validate-system-maturity-evidence.mjs",
         "node scripts/validate-system-maturity-plan.mjs",
-        "clean detached checkout evidence collection at df7c2f7a602c34d487caa10e1eead2529ce95be4",
-        "pnpm test",
-        "pnpm run lint:check",
-        "pnpm run typecheck",
-        "pnpm run harness:ci",
-        "pnpm agent-dev:deep-test",
-        "pnpm run test:e2e:agent-dev-quality",
-        "pnpm run maturity:validate",
-        "pnpm run release:validate",
-        "cross-worktree CRLF evidence replay",
-        "native nonzero gate exit regression",
-        "pnpm harness context --spec harness/specs/tasks/clean-release-baseline-reproducibility.md",
-        "pnpm harness validate --spec harness/specs/tasks/clean-release-baseline-reproducibility.md --since 85c2652b7184cf847d2439e41e76c0c46f42ae2b",
-        "workflow YAML parse",
-        "fresh manifest replay",
+        "2026-09-08 captured release evidence at 819338bcfb9574fcd6cddf738065de8715893a24",
+        "runtime-build preflight and 13 required release gate attempts",
+        "2026-09-10 evidence-index byte/hash and identity verification",
         "git diff --check",
-        "extra four-shard full Electron Playwright diagnostic",
         "pnpm exec vitest run tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
         "pnpm maturity:quarterly -- --dry-run",
         "pnpm agent-dev:audit",
         "pnpm agent-dev:deep-test:reuse",
+        "pnpm run typecheck",
         "pnpm run test:e2e:agent-dev-quality:run",
+        "pnpm run lint:check",
+        "pnpm test",
         "pnpm harness validate --spec harness/specs/tasks/system-maturity-quarterly-audit.md",
         "node scripts/update-system-maturity-delivery-hashes.mjs",
         "pnpm maturity:validate",
@@ -4965,13 +4995,13 @@
         },
         {
           "path": "plans/system-maturity/BASELINE.json",
-          "sha256": "e8fa256feba4f29aa1f78e761599d5f238c5acc4f24884a912c4301d9e1f0379",
+          "sha256": "aa0b3c1c35c5d490cfeb98b867be2a96c6c5693aca0c8495a36c5a41d30a28f0",
           "taskId": "P0-001",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/findings-registry.json",
-          "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178",
+          "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46",
           "taskId": "P0-001",
           "kind": "task"
         },
@@ -4983,7 +5013,7 @@
         },
         {
           "path": "plans/system-maturity/EXECUTION-ORDER.md",
-          "sha256": "fb497ea8cba7d66e673f47a7e9de2631bb1a65966652fea172713e0a8f94f495",
+          "sha256": "1e2d0285ae25fadd1c49ece9386086d59da3ba358ceb93733828b9a04eea8fe1",
           "taskId": "P0-001",
           "kind": "task"
         },
@@ -5007,19 +5037,19 @@
         },
         {
           "path": "scripts/validate-system-maturity-evidence.mjs",
-          "sha256": "afd81298c58bfa3c9d08ccd2fefb906f27d82cfb841caacae0f56c89e4c00e34",
+          "sha256": "86041babf3bb616410eae40007638196cd0a1b00c2074112a61faab8c1dccd35",
           "taskId": "P0-004",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
+          "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
           "taskId": "P0-004",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/BASELINE.json",
-          "sha256": "e8fa256feba4f29aa1f78e761599d5f238c5acc4f24884a912c4301d9e1f0379",
+          "sha256": "aa0b3c1c35c5d490cfeb98b867be2a96c6c5693aca0c8495a36c5a41d30a28f0",
           "taskId": "P0-004",
           "kind": "task"
         },
@@ -5054,68 +5084,68 @@
           "kind": "task"
         },
         {
+          "path": "harness/specs/rules/repository-artifact-retention.md",
+          "sha256": "94608e81ffeb6e4da9283d4ba23b741db747ec02c1f230af515fcab89f76bc6f",
+          "taskId": "P0-004",
+          "kind": "task"
+        },
+        {
           "path": "artifacts/system-maturity/P6-005/acceptance-matrix.json",
-          "sha256": "d96c22c4d6dbb7beaa30e3643e58246b046d81505a1781ca85c83d81fc2035fd",
+          "sha256": "54de0c2f20de09fe0d94161088b89b838db0c02e8febf9bc9f87f1689464fb42",
           "taskId": "P6-005",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P6-005/release-gate-evidence.json",
-          "sha256": "9f3e1b4e220aef7c37b9ba181f9b310ee814e29985ad7552a3171fea099a1c4e",
+          "sha256": "a5e89abc675a3cc29e7f6129139cdc8db81cea59a9202b0eb89acef2a4c7302a",
           "taskId": "P6-005",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P6-005/release-source-manifest.json",
-          "sha256": "453553124189783c7949c7c62f975cad62d520e8caced5aac52902bc1f861284",
+          "sha256": "bc093301ab2b2ee16864bcf1aacff1f8825ceef179f970d0d1c7470ddfbeab7b",
           "taskId": "P6-005",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P6-005/evidence-index.json",
-          "sha256": "193de198d18b7c82a915ba683a2d8e415454f2ec5b3f8fb47dbc5f72e2b27e99",
-          "taskId": "P6-005",
-          "kind": "task"
-        },
-        {
-          "path": "artifacts/system-maturity/P6-005/full-electron-e2e-audit.json",
-          "sha256": "bca96b8ae8f763daef8497ed5623466ad085762eb229797d8b00d08242d2f572",
+          "sha256": "7891a26a1ee511a57ad34dd606d32b072b4b6f1e1df1480b477f22fb6c69011a",
           "taskId": "P6-005",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P6-005/gates/test.stdout.txt",
-          "sha256": "4b56387c7da9750c9b83d6417aaf2d649cfc5f994341587915a3d253d29eff15",
+          "sha256": "d7fd6a4c2cc2c743b5335f639cd2a7d4f8717831616b97fd6a6845ea67c01573",
           "taskId": "P6-005",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P6-005/gates/lint-check.stdout.txt",
-          "sha256": "20de2507035b0b47ca632a4c1f93fe22d2925f8938ef4380b5696552069fdf10",
+          "sha256": "cb72a5ef311bfed1ca1933249a0e765d547dec795d6dfdf43cbb2e017830b417",
           "taskId": "P6-005",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P6-005/gates/typecheck.stdout.txt",
-          "sha256": "82ce041683605bb9545a648d8dfc186d42052d78d00e90241e1d50c101c00e3e",
+          "sha256": "6fa5e7cb444aa27ce5e02cf989148c3714e147215cdd6b3c6cb09ec2367dc71d",
           "taskId": "P6-005",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P6-005/gates/agent-dev-deep-test.stdout.txt",
-          "sha256": "26c03cde11f84a9b9d3c627925d9bc74f0581c09c74760825b4a63ab37d0d638",
+          "sha256": "f67b8442a500a1b5f0322645ff872527fb9f0551920c0d6204a77c5bca15e318",
           "taskId": "P6-005",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P6-005/gates/test-e2e-agent-dev-quality.stdout.txt",
-          "sha256": "f9b972299ec24da57059eaa9a31adadffa4130d1f1e223b8ab1d85c2360e3850",
+          "sha256": "7e405ca779ae1e8c4a157c3aedb93033ada0a721efbe2e18260a34ecd9e17af2",
           "taskId": "P6-005",
           "kind": "task"
         },
         {
           "path": "artifacts/system-maturity/P6-005/gates/maturity-validate.stdout.txt",
-          "sha256": "034690d21b71a173974b885d053f7adf37e0dc975825fe7d59d82dc61cb33011",
+          "sha256": "4bb58312a5ab3652c90f7f393644b5e8e7096e3ed2ab268fa54286d774410554",
           "taskId": "P6-005",
           "kind": "task"
         },
@@ -5247,49 +5277,49 @@
         },
         {
           "path": "scripts/sync-system-maturity-index.mjs",
-          "sha256": "73de77627da9d2117d63a34dc6faf15f15dbbfd57d47c72817ea79c3edd0ab2e",
+          "sha256": "14d8075d485649635c401855797a9decc75730e825ad5f59d18b2cbfed7abddb",
           "taskId": "P7-004",
           "kind": "task"
         },
         {
           "path": "scripts/validate-system-maturity-plan.mjs",
-          "sha256": "44a7e14a592efe461baaab5c13737d4abc95ac3bdb92ddb85bd5cafa93f50c14",
+          "sha256": "d8359b937c361d9f24ddf7bf31e57295adaef627febbb72935793b0d349b0b3a",
           "taskId": "P7-004",
           "kind": "task"
         },
         {
           "path": "tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
-          "sha256": "32fb987793694b77e9c8f1ff850b0870b4cc98da42d3c1c818d945cab2346c27",
+          "sha256": "3ca93f513122530299b43049a59227425b932b18e041cb05a64bba8a2269ca36",
           "taskId": "P7-004",
           "kind": "task"
         },
         {
           "path": "harness/specs/tasks/system-maturity-quarterly-audit.md",
-          "sha256": "7010ea25f4397a674147399ebabe5739b7e60d396ab2c2e8ae74e320f4e19302",
+          "sha256": "bec66f3cbf0f3dcfef5bd11d2dde4364b28a5bb7241cb1ddaf4d5e900740f050",
           "taskId": "P7-004",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
+          "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
           "taskId": "P7-004",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/findings-registry.json",
-          "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178",
+          "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46",
           "taskId": "P7-004",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/risk-acceptance.json",
-          "sha256": "323089048338a1b07232898a6e1e6e087f551369cd8a50e4610e360f376f3e29",
+          "sha256": "ace5cec594927b5a21123c2c5db40214c2e8b7a04e81cbcdb2109f282cb749bd",
           "taskId": "P7-004",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/README.md",
-          "sha256": "2c8c315d7daec6f33fda86d0ef1b9bd3b71c41a88100b6968a1355bd6bf40f87",
+          "sha256": "710dc994c98402e90b8d383a81a4eaebc2b6be249f35f30beb4e1cf25de2c974",
           "taskId": "P7-004",
           "kind": "task"
         },
@@ -5301,7 +5331,7 @@
         },
         {
           "path": "plans/system-maturity/INDEX.md",
-          "sha256": "1d72a4b5b08d92d65ae5f649cb18d917f1780fd46cc44af6781af62ef378e3ef",
+          "sha256": "1bf49b5e0f6c53ce82c3d5a5a92ad70349d24e065b6e595d04682840f8920194",
           "taskId": "P7-004",
           "kind": "task"
         },
@@ -5331,9 +5361,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
-      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
-      "nextReviewAt": "2026-08-30T07:42:04.000Z",
+      "latestSourceAt": "2026-10-26T15:06:23.000Z",
+      "latestEvidenceAt": "2026-11-11T02:53:37.139Z",
+      "nextReviewAt": "2026-12-11T02:53:37.139Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5418,11 +5448,13 @@
         }
       ],
       "reviewCycleDays": 60,
-      "latestSourceAt": "2026-07-28T12:25:40.000Z",
+      "latestSourceAt": "2026-10-31T02:51:59.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-09-26T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence, review cycle expired"
+      ]
     },
     {
       "id": "F-UX-002",
@@ -5522,7 +5554,7 @@
         },
         {
           "path": "plans/system-maturity/privacy-data-flow-inventory.json",
-          "sha256": "75c97f10101fe60d5df4a95f1005bf24053936441a6600f86ea6f9d78dfd573b",
+          "sha256": "ca55a14ce9f0e80b639f720f8463286d4d3136e97ca77d7f365b35a8d3fa69fd",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -5558,7 +5590,7 @@
         },
         {
           "path": "scripts/collect-p7-003-evidence.mjs",
-          "sha256": "710a293fa078d0210869d6be2c9a73289c95a12135a81d95d16461c17275acb9",
+          "sha256": "08aa12d0341e162d90f125944b7bae6fc8229c4ae4283d7da0ad4dff9ade0f35",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -5570,7 +5602,7 @@
         },
         {
           "path": "harness/specs/tasks/system-maturity-privacy-controls.md",
-          "sha256": "51b9e4b274dfbd121c6756b6d03d0341965432a620d25e0f0fd2c21e075e48c5",
+          "sha256": "7121335fbf0b2b1f57000f383305446c2ea766c9cfd6d6940dbffee1745142fb",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -5582,43 +5614,43 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d",
+          "sha256": "41c49266c5ff14b4b3321969ae0fe3e28fa48256f697b294ac6a267f5eaf1d12",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/services/agent-browser-api.ts",
-          "sha256": "94dfcf70eb5dd6a7110d634f7c6afc573f228bc8b008e330e06ca6f13fbc439b",
+          "sha256": "04b080fc06ebe7f1bd09bde9254b0fdf05c79280c28e6a6f4e7353da1a7b2fb1",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/services/remote-control-api.ts",
-          "sha256": "a5ca5203b80c1f4d2c314485990bb67f1b3798540d088407ae93ec19528d3915",
+          "sha256": "d59b260cc1d35c4e27a7e00082cb4747c941d627cec40aeb5c9fdefa0d354fa6",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/services/gateway-api.ts",
-          "sha256": "8415d663c01b7fa22092b792420390b314673f1c0d2d8d396d542d4c89e9227c",
+          "sha256": "0298b9d6fc3ba4fe9ed50f9744d48fe44443e4b1e3b2216c8ca22ab70665a70a",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/utils/store.ts",
-          "sha256": "1c3e05efcc0e722394c38960ec60f8f2bdecd925980d30487e92d7521047c4af",
+          "sha256": "c683385a9b76cb75cb61ecf08068c74fb1c82ec1afafb2b904f5019be0acc88a",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
+          "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/findings-registry.json",
-          "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178",
+          "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -5654,9 +5686,9 @@
         }
       ],
       "reviewCycleDays": 90,
-      "latestSourceAt": "2026-07-29T02:34:58.000Z",
-      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
-      "nextReviewAt": "2026-10-29T07:42:04.000Z",
+      "latestSourceAt": "2026-11-06T13:38:55.000Z",
+      "latestEvidenceAt": "2026-11-11T02:53:37.139Z",
+      "nextReviewAt": "2027-02-09T02:53:37.139Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5744,13 +5776,13 @@
         },
         {
           "path": "electron/services/files-api.ts",
-          "sha256": "6cbb73f53dd7efabdcf868a7791390ccc2c5a09e9b8a36494d3dfb7552c51b6f",
+          "sha256": "99f5dcdd3d2fa9d240b656bf6b97b6f3937923ba0c17e869f53b916637835d08",
           "taskId": "P1-003",
           "kind": "task"
         },
         {
           "path": "electron/services/workspace-permissions.ts",
-          "sha256": "fe62bd3150c4476f6e6f0edee680e87862c800af3f748f802f4545ff4084de43",
+          "sha256": "909cdf6a2ae875a7c75ef4e53a17f510ab7708d6593942f9eb690f1a2c7f1685",
           "taskId": "P1-003",
           "kind": "task"
         },
@@ -5816,7 +5848,7 @@
         },
         {
           "path": "plans/system-maturity/security-regression-suite.json",
-          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "sha256": "9cbbc093b7f709cd0336ccee6d5618a73fe533917915819cdfedeb77a195ac9c",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -5840,13 +5872,13 @@
         },
         {
           "path": "harness/specs/tasks/system-maturity-security-regression.md",
-          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "sha256": "ead99d2bb256dbe86bf501c808ce88467735885fd647c9543c3ddcd80a2efdd9",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": ".github/workflows/system-maturity-security.yml",
-          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "sha256": "7f20569ee913273b85e7bc30f01c532b1710925327610b8f0adbb82425ee1f62",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -5887,9 +5919,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
-      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
-      "nextReviewAt": "2026-08-30T07:42:04.000Z",
+      "latestSourceAt": "2026-11-07T06:51:09.000Z",
+      "latestEvidenceAt": "2026-11-07T06:51:09.000Z",
+      "nextReviewAt": "2026-12-07T06:51:09.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -5933,8 +5965,6 @@
       ],
       "codePaths": [
         "shared/agent-browser/browser-control.ts",
-        "electron/services/agent-browser/browser-control/tab-manager.ts",
-        "electron/services/agent-browser-service.ts",
         "shared/security/url-policy.ts",
         "electron/utils/safe-open-external.ts",
         "electron/services/shell-api.ts",
@@ -5947,9 +5977,7 @@
         "src/components/file-preview/HtmlPreview.tsx",
         "tests/unit/url-policy.test.ts",
         "tests/unit/html-preview-security.test.tsx",
-        "tests/unit/file-preview-body.test.tsx",
-        "tests/unit/agent-browser-cdp-lifecycle.test.ts",
-        "tests/unit/agent-browser-tab-manager.test.ts"
+        "tests/unit/file-preview-body.test.tsx"
       ],
       "evidence": [
         {
@@ -5972,7 +6000,7 @@
         },
         {
           "path": "shared/security/url-policy.ts",
-          "sha256": "b39c676620af5841b2f7991b0a06d19f7fcfb080fef1e351d59a6c6889681495",
+          "sha256": "b11c8d42f6189f2b07b5495a4e443b96473d0aedbd1e67e443d252714f47a49c",
           "taskId": "P1-004",
           "kind": "task"
         },
@@ -6026,9 +6054,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
-      "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
-      "nextReviewAt": "2026-08-27T16:42:10.000Z",
+      "latestSourceAt": "2026-11-06T13:38:55.000Z",
+      "latestEvidenceAt": "2026-10-13T22:43:50.000Z",
+      "nextReviewAt": "2026-11-12T22:43:50.000Z",
       "freshness": "stale",
       "failures": [
         "stale evidence: linked source is newer than evidence"
@@ -6127,7 +6155,7 @@
         },
         {
           "path": "plans/system-maturity/phase2-authorization-isolation/STATUS.json",
-          "sha256": "29cba9bf2d6299078ebe759e3e22dc5591b334cafd2b0707ec4adb5a253d571f",
+          "sha256": "ed167cab96a8a7bbf336b170e0f0aa4f99c9321aafb3c9e4feac1184da359f16",
           "taskId": "P2-002",
           "kind": "task"
         },
@@ -6187,7 +6215,7 @@
         },
         {
           "path": "plans/system-maturity/security-regression-suite.json",
-          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "sha256": "9cbbc093b7f709cd0336ccee6d5618a73fe533917915819cdfedeb77a195ac9c",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -6211,13 +6239,13 @@
         },
         {
           "path": "harness/specs/tasks/system-maturity-security-regression.md",
-          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "sha256": "ead99d2bb256dbe86bf501c808ce88467735885fd647c9543c3ddcd80a2efdd9",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": ".github/workflows/system-maturity-security.yml",
-          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "sha256": "7f20569ee913273b85e7bc30f01c532b1710925327610b8f0adbb82425ee1f62",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -6258,9 +6286,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T15:58:34.000Z",
-      "latestEvidenceAt": "2026-07-29T02:29:22.000Z",
-      "nextReviewAt": "2026-08-28T02:29:22.000Z",
+      "latestSourceAt": "2026-10-10T08:02:53.000Z",
+      "latestEvidenceAt": "2026-10-16T04:04:24.000Z",
+      "nextReviewAt": "2026-11-15T04:04:24.000Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6345,12 +6373,12 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-31T07:42:04.000Z",
+      "latestSourceAt": "2026-11-07T06:51:09.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-08-27T16:42:10.000Z",
       "freshness": "stale",
       "failures": [
-        "stale evidence: linked source is newer than evidence"
+        "stale evidence: linked source is newer than evidence, review cycle expired"
       ]
     },
     {
@@ -6434,11 +6462,13 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T12:25:40.000Z",
+      "latestSourceAt": "2026-11-07T06:51:09.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-08-27T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence, review cycle expired"
+      ]
     },
     {
       "id": "F-DATA-005",
@@ -6593,7 +6623,7 @@
         },
         {
           "path": "plans/system-maturity/security-regression-suite.json",
-          "sha256": "9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af",
+          "sha256": "9cbbc093b7f709cd0336ccee6d5618a73fe533917915819cdfedeb77a195ac9c",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -6617,13 +6647,13 @@
         },
         {
           "path": "harness/specs/tasks/system-maturity-security-regression.md",
-          "sha256": "0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9",
+          "sha256": "ead99d2bb256dbe86bf501c808ce88467735885fd647c9543c3ddcd80a2efdd9",
           "taskId": "P7-002",
           "kind": "task"
         },
         {
           "path": ".github/workflows/system-maturity-security.yml",
-          "sha256": "07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb",
+          "sha256": "7f20569ee913273b85e7bc30f01c532b1710925327610b8f0adbb82425ee1f62",
           "taskId": "P7-002",
           "kind": "task"
         },
@@ -6677,7 +6707,7 @@
         },
         {
           "path": "plans/system-maturity/privacy-data-flow-inventory.json",
-          "sha256": "75c97f10101fe60d5df4a95f1005bf24053936441a6600f86ea6f9d78dfd573b",
+          "sha256": "ca55a14ce9f0e80b639f720f8463286d4d3136e97ca77d7f365b35a8d3fa69fd",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -6713,7 +6743,7 @@
         },
         {
           "path": "scripts/collect-p7-003-evidence.mjs",
-          "sha256": "710a293fa078d0210869d6be2c9a73289c95a12135a81d95d16461c17275acb9",
+          "sha256": "08aa12d0341e162d90f125944b7bae6fc8229c4ae4283d7da0ad4dff9ade0f35",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -6725,7 +6755,7 @@
         },
         {
           "path": "harness/specs/tasks/system-maturity-privacy-controls.md",
-          "sha256": "51b9e4b274dfbd121c6756b6d03d0341965432a620d25e0f0fd2c21e075e48c5",
+          "sha256": "7121335fbf0b2b1f57000f383305446c2ea766c9cfd6d6940dbffee1745142fb",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -6737,43 +6767,43 @@
         },
         {
           "path": "shared/host-api/contract.ts",
-          "sha256": "5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d",
+          "sha256": "41c49266c5ff14b4b3321969ae0fe3e28fa48256f697b294ac6a267f5eaf1d12",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/services/agent-browser-api.ts",
-          "sha256": "94dfcf70eb5dd6a7110d634f7c6afc573f228bc8b008e330e06ca6f13fbc439b",
+          "sha256": "04b080fc06ebe7f1bd09bde9254b0fdf05c79280c28e6a6f4e7353da1a7b2fb1",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/services/remote-control-api.ts",
-          "sha256": "a5ca5203b80c1f4d2c314485990bb67f1b3798540d088407ae93ec19528d3915",
+          "sha256": "d59b260cc1d35c4e27a7e00082cb4747c941d627cec40aeb5c9fdefa0d354fa6",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/services/gateway-api.ts",
-          "sha256": "8415d663c01b7fa22092b792420390b314673f1c0d2d8d396d542d4c89e9227c",
+          "sha256": "0298b9d6fc3ba4fe9ed50f9744d48fe44443e4b1e3b2216c8ca22ab70665a70a",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "electron/utils/store.ts",
-          "sha256": "1c3e05efcc0e722394c38960ec60f8f2bdecd925980d30487e92d7521047c4af",
+          "sha256": "c683385a9b76cb75cb61ecf08068c74fb1c82ec1afafb2b904f5019be0acc88a",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "package.json",
-          "sha256": "f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846",
+          "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93",
           "taskId": "P7-003",
           "kind": "task"
         },
         {
           "path": "plans/system-maturity/findings-registry.json",
-          "sha256": "240a8698441811f7d0d778e89c811f62c7d71875f0a93a9f677d05022e4af178",
+          "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46",
           "taskId": "P7-003",
           "kind": "task"
         },
@@ -6826,9 +6856,9 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-29T02:34:58.000Z",
-      "latestEvidenceAt": "2026-07-31T07:42:04.000Z",
-      "nextReviewAt": "2026-08-30T07:42:04.000Z",
+      "latestSourceAt": "2026-11-10T15:11:50.000Z",
+      "latestEvidenceAt": "2026-11-11T02:53:37.139Z",
+      "nextReviewAt": "2026-12-11T02:53:37.139Z",
       "freshness": "fresh",
       "failures": []
     },
@@ -6915,8 +6945,10 @@
       "latestSourceAt": "2026-07-17T23:30:07.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-09-26T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: review cycle expired"
+      ]
     },
     {
       "id": "F-SUPPLY-002",
@@ -7111,25 +7143,38 @@
         }
       ],
       "reviewCycleDays": 30,
-      "latestSourceAt": "2026-07-28T12:54:31.000Z",
+      "latestSourceAt": "2026-10-19T01:00:03.000Z",
       "latestEvidenceAt": "2026-07-28T16:42:10.000Z",
       "nextReviewAt": "2026-08-27T16:42:10.000Z",
-      "freshness": "fresh",
-      "failures": []
+      "freshness": "stale",
+      "failures": [
+        "stale evidence: linked source is newer than evidence, review cycle expired"
+      ]
     }
   ],
   "fail": [
-    "F-SEC-002: stale evidence: linked source is newer than evidence",
+    "F-SEC-001: task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json",
     "F-SEC-003: stale evidence: linked source is newer than evidence",
     "F-SEC-010: stale evidence: linked source is newer than evidence",
-    "F-ISO-001: stale evidence: linked source is newer than evidence",
-    "F-ISO-002: stale evidence: linked source is newer than evidence",
-    "F-AUTH-001: stale evidence: linked source is newer than evidence",
-    "F-DATA-002: stale evidence: linked source is newer than evidence",
-    "F-DATA-003: stale evidence: linked source is newer than evidence",
-    "F-REL-002: stale evidence: linked source is newer than evidence",
+    "F-ISO-001: stale evidence: linked source is newer than evidence, review cycle expired",
+    "F-ISO-002: stale evidence: linked source is newer than evidence, review cycle expired",
+    "F-AUTH-003: stale evidence: linked source is newer than evidence, review cycle expired",
+    "F-AUTH-004: stale evidence: linked source is newer than evidence, review cycle expired",
+    "F-AUTH-005: stale evidence: linked source is newer than evidence, review cycle expired",
+    "F-DATA-001: stale evidence: linked source is newer than evidence, review cycle expired",
+    "F-DATA-002: stale evidence: linked source is newer than evidence, review cycle expired",
+    "F-DATA-003: stale evidence: linked source is newer than evidence, review cycle expired",
+    "F-REL-001: stale evidence: linked source is newer than evidence",
+    "F-REL-002: stale evidence: linked source is newer than evidence, review cycle expired",
+    "F-REL-003: stale evidence: linked source is newer than evidence, review cycle expired",
+    "F-REL-004: task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json",
+    "F-GOV-002: task P8-001 evidence hash mismatch: artifacts/system-maturity/P8-001/residual-audit-report.json",
+    "F-UX-001: stale evidence: linked source is newer than evidence, review cycle expired",
     "F-SEC-007: stale evidence: linked source is newer than evidence",
-    "F-AUTH-008: stale evidence: linked source is newer than evidence"
+    "F-AUTH-008: stale evidence: linked source is newer than evidence, review cycle expired",
+    "F-AUTH-009: stale evidence: linked source is newer than evidence, review cycle expired",
+    "F-REL-005: stale evidence: review cycle expired",
+    "F-SUPPLY-002: stale evidence: linked source is newer than evidence, review cycle expired"
   ],
   "warn": []
 }

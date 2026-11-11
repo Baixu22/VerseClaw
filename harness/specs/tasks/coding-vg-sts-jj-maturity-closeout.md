@@ -9,6 +9,20 @@ intent: 聚合 TF-0764–TF-0781 的当前磁盘证据，在同一候选完成�
 ownedPaths:
   - harness/specs/tasks/coding-vg-sts-jj-maturity-closeout.md
   - .gitignore
+  - plans/system-maturity/gates.json
+  - plans/system-maturity/**/*.delivery.md
+  - artifacts/system-maturity/P0-001/audit-baseline-check.json
+  - artifacts/system-maturity/P0-002/validate-system-maturity-plan.json
+  - artifacts/system-maturity/P0-003/validate-test-gates.json
+  - artifacts/system-maturity/P0-004/evidence-index.json
+  - artifacts/system-maturity/P0-004/validate-system-maturity-evidence.json
+  - artifacts/system-maturity/P7-001/traceability-report.json
+  - plans/system-maturity/residual-register.json
+  - plans/system-maturity/findings-registry.json
+  - artifacts/system-maturity/P8-001/residual-audit-report.json
+  - artifacts/system-maturity/P8-001/residual-audit-dry-run.json
+  - artifacts/system-maturity/P8-001/residual-revalidation-20261111.json
+  - artifacts/system-maturity/P8-001/residual-revalidation-20261111.stdout.txt
   - .gitattributes
   - harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json
   - harness/specs/fixtures/harness-codex-active-verification/acceptance.json
@@ -57,6 +71,20 @@ ownedPaths:
 touchedAreas:
   - harness/specs/tasks/coding-vg-sts-jj-maturity-closeout.md
   - .gitignore
+  - plans/system-maturity/gates.json
+  - plans/system-maturity/**/*.delivery.md
+  - artifacts/system-maturity/P0-001/audit-baseline-check.json
+  - artifacts/system-maturity/P0-002/validate-system-maturity-plan.json
+  - artifacts/system-maturity/P0-003/validate-test-gates.json
+  - artifacts/system-maturity/P0-004/evidence-index.json
+  - artifacts/system-maturity/P0-004/validate-system-maturity-evidence.json
+  - artifacts/system-maturity/P7-001/traceability-report.json
+  - plans/system-maturity/residual-register.json
+  - plans/system-maturity/findings-registry.json
+  - artifacts/system-maturity/P8-001/residual-audit-report.json
+  - artifacts/system-maturity/P8-001/residual-audit-dry-run.json
+  - artifacts/system-maturity/P8-001/residual-revalidation-20261111.json
+  - artifacts/system-maturity/P8-001/residual-revalidation-20261111.stdout.txt
   - .gitattributes
   - harness/specs/fixtures/rsi-evidence-loop/decision-implementation-validation.v1.json
   - harness/specs/fixtures/harness-codex-active-verification/acceptance.json

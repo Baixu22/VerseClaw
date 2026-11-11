@@ -1,0 +1,67 @@
+{
+  "schema": "coding-tf0782-handoff/v1",
+  "driven_by": "agent",
+  "actor": "codex",
+  "realHumanEvidence": false,
+  "goal": {
+    "threadId": "01a1be4a-6281-7db2-8026-237870c6db3e",
+    "toolStatus": "blocked",
+    "objective": "完成 TF-0758：修复编码链路缺陷并完成 VG、STS、JJ 联合评测（非 GA），按 TF-0764–TF-0782 的依赖与验收逐项留证，保持既有产品锁、默认值和发布权限不变。"
+  },
+  "linkedThread": {
+    "threadId": "01a1b68a-1eec-7033-ac3a-2e14f4edde10",
+    "status": "notLoaded",
+    "failedCompactions": 3,
+    "lastActionableCheckpoint": "TF-0776 passed; autoreview receipt still pending at that time"
+  },
+  "candidate": {
+    "commit": "0a9f8b23b4fb4c5ba7cb080302136c039641fe45",
+    "tree": "4a69f3af216c07f635494c7a2df6f03ceb73409b",
+    "ref": "codex/coding-vg-sts-jj-tf0782-final",
+    "releaseEvidenceRoot": "D:\\tmp\\tf0782-p6-005-0a9f8b23"
+  },
+  "taskForest": {
+    "program": "TF-0758",
+    "programStatus": "in_progress",
+    "programProgress": 0,
+    "phase": "TF-0763",
+    "phaseStatus": "proposed",
+    "terminal": "TF-0782",
+    "terminalStatus": "ready",
+    "terminalProgress": 0,
+    "note": "TF-0764-TF-0781 are done/100; the program progress and phase status are stale projections and require a proposal update."
+  },
+  "evidence": {
+    "cleanExecutorReport": "D:\\tmp\\tf0782-final-713e224-executor\\executor-report.json",
+    "releaseGateEvidence": "D:\\tmp\\tf0782-p6-005-0a9f8b23\\release-gate-evidence.json",
+    "rootTest": {
+      "passed": 10178,
+      "failed": 2,
+      "skipped": 55,
+      "failures": [
+        "harness-codex-active-verification.test.ts",
+        "versegit-wp2-profile.test.ts"
+      ]
+    },
+    "maturityValidateFailures": 56,
+    "wp2RequiredBinary": {
+      "sha256": "0ff835bd1314441c7f919e5933a62e6cc9517a847a5ca520c1c2d2a05fb44b36",
+      "bytes": 72509440
+    }
+  },
+  "nextSteps": [
+    "Unify clean-checkout bootstrap and pin Rust 1.94.0.",
+    "Restore or locate the historical WP2 MC0 binary and rerun root gates.",
+    "Resign the 56 maturity evidence hashes for the current tree.",
+    "Run the full clean executor and an independent verifier on the final candidate.",
+    "Rebuild current Windows package and three fresh profiles.",
+    "Generate TF-0782 aggregate, SHA256SUMS, negative checks and verifier; then apply, validate and export Task Forest."
+  ],
+  "preservedProductBoundaries": {
+    "defaultOnChanged": false,
+    "productLocksChanged": false,
+    "m4LandAdmitChanged": false,
+    "releaseAuthorized": false,
+    "ga": false
+  }
+}

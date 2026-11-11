@@ -55,8 +55,7 @@
     "passWithNoTests": false,
     "configs": [
       "vitest.config.ts",
-      "vitest.agent-dev.node.config.ts",
-      "vitest.runtime-effectiveness.config.ts"
+      "vitest.agent-dev.node.config.ts"
     ]
   }
 }
