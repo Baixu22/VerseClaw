@@ -102,7 +102,16 @@ describe("session activity handler", () => {
       canonicalKey: "agent:main:main",
     }));
 
-    const respond = await callHandler({ sessionKey: "agent:main:main" });
+    const respond = await callHandler({ sessionKey: "agent:main:main" }, new Map([
+      ["old-run", {
+        sessionKey: "agent:main:main",
+        sessionId: "before-reset",
+        agentId: "main",
+        controlUiVisible: true,
+        projectSessionActive: true,
+        startedAtMs: 1,
+      }],
+    ]));
     expect(respond.mock.calls[0][1].snapshot.session.sessionId).toBe("after-reset");
     expect(listOrchestrationCompletionBatchesForRequester).toHaveBeenCalledWith(
       "agent:main:main", "after-reset",

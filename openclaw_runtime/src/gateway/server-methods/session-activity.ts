@@ -142,6 +142,7 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
       ...(activeRun?.[1].agentId ? { agentId: activeRun[1].agentId } : {}),
       skipCache: true,
     });
+    const currentSessionId = loaded.entry?.sessionId ?? activeRun?.[1].sessionId ?? null;
     const workspaceId =
       readWorkspaceId(params) ??
       activeRun?.[1].workspaceId?.trim() ??
@@ -149,12 +150,12 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
       "unknown";
     const completionBatches = listOrchestrationCompletionBatchesForRequester(
       sessionKey,
-      activeRun?.[1].sessionId ?? loaded.entry?.sessionId ?? null,
+      currentSessionId,
     );
     const capabilityObservation = readRuntimeEffectiveCapabilityObservation({
       workspaceId,
       sessionKey,
-      sessionId: activeRun?.[1].sessionId ?? loaded.entry?.sessionId ?? null,
+      sessionId: currentSessionId,
       runId: activeRun?.[0] ?? null,
       runtimeGeneration: resolveCurrentRuntimeGeneration(),
       nowMs: now,
@@ -168,7 +169,7 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
       activeRun: activeRun
         ? {
             runId: activeRun[0],
-            sessionId: activeRun[1].sessionId,
+            sessionId: currentSessionId,
             startedAtMs: activeRun[1].startedAtMs,
           }
         : null,
@@ -176,7 +177,7 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
       queuedCount: queueCount,
       nowMs: now,
     });
-    const expectedSessionId = activeRun?.[1].sessionId ?? loaded.entry?.sessionId ?? null;
+    const expectedSessionId = currentSessionId;
     const resourceAgentId = activeRun?.[1].agentId ?? parseAgentSessionKey(sessionKey)?.agentId;
     const agentWorkspaceDir = resourceAgentId
       ? resolveAgentWorkspaceDir(cfg, resourceAgentId)
