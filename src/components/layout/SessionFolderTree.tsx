@@ -548,7 +548,7 @@ function SessionFolderTreeInner({
               onClick={() => toggle()} onKeyDown={(event) => {
                 if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); toggle(event.key === 'ArrowRight'); }
               }}>
-              <ChevronRight aria-hidden="true" /><span>{count}</span>
+              <ChevronRight aria-hidden="true" />
             </button>
           ) : row.originKey ? (
             <>
@@ -558,6 +558,7 @@ function SessionFolderTreeInner({
           ) : relation?.kind !== 'unknown' || row.sourceStatus === 'source-unavailable' ? (
             <span className="ws-family-kind" title={t(`chat:sessionFamily.kind.${relation?.kind ?? 'unknown'}`)}><Icon /></span>
           ) : null}
+          {count > 0 && <span className="session-family__count" aria-hidden="true">{count}</span>}
           {renderDraggableSession(entry)}
         </div>
       );

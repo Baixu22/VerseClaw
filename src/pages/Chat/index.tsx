@@ -593,7 +593,7 @@ function ProjectSessionHeader({
             <TooltipTrigger asChild>
           <button
             type="button"
-            className="inline-flex max-w-[460px] items-center gap-1 rounded-md px-1.5 py-1 font-medium text-foreground transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+            className="inline-flex max-w-[360px] items-center gap-1.5 rounded-md px-1.5 py-1 text-sm font-medium text-foreground transition-colors hover:bg-black/5 dark:hover:bg-white/10"
             onClick={() => setOpen((current) => current === 'session' ? null : 'session')}
             onDoubleClick={(event) => {
               event.preventDefault();
@@ -601,7 +601,7 @@ function ProjectSessionHeader({
             }}
             data-testid="chat-header-session-name"
           >
-            <span className="chat-header-session-label text-xs font-normal text-muted-foreground">{t("session.manage")}</span>
+            <span className="chat-header-session-label truncate">{sessionName}</span>
             <ChevronDown className="chat-header-session-chevron h-3.5 w-3.5 shrink-0 text-muted-foreground" />
           </button>
             </TooltipTrigger>

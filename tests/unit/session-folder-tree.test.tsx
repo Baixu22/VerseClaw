@@ -103,7 +103,7 @@ describe('SessionFolderTree folder mutation dispatch', () => {
     ];
     await renderTree({ sessions, currentSessionKey: 'parent' });
     const toggle = screen.getByTestId('session-family-toggle-parent');
-    expect(toggle).toHaveTextContent('2');
+    expect(screen.getByTestId('sidebar-session-family-parent')).toHaveTextContent('2');
     expect(screen.queryByTestId('session-row-child-a')).toBeNull();
     fireEvent.click(toggle);
     expect(screen.getAllByTestId('session-row-child-a')).toHaveLength(1);

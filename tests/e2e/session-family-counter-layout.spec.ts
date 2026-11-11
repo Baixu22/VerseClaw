@@ -30,13 +30,14 @@ test('family counters keep a separate visible area from the title at 2, 20 and 1
             const row = element.closest('.ws-family-row')!;
             const title = row.querySelector('.task-title__clip')!;
             const a = element.getBoundingClientRect(), b = title.getBoundingClientRect();
-            const label = element.querySelector('span')!.getBoundingClientRect();
+            const label = row.querySelector('.session-family__count')!.getBoundingClientRect();
             return { toggle: { x: a.x, right: a.right, width: a.width }, title: { x: b.x, width: b.width },
-              labelRight: label.right, rowHeight: row.getBoundingClientRect().height, overflow: document.documentElement.scrollWidth > innerWidth };
+              labelRight: label.right, rowRight: row.getBoundingClientRect().right, rowHeight: row.getBoundingClientRect().height, overflow: document.documentElement.scrollWidth > innerWidth };
           });
           evidence.samples.push({ count, theme, width, ...sample });
           expect(sample.title.x).toBeGreaterThanOrEqual(sample.toggle.right + 2);
-          expect(sample.labelRight).toBeLessThanOrEqual(sample.toggle.right + 0.5);
+          expect(sample.labelRight).toBeGreaterThan(sample.toggle.right);
+          expect(sample.labelRight).toBeLessThanOrEqual(sample.rowRight - 8);
           expect(sample.rowHeight).toBe(30); expect(sample.overflow).toBe(false);
           await toggle.focus(); await expect(toggle).toBeFocused(); await toggle.press('Enter');
           await expect(toggle).toHaveAttribute('aria-expanded', 'true'); await toggle.press('Enter');

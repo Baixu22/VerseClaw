@@ -443,13 +443,11 @@
 .codex-sidebar .ws-family-row { position: relative; min-width: 0; }
 .codex-sidebar .ws-family-toggle,
 .codex-sidebar .ws-family-kind { position: absolute; z-index: 4; left: 9px; top: 3px; height: 24px; display: flex; align-items: center; gap: 1px; color: var(--cdx-text-3); }
-.codex-sidebar .ws-family-toggle { width: 30px; font-size: 9px; }
-.codex-sidebar .ws-family-row:has(> .ws-family-toggle) .task-select { padding-left: max(var(--task-indent), 46px); --task-title-gutter: 4px; }
+.codex-sidebar .ws-family-toggle { font-size: 9px; }
+.codex-sidebar .ws-family-row:has(> .ws-family-toggle) .task-select { --task-indent: 36px; --task-title-gutter: 4px; }
 .codex-sidebar .ws-family-toggle svg { width: 11px; height: 11px; flex-shrink: 0; }
 .codex-sidebar .ws-family-kind { width: 16px; pointer-events: none; }
 .codex-sidebar .ws-family-kind svg { width: 13px; height: 13px; }
-.codex-sidebar .ws-family-row[data-lineage-depth='1'] .task-select { --task-indent: 50px; }
-.codex-sidebar .ws-family-row[data-lineage-depth='1'] .ws-family-kind { left: 30px; }
 
 /* Session title: three boxes, one job each.
  *
@@ -1275,18 +1273,23 @@
 .codex-sidebar .project-tasks:not([data-flat='true']) .ws-time-slice { padding-left: 34px; }
 .codex-sidebar .project-tasks:not([data-flat='true']) .ws-tree[data-has-groups='true'] .task-select { --task-indent: 50px; }
 
-/* Related conversations stay inside their project/workgroup. One branch marker
- * and a quiet guide carry the hierarchy; the title and disclosure keep their
- * own hit areas instead of competing for the same narrow gutter. */
+/* Related conversations share the normal row rhythm. The chevron belongs to
+ * the parent; its count sits at the trailing edge. Descendants use one quiet
+ * marker rather than a stack of implementation-shaped badges. */
 .session-family__parent, .session-family__child { position: relative; min-width: 0; }
-.session-family__toggle { position: absolute; left: 5px; top: 4px; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 2px; min-width: 24px; padding: 0 3px; height: 24px; border-radius: 5px; color: var(--color-text-foreground-tertiary); font-size: 10px; font-variant-numeric: tabular-nums; }
-.session-family__toggle svg { width: 11px; height: 11px; transition: rotate 150ms ease; }
+.session-family__toggle { position: absolute; inset: 3px auto 3px 6px; z-index: 2; width: 24px; padding: 0; border-radius: 5px; color: var(--color-text-foreground-tertiary); }
+.session-family__toggle svg { width: 13px; height: 13px; margin: auto; transition: rotate 150ms ease; }
 .session-family__toggle[aria-expanded='true'] svg { rotate: 90deg; }
 .session-family__toggle:hover { background: var(--color-background-row-hover); color: var(--color-text-foreground); }
 .session-family__toggle:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 1px; }
-.session-family__children { position: relative; margin-left: 11px; border-left: 1px solid var(--color-border); }
+.session-family__count { position: absolute; top: 5px; right: 9px; z-index: 3; min-width: 18px; color: var(--color-text-foreground-tertiary); font-size: 11px; line-height: 20px; font-variant-numeric: tabular-nums; text-align: right; pointer-events: none; }
+.ws-family-row:has(> .ws-family-toggle) .task-title { padding-right: 22px; }
+.ws-family-row:has(> .ws-family-toggle) .task-row:hover .session-family__count,
+.ws-family-row:has(> .ws-family-toggle) .task-row:has(:focus-visible) .session-family__count,
+.ws-family-row:has(> .ws-family-toggle) .task-row[data-force-actions='true'] .session-family__count { opacity: 0; }
+.session-family__children { position: relative; margin-left: 17px; border-left: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent); }
 .session-family__connector { display: none; }
-.codex-sidebar .session-family__child .ws-family-kind { left: 19px; }
-.codex-sidebar .session-family__child .ws-family-kind svg { width: 12px; height: 12px; }
-.codex-sidebar .session-family__child .task-select { --task-indent: 41px; }
+.codex-sidebar .session-family__child .ws-family-kind { left: 13px; }
+.codex-sidebar .session-family__child .ws-family-kind svg { width: 11px; height: 11px; }
+.codex-sidebar .session-family__child .task-select { --task-indent: 33px; font-size: 13px; }
 @media (prefers-reduced-motion: reduce) { .session-family__toggle svg { transition: none; } }

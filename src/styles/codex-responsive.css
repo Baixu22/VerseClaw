@@ -41,7 +41,7 @@
     gap: 0;
   }
 
-  .session-family-nav__name { max-width: 112px; }
+  .session-family-nav__name { max-width: 96px; }
 }
 
 @container chat-toolbar (max-width: 560px) {

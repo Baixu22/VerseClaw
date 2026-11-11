@@ -62,7 +62,7 @@ describe('family navigation', () => {
     fireEvent.blur(screen.getByTestId('session-family-toggle-parent'),{relatedTarget:document.body});
     view.rerender(renderTree(true));
     expect(order()).toEqual(before);expect(screen.getByText('Older:error')).toBeVisible();
-    expect(screen.getByTestId('session-family-toggle-parent')).toHaveTextContent('3');
+    expect(screen.getByTestId('sidebar-session-family-parent')).toHaveTextContent('3');
     expect(screen.queryByText('New')).not.toBeInTheDocument();
     fireEvent.pointerLeave(treeNode,{relatedTarget:null});
     fireEvent.blur(screen.getByTestId('session-family-toggle-parent'),{relatedTarget:null});
