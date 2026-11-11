@@ -96,6 +96,19 @@ beforeEach(() => {
 });
 
 describe("session activity handler", () => {
+  it("reads a fresh generation before projecting completed worker batches", async () => {
+    loadSessionEntry.mockImplementation((_key, options) => ({
+      entry: { sessionId: options?.skipCache ? "after-reset" : "before-reset", updatedAt: 1 },
+      canonicalKey: "agent:main:main",
+    }));
+
+    const respond = await callHandler({ sessionKey: "agent:main:main" });
+    expect(respond.mock.calls[0][1].snapshot.session.sessionId).toBe("after-reset");
+    expect(listOrchestrationCompletionBatchesForRequester).toHaveBeenCalledWith(
+      "agent:main:main", "after-reset",
+    );
+  });
+
   it("retains a worker's own transcript key and reports errors separately", async () => {
     listSubagentRunsForRequester.mockReturnValue([
       {

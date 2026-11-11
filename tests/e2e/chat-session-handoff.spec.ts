@@ -661,8 +661,15 @@ test.describe('Verse Claw chat session handoff', () => {
             success: true,
             result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: 'main-generation', displayName: 'main' }] },
           },
+          [stableStringify(['chat.history', { sessionKey: MAIN_SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
+            success: true,
+            result: { messages: handoffHistory },
+          },
         },
-        hostApi: baseHostApiMocks(),
+        hostApi: {
+          ...baseHostApiMocks(),
+          [stableStringify(['sessions', 'history', null])]: { messages: handoffHistory, hasMore: false },
+        },
       });
       await app.evaluate(() => {
         const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');

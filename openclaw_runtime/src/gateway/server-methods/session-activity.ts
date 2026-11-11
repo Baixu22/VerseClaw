@@ -135,8 +135,12 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
     const readProjection = collectSessionActivityReadProjection(sessionKey, mission);
     const now = Date.now();
     const cfg = context.getRuntimeConfig();
+    // The activity snapshot exposes the physical generation. A concurrent reset
+    // can rewrite the SQLite store inside one freshness-stat window, so this
+    // read must bypass the shared object cache rather than return a prior row.
     const loaded = loadSessionEntry(sessionKey, {
       ...(activeRun?.[1].agentId ? { agentId: activeRun[1].agentId } : {}),
+      skipCache: true,
     });
     const workspaceId =
       readWorkspaceId(params) ??

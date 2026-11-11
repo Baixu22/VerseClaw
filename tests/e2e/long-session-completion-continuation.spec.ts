@@ -87,6 +87,7 @@ type CompletionBatch = {
 };
 type ActivitySnapshot = {
   snapshot: {
+    session: { sessionKey: string; sessionId?: string | null; status: string; runId?: string | null };
     subagents: Array<{ role?: string; status: string; childSessionKey?: string }>;
     completionBatches: CompletionBatch[];
     processes: Array<{ id: string; status: string }>;
@@ -340,11 +341,22 @@ test('consolidates deferred worker completion into one generation-fenced batch a
     expect(replayBatch.consolidatedReceiptId).toBe(terminalBatch?.consolidatedReceiptId);
     expect(replayBatch.members).toEqual(terminalBatch?.members);
 
-    await hostInvoke(second, 'gateway', 'rpc', {
+    const reset = await hostInvoke<{ ok: boolean; key: string; entry: { sessionId: string } }>(second, 'gateway', 'rpc', {
       method: 'sessions.reset',
       params: { key: sessionKey, agentId: 'main', reason: 'reset' },
       timeoutMs: 30_000,
     });
+    expect(reset.ok).toBe(true);
+    expect(reset.entry.sessionId).toBeTruthy();
+    expect(reset.entry.sessionId).not.toBe(sessionGeneration);
+    const activityAfterReset = await hostInvoke<ActivitySnapshot>(second, 'gateway', 'rpc', {
+      method: 'session.activitySnapshot',
+      params: { sessionKey, workspaceId },
+      timeoutMs: 30_000,
+    });
+    expect(activityAfterReset.snapshot.session.sessionId).toBe(reset.entry.sessionId);
+    expect(activityAfterReset.snapshot.completionBatches.find((candidate) => candidate.orchestrationRunId === firstReceipt.orchestrationRunId))
+      .toMatchObject({ generationState: 'mismatch' });
     const stale = await hostInvoke<DelegationResult>(second, 'sessions', 'delegate', {
       ...request,
       idempotencyKey: `${it}-stale-generation`,
@@ -354,7 +366,12 @@ test('consolidates deferred worker completion into one generation-fenced batch a
     expect(stale.error).toMatch(/generation|ready|binding/i);
     if (!firstReceipt.orchestrationRunId) throw new Error('Missing orchestration run id');
     fencedBatch = await waitForBatch(second, sessionKey, workspaceId, firstReceipt.orchestrationRunId);
-    expect(fencedBatch).toMatchObject({ status: 'fenced', outcome: 'fenced', generationState: 'mismatch', consolidatedReceiptId: null });
+    expect(fencedBatch).toMatchObject({
+      status: 'fenced',
+      outcome: 'fenced',
+      generationState: 'mismatch',
+      consolidatedReceiptId: null,
+    });
 
     const output = testInfo.outputPath('completion-continuation-e2e.json');
     await writeFile(output, `${JSON.stringify({

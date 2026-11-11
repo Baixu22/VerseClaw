@@ -19,6 +19,14 @@ test.describe('Verse Claw chat manual compaction', () => {
     try {
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        // loadSessions reads the Gateway owner, not the legacy HTTP manifest.
+        // Keep the mocked generation on that path so compaction carries it.
+        gatewayRpc: {
+          [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
+            success: true,
+            result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: EXPECTED_SESSION_ID, displayName: 'main' }] },
+          },
+        },
         hostApi: {
           [stableStringify(['gateway', 'status', null])]: {
             state: 'running',

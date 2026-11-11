@@ -1,12 +1,16 @@
 ---
 lifecycleStatus: active
 id: unified-acceptance-fixture-refresh
-title: Align unified acceptance fixtures with current task and session owners
+title: Keep unified acceptance and activity reads bound to the current session generation
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 diffBase: 395d3070e67c5af3cf24b197d5fa531884f88f9e
 intent: Refresh the original U6 aggregate fixtures while retaining its 64 criteria and the five TF-0867 criteria.
 ownedPaths: &paths
+  - openclaw_runtime/src/gateway/session-utils.ts
+  - openclaw_runtime/src/gateway/server-methods/session-activity.ts
+  - openclaw_runtime/src/gateway/server-methods/session-activity.test.ts
+  - tests/unit/session-generation-freshness.test.ts
   - tests/e2e/chat-checkpoints.spec.ts
   - tests/e2e/chat-manual-compaction.spec.ts
   - tests/e2e/chat-session-compact-range.spec.ts
@@ -39,6 +43,7 @@ expectedUserBehavior:
   - Delegation uses a live task claim; task acceptance remains separate from worker completion.
   - Lifecycle operations retain their original workspace and retry operation identity.
 acceptance:
+  - Activity snapshots read the persisted session generation after reset even when the session-store cache still contains the previous generation; deleted-agent discovery obeys the same fresh-read option.
   - All original 73 aggregate Electron cases are retained, with failures and skipped cases reported separately.
   - Positive context and Handoff fixtures provide a current session generation and verify the scoped request.
   - Delegation fixtures create and claim a real task in an isolated project before admission and preserve restart, rejection and completion-batch assertions.
@@ -46,6 +51,8 @@ acceptance:
   - Visual fixtures wait for measured viewport dimensions; response-loss injection occurs only after committed Handoff creation.
   - Continuation verifies the public run-terminal receipt and a successful tool receipt before Handoff; missing or rejected effects cannot count as success.
 requiredTests:
+  - pnpm exec vitest run tests/unit/session-generation-freshness.test.ts tests/unit/long-session-completion-continuation.test.ts --maxWorkers=1 --no-file-parallelism
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.gateway-methods.config.ts src/gateway/server-methods/session-activity.test.ts --maxWorkers=1
   - pnpm run typecheck
   - pnpm run typecheck:test
   - pnpm run contract:check
