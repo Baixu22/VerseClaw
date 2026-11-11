@@ -2491,3 +2491,7 @@ openclaw_runtime/_tmp_*
 !harness/specs/fixtures/coding-evaluation/TF-0778/environment/packaging-setup.log
 !harness/specs/fixtures/coding-evaluation/TF-0778/inputs/vg.exe
 !harness/specs/fixtures/coding-evaluation/TF-0778/package/artifacts/*.log
+
+# TF-0782 residual revalidation evidence consumed by maturity delivery.
+!/artifacts/system-maturity/P8-001/residual-revalidation-20261111.json
+!/artifacts/system-maturity/P8-001/residual-revalidation-20261111.stdout.txt
