@@ -20,6 +20,9 @@ import {
   inferCoverage,
   isCountableTestCommand,
   parseTestCounts,
+  pnpmCommandArguments,
+  pnpmExecutable,
+  pnpmGateSpawnSpec,
   redactText,
   readAcceptanceStatus,
   repositoryIdentity,
@@ -338,6 +341,19 @@ function tf0009Report() {
 }
 
 describe('Agent Engineering Acceptance', () => {
+  it('routes pnpm gates through the packageManager-pinned corepack shim', () => {
+    const args = ['install', '--offline', '--frozen-lockfile', '--ignore-scripts'];
+    const spec = pnpmGateSpawnSpec(pnpmExecutable(), pnpmCommandArguments(args));
+    if (process.platform === 'win32') {
+      expect(spec.command.toLowerCase()).toBe('cmd.exe');
+      expect(spec.args.join(' ')).toContain('corepack.cmd');
+      expect(spec.args.join(' ')).toContain('pnpm install --offline --frozen-lockfile --ignore-scripts');
+    } else {
+      expect(spec.command).toBe('corepack');
+      expect(spec.args.slice(0, 2)).toEqual(['pnpm', 'install']);
+    }
+  });
+
   it('hashes empty and multi-chunk files without changing their byte identity', () => {
     const root = mkdtempSync(join(tmpdir(), 'acceptance-hash-'));
     temporaryPaths.push(root);

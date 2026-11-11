@@ -151,6 +151,14 @@ export function parseTestCounts(stdout: string, stderr?: string): {
   segments: number;
 } | null;
 export function isCountableTestCommand(command?: string | null, args?: string[], commandLine?: string): boolean;
+export function pnpmExecutable(): string;
+export function pnpmCommandArguments(args?: string[]): string[];
+export function pnpmGateSpawnSpec(command: string, args: string[]): {
+  command: string;
+  args: string[];
+  shell: boolean;
+  windowsVerbatimArguments?: boolean;
+};
 
 export function sealReport(report: AcceptanceReport): AcceptanceReport;
 export function runAcceptance(

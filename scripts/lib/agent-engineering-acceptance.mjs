@@ -316,8 +316,12 @@ function gitExecutable() {
   return process.platform === 'win32' ? 'git.exe' : 'git';
 }
 
-function pnpmExecutable() {
-  return process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
+export function pnpmExecutable() {
+  return process.platform === 'win32' ? 'corepack.cmd' : 'corepack';
+}
+
+export function pnpmCommandArguments(args = []) {
+  return ['pnpm', ...args];
 }
 
 function runGit(root, args, options = {}) {
@@ -1274,12 +1278,12 @@ export function parseTestCounts(stdout, stderr = '') {
   };
 }
 
-function pnpmGateSpawnSpec(command, args) {
+export function pnpmGateSpawnSpec(command, args) {
   // Node cannot exec .cmd shims directly on Windows (EINVAL). Match the repo's
   // pnpm-runner pattern: wrap in cmd.exe and rely on the shim's trailing
   // `exit /b %errorlevel%` to propagate the child's real exit code. (The shim
   // must keep that line; a shim without it fails open.)
-  if (process.platform !== 'win32' || !/^pnpm(\.cmd)?$/iu.test(commandName(command))) {
+  if (process.platform !== 'win32' || !/^(?:pnpm|corepack)(?:\.cmd)?$/iu.test(commandName(command))) {
     return { command, args, shell: false };
   }
   const escaped = [command, ...args].map((part) => {
@@ -1316,8 +1320,10 @@ function spawnGate(gate, options = {}) {
     // run it through the platform shell with the same failure posture.
     spawnSpec = shellCommandLineSpec(gate.commandLine);
   } else {
-    const command = commandName(gate.command) === 'pnpm' ? pnpmExecutable() : gate.command;
-    spawnSpec = pnpmGateSpawnSpec(command, gate.args);
+    const isPnpm = ['pnpm', 'pnpm.cmd'].includes(commandName(gate.command));
+    const command = isPnpm ? pnpmExecutable() : gate.command;
+    const args = isPnpm ? pnpmCommandArguments(gate.args) : gate.args;
+    spawnSpec = pnpmGateSpawnSpec(command, args);
   }
   const startedAt = new Date().toISOString();
   const started = Date.now();
