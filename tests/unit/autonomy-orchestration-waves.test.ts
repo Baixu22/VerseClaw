@@ -208,7 +208,7 @@ describe('orchestration waves follow actual registry terminal state', () => {
   it('dispatches a queued native Git worker through its registered owner base', async () => {
     const fixture = mkdtempSync(path.join(tmpdir(), 'r4-native-wave-')), repository = path.join(fixture, 'repo'); mkdirSync(repository);
     vi.stubEnv('OPENCLAW_STATE_DIR', path.join(fixture, 'state'));
-    const nativeCfg = { ...config, runtime: { coding: { worktree: { backend: 'git' as const } } } };
+    const nativeCfg = { ...config, runtime: { coding: { worktree: { backend: 'git' as const } } } } as Parameters<typeof setSessionsSpawnConfigOverride>[0];
     setSessionsSpawnConfigOverride(nativeCfg);
     const git = (...args: string[]) => execFileSync('git', args, { cwd: repository, encoding: 'utf8', windowsHide: true }).trim();
     try {
