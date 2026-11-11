@@ -242,10 +242,28 @@ describe('Task evidence retention and original checkout cleanup', () => {
         }
         return save(scope);
       });
-      service.cleanup(row.id); spy.mockRestore();
+      let cleanupMs = -1;
+      try {
+        const cleanupStarted = Date.now();
+        service.cleanup(row.id);
+        cleanupMs = Date.now() - cleanupStarted;
+      } finally {
+        spy.mockRestore();
+      }
       expect(await run.exited, run.output()).toBe(0);
       const proof = JSON.parse(readFileSync(result, 'utf8'));
-      expect(proof.rejected).toMatch(/ENOENT|unavailable|STALE|no such file/i);
+      expect(proof).toMatchObject({ success: false, operation: mode, operationStarted: true });
+      expect(cleanupMs).toBeLessThan(20000);
+      if (mode === 'first-open') expect(['open', 'create']).toContain(proof.stage);
+      else expect(proof.stage).toBe(mode);
+      if (proof.code === 'LOCK_TIMEOUT') {
+        expect(proof.retryable).toBe(true);
+        expect(proof.rejected.toLowerCase()).toContain(lock.toLowerCase());
+      } else {
+        expect(proof.code).toBe('ENOENT');
+        expect(proof.retryable).toBe(false);
+        expect(proof.rejected.toLowerCase()).toContain(row.root.toLowerCase());
+      }
       expect(existsSync(row.root)).toBe(false);
       if (mode === 'first-open') expect(existsSync(resolveTaskDomain(repository).database)).toBe(false);
       if (mode === 'register') expect(resolveExecutionDomain(repository).state).toBe('independent');

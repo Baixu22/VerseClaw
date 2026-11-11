@@ -53,6 +53,7 @@ touchedAreas:
   - tests/unit/versegit-candidate-freeze.test.ts
   - tests/fixtures/worktree-integration-process.ts
   - tests/fixtures/worktree-registry-process.ts
+  - tests/unit/fixtures/task-retention-worker.mts
   - vitest.autonomy-r4.config.ts
   - harness/specs/tasks/autonomy-worktree-integration.md
   - harness/specs/rules/autonomy-worktree-integration.md
