@@ -60,6 +60,11 @@ touchedAreas:
   - "tests/unit/project-rag-embedding-lifecycle.test.ts"
   - "tests/unit/knowledge-vector-settings.test.tsx"
   - "tests/e2e/project-rag-vector-backends.spec.ts"
+  - "artifacts/agent-dev-deep-test/history.json"
+  - "artifacts/agent-dev-deep-test/report.json"
+  - "artifacts/agent-dev-deep-test/report.md"
+  - "artifacts/agent-dev-quality/report.json"
+  - "artifacts/agent-dev-workbench/evidence.json"
 requiredProfiles:
   - "fast"
   - "comms"
