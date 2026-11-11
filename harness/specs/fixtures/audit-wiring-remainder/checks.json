@@ -1,0 +1,101 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-audit-remainder",
+  "results": [
+    {
+      "name": "harness",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/audit-wiring-remainder.md"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 3024,
+      "log": "gate-harness.log"
+    },
+    {
+      "name": "harness-dry-run",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/audit-wiring-remainder.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 2707,
+      "log": "gate-harness-dry-run.log"
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 8548,
+      "log": "gate-contract.log"
+    },
+    {
+      "name": "i18n",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/i18n-lint.mjs"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 2381,
+      "log": "gate-i18n.log"
+    },
+    {
+      "name": "retention",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 22960,
+      "log": "gate-retention.log"
+    },
+    {
+      "name": "test-coverage",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/check-test-coverage-baseline.mjs"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 1089,
+      "log": "gate-test-coverage.log"
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 609,
+      "log": "gate-comms-replay.log"
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 1600,
+      "log": "gate-comms-compare.log"
+    }
+  ]
+}

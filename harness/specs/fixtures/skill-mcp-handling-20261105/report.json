@@ -1,0 +1,246 @@
+{
+  "schema": "ClawXSkillMcpHandlingAudit/v1",
+  "driven_by": "agent",
+  "actor": "codex-skill-mcp-audit",
+  "researchDate": "2026-11-05",
+  "finalVerificationDate": "2026-11-06",
+  "timezone": "Asia/Shanghai",
+  "observedAt": "2026-11-05T16:17:19.340Z",
+  "candidate": {
+    "startingHead": "5accfbddbf46839bf7999c70eed31b1b045b640b",
+    "finalHead": "95a0d34e94331d9803d05a6267446214cf7626de",
+    "sharedDirtyWorktree": true,
+    "concurrentHeadChanged": true,
+    "sourceManifest": "source-manifest.json",
+    "committed": false
+  },
+  "scope": {
+    "requested": "ClawX application handling of Skills and MCP; upstream research and compatible dependency refresh",
+    "withdrawnPriorScope": "Personal VerseSearch/AnySearch/Exa skill edits and development MCP registration were restored from byte-checked backups",
+    "personalCredentialsPreserved": true,
+    "productLocksChanged": false
+  },
+  "upstream": {
+    "registry": [
+      {
+        "name": "@modelcontextprotocol/sdk",
+        "url": "https://registry.npmjs.org/%40modelcontextprotocol%2Fsdk/latest",
+        "version": "1.32.2",
+        "integrity": "sha512-SWsVtH/0vULSQStoZ6xxH2K09Li8fXYTMC64ZeogCdpZ3XSi1eCPOByV1OpuJxuI3OcmHhosDWYyii07tpPsLw==",
+        "observedAt": "2026-11-05T16:07:28.346Z"
+      },
+      {
+        "name": "@modelcontextprotocol/client",
+        "url": "https://registry.npmjs.org/%40modelcontextprotocol%2Fclient/latest",
+        "version": "2.4.0",
+        "integrity": "sha512-LgrD2OphHuG12vfKFKz6SOnq7bKHQmhGJIAYdD+MZBn2npHEyry6uD8zvktodtl5CQM85MO0anUyD9JwmUmxww==",
+        "observedAt": "2026-11-05T16:07:24.050Z"
+      },
+      {
+        "name": "@modelcontextprotocol/server",
+        "url": "https://registry.npmjs.org/%40modelcontextprotocol%2Fserver/latest",
+        "version": "2.4.0",
+        "integrity": "sha512-rgR9yxSaAJ+bcsi/XroT/S2AfPiIWloXAnrdfYSCms9ivVju0ishu/wW0J21Ho6+ZOR1r7RyeRbjiRuF87ix5Q==",
+        "observedAt": "2026-11-05T16:07:24.848Z"
+      }
+    ],
+    "protocolCurrent": "2026-07-28",
+    "v1ProtocolMaximum": "2025-11-25",
+    "skillsExtension": "SEP-2640",
+    "v2SkillAttachStatus": "experimental server attach; SkillsClient supports read/verify",
+    "publications": [
+      "https://agentskills.io/specification",
+      "https://agentskills.io/integrate-skills",
+      "https://modelcontextprotocol.io/specification/2026-07-28/changelog",
+      "https://modelcontextprotocol.io/extensions/skills",
+      "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/1.32.2",
+      "https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/v2.4.0"
+    ]
+  },
+  "updates": {
+    "selectedDirectSdk": [
+      {
+        "owner": "openclaw_runtime",
+        "declared": "1.32.2",
+        "installed": "1.32.2",
+        "protocolMaximum": "2025-11-25"
+      },
+      {
+        "owner": "packages/versebrowser",
+        "declared": "1.32.2",
+        "installed": "1.32.2",
+        "protocolMaximum": "2025-11-25"
+      },
+      {
+        "owner": "resources/verseshell-mcp",
+        "declared": "1.32.2",
+        "installed": "1.32.2",
+        "protocolMaximum": "2025-11-25"
+      }
+    ],
+    "lockfiles": [
+      "pnpm-lock.yaml",
+      "openclaw_runtime/pnpm-lock.yaml"
+    ],
+    "unrelatedLockChanges": false,
+    "remainingLegacyDirectRuntimePlugins": [
+      "extensions/browser",
+      "extensions/codex-supervisor",
+      "extensions/qa-lab"
+    ],
+    "installation": {
+      "packageManager": "pnpm 11.2.2",
+      "workspaceInstallFirstAttempt": "failed: locked Electron EPERM",
+      "workspaceInstallRetry": "failed: same EPERM",
+      "runtimeFinal": "frozen install succeeded",
+      "browserShellFinal": "frozen projected importer/package/snapshot lock installed by pnpm 11.2.2",
+      "browserShellVirtualStore": ".local/skill-mcp-deps-20261105",
+      "bothCanonicalAndJunctionPathsVerified": true,
+      "transientShellInstall": "An intermediate pnpm 10 standalone install was replaced by the repository-pinned pnpm 11.2.2 frozen dependency set.",
+      "existingBrowserPatch": "scripts/patch-upstream.mjs replayed without changes after ignore-scripts install"
+    }
+  },
+  "findings": [
+    {
+      "id": "skill-config-runtime-sync",
+      "status": "reproduced-at-main-config-boundary",
+      "priority": "P1",
+      "summary": "updateSkillConfigs returns success and persists disabled locally while isolated runtime config remains enabled",
+      "evidence": "skill-boundary.json",
+      "probe": "skill-boundary-probe.mts",
+      "notProven": "Complete Electron/model path and any separately configured deployment-specific bridge",
+      "fixed": false
+    },
+    {
+      "id": "mcp-new-protocol",
+      "status": "not-implemented",
+      "summary": "Current SDK/session runtime uses initialize and old listChanged, with no server/discover or subscriptions/listen integration",
+      "fixed": false
+    },
+    {
+      "id": "mcp-skills-extension",
+      "status": "not-implemented",
+      "summary": "No SkillsClient or skills/list/get resource-manifest verification path; local skill support is separate",
+      "fixed": false
+    },
+    {
+      "id": "skill-marketplace-lifecycle",
+      "status": "source-confirmed",
+      "summary": "clawhubSearch is six-item catalog; uninstall is success no-op; unresolved requested ref can fall back to branch",
+      "fixed": false
+    },
+    {
+      "id": "skill-metadata",
+      "status": "source-confirmed",
+      "summary": "Local skill summary reads top-level version/author, not metadata.version/author",
+      "fixed": false
+    },
+    {
+      "id": "mcp-oauth-ui",
+      "status": "source-gap",
+      "summary": "Runtime OAuth support is not fully exposed by shared server config and management UI",
+      "fixed": false
+    }
+  ],
+  "validation": {
+    "uniquePassingTests": 98,
+    "suites": [
+      {
+        "name": "root Skill/MCP management",
+        "files": 5,
+        "passed": 35,
+        "failed": 0,
+        "exitCode": 0,
+        "artifact": "root-tests.json",
+        "command": "node node_modules/vitest/vitest.mjs run tests/unit/mcp-api.test.ts tests/unit/runtime-capability-publications.test.ts tests/unit/local-skill-service.test.ts tests/unit/skill-installer-identity.test.ts tests/unit/skills-api-install-trust-gate.test.ts --maxWorkers=1"
+      },
+      {
+        "name": "runtime catalog and handshake",
+        "files": 2,
+        "passed": 15,
+        "failed": 0,
+        "exitCode": 0,
+        "artifact": "runtime-tests.json",
+        "cwd": "openclaw_runtime",
+        "command": "node scripts/run-vitest.mjs run --config test/vitest/vitest.agents-core.config.ts src/agents/agent-bundle-mcp-runtime.test.ts src/agents/tool-convergence.test.ts --maxWorkers=1"
+      },
+      {
+        "name": "browser result envelope and surface",
+        "files": 2,
+        "passed": 36,
+        "failed": 0,
+        "exitCode": 0,
+        "artifact": "browser-surface-final.json",
+        "command": "node node_modules/vitest/vitest.mjs run tests/mcp-result-envelope.test.ts tests/mcp-surface-sync.test.ts --maxWorkers=1",
+        "cwd": "packages/versebrowser"
+      },
+      {
+        "name": "browser cancellation final",
+        "files": 1,
+        "passed": 1,
+        "failed": 0,
+        "exitCode": 0,
+        "artifact": "browser-cancel-final.json",
+        "command": "node node_modules/vitest/vitest.mjs run tests/mcp-protocol-cancel.test.ts --maxWorkers=1",
+        "cwd": "packages/versebrowser"
+      },
+      {
+        "name": "VerseShell adapter",
+        "passed": 11,
+        "failed": 0,
+        "exitCode": 0,
+        "artifact": "verseshell-tests.log",
+        "command": "node --test test/*.test.mjs",
+        "cwd": "resources/verseshell-mcp"
+      }
+    ],
+    "typechecks": [
+      {
+        "name": "VerseBrowser",
+        "command": "node node_modules/typescript/bin/tsc -p tsconfig.json --noEmit",
+        "exitCode": 0
+      }
+    ],
+    "comms": {
+      "replayExitCode": 0,
+      "compareExitCode": 0,
+      "artifacts": [
+        "comms-replay.json",
+        "comms-compare.json"
+      ],
+      "meaning": "Recorded dataset replay, not proof of external MCP latency or latest protocol."
+    },
+    "skillBoundaryProbe": {
+      "exitCode": 0,
+      "meaning": "Defect reproduction, not correct behavior acceptance",
+      "artifact": "skill-boundary.json"
+    },
+    "harness": {
+      "contextExitCode": 0,
+      "validateExitCode": 1,
+      "reason": "Mixed shared-worktree changes outside task ownedPaths",
+      "artifact": "harness-validation.log",
+      "noDiffUsed": false,
+      "ownedPathsWidened": false
+    },
+    "diffCheck": {
+      "exitCode": 0,
+      "scope": "This task dependency files and documentation only"
+    }
+  },
+  "notRun": [
+    "Full Electron/model Skill enable-disable-restart acceptance",
+    "MCP 2026-07-28/v2 protocol compatibility matrix",
+    "Remote MCP Skills authorization/cache/integrity acceptance",
+    "Full runtime or repository typecheck/build/release suite"
+  ],
+  "decision": {
+    "audit": "complete-with-reproduced-gaps",
+    "compatibleSdkRefresh": "focused-verification-passed",
+    "formalClosure": "not-accepted: mixed candidate fails ownership",
+    "mcpV2Implemented": false,
+    "remoteSkillsImplemented": false,
+    "nextPriority": "Repair Skill config-to-runtime convergence using existing owners; then migrate v2 protocol and separately add remote Skill support."
+  },
+  "updatedAt": "2026-11-05T16:25:17.535Z"
+}

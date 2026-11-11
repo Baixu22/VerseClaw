@@ -1,0 +1,135 @@
+[
+  {
+    "filePath": "D:\\ClawX\\src\\lib\\chat-model-selection.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "D:\\ClawX\\src\\pages\\Chat\\ChatInput.tsx",
+    "errorCount": 0,
+    "warningCount": 2,
+    "messages": [
+      {
+        "ruleId": "react-hooks/exhaustive-deps",
+        "severity": 1,
+        "message": "The ref value 'sessionGenerationRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'sessionGenerationRef.current' to a variable inside the effect, and use that variable in the cleanup function.",
+        "line": 1773,
+        "column": 28,
+        "endLine": 1773,
+        "endColumn": 35
+      },
+      {
+        "ruleId": "react-hooks/exhaustive-deps",
+        "severity": 1,
+        "message": "React Hook useCallback has missing dependencies: 'allReady', 'capabilityExecuting', 'inputDisabled', and 'sending'. Either include them or remove the dependency array.",
+        "line": 2868,
+        "column": 6,
+        "endLine": 2868,
+        "endColumn": 405,
+        "suggestions": [
+          {
+            "desc": "Update the dependencies array to be: [slashInput.active, canSend, providerRuntimeReady, attachments, selectedKnowledgeRefs, input, t, knowledgeMode, knowledgeScope, captureHeroComposerPosition, updateInput, recordKnowledgeReferences, onSend, targetAgentId, activeTaskNodeId, effectiveModelRef, selectSlashItem, findExactSlashItem, selectedSlashItem, sending, inputDisabled, capabilityExecuting, allReady, refreshProviderSnapshot, routeKnowledgeForMessage, handleUnsupportedCapabilityRequest]",
+            "fix": {
+              "range": [
+                112125,
+                112524
+              ],
+              "text": "[slashInput.active, canSend, providerRuntimeReady, attachments, selectedKnowledgeRefs, input, t, knowledgeMode, knowledgeScope, captureHeroComposerPosition, updateInput, recordKnowledgeReferences, onSend, targetAgentId, activeTaskNodeId, effectiveModelRef, selectSlashItem, findExactSlashItem, selectedSlashItem, sending, inputDisabled, capabilityExecuting, allReady, refreshProviderSnapshot, routeKnowledgeForMessage, handleUnsupportedCapabilityRequest]"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\ClawX\\src\\pages\\Chat\\index.tsx",
+    "errorCount": 0,
+    "warningCount": 3,
+    "messages": [
+      {
+        "ruleId": "react-refresh/only-export-components",
+        "severity": 1,
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+        "line": 296,
+        "column": 17,
+        "messageId": "namedExport",
+        "endLine": 296,
+        "endColumn": 47
+      },
+      {
+        "ruleId": "react-refresh/only-export-components",
+        "severity": 1,
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+        "line": 339,
+        "column": 17,
+        "messageId": "namedExport",
+        "endLine": 339,
+        "endColumn": 46
+      },
+      {
+        "ruleId": "react-hooks/exhaustive-deps",
+        "severity": 1,
+        "message": "The 'graphStepCache' logical expression could make the dependencies of useMemo Hook (at line 2674) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'graphStepCache' in its own useMemo() Hook.",
+        "line": 1415,
+        "column": 9,
+        "endLine": 1415,
+        "endColumn": 111
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\ClawX\\src\\stores\\chat.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "D:\\ClawX\\src\\stores\\settings.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "D:\\ClawX\\tests\\e2e\\chat-agent-effort.spec.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "D:\\ClawX\\tests\\e2e\\chat-composer-popovers.spec.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "D:\\ClawX\\tests\\e2e\\chat-model-picker-tiers.spec.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "D:\\ClawX\\tests\\e2e\\chat-model-picker.spec.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "D:\\ClawX\\tests\\unit\\chat-input.test.tsx",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "D:\\ClawX\\tests\\unit\\chat-model-selection.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "D:\\ClawX\\tests\\unit\\chat-target-routing.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  }
+]

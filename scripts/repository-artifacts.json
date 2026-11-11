@@ -58,6 +58,13 @@
     "artifacts/runtime-authority-convergence/rc-10/irc-server.d.mts"
   ],
   "retiredTests": [
+    "tests/unit/chat-history-actions.test.ts",
+    "tests/unit/chat-runtime-event-handlers.test.ts",
+    "tests/unit/chat-session-actions.test.ts",
+    "tests/unit/session-label-fetch.test.ts",
+    "tests/unit/browser-workbench.test.tsx",
+    "tests/unit/remote-tasks-page.test.tsx",
+    "tests/unit/dreams-page.test.tsx",
     "tests/unit/runtime-ast-edit-plan-narrow-evaluation-decision-gate.test.ts",
     "tests/unit/runtime-ast-patch-planner-route-correction.test.ts",
     "tests/unit/runtime-controlled-runtime-use-acceptance-decision.test.ts",

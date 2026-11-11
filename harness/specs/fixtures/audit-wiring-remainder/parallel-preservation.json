@@ -1,0 +1,37 @@
+{
+  "files": 97,
+  "unchanged": 87,
+  "observedConcurrentChanges": [
+    "shared/i18n/locales/en/chat.json",
+    "shared/i18n/locales/ja/chat.json",
+    "shared/i18n/locales/ru/chat.json",
+    "shared/i18n/locales/zh/chat.json",
+    "src/pages/Chat/SessionActivityPanel.tsx",
+    "src/pages/Chat/index.tsx",
+    "src/styles/codex-session-activity.css",
+    "tests/e2e/fixtures/electron.ts",
+    "tests/e2e/session-activity-background-read.spec.ts",
+    "tests/unit/session-activity-panel-sections.test.tsx"
+  ],
+  "documents": [
+    {
+      "file": "README.md",
+      "recoveredPreQuickHash": "e3198142a6ac59361f4199b4a085c88a45fa6eafc39b7ab7585e43171ef46ac8",
+      "expected": "e3198142a6ac59361f4199b4a085c88a45fa6eafc39b7ab7585e43171ef46ac8",
+      "allParallelContentRestored": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "recoveredPreQuickHash": "291c4d46b9d2c0df7c31815eb81f5c8082901d99823d1c0101b6b64aa950995b",
+      "expected": "291c4d46b9d2c0df7c31815eb81f5c8082901d99823d1c0101b6b64aa950995b",
+      "allParallelContentRestored": true
+    },
+    {
+      "file": "README.ja-JP.md",
+      "recoveredPreQuickHash": "4c64f10ee95f31c47992ae16d97b0f056174be1c321fb64ffbb5ea6ea49bfb9d",
+      "expected": "4c64f10ee95f31c47992ae16d97b0f056174be1c321fb64ffbb5ea6ea49bfb9d",
+      "allParallelContentRestored": true
+    }
+  ],
+  "lockBaselineSha256": "182e28e567094b7215d859feb063d8b593e4c230c9781e672d0783953a78764a"
+}

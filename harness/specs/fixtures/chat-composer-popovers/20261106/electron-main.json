@@ -1,0 +1,453 @@
+{
+  "config": {
+    "configFile": "D:\\ClawX\\playwright.config.ts",
+    "rootDir": "D:/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/chat-composer-polish/model-final-electron-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "chat-agent-effort.spec.ts",
+      "file": "chat-agent-effort.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw combined model and reasoning settings",
+          "file": "chat-agent-effort.spec.ts",
+          "line": 25,
+          "column": 6,
+          "specs": [
+            {
+              "title": "opens the reasoning section in the shared menu, slides to max, and commits max",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 29823,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('chat-model-options')\nExpected: visible\nReceived: hidden\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-model-options')\u001b[22m\n\u001b[2m    18 × locator resolved to <div class=\"codex-model-options\" data-testid=\"chat-model-options\"></div>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('chat-model-options')\nExpected: visible\nReceived: hidden\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-model-options')\u001b[22m\n\u001b[2m    18 × locator resolved to <div class=\"codex-model-options\" data-testid=\"chat-model-options\"></div>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n    at D:\\ClawX\\tests\\e2e\\chat-agent-effort.spec.ts:187:60",
+                        "location": {
+                          "file": "D:\\ClawX\\tests\\e2e\\chat-agent-effort.spec.ts",
+                          "column": 60,
+                          "line": 187
+                        },
+                        "snippet": "  185 |       const settingRows = settingsMenu.locator('.codex-execution-settings__row');\n  186 |       await expect(settingRows).toHaveCount(1);\n> 187 |       await expect(page.getByTestId('chat-model-options')).toBeVisible();\n      |                                                            ^\n  188 |       const screenshotPath = testInfo.outputPath('combined-model-effort-menu.png');\n  189 |       await page.screenshot({ path: screenshotPath, animations: 'disabled' });\n  190 |       await testInfo.attach('combined-model-effort-menu', {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\ClawX\\tests\\e2e\\chat-agent-effort.spec.ts",
+                            "column": 60,
+                            "line": 187
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('chat-model-options')\nExpected: visible\nReceived: hidden\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-model-options')\u001b[22m\n\u001b[2m    18 × locator resolved to <div class=\"codex-model-options\" data-testid=\"chat-model-options\"></div>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n\n  185 |       const settingRows = settingsMenu.locator('.codex-execution-settings__row');\n  186 |       await expect(settingRows).toHaveCount(1);\n> 187 |       await expect(page.getByTestId('chat-model-options')).toBeVisible();\n      |                                                            ^\n  188 |       const screenshotPath = testInfo.outputPath('combined-model-effort-menu.png');\n  189 |       await page.screenshot({ path: screenshotPath, animations: 'disabled' });\n  190 |       await testInfo.attach('combined-model-effort-menu', {\n    at D:\\ClawX\\tests\\e2e\\chat-agent-effort.spec.ts:187:60"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-06T13:38:32.108Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "combined-effort-max",
+                          "contentType": "image/png",
+                          "path": "D:\\tmp\\chat-composer-polish\\model-final-electron-results\\chat-agent-effort-Verse-Cl-c57e0-ides-to-max-and-commits-max\\attachments\\combined-effort-max-c8f903b72c2c6ebc9066f25da16bc09ed67eeb9d.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\tmp\\chat-composer-polish\\model-final-electron-results\\chat-agent-effort-Verse-Cl-c57e0-ides-to-max-and-commits-max\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "D:\\tmp\\chat-composer-polish\\model-final-electron-results\\chat-agent-effort-Verse-Cl-c57e0-ides-to-max-and-commits-max\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\ClawX\\tests\\e2e\\chat-agent-effort.spec.ts",
+                        "column": 60,
+                        "line": 187
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "687b3160d69c83383da6-7706c8fb2ebf6f302d3b",
+              "file": "chat-agent-effort.spec.ts",
+              "line": 26,
+              "column": 7
+            },
+            {
+              "title": "keeps the reasoning slider inside the shared dropdown surface",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14801,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-06T13:39:03.220Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "687b3160d69c83383da6-27a59b2d788480d3f4c6",
+              "file": "chat-agent-effort.spec.ts",
+              "line": 199,
+              "column": 7
+            },
+            {
+              "title": "does not commit when slider stays at the current value",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10281,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-06T13:39:18.038Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "687b3160d69c83383da6-bd6b138083e40507e387",
+              "file": "chat-agent-effort.spec.ts",
+              "line": 350,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-composer-popovers.spec.ts",
+      "file": "chat-composer-popovers.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "composer menus share motion, stay in bounds and dismiss accessibly (light)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23053,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-06T13:39:28.335Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "menu-motion-frames",
+                      "contentType": "application/json",
+                      "body": "ewogICJvcGVuaW5nIjogWwogICAgewogICAgICAidGltZSI6IDE5Ljg5OTk5OTk3NjE1ODE0MiwKICAgICAgImZpbHRlciI6ICJibHVyKDJweCkiLAogICAgICAib3BhY2l0eSI6IDAsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDUwLAogICAgICAiZmlsdGVyIjogImJsdXIoMS4yMDc5OXB4KSIsCiAgICAgICJvcGFjaXR5IjogMC4zOTYwMDMsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDgxLjE5OTk5OTk4ODA3OTA3LAogICAgICAiZmlsdGVyIjogImJsdXIoMC42OTIxNTlweCkiLAogICAgICAib3BhY2l0eSI6IDAuNjUzOTIxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxMTkuODAwMDAwMDExOTIwOTMsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjI0OTYxOXB4KSIsCiAgICAgICJvcGFjaXR5IjogMC44NzUxOTEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDE2MC42OTk5OTk5ODgwNzkwNywKICAgICAgImZpbHRlciI6ICJibHVyKDAuMDAzOTk4MzhweCkiLAogICAgICAib3BhY2l0eSI6IDAuOTk4MDAxLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyMDEuNSwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDIzOCwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDI4MC4wOTk5OTk5NjQyMzcyLAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMzE1Ljg5OTk5OTk3NjE1ODE0LAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMzU0LjMwMDAwMDAxMTkyMDkzLAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMzkyLjM5OTk5OTk3NjE1ODE0LAogICAgICAiZmlsdGVyIjogIm5vbmUiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9CiAgXSwKICAiY2xvc2luZyI6IFsKICAgIHsKICAgICAgInRpbWUiOiAzOC42OTk5OTk5ODgwNzkwNywKICAgICAgImZpbHRlciI6ICJibHVyKDAuNjY2MTlweCkiLAogICAgICAib3BhY2l0eSI6IDAuNjY2OTA1LAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogNzMuNjAwMDAwMDIzODQxODYsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjIwMjQzcHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjM5ODc4NywKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDExMS40MDAwMDAwMzU3NjI3OSwKICAgICAgImZpbHRlciI6ICJibHVyKDEuNjc2NThweCkiLAogICAgICAib3BhY2l0eSI6IDAuMTYxNzEsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNTAuMTk5OTk5OTg4MDc5MDcsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjk2MjY0cHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjAxODY4MjMsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxODguMTk5OTk5OTg4MDc5MDcsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjk3ODExcHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjAxMDk0NTUsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAyMjYuNSwKICAgICAgImZpbHRlciI6ICJibHVyKDJweCkiLAogICAgICAib3BhY2l0eSI6IDAsCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfQogIF0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "684c93bd8c41b6c8b2fe-743937ce6b63a874d31d",
+          "file": "chat-composer-popovers.spec.ts",
+          "line": 5,
+          "column": 7
+        },
+        {
+          "title": "composer menus share motion, stay in bounds and dismiss accessibly (dark)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22855,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-06T13:39:51.401Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "menu-motion-frames",
+                      "contentType": "application/json",
+                      "body": "ewogICJvcGVuaW5nIjogWwogICAgewogICAgICAidGltZSI6IDIyLjY5OTk5OTk4ODA3OTA3LAogICAgICAiZmlsdGVyIjogImJsdXIoMnB4KSIsCiAgICAgICJvcGFjaXR5IjogMCwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogNTIuNjAwMDAwMDIzODQxODYsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjIwNDYxcHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjM5NzY5NSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMTE5LjkwMDAwMDAzNTc2Mjc5LAogICAgICAiZmlsdGVyIjogImJsdXIoMC4yNDg2NzNweCkiLAogICAgICAib3BhY2l0eSI6IDAuODc1NjYzLAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxNTguMzAwMDAwMDExOTIwOTMsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjAxMjI0NDVweCkiLAogICAgICAib3BhY2l0eSI6IDAuOTkzODc4LAogICAgICAic3RhdGUiOiAib3BlbiIsCiAgICAgICJpbmVydCI6IGZhbHNlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJhdXRvIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxOTQuNDAwMDAwMDM1NzYyOCwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDIyOS4xMDAwMDAwMjM4NDE4NiwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDI2NSwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDMwMi4zMDAwMDAwMTE5MjA5MywKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDMwNCwKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDM3MC42OTk5OTk5ODgwNzkwNywKICAgICAgImZpbHRlciI6ICJibHVyKDBweCkiLAogICAgICAib3BhY2l0eSI6IDEsCiAgICAgICJzdGF0ZSI6ICJvcGVuIiwKICAgICAgImluZXJ0IjogZmFsc2UsCiAgICAgICJwb2ludGVyRXZlbnRzIjogImF1dG8iCiAgICB9LAogICAgewogICAgICAidGltZSI6IDQwNy45MDAwMDAwMzU3NjI4LAogICAgICAiZmlsdGVyIjogImJsdXIoMHB4KSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogNDQ0LjkwMDAwMDAzNTc2MjgsCiAgICAgICJmaWx0ZXIiOiAibm9uZSIsCiAgICAgICJvcGFjaXR5IjogMSwKICAgICAgInN0YXRlIjogIm9wZW4iLAogICAgICAiaW5lcnQiOiBmYWxzZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAiYXV0byIKICAgIH0KICBdLAogICJjbG9zaW5nIjogWwogICAgewogICAgICAidGltZSI6IDM2LAogICAgICAiZmlsdGVyIjogImJsdXIoMC41NzU2MDhweCkiLAogICAgICAib3BhY2l0eSI6IDAuNzEyMTk2LAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogNzAsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigwLjY0ODYwM3B4KSIsCiAgICAgICJvcGFjaXR5IjogMC42NzU2OTksCiAgICAgICJzdGF0ZSI6ICJjbG9zZWQiLAogICAgICAiaW5lcnQiOiB0cnVlLAogICAgICAicG9pbnRlckV2ZW50cyI6ICJub25lIgogICAgfSwKICAgIHsKICAgICAgInRpbWUiOiAxMDMuMTk5OTk5OTg4MDc5MDcsCiAgICAgICJmaWx0ZXIiOiAiYmx1cigxLjYyMTUzcHgpIiwKICAgICAgIm9wYWNpdHkiOiAwLjE4OTIzNSwKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9LAogICAgewogICAgICAidGltZSI6IDEzNi40MDAwMDAwMzU3NjI4LAogICAgICAiZmlsdGVyIjogImJsdXIoMS45MTQ0OHB4KSIsCiAgICAgICJvcGFjaXR5IjogMC4wNDI3NTk0LAogICAgICAic3RhdGUiOiAiY2xvc2VkIiwKICAgICAgImluZXJ0IjogdHJ1ZSwKICAgICAgInBvaW50ZXJFdmVudHMiOiAibm9uZSIKICAgIH0sCiAgICB7CiAgICAgICJ0aW1lIjogMjA5LjE5OTk5OTk4ODA3OTA3LAogICAgICAiZmlsdGVyIjogImJsdXIoMnB4KSIsCiAgICAgICJvcGFjaXR5IjogMCwKICAgICAgInN0YXRlIjogImNsb3NlZCIsCiAgICAgICJpbmVydCI6IHRydWUsCiAgICAgICJwb2ludGVyRXZlbnRzIjogIm5vbmUiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "684c93bd8c41b6c8b2fe-9bce6f88180b9264c4d4",
+          "file": "chat-composer-popovers.spec.ts",
+          "line": 5,
+          "column": 7
+        }
+      ]
+    },
+    {
+      "title": "chat-model-picker-tiers.spec.ts",
+      "file": "chat-model-picker-tiers.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw direct chat model selection",
+          "file": "chat-model-picker-tiers.spec.ts",
+          "line": 12,
+          "column": 6,
+          "specs": [
+            {
+              "title": "selects directly and forwards the displayed model in the send payload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10041,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-06T13:40:14.295Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3795fe33307d6dc02823-c52644500f6a9c781053",
+              "file": "chat-model-picker-tiers.spec.ts",
+              "line": 13,
+              "column": 7
+            },
+            {
+              "title": "restores the saved model and remembers explicit choices for new chats",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10797,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-06T13:40:24.347Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3795fe33307d6dc02823-1920f3118177b64c619e",
+              "file": "chat-model-picker-tiers.spec.ts",
+              "line": 190,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-model-picker.spec.ts",
+      "file": "chat-model-picker.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat model picker",
+          "file": "chat-model-picker.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "selects a model directly and preserves the previous choice on save failure",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10471,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-06T13:40:35.176Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "14a7e36374152ee4f474-77005cc8329464b91da4",
+              "file": "chat-model-picker.spec.ts",
+              "line": 7,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-06T13:38:30.597Z",
+    "duration": 138612.962,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

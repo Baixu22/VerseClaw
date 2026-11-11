@@ -1,0 +1,212 @@
+{
+  "schema": "chat-worktree-session-navigation-audit/v1",
+  "date": "2026-11-08",
+  "driven_by": "agent",
+  "actor": "codex",
+  "workspace": "D:\\ClawX",
+  "current_head": "df229c0c3b001b984d4896c10c1e8408ecf678a0",
+  "source_state": "shared working directory, task changes uncommitted",
+  "verification": {
+    "unit": {
+      "passed": 52,
+      "files": 6
+    },
+    "electron_batch": {
+      "startTime": "2026-11-08T09:47:52.248Z",
+      "duration": 301926.932,
+      "expected": 11,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "integrated_electron": {
+      "startTime": "2026-11-08T10:55:32.235Z",
+      "duration": 185894.753,
+      "expected": 6,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "integrated_build": "passed",
+    "web_typecheck": "passed",
+    "test_typecheck": "passed",
+    "i18n": "passed",
+    "targeted_lint": {
+      "errors": 0,
+      "warnings": 2
+    },
+    "comms_replay_compare": "passed",
+    "harness_task_diff": "passed in isolated checkout with identical scoped source files",
+    "harness_ci": {
+      "status": "failed",
+      "reason": "four existing task specs lack lifecycleStatus",
+      "paths": [
+        "audit-wiring-quick-fixes.md",
+        "audit-wiring-remainder.md",
+        "session-task-scope-admission.md",
+        "session-task-scope-derivation.md"
+      ]
+    },
+    "integrated_source_hashes_rechecked": true
+  },
+  "concurrent_integration": "Preserved task dock and status-rail changes from 73c4885a8; rebuilt and reran six navigation/Git tests against a frozen validation copy with the source-mutation guard enabled.",
+  "journey": {
+    "git": "real temporary main checkout and linked worktree",
+    "workspace_storage": "real Host storage",
+    "gateway": "agent-driven history fixtures",
+    "checks": [
+      "cross-worktree exact session selection",
+      "immediate navigation preserves original draft",
+      "foreign session state never added to former workspace",
+      "header/composer/activity branch refresh",
+      "return restores last selected conversation",
+      "child disclosure, deduplication and source navigation",
+      "unfiled child inherits recorded parent workspace, explicit child owner takes precedence",
+      "loading checkout identity is not mislabeled Local",
+      "menus fit 1280 and 960 pixel viewports"
+    ]
+  },
+  "screenshots": [
+    {
+      "path": "screenshots/composer-aligned-with-strip.png",
+      "sha256": "2d9e69b2782379a884d3e453f96dd0ece70adb17a5f56c45034b273ad50618a0"
+    },
+    {
+      "path": "screenshots/composer-git-layout.png",
+      "sha256": "6057a4cd503e904ab96218828d68c348ce63d065993a6a5fcba7ecfa6ff6f011"
+    },
+    {
+      "path": "screenshots/dark-1280-branches.png",
+      "sha256": "8f99e208e95b5daf2629de9b7cbcfa3431cc9c12bff0c81bdfafef79389e167f"
+    },
+    {
+      "path": "screenshots/dark-1280-sessions.png",
+      "sha256": "eb7cd5f57f2858e0da8be2583cce67272caca5cabfb8bc1ac0db3826062441c2"
+    },
+    {
+      "path": "screenshots/dark-1280-worktree-session.png",
+      "sha256": "709c60f07ff0a8b28f272f63325aa745dc1bb12bc975efe4573f18cc987b8839"
+    },
+    {
+      "path": "screenshots/dark-960-branches.png",
+      "sha256": "e19f754fa1f329bbf0f65881d6bc34f07689335855e8acb031b4992f6f51183a"
+    },
+    {
+      "path": "screenshots/dark-960-sessions.png",
+      "sha256": "b444af173bae50f1b54af1b4c6e1e594317d9f1b9b43e30c100de056a866a08f"
+    },
+    {
+      "path": "screenshots/dark-960-worktree-session.png",
+      "sha256": "6037c1cc3dc5e35fb2d39df98d32532fc83f779346d5564a59906f14d2497a33"
+    },
+    {
+      "path": "screenshots/dark-session-worktree.png",
+      "sha256": "b330458dc35c5687b3440c5ed84da13f09f555479628e7faf9246cc2274a2511"
+    },
+    {
+      "path": "screenshots/dark-worktree-menu.png",
+      "sha256": "9702f47ad80188a4147d050b20a1193eb0b4c50b007a9963410e84f7df428ef3"
+    },
+    {
+      "path": "screenshots/git-menu.png",
+      "sha256": "33940d44a752b8a700a9a0de0bf764fc7f3870c5747c8a3ac7a2610e9c7feb70"
+    },
+    {
+      "path": "screenshots/light-1280-branches.png",
+      "sha256": "6ac9a2a0d4d2dccc240a115e86c6109539a2c282485eba0e99579652204aeea0"
+    },
+    {
+      "path": "screenshots/light-1280-sessions.png",
+      "sha256": "f86e401d14883b2cf73f3cc7990ee68ec995457caf6d16cc8a2be176e3f7b3eb"
+    },
+    {
+      "path": "screenshots/light-1280-worktree-session.png",
+      "sha256": "ee4ddf4d4a45764a43de13dad8caf312014e68d9875c6f7a5b06241ee36ae250"
+    },
+    {
+      "path": "screenshots/light-960-branches.png",
+      "sha256": "eeced3f269ab0349562ca1b90bb98aeb14028c66f59fd6671d5ab499588d762d"
+    },
+    {
+      "path": "screenshots/light-960-sessions.png",
+      "sha256": "6386dcc30caf200000a28665732c6df23baf537e30d359d40e27ef03685c6a40"
+    },
+    {
+      "path": "screenshots/light-960-worktree-session.png",
+      "sha256": "b51c0e6aadc962316d529df035f46165ad94eb770b2000fc63b1cc9c7eaa26fc"
+    },
+    {
+      "path": "screenshots/light-child-source.png",
+      "sha256": "9a2c1051bb9fbf989408b78f309f1e1cbaf587ae67f74fe0daa382fed50e6c58"
+    },
+    {
+      "path": "screenshots/light-parent-family.png",
+      "sha256": "aa4cfe9e3c78b157df5d985ee92c4132d84dc7e28d398842c630096f4b354760"
+    },
+    {
+      "path": "screenshots/light-parent-sessions.png",
+      "sha256": "58db0eaa77c6bcf30b2c59ac4b6bf458a58d9c68414c7be697f16d7eb41515cd"
+    },
+    {
+      "path": "screenshots/light-session-worktree.png",
+      "sha256": "a37dbaa1d12d4e16d99b49169d6e04301cb29f3f6c5a649ce3533d54b5f53789"
+    },
+    {
+      "path": "screenshots/light-worktree-menu.png",
+      "sha256": "15e1876f05c9428c0890485df5ad9249875786544c0680c9064003cc2a35dc18"
+    },
+    {
+      "path": "screenshots/resource-release-confirm.png",
+      "sha256": "ae8b64c5546d319e50d7e219d6f2d51595dd44f7ee778006a6804d4e10db400b"
+    },
+    {
+      "path": "screenshots/runtime-approval-inline-prompt.png",
+      "sha256": "4c412172c9076752ccdc25df248cd19b7b889dd76f2d92b94eacf3c46c20b74e"
+    },
+    {
+      "path": "screenshots/runtime-approval-inline-with-git.png",
+      "sha256": "5a6123dd160f8ac9e471a7f952a056d0e49304b11e72380135a101d80bb413b1"
+    },
+    {
+      "path": "screenshots/storage-dark-1280.png",
+      "sha256": "88129da5bccf2a2b17117aea29f8b0c10e8bfb8129e85bb6ee25ebff65cca049"
+    },
+    {
+      "path": "screenshots/storage-light-760.png",
+      "sha256": "277e2dc98deed908a784e8220c5a4ee044d03f7a99b5a0f5def82e3b5bb7429f"
+    },
+    {
+      "path": "screenshots/storage-light.png",
+      "sha256": "4636ea54cafe984f51d8e67fc4b65296b295769ed7605aa017ea4a86d9c37881"
+    },
+    {
+      "path": "screenshots/worktree-create-light.png",
+      "sha256": "a9b222b26decf1c99c6038e3da2d2a34a38b8121dcd14d9e3826aed72b2c28e7"
+    },
+    {
+      "path": "screenshots/worktree-remove-confirm.png",
+      "sha256": "4d297730a4a0e0f20c43671abbaa88053e57e939faea586e56f61ec4dcaca285"
+    },
+    {
+      "path": "screenshots/worktrees-light.png",
+      "sha256": "3d69228ca126c57bc1f761215279a451cc12b7eb3aa7cfca1f90ea90f460f440"
+    }
+  ],
+  "visual_audit": {
+    "status": "reviewed",
+    "count": 31,
+    "themes": [
+      "light",
+      "dark"
+    ]
+  },
+  "earlier_attempts": {
+    "retained_at": "D:\\tmp\\chat-session-navigation-20261108",
+    "notes": [
+      "Runtime freshness failure resolved by runtime rebuild.",
+      "Fixture wildcard shadowing and stale UI selectors corrected.",
+      "Screenshot capture waits for exiting menus to unmount and focuses the reviewed surface.",
+      "Electron launch failures preserved separately from passing final batches."
+    ]
+  }
+}

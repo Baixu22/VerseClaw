@@ -1,6 +1,6 @@
 {
   "schema": "clawx.agent-dev.workbench-evidence.v1",
-  "generatedAt": "2026-11-06T12:06:56.055Z",
+  "generatedAt": "2026-11-06T15:39:03.481Z",
   "scenarioCount": 15,
   "scenarios": [
     {
@@ -432,13 +432,13 @@
   "artifactStatus": {
     "workbench": true,
     "quality": true,
-    "channelConformance": false,
-    "scenarioRecordings": false
+    "channelConformance": true,
+    "scenarioRecordings": true
   },
   "artifacts": {
     "quality": true,
-    "channelConformance": false,
-    "scenarioRecordings": false
+    "channelConformance": true,
+    "scenarioRecordings": true
   },
   "gateCommands": {
     "fastPr": [
@@ -458,9 +458,9 @@
   },
   "performance": {
     "latest": {
-      "generatedAt": "2026-11-06T12:06:55.501Z",
+      "generatedAt": "2026-11-06T12:06:56.096Z",
       "success": true,
-      "totalDurationMs": 309373,
+      "totalDurationMs": 309964,
       "decision": {
         "status": "blocked",
         "reason": "vitest-agent-dev, typecheck, contract exceeded hard performance limits.",
@@ -621,90 +621,15 @@
     },
     "history": {
       "trend": {
-        "direction": "regressed",
-        "previousRunDeltaMs": 447757,
-        "sameModeDeltaMs": 447757,
-        "sameModeSampleCount": 3,
-        "previousRunGeneratedAt": "2026-11-06T11:33:40.995Z",
-        "previousSameModeGeneratedAt": "2026-11-06T11:33:40.995Z",
-        "note": "Compared with previous same-mode run 2026-11-06T11:33:40.995Z."
+        "direction": "new-baseline",
+        "previousRunDeltaMs": -189650,
+        "sameModeDeltaMs": null,
+        "sameModeSampleCount": 1,
+        "previousRunGeneratedAt": "2026-11-06T11:48:44.066Z",
+        "previousSameModeGeneratedAt": null,
+        "note": "No previous same-mode run was available; this run establishes a baseline."
       },
       "entries": [
-        {
-          "generatedAt": "2026-10-26T14:49:46.771Z",
-          "success": false,
-          "totalDurationMs": 60181,
-          "decisionStatus": "blocked",
-          "releaseReady": false,
-          "modes": {
-            "buildReuse": "reused",
-            "unit": "full",
-            "typecheck": "cached",
-            "e2e": "smoke"
-          },
-          "stepDurations": {
-            "typecheck": {
-              "durationMs": 5523,
-              "skipped": false,
-              "ok": true
-            },
-            "contract": {
-              "durationMs": 428,
-              "skipped": false,
-              "ok": true
-            },
-            "i18n": {
-              "durationMs": 573,
-              "skipped": false,
-              "ok": true
-            },
-            "workbench": {
-              "durationMs": 425,
-              "skipped": false,
-              "ok": true
-            },
-            "harness-agent-dev": {
-              "durationMs": 1646,
-              "skipped": false,
-              "ok": true
-            },
-            "vitest-agent-dev": {
-              "durationMs": 3700,
-              "skipped": false,
-              "ok": true
-            },
-            "comms-replay": {
-              "durationMs": 525,
-              "skipped": false,
-              "ok": true
-            },
-            "comms-compare": {
-              "durationMs": 460,
-              "skipped": false,
-              "ok": true
-            },
-            "e2e-build": {
-              "durationMs": 1,
-              "skipped": true,
-              "ok": true
-            },
-            "playwright-agent-dev": {
-              "durationMs": 46427,
-              "skipped": false,
-              "ok": false
-            },
-            "workbench-refresh": {
-              "durationMs": 384,
-              "skipped": false,
-              "ok": true
-            }
-          },
-          "budgetSummary": {
-            "ok": 10,
-            "watch": 0,
-            "limit": 1
-          }
-        },
         {
           "generatedAt": "2026-10-26T15:02:38.900Z",
           "success": true,
@@ -1129,20 +1054,95 @@
             "watch": 1,
             "limit": 4
           }
+        },
+        {
+          "generatedAt": "2026-11-06T12:06:56.096Z",
+          "success": true,
+          "totalDurationMs": 309964,
+          "decisionStatus": "blocked",
+          "releaseReady": false,
+          "modes": {
+            "buildReuse": "reused",
+            "unit": "full",
+            "typecheck": "full",
+            "e2e": "full"
+          },
+          "stepDurations": {
+            "typecheck": {
+              "durationMs": 81259,
+              "skipped": false,
+              "ok": true
+            },
+            "contract": {
+              "durationMs": 3977,
+              "skipped": false,
+              "ok": true
+            },
+            "i18n": {
+              "durationMs": 1103,
+              "skipped": false,
+              "ok": true
+            },
+            "workbench": {
+              "durationMs": 552,
+              "skipped": false,
+              "ok": true
+            },
+            "harness-agent-dev": {
+              "durationMs": 1807,
+              "skipped": false,
+              "ok": true
+            },
+            "vitest-agent-dev": {
+              "durationMs": 180444,
+              "skipped": false,
+              "ok": true
+            },
+            "comms-replay": {
+              "durationMs": 645,
+              "skipped": false,
+              "ok": true
+            },
+            "comms-compare": {
+              "durationMs": 532,
+              "skipped": false,
+              "ok": true
+            },
+            "e2e-build": {
+              "durationMs": 1,
+              "skipped": true,
+              "ok": true
+            },
+            "playwright-agent-dev": {
+              "durationMs": 38302,
+              "skipped": false,
+              "ok": true
+            },
+            "workbench-refresh": {
+              "durationMs": 574,
+              "skipped": false,
+              "ok": true
+            }
+          },
+          "budgetSummary": {
+            "ok": 6,
+            "watch": 2,
+            "limit": 3
+          }
         }
       ]
     },
     "audit": {
-      "status": "fail",
-      "grade": "C",
-      "totalScore": 74,
+      "status": "pass",
+      "grade": "A",
+      "totalScore": 94,
       "maxScore": 100,
       "confidence": {
-        "level": "medium",
-        "reason": "4 generated evidence artifact(s) are stale.",
-        "freshGeneratedCount": 0,
+        "level": "high",
+        "reason": "Required generated evidence is present, parseable, and within the freshness window.",
+        "freshGeneratedCount": 4,
         "generatedSourceCount": 4,
-        "staleGeneratedCount": 4
+        "staleGeneratedCount": 0
       },
       "scoreBreakdown": [
         {
@@ -1158,37 +1158,12 @@
         {
           "id": "evidence-completeness",
           "title": "Evidence Completeness",
-          "score": 0,
+          "score": 20,
           "maxScore": 20,
-          "deducted": 20,
-          "status": "fail",
-          "reason": "4 finding(s) deducted 20 point(s).",
-          "findings": [
-            {
-              "id": "evidence-stale:workbench",
-              "severity": "fail",
-              "estimatedPenalty": 8,
-              "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
-            },
-            {
-              "id": "evidence-stale:deep-test",
-              "severity": "fail",
-              "estimatedPenalty": 8,
-              "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
-            },
-            {
-              "id": "evidence-stale:deep-test-history",
-              "severity": "fail",
-              "estimatedPenalty": 8,
-              "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
-            },
-            {
-              "id": "evidence-stale:quality",
-              "severity": "fail",
-              "estimatedPenalty": 8,
-              "recommendation": "Refresh Workbench, deep-test, quality, and audit evidence before final review."
-            }
-          ]
+          "deducted": 0,
+          "status": "pass",
+          "reason": "No findings deducted points for this dimension.",
+          "findings": []
         },
         {
           "id": "coverage-breadth",
@@ -1244,7 +1219,7 @@
           "findings": []
         }
       ],
-      "disqualifierCount": 4
+      "disqualifierCount": 0
     },
     "quality": {
       "success": true,

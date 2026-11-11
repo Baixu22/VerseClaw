@@ -1,0 +1,187 @@
+{
+  "schema": "ClawXWiringQuickFix/v1",
+  "generatedAt": "2026-11-06T15:41:00.833Z",
+  "driven_by": "agent",
+  "actor": "codex-audit-wiring-fix",
+  "implemented": [
+    "F01 Skill canonical runtime config and legacy migration",
+    "F02 Normal runtime/chat trace, cost deduplication, observed tool completions",
+    "F03 Managed skill uninstall UI, service call, managed directory and error propagation"
+  ],
+  "remainingAuditItems": [
+    "F04 verifier failure execution wiring",
+    "F05 trajectory store migration",
+    "F06 disconnected chat split cleanup",
+    "F07 retired page cleanup",
+    "F08 unused react-virtuoso dependency"
+  ],
+  "main": {
+    "head": "c7573ec11095b541f3a4a9c5470bf4e0727489bc",
+    "uncommitted": true
+  },
+  "candidate": {
+    "path": "D:\\tmp\\clawx-wiring-quick-fix-20261106\\candidate",
+    "commit": "1a14b25a26e349543cc844a9c7924e7b33280115",
+    "dirty": false,
+    "sourceFilesEqual": 15,
+    "totalSourceFiles": 18,
+    "readmeDifference": "Shared main retains earlier parallel README edits; candidate contains only the three added behavior descriptions."
+  },
+  "unit": {
+    "files": 15,
+    "total": 114,
+    "passed": 114,
+    "failed": 0,
+    "pending": 0,
+    "exitCode": 0
+  },
+  "electron": {
+    "startTime": "2026-11-06T15:36:07.204Z",
+    "duration": 58051.98,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0,
+    "exitCode": 0,
+    "scope": "Shared main source build; enable/disable canonical write, restart readback, UI uninstall, directory/config absence; screenshot visually reviewed."
+  },
+  "checks": {
+    "build": 0,
+    "webTypecheckMain": 0,
+    "nodeTypecheckCandidate": 0,
+    "webTypecheckCandidate": 0,
+    "lint": 0,
+    "contract": 0,
+    "i18n": 0,
+    "commsReplay": 0,
+    "commsCompare": 0,
+    "harnessCandidate": 0,
+    "harnessDryRun": 0,
+    "agentDevWorkbench": 0
+  },
+  "residuals": [
+    {
+      "check": "nodeTypecheckMain",
+      "exitCode": 1,
+      "file": "electron/services/sessions-api.ts:1929",
+      "reason": "Pre-existing dirty session scope callback signature. Isolated candidate node and web checks pass."
+    },
+    {
+      "check": "harnessMain",
+      "exitCode": 1,
+      "reason": "Whole shared-tree diff includes parallel paths outside this spec; isolated candidate diff-aware validation passes."
+    }
+  ],
+  "unrelatedPreexistingFiles": 71,
+  "unrelatedModified": 0,
+  "sourceFiles": [
+    {
+      "file": "electron/utils/skill-config.ts",
+      "sha256": "47e1e8db0afacff35f65adc668fe889f702879b2253eef25dc473249af4e4b2a",
+      "candidateSha256": "47e1e8db0afacff35f65adc668fe889f702879b2253eef25dc473249af4e4b2a",
+      "matchesCandidate": true
+    },
+    {
+      "file": "electron/gateway/config-sync.ts",
+      "sha256": "204123c3f843c9ef1b679a0995a94b0724b5b59fe77ccab22444e688200fb69a",
+      "candidateSha256": "204123c3f843c9ef1b679a0995a94b0724b5b59fe77ccab22444e688200fb69a",
+      "matchesCandidate": true
+    },
+    {
+      "file": "electron/gateway/clawhub.ts",
+      "sha256": "9db034a11f0cdf209a686243b371838d45ed66959c6ee9b435ad7b1ab99cee60",
+      "candidateSha256": "9db034a11f0cdf209a686243b371838d45ed66959c6ee9b435ad7b1ab99cee60",
+      "matchesCandidate": true
+    },
+    {
+      "file": "electron/services/skills-api.ts",
+      "sha256": "1cea665de2c98254183b15ac1b734f48051cf8f33f34ba8476c96a160af5cc4e",
+      "candidateSha256": "1cea665de2c98254183b15ac1b734f48051cf8f33f34ba8476c96a160af5cc4e",
+      "matchesCandidate": true
+    },
+    {
+      "file": "electron/services/agent-dev-api.ts",
+      "sha256": "a1137a099ec96aed7df3b1e88c8acd3fb2a301e29a60e56b2dcfaede32052857",
+      "candidateSha256": "a1137a099ec96aed7df3b1e88c8acd3fb2a301e29a60e56b2dcfaede32052857",
+      "matchesCandidate": true
+    },
+    {
+      "file": "src/pages/Skills/index.tsx",
+      "sha256": "7512afab780bedeb46300484b49172a1987cc04674d5d59d035fa922205980e8",
+      "candidateSha256": "7512afab780bedeb46300484b49172a1987cc04674d5d59d035fa922205980e8",
+      "matchesCandidate": true
+    },
+    {
+      "file": "tests/unit/skill-config-runtime-sync.test.ts",
+      "sha256": "2f3bb33e3516503ee94a5681e6477a1d0f5d95efea7ec4e4fb2fceccc1bb16d3",
+      "candidateSha256": "2f3bb33e3516503ee94a5681e6477a1d0f5d95efea7ec4e4fb2fceccc1bb16d3",
+      "matchesCandidate": true
+    },
+    {
+      "file": "tests/unit/skills-api-install-trust-gate.test.ts",
+      "sha256": "00c1f20af20ee8e427ff1642390a84bf280b79e27f084cbad1ede93777419d67",
+      "candidateSha256": "00c1f20af20ee8e427ff1642390a84bf280b79e27f084cbad1ede93777419d67",
+      "matchesCandidate": true
+    },
+    {
+      "file": "tests/unit/agent-dev-api.test.ts",
+      "sha256": "b3efad58f26b917097951c082965b2fa2b6417f6d9c29bd3b263201550eaae22",
+      "candidateSha256": "b3efad58f26b917097951c082965b2fa2b6417f6d9c29bd3b263201550eaae22",
+      "matchesCandidate": true
+    },
+    {
+      "file": "tests/unit/clawhub-service.test.ts",
+      "sha256": "1e0c1dad0ac5933b6ddcd0fc031a2a6dacf6808ba2d2817b7829e94bd4e48f9a",
+      "candidateSha256": "1e0c1dad0ac5933b6ddcd0fc031a2a6dacf6808ba2d2817b7829e94bd4e48f9a",
+      "matchesCandidate": true
+    },
+    {
+      "file": "tests/e2e/skills-runtime-config.spec.ts",
+      "sha256": "92b9ba06df5bae0f9505ce30de6de3e62041c6f703459326426a64781c6ed7f0",
+      "candidateSha256": "92b9ba06df5bae0f9505ce30de6de3e62041c6f703459326426a64781c6ed7f0",
+      "matchesCandidate": true
+    },
+    {
+      "file": "harness/specs/tasks/audit-wiring-quick-fixes.md",
+      "sha256": "91be9881951d3cb8c1b74d9ba69ed74fbba515848a6f2922b86390671d05a05f",
+      "candidateSha256": "91be9881951d3cb8c1b74d9ba69ed74fbba515848a6f2922b86390671d05a05f",
+      "matchesCandidate": true
+    },
+    {
+      "file": "harness/specs/rules/agent-dev-conformance-evidence.md",
+      "sha256": "feaddcdd8656c0c38f66edf8dd815deb53a9a7bb1c257739d0eeba210d8a4bc1",
+      "candidateSha256": "feaddcdd8656c0c38f66edf8dd815deb53a9a7bb1c257739d0eeba210d8a4bc1",
+      "matchesCandidate": true
+    },
+    {
+      "file": "harness/specs/scenarios/agent-dev-composable-scenarios.md",
+      "sha256": "9680b4880c87959455bc81ce6e0b679b83e85dc5d33230119405de858b941155",
+      "candidateSha256": "9680b4880c87959455bc81ce6e0b679b83e85dc5d33230119405de858b941155",
+      "matchesCandidate": true
+    },
+    {
+      "file": "docs/agent-dev-control-plane.md",
+      "sha256": "ea0b8d250b44a58935a4132b67b28a93bfeceb6899179016424c69963ba8179b",
+      "candidateSha256": "ea0b8d250b44a58935a4132b67b28a93bfeceb6899179016424c69963ba8179b",
+      "matchesCandidate": true
+    },
+    {
+      "file": "README.md",
+      "sha256": "f4fa595fcc98293c95bb2f28c4eb042ac9584521bace487d49b8836cc442406f",
+      "candidateSha256": "2bbe60104e71593d2a2fd5dccbcc930df0669eefe3ce64b67a7f69c4af625bc2",
+      "matchesCandidate": false
+    },
+    {
+      "file": "README.zh-CN.md",
+      "sha256": "73d3ac414940ec62846830f667ff5ce2843d8f2639797015b5a87e5440925e63",
+      "candidateSha256": "fd924dad6fd5344c878b36f95cf0358f7b22dffce7c4b007d8400db6b2a1c801",
+      "matchesCandidate": false
+    },
+    {
+      "file": "README.ja-JP.md",
+      "sha256": "4746df8c78b16fbbbea6cf98c60d22ea2c54847003bf096e2358e25b1169f63c",
+      "candidateSha256": "e66c4664f46feeffc988d2826c469053d0740b60b3fcade851cda4ee76f5c47f",
+      "matchesCandidate": false
+    }
+  ]
+}

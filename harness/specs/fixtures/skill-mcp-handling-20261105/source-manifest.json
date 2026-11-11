@@ -1,0 +1,90 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-skill-mcp-audit",
+  "files": [
+    {
+      "path": "openclaw_runtime/package.json",
+      "sha256": "f364675abf528ae3e4ad9e5b654f92d05f88e6eefc581e3f6e4cd6fb853b230b"
+    },
+    {
+      "path": "openclaw_runtime/pnpm-lock.yaml",
+      "sha256": "663afb8ca136834971505684403b8c98a0665e20b20d6ba9eec4a69abbfa9b0e"
+    },
+    {
+      "path": "packages/versebrowser/package.json",
+      "sha256": "67449ef9c5620430ceafe4c716924ab659ee6197768b9e969fe1b8f50136e8d7"
+    },
+    {
+      "path": "resources/verseshell-mcp/package.json",
+      "sha256": "a30980f01c03b416ed3b0e6a0d2ee16fe2ca991ade4d292e55a16d874ceebb03"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "182e28e567094b7215d859feb063d8b593e4c230c9781e672d0783953a78764a"
+    },
+    {
+      "path": "electron/services/skills-api.ts",
+      "sha256": "a6372e98dad5a7fd2604dcd5b4bb13ba0ced88316e9ae841fcffedb7e61c1839"
+    },
+    {
+      "path": "electron/utils/skill-config.ts",
+      "sha256": "2e2980b4a0b61e4ecca44c3d2da7c123fc4aae9501567c2e9f7914a69f8cb4db"
+    },
+    {
+      "path": "electron/utils/paths.ts",
+      "sha256": "15c52f743573f27f8d5a82cc15369209ef2c56bdbb26363a0c91aa4b91037c9a"
+    },
+    {
+      "path": "electron/services/skills/local-skill-service.ts",
+      "sha256": "22c93dbff79a0b6f10f449643a207dc9466c5f1092652343cbff18c4067c38f4"
+    },
+    {
+      "path": "electron/gateway/skill-installer.ts",
+      "sha256": "832de3007f8c1bbbb130b01e49aff2b8d2b08983144610669c5fb6c12c25bbe4"
+    },
+    {
+      "path": "src/stores/skills.ts",
+      "sha256": "056b61f378958232036385f92ff15be84a09269fb21dbce74fb417b874ac1ab4"
+    },
+    {
+      "path": "electron/services/mcp-api.ts",
+      "sha256": "d155dca01548a332df6617e18ef0994bfb141042c1b6ab5c100b8902b90e88c2"
+    },
+    {
+      "path": "shared/types/mcp.ts",
+      "sha256": "3daaa2ba5817c1699d6253b51bb161eccf595030f47c719375fe2c533974daac"
+    },
+    {
+      "path": "openclaw_runtime/src/skills/loading/config.ts",
+      "sha256": "d5bfad98df0f7616f3a5a485396ded857c311ef79d2a51329305ac77eef75968"
+    },
+    {
+      "path": "openclaw_runtime/src/skills/loading/workspace.ts",
+      "sha256": "9adf69a9feae63c2fc27d4bdd2bd7cfef0bb5329367f410fab9f6584a61ee486"
+    },
+    {
+      "path": "openclaw_runtime/src/skills/loading/skill-contract.ts",
+      "sha256": "f4c6e9c65b99c525d4035a39433300761155f035f31d0024a8c14a234d54e98f"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-bundle-mcp-runtime.ts",
+      "sha256": "3b9ba86288d7bcff86da94d536a57ddef46dce094d2abdb0ba92d1f0e8fa5761"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-bundle-mcp-materialize.ts",
+      "sha256": "c6576c2ec40b5b2db76f172a07b5a84f4cc59d80cbbf045b79ad5624334e3a4d"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/mcp-transport.ts",
+      "sha256": "95740ea8bbe1730aa3bf0b7543933a77d8487ff31886bf1d11d9bc607ccb972c"
+    },
+    {
+      "path": "openclaw_runtime/src/agents/mcp-oauth.ts",
+      "sha256": "b13fe9d84ccf879155f6f30103789d41d5812e716a7786fd73eba8839cf46564"
+    },
+    {
+      "path": "openclaw_runtime/src/runtime-core/capability-publications.ts",
+      "sha256": "2e643cf5afd0c0311975f6ce8051ecd01a43684cc8107e53be0bd3abfd384b73"
+    }
+  ]
+}
