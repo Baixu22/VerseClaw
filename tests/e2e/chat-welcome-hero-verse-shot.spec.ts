@@ -207,7 +207,7 @@ test('chips retract while the composer holds a draft and return when it is clear
 
     // Stagger is 110ms + a 260ms fade; settle past both before reading.
     await page.waitForTimeout(700);
-    const firstChip = page.getByTestId('chat-welcome-suggestions').locator('button').first();
+    const firstChip = page.getByTestId('welcome-quick-start-trigger');
     await expect(firstChip).toBeHidden();
 
     // The row keeps its box, so the composer above it must not have moved.
@@ -221,10 +221,15 @@ test('chips retract while the composer holds a draft and return when it is clear
     expect(Math.abs((await composerTop()) - restingTop)).toBeLessThanOrEqual(1);
 
     await page.setViewportSize({ width: 600, height: 820 });
-    await expect(chips.locator('button:visible')).toHaveCount(2);
+    await expect(firstChip).toBeVisible();
+    await firstChip.click();
+    await expect(chips.locator('button:visible')).toHaveCount(3);
+    await page.keyboard.press('Escape');
 
     await page.setViewportSize({ width: 400, height: 820 });
-    await expect(chips.locator('button:visible')).toHaveCount(1);
+    await expect(firstChip).toBeVisible();
+    await firstChip.click();
+    await expect(chips.locator('button:visible')).toHaveCount(3);
   } finally {
     await closeElectronApp(app);
   }

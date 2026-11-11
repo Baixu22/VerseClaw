@@ -1,3 +1,4 @@
+import { createEmptySessionActivitySnapshot } from '../../shared/types/session-activity';
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const SESSION_KEY = 'agent:main:main';
@@ -73,12 +74,14 @@ const branches = [
 
 const worktrees = [
   { path: '/workspace/demo', branch: 'feature/current', head: 'abcdef123456' },
-  { path: '/workspace/demo-feature-existing', branch: 'feature/existing', head: '456789abcdef', locked: true, prunable: true },
+  { path: '/workspace/demo-feature-existing', branch: 'feature/existing', head: '456789abcdef', locked: true },
+  { path: '/workspace/demo-pruned', branch: 'obsolete', head: '1234567', prunable: true },
 ];
 
 async function installComposerGitMocks(
   app: Parameters<typeof installIpcMocks>[0],
-  messages: Array<Record<string, unknown>> = [],
+  messages: Array<Record<string, unknown>> = [{ role: 'user', content: 'Review the current repository', timestamp: fixedTimestamp }],
+  linked = false,
 ) {
   await installIpcMocks(app, {
     gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
@@ -97,6 +100,7 @@ async function installComposerGitMocks(
       },
     },
     hostApi: {
+      [stableStringify(['sessionActivity', 'snapshot', null])]: { success: true, snapshot: { ...createEmptySessionActivitySnapshot(SESSION_KEY), git: gitStatus, availability: { git: true, tasks: true, subagents: true, terminals: true, continuity: true } } },
       [stableStringify(['agents', 'list', null])]: {
         success: true,
         agents: [{
@@ -133,11 +137,7 @@ async function installComposerGitMocks(
         activeWorkspaceId: WORKSPACE_ID,
         activeWorkspace: workspace,
       },
-      [stableStringify(['workspaces', 'create', {
-        agentId: 'main',
-        name: 'demo-feature-existing',
-        rootPath: '/workspace/demo-feature-existing',
-      }])]: {
+      [stableStringify(['workspaces', 'create', null])]: {
         profiles: [workspace, worktreeWorkspace],
         activeWorkspaceId: worktreeWorkspace.id,
         activeWorkspace: worktreeWorkspace,
@@ -157,7 +157,7 @@ async function installComposerGitMocks(
       },
       [stableStringify(['git', 'worktrees', null])]: {
         success: true,
-        worktrees,
+        worktrees: linked ? [{ path: '/workspace/main-checkout', branch: 'main', head: '1234567' }, ...worktrees] : worktrees,
       },
       [stableStringify(['git', 'checkoutBranch', { name: 'main' }])]: {
         success: true,
@@ -179,6 +179,32 @@ async function installComposerGitMocks(
 }
 
 test.describe('Chat composer Git strip', () => {
+  for (const theme of ['light', 'dark'] as const) {
+    test(`identifies a linked worktree in the composer and session status (${theme})`, async ({ launchElectronApp }, testInfo) => {
+      const app = await launchElectronApp({ skipSetup: true, visualMode: true, theme });
+      try {
+        await installComposerGitMocks(app, undefined, true);
+        const page = await getStableWindow(app);
+        await page.reload({ waitUntil: 'domcontentloaded' });
+        await page.setViewportSize({ width: 1280, height: 820 });
+        await expect(page.getByTestId('composer-git-strip')).toHaveAttribute('data-git-kind', 'worktree');
+        await expect(page.getByTestId('composer-git-kind')).toHaveText('Worktree');
+        await page.getByTestId('composer-git-trigger').click();
+        const menu = page.getByTestId('composer-git-menu');
+        await expect(menu).toContainText('Linked worktree');
+        await expect(menu).toHaveCSS('backdrop-filter', 'none');
+        await expect(menu).toHaveCSS('opacity', '1');
+        await page.screenshot({ path: testInfo.outputPath(`${theme}-worktree-menu.png`) });
+        await page.keyboard.press('Escape');
+        const toggle = page.getByTestId('chat-session-activity-toggle');
+        if (!await page.getByTestId('session-activity-panel').isVisible()) await toggle.click();
+        await expect(page.getByTestId('session-activity-head-branch')).toHaveAttribute('data-git-kind', 'worktree');
+        await expect(page.getByTestId('session-activity-worktree-kind')).toHaveText('Worktree');
+        await page.screenshot({ path: testInfo.outputPath(`${theme}-session-worktree.png`) });
+      } finally { await closeElectronApp(app); }
+    });
+  }
+
   test('renders runtime approval inline with the composer and Git strip', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true, visualMode: true });
 
@@ -305,6 +331,7 @@ test.describe('Chat composer Git strip', () => {
       await expect(menu).toContainText('demo-feature-existing · feature/existing · 456789a');
       await expect(menu).toContainText('Locked');
       await expect(menu).toContainText('Prunable');
+      await expect(page.getByTestId('composer-git-switch-worktree-/workspace/demo-pruned')).toBeDisabled();
 
       await page.getByTestId('composer-git-branch-search').fill('main');
       await page.getByTestId('composer-git-checkout-main').click();
@@ -367,11 +394,12 @@ test.describe('Chat composer Git strip', () => {
         expect.objectContaining({
           module: 'workspaces',
           action: 'create',
-          payload: {
+          payload: expect.objectContaining({
             agentId: 'main',
-            name: 'demo-feature-existing',
+            name: 'feature/existing',
             rootPath: '/workspace/demo-feature-existing',
-          },
+            activeSessionKey: expect.stringMatching(/^agent:main:session-/),
+          }),
         }),
         expect.objectContaining({
           module: 'workspaces',

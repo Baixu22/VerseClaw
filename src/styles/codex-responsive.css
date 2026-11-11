@@ -18,7 +18,7 @@
 
 .chat-project-session-header {
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .chat-project-session-header > .relative,
@@ -33,7 +33,6 @@
  * toolbars and keep the controls reachable through the session trigger. */
 @container chat-toolbar (max-width: 760px) {
   .chat-header-environment-project,
-  .chat-header-branch,
   .chat-header-separator {
     display: none !important;
   }
@@ -41,19 +40,25 @@
   [data-testid='chat-project-session-header'] {
     gap: 0;
   }
+
+  /* Lineage chips keep their icon and source name; the relation word goes
+   * first because the tooltip still carries it. */
+  .session-family-nav__kind {
+    display: none;
+  }
 }
 
 @container chat-toolbar (max-width: 560px) {
-  .chat-header-session-label,
-  .chat-header-session-chevron {
-    display: none;
+  .chat-header-session-label {
+    max-width: 140px;
   }
 
   [data-testid='chat-header-session-name'] {
-    width: 28px;
-    min-width: 28px;
-    justify-content: center;
-    padding-inline: 0;
+    max-width: 180px;
+    min-width: 0;
+  }
+  .chat-header-branch .codex-welcome-context__branch-name {
+    max-width: 100px;
   }
 }
 
@@ -89,9 +94,11 @@
 }
 
 @container chat-toolbar (max-width: 400px) {
-  [data-testid='chat-header-session-name'] {
+  .chat-header-branch {
     display: none;
   }
+  .chat-header-session-label { max-width: 100px; }
+  .session-family-nav__name { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

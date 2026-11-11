@@ -37,6 +37,7 @@ vi.mock('@/lib/host-api', () => ({
       summaries: vi.fn(async () => ({ success: true, summaries: [] })),
       delete: vi.fn(async () => ({ success: true })),
       rename: vi.fn(async () => ({ success: true })),
+      patchRuntimeModel: vi.fn(async () => ({ success: true })),
     },
     chat: {
       sendWithMedia: async (input: unknown) => hostApiFetchMock('/api/chat/send-with-media', {
@@ -296,6 +297,41 @@ describe('chat target routing', () => {
       message: 'Turn override test',
       modelRef: 'provider/cheap-model',
     });
+  });
+
+  it('saves an inherited model before the first send and retains it in the conversation', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const { hostApi } = await import('@/lib/host-api');
+    let finish!: (result: { success: true }) => void;
+    vi.mocked(hostApi.sessions.patchRuntimeModel).mockImplementationOnce(() => new Promise((resolve) => { finish = resolve; }));
+    useChatStore.setState({ currentSessionKey: 'agent:main:new', sessions: [{ key: 'agent:main:new' }], messages: [], sending: false });
+    const pending = useChatStore.getState().sendMessage('Inherit recent choice', { modelRefOverride: 'provider/recent', persistModelSelection: true });
+    await vi.waitFor(() => expect(hostApi.sessions.patchRuntimeModel).toHaveBeenCalledWith({ sessionKey: 'agent:main:new', modelRef: 'provider/recent' }));
+    expect(hostApiFetchMock.mock.calls.some(([url]) => url === '/api/chat/send-with-media')).toBe(false);
+    finish({ success: true });
+    await pending;
+    const request = hostApiFetchMock.mock.calls.find(([url]) => url === '/api/chat/send-with-media');
+    expect(JSON.parse(request![1].body)).toMatchObject({ sessionKey: 'agent:main:new', modelRef: 'provider/recent' });
+    expect(useChatStore.getState().sessions.find((s) => s.key === 'agent:main:new')?.modelRefOverride).toBe('provider/recent');
+  });
+
+  it('retains the previous choice and reports failure when persistence fails', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const { hostApi } = await import('@/lib/host-api');
+    vi.mocked(hostApi.sessions.patchRuntimeModel).mockResolvedValueOnce({ success: false, error: 'Model unavailable' });
+    useChatStore.setState({ currentSessionKey: 'agent:main:main', sessions: [{ key: 'agent:main:main', modelRefOverride: 'provider/old' }], messages: [], sending: false });
+    await useChatStore.getState().sendMessage('Keep old model', { modelRefOverride: 'provider/new', persistModelSelection: true });
+    expect(hostApiFetchMock.mock.calls.some(([url]) => url === '/api/chat/send-with-media')).toBe(false);
+    expect(useChatStore.getState().sessions[0].modelRefOverride).toBe('provider/old');
+    expect(useChatStore.getState().error).toContain('Model unavailable');
+    expect(useChatStore.getState().sending).toBe(false);
+  });
+
+  it('keeps a queued message bound to the visible model choice', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    useChatStore.setState({ currentSessionKey: 'agent:main:main', pendingMessages: [], sending: true });
+    await useChatStore.getState().sendMessage('Later message', { modelRefOverride: 'provider/recent', persistModelSelection: true });
+    expect(useChatStore.getState().pendingMessages[0].opts).toMatchObject({ modelRefOverride: 'provider/recent', persistModelSelection: true });
   });
 
   it('omits modelRef when no turn override is set (default path parity, Area 2 §6)', async () => {

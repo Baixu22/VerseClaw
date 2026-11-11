@@ -4272,6 +4272,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
         knowledgeReferences: opts?.knowledgeReferences,
         activeTaskNodeId: opts?.activeTaskNodeId,
         modelRefOverride: opts?.modelRefOverride,
+        persistModelSelection: opts?.persistModelSelection,
         reasoningEffort: opts?.reasoningEffort,
         runtimeIntensity: opts?.runtimeIntensity,
         // Queued sends are ordinary chat messages, never long-task interventions.
@@ -4345,6 +4346,8 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     }
 
     const currentSessionKey = targetSessionKey;
+    const previousModelRef = get().sessions.find((session) => session.key === currentSessionKey)?.modelRefOverride;
+    const saveModelSelection = Boolean(opts?.persistModelSelection && modelRefOverride && modelRefOverride !== previousModelRef);
     const sendGeneration = ++_sendGenerationCounter;
     _activeSendGenerationBySession.set(currentSessionKey, sendGeneration);
 
@@ -4370,7 +4373,11 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     _deferredSessionEntries.delete(currentSessionKey);
     set((s) => ({
       messages: applyHistoryMemoryCap([...s.messages, userMsg]),
-      sessions: ensureSessionEntry(s.sessions, currentSessionKey),
+      sessions: ensureSessionEntry(s.sessions, currentSessionKey).map((session) => (
+        saveModelSelection && session.key === currentSessionKey
+          ? { ...session, modelRefOverride: modelRefOverride! }
+          : session
+      )),
       sending: true,
       error: null,
       runError: null,
@@ -4529,6 +4536,21 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       }
 
       let result: ChatSendWithMediaResult;
+
+      if (saveModelSelection) {
+        try {
+          const saved = await hostApi.sessions.patchRuntimeModel({ sessionKey: currentSessionKey, modelRef: modelRefOverride! });
+          if (!saved.success) throw new Error(saved.error || 'Failed to save model selection');
+          if (_activeSendGenerationBySession.get(currentSessionKey) !== sendGeneration) return;
+        } catch (error) {
+          set((state) => ({ sessions: state.sessions.map((session) => (
+            session.key === currentSessionKey && session.modelRefOverride === modelRefOverride
+              ? { ...session, modelRefOverride: previousModelRef }
+              : session
+          )) }));
+          throw error;
+        }
+      }
 
       if (hasMedia) {
         result = await hostApi.chat.sendWithMedia({

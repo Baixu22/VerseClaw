@@ -216,11 +216,13 @@ export type SendOptions = {
   knowledgeReferences?: ChatKnowledgeReference[];
   activeTaskNodeId?: string | null;
   /**
-   * Turn-scoped model override (Area 2 §3.2). When set, this single send runs
-   * on the named model. Cleared after send (composer-local state). Never
-   * persisted to Agent.modelRef.
+   * Model used by this send. The composer also saves it to the conversation
+   * when persistModelSelection is set; other callers can override one send.
+   * Never persisted to Agent.modelRef.
    */
   modelRefOverride?: string | null;
+  /** Save the composer's visible choice before sending, including an inherited new-chat choice. */
+  persistModelSelection?: boolean;
   /** Per-send reasoning effort; overrides the agent default for this turn only. */
   reasoningEffort?: AgentReasoningEffort;
   /** Per-send linked runtime intensity; when omitted the runtime derives it from reasoning effort. */
