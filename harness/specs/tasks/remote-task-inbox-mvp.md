@@ -12,7 +12,7 @@ touchedAreas:
   - electron/services/remote-tasks-api.ts
   - electron/main/ipc-handlers.ts
   - src/lib/host-api.ts
-  - src/pages/RemoteTasks/**
+  - src/pages/Inbox/**
   - src/App.tsx
   - src/components/layout/Sidebar.tsx
   - shared/i18n/locales
@@ -20,7 +20,7 @@ touchedAreas:
   - README.zh-CN.md
   - README.ja-JP.md
   - tests/unit/remote-tasks-api.test.ts
-  - tests/unit/remote-tasks-page.test.tsx
+  - tests/unit/inbox-store.test.ts
   - tests/e2e/remote-tasks.spec.ts
 expectedUserBehavior:
   - Users can open a Remote Tasks inbox from the sidebar.
@@ -39,7 +39,7 @@ requiredRules:
   - docs-sync
 requiredTests:
   - pnpm harness validate --spec harness/specs/tasks/remote-task-inbox-mvp.md
-  - pnpm exec vitest run tests/unit/remote-tasks-api.test.ts tests/unit/remote-tasks-page.test.tsx
+  - pnpm exec vitest run tests/unit/remote-tasks-api.test.ts tests/unit/inbox-store.test.ts
   - pnpm exec playwright test tests/e2e/remote-tasks.spec.ts
 acceptance:
   - Renderer uses hostApi.remoteTasks only and adds no direct window.electron.ipcRenderer calls or direct Gateway HTTP/WebSocket calls.

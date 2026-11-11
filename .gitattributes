@@ -1,3 +1,7 @@
+# Keep ordinary text files stable across Windows and POSIX checkouts. The
+# byte-locked exceptions below override this default explicitly.
+* text=auto eol=lf
+
 # VerseShell process-lifecycle patch is content-addressed by the committed
 # manifest (provenance.build_input.diff_sha256 / compliance checksum) and
 # verified by tests/unit/uas-05-verseshell-process-lifecycle.test.ts and

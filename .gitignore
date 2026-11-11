@@ -29,8 +29,6 @@ release/
 # Logs
 logs
 *.log
-!/harness/specs/fixtures/rsi-candidate-evolution/closeout-20261108/harness-ci-stderr.log
-!/harness/specs/fixtures/rsi-candidate-evolution/closeout-20261108/harness-ci-stdout.log
 !/harness/specs/fixtures/rsi-coding-tool-loop/closeout-20261108/oracle-01-stderr.log
 !/harness/specs/fixtures/rsi-coding-tool-loop/closeout-20261108/oracle-01-stdout.log
 # Existing retained RSI calibration inputs; keep ordinary run logs local.
@@ -2177,6 +2175,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/runtime-feature-control-surface.md
 !/docs/dev/runtime-lifecycle-governance/README.zh-CN.md
 !/docs/dev/runtime-memory-persistence-breakage-20261103.md
+!/docs/dev/chat-model-selection.md
 !/docs/dev/runtime-research-boundaries.md
 !/docs/dev/runtime-resource-governance-p0a-20261013.md
 !/docs/dev/runtime-resource-governance-p0b-20261014.md
@@ -2672,6 +2671,12 @@ openclaw_runtime/_tmp_*
 !/docs/dev/durable-task-system/STATUS.md
 !/docs/dev/session-lifecycle-control-matrix.md
 # END reviewed repository inputs
+
+# Ephemeral command and acceptance runs remain local unless curated elsewhere.
+/artifacts/runs/
+
+# Superseded intermediate capture; the accepted round is 20261106.
+/harness/specs/fixtures/chat-composer-popovers/20261108-polish/
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.
 !/docs/dev/harness-gap-closure/

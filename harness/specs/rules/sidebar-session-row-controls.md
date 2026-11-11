@@ -46,6 +46,9 @@ requiredTests:
 - Row callbacks threaded through `renderSessionRow` keep stable identities, and
   per-row UI state (menu open, marquee) stays in the row, so opening a menu or
   streaming a run does not re-render every row (`sidebar-render-containment`).
+- A project containing session-family connectors uses those connectors and row
+  selection backgrounds. Travelling selection/hover rails must not cross family
+  disclosure buttons or duplicate the child connectors.
 
 ## Activity bell
 

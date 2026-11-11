@@ -7,7 +7,6 @@ ownedPaths:
   - electron/utils/openclaw-auth.ts
   - electron/utils/paths.ts
   - src/stores/gateway.ts
-  - src/pages/Dreams/**
 requiredProfiles:
   - fast
   - comms
