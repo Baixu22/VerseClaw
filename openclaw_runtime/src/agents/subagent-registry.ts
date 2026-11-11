@@ -602,7 +602,7 @@ async function processCompletedOrchestrationWorktrees(
               });
               return pendingIndexes.filter(index => typeof mergeable[index]!.orchestration?.worktreeMergeProcessedAt !== 'number').map(index => worktreeInputs[index]!);
             }
-          } else candidate = freezeOrchestrationWorktreeCandidate({ baseRoot, workers: gitInputs });
+          } else candidate = freezeOrchestrationWorktreeCandidate({ baseRoot: baseRoot!, workers: gitInputs });
           if (candidate.status !== "frozen") {
             // Shared or external writes make the Git baseline dirty. Preserve both
             // outputs as a conflict rather than implicitly committing host changes.
@@ -616,7 +616,7 @@ async function processCompletedOrchestrationWorktrees(
             for (const input of gitInputs) {
               const snapshot = candidate.manifest.workerSnapshots.find(worker => worker.taskNodeId === input.taskNodeId && worker.worktreeRole === input.worktreeId);
               if (!snapshot) throw new Error('worktree_candidate_snapshot_missing');
-              input.expectedPostimages = orchestrationCandidatePostimages(baseRoot, candidate.manifest, snapshot.changedFiles);
+              input.expectedPostimages = orchestrationCandidatePostimages(baseRoot!, candidate.manifest, snapshot.changedFiles);
             }
             for (const worker of gitWorkers) applyOrchestrationWorkerPatch(worker, {
               worktreeVerificationCandidate: { manifest: candidate.manifest, materializedPath: candidate.materializedPath, baseRoot },
