@@ -76,6 +76,7 @@ describe('skills.clawhubInstall install-trust gate (#131)', () => {
     vi.clearAllMocks();
     vi.spyOn(console, 'log').mockImplementation(() => {});
     installMock.mockResolvedValue(VERIFIED_IDENTITY);
+    updateSkillConfigMock.mockResolvedValue({ success: true });
     verifyMock.mockReturnValue({ verified: true, reason: 'verified' });
   });
 
@@ -105,11 +106,31 @@ describe('skills.clawhubInstall install-trust gate (#131)', () => {
     expect(updateSkillConfigMock).not.toHaveBeenCalled();
   });
 
+  it('returns failure when enabling the verified install cannot persist', async () => {
+    updateSkillConfigMock.mockResolvedValue({ success: false, error: 'config write failed' });
+    const result = await createApi().clawhubInstall({ slug: 'pdf' });
+    expect(result).toEqual({ success: false, error: 'config write failed' });
+  });
+
   it('refuses slugs outside the built-in catalog without invoking the installer', async () => {
     const result = await createApi().clawhubInstall({ slug: 'not-in-catalog' });
 
     expect(result.success).toBe(false);
     expect(installMock).not.toHaveBeenCalled();
     expect(updateSkillConfigMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('managed skill uninstall routing', () => {
+  it('calls the existing uninstall service and propagates its failure', async () => {
+    const uninstall = vi.fn().mockResolvedValue(undefined);
+    const api = createSkillsApi({ clawHubService: { uninstall } as never, gatewayManager: {} as never });
+    expect(await api.clawhubUninstall({ slug: 'pdf' })).toEqual({ success: true, result: null });
+    expect(uninstall).toHaveBeenCalledWith({ slug: 'pdf' });
+    uninstall.mockRejectedValueOnce(new Error('cleanup failed'));
+    expect(await api.clawhubUninstall({ slug: 'pdf' })).toEqual({ success: false, error: 'cleanup failed' });
+    uninstall.mockClear();
+    expect((await api.clawhubUninstall({ slug: '../escape' })).success).toBe(false);
+    expect(uninstall).not.toHaveBeenCalled();
   });
 });

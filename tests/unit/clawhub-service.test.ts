@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
@@ -7,6 +7,7 @@ async function loadServiceForHome(homeDir: string) {
   vi.resetModules();
   const paths = await import('@electron/utils/paths');
   vi.spyOn(paths, 'getOpenClawConfigDir').mockReturnValue(join(homeDir, '.openclaw'));
+  vi.spyOn(paths, 'getOpenClawSkillsDir').mockReturnValue(join(homeDir, 'managed-skills'));
   const mod = await import('@electron/gateway/clawhub');
   return mod.ClawHubService;
 }
@@ -73,5 +74,26 @@ describe('ClawHubService marketplace compatibility', () => {
         baseDir: skillDir,
       },
     ]);
+  });
+
+  it('uninstalls from the installer-managed root and rejects path traversal', async () => {
+    const homeDir = mkdtempSync(join(tmpdir(), 'clawx-uninstall-'));
+    const skillDir = join(homeDir, 'managed-skills', 'pdf');
+    const outsideDir = join(homeDir, 'keep');
+    mkdirSync(skillDir, { recursive: true });
+    mkdirSync(outsideDir, { recursive: true });
+    const ClawHubService = await loadServiceForHome(homeDir);
+    const config = await import('@electron/utils/skill-config');
+    const remove = vi.spyOn(config, 'removeSkillConfig').mockResolvedValue({ success: true });
+    const service = new ClawHubService();
+    await service.uninstall({ slug: 'pdf' });
+    expect(existsSync(skillDir)).toBe(false);
+    expect(remove).toHaveBeenCalledWith('pdf');
+    for (const slug of ['..', '../keep', 'x/../../keep', 'C:\\keep', '']) {
+      await expect(service.uninstall({ slug })).rejects.toThrow('Invalid managed skill slug');
+    }
+    expect(existsSync(outsideDir)).toBe(true);
+    remove.mockResolvedValueOnce({ success: false, error: 'config cleanup failed' });
+    await expect(service.uninstall({ slug: 'pdf' })).rejects.toThrow('config cleanup failed');
   });
 });
