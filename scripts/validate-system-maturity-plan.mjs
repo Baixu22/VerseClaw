@@ -10,6 +10,7 @@
  *  - INDEX/phase PLAN findings resolve into findings-registry when present
  */
 import fs from 'fs';
+import { acceptanceArtifactPath } from './lib/acceptance-artifacts.mjs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import {
@@ -295,7 +296,7 @@ const report = {
   info: INFO,
 };
 
-const outDir = path.join(root, 'artifacts/system-maturity/P0-002');
+const outDir = acceptanceArtifactPath(root, 'system-maturity/P0-002');
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, 'validate-system-maturity-plan.json'), JSON.stringify(report, null, 2) + '\n');
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
+import { acceptanceArtifactPath, AGENT_DEV_EVIDENCE_INPUTS } from './lib/acceptance-artifacts.mjs';
 import { existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
@@ -7,7 +8,7 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const ROOT = process.cwd();
-const OUT_DIR = resolve(ROOT, 'artifacts', 'agent-dev-audit');
+const OUT_DIR = acceptanceArtifactPath(ROOT, 'agent-dev-audit');
 const OUT_JSON = resolve(OUT_DIR, 'report.json');
 const OUT_MD = resolve(OUT_DIR, 'report.md');
 
@@ -84,10 +85,7 @@ const DIMENSIONS = [
 ];
 
 const EVIDENCE_SOURCES = [
-  { id: 'workbench', path: 'artifacts/agent-dev-workbench/evidence.json', required: true, generated: true },
-  { id: 'deep-test', path: 'artifacts/agent-dev-deep-test/report.json', required: true, generated: true },
-  { id: 'deep-test-history', path: 'artifacts/agent-dev-deep-test/history.json', required: true, generated: true },
-  { id: 'quality', path: 'artifacts/agent-dev-quality/report.json', required: true, generated: true },
+  ...AGENT_DEV_EVIDENCE_INPUTS.map((entry) => ({ ...entry, path: `artifacts/${entry.path}`, required: true, generated: true })),
   { id: 'package-scripts', path: 'package.json', required: true, generated: false },
   { id: 'agent-dev-runbook', path: 'docs/agent-dev-control-plane.md', required: true, generated: false },
   { id: 'agent-instructions', path: 'AGENTS.md', required: true, generated: false },
@@ -102,6 +100,7 @@ const AGENT_DEV_SOURCE_PATHS = [
   'scripts/agent-dev-audit.mjs',
   'scripts/agent-dev-deep-test.mjs',
   'scripts/agent-dev-workbench.mjs',
+  'scripts/lib/acceptance-artifacts.mjs',
   'scripts/typecheck-agent-dev.mjs',
   'tests/setup-agent-dev-node.ts',
   'tests/unit/agent-dev-regularization.test.ts',
@@ -113,7 +112,7 @@ const AGENT_DEV_SOURCE_PATHS = [
 ];
 
 async function readText(path) {
-  const full = resolve(ROOT, path);
+  const full = path.startsWith('artifacts/') ? acceptanceArtifactPath(ROOT, path.slice('artifacts/'.length)) : resolve(ROOT, path);
   if (!existsSync(full)) return '';
   return await readFile(full, 'utf8');
 }
@@ -423,7 +422,9 @@ async function collectEvidenceInventory(now = new Date()) {
   const items = [];
   const newestSource = await newestAgentDevSource();
   for (const source of EVIDENCE_SOURCES) {
-    const absolute = resolve(ROOT, source.path);
+    const absolute = source.generated
+      ? acceptanceArtifactPath(ROOT, source.path.slice('artifacts/'.length))
+      : resolve(ROOT, source.path);
     const exists = existsSync(absolute);
     let mtime = null;
     let generatedAt = null;

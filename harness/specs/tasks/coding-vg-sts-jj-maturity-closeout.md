@@ -38,6 +38,22 @@ ownedPaths:
   - tests/unit/channels-page.test.tsx
   - scripts/lib/agent-engineering-acceptance.mjs
   - scripts/rc00-acceptance-bootstrap.mjs
+  - scripts/lib/acceptance-artifacts.mjs
+  - scripts/lib/acceptance-artifacts.d.mts
+  - scripts/audit-baseline-check.mjs
+  - scripts/validate-system-maturity-plan.mjs
+  - scripts/validate-test-gates.mjs
+  - scripts/validate-system-maturity-evidence.mjs
+  - scripts/run-system-maturity-residual-audit.mjs
+  - scripts/validate-system-maturity-traceability.mjs
+  - scripts/agent-dev-deep-test.mjs
+  - scripts/agent-dev-audit.mjs
+  - scripts/agent-dev-workbench.mjs
+  - scripts/collect-p6-005-evidence.mjs
+  - scripts/validate-release-baseline.mjs
+  - scripts/lib/system-maturity-security-suite.mjs
+  - tests/unit/acceptance-artifact-routing.test.ts
+  - docs/agent-dev-control-plane.md
   - docs/dev/handoffs/CODING-VG-STS-JJ-RELAY-20261111-01A1BE4A.md
   - scripts/coding-evaluation/package-evaluation.py
   - scripts/coding-evaluation/final_evaluation.py
@@ -104,6 +120,22 @@ touchedAreas:
   - tests/unit/channels-page.test.tsx
   - scripts/lib/agent-engineering-acceptance.mjs
   - scripts/rc00-acceptance-bootstrap.mjs
+  - scripts/lib/acceptance-artifacts.mjs
+  - scripts/lib/acceptance-artifacts.d.mts
+  - scripts/audit-baseline-check.mjs
+  - scripts/validate-system-maturity-plan.mjs
+  - scripts/validate-test-gates.mjs
+  - scripts/validate-system-maturity-evidence.mjs
+  - scripts/run-system-maturity-residual-audit.mjs
+  - scripts/validate-system-maturity-traceability.mjs
+  - scripts/agent-dev-deep-test.mjs
+  - scripts/agent-dev-audit.mjs
+  - scripts/agent-dev-workbench.mjs
+  - scripts/collect-p6-005-evidence.mjs
+  - scripts/validate-release-baseline.mjs
+  - scripts/lib/system-maturity-security-suite.mjs
+  - tests/unit/acceptance-artifact-routing.test.ts
+  - docs/agent-dev-control-plane.md
   - docs/dev/handoffs/CODING-VG-STS-JJ-RELAY-20261111-01A1BE4A.md
   - scripts/coding-evaluation/package-evaluation.py
   - scripts/coding-evaluation/final_evaluation.py

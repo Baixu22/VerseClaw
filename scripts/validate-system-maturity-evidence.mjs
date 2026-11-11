@@ -6,6 +6,7 @@
  * A3: STATUS.json, task acceptance checkboxes, and delivery STATUS agree
  */
 import fs from 'fs';
+import { acceptanceArtifactPath } from './lib/acceptance-artifacts.mjs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { sha256CanonicalEvidenceFile } from './lib/canonical-evidence-hash.mjs';
@@ -282,11 +283,11 @@ const report = {
 };
 
 if (!integrityProbe) {
-  const outDir = path.join(
+  const outDir = acceptanceArtifactPath(
     root,
     selectedTaskPrefixes.length > 0
-      ? `artifacts/system-maturity/${selectedTaskPrefixes.join('').replace(/[^A-Za-z0-9-]/g, '')}-EVIDENCE`
-      : 'artifacts/system-maturity/P0-004',
+      ? `system-maturity/${selectedTaskPrefixes.join('').replace(/[^A-Za-z0-9-]/g, '')}-EVIDENCE`
+      : 'system-maturity/P0-004',
   );
   fs.mkdirSync(outDir, { recursive: true });
   fs.writeFileSync(path.join(outDir, 'validate-system-maturity-evidence.json'), JSON.stringify(report, null, 2) + '\n');

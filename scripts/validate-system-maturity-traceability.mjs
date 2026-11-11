@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
+import { acceptanceArtifactPath } from './lib/acceptance-artifacts.mjs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -24,7 +25,7 @@ const report = validateSystemMaturityTraceability({
   now: new Date(evaluatedAt),
   evaluatedAt,
 });
-const outDir = path.join(root, 'artifacts/system-maturity/P7-001');
+const outDir = acceptanceArtifactPath(root, 'system-maturity/P7-001');
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, 'traceability-report.json'), `${JSON.stringify(report, null, 2)}\n`);
 
