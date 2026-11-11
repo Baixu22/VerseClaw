@@ -1,0 +1,197 @@
+{
+  "schema": "ProjectRagVectorOwnerProbe/v1",
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "status": "pass",
+  "candidate": "5c15e3507340b679986377026665b80585d1efbc",
+  "recordedAt": "2026-11-11T14:46:06.770Z",
+  "dirtyDevelopmentProbe": false,
+  "steps": {
+    "portableReady": true,
+    "sourceUpdateReplaced": true,
+    "aclImmediateReject": true,
+    "nativeSwitchPublished": true,
+    "nativeRestartRecovered": true,
+    "deletionImmediateReject": true,
+    "cleanupReconciled": true
+  },
+  "modelReplacement": {
+    "status": "pass",
+    "fromDimensions": 768,
+    "toDimensions": 4096,
+    "from": {
+      "schema": "VectorGeneration/v1",
+      "generationId": "806e34f9-a54d-44d7-a2dd-c9c0fe542c62",
+      "namespaceId": "memory-wiki:dae505b16a332db6d507b682aafce13b4b50e4c436f147896c5101755590de1d",
+      "workspaceId": "agent-vector-project",
+      "spaceId": "sha256:5e25c7865d45bcde7cd60f0ab803a63647d99770d569108072d0d563247341e2",
+      "backend": "lancedb-ann",
+      "intentSequence": 2,
+      "state": "active",
+      "rowCount": 1
+    },
+    "to": {
+      "schema": "VectorGeneration/v1",
+      "generationId": "e6cb6268-341f-4642-9c0d-2319bd808a0f",
+      "namespaceId": "memory-wiki:dae505b16a332db6d507b682aafce13b4b50e4c436f147896c5101755590de1d",
+      "workspaceId": "agent-vector-project",
+      "spaceId": "sha256:43533c9af7e35ad56b5e58bd7053028b4597d5e809196bc2963504d3f04747d2",
+      "backend": "lancedb-ann",
+      "intentSequence": 3,
+      "state": "active",
+      "rowCount": 1
+    },
+    "answer": {
+      "status": "available",
+      "effectiveBackend": "lancedb-ann",
+      "generationId": "e6cb6268-341f-4642-9c0d-2319bd808a0f",
+      "contextId": "2f9592d3-512a-4bc0-8c73-e3e83094f448",
+      "candidates": [
+        {
+          "id": "sha256:21ba2b60a99dac7971b924877c9d7bd85fa40f427300f62e99b2d31bf0dcdb46",
+          "chunkId": "chunk:sha256:641a505c88d0098b730687ebd55d5f5b6480e95f4acc765e8f55e9571bc17e25",
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:dae505b16a332db6d507b682aafce13b4b50e4c436f147896c5101755590de1d",
+            "subjectId": "concepts/source.md",
+            "revision": "4",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:ecf3d8c24edab7939339ac222c6b8e7f56bfa3bf47fb4e8c242d43d664898078",
+            "policyEpoch": "sha256:3801891fde6ba786a2cdf8a613361b2d00ad0a61b5c7b81e68557069a80ec94a",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 115,
+              "endByteExclusive": 162,
+              "startLine": 9,
+              "endLine": 9
+            }
+          },
+          "distance": 0.3161274790763855,
+          "quote": "The restored deployment gateway port is 19999.\n"
+        }
+      ]
+    }
+  },
+  "portable": {
+    "status": "available",
+    "effectiveBackend": "sqlite-flat",
+    "generationId": "2f89063b-5c76-456a-a910-32b02ad8b5f4",
+    "contextId": "cab2bcfb-2093-4d2b-8b33-8b0574986f14",
+    "candidates": [
+      {
+        "id": "sha256:670cb52af3509ddcd3bad15d8912ca85ba55055300f66dc6bd7d63097774a0da",
+        "chunkId": "chunk:sha256:93eaf3facece66698fb3b9515d113d5bf200abd2274bcea7d8dae5f337f7abd2",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:dae505b16a332db6d507b682aafce13b4b50e4c436f147896c5101755590de1d",
+          "subjectId": "concepts/source.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:f92a913092d31ba950bc358b851d6af77b97b6d7b236c35f612ae934033bd192",
+          "policyEpoch": "sha256:3801891fde6ba786a2cdf8a613361b2d00ad0a61b5c7b81e68557069a80ec94a",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 115,
+            "endByteExclusive": 204,
+            "startLine": 9,
+            "endLine": 9
+          }
+        },
+        "distance": 0.2614218331668632,
+        "quote": "The deployment gateway port is 18789. Source owners check project access before reading.\n"
+      }
+    ]
+  },
+  "ann": {
+    "status": "available",
+    "effectiveBackend": "lancedb-ann",
+    "generationId": "806e34f9-a54d-44d7-a2dd-c9c0fe542c62",
+    "contextId": "895b38a1-5486-4524-a2d4-752722b697fa",
+    "candidates": [
+      {
+        "id": "sha256:f31ac8b41c0c9a51279be804d7975856afcde518ef34685ac55d6f3a185d5697",
+        "chunkId": "chunk:sha256:641a505c88d0098b730687ebd55d5f5b6480e95f4acc765e8f55e9571bc17e25",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:dae505b16a332db6d507b682aafce13b4b50e4c436f147896c5101755590de1d",
+          "subjectId": "concepts/source.md",
+          "revision": "4",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:ecf3d8c24edab7939339ac222c6b8e7f56bfa3bf47fb4e8c242d43d664898078",
+          "policyEpoch": "sha256:3801891fde6ba786a2cdf8a613361b2d00ad0a61b5c7b81e68557069a80ec94a",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 115,
+            "endByteExclusive": 162,
+            "startLine": 9,
+            "endLine": 9
+          }
+        },
+        "distance": 0.25681382417678833,
+        "quote": "The restored deployment gateway port is 19999.\n"
+      }
+    ]
+  },
+  "active": {
+    "status": "ready",
+    "requestedBackend": "lancedb-ann",
+    "effectiveBackend": "lancedb-ann",
+    "capability": {
+      "schema": "IndexBackendCapabilities/v1",
+      "backend": "lancedb-ann",
+      "platform": "win32",
+      "arch": "x64",
+      "maxReferenceRows": 100000,
+      "prefilter": true,
+      "includesUnindexedRows": true,
+      "available": true
+    },
+    "reason": null,
+    "generation": {
+      "schema": "VectorGeneration/v1",
+      "generationId": "806e34f9-a54d-44d7-a2dd-c9c0fe542c62",
+      "namespaceId": "memory-wiki:dae505b16a332db6d507b682aafce13b4b50e4c436f147896c5101755590de1d",
+      "workspaceId": "agent-vector-project",
+      "spaceId": "sha256:5e25c7865d45bcde7cd60f0ab803a63647d99770d569108072d0d563247341e2",
+      "backend": "lancedb-ann",
+      "intentSequence": 2,
+      "state": "active",
+      "rowCount": 1
+    },
+    "indexing": false
+  },
+  "recovered": {
+    "status": "available",
+    "effectiveBackend": "lancedb-ann",
+    "generationId": "e6cb6268-341f-4642-9c0d-2319bd808a0f",
+    "contextId": "2bf49890-c9aa-4831-9066-2e9e25d9e0c9",
+    "candidates": [
+      {
+        "id": "sha256:21ba2b60a99dac7971b924877c9d7bd85fa40f427300f62e99b2d31bf0dcdb46",
+        "chunkId": "chunk:sha256:641a505c88d0098b730687ebd55d5f5b6480e95f4acc765e8f55e9571bc17e25",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:dae505b16a332db6d507b682aafce13b4b50e4c436f147896c5101755590de1d",
+          "subjectId": "concepts/source.md",
+          "revision": "4",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:ecf3d8c24edab7939339ac222c6b8e7f56bfa3bf47fb4e8c242d43d664898078",
+          "policyEpoch": "sha256:3801891fde6ba786a2cdf8a613361b2d00ad0a61b5c7b81e68557069a80ec94a",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 115,
+            "endByteExclusive": 162,
+            "startLine": 9,
+            "endLine": 9
+          }
+        },
+        "distance": 0.3161274790763855,
+        "quote": "The restored deployment gateway port is 19999.\n"
+      }
+    ]
+  }
+}

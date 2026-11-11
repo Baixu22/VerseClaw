@@ -1,0 +1,184 @@
+{
+  "actor": "codex/project-rag-vector-electron",
+  "driven_by": "agent",
+  "status": "pass",
+  "steps": {
+    "portable": true,
+    "annSwitch": true,
+    "aclImmediate": true,
+    "appendVisible": true,
+    "restart": true,
+    "formRestored": true,
+    "deletedImmediate": true,
+    "workspaceSwitch": true,
+    "priorSourceRejected": true,
+    "disabled": true
+  },
+  "freeMemoryAtStartMiB": 3962,
+  "portable": {
+    "status": "available",
+    "effectiveBackend": "sqlite-flat",
+    "generationId": "bcdae210-62c4-4058-b067-7344ac62bb9c",
+    "contextId": "9c27210d-bd47-4b4f-af35-3e39331e0e9f",
+    "candidates": [
+      {
+        "id": "sha256:90f669f6c0d4054e130ff559286b8a785d351b4b3482a4666874628807978085",
+        "chunkId": "chunk:sha256:1aafd6c32a8c8505c099cd6829810d7c73c639d6f4d43bb481977c3075e2940a",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:35fe20936fd75895e68dd6105a891af92d1c0a9e974a0b10f5bbd6e18e952cb8",
+          "subjectId": "concepts/source.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:9abcba6491f2daf800893ca6f1b5ba5e58c2717615bb8bab54e05facfacb8994",
+          "policyEpoch": "sha256:106680e0164d50bce3d62f454c832b175eb053c6228f295336050d877fb1325d",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 123,
+            "endByteExclusive": 161,
+            "startLine": 9,
+            "endLine": 9
+          }
+        },
+        "distance": 0.12166424016371968,
+        "quote": "The gateway deployment port is 18789.\n"
+      }
+    ]
+  },
+  "lastVectorStatus": {
+    "status": "ready",
+    "requestedBackend": "lancedb-ann",
+    "effectiveBackend": "lancedb-ann",
+    "capability": {
+      "schema": "IndexBackendCapabilities/v1",
+      "backend": "lancedb-ann",
+      "platform": "win32",
+      "arch": "x64",
+      "maxReferenceRows": 100000,
+      "prefilter": true,
+      "includesUnindexedRows": true,
+      "available": true
+    },
+    "reason": null,
+    "generation": {
+      "schema": "VectorGeneration/v1",
+      "generationId": "57008e0c-0d21-4116-8b0b-2bc8b6c4cd89",
+      "namespaceId": "memory-wiki:35fe20936fd75895e68dd6105a891af92d1c0a9e974a0b10f5bbd6e18e952cb8",
+      "workspaceId": "project-vector-fixture",
+      "spaceId": "sha256:5e25c7865d45bcde7cd60f0ab803a63647d99770d569108072d0d563247341e2",
+      "backend": "lancedb-ann",
+      "intentSequence": 2,
+      "state": "active",
+      "rowCount": 1
+    },
+    "indexing": false
+  },
+  "ann": {
+    "status": "available",
+    "effectiveBackend": "lancedb-ann",
+    "generationId": "57008e0c-0d21-4116-8b0b-2bc8b6c4cd89",
+    "contextId": "ff9d9b0d-dd55-4d95-94d5-84ffa3d7250c",
+    "candidates": [
+      {
+        "id": "sha256:90f669f6c0d4054e130ff559286b8a785d351b4b3482a4666874628807978085",
+        "chunkId": "chunk:sha256:1aafd6c32a8c8505c099cd6829810d7c73c639d6f4d43bb481977c3075e2940a",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:35fe20936fd75895e68dd6105a891af92d1c0a9e974a0b10f5bbd6e18e952cb8",
+          "subjectId": "concepts/source.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:9abcba6491f2daf800893ca6f1b5ba5e58c2717615bb8bab54e05facfacb8994",
+          "policyEpoch": "sha256:106680e0164d50bce3d62f454c832b175eb053c6228f295336050d877fb1325d",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 123,
+            "endByteExclusive": 161,
+            "startLine": 9,
+            "endLine": 9
+          }
+        },
+        "distance": 0.12166422605514526,
+        "quote": "The gateway deployment port is 18789.\n"
+      }
+    ]
+  },
+  "memoryBeforeRestartMiB": 2330,
+  "lastEmbeddingStatus": {
+    "success": true,
+    "embedding": {
+      "mode": "local",
+      "status": "ready",
+      "credentialEpoch": 2,
+      "providerRef": "local:embeddinggemma-300m",
+      "model": "google/embeddinggemma-300m",
+      "dimensions": 768,
+      "spaceId": "sha256:5e25c7865d45bcde7cd60f0ab803a63647d99770d569108072d0d563247341e2",
+      "capability": {
+        "schema": "ProviderCapabilitySnapshot/v1",
+        "providerRef": "local:embeddinggemma-300m",
+        "transport": "local",
+        "credentialEpoch": 2,
+        "observedAt": "2026-11-11T14:51:41.219Z",
+        "status": "ready",
+        "space": {
+          "schema": "EmbeddingSpace/v1",
+          "spaceId": "sha256:5e25c7865d45bcde7cd60f0ab803a63647d99770d569108072d0d563247341e2",
+          "providerRef": "local:embeddinggemma-300m",
+          "model": "google/embeddinggemma-300m",
+          "modelRevision": "66f974f8cd48cc3b9c41c516b95508e75b4bee64/sha256:6fa0c02a9c302be6f977521d399b4de3a46310a4f2621ee0063747881b673f67",
+          "dimensions": 768,
+          "maxInputTokens": 2047,
+          "tokenizerId": "node-llama-cpp/calculateInputLength/v1",
+          "tokenizerDigest": "sha256:582cf5d4bcf3eed88b5468621bb07f634d32eb40d3a932588da4873b0590895e",
+          "inputFormat": {
+            "id": "embeddinggemma/search-v1",
+            "query": "task: search result | query: {text}",
+            "document": "title: {title} | text: {text}"
+          },
+          "normalization": "l2"
+        }
+      }
+    }
+  },
+  "freeMemoryMiB": 1414,
+  "restored": {
+    "status": "available",
+    "effectiveBackend": "lancedb-ann",
+    "generationId": "57008e0c-0d21-4116-8b0b-2bc8b6c4cd89",
+    "contextId": "e6829c72-82ce-48ea-9b34-114803bc4ce0",
+    "candidates": [
+      {
+        "id": "sha256:c26d3fcffe88fa81fe1b60230370beedb1157f6ecfa9741f366765a3d5cb1919",
+        "chunkId": "chunk:sha256:4d13d894257731fbed8250334cef2039cceabe2ab39d557a520403346795a898",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:35fe20936fd75895e68dd6105a891af92d1c0a9e974a0b10f5bbd6e18e952cb8",
+          "subjectId": "concepts/source.md",
+          "revision": "3",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:326e928e445622dde3c75c6f66f435d92b77525526995f9d6de4cf78e33b0f3b",
+          "policyEpoch": "sha256:106680e0164d50bce3d62f454c832b175eb053c6228f295336050d877fb1325d",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 123,
+            "endByteExclusive": 170,
+            "startLine": 9,
+            "endLine": 9
+          }
+        },
+        "distance": 0.19406414031982422,
+        "quote": "The restored gateway deployment port is 19999.\n"
+      }
+    ]
+  },
+  "memoryBeforeWorkspaceSwitchMiB": 1287,
+  "workspaceSwitch": {
+    "from": "project-vector-fixture",
+    "to": "next-vector-workspace",
+    "priorSourceRejected": true
+  }
+}

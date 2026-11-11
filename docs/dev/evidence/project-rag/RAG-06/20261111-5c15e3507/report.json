@@ -1,0 +1,131 @@
+{
+  "schema": "ProjectRagVectorAcceptance/v1",
+  "node": "TF-0883",
+  "programKey": "RAG-06",
+  "status": "pass",
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "candidate": "5c15e3507340b679986377026665b80585d1efbc",
+  "dirty": false,
+  "recordedAt": "2026-11-11T15:49:04.3638885Z",
+  "worktree": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+  "acceptance": [
+    {
+      "criterion": 1,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "runtime-unit.json",
+        "electron.json",
+        "electron/project-rag-vector-backend-6ff46-r-revocation-across-restart/vector-lifecycle-receipt.json"
+      ],
+      "result": "SQLite and LanceDB adapters implement the same id/filter/space/generation contract. SQLite stores one active generation per namespace; the Electron journey switches portable to ANN and restores the active backend after restart."
+    },
+    {
+      "criterion": 2,
+      "status": "pass",
+      "evidence": [
+        "electron.json",
+        "electron/project-rag-vector-backend-6ff46-r-revocation-across-restart/vector-lifecycle-receipt.json",
+        "owner-model-switch.json"
+      ],
+      "result": "The LanceDB adapter is a library-only owner-side retrieval seam. It does not load memory-lancedb recall/capture/store hooks, and vector rows contain identity plus vectors rather than answer-ready source text."
+    },
+    {
+      "criterion": 3,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "runtime-unit.json",
+        "owner-model-switch.json",
+        "electron.json"
+      ],
+      "result": "Coverage includes conditional prefilter, unindexed appended rows, deletion, model-space replacement with 768-to-4096 vectors, background optimize, old-generation cleanup, interrupted switching, restart recovery, ACL revocation and workspace isolation. Prior authorization is not revived."
+    },
+    {
+      "criterion": 4,
+      "status": "pass",
+      "evidence": [
+        "capacity-portable\\report.json",
+        "capacity-ann\\report.json",
+        "native-missing.json",
+        "electron.json"
+      ],
+      "result": "Portable 20k and ANN 100k measured Recall@20 1.0 with P95 25.37 ms and 409.47 ms, plus RSS/disk. Missing native capability is reported and falls back to portable while ordinary Chat remains available."
+    },
+    {
+      "criterion": 5,
+      "status": "pass",
+      "evidence": [
+        "gates.json",
+        "harness-validate.log",
+        "contract.log",
+        "runtime-unit.json"
+      ],
+      "result": "LanceDB and Arrow dependencies remain in the memory-wiki owner package. Core consumes the public retrieval SDK; the ANN store is the registered derived-index exception while SQLite owns active generation state."
+    },
+    {
+      "criterion": 6,
+      "status": "pass",
+      "evidence": [
+        "gates.json",
+        "root-unit.json",
+        "runtime-unit.json",
+        "electron.json",
+        "harness-ci-report.json"
+      ],
+      "result": "Planned unit and Electron tests are implemented and listed in requiredTests. All 21 formal gates exit zero on the clean source candidate."
+    }
+  ],
+  "tests": {
+    "root": {
+      "passed": 308,
+      "total": 308,
+      "skipped": 0
+    },
+    "runtime": {
+      "passed": 33,
+      "total": 33,
+      "skipped": 0
+    },
+    "electron": {
+      "passed": 1,
+      "total": 1,
+      "skipped": 0,
+      "flaky": 0
+    }
+  },
+  "capacity": {
+    "portable": {
+      "rows": 20000,
+      "dimensions": 768,
+      "recallAt20": 1,
+      "warmP95Ms": 25.367200000000594,
+      "peakRssMiB": 944.8,
+      "diskMiB": 86.3,
+      "restart": "pass"
+    },
+    "ann": {
+      "rows": 100000,
+      "dimensions": 768,
+      "recallAt20": 1,
+      "warmP95Ms": 409.46630000000005,
+      "peakRssMiB": 1119.1,
+      "diskMiB": 817.0,
+      "restart": "pass"
+    }
+  },
+  "formalGates": {
+    "total": 21,
+    "passed": 21,
+    "failed": 0,
+    "notRun": 0,
+    "cleanAtStart": true,
+    "cleanAtEnd": true
+  },
+  "productClaims": {
+    "scope": "Windows x64 local Electron and deterministic capacity fixtures",
+    "releasePermission": "publisher decision",
+    "semanticQuality": "measured separately by the frozen query evaluation"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\ragvec-formal\\verse-claw-e2e-run-PAwF86",
+  "ledgerEntries": 6,
+  "checks": [
+    {
+      "pid": 24232,
+      "creationTime": 1794408615682,
+      "status": "exited"
+    },
+    {
+      "pid": 43344,
+      "creationTime": 1794408622082,
+      "status": "exited"
+    },
+    {
+      "pid": 26656,
+      "creationTime": 1794408622597,
+      "status": "exited"
+    },
+    {
+      "pid": 40904,
+      "creationTime": 1794408671036,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

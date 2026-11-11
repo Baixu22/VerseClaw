@@ -1,0 +1,3854 @@
+{
+  "numTotalTestSuites": 39,
+  "numPassedTestSuites": 39,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 308,
+  "numPassedTests": 308,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1794407048287,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "contract check"
+          ],
+          "fullName": "contract check parses contract, facade, and scenario registry entries",
+          "status": "passed",
+          "title": "parses contract, facade, and scenario registry entries",
+          "duration": 3.3559000000000196,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check"
+          ],
+          "fullName": "contract check inlines aliased module facades for contract parsing",
+          "status": "passed",
+          "title": "inlines aliased module facades for contract parsing",
+          "duration": 0.496599999999944,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check"
+          ],
+          "fullName": "contract check passes representative aligned P0 inputs",
+          "status": "passed",
+          "title": "passes representative aligned P0 inputs",
+          "duration": 1.4986999999999853,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check"
+          ],
+          "fullName": "contract check reports readable drift for missing facade actions and registry ids",
+          "status": "passed",
+          "title": "reports readable drift for missing facade actions and registry ids",
+          "duration": 0.5716999999999643,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: alias contract members"
+          ],
+          "fullName": "contract check: alias contract members lists alias members and resolves their relative type imports",
+          "status": "passed",
+          "title": "lists alias members and resolves their relative type imports",
+          "duration": 0.4611000000001013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: alias contract members"
+          ],
+          "fullName": "contract check: alias contract members resolves alias members to their actions when the defining type text is supplied",
+          "status": "passed",
+          "title": "resolves alias members to their actions when the defining type text is supplied",
+          "duration": 0.20080000000007203,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: alias contract members"
+          ],
+          "fullName": "contract check: alias contract members fails closed when an alias member cannot be resolved",
+          "status": "passed",
+          "title": "fails closed when an alias member cannot be resolved",
+          "duration": 0.34579999999994016,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: alias contract members"
+          ],
+          "fullName": "contract check: alias contract members reconciles alias member actions against the facade and invokeHost",
+          "status": "passed",
+          "title": "reconciles alias member actions against the facade and invokeHost",
+          "duration": 0.30160000000000764,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface finds a namespace registration after an interpolated template",
+          "status": "passed",
+          "title": "finds a namespace registration after an interpolated template",
+          "duration": 54.561500000000024,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface ignores comments, strings, unrelated handles and shadowed IPC objects",
+          "status": "passed",
+          "title": "ignores comments, strings, unrelated handles and shadowed IPC objects",
+          "duration": 17.63390000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface resolves scoped aliases and parenthesized/type-wrapped IPC receivers",
+          "status": "passed",
+          "title": "resolves scoped aliases and parenthesized/type-wrapped IPC receivers",
+          "duration": 14.451099999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface keeps the original bound channel for register('payload');",
+          "status": "passed",
+          "title": "keeps the original bound channel for register('payload');",
+          "duration": 14.026700000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface keeps the original bound channel for register.call(ipcMain, 'payload');",
+          "status": "passed",
+          "title": "keeps the original bound channel for register.call(ipcMain, 'payload');",
+          "duration": 13.476999999999975,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface keeps the original bound channel for register.apply(ipcMain, ['payload']);",
+          "status": "passed",
+          "title": "keeps the original bound channel for register.apply(ipcMain, ['payload']);",
+          "duration": 14.466599999999971,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface keeps the original bound channel for const alias = register; alias.bind(null, 'payload')();",
+          "status": "passed",
+          "title": "keeps the original bound channel for const alias = register; alias.bind(null, 'payload')();",
+          "duration": 12.777200000000107,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface retains nonliteral bound channels and handleOnce identity",
+          "status": "passed",
+          "title": "retains nonliteral bound channels and handleOnce identity",
+          "duration": 13.185299999999984,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface does not treat dynamic or default bindings from ordinary objects as IPC",
+          "status": "passed",
+          "title": "does not treat dynamic or default bindings from ordinary objects as IPC",
+          "duration": 14.01400000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface enumerates ipcMain.handle sites including multi-line and non-literal forms",
+          "status": "passed",
+          "title": "enumerates ipcMain.handle sites including multi-line and non-literal forms",
+          "duration": 12.389400000000023,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface parses the preload allowlist and fails closed when it is missing",
+          "status": "passed",
+          "title": "parses the preload allowlist and fails closed when it is missing",
+          "duration": 0.42019999999990887,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface enforces the final zero-handler, host-invoke-only preload invariant",
+          "status": "passed",
+          "title": "enforces the final zero-handler, host-invoke-only preload invariant",
+          "duration": 25.875800000000027,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface fails closed when the registry or the site enumeration is absent",
+          "status": "passed",
+          "title": "fails closed when the registry or the site enumeration is absent",
+          "duration": 0.5471000000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface rejects an unregistered flat channel with its file and line",
+          "status": "passed",
+          "title": "rejects an unregistered flat channel with its file and line",
+          "duration": 0.2156999999999698,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface rejects a stale registry entry whose handler is gone",
+          "status": "passed",
+          "title": "rejects a stale registry entry whose handler is gone",
+          "duration": 0.175200000000018,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface rejects channels that bypass HostApiRegistry or use non-literal names",
+          "status": "passed",
+          "title": "rejects channels that bypass HostApiRegistry or use non-literal names",
+          "duration": 0.20730000000003201,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface requires the single typed host:invoke entry to exist",
+          "status": "passed",
+          "title": "requires the single typed host:invoke entry to exist",
+          "duration": 0.18870000000003984,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface requires every dual-entry channel to be acknowledged with a typed module and a reason",
+          "status": "passed",
+          "title": "requires every dual-entry channel to be acknowledged with a typed module and a reason",
+          "duration": 0.31799999999998363,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface rejects flat channels outside any typed domain and unknown typed actions",
+          "status": "passed",
+          "title": "rejects flat channels outside any typed domain and unknown typed actions",
+          "duration": 0.265700000000038,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface requires migrate and freeze dispositions to carry a removal plan and rejects unknown dispositions",
+          "status": "passed",
+          "title": "requires migrate and freeze dispositions to carry a removal plan and rejects unknown dispositions",
+          "duration": 0.2823999999999387,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: flat IPC admission surface"
+          ],
+          "fullName": "contract check: flat IPC admission surface reconciles the preload allowlist in both directions",
+          "status": "passed",
+          "title": "reconciles the preload allowlist in both directions",
+          "duration": 0.2946999999999207,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) passes on the current repository without fixtures",
+          "status": "passed",
+          "title": "passes on the current repository without fixtures",
+          "duration": 0.2752999999993335,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) ships every negative class as a checked-in fixture",
+          "status": "passed",
+          "title": "ships every negative class as a checked-in fixture",
+          "duration": 8.09690000000046,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-allowlist-dangling.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-allowlist-dangling.json through the real entry with a single locatable diagnostic",
+          "duration": 1.076799999999821,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-bound-channel.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-bound-channel.json through the real entry with a single locatable diagnostic",
+          "duration": 0.4790000000002692,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-bound-dynamic-channel.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-bound-dynamic-channel.json through the real entry with a single locatable diagnostic",
+          "duration": 0.4275000000006912,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-bound-spread-channel.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-bound-spread-channel.json through the real entry with a single locatable diagnostic",
+          "duration": 0.4317000000000917,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-bypass-registry.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-bypass-registry.json through the real entry with a single locatable diagnostic",
+          "duration": 0.47730000000046857,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-commented-handle.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-commented-handle.json through the real entry with a single locatable diagnostic",
+          "duration": 0.4013999999997395,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-computed-handle.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-computed-handle.json through the real entry with a single locatable diagnostic",
+          "duration": 0.37820000000010623,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-default-method.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-default-method.json through the real entry with a single locatable diagnostic",
+          "duration": 0.4535999999998239,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-default-receiver.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-default-receiver.json through the real entry with a single locatable diagnostic",
+          "duration": 0.35379999999986467,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-destructured-method.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-destructured-method.json through the real entry with a single locatable diagnostic",
+          "duration": 0.350800000000163,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-dual-entry-unacknowledged.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-dual-entry-unacknowledged.json through the real entry with a single locatable diagnostic",
+          "duration": 0.34130000000004657,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-duplicate-typed-entry.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-duplicate-typed-entry.json through the real entry with a single locatable diagnostic",
+          "duration": 0.3249999999998181,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-dynamic-destructured-method.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-dynamic-destructured-method.json through the real entry with a single locatable diagnostic",
+          "duration": 0.4834000000000742,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-dynamic-method.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-dynamic-method.json through the real entry with a single locatable diagnostic",
+          "duration": 0.4563000000007378,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-escaped-identifier.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-escaped-identifier.json through the real entry with a single locatable diagnostic",
+          "duration": 0.45160000000032596,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-handle-once.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-handle-once.json through the real entry with a single locatable diagnostic",
+          "duration": 0.39179999999942083,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-import-alias.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-import-alias.json through the real entry with a single locatable diagnostic",
+          "duration": 0.3731999999999971,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-method-alias.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-method-alias.json through the real entry with a single locatable diagnostic",
+          "duration": 0.6390000000001237,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-method-apply.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-method-apply.json through the real entry with a single locatable diagnostic",
+          "duration": 2.069300000000112,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-method-call.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-method-call.json through the real entry with a single locatable diagnostic",
+          "duration": 0.4044000000003507,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-named-default-import.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-named-default-import.json through the real entry with a single locatable diagnostic",
+          "duration": 0.3985000000002401,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-namespace-alias.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-namespace-alias.json through the real entry with a single locatable diagnostic",
+          "duration": 0.4629000000004453,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-nested-default-binding.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-nested-default-binding.json through the real entry with a single locatable diagnostic",
+          "duration": 0.4385000000002037,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-nested-destructured-method.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-nested-destructured-method.json through the real entry with a single locatable diagnostic",
+          "duration": 0.35720000000037544,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-object-alias.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-object-alias.json through the real entry with a single locatable diagnostic",
+          "duration": 0.472700000000259,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-aliased.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-preload-aliased.json through the real entry with a single locatable diagnostic",
+          "duration": 0.5303999999996449,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-bound-channel.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-preload-bound-channel.json through the real entry with a single locatable diagnostic",
+          "duration": 0.5482999999994718,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-bound-dynamic-channel.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-preload-bound-dynamic-channel.json through the real entry with a single locatable diagnostic",
+          "duration": 0.447400000000016,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-computed.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-preload-computed.json through the real entry with a single locatable diagnostic",
+          "duration": 0.422099999999773,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-default-method.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-preload-default-method.json through the real entry with a single locatable diagnostic",
+          "duration": 0.41529999999966094,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-default-receiver.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-preload-default-receiver.json through the real entry with a single locatable diagnostic",
+          "duration": 0.4206000000003769,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-direct-invoke.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-preload-direct-invoke.json through the real entry with a single locatable diagnostic",
+          "duration": 0.49729999999999563,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-dynamic-destructured-method.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-preload-dynamic-destructured-method.json through the real entry with a single locatable diagnostic",
+          "duration": 0.3617000000003827,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-dynamic.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-preload-dynamic.json through the real entry with a single locatable diagnostic",
+          "duration": 0.5868000000000393,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-mismatch.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-preload-mismatch.json through the real entry with a single locatable diagnostic",
+          "duration": 0.5471999999999753,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-named-default-import.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-preload-named-default-import.json through the real entry with a single locatable diagnostic",
+          "duration": 0.5018000000000029,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-nested-default-binding.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-preload-nested-default-binding.json through the real entry with a single locatable diagnostic",
+          "duration": 0.49209999999948195,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-nested-destructured-method.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-preload-nested-destructured-method.json through the real entry with a single locatable diagnostic",
+          "duration": 0.5063000000000102,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-preload-spaced.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-preload-spaced.json through the real entry with a single locatable diagnostic",
+          "duration": 0.4301999999997861,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-cjs.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-production-cjs.json through the real entry with a single locatable diagnostic",
+          "duration": 0.3481999999994514,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-cts.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-production-cts.json through the real entry with a single locatable diagnostic",
+          "duration": 0.39289999999982683,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-js.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-production-js.json through the real entry with a single locatable diagnostic",
+          "duration": 0.31270000000040454,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-jsx.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-production-jsx.json through the real entry with a single locatable diagnostic",
+          "duration": 0.2845999999999549,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-mjs.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-production-mjs.json through the real entry with a single locatable diagnostic",
+          "duration": 0.2768999999998414,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-mts.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-production-mts.json through the real entry with a single locatable diagnostic",
+          "duration": 0.2942000000002736,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-ts.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-production-ts.json through the real entry with a single locatable diagnostic",
+          "duration": 0.25280000000020664,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-production-tsx.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-production-tsx.json through the real entry with a single locatable diagnostic",
+          "duration": 0.32159999999930733,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-removal-plan-missing.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-removal-plan-missing.json through the real entry with a single locatable diagnostic",
+          "duration": 0.3441000000002532,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-retired-channel-live.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-retired-channel-live.json through the real entry with a single locatable diagnostic",
+          "duration": 0.31009999999969295,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-spaced-handle.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-spaced-handle.json through the real entry with a single locatable diagnostic",
+          "duration": 0.2638999999999214,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-static-method-name.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-static-method-name.json through the real entry with a single locatable diagnostic",
+          "duration": 0.2543000000005122,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-template-before-namespace.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-template-before-namespace.json through the real entry with a single locatable diagnostic",
+          "duration": 0.3863000000001193,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture flat-ipc-unregistered-channel.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture flat-ipc-unregistered-channel.json through the real entry with a single locatable diagnostic",
+          "duration": 0.3047999999998865,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture host-api-alias-member-unreconciled.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture host-api-alias-member-unreconciled.json through the real entry with a single locatable diagnostic",
+          "duration": 0.3470000000006621,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) rejects fixture host-api-unresolved-alias-member.json through the real entry with a single locatable diagnostic",
+          "status": "passed",
+          "title": "rejects fixture host-api-unresolved-alias-member.json through the real entry with a single locatable diagnostic",
+          "duration": 0.3743000000004031,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) accepts fixture flat-ipc-bound-typed-entry.json through the real entry without diagnostics",
+          "status": "passed",
+          "title": "accepts fixture flat-ipc-bound-typed-entry.json through the real entry without diagnostics",
+          "duration": 0.4438000000000102,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) accepts fixture flat-ipc-ordinary-bindings.json through the real entry without diagnostics",
+          "status": "passed",
+          "title": "accepts fixture flat-ipc-ordinary-bindings.json through the real entry without diagnostics",
+          "duration": 0.29510000000027503,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) accepts fixture flat-ipc-preload-bound-host-invoke.json through the real entry without diagnostics",
+          "status": "passed",
+          "title": "accepts fixture flat-ipc-preload-bound-host-invoke.json through the real entry without diagnostics",
+          "duration": 0.3279999999995198,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual ts production probes off disk",
+          "status": "passed",
+          "title": "keeps virtual ts production probes off disk",
+          "duration": 0.6833999999998923,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual tsx production probes off disk",
+          "status": "passed",
+          "title": "keeps virtual tsx production probes off disk",
+          "duration": 0.25059999999939464,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual mts production probes off disk",
+          "status": "passed",
+          "title": "keeps virtual mts production probes off disk",
+          "duration": 0.23210000000017317,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual cts production probes off disk",
+          "status": "passed",
+          "title": "keeps virtual cts production probes off disk",
+          "duration": 0.21889999999984866,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual js production probes off disk",
+          "status": "passed",
+          "title": "keeps virtual js production probes off disk",
+          "duration": 0.245600000000195,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual jsx production probes off disk",
+          "status": "passed",
+          "title": "keeps virtual jsx production probes off disk",
+          "duration": 0.2719999999999345,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual mjs production probes off disk",
+          "status": "passed",
+          "title": "keeps virtual mjs production probes off disk",
+          "duration": 0.19570000000021537,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) keeps virtual cjs production probes off disk",
+          "status": "passed",
+          "title": "keeps virtual cjs production probes off disk",
+          "duration": 0.18360000000029686,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) distinguishes a broken fixture (exit 2) from a gate failure (exit 1)",
+          "status": "passed",
+          "title": "distinguishes a broken fixture (exit 2) from a gate failure (exit 1)",
+          "duration": 314.7566000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "contract check: real gate entry (node scripts/contract-check.mjs)"
+          ],
+          "fullName": "contract check: real gate entry (node scripts/contract-check.mjs) clears fixture mutations before the final real baseline",
+          "status": "passed",
+          "title": "clears fixture mutations before the final real baseline",
+          "duration": 0.9129999999995562,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794407097404,
+      "endTime": 1794407103170.913,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/contract-check.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "materializes nested pnpm junctions rather than copying their development targets",
+          "status": "passed",
+          "title": "materializes nested pnpm junctions rather than copying their development targets",
+          "duration": 25.705200000000048,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "collects a native package graph beside the plugin while preserving dependency versions",
+          "status": "passed",
+          "title": "collects a native package graph beside the plugin while preserving dependency versions",
+          "duration": 37.191599999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "ships transitive dependency conflicts and never relies on parent node_modules",
+          "status": "passed",
+          "title": "ships transitive dependency conflicts and never relies on parent node_modules",
+          "duration": 57.91040000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "ships only a private workspace package allowlist and drops .ae runtime evidence",
+          "status": "passed",
+          "title": "ships only a private workspace package allowlist and drops .ae runtime evidence",
+          "duration": 327.39380000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "rejects missing installed dependencies even when a user-level copy is available",
+          "status": "passed",
+          "title": "rejects missing installed dependencies even when a user-level copy is available",
+          "duration": 7.4355999999999085,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "ships owner dependencies from its managed node_modules junction without copying the host peer",
+          "status": "passed",
+          "title": "ships owner dependencies from its managed node_modules junction without copying the host peer",
+          "duration": 51.948999999999955,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "loads Main dependencies and their children from the complete packaged graph",
+          "status": "passed",
+          "title": "loads Main dependencies and their children from the complete packaged graph",
+          "duration": 275.90210000000013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794407116901,
+      "endTime": 1794407117684.902,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/copy-runtime-package.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow binds chat workspace identity to the Main owner and refuses forged scopes",
+          "status": "passed",
+          "title": "binds chat workspace identity to the Main owner and refuses forged scopes",
+          "duration": 199.21659999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow rejects verification for a workspace whose permissions were not evaluated",
+          "status": "passed",
+          "title": "rejects verification for a workspace whose permissions were not evaluated",
+          "duration": 1.9403999999999542,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow refuses verification when its persisted physical root differs from Main",
+          "status": "passed",
+          "title": "refuses verification when its persisted physical root differs from Main",
+          "duration": 1.8529000000000906,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow requires approval for dangerous gateway RPC and consumes approval before replay",
+          "status": "passed",
+          "title": "requires approval for dangerous gateway RPC and consumes approval before replay",
+          "duration": 3.24980000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow does not allow an approved gateway request to be reused for different params",
+          "status": "passed",
+          "title": "does not allow an approved gateway request to be reused for different params",
+          "duration": 0.7360000000001037,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow captures mission knowledge draft candidates into Knowledge Inbox without changing the RPC result",
+          "status": "passed",
+          "title": "captures mission knowledge draft candidates into Knowledge Inbox without changing the RPC result",
+          "duration": 3.0505000000000564,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "gateway permission approval flow"
+          ],
+          "fullName": "gateway permission approval flow returns structured sandbox denial details for a fail-closed gateway action",
+          "status": "passed",
+          "title": "returns structured sandbox denial details for a fail-closed gateway action",
+          "duration": 0.8586999999999989,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794407118672,
+      "endTime": 1794407118882.8586,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/gateway-permissions-api.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API wraps wiki.status and reports Gateway failures",
+          "status": "passed",
+          "title": "wraps wiki.status and reports Gateway failures",
+          "duration": 2340.522,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API returns a read-only SEKB runtime lessons report without Gateway writes",
+          "status": "passed",
+          "title": "returns a read-only SEKB runtime lessons report without Gateway writes",
+          "duration": 140.67569999999978,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API resolves Host SEKB state dir and workspace root without using process.cwd defaults",
+          "status": "passed",
+          "title": "resolves Host SEKB state dir and workspace root without using process.cwd defaults",
+          "duration": 114.18139999999948,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API exposes SEKB ops host routes without gateway RPC and without auto-writes",
+          "status": "passed",
+          "title": "exposes SEKB ops host routes without gateway RPC and without auto-writes",
+          "duration": 105.6317999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API passes explicit experienceShadow through the production SEKB confirm route",
+          "status": "passed",
+          "title": "passes explicit experienceShadow through the production SEKB confirm route",
+          "duration": 242.74209999999948,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API omits experienceShadow entirely when the explicit request is absent",
+          "status": "passed",
+          "title": "omits experienceShadow entirely when the explicit request is absent",
+          "duration": 334.77940000000035,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API configures memory-wiki defaults without overwriting unrelated plugin config",
+          "status": "passed",
+          "title": "configures memory-wiki defaults without overwriting unrelated plugin config",
+          "duration": 135.89639999999963,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API enumerates bounded text files and skips large or non-text imports",
+          "status": "passed",
+          "title": "enumerates bounded text files and skips large or non-text imports",
+          "duration": 132.5075999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API keeps draft review and steward review local until a reviewed change is applied",
+          "status": "passed",
+          "title": "keeps draft review and steward review local until a reviewed change is applied",
+          "duration": 420.8099000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API runs the semantic steward invoker through the gateway agent RPC when the active role is semantic",
+          "status": "passed",
+          "title": "runs the semantic steward invoker through the gateway agent RPC when the active role is semantic",
+          "duration": 474.71860000000015,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API orchestrates inbox candidates into drafts without applying wiki writes",
+          "status": "passed",
+          "title": "orchestrates inbox candidates into drafts without applying wiki writes",
+          "duration": 342.9577999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API keeps automatic knowledge candidates as pending Inbox items without reviewed apply",
+          "status": "passed",
+          "title": "keeps automatic knowledge candidates as pending Inbox items without reviewed apply",
+          "duration": 322.9521000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API triages inbox candidates as duplicate, incomplete, or ready for review",
+          "status": "passed",
+          "title": "triages inbox candidates as duplicate, incomplete, or ready for review",
+          "duration": 100.24330000000009,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API forces watched-directory automation to remain review-gated",
+          "status": "passed",
+          "title": "forces watched-directory automation to remain review-gated",
+          "duration": 319.47100000000046,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API reconciles watched file changes into versioned agent-driven review candidates",
+          "status": "passed",
+          "title": "reconciles watched file changes into versioned agent-driven review candidates",
+          "duration": 618.7960000000012,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API records knowledge provenance references as metadata only",
+          "status": "passed",
+          "title": "records knowledge provenance references as metadata only",
+          "duration": 237.24179999999978,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API validates proposals and applies only approved create proposals",
+          "status": "passed",
+          "title": "validates proposals and applies only approved create proposals",
+          "duration": 270.72359999999935,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API converts legacy applyDraft calls into review-gated drafts without direct wiki apply",
+          "status": "passed",
+          "title": "converts legacy applyDraft calls into review-gated drafts without direct wiki apply",
+          "duration": 221.82140000000072,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API routes knowledge context only when scope and mode allow read-only search",
+          "status": "passed",
+          "title": "routes knowledge context only when scope and mode allow read-only search",
+          "duration": 211.24289999999928,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API keeps Runtime Lessons opt-in and exposes principle provenance",
+          "status": "passed",
+          "title": "keeps Runtime Lessons opt-in and exposes principle provenance",
+          "duration": 220.22350000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API preserves array Gateway rows and SourceRef in Host search",
+          "status": "passed",
+          "title": "preserves array Gateway rows and SourceRef in Host search",
+          "duration": 81.65709999999854,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API preserves results Gateway rows and SourceRef in Host search",
+          "status": "passed",
+          "title": "preserves results Gateway rows and SourceRef in Host search",
+          "duration": 74.83150000000023,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API preserves hits Gateway rows and SourceRef in Host search",
+          "status": "passed",
+          "title": "preserves hits Gateway rows and SourceRef in Host search",
+          "duration": 77.12980000000061,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API matches error-experience advisories and updates effectiveness counters",
+          "status": "passed",
+          "title": "matches error-experience advisories and updates effectiveness counters",
+          "duration": 255.04939999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API aggregates governance quality metrics from audit issues and error-experience counters",
+          "status": "passed",
+          "title": "aggregates governance quality metrics from audit issues and error-experience counters",
+          "duration": 346.03650000000016,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API auto-read routes only high-confidence fresh non-contradicted candidates",
+          "status": "passed",
+          "title": "auto-read routes only high-confidence fresh non-contradicted candidates",
+          "duration": 404.97109999999884,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API validates OKF bundles while preserving frontmatter and treating compatibility issues as warnings",
+          "status": "passed",
+          "title": "validates OKF bundles while preserving frontmatter and treating compatibility issues as warnings",
+          "duration": 425.5802999999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API rejects OKF concept files missing frontmatter or type",
+          "status": "passed",
+          "title": "rejects OKF concept files missing frontmatter or type",
+          "duration": 307.42139999999927,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API imports selected OKF concepts through wiki.ingest and records mapping metadata without wiki.apply",
+          "status": "passed",
+          "title": "imports selected OKF concepts through wiki.ingest and records mapping metadata without wiki.apply",
+          "duration": 332.46470000000045,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API rejects archived Source Set evidence without fallback (semantic=false)",
+          "status": "passed",
+          "title": "rejects archived Source Set evidence without fallback (semantic=false)",
+          "duration": 103.80159999999887,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API rejects archived Source Set evidence without fallback (semantic=true)",
+          "status": "passed",
+          "title": "rejects archived Source Set evidence without fallback (semantic=true)",
+          "duration": 95.93319999999949,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API retains explicit Source Set version pins and rejects a changed owner revision",
+          "status": "passed",
+          "title": "retains explicit Source Set version pins and rejects a changed owner revision",
+          "duration": 274.1477999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API reports unverified Source Set excerpts as partial rather than a calibrated answer",
+          "status": "passed",
+          "title": "reports unverified Source Set excerpts as partial rather than a calibrated answer",
+          "duration": 118.85770000000048,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API keeps Studio drafts bound to admitted evidence and prevents client metadata from upgrading it",
+          "status": "passed",
+          "title": "keeps Studio drafts bound to admitted evidence and prevents client metadata from upgrading it",
+          "duration": 357.6977000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API applies saved Source Set workspace context without granting cross-workspace reads",
+          "status": "passed",
+          "title": "applies saved Source Set workspace context without granting cross-workspace reads",
+          "duration": 425.804900000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API answers default and follow-up questions through the existing model-only Gateway with checked citations",
+          "status": "passed",
+          "title": "answers default and follow-up questions through the existing model-only Gateway with checked citations",
+          "duration": 123.80789999999979,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API persists source sets and answers from their selected sources without applying durable wiki changes",
+          "status": "passed",
+          "title": "persists source sets and answers from their selected sources without applying durable wiki changes",
+          "duration": 501.5650000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API uses the selected semantic service with owner pins and one shared deadline (query expires=false)",
+          "status": "passed",
+          "title": "uses the selected semantic service with owner pins and one shared deadline (query expires=false)",
+          "duration": 110.23500000000058,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API uses the selected semantic service with owner pins and one shared deadline (query expires=true)",
+          "status": "passed",
+          "title": "uses the selected semantic service with owner pins and one shared deadline (query expires=true)",
+          "duration": 162.59460000000036,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API normalizes provider whitespace before deriving owner egress and sending configure",
+          "status": "passed",
+          "title": "normalizes provider whitespace before deriving owner egress and sending configure",
+          "duration": 150.13810000000012,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API keeps admitted lexical evidence available when the embedding status service fails",
+          "status": "passed",
+          "title": "keeps admitted lexical evidence available when the embedding status service fails",
+          "duration": 145.51770000000033,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API creates reviewable studio artifact drafts from selected source sets",
+          "status": "passed",
+          "title": "creates reviewable studio artifact drafts from selected source sets",
+          "duration": 290.8636999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-01 ReviewBundle and governance integrity hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-01 ReviewBundle and governance integrity hard acceptance pairs 10 drafts and 10 proposals without cross-selection",
+          "status": "passed",
+          "title": "pairs 10 drafts and 10 proposals without cross-selection",
+          "duration": 567.8570999999993,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-01 ReviewBundle and governance integrity hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-01 ReviewBundle and governance integrity hard acceptance rejects stale approvals as conflicts and never calls wiki.apply",
+          "status": "passed",
+          "title": "rejects stale approvals as conflicts and never calls wiki.apply",
+          "duration": 450.5622999999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-01 ReviewBundle and governance integrity hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-01 ReviewBundle and governance integrity hard acceptance concurrent same captureKey calls create exactly one inbox candidate",
+          "status": "passed",
+          "title": "concurrent same captureKey calls create exactly one inbox candidate",
+          "duration": 372.08150000000023,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-01 ReviewBundle and governance integrity hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-01 ReviewBundle and governance integrity hard acceptance idempotent apply retry is duplicate success and writes an operation journal",
+          "status": "passed",
+          "title": "idempotent apply retry is duplicate success and writes an operation journal",
+          "duration": 491.1969999999983,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-03 GovernanceStore cutover hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-03 GovernanceStore cutover hard acceptance new inbox/draft/proposal records go to SQLite and JSON governance writers stay zero",
+          "status": "passed",
+          "title": "new inbox/draft/proposal records go to SQLite and JSON governance writers stay zero",
+          "duration": 354.1560000000027,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-03 GovernanceStore cutover hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-03 GovernanceStore cutover hard acceptance imports legacy JSON in one transaction and leaves it read-only with parity 100%",
+          "status": "passed",
+          "title": "imports legacy JSON in one transaction and leaves it read-only with parity 100%",
+          "duration": 274.35150000000067,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-02 truthful DCS projection sink"
+          ],
+          "fullName": "knowledge host API KS-02 truthful DCS projection sink exposes a blockstore sink with read-back verification when state DB opens",
+          "status": "passed",
+          "title": "exposes a blockstore sink with read-back verification when state DB opens",
+          "duration": 232.3510000000024,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-02 truthful DCS projection sink"
+          ],
+          "fullName": "knowledge host API KS-02 truthful DCS projection sink falls back to a journal sink and never claims blockstore when state DB cannot open",
+          "status": "passed",
+          "title": "falls back to a journal sink and never claims blockstore when state DB cannot open",
+          "duration": 153.2091999999975,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794407050919,
+      "endTime": 1794407066291.2092,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-api.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "TF-0735 knowledge embedding total deadline"
+          ],
+          "fullName": "TF-0735 knowledge embedding total deadline caps a 100-text / 13-batch operation at the 120s total deadline",
+          "status": "passed",
+          "title": "caps a 100-text / 13-batch operation at the 120s total deadline",
+          "duration": 5.9726,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0735 knowledge embedding total deadline"
+          ],
+          "fullName": "TF-0735 knowledge embedding total deadline does not start another batch after the budget is exhausted",
+          "status": "passed",
+          "title": "does not start another batch after the budget is exhausted",
+          "duration": 0.9928999999999633,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0735 knowledge embedding total deadline"
+          ],
+          "fullName": "TF-0735 knowledge embedding total deadline rejects instead of returning partial vectors when a later batch fails",
+          "status": "passed",
+          "title": "rejects instead of returning partial vectors when a later batch fails",
+          "duration": 1.1517000000000053,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0735 knowledge embedding total deadline"
+          ],
+          "fullName": "TF-0735 knowledge embedding total deadline shares one budget between embedQuery and the following batch",
+          "status": "passed",
+          "title": "shares one budget between embedQuery and the following batch",
+          "duration": 0.8351000000000113,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0735 knowledge embedding total deadline"
+          ],
+          "fullName": "TF-0735 knowledge embedding total deadline parses the configured deadline and falls back to 120s",
+          "status": "passed",
+          "title": "parses the configured deadline and falls back to 120s",
+          "duration": 0.29309999999998126,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0735 knowledge embedding total deadline"
+          ],
+          "fullName": "TF-0735 knowledge embedding total deadline does not let a cached vector bypass an expired operation deadline",
+          "status": "passed",
+          "title": "does not let a cached vector bypass an expired operation deadline",
+          "duration": 0.7846000000000117,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "TF-0735 knowledge embedding total deadline"
+          ],
+          "fullName": "TF-0735 knowledge embedding total deadline keeps injected transports isolated while retaining within-instance cache reuse",
+          "status": "passed",
+          "title": "keeps injected transports isolated while retaining within-instance cache reuse",
+          "duration": 0.6208999999999492,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794407121411,
+      "endTime": 1794407121421.7847,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-embedding-deadline.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA accepts a version-bound exact quotation and exposes no numeric confidence",
+          "status": "passed",
+          "title": "accepts a version-bound exact quotation and exposes no numeric confidence",
+          "duration": 4.1340999999999894,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA rejects forged or absent evidence {\"claims\":[{\"text\":\"Fabricated\",\"citations\":[{\"sourceId\":\"foreign-source\",\"quote\":\"Port\"}]}],\"unknowns\":[]}",
+          "status": "passed",
+          "title": "rejects forged or absent evidence {\"claims\":[{\"text\":\"Fabricated\",\"citations\":[{\"sourceId\":\"foreign-source\",\"quote\":\"Port\"}]}],\"unknowns\":[]}",
+          "duration": 1.1697000000000344,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA rejects forged or absent evidence {\"claims\":[{\"text\":\"Fabricated\",\"citations\":[{\"sourceId\":\"memory-wiki:deployment.md\",\"quote\":\"port 9090\"}]}],\"unknowns\":[]}",
+          "status": "passed",
+          "title": "rejects forged or absent evidence {\"claims\":[{\"text\":\"Fabricated\",\"citations\":[{\"sourceId\":\"memory-wiki:deployment.md\",\"quote\":\"port 9090\"}]}],\"unknowns\":[]}",
+          "duration": 0.2939999999999827,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA rejects forged or absent evidence {\"claims\":[{\"text\":\"Uncited\",\"citations\":[]}],\"unknowns\":[]}",
+          "status": "passed",
+          "title": "rejects forged or absent evidence {\"claims\":[{\"text\":\"Uncited\",\"citations\":[]}],\"unknowns\":[]}",
+          "duration": 0.2805000000000746,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA rejects forged or absent evidence {\"claims\":[],\"unknowns\":[]}",
+          "status": "passed",
+          "title": "rejects forged or absent evidence {\"claims\":[],\"unknowns\":[]}",
+          "duration": 0.25519999999994525,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA bounds conversation and encloses source instructions as untrusted data",
+          "status": "passed",
+          "title": "bounds conversation and encloses source instructions as untrusted data",
+          "duration": 0.7363000000000284,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA runs through model-only Gateway RPC and captures deltas emitted before acceptance",
+          "status": "passed",
+          "title": "runs through model-only Gateway RPC and captures deltas emitted before acceptance",
+          "duration": 3.2323000000000093,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "evidence QA"
+          ],
+          "fullName": "evidence QA does not report incomplete model runs as answers and releases its listener",
+          "status": "passed",
+          "title": "does not report incomplete model runs as answers and releases its listener",
+          "duration": 1.1690000000000964,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794407123392,
+      "endTime": 1794407123403.169,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-evidence-qa.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Chinese and bounded long-source retrieval"
+          ],
+          "fullName": "Chinese and bounded long-source retrieval recalls relevant words in 网关部署端口是什么 and leaves unrelated text at zero",
+          "status": "passed",
+          "title": "recalls relevant words in 网关部署端口是什么 and leaves unrelated text at zero",
+          "duration": 1.8921999999998889,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Chinese and bounded long-source retrieval"
+          ],
+          "fullName": "Chinese and bounded long-source retrieval recalls relevant words in deployment port and leaves unrelated text at zero",
+          "status": "passed",
+          "title": "recalls relevant words in deployment port and leaves unrelated text at zero",
+          "duration": 0.33760000000006585,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Chinese and bounded long-source retrieval"
+          ],
+          "fullName": "Chinese and bounded long-source retrieval continues to a matching tail window and discloses remaining unread lines",
+          "status": "passed",
+          "title": "continues to a matching tail window and discloses remaining unread lines",
+          "duration": 4.165700000000015,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Chinese and bounded long-source retrieval"
+          ],
+          "fullName": "Chinese and bounded long-source retrieval rejects changing owner state during continuation {\"revision\":3}",
+          "status": "passed",
+          "title": "rejects changing owner state during continuation {\"revision\":3}",
+          "duration": 0.7735999999999876,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Chinese and bounded long-source retrieval"
+          ],
+          "fullName": "Chinese and bounded long-source retrieval rejects changing owner state during continuation {\"acl\":{\"read\":[\"other\"]}}",
+          "status": "passed",
+          "title": "rejects changing owner state during continuation {\"acl\":{\"read\":[\"other\"]}}",
+          "duration": 0.5027999999999793,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Chinese and bounded long-source retrieval"
+          ],
+          "fullName": "Chinese and bounded long-source retrieval rejects changing owner state during continuation {\"privacyTier\":\"secret\"}",
+          "status": "passed",
+          "title": "rejects changing owner state during continuation {\"privacyTier\":\"secret\"}",
+          "duration": 0.4574000000000069,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Chinese and bounded long-source retrieval"
+          ],
+          "fullName": "Chinese and bounded long-source retrieval never continues a rejected first read",
+          "status": "passed",
+          "title": "never continues a rejected first read",
+          "duration": 0.338799999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "content-addressed embedding cache"
+          ],
+          "fullName": "content-addressed embedding cache uses the owner-selected Qwen VL model when no model override is set",
+          "status": "passed",
+          "title": "uses the owner-selected Qwen VL model when no model override is set",
+          "duration": 2.5745000000000573,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "content-addressed embedding cache"
+          ],
+          "fullName": "content-addressed embedding cache reuses query/document vectors across providers and invalidates content, model, endpoint and credential scope",
+          "status": "passed",
+          "title": "reuses query/document vectors across providers and invalidates content, model, endpoint and credential scope",
+          "duration": 1.5883000000000038,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "content-addressed embedding cache"
+          ],
+          "fullName": "content-addressed embedding cache does not cache failed or invalid provider results",
+          "status": "passed",
+          "title": "does not cache failed or invalid provider results",
+          "duration": 2.1621000000000095,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794407120903,
+      "endTime": 1794407120918.162,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-retrieval.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission retains owner revision, freshness, exact read bytes and advisory trust",
+          "status": "passed",
+          "title": "retains owner revision, freshness, exact read bytes and advisory trust",
+          "duration": 4.840400000000045,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status archived",
+          "status": "passed",
+          "title": "rejects owner status archived",
+          "duration": 0.8589999999999236,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status revoked",
+          "status": "passed",
+          "title": "rejects owner status revoked",
+          "duration": 0.4130999999999858,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status deleted",
+          "status": "passed",
+          "title": "rejects owner status deleted",
+          "duration": 0.3089999999999691,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status denied",
+          "status": "passed",
+          "title": "rejects owner status denied",
+          "duration": 0.33170000000006894,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status stale",
+          "status": "passed",
+          "title": "rejects owner status stale",
+          "duration": 0.31719999999995707,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status unexpected-state",
+          "status": "passed",
+          "title": "rejects owner status unexpected-state",
+          "duration": 0.3342000000000098,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier sensitive",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier sensitive",
+          "duration": 0.3403999999999314,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier secret-adjacent",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier secret-adjacent",
+          "duration": 0.25310000000001764,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier secret",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier secret",
+          "duration": 0.231899999999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier personal",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier personal",
+          "duration": 0.21600000000000819,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier unknown-tier",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier unknown-tier",
+          "duration": 0.18990000000007967,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier __proto__",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier __proto__",
+          "duration": 0.14380000000005566,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier constructor",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier constructor",
+          "duration": 0.1490000000000009,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier null",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier null",
+          "duration": 0.15430000000003474,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission cannot replace an owner ACL with operator access: {\"read\":[\"another-operator\"]}",
+          "status": "passed",
+          "title": "cannot replace an owner ACL with operator access: {\"read\":[\"another-operator\"]}",
+          "duration": 0.2595999999999776,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission cannot replace an owner ACL with operator access: null",
+          "status": "passed",
+          "title": "cannot replace an owner ACL with operator access: null",
+          "duration": 0.15160000000003038,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission cannot replace an owner ACL with operator access: {\"read\":\"operator\"}",
+          "status": "passed",
+          "title": "cannot replace an owner ACL with operator access: {\"read\":\"operator\"}",
+          "duration": 0.1452000000000453,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission enforces a supplied workspace filter against the owner scope",
+          "status": "passed",
+          "title": "enforces a supplied workspace filter against the owner scope",
+          "duration": 0.22429999999997108,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: null",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: null",
+          "duration": 0.17810000000008586,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {}",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: {}",
+          "duration": 0.10430000000008022,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {\"title\":\"An empty source\"}",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: {\"title\":\"An empty source\"}",
+          "duration": 0.09710000000006858,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {\"content\":\"   \",\"title\":\"No source body\"}",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: {\"content\":\"   \",\"title\":\"No source body\"}",
+          "duration": 0.0806999999999789,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {\"content\":\"\",\"body\":\"Stale fallback body\"}",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: {\"content\":\"\",\"body\":\"Stale fallback body\"}",
+          "duration": 0.10779999999999745,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {\"corpus\":\"memory\",\"content\":\"  Review before applying.\\nKeep the original read bytes.\\n\"}",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: {\"corpus\":\"memory\",\"content\":\"  Review before applying.\\nKeep the original read bytes.\\n\"}",
+          "duration": 0.08569999999997435,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission discloses a truncated range without pretending it read the complete page",
+          "status": "passed",
+          "title": "discloses a truncated range without pretending it read the complete page",
+          "duration": 0.342899999999986,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects malformed owner scope metadata: {\"scope\":null}",
+          "status": "passed",
+          "title": "rejects malformed owner scope metadata: {\"scope\":null}",
+          "duration": 0.31350000000009004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects malformed owner scope metadata: {\"scope\":{\"workspaceId\":42}}",
+          "status": "passed",
+          "title": "rejects malformed owner scope metadata: {\"scope\":{\"workspaceId\":42}}",
+          "duration": 0.1897000000000162,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects malformed owner scope metadata: {\"workspaceId\":0}",
+          "status": "passed",
+          "title": "rejects malformed owner scope metadata: {\"workspaceId\":0}",
+          "duration": 0.19219999999995707,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects an invalid supplied read range: {\"fromLine\":0}",
+          "status": "passed",
+          "title": "rejects an invalid supplied read range: {\"fromLine\":0}",
+          "duration": 0.19799999999997908,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects an invalid supplied read range: {\"totalLines\":2}",
+          "status": "passed",
+          "title": "rejects an invalid supplied read range: {\"totalLines\":2}",
+          "duration": 0.15650000000005093,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects an invalid supplied read range: {\"truncated\":\"false\"}",
+          "status": "passed",
+          "title": "rejects an invalid supplied read range: {\"truncated\":\"false\"}",
+          "duration": 0.18989999999996598,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not invent an indexing timestamp for a legacy owner result",
+          "status": "passed",
+          "title": "does not invent an indexing timestamp for a legacy owner result",
+          "duration": 0.32910000000003947,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not relax an explicit version pin after a mismatch: {\"revision\":\"18\"}",
+          "status": "passed",
+          "title": "does not relax an explicit version pin after a mismatch: {\"revision\":\"18\"}",
+          "duration": 0.213799999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not relax an explicit version pin after a mismatch: {\"contentDigest\":\"sha256:2f04f3044eb15f46d7f1f6e22cbb7e34761eb9daa5d91ce425a4048dd82172eb\"}",
+          "status": "passed",
+          "title": "does not relax an explicit version pin after a mismatch: {\"contentDigest\":\"sha256:2f04f3044eb15f46d7f1f6e22cbb7e34761eb9daa5d91ce425a4048dd82172eb\"}",
+          "duration": 0.16840000000001965,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects a supplied owner content digest that does not match the read bytes",
+          "status": "passed",
+          "title": "rejects a supplied owner content digest that does not match the read bytes",
+          "duration": 0.23330000000009932,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission passes only admitted content into the optional embedding provider",
+          "status": "passed",
+          "title": "passes only admitted content into the optional embedding provider",
+          "duration": 1.0754000000000588,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not call the provider or refill rejected text when no source is admitted",
+          "status": "passed",
+          "title": "does not call the provider or refill rejected text when no source is admitted",
+          "duration": 0.34360000000003765,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission preserves structured owner claim conflicts and their version-bound citations",
+          "status": "passed",
+          "title": "preserves structured owner claim conflicts and their version-bound citations",
+          "duration": 6.910499999999956,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission deduplicates canonical aliases without duplicating the evidence",
+          "status": "passed",
+          "title": "deduplicates canonical aliases without duplicating the evidence",
+          "duration": 0.6660999999999149,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not let an active alias hide a later archived read of the same owner",
+          "status": "passed",
+          "title": "does not let an active alias hide a later archived read of the same owner",
+          "duration": 0.2720000000000482,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794407119928,
+      "endTime": 1794407119951.272,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-source-set-answer.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "shows native fallback, preserves a failed action through polling, and supports retry and disable",
+          "status": "passed",
+          "title": "shows native fallback, preserves a failed action through polling, and supports retry and disable",
+          "duration": 2620.9833000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794407105763,
+      "endTime": 1794407108383.9834,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-vector-settings.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Project RAG embedding space lifecycle"
+          ],
+          "fullName": "Project RAG embedding space lifecycle rejects vectors from a changed space {\"modelRevision\":\"agent-fixture-revision-2\"}",
+          "status": "passed",
+          "title": "rejects vectors from a changed space {\"modelRevision\":\"agent-fixture-revision-2\"}",
+          "duration": 2.103399999999965,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG embedding space lifecycle"
+          ],
+          "fullName": "Project RAG embedding space lifecycle rejects vectors from a changed space {\"dimensions\":4}",
+          "status": "passed",
+          "title": "rejects vectors from a changed space {\"dimensions\":4}",
+          "duration": 0.4337000000000444,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG embedding space lifecycle"
+          ],
+          "fullName": "Project RAG embedding space lifecycle rejects vectors from a changed space {\"tokenizerDigest\":\"sha256:2222222222222222222222222222222222222222222222222222222222222222\"}",
+          "status": "passed",
+          "title": "rejects vectors from a changed space {\"tokenizerDigest\":\"sha256:2222222222222222222222222222222222222222222222222222222222222222\"}",
+          "duration": 0.3006000000000313,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG embedding space lifecycle"
+          ],
+          "fullName": "Project RAG embedding space lifecycle rejects vectors from a changed space {\"inputFormat\":{\"id\":\"agent-fixture-format-1\",\"query\":\"changed query: {text}\",\"document\":\"title: {title} | text: {text}\"}}",
+          "status": "passed",
+          "title": "rejects vectors from a changed space {\"inputFormat\":{\"id\":\"agent-fixture-format-1\",\"query\":\"changed query: {text}\",\"document\":\"title: {title} | text: {text}\"}}",
+          "duration": 0.23569999999972424,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG embedding space lifecycle"
+          ],
+          "fullName": "Project RAG embedding space lifecycle rejects vectors from a changed space {\"normalization\":\"none\"}",
+          "status": "passed",
+          "title": "rejects vectors from a changed space {\"normalization\":\"none\"}",
+          "duration": 0.5512999999996282,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG embedding space lifecycle"
+          ],
+          "fullName": "Project RAG embedding space lifecycle retains literal source placeholders and counts the complete query or document",
+          "status": "passed",
+          "title": "retains literal source placeholders and counts the complete query or document",
+          "duration": 2.0901999999996406,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG embedding space lifecycle"
+          ],
+          "fullName": "Project RAG embedding space lifecycle rejects an invalid vector {\"vector\":[]}",
+          "status": "passed",
+          "title": "rejects an invalid vector {\"vector\":[]}",
+          "duration": 0.23739999999997963,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG embedding space lifecycle"
+          ],
+          "fullName": "Project RAG embedding space lifecycle rejects an invalid vector {\"vector\":[1,0]}",
+          "status": "passed",
+          "title": "rejects an invalid vector {\"vector\":[1,0]}",
+          "duration": 0.12989999999990687,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG embedding space lifecycle"
+          ],
+          "fullName": "Project RAG embedding space lifecycle rejects an invalid vector {\"vector\":[0,0,0]}",
+          "status": "passed",
+          "title": "rejects an invalid vector {\"vector\":[0,0,0]}",
+          "duration": 0.18279999999958818,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG embedding space lifecycle"
+          ],
+          "fullName": "Project RAG embedding space lifecycle rejects an invalid vector {\"vector\":[null,0,1]}",
+          "status": "passed",
+          "title": "rejects an invalid vector {\"vector\":[null,0,1]}",
+          "duration": 0.16669999999976426,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG embedding space lifecycle"
+          ],
+          "fullName": "Project RAG embedding space lifecycle rejects an invalid vector {\"vector\":[null,0,1]}",
+          "status": "passed",
+          "title": "rejects an invalid vector {\"vector\":[null,0,1]}",
+          "duration": 0.11640000000033979,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG embedding space lifecycle"
+          ],
+          "fullName": "Project RAG embedding space lifecycle rejects an invalid vector {\"vector\":[null,0,1]}",
+          "status": "passed",
+          "title": "rejects an invalid vector {\"vector\":[null,0,1]}",
+          "duration": 0.10869999999977153,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG embedding space lifecycle"
+          ],
+          "fullName": "Project RAG embedding space lifecycle normalizes into an isolated vector and binds a deterministic immutable space",
+          "status": "passed",
+          "title": "normalizes into an isolated vector and binds a deterministic immutable space",
+          "duration": 0.31100000000014916,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "local embedding artifact and capability lifecycle"
+          ],
+          "fullName": "local embedding artifact and capability lifecycle verifies an existing model offline and rejects same-size corruption",
+          "status": "passed",
+          "title": "verifies an existing model offline and rejects same-size corruption",
+          "duration": 8.272300000000087,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "local embedding artifact and capability lifecycle"
+          ],
+          "fullName": "local embedding artifact and capability lifecycle rejects an installation before opening the downloader when the disk budget is exhausted",
+          "status": "passed",
+          "title": "rejects an installation before opening the downloader when the disk budget is exhausted",
+          "duration": 1.9342999999998938,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "local embedding artifact and capability lifecycle"
+          ],
+          "fullName": "local embedding artifact and capability lifecycle cancels an incomplete install, cleans staging, and retries with checksum verification",
+          "status": "passed",
+          "title": "cancels an incomplete install, cleans staging, and retries with checksum verification",
+          "duration": 12.561999999999898,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "local embedding artifact and capability lifecycle"
+          ],
+          "fullName": "local embedding artifact and capability lifecycle cancels while waiting for download headers and removes staging",
+          "status": "passed",
+          "title": "cancels while waiting for download headers and removes staging",
+          "duration": 3.5626000000002023,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "local embedding artifact and capability lifecycle"
+          ],
+          "fullName": "local embedding artifact and capability lifecycle inspects the loaded model and full native token count, then releases all resources",
+          "status": "passed",
+          "title": "inspects the loaded model and full native token count, then releases all resources",
+          "duration": 5.474299999999857,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "local embedding artifact and capability lifecycle"
+          ],
+          "fullName": "local embedding artifact and capability lifecycle cancels a real child inspect wait and allows a replacement child to answer",
+          "status": "passed",
+          "title": "cancels a real child inspect wait and allows a replacement child to answer",
+          "duration": 195.45100000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public remote embedding provider boundary"
+          ],
+          "fullName": "public remote embedding provider boundary binds reordered vectors to inputs and preserves query/document semantics",
+          "status": "passed",
+          "title": "binds reordered vectors to inputs and preserves query/document semantics",
+          "duration": 3.127799999999752,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public remote embedding provider boundary"
+          ],
+          "fullName": "public remote embedding provider boundary rejects malformed row binding or dimensions 0",
+          "status": "passed",
+          "title": "rejects malformed row binding or dimensions 0",
+          "duration": 0.6797999999998865,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public remote embedding provider boundary"
+          ],
+          "fullName": "public remote embedding provider boundary rejects malformed row binding or dimensions 1",
+          "status": "passed",
+          "title": "rejects malformed row binding or dimensions 1",
+          "duration": 0.4228000000002794,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public remote embedding provider boundary"
+          ],
+          "fullName": "public remote embedding provider boundary rejects malformed row binding or dimensions 2",
+          "status": "passed",
+          "title": "rejects malformed row binding or dimensions 2",
+          "duration": 0.35190000000011423,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public remote embedding provider boundary"
+          ],
+          "fullName": "public remote embedding provider boundary rejects malformed row binding or dimensions 3",
+          "status": "passed",
+          "title": "rejects malformed row binding or dimensions 3",
+          "duration": 0.3404000000000451,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public remote embedding provider boundary"
+          ],
+          "fullName": "public remote embedding provider boundary rejects malformed row binding or dimensions 4",
+          "status": "passed",
+          "title": "rejects malformed row binding or dimensions 4",
+          "duration": 0.33730000000014115,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public remote embedding provider boundary"
+          ],
+          "fullName": "public remote embedding provider boundary keeps provider error response text out of surfaced failures",
+          "status": "passed",
+          "title": "keeps provider error response text out of surfaced failures",
+          "duration": 0.6050000000000182,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public remote embedding provider boundary"
+          ],
+          "fullName": "public remote embedding provider boundary rejects a response that identifies a different model",
+          "status": "passed",
+          "title": "rejects a response that identifies a different model",
+          "duration": 0.443000000000211,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "public remote embedding provider boundary"
+          ],
+          "fullName": "public remote embedding provider boundary resolves a rotated SecretRef anew without retaining credential bytes in runtime metadata",
+          "status": "passed",
+          "title": "resolves a rotated SecretRef anew without retaining credential bytes in runtime metadata",
+          "duration": 1.2362999999995736,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "embedding selection persisted in real plugin SQLite"
+          ],
+          "fullName": "embedding selection persisted in real plugin SQLite preserves a configured case-insensitive provider alias and SecretRef over environment defaults",
+          "status": "passed",
+          "title": "preserves a configured case-insensitive provider alias and SecretRef over environment defaults",
+          "duration": 349.8814000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "embedding selection persisted in real plugin SQLite"
+          ],
+          "fullName": "embedding selection persisted in real plugin SQLite omits undefined optional fields and preserves cancellation across service restart",
+          "status": "passed",
+          "title": "omits undefined optional fields and preserves cancellation across service restart",
+          "duration": 115.77959999999985,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "embedding selection persisted in real plugin SQLite"
+          ],
+          "fullName": "embedding selection persisted in real plugin SQLite leaves the selected provider unavailable when the RAM budget cannot admit the local model",
+          "status": "passed",
+          "title": "leaves the selected provider unavailable when the RAM budget cannot admit the local model",
+          "duration": 271.6447000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "owner-bound embedding sessions"
+          ],
+          "fullName": "owner-bound embedding sessions rechecks the owner before cached vectors and isolates query/document, workspace, and credential generation",
+          "status": "passed",
+          "title": "rechecks the owner before cached vectors and isolates query/document, workspace, and credential generation",
+          "duration": 3.751900000000205,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "owner-bound embedding sessions"
+          ],
+          "fullName": "owner-bound embedding sessions rejects denied egress and owner pin changes before any provider call",
+          "status": "passed",
+          "title": "rejects denied egress and owner pin changes before any provider call",
+          "duration": 0.8996999999999389,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "owner-bound embedding sessions"
+          ],
+          "fullName": "owner-bound embedding sessions discards a response when the owner revokes during inference or the session is closed",
+          "status": "passed",
+          "title": "discards a response when the owner revokes during inference or the session is closed",
+          "duration": 1.0940999999997985,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "owner-bound embedding sessions"
+          ],
+          "fullName": "owner-bound embedding sessions releases cancellation even when the provider ignores its signal",
+          "status": "passed",
+          "title": "releases cancellation even when the provider ignores its signal",
+          "duration": 0.7822999999998501,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "owner-bound embedding sessions"
+          ],
+          "fullName": "owner-bound embedding sessions refreshes owner context after a slow response and rejects a changed physical generation",
+          "status": "passed",
+          "title": "refreshes owner context after a slow response and rejects a changed physical generation",
+          "duration": 1.5189000000000306,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "owner-bound embedding sessions"
+          ],
+          "fullName": "owner-bound embedding sessions enforces the supplied total deadline after a provider response",
+          "status": "passed",
+          "title": "enforces the supplied total deadline after a provider response",
+          "duration": 0.601799999999912,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794407115488,
+      "endTime": 1794407116476.6018,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-embedding-lifecycle.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Project RAG real owner index lifecycle recovery"
+          ],
+          "fullName": "Project RAG real owner index lifecycle recovery publishes in a worker, follows edits and revocation, and recovers changes missed during stop",
+          "status": "passed",
+          "title": "publishes in a worker, follows edits and revocation, and recovers changes missed during stop",
+          "duration": 4101.7978,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG real owner index lifecycle recovery"
+          ],
+          "fullName": "Project RAG real owner index lifecycle recovery keeps malformed source revisions unavailable and rejects a foreign query scope",
+          "status": "passed",
+          "title": "keeps malformed source revisions unavailable and rejects a foreign query scope",
+          "duration": 938.9583999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794407091723,
+      "endTime": 1794407096763.9585,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-index-recovery.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "real portable and LanceDB library adapters"
+          ],
+          "fullName": "real portable and LanceDB library adapters reports native write capability unavailable for an overlong Windows index root",
+          "status": "passed",
+          "title": "reports native write capability unavailable for an overlong Windows index root",
+          "duration": 1281.300299999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "real portable and LanceDB library adapters"
+          ],
+          "fullName": "real portable and LanceDB library adapters enforces filters and appended-row coverage through sqlite-flat",
+          "status": "passed",
+          "title": "enforces filters and appended-row coverage through sqlite-flat",
+          "duration": 2275.4511999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "real portable and LanceDB library adapters"
+          ],
+          "fullName": "real portable and LanceDB library adapters enforces filters and appended-row coverage through lancedb-ann",
+          "status": "passed",
+          "title": "enforces filters and appended-row coverage through lancedb-ann",
+          "duration": 1914.8605000000025,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "real portable and LanceDB library adapters"
+          ],
+          "fullName": "real portable and LanceDB library adapters refreshes a warm worker after a separate owner changes rows without changing the count",
+          "status": "passed",
+          "title": "refreshes a warm worker after a separate owner changes rows without changing the count",
+          "duration": 975.1471999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "real portable and LanceDB library adapters"
+          ],
+          "fullName": "real portable and LanceDB library adapters cancels worker startup, releases the worker on close, and can reopen",
+          "status": "passed",
+          "title": "cancels worker startup, releases the worker on close, and can reopen",
+          "duration": 1521.4105999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794407081371,
+      "endTime": 1794407089339.4106,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-vector-backends.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "shared SQLite vector generation activation"
+          ],
+          "fullName": "shared SQLite vector generation activation quarantines the old active generation when a different workspace takes the namespace",
+          "status": "passed",
+          "title": "quarantines the old active generation when a different workspace takes the namespace",
+          "duration": 133.2876,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "shared SQLite vector generation activation"
+          ],
+          "fullName": "shared SQLite vector generation activation fences competing builds and activates one backend per namespace",
+          "status": "passed",
+          "title": "fences competing builds and activates one backend per namespace",
+          "duration": 119.47429999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "shared SQLite vector generation activation"
+          ],
+          "fullName": "shared SQLite vector generation activation rejects model replacement reuse and leaves interrupted builds recoverable",
+          "status": "passed",
+          "title": "rejects model replacement reuse and leaves interrupted builds recoverable",
+          "duration": 121.5498,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "shared SQLite vector generation activation"
+          ],
+          "fullName": "shared SQLite vector generation activation prefilters exact distance and keeps workspace, space and generation boundaries",
+          "status": "passed",
+          "title": "prefilters exact distance and keeps workspace, space and generation boundaries",
+          "duration": 123.20280000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "shared SQLite vector generation activation"
+          ],
+          "fullName": "shared SQLite vector generation activation removes vector eligibility immediately when the shared source owner revokes a generation",
+          "status": "passed",
+          "title": "removes vector eligibility immediately when the shared source owner revokes a generation",
+          "duration": 118.08550000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794407112552,
+      "endTime": 1794407113168.0854,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-vector-generation.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "vector activation ownership"
+          ],
+          "fullName": "vector activation ownership repairs a native generation whose IDs changed without changing its row count",
+          "status": "passed",
+          "title": "repairs a native generation whose IDs changed without changing its row count",
+          "duration": 398.59169999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vector activation ownership"
+          ],
+          "fullName": "vector activation ownership does not reuse an old source generation after identical content is revoked and restored",
+          "status": "passed",
+          "title": "does not reuse an old source generation after identical content is revoked and restored",
+          "duration": 165.05060000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vector activation ownership"
+          ],
+          "fullName": "vector activation ownership does not reuse vector rows whose current source identity changed",
+          "status": "passed",
+          "title": "does not reuse vector rows whose current source identity changed",
+          "duration": 157.50160000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vector activation ownership"
+          ],
+          "fullName": "vector activation ownership returns maintenance intent without waiting for the active build",
+          "status": "passed",
+          "title": "returns maintenance intent without waiting for the active build",
+          "duration": 154.3442,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vector activation ownership"
+          ],
+          "fullName": "vector activation ownership retains a rebuild requested during embedding and drains queued maintenance",
+          "status": "passed",
+          "title": "retains a rebuild requested during embedding and drains queued maintenance",
+          "duration": 147.9967999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vector activation ownership"
+          ],
+          "fullName": "vector activation ownership allows a new workspace/session to configure its own index without exposing the prior generation",
+          "status": "passed",
+          "title": "allows a new workspace/session to configure its own index without exposing the prior generation",
+          "duration": 119.5909999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vector activation ownership"
+          ],
+          "fullName": "vector activation ownership drains an enabling activation before a concurrent disable and leaves no polling timer",
+          "status": "passed",
+          "title": "drains an enabling activation before a concurrent disable and leaves no polling timer",
+          "duration": 136.2435999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "vector activation ownership"
+          ],
+          "fullName": "vector activation ownership rejects a late query result after disable and re-enable of the same vector generation",
+          "status": "passed",
+          "title": "rejects a late query result after disable and re-enable of the same vector generation",
+          "duration": 155.0926000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794407110285,
+      "endTime": 1794407111719.0925,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-vector-service.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy allows projection reads in read-only mode and keeps lifecycle writes gated",
+          "status": "passed",
+          "title": "allows projection reads in read-only mode and keeps lifecycle writes gated",
+          "duration": 3.06149999999991,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy classifies common read, write, network, and destructive commands",
+          "status": "passed",
+          "title": "classifies common read, write, network, and destructive commands",
+          "duration": 1.1895999999999276,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy blocks mutating commands in read-only mode",
+          "status": "passed",
+          "title": "blocks mutating commands in read-only mode",
+          "duration": 0.2987000000000535,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy treats git config-injection and boundary-escape flags as destructive whatever the subcommand",
+          "status": "passed",
+          "title": "treats git config-injection and boundary-escape flags as destructive whatever the subcommand",
+          "duration": 0.2980000000000018,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy does not let a leading git global flag downgrade a destructive or network subcommand",
+          "status": "passed",
+          "title": "does not let a leading git global flag downgrade a destructive or network subcommand",
+          "duration": 0.19399999999995998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy classifies worktree lifecycle commands without letting shell risk lag behind git-api",
+          "status": "passed",
+          "title": "classifies worktree lifecycle commands without letting shell risk lag behind git-api",
+          "duration": 0.5880000000000791,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy keeps benign git invocations readable when global flags are absent or harmless",
+          "status": "passed",
+          "title": "keeps benign git invocations readable when global flags are absent or harmless",
+          "duration": 0.20860000000004675,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy stops treating a read subcommand as read-only once --output redirects to a file",
+          "status": "passed",
+          "title": "stops treating a read subcommand as read-only once --output redirects to a file",
+          "duration": 0.14070000000003802,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy blocks a git --output write in read-only mode",
+          "status": "passed",
+          "title": "blocks a git --output write in read-only mode",
+          "duration": 0.20590000000004238,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy does not mistake look-alike git flags for an output redirect",
+          "status": "passed",
+          "title": "does not mistake look-alike git flags for an output redirect",
+          "duration": 0.22639999999989868,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy requires approval for risky commands in accept-edits mode",
+          "status": "passed",
+          "title": "requires approval for risky commands in accept-edits mode",
+          "duration": 0.14950000000010277,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy gates writes to Git repository metadata even inside the workspace",
+          "status": "passed",
+          "title": "gates writes to Git repository metadata even inside the workspace",
+          "duration": 0.40790000000004056,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy does not treat git-adjacent project files as repository metadata",
+          "status": "passed",
+          "title": "does not treat git-adjacent project files as repository metadata",
+          "duration": 0.2866999999999962,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy detects git metadata through backslash paths and case differences",
+          "status": "passed",
+          "title": "detects git metadata through backslash paths and case differences",
+          "duration": 0.10190000000000055,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy maps workspace modes to OpenClaw exec approval config",
+          "status": "passed",
+          "title": "maps workspace modes to OpenClaw exec approval config",
+          "duration": 0.3346000000000231,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy checks whether a path stays inside the workspace",
+          "status": "passed",
+          "title": "checks whether a path stays inside the workspace",
+          "duration": 0.13959999999997308,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy applies workspace modes to file writes",
+          "status": "passed",
+          "title": "applies workspace modes to file writes",
+          "duration": 0.23470000000008895,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy classifies gateway RPC methods conservatively",
+          "status": "passed",
+          "title": "classifies gateway RPC methods conservatively",
+          "duration": 0.35429999999996653,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy keeps the dev/test-only gateway RPC guard mechanism with an empty method set",
+          "status": "passed",
+          "title": "keeps the dev/test-only gateway RPC guard mechanism with an empty method set",
+          "duration": 0.260599999999954,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy defaults new/untrusted workspace permission mode to readOnly (P2-001 / F-AUTH-001)",
+          "status": "passed",
+          "title": "defaults new/untrusted workspace permission mode to readOnly (P2-001 / F-AUTH-001)",
+          "duration": 0.22280000000000655,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "workspace permission policy"
+          ],
+          "fullName": "workspace permission policy covers write decisions across permission modes for files and commands",
+          "status": "passed",
+          "title": "covers write decisions across permission modes for files and commands",
+          "duration": 0.337099999999964,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794407122408,
+      "endTime": 1794407122417.3542,
+      "status": "passed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/workspace-permissions.test.ts"
+    }
+  ]
+}

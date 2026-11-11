@@ -1,0 +1,116 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-TF-0883/formal-5c15e3507-rag06-20261111-final3/electron",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-vector-backends.spec.ts",
+      "file": "project-rag-vector-backends.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG vector settings switch native backends and preserve owner revocation across restart",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 162453,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T14:50:15.289Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "vector-lifecycle-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJhY3RvciI6ICJjb2RleC9wcm9qZWN0LXJhZy12ZWN0b3ItZWxlY3Ryb24iLAogICJkcml2ZW5fYnkiOiAiYWdlbnQiLAogICJzdGF0dXMiOiAicGFzcyIsCiAgInN0ZXBzIjogewogICAgInBvcnRhYmxlIjogdHJ1ZSwKICAgICJhbm5Td2l0Y2giOiB0cnVlLAogICAgImFjbEltbWVkaWF0ZSI6IHRydWUsCiAgICAiYXBwZW5kVmlzaWJsZSI6IHRydWUsCiAgICAicmVzdGFydCI6IHRydWUsCiAgICAiZm9ybVJlc3RvcmVkIjogdHJ1ZSwKICAgICJkZWxldGVkSW1tZWRpYXRlIjogdHJ1ZSwKICAgICJ3b3Jrc3BhY2VTd2l0Y2giOiB0cnVlLAogICAgInByaW9yU291cmNlUmVqZWN0ZWQiOiB0cnVlLAogICAgImRpc2FibGVkIjogdHJ1ZQogIH0sCiAgImZyZWVNZW1vcnlBdFN0YXJ0TWlCIjogMzk2MiwKICAicG9ydGFibGUiOiB7CiAgICAic3RhdHVzIjogImF2YWlsYWJsZSIsCiAgICAiZWZmZWN0aXZlQmFja2VuZCI6ICJzcWxpdGUtZmxhdCIsCiAgICAiZ2VuZXJhdGlvbklkIjogImJjZGFlMjEwLTYyYzQtNDA1OC1iMDY3LTczNDRhYzYyYmI5YyIsCiAgICAiY29udGV4dElkIjogIjljMjcyMTBkLWJkNDctNGI0Zi1hZjM1LTNlMzkzMzFlMGU5ZiIsCiAgICAiY2FuZGlkYXRlcyI6IFsKICAgICAgewogICAgICAgICJpZCI6ICJzaGEyNTY6OTBmNjY5ZjZjMGQ0MDU0ZTEzMGZmNTU5Mjg2YjhhNzg1ZDM1MWI0YjM0ODJhNDY2Njg3NDYyODgwNzk3ODA4NSIsCiAgICAgICAgImNodW5rSWQiOiAiY2h1bms6c2hhMjU2OjFhYWZkNmMzMmE4Yzg1MDVjMDk5Y2Q2ODI5ODEwZDdjNzNjNjM5ZDZmNGQ0M2JiNDgxOTc3YzMwNzVlMjk0MGEiLAogICAgICAgICJzb3VyY2VSZWYiOiB7CiAgICAgICAgICAiZG9tYWluIjogIndpa2kiLAogICAgICAgICAgImF1dGhvcml0eUlkIjogIm1lbW9yeS13aWtpIiwKICAgICAgICAgICJuYW1lc3BhY2VJZCI6ICJtZW1vcnktd2lraTozNWZlMjA5MzZmZDc1ODk1ZTY4ZGQ2MTA1YTg5MWFmOTJkMWMwYTllOTc0YTBiMTBmNWJiZDZlMThlOTUyY2I4IiwKICAgICAgICAgICJzdWJqZWN0SWQiOiAiY29uY2VwdHMvc291cmNlLm1kIiwKICAgICAgICAgICJyZXZpc2lvbiI6ICIxIiwKICAgICAgICAgICJzY2hlbWEiOiAiU291cmNlUmVmL3YyIiwKICAgICAgICAgICJzb3VyY2VEaWdlc3QiOiAic2hhMjU2OjlhYmNiYTY0OTFmMmRhZjgwMDg5M2NhNmYxYjViYTVlNThjMjcxNzYxNWJiOGJhYjU0ZTA1ZmFjZmFjYjg5OTQiLAogICAgICAgICAgInBvbGljeUVwb2NoIjogInNoYTI1NjoxMDY2ODBlMDE2NGQ1MGJjZTNkNjJmNDU0YzgzMmIxNzVlYjA1M2M2MjI4ZjI5NTMzNjA1MGQ4NzdmYjEzMjVkIiwKICAgICAgICAgICJsb2NhdG9yIjogewogICAgICAgICAgICAiY29vcmRpbmF0ZVNwYWNlIjogInJhdy1zb3VyY2UtdXRmOC12MSIsCiAgICAgICAgICAgICJzdGFydEJ5dGUiOiAxMjMsCiAgICAgICAgICAgICJlbmRCeXRlRXhjbHVzaXZlIjogMTYxLAogICAgICAgICAgICAic3RhcnRMaW5lIjogOSwKICAgICAgICAgICAgImVuZExpbmUiOiA5CiAgICAgICAgICB9CiAgICAgICAgfSwKICAgICAgICAiZGlzdGFuY2UiOiAwLjEyMTY2NDI0MDE2MzcxOTY4LAogICAgICAgICJxdW90ZSI6ICJUaGUgZ2F0ZXdheSBkZXBsb3ltZW50IHBvcnQgaXMgMTg3ODkuXG4iCiAgICAgIH0KICAgIF0KICB9LAogICJsYXN0VmVjdG9yU3RhdHVzIjogewogICAgInN0YXR1cyI6ICJyZWFkeSIsCiAgICAicmVxdWVzdGVkQmFja2VuZCI6ICJsYW5jZWRiLWFubiIsCiAgICAiZWZmZWN0aXZlQmFja2VuZCI6ICJsYW5jZWRiLWFubiIsCiAgICAiY2FwYWJpbGl0eSI6IHsKICAgICAgInNjaGVtYSI6ICJJbmRleEJhY2tlbmRDYXBhYmlsaXRpZXMvdjEiLAogICAgICAiYmFja2VuZCI6ICJsYW5jZWRiLWFubiIsCiAgICAgICJwbGF0Zm9ybSI6ICJ3aW4zMiIsCiAgICAgICJhcmNoIjogIng2NCIsCiAgICAgICJtYXhSZWZlcmVuY2VSb3dzIjogMTAwMDAwLAogICAgICAicHJlZmlsdGVyIjogdHJ1ZSwKICAgICAgImluY2x1ZGVzVW5pbmRleGVkUm93cyI6IHRydWUsCiAgICAgICJhdmFpbGFibGUiOiB0cnVlCiAgICB9LAogICAgInJlYXNvbiI6IG51bGwsCiAgICAiZ2VuZXJhdGlvbiI6IHsKICAgICAgInNjaGVtYSI6ICJWZWN0b3JHZW5lcmF0aW9uL3YxIiwKICAgICAgImdlbmVyYXRpb25JZCI6ICI1NzAwOGUwYy0wZDIxLTQxMTYtOGIwYi0yYmM4YjZjNGNkODkiLAogICAgICAibmFtZXNwYWNlSWQiOiAibWVtb3J5LXdpa2k6MzVmZTIwOTM2ZmQ3NTg5NWU2OGRkNjEwNWE4OTFhZjkyZDFjMGE5ZTk3NGEwYjEwZjViYmQ2ZTE4ZTk1MmNiOCIsCiAgICAgICJ3b3Jrc3BhY2VJZCI6ICJwcm9qZWN0LXZlY3Rvci1maXh0dXJlIiwKICAgICAgInNwYWNlSWQiOiAic2hhMjU2OjVlMjVjNzg2NWQ0NWJjZGU3Y2Q2MGYwYWI4MDNhNjM2NDdkOTk3NzBkNTY5MTA4MDcyZDBkNTYzMjQ3MzQxZTIiLAogICAgICAiYmFja2VuZCI6ICJsYW5jZWRiLWFubiIsCiAgICAgICJpbnRlbnRTZXF1ZW5jZSI6IDIsCiAgICAgICJzdGF0ZSI6ICJhY3RpdmUiLAogICAgICAicm93Q291bnQiOiAxCiAgICB9LAogICAgImluZGV4aW5nIjogZmFsc2UKICB9LAogICJhbm4iOiB7CiAgICAic3RhdHVzIjogImF2YWlsYWJsZSIsCiAgICAiZWZmZWN0aXZlQmFja2VuZCI6ICJsYW5jZWRiLWFubiIsCiAgICAiZ2VuZXJhdGlvbklkIjogIjU3MDA4ZTBjLTBkMjEtNDExNi04YjBiLTJiYzhiNmM0Y2Q4OSIsCiAgICAiY29udGV4dElkIjogImZmOWQ5YjBkLWRkNTUtNGQ5NS05NGQ1LTg0ZmZhM2Q3MjUwYyIsCiAgICAiY2FuZGlkYXRlcyI6IFsKICAgICAgewogICAgICAgICJpZCI6ICJzaGEyNTY6OTBmNjY5ZjZjMGQ0MDU0ZTEzMGZmNTU5Mjg2YjhhNzg1ZDM1MWI0YjM0ODJhNDY2Njg3NDYyODgwNzk3ODA4NSIsCiAgICAgICAgImNodW5rSWQiOiAiY2h1bms6c2hhMjU2OjFhYWZkNmMzMmE4Yzg1MDVjMDk5Y2Q2ODI5ODEwZDdjNzNjNjM5ZDZmNGQ0M2JiNDgxOTc3YzMwNzVlMjk0MGEiLAogICAgICAgICJzb3VyY2VSZWYiOiB7CiAgICAgICAgICAiZG9tYWluIjogIndpa2kiLAogICAgICAgICAgImF1dGhvcml0eUlkIjogIm1lbW9yeS13aWtpIiwKICAgICAgICAgICJuYW1lc3BhY2VJZCI6ICJtZW1vcnktd2lraTozNWZlMjA5MzZmZDc1ODk1ZTY4ZGQ2MTA1YTg5MWFmOTJkMWMwYTllOTc0YTBiMTBmNWJiZDZlMThlOTUyY2I4IiwKICAgICAgICAgICJzdWJqZWN0SWQiOiAiY29uY2VwdHMvc291cmNlLm1kIiwKICAgICAgICAgICJyZXZpc2lvbiI6ICIxIiwKICAgICAgICAgICJzY2hlbWEiOiAiU291cmNlUmVmL3YyIiwKICAgICAgICAgICJzb3VyY2VEaWdlc3QiOiAic2hhMjU2OjlhYmNiYTY0OTFmMmRhZjgwMDg5M2NhNmYxYjViYTVlNThjMjcxNzYxNWJiOGJhYjU0ZTA1ZmFjZmFjYjg5OTQiLAogICAgICAgICAgInBvbGljeUVwb2NoIjogInNoYTI1NjoxMDY2ODBlMDE2NGQ1MGJjZTNkNjJmNDU0YzgzMmIxNzVlYjA1M2M2MjI4ZjI5NTMzNjA1MGQ4NzdmYjEzMjVkIiwKICAgICAgICAgICJsb2NhdG9yIjogewogICAgICAgICAgICAiY29vcmRpbmF0ZVNwYWNlIjogInJhdy1zb3VyY2UtdXRmOC12MSIsCiAgICAgICAgICAgICJzdGFydEJ5dGUiOiAxMjMsCiAgICAgICAgICAgICJlbmRCeXRlRXhjbHVzaXZlIjogMTYxLAogICAgICAgICAgICAic3RhcnRMaW5lIjogOSwKICAgICAgICAgICAgImVuZExpbmUiOiA5CiAgICAgICAgICB9CiAgICAgICAgfSwKICAgICAgICAiZGlzdGFuY2UiOiAwLjEyMTY2NDIyNjA1NTE0NTI2LAogICAgICAgICJxdW90ZSI6ICJUaGUgZ2F0ZXdheSBkZXBsb3ltZW50IHBvcnQgaXMgMTg3ODkuXG4iCiAgICAgIH0KICAgIF0KICB9LAogICJtZW1vcnlCZWZvcmVSZXN0YXJ0TWlCIjogMjMzMCwKICAibGFzdEVtYmVkZGluZ1N0YXR1cyI6IHsKICAgICJzdWNjZXNzIjogdHJ1ZSwKICAgICJlbWJlZGRpbmciOiB7CiAgICAgICJtb2RlIjogImxvY2FsIiwKICAgICAgInN0YXR1cyI6ICJyZWFkeSIsCiAgICAgICJjcmVkZW50aWFsRXBvY2giOiAyLAogICAgICAicHJvdmlkZXJSZWYiOiAibG9jYWw6ZW1iZWRkaW5nZ2VtbWEtMzAwbSIsCiAgICAgICJtb2RlbCI6ICJnb29nbGUvZW1iZWRkaW5nZ2VtbWEtMzAwbSIsCiAgICAgICJkaW1lbnNpb25zIjogNzY4LAogICAgICAic3BhY2VJZCI6ICJzaGEyNTY6NWUyNWM3ODY1ZDQ1YmNkZTdjZDYwZjBhYjgwM2E2MzY0N2Q5OTc3MGQ1NjkxMDgwNzJkMGQ1NjMyNDczNDFlMiIsCiAgICAgICJjYXBhYmlsaXR5IjogewogICAgICAgICJzY2hlbWEiOiAiUHJvdmlkZXJDYXBhYmlsaXR5U25hcHNob3QvdjEiLAogICAgICAgICJwcm92aWRlclJlZiI6ICJsb2NhbDplbWJlZGRpbmdnZW1tYS0zMDBtIiwKICAgICAgICAidHJhbnNwb3J0IjogImxvY2FsIiwKICAgICAgICAiY3JlZGVudGlhbEVwb2NoIjogMiwKICAgICAgICAib2JzZXJ2ZWRBdCI6ICIyMDI2LTExLTExVDE0OjUxOjQxLjIxOVoiLAogICAgICAgICJzdGF0dXMiOiAicmVhZHkiLAogICAgICAgICJzcGFjZSI6IHsKICAgICAgICAgICJzY2hlbWEiOiAiRW1iZWRkaW5nU3BhY2UvdjEiLAogICAgICAgICAgInNwYWNlSWQiOiAic2hhMjU2OjVlMjVjNzg2NWQ0NWJjZGU3Y2Q2MGYwYWI4MDNhNjM2NDdkOTk3NzBkNTY5MTA4MDcyZDBkNTYzMjQ3MzQxZTIiLAogICAgICAgICAgInByb3ZpZGVyUmVmIjogImxvY2FsOmVtYmVkZGluZ2dlbW1hLTMwMG0iLAogICAgICAgICAgIm1vZGVsIjogImdvb2dsZS9lbWJlZGRpbmdnZW1tYS0zMDBtIiwKICAgICAgICAgICJtb2RlbFJldmlzaW9uIjogIjY2Zjk3NGY4Y2Q0OGNjM2I5YzQxYzUxNmI5NTUwOGU3NWI0YmVlNjQvc2hhMjU2OjZmYTBjMDJhOWMzMDJiZTZmOTc3NTIxZDM5OWI0ZGUzYTQ2MzEwYTRmMjYyMWVlMDA2Mzc0Nzg4MWI2NzNmNjciLAogICAgICAgICAgImRpbWVuc2lvbnMiOiA3NjgsCiAgICAgICAgICAibWF4SW5wdXRUb2tlbnMiOiAyMDQ3LAogICAgICAgICAgInRva2VuaXplcklkIjogIm5vZGUtbGxhbWEtY3BwL2NhbGN1bGF0ZUlucHV0TGVuZ3RoL3YxIiwKICAgICAgICAgICJ0b2tlbml6ZXJEaWdlc3QiOiAic2hhMjU2OjU4MmNmNWQ0YmNmM2VlZDg4YjU0Njg2MjFiYjA3ZjYzNGQzMmViNDBkM2E5MzI1ODhkYTQ4NzNiMDU5MDg5NWUiLAogICAgICAgICAgImlucHV0Rm9ybWF0IjogewogICAgICAgICAgICAiaWQiOiAiZW1iZWRkaW5nZ2VtbWEvc2VhcmNoLXYxIiwKICAgICAgICAgICAgInF1ZXJ5IjogInRhc2s6IHNlYXJjaCByZXN1bHQgfCBxdWVyeToge3RleHR9IiwKICAgICAgICAgICAgImRvY3VtZW50IjogInRpdGxlOiB7dGl0bGV9IHwgdGV4dDoge3RleHR9IgogICAgICAgICAgfSwKICAgICAgICAgICJub3JtYWxpemF0aW9uIjogImwyIgogICAgICAgIH0KICAgICAgfQogICAgfQogIH0sCiAgImZyZWVNZW1vcnlNaUIiOiAxNDE0LAogICJyZXN0b3JlZCI6IHsKICAgICJzdGF0dXMiOiAiYXZhaWxhYmxlIiwKICAgICJlZmZlY3RpdmVCYWNrZW5kIjogImxhbmNlZGItYW5uIiwKICAgICJnZW5lcmF0aW9uSWQiOiAiNTcwMDhlMGMtMGQyMS00MTE2LThiMGItMmJjOGI2YzRjZDg5IiwKICAgICJjb250ZXh0SWQiOiAiZTY4MjljNzItODJjZS00OGVhLTliMzQtMTE0ODAzYmM0Y2UwIiwKICAgICJjYW5kaWRhdGVzIjogWwogICAgICB7CiAgICAgICAgImlkIjogInNoYTI1NjpjMjZkM2ZjZmZlODhmYTgxZmUxYjYwMjMwMzcwYmVlZGIxMTU3ZjZlY2ZhOTc0MWYzNjY3NjVhM2Q1Y2IxOTE5IiwKICAgICAgICAiY2h1bmtJZCI6ICJjaHVuazpzaGEyNTY6NGQxM2Q4OTQyNTc3MzFmYmVkODI1MDMzNGNlZjIwMzljY2VhYmUyYWIzOWQ1NTdhNTIwNDAzMzQ2Nzk1YTg5OCIsCiAgICAgICAgInNvdXJjZVJlZiI6IHsKICAgICAgICAgICJkb21haW4iOiAid2lraSIsCiAgICAgICAgICAiYXV0aG9yaXR5SWQiOiAibWVtb3J5LXdpa2kiLAogICAgICAgICAgIm5hbWVzcGFjZUlkIjogIm1lbW9yeS13aWtpOjM1ZmUyMDkzNmZkNzU4OTVlNjhkZDYxMDVhODkxYWY5MmQxYzBhOWU5NzRhMGIxMGY1YmJkNmUxOGU5NTJjYjgiLAogICAgICAgICAgInN1YmplY3RJZCI6ICJjb25jZXB0cy9zb3VyY2UubWQiLAogICAgICAgICAgInJldmlzaW9uIjogIjMiLAogICAgICAgICAgInNjaGVtYSI6ICJTb3VyY2VSZWYvdjIiLAogICAgICAgICAgInNvdXJjZURpZ2VzdCI6ICJzaGEyNTY6MzI2ZTkyOGU0NDU2MjJkZGUzYzc1YzZmNjZmNDM1ZDkyYjc3NTI1NTI2OTk1ZjlkNmRlNGNmNzhlMzNiMGYzYiIsCiAgICAgICAgICAicG9saWN5RXBvY2giOiAic2hhMjU2OjEwNjY4MGUwMTY0ZDUwYmNlM2Q2MmY0NTRjODMyYjE3NWViMDUzYzYyMjhmMjk1MzM2MDUwZDg3N2ZiMTMyNWQiLAogICAgICAgICAgImxvY2F0b3IiOiB7CiAgICAgICAgICAgICJjb29yZGluYXRlU3BhY2UiOiAicmF3LXNvdXJjZS11dGY4LXYxIiwKICAgICAgICAgICAgInN0YXJ0Qnl0ZSI6IDEyMywKICAgICAgICAgICAgImVuZEJ5dGVFeGNsdXNpdmUiOiAxNzAsCiAgICAgICAgICAgICJzdGFydExpbmUiOiA5LAogICAgICAgICAgICAiZW5kTGluZSI6IDkKICAgICAgICAgIH0KICAgICAgICB9LAogICAgICAgICJkaXN0YW5jZSI6IDAuMTk0MDY0MTQwMzE5ODI0MjIsCiAgICAgICAgInF1b3RlIjogIlRoZSByZXN0b3JlZCBnYXRld2F5IGRlcGxveW1lbnQgcG9ydCBpcyAxOTk5OS5cbiIKICAgICAgfQogICAgXQogIH0sCiAgIm1lbW9yeUJlZm9yZVdvcmtzcGFjZVN3aXRjaE1pQiI6IDEyODcsCiAgIndvcmtzcGFjZVN3aXRjaCI6IHsKICAgICJmcm9tIjogInByb2plY3QtdmVjdG9yLWZpeHR1cmUiLAogICAgInRvIjogIm5leHQtdmVjdG9yLXdvcmtzcGFjZSIsCiAgICAicHJpb3JTb3VyY2VSZWplY3RlZCI6IHRydWUKICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5ad357286a82a0ea23cf-60d2a8c2becc8956502a",
+          "file": "project-rag-vector-backends.spec.ts",
+          "line": 49,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-11T14:50:14.328Z",
+    "duration": 165376.398,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

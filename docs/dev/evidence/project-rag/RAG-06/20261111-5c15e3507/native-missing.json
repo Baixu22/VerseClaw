@@ -1,0 +1,146 @@
+{
+  "schema": "ProjectRagVectorOwnerProbe/v1",
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "status": "pass",
+  "candidate": "5c15e3507340b679986377026665b80585d1efbc",
+  "recordedAt": "2026-11-11T14:46:46.586Z",
+  "dirtyDevelopmentProbe": false,
+  "steps": {
+    "portableReady": true,
+    "sourceUpdateReplaced": true,
+    "aclImmediateReject": true,
+    "missingNativeFallback": true,
+    "fallbackRestartRecovered": true,
+    "deletionImmediateReject": true,
+    "cleanupReconciled": true
+  },
+  "portable": {
+    "status": "available",
+    "effectiveBackend": "sqlite-flat",
+    "generationId": "adfd29c7-0322-48bf-9756-c879c3ade9e9",
+    "contextId": "7d271a67-e1ad-463d-beb2-90cbe202ccab",
+    "candidates": [
+      {
+        "id": "sha256:b4ca44345b1e7f6196f1afd64024ff9098052521ef9749b9aa820ea3ac4f1f16",
+        "chunkId": "chunk:sha256:c427892d7185bd55ce3bcbb6eb317f968d9022696c5f5d376815a2cca55d7e01",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:ecb9098db11d5f7761ea12b8aee75723f415fe01afaeb2e2c58de392916e046e",
+          "subjectId": "concepts/source.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:f92a913092d31ba950bc358b851d6af77b97b6d7b236c35f612ae934033bd192",
+          "policyEpoch": "sha256:3801891fde6ba786a2cdf8a613361b2d00ad0a61b5c7b81e68557069a80ec94a",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 115,
+            "endByteExclusive": 204,
+            "startLine": 9,
+            "endLine": 9
+          }
+        },
+        "distance": 0.2614218331668632,
+        "quote": "The deployment gateway port is 18789. Source owners check project access before reading.\n"
+      }
+    ]
+  },
+  "ann": {
+    "status": "available",
+    "effectiveBackend": "sqlite-flat",
+    "generationId": "adfd29c7-0322-48bf-9756-c879c3ade9e9",
+    "contextId": "f4ead5ce-e2a0-46c7-b216-b56cce98229e",
+    "candidates": [
+      {
+        "id": "sha256:04ceb08c43ab20d103aa4ca512cf1e5d81207d09ecfaf7d1362cd3ce4c6360f5",
+        "chunkId": "chunk:sha256:2fc9f896cf430a33c61767a4b9f9c668aaeb888239e7f7a3c8d218bcfdad468a",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:ecb9098db11d5f7761ea12b8aee75723f415fe01afaeb2e2c58de392916e046e",
+          "subjectId": "concepts/source.md",
+          "revision": "4",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:ecf3d8c24edab7939339ac222c6b8e7f56bfa3bf47fb4e8c242d43d664898078",
+          "policyEpoch": "sha256:3801891fde6ba786a2cdf8a613361b2d00ad0a61b5c7b81e68557069a80ec94a",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 115,
+            "endByteExclusive": 162,
+            "startLine": 9,
+            "endLine": 9
+          }
+        },
+        "distance": 0.2568138714330471,
+        "quote": "The restored deployment gateway port is 19999.\n"
+      }
+    ]
+  },
+  "active": {
+    "status": "ready",
+    "requestedBackend": "lancedb-ann",
+    "effectiveBackend": "sqlite-flat",
+    "capability": {
+      "schema": "IndexBackendCapabilities/v1",
+      "backend": "lancedb-ann",
+      "platform": "win32",
+      "arch": "x64",
+      "maxReferenceRows": 100000,
+      "prefilter": true,
+      "includesUnindexedRows": true,
+      "available": false,
+      "reason": "Native LanceDB module loading capability unavailable"
+    },
+    "reason": "Native LanceDB module loading capability unavailable",
+    "generation": {
+      "schema": "VectorGeneration/v1",
+      "generationId": "adfd29c7-0322-48bf-9756-c879c3ade9e9",
+      "namespaceId": "memory-wiki:ecb9098db11d5f7761ea12b8aee75723f415fe01afaeb2e2c58de392916e046e",
+      "workspaceId": "agent-vector-project",
+      "spaceId": "sha256:5e25c7865d45bcde7cd60f0ab803a63647d99770d569108072d0d563247341e2",
+      "backend": "sqlite-flat",
+      "intentSequence": 1,
+      "state": "active",
+      "rowCount": 1
+    },
+    "indexing": false
+  },
+  "recovered": {
+    "status": "available",
+    "effectiveBackend": "sqlite-flat",
+    "generationId": "adfd29c7-0322-48bf-9756-c879c3ade9e9",
+    "contextId": "b34b050b-ce56-40af-baa9-4abefd08ae84",
+    "candidates": [
+      {
+        "id": "sha256:04ceb08c43ab20d103aa4ca512cf1e5d81207d09ecfaf7d1362cd3ce4c6360f5",
+        "chunkId": "chunk:sha256:2fc9f896cf430a33c61767a4b9f9c668aaeb888239e7f7a3c8d218bcfdad468a",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:ecb9098db11d5f7761ea12b8aee75723f415fe01afaeb2e2c58de392916e046e",
+          "subjectId": "concepts/source.md",
+          "revision": "4",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:ecf3d8c24edab7939339ac222c6b8e7f56bfa3bf47fb4e8c242d43d664898078",
+          "policyEpoch": "sha256:3801891fde6ba786a2cdf8a613361b2d00ad0a61b5c7b81e68557069a80ec94a",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 115,
+            "endByteExclusive": 162,
+            "startLine": 9,
+            "endLine": 9
+          }
+        },
+        "distance": 0.2568138714330471,
+        "quote": "The restored deployment gateway port is 19999.\n"
+      }
+    ]
+  },
+  "nativeDependencyFault": {
+    "simulated": true,
+    "actor": "codex/project-rag",
+    "mechanism": "Node module resolution rejection",
+    "blockedNativeLoads": 2
+  }
+}

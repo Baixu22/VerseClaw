@@ -1,0 +1,37 @@
+rows 0 / 20000
+rows 4096 / 20000
+rows 8192 / 20000
+rows 12288 / 20000
+rows 16384 / 20000
+query 0 ms 857 recall 1
+query 1 ms 25 recall 1
+query 2 ms 17 recall 1
+query 3 ms 19 recall 1
+query 4 ms 19 recall 1
+query 5 ms 18 recall 1
+query 6 ms 16 recall 1
+query 7 ms 15 recall 1
+query 8 ms 18 recall 1
+query 9 ms 16 recall 1
+query 10 ms 15 recall 1
+query 11 ms 20 recall 1
+query 12 ms 15 recall 1
+query 13 ms 16 recall 1
+query 14 ms 15 recall 1
+query 15 ms 16 recall 1
+query 16 ms 17 recall 1
+query 17 ms 16 recall 1
+query 18 ms 25 recall 1
+query 19 ms 18 recall 1
+query 20 ms 16 recall 1
+query 21 ms 15 recall 1
+query 22 ms 15 recall 1
+query 23 ms 15 recall 1
+query 24 ms 18 recall 1
+query 25 ms 15 recall 1
+query 26 ms 15 recall 1
+query 27 ms 18 recall 1
+query 28 ms 17 recall 1
+query 29 ms 18 recall 1
+query 30 ms 17 recall 1
+{"schema":"ProjectRagVectorCapacity/v1","actor":"codex/project-rag","driven_by":"agent","candidate":"5c15e3507340b679986377026665b80585d1efbc","dirtyDevelopmentProbe":false,"recordedAt":"2026-11-11T14:47:17.238Z","mode":"portable","rows":20000,"dimensions":768,"fixture":{"kind":"agent-generated deterministic synthetic vectors","distribution":"32 latent coordinates repeated across768 with topic jitter","seed":87319,"semanticQualityMeasured":false},"capability":{"schema":"IndexBackendCapabilities/v1","backend":"sqlite-flat","available":true,"platform":"win32","arch":"x64","maxReferenceRows":20000,"prefilter":true,"includesUnindexedRows":true},"status":"pass","writeMs":4396,"query":{"count":31,"warmCount":30,"coldMs":857.0078999999987,"warmP50Ms":15.822299999999814,"warmP95Ms":25.367200000000594,"recallAt20":1,"eachRecall":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"timingsMs":[857.0078999999987,25.367200000000594,17.208199999999124,18.911000000000058,18.74789999999848,17.66269999999895,15.773299999998926,15.27180000000044,18.33980000000156,15.514999999999418,14.659700000000157,19.607599999999366,15.366500000000087,15.741900000000896,15.149199999999837,15.677999999999884,17.20679999999993,15.822299999999814,25.481500000001688,17.688700000002427,15.54910000000018,14.603899999998248,14.698300000000017,15.334999999999127,17.7187999999951,14.864900000000489,14.971900000004098,18.305500000002212,17.29370000000199,18.24659999999858,17.385400000006484],"filterSelectivity":0.8},"gates":{"recall":{"minimum":0.98,"actual":1,"passed":true},"warmLatency":{"maximumMs":900,"actualMs":25.367200000000594,"passed":true}},"restart":{"status":"pass"},"diskBytes":90473759,"peakRssBytes":990724096,"finishedAt":"2026-11-11T14:47:55.272Z"}

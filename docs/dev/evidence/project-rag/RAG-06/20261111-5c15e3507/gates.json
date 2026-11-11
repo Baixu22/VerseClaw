@@ -1,0 +1,326 @@
+{
+  "cleanAtEnd": true,
+  "results": [
+    {
+      "finishedAt": "2026-11-11T14:18:56.6854506+00:00",
+      "startedAt": "2026-11-11T14:17:42.8888221+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "runtime-build",
+      "args": [
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:20:23.5198588+00:00",
+      "startedAt": "2026-11-11T14:18:58.3144296+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "desktop-build",
+      "args": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "build:vite"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:25:23.7947368+00:00",
+      "startedAt": "2026-11-11T14:24:06.6755314+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "root-unit",
+      "args": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/project-rag-vector-backends.test.ts",
+        "tests/unit/project-rag-vector-generation.test.ts",
+        "tests/unit/project-rag-vector-service.test.ts",
+        "tests/unit/copy-runtime-package.test.ts",
+        "tests/unit/knowledge-vector-settings.test.tsx",
+        "tests/unit/project-rag-embedding-lifecycle.test.ts",
+        "tests/unit/knowledge-evidence-qa.test.ts",
+        "tests/unit/project-rag-index-recovery.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/knowledge-source-set-answer.test.ts",
+        "tests/unit/knowledge-retrieval.test.ts",
+        "tests/unit/knowledge-embedding-deadline.test.ts",
+        "tests/unit/workspace-permissions.test.ts",
+        "tests/unit/gateway-permissions-api.test.ts",
+        "tests/unit/contract-check.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile",
+        "D:\\tmp\\project-rag-TF-0883\\formal-5c15e3507-rag06-20261111-final3/root-unit.json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:26:04.9837750+00:00",
+      "startedAt": "2026-11-11T14:25:25.4848586+00:00",
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime",
+      "name": "runtime-unit",
+      "args": [
+        "scripts/run-vitest.mjs",
+        "src/knowledge/retrieval/projection-store.test.ts",
+        "src/context-engine/source-set.test.ts",
+        "--reporter=json",
+        "--outputFile",
+        "D:\\tmp\\project-rag-TF-0883\\formal-5c15e3507-rag06-20261111-final3/runtime-unit.json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:29:26.9147861+00:00",
+      "startedAt": "2026-11-11T14:26:52.8467079+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "typecheck",
+      "args": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:29:39.6431009+00:00",
+      "startedAt": "2026-11-11T14:29:28.8713806+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "root-lint",
+      "args": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "exec",
+        "eslint",
+        "electron/services/knowledge-api.ts",
+        "electron/services/gateway-api.ts",
+        "electron/services/workspace-permissions.ts",
+        "src/components/settings/KnowledgeVectorSettings.tsx",
+        "src/lib/host-api/knowledge/vector.ts",
+        "shared/knowledge/vector.ts",
+        "tests/unit/project-rag-vector-backends.test.ts",
+        "tests/unit/project-rag-vector-generation.test.ts",
+        "tests/unit/project-rag-vector-service.test.ts",
+        "tests/e2e/project-rag-vector-backends.spec.ts",
+        "scripts/knowledge-rag-vector-probe.ts",
+        "scripts/knowledge-rag-vector-capacity.ts",
+        "scripts/contract-check.mjs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:33:08.3119674+00:00",
+      "startedAt": "2026-11-11T14:29:40.7972941+00:00",
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime",
+      "name": "runtime-lint",
+      "args": [
+        "scripts/run-oxlint.mjs",
+        "src/knowledge/retrieval/vector-store.ts",
+        "src/knowledge/retrieval/vector-worker.ts",
+        "src/knowledge/retrieval/vector.worker.ts",
+        "src/knowledge/retrieval/vector-contracts.ts",
+        "src/knowledge/retrieval/projection-store.ts",
+        "src/plugin-sdk/knowledge-retrieval.ts",
+        "extensions/memory-wiki/src/retrieval/vector-service.ts",
+        "extensions/memory-wiki/src/retrieval/vector-backends.ts",
+        "extensions/memory-wiki/src/gateway.ts",
+        "extensions/memory-wiki/src/retrieval-embeddings.ts",
+        "extensions/memory-wiki/index.ts"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:33:09.2207935+00:00",
+      "startedAt": "2026-11-11T14:33:09.0717454+00:00",
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime",
+      "name": "schema",
+      "args": [
+        "scripts/generate-kysely-types.mjs",
+        "--verify"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:33:11.2044453+00:00",
+      "startedAt": "2026-11-11T14:33:09.6695581+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "contract",
+      "args": [
+        "scripts/contract-check.mjs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:33:11.9751985+00:00",
+      "startedAt": "2026-11-11T14:33:11.4888672+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "i18n",
+      "args": [
+        "scripts/i18n-lint.mjs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:33:13.1381334+00:00",
+      "startedAt": "2026-11-11T14:33:12.2102009+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "comms-replay",
+      "args": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "comms:replay"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:33:14.3350208+00:00",
+      "startedAt": "2026-11-11T14:33:13.4870502+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "comms-compare",
+      "args": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "comms:compare"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:33:17.2539245+00:00",
+      "startedAt": "2026-11-11T14:33:14.6151541+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "harness-validate",
+      "args": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/project-rag-vector-projection-backends.md"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:33:19.9142678+00:00",
+      "startedAt": "2026-11-11T14:33:17.7456452+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "harness-dry-run",
+      "args": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/project-rag-vector-projection-backends.md",
+        "--dry-run"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:45:56.9757151+00:00",
+      "startedAt": "2026-11-11T14:45:23.9199504+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "harness-ci",
+      "args": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "harness:ci"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:45:59.7284125+00:00",
+      "startedAt": "2026-11-11T14:45:57.2240493+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "artifact-retention",
+      "args": [
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:46:31.4088782+00:00",
+      "startedAt": "2026-11-11T14:46:00.5113753+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "owner-model-switch",
+      "args": [
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "--tsconfig",
+        "tsconfig.node.json",
+        "scripts/knowledge-rag-vector-probe.ts",
+        "D:\\tmp\\project-rag-TF-0883\\formal-5c15e3507-rag06-20261111-final3/owner-model-switch.json",
+        "D:\\tmp\\project-rag-rag05-e2e-assets\\6fa0c02a9c302be6-embeddinggemma-300m-qat-Q8_0.gguf",
+        "--model-switch"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:47:12.5493831+00:00",
+      "startedAt": "2026-11-11T14:46:42.8160966+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "native-missing",
+      "args": [
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "--tsconfig",
+        "tsconfig.node.json",
+        "scripts/knowledge-rag-vector-probe.ts",
+        "D:\\tmp\\project-rag-TF-0883\\formal-5c15e3507-rag06-20261111-final3/native-missing.json",
+        "D:\\tmp\\project-rag-rag05-e2e-assets\\6fa0c02a9c302be6-embeddinggemma-300m-qat-Q8_0.gguf",
+        "--native-missing"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:47:55.3730529+00:00",
+      "startedAt": "2026-11-11T14:47:13.2672667+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "capacity-portable",
+      "args": [
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "--tsconfig",
+        "tsconfig.node.json",
+        "scripts/knowledge-rag-vector-capacity.ts",
+        "D:\\tmp\\project-rag-TF-0883\\formal-5c15e3507-rag06-20261111-final3/capacity-portable",
+        "portable"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:50:12.4410121+00:00",
+      "startedAt": "2026-11-11T14:47:56.0367584+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "capacity-ann",
+      "args": [
+        "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+        "--tsconfig",
+        "tsconfig.node.json",
+        "scripts/knowledge-rag-vector-capacity.ts",
+        "D:\\tmp\\project-rag-TF-0883\\formal-5c15e3507-rag06-20261111-final3/capacity-ann",
+        "ann"
+      ],
+      "exitCode": 0
+    },
+    {
+      "finishedAt": "2026-11-11T14:52:59.7796897+00:00",
+      "startedAt": "2026-11-11T14:50:13.0959036+00:00",
+      "cwd": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+      "name": "electron",
+      "args": [
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/project-rag-vector-backends.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output",
+        "D:\\tmp\\project-rag-TF-0883\\formal-5c15e3507-rag06-20261111-final3/electron"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "schema": "ProjectRagVectorFormalGates/v1",
+  "status": "pass",
+  "notRun": [],
+  "cleanAtStart": true,
+  "actor": "codex/project-rag-relay",
+  "driven_by": "agent",
+  "worktree": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX",
+  "candidate": "5c15e3507340b679986377026665b80585d1efbc"
+}
