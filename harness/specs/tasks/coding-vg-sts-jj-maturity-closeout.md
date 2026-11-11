@@ -33,6 +33,7 @@ ownedPaths:
   - artifacts/agent-dev-deep-test/report.md
   - artifacts/agent-dev-quality/report.json
   - openclaw_runtime/extensions/amazon-bedrock-mantle/npm-shrinkwrap.json
+  - openclaw_runtime/extensions/tlon/npm-shrinkwrap.json
   - openclaw_runtime/extensions/amazon-bedrock/npm-shrinkwrap.json
   - openclaw_runtime/extensions/diagnostics-otel/npm-shrinkwrap.json
   - tests/unit/channels-page.test.tsx
@@ -114,6 +115,7 @@ touchedAreas:
   - artifacts/agent-dev-deep-test/report.json
   - artifacts/agent-dev-deep-test/report.md
   - artifacts/agent-dev-quality/report.json
+  - openclaw_runtime/extensions/tlon/npm-shrinkwrap.json
   - openclaw_runtime/extensions/amazon-bedrock-mantle/npm-shrinkwrap.json
   - openclaw_runtime/extensions/amazon-bedrock/npm-shrinkwrap.json
   - openclaw_runtime/extensions/diagnostics-otel/npm-shrinkwrap.json
