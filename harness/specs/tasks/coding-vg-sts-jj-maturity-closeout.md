@@ -61,6 +61,9 @@ ownedPaths:
   - tests/unit/agent-engineering-acceptance.test.ts
   - tests/unit/first-product-claims.test.ts
   - tests/unit/versegit-wp2-profile.test.ts
+  - tests/unit/versegit-wp6-closeout.test.ts
+  - tests/unit/fixtures/versegit-wp6/9a50-closeout.json
+  - scripts/versegit-wp6-closeout.d.mts
   - harness/specs/fixtures/versegit-planning-correction/mc0-evidence/baseline.json
   - harness/specs/fixtures/versegit-planning-correction/wp2-diagnostic-profile-fixture.json
   - scripts/versegit-wp2-profile.mjs
@@ -124,6 +127,9 @@ touchedAreas:
   - tests/unit/agent-engineering-acceptance.test.ts
   - tests/unit/first-product-claims.test.ts
   - tests/unit/versegit-wp2-profile.test.ts
+  - tests/unit/versegit-wp6-closeout.test.ts
+  - tests/unit/fixtures/versegit-wp6/9a50-closeout.json
+  - scripts/versegit-wp6-closeout.d.mts
   - harness/specs/fixtures/versegit-planning-correction/mc0-evidence/baseline.json
   - harness/specs/fixtures/versegit-planning-correction/wp2-diagnostic-profile-fixture.json
   - scripts/versegit-wp2-profile.mjs
@@ -152,7 +158,7 @@ expectedUserBehavior:
 requiredTests:
   - python -X utf8 -B scripts/coding-evaluation/test_final_evaluation.py
   - python -X utf8 -B scripts/coding-evaluation/final_evaluation.py --check-inputs
-  - node scripts/validate-release-baseline.mjs --ref codex/coding-vg-sts-jj-tf0782-final
+  - node scripts/validate-release-baseline.mjs --ref codex/tf0782-maturity-final
   # The frozen product-acceptance contract anchors this consumer for final entry.
   - pnpm docs:policy:validate
   - pnpm harness validate --spec harness/specs/tasks/coding-vg-sts-jj-maturity-closeout.md --since c00e5ae3ca7f0c745b60b1b611dff64859116abe
@@ -189,3 +195,8 @@ acceptance、SHA256SUMS、门报告和包报告；`verify_final_evaluation.py` �
 输入的路径、字节数与 SHA-256 随执行计划固定，复制前后都校验。VerseShell 仍按
 冻结源码和有序补丁重建。WP2 单测在隔离目录重放 MC0 捕获的三个输出，并覆盖
 二进制变更时零调用拒绝；显式历史 replay 继续校验 MC0 原始二进制摘要。
+
+带注入的 WP2 报告标为 fixture replay，不能被默认 native verifier 接受。执行器在
+全部门结束后再次复核 source 和 detached checkout 的准备输入；大文件 SHA-256
+使用有界内存读取。WP6 历史失败 consumer 读取固定提交的完整快照，producer 的
+缺件及篡改拒绝由独立的小型文件夹具验证。

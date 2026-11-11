@@ -338,6 +338,40 @@ function tf0009Report() {
 }
 
 describe('Agent Engineering Acceptance', () => {
+  it('hashes empty and multi-chunk files without changing their byte identity', () => {
+    const root = mkdtempSync(join(tmpdir(), 'acceptance-hash-'));
+    temporaryPaths.push(root);
+    const file = join(root, 'input.bin');
+    for (const bytes of [Buffer.alloc(0), Buffer.alloc(1024 * 1024 + 17, 0xab)]) {
+      writeFileSync(file, bytes);
+      expect(sha256File(file)).toBe(sha256(bytes));
+    }
+  });
+
+  it.each(['source', 'detached'])('rejects ignored binary changes after %s gate execution', (location) => {
+    const root = createFixtureRepository();
+    const binary = 'resources/bin/win32-x64/vg.exe';
+    const target = location === 'source' ? join(root, binary) : binary;
+    const manifest = createManifest(root, {
+      gate: {
+        id: 'fixture-gate', name: 'Mutate provisioned binary', profile: 'fast',
+        command: 'node',
+        args: ['-e', 'require("node:fs").writeFileSync(process.argv[1], "changed"); console.log("Tests 1 passed (1)")', target],
+        required: true, allowSkip: false, timeoutMs: 10_000,
+        safety: { network: 'none', productionEffects: false, humanEvidence: false },
+        testExpectation: { requireCounts: true, expectedSkips: 0 },
+      },
+    });
+    const outputDir = mkdtempSync(join(tmpdir(), 'acceptance-input-mutation-'));
+    temporaryPaths.push(outputDir);
+    const report = runAcceptance(manifest, { sourceRoot: root, outputDir, actor: 'fixture-executor', env: { PATH: process.env.PATH ?? '' } });
+    expect(report.result).toBe('NO-GO');
+    expect(report.failures).toContain(`${location} provision input changed during acceptance: ${binary}`);
+    expect(report.mutationCheck).toMatchObject({
+      sourceCleanAfter: true, detachedWorktreeCleanAfter: true, provisionInputsUnchangedAfter: false,
+    });
+  });
+
   it('derives full runtime, UI, comms, and release coverage from changed paths (release does not imply maturity)', () => {
     const manifest = createAcceptancePlan({
       specPath: 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md',

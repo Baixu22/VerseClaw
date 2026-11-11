@@ -187,6 +187,7 @@ export async function buildWp2Report({ root = repositoryRoot, fixturePath, fixtu
     generated_at: new Date().toISOString(),
     driven_by: 'agent',
     actor: 'codex',
+    ...((spawn || moduleLoader) ? { evidenceMode: 'fixture-replay' } : {}),
     task: 'TF-0468',
     fixture: 'harness/specs/fixtures/versegit-planning-correction/wp2-diagnostic-profile-fixture.json',
     profile: WP2_PROFILE,
@@ -218,6 +219,7 @@ export async function buildWp2Report({ root = repositoryRoot, fixturePath, fixtu
 
 export function validateWp2Report(report) {
   const issues = [];
+  if (report?.evidenceMode === 'fixture-replay') issues.push('fixture replay is not native WP2 evidence');
   if (report?.schema !== WP2_SCHEMA) issues.push('WP2 report schema mismatch');
   if (report?.driven_by !== 'agent' || report?.actor !== 'codex') issues.push('WP2 evidence must be agent-driven');
   if (report?.task !== 'TF-0468') issues.push('WP2 task mismatch');

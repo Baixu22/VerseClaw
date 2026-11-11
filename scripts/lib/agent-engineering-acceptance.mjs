@@ -1,9 +1,13 @@
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 import {
+  closeSync,
   existsSync,
+  fstatSync,
   mkdirSync,
   mkdtempSync,
+  openSync,
   readFileSync,
+  readSync,
   readdirSync,
   readlinkSync,
   rmSync,
@@ -30,10 +34,9 @@ const REPOSITORY_ROOT = resolve(dirname(THIS_FILE), '../..');
 const DEFAULT_OUTPUT_ROOT = join(REPOSITORY_ROOT, 'artifacts', 'agent-engineering-acceptance');
 const DEFAULT_TIMEOUT_MS = 30 * 60 * 1000;
 const MAX_OUTPUT_BYTES = 64 * 1024 * 1024;
-// Identity-backed root skip budget. Every entry is a test file whose skips are
-// gated on an input the acceptance environment deliberately withholds, so the
-// count is deterministic there. Enumerated from the vitest JSON reporter on the
-// candidate (23f4a0c3b) and its diffBase (5dabc7ca5); both read identically.
+// Identity-backed root skip budget for withheld provider/repository inputs and
+// platform-specific assertions. The original inventory came from 23f4a0c3b;
+// the two later cases below retain their explicit provider and POSIX gates.
 // A reading above this sum means a capability-gated test was skipped (for
 // example `skills-symlink-cleanup.test.ts` skips 3 tests when the process
 // cannot create file symlinks); fix the environment, do not raise the budget.
@@ -44,6 +47,7 @@ export const ROOT_UNIT_SKIP_INVENTORY = Object.freeze([
   { file: 'tests/unit/justifier-rerank.test.ts', skips: 2, gate: 'DEEPSEEK_API_KEY withheld' },
   { file: 'tests/unit/question-decomposer.test.ts', skips: 4, gate: 'DEEPSEEK_API_KEY withheld' },
   { file: 'tests/unit/runtime-memory-adversarial-holdout.test.ts', skips: 3, gate: 'DEEPSEEK_API_KEY withheld' },
+  { file: 'tests/unit/runtime-memory-benefit-real-model.test.ts', skips: 1, gate: 'DEEPSEEK_API_KEY withheld' },
   { file: 'tests/unit/runtime-memory-consumer-llm-judge.test.ts', skips: 3, gate: 'DEEPSEEK_API_KEY withheld' },
   { file: 'tests/unit/runtime-memory-interleaved-read-write.test.ts', skips: 3, gate: 'DEEPSEEK_API_KEY withheld' },
   { file: 'tests/unit/runtime-memory-llm-multi-judge.test.ts', skips: 4, gate: 'DEEPSEEK_API_KEY withheld' },
@@ -54,6 +58,7 @@ export const ROOT_UNIT_SKIP_INVENTORY = Object.freeze([
   { file: 'tests/unit/runtime-memory-retention-llm-judge.test.ts', skips: 4, gate: 'DEEPSEEK_API_KEY withheld' },
   { file: 'tests/unit/runtime-memory-useless-content-judge.test.ts', skips: 6, gate: 'DEEPSEEK_API_KEY withheld' },
   { file: 'tests/unit/runtime-memory-write-path-llm-judge.test.ts', skips: 3, gate: 'DEEPSEEK_API_KEY withheld' },
+  { file: 'tests/unit/session-files.test.ts', skips: process.platform === 'win32' ? 1 : 0, gate: 'POSIX permission bits are not asserted on Windows' },
 ].map(Object.freeze));
 export const ROOT_UNIT_EXPECTED_SKIPS = ROOT_UNIT_SKIP_INVENTORY.reduce((sum, entry) => sum + entry.skips, 0);
 // The 53 budget frozen on 2026-09-11 was read on a process without file-symlink
@@ -254,7 +259,16 @@ export function sha256(value) {
 }
 
 export function sha256File(filePath) {
-  return sha256(readFileSync(filePath));
+  const descriptor = openSync(filePath, 'r');
+  try {
+    const hash = createHash('sha256');
+    const buffer = Buffer.allocUnsafe(Math.min(Math.max(fstatSync(descriptor).size, 1), 1024 * 1024));
+    let bytes;
+    while ((bytes = readSync(descriptor, buffer, 0, buffer.length, null)) > 0) hash.update(buffer.subarray(0, bytes));
+    return hash.digest('hex');
+  } finally {
+    closeSync(descriptor);
+  }
 }
 
 /**
@@ -1140,12 +1154,11 @@ function collectProvisionCopyInputs(root, args) {
     if (!existsSync(fullPath) || !statSync(fullPath).isFile()) {
       return { path: relativePath, exists: false, bytes: null, sha256: null };
     }
-    const bytes = readFileSync(fullPath);
     return {
       path: relativePath,
       exists: true,
-      bytes: bytes.length,
-      sha256: sha256(bytes),
+      bytes: statSync(fullPath).size,
+      sha256: sha256File(fullPath),
     };
   });
 }
@@ -1479,19 +1492,12 @@ function runVerseShellBinaryProvision(gate, options = {}) {
     }
     const sourceBinary = resolve(worktree, binaryRelative);
     if (!existsSync(sourceBinary)) return fail(`reconstructed binary missing: ${binaryRelative}`);
-    const sourceBytes = readFileSync(sourceBinary);
-    const sourceDigest = createHash('sha256').update(sourceBytes).digest('hex');
-    if (sourceDigest !== artifact.sha256 || sourceBytes.length !== artifact.bytes) {
-      return fail(`source binary does not match committed manifest (sha256 ${sourceDigest.slice(0, 12)}… expected ${artifact.sha256.slice(0, 12)}…, bytes ${sourceBytes.length} expected ${artifact.bytes})`);
+    const sourceSize = statSync(sourceBinary).size;
+    const sourceDigest = sha256File(sourceBinary);
+    if (sourceDigest !== artifact.sha256 || sourceSize !== artifact.bytes) {
+      return fail(`source binary does not match committed manifest (sha256 ${sourceDigest.slice(0, 12)}… expected ${artifact.sha256.slice(0, 12)}…, bytes ${sourceSize} expected ${artifact.bytes})`);
     }
-    const dest = sourceBinary;
-    mkdirSync(dirname(dest), { recursive: true });
-    const provisionedBytes = readFileSync(dest);
-    const provisionedDigest = createHash('sha256').update(provisionedBytes).digest('hex');
-    if (provisionedDigest !== artifact.sha256 || provisionedBytes.length !== artifact.bytes) {
-      return fail('provisioned binary verification failed in worktree');
-    }
-    let stdout = `provisioned ${binaryRelative} (${provisionedBytes.length} bytes, sha256 ${provisionedDigest.slice(0, 16)}…) verified against committed manifest\n`;
+    let stdout = `provisioned ${binaryRelative} (${sourceSize} bytes, sha256 ${sourceDigest.slice(0, 16)}…) verified against committed manifest\n`;
     const copied = [];
     const sourceRoot = options.sourceRoot;
     if (!sourceRoot) return fail('provision copy requires sourceRoot and cwd');
@@ -1509,20 +1515,19 @@ function runVerseShellBinaryProvision(gate, options = {}) {
       if (!existsSync(sourcePath) || !statSync(sourcePath).isFile()) {
         return fail(`provision source missing: ${copyRelative}`);
       }
-      const sourceBytes = readFileSync(sourcePath);
-      const sourceDigest = sha256(sourceBytes);
-      if (sourceDigest !== expected.sha256 || sourceBytes.length !== expected.bytes) {
+      const sourceDigest = sha256File(sourcePath);
+      if (sourceDigest !== expected.sha256 || statSync(sourcePath).size !== expected.bytes) {
         return fail(`provision source digest mismatch: ${copyRelative}`);
       }
       const destPath = resolve(worktree, copyRelative);
       mkdirSync(dirname(destPath), { recursive: true });
       copyFileSync(sourcePath, destPath);
-      const destBytes = readFileSync(destPath);
-      const destDigest = sha256(destBytes);
-      if (destDigest !== expected.sha256 || destBytes.length !== expected.bytes) {
+      const destDigest = sha256File(destPath);
+      const destSize = statSync(destPath).size;
+      if (destDigest !== expected.sha256 || destSize !== expected.bytes) {
         return fail(`provision destination digest mismatch: ${copyRelative}`);
       }
-      copied.push(`${copyRelative} (${destBytes.length} bytes, sha256 ${destDigest.slice(0, 16)}…)`);
+      copied.push(`${copyRelative} (${destSize} bytes, sha256 ${destDigest.slice(0, 16)}…)`);
     }
     if (copied.length > 0) stdout += `copied ${copied.join(', ')} from source repository\n`;
     if (argv.includes('--electron')) {
@@ -1984,6 +1989,20 @@ export function runAcceptance(manifest, options = {}) {
       });
     }
     const mutationErrors = [];
+    const provisionErrors = [];
+    const completedProvisions = manifest.gates.filter((gate) => gate.kind === 'provision-verseshell'
+      && gateResults.some((result) => result.id === gate.id && result.status === 'pass'));
+    for (const gate of completedProvisions) {
+      for (const [label, directory] of [['source', root], ['detached', workspace]]) {
+        const current = collectProvisionCopyInputs(directory, gate.args);
+        for (const [index, expected] of gate.copyInputs.entries()) {
+          if (stableJson(current[index]) !== stableJson(expected)) {
+            provisionErrors.push(`${label} provision input changed during acceptance: ${expected.path}`);
+          }
+        }
+      }
+    }
+    mutationErrors.push(...provisionErrors);
     const worktreeState = repositoryIdentity(workspace);
     if (!worktreeState.clean) mutationErrors.push('detached worktree changed tracked or unexpected source files during acceptance');
     const sourceState = repositoryIdentity(root);
@@ -1997,6 +2016,7 @@ export function runAcceptance(manifest, options = {}) {
         failures: mutationErrors,
         controlledArtifacts: controlledArtifacts(outputDir, manifest, gateResults),
         mutationCheck: {
+          provisionInputsUnchangedAfter: completedProvisions.length > 0 && provisionErrors.length === 0,
           sourceCleanAfter: sourceState.clean,
           detachedWorktreeCleanAfter: worktreeState.clean,
           sourceStatusEntries: sourceState.clean ? 0 : sourceState.status.split(/\r?\n/u).filter(Boolean).length,

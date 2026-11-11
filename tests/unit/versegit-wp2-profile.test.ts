@@ -45,6 +45,11 @@ function replayFixture() {
 }
 
 describe('WP2 concurrency-aux diagnostic profile', () => {
+  it('keeps the captured native report compatible with the default validator', () => {
+    const report = JSON.parse(readFileSync(resolve(root, 'harness/specs/fixtures/versegit-planning-correction/wp2-evidence/report.json'), 'utf8'));
+    expect(validateWp2Report(report).issues).toEqual([]);
+  });
+
   it('replays frozen probe outputs with zero calls for single-worktree and missing-binary cases', async () => {
     const replay = replayFixture();
     const built = await buildWp2Report(replay.options);
@@ -57,7 +62,8 @@ describe('WP2 concurrency-aux diagnostic profile', () => {
     expect(built.report.cases.find((entry: { caseId: string }) => entry.caseId === 'single-worktree')?.usage.processesStarted).toBe(0);
     expect(built.report.cases.find((entry: { caseId: string }) => entry.caseId === 'multi-worktree')?.status).toBe('partial');
     expect(built.report.cases.find((entry: { caseId: string }) => entry.caseId === 'missing-binary')?.status).toBe('unavailable');
-    expect(validateWp2Report(built.report).issues).toEqual([]);
+    expect(built.report.evidenceMode).toBe('fixture-replay');
+    expect(validateWp2Report(built.report).issues).toEqual(['fixture replay is not native WP2 evidence']);
   });
 
   it('rejects a widened single-worktree call or a leaked host path', async () => {

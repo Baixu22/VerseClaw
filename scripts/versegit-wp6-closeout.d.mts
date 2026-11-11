@@ -4,3 +4,4 @@ export function buildMc6Decision(...args: any[]): any;
 export function buildWp6Closeout(...args: any[]): any;
 export function validateMc6Decision(...args: any[]): any;
 export function validateWp6Report(...args: any[]): any;
+export function verifyShaManifest(...args: any[]): any;
