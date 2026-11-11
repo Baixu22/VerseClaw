@@ -55,6 +55,7 @@ touchedAreas:
   - tests/fixtures/worktree-registry-process.ts
   - tests/unit/fixtures/task-retention-worker.mts
   - vitest.autonomy-r4.config.ts
+  - vite.config.ts
   - harness/specs/tasks/autonomy-worktree-integration.md
   - harness/specs/rules/autonomy-worktree-integration.md
   - harness/specs/scenarios/autonomy-worktree-integration.md
