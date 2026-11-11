@@ -418,3 +418,5 @@ Git 工作树的生产完成链沿既有 `freezeOrchestrationWorktreeCandidate()
 完成回执按 worktreeId 与 generation 二元身份发布；同名工作树的陈旧或被修改代次不能接收当前回执。worker 冻结前和实际整合前均复用原索引可见性检查，隐藏文件变更不会被当作无成果静默接受。
 
 同批次同时包含 Git 与进程内后端时，仅 Git worker 参与 Git 候选冻结，进程内 worker 使用原内容基线整合。两者的整合回执和验证目录分别进入同一 verifier 任务，Git 检查在冻结候选目录执行，进程内结果按记录的目标目录及后像摘要核对。
+
+当前整合接口只应用受控文件后像，不创建 Git 多父/octopus merge，也不提供自动 `git gc` 或 `worktree prune`。这些路径没有独立验收，属于明确不可用的能力，调用方不得宣称支持。

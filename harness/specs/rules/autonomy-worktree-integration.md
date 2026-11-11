@@ -13,3 +13,4 @@ type: ai-coding-rule
 - registry决定实际后端；Git检查绑定冻结候选，进程内工作树检查绑定整合目标。未知后端不得绕过候选检查，脏Git基线返回冲突并保留双方成果。
 - 混合后端按registry记录分别冻结和整合；候选目录沿原native identity校验根实例、Git反向引用和所属仓库，派发前拒绝替换及重定向。
 - 回收沿用现有Task、资源与工作树owner，保留未推送成果、活动引用和唯一证据。
+- 当前整合只应用受控文件后像；Git 多父/octopus merge、自动 `git gc` 和 `worktree prune` 未实现，必须明确不可用，不得用普通文件合并结果冒充支持。
