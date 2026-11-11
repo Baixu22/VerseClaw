@@ -379,7 +379,7 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
           return response;
         });
       });
-      await ui('click', 'chat-header:options', () => id('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click());
+      await ui('click', 'chat-header:options', () => id('chat-header-session-name').click());
       await need('chat-session-handoff');
       await expect(id('chat-session-handoff')).toBeEnabled();
       await ui('press', 'testid:chat-session-handoff:Enter', async () => {

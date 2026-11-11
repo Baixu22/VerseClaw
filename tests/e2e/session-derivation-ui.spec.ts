@@ -281,7 +281,7 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
       if (view === 'project') {
         const toggle = page.getByTestId('session-family-toggle-' + project.sessionKey);
         await expect(toggle).toBeVisible({ timeout: 30_000 });
-        await expect(toggle).toContainText(String(children.length));
+        await expect(toggle.locator('xpath=..').locator('.session-family__count')).toHaveText(String(children.length));
         if (await toggle.getAttribute('aria-expanded') !== 'true') { await toggle.focus(); await toggle.press('ArrowRight'); }
         await expect(toggle).toHaveAttribute('aria-expanded', 'true');
       } else await expect(page.getByTestId('session-family-toggle-' + project.sessionKey)).toHaveCount(0);
@@ -417,7 +417,7 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
       await instrumentSessionChainHost(app);
       const reloadStartedAt = Date.now(); await page.reload();
       const toggle = page.getByTestId('session-family-toggle-' + project.sessionKey);
-      await expect(toggle).toBeVisible({ timeout: 30_000 }); await expect(toggle).toContainText(String(count));
+      await expect(toggle).toBeVisible({ timeout: 30_000 }); await expect(toggle.locator('xpath=..').locator('.session-family__count')).toHaveText(String(count));
       const reloadEndedAt = Date.now();
       const sharedWarmup = { projection: 'project', coldReloadMs: reloadEndedAt - reloadStartedAt,
         rpc: await rpcWindow(reloadStartedAt, reloadEndedAt), excludedFromProjectionComparison: true };
@@ -500,7 +500,7 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
         if (await sidebarToggle.getAttribute('aria-label') === 'Expand sidebar') await sidebarToggle.click();
         await chooseProjection('project'); await exposeProjection('project');
         const toggle = page.getByTestId('session-family-toggle-' + project.sessionKey);
-        await expect(toggle).toContainText(String(children.length));
+        await expect(toggle.locator('xpath=..').locator('.session-family__count')).toHaveText(String(children.length));
         const dom = await revealChildren();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
         const first = page.locator('.ws-family-row[data-lineage-depth="1"]').first();

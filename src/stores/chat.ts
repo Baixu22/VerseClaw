@@ -3373,9 +3373,18 @@ export const useChatStore = create<ChatState>((set, get, api) => {
 
     const { currentSessionKey, sessions } = get();
     const current = sessions.find(session => session.key === key);
-    if ((current && current.sessionId !== generation) || (currentSessionKey === key && get().viewRevision !== visit)) {
+    if (currentSessionKey === key && get().viewRevision !== visit) {
       void get().loadSessions();
       return;
+    }
+    let archivedRefreshed = false;
+    if (current && current.sessionId !== generation) {
+      archivedRefreshed = true;
+      await get().loadArchivedSessions();
+      if (!get().archivedSessions.some((entry) => entry.sessionKey === key)) {
+        void get().loadSessions();
+        return;
+      }
     }
     clearCachedSessionHistory(key);
     clearCachedSessionRunState(key);
@@ -3411,7 +3420,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     } else {
       set(dropSessionState);
     }
-    void get().loadArchivedSessions();
+    if (!archivedRefreshed) void get().loadArchivedSessions();
   },
 
   restoreSession: async (sessionKey) => {
