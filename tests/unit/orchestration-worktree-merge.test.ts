@@ -25,7 +25,7 @@ afterEach(() => {
 });
 
 describe("orchestration worktree merge evidence", () => {
-  it("merges the first overlapping worktree and records the conflict for the second", () => {
+  it("merges the first overlapping worktree and records the conflict for the second", async () => {
     const root = makeRoot();
     mkdirSync(join(root, "src"), { recursive: true });
     writeFileSync(join(root, "src", "a.ts"), "base", "utf8");
@@ -35,7 +35,7 @@ describe("orchestration worktree merge evidence", () => {
     writeFileSync(join(first.root, "src", "a.ts"), "from-a", "utf8");
     writeFileSync(join(second.root, "src", "a.ts"), "from-b", "utf8");
 
-    const results = mergeOrchestrationWorktrees({
+    const results = await mergeOrchestrationWorktrees({
       baseRoot: root,
       workers: [
         { taskNodeId: "node-a", worktreeId: "wt-a", worktreeGeneration: first.generation, declaredWriteSet: ["src/a.ts"] },
@@ -48,7 +48,7 @@ describe("orchestration worktree merge evidence", () => {
     expect(readFileSync(join(root, "src", "a.ts"), "utf8")).toBe("from-a");
   });
 
-  it("reports declared-vs-actual write-set drift from the git worktree status", () => {
+  it("reports declared-vs-actual write-set drift from the git worktree status", async () => {
     const root = makeRoot();
     git(["init"], root);
     git(["config", "user.email", "agent@example.invalid"], root);
@@ -63,7 +63,7 @@ describe("orchestration worktree merge evidence", () => {
     mkdirSync(join(worktree.root, "src"), { recursive: true });
     writeFileSync(join(worktree.root, "src", "actual.ts"), "actual", "utf8");
 
-    const results = mergeOrchestrationWorktrees({
+    const results = await mergeOrchestrationWorktrees({
       baseRoot: root,
       workers: [
         {
@@ -84,7 +84,7 @@ describe("orchestration worktree merge evidence", () => {
     service.cleanup("wt-mismatch");
   });
 });
-it('rejects late merge, freeze and cleanup requests after the same id is recreated', () => {
+it('rejects late merge, freeze and cleanup requests after the same id is recreated', async () => {
   const root = makeRoot();
   const service = createWorktreeService(root);
   const old = service.create('same');
@@ -92,7 +92,7 @@ it('rejects late merge, freeze and cleanup requests after the same id is recreat
   const current = service.create('same');
   writeFileSync(join(current.root, 'retained.txt'), 'new work');
   const workers = [{ taskNodeId: 'old-task', worktreeId: old.id, worktreeGeneration: old.generation }];
-  expect(() => mergeOrchestrationWorktrees({ baseRoot: root, workers })).toThrow(/stale_generation/);
+  await expect(mergeOrchestrationWorktrees({ baseRoot: root, workers })).rejects.toThrow(/stale_generation/);
   expect(() => freezeOrchestrationWorktreeCandidate({ baseRoot: root, workers })).toThrow(/stale_generation/);
   expect(() => service.cleanup(old.id, { expectedGeneration: old.generation })).toThrow(/stale_generation/);
   expect(readFileSync(join(current.root, 'retained.txt'), 'utf8')).toBe('new work');
@@ -104,7 +104,7 @@ describe("worktree long-session ownership", () => {
     expectedSessionId: "generation-1",
   } as const;
 
-  it("cleans only explicit ephemeral worktrees for the exact generation", () => {
+  it("cleans only explicit ephemeral worktrees for the exact generation", async () => {
     const root = makeRoot();
     const service = createWorktreeService(root);
     const kept = service.create("wt-keep", { owner: { ...owner, retention: "keep" } });

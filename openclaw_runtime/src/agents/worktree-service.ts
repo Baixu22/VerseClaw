@@ -25,7 +25,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
-import { withTaskLedgerJournalLockSync } from '../../../shared/task-ledger-journal-lock.js';
+import { withTaskLedgerJournalLock, withTaskLedgerJournalLockSync } from '../../../shared/task-ledger-journal-lock.js';
 import {
   LongSessionCoordinationError,
   decideLongSessionCoordination,
@@ -38,7 +38,7 @@ import type { WorktreeBackend } from "../context-engine/coding-runtime-flags.js"
 import { withExecutionTaskWorktreeCleanup, finishExecutionTaskWorktreeCleanup, openExecutionTaskStore, type TaskWorktreeCleanupBinding } from "./execution-task-authority.js";
 import type { TaskCredential } from '../../../shared/task-system/types.js';
 import { assertGitNativeRoot, nativeGitWorktreeRoot, isSharedGitRef } from '../../../shared/git-native-root.js';
-import { captureWorktreeFiles, captureWorktreeModes, changedWorktreeFiles, readWorktreeFile, worktreeContentHash } from "./worktree-merge-files.js";
+import { applyWorktreeFiles, captureWorktreeFiles, captureWorktreeModes, changedWorktreeFiles, nativeFilename, readWorktreeFile, worktreeContentHash } from "./worktree-merge-files.js";
 import { reviewDiff } from "../context-engine/views/verify/review-diff-view.js";
 import type { FactStore } from "../context-engine/factstore/store.js";
 import { closeOpenClawStateDatabaseForTest } from "../state/openclaw-state-db.js";
@@ -46,7 +46,7 @@ import { registerExecutionDomain, resolveExecutionDomain } from "./execution-dom
 import {
   beginCheckoutWrite, checkoutWriterSnapshot, claimCheckoutWriter, drainCheckoutWriter,
   releaseCheckoutWriter, releaseUnusedCheckoutWriter, settleCheckoutWrite, withCheckoutMaintenance,
-  finishRemovedCheckoutCleanup, transferCheckoutWriter, endCheckoutWriter,
+  finishRemovedCheckoutCleanup, transferCheckoutWriter, endCheckoutWriter, withAsyncCheckoutMaintenance, recoverPreparedCheckoutMaintenance,
   type CheckoutWriteReceipt, type CheckoutWriterCredential, type CheckoutWriterIdentity, type CheckoutWriterBasis,
 } from "./worktree-writer.js";
 import {
@@ -95,7 +95,8 @@ export type WorktreeRecord = {
   baseOid?: string;
   owner?: WorktreeLifecycleOwner;
   taskCleanup?: TaskWorktreeCleanupBinding;
-  mergeBaseline?: { parent: Record<string, string>; worker: Record<string, string>; workerModes?: Record<string, number> };
+  mergeBaseline?: { parent: Record<string, string>; worker: Record<string, string>; workerModes?: Record<string, number>; restoredFromBase?: boolean };
+  mergeResult?: MergeQueueItem;
 };
 
 export type MergeQueueItem = {
@@ -105,6 +106,10 @@ export type MergeQueueItem = {
   status: "pending" | "merged" | "conflict" | "rework";
   review?: { relatedTests: string[]; riskLevel: string };
   reason?: string;
+  journalRef?: string;
+  recoveryRequired?: boolean;
+  hashes?: Record<string, string | null>;
+  expectedPostimages?: Record<string, string | null>;
 };
 
 /** Safe default marks conflict; optional policies return work to worker or escalate lead. */
@@ -144,7 +149,7 @@ export type WorktreeService = {
   processMergeQueue(
     factStore?: FactStore,
     options?: { conflictPolicy?: MergeConflictPolicy; worktreeIds?: readonly string[] },
-  ): MergeQueueItem[];
+  ): Promise<MergeQueueItem[]>;
   cleanup(id: string, options?: { authorization?: VerseGitCleanupDeletionAuthorization; expectedGeneration?: string }): void;
   listOwned(owner: Pick<WorktreeLifecycleOwner, "sessionKey" | "agentId" | "expectedSessionId">): WorktreeRecord[];
   cleanupOwned(owner: Pick<WorktreeLifecycleOwner, "sessionKey" | "agentId" | "expectedSessionId">): WorktreeLifecycleResult;
@@ -175,7 +180,9 @@ function pathEntryExists(target: string): boolean {
 function recordSnapshot(record: WorktreeRecord): WorktreeRecord {
   return { ...record, ...(record.owner ? { owner: { ...record.owner } } : {}),
     registration: { ...record.registration },
-    ...(record.writeSet ? { writeSet: [...record.writeSet] } : {}) };
+    ...(record.writeSet ? { writeSet: [...record.writeSet] } : {}),
+    ...(record.mergeBaseline ? { mergeBaseline: structuredClone(record.mergeBaseline) } : {}),
+    ...(record.mergeResult ? { mergeResult: structuredClone(record.mergeResult) } : {}) };
 }
 
 function assertCurrentWorktree(record: WorktreeRecord): void {
@@ -190,12 +197,20 @@ function canonicalPath(target: string): string {
 
 /** Normalize relative paths for Windows separators and reject traversal. */
 export function normalizeWorktreeRelPath(rel: string): string {
-  const cleaned = rel.replace(/\\/g, "/").replace(/^\/+/, "");
+  const cleaned = (process.platform === 'win32' ? rel.replace(/\\/g, "/") : rel).replace(/^\/+/, "");
   const parts = cleaned.split("/").filter((p) => p && p !== ".");
   if (parts.some((p) => p === "..")) {
     throw new Error(`unsafe_worktree_rel_path:${rel}`);
   }
   return parts.join("/");
+}
+
+export function worktreeRelPathKey(rel: string, root?: string, alternate?: string): string {
+  const normalized = normalizeWorktreeRelPath(rel);
+  if (typeof root === 'string') {
+    return nativeFilename(existsSync(path.join(root, normalized)) || !alternate ? root : alternate, normalized);
+  }
+  return normalized;
 }
 
 /** Windows long-path aware absolute root when needed. */
@@ -227,21 +242,25 @@ function hardenedGitEnv(): NodeJS.ProcessEnv {
   };
 }
 
-function listChangedFilesFromGit(root: string): string[] {
+function listChangedFilesFromGit(root: string, includeIgnored = false, baseOid?: string): string[] {
   const out = git(
-    ["-c", "core.quotePath=false", "status", "--porcelain", "--untracked-files=all"],
+    ["-c", "core.quotePath=false", "status", "--porcelain=v1", "-z", "--untracked-files=all", ...(includeIgnored ? ['--ignored'] : [])],
     root,
   );
   const files = new Set<string>();
-  for (const line of out.split(/\r?\n/)) {
-    if (!line.trim() || line.startsWith("!!")) continue;
-    const raw = line.includes(" -> ") ? line.slice(line.indexOf(" -> ") + 4) : line.slice(3);
-    const candidate = raw.trim();
-    if (!candidate) continue;
-    try {
-      files.add(normalizeWorktreeRelPath(candidate));
-    } catch {
-      // Ignore unsafe or malformed status entries.
+  if (baseOid) for (const file of git(['diff', '--name-only', '--no-renames', '-z', baseOid], root).split('\0').filter(Boolean)) {
+    files.add(normalizeWorktreeRelPath(file));
+  }
+  const entries = out.split('\0');
+  for (let index = 0; index < entries.length; index++) {
+    const entry = entries[index];
+    if (!entry || (!includeIgnored && entry.startsWith('!!'))) continue;
+    const status = entry.slice(0, 2);
+    files.add(normalizeWorktreeRelPath(entry.slice(3)));
+    if (status.includes('R') || status.includes('C')) {
+      const original = entries[++index];
+      if (!original) throw new Error('worktree_git_status_invalid');
+      if (status.includes('R')) files.add(normalizeWorktreeRelPath(original));
     }
   }
   return [...files].sort();
@@ -294,7 +313,21 @@ function sleepMs(ms: number): void {
 }
 
 /** Age never proves a writer has stopped. Reuse the incarnation-aware mutex. */
+function assertSupportedGitModes(record: WorktreeRecord, reason: string, baseline = record.baseOid): void {
+  if (record.backend !== 'git' || !record.baseOid) return;
+  const raw = git(['diff', '--raw', '--no-renames', '-z', baseline!], record.root).split('\0');
+  for (let index = 0; index < raw.length; index += 2) {
+    const mode = /^:(\d{6}) (\d{6}) /.exec(raw[index]!);
+    if (mode && mode[1] !== mode[2] && mode[2] !== '000000' && (mode[1] === '100755' || mode[2] === '100755')) throw new Error(reason);
+  }
+}
+
+const asyncWorktreeOwners = new Map<string, number>();
+
 function withWorktreeLock<T>(baseRoot: string, fn: () => T): T {
+  if (asyncWorktreeOwners.has(canonicalWorktreePath(baseRoot))) {
+    throw Object.assign(new Error('worktree_merge_busy'), { retryable: true });
+  }
   const lockDir = path.join(path.resolve(baseRoot), ".openclaw", "worktrees");
   mkdirSync(lockDir, { recursive: true });
   if (canonicalPath(lockDir) !== (process.platform === 'win32' ? path.resolve(lockDir).toLowerCase() : path.resolve(lockDir))) {
@@ -303,6 +336,23 @@ function withWorktreeLock<T>(baseRoot: string, fn: () => T): T {
   const lockPath = path.join(lockDir, ".merge.lock");
   if (pathEntryExists(lockPath)) throw new Error('worktree_legacy_lock_unavailable');
   return withTaskLedgerJournalLockSync(lockPath, fn, { timeoutMs: 3000 });
+}
+
+async function withAsyncWorktreeLock<T>(baseRoot: string, fn: () => Promise<T>): Promise<T> {
+  const lockDir = path.join(path.resolve(baseRoot), ".openclaw", "worktrees");
+  mkdirSync(lockDir, { recursive: true });
+  if (canonicalPath(lockDir) !== (process.platform === 'win32' ? path.resolve(lockDir).toLowerCase() : path.resolve(lockDir))) {
+    throw new Error('worktree_root_redirected');
+  }
+  const lockPath = path.join(lockDir, ".merge.lock");
+  if (pathEntryExists(lockPath)) throw new Error('worktree_legacy_lock_unavailable');
+  const key = canonicalWorktreePath(baseRoot);
+  asyncWorktreeOwners.set(key, (asyncWorktreeOwners.get(key) ?? 0) + 1);
+  try { return await withTaskLedgerJournalLock(lockPath, fn, { timeoutMs: 3000 }); }
+  finally {
+    const count = asyncWorktreeOwners.get(key)! - 1;
+    if (count) asyncWorktreeOwners.set(key, count); else asyncWorktreeOwners.delete(key);
+  }
 }
 
 function applyConflictPolicy(
@@ -420,6 +470,29 @@ function requireCleanupAuthorization(input: {
   }
   return { root };
 }
+/** Recover only baseline facts that the existing Git commit or unchanged target proves. */
+function restoreLegacyMergeBaseline(record: WorktreeRecord, files: readonly string[]): void {
+  if (record.mergeBaseline && !record.mergeBaseline.restoredFromBase) return;
+  const parent = new Map<string, string>(Object.entries(record.mergeBaseline?.parent ?? {}));
+  if (record.backend === 'git' && record.baseOid) {
+    for (const file of new Set([...files, ...listChangedFilesFromGit(record.root, false, record.baseOid)])) {
+      const relative = worktreeRelPathKey(file, record.baseRoot, record.root);
+      const entry = git(['ls-tree', '-z', record.baseOid, '--', relative], record.root);
+      if (!entry) continue;
+      if (!/^100(?:644|755) blob /.test(entry)) throw new Error('worktree_legacy_baseline_unsupported');
+      const oid = /^\d+ blob ([0-9a-f]+)/.exec(entry)![1]!;
+      const bytes = execFileSync('git', ['cat-file', 'blob', oid], { cwd: record.root, windowsHide: true,
+        timeout: GIT_EXEC_TIMEOUT_MS, env: hardenedGitEnv(), maxBuffer: 64 * 1024 * 1024 });
+      parent.set(relative, worktreeContentHash(bytes)!);
+    }
+  } else {
+    for (const [file, hash] of captureWorktreeFiles(record.root)) {
+      if (worktreeContentHash(readWorktreeFile(record.baseRoot, file)) !== hash) throw new Error('worktree_legacy_baseline_unproven');
+      parent.set(file, hash);
+    }
+  }
+  record.mergeBaseline = { parent: Object.fromEntries(parent), worker: Object.fromEntries(parent), restoredFromBase: record.backend === 'git' };
+}
 export function createWorktreeService(
   baseRoot: string,
   options?: CreateWorktreeServiceOptions,
@@ -485,7 +558,13 @@ export function createWorktreeService(
     }),
     writer: id => checkoutWriterSnapshot(id === null ? resolved : findRecord(id).root),
     withFrozenWorktrees: (workers, freeze) => withWorktreeLock(resolved, () =>
-      withCheckoutMaintenance([baseBasis(), ...workers.map(worker => basisFor(findRecord(worker.worktreeId, worker.worktreeGeneration)))], "freeze", freeze)),
+      withCheckoutMaintenance([baseBasis(), ...workers.map(worker => basisFor(findRecord(worker.worktreeId, worker.worktreeGeneration)))], "freeze", freeze, () => {
+        assertWorktreeIndexVisible(resolved);
+        for (const worker of workers) {
+          const record = findRecord(worker.worktreeId, worker.worktreeGeneration);
+          if (record.backend === 'git') assertWorktreeIndexVisible(record.root);
+        }
+      })),
     create(id, createOptions) {
       const owner = createOptions?.owner;
       const safeId = safeWorktreeId(id);
@@ -635,9 +714,9 @@ export function createWorktreeService(
       if (observeWorktree(rec) !== "ready") return { files: [], source: "unavailable" as const };
       if (rec.backend === "git") {
         try {
-          return { files: listChangedFilesFromGit(rec.root), source: "git-status" as const };
+          return { files: listChangedFilesFromGit(rec.root, false, rec.baseOid), source: "git-status" as const };
         } catch {
-          return { files: [...(rec.writeSet ?? [])], source: "declared-writeSet" as const };
+          return { files: [], source: "unavailable" as const };
         }
       }
       return {
@@ -648,126 +727,166 @@ export function createWorktreeService(
     enqueueMerge(item) {
       return withWorktreeLock(resolved, () => {
         const s = scope(resolved);
-        const record = s.records.get(safeWorktreeId(item.worktreeId));
+        const id = safeWorktreeId(item.worktreeId);
+        const record = s.records.get(id);
+        const pathKey = (file: string) => worktreeRelPathKey(file, resolved, record?.root);
         if (item.worktreeGeneration !== undefined && record?.generation !== item.worktreeGeneration) throw new Error("worktree_stale_generation");
-        if (s.queue.some(entry => entry.worktreeId === safeWorktreeId(item.worktreeId) && entry.reason === "merge_outcome_unknown")) {
+        if (record && s.queue.some(entry => entry.worktreeId === id && entry.reason === 'merge_outcome_unknown')) {
+          const states = [recoverPreparedCheckoutMaintenance(resolved), recoverPreparedCheckoutMaintenance(record.root)];
+          if (states.every(state => state?.state === 'released' && state.owner.kind === 'maintenance' && state.owner.operation === 'merge'
+            && state.operations.length && state.operations.every(operation => operation.state === 'settled' && operation.receipt?.outcome === 'not-applied' && operation.effectPrepared === false))
+            && states[0]!.owner.kind === 'maintenance' && states[1]!.owner.kind === 'maintenance'
+            && states[0]!.owner.operationId === states[1]!.owner.operationId) {
+            s.queue = s.queue.filter(entry => entry.worktreeId !== id || entry.reason !== 'merge_outcome_unknown');
+            saveWorktreeRegistryScope(s);
+          }
+        }
+        if (s.queue.some(entry => entry.worktreeId === id && (entry.reason === "merge_outcome_unknown" || entry.recoveryRequired))) {
           throw new Error("worktree_merge_reconciliation_required");
         }
+        const changedFiles = [...new Map(item.changedFiles.map(normalizeWorktreeRelPath).map(file => [pathKey(file), file])).values()].sort();
+        const sameFiles = (entry: MergeQueueItem) => entry.worktreeGeneration === record?.generation
+          && JSON.stringify(entry.changedFiles.map(pathKey).sort()) === JSON.stringify(changedFiles.map(pathKey).sort());
+        // Terminal outcomes retain their original generation independently of checkout lifecycle.
+        if (record?.mergeResult?.status === 'merged' && sameFiles(record.mergeResult)) {
+          const hashes = new Map(Object.entries(record.mergeResult.hashes ?? {}).map(([file, hash]) => [pathKey(file), hash]));
+          if (item.expectedPostimages) {
+            const expected = new Map(Object.entries(item.expectedPostimages).map(([file, hash]) => [pathKey(file), hash]));
+            if (expected.size !== hashes.size || [...expected].some(([file, hash]) => !hashes.has(file) || hashes.get(file) !== hash)) {
+              throw new Error('worktree_frozen_candidate_changed');
+            }
+          }
+          if (record.status !== 'cleaned' && changedFiles.some(file => worktreeContentHash(readWorktreeFile(record.root, file)) !== hashes.get(pathKey(file)))) {
+            throw new Error("worktree_merge_input_changed");
+          }
+          return structuredClone(record.mergeResult);
+        }
+        if (record?.mergeResult?.status === 'merged') throw new Error('worktree_merge_request_conflict');
+        if (record && (!record.mergeBaseline || record.mergeBaseline.restoredFromBase)) {
+          restoreLegacyMergeBaseline(record, changedFiles);
+          saveWorktreeRegistryScope(s);
+        }
+        if (record?.backend === 'git') {
+          const observed = new Set(listChangedFilesFromGit(record.root, false, record.baseOid).map(pathKey));
+          if (changedFiles.some(file => !observed.has(pathKey(file)))) throw new Error('worktree_merge_paths_not_observed');
+        }
+        const pending = s.queue.find(entry => entry.worktreeId === id && entry.status === "pending" && sameFiles(entry));
+        if (pending) {
+          if (item.expectedPostimages) {
+            if (pending.expectedPostimages && JSON.stringify(pending.expectedPostimages) !== JSON.stringify(item.expectedPostimages)) throw new Error('worktree_frozen_candidate_changed');
+            pending.expectedPostimages = structuredClone(item.expectedPostimages);
+            saveWorktreeRegistryScope(s);
+          }
+          return structuredClone(pending);
+        }
         const entry: MergeQueueItem = {
-          worktreeId: safeWorktreeId(item.worktreeId),
+          worktreeId: id,
           worktreeGeneration: record?.generation,
-          changedFiles: item.changedFiles.map((f) => normalizeWorktreeRelPath(f)),
+          changedFiles,
           status: item.status ?? "pending",
           review: item.review,
           reason: item.reason,
+          ...(item.expectedPostimages ? { expectedPostimages: structuredClone(item.expectedPostimages) } : {}),
         };
         s.queue.push(entry);
         saveWorktreeRegistryScope(s);
         return structuredClone(entry);
       });
     },
-    processMergeQueue(factStore, processOptions) {
+    async processMergeQueue(factStore, processOptions) {
       const policy = processOptions?.conflictPolicy ?? defaultConflictPolicy;
-      const selectedWorktreeIds = processOptions?.worktreeIds
-        ? new Set(processOptions.worktreeIds)
-        : undefined;
-      const results: MergeQueueItem[] = [];
-      withWorktreeLock(resolved, () => {
+      const selectedWorktreeIds = processOptions?.worktreeIds ? new Set(processOptions.worktreeIds) : undefined;
+      return withAsyncWorktreeLock(resolved, async () => {
         const s = scope(resolved);
+        const results: MergeQueueItem[] = [];
         for (const item of s.queue) {
-          if (selectedWorktreeIds && !selectedWorktreeIds.has(item.worktreeId)) {
-            continue;
-          }
-          if (item.status !== "pending") {
-            results.push(item);
-            continue;
-          }
+          if (selectedWorktreeIds && !selectedWorktreeIds.has(item.worktreeId)) continue;
+          if (item.status !== "pending") { results.push(item); continue; }
           const rec = s.records.get(item.worktreeId);
-          if (!rec) {
-            applyConflictPolicy(item, undefined, "missing_worktree", policy);
-            results.push(item);
-            continue;
+          if (!rec || rec.generation !== item.worktreeGeneration || observeWorktree(rec) !== "ready") {
+            applyConflictPolicy(item, undefined,
+              !rec ? "missing_worktree" : rec.generation !== item.worktreeGeneration ? "stale-generation" : "worktree_not_ready", policy);
+            results.push(item); continue;
           }
-          if (rec.generation !== item.worktreeGeneration) {
-            applyConflictPolicy(item, undefined, "stale-generation", policy);
-            results.push(item);
-            continue;
+          if (rec.mergeResult?.status === 'merged') {
+            const pathKey = (file: string) => worktreeRelPathKey(file, resolved, rec.root);
+            if (JSON.stringify(item.changedFiles.map(pathKey).sort()) === JSON.stringify(rec.mergeResult.changedFiles.map(pathKey).sort())) {
+              Object.assign(item, structuredClone(rec.mergeResult));
+            } else applyConflictPolicy(item, undefined, 'worktree_merge_request_conflict', policy);
+            results.push(item); continue;
           }
-          if (observeWorktree(rec) !== "ready") {
-            applyConflictPolicy(item, rec, "worktree_not_ready", policy);
-            results.push(item);
-            continue;
-          }
-          const conflictWith = results.find(
-            (other) =>
-              other.status === "merged" &&
-              other.changedFiles.some((f) => item.changedFiles.includes(f)),
-          );
+          const conflictWith = results.find(other => other.status === "merged" && other.changedFiles.some(file => item.changedFiles.includes(file)));
           if (conflictWith) {
             applyConflictPolicy(item, rec, `overlap_with_${conflictWith.worktreeId}`, policy);
-            results.push(item);
-            continue;
-          }
-          let contentConflict = false;
-          for (const rel of item.changedFiles) {
-            const src = path.join(rec.root, ...rel.split("/"));
-            const dest = path.join(resolved, ...rel.split("/"));
-            if (existsSync(src) && existsSync(dest)) {
-              try {
-                const a = readFileSync(src, "utf8");
-                const b = readFileSync(dest, "utf8");
-                if (
-                  a !== b &&
-                  results.some((r) => r.status === "merged" && r.changedFiles.includes(rel))
-                ) {
-                  applyConflictPolicy(item, rec, `content_conflict_${rel}`, policy);
-                  contentConflict = true;
-                  break;
-                }
-              } catch {
-                // ignore read errors
-              }
-            }
-          }
-          if (contentConflict) {
-            results.push(item);
-            continue;
+            results.push(item); continue;
           }
           if (factStore) {
             try {
               const review = reviewDiff(factStore, resolved, { changedFiles: item.changedFiles });
-              item.review = {
-                relatedTests: review.relatedTests ?? [],
-                riskLevel: review.riskLevel,
-              };
-            } catch {
-              // fail-open review
-            }
+              item.review = { relatedTests: review.relatedTests ?? [], riskLevel: review.riskLevel };
+            } catch { /* Related-test hints do not authorize filesystem effects. */ }
           }
-          withCheckoutMaintenance([baseBasis(), basisFor(rec)], "merge", () => {
-            // A crash after copying a subset must not silently replay a merge.
-            item.status = "conflict";
-            item.reason = "merge_outcome_unknown";
+          const pathKey = (file: string) => worktreeRelPathKey(file, resolved, rec.root);
+          const assertCurrent = () => {
+            assertCurrentWorktree(rec);
+            if (rec.backend === 'git') assertWorktreeIndexVisible(rec.root);
+            if (rec.baseOid && git(["rev-parse", "HEAD"], resolved).trim() !== rec.baseOid) throw new Error("worktree_base_head_changed");
+            if (!rec.mergeBaseline) throw new Error("worktree_baseline_unavailable");
+            assertSupportedGitModes(rec, 'worktree_merge_mode_unsupported');
+            const changes = rec.backend === 'git' ? listChangedFilesFromGit(rec.root, false, rec.baseOid)
+              : changedWorktreeFiles(new Map(Object.entries(rec.mergeBaseline.worker)), captureWorktreeFiles(rec.root));
+            const requested = new Set(item.changedFiles.map(pathKey));
+            const observed = new Set(changes.map(pathKey));
+            if (changes.some(file => !requested.has(pathKey(file)))) throw new Error("worker_changes_not_in_merge_request");
+            if (rec.backend === 'git' && item.changedFiles.some(file => !observed.has(pathKey(file)))) throw new Error('worktree_merge_paths_not_observed');
+          };
+          let validationFailed = false;
+          try {
+          await withAsyncCheckoutMaintenance<MergeQueueItem>([baseBasis(), basisFor(rec)], "merge", async (admit) => {
+            item.status = 'conflict'; item.reason = 'merge_outcome_unknown';
             saveWorktreeRegistryScope(s);
-            for (const rel of item.changedFiles) {
-              const src = path.join(rec.root, ...rel.split("/"));
-              const dest = path.join(resolved, ...rel.split("/"));
-              if (existsSync(src)) {
-                mkdirSync(path.dirname(dest), { recursive: true });
-                cpSync(src, dest);
-              }
+            const baseline = rec.mergeBaseline!;
+            const applied = await applyWorktreeFiles({ baseRoot: resolved, workerRoot: rec.root,
+              sessionKey: rec.owner?.sessionKey ?? `worktree:${rec.id}`,
+              baseline: { parent: new Map(Object.entries(baseline.parent)), worker: new Map(Object.entries(baseline.worker)) },
+              files: item.changedFiles, assertCurrent, expectedPostimages: item.expectedPostimages,
+              beforeApply: (journalRef, hashes) => {
+                item.journalRef = journalRef; item.hashes = hashes;
+                saveWorktreeRegistryScope(s);
+              }, beforeEffect: admit });
+            item.journalRef = applied.journalRef ?? item.journalRef;
+            item.recoveryRequired = applied.recoveryRequired;
+            item.hashes = applied.hashes;
+            if (!applied.success) applyConflictPolicy(item, rec, applied.reason ?? "merge_failed", policy);
+            else { item.status = "merged"; delete item.reason; codingObservability.recordMergeOutcome(false); }
+            // Keep the journal and postimages durable before returning the writer.
+            // Until its terminal receipt settles, the queue still requires reconciliation.
+            const terminal = structuredClone(item);
+            item.status = 'conflict'; item.reason = 'merge_outcome_unknown';
+            saveWorktreeRegistryScope(s);
+            if (applied.recoveryRequired) {
+              throw new Error("worktree_merge_reconciliation_required");
             }
-            item.status = "merged";
-            delete item.reason;
-            rec.status = "merged";
-            codingObservability.recordMergeOutcome(false);
-            results.push(item);
-          });
+            Object.assign(item, terminal);
+            if (!terminal.reason) delete item.reason;
+            return terminal;
+          }, () => {
+            try { assertCurrent(); } catch (error) { validationFailed = true; throw error; }
+          }, terminal => terminal.status === 'merged' ? 'completed' : 'not-applied', terminal => {
+            rec.status = terminal.status === 'merged' ? 'merged' : 'conflict';
+            rec.mergeResult = structuredClone(terminal);
+            saveWorktreeRegistryScope(s);
+          }, true);
+          } catch (error) {
+            if (!validationFailed) throw error;
+            applyConflictPolicy(item, undefined, `preflight:${error instanceof Error ? error.message : String(error)}`, policy);
+          }
+          results.push(item);
         }
-        s.queue = s.queue.filter(item => item.reason === "merge_outcome_unknown" || !results.includes(item));
+        s.queue = s.queue.filter(item => item.reason === "merge_outcome_unknown" || item.recoveryRequired || !results.includes(item));
         saveWorktreeRegistryScope(s);
+        return results.map(item => structuredClone(item));
       });
-      return results;
     },
     cleanup(id, cleanupOptions) {
       withWorktreeLock(resolved, () => {

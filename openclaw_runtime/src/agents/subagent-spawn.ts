@@ -71,7 +71,7 @@ import {
 } from "./subagent-depth.js";
 import { buildSubagentInitialUserMessage } from "./subagent-initial-user-message.js";
 import { countActiveRunsForSession, enqueueSubagentRun, getSubagentRunByRunId, registerSubagentRun, releaseSubagentRun, reserveSubagentRun } from "./subagent-registry.js";
-import { createWorktreeService } from './worktree-service.js';
+import { resolveExecutionCheckout } from './worktree-service.js';
 import type { QueuedSubagentDispatchResult } from './subagent-registry-dispatch.js';
 import type { TeamOrchestrationMetadata } from "./subagent-registry.types.js";
 import { normalizeWriteSetPaths } from "./orchestration-protocol.js";
@@ -315,6 +315,14 @@ function releaseCancelledSpawnRun(runId: string, childSessionKey: string): void 
   if (getSubagentRunByRunId(runId)?.childSessionKey === childSessionKey) releaseSubagentRun(runId);
 }
 
+async function assertVerifierCandidate(orchestration: TeamOrchestrationMetadata | undefined, workspaceDir: string | undefined): Promise<void> {
+  if (orchestration?.phase !== 'verifier' || !orchestration.worktreeVerificationCandidate) return;
+  const { inspectOrchestrationCandidate } = await import('./orchestration-candidate.js');
+  if (!workspaceDir || !inspectOrchestrationCandidate({ ...orchestration.worktreeVerificationCandidate, materializedPath: workspaceDir })) {
+    throw new Error('verification candidate expired before dispatch');
+  }
+}
+
 /** Executes only this registry's already-prepared agent request after rechecking its owner. */
 export async function dispatchQueuedSubagentRun(entry: import('./subagent-registry.types.js').SubagentRunRecord): Promise<QueuedSubagentDispatchResult> {
   const queued = entry.queuedDispatch;
@@ -332,10 +340,16 @@ export async function dispatchQueuedSubagentRun(entry: import('./subagent-regist
     if (!parent?.sessionId || parent.sessionId !== queued.controllerSessionId) {
       return { status: 'rejected', error: 'orchestration controller generation changed or unavailable' };
     }
-    if (entry.orchestration?.worktreeBackend === 'git') {
+    if (entry.orchestration?.phase === 'verifier' && entry.orchestration.worktreeVerificationCandidate) {
+      await assertVerifierCandidate(entry.orchestration, entry.workspaceDir);
+    } else if (entry.orchestration?.worktreeBackend === 'git') {
       const meta = entry.orchestration;
-      if (!entry.workspaceDir || !meta.worktreeId || !meta.worktreeGeneration
-        || createWorktreeService(entry.workspaceDir).inspectIsolation(meta.worktreeId, meta.worktreeGeneration).status !== 'verified') {
+      if (!entry.workspaceDir || !meta.worktreeId || !meta.worktreeGeneration) {
+        return { status: 'rejected', error: 'worktree isolation expired before queued dispatch' };
+      }
+      const checkout = resolveExecutionCheckout(entry.workspaceDir);
+      if ((checkout.worktreeId !== null && (checkout.worktreeId !== meta.worktreeId || checkout.basis.generation !== meta.worktreeGeneration))
+        || checkout.service.inspectIsolation(meta.worktreeId, meta.worktreeGeneration).status !== 'verified') {
         return { status: 'rejected', error: 'worktree isolation expired before queued dispatch' };
       }
     }
@@ -348,7 +362,10 @@ export async function dispatchQueuedSubagentRun(entry: import('./subagent-regist
       canonicalSessionKey: target.canonicalKey ?? controller, expectedSessionId: queued.controllerSessionId }, 'subagent-spawn');
   } catch (error) { return { status: "rejected", error: summarizeError(error) }; }
   try {
-    try { taskDelegation = queued.persistentTask ? preparePersistentTaskDelegation(queued.persistentTask) : null; }
+    try {
+      await assertVerifierCandidate(entry.orchestration, entry.workspaceDir);
+      taskDelegation = queued.persistentTask ? preparePersistentTaskDelegation(queued.persistentTask) : null;
+    }
     catch (error) { return { status: 'rejected', error: summarizeError(error) }; }
     const response = await callSubagentGateway({ method: 'agent', params: queued.params, timeoutMs: queued.timeoutMs });
     const runId = readGatewayRunId(response);
@@ -1787,6 +1804,7 @@ export async function spawnSubagentDirect(
           emitLifecycleHooks: threadBindingReady, deleteTranscript: true });
         return { status: "forbidden", error: `sessions_spawn has reached max active children for this session (${maxChildren}/${maxChildren})`, childSessionKey };
       }
+      await assertVerifierCandidate(params.orchestration, spawnedCwd ?? spawnedWorkspaceDir ?? ctx.workspaceDir);
       taskDelegation = taskIntent ? preparePersistentTaskDelegation(taskIntent) : null;
       const response = await callSubagentGateway(dispatchRequest);
       const runId = readGatewayRunId(response);
