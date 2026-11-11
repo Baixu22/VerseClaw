@@ -1,0 +1,12 @@
+{
+  "actor": "codex-01a1b4da",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "ca51f0970c1bfa17175d108a44dc645358776a63",
+  "tree": "98b79d0654163f56a054cc67925eb0de5aeb5e9e",
+  "projection": "D:\\tmp\\coding-relay-01a1b4da\\tracked-source-ca51f0970",
+  "archiveSha256": "4712b588f127eda92bf910e1e148553d15d4fc376e1cb7c0081dc7d3f5785230",
+  "filesVerified": 20699,
+  "errors": [],
+  "dependencies": "Reused installed root, runtime and VerseBrowser dependencies through explicit directory junctions."
+}

@@ -1,0 +1,52 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-coding-audit",
+  "realHumanEvidence": false,
+  "candidate": "ff525cd5d1dbc5aa9ef5a176e914a50ceac1632e",
+  "area": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\tf0765\\final\\probe\\boundaries-Zey4zh",
+  "rows": [
+    {
+      "id": "denied-write-journal-trusted",
+      "expected": "denied; no copied data",
+      "actual": {
+        "directReadDenied": true,
+        "refused": "Error: Path escapes sandbox root (D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\tf0765\\final\\probe\\boundaries-Zey4zh\\workspace): D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\tf0765\\final\\probe\\boundaries-Zey4zh\\outside\\marker.txt. Use a relative path under `.openclaw/tmp/` inside the workspace for scratch/temp/meta files that file tools need to read or write later.",
+        "outsideUnchanged": true,
+        "snapshots": [],
+        "copied": false,
+        "readableByReadTool": false
+      },
+      "reproduced": false
+    },
+    {
+      "id": "denied-write-journal-external",
+      "expected": "denied; no copied data",
+      "actual": {
+        "directReadDenied": true,
+        "refused": "Error: Path escapes sandbox root (D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\tf0765\\final\\probe\\boundaries-Zey4zh\\workspace): D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\tf0765\\final\\probe\\boundaries-Zey4zh\\outside\\marker.txt. Use a relative path under `.openclaw/tmp/` inside the workspace for scratch/temp/meta files that file tools need to read or write later.",
+        "outsideUnchanged": true,
+        "snapshots": [],
+        "copied": false,
+        "readableByReadTool": false
+      },
+      "reproduced": false
+    },
+    {
+      "id": "undo-via-junction-workspaceOnly",
+      "expected": "reject; outside marker unchanged",
+      "actual": {
+        "outsideContents": "before-local-edit",
+        "undo": {
+          "ok": true,
+          "restored": [
+            "sub/marker.txt"
+          ],
+          "errors": [],
+          "journalDir": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\tf0765\\final\\probe\\boundaries-Zey4zh\\workspace\\.openclaw\\journal\\undo-alias",
+          "remainingEntries": 0
+        }
+      },
+      "reproduced": true
+    }
+  ]
+}

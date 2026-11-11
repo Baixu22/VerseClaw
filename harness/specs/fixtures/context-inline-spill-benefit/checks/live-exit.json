@@ -1,0 +1,7 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r2",
+  "pid": 24544,
+  "exitCode": 0,
+  "method": "Attached process handle before exit, then read Process.ExitCode"
+}

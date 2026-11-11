@@ -1,3 +1,74 @@
+import {
+  normalizeAutonomySessionScope,
+  type AutonomySessionScope,
+  type TaskId,
+} from './identity-scope.js';
+
+/** New autonomy references carry the existing owner rather than a bare taskId. */
+export type ScopedTaskReference = { scope: AutonomySessionScope } & (
+  | { owner: 'task-ledger'; taskNodeId: TaskId }
+  | { owner: 'task-forest'; taskNodeId: string }
+);
+
+export type TaskForestExecutionAnchor = {
+  owner: 'task-ledger';
+  taskNodeId: TaskId;
+  scope: AutonomySessionScope;
+  externalRef: ScopedTaskReference & {
+    owner: 'task-forest';
+    direction: 'execution-to-task-forest';
+  };
+};
+
+function taskReferenceRecord(value: unknown, keys: readonly string[]): Record<string, unknown> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new TypeError('Task reference requires an object');
+  }
+  const input = value as Record<string, unknown>;
+  const prototype = Object.getPrototypeOf(input);
+  if (prototype !== Object.prototype && prototype !== null) {
+    throw new TypeError('Task reference requires a plain object');
+  }
+  if (Object.keys(input).some((key) => !keys.includes(key))) {
+    throw new TypeError('Task reference forbids bare taskId, mixed owner or completion fields');
+  }
+  return input;
+}
+
+export function normalizeScopedTaskReference(
+  value: unknown,
+  ownerScope: AutonomySessionScope | null,
+): ScopedTaskReference {
+  const input = taskReferenceRecord(value, ['owner', 'taskNodeId', 'scope']);
+  if (input.owner !== 'task-ledger' && input.owner !== 'task-forest') {
+    throw new TypeError('Task reference requires an explicit completion owner');
+  }
+  if (typeof input.taskNodeId !== 'string' || !input.taskNodeId.trim()) {
+    throw new TypeError('Task reference requires taskNodeId');
+  }
+  return {
+    owner: input.owner,
+    taskNodeId: input.taskNodeId,
+    scope: normalizeAutonomySessionScope(input.scope, ownerScope),
+  } as ScopedTaskReference;
+}
+
+/** This pointer owns neither Forest task status nor a second completion decision. */
+export function normalizeTaskForestExecutionAnchor(
+  value: unknown,
+  ownerScope: AutonomySessionScope | null,
+): TaskForestExecutionAnchor {
+  const input = taskReferenceRecord(value, ['owner', 'taskNodeId', 'scope', 'externalRef']);
+  const anchor = normalizeScopedTaskReference({ owner: input.owner, taskNodeId: input.taskNodeId, scope: input.scope }, ownerScope);
+  const external = taskReferenceRecord(input.externalRef, ['owner', 'taskNodeId', 'scope', 'direction']);
+  if (anchor.owner !== 'task-ledger' || external.direction !== 'execution-to-task-forest') {
+    throw new TypeError('Task Forest execution anchor must point one way from Ledger execution');
+  }
+  const reference = normalizeScopedTaskReference({ owner: external.owner, taskNodeId: external.taskNodeId, scope: external.scope }, anchor.scope);
+  if (reference.owner !== 'task-forest') throw new TypeError('External completion authority must remain Task Forest');
+  return { ...anchor, externalRef: { ...reference, direction: external.direction } };
+}
+
 export type TaskLedgerReference = {
   direction: 'workboard-to-task-ledger';
   taskLedgerNodeId: string;

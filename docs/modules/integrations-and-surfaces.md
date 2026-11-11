@@ -233,6 +233,7 @@ Skill source 可来自：
 边界：
 
 - skill discovered ≠ exposed；
+- Skill 启停配置写入 runtime 所有的 `openclaw.json`，受管目录在 Gateway 启动前注册；
 - config saved ≠ runtime reloaded；
 - marketplace install ≠ executable trust；
 - skill contents 可以影响 prompt，但不是权限 grant。
@@ -285,8 +286,17 @@ MCP server 可配置：
 - tool listed 不等于 allowed；
 - tool call `success:false` 与 Host transport failure 分开；
 - `approvalRequired`/`blocked` 必须保留；
-- runtime reload 可能要求 Gateway restart；
+- MCP 配置更新通过当前会话 runtime 热重载，旧目录 revision 的调用会被拒绝；
+- 工具完成后返回本次调用的实际结果，调用期间产生的合法配置变更用于后续调用的准入；
 - MCP 不是绕过 Host API 的第二 action transport。
+
+Loopback HTTP 与 stdio 的工具结果使用同一 SDK 内容校验。`isError`、工具内部错误、审批等待、取消和超时保留失败语义；取消信号进入实际 SDK 调用，重复取消不计作服务故障。模型工具结果保留图片和结构化数据，音频或资源转为文本时记录转换信息。
+
+HTTP 保持现有 `2025-03-26` / `2024-11-05` 协商版本；旧版本不支持的音频、资源链接和结构化字段转换为合法文本，并在 `_meta` 中记录损失。stdio 使用 SDK 协商结果执行相同降级。后续请求的未知协议版本返回 400。
+
+HTTP 初始化返回 `Mcp-Session-Id`，将取消请求绑定到该客户端、agent 会话和 owner 身份；不同客户端使用相同 JSON-RPC id 不会互相取消。会话内调用 id 不可复用；会话处理 4096 次调用后需重新初始化，空闲十分钟后可回收，最多保留 256 个会话。客户端可用 DELETE 结束会话。未携带会话标识的旧请求只使用自身连接断开的取消信号。
+
+HTTP 会话失效返回 404 时，Runtime 回收发起请求的连接，下一次显式调用重新握手。失败调用不自动重放，旧连接的迟到错误不会回收替换后的连接。
 
 ## 8. Code Review 与 Remote Forge
 

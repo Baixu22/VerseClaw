@@ -53,7 +53,11 @@ import {
 } from "../runtime/index.js";
 import { stripFrontmatter } from "../utils/frontmatter.js";
 import { sleep } from "../utils/sleep.js";
-import { createRequestAttemptBudget, runWithRequestAttemptBudget, type RequestAttemptBudget } from "../request-attempt-budget.js";
+import {
+  createRequestAttemptBudget,
+  runWithRequestAttemptBudget,
+  type RequestAttemptBudget,
+} from "../request-attempt-budget.js";
 import { parseRetryAfterMsFromText } from "../retry-after.js";
 import { sanitizeFailedAttemptTranscriptMessage } from "../stream-failure.js";
 import { formatNoApiKeyFoundMessage, formatNoModelSelectedMessage } from "./auth-guidance.js";
@@ -131,8 +135,11 @@ function extractContextFamilyMessageContent(message: AgentMessage): unknown {
 }
 
 function getContextFamilyMessageEntryId(message: AgentMessage): string {
-  return readStringField(message, "id") ?? readStringField(message, "messageId") ??
-    `${message.role}-${readStringField(message, "timestamp") ?? Date.now().toString(36)}`;
+  return (
+    readStringField(message, "id") ??
+    readStringField(message, "messageId") ??
+    `${message.role}-${readStringField(message, "timestamp") ?? Date.now().toString(36)}`
+  );
 }
 
 function getContextFamilyToolCallId(message: AgentMessage, fallback: string): string {
@@ -280,6 +287,8 @@ export interface ExtensionBindings {
 
 /** Options for AgentSession.prompt() */
 export interface PromptOptions {
+  /** Internal restart-owner continuation; use the durable tail without adding a user turn. */
+  resumePersistedHistory?: boolean;
   /** Whether to expand file-based prompt templates (default: true) */
   expandPromptTemplates?: boolean;
   /** Image attachments */
@@ -1369,11 +1378,16 @@ export class AgentSession {
       if (currentImages) {
         userContent.push(...currentImages);
       }
-      messages.push({
-        role: "user",
-        content: userContent,
-        timestamp: Date.now(),
-      });
+      if (options?.resumePersistedHistory) {
+        const tail = this.agent.state.messages.at(-1);
+        if (!tail || (tail.role !== "user" && tail.role !== "toolResult")) {
+          throw new Error("restart continuation requires a durable user intent or tool result");
+        }
+        // The recovery owner already persisted this turn before the crash.
+        // Keep model input and transcript identity aligned across repeated restarts.
+      } else {
+        messages.push({ role: "user", content: userContent, timestamp: Date.now() });
+      }
 
       // Inject any pending "nextTurn" messages as context alongside the user message
       for (const msg of this.pendingNextTurnMessages) {
@@ -2804,7 +2818,8 @@ export class AgentSession {
       this.retryCount--;
       return false;
     }
-    const baseDelayMs = retryAfterMs !== undefined ? retryAfterMs : settings.baseDelayMs * 2 ** (this.retryCount - 1);
+    const baseDelayMs =
+      retryAfterMs !== undefined ? retryAfterMs : settings.baseDelayMs * 2 ** (this.retryCount - 1);
     const jitterFraction = Math.random();
     const delayMs =
       retryAfterMs !== undefined

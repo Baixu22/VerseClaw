@@ -1,0 +1,1102 @@
+{
+  "schema": "RecoveryObservedShadowAccounting/v1",
+  "sampler": "1909dfd0c0e0d8fe8e2e3ebb0ae49e1b565a776f",
+  "rows": [
+    {
+      "arm": "legacy",
+      "windowId": "child-created-before-parent-advance-kill",
+      "index": 0,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-45400-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "55abf13e-8371-42b9-87e0-5f6de750bb2c",
+          "action": "shadow",
+          "requestId": "main-session:55abf13e-8371-42b9-87e0-5f6de750bb2c",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793863960193,
+          "pid": 45400,
+          "observedAt": 1793863960193,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "legacy",
+      "windowId": "child-created-before-parent-advance-kill",
+      "index": 1,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-15656-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "f482dd7d-1322-4d25-aea8-3b2b127b5fcd",
+          "action": "shadow",
+          "requestId": "main-session:f482dd7d-1322-4d25-aea8-3b2b127b5fcd",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793865398667,
+          "pid": 15656,
+          "observedAt": 1793865398668,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "legacy",
+      "windowId": "child-created-before-parent-advance-kill",
+      "index": 2,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-10648-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "c30df1dd-7b8e-4516-b88d-af7e9d8327dc",
+          "action": "shadow",
+          "requestId": "main-session:c30df1dd-7b8e-4516-b88d-af7e9d8327dc",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793865465411,
+          "pid": 10648,
+          "observedAt": 1793865465412,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "legacy",
+      "windowId": "effect-before-receipt-kill",
+      "index": 0,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-13256-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "ff2d678c-9200-4736-acc5-83d6f6904b97",
+          "action": "shadow",
+          "requestId": "main-session:ff2d678c-9200-4736-acc5-83d6f6904b97",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793862819561,
+          "pid": 13256,
+          "observedAt": 1793862819562,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "legacy",
+      "windowId": "effect-before-receipt-kill",
+      "index": 1,
+      "actualDecisionRecords": 0,
+      "shadowRecords": 0,
+      "driftRecords": 0,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": true,
+      "records": []
+    },
+    {
+      "arm": "legacy",
+      "windowId": "effect-before-receipt-kill",
+      "index": 2,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-35628-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "e8781775-1688-4e3a-a428-e77069915b8b",
+          "action": "shadow",
+          "requestId": "main-session:e8781775-1688-4e3a-a428-e77069915b8b",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793863624737,
+          "pid": 35628,
+          "observedAt": 1793863624738,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "legacy",
+      "windowId": "intent-after-persist-kill",
+      "index": 0,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-48924-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "8450e606-921e-4ec0-919a-5a49d2005f6f",
+          "action": "shadow",
+          "requestId": "main-session:8450e606-921e-4ec0-919a-5a49d2005f6f",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793862602915,
+          "pid": 48924,
+          "observedAt": 1793862602915,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "legacy",
+      "windowId": "intent-after-persist-kill",
+      "index": 1,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-44912-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "fd135a43-cf84-44c7-905a-8dbc8283e1ea",
+          "action": "shadow",
+          "requestId": "main-session:fd135a43-cf84-44c7-905a-8dbc8283e1ea",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793862664814,
+          "pid": 44912,
+          "observedAt": 1793862664821,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "legacy",
+      "windowId": "intent-after-persist-kill",
+      "index": 2,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-24496-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "214bace8-88f5-469d-a577-428c1d42c9d3",
+          "action": "shadow",
+          "requestId": "main-session:214bace8-88f5-469d-a577-428c1d42c9d3",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "deliver",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=deliver (basis=owner-state)"
+          ],
+          "recordedAt": 1793862736665,
+          "pid": 24496,
+          "observedAt": 1793862736665,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "legacy",
+      "windowId": "repeated-restart",
+      "index": 0,
+      "actualDecisionRecords": 3,
+      "shadowRecords": 3,
+      "driftRecords": 3,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-24692-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "7944ae5e-bd5c-4958-ab60-a4a5f38bc0b3",
+          "action": "shadow",
+          "requestId": "main-session:7944ae5e-bd5c-4958-ab60-a4a5f38bc0b3",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793865663964,
+          "pid": 24692,
+          "observedAt": 1793865663964,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        },
+        {
+          "file": "decision-43440-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "7944ae5e-bd5c-4958-ab60-a4a5f38bc0b3",
+          "action": "shadow",
+          "requestId": "main-session:7944ae5e-bd5c-4958-ab60-a4a5f38bc0b3",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793865707844,
+          "pid": 43440,
+          "observedAt": 1793865707845,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        },
+        {
+          "file": "decision-44420-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "7944ae5e-bd5c-4958-ab60-a4a5f38bc0b3",
+          "action": "shadow",
+          "requestId": "main-session:7944ae5e-bd5c-4958-ab60-a4a5f38bc0b3",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793865686031,
+          "pid": 44420,
+          "observedAt": 1793865686031,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "legacy",
+      "windowId": "repeated-restart",
+      "index": 1,
+      "actualDecisionRecords": 3,
+      "shadowRecords": 3,
+      "driftRecords": 3,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-32352-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "6e57a18c-e14a-463a-a2eb-fc6fa5046b25",
+          "action": "shadow",
+          "requestId": "main-session:6e57a18c-e14a-463a-a2eb-fc6fa5046b25",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793867215377,
+          "pid": 32352,
+          "observedAt": 1793867215378,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        },
+        {
+          "file": "decision-36144-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "6e57a18c-e14a-463a-a2eb-fc6fa5046b25",
+          "action": "shadow",
+          "requestId": "main-session:6e57a18c-e14a-463a-a2eb-fc6fa5046b25",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793867377036,
+          "pid": 36144,
+          "observedAt": 1793867377037,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        },
+        {
+          "file": "decision-40360-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "6e57a18c-e14a-463a-a2eb-fc6fa5046b25",
+          "action": "shadow",
+          "requestId": "main-session:6e57a18c-e14a-463a-a2eb-fc6fa5046b25",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793867238755,
+          "pid": 40360,
+          "observedAt": 1793867238755,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "legacy",
+      "windowId": "repeated-restart",
+      "index": 2,
+      "actualDecisionRecords": 3,
+      "shadowRecords": 3,
+      "driftRecords": 3,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-10772-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "cbdc80f6-fa47-4e28-8a0f-7be5f3051170",
+          "action": "shadow",
+          "requestId": "main-session:cbdc80f6-fa47-4e28-8a0f-7be5f3051170",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "deliver",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=deliver (basis=owner-state)"
+          ],
+          "recordedAt": 1793867531014,
+          "pid": 10772,
+          "observedAt": 1793867531015,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        },
+        {
+          "file": "decision-32456-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "cbdc80f6-fa47-4e28-8a0f-7be5f3051170",
+          "action": "shadow",
+          "requestId": "main-session:cbdc80f6-fa47-4e28-8a0f-7be5f3051170",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "deliver",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=deliver (basis=owner-state)"
+          ],
+          "recordedAt": 1793867483201,
+          "pid": 32456,
+          "observedAt": 1793867483202,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        },
+        {
+          "file": "decision-35220-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "cbdc80f6-fa47-4e28-8a0f-7be5f3051170",
+          "action": "shadow",
+          "requestId": "main-session:cbdc80f6-fa47-4e28-8a0f-7be5f3051170",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "deliver",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=deliver (basis=owner-state)"
+          ],
+          "recordedAt": 1793867508323,
+          "pid": 35220,
+          "observedAt": 1793867508324,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "legacy",
+      "windowId": "store-write-failure",
+      "index": 0,
+      "actualDecisionRecords": 0,
+      "shadowRecords": 0,
+      "driftRecords": 0,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": []
+    },
+    {
+      "arm": "legacy",
+      "windowId": "store-write-failure",
+      "index": 1,
+      "actualDecisionRecords": 0,
+      "shadowRecords": 0,
+      "driftRecords": 0,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": []
+    },
+    {
+      "arm": "legacy",
+      "windowId": "store-write-failure",
+      "index": 2,
+      "actualDecisionRecords": 0,
+      "shadowRecords": 0,
+      "driftRecords": 0,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": []
+    },
+    {
+      "arm": "candidate",
+      "windowId": "child-created-before-parent-advance-kill",
+      "index": 0,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-40216-1.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "ec1efd19-8209-431c-965d-f963fd8f103f",
+          "action": "shadow",
+          "requestId": "main-session:ec1efd19-8209-431c-965d-f963fd8f103f",
+          "entry": "main-session-restart",
+          "legacyOutcome": "not-resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=not-resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793868104875,
+          "pid": 40216,
+          "observedAt": 1793868104876,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "candidate",
+      "windowId": "child-created-before-parent-advance-kill",
+      "index": 1,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-33108-1.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "dc20acb9-65fd-4feb-b508-4e2f2e490cd0",
+          "action": "shadow",
+          "requestId": "main-session:dc20acb9-65fd-4feb-b508-4e2f2e490cd0",
+          "entry": "main-session-restart",
+          "legacyOutcome": "not-resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=not-resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793868153512,
+          "pid": 33108,
+          "observedAt": 1793868153513,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "candidate",
+      "windowId": "child-created-before-parent-advance-kill",
+      "index": 2,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-49828-1.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "b6256e42-697f-413c-bca5-82a02e0e225f",
+          "action": "shadow",
+          "requestId": "main-session:b6256e42-697f-413c-bca5-82a02e0e225f",
+          "entry": "main-session-restart",
+          "legacyOutcome": "not-resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=not-resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793868213895,
+          "pid": 49828,
+          "observedAt": 1793868213919,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "candidate",
+      "windowId": "effect-before-receipt-kill",
+      "index": 0,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-29860-1.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "ef9661b3-5365-46d7-be4e-fe74ffc8cc1e",
+          "action": "shadow",
+          "requestId": "main-session:ef9661b3-5365-46d7-be4e-fe74ffc8cc1e",
+          "entry": "main-session-restart",
+          "legacyOutcome": "not-resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=not-resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793867898808,
+          "pid": 29860,
+          "observedAt": 1793867898809,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "candidate",
+      "windowId": "effect-before-receipt-kill",
+      "index": 1,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-43460-1.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "e8f30ae3-cf7f-43ac-b8bb-ac8646add926",
+          "action": "shadow",
+          "requestId": "main-session:e8f30ae3-cf7f-43ac-b8bb-ac8646add926",
+          "entry": "main-session-restart",
+          "legacyOutcome": "not-resumed",
+          "authorityKind": "deliver",
+          "drift": true,
+          "reasons": [
+            "legacy=not-resumed but authority=deliver (basis=owner-state)"
+          ],
+          "recordedAt": 1793867990395,
+          "pid": 43460,
+          "observedAt": 1793867990396,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "candidate",
+      "windowId": "effect-before-receipt-kill",
+      "index": 2,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-5312-1.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "116c36f3-8e10-4c4f-9056-97431239758a",
+          "action": "shadow",
+          "requestId": "main-session:116c36f3-8e10-4c4f-9056-97431239758a",
+          "entry": "main-session-restart",
+          "legacyOutcome": "not-resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=not-resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793868055733,
+          "pid": 5312,
+          "observedAt": 1793868055734,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "candidate",
+      "windowId": "intent-after-persist-kill",
+      "index": 0,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-50316-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "3d04e756-eb4f-4b9f-ae0e-e0ca092a876f",
+          "action": "shadow",
+          "requestId": "main-session:3d04e756-eb4f-4b9f-ae0e-e0ca092a876f",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793867626035,
+          "pid": 50316,
+          "observedAt": 1793867626035,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "candidate",
+      "windowId": "intent-after-persist-kill",
+      "index": 1,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-48048-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "d88c73c4-68fd-446e-b3a9-97f839045af8",
+          "action": "shadow",
+          "requestId": "main-session:d88c73c4-68fd-446e-b3a9-97f839045af8",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793867734650,
+          "pid": 48048,
+          "observedAt": 1793867734650,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "candidate",
+      "windowId": "intent-after-persist-kill",
+      "index": 2,
+      "actualDecisionRecords": 1,
+      "shadowRecords": 1,
+      "driftRecords": 1,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-6224-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "452eb977-c396-49d9-9e65-fdb666737e62",
+          "action": "shadow",
+          "requestId": "main-session:452eb977-c396-49d9-9e65-fdb666737e62",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793867817194,
+          "pid": 6224,
+          "observedAt": 1793867817195,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "candidate",
+      "windowId": "repeated-restart",
+      "index": 0,
+      "actualDecisionRecords": 3,
+      "shadowRecords": 3,
+      "driftRecords": 3,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-13096-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "3d933990-cab1-48c0-a5f4-77bdc7472655",
+          "action": "shadow",
+          "requestId": "main-session:3d933990-cab1-48c0-a5f4-77bdc7472655",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793868627665,
+          "pid": 13096,
+          "observedAt": 1793868627665,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        },
+        {
+          "file": "decision-32456-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "3d933990-cab1-48c0-a5f4-77bdc7472655",
+          "action": "shadow",
+          "requestId": "main-session:3d933990-cab1-48c0-a5f4-77bdc7472655",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793868583668,
+          "pid": 32456,
+          "observedAt": 1793868583669,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        },
+        {
+          "file": "decision-5112-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "3d933990-cab1-48c0-a5f4-77bdc7472655",
+          "action": "shadow",
+          "requestId": "main-session:3d933990-cab1-48c0-a5f4-77bdc7472655",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793868598440,
+          "pid": 5112,
+          "observedAt": 1793868598441,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "candidate",
+      "windowId": "repeated-restart",
+      "index": 1,
+      "actualDecisionRecords": 3,
+      "shadowRecords": 3,
+      "driftRecords": 3,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-22660-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "98bb8c32-98dd-4035-8dd1-4f2568f250fc",
+          "action": "shadow",
+          "requestId": "main-session:98bb8c32-98dd-4035-8dd1-4f2568f250fc",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793868763209,
+          "pid": 22660,
+          "observedAt": 1793868763210,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        },
+        {
+          "file": "decision-36268-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "98bb8c32-98dd-4035-8dd1-4f2568f250fc",
+          "action": "shadow",
+          "requestId": "main-session:98bb8c32-98dd-4035-8dd1-4f2568f250fc",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793868733216,
+          "pid": 36268,
+          "observedAt": 1793868733216,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        },
+        {
+          "file": "decision-41660-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "98bb8c32-98dd-4035-8dd1-4f2568f250fc",
+          "action": "shadow",
+          "requestId": "main-session:98bb8c32-98dd-4035-8dd1-4f2568f250fc",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793868705991,
+          "pid": 41660,
+          "observedAt": 1793868705991,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "candidate",
+      "windowId": "repeated-restart",
+      "index": 2,
+      "actualDecisionRecords": 3,
+      "shadowRecords": 3,
+      "driftRecords": 3,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": [
+        {
+          "file": "decision-26980-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "73f52086-5a54-4ec8-b06c-eb8297d71af0",
+          "action": "shadow",
+          "requestId": "main-session:73f52086-5a54-4ec8-b06c-eb8297d71af0",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793868867379,
+          "pid": 26980,
+          "observedAt": 1793868867380,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        },
+        {
+          "file": "decision-27368-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "73f52086-5a54-4ec8-b06c-eb8297d71af0",
+          "action": "shadow",
+          "requestId": "main-session:73f52086-5a54-4ec8-b06c-eb8297d71af0",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793868939439,
+          "pid": 27368,
+          "observedAt": 1793868939439,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        },
+        {
+          "file": "decision-36876-2.json",
+          "sessionKey": "agent:main:main",
+          "sessionId": "73f52086-5a54-4ec8-b06c-eb8297d71af0",
+          "action": "shadow",
+          "requestId": "main-session:73f52086-5a54-4ec8-b06c-eb8297d71af0",
+          "entry": "main-session-restart",
+          "legacyOutcome": "resumed",
+          "authorityKind": "reconcile",
+          "drift": true,
+          "reasons": [
+            "legacy=resumed but authority=reconcile (basis=effect-certainty)"
+          ],
+          "recordedAt": 1793868901903,
+          "pid": 36876,
+          "observedAt": 1793868901904,
+          "driven_by": "agent",
+          "actor": "main-session-recovery",
+          "realHumanEvidence": false
+        }
+      ]
+    },
+    {
+      "arm": "candidate",
+      "windowId": "store-write-failure",
+      "index": 0,
+      "actualDecisionRecords": 0,
+      "shadowRecords": 0,
+      "driftRecords": 0,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": []
+    },
+    {
+      "arm": "candidate",
+      "windowId": "store-write-failure",
+      "index": 1,
+      "actualDecisionRecords": 0,
+      "shadowRecords": 0,
+      "driftRecords": 0,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": []
+    },
+    {
+      "arm": "candidate",
+      "windowId": "store-write-failure",
+      "index": 2,
+      "actualDecisionRecords": 0,
+      "shadowRecords": 0,
+      "driftRecords": 0,
+      "unpairedActualRecords": 0,
+      "unreportedDriftRecords": 0,
+      "observationTimedOut": false,
+      "records": []
+    }
+  ],
+  "totals": {
+    "actualDecisionRecords": 35,
+    "shadowRecords": 35,
+    "driftRecords": 35,
+    "unpairedActualRecords": 0,
+    "unreportedDriftRecords": 0,
+    "declaredTimeoutWindows": 1
+  },
+  "scope": "Only observed main-session decisions in the primary fault matrix. A window with no decision before timeout is an explicit observation gap, not proof that no recovery request existed. Reconcile has no equivalent legacy outcome and is expected to produce a drift flag.",
+  "benchmarkRef": "shadow-benchmark.json",
+  "driven_by": "agent",
+  "actor": "recovery-shadow-auditor",
+  "realHumanEvidence": false
+}

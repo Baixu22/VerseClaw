@@ -1,0 +1,50 @@
+{
+  "schema": "clawx.versegit.d1-runtime-probe/v1",
+  "generated_at": "2026-11-08T03:46:34.333Z",
+  "driven_by": "agent",
+  "actor": "codex",
+  "tool_result": {
+    "original_content_blocks": 1,
+    "enriched_content_blocks": 2,
+    "original_content_preserved": true,
+    "original_details_preserved": true,
+    "is_error": false
+  },
+  "delivery": {
+    "evidence_id": "vgf_c229d459ad9cd2f4a8fe991f",
+    "coverage": "direct",
+    "basis_digest": "sha256:8f26a8d9ee2f6ca035276656ff858c1409c635f48b17503098be62324ba51792",
+    "candidate_id": null,
+    "produced": true,
+    "host_delivered": true,
+    "transcript_confirmed": true,
+    "produced_count": 1,
+    "host_delivered_count": 1,
+    "transcript_confirmed_count": 1
+  },
+  "transcript": {
+    "relative_path": "sessions/2026-11-08T03-46-33-489Z_01a1b943-d790-7e82-8746-18af176d6aa5.jsonl",
+    "marker_in_transcript": true,
+    "marker_in_next_call": true,
+    "next_call_message_count": 2,
+    "next_call_text_sha256": "980a6a80580f7911a9efaa781f0d064e22e34176fecdc44e129e9e9c8758c44e"
+  },
+  "negatives": {
+    "duplicate_observation": "duplicate",
+    "duplicate_feedback_emitted": false,
+    "duplicate_delivery_rejected": true,
+    "wrong_owner_rejected": true,
+    "old_epoch_rejected": true,
+    "revoked_after_end_rejected": true,
+    "timeout_after_ttl_rejected": true,
+    "unavailable_original_preserved": true
+  },
+  "boundaries": {
+    "external_model_provider_claimed": false,
+    "new_agent_loop": false,
+    "new_steering_bus": false,
+    "host_verdict": "unchanged",
+    "m4_authorized": false
+  },
+  "passed": true
+}

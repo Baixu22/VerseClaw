@@ -1,0 +1,1 @@
+{"candidate":"16da6fdf22b0bda023becffa4272373be610ab54","deterministic_pass":true,"live_paired_pass":true,"deterministic_manifest":{"files":13,"sha256":"fe1af281317cec75152c6230751da72ce1b9ec294517a4c24791a4d4bb1efe6a"},"live_manifest":{"files":13,"sha256":"92ba846c354c0151b2a594867454ae76f2eb8d5ca99d5a88e10f78a3dd96db8f"},"raw_jsonl_archives_and_provider_inputs_verified":true}

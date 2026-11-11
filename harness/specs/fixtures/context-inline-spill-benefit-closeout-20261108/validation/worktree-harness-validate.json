@@ -1,0 +1,29 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b90a",
+  "name": "worktree-harness-validate",
+  "cwd": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+  "command": [
+    "node",
+    "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+    "harness",
+    "validate",
+    "--spec",
+    "harness/specs/tasks/inline-spill-real-benefit-closeout.md"
+  ],
+  "started_at": "2026-11-08T03:03:07.925204+00:00",
+  "duration_seconds": 7.422,
+  "exit_code": 1,
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\worktree-harness-validate.stdout.txt",
+      "bytes": 388,
+      "sha256": "0760d32aea9fe61602c8ed827107992fc2a1076ded11d83611b5ca97ce8e2378"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\worktree-harness-validate.stderr.txt",
+      "bytes": 506,
+      "sha256": "5eb00657999e7dac5a077c47cbbcaaa1395b3306a998520fc82a895b054140fa"
+    }
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "candidate": "3be783eac6a4e2aae35558dbee705f47cf3caeb1",
+  "driven_by": "agent",
+  "actor": "codex-01a1b68a",
+  "realHumanEvidence": false,
+  "finishedAt": "2026-11-08T01:58:44.834024+00:00",
+  "commands": [
+    {
+      "name": "projection-units",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/coding-controls-tf0510.test.ts",
+        "tests/unit/coding-controls-tf0510-patchflow-trigger.test.ts",
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/coding-retired-deferred-completion.test.ts",
+        "tests/unit/dcs-prod-flags-catalog.test.ts",
+        "tests/unit/dcs-prod-flags-retirement.test.tsx",
+        "tests/unit/dcs-prod-flags-memory-semantics.test.tsx",
+        "tests/unit/component-disposition-catalog.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\projection-units.json"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac",
+      "exitCode": 0,
+      "seconds": 61.42199999999866
+    },
+    {
+      "name": "projection-runtime",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/run-vitest.mjs",
+        "run",
+        "src/agents/isolation-mode-matrix.test.ts",
+        "src/agents/orchestrator-write-set-plan.test.ts",
+        "src/agents/patch-flow-graduation.test.ts",
+        "src/agents/worktree-service.test.ts",
+        "src/agents/tools/write-journal.test.ts",
+        "src/context-engine/runtime-flag-ack.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\projection-runtime.json"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 48.70300000000134
+    },
+    {
+      "name": "projection-bridge",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/generate-ext-bridge.mjs"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac",
+      "exitCode": 0,
+      "seconds": 0.20300000000133878
+    },
+    {
+      "name": "projection-type-node",
+      "argv": [
+        "D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@typescript+native-preview-win32-x64@7.0.0-dev.20260527.2/node_modules/@typescript/native-preview-win32-x64/lib/tsgo.exe",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac",
+      "exitCode": 0,
+      "seconds": 12.671999999998661
+    },
+    {
+      "name": "projection-type-web",
+      "argv": [
+        "D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@typescript+native-preview-win32-x64@7.0.0-dev.20260527.2/node_modules/@typescript/native-preview-win32-x64/lib/tsgo.exe",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac",
+      "exitCode": 0,
+      "seconds": 4.48399999999674
+    },
+    {
+      "name": "projection-type-test",
+      "argv": [
+        "D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@typescript+native-preview-win32-x64@7.0.0-dev.20260527.2/node_modules/@typescript/native-preview-win32-x64/lib/tsgo.exe",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac",
+      "exitCode": 0,
+      "seconds": 17.5
+    },
+    {
+      "name": "projection-contract",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac",
+      "exitCode": 0,
+      "seconds": 0.3440000000045984
+    },
+    {
+      "name": "projection-lint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "src/components/settings/DcsProdFlagsPanel.tsx",
+        "tests/e2e/coding-retired-controls.spec.ts",
+        "tests/unit/coding-retired-deferred-completion.test.ts",
+        "--max-warnings=0"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac",
+      "exitCode": 0,
+      "seconds": 4.8439999999973224
+    }
+  ]
+}

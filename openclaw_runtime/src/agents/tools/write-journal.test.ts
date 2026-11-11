@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { linkSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { codingObservability } from "../../context-engine/coding-observability.js";
@@ -56,11 +56,11 @@ describe("write-journal (C2-8)", () => {
     }
     expect(readFileSync(file, "utf8")).toBe("v3\n");
     // undo once -> v2
-    const one = undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 1 });
+    const one = await undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 1 });
     expect(one.restored).toEqual(["f.ts"]);
     expect(readFileSync(file, "utf8")).toBe("v2\n");
     // undo again -> v1
-    undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 1 });
+    await undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 1 });
     expect(readFileSync(file, "utf8")).toBe("v1\n");
     expect(codingObservability.snapshot().undoCount).toBe(2);
   });
@@ -149,7 +149,7 @@ describe("write-journal (C2-8)", () => {
       });
       expect(readFileSync(outsideFile, "utf8")).toBe("outside-v1\n");
 
-      const authorized = undoLastWrites({
+      const authorized = await undoLastWrites({
         workspaceRoot: repoRoot,
         sessionId,
         steps: 1,
@@ -444,6 +444,39 @@ describe("write-journal (C2-8)", () => {
     clearWriteJournal({ workspaceRoot: repoRoot, sessionId });
     // no throw
   });
+
+  it("refuses a snapshot replaced by an outside hardlink without restoring its bytes", async () => {
+    const file = path.join(repoRoot, "f.ts");
+    const entry = snapshotBeforeWrite({ workspaceRoot: repoRoot, sessionId, filePath: file, toolName: "write" })!;
+    writeFileSync(file, "changed\n");
+    const outside = repoRoot + "-external.txt";
+    writeFileSync(outside, "external-private-marker\n");
+    try {
+      rmSync(entry.snapshotPath);
+      linkSync(outside, entry.snapshotPath);
+      const result = await undoLastWrites({ workspaceRoot: repoRoot, sessionId, workspaceOnly: true });
+      expect(result.errors).toHaveLength(1);
+      expect(result.remainingEntries).toBe(1);
+      expect(readFileSync(file, "utf8")).toBe("changed\n");
+      expect(readFileSync(outside, "utf8")).toBe("external-private-marker\n");
+    } finally { rmSync(outside, { force: true }); }
+  });
+
+  it("does not consume a new journal tail while asynchronous undo reads its snapshot", async () => {
+    const file = path.join(repoRoot, "f.ts");
+    snapshotBeforeWrite({ workspaceRoot: repoRoot, sessionId, filePath: file, toolName: "write" });
+    writeFileSync(file, "changed\n");
+    const pending = undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 2, workspaceOnly: true });
+    const other = path.join(repoRoot, "new.txt");
+    snapshotBeforeWrite({ workspaceRoot: repoRoot, sessionId, filePath: other, toolName: "write" });
+    writeFileSync(other, "new-concurrent-content");
+    const result = await pending;
+    expect(result.errors.join(" ")).toContain("concurrent_write_detected");
+    expect(result.restored).toEqual([]);
+    expect(result.remainingEntries).toBe(2);
+    expect(readFileSync(other, "utf8")).toBe("new-concurrent-content");
+    expect(readFileSync(file, "utf8")).toBe("changed\n");
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -479,7 +512,7 @@ describe("write-journal FP-P1-04 semantics", () => {
     writeFileSync(path.join(repoRoot, file), content, "utf8");
   }
 
-  it("multi-file batch undo restores everything (create + modify)", () => {
+  it("multi-file batch undo restores everything (create + modify)", async () => {
     write("a.ts", "a1\n");
     write("b.ts", "b1\n");
     snapshotBeforeWrite({
@@ -490,7 +523,7 @@ describe("write-journal FP-P1-04 semantics", () => {
     });
     writeFileSync(path.join(repoRoot, "new.ts"), "n1\n", "utf8");
 
-    const outcome = undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 3 });
+    const outcome = await undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 3 });
     expect(outcome.errors).toEqual([]);
     expect(outcome.restored.sort()).toEqual(["a.ts", "b.ts", "new.ts"].sort());
     expect(readFileSync(path.join(repoRoot, "a.ts"), "utf8")).toBe("a0\n");
@@ -499,14 +532,14 @@ describe("write-journal FP-P1-04 semantics", () => {
     expect(outcome.remainingEntries).toBe(0);
   });
 
-  it("HARD LOCK: partial restore is a failure — stops at first error, journal retained", () => {
+  it("HARD LOCK: partial restore is a failure — stops at first error, journal retained", async () => {
     write("a.ts", "a1\n");
     write("b.ts", "b1\n");
     const journal = getOrCreateWriteJournal(repoRoot, sessionId);
     const newest = journal.entries[journal.entries.length - 1]!;
     rmSync(newest.snapshotPath, { force: true });
 
-    const outcome = undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 2 });
+    const outcome = await undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 2 });
     expect(outcome.errors).toHaveLength(1);
     expect(outcome.errors[0]).toContain("journal snapshot missing");
     expect(outcome.restored).toEqual([]);
@@ -516,14 +549,14 @@ describe("write-journal FP-P1-04 semantics", () => {
     expect(existsSync(outcome.journalDir)).toBe(true);
   });
 
-  it("journal rehydrates from disk after a restart (fresh in-memory state)", () => {
+  it("journal rehydrates from disk after a restart (fresh in-memory state)", async () => {
     write("a.ts", "a1\n");
     write("a.ts", "a2\n");
     __resetWriteJournals();
     const journal = getOrCreateWriteJournal(repoRoot, sessionId);
     expect(journal.entries).toHaveLength(2);
     expect(journal.nextSeq).toBe(3);
-    const outcome = undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 2 });
+    const outcome = await undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 2 });
     expect(outcome.errors).toEqual([]);
     expect(readFileSync(path.join(repoRoot, "a.ts"), "utf8")).toBe("a0\n");
   });
@@ -586,10 +619,10 @@ describe("write-journal FP-P1-04 semantics", () => {
     ).toBe(true);
   });
 
-  it("successful undo cleans consumed snapshots; journal stays consistent with disk", () => {
+  it("successful undo cleans consumed snapshots; journal stays consistent with disk", async () => {
     write("a.ts", "a1\n");
     expect(listJournalSnapshotFiles(repoRoot, sessionId)).toHaveLength(1);
-    const outcome = undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 1 });
+    const outcome = await undoLastWrites({ workspaceRoot: repoRoot, sessionId, steps: 1 });
     expect(outcome.errors).toEqual([]);
     expect(listJournalSnapshotFiles(repoRoot, sessionId)).toHaveLength(0);
     expect(getOrCreateWriteJournal(repoRoot, sessionId).entries).toHaveLength(0);

@@ -13,11 +13,7 @@
 
 export const CODING_CONTROL_DISPOSITION_SCHEMA = "CodingControlDisposition/v1" as const;
 
-export type CodingControlDisposition =
-  | "internal"
-  | "advanced"
-  | "experiment"
-  | "retired";
+export type CodingControlDisposition = "internal" | "advanced" | "experiment" | "retired";
 
 export type CodingControlImplementationState =
   | "implemented"
@@ -64,9 +60,9 @@ export const CODING_CONTROL_COMPONENTS: readonly CodingControlComponent[] = [
   {
     id: "symbol-lease",
     label: "Symbol lease / WAL",
-    currentConsumer: "edit / write / apply_patch concurrency guard",
+    currentConsumer: "retained benchmark sources; execution retired",
     disposition: "retired",
-    implementationState: "implemented-opt-in",
+    implementationState: "implemented",
     implementationNode: "TF-0510",
     verificationArtifact: [
       "openclaw_runtime/src/agents/symbol-lease-guard.test.ts",
@@ -83,9 +79,9 @@ export const CODING_CONTROL_COMPONENTS: readonly CodingControlComponent[] = [
   {
     id: "patch-flow",
     label: "Patch flow (serial fenced apply)",
-    currentConsumer: "team_orchestrate patchFlowExecution + orchestrator serial apply",
+    currentConsumer: "historical apply records; execution retired",
     disposition: "retired",
-    implementationState: "implemented-opt-in",
+    implementationState: "implemented",
     implementationNode: "TF-0510",
     verificationArtifact: [
       "openclaw_runtime/src/agents/orchestration-patch-flow.test.ts",
@@ -96,7 +92,7 @@ export const CODING_CONTROL_COMPONENTS: readonly CodingControlComponent[] = [
     remainingGap: [],
     productEntry: null,
     notes:
-      "Serial fenced apply, destructive holds, a 10-cycle agent-driven soak and fail-closed missing-workspace behaviour are all tested. What is missing is a product decision plus a non-vacuous graduation gate, not more code.",
+      "Retired by TF-0510. Request/config admission leaves ordinary worker tools intact; restored execution markers cannot start new candidate application. Historical applied effects retain their recorded status and identity. Concurrent coding uses explicit worktree isolation and the existing journal/candidate owner.",
   },
   {
     id: "worktree-backend",
@@ -112,7 +108,7 @@ export const CODING_CONTROL_COMPONENTS: readonly CodingControlComponent[] = [
     remainingGap: [],
     productEntry: "isolation=worktree on an orchestrator request/plan",
     notes:
-      "In-process is the default backend; the git backend is opt-in and falls back to inprocess outside a git repo. Windows separators, traversal rejection, concurrent create/merge/cleanup and a two-worker overlap conflict are covered. TFD-tf0137-api-only-promise-withdrawal-20260830 already resolved the config-flag promise: the backend is selected through the real API argument, and the config leaf is ack-only.",
+      "Inprocess remains the default backend. Explicit worktree requests select the configured inprocess/Git backend; an unavailable Git checkout is rejected before spawn. Owner-verified Git checkouts provide checkout isolation, while inprocess records identify directory simulation. Journal-backed merge rejects stale or conflicting candidates.",
   },
   {
     id: "isolation-request",
@@ -127,17 +123,17 @@ export const CODING_CONTROL_COMPONENTS: readonly CodingControlComponent[] = [
       "openclaw_runtime/src/agents/worktree-service.test.ts",
     ],
     remainingGap: [],
-    productEntry: "isolation: \"worktree\" | \"shared\" on a request/plan",
+    productEntry: 'isolation: "worktree" | "shared" on a request/plan',
     notes:
-      "Defaults to shared; unknown values normalize to shared; worktree is accepted by the orchestrator plan and carried through HandoffPack alongside writeSet/worktreeId. Shared is intentionally the product default until multi-writer isolation is approved.",
+      "Defaults to shared; explicit unknown isolation values are rejected. Worktree requests inherit to workers unless explicitly overridden, and execute under the parent session's authorized workspace and generation. Only owner-verified Git checkouts prove checkout isolation; directory simulation remains inprocess. Shared remains the product default.",
   },
 ];
 
 /** Components that still block a truthful TF-0510 closeout. */
 export function codingControlGaps(): Array<{ id: string; remainingGap: readonly string[] }> {
-  return CODING_CONTROL_COMPONENTS
-    .filter((component) => component.remainingGap.length > 0)
-    .map((component) => ({ id: component.id, remainingGap: component.remainingGap }));
+  return CODING_CONTROL_COMPONENTS.filter((component) => component.remainingGap.length > 0).map(
+    (component) => ({ id: component.id, remainingGap: component.remainingGap }),
+  );
 }
 
 /** True only when every component reports an empty remaining gap. */

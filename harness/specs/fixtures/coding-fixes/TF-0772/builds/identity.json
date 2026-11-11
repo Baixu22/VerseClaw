@@ -1,0 +1,24 @@
+{
+  "candidate": {
+    "commit": "d9bbffa8daaca596aa9fa027ba6065ae829f6af9",
+    "tree": "c8f1fa8973e7f4c66296d1482ad8e6b89b93c698",
+    "dirty": false
+  },
+  "runtimeBuiltSources": "515c91824",
+  "mainBuiltSources": "cdef15468",
+  "runtimeSourceDrift": [],
+  "mainRendererSourceDrift": [],
+  "buildExitCodes": {
+    "runtime": 0,
+    "vite": 0
+  },
+  "electronVersion": "40.8.4",
+  "electronSha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e",
+  "outputs": {
+    "openclaw_runtime/dist/entry.js": "045a16f01a111d8917e4909d542274f13a73989fc7082aa52b1df5da22c8f0df",
+    "dist-electron/main/index.js": "38a5c29950093c875b26fda3dfa2ad047e4bc514a946078772783e3916cd170b",
+    "dist/index.html": "73f37763fdbf86c7210b6114716e01bc91f5ea3f8796c20d823c4b171666adeb"
+  },
+  "driven_by": "agent",
+  "actor": "codex-01a1ab23"
+}

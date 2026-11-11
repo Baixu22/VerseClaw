@@ -1,0 +1,30 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "package-before-closeout",
+  "cwd": "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX",
+  "command": [
+    "node",
+    "harness/specs/fixtures/context-inline-spill-benefit-round4/verify-evidence.mjs"
+  ],
+  "started_at": "2026-11-08T06:09:07.933857+00:00",
+  "duration_seconds": 1.172,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": null
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\package-before-closeout.stdout.txt",
+      "bytes": 158,
+      "sha256": "e575aaddc13c2dc32b938f9d2c6e9232ddde0b57d927c529c4d66844427b0f2d"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\package-before-closeout.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+Preparing worktree (detached HEAD a75db21)
+Preparing worktree (detached HEAD 2dcd1dd)
+Preparing worktree (detached HEAD 50588df)
+Preparing worktree (detached HEAD a62df2c)
+Preparing worktree (detached HEAD fd42716)
+Preparing worktree (detached HEAD 97a64aa)
+Preparing worktree (detached HEAD cee9c52)
+Preparing worktree (detached HEAD 357cf0d)
+JSON report written to D:/ClawX-work/coding-vg-sts-jj-20261104/.audit/tf0766/final/vg-host-unit.json

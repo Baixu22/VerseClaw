@@ -4,9 +4,45 @@
  * Bounds automatic recovery attempts and tombstones repeatedly wedged session entries.
  */
 import type { SessionEntry } from "../config/sessions.js";
+import type { RecoveryOwnerAdmission } from "../../../shared/recovery-authority/contract.js";
+import { buildRecoveryAdmissionKey } from "./recovery-authority/owner-admission.js";
 
-const SUBAGENT_RECOVERY_MAX_AUTOMATIC_ATTEMPTS = 2;
+export const SUBAGENT_RECOVERY_MAX_AUTOMATIC_ATTEMPTS = 2;
 const SUBAGENT_RECOVERY_REWEDGE_WINDOW_MS = 2 * 60_000;
+
+/** Compaction retains the admission's predecessor while advancing its transcript. */
+export function matchesSubagentRecoveryGeneration(
+  entry: SessionEntry | undefined,
+  admission: RecoveryOwnerAdmission | undefined,
+): boolean {
+  if (!entry || !admission || admission.decision.entry !== "subagent-orphan") return false;
+  const matches = (sessionId: string) =>
+    admission.idempotencyKey ===
+    buildRecoveryAdmissionKey("subagent-orphan", admission.ownerId, sessionId, admission.ownerId);
+  return (
+    matches(entry.sessionId) ||
+    (entry.lifecycleRunId === admission.idempotencyKey &&
+      (entry.usageFamilySessionIds?.some(matches) ?? false))
+  );
+}
+
+/** The original registry row remains reserved until its admitted identity is reconciled. */
+export function hasReservedSubagentRecovery(
+  entry: SessionEntry | undefined,
+  originalRunId: string,
+): boolean {
+  const admission = entry?.subagentRecovery?.authority;
+  return Boolean(
+    admission &&
+    matchesSubagentRecoveryGeneration(entry, admission) &&
+    admission.ownerId === originalRunId &&
+    (admission.decision.kind === "resume" || admission.decision.effect === "unknown") &&
+    ["pending", "accepted", "reconcile"].includes(admission.state) &&
+    (!entry?.lifecycleRunId ||
+      entry.lifecycleRunId === originalRunId ||
+      entry.lifecycleRunId === admission.idempotencyKey),
+  );
+}
 
 /** Decision returned before attempting automatic subagent orphan recovery. */
 type SubagentRecoveryGate =
@@ -92,6 +128,7 @@ export function markSubagentRecoveryAttempt(params: {
   attempt: number;
 }): void {
   params.entry.subagentRecovery = {
+    ...params.entry.subagentRecovery,
     automaticAttempts: Math.max(1, params.attempt),
     lastAttemptAt: params.now,
     lastRunId: params.runId,

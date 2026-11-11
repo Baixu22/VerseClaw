@@ -1,0 +1,36 @@
+{
+  "schema": "ContextInlineSpillGate/v2",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "name": "deterministic-candidate-c",
+  "command": "openclaw_runtime/node_modules/.bin/tsx.cmd",
+  "args": [
+    "--expose-gc",
+    "scripts/context-inline-spill-eval.mts",
+    "--mode",
+    "deterministic",
+    "--out",
+    "D:/tmp/context-inline-spill-closeout-20261103/final-evals"
+  ],
+  "workspace": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+  "started_at": "2026-11-03T15:14:42.1167258+00:00",
+  "finished_at": "2026-11-03T15:14:49.8158301+00:00",
+  "elapsed_ms": 7501,
+  "exit_code": 0,
+  "command_exit_code": 0,
+  "candidate": {
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf",
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "status": "",
+    "dirty": false
+  },
+  "candidate_after": {
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf",
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "status": "",
+    "dirty": false
+  },
+  "source_status_unchanged": true,
+  "log_file": "D:\\tmp\\context-inline-spill-closeout-20261103\\gates\\deterministic-candidate-c.log",
+  "log_sha256": "a9dc9f40ed4de7c2cba107204977eaf301b7aff1a9f88350450d34b65c8ae318"
+}

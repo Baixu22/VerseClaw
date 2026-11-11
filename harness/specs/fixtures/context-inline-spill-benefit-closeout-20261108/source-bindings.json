@@ -1,0 +1,144 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b90a",
+  "bindings": {
+    "round2": [
+      {
+        "path": "scripts/context-inline-spill-benefit-loop-eval.mts",
+        "expected_sha256": "051209dea4f2a8065e5fa3421ce25f3e545667de7579d85e18bf7dbbcf1e5bbe",
+        "observed_sha256": "051209dea4f2a8065e5fa3421ce25f3e545667de7579d85e18bf7dbbcf1e5bbe",
+        "matches": true
+      },
+      {
+        "path": "scripts/context-inline-spill-benefit-scoring.mts",
+        "expected_sha256": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+        "observed_sha256": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+        "matches": true
+      },
+      {
+        "path": "tests/unit/context-inline-spill-benefit-scoring.test.ts",
+        "expected_sha256": "e4ce05755953667522e58bd020a801d74f77346841d8f7c8a20777870e03a27c",
+        "observed_sha256": "e4ce05755953667522e58bd020a801d74f77346841d8f7c8a20777870e03a27c",
+        "matches": true
+      },
+      {
+        "path": "harness/specs/tasks/inline-spill-real-benefit-eval.md",
+        "expected_sha256": "a41c2d469eac76310ce1353c488b421057a6a1f7d32d3de894ece70cfcc15065",
+        "observed_sha256": "a41c2d469eac76310ce1353c488b421057a6a1f7d32d3de894ece70cfcc15065",
+        "matches": true
+      },
+      {
+        "path": "harness/specs/rules/inline-spill-benefit-quantification.md",
+        "expected_sha256": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f",
+        "observed_sha256": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f",
+        "matches": true
+      },
+      {
+        "path": "docs/modules/context-and-memory.md",
+        "expected_sha256": "88d0031989651a4b252f0eba256c7ecb52bc9141b719f5ab6dc44af524d166e6",
+        "observed_sha256": "88d0031989651a4b252f0eba256c7ecb52bc9141b719f5ab6dc44af524d166e6",
+        "matches": true
+      }
+    ],
+    "round3": [
+      {
+        "path": "scripts/context-inline-spill-benefit-loop-eval.mts",
+        "expected_sha256": "4cccb534cfe3d4c7abb064c3c25c974359151952972da07eb45a24a465e87c85",
+        "observed_sha256": "4cccb534cfe3d4c7abb064c3c25c974359151952972da07eb45a24a465e87c85",
+        "matches": true,
+        "historical_commit_blob_sha256": "4cccb534cfe3d4c7abb064c3c25c974359151952972da07eb45a24a465e87c85",
+        "historical_commit_blob_matches": true
+      },
+      {
+        "path": "scripts/context-inline-spill-benefit-input.mts",
+        "expected_sha256": "c0658927dc9944a5180d3a5fe339385ef771813d842b2a8dc54249d7dba12cbd",
+        "observed_sha256": "c0658927dc9944a5180d3a5fe339385ef771813d842b2a8dc54249d7dba12cbd",
+        "matches": true,
+        "historical_commit_blob_sha256": "c0658927dc9944a5180d3a5fe339385ef771813d842b2a8dc54249d7dba12cbd",
+        "historical_commit_blob_matches": true
+      },
+      {
+        "path": "scripts/context-inline-spill-benefit-scoring.mts",
+        "expected_sha256": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+        "observed_sha256": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+        "matches": true,
+        "historical_commit_blob_sha256": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+        "historical_commit_blob_matches": true
+      },
+      {
+        "path": "tests/unit/context-inline-spill-benefit-input.test.ts",
+        "expected_sha256": "d5bd3439f81f89c8d55c29e7d2d55c5e3b5b7a1053485b79909411ed712ca3cd",
+        "observed_sha256": "d5bd3439f81f89c8d55c29e7d2d55c5e3b5b7a1053485b79909411ed712ca3cd",
+        "matches": true,
+        "historical_commit_blob_sha256": "d5bd3439f81f89c8d55c29e7d2d55c5e3b5b7a1053485b79909411ed712ca3cd",
+        "historical_commit_blob_matches": true
+      },
+      {
+        "path": "harness/specs/tasks/inline-spill-real-benefit-eval-round3.md",
+        "expected_sha256": "f8dcf833bd5f343b9c7539fdf3cfba386010954171bb950330f974f1d69f06e4",
+        "observed_sha256": "f8dcf833bd5f343b9c7539fdf3cfba386010954171bb950330f974f1d69f06e4",
+        "matches": true,
+        "historical_commit_blob_sha256": "f8dcf833bd5f343b9c7539fdf3cfba386010954171bb950330f974f1d69f06e4",
+        "historical_commit_blob_matches": true
+      },
+      {
+        "path": "harness/specs/rules/inline-spill-eval-projected-input.md",
+        "expected_sha256": "6b3ee56e1a4b5abf414b42e924d3606da2729dbbdbb3a42b74f84d4b86da305e",
+        "observed_sha256": "6b3ee56e1a4b5abf414b42e924d3606da2729dbbdbb3a42b74f84d4b86da305e",
+        "matches": true,
+        "historical_commit_blob_sha256": "6b3ee56e1a4b5abf414b42e924d3606da2729dbbdbb3a42b74f84d4b86da305e",
+        "historical_commit_blob_matches": true
+      },
+      {
+        "path": "harness/specs/rules/inline-spill-benefit-quantification.md",
+        "expected_sha256": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f",
+        "observed_sha256": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f",
+        "matches": true,
+        "historical_commit_blob_sha256": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f",
+        "historical_commit_blob_matches": true
+      }
+    ]
+  },
+  "round3_frozen_inputs": {
+    "scripts/inline-spill-benefit-eval.mts": {
+      "expected_sha256": "d5fd4cef5f0c6e9ea1f902a664992e9148bff3e331fb57412cd507330a7dcfcc",
+      "observed_sha256": "d5fd4cef5f0c6e9ea1f902a664992e9148bff3e331fb57412cd507330a7dcfcc",
+      "matches": true
+    },
+    "scripts/inline-spill-benefit-scoring.ts": {
+      "expected_sha256": "355c8bebc3de817d66c9b1e9371a1d51438ab63c30ab95a9df1f1e6dd3b099eb",
+      "observed_sha256": "355c8bebc3de817d66c9b1e9371a1d51438ab63c30ab95a9df1f1e6dd3b099eb",
+      "matches": true
+    },
+    "tests/unit/inline-spill-benefit-eval.test.ts": {
+      "expected_sha256": "7edfec3c189b031b28c87ca00fd782aefd442e270378efcacfdb24e1a604dd5f",
+      "observed_sha256": "7edfec3c189b031b28c87ca00fd782aefd442e270378efcacfdb24e1a604dd5f",
+      "matches": true
+    },
+    "tests/unit/zz-probe5.test.ts": {
+      "expected_sha256": "d0c8e11e03a6fa394421116d12f668bdbb81fb97b80d305743ffca17b417ede8",
+      "observed_sha256": "d0c8e11e03a6fa394421116d12f668bdbb81fb97b80d305743ffca17b417ede8",
+      "matches": true
+    },
+    "scripts/context-inline-spill-benefit-scoring.mts": {
+      "expected_sha256": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+      "observed_sha256": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+      "matches": true
+    },
+    "harness/specs/rules/inline-spill-benefit-quantification.md": {
+      "expected_sha256": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f",
+      "observed_sha256": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f",
+      "matches": true
+    },
+    "harness/specs/fixtures/context-inline-spill-benefit/SHA256SUMS": {
+      "expected_sha256": "88542d63e053bf37d466d722c1dc8964b4930b86ff3a1fd292a6184ddbcd8bd0",
+      "observed_sha256": "88542d63e053bf37d466d722c1dc8964b4930b86ff3a1fd292a6184ddbcd8bd0",
+      "matches": true
+    },
+    "harness/specs/fixtures/context-inline-spill/SHA256SUMS": {
+      "expected_sha256": "5f436c49c12197b2870ef0c00b3694a1cdfecdef25a83c406518000eef4227a2",
+      "observed_sha256": "5f436c49c12197b2870ef0c00b3694a1cdfecdef25a83c406518000eef4227a2",
+      "matches": true
+    }
+  }
+}

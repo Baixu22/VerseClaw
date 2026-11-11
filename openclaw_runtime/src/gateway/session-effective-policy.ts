@@ -27,6 +27,7 @@ import {
   type SessionPolicyQueueLimits,
   type SessionPolicyResourceLimits,
   type SessionPolicyScheduleLimits,
+  type SessionPolicyTools,
 } from "../../../shared/types/session-effective-policy.js";
 import { resolveLongSessionCoordinationPolicy } from "../../../shared/long-session-resource-reclamation.js";
 
@@ -486,6 +487,15 @@ export function buildSessionEffectivePolicy(
       fact(configuredSchedule, Object.values(configuredSchedule).some((value) => value !== null) ? "configured" : "unverified", "cron configuration"),
       fact<SessionPolicyScheduleLimits>(null, "unverified", "cron.owner", "current schedule state is not part of this read"),
     ),
+    tools: observed?.result.source === "runtime"
+      && observed.result.ack.state === "acknowledged"
+      && observed.result.ack.generation === runtimeGeneration
+      ? fact<SessionPolicyTools>(
+          { names: [...observed.result.effectiveToolNames], digest: observed.result.effectiveDigest },
+          "effective",
+          "runtime-effective-capability.observation.effectiveToolNames",
+        )
+      : fact<SessionPolicyTools>(null, "unverified", "runtime-effective-capability.observation", observation.reason ?? "runtime adapter acknowledgement unavailable"),
     compatibility: buildBackendCompatibilityRows({
       runtime: effectiveRuntime,
       kind: configuredKind.kind,

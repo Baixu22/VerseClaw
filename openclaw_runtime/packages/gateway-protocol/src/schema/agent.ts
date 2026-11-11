@@ -190,6 +190,18 @@ export const AgentParamsSchema = Type.Object(
     sessionId: Type.Optional(Type.String()),
     sessionKey: Type.Optional(Type.String()),
     thinking: Type.Optional(Type.String()),
+    /** Backend recovery pins a session to an already committed owner admission. */
+    recoveryAdmission: Type.Optional(
+      Type.Object(
+        {
+          idempotencyKey: NonEmptyString,
+          ownerId: NonEmptyString,
+          attempts: Type.Integer({ minimum: 1 }),
+          ownerEpoch: NonEmptyString,
+        },
+        { additionalProperties: false },
+      ),
+    ),
     deliver: Type.Optional(Type.Boolean()),
     attachments: Type.Optional(Type.Array(Type.Unknown())),
     channel: Type.Optional(Type.String()),

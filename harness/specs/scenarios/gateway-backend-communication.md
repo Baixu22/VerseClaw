@@ -55,6 +55,11 @@ forbiddenPatterns:
 
 Gateway backend communication covers all Verse Claw paths that move data between the visual desktop UI and OpenClaw runtime/backend services.
 
+Coding retirement also crosses this boundary. Legacy Patch Flow requests and restored worker
+metadata must not revive proposal-only execution or delayed candidate application. Developer
+flags show retired controls as unavailable, while ordinary journal-backed coding and explicit
+worktree isolation remain the supported paths. See `harness/specs/tasks/coding-retired-control-admission.md`.
+
 Allowed flow:
 Renderer page/component -> `src/lib/host-api.ts` (typed facade) or `src/lib/host-api-client.ts` (typed request client) -> Electron Main typed host service or IPC handler -> Main-owned OpenClaw Gateway WebSocket -> runtime result -> store/UI.
 
@@ -72,6 +77,8 @@ Tool cancellation must survive runtime adaptation, client delegation, policy eva
 
 Pending preparation and policy promises must release their local wait on cancellation without waiting for the plugin to return. Input acknowledgements must report a process that exited during the write with its owner's terminal status and output. Session alias merges must not duplicate a tool call, and changes to process poll wait duration must not reset otherwise unchanged loop evidence.
 
+Tool admission checks the current session, workspace, configuration and approval before execution. A completed tool's known result retains its call association; configuration changes produced during the call apply to subsequent admissions.
+
 Long-session archive and restore mutations cross the same boundary but remain
 runtime-owned. The renderer calls the typed sessions host service, Main persists a
 lifecycle operation gate and invokes the Gateway method, and the runtime acquires
@@ -81,6 +88,16 @@ renderer must not sweep, hide success, or perform a second direct transcript
 rename. Restore creates a fresh physical generation while retaining the logical
 SessionKey, and archived rows are excluded from the live list until the runtime
 commit reconciles.
+
+The opt-in execution-phase recovery path uses the existing TaskFlow row and CAS
+revision as its lifecycle owner. Both task-loop and execution writers must select
+taskflow before it writes. User intent, assistant dispatch and real tool results
+reach stable transcript storage before continuation. Recovery consumes only the
+current session generation and active tail; unknown effects remain in explicit
+reconciliation and never authorize a repeated tool effect. The read-only authority
+shadow records the observed owner outcome, including failed RPC admission.
+See `recovery-tool-redispatch` for the frozen fault-window and post-boundary
+assistant-readback validation.
 
 ## Explicit coding diagnostics
 

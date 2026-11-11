@@ -1,0 +1,39 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/context-inline-spill-eval-provider.test.ts > retains raw HTTP response and usage when a provider answer is not JSON
+AssertionError: expected Error: spawnSync C:\Program Files\nodejs\… { …(5) } to be undefined
+
+- Expected:
+undefined
+
++ Received:
+Error {
+  "message": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+  "errno": -4039,
+  "code": "ETIMEDOUT",
+  "syscall": "spawnSync C:\\Program Files\\nodejs\\node.exe",
+  "path": "C:\\Program Files\\nodejs\\node.exe",
+  "spawnargs": [
+    "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\validation-candidate\\openclaw_runtime\\node_modules\\tsx\\dist\\cli.mjs",
+    "--expose-gc",
+    "--import",
+    "file:///D:/tmp/inline-spill-provider-D7Ryx8/provider.mjs",
+    "scripts/context-inline-spill-eval.mts",
+    "--mode",
+    "live",
+    "--out",
+    "D:\\tmp\\inline-spill-provider-D7Ryx8\\evals",
+  ],
+}
+
+ ❯ tests/unit/context-inline-spill-eval-provider.test.ts:48:39
+     46|       },
+     47|     );
+     48|     expect(child.error, child.stderr).toBeUndefined();
+       |                                       ^
+     49|     expect(child.status, child.stderr).toBe(1);
+     50|     expect(existsSync(output), child.stderr).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

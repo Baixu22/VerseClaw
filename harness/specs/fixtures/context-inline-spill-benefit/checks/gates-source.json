@@ -1,0 +1,89 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r2",
+  "results": [
+    {
+      "name": "scoring-unit",
+      "command": "pnpm exec vitest run tests/unit/context-inline-spill-benefit-scoring.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "elapsedMs": 11207,
+      "stdout": "D:\\tmp\\inline-spill-benefit-r2\\gates-fixed\\scoring-unit.stdout.txt",
+      "stderr": "D:\\tmp\\inline-spill-benefit-r2\\gates-fixed\\scoring-unit.stderr.txt",
+      "summary": [
+        " Test Files  1 passed (1)",
+        "      Tests  4 passed (4)",
+        "   Duration  744ms (transform 102ms, setup 344ms, import 27ms, tests 4ms, environment 0ms)"
+      ]
+    },
+    {
+      "name": "harness-validate",
+      "command": "pnpm harness validate --spec harness/specs/tasks/inline-spill-real-benefit-eval.md",
+      "exitCode": 1,
+      "elapsedMs": 3313,
+      "stdout": "D:\\tmp\\inline-spill-benefit-r2\\gates-fixed\\harness-validate.stdout.txt",
+      "stderr": "D:\\tmp\\inline-spill-benefit-r2\\gates-fixed\\harness-validate.stderr.txt",
+      "summary": [
+        "[ELIFECYCLE] Command failed with exit code 1."
+      ]
+    },
+    {
+      "name": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "elapsedMs": 36534,
+      "stdout": "D:\\tmp\\inline-spill-benefit-r2\\gates-fixed\\typecheck.stdout.txt",
+      "stderr": "D:\\tmp\\inline-spill-benefit-r2\\gates-fixed\\typecheck.stderr.txt",
+      "summary": [
+        "    \"errorCount\": 0,",
+        "    \"errorLog\": \"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\context-inline-spill\\\\ClawX\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\"",
+        "  \"coverageNote\": \"Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.\",",
+        "      \"errorCount\": 0,",
+        "      \"errorLog\": \"C:\\\\Users\\\\27933\\\\.codex\\\\worktrees\\\\context-inline-spill\\\\ClawX\\\\artifacts\\\\typecheck-cache\\\\test-typecheck-errors.log\""
+      ]
+    },
+    {
+      "name": "contract-check",
+      "command": "pnpm run contract:check",
+      "exitCode": 0,
+      "elapsedMs": 3199,
+      "stdout": "D:\\tmp\\inline-spill-benefit-r2\\gates-fixed\\contract-check.stdout.txt",
+      "stderr": "D:\\tmp\\inline-spill-benefit-r2\\gates-fixed\\contract-check.stderr.txt",
+      "summary": [
+        "Contract check passed."
+      ]
+    },
+    {
+      "name": "retention-provider-unit",
+      "command": "pnpm exec vitest run tests/unit/context-inline-spill-retention.test.ts tests/unit/context-inline-spill-eval-provider.test.ts --maxWorkers=1",
+      "exitCode": 0,
+      "elapsedMs": 57066,
+      "stdout": "D:\\tmp\\inline-spill-benefit-r2\\gates-fixed\\retention-provider-unit.stdout.txt",
+      "stderr": "D:\\tmp\\inline-spill-benefit-r2\\gates-fixed\\retention-provider-unit.stderr.txt",
+      "summary": [
+        " Test Files  2 passed (2)",
+        "      Tests  39 passed (39)",
+        "   Duration  44.81s (transform 24.34s, setup 1.57s, import 28.42s, tests 13.39s, environment 0ms)"
+      ]
+    },
+    {
+      "name": "harness-dry-run",
+      "command": "pnpm harness run --spec harness/specs/tasks/inline-spill-real-benefit-eval.md --dry-run",
+      "exitCode": 1,
+      "elapsedMs": 3715,
+      "stdout": "D:\\tmp\\inline-spill-benefit-r2\\gates-fixed\\harness-dry-run.stdout.txt",
+      "stderr": "D:\\tmp\\inline-spill-benefit-r2\\gates-fixed\\harness-dry-run.stderr.txt",
+      "summary": [
+        "[ELIFECYCLE] Command failed with exit code 1."
+      ]
+    },
+    {
+      "name": "diff-check",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "elapsedMs": 104,
+      "stdout": "D:\\tmp\\inline-spill-benefit-r2\\gates-fixed\\diff-check.stdout.txt",
+      "stderr": "D:\\tmp\\inline-spill-benefit-r2\\gates-fixed\\diff-check.stderr.txt",
+      "summary": []
+    }
+  ]
+}

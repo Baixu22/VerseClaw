@@ -148,7 +148,7 @@ const FIXED_OPERATIONS: Record<VerseGitFactOperation, FactOperationSpec> = {
   doctor: { minMode: 'M2', effects: STATE_OPEN_EFFECTS, argv: () => ['doctor', '--json'], parse: 'json' },
   sessionList: { minMode: 'M2', effects: STATE_OPEN_EFFECTS, argv: () => ['session', 'list', '--json'], parse: 'json' },
   sessionShow: { minMode: 'M2', effects: STATE_OPEN_EFFECTS, argv: (identity, input) => ['session', 'show', requireOpaque(input.vgSessionId ?? identity.vgSessionId, 'session id'), '--json'], parse: 'json' },
-  observeRead: { minMode: 'M2', effects: STATE_OPEN_EFFECTS, argv: (identity, input) => ['observe', 'read', '--session', requireOpaque(input.vgSessionId ?? identity.vgSessionId, 'session id'), '--path', requireRelativePath(input.path), ...(input.lineStart === undefined ? [] : ['--line-start', String(requireLine(input.lineStart, 'lineStart'))]), ...(input.lineEnd === undefined ? [] : ['--line-end', String(requireLine(input.lineEnd, 'lineEnd'))]), '--json'], parse: 'json' },
+  observeRead: { minMode: 'M2', effects: { ...STATE_OPEN_EFFECTS, fileRead: false }, argv: (identity, input) => ['observe', 'read', '--session', requireOpaque(input.vgSessionId ?? identity.vgSessionId, 'session id'), '--path', requireRelativePath(input.path), '--actor', identity.ownerId, ...(input.lineStart === undefined ? [] : ['--line-start', String(requireLine(input.lineStart, 'lineStart'))]), ...(input.lineEnd === undefined ? [] : ['--line-end', String(requireLine(input.lineEnd, 'lineEnd'))]), '--json'], parse: 'json' },
   check: { minMode: 'M2', effects: STATE_OPEN_EFFECTS, argv: (identity, input) => ['check', '--file', requireRelativePath(input.path), '--session', requireOpaque(input.vgSessionId ?? identity.vgSessionId, 'session id'), '--json'], parse: 'json' },
 };
 
@@ -276,6 +276,13 @@ export class VerseGitFactAdapter {
     if (bounded.code !== 0) return { schema: VG_FACT_SCHEMA, operation, status: 'degraded', reason: 'nonzero_exit', issues: [bounded.stderr.toString('utf8').slice(0, 400) || `provider fact command exited ${String(bounded.code)}`], observation, host_verdict: 'unchanged' };
     const stdoutText = bounded.stdout.toString('utf8').trim();
     if (bounded.truncated) return { schema: VG_FACT_SCHEMA, operation, status: 'partial', reason: 'output_truncated', issues: ['provider fact output exceeded the bounded capture limit'], observation, host_verdict: 'unchanged' };
+    // Native observe/read appends supplied read facts and intentionally returns
+    // no payload. Confirm that command; sessionShow supplies the recorded read set.
+    if (!stdoutText && operation === 'observeRead') {
+      return { schema: VG_FACT_SCHEMA, operation, status: 'observed',
+        document: { acknowledgement: 'recorded', operation, vgSessionId: input.vgSessionId ?? identity.vgSessionId, path: input.path },
+        issues: [], observation, host_verdict: 'unchanged' };
+    }
     if (!stdoutText) return { schema: VG_FACT_SCHEMA, operation, status: 'unavailable', reason: 'empty_output', issues: ['provider fact command returned no output'], observation, host_verdict: 'unchanged' };
     if (spec.parse === 'text') {
       if (operation === 'version' && stdoutText !== this.expectedVersion) return { schema: VG_FACT_SCHEMA, operation, status: 'rejected_by_policy', reason: 'identity_mismatch', issues: [`provider version ${stdoutText} != ${this.expectedVersion}`], observation, host_verdict: 'unchanged' };

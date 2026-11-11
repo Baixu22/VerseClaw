@@ -1,0 +1,44 @@
+{
+  "schema": "ContextInlineSpillGate/v2",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "name": "codex-model-routing-probe-b",
+  "command": "C:/Users/27933/AppData/Local/OpenAI/Codex/bin/22cfb1d302613eae/codex.exe",
+  "args": [
+    "--ask-for-approval",
+    "never",
+    "exec",
+    "--model",
+    "gpt-6-astra",
+    "--ephemeral",
+    "-C",
+    "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX",
+    "-s",
+    "read-only",
+    "--json",
+    "--output-last-message",
+    "D:/tmp/context-inline-spill-closeout-20261103/codex-model-routing-probe-b.txt",
+    "Reply with exactly OK. Do not use tools."
+  ],
+  "workspace": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+  "started_at": "2026-11-03T13:35:04.9466500+00:00",
+  "finished_at": "2026-11-03T13:35:35.4645206+00:00",
+  "elapsed_ms": 30260,
+  "exit_code": 1,
+  "command_exit_code": 1,
+  "candidate": {
+    "status": "",
+    "commit": "3fd7fd92d202c6b0276081ed0fc97a98f6205f81",
+    "tree": "15314175fb6e2818ca2e0fdf18d5622a88056f24",
+    "dirty": false
+  },
+  "candidate_after": {
+    "status": "",
+    "commit": "3fd7fd92d202c6b0276081ed0fc97a98f6205f81",
+    "tree": "15314175fb6e2818ca2e0fdf18d5622a88056f24",
+    "dirty": false
+  },
+  "source_status_unchanged": true,
+  "log_file": "D:\\tmp\\context-inline-spill-closeout-20261103\\gates\\codex-model-routing-probe-b.log",
+  "log_sha256": "5c0b2adca5cb4d4b3e7ebc726a81babc3efd954767f3fada1aca8135adf0523f"
+}

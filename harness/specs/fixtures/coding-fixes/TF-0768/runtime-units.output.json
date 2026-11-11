@@ -1,0 +1,4 @@
+{
+  "output": "[vitest] still running with no output for 30000ms (run --config vitest.config.ts D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime/src/agents/subagent-spawn.test.ts D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime/src/agents/worktree-service.test.ts D:/ClawX-work/coding-vg-sts-jj-20261104/openclaw_runtime/src/agents/worktree-pnpm-install.test.ts --maxWorkers=1 --reporter=json --outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0768\\final\\runtime-unit.json --passWithNoTests=false).\nJSON report written to D:/ClawX-work/coding-vg-sts-jj-20261104/.audit/TF-0768/final/runtime-unit.json\n",
+  "rawSha256": "a5e8cab58fe5c83a22cd1b4feebeefec25122800e26c659b30a673d64237f2ef"
+}

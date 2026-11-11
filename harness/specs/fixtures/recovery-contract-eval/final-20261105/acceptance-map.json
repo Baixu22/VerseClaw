@@ -1,0 +1,109 @@
+{
+  "schema": "RecoveryNodeAcceptanceMap/v1",
+  "evaluatorCommit": "c0184e62e2ea7c3dcfddbe47258bd552ae8f0c1b",
+  "runtimeCommit": "8137cdb2e7200bddedda1fb415886392fd52ca5f",
+  "decision": "NO-GO",
+  "nodes": [
+    {
+      "id": "TF-0710",
+      "status": "done",
+      "basis": "30 qualified primary windows, all five boundaries, hashes and explicit failed attempts; incomplete sequence capture patched and tested.",
+      "refs": [
+        "bundle-index.json",
+        "attempt-inventory.json",
+        "source-audit.json",
+        "gates.json"
+      ]
+    },
+    {
+      "id": "TF-0711",
+      "status": "review_needed",
+      "basis": "Primary legacy 15 trials complete. Independent repeat 14 complete plus one post-kill incomplete; two completed rows differ and one slot lacks the full sequence, so two structurally identical reruns are not proven.",
+      "refs": [
+        "baseline-repeat.json",
+        "attempt-inventory.json"
+      ]
+    },
+    {
+      "id": "TF-0714",
+      "status": "done",
+      "basis": "Default-off read-only shadow; 35 observed decisions,35 recorded drifts with reasons,0 unpaired/undocumented records,one declared timeout gap.10000-sample core benchmark excludes I/O.",
+      "refs": [
+        "shadow-accounting.json",
+        "shadow-benchmark.json",
+        "source-audit.json",
+        "gates.json"
+      ]
+    },
+    {
+      "id": "TF-0718",
+      "status": "done",
+      "basis": "Covered tools have versioned intent binding and pre-effect CAS; all six uncertain candidate K2/K3 observations reach no-replay reconciliation. Receipts alone do not grant execution.",
+      "refs": [
+        "candidate-report.json",
+        "source-audit.json",
+        "gates.json",
+        "process-kill-proof.json"
+      ]
+    },
+    {
+      "id": "TF-0719",
+      "status": "done",
+      "basis": "Committed phase recovery uses the existing executor; five candidate window kinds are correct,blind replay0,defaults remain legacy and event replay off.",
+      "refs": [
+        "candidate-report.json",
+        "source-audit.json",
+        "process-kill-proof.json"
+      ]
+    },
+    {
+      "id": "TF-0721",
+      "status": "done",
+      "basis": "Candidate primary 15:duplicate0,lost0,terminal15/15. Fault-only P95 ratio 0.6267553045866618 meets relative1.10 criterion; frozen combined absolute latency gates still FAIL.",
+      "refs": [
+        "comparison.json",
+        "candidate-report.json"
+      ]
+    },
+    {
+      "id": "TF-0722",
+      "status": "done",
+      "basis": "Each arm30 actual live-provider post-boundary answers:120/120 facts,30/30 next actions,0 false completion/forbidden leaks. JSON array compliance17/30 and20/30 remains separate.",
+      "refs": [
+        "comparison.json",
+        "answer-integrity.json",
+        "legacy-report.json",
+        "candidate-report.json"
+      ]
+    },
+    {
+      "id": "TF-0723",
+      "status": "done",
+      "basis": "Nine metrics with N and deltas, source origins, all failures and unmeasured limits, full raw bundle and isolated tamper reproduction; overall FAIL/NO-GO,qualityClaimAllowed=false.",
+      "refs": [
+        "comparison.json",
+        "README.md",
+        "offline-verification.json",
+        "source-audit.json",
+        "gates.json"
+      ]
+    },
+    {
+      "id": "TF-0724",
+      "status": "done",
+      "basis": "Four default-switch proposals updated from complete negative evaluation; no default or product-lock flip; authoritative five-entry cutover and event-log replay not enabled.",
+      "refs": [
+        "comparison.json",
+        "source-audit.json"
+      ]
+    }
+  ],
+  "outOfScope": {
+    "id": "TF-0715",
+    "status": "proposed",
+    "basis": "Other four owner migrations remain outside this inherited execution sequence; no claim of five-entry unification."
+  },
+  "driven_by": "agent",
+  "actor": "recovery-acceptance-auditor",
+  "realHumanEvidence": false
+}

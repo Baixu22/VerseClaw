@@ -1,0 +1,18 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-coding-TF-0770",
+  "argv": [
+    "node",
+    "scripts/run-vitest.mjs",
+    "run",
+    "src/agents/apply-patch-consistency.test.ts",
+    "src/agents/apply-patch-effect-receipt.test.ts",
+    "--maxWorkers=1",
+    "--reporter=json",
+    "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0770\\final\\projection-unit.json"
+  ],
+  "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0770\\projection-a4ab0635b\\openclaw_runtime",
+  "exitCode": 0,
+  "seconds": 21.75689172744751,
+  "output": "JSON report written to D:/ClawX-work/coding-vg-sts-jj-20261104/.audit/TF-0770/final/projection-unit.json\n"
+}

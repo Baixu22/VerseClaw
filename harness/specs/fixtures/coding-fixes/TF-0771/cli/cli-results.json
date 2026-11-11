@@ -1,0 +1,254 @@
+{
+  "schema": "CodingRunCliAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-coding-p1",
+  "realHumanEvidence": false,
+  "candidate": "8b42b1351307c3c607c8971d5447d647daabdc83",
+  "rows": [
+    {
+      "name": "complete-gate",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\complete-gate.jsonl"
+      ],
+      "inputSha256": "026cb70588a2791c805841b86f10c7bd82821ef348511bd0c89b23350b9990f6",
+      "exitCode": 0,
+      "stdout": "{\n  \"codingRunId\": \"task-loop:loop-complete\",\n  \"records\": 4,\n  \"turns\": 0,\n  \"approvals\": 0,\n  \"files\": 0,\n  \"tests\": 1,\n  \"verification\": \"passed\",\n  \"finalStatus\": \"completed\"\n}\n",
+      "stderr": "",
+      "expectedExit": 0,
+      "expectedFinal": "completed",
+      "pass": true
+    },
+    {
+      "name": "complete-no-gate",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\complete-no-gate.jsonl"
+      ],
+      "inputSha256": "127586e519c91d8b8e484a9ec4ea76de9e1708680605139c396bfcb419745dfb",
+      "exitCode": 0,
+      "stdout": "{\n  \"codingRunId\": \"task-loop:loop-complete\",\n  \"records\": 4,\n  \"turns\": 0,\n  \"approvals\": 0,\n  \"files\": 0,\n  \"tests\": 1,\n  \"verification\": \"unavailable\",\n  \"finalStatus\": \"unavailable\"\n}\n",
+      "stderr": "",
+      "expectedExit": 0,
+      "expectedFinal": "unavailable",
+      "pass": true
+    },
+    {
+      "name": "cancelled-no-gate",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\cancelled-no-gate.jsonl"
+      ],
+      "inputSha256": "3b4e24a5ffdd1545fa6734835bbb3ddfda6b6df3ca237704957cc77a5fe898ea",
+      "exitCode": 0,
+      "stdout": "{\n  \"codingRunId\": \"task-loop:loop-cancelled\",\n  \"records\": 4,\n  \"turns\": 0,\n  \"approvals\": 0,\n  \"files\": 0,\n  \"tests\": 1,\n  \"verification\": \"unavailable\",\n  \"finalStatus\": \"aborted\"\n}\n",
+      "stderr": "",
+      "expectedExit": 0,
+      "expectedFinal": "aborted",
+      "pass": true
+    },
+    {
+      "name": "aborted-no-gate",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\aborted-no-gate.jsonl"
+      ],
+      "inputSha256": "9c28c76f28235e70049a0824881911d957da3fbcdfc83532498bac8f9b6e3396",
+      "exitCode": 0,
+      "stdout": "{\n  \"codingRunId\": \"task-loop:loop-aborted\",\n  \"records\": 4,\n  \"turns\": 0,\n  \"approvals\": 0,\n  \"files\": 0,\n  \"tests\": 1,\n  \"verification\": \"unavailable\",\n  \"finalStatus\": \"aborted\"\n}\n",
+      "stderr": "",
+      "expectedExit": 0,
+      "expectedFinal": "aborted",
+      "pass": true
+    },
+    {
+      "name": "error-no-gate",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\error-no-gate.jsonl"
+      ],
+      "inputSha256": "2ce2c4579c1834a56c93dad9e817c80553f400e26591edeac966cb97a10c2808",
+      "exitCode": 0,
+      "stdout": "{\n  \"codingRunId\": \"task-loop:loop-error\",\n  \"records\": 4,\n  \"turns\": 0,\n  \"approvals\": 0,\n  \"files\": 0,\n  \"tests\": 1,\n  \"verification\": \"unavailable\",\n  \"finalStatus\": \"error\"\n}\n",
+      "stderr": "",
+      "expectedExit": 0,
+      "expectedFinal": "error",
+      "pass": true
+    },
+    {
+      "name": "blocked-no-gate",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\blocked-no-gate.jsonl"
+      ],
+      "inputSha256": "ab48ff5acd9b54febbd3c9b29f95f6c29c659f05504d3662fda204beac97ed0d",
+      "exitCode": 0,
+      "stdout": "{\n  \"codingRunId\": \"task-loop:loop-blocked\",\n  \"records\": 4,\n  \"turns\": 0,\n  \"approvals\": 0,\n  \"files\": 0,\n  \"tests\": 1,\n  \"verification\": \"unavailable\",\n  \"finalStatus\": \"unavailable\"\n}\n",
+      "stderr": "",
+      "expectedExit": 0,
+      "expectedFinal": "unavailable",
+      "pass": true
+    },
+    {
+      "name": "cross-run",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\cross-run.jsonl"
+      ],
+      "inputSha256": "c78dc1fbb243f3c04d46187a09e48f96288864ed7c11bb9453d88f74662cf93d",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "{\"status\":\"error\",\"code\":\"INVALID_FIELD\",\"line\":3,\"message\":\"Event codingRunId must match the header\",\"field\":\"codingRunId\"}\n",
+      "expectedExit": 1,
+      "pass": true
+    },
+    {
+      "name": "empty-scope",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\empty-scope.jsonl"
+      ],
+      "inputSha256": "e09ac37c8cc30a17c0d91827c2a565f6b6088656666319f1d1e57e8f01367b1a",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "{\"status\":\"error\",\"code\":\"MISSING_FIELD\",\"line\":1,\"message\":\"Missing scope.workspaceId\",\"field\":\"scope.workspaceId\"}\n",
+      "expectedExit": 1,
+      "pass": true
+    },
+    {
+      "name": "numeric-run",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\numeric-run.jsonl"
+      ],
+      "inputSha256": "30b3e8efa902a09cb0f4a005f1caad1d42f2a54fef040674b2aed8225210af68",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "{\"status\":\"error\",\"code\":\"INVALID_FIELD\",\"line\":1,\"message\":\"runIds[0] must be an object\",\"field\":\"runIds[0]\"}\n",
+      "expectedExit": 1,
+      "pass": true
+    },
+    {
+      "name": "numeric-task",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\numeric-task.jsonl"
+      ],
+      "inputSha256": "26b4700e57b546ca7688869e4b1c61b3fbc4afce9ab7e5129c73283cff58c514",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "{\"status\":\"error\",\"code\":\"INVALID_FIELD\",\"line\":1,\"message\":\"taskLedgerRootId must be a non-empty string or null\",\"field\":\"taskLedgerRootId\"}\n",
+      "expectedExit": 1,
+      "pass": true
+    },
+    {
+      "name": "bad-completion",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\bad-completion.jsonl"
+      ],
+      "inputSha256": "7e3733d764ba7a1f10e68264de6ff6a8d58d956138e314a4f01252dcb5d184fe",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "{\"status\":\"error\",\"code\":\"INVALID_FIELD\",\"line\":1,\"message\":\"Invalid completion.taskStatus\",\"field\":\"completion.taskStatus\"}\n",
+      "expectedExit": 1,
+      "pass": true
+    },
+    {
+      "name": "bad-event",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\bad-event.jsonl"
+      ],
+      "inputSha256": "780f2cce8121699d754e8a40e8b989b6e5e8bf282284466ad727b461063aedad",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "{\"status\":\"error\",\"code\":\"INVALID_FIELD\",\"line\":3,\"message\":\"Invalid status\",\"field\":\"status\"}\n",
+      "expectedExit": 1,
+      "pass": true
+    },
+    {
+      "name": "bad-iteration",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\bad-iteration.jsonl"
+      ],
+      "inputSha256": "2496a41df9b98ebba261865355a5be1d2ef118e2f53622b1db1f3a5737260068",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "{\"status\":\"error\",\"code\":\"INVALID_FIELD\",\"line\":2,\"message\":\"iteration must be a nonnegative integer or null\",\"field\":\"iteration\"}\n",
+      "expectedExit": 1,
+      "pass": true
+    },
+    {
+      "name": "bad-sequence",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\bad-sequence.jsonl"
+      ],
+      "inputSha256": "c6c3a26d714392972ef6c31044101f1445a5e8c9eb14695737e30718ae7be57b",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "{\"status\":\"error\",\"code\":\"INVALID_SEQUENCE\",\"line\":2,\"message\":\"Expected sequence 1\",\"field\":\"sequence\"}\n",
+      "expectedExit": 1,
+      "pass": true
+    },
+    {
+      "name": "bad-version",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\bad-version.jsonl"
+      ],
+      "inputSha256": "9a5a8e17902b2b7790f3697d4622fd52edfd7acd32863f9a4152cd3f34aeecca",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "{\"status\":\"error\",\"code\":\"INVALID_SCHEMA\",\"line\":1,\"message\":\"Expected schema coding-run/v1\",\"field\":\"schema\"}\n",
+      "expectedExit": 1,
+      "pass": true
+    },
+    {
+      "name": "unknown-scope-field",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\unknown-scope-field.jsonl"
+      ],
+      "inputSha256": "8361f6118737ac54cadd84d01974d8ec32a3b8cee6400750ad8edc6e56be397a",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "{\"status\":\"error\",\"code\":\"UNKNOWN_FIELD\",\"line\":1,\"message\":\"Unknown scope.grantsWrite\",\"field\":\"scope.grantsWrite\"}\n",
+      "expectedExit": 1,
+      "pass": true
+    },
+    {
+      "name": "unknown-event-field",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/coding-run-summary.mjs",
+        "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli\\unknown-event-field.jsonl"
+      ],
+      "inputSha256": "51dc5d9f2166d373984e578581ad403d4a9dc0d7bf638866b0e45717cf1856f0",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "{\"status\":\"error\",\"code\":\"UNKNOWN_FIELD\",\"line\":2,\"message\":\"Unknown loop field: grantsWrite\",\"field\":\"grantsWrite\"}\n",
+      "expectedExit": 1,
+      "pass": true
+    }
+  ],
+  "pass": true
+}

@@ -1,5 +1,6 @@
 // Session store types define durable per-session metadata and merge/usage helpers.
 import crypto from "node:crypto";
+import type { RecoveryOwnerAdmission } from "../../../../shared/recovery-authority/contract.js";
 import type {
   AcpSessionRuntimeOptions,
   SessionAcpIdentity,
@@ -153,6 +154,8 @@ export type SessionPluginNextTurnInjection = {
 };
 
 export type SubagentRecoveryState = {
+  /** Gated owner decision and attempts, persisted before the recovery RPC. */
+  authority?: RecoveryOwnerAdmission;
   /** Consecutive accepted automatic orphan-recovery resumes in the rapid re-wedge window. */
   automaticAttempts?: number;
   /** Timestamp (ms) of the latest accepted automatic orphan-recovery resume. */
@@ -319,6 +322,8 @@ export type SessionEntry = {
   runtimeMs?: number;
   /** Final persisted subagent run status, used after in-memory run archival. */
   status?: "running" | "done" | "failed" | "killed" | "timeout";
+  /** Run identity written by the lifecycle owner together with status=running. */
+  lifecycleRunId?: string;
   /**
    * Session-level stop cutoff captured when /stop is received.
    * Messages at/before this boundary are skipped to avoid replaying
@@ -380,6 +385,10 @@ export type SessionEntry = {
   totalTokens?: number;
   /** Durable marker that final user reply delivery still needs a retry/resume pass. */
   pendingFinalDelivery?: boolean;
+  /** Run that produced the pending payload; immutable across restart attempts. */
+  pendingFinalDeliveryRunId?: string;
+  /** Recovery run currently carrying the same pending payload. */
+  pendingFinalDeliveryRecoveryRunId?: string;
   pendingFinalDeliveryCreatedAt?: number;
   pendingFinalDeliveryLastAttemptAt?: number;
   pendingFinalDeliveryAttemptCount?: number;
@@ -394,6 +403,14 @@ export type SessionEntry = {
   restartRecoveryDeliveryContext?: DeliveryContext;
   /** Active run id that owns restartRecoveryDeliveryContext cleanup. */
   restartRecoveryDeliveryRunId?: string;
+  /** Durable restart-owner authorization and finite budget for one transcript boundary. */
+  restartRecovery?: {
+    sessionId: string;
+    boundary: string;
+    runId: string;
+    attempts: number;
+    state: "admitted" | "accepted" | "wedged";
+  };
   /**
    * Whether totalTokens reflects a fresh context snapshot for the latest run.
    * Undefined means legacy/unknown freshness; false forces consumers to treat
@@ -558,6 +575,7 @@ export type SessionEntryMergePolicy = "touch-activity" | "preserve-activity";
 type MergeSessionEntryOptions = {
   policy?: SessionEntryMergePolicy;
   now?: number;
+  identityTransition?: "compaction";
 };
 
 function resolveMergedUpdatedAt(
@@ -607,6 +625,12 @@ export function mergeSessionEntryWithPolicy(
   };
 
   if (existing.sessionId !== sessionId) {
+    // Usage families aggregate history across ordinary rotations too. Only a
+    // compaction transition may transfer the prior generation's recovery owner.
+    if (options?.identityTransition !== "compaction") {
+      delete next.subagentRecovery;
+      delete next.restartRecovery;
+    }
     // Session id rotations should move transcript paths when they match known reset/fork shapes.
     const patchHasSessionFile = Object.hasOwn(patch, "sessionFile");
     const candidateSessionFile = patchHasSessionFile ? patch.sessionFile : existing.sessionFile;

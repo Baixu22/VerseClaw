@@ -6,6 +6,8 @@ import type { WouldTrimReport } from "./would-trim.js";
 /** Runtime inputs consumed by the context-pruning extension. */
 export type ContextPruningRuntimeValue = {
   settings: EffectiveContextPruningSettings;
+  sessionId?: string;
+  archiveRecallRetention?: boolean;
   contextWindowTokens?: number | null;
   isToolPrunable: (toolName: string) => boolean;
   dropThinkingBlocks: boolean;

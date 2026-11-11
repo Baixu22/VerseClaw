@@ -1,0 +1,51 @@
+{
+  "schema": "ContextInlineSpillGate/v2",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "name": "autoreview-candidate-b",
+  "command": "python",
+  "args": [
+    "-X",
+    "utf8",
+    "openclaw_runtime/.agents/skills/autoreview/scripts/autoreview",
+    "--mode",
+    "branch",
+    "--base",
+    "10dd6c472419437800bde7a07ff8e3440929bfc2",
+    "--engine",
+    "codex",
+    "--model",
+    "codex=gpt-6-astra",
+    "--codex-bin",
+    "C:/Users/27933/AppData/Local/OpenAI/Codex/bin/22cfb1d302613eae/codex.exe",
+    "--no-web-search",
+    "--prompt-file",
+    "D:/tmp/context-inline-spill-closeout-20261103/review-notes-complete.md",
+    "--output",
+    "D:/tmp/context-inline-spill-closeout-20261103/review-candidate-b.txt",
+    "--json-output",
+    "D:/tmp/context-inline-spill-closeout-20261103/review-candidate-b.json",
+    "--stream-engine-output"
+  ],
+  "workspace": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+  "started_at": "2026-11-03T13:31:20.7689749+00:00",
+  "finished_at": "2026-11-03T13:32:14.5080699+00:00",
+  "elapsed_ms": 48225,
+  "exit_code": 1,
+  "command_exit_code": 1,
+  "candidate": {
+    "dirty": false,
+    "tree": "15314175fb6e2818ca2e0fdf18d5622a88056f24",
+    "status": "",
+    "commit": "3fd7fd92d202c6b0276081ed0fc97a98f6205f81"
+  },
+  "candidate_after": {
+    "dirty": false,
+    "tree": "15314175fb6e2818ca2e0fdf18d5622a88056f24",
+    "status": "",
+    "commit": "3fd7fd92d202c6b0276081ed0fc97a98f6205f81"
+  },
+  "source_status_unchanged": true,
+  "log_file": "D:\\tmp\\context-inline-spill-closeout-20261103\\gates\\autoreview-candidate-b.log",
+  "log_sha256": "d7d917eccbe788d2a3277afb287d1fc932ab646b25319e4289019b0716c651bc"
+}

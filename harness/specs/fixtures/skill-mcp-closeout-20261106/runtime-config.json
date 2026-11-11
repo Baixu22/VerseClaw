@@ -1,0 +1,11 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-skill-mcp-closeout",
+  "scope": "real Main config and runtime loader, isolated disk",
+  "migration": true,
+  "managedDiscovery": true,
+  "enabledVisible": true,
+  "disabledHidden": true,
+  "removedNotResurrected": true,
+  "configPath": "D:\\tmp\\skill-runtime-closeout-kCY0Va\\runtime\\openclaw.json"
+}

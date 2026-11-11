@@ -57,7 +57,18 @@ import {
 } from './helpers/role-gateway-test-utils';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { createWorktreeService } from '../../openclaw_runtime/src/agents/worktree-service';
+import { clearSessionStoreCacheForTest } from '../../openclaw_runtime/src/config/sessions/store';
+import { closeSqliteSessionStoreDatabase, replaceSqliteSessionStore } from '../../openclaw_runtime/src/config/sessions/store-sqlite';
+import type { OpenClawConfig } from '../../openclaw_runtime/src/config/types.openclaw';
+
+let handlerFixtureRoot: string;
+beforeEach(() => {
+  handlerFixtureRoot = mkdtempSync(join(tmpdir(), 's4-gateway-'));
+  vi.mocked(spawnSubagentDirect).mockReset();
+});
 
 /** Fake spawn shape mirroring role-spawn.test.ts inline types. */
 type FakeSpawnParams = {
@@ -96,6 +107,14 @@ async function callHandler(
   const captured: CapturedRespond[] = [];
   const handler = (roleOrchestrationHandlers as Record<string, (args: unknown) => Promise<void>>)[method];
   if (!handler) throw new Error(`unknown handler: ${method}`);
+  if (typeof params.sessionKey === 'string' && !cfg.session?.store) {
+    const store = join(handlerFixtureRoot, 'sessions.json');
+    replaceSqliteSessionStore(store, { [params.sessionKey]: {
+      sessionId: 'physical-gateway', updatedAt: Date.now(), workspaceDir: handlerFixtureRoot,
+    } });
+    cfg = { ...cfg, session: { ...cfg.session, store } };
+    clearSessionStoreCacheForTest();
+  }
   await handler(buildHandlerArgs(params, cfg, captured));
   return captured[0];
 }
@@ -105,6 +124,215 @@ afterEach(() => {
   delete process.env.OPENCLAW_MEMORY_USE_GATE;
   clearRuntimeTraceBuffer();
   clearMemoryCards();
+  clearSessionStoreCacheForTest();
+  closeSqliteSessionStoreDatabase(join(handlerFixtureRoot, 'sessions.json'));
+  rmSync(handlerFixtureRoot, { recursive: true, force: true });
+});
+
+describe('TF-0768 authorized workspace execution', () => {
+  function fixture(backend: 'inprocess' | 'git' = 'inprocess') {
+    const root = join(handlerFixtureRoot, 'workspace');
+    mkdirSync(root);
+    const store = join(handlerFixtureRoot, 'sessions.json');
+    const sessionKey = 'agent:main:gateway';
+    const entry = { sessionId: 'physical-gateway', updatedAt: Date.now(), workspaceDir: root };
+    const save = () => {
+      replaceSqliteSessionStore(store, { [sessionKey]: entry });
+      clearSessionStoreCacheForTest();
+    };
+    save();
+    const cfg = { session: { store }, runtime: { coding: { worktree: { backend } } } } as unknown as OpenClawConfig;
+    const admission = {
+      receiptId: 's4-admission', idempotencyKey: 's4-key',
+      coordinator: { workspaceId: 's4-workspace', agentId: 'main', sessionKey, sessionId: entry.sessionId, bindingRevision: 1 },
+      taskRef: { kind: 'task-ledger', nodeId: 's4-node' },
+    };
+    const request = { task: 'write an isolated marker', sessionKey, isolation: 'worktree',
+      includeVerifier: false, workers: [{ roleName: 'implementer', task: 'write marker' }], delegationAdmission: admission };
+    return { root, store, sessionKey, entry, save, cfg, admission, request };
+  }
+
+  it.each(['inprocess', 'git'] as const)('plan to run to actual child cwd preserves %s identity and receipts', async (backend) => {
+    const f = fixture(backend);
+    if (backend === 'git') {
+      const git = (...args: string[]) => execFileSync('git', args, { cwd: f.root, windowsHide: true, stdio: 'pipe' });
+      git('init'); git('-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--allow-empty', '-m', 'fixture');
+    }
+    const plan = await callHandler('orchestrator.plan', f.request, f.cfg);
+    expect(plan?.error).toBeUndefined();
+    expect(plan?.ok).toBe(true);
+    expect(existsSync(join(f.root, '.openclaw'))).toBe(false);
+    let childRoot = '';
+    vi.mocked(spawnSubagentDirect).mockImplementation(async (params, ctx) => {
+      expect(ctx.workspaceDir).toBe(params.cwd);
+      childRoot = params.cwd!;
+      execFileSync(process.execPath, ['-e', "require('node:fs').writeFileSync('worker-cwd.json',JSON.stringify({cwd:process.cwd()}))"], {
+        cwd: params.cwd, windowsHide: true, stdio: 'pipe',
+      });
+      return { status: 'accepted', runId: 's4-run', childSessionKey: 'agent:main:s4-child' };
+    });
+    const result = await callHandler('orchestrator.run', f.request, f.cfg);
+    expect(result?.error).toBeUndefined();
+    expect(result?.ok).toBe(true);
+    expect(JSON.parse(readFileSync(join(childRoot, 'worker-cwd.json'), 'utf8')).cwd).toBe(realpathSync(childRoot));
+    expect(existsSync(join(f.root, 'worker-cwd.json'))).toBe(false);
+    const record = createWorktreeService(f.root).list().find((r) => r.root === childRoot);
+    expect(record).toMatchObject({ backend, owner: { sessionKey: f.sessionKey, expectedSessionId: f.entry.sessionId } });
+    expect(result?.payload).toMatchObject({ delegationReceipt: { children: [{ isolation: {
+      mode: 'worktree', backend: backend === 'git' ? 'git-worktree' : 'inprocess-worktree',
+      canonicalRoot: childRoot, verifiedCheckout: backend === 'git',
+    } }] } });
+  });
+
+  it.each(['outside-root', 'missing-root', 'stale-generation', 'wrong-session', 'wrong-agent', 'missing-session'] as const)(
+    'rejects %s before any worktree or spawn', async (failure) => {
+      const f = fixture();
+      const request: Record<string, unknown> = { ...f.request };
+      if (failure === 'outside-root') request.workspaceDir = handlerFixtureRoot;
+      if (failure === 'missing-root') { f.entry.workspaceDir = join(handlerFixtureRoot, 'missing'); f.save(); }
+      if (failure === 'stale-generation') f.admission.coordinator.sessionId = 'old-generation';
+      if (failure === 'wrong-session') f.admission.coordinator.sessionKey = 'agent:main:other';
+      if (failure === 'wrong-agent') request.agentId = 'other';
+      if (failure === 'missing-session') { replaceSqliteSessionStore(f.store, {}); clearSessionStoreCacheForTest(); }
+      const result = await callHandler('orchestrator.run', request, f.cfg);
+      expect(result?.ok).toBe(false);
+      expect(spawnSubagentDirect).not.toHaveBeenCalled();
+      expect(existsSync(join(f.root, '.openclaw'))).toBe(false);
+      expect(existsSync(join(handlerFixtureRoot, '.openclaw'))).toBe(false);
+    },
+  );
+
+  it('refuses an unavailable Git backend without a directory fallback', async () => {
+    const f = fixture('git');
+    const result = await callHandler('orchestrator.run', f.request, f.cfg);
+    expect(result?.ok).toBe(false);
+    expect(result?.error?.message).toMatch(/backend is unavailable/);
+    expect(spawnSubagentDirect).not.toHaveBeenCalled();
+    expect(existsSync(join(f.root, '.openclaw'))).toBe(false);
+  });
+
+  it('refuses worktree creation conflicts before the worker starts', async () => {
+    const f = fixture();
+    createWorktreeService(f.root).create('existing');
+    const result = await callHandler('orchestrator.run', { ...f.request,
+      workers: [{ roleName: 'implementer', task: 'edit', worktreeId: 'existing' }],
+    }, f.cfg);
+    expect(result?.ok).toBe(false);
+    expect(result?.error?.message).toMatch(/already_exists/);
+    expect(spawnSubagentDirect).not.toHaveBeenCalled();
+    expect(createWorktreeService(f.root).list()).toHaveLength(1);
+  });
+
+  it('retains failed Git setup as incomplete without spawning a simulated worker', async () => {
+    const f = fixture('git');
+    const git = (...args: string[]) => execFileSync('git', args, { cwd: f.root, windowsHide: true, stdio: 'pipe' });
+    git('init');
+    git('-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--allow-empty', '-m', 'fixture');
+    writeFileSync(join(f.root, '.git', 'worktrees'), 'block registry creation');
+    const result = await callHandler('orchestrator.run', { ...f.request,
+      workers: [{ roleName: 'implementer', task: 'edit', worktreeId: 'failed-checkout' }],
+    }, f.cfg);
+    expect(result?.ok).toBe(false);
+    expect(spawnSubagentDirect).not.toHaveBeenCalled();
+    const inventory = createWorktreeService(f.root).inventory();
+    expect(inventory).toHaveLength(1);
+    expect(inventory[0]).toMatchObject({ availability: 'incomplete', record: {
+      backend: 'git', status: 'creating', registration: { phase: 'allocated' },
+    } });
+    expect(existsSync(join(f.root, '.openclaw', 'worktrees', 'failed-checkout', '.git'))).toBe(false);
+  });
+
+  it('stops the next worker after a parent generation change', async () => {
+    const f = fixture();
+    vi.mocked(spawnSubagentDirect).mockImplementation(async () => {
+      f.entry.sessionId = 'next-generation'; f.save();
+      return { status: 'accepted', runId: 'first-run', childSessionKey: 'agent:main:first' };
+    });
+    const result = await callHandler('orchestrator.run', { ...f.request, maxWorkers: 1,
+      workers: [{ roleName: 'implementer', task: 'first' }, { roleName: 'implementer', task: 'second' }],
+    }, f.cfg);
+    expect(result?.ok).toBe(false);
+    expect(result?.error?.message).toMatch(/generation changed/);
+    expect(spawnSubagentDirect).toHaveBeenCalledTimes(1);
+  });
+
+  it('carries the parent guard through preparation and rejects its reset before dispatch', async () => {
+    const f = fixture();
+    let dispatched = false;
+    vi.mocked(spawnSubagentDirect).mockImplementation(async (_params, ctx) => {
+      await Promise.resolve();
+      f.entry.sessionId = 'reset-during-preparation';
+      f.save();
+      ctx.assertWorkspaceCurrent?.();
+      dispatched = true;
+      return { status: 'accepted', runId: 'stale-run' };
+    });
+    const result = await callHandler('orchestrator.run', f.request, f.cfg);
+    expect(result?.ok).toBe(false);
+    expect(result?.error?.message).toMatch(/generation changed/);
+    expect(dispatched).toBe(false);
+  });
+
+  it('runs an explicit shared worker override in the parent workspace without a worktree', async () => {
+    const f = fixture();
+    vi.mocked(spawnSubagentDirect).mockImplementation(async (params, ctx) => {
+      expect(params.cwd).toBeUndefined();
+      expect(ctx.workspaceDir).toBe(realpathSync(f.root));
+      return { status: 'accepted', runId: 'shared-run', childSessionKey: 'agent:main:shared-child' };
+    });
+    const result = await callHandler('orchestrator.run', { ...f.request,
+      workers: [{ roleName: 'implementer', task: 'shared edit', isolation: 'shared' }],
+    }, f.cfg);
+    expect(result?.ok).toBe(true);
+    expect(result?.payload).toMatchObject({ delegationReceipt: { children: [{ isolation: {
+      mode: 'shared', canonicalRoot: realpathSync(f.root), verifiedCheckout: false,
+    } }] } });
+    expect(existsSync(join(f.root, '.openclaw', 'worktrees'))).toBe(false);
+  });
+
+  it.each(['current', 'stale-at-call', 'reset-during-preparation', 'foreign-workspace'] as const)(
+    'team_orchestrate uses the same parent owner for %s', async (state) => {
+      const f = fixture();
+      let dispatched = false;
+      const spawn = vi.fn<typeof spawnSubagentDirect>(async (params, ctx) => {
+        expect(ctx.workspaceDir).toBe(params.cwd);
+        expect(params.cwd).not.toBe(f.root);
+        if (state === 'reset-during-preparation') {
+          f.entry.sessionId = 'reset-in-tool';
+          f.save();
+        }
+        ctx.assertWorkspaceCurrent?.();
+        dispatched = true;
+        return { status: 'accepted', runId: 'tool-child', childSessionKey: 'agent:main:tool-child' };
+      });
+      const tool = createTeamOrchestrateTool({
+        agentSessionKey: f.sessionKey,
+        expectedSessionGeneration: state === 'stale-at-call' ? 'old-generation' : f.entry.sessionId,
+        workspaceDir: state === 'foreign-workspace' ? handlerFixtureRoot : f.root,
+        config: f.cfg,
+        deps: { spawn, idFactory: () => 'tool-owner' },
+      });
+      const run = tool.execute('tool-owner-call', {
+        task: 'write one file', isolation: 'worktree', includeVerifier: false, maxWorkers: 1,
+      });
+      if (state === 'current') {
+        expect((await run).details).toMatchObject({ status: 'accepted' });
+        expect(dispatched).toBe(true);
+        expect(createWorktreeService(f.root).list()[0]?.owner).toMatchObject({
+          sessionKey: f.sessionKey, expectedSessionId: f.entry.sessionId,
+        });
+      } else if (state === 'reset-during-preparation') {
+        const response = await run;
+        expect(response.details).toMatchObject({ status: expect.stringMatching(/error|partial/) });
+        expect(dispatched).toBe(false);
+      } else {
+        await expect(run).rejects.toThrow(/workspace|generation/);
+        expect(dispatched).toBe(false);
+        expect(spawn).not.toHaveBeenCalled();
+        expect(existsSync(join(f.root, '.openclaw'))).toBe(false);
+      }
+    },
+  );
 });
 
 describe('roles.* / teams.* handlers', () => {
@@ -227,6 +455,34 @@ describe('roles.* / teams.* handlers', () => {
 });
 
 describe('orchestrator.plan handler', () => {
+  it('inherits top-level worktree isolation and honors explicit worker shared overrides', async () => {
+    const res = await callHandler('orchestrator.plan', {
+      task: 'two isolated edits', isolation: 'worktree',
+      workers: [
+        { roleName: 'implementer', task: 'isolated edit' },
+        { roleName: 'reviewer', task: 'shared review', isolation: 'shared' },
+      ],
+    });
+    expect(res?.ok).toBe(true);
+    expect(res?.payload).toMatchObject({ plan: { isolation: 'worktree', workers: [
+      { isolation: 'worktree' }, { isolation: 'shared' },
+    ] } });
+  });
+
+  it.each(['container', '', null, true])('rejects unsupported isolation %j instead of silently using shared', async (isolation) => {
+    const res = await callHandler('orchestrator.plan', { task: 'edit', isolation });
+    expect(res?.ok).toBe(false);
+    expect(res?.error?.message).toMatch(/isolation/);
+  });
+
+  it('rejects unsupported worker isolation', async () => {
+    const res = await callHandler('orchestrator.plan', {
+      task: 'edit', workers: [{ roleName: 'implementer', task: 'edit', isolation: 'container' }],
+    });
+    expect(res?.ok).toBe(false);
+    expect(res?.error?.message).toMatch(/isolation/);
+  });
+
   it('errors when task is empty', async () => {
     const res = await callHandler('orchestrator.plan', { task: '   ' });
     expect(res?.ok).toBe(false);
@@ -693,7 +949,7 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
     expect(getRuntimeTraceBuffer().length).toBeGreaterThanOrEqual(1);
   });
 
-  it('enables proposal-only patch-flow execution only with explicit opt-in and advisory', async () => {
+  it.each([false, true])('TF-0774 keeps three workers ordinary with legacy opt-in and config default %s', async (configDefault) => {
     const spawned: FakeSpawnParams[] = [];
     const contexts: FakeSpawnContext[] = [];
     let counter = 0;
@@ -717,33 +973,57 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
         ],
         durationMinutes: 45,
         patchFlowExecution: true,
+        cfg: { runtime: { coding: { patchFlow: { default: configDefault } } } } as OpenClawConfig,
       },
-      { agentSessionKey: 'agent:main:abc', workspaceDir: 'D:/workspace' },
+      { agentSessionKey: 'agent:main:abc', workspaceDir: handlerFixtureRoot },
       { spawn: fakeSpawn as unknown as never },
     );
 
     expect(result.plan.routeDiagnostics.isolationAdvisory).toMatchObject({
-      recommendedMode: 'patch-flow',
+      recommendedMode: 'worktree',
       applied: false,
     });
     expect(result.plan.isolation).toBe('shared');
     expect(spawned).toHaveLength(3);
     expect(contexts.length).toBe(3);
     for (const context of contexts) {
-      expect(context.inheritedToolDenylist).toEqual(
-        expect.arrayContaining(['write', 'edit', 'apply_patch', 'bash', 'exec']),
-      );
+      for (const tool of ['write', 'edit', 'apply_patch', 'bash', 'exec']) {
+        expect(context.inheritedToolDenylist ?? []).not.toContain(tool);
+      }
     }
-    for (const [index, params] of spawned.entries()) {
-      expect(params.roleSystemPrompt).toContain('## Patch-Flow Proposal Contract');
+    for (const params of spawned) {
+      expect(params.roleSystemPrompt).not.toContain('## Patch-Flow Proposal Contract');
       const orchestration = params.orchestration as unknown as {
         patchFlowExecution?: true;
         patchFlowWriteSet?: string[];
       };
-      expect(orchestration.patchFlowExecution).toBe(true);
-      expect(orchestration.patchFlowWriteSet).toEqual(['src/shared.ts']);
-      expect((params.orchestration as { executionWave?: number }).executionWave).toBe(index + 1);
+      expect(orchestration.patchFlowExecution).toBeUndefined();
+      expect(orchestration.patchFlowWriteSet).toBeUndefined();
+      expect((params.orchestration as { executionWave?: number }).executionWave).toBeGreaterThanOrEqual(1);
     }
+  });
+
+  it('TF-0774 Gateway API ignores legacy patch-flow opt-in for three workers', async () => {
+    let counter = 0;
+    const contexts: FakeSpawnContext[] = [];
+    vi.mocked(spawnSubagentDirect).mockImplementation(async (_params, context) => {
+      contexts.push(context);
+      counter += 1;
+      return { status: 'accepted', runId: `retired-api-${counter}`, childSessionKey: `agent:main:retired-${counter}` };
+    });
+    const result = await callHandler('orchestrator.run', {
+      task: 'long dense overlapping coding task', sessionKey: 'agent:main:retired-api',
+      durationMinutes: 45, maxWorkers: 3, graphMode: 'flat', includeVerifier: false,
+      patchFlowExecution: true,
+      workers: [1, 2, 3].map((index) => ({ roleName: 'implementer', task: `edit shared ${index}`, writeSet: ['src/shared.ts'] })),
+    });
+    expect(result?.ok).toBe(true);
+    expect(spawnSubagentDirect).toHaveBeenCalledTimes(3);
+    for (const [params] of vi.mocked(spawnSubagentDirect).mock.calls) {
+      expect(params.roleSystemPrompt).not.toContain('Patch-Flow Proposal Contract');
+      expect(params.orchestration?.patchFlowExecution).toBeUndefined();
+    }
+    for (const context of contexts) expect(context.inheritedToolDenylist ?? []).not.toContain('write');
   });
 
   it('keeps ordinary worker execution unchanged when patchFlowExecution is omitted', async () => {
@@ -816,6 +1096,15 @@ describe('runOrchestrationObserved (observed execution + tracing)', () => {
 });
 
 describe('team_orchestrate tool', () => {
+  let toolConfig: OpenClawConfig;
+  beforeEach(() => {
+    const store = join(handlerFixtureRoot, 'sessions.json');
+    replaceSqliteSessionStore(store, { 'agent:main:abc': {
+      sessionId: 'tool-generation', updatedAt: Date.now(), workspaceDir: handlerFixtureRoot,
+    } });
+    clearSessionStoreCacheForTest();
+    toolConfig = { ...emptyConfig(), session: { store } };
+  });
   it('runs router-mode orchestration without a template and returns yield guidance', async () => {
     const fakeSpawn = async (): Promise<FakeSpawnResult> => ({
       status: 'accepted',
@@ -829,7 +1118,7 @@ describe('team_orchestrate tool', () => {
     });
     const tool = createTeamOrchestrateTool({
       agentSessionKey: 'agent:main:abc',
-      config: emptyConfig(),
+      config: toolConfig,
       deps: {
         spawn: fakeSpawn as unknown as never,
         idFactory: () => 'orch_test',
@@ -913,7 +1202,7 @@ describe('team_orchestrate tool', () => {
     };
     const tool = createTeamOrchestrateTool({
       agentSessionKey: 'agent:main:abc',
-      config: emptyConfig(),
+      config: toolConfig,
       deps: {
         spawn: fakeSpawn as unknown as never,
         idFactory: () => 'orch_template',
@@ -1015,7 +1304,7 @@ describe('team_orchestrate tool', () => {
     });
     const tool = createTeamOrchestrateTool({
       agentSessionKey: 'agent:main:abc',
-      config: emptyConfig(),
+      config: toolConfig,
       deps: {
         spawn: fakeSpawn as unknown as never,
         idFactory: () => 'orch_tool_p2',
@@ -1051,7 +1340,7 @@ describe('team_orchestrate tool', () => {
     });
     const tool = createTeamOrchestrateTool({
       agentSessionKey: 'agent:main:abc',
-      config: emptyConfig(),
+      config: toolConfig,
       deps: {
         spawn: fakeSpawn as unknown as never,
         idFactory: () => 'orch_tool_p4',

@@ -128,8 +128,7 @@ export function resolveGatewayScopedTools(params: {
     resolveSessionWorkspaceDir({
       spawnedWorkspaceDir: sessionEntry?.spawnedWorkspaceDir,
       persistedWorkspaceDir: sessionEntry?.workspaceDir,
-    }) ??
-    resolveAgentWorkspaceDir(params.cfg, agentId ?? resolveDefaultAgentId(params.cfg));
+    }) ?? resolveAgentWorkspaceDir(params.cfg, agentId ?? resolveDefaultAgentId(params.cfg));
   const explicitDenylist = collectExplicitDenylist([
     profilePolicy,
     providerProfilePolicy,
@@ -235,6 +234,8 @@ export function resolveGatewayScopedTools(params: {
 
   return {
     agentId,
+    workspaceDir,
+    sessionId: sessionEntry?.sessionId,
     tools,
   };
 }

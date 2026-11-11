@@ -1,0 +1,35 @@
+{
+  "actor": "codex-01a1b4da",
+  "driven_by": "agent",
+  "source": "existing pinned Electron cache",
+  "archive": "D:\\tmp\\electron-cache\\beed542864476fc9aee0c36905255e348bff7e3ade4558d42f9849a03b6db059\\electron-v40.8.4-win32-x64.zip",
+  "archiveSha256": "f72e4f646cd1fd4ca6d92ae2fdcc83db9303518f18b4743998db95c37169856a",
+  "dist": "D:\\ClawX\\.tmp\\coding-relay-01a1b4da\\electron-40.8.4",
+  "version": "40.8.4",
+  "files": {
+    "electron.exe": {
+      "bytes": 213919232,
+      "sha256": "fad08627e2f61846a9afc3ec3e0b6110e6f0c57a79e716cbf2268c5f352bce6e"
+    },
+    "resources.pak": {
+      "bytes": 6431898,
+      "sha256": "5a7e08797736796e11474dc2ed0b57cf329ba44d74d410c53bc57a07868db9b4"
+    },
+    "chrome_100_percent.pak": {
+      "bytes": 114781,
+      "sha256": "cbe052e9bd36032cde9d0ad7496d611c6a3c98a130b960e1298d490254be1159"
+    },
+    "chrome_200_percent.pak": {
+      "bytes": 186658,
+      "sha256": "6593ba8ece63001a3fb77bd1d872566edeb26213a1be8e852dd956f6d0e2c93e"
+    },
+    "icudtl.dat": {
+      "bytes": 10822192,
+      "sha256": "1cf67874b5a87a8363a86fb3f81e3cbbed54d389062dab8fb52308d5cf8c8612"
+    },
+    "version": {
+      "bytes": 6,
+      "sha256": "dd802348b2318bb3792f614fecd321a46c298a91056ae5bc6fa680936af0a452"
+    }
+  }
+}

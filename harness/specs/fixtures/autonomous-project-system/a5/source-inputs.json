@@ -1,0 +1,153 @@
+{
+  "schema": "AutonomyA5SourceInputs/v1",
+  "driven_by": "agent",
+  "actor": "codex-a5",
+  "generatedAt": "2026-11-02T11:13:09.138Z",
+  "candidate": {
+    "dirty": false,
+    "tree": "4f46b4dbe314eea6479e64868e07305fae631445",
+    "commit": "9f0c5b07ecbe7f982b5ac111edf772e96158d46e"
+  },
+  "sources": [
+    {
+      "path": "electron/gateway/capability-monitor.ts",
+      "bytes": 5423,
+      "workingSha256": "e4d23b53e4446ab08d68c2cae076c887268b037726345696f65c1997c141a68c",
+      "candidateBlobSha256": "e4d23b53e4446ab08d68c2cae076c887268b037726345696f65c1997c141a68c",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "electron/gateway/manager.ts",
+      "bytes": 64860,
+      "workingSha256": "46e3e9e87dca927cf889e7426cec80a97fa882bb85930cbe8143b269dbb67a74",
+      "candidateBlobSha256": "46e3e9e87dca927cf889e7426cec80a97fa882bb85930cbe8143b269dbb67a74",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "electron/gateway/session-host-readiness.ts",
+      "bytes": 3664,
+      "workingSha256": "5260832a57058a9236da924a3f6eceebd9fe1987a1dd8d154ac877c0ff659eca",
+      "candidateBlobSha256": "5260832a57058a9236da924a3f6eceebd9fe1987a1dd8d154ac877c0ff659eca",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "electron/services/session-activity-api.ts",
+      "bytes": 11244,
+      "workingSha256": "41648995023e224e940144cd6562b0d69cece565060b46bf2970faaa712c0027",
+      "candidateBlobSha256": "41648995023e224e940144cd6562b0d69cece565060b46bf2970faaa712c0027",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "harness/specs/rules/autonomy-host-readiness-boundary.md",
+      "bytes": 788,
+      "workingSha256": "ba862171a7052fa5c66486770d9cd7411b03887fdbfa01cb671f5cd1ee03984e",
+      "candidateBlobSha256": "ba862171a7052fa5c66486770d9cd7411b03887fdbfa01cb671f5cd1ee03984e",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "harness/specs/scenarios/autonomy-host-readiness.md",
+      "bytes": 489,
+      "workingSha256": "389258dafee3f9058a2ad9ddf726aa6059516f0a996464473eecacdc5b07601d",
+      "candidateBlobSha256": "389258dafee3f9058a2ad9ddf726aa6059516f0a996464473eecacdc5b07601d",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "harness/specs/tasks/autonomy-host-readiness.md",
+      "bytes": 4839,
+      "workingSha256": "2c86654567c7081610c5e918d1c8e24386fcfdd7917e5ff0655fcdadd0a2fc7b",
+      "candidateBlobSha256": "2c86654567c7081610c5e918d1c8e24386fcfdd7917e5ff0655fcdadd0a2fc7b",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "openclaw_runtime/src/gateway/session-effective-policy.ts",
+      "bytes": 19389,
+      "workingSha256": "b7ec635c36bb8d9b2a3d8b9bcc0a61d58b6523280659abdef8a22a17d45784bc",
+      "candidateBlobSha256": "b7ec635c36bb8d9b2a3d8b9bcc0a61d58b6523280659abdef8a22a17d45784bc",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "shared/types/session-effective-policy.ts",
+      "bytes": 4534,
+      "workingSha256": "42872f94049bda114a2ca84aae8e91e1de0676e9a29ffe2a81d7823f9be8c40f",
+      "candidateBlobSha256": "42872f94049bda114a2ca84aae8e91e1de0676e9a29ffe2a81d7823f9be8c40f",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "tests/e2e/autonomy-host-readiness.spec.ts",
+      "bytes": 9634,
+      "workingSha256": "0e7a0929569b693bd42454cdb6ba229ef400b98a21dc389d483a361f96c283a3",
+      "candidateBlobSha256": "0e7a0929569b693bd42454cdb6ba229ef400b98a21dc389d483a361f96c283a3",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "tests/e2e/autonomy-runtime-readiness.spec.ts",
+      "bytes": 8774,
+      "workingSha256": "c320c0780e1e14c52adf3ee5862d05b68699702064cc336b0758c2dcb1e31b08",
+      "candidateBlobSha256": "c320c0780e1e14c52adf3ee5862d05b68699702064cc336b0758c2dcb1e31b08",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "tests/unit/autonomy-host-readiness.test.ts",
+      "bytes": 10820,
+      "workingSha256": "7af0afdc00d2b35b0db6ed1e90c7823638c56a546afbf9f2967bbc94c3dfdcc0",
+      "candidateBlobSha256": "7af0afdc00d2b35b0db6ed1e90c7823638c56a546afbf9f2967bbc94c3dfdcc0",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "tests/unit/gateway-manager-diagnostics.test.ts",
+      "bytes": 11518,
+      "workingSha256": "ae72b3fab45f46032234d9414294fa19c44f2685725095d1d4e311b3b8c4d972",
+      "candidateBlobSha256": "ae72b3fab45f46032234d9414294fa19c44f2685725095d1d4e311b3b8c4d972",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "tests/unit/long-session-effective-policy.test.ts",
+      "bytes": 13009,
+      "workingSha256": "28bb095520ef530fee8195c3cabdc35aa1502930162f8fddb004146b5cb2bc75",
+      "candidateBlobSha256": "28bb095520ef530fee8195c3cabdc35aa1502930162f8fddb004146b5cb2bc75",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "tests/e2e/fixtures/fp-p1-harness.ts",
+      "bytes": 13396,
+      "workingSha256": "5882bd14fddef513f142ca2258d47f5a655cbe940ecef4ddbc93f7e8d9fd316c",
+      "candidateBlobSha256": "5882bd14fddef513f142ca2258d47f5a655cbe940ecef4ddbc93f7e8d9fd316c",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "scripts/smoke-openclaw-runtime.mjs",
+      "bytes": 4771,
+      "workingSha256": "74f042834b3695c7b634d2f6124a72971cd141ceaca21ed226e23c45ef902aab",
+      "candidateBlobSha256": "74f042834b3695c7b634d2f6124a72971cd141ceaca21ed226e23c45ef902aab",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "scripts/repository-artifacts.json",
+      "bytes": 151087,
+      "workingSha256": "d5e8e304e9e4976295fb69ee5c8645f30391ca17dbb3e225fa1597116616e1eb",
+      "candidateBlobSha256": "d5e8e304e9e4976295fb69ee5c8645f30391ca17dbb3e225fa1597116616e1eb",
+      "canonicalTextMatches": true
+    },
+    {
+      "path": "docs/dev/default-config-matrix.md",
+      "bytes": 8116,
+      "workingSha256": "782bc1c21584af22e9a4ad18dff71664ccdddf3798db8717644ca61bfe8341db",
+      "candidateBlobSha256": "782bc1c21584af22e9a4ad18dff71664ccdddf3798db8717644ca61bfe8341db",
+      "canonicalTextMatches": true
+    }
+  ],
+  "inheritedArtifactGap": {
+    "path": "docs/dev/architecture-skeleton/ADMISSION-CONVERGENCE.md",
+    "presentInBaseline": false,
+    "presentInCandidate": false,
+    "referringSpec": "harness/specs/tasks/architecture-skeleton-admission-regression.md",
+    "specChangedByThisLeaf": false
+  },
+  "buildSource": {
+    "viteBuildLog": "D:/tmp/autonomy-a5-vite-build-r2.log",
+    "productionSourceEquivalentCommit": "54a472406d4d1d1e5c70e08127c823548e203daf",
+    "productionDiff": "",
+    "runtimeBuildLog": "D:/tmp/autonomy-a5-runtime-build.log",
+    "runtimeBuilderDiffSinceFirstBuild": ""
+  }
+}

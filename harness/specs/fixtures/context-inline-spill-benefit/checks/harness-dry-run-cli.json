@@ -1,0 +1,9 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r2",
+  "workspace": "D:\\tmp\\inline-spill-benefit-r2\\validation-candidate",
+  "command": "node harness/src/cli.mjs run --spec harness/specs/tasks/inline-spill-real-benefit-eval.md --dry-run",
+  "exitCode": 0,
+  "noDiff": false,
+  "base": "ddd66ced9f3d389bd03a476fcbdccfc2de759f33"
+}

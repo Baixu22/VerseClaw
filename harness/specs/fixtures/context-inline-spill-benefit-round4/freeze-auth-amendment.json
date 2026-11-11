@@ -1,0 +1,36 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-relay",
+  "recordedAt": "2026-11-08T05:34:02.744639+00:00",
+  "freezeSha256": "474b813cd2e116ccb1fc5b61db33f787500624de3a1f6b030b1ce28364bd2cd8",
+  "firstAttempt": {
+    "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\live\\2026-11-08T05-27-58-864Z-live",
+    "runs": 96,
+    "providerRequests": 96,
+    "allStatus": 401,
+    "usageObserved": false,
+    "reason": "The database key was passed as its encrypted storage envelope. Existing enabled key is now decrypted locally and only injected into process environment.",
+    "verdict": "authentication-failed; task benefit not evaluated",
+    "rawSummaryRetained": "no-benefit is the unchanged harness diagnostic from zero successful responses; excluded from model-benefit measurement"
+  },
+  "authPreflight": {
+    "driven_by": "agent",
+    "actor": "codex-inline-spill-benefit-r4-relay",
+    "encryptedKeyEnvelope": true,
+    "keyPersisted": false,
+    "requestKind": "authentication-only empty input; no corpus, no tools",
+    "http_status": 400,
+    "error_code": "invalid_request_error",
+    "error_type": "invalid_request_error"
+  },
+  "retry": {
+    "out": "live-auth-fixed",
+    "runs": 96,
+    "sameCandidate": {
+      "commit": "8fa33a84ef8c9eeac3086d168264e77d4560e21d",
+      "tree": "541a95b34245cf442a4b9ebdd7ea8320b35e63aa",
+      "dirty": false
+    },
+    "conditions": "All frozen corpus, scoring, model, budgets, order, and pressure unchanged. No model response was observed during the failed attempt. Only local credential decoding is corrected."
+  }
+}

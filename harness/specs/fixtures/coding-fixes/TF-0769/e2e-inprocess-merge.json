@@ -1,0 +1,1224 @@
+{
+  "schema": "CodingWorktreeMerge/v1",
+  "driven_by": "agent",
+  "actor": "codex-coding-s5",
+  "realHumanEvidence": false,
+  "provider": "scripted-local",
+  "backend": "inprocess",
+  "concurrent": false,
+  "workspace": "D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-byEJzg\\verse-claw-e2e-user-data-upXN7x\\workspace",
+  "run": {
+    "status": "accepted",
+    "orchestrationRunId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a",
+    "plan": {
+      "mode": "lead-workers",
+      "leadRole": "implementer",
+      "workers": [
+        {
+          "roleName": "implementer",
+          "task": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+          "modelRef": null,
+          "writeSet": [
+            "a.txt",
+            "b.txt",
+            "c.txt"
+          ],
+          "isolation": "worktree"
+        }
+      ],
+      "reasons": [
+        "explicit-workers",
+        "lead:implementer",
+        "max-workers:5"
+      ],
+      "routeDiagnostics": {
+        "difficulty": "complex",
+        "confidence": 0.68,
+        "reasons": [
+          "explicit-workers",
+          "lead:implementer",
+          "max-workers:5",
+          "difficulty:complex",
+          "confidence:0.68"
+        ],
+        "selectedRoles": [
+          "implementer"
+        ],
+        "rejectedRoles": [
+          {
+            "roleName": "planner",
+            "reason": "not-selected-by-route"
+          },
+          {
+            "roleName": "architect",
+            "reason": "not-selected-by-route"
+          },
+          {
+            "roleName": "tester",
+            "reason": "not-selected-by-route"
+          },
+          {
+            "roleName": "reviewer",
+            "reason": "not-selected-by-route"
+          },
+          {
+            "roleName": "security-reviewer",
+            "reason": "not-selected-by-route"
+          },
+          {
+            "roleName": "docs-writer",
+            "reason": "not-selected-by-route"
+          },
+          {
+            "roleName": "knowledge-librarian",
+            "reason": "not-selected-by-route"
+          },
+          {
+            "roleName": "skeptic",
+            "reason": "not-selected-by-route"
+          }
+        ],
+        "requiredCapabilities": [
+          "task-analysis"
+        ],
+        "capabilityGaps": [],
+        "isolationAdvisory": {
+          "boundary": "advisory-only",
+          "applied": false,
+          "recommendedMode": "shared",
+          "reason": "shared_l0_default",
+          "score": {
+            "duration": 0,
+            "workers": 1,
+            "writeDensity": 1,
+            "writeSetOverlapRisk": 0
+          }
+        }
+      },
+      "taskGraph": {
+        "graphRunId": "explicit-workers",
+        "mode": "auto",
+        "status": "planned",
+        "nodes": [
+          {
+            "taskNodeId": "implementer-1",
+            "agentId": "main",
+            "roleName": "implementer",
+            "task": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+            "phase": "implementation",
+            "dependsOn": [],
+            "scope": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+            "requiredCapabilities": [
+              "task-analysis"
+            ],
+            "attemptPolicy": {
+              "maxRepairAttempts": 1,
+              "maxRedoAttempts": 1
+            },
+            "status": "ready",
+            "modelRef": null,
+            "writeSet": [
+              "a.txt",
+              "b.txt",
+              "c.txt"
+            ],
+            "isolation": "worktree",
+            "worktreeId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a-implemen-f75b98ecd7"
+          }
+        ],
+        "edges": []
+      },
+      "graphStatus": "planned",
+      "executionWaves": [
+        {
+          "wave": 1,
+          "taskNodeIds": [
+            "implementer-1"
+          ],
+          "roles": [
+            "implementer"
+          ],
+          "reason": "scheduled 1 ready node(s) within concurrency cap 5"
+        }
+      ],
+      "capabilityGaps": [],
+      "estimatedRepairPolicy": {
+        "maxRepairAttempts": 1,
+        "maxRedoAttempts": 1,
+        "maxFollowupRuns": 2
+      },
+      "isolation": "worktree",
+      "verifierNoSelfRepair": true,
+      "complexityDecision": {
+        "mode": "team-orchestrated",
+        "confidence": 0.74,
+        "signals": [
+          {
+            "name": "taskWordCount",
+            "value": 4
+          },
+          {
+            "name": "fileHintCount",
+            "value": 0
+          },
+          {
+            "name": "riskHintCount",
+            "value": 0
+          },
+          {
+            "name": "capabilityFamilyCount",
+            "value": 0
+          },
+          {
+            "name": "toolHintCount",
+            "value": 0
+          },
+          {
+            "name": "priorFailureCount",
+            "value": 0
+          },
+          {
+            "name": "explicitTeamRequested",
+            "value": true
+          },
+          {
+            "name": "explicitRunbookRequested",
+            "value": false
+          }
+        ],
+        "reasons": [
+          "explicit-team-requested"
+        ],
+        "warnings": [
+          "team orchestration may add cost for a simple task"
+        ]
+      },
+      "runbookSelection": {
+        "unselected": [
+          {
+            "runbookId": "code-review",
+            "reasons": [
+              "no-intent-match"
+            ]
+          },
+          {
+            "runbookId": "feature-implementation",
+            "reasons": [
+              "no-intent-match"
+            ]
+          },
+          {
+            "runbookId": "security-check",
+            "reasons": [
+              "no-intent-match"
+            ]
+          },
+          {
+            "runbookId": "documentation-migration",
+            "reasons": [
+              "no-intent-match"
+            ]
+          },
+          {
+            "runbookId": "test-repair",
+            "reasons": [
+              "no-intent-match"
+            ]
+          }
+        ]
+      },
+      "qualityRouting": {
+        "authority": {
+          "state": "unavailable",
+          "source": "none",
+          "qualityOverall": null,
+          "scorecardBacked": false,
+          "verified": false,
+          "routingEligible": false,
+          "reason": "No Task Loop quality authority reference was supplied.",
+          "evidenceRefs": []
+        },
+        "affected": false,
+        "reason": "explicit-plan"
+      }
+    },
+    "resultBundle": {
+      "schemaVersion": 1,
+      "phase": "spawn",
+      "orchestrationRunId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a",
+      "taskGraphId": "explicit-workers",
+      "attempt": 1,
+      "status": "pending",
+      "leadRole": "implementer",
+      "selectedRoles": [
+        "implementer"
+      ],
+      "roleOutcomes": [
+        {
+          "roleName": "implementer",
+          "agentId": "main",
+          "task": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+          "phase": "worker",
+          "taskId": "implementer-1",
+          "taskNodeId": "implementer-1",
+          "roleInstanceId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a:implementer-1:implementer:attempt-1",
+          "attempt": 1,
+          "status": "accepted",
+          "childRunId": "9597d245-39fe-45ac-b5cf-e19ef986204e",
+          "childSessionKey": "agent:main:subagent:e07f9d28-b630-4adf-9910-c1481318677e",
+          "evidenceRefs": [
+            {
+              "type": "run",
+              "ref": "9597d245-39fe-45ac-b5cf-e19ef986204e",
+              "roleName": "implementer",
+              "taskId": "implementer-1"
+            }
+          ]
+        }
+      ],
+      "handoffArtifacts": [],
+      "artifacts": [],
+      "evidenceRefs": [],
+      "permissionEvents": [],
+      "failures": [],
+      "memoryProposals": [],
+      "traceIds": [
+        "trace_489c702d-0b8d-4616-a2a5-226004014290"
+      ]
+    },
+    "admissionReceipts": [
+      {
+        "schemaVersion": "DelegationAdmissionReceipt/v1",
+        "receiptId": "s5-e2e",
+        "idempotencyKey": "s5-e2e",
+        "requestDigest": "609e118ce0259eb782b37567c47b7b1cffc59dd19cc55557559a471d7de95337",
+        "coordinator": {
+          "workspaceId": "s5",
+          "agentId": "main",
+          "sessionKey": "agent:main:dashboard:b49f4117-7359-4f78-9463-13a9cf81bcfc",
+          "sessionId": "bed4b37b-0638-4626-8d5a-d8b03382725e",
+          "bindingRevision": 1
+        },
+        "taskRef": {
+          "kind": "task-ledger",
+          "nodeId": "s5"
+        },
+        "roleName": "implementer",
+        "task": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+        "state": "accepted",
+        "acceptedIsNotCompletion": true,
+        "orchestrationRunId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a",
+        "taskNodeId": "implementer-1",
+        "taskId": "implementer-1",
+        "roleInstanceId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a:implementer-1:implementer:attempt-1",
+        "childSessionKey": "agent:main:subagent:e07f9d28-b630-4adf-9910-c1481318677e",
+        "childRunId": "9597d245-39fe-45ac-b5cf-e19ef986204e",
+        "backend": {
+          "kind": "openclaw-embedded",
+          "provider": "openai",
+          "model": "openai/mock-coder",
+          "evidence": "role-spawn:spawnSubagentDirect"
+        },
+        "toolAuthorization": {
+          "allowlist": [
+            "read",
+            "write",
+            "edit",
+            "bash"
+          ],
+          "denylist": [
+            "web_search",
+            "web_fetch",
+            "x_search",
+            "code_execution",
+            "browser",
+            "__role_capability:mcp_network"
+          ],
+          "permissionDecisionCount": 6,
+          "source": "role-clamped-inherited"
+        },
+        "isolation": {
+          "mode": "worktree",
+          "backend": "inprocess",
+          "worktreeId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a-implemen-f75b98ecd7",
+          "writeSet": [
+            "a.txt",
+            "b.txt",
+            "c.txt"
+          ],
+          "parallelWritesAllowed": true,
+          "writeSetBasis": "explicit-disjoint-writeset"
+        },
+        "reason": null,
+        "createdAt": "2026-11-05T17:28:05.521Z",
+        "updatedAt": "2026-11-05T17:28:06.347Z",
+        "acceptedAt": "2026-11-05T17:28:06.347Z",
+        "rejectedAt": null
+      }
+    ],
+    "delegationReceipt": {
+      "schemaVersion": "clawx.session-delegation-receipt/v1",
+      "admissionId": "s5-e2e",
+      "idempotencyKey": "s5-e2e",
+      "status": "accepted",
+      "orchestrationRunId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a",
+      "acceptedAt": "2026-11-05T17:28:06.354Z",
+      "coordinator": {
+        "workspaceId": "s5",
+        "agentId": "main",
+        "sessionKey": "agent:main:dashboard:b49f4117-7359-4f78-9463-13a9cf81bcfc",
+        "bindingRevision": 1,
+        "sessionGeneration": "bed4b37b-0638-4626-8d5a-d8b03382725e"
+      },
+      "taskRef": "s5",
+      "parentEnvironment": {
+        "kind": "local",
+        "canonicalRoot": "D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-byEJzg\\verse-claw-e2e-user-data-upXN7x\\workspace",
+        "backend": "local-workspace",
+        "branch": null,
+        "detachedHead": false,
+        "setupProfile": null
+      },
+      "parentEnvironmentRevision": 1,
+      "authorization": {
+        "approvalId": null,
+        "grantState": "authorized",
+        "owner": "gateway-permission"
+      },
+      "budget": {
+        "status": "observed",
+        "reason": null,
+        "maxWorkers": 5,
+        "process": {
+          "maxChildrenPerAgent": 5,
+          "maxSpawnDepth": 1,
+          "source": "agents.defaults.subagents"
+        },
+        "backgroundTerminal": {
+          "lane": "subagent",
+          "maxConcurrent": 8,
+          "activeCount": 0,
+          "queuedCount": 0,
+          "source": "process.command-queue.subagent"
+        }
+      },
+      "scheduler": {
+        "executionWaves": [
+          {
+            "wave": 1,
+            "taskNodeIds": [
+              "implementer-1"
+            ],
+            "roles": [
+              "implementer"
+            ],
+            "reason": "scheduled"
+          }
+        ],
+        "metrics": {
+          "queued": 1,
+          "running": 0,
+          "scheduled": 1,
+          "skipped": 0,
+          "concurrencyCap": 5,
+          "budgetEstimate": 2
+        }
+      },
+      "children": [
+        {
+          "roleName": "implementer",
+          "taskNodeId": "implementer-1",
+          "roleInstanceId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a:implementer-1:implementer:attempt-1",
+          "admissionStatus": "accepted",
+          "runState": "accepted-not-completed",
+          "completionObserved": false,
+          "backend": "subagent",
+          "childSessionKey": "agent:main:subagent:e07f9d28-b630-4adf-9910-c1481318677e",
+          "childRunId": "9597d245-39fe-45ac-b5cf-e19ef986204e",
+          "toolAuthorization": {
+            "status": "effective",
+            "source": "role-contract+parent-clamp",
+            "roleName": "implementer",
+            "effectiveRoleName": "implementer",
+            "parentRoleName": null,
+            "allowlist": [
+              "read",
+              "write",
+              "edit",
+              "bash"
+            ],
+            "denylist": [
+              "web_search",
+              "web_fetch",
+              "x_search",
+              "code_execution",
+              "browser",
+              "__role_capability:mcp_network"
+            ],
+            "permissionDecisionCount": 6
+          },
+          "isolation": {
+            "mode": "worktree",
+            "backend": "inprocess-worktree",
+            "canonicalRoot": "D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-byEJzg\\verse-claw-e2e-user-data-upXN7x\\workspace\\.openclaw\\worktrees\\orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a-implemen-f75b98ecd7",
+            "branch": null,
+            "detachedHead": null,
+            "verifiedCheckout": false,
+            "worktreeId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a-implemen-f75b98ecd7"
+          },
+          "schedulerWave": 1,
+          "error": null
+        }
+      ],
+      "errors": [],
+      "completionObserved": false,
+      "recoveryRequired": false
+    },
+    "handoffMode": "off",
+    "handoffState": "disabled",
+    "handoffArtifacts": [],
+    "blackboardState": {
+      "entries": [
+        {
+          "id": "bb_orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a_implementer_implementer-1",
+          "type": "claim",
+          "authorRole": "implementer",
+          "taskId": "implementer-1",
+          "content": {
+            "subject": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+            "conclusion": "accepted",
+            "phase": "worker"
+          },
+          "confidence": 0.45,
+          "evidenceRefs": [
+            "9597d245-39fe-45ac-b5cf-e19ef986204e"
+          ],
+          "visibility": "verifier",
+          "status": "needs_review",
+          "trustBoundary": "role-output",
+          "version": 1,
+          "createdAt": "2026-11-05T17:28:06.352Z",
+          "updatedAt": "2026-11-05T17:28:06.352Z"
+        }
+      ]
+    },
+    "blackboardSummary": {
+      "entryCount": 1,
+      "unresolvedConflicts": 0,
+      "openQuestions": 0,
+      "openRisks": 0,
+      "memoryProposals": 0,
+      "evidenceRefs": [
+        "9597d245-39fe-45ac-b5cf-e19ef986204e"
+      ],
+      "trustBoundaries": [
+        "role-output"
+      ]
+    },
+    "synthesis": {
+      "schemaVersion": 1,
+      "orchestrationRunId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a",
+      "taskGraphId": "explicit-workers",
+      "status": "verified",
+      "summary": "Verified result; 1 role contribution(s), 0 evidence ref(s), 0 artifact(s).",
+      "roleContributions": [
+        {
+          "roleName": "implementer",
+          "task": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+          "taskId": "implementer-1",
+          "status": "accepted",
+          "phase": "worker",
+          "evidenceRefs": [
+            {
+              "type": "run",
+              "ref": "9597d245-39fe-45ac-b5cf-e19ef986204e",
+              "roleName": "implementer",
+              "taskId": "implementer-1"
+            }
+          ]
+        }
+      ],
+      "evidenceRefs": [],
+      "artifactRefs": [],
+      "visibleFailures": [],
+      "verifier": {
+        "decision": "not_required",
+        "evidenceRefs": [],
+        "reasons": []
+      },
+      "traceIds": [
+        "trace_489c702d-0b8d-4616-a2a5-226004014290"
+      ],
+      "blackboardSummary": {
+        "entryCount": 1,
+        "unresolvedConflicts": 0,
+        "openQuestions": 0,
+        "openRisks": 0,
+        "memoryProposals": 0,
+        "evidenceRefs": [
+          "9597d245-39fe-45ac-b5cf-e19ef986204e"
+        ],
+        "trustBoundaries": [
+          "role-output"
+        ]
+      },
+      "policy": {
+        "toolAccess": "none",
+        "verifierAuthority": "preserved",
+        "memoryWrite": "none"
+      }
+    },
+    "complexityDecision": {
+      "mode": "team-orchestrated",
+      "confidence": 0.74,
+      "signals": [
+        {
+          "name": "taskWordCount",
+          "value": 4
+        },
+        {
+          "name": "fileHintCount",
+          "value": 0
+        },
+        {
+          "name": "riskHintCount",
+          "value": 0
+        },
+        {
+          "name": "capabilityFamilyCount",
+          "value": 0
+        },
+        {
+          "name": "toolHintCount",
+          "value": 0
+        },
+        {
+          "name": "priorFailureCount",
+          "value": 0
+        },
+        {
+          "name": "explicitTeamRequested",
+          "value": true
+        },
+        {
+          "name": "explicitRunbookRequested",
+          "value": false
+        }
+      ],
+      "reasons": [
+        "explicit-team-requested"
+      ],
+      "warnings": [
+        "team orchestration may add cost for a simple task"
+      ]
+    },
+    "runbookSelection": {
+      "unselected": [
+        {
+          "runbookId": "code-review",
+          "reasons": [
+            "no-intent-match"
+          ]
+        },
+        {
+          "runbookId": "feature-implementation",
+          "reasons": [
+            "no-intent-match"
+          ]
+        },
+        {
+          "runbookId": "security-check",
+          "reasons": [
+            "no-intent-match"
+          ]
+        },
+        {
+          "runbookId": "documentation-migration",
+          "reasons": [
+            "no-intent-match"
+          ]
+        },
+        {
+          "runbookId": "test-repair",
+          "reasons": [
+            "no-intent-match"
+          ]
+        }
+      ]
+    },
+    "routeDiagnostics": {
+      "difficulty": "complex",
+      "confidence": 0.68,
+      "reasons": [
+        "explicit-workers",
+        "lead:implementer",
+        "max-workers:5",
+        "difficulty:complex",
+        "confidence:0.68"
+      ],
+      "selectedRoles": [
+        "implementer"
+      ],
+      "rejectedRoles": [
+        {
+          "roleName": "planner",
+          "reason": "not-selected-by-route"
+        },
+        {
+          "roleName": "architect",
+          "reason": "not-selected-by-route"
+        },
+        {
+          "roleName": "tester",
+          "reason": "not-selected-by-route"
+        },
+        {
+          "roleName": "reviewer",
+          "reason": "not-selected-by-route"
+        },
+        {
+          "roleName": "security-reviewer",
+          "reason": "not-selected-by-route"
+        },
+        {
+          "roleName": "docs-writer",
+          "reason": "not-selected-by-route"
+        },
+        {
+          "roleName": "knowledge-librarian",
+          "reason": "not-selected-by-route"
+        },
+        {
+          "roleName": "skeptic",
+          "reason": "not-selected-by-route"
+        }
+      ],
+      "requiredCapabilities": [
+        "task-analysis"
+      ],
+      "capabilityGaps": [],
+      "isolationAdvisory": {
+        "boundary": "advisory-only",
+        "applied": false,
+        "recommendedMode": "shared",
+        "reason": "shared_l0_default",
+        "score": {
+          "duration": 0,
+          "workers": 1,
+          "writeDensity": 1,
+          "writeSetOverlapRisk": 0
+        }
+      }
+    },
+    "taskGraph": {
+      "graphRunId": "explicit-workers",
+      "mode": "auto",
+      "status": "planned",
+      "nodes": [
+        {
+          "taskNodeId": "implementer-1",
+          "agentId": "main",
+          "roleName": "implementer",
+          "task": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+          "phase": "implementation",
+          "dependsOn": [],
+          "scope": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+          "requiredCapabilities": [
+            "task-analysis"
+          ],
+          "attemptPolicy": {
+            "maxRepairAttempts": 1,
+            "maxRedoAttempts": 1
+          },
+          "status": "ready",
+          "modelRef": null,
+          "writeSet": [
+            "a.txt",
+            "b.txt",
+            "c.txt"
+          ],
+          "isolation": "worktree",
+          "worktreeId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a-implemen-f75b98ecd7"
+        }
+      ],
+      "edges": []
+    },
+    "graphStatus": "completed",
+    "executionWaves": [
+      {
+        "wave": 1,
+        "taskNodeIds": [
+          "implementer-1"
+        ],
+        "roles": [
+          "implementer"
+        ],
+        "reason": "scheduled 1 ready node(s) within concurrency cap 5"
+      }
+    ],
+    "schedulerMetrics": {
+      "queued": 1,
+      "running": 0,
+      "completed": 1,
+      "skipped": 0,
+      "concurrencyCap": 5,
+      "budgetEstimate": 2,
+      "roleCostSummary": [
+        {
+          "roleName": "implementer",
+          "taskNodeIds": [
+            "implementer-1"
+          ],
+          "estimatedCost": 2
+        }
+      ]
+    },
+    "spawnedRunIds": [
+      "9597d245-39fe-45ac-b5cf-e19ef986204e"
+    ],
+    "expectedChildren": [
+      {
+        "roleName": "implementer",
+        "task": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+        "taskId": "implementer-1",
+        "roleInstanceId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a:implementer-1:implementer:attempt-1",
+        "runId": "9597d245-39fe-45ac-b5cf-e19ef986204e",
+        "childSessionKey": "agent:main:subagent:e07f9d28-b630-4adf-9910-c1481318677e"
+      }
+    ],
+    "pendingVerifier": false,
+    "attempts": [
+      {
+        "taskId": "implementer-1",
+        "taskNodeId": "implementer-1",
+        "graphRunId": "explicit-workers",
+        "roleName": "implementer",
+        "roleInstanceId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a:implementer-1:implementer:attempt-1",
+        "attempt": 1,
+        "phase": "worker",
+        "scope": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+        "requiredCapabilities": [
+          "task-analysis"
+        ],
+        "status": "accepted",
+        "executionWave": 1,
+        "startedAt": 1793899685603,
+        "endedAt": 1793899686347
+      }
+    ],
+    "pendingGraphNodes": [],
+    "orchestrationDiagnostics": {
+      "kind": "ordinary-orchestration-diagnostics",
+      "boundary": "diagnostics-only",
+      "status": "ok",
+      "summary": "Ordinary orchestration completed without diagnostic recommendations.",
+      "failedWorkerCount": 0,
+      "taskLoopUpgradeAvailable": true,
+      "recommendations": [],
+      "nextSteps": []
+    },
+    "rerouteRecommendations": [],
+    "capabilityGaps": [],
+    "estimatedRepairPolicy": {
+      "maxRepairAttempts": 1,
+      "maxRedoAttempts": 1,
+      "maxFollowupRuns": 2
+    },
+    "quality": [
+      {
+        "roleName": "implementer",
+        "childRunId": "9597d245-39fe-45ac-b5cf-e19ef986204e",
+        "childSessionKey": "agent:main:subagent:e07f9d28-b630-4adf-9910-c1481318677e",
+        "overall": "good",
+        "score": 75,
+        "schemaCompliance": "weak",
+        "evidenceCoverage": "partial",
+        "scopeDiscipline": "pass",
+        "actionability": "strong",
+        "verificationSignal": "weak",
+        "verifierVerdict": "not_available",
+        "runtimeHealth": "healthy",
+        "reasons": [
+          "schema:weak"
+        ]
+      }
+    ],
+    "qualityState": "shadow",
+    "qualityStateReason": "Ordinary orchestration scored from 1 worker attempt(s) and observability trace trace_489c702d-0b8d-4616-a2a5-226004014290; this evidence is shadow-only and cannot change routing.",
+    "qualityScorecard": {
+      "state": "shadow",
+      "overall": "good",
+      "worst": "good",
+      "reason": "Ordinary orchestration scored from 1 worker attempt(s) and observability trace trace_489c702d-0b8d-4616-a2a5-226004014290; this evidence is shadow-only and cannot change routing.",
+      "evidenceRefs": [
+        "orchestration:orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a",
+        "trace:trace_489c702d-0b8d-4616-a2a5-226004014290",
+        "run:9597d245-39fe-45ac-b5cf-e19ef986204e"
+      ],
+      "workerScores": [
+        {
+          "roleName": "implementer",
+          "childRunId": "9597d245-39fe-45ac-b5cf-e19ef986204e",
+          "childSessionKey": "agent:main:subagent:e07f9d28-b630-4adf-9910-c1481318677e",
+          "overall": "good",
+          "score": 75,
+          "schemaCompliance": "weak",
+          "evidenceCoverage": "partial",
+          "scopeDiscipline": "pass",
+          "actionability": "strong",
+          "verificationSignal": "weak",
+          "verifierVerdict": "not_available",
+          "runtimeHealth": "healthy",
+          "reasons": [
+            "schema:weak"
+          ]
+        }
+      ],
+      "scorecardBacked": true,
+      "authority": {
+        "state": "shadow",
+        "source": "ordinary_orchestration_scorecard",
+        "qualityOverall": "good",
+        "scorecardBacked": true,
+        "verified": false,
+        "routingEligible": false,
+        "reason": "Ordinary orchestration scored from 1 worker attempt(s) and observability trace trace_489c702d-0b8d-4616-a2a5-226004014290; this evidence is shadow-only and cannot change routing.",
+        "evidenceRefs": [
+          "orchestration:orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a",
+          "trace:trace_489c702d-0b8d-4616-a2a5-226004014290",
+          "run:9597d245-39fe-45ac-b5cf-e19ef986204e"
+        ]
+      },
+      "observabilityScore": {
+        "traceId": "trace_489c702d-0b8d-4616-a2a5-226004014290",
+        "grade": "B",
+        "score": 84
+      },
+      "summary": {
+        "good": 1,
+        "needsAttention": 0,
+        "poorAttempts": 0
+      }
+    },
+    "qualitySummary": {
+      "good": 1,
+      "needsAttention": 0,
+      "poorAttempts": 0
+    },
+    "qualityDecision": {
+      "result": {
+        "state": "shadow",
+        "source": "ordinary_orchestration_scorecard",
+        "qualityOverall": "good",
+        "scorecardBacked": true,
+        "verified": false,
+        "routingEligible": false,
+        "reason": "Ordinary orchestration scored from 1 worker attempt(s) and observability trace trace_489c702d-0b8d-4616-a2a5-226004014290; this evidence is shadow-only and cannot change routing.",
+        "evidenceRefs": [
+          "orchestration:orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a",
+          "trace:trace_489c702d-0b8d-4616-a2a5-226004014290",
+          "run:9597d245-39fe-45ac-b5cf-e19ef986204e"
+        ]
+      },
+      "routing": {
+        "authority": {
+          "state": "unavailable",
+          "source": "none",
+          "qualityOverall": null,
+          "scorecardBacked": false,
+          "verified": false,
+          "routingEligible": false,
+          "reason": "No Task Loop quality authority reference was supplied.",
+          "evidenceRefs": []
+        },
+        "affected": false,
+        "reason": "explicit-plan"
+      }
+    },
+    "followupCandidates": [],
+    "memoryCandidates": [],
+    "outcomes": [
+      {
+        "roleName": "implementer",
+        "task": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+        "isVerifier": false,
+        "ledger": {
+          "taskId": "implementer-1",
+          "taskNodeId": "implementer-1",
+          "graphRunId": "explicit-workers",
+          "roleName": "implementer",
+          "roleInstanceId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a:implementer-1:implementer:attempt-1",
+          "attempt": 1,
+          "phase": "worker",
+          "scope": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+          "requiredCapabilities": [
+            "task-analysis"
+          ],
+          "status": "accepted",
+          "executionWave": 1,
+          "startedAt": 1793899685603,
+          "endedAt": 1793899686347
+        },
+        "status": "accepted",
+        "runId": "9597d245-39fe-45ac-b5cf-e19ef986204e",
+        "childSessionKey": "agent:main:subagent:e07f9d28-b630-4adf-9910-c1481318677e"
+      }
+    ],
+    "failures": []
+  },
+  "terminal": {
+    "runId": "9597d245-39fe-45ac-b5cf-e19ef986204e",
+    "status": "ok",
+    "startedAt": 1793899698604,
+    "endedAt": 1793899702931,
+    "stopReason": "stop",
+    "livenessState": "working"
+  },
+  "persistedRun": {
+    "runId": "9597d245-39fe-45ac-b5cf-e19ef986204e",
+    "childSessionKey": "agent:main:subagent:e07f9d28-b630-4adf-9910-c1481318677e",
+    "controllerSessionKey": "agent:main:dashboard:b49f4117-7359-4f78-9463-13a9cf81bcfc",
+    "requesterSessionKey": "agent:main:dashboard:b49f4117-7359-4f78-9463-13a9cf81bcfc",
+    "requesterSessionId": "bed4b37b-0638-4626-8d5a-d8b03382725e",
+    "requesterDisplayKey": "agent:main:dashboard:b49f4117-7359-4f78-9463-13a9cf81bcfc",
+    "task": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+    "cleanup": "keep",
+    "expectsCompletionMessage": true,
+    "spawnMode": "run",
+    "label": "Implementer",
+    "model": "openai/mock-coder",
+    "agentDir": "D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-byEJzg\\verse-claw-e2e-user-data-upXN7x\\openclaw-source-state\\agents\\main\\agent",
+    "workspaceDir": "D:\\ClawX\\.tmp\\coding-s5-01a1ab23-final\\verse-claw-e2e-run-byEJzg\\verse-claw-e2e-user-data-upXN7x\\workspace\\.openclaw\\worktrees\\orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a-implemen-f75b98ecd7",
+    "runTimeoutSeconds": 0,
+    "createdAt": 1793899686320,
+    "startedAt": 1793899698604,
+    "execution": {
+      "status": "terminal",
+      "startedAt": 1793899698604,
+      "endedAt": 1793899702931,
+      "outcome": {
+        "status": "ok",
+        "startedAt": 1793899698604,
+        "endedAt": 1793899702931,
+        "elapsedMs": 4327
+      }
+    },
+    "completion": {
+      "required": true,
+      "resultText": "S5-WORKER-DONE",
+      "capturedAt": 1793899705048
+    },
+    "delivery": {
+      "status": "pending",
+      "lastError": null
+    },
+    "sessionStartedAt": 1793899686320,
+    "accumulatedRuntimeMs": 0,
+    "cleanupHandled": false,
+    "orchestration": {
+      "orchestrationRunId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a",
+      "roleName": "implementer",
+      "isVerifier": false,
+      "phase": "worker",
+      "expectedWorkerRunIds": [
+        "9597d245-39fe-45ac-b5cf-e19ef986204e"
+      ],
+      "leadRole": "implementer",
+      "originalTask": "Merge one coding worker",
+      "taskId": "implementer-1",
+      "roleInstanceId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a:implementer-1:implementer:attempt-1",
+      "attempt": 1,
+      "scope": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+      "requiredCapabilities": [
+        "task-analysis"
+      ],
+      "ledger": {
+        "taskId": "implementer-1",
+        "taskNodeId": "implementer-1",
+        "graphRunId": "explicit-workers",
+        "roleName": "implementer",
+        "roleInstanceId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a:implementer-1:implementer:attempt-1",
+        "attempt": 1,
+        "phase": "worker",
+        "scope": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+        "requiredCapabilities": [
+          "task-analysis"
+        ],
+        "status": "planned",
+        "executionWave": 1,
+        "startedAt": 1793899685603
+      },
+      "taskNodeId": "implementer-1",
+      "graphRunId": "explicit-workers",
+      "executionWave": 1,
+      "taskGraph": {
+        "graphRunId": "explicit-workers",
+        "mode": "auto",
+        "status": "planned",
+        "nodes": [
+          {
+            "taskNodeId": "implementer-1",
+            "agentId": "main",
+            "roleName": "implementer",
+            "task": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+            "phase": "implementation",
+            "dependsOn": [],
+            "scope": "S5-MERGE-WORKER: delete a.txt and rename b.txt to c.txt, then finish.",
+            "requiredCapabilities": [
+              "task-analysis"
+            ],
+            "attemptPolicy": {
+              "maxRepairAttempts": 1,
+              "maxRedoAttempts": 1
+            },
+            "status": "ready",
+            "modelRef": null,
+            "writeSet": [
+              "a.txt",
+              "b.txt",
+              "c.txt"
+            ],
+            "isolation": "worktree",
+            "worktreeId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a-implemen-f75b98ecd7"
+          }
+        ],
+        "edges": []
+      },
+      "executionWaves": [
+        {
+          "wave": 1,
+          "taskNodeIds": [
+            "implementer-1"
+          ],
+          "roles": [
+            "implementer"
+          ],
+          "reason": "scheduled 1 ready node(s) within concurrency cap 5"
+        }
+      ],
+      "isolation": "worktree",
+      "worktreeId": "orch_1ce607ea-dba0-42e8-aef4-7875a1cfd40a-implemen-f75b98ecd7",
+      "worktreeBackend": "inprocess",
+      "worktreeWriteSet": [
+        "a.txt",
+        "b.txt",
+        "c.txt"
+      ],
+      "routeDiagnostics": {
+        "difficulty": "complex",
+        "confidence": 0.68,
+        "reasons": [
+          "explicit-workers",
+          "lead:implementer",
+          "max-workers:5",
+          "difficulty:complex",
+          "confidence:0.68"
+        ],
+        "selectedRoles": [
+          "implementer"
+        ],
+        "rejectedRoles": [
+          {
+            "roleName": "planner",
+            "reason": "not-selected-by-route"
+          },
+          {
+            "roleName": "architect",
+            "reason": "not-selected-by-route"
+          },
+          {
+            "roleName": "tester",
+            "reason": "not-selected-by-route"
+          },
+          {
+            "roleName": "reviewer",
+            "reason": "not-selected-by-route"
+          },
+          {
+            "roleName": "security-reviewer",
+            "reason": "not-selected-by-route"
+          },
+          {
+            "roleName": "docs-writer",
+            "reason": "not-selected-by-route"
+          },
+          {
+            "roleName": "knowledge-librarian",
+            "reason": "not-selected-by-route"
+          },
+          {
+            "roleName": "skeptic",
+            "reason": "not-selected-by-route"
+          }
+        ],
+        "requiredCapabilities": [
+          "task-analysis"
+        ],
+        "capabilityGaps": [],
+        "isolationAdvisory": {
+          "boundary": "advisory-only",
+          "applied": false,
+          "recommendedMode": "shared",
+          "reason": "shared_l0_default",
+          "score": {
+            "duration": 0,
+            "workers": 1,
+            "writeDensity": 1,
+            "writeSetOverlapRisk": 0
+          }
+        }
+      },
+      "qualityPolicy": "standard",
+      "repairPolicy": {
+        "maxRepairAttempts": 1,
+        "maxRedoAttempts": 1,
+        "maxFollowupRuns": 2
+      },
+      "workerCommunication": "none",
+      "handoffArtifactsMode": "off",
+      "allowFollowupPlanning": false,
+      "worktreeMergeStatus": "merged",
+      "worktreeWriteSetMismatch": [],
+      "worktreeMergeJournalRef": "write-journal:review-apply-eb154550-9847-4c1a-8b51-f73b7f0a0579:1",
+      "worktreeMergeHashes": {
+        "a.txt": null,
+        "b.txt": null,
+        "c.txt": "0063d7660ed630e73ec1d8055051ed757ced9d3051795edb45b65dda0bd5d4ad"
+      },
+      "worktreeMergeRecoveryRequired": false,
+      "worktreeMergeProcessedAt": 1793899705029,
+      "verifierSkippedReason": "no-verifier-role",
+      "verifierSkippedAt": 1793899705167
+    },
+    "endedAt": 1793899702931,
+    "outcome": {
+      "status": "ok",
+      "startedAt": 1793899698604,
+      "endedAt": 1793899702931,
+      "elapsedMs": 4327
+    },
+    "endedReason": "subagent-complete",
+    "browserCleanupDispatchedAt": 1793899703928
+  },
+  "parentFiles": {
+    "a": null,
+    "b": null,
+    "c": "original b"
+  },
+  "status": "pass",
+  "providerLog": [
+    {
+      "turn": "[Fri 2026-11-06 01:28 GMT+8] [Subagent Context] You are runn",
+      "toolResults": {},
+      "issued": "s5merge"
+    },
+    {
+      "turn": "[Fri 2026-11-06 01:28 GMT+8] [Subagent Context] You are runn",
+      "toolResults": {
+        "s5merge": "Warning: background execution is disabled; running synchronously and returning only after the process exits.\n\n\n\n(no output)"
+      },
+      "issued": "text:S5-WORKER-DONE"
+    }
+  ],
+  "providerAnomalies": []
+}

@@ -4,8 +4,6 @@ import {
   RUNTIME_MEMORY_FACT_PROPOSAL_REJECTION_REASONS,
   buildRuntimeMemoryFactProposalShadow,
   buildRuntimeMemoryTemporalFactFixture,
-  isRuntimeMemoryTemporalFact,
-  isRuntimeMemoryTemporalFactCandidate,
   sanitizeRuntimeMemoryFactProposalInput,
   type RuntimeMemoryFactProposalInput,
 } from "../../openclaw_runtime/src/runtime-core";

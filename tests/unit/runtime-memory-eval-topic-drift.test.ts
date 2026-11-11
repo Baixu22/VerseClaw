@@ -9,12 +9,10 @@ import { closeOpenClawStateDatabaseForTest } from "../../openclaw_runtime/src/st
 import { closeRuntimeMemoryHydrationShadowDatabasesForTest } from "../../openclaw_runtime/src/runtime-core/memory-read-hydration-shadow";
 import {
   buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics,
-  type TaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics,
 } from "../../openclaw_runtime/src/agents/task-loop-runtime-memory-read-hydration-shadow";
 import {
   buildTopicSegments,
   evaluateTopicDrift,
-  type TopicSegment,
 } from "../../openclaw_runtime/src/agents/runtime-memory-eval/topic-drift-eval";
 import {
   appendFactToDb,
@@ -108,45 +106,4 @@ function tryInitializeDb(dbPath: string): string {
   });
   const result = persistence.migrate();
   return result.status === "skipped" ? result.reason : result.status;
-}
-
-function runTopicDiagnostics(
-  segments: readonly TopicSegment[],
-  dbPath: string,
-): TaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics[] {
-  const results: TaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics[] = [];
-  let globalTurn = 0;
-  for (const segment of segments) {
-    for (const query of segment.queries) {
-      const diag = buildTaskLoopRuntimeMemoryReadHydrationShadowOnlyDiagnostics({
-        config: CONFIG,
-        loopRunId: `topic_drift_${globalTurn}`,
-        sessionKey: "agent:main:topic-drift",
-        iteration: globalTurn,
-        options: {
-          explicitOptIn: true,
-          testResearchOnly: true,
-          databasePath: dbPath,
-          limit: 50,
-          maxFacts: 200,
-          now: () => REFERENCE_TIME,
-          queries: [
-            {
-              queryId: query.queryId,
-              taskId: query.taskId,
-              subject: query.subject,
-              predicate: query.predicate,
-              referenceTime: query.referenceTime,
-              tokenBudget: query.tokenBudget,
-              limit: query.limit,
-              expectedFactIds: [...query.expectedFactIds],
-            },
-          ],
-        },
-      });
-      results.push(diag);
-      globalTurn += 1;
-    }
-  }
-  return results;
 }

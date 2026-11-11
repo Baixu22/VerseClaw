@@ -1,0 +1,32 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-relay",
+  "frozenInputsSha256": {
+    "scripts/inline-spill-benefit-eval.mts": "d5fd4cef5f0c6e9ea1f902a664992e9148bff3e331fb57412cd507330a7dcfcc",
+    "scripts/inline-spill-benefit-scoring.ts": "355c8bebc3de817d66c9b1e9371a1d51438ab63c30ab95a9df1f1e6dd3b099eb",
+    "tests/unit/inline-spill-benefit-eval.test.ts": "7edfec3c189b031b28c87ca00fd782aefd442e270378efcacfdb24e1a604dd5f",
+    "tests/unit/zz-probe5.test.ts": "d0c8e11e03a6fa394421116d12f668bdbb81fb97b80d305743ffca17b417ede8",
+    "scripts/context-inline-spill-benefit-scoring.mts": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+    "harness/specs/rules/inline-spill-benefit-quantification.md": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f",
+    "harness/specs/fixtures/context-inline-spill-benefit/SHA256SUMS": "88542d63e053bf37d466d722c1dc8964b4930b86ff3a1fd292a6184ddbcd8bd0",
+    "harness/specs/fixtures/context-inline-spill/SHA256SUMS": "5f436c49c12197b2870ef0c00b3694a1cdfecdef25a83c406518000eef4227a2"
+  },
+  "oldPackages": {
+    "context-inline-spill": {
+      "entries": 105,
+      "manifest_sha256": "5f436c49c12197b2870ef0c00b3694a1cdfecdef25a83c406518000eef4227a2"
+    },
+    "context-inline-spill-benefit": {
+      "entries": 47,
+      "manifest_sha256": "88542d63e053bf37d466d722c1dc8964b4930b86ff3a1fd292a6184ddbcd8bd0"
+    },
+    "context-inline-spill-benefit-round3": {
+      "entries": 37,
+      "manifest_sha256": "e6ef8c3226c551fb893b8579d28755c0caf3609106f46b5d359b0599a12f6553"
+    },
+    "context-inline-spill-benefit-closeout-20261108": {
+      "entries": 102,
+      "manifest_sha256": "92799f023b527f5e294ea6c64791e24dbb02cf277985f8bdfeb83671d582c374"
+    }
+  }
+}

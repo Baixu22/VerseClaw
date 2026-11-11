@@ -59,7 +59,6 @@ import {
   createSandboxedWriteTool,
   getToolParamsRecord,
   wrapToolMemoryFlushAppendOnlyWrite,
-  wrapToolWorkspaceRootGuard,
   wrapToolWorkspaceRootGuardWithOptions,
   wrapToolParamValidation,
   resolveToolPathAgainstWorkspaceRoot,
@@ -878,6 +877,7 @@ export function createOpenClawCodingTools(options?: {
     if (kind !== "apply_patch") {
       next = wrapToolWithWriteJournal(next, {
         workspaceRoot: codingRoot,
+        workspaceOnly,
         sessionId: codingSessionId,
         enabled: writeJournalEnabled,
         flags: writeJournalFlags,
@@ -963,7 +963,14 @@ export function createOpenClawCodingTools(options?: {
           : { check: true, scopeKnown: false, targetPaths: [] };
       },
     });
-    return next;
+    // The kit reads pre-images and diagnostics before the inner tool executes.
+    // Confinement therefore wraps the whole kit, including its journal reads.
+    return kind !== "apply_patch" && workspaceOnly
+      ? wrapToolWorkspaceRootGuardWithOptions(next, codingRoot, {
+          containerWorkdir: sandbox?.containerWorkdir,
+          normalizeGuardedPathParams: true,
+        })
+      : next;
   };
   const memoryFlushWriteRoot = sandboxRoot ?? workspaceRoot;
   const includeCoreTools = options?.includeCoreTools !== false;
@@ -1057,33 +1064,17 @@ export function createOpenClawCodingTools(options?: {
     {
       name: "edit",
       build: () => {
-        const wrapped = sandboxRoot
+        return sandboxRoot
           ? createSandboxedEditTool({ root: sandboxRoot, bridge: sandboxFsBridge! })
           : createHostWorkspaceEditTool(codingRoot, { workspaceOnly });
-        if (!workspaceOnly) {
-          return wrapped;
-        }
-        return sandboxRoot
-          ? wrapToolWorkspaceRootGuardWithOptions(wrapped, sandboxRoot, {
-              containerWorkdir: sandbox.containerWorkdir,
-            })
-          : wrapToolWorkspaceRootGuard(wrapped, codingRoot);
       },
     },
     {
       name: "write",
       build: () => {
-        const wrapped = sandboxRoot
+        return sandboxRoot
           ? createSandboxedWriteTool({ root: sandboxRoot, bridge: sandboxFsBridge! })
           : createHostWorkspaceWriteTool(codingRoot, { workspaceOnly });
-        if (!workspaceOnly) {
-          return wrapped;
-        }
-        return sandboxRoot
-          ? wrapToolWorkspaceRootGuardWithOptions(wrapped, sandboxRoot, {
-              containerWorkdir: sandbox.containerWorkdir,
-            })
-          : wrapToolWorkspaceRootGuard(wrapped, codingRoot);
       },
     },
   ];
@@ -1118,6 +1109,8 @@ export function createOpenClawCodingTools(options?: {
   // attempt/compact supplied BlockStore (+ sink for write) and session id.
   const dcsContextTools = createDcsContextAgentTools({
     sessionId: options?.sessionId,
+    archiveRecallRetention:
+      options?.config?.runtime?.contextFamily?.archiveRecallRetention?.enabled === true,
     runSessionKey: options?.runSessionKey,
     agentSessionKey: options?.sessionKey,
     workspaceRoot: codingRoot,

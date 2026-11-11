@@ -1315,3 +1315,48 @@ Use this packet before any handoff, fork, or context-pressure continuation.
     focused and repo-wide unit gates. Per the 2026-07-09 decision, those UI E2E
     failures are parked as UI/worktree drift and are not treated as backend
     closure blockers.
+
+## 2026-11-03 Inline/Spill retention development checkpoint
+
+- The default truncation references remain archive-backed and bounded. The
+  follow-up retention policy is explicitly off by default through
+  `runtime.contextFamily.archiveRecallRetention.enabled`.
+- The real recall tool issues provenance only after checksum/session checks.
+  The pruner and replacement planner use it for `ageTurns < 4`, at most 16000
+  visible characters total, and only when the existing budget can fit it.
+  Already-trimmed results, ordinary tools, user content, and assistant reasoning
+  get no added retention. No store, timer, queue, or re-injection is introduced.
+- The legacy pruner negative control was captured before implementation at
+  commit `10dd6c472`. The frozen `off-mode-baseline.json` is replayed by current
+  tests; metadata is never counted as provider-visible text.
+- Development proof passed 36 retention tests, one malformed-provider evidence
+  test, 10 would-trim tests, and 126 config-parity tests. Replay/precheck retain
+  minimal verified lineage; eligible sources are selected before conversion and
+  final budgets are planned afterward with transient lineage removed before
+  dispatch. Existing call-id rewrites carry only a previously valid binding.
+  Guarded disk reload covers large ASCII/CJK pages; multi-block budget failures
+  fall back to the existing unprotected plan. The evaluator retains real JSONL.
+  Multiple fitting recalls share the total cap, converter-added text remains
+  bounded, and masking replacements follow the enabled conversion boundary.
+  Retained pages do not consume truncation notices; actual budget pressure
+  releases the oldest protected page first through the existing planner.
+  This is a development checkpoint, not final acceptance.
+- Final deterministic/live-provider results, raw transcripts, source hashes,
+  command records, credential scan, and recovery index are retained under
+  `harness/specs/fixtures/context-inline-spill/`; closure depends on reading
+  those refreshed artifacts and completing the spec-declared gates.
+- Autonomous model recall selection, full-loop continuation, lossless full
+  summarization, product/default graduation, and GA are not claimed.
+
+## 2026-11-08 Inline/Spill 封存收益复核
+
+- 第二轮 47 份、第三轮 37 份证据哈希及 1605 个归档回读通过，原始评分与逐次 usage 复算一致；候选未跟踪材料已复制归档并记录 SHA256。
+- 第三轮收益判定为 NO-GO：B2/B4/B5/B6 失败，B3 的唯一差异来自无证据控制；TF-0749 保持 in_progress/80，TF-0750–0755 的既有 done 状态保留。
+- 本轮新增 provider 调用为 0。复算结果、验证记录与下一轮页适配实验见 [封存收益证据复核](../../harness/specs/fixtures/context-inline-spill-benefit-closeout-20261108/REPORT.md)。
+- 续接收尾：48 项相关单测、node/web/tests 三套无缓存类型、契约与本任务 Harness 检查通过；完整 Harness CI 在 59 项前置测试通过后因四份 Agent Dev 证据过期退出 1。Task Forest validate/export 与图、HTML 当前投影及末帧读回通过，TF-0749 字段保持原值。
+
+## 2026-11-08 Inline/Spill 第四轮页预算适配
+
+- TF-0859 已完成显式 1–5500 字符页参数适配，以及 32 次 deterministic 和 96 次 live/367 次调用的评测。最大序列化结果 5944 字符、超页 0、24 对首轮请求相同、原始历史旁路与 baseline oracle 泄漏均为 0。
+- stable 证据正确 0/18、控制有效 null 3/6；B1–B6 全部失败，56 次响应耗尽 900 输出 token，token 增长 51.56%。TF-0749 保持 in_progress/80、NO-GO。
+- 50 项定向单测、三套串行无缓存类型、契约与定向 Harness 通过。完整 Harness CI 在 59 项测试通过后因四份 Agent Dev 历史证据过期退出 1。认证失败的首次 96 请求、测试夹具失败和类型内存失败均保留，详见[第四轮报告](../../harness/specs/fixtures/context-inline-spill-benefit-round4/REPORT.md)。

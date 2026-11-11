@@ -2393,6 +2393,8 @@ export async function runReplyAgent(params: {
           patch: {
             pendingFinalDelivery: true,
             pendingFinalDeliveryText: resolvedPendingText,
+            pendingFinalDeliveryRunId: runId,
+            pendingFinalDeliveryRecoveryRunId: undefined,
             pendingFinalDeliveryContext,
             pendingFinalDeliveryCreatedAt: Date.now(),
             updatedAt: Date.now(),

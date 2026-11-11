@@ -60,6 +60,7 @@ export const toolsInvokeHandlers: GatewayRequestHandlers = {
 
     const outcome = await invokeGatewayTool({
       cfg: context.getRuntimeConfig(),
+      getRuntimeConfig: () => context.getRuntimeConfig(),
       input: params,
       senderIsOwner: client?.connect?.scopes?.includes("operator.admin"),
       toolCallIdPrefix: "rpc",

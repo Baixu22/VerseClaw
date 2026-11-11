@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_confidence": 0.98,
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "The platform condition preserves owned-process targeting, the exit listener, and the five-second forced-exit deadline. POSIX now escalates to SIGKILL after the existing grace period. The regression models successful graceful signaling without an exit and requires SIGKILL on the owned PID; the parent implementation would time out instead. No actionable defects found."
+}

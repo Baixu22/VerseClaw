@@ -643,6 +643,11 @@
       "description": "DCS（BlockStore）的高级 opt-in 控制面，用于工作记忆、context 工具及相关 flag。默认保持 off/shared/shadow；本面板不代表发布审批。可写开关写入应用设置；config 类同时写入 openclaw.json，并在 Gateway 运行时尝试重启。",
       "modeOptIn": "status: opt-in",
       "defaultLabel": "默认",
+      "retired": {
+        "label": "已退役",
+        "description": "该功能已退役。配置、旧请求参数与恢复记录不会重新启用它。",
+        "alternative": "继续使用普通编码工具和写入日志；并发修改时显式选择工作树隔离。"
+      },
       "enableLabel": "启用方式",
       "rollbackLabel": "回滚",
       "riskLabel": "风险",

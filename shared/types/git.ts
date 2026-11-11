@@ -1,5 +1,5 @@
-import type { PermissionApprovalEvent } from './workspace';
-import type { GitPatchArtifactV1, RemoteForgeErrorV1 } from './remote-forge';
+import type { PermissionApprovalEvent } from './workspace.js';
+import type { GitPatchArtifactV1, RemoteForgeErrorV1 } from './remote-forge.js';
 
 export type GitChangeBucket = 'staged' | 'unstaged' | 'untracked' | 'conflicted';
 export type GitDiffMode = 'unstaged' | 'staged';

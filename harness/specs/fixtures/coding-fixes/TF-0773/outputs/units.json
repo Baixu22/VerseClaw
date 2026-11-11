@@ -1,0 +1,23 @@
+{
+  "actor": "codex-01a1b4da",
+  "driven_by": "agent",
+  "name": "units",
+  "argv": [
+    "C:/Program Files/nodejs/node.exe",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "tests/unit/mcp-result-fidelity.test.ts",
+    "tests/unit/mcp-approval-fidelity.test.ts",
+    "tests/unit/tool-protocol-shadow.test.ts",
+    "tests/integration/mcp-result-sdk.test.ts",
+    "--maxWorkers=1",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile.json=D:\\tmp\\coding-relay-01a1b4da\\tf0773-final\\units.json"
+  ],
+  "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+  "exitCode": 0,
+  "seconds": 60.68233823776245,
+  "log": "units.log",
+  "output": "\n RUN  v4.1.1 D:/ClawX-work/coding-vg-sts-jj-20261104\n\n \u2713 tests/integration/mcp-result-sdk.test.ts (9 tests) 22066ms\n     \u2713 preserves results, failure and cancellation across the transport  1344ms\n     \u2713 preserves results, failure and cancellation across the transport  5783ms\n   \u2713 downgrades newer result fields for negotiated 2024-11-05 over real HTTP and stdio  5526ms\n   \u2713 downgrades newer result fields for negotiated 2025-03-26 over real HTTP and stdio  6880ms\n   \u2713 isolates cancellation and duplicate request ids between two initialized HTTP clients  1073ms\n   \u2713 cancels queued HTTP batch calls through notification  1024ms\n \u2713 tests/unit/mcp-result-fidelity.test.ts (34 tests) 22ms\n \u2713 tests/unit/mcp-approval-fidelity.test.ts (3 tests) 10ms\n \u2713 tests/unit/tool-protocol-shadow.test.ts (6 tests) 5ms\n\n Test Files  4 passed (4)\n      Tests  52 passed (52)\n   Start at  23:53:57\n   Duration  58.69s (transform 20.18s, setup 626ms, import 32.82s, tests 22.10s, environment 1.85s)\n\nJSON report written to D:/tmp/coding-relay-01a1b4da/tf0773-final/units.json\n"
+}

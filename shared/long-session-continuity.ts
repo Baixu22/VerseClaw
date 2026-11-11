@@ -1,10 +1,10 @@
-import type { MemorySurfaceEntry, MemorySurfaceSnapshot } from './types/memory';
+import type { MemorySurfaceEntry, MemorySurfaceSnapshot } from './types/memory.js';
 import type {
   TaskLedgerSnapshot,
   TaskLedgerWorkingContextField,
   TaskLedgerWorkingContextFieldValue,
   TaskLedgerWorkingContextSnapshot,
-} from './types/task-ledger';
+} from './types/task-ledger.js';
 
 export type ContinuityItemKind =
   | 'objective'

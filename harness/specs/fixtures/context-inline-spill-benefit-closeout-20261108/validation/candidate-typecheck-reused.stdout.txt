@@ -1,0 +1,63 @@
+[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed
+[ext-bridge] No external extensions configured — empty stubs generated.
+[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed
+[WARN] Your node_modules are out of sync with your lockfile. The value of the patchedDependencies setting has changed
+electron/gateway/agent-browser-bridge.ts(11,42): error TS2307: Cannot find module '@verse-claw/versebrowser' or its corresponding type declarations.
+electron/services/agent-browser-api.ts(29,8): error TS2307: Cannot find module '@verse-claw/versebrowser' or its corresponding type declarations.
+electron/services/agent-browser-api.ts(317,24): error TS18046: 'payload' is of type 'unknown'.
+electron/services/agent-browser-api.ts(324,22): error TS18046: 'payload' is of type 'unknown'.
+electron/services/agent-browser-api.ts(324,45): error TS18046: 'payload' is of type 'unknown'.
+electron/services/agent-browser-api.ts(329,42): error TS18046: 'payload' is of type 'unknown'.
+electron/services/agent-browser-api.ts(330,53): error TS2698: Spread types may only be created from object types.
+electron/services/agent-browser-api.ts(370,62): error TS2554: Expected 0 arguments, but got 1.
+electron/services/long-session-resource-reclamation.ts(49,34): error TS7006: Parameter 'session' implicitly has an 'any' type.
+electron/services/long-session-resource-reclamation.ts(173,74): error TS7006: Parameter 'session' implicitly has an 'any' type.
+electron/services/long-session-resource-reclamation.ts(233,40): error TS7006: Parameter 'session' implicitly has an 'any' type.
+[ELIFECYCLE] Command failed with exit code 2.
+{
+  "success": false,
+  "mode": "parallel",
+  "testTypes": {
+    "commandLine": "pnpm run typecheck:test",
+    "exitCode": 2,
+    "durationMs": 57026,
+    "observationMode": false,
+    "errorCount": 17,
+    "errorLog": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\validation-candidate\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+  },
+  "cache": {
+    "enabled": false,
+    "status": "disabled",
+    "key": "dd644527609cd7eb085d626cbc45fa7f62fcb42f566774afa7ddee1cb197b810",
+    "inputCount": 13007,
+    "report": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\validation-candidate\\artifacts\\typecheck-cache\\report.json"
+  },
+  "totalDurationMs": 69498,
+  "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 383
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 2,
+      "durationMs": 39963
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "durationMs": 38638
+    },
+    {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 2,
+      "durationMs": 57026,
+      "observationMode": false,
+      "errorCount": 17,
+      "errorLog": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\validation-candidate\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    }
+  ]
+}
+[ELIFECYCLE] Command failed with exit code 1.

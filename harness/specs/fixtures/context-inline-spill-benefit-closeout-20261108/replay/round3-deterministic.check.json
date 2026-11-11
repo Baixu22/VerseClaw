@@ -1,0 +1,27 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-closeout-01a1b90a",
+  "name": "round3-deterministic",
+  "cwd": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+  "command": [
+    "node",
+    "harness/specs/fixtures/context-inline-spill-benefit-round3/verify-run.mjs",
+    "harness/specs/fixtures/context-inline-spill-benefit-round3/deterministic",
+    "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\round3-deterministic.json"
+  ],
+  "started_at": "2026-11-08T02:47:51.668416+00:00",
+  "duration_seconds": 0.485,
+  "exit_code": 0,
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\round3-deterministic.stdout.txt",
+      "bytes": 426,
+      "sha256": "972fbe27c2e8c3ea4c4acbb5dac9b1ef11a7c0e8f4bc743e70f6453e588a05bc"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-closeout-20261108-01a1b90a\\checks\\round3-deterministic.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

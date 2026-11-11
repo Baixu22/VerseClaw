@@ -1,0 +1,40 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "tf-closeout-apply",
+  "cwd": "D:/ClawX",
+  "command": [
+    "py",
+    "-3",
+    "-X",
+    "utf8",
+    "D:/ClawX/.codex-tools/task-forest/hardened-recovery-20261103/scripts/task_forest.py",
+    "proposal-apply",
+    "TFP-inline-spill-r4-closeout-20261108-01a1b97b",
+    "--workspace",
+    "D:/ClawX",
+    "--yes",
+    "--lock-timeout",
+    "30"
+  ],
+  "started_at": "2026-11-08T06:14:14.813601+00:00",
+  "duration_seconds": 422.297,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": null
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\tf-closeout-apply.stdout.txt",
+      "bytes": 72,
+      "sha256": "3f0a6cb4e071677cdb29723ac72a10dda546da1c7cd61b89d3068ef270af2c0a"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\tf-closeout-apply.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

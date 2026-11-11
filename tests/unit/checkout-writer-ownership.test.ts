@@ -151,14 +151,14 @@ describe('checkout writer resource owner',()=>{
   expect(()=>s.beginWrite(b,'write','digest')).toThrow(/replaced/);
   expect(()=>s.cleanup(next.id)).toThrow(/replaced/);expect(readFileSync(path.join(next.root,'keep.txt'),'utf8')).toBe('keep');
  });
- it('gates real service merge, freeze and cleanup before filesystem effects',()=>{
+ it('gates real service merge, freeze and cleanup before filesystem effects',async()=>{
   const s=service();writeFileSync(path.join(root,'a.txt'),'base');const r=s.create('one',{writeSet:['a.txt'],seedFiles:['a.txt']});
   writeFileSync(path.join(r.root,'a.txt'),'worker');const writer=s.claimWriter(r.id,r.generation,owner(),'claim');
   s.enqueueMerge({worktreeId:r.id,worktreeGeneration:r.generation,changedFiles:['a.txt']});
-  expect(()=>s.processMergeQueue()).toThrow(/writer_busy/);expect(readFileSync(path.join(root,'a.txt'),'utf8')).toBe('base');
+  await expect(s.processMergeQueue()).rejects.toThrow(/writer_busy/);expect(readFileSync(path.join(root,'a.txt'),'utf8')).toBe('base');
   const freeze=vi.fn();expect(()=>s.withFrozenWorktrees([{worktreeId:r.id,worktreeGeneration:r.generation}],freeze)).toThrow(/writer_busy/);expect(freeze).not.toHaveBeenCalled();
   expect(()=>s.cleanup(r.id)).toThrow(/reconciliation_required/);
-  s.releaseWriter(writer);expect(s.processMergeQueue()[0].status).toBe('merged');expect(readFileSync(path.join(root,'a.txt'),'utf8')).toBe('worker');
+  s.releaseWriter(writer);expect((await s.processMergeQueue())[0].status).toBe('merged');expect(readFileSync(path.join(root,'a.txt'),'utf8')).toBe('worker');
   expect(s.withFrozenWorktrees([{worktreeId:r.id,worktreeGeneration:r.generation}],()=>42)).toBe(42);
   s.cleanup(r.id);expect(existsSync(r.root)).toBe(false);
  });

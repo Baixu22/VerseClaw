@@ -1,0 +1,36 @@
+{
+  "schema": "ContextInlineSpillGate/v2",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "name": "live-provider-candidate-c",
+  "command": "openclaw_runtime/node_modules/.bin/tsx.cmd",
+  "args": [
+    "--expose-gc",
+    "scripts/context-inline-spill-eval.mts",
+    "--mode",
+    "live",
+    "--out",
+    "D:/tmp/context-inline-spill-closeout-20261103/final-evals"
+  ],
+  "workspace": "C:\\Users\\27933\\.codex\\worktrees\\context-inline-spill\\ClawX",
+  "started_at": "2026-11-03T15:15:41.4219749+00:00",
+  "finished_at": "2026-11-03T15:16:03.4466290+00:00",
+  "elapsed_ms": 21795,
+  "exit_code": 0,
+  "command_exit_code": 0,
+  "candidate": {
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf",
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "status": "",
+    "dirty": false
+  },
+  "candidate_after": {
+    "tree": "13e352f499403ec9c2a7c1fbe700a67fbce4e8bf",
+    "commit": "16da6fdf22b0bda023becffa4272373be610ab54",
+    "status": "",
+    "dirty": false
+  },
+  "source_status_unchanged": true,
+  "log_file": "D:\\tmp\\context-inline-spill-closeout-20261103\\gates\\live-provider-candidate-c.log",
+  "log_sha256": "bd1697ec3d04bef6cae6dd3350675bea2aa399e46bfb373c885260ce51d8060f"
+}

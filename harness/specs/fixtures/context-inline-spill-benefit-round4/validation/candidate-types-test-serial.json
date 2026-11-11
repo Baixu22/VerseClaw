@@ -1,0 +1,32 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "candidate-types-test-serial",
+  "cwd": "D:/tmp/inline-spill-benefit-r4-20261108-01a1b934/candidate",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+    "run",
+    "typecheck:test"
+  ],
+  "started_at": "2026-11-08T05:37:12.148343+00:00",
+  "duration_seconds": 96.547,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": "warn"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-types-test-serial.stdout.txt",
+      "bytes": 118,
+      "sha256": "d684aadf7cc18ecc0092139d60cc8dde7043f28dab178aa0b69edc8c63e236be"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\candidate-types-test-serial.stderr.txt",
+      "bytes": 56,
+      "sha256": "2965c30ed6c0458fe82c037cbd4fcb6ec7b20eb952bfab14bcb028ad81bbeb57"
+    }
+  }
+}

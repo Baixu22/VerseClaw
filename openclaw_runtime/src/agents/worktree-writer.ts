@@ -303,3 +303,29 @@ export function withCheckoutMaintenance<T>(bases: readonly CheckoutWriterBasis[]
   for (const claim of claims) releaseCheckoutWriter(claim);
   return result;
 }
+
+export async function withCheckoutMaintenanceAsync<T>(bases: readonly CheckoutWriterBasis[], operation: "merge" | "freeze" | "cleanup", effect: () => T | Promise<T>, prepare?: () => void, outcome?: (value: T) => CheckoutWriteReceipt['outcome']): Promise<T> {
+  const operationId = randomUUID();
+  const claims: CheckoutWriterCredential[] = [];
+  try {
+    for (const basis of [...new Map(bases.map(b => [canonicalWorktreePath(b.root), b])).values()].sort((a, b) => a.root.localeCompare(b.root))) {
+      claims.push(claimCheckoutWriter(basis, { kind: "maintenance", operation, operationId }, operationId));
+    }
+  } catch (error) { for (const claim of claims) releaseCheckoutWriter(claim); throw error; }
+  try {
+    prepare?.();
+    for (const claim of claims) beginCheckoutWrite(claim, operationId, digest({ operation, roots: claims.map(c => [c.root, c.incarnation, c.generation]) }));
+  } catch (error) {
+    for (const claim of claims) {
+      if (current(claim).operations.some(op => op.id === operationId)) settleCheckoutWrite(claim, operationId, { outcome: "not-applied", ownerReceipt: `preflight:${operationId}` });
+      releaseCheckoutWriter(claim);
+    }
+    throw error;
+  }
+  let result: T;
+  try { result = await effect(); }
+  catch (error) { for (const claim of claims) settleCheckoutWrite(claim, operationId, null); throw error; }
+  for (const claim of claims) settleCheckoutWrite(claim, operationId, { outcome: outcome?.(result) ?? "completed", ownerReceipt: `${operation}:${operationId}` });
+  for (const claim of claims) releaseCheckoutWriter(claim);
+  return result;
+}

@@ -645,6 +645,7 @@ export function createOpenClawTools(
           }),
           createTeamOrchestrateTool({
             agentSessionKey: options?.agentSessionKey,
+            expectedSessionGeneration: options?.sessionId,
             completionOwnerKey: options?.runSessionKey,
             agentChannel: options?.agentChannel,
             agentAccountId: options?.agentAccountId,

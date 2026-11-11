@@ -1,0 +1,222 @@
+{
+  "candidate": "3be783eac6a4e2aae35558dbee705f47cf3caeb1",
+  "driven_by": "agent",
+  "actor": "codex-01a1b68a",
+  "realHumanEvidence": false,
+  "commands": [
+    {
+      "name": "projection-units",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/coding-controls-tf0510.test.ts",
+        "tests/unit/coding-controls-tf0510-patchflow-trigger.test.ts",
+        "tests/unit/role-orchestration-methods.test.ts",
+        "tests/unit/coding-retired-deferred-completion.test.ts",
+        "tests/unit/dcs-prod-flags-catalog.test.ts",
+        "tests/unit/dcs-prod-flags-retirement.test.tsx",
+        "tests/unit/dcs-prod-flags-memory-semantics.test.tsx",
+        "tests/unit/component-disposition-catalog.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\projection-units.json"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac",
+      "exitCode": 0,
+      "seconds": 61.42199999999866
+    },
+    {
+      "name": "projection-runtime",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/run-vitest.mjs",
+        "run",
+        "src/agents/isolation-mode-matrix.test.ts",
+        "src/agents/orchestrator-write-set-plan.test.ts",
+        "src/agents/patch-flow-graduation.test.ts",
+        "src/agents/worktree-service.test.ts",
+        "src/agents/tools/write-journal.test.ts",
+        "src/context-engine/runtime-flag-ack.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\projection-runtime.json"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac\\openclaw_runtime",
+      "exitCode": 0,
+      "seconds": 48.70300000000134
+    },
+    {
+      "name": "projection-bridge",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/generate-ext-bridge.mjs"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac",
+      "exitCode": 0,
+      "seconds": 0.20300000000133878
+    },
+    {
+      "name": "projection-type-node",
+      "argv": [
+        "D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@typescript+native-preview-win32-x64@7.0.0-dev.20260527.2/node_modules/@typescript/native-preview-win32-x64/lib/tsgo.exe",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac",
+      "exitCode": 0,
+      "seconds": 12.671999999998661
+    },
+    {
+      "name": "projection-type-web",
+      "argv": [
+        "D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@typescript+native-preview-win32-x64@7.0.0-dev.20260527.2/node_modules/@typescript/native-preview-win32-x64/lib/tsgo.exe",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac",
+      "exitCode": 0,
+      "seconds": 4.48399999999674
+    },
+    {
+      "name": "projection-type-test",
+      "argv": [
+        "D:/ClawX-work/coding-vg-sts-jj-20261104/node_modules/.pnpm/@typescript+native-preview-win32-x64@7.0.0-dev.20260527.2/node_modules/@typescript/native-preview-win32-x64/lib/tsgo.exe",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac",
+      "exitCode": 0,
+      "seconds": 17.5
+    },
+    {
+      "name": "projection-contract",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac",
+      "exitCode": 0,
+      "seconds": 0.3440000000045984
+    },
+    {
+      "name": "projection-lint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "src/components/settings/DcsProdFlagsPanel.tsx",
+        "tests/e2e/coding-retired-controls.spec.ts",
+        "tests/unit/coding-retired-deferred-completion.test.ts",
+        "--max-warnings=0"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0774\\final-3be783eac\\source-3be783eac",
+      "exitCode": 0,
+      "seconds": 4.8439999999973224
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 1.9210000000020955
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 2.437999999994645
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 0.2970000000059372
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/coding-retired-control-admission.md"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 1.639999999999418
+    },
+    {
+      "name": "harness-selection",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/coding-retired-control-admission.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 1.312999999994645
+    },
+    {
+      "name": "artifact-policy",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "exitCode": 0,
+      "seconds": 9.14100000000326
+    }
+  ],
+  "electron": {
+    "candidate": "3be783eac6a4e2aae35558dbee705f47cf3caeb1",
+    "candidateAfter": "3be783eac6a4e2aae35558dbee705f47cf3caeb1",
+    "dirtyAfter": false,
+    "exitCode": 0,
+    "seconds": 68.1221673,
+    "finishedAt": "2026-11-08T01:57:06.9254573Z"
+  },
+  "buildReuse": {
+    "fromSourceCandidate": "29dce73d2879097cef132a380c44ed9ca434bb7e",
+    "productionChanges": [],
+    "buildCommands": {
+      "runtime": 0,
+      "vite": 0,
+      "seconds": 137.0210579,
+      "finishedAt": "2026-11-07T17:40:40.0090611Z"
+    },
+    "outputs": {
+      "dist/index.html": "d4ca72dbe3e8cb4e31107e754672ba567ac2dbd439ac8977928530579faad475",
+      "dist-electron/main/index.js": "3c016743585730e941dd34ef10eeff8c41bcff6eb679483e36bd923241ef2661",
+      "openclaw_runtime/dist/entry.js": "9e6928a86e6c2368e1797fb14e82a7c4964b58b9d3540d4a894f89ff5ef19871"
+    }
+  },
+  "review": {
+    "exitCode": 0,
+    "finishedAt": "2026-11-07T17:39:32.5994996Z"
+  }
+}

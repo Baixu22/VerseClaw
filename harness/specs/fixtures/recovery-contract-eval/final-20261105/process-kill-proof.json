@@ -1,0 +1,322 @@
+{
+  "schema": "RecoveryToolRedispatchProcessProof/v1",
+  "driven_by": "agent",
+  "actor": "redispatch-process-test",
+  "realHumanEvidence": false,
+  "generatedAt": "2026-11-05T03:59:14.624Z",
+  "trials": [
+    {
+      "stage": "dispatch",
+      "repeat": 0,
+      "killedPid": 48368,
+      "status": "resumed",
+      "effects": 1,
+      "realResults": 1,
+      "rows": [
+        {
+          "phase": "effect_committed",
+          "recovery": {}
+        }
+      ],
+      "driven_by": "agent",
+      "actor": "redispatch-process-test",
+      "realHumanEvidence": false
+    },
+    {
+      "stage": "dispatch",
+      "repeat": 1,
+      "killedPid": 36624,
+      "status": "resumed",
+      "effects": 1,
+      "realResults": 1,
+      "rows": [
+        {
+          "phase": "effect_committed",
+          "recovery": {}
+        }
+      ],
+      "driven_by": "agent",
+      "actor": "redispatch-process-test",
+      "realHumanEvidence": false
+    },
+    {
+      "stage": "dispatch",
+      "repeat": 2,
+      "killedPid": 20772,
+      "status": "resumed",
+      "effects": 1,
+      "realResults": 1,
+      "rows": [
+        {
+          "phase": "effect_committed",
+          "recovery": {}
+        }
+      ],
+      "driven_by": "agent",
+      "actor": "redispatch-process-test",
+      "realHumanEvidence": false
+    },
+    {
+      "stage": "pending",
+      "repeat": 0,
+      "killedPid": 37944,
+      "status": "reconcile",
+      "error": "Error: effect outcome requires reconciliation, even if an error result was persisted",
+      "effects": 0,
+      "realResults": 0,
+      "rows": [
+        {
+          "phase": "effect_pending",
+          "recovery": {
+            "needsReconciliation": true,
+            "reason": "gateway-restart",
+            "settledAt": 1793851054882
+          }
+        }
+      ],
+      "driven_by": "agent",
+      "actor": "redispatch-process-test",
+      "realHumanEvidence": false
+    },
+    {
+      "stage": "pending",
+      "repeat": 1,
+      "killedPid": 34508,
+      "status": "reconcile",
+      "error": "Error: effect outcome requires reconciliation, even if an error result was persisted",
+      "effects": 0,
+      "realResults": 0,
+      "rows": [
+        {
+          "phase": "effect_pending",
+          "recovery": {
+            "needsReconciliation": true,
+            "reason": "gateway-restart",
+            "settledAt": 1793851068457
+          }
+        }
+      ],
+      "driven_by": "agent",
+      "actor": "redispatch-process-test",
+      "realHumanEvidence": false
+    },
+    {
+      "stage": "pending",
+      "repeat": 2,
+      "killedPid": 17584,
+      "status": "reconcile",
+      "error": "Error: effect outcome requires reconciliation, even if an error result was persisted",
+      "effects": 0,
+      "realResults": 0,
+      "rows": [
+        {
+          "phase": "effect_pending",
+          "recovery": {
+            "needsReconciliation": true,
+            "reason": "gateway-restart",
+            "settledAt": 1793851077970
+          }
+        }
+      ],
+      "driven_by": "agent",
+      "actor": "redispatch-process-test",
+      "realHumanEvidence": false
+    },
+    {
+      "stage": "effect",
+      "repeat": 0,
+      "killedPid": 34564,
+      "status": "reconcile",
+      "error": "Error: effect outcome requires reconciliation, even if an error result was persisted",
+      "effects": 1,
+      "realResults": 0,
+      "rows": [
+        {
+          "phase": "effect_pending",
+          "recovery": {
+            "needsReconciliation": true,
+            "reason": "gateway-restart",
+            "settledAt": 1793851085549
+          }
+        }
+      ],
+      "driven_by": "agent",
+      "actor": "redispatch-process-test",
+      "realHumanEvidence": false
+    },
+    {
+      "stage": "effect",
+      "repeat": 1,
+      "killedPid": 10980,
+      "status": "reconcile",
+      "error": "Error: effect outcome requires reconciliation, even if an error result was persisted",
+      "effects": 1,
+      "realResults": 0,
+      "rows": [
+        {
+          "phase": "effect_pending",
+          "recovery": {
+            "needsReconciliation": true,
+            "reason": "gateway-restart",
+            "settledAt": 1793851094417
+          }
+        }
+      ],
+      "driven_by": "agent",
+      "actor": "redispatch-process-test",
+      "realHumanEvidence": false
+    },
+    {
+      "stage": "effect",
+      "repeat": 2,
+      "killedPid": 27480,
+      "status": "reconcile",
+      "error": "Error: effect outcome requires reconciliation, even if an error result was persisted",
+      "effects": 1,
+      "realResults": 0,
+      "rows": [
+        {
+          "phase": "effect_pending",
+          "recovery": {
+            "needsReconciliation": true,
+            "reason": "gateway-restart",
+            "settledAt": 1793851102607
+          }
+        }
+      ],
+      "driven_by": "agent",
+      "actor": "redispatch-process-test",
+      "realHumanEvidence": false
+    },
+    {
+      "stage": "committed",
+      "repeat": 0,
+      "killedPid": 15716,
+      "status": "reconcile",
+      "error": "Error: tool call original-call requires reconciliation; no matching unstarted dispatch",
+      "effects": 1,
+      "realResults": 0,
+      "rows": [
+        {
+          "phase": "effect_committed",
+          "recovery": {
+            "needsReconciliation": true,
+            "reason": "gateway-restart",
+            "settledAt": 1793851109753
+          }
+        }
+      ],
+      "driven_by": "agent",
+      "actor": "redispatch-process-test",
+      "realHumanEvidence": false
+    },
+    {
+      "stage": "committed",
+      "repeat": 1,
+      "killedPid": 27068,
+      "status": "reconcile",
+      "error": "Error: tool call original-call requires reconciliation; no matching unstarted dispatch",
+      "effects": 1,
+      "realResults": 0,
+      "rows": [
+        {
+          "phase": "effect_committed",
+          "recovery": {
+            "needsReconciliation": true,
+            "reason": "gateway-restart",
+            "settledAt": 1793851117465
+          }
+        }
+      ],
+      "driven_by": "agent",
+      "actor": "redispatch-process-test",
+      "realHumanEvidence": false
+    },
+    {
+      "stage": "committed",
+      "repeat": 2,
+      "killedPid": 21848,
+      "status": "reconcile",
+      "error": "Error: tool call original-call requires reconciliation; no matching unstarted dispatch",
+      "effects": 1,
+      "realResults": 0,
+      "rows": [
+        {
+          "phase": "effect_committed",
+          "recovery": {
+            "needsReconciliation": true,
+            "reason": "gateway-restart",
+            "settledAt": 1793851127117
+          }
+        }
+      ],
+      "driven_by": "agent",
+      "actor": "redispatch-process-test",
+      "realHumanEvidence": false
+    },
+    {
+      "stage": "result",
+      "repeat": 0,
+      "killedPid": 9576,
+      "status": "resumed",
+      "effects": 1,
+      "realResults": 1,
+      "rows": [
+        {
+          "phase": "effect_committed",
+          "recovery": {
+            "needsReconciliation": true,
+            "reason": "gateway-restart",
+            "settledAt": 1793851137922
+          }
+        }
+      ],
+      "driven_by": "agent",
+      "actor": "redispatch-process-test",
+      "realHumanEvidence": false
+    },
+    {
+      "stage": "result",
+      "repeat": 1,
+      "killedPid": 15424,
+      "status": "resumed",
+      "effects": 1,
+      "realResults": 1,
+      "rows": [
+        {
+          "phase": "effect_committed",
+          "recovery": {
+            "needsReconciliation": true,
+            "reason": "gateway-restart",
+            "settledAt": 1793851145896
+          }
+        }
+      ],
+      "driven_by": "agent",
+      "actor": "redispatch-process-test",
+      "realHumanEvidence": false
+    },
+    {
+      "stage": "result",
+      "repeat": 2,
+      "killedPid": 22292,
+      "status": "resumed",
+      "effects": 1,
+      "realResults": 1,
+      "rows": [
+        {
+          "phase": "effect_committed",
+          "recovery": {
+            "needsReconciliation": true,
+            "reason": "gateway-restart",
+            "settledAt": 1793851154563
+          }
+        }
+      ],
+      "driven_by": "agent",
+      "actor": "redispatch-process-test",
+      "realHumanEvidence": false
+    }
+  ],
+  "scope": "actual tool adapter + SQLite + SessionManager + process kill; not the frozen K1-K5 Electron matrix"
+}

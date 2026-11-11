@@ -5,6 +5,7 @@
  */
 import { createHash } from "node:crypto";
 import type { AgentMessage } from "./runtime/index.js";
+import { preserveArchiveRecallOriginAfterIdRewrite } from "./archive-recall-retention.js";
 import { isAllowedToolCallName, normalizeAllowedToolNames } from "./tool-call-shared.js";
 
 export type ToolCallIdMode = "strict" | "strict9";
@@ -430,11 +431,11 @@ function rewriteToolResultIds(params: {
     return params.message;
   }
 
-  return {
+  return preserveArchiveRecallOriginAfterIdRewrite(params.message, {
     ...params.message,
     ...(nextToolCallId && { toolCallId: nextToolCallId }),
     ...(nextToolUseId && { toolUseId: nextToolUseId }),
-  } as Extract<AgentMessage, { role: "toolResult" }>;
+  } as Extract<AgentMessage, { role: "toolResult" }>);
 }
 
 /**

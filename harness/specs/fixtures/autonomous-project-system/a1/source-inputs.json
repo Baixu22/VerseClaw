@@ -1,0 +1,316 @@
+{
+  "schema": "AutonomyA1SourceInputs/v1",
+  "driven_by": "agent",
+  "actor": "codex/autonomous-project-system",
+  "generatedAt": "2026-11-02T07:33:46.641Z",
+  "candidate": {
+    "commit": "a7ce35fde61a87afd5a7d87ee73b8b74479fae4a",
+    "tree": "16377fc717671d22be6e5dbd2fff2966bf8743af",
+    "dirty": false
+  },
+  "sourceMode": "candidate Git blobs and observed working bytes",
+  "sources": [
+    {
+      "path": "electron/services/gateway-api.ts",
+      "candidateBlobSha256": "4a9ad73aa6fbea3767ac91c565344b04b368dd3be9d2427f10955890f2278b55",
+      "workingSha256": "4a9ad73aa6fbea3767ac91c565344b04b368dd3be9d2427f10955890f2278b55",
+      "canonicalWorkingSha256": "4a9ad73aa6fbea3767ac91c565344b04b368dd3be9d2427f10955890f2278b55",
+      "bytes": 22086
+    },
+    {
+      "path": "electron/services/resource-fabric.ts",
+      "candidateBlobSha256": "ff16eebaee37932e8ff8050ea2094200992c4c38f90882f81d71c1cac45ee777",
+      "workingSha256": "ff16eebaee37932e8ff8050ea2094200992c4c38f90882f81d71c1cac45ee777",
+      "canonicalWorkingSha256": "ff16eebaee37932e8ff8050ea2094200992c4c38f90882f81d71c1cac45ee777",
+      "bytes": 15760
+    },
+    {
+      "path": "electron/services/resource-tracker-api.ts",
+      "candidateBlobSha256": "f2bd8b21108a33441fda8efea798d0617c2e380501a244d5145aefbb03cda03e",
+      "workingSha256": "f2bd8b21108a33441fda8efea798d0617c2e380501a244d5145aefbb03cda03e",
+      "canonicalWorkingSha256": "f2bd8b21108a33441fda8efea798d0617c2e380501a244d5145aefbb03cda03e",
+      "bytes": 415
+    },
+    {
+      "path": "electron/services/resource-tracker.ts",
+      "candidateBlobSha256": "ba048290d8dde218249270f62a49f45334a9582b388a5cd4445fa1e31822582e",
+      "workingSha256": "ba048290d8dde218249270f62a49f45334a9582b388a5cd4445fa1e31822582e",
+      "canonicalWorkingSha256": "ba048290d8dde218249270f62a49f45334a9582b388a5cd4445fa1e31822582e",
+      "bytes": 14855
+    },
+    {
+      "path": "electron/services/session-delegation-admission.ts",
+      "candidateBlobSha256": "2fc5834095421f83a0a64ffcbb2eca6ef112d770bf55f0a334b8c2bf8dc76946",
+      "workingSha256": "2fc5834095421f83a0a64ffcbb2eca6ef112d770bf55f0a334b8c2bf8dc76946",
+      "canonicalWorkingSha256": "2fc5834095421f83a0a64ffcbb2eca6ef112d770bf55f0a334b8c2bf8dc76946",
+      "bytes": 19823
+    },
+    {
+      "path": "electron/services/sessions-api.ts",
+      "candidateBlobSha256": "f50cf96b1c091ad25e494610d708519f9de1556d568eed12f5a1e45d3bc74734",
+      "workingSha256": "f50cf96b1c091ad25e494610d708519f9de1556d568eed12f5a1e45d3bc74734",
+      "canonicalWorkingSha256": "f50cf96b1c091ad25e494610d708519f9de1556d568eed12f5a1e45d3bc74734",
+      "bytes": 124765
+    },
+    {
+      "path": "electron/services/task-ledger-service.ts",
+      "candidateBlobSha256": "1ad366353800290fa9bf78591a25424763b1e5c52c7c06d4e6299730fff9bf57",
+      "workingSha256": "1ad366353800290fa9bf78591a25424763b1e5c52c7c06d4e6299730fff9bf57",
+      "canonicalWorkingSha256": "1ad366353800290fa9bf78591a25424763b1e5c52c7c06d4e6299730fff9bf57",
+      "bytes": 12936
+    },
+    {
+      "path": "electron/services/workspace-permissions.ts",
+      "candidateBlobSha256": "684ebb1be67621d6d6238706ce8b87e531d10b96de98d559aedb2099c8c303db",
+      "workingSha256": "684ebb1be67621d6d6238706ce8b87e531d10b96de98d559aedb2099c8c303db",
+      "canonicalWorkingSha256": "ce99d1fce88c05b79cb86d7fb6af4c6956edd4f4b2d457f68bf7f9d89dd9a1f4",
+      "bytes": 17938
+    },
+    {
+      "path": "electron/services/workspaces-api.ts",
+      "candidateBlobSha256": "5d92c41a77d7c42ad8020e7f861e91bb952495f6d456e3172a0570337d7931f8",
+      "workingSha256": "5d92c41a77d7c42ad8020e7f861e91bb952495f6d456e3172a0570337d7931f8",
+      "canonicalWorkingSha256": "5d92c41a77d7c42ad8020e7f861e91bb952495f6d456e3172a0570337d7931f8",
+      "bytes": 66535
+    },
+    {
+      "path": "harness/specs/fixtures/autonomous-project-system/a1/object-owner-consumer-map.json",
+      "candidateBlobSha256": "2083df79fb849c385321acb829e0281e8b0cefe5c09e10c87f3fb1e5f2d71f9a",
+      "workingSha256": "2083df79fb849c385321acb829e0281e8b0cefe5c09e10c87f3fb1e5f2d71f9a",
+      "canonicalWorkingSha256": "2083df79fb849c385321acb829e0281e8b0cefe5c09e10c87f3fb1e5f2d71f9a",
+      "bytes": 5877
+    },
+    {
+      "path": "harness/specs/rules/autonomy-object-owner-boundary.md",
+      "candidateBlobSha256": "d38cb415fbc8dcc17c3ed2b54820ed8261fd177b6de48e42867b77c46a8d9b84",
+      "workingSha256": "d38cb415fbc8dcc17c3ed2b54820ed8261fd177b6de48e42867b77c46a8d9b84",
+      "canonicalWorkingSha256": "d38cb415fbc8dcc17c3ed2b54820ed8261fd177b6de48e42867b77c46a8d9b84",
+      "bytes": 868
+    },
+    {
+      "path": "harness/specs/scenarios/autonomy-object-owner-contract.md",
+      "candidateBlobSha256": "f5f5d63dd02645817c54bd6b1f57878b0ac5ecd5568b26d79dd36557cbe3c58f",
+      "workingSha256": "f5f5d63dd02645817c54bd6b1f57878b0ac5ecd5568b26d79dd36557cbe3c58f",
+      "canonicalWorkingSha256": "f5f5d63dd02645817c54bd6b1f57878b0ac5ecd5568b26d79dd36557cbe3c58f",
+      "bytes": 718
+    },
+    {
+      "path": "harness/specs/tasks/autonomy-object-owner-contract.md",
+      "candidateBlobSha256": "e50f8b12d6fbb59d5007cbbd9e50a2249a7d3bc2c5e887de5e9fc2473dabc355",
+      "workingSha256": "e50f8b12d6fbb59d5007cbbd9e50a2249a7d3bc2c5e887de5e9fc2473dabc355",
+      "canonicalWorkingSha256": "e50f8b12d6fbb59d5007cbbd9e50a2249a7d3bc2c5e887de5e9fc2473dabc355",
+      "bytes": 4098
+    },
+    {
+      "path": "openclaw_runtime/src/agents/agent-tools.ts",
+      "candidateBlobSha256": "aec9b936f35ccbd9ee3111d9c1c6ce1c614b8561e64096676abfa490cf699864",
+      "workingSha256": "aec9b936f35ccbd9ee3111d9c1c6ce1c614b8561e64096676abfa490cf699864",
+      "canonicalWorkingSha256": "aec9b936f35ccbd9ee3111d9c1c6ce1c614b8561e64096676abfa490cf699864",
+      "bytes": 64425
+    },
+    {
+      "path": "openclaw_runtime/src/agents/role-contract.ts",
+      "candidateBlobSha256": "2c795e993a9693afd7d418fa7406b3485d54d8d9bde325d9cbaa5a4a007a7d29",
+      "workingSha256": "2c795e993a9693afd7d418fa7406b3485d54d8d9bde325d9cbaa5a4a007a7d29",
+      "canonicalWorkingSha256": "2c795e993a9693afd7d418fa7406b3485d54d8d9bde325d9cbaa5a4a007a7d29",
+      "bytes": 19005
+    },
+    {
+      "path": "openclaw_runtime/src/agents/task-loop-controller.ts",
+      "candidateBlobSha256": "f03e9e0c91652df0ca72d97bae4a4e7a6c8c1f153e7a7f556f1f8aed1bda7ed7",
+      "workingSha256": "f03e9e0c91652df0ca72d97bae4a4e7a6c8c1f153e7a7f556f1f8aed1bda7ed7",
+      "canonicalWorkingSha256": "f03e9e0c91652df0ca72d97bae4a4e7a6c8c1f153e7a7f556f1f8aed1bda7ed7",
+      "bytes": 141695
+    },
+    {
+      "path": "package.json",
+      "candidateBlobSha256": "6991c3f19e9935af89f1508276e32e4ab7b3fb84a1533aa3d22a93262aa8fd42",
+      "workingSha256": "6991c3f19e9935af89f1508276e32e4ab7b3fb84a1533aa3d22a93262aa8fd42",
+      "canonicalWorkingSha256": "6991c3f19e9935af89f1508276e32e4ab7b3fb84a1533aa3d22a93262aa8fd42",
+      "bytes": 41259
+    },
+    {
+      "path": "packages/versebrowser/package.json",
+      "candidateBlobSha256": "cbe84fe46b0b65a5872b18100540ff63263c881beee738fd837db4353fea1518",
+      "workingSha256": "cbe84fe46b0b65a5872b18100540ff63263c881beee738fd837db4353fea1518",
+      "canonicalWorkingSha256": "fadb2c099fa5644b9d3f98379ebfc62762aefe38af1dfcd31dd8d133c37d7908",
+      "bytes": 4392
+    },
+    {
+      "path": "packages/versebrowser/tsconfig.build.json",
+      "candidateBlobSha256": "466e43d806f334e9ef3957e05ebcf92b47e32e40e0b59c6c2ff786ad4d7c7535",
+      "workingSha256": "466e43d806f334e9ef3957e05ebcf92b47e32e40e0b59c6c2ff786ad4d7c7535",
+      "canonicalWorkingSha256": "466e43d806f334e9ef3957e05ebcf92b47e32e40e0b59c6c2ff786ad4d7c7535",
+      "bytes": 444
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "candidateBlobSha256": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441",
+      "workingSha256": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441",
+      "canonicalWorkingSha256": "6427882a1725aa5929da2db9d55d1397237dee1a354bb6db3dfb63bb61abb441",
+      "bytes": 735492
+    },
+    {
+      "path": "scripts/check-evidence-refs.mjs",
+      "candidateBlobSha256": "0349b790a21e690ed3051bacb366f05ced514fbfa5b1e9ca304d6b078bf7be09",
+      "workingSha256": "0349b790a21e690ed3051bacb366f05ced514fbfa5b1e9ca304d6b078bf7be09",
+      "canonicalWorkingSha256": "0349b790a21e690ed3051bacb366f05ced514fbfa5b1e9ca304d6b078bf7be09",
+      "bytes": 39104
+    },
+    {
+      "path": "scripts/check-semantic-authority.mjs",
+      "candidateBlobSha256": "de7c4fa1de27e1e83a28f6187497f961134ade5d033bfde72bd44d8561b18008",
+      "workingSha256": "de7c4fa1de27e1e83a28f6187497f961134ade5d033bfde72bd44d8561b18008",
+      "canonicalWorkingSha256": "de7c4fa1de27e1e83a28f6187497f961134ade5d033bfde72bd44d8561b18008",
+      "bytes": 64747
+    },
+    {
+      "path": "scripts/contract-check.mjs",
+      "candidateBlobSha256": "65200ab85f12a99ee86ab29c2b024af669cb88979e99fb538555797c3a2eb295",
+      "workingSha256": "65200ab85f12a99ee86ab29c2b024af669cb88979e99fb538555797c3a2eb295",
+      "canonicalWorkingSha256": "65200ab85f12a99ee86ab29c2b024af669cb88979e99fb538555797c3a2eb295",
+      "bytes": 28907
+    },
+    {
+      "path": "shared/component-authority-manifest.ts",
+      "candidateBlobSha256": "4eea3dd6d3d4fae1ee947aad34f633db8f861e8daf40fdec53f954697d29f85f",
+      "workingSha256": "4eea3dd6d3d4fae1ee947aad34f633db8f861e8daf40fdec53f954697d29f85f",
+      "canonicalWorkingSha256": "4eea3dd6d3d4fae1ee947aad34f633db8f861e8daf40fdec53f954697d29f85f",
+      "bytes": 62605
+    },
+    {
+      "path": "shared/host-api/contract.ts",
+      "candidateBlobSha256": "73309d6c1fa98b4f8eceea1103027bb2b46f84055fdac9a50a26ddad12313133",
+      "workingSha256": "73309d6c1fa98b4f8eceea1103027bb2b46f84055fdac9a50a26ddad12313133",
+      "canonicalWorkingSha256": "73309d6c1fa98b4f8eceea1103027bb2b46f84055fdac9a50a26ddad12313133",
+      "bytes": 214221
+    },
+    {
+      "path": "shared/product-semantics.ts",
+      "candidateBlobSha256": "8ecf97e2c236177b5bb21674f4db3c141e5dad2f87f7c3091562729e46668133",
+      "workingSha256": "8ecf97e2c236177b5bb21674f4db3c141e5dad2f87f7c3091562729e46668133",
+      "canonicalWorkingSha256": "8ecf97e2c236177b5bb21674f4db3c141e5dad2f87f7c3091562729e46668133",
+      "bytes": 38484
+    },
+    {
+      "path": "shared/types/agent.ts",
+      "candidateBlobSha256": "0481555798f3fbadfedd56d617ba759e44f87f8ff503cc08cd57bf4178d13e84",
+      "workingSha256": "0481555798f3fbadfedd56d617ba759e44f87f8ff503cc08cd57bf4178d13e84",
+      "canonicalWorkingSha256": "0481555798f3fbadfedd56d617ba759e44f87f8ff503cc08cd57bf4178d13e84",
+      "bytes": 6416
+    },
+    {
+      "path": "shared/types/coding-run.ts",
+      "candidateBlobSha256": "1c5b30f8163c820a06351ec740fd444b3b1dab4923a40b228c7424bd9314d686",
+      "workingSha256": "1c5b30f8163c820a06351ec740fd444b3b1dab4923a40b228c7424bd9314d686",
+      "canonicalWorkingSha256": "1c5b30f8163c820a06351ec740fd444b3b1dab4923a40b228c7424bd9314d686",
+      "bytes": 17799
+    },
+    {
+      "path": "shared/types/identity-scope.ts",
+      "candidateBlobSha256": "19396498d321e8fd0a56ad65744a2d73b6f64fa4d7a24e7b728ea576f7febcb7",
+      "workingSha256": "19396498d321e8fd0a56ad65744a2d73b6f64fa4d7a24e7b728ea576f7febcb7",
+      "canonicalWorkingSha256": "19396498d321e8fd0a56ad65744a2d73b6f64fa4d7a24e7b728ea576f7febcb7",
+      "bytes": 12523
+    },
+    {
+      "path": "shared/types/project.ts",
+      "candidateBlobSha256": "856729e69c13dd72e5c2ecac5900b4293f7a7747c28c2c04e0cc26df8f24fdf1",
+      "workingSha256": "856729e69c13dd72e5c2ecac5900b4293f7a7747c28c2c04e0cc26df8f24fdf1",
+      "canonicalWorkingSha256": "856729e69c13dd72e5c2ecac5900b4293f7a7747c28c2c04e0cc26df8f24fdf1",
+      "bytes": 2642
+    },
+    {
+      "path": "shared/types/task-ledger-reference.ts",
+      "candidateBlobSha256": "86e40e27c95aa49d5728ee8c1d1660c891e2d3c21cecf7c7bcc0387d698e2cc5",
+      "workingSha256": "86e40e27c95aa49d5728ee8c1d1660c891e2d3c21cecf7c7bcc0387d698e2cc5",
+      "canonicalWorkingSha256": "86e40e27c95aa49d5728ee8c1d1660c891e2d3c21cecf7c7bcc0387d698e2cc5",
+      "bytes": 7812
+    },
+    {
+      "path": "shared/types/task-ledger.ts",
+      "candidateBlobSha256": "2dd0d945502fc1cc55d3ede9b63e2aec26fbcdb5f995c788ff7b3f55a8fadbf0",
+      "workingSha256": "2dd0d945502fc1cc55d3ede9b63e2aec26fbcdb5f995c788ff7b3f55a8fadbf0",
+      "canonicalWorkingSha256": "2dd0d945502fc1cc55d3ede9b63e2aec26fbcdb5f995c788ff7b3f55a8fadbf0",
+      "bytes": 7508
+    },
+    {
+      "path": "tests/unit/autonomy-object-owner-contract.test.ts",
+      "candidateBlobSha256": "d65ac654739a6e0a5440aac3ee328297a39bd8c50c9f25c872b3fe2846adffe7",
+      "workingSha256": "d65ac654739a6e0a5440aac3ee328297a39bd8c50c9f25c872b3fe2846adffe7",
+      "canonicalWorkingSha256": "d65ac654739a6e0a5440aac3ee328297a39bd8c50c9f25c872b3fe2846adffe7",
+      "bytes": 7976
+    },
+    {
+      "path": "tests/unit/component-authority-manifest.test.ts",
+      "candidateBlobSha256": "a15c21f68c125ae192626487bcbd4ee191903da00b2c4b91261122f999b8826e",
+      "workingSha256": "a15c21f68c125ae192626487bcbd4ee191903da00b2c4b91261122f999b8826e",
+      "canonicalWorkingSha256": "a15c21f68c125ae192626487bcbd4ee191903da00b2c4b91261122f999b8826e",
+      "bytes": 13008
+    },
+    {
+      "path": "tests/unit/identity-scope.test.ts",
+      "candidateBlobSha256": "338d0e68099b18b75b8670f600eabf4d8878025e7c7c17f67b0e291f985fcb3e",
+      "workingSha256": "338d0e68099b18b75b8670f600eabf4d8878025e7c7c17f67b0e291f985fcb3e",
+      "canonicalWorkingSha256": "338d0e68099b18b75b8670f600eabf4d8878025e7c7c17f67b0e291f985fcb3e",
+      "bytes": 7362
+    },
+    {
+      "path": "tests/unit/product-semantics.test.ts",
+      "candidateBlobSha256": "265f9ac343b8941a01a1964025fff999b7d5990ed27ec7e2d86f05b3422f8caa",
+      "workingSha256": "265f9ac343b8941a01a1964025fff999b7d5990ed27ec7e2d86f05b3422f8caa",
+      "canonicalWorkingSha256": "265f9ac343b8941a01a1964025fff999b7d5990ed27ec7e2d86f05b3422f8caa",
+      "bytes": 18178
+    },
+    {
+      "path": "tests/unit/project-projection.test.ts",
+      "candidateBlobSha256": "2e2dd77b21c6f521279aac4b769cae91e7b6b94b5df5fd51bad5f5cc4fbc921b",
+      "workingSha256": "2e2dd77b21c6f521279aac4b769cae91e7b6b94b5df5fd51bad5f5cc4fbc921b",
+      "canonicalWorkingSha256": "2e2dd77b21c6f521279aac4b769cae91e7b6b94b5df5fd51bad5f5cc4fbc921b",
+      "bytes": 1911
+    },
+    {
+      "path": "tests/unit/task-ledger-reference.test.ts",
+      "candidateBlobSha256": "8a58834b2fad9c64b053d6f4e29456a578f9b311a1e23d46203c482b8fae17ad",
+      "workingSha256": "8a58834b2fad9c64b053d6f4e29456a578f9b311a1e23d46203c482b8fae17ad",
+      "canonicalWorkingSha256": "8a58834b2fad9c64b053d6f4e29456a578f9b311a1e23d46203c482b8fae17ad",
+      "bytes": 3999
+    },
+    {
+      "path": "tsconfig.node.json",
+      "candidateBlobSha256": "01b4363d8da06b72b30f19e05de7dd3d27d00a29fafdda48f963a043d7af7324",
+      "workingSha256": "01b4363d8da06b72b30f19e05de7dd3d27d00a29fafdda48f963a043d7af7324",
+      "canonicalWorkingSha256": "01b4363d8da06b72b30f19e05de7dd3d27d00a29fafdda48f963a043d7af7324",
+      "bytes": 13697
+    },
+    {
+      "path": "tsconfig.test.json",
+      "candidateBlobSha256": "c4953d93389d317eb2746b3fe6334e7a99cb109142e4dcef63ee779f3fc6f97d",
+      "workingSha256": "c4953d93389d317eb2746b3fe6334e7a99cb109142e4dcef63ee779f3fc6f97d",
+      "canonicalWorkingSha256": "c4953d93389d317eb2746b3fe6334e7a99cb109142e4dcef63ee779f3fc6f97d",
+      "bytes": 3403
+    },
+    {
+      "path": "tsconfig.web.json",
+      "candidateBlobSha256": "6f7f149dcc5f75bea4955a81a49c38a949825403e37be5fdb7917fe9cca15bbd",
+      "workingSha256": "6f7f149dcc5f75bea4955a81a49c38a949825403e37be5fdb7917fe9cca15bbd",
+      "canonicalWorkingSha256": "6f7f149dcc5f75bea4955a81a49c38a949825403e37be5fdb7917fe9cca15bbd",
+      "bytes": 1929
+    }
+  ],
+  "environment": {
+    "node": "v24.22.1",
+    "packageManager": "pnpm@11.2.2+sha512.36e6621fad506178936455e70247b8808ef4ec25797a9f437a93281a020484e2607f6a469a22e982987c3dbb8866e3071514ab10a4a1749e06edcd1ec118436f",
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "verifyDepsBeforeRun": false,
+    "dependencyReuse": {
+      "nodeModules": "D:/ClawX/node_modules",
+      "freshInstall": false,
+      "localVerseBrowserBuild": true
+    }
+  },
+  "limitations": [
+    "Existing installed dependencies reused; VerseBrowser built from this checkout; no fresh install or frozen Windows package tested."
+  ]
+}

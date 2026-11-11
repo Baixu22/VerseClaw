@@ -1,0 +1,46 @@
+{
+  "schema": "InlineSpillTaskForestReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-relay",
+  "created_at": "2026-11-08T05:57:34.456071+00:00",
+  "cli": {
+    "path": "D:\\ClawX\\.codex-tools\\task-forest\\hardened-recovery-20261103\\scripts\\task_forest.py",
+    "sha256": "26b30d3b4bae81d52803ec0481374c4ce9fb5d4035edeb02357353da2cab66ea"
+  },
+  "canonical_graph_hash": "2fcfd311efa78c05585bd3219105329357cab1cc845a9345d033a3f7d50abf53",
+  "TF-0749": {
+    "status": "in_progress",
+    "progress": 80.0,
+    "round4_status": "in_progress"
+  },
+  "children_done": 6,
+  "validate_errors": [],
+  "validate_warnings": [],
+  "graph_matches": true,
+  "html_current_projection_matches": true,
+  "html_last_frame_matches": true,
+  "history_last_frame_type": "current_snapshot",
+  "snapshot_file_count": 1404,
+  "exports": {
+    "task-forest.graph.json": {
+      "path": "D:\\ClawX\\.agent-workbench\\task-forest\\exports\\task-forest.graph.json",
+      "bytes": 5219238,
+      "sha256": "07344e9acbba6b9385dff32af73d5096dc038841ba3a189ea44bc3177afa725c"
+    },
+    "task-forest.todos.json": {
+      "path": "D:\\ClawX\\.agent-workbench\\task-forest\\exports\\task-forest.todos.json",
+      "bytes": 119203,
+      "sha256": "9e7e28d8a27da0ce011f9c8a1c117eea460e68d7fea7f7f7daf9415749b81490"
+    },
+    "task-forest.html": {
+      "path": "D:\\ClawX\\.agent-workbench\\task-forest\\exports\\task-forest.html",
+      "bytes": 691827954,
+      "sha256": "c606cb76a9a6189b0e30dc5812fc075df6d1f7f90b63864eaf13e913c2dbbb68"
+    },
+    "task-forest.timeline.json": {
+      "path": "D:\\ClawX\\.agent-workbench\\task-forest\\exports\\task-forest.timeline.json",
+      "bytes": 3255927737,
+      "sha256": "c7e2bdd1f933c8c922b798e985b497cd0b4a27c5b0485814e5d88074feb9f3bc"
+    }
+  }
+}

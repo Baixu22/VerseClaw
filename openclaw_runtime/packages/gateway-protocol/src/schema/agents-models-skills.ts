@@ -846,6 +846,8 @@ export const ToolsInvokeParamsSchema = Type.Object(
     args: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
     sessionKey: Type.Optional(NonEmptyString),
     agentId: Type.Optional(NonEmptyString),
+    workspaceDir: Type.Optional(NonEmptyString),
+    expectedSessionGeneration: Type.Optional(NonEmptyString),
     confirm: Type.Optional(Type.Boolean()),
     idempotencyKey: Type.Optional(NonEmptyString),
   },

@@ -2,7 +2,7 @@
 import { execFile, spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { promisify } from 'node:util';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { basename, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createRequire } from 'node:module';
@@ -76,8 +76,11 @@ test.skipIf(process.platform !== 'win32')('cleanup preserves a reused PID and te
 }, 30_000);
 
 test.skipIf(process.platform !== 'win32')('Electron creation time matches the native process identity', async () => {
-  const root = await mkdtemp(join(tmpdir(), 'electron-identity-'));
-  const otherRoot = await mkdtemp(join(tmpdir(), 'electron-unrelated-'));
+  // Windows Electron cannot write the low-integrity D:\tmp test profile.
+  const base = process.env.CLAWX_E2E_RUN_ROOT_BASE ?? join(process.cwd(), '.tmp', 'electron-identity-tests');
+  await mkdir(base, { recursive: true });
+  const root = await mkdtemp(join(base, 'electron-identity-'));
+  const otherRoot = await mkdtemp(join(base, 'electron-unrelated-'));
   const entry = join(root, 'main.cjs');
   const output = join(root, 'identity.json');
   await writeFile(entry, `const { app } = require('electron');

@@ -1,0 +1,104 @@
+{
+  "specPath": "harness\\specs\\tasks\\inline-spill-real-benefit-eval-round4.md",
+  "scenario": "context-family",
+  "taskType": "runtime-bridge",
+  "startedAt": "2026-11-08T05:34:47.237Z",
+  "finishedAt": "2026-11-08T05:34:47.981Z",
+  "changedFiles": [
+    "docs/modules/context-and-memory.md",
+    "harness/specs/fixtures/context-inline-spill-benefit-round4/.gitattributes",
+    "harness/specs/fixtures/context-inline-spill-benefit-round4/diagnose-run.mjs",
+    "harness/specs/fixtures/context-inline-spill-benefit-round4/recompute-stats.mjs",
+    "harness/specs/fixtures/context-inline-spill-benefit-round4/verify-run.mjs",
+    "harness/specs/rules/inline-spill-eval-projected-input.md",
+    "harness/specs/scenarios/context-family.md",
+    "harness/specs/tasks/inline-spill-real-benefit-eval-round4.md",
+    "scripts/context-inline-spill-benefit-input.mts",
+    "scripts/context-inline-spill-benefit-loop-eval.mts",
+    "tests/unit/context-inline-spill-benefit-input.test.ts"
+  ],
+  "residualPaths": [],
+  "ownership": {
+    "checked": true,
+    "covered": [
+      "docs/modules/context-and-memory.md",
+      "harness/specs/fixtures/context-inline-spill-benefit-round4/.gitattributes",
+      "harness/specs/fixtures/context-inline-spill-benefit-round4/diagnose-run.mjs",
+      "harness/specs/fixtures/context-inline-spill-benefit-round4/recompute-stats.mjs",
+      "harness/specs/fixtures/context-inline-spill-benefit-round4/verify-run.mjs",
+      "harness/specs/rules/inline-spill-eval-projected-input.md",
+      "harness/specs/scenarios/context-family.md",
+      "harness/specs/tasks/inline-spill-real-benefit-eval-round4.md",
+      "scripts/context-inline-spill-benefit-input.mts",
+      "scripts/context-inline-spill-benefit-loop-eval.mts",
+      "tests/unit/context-inline-spill-benefit-input.test.ts"
+    ],
+    "residual": [],
+    "uncovered": []
+  },
+  "selectedProfiles": [
+    "fast"
+  ],
+  "steps": [
+    {
+      "profile": "rules",
+      "name": "Backend communication boundary scan",
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "fast",
+      "name": "Generate extension bridge",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "ext:bridge"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "fast",
+      "name": "Lint without autofix",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "lint:check"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "fast",
+      "name": "Typecheck",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "run",
+        "typecheck"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    },
+    {
+      "profile": "fast",
+      "name": "Unit tests",
+      "command": "pnpm",
+      "args": [
+        "-w",
+        "test"
+      ],
+      "status": "skipped",
+      "exitCode": 0,
+      "durationMs": 0
+    }
+  ],
+  "failures": [],
+  "result": "pass"
+}

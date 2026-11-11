@@ -1,0 +1,15 @@
+
+ RUN  v4.1.1 C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX
+
+ ✓ tests/unit/context-inline-spill-eval-provider.test.ts (1 test) 15704ms
+   ✓ retains raw HTTP response and usage when a provider answer is not JSON  15701ms
+ ✓ tests/unit/context-inline-spill-retention.test.ts (38 tests) 259ms
+ ✓ tests/unit/config-schema-parity.test.ts (126 tests) 26ms
+ ✓ tests/unit/context-pruning-would-trim.test.ts (10 tests) 9ms
+
+ Test Files  4 passed (4)
+      Tests  175 passed (175)
+   Start at  23:11:27
+   Duration  31.25s (transform 9.56s, setup 578ms, import 13.48s, tests 16.00s, environment 1ms)
+
+JSON report written to D:/tmp/context-inline-spill-closeout-20261103/retention-candidate-c-vitest.json

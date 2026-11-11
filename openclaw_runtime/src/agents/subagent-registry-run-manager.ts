@@ -41,7 +41,11 @@ import {
 } from "./subagent-registry-helpers.js";
 import type { SubagentRunRecord, TeamOrchestrationMetadata } from "./subagent-registry.types.js";
 import { resolveSubagentRunDeadlineMs } from "./subagent-run-timeout.js";
-import type { SubagentSessionCompletion } from "./subagent-session-reconciliation.js";
+import {
+  loadSubagentSessionEntry,
+  type SubagentSessionCompletion,
+} from "./subagent-session-reconciliation.js";
+import { hasReservedSubagentRecovery } from "./subagent-recovery-state.js";
 
 const log = createSubsystemLogger("agents/subagent-registry");
 const RECOVERABLE_WAIT_RETRY_DELAY_MS = process.env.OPENCLAW_TEST_FAST === "1" ? 25 : 5_000;
@@ -265,6 +269,20 @@ export function createSubagentRunManager(params: {
       });
       const entry = params.runs.get(runId);
       if (!entry || (expectedEntry && entry !== expectedEntry)) {
+        return;
+      }
+      // An old wait can finish after recovery starts under its admitted identity.
+      // Keep the original owner intact until registry adoption completes.
+      if (
+        hasReservedSubagentRecovery(
+          loadSubagentSessionEntry({
+            childSessionKey: entry.childSessionKey,
+            cfg: params.getRuntimeConfig(),
+          }),
+          runId,
+        )
+      ) {
+        params.scheduleOrphanRecovery({ delayMs: 1000 });
         return;
       }
       if (wait.status === "pending") {
@@ -528,6 +546,7 @@ export function createSubagentRunManager(params: {
     runTimeoutSeconds?: number;
     preserveFrozenResultFallback?: boolean;
     transcriptFile?: string;
+    startedAt?: number;
   }) => {
     const previousRunId = replaceParams.previousRunId.trim();
     const nextRunId = replaceParams.nextRunId.trim();
@@ -539,6 +558,19 @@ export function createSubagentRunManager(params: {
     const source = previous ?? replaceParams.fallback;
     if (!source) {
       return false;
+    }
+
+    const existingNext = params.runs.get(nextRunId);
+    if (existingNext && previousRunId !== nextRunId) {
+      if (
+        existingNext.childSessionKey !== source.childSessionKey ||
+        existingNext.requesterSessionKey !== source.requesterSessionKey ||
+        existingNext.requesterSessionId !== source.requesterSessionId
+      )
+        return false;
+      // Adoption and a delayed acknowledgement converge on the installed run.
+      // Its terminal, delivery and cleanup state remain owned by that run.
+      return true;
     }
 
     if (previousRunId !== nextRunId) {
@@ -557,6 +589,12 @@ export function createSubagentRunManager(params: {
     }
 
     const now = Date.now();
+    const observedStartedAt =
+      typeof replaceParams.startedAt === "number" &&
+      Number.isFinite(replaceParams.startedAt) &&
+      replaceParams.startedAt >= 0
+        ? replaceParams.startedAt
+        : now;
     const cfg = params.getRuntimeConfig();
     const archiveAfterMs = resolveArchiveAfterMs(cfg);
     const spawnMode = source.spawnMode === "session" ? "session" : "run";
@@ -581,7 +619,7 @@ export function createSubagentRunManager(params: {
       ...source,
       runId: nextRunId,
       createdAt: now,
-      startedAt: now,
+      startedAt: observedStartedAt,
       sessionStartedAt,
       accumulatedRuntimeMs,
       endedAt: undefined,
@@ -593,7 +631,7 @@ export function createSubagentRunManager(params: {
       outcome: undefined,
       execution: {
         status: "running",
-        startedAt: now,
+        startedAt: observedStartedAt,
         transcriptFile: replaceParams.transcriptFile,
       },
       completion: {

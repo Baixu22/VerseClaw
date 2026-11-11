@@ -1,0 +1,32 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-benefit-r4-01a1b934",
+  "name": "deterministic-verify",
+  "cwd": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\candidate",
+  "command": [
+    "node",
+    "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\candidate\\harness\\specs\\fixtures\\context-inline-spill-benefit-round4\\verify-run.mjs",
+    "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\deterministic\\2026-11-08T05-04-24-794Z-deterministic",
+    "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\deterministic-verify.json"
+  ],
+  "started_at": "2026-11-08T05:26:47.244717+00:00",
+  "duration_seconds": 0.375,
+  "exit_code": 0,
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "pnpm_config_verify_deps_before_run": null
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\deterministic-verify.stdout.txt",
+      "bytes": 426,
+      "sha256": "972fbe27c2e8c3ea4c4acbb5dac9b1ef11a7c0e8f4bc743e70f6453e588a05bc"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\inline-spill-benefit-r4-20261108-01a1b934\\checks\\deterministic-verify.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

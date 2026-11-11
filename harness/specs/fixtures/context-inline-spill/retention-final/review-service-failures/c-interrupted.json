@@ -1,0 +1,14 @@
+{
+  "schema": "ContextInlineSpillInterruptedReview/v1",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "candidate": "16da6fdf22b0bda023becffa4272373be610ab54",
+  "engine": "codex",
+  "model": "space-bunny",
+  "status": "process-ended-without-structured-result",
+  "exit_code": null,
+  "clean_review_claimed": false,
+  "last_recorded_elapsed_seconds": 2033,
+  "log_sha256": "8fcc38b5d94f6ee310ede807ada5b7af5c6f8f0df7b0e4ce2bdca7468ab32e4f",
+  "cause": "not established; original tool session is no longer available"
+}

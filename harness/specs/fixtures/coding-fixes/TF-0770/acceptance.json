@@ -1,0 +1,252 @@
+{
+  "schema": "CodingFixAcceptance/v1",
+  "taskId": "TF-0770",
+  "finding": "A5",
+  "driven_by": "agent",
+  "actor": "codex-coding-TF-0770",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "a4ab0635b0786c96788dd569f532d92a2fdacc0f",
+    "tree": "0ced0b6f9043d4976ee8c1a75ab541174961f3f2",
+    "dirty": false
+  },
+  "status": "resolved",
+  "unitCounts": {
+    "focused-unit.json": 41,
+    "runtime-unit.json": 64
+  },
+  "projectionTests": 26,
+  "killWindows": 3,
+  "criteria": [
+    "Readonly metadata, missing snapshot storage and terminal persistence failures do not report committed; file effect and persisted state are separate.",
+    "Native tool errors expose effectApplied/journalStatePersisted/recoveryRef; memory advances only after persistent writes succeed.",
+    "Real SQLite Effect Receipt reports applied for normal commit, unknown for incomplete persistence.",
+    "Three separate child process SIGKILL windows read back prepared/committed from disk on restart; first undo restores bytes and second undo has zero effects."
+  ],
+  "sourceHashes": {
+    "docs/modules/workspace-and-coding.md": "93a8e5afb4245b3333ecf995d35fddb3fe33ec04e9a7bbe7699a1812ef647d44",
+    "harness/specs/tasks/coding-journal-terminal-durability.md": "294674dc9b5e7439654598f1288342a187357c76b46bad07749ae25ccf175c37",
+    "openclaw_runtime/src/agents/apply-patch-consistency.test.ts": "6f4d013b4ab1ab90f04a1537f8e85d3bb2c636fe79325d90b91a103bfabbecaf",
+    "openclaw_runtime/src/agents/apply-patch-preflight.ts": "463a8a7e0129cb3390d7a6b6049828756f8f0f80760df64ab66142bf42e10d83",
+    "openclaw_runtime/src/agents/apply-patch.ts": "2fbc605a820b141275af40b8236e42c6fe7321fcd5d8c91b53654b0d0045c788",
+    "openclaw_runtime/src/agents/tools/write-journal-core.ts": "9f99acd840842909c6d3d0fc86fc1398f695e1145c48e57b8071cdf4becc09bd",
+    "scripts/coding-baseline/probes/journal-kill.mts": "a55a4193a3e3f0551e74f1d657bd27dcabc4075266354525071ff34e8c635c3d",
+    "scripts/coding-baseline/probes/journal.mts": "891a7572662007b5957ee427e42e3e7893d6774c27a740c7b585ac512511bfd8"
+  },
+  "commands": [
+    {
+      "name": "focused-units",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/orchestration-worktree-merge.test.ts",
+        "tests/unit/versegit-host-apply.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0770\\final\\focused-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:56:49.157787+00:00",
+      "seconds": 34.04559659957886,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "runtime-units",
+      "argv": [
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "src/agents/apply-patch-consistency.test.ts",
+        "src/agents/tools/write-journal.test.ts",
+        "src/agents/apply-patch-effect-receipt.test.ts",
+        "src/agents/apply-patch-preview-binding.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0770\\final\\runtime-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime",
+      "env": {},
+      "startedAt": "2026-11-05T17:57:23.310890+00:00",
+      "seconds": 21.29086208343506,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "typecheck-direct",
+      "argv": [
+        "node",
+        ".audit/TF-0770/typecheck-direct.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:57:44.727343+00:00",
+      "seconds": 23.339507341384888,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "runtime-test-types",
+      "argv": [
+        "node",
+        "node_modules/@typescript/native-preview/bin/tsgo.js",
+        "--noEmit",
+        "-p",
+        ".audit/TF-0770/runtime-test-types.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:58:08.257893+00:00",
+      "seconds": 5.579995155334473,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "openclaw_runtime/src/agents/apply-patch-consistency.test.ts",
+        "openclaw_runtime/src/agents/apply-patch-preflight.ts",
+        "openclaw_runtime/src/agents/apply-patch.ts",
+        "openclaw_runtime/src/agents/tools/write-journal-core.ts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:58:13.964642+00:00",
+      "seconds": 3.7003469467163086,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:58:17.772064+00:00",
+      "seconds": 0.27457571029663086,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/coding-journal-terminal-durability.md"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:58:18.196809+00:00",
+      "seconds": 0.7068862915039062,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "harness-dry-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/coding-journal-terminal-durability.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:58:19.018961+00:00",
+      "seconds": 0.5447607040405273,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:58:19.680593+00:00",
+      "seconds": 1.0519208908081055,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:58:20.848450+00:00",
+      "seconds": 0.18293046951293945,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "original-journal-probe",
+      "argv": [
+        "node",
+        "--import",
+        "./openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+        "scripts/coding-baseline/probes/journal.mts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {
+        "TSX_TSCONFIG_PATH": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\tsconfig.json",
+        "CODING_BASELINE_OUTPUT": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0770\\final\\journal"
+      },
+      "startedAt": "2026-11-05T17:58:21.143533+00:00",
+      "seconds": 7.28481125831604,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "kill-windows",
+      "argv": [
+        "node",
+        "--import",
+        "./openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+        "scripts/coding-baseline/probes/journal-kill.mts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {
+        "TSX_TSCONFIG_PATH": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\openclaw_runtime\\tsconfig.json",
+        "CODING_BASELINE_OUTPUT": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0770\\final\\kill"
+      },
+      "startedAt": "2026-11-05T17:58:28.537326+00:00",
+      "seconds": 5.367078542709351,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "artifact-retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-05T17:58:34.009622+00:00",
+      "seconds": 6.656860113143921,
+      "exitCode": 0,
+      "timedOut": false
+    }
+  ],
+  "limitations": [
+    "Windows source-runtime proof; no new Electron journey or packaged distribution run for this metadata-only change.",
+    "SIGKILL proof covers before mutation, after file effect before journal commit, and after completed journal commit. Power-loss atomicity inside an individual filesystem metadata write is not measured.",
+    "Unknown journal outcomes require reconciliation; this change does not grant replay or introduce a second journal."
+  ]
+}

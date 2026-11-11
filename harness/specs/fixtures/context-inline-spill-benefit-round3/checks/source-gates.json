@@ -1,0 +1,36 @@
+{
+  "driven_by": "agent",
+  "results": [
+    {
+      "elapsedMs": 4543,
+      "command": "pnpm exec vitest run tests/unit/context-inline-spill-benefit-input.test.ts tests/unit/context-inline-spill-benefit-scoring.test.ts --maxWorkers=1",
+      "name": "unit",
+      "exitCode": 0
+    },
+    {
+      "elapsedMs": 21734,
+      "command": "pnpm exec vitest run tests/unit/context-inline-spill-retention.test.ts tests/unit/context-inline-spill-eval-provider.test.ts --maxWorkers=1",
+      "name": "retention-provider-unit",
+      "exitCode": 0
+    },
+    {
+      "elapsedMs": 29816,
+      "command": "pnpm run typecheck",
+      "name": "typecheck",
+      "exitCode": 0
+    },
+    {
+      "elapsedMs": 1344,
+      "command": "pnpm run contract:check",
+      "name": "contract-check",
+      "exitCode": 0
+    },
+    {
+      "elapsedMs": 3532,
+      "command": "pnpm harness validate --spec harness/specs/tasks/inline-spill-real-benefit-eval-round3.md",
+      "name": "harness-validate-source",
+      "exitCode": 1
+    }
+  ],
+  "actor": "codex-inline-spill-benefit-r3"
+}

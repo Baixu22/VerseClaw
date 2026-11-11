@@ -1,0 +1,349 @@
+{
+  "candidate": {
+    "commit": "8b42b1351307c3c607c8971d5447d647daabdc83",
+    "tree": "0ee6fbe5907457618e147b5a3ee359874bd2db08",
+    "dirty": false
+  },
+  "driven_by": "agent",
+  "actor": "codex-coding-TF-0771-relay",
+  "realHumanEvidence": false,
+  "commands": [
+    {
+      "name": "focused-units",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/coding-run.test.ts",
+        "tests/unit/identity-scope.test.ts",
+        "tests/unit/execution-projection.test.ts",
+        "tests/unit/product-semantics.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\focused-unit.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-06T01:23:41.370629+00:00",
+      "seconds": 39.01536178588867,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "task-loop-roundtrip",
+      "argv": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/task-loop-controller.test.ts",
+        "-t",
+        "completes after one successful self-check|keeps legacy error status",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\task-loop.json"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-06T01:24:20.706120+00:00",
+      "seconds": 19.755053997039795,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "typecheck-direct",
+      "argv": [
+        "node",
+        ".audit/TF-0771/typecheck-direct.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-06T01:24:41.124226+00:00",
+      "seconds": 59.318941831588745,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "shared/types/coding-run.ts",
+        "shared/types/identity-scope.ts",
+        "src/components/agents/RolesOrchestrationPanel.tsx",
+        "tests/e2e/task-loop-panel.spec.ts",
+        "tests/unit/coding-run.test.ts",
+        "tests/unit/task-loop-controller.test.ts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-06T01:25:41.080856+00:00",
+      "seconds": 11.819343090057373,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "contract",
+      "argv": [
+        "node",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-06T01:25:53.168398+00:00",
+      "seconds": 0.3995223045349121,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "harness",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/coding-run-protocol-integrity.md"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-06T01:25:53.727015+00:00",
+      "seconds": 0.898465633392334,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "harness-dry-run",
+      "argv": [
+        "node",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/coding-run-protocol-integrity.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-06T01:25:54.812866+00:00",
+      "seconds": 1.048234224319458,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "node",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-06T01:25:56.025035+00:00",
+      "seconds": 0.36165904998779297,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "node",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-06T01:25:56.522619+00:00",
+      "seconds": 0.201690673828125,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "cli-matrix",
+      "argv": [
+        "node",
+        "scripts/coding-baseline/probes/coding-run.mts"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {
+        "CODING_BASELINE_OUTPUT": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\cli"
+      },
+      "startedAt": "2026-11-06T01:25:56.871592+00:00",
+      "seconds": 2.5367419719696045,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "electron-build",
+      "argv": [
+        "node",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-06T01:25:59.571768+00:00",
+      "seconds": 38.16136288642883,
+      "exitCode": 1,
+      "timedOut": false
+    },
+    {
+      "name": "electron-build",
+      "argv": [
+        "node",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-06T01:35:48.914981+00:00",
+      "seconds": 25.790506601333618,
+      "exitCode": 1,
+      "timedOut": false
+    },
+    {
+      "name": "electron-build",
+      "argv": [
+        "node",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-06T02:14:31.886465+00:00",
+      "seconds": 126.00079154968262,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "electron-e2e",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/task-loop-panel.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\e2e-results"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {
+        "PLAYWRIGHT_JSON_OUTPUT_FILE": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\e2e.json",
+        "CLAWX_E2E_RUN_ROOT_BASE": "D:\\ClawX\\.tmp\\coding-p1-01a1ab23-final",
+        "CLAWX_E2E_KEEP_TEMP": "1",
+        "CLAWX_E2E_APP_LOGS": "1",
+        "TEMP": "D:\\ClawX\\.tmp\\coding-p1-01a1ab23-final\\tmp",
+        "TMP": "D:\\ClawX\\.tmp\\coding-p1-01a1ab23-final\\tmp"
+      },
+      "startedAt": "2026-11-06T02:16:38.425435+00:00",
+      "seconds": 12.111618518829346,
+      "exitCode": 1,
+      "timedOut": false
+    },
+    {
+      "name": "runtime-build",
+      "argv": [
+        "node",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-06T02:57:34.552387+00:00",
+      "seconds": 43.10099482536316,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "electron-e2e",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/task-loop-panel.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\e2e-results"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {
+        "PLAYWRIGHT_JSON_OUTPUT_FILE": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\e2e.json",
+        "CLAWX_E2E_RUN_ROOT_BASE": "D:\\ClawX\\.tmp\\coding-p1-01a1ab23-final",
+        "CLAWX_E2E_KEEP_TEMP": "1",
+        "CLAWX_E2E_APP_LOGS": "1",
+        "TEMP": "D:\\ClawX\\.tmp\\coding-p1-01a1ab23-final\\tmp",
+        "TMP": "D:\\ClawX\\.tmp\\coding-p1-01a1ab23-final\\tmp"
+      },
+      "startedAt": "2026-11-06T02:58:17.793295+00:00",
+      "seconds": 199.01204323768616,
+      "exitCode": 1,
+      "timedOut": false
+    },
+    {
+      "name": "electron-e2e",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/task-loop-panel.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\e2e-results"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {
+        "PLAYWRIGHT_JSON_OUTPUT_FILE": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\e2e.json",
+        "CLAWX_E2E_RUN_ROOT_BASE": "D:\\ClawX\\.tmp\\coding-p1-01a1ab23-final",
+        "CLAWX_E2E_KEEP_TEMP": "1",
+        "CLAWX_E2E_APP_LOGS": "1",
+        "TEMP": "D:\\ClawX\\.tmp\\coding-p1-01a1ab23-final\\tmp",
+        "TMP": "D:\\ClawX\\.tmp\\coding-p1-01a1ab23-final\\tmp",
+        "ELECTRON_OVERRIDE_DIST_PATH": "D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist",
+        "DEBUG": "pw:browser",
+        "CLAWX_E2E_STARTUP_TRACE": "1"
+      },
+      "startedAt": "2026-11-06T03:23:13.272671+00:00",
+      "seconds": 185.59925508499146,
+      "exitCode": 1,
+      "timedOut": false
+    },
+    {
+      "name": "electron-e2e",
+      "argv": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "tests/e2e/task-loop-panel.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output=D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\e2e-results"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {
+        "PLAYWRIGHT_JSON_OUTPUT_FILE": "D:\\ClawX-work\\coding-vg-sts-jj-20261104\\.audit\\TF-0771\\final\\e2e.json",
+        "CLAWX_E2E_RUN_ROOT_BASE": "D:\\ClawX\\.tmp\\coding-p1-01a1ab23-final",
+        "CLAWX_E2E_KEEP_TEMP": "1",
+        "CLAWX_E2E_APP_LOGS": "1",
+        "TEMP": "D:\\ClawX\\.tmp\\coding-p1-01a1ab23-final\\tmp",
+        "TMP": "D:\\ClawX\\.tmp\\coding-p1-01a1ab23-final\\tmp",
+        "ELECTRON_OVERRIDE_DIST_PATH": "D:\\ClawX\\node_modules\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist",
+        "DEBUG": "pw:browser",
+        "CLAWX_E2E_STARTUP_TRACE": "1"
+      },
+      "startedAt": "2026-11-06T07:53:11.123163+00:00",
+      "seconds": 41.307461977005005,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    {
+      "name": "artifact-retention",
+      "argv": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "D:\\ClawX-work\\coding-vg-sts-jj-20261104",
+      "env": {},
+      "startedAt": "2026-11-06T07:53:52.553229+00:00",
+      "seconds": 4.337799310684204,
+      "exitCode": 0,
+      "timedOut": false
+    }
+  ]
+}

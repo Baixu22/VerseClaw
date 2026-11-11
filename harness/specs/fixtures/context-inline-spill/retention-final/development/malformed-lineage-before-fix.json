@@ -1,0 +1,40 @@
+{
+  "schema": "ContextInlineSpillMalformedLineageProbe/v1",
+  "driven_by": "agent",
+  "actor": "codex-inline-spill-retention",
+  "candidate": "3fd7fd92d202c6b0276081ed0fc97a98f6205f81",
+  "source": "actual guarded JSONL recall receipt, cloned and deliberately corrupted",
+  "observations": [
+    {
+      "case": "bad-call-id:undefined",
+      "retained": 1,
+      "rewritten_binding_preserved": true
+    },
+    {
+      "case": "bad-call-id:",
+      "retained": 1,
+      "rewritten_binding_preserved": true
+    },
+    {
+      "case": "bad-call-id:   ",
+      "retained": 1,
+      "rewritten_binding_preserved": true
+    },
+    {
+      "case": "bad-offset:undefined",
+      "retained": 1
+    },
+    {
+      "case": "bad-offset:-1",
+      "retained": 1
+    },
+    {
+      "case": "bad-offset:0.5",
+      "retained": 1
+    },
+    {
+      "case": "bad-offset:NaN",
+      "retained": 0
+    }
+  ]
+}

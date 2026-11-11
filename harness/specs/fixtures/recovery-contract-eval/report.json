@@ -1,0 +1,858 @@
+{
+  "schema": "RecoveryContractEvalReport/v1",
+  "drivenBy": "agent",
+  "actor": "recovery-contract-eval-driver",
+  "realHumanEvidence": false,
+  "generatedAt": "2026-11-05T10:25:39.176Z",
+  "manifest": {
+    "schema": "RecoveryContractManifest/v1",
+    "frozenAt": "2026-11-03T00:00:00.000Z",
+    "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+    "windows": 5,
+    "longSessionPairs": 30
+  },
+  "trialReceiptsDir": "D:/tmp/recovery-eval",
+  "pairReceiptsDir": "D:/tmp/recovery-longsession-eval",
+  "trialCountsByWindow": {
+    "child-created-before-parent-advance-kill": 3,
+    "effect-before-receipt-kill": 3,
+    "intent-after-persist-kill": 3,
+    "repeated-restart": 3,
+    "store-write-failure": 3
+  },
+  "rejectedEvidence": [],
+  "readbackJudgements": [
+    {
+      "pairId": "ls-compression-01",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "6465bc5ccc1d50671865352afbf981e8c2fa3e6ba97a647450e7075da59f7eab",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true,
+        "compaction": {
+          "seedNotInRetainedTail": true,
+          "summaryLiteralMatches": 4
+        }
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-compression-02",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "f1c950cbdd9ee0536c4a7683feed48ddc921e4e1026bde2854b36840309ceb9b",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true,
+        "compaction": {
+          "seedNotInRetainedTail": true,
+          "summaryLiteralMatches": 4
+        }
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-compression-03",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "f6d1653e426ae3357a24fdae1238e31ef4ae30c5da55692b2de0c9d324c64210",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true,
+        "compaction": {
+          "seedNotInRetainedTail": true,
+          "summaryLiteralMatches": 4
+        }
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": false
+      },
+      "judged": {
+        "schemaValid": false,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-compression-04",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "13a870391dbeec752018f6b5e285ba05ff69537e2482da08c08d1100194843df",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true,
+        "compaction": {
+          "seedNotInRetainedTail": true,
+          "summaryLiteralMatches": 4
+        }
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": false
+      },
+      "judged": {
+        "schemaValid": false,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-compression-05",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "144eb6a23d312701e23f36dce50dd115d959371b89996fe1bc2e5201288b8314",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true,
+        "compaction": {
+          "seedNotInRetainedTail": true,
+          "summaryLiteralMatches": 4
+        }
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-compression-06",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "19e5191b42b9bc2788b5160917b7b2d9bcf2a6c296ef3ea40674a5d382b94cea",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true,
+        "compaction": {
+          "seedNotInRetainedTail": true,
+          "summaryLiteralMatches": 4
+        }
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": false,
+        "falseCompletionClaim": false,
+        "schemaValid": false
+      },
+      "judged": {
+        "schemaValid": false,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-fork-01",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "d2f89381e5bf9376102b4dd82d77f17bff2ea766f11941ee276b216513cfec7d",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-fork-02",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "4e242d6ae76c8c414b80139ce98ddbe4d7f78c69243a8984cc58941bf3df6f00",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-fork-03",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "2ebed7ceb701ba5f6d3c0f47b4c4206e04fe666927ef77d20e2dd7a96a163320",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-fork-04",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "3309ac792a05146db29f36c12110ddef99eb2ce6e63f94ea838e70f822f0a8a1",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-fork-05",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "7d1ef8040aa0e4179478b028648129ab4608ad61646ee9c7b1cd7e89d7c488f0",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-fork-06",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "c63bf197a17a0f76371a2decb3bb5dbf8dc76466ba8b6700b55f7a722d872949",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 0,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": false
+      },
+      "judged": {
+        "schemaValid": false,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-handoff-01",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "1e9b5ed07e9f2ac466b3932aa1664e1e3786d9a6d570db0a76e5dfc9bbaa68b1",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-handoff-02",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "38f70ddc97db79670698f0778d38f2c08c31951cd42d29da8358e9fcb54b8e91",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-handoff-03",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "68aa4f301e97af7384fdc1a1df2c8680b216e33b2d6d546766bab5b238a58c36",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-handoff-04",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "e0d72d78a3204ac44b99668dafb953ea7dde60f977d691179be4ecb89e3e7cb6",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-handoff-05",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "6cb39c6d984ec6096f814748634b68b68b8254672c6e8ccaeacd1967d7b0cec6",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-handoff-06",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "bfecd9d6870afa448c94e56e4acbbc164f2a93e93d70fe6aa97e940ee5c7f952",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-restart-01",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "52db606ac3b3e18771232d8274027d2454c37ad401a2c3b26049ef533a661aeb",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-restart-02",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "a72d8077ff3d7a9911e71de7bcaf045ae45c25ea266bf07448ec63c05bf6c3ec",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": false
+      },
+      "judged": {
+        "schemaValid": false,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-restart-03",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "7fe42d3f13dc20f75043aa25f3bd796a9f38e36f88309586b3579df906f5ebf5",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": false
+      },
+      "judged": {
+        "schemaValid": false,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-restart-04",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "20c68fae25184163e98ebaf6d0bad55e54dc90df87728802962849a8cea4dc05",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 0,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": false
+      },
+      "judged": {
+        "schemaValid": false,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-restart-05",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "09b31080b87f29c682e64b65be646b436eec00f56179b99cd91d7441afb14343",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 0,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": false
+      },
+      "judged": {
+        "schemaValid": false,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-restart-06",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "50f316a206c41486c376061a4b9b487e0e06c6a79500ec19dfdb0369fe0c11e4",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-revocation-01",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "01e37807518e7f9c2f45b1360d38b4acfd157cb6a14634e55b245e1b3c6c4ade",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-revocation-02",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "6eeb60c0c19c6646814220122641c3ac4d177397dd9209fb65869eec48c76e2c",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": false
+      },
+      "judged": {
+        "schemaValid": false,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-revocation-03",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "b588280d311a615753434ed358d027663853b5854ec469e044940cd5f2cc58ff",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 0,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": false
+      },
+      "judged": {
+        "schemaValid": false,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-revocation-04",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "c6ea15f3dbf60b7f918886a80d23c67f715f5cefdcd15522edf59c4a2292848e",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-revocation-05",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "a54f148c9e7d618b3e126341e505f5fc84eebf11d6d2c9a2cfb5a6f90dda8c9d",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    },
+    {
+      "pairId": "ls-revocation-06",
+      "judgeVersion": "recovery-readback/v4",
+      "answerSha256": "72c16db09c9e94639a91a13cda051e46faaebdb73db7019516ea03f5cbfcead3",
+      "integrity": {
+        "freshAssistant": true,
+        "questionDoesNotContainGold": true
+      },
+      "preliminary": {
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false,
+        "schemaValid": true
+      },
+      "judged": {
+        "schemaValid": true,
+        "forbiddenFactLeak": false,
+        "mustPreserveMatched": 4,
+        "nextActionCorrect": true,
+        "falseCompletionClaim": false
+      }
+    }
+  ],
+  "evaluation": {
+    "schema": "RecoveryContractEval/v1",
+    "generatedAt": "2026-11-05T10:25:39.174Z",
+    "drivenBy": "agent",
+    "actor": "recovery-contract-eval-driver",
+    "realHumanEvidence": false,
+    "manifestHash": "715572909525952cf53167d6e29d36a39ca2a394f2c05eada529faee033a3b5a",
+    "status": "FAIL",
+    "qualityClaimAllowed": false,
+    "metrics": {
+      "duplicateEffects": 0,
+      "lostTasks": 0,
+      "terminalCorrectness": 1,
+      "unknownClassifiableRate": 0,
+      "mustPreserveFidelity": 1,
+      "falseCompletionClaims": 0,
+      "nextActionAccuracy": 1,
+      "recoveryLatencyP50": 32007,
+      "recoveryLatencyP95": 86786.39999999992
+    },
+    "coverage": {
+      "windows": [
+        {
+          "windowId": "intent-after-persist-kill",
+          "requiredRepeats": 3,
+          "observedRepeats": 3,
+          "completeRepeats": 3
+        },
+        {
+          "windowId": "effect-before-receipt-kill",
+          "requiredRepeats": 3,
+          "observedRepeats": 3,
+          "completeRepeats": 3
+        },
+        {
+          "windowId": "child-created-before-parent-advance-kill",
+          "requiredRepeats": 3,
+          "observedRepeats": 3,
+          "completeRepeats": 3
+        },
+        {
+          "windowId": "store-write-failure",
+          "requiredRepeats": 3,
+          "observedRepeats": 3,
+          "completeRepeats": 3
+        },
+        {
+          "windowId": "repeated-restart",
+          "requiredRepeats": 3,
+          "observedRepeats": 3,
+          "completeRepeats": 3
+        }
+      ],
+      "longSession": {
+        "requiredPairs": 30,
+        "observedPairs": 30,
+        "completePairs": 30,
+        "liveProviderPairs": 30,
+        "scriptedProviderPairs": 0,
+        "agentDerivedPairs": 0,
+        "families": {
+          "compression": 6,
+          "handoff": 6,
+          "fork": 6,
+          "restart": 6,
+          "revocation": 6
+        }
+      }
+    },
+    "gates": [
+      {
+        "name": "duplicateEffects",
+        "observed": 0,
+        "threshold": "= 0",
+        "pass": true
+      },
+      {
+        "name": "lostTasks",
+        "observed": 0,
+        "threshold": "= 0",
+        "pass": true
+      },
+      {
+        "name": "terminalCorrectness",
+        "observed": 1,
+        "threshold": "= 1",
+        "pass": true
+      },
+      {
+        "name": "unknownClassifiableRate",
+        "observed": 0,
+        "threshold": "<= 0.02",
+        "pass": true
+      },
+      {
+        "name": "mustPreserveFidelity",
+        "observed": 1,
+        "threshold": "= 1",
+        "pass": true
+      },
+      {
+        "name": "falseCompletionClaims",
+        "observed": 0,
+        "threshold": "= 0",
+        "pass": true
+      },
+      {
+        "name": "nextActionAccuracy",
+        "observed": 1,
+        "threshold": ">= 0.95",
+        "pass": true
+      },
+      {
+        "name": "recoveryLatencyP50",
+        "observed": 32007,
+        "threshold": "<= 5000ms",
+        "pass": false
+      },
+      {
+        "name": "recoveryLatencyP95",
+        "observed": 86786.39999999992,
+        "threshold": "<= 15000ms",
+        "pass": false
+      },
+      {
+        "name": "diskEvidenceComplete",
+        "observed": 0,
+        "threshold": "= 0 failures",
+        "pass": true
+      },
+      {
+        "name": "rerunOutsideAllowedRegion",
+        "observed": 0,
+        "threshold": "= 0 violations",
+        "pass": true
+      }
+    ],
+    "blockers": [
+      "recoveryLatencyP50 must be <= 5000ms (observed 32007)",
+      "recoveryLatencyP95 must be <= 15000ms (observed 86786.39999999992)"
+    ],
+    "unmeasured": [],
+    "decision": {
+      "disposition": "contract-failed",
+      "productDefaultChanged": false,
+      "requiresPublisherDecision": false
+    }
+  }
+}

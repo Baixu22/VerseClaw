@@ -1,0 +1,50 @@
+{
+  "schema": "CodingC0Acceptance/v1",
+  "taskId": "TF-0764",
+  "driven_by": "agent",
+  "actor": "codex-coding-c0-builder",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "27bd9df474236a52da03fd6b63613b66d0cc6af4",
+    "tree": "811915f1ad0bfde40c90d7821878ff4e01d86188",
+    "dirty": false
+  },
+  "baseline": "established",
+  "productVerdict": "needs-fix",
+  "reproducedFindings": 10,
+  "sourceInputs": 50,
+  "originalInputsUnchanged": 35,
+  "originalInputCount": 38,
+  "capabilityRows": 13,
+  "stsContractFiles": 69,
+  "stsWheelSourceFiles": 96,
+  "unit": {
+    "files": 5,
+    "passed": 46,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0
+  },
+  "criteria": {
+    "currentCounterexamples": "A1-A10 all re-executed using actual frozen source; resolver/spawn mocks explicitly identified in raw outputs",
+    "componentIdentity": "VG/VS exact manifest binary hashes; STS 1.1/2.0 contracts + wheel/source + active interpreter distributions; jj-lib lock 0.46.0",
+    "corpus": "two independently fetched pinned pytest projects plus pinned ClawX TypeScript and generated dual-worktree fixtures",
+    "evaluationContract": "evaluation-protocol.json predeclares full/selected, common candidates, positive/negative oracles, budgets, repetitions, cost and later node ownership"
+  },
+  "limitations": [
+    "No production bugs fixed by C0",
+    "No live-provider quality or net-performance benefit measured",
+    "No clean wheel install validation or packaged Electron execution",
+    "Independent jj CLI oracle not executed; TF-0776 must provision it",
+    "Existing installed Node dependencies and manifest-matching VG/VS binaries reused, not a fresh build/install"
+  ],
+  "retainedFailure": {
+    "candidate": "cfebe8c6df54a3a6af14d5e3713f9c8202ca4e09",
+    "failure": "missing ignored vg.exe in fresh worktree; four mechanism probes completed before inventory; no acceptance report claimed",
+    "localArchive": "D:/tmp/coding-c0-failed-cfebe8c6d"
+  },
+  "next": {
+    "taskId": "TF-0765",
+    "title": "修复拒绝文件访问前仍生成可读快照的泄露"
+  }
+}

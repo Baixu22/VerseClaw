@@ -191,7 +191,7 @@ function registerTypedHostHandlers(
     agentDev: createAgentDevApi({ gatewayManager }),
     remoteControl: createRemoteControlApi(),
     agentBrowser: agentBrowserApi,
-    mcp: createMcpApiWithContext({ gatewayManager, remoteForgeApi }),
+    mcp: createMcpApiWithContext({ gatewayManager, gatewayRpc: gatewayApi.rpc, remoteForgeApi }),
     sandbox: createSandboxApi(),
     hooks: createHooksApi(),
     logs: createLogsApi(),
