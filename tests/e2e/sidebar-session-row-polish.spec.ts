@@ -48,9 +48,9 @@ async function seed(app: ElectronApplication, hierarchy = false) {
   const profiles = hierarchy ? [profile, { ...workspace, id: 'migration-target', name: 'Migration target', rootPath: ROOT + '-target' }] : [profile];
   const sessions = [
     { key: MAIN, sessionId: 'sidebar-generation', displayName: 'Sidebar review', updatedAt: now },
-    { key: LONG, displayName: LONG_TITLE, updatedAt: now - 60_000 },
-    { key: RUNNING, displayName: 'Background build', updatedAt: now - 30_000, status: 'running', hasActiveRun: true },
-    ...(hierarchy ? [{ key: childKey, displayName: 'Related design review', parentSessionKey: MAIN, forkedFromParent: true, updatedAt: now - 90_000 }] : []),
+    { key: LONG, sessionId: 'sidebar-long-generation', displayName: LONG_TITLE, updatedAt: now - 60_000 },
+    { key: RUNNING, sessionId: 'sidebar-running-generation', displayName: 'Background build', updatedAt: now - 30_000, status: 'running', hasActiveRun: true },
+    ...(hierarchy ? [{ key: childKey, sessionId: 'sidebar-child-generation', displayName: 'Related design review', parentSessionKey: MAIN, forkedFromParent: true, updatedAt: now - 90_000 }] : []),
   ];
   await installIpcMocks(app, {
     gatewayStatus: { state: 'running', gatewayReady: true, port: 18789 },
