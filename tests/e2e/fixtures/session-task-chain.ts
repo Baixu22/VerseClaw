@@ -160,10 +160,9 @@ export async function failNextHandoffAcknowledgementWrite(app: ElectronApplicati
         const profiles = Array.isArray(value) ? value as Array<{ handoffOperations?: Record<string, { phase?: string }> }> : [];
         if (this.path && path.resolve(this.path) === expectedPath && key === 'profiles'
           && profiles.some((profile) => profile.handoffOperations?.[id]?.phase === 'accepted')) {
-            if (descriptor) Object.defineProperty(Store.prototype, 'set', descriptor);
-            else delete Store.prototype.set;
-            throw new Error('agent injected acknowledgement persistence failure');
-          }
+          if (descriptor) Object.defineProperty(Store.prototype, 'set', descriptor);
+          else delete Store.prototype.set;
+          throw new Error('agent injected acknowledgement persistence failure');
         }
         return Reflect.apply(original, this, [key, value]);
       },
