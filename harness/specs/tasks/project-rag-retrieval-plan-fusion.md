@@ -46,6 +46,11 @@ touchedAreas:
   - "tests/unit/project-rag-plan-owner.test.ts"
   - "tests/unit/project-rag-vector-service.test.ts"
   - "tests/e2e/project-rag-plan-fusion.spec.ts"
+  - "artifacts/agent-dev-deep-test/history.json"
+  - "artifacts/agent-dev-deep-test/report.json"
+  - "artifacts/agent-dev-deep-test/report.md"
+  - "artifacts/agent-dev-quality/report.json"
+  - "artifacts/agent-dev-workbench/evidence.json"
 requiredProfiles:
   - "fast"
   - "comms"

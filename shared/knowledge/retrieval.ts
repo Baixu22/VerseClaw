@@ -7,4 +7,4 @@ export type {
   RetrievalPlanV2,
   RetrievalProfile,
   RetrievalResultV2,
-} from '../../openclaw_runtime/src/knowledge/retrieval/plan';
+} from 'openclaw/plugin-sdk/knowledge-retrieval';
