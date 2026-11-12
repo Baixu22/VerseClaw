@@ -10,6 +10,7 @@ touchedAreas:
   - harness/specs/scenarios/session-derivation-ui.md
   - harness/specs/rules/session-derivation-ui-contract.md
   - harness/specs/guides/session-derivation-ui-design.md
+  - harness/specs/fixtures/session-derivation-ui/**
   - harness/specs/tasks/autonomous-project-system.md
   - harness/specs/guides/autonomous-project-system-plan.md
   - harness/specs/scenarios/autonomous-project-system.md
