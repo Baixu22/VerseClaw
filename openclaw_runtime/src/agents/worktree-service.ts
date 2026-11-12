@@ -666,7 +666,7 @@ export function createWorktreeService(
         rec.registration.phase = "created";
         saveWorktreeRegistryScope(s);
         seedFilesInto(wtRoot, resolved, seedFiles);
-        rec.mergeBaseline = { parent: [...parentBaseline], worker: [...captureWorktreeFiles(wtRoot)], workerModes: Object.fromEntries(captureWorktreeModes(wtRoot)) };
+        rec.mergeBaseline = { parent: Object.fromEntries(parentBaseline), worker: Object.fromEntries(captureWorktreeFiles(wtRoot)), workerModes: Object.fromEntries(captureWorktreeModes(wtRoot)) };
         let install: WorktreeInstallResult | undefined;
         if (createOptions?.installStrategy && createOptions.installStrategy !== "none") {
           install = installWorktreeDependencies({
@@ -687,7 +687,7 @@ export function createWorktreeService(
           const hash = worktreeContentHash(readWorktreeFile(resolved, file));
           if (hash !== null) initialParent.set(file, hash);
         }
-        rec.mergeBaseline = { parent: [...initialParent], worker: [...initialWorker], workerModes: Object.fromEntries(captureWorktreeModes(rec.root)) };
+        rec.mergeBaseline = { parent: Object.fromEntries(initialParent), worker: Object.fromEntries(initialWorker), workerModes: Object.fromEntries(captureWorktreeModes(rec.root)) };
         rec.registration.phase = "registered";
         saveWorktreeRegistryScope(s);
         rec.registration.phase = "ready";
@@ -754,7 +754,7 @@ export function createWorktreeService(
       if (expectedGeneration !== undefined && rec.generation !== expectedGeneration) throw new Error("worktree_stale_generation");
       if (observeWorktree(rec) !== "ready") return { files: [], source: "unavailable" as const };
       if (rec.mergeBaseline) {
-        return { files: changedWorktreeFiles(new Map(rec.mergeBaseline.worker), captureWorktreeFiles(rec.root)), source: "worktree-snapshot" as const };
+        return { files: changedWorktreeFiles(new Map(Object.entries(rec.mergeBaseline.worker)), captureWorktreeFiles(rec.root)), source: "filesystem-snapshot" as const };
       }
       if (rec.backend === "git") {
         try {
@@ -969,7 +969,7 @@ export function createWorktreeService(
           }
           const observed = captureWorktreeFiles(rec.root, rec.backend === 'inprocess');
           const changed = rec.backend === 'git' ? { files: listChangedFilesFromGit(rec.root), source: 'git-status' as const }
-            : { files: changedWorktreeFiles(new Map(rec.mergeBaseline?.worker ?? []), observed), source: 'filesystem-snapshot' as const };
+            : { files: changedWorktreeFiles(new Map(Object.entries(rec.mergeBaseline?.worker ?? {})), observed), source: 'filesystem-snapshot' as const };
           const ownership = requireCleanupAuthorization({ rootDir, baseRoot: resolved, record: rec,
             authorization: cleanupOptions?.authorization, changed });
           if (rec.backend === 'inprocess') {
