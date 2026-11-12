@@ -54,14 +54,15 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
       return;
     }
 
-    const activeRun = [...context.chatAbortControllers.entries()]
+    const visibleRuns = [...context.chatAbortControllers.entries()]
       .filter(
         ([, entry]) =>
           entry.sessionKey === sessionKey &&
           entry.controlUiVisible !== false &&
           entry.projectSessionActive !== false,
       )
-      .sort((left, right) => right[1].startedAtMs - left[1].startedAtMs)[0];
+      .sort((left, right) => right[1].startedAtMs - left[1].startedAtMs);
+    const latestRun = visibleRuns[0];
     const mission = getLatestMissionForSession(sessionKey);
     const tasks = [
       ...(mission
@@ -135,9 +136,17 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
     const readProjection = collectSessionActivityReadProjection(sessionKey, mission);
     const now = Date.now();
     const cfg = context.getRuntimeConfig();
+    // The activity snapshot exposes the physical generation. A concurrent reset
+    // can rewrite the SQLite store inside one freshness-stat window, so this
+    // read must bypass the shared object cache rather than return a prior row.
     const loaded = loadSessionEntry(sessionKey, {
-      ...(activeRun?.[1].agentId ? { agentId: activeRun[1].agentId } : {}),
+      ...(latestRun?.[1].agentId ? { agentId: latestRun[1].agentId } : {}),
+      skipCache: true,
     });
+    const currentSessionId = loaded.entry?.sessionId ?? latestRun?.[1].sessionId ?? null;
+    // Reset can precede old-run cleanup. Only a run captured in this generation
+    // may supply the current run identity or effective capability scope.
+    const activeRun = visibleRuns.find(([, run]) => run.sessionId === currentSessionId);
     const workspaceId =
       readWorkspaceId(params) ??
       activeRun?.[1].workspaceId?.trim() ??
@@ -145,12 +154,12 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
       "unknown";
     const completionBatches = listOrchestrationCompletionBatchesForRequester(
       sessionKey,
-      activeRun?.[1].sessionId ?? loaded.entry?.sessionId ?? null,
+      currentSessionId,
     );
     const capabilityObservation = readRuntimeEffectiveCapabilityObservation({
       workspaceId,
       sessionKey,
-      sessionId: activeRun?.[1].sessionId ?? loaded.entry?.sessionId ?? null,
+      sessionId: currentSessionId,
       runId: activeRun?.[0] ?? null,
       runtimeGeneration: resolveCurrentRuntimeGeneration(),
       nowMs: now,
@@ -172,7 +181,7 @@ export const sessionActivityHandlers: GatewayRequestHandlers = {
       queuedCount: queueCount,
       nowMs: now,
     });
-    const expectedSessionId = activeRun?.[1].sessionId ?? loaded.entry?.sessionId ?? null;
+    const expectedSessionId = currentSessionId;
     const resourceAgentId = activeRun?.[1].agentId ?? parseAgentSessionKey(sessionKey)?.agentId;
     const agentWorkspaceDir = resourceAgentId
       ? resolveAgentWorkspaceDir(cfg, resourceAgentId)

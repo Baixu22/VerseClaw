@@ -1,8 +1,6 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, publishGatewayStatus, test } from './fixtures/electron';
 import { hostInvoke } from './fixtures/fp-p1-harness';
-import { scheduleResourceAwareWaves } from '../../openclaw_runtime/src/agents/orchestration-resource-scheduler';
-import { buildDelegationReceipt } from '../../openclaw_runtime/src/agents/long-session-delegation-receipt';
 import type { RoleContract } from '../../openclaw_runtime/src/agents/role-contract';
 import type { OrchestrationRunResult } from '../../openclaw_runtime/src/agents/orchestrator-run-observed';
 import type { SessionDelegationAdmission } from '../../shared/types/session-delegation';
@@ -11,6 +9,10 @@ import { createEmptySessionActivitySnapshot } from '../../shared/types/session-a
 // Agent-driven UI proof: real scheduler + receipt builder, Host fixture delivery.
 // No live worker is launched and no OS capacity exhaustion is claimed.
 test('U2 shows owner-generated dispatch capacity reasons and opens resource storage', async ({ launchElectronApp }, testInfo) => {
+  const [{ scheduleResourceAwareWaves }, { buildDelegationReceipt }] = await Promise.all([
+    import('../../openclaw_runtime/src/agents/orchestration-resource-scheduler'),
+    import('../../openclaw_runtime/src/agents/long-session-delegation-receipt'),
+  ]);
   const key = 'agent:main:capacity-proof', generation = 'capacity-generation', child = 'agent:main:capacity-child';
   const app = await launchElectronApp({ skipSetup: true });
   const evidence: Record<string, unknown> = {

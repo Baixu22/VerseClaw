@@ -1,10 +1,21 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import type { ElectronApplication } from '@playwright/test';
+import type { TaskView } from '../../shared/task-system/types';
+import { configureSessionChainProvider, createSessionChainProject, createSessionChainTask } from './fixtures/session-task-chain';
+import { startScriptedLlm } from './fixtures/fp-p1-harness';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
+
+let scriptedProvider: Awaited<ReturnType<typeof startScriptedLlm>> | undefined;
+test.afterEach(async () => {
+  const provider = scriptedProvider;
+  scriptedProvider = undefined;
+  if (!provider) return;
+  provider.server.closeAllConnections();
+  await new Promise<void>((resolve) => provider.server.close(() => resolve()));
+});
 
 type HostResponse<T> = { ok: boolean; data?: T; error?: { code?: string; message?: string } };
 type GatewayStatus = { state?: string; gatewayReady?: boolean };
-type CreatedSession = { key?: string; sessionKey?: string; entry?: { sessionId?: string } };
 type LedgerSnapshot = { snapshot: { nodes: Array<{ id: string; title: string; status: string }> } };
 type BindingResult = {
   success: boolean;
@@ -76,6 +87,7 @@ type CompletionBatch = {
 };
 type ActivitySnapshot = {
   snapshot: {
+    session: { sessionKey: string; sessionId?: string | null; status: string; runId?: string | null };
     subagents: Array<{ role?: string; status: string; childSessionKey?: string }>;
     completionBatches: CompletionBatch[];
     processes: Array<{ id: string; status: string }>;
@@ -138,21 +150,10 @@ async function ensureGatewayReady(app: ElectronApplication): Promise<void> {
   throw new Error('Gateway did not become ready for delegation admission E2E');
 }
 
-async function activeWorkspace(app: ElectronApplication): Promise<{ id: string; rootPath: string }> {
-  const active = await hostInvoke<{ activeWorkspace?: { id?: string; rootPath?: string }; id?: string; rootPath?: string }>(
-    app,
-    'workspaces',
-    'getActive',
-  );
-  const workspace = active.activeWorkspace ?? active;
-  if (!workspace.id || !workspace.rootPath) throw new Error('Active workspace is incomplete');
-  await mkdir(workspace.rootPath, { recursive: true });
-  await hostInvoke(app, 'workspaces', 'update', { id: workspace.id, permissionMode: 'fullAccess' });
-  return { id: workspace.id, rootPath: workspace.rootPath };
-}
-
 test('consolidates deferred worker completion into one generation-fenced batch after restart', async ({ launchElectronApp }, testInfo) => {
   test.setTimeout(360_000);
+  const provider = await startScriptedLlm(() => ({ text: 'Delegation review recorded for task verification.' }));
+  scriptedProvider = provider;
   const first = await launchElectronApp({ skipSetup: true });
   let workspaceId: string;
   let rootPath: string;
@@ -170,40 +171,21 @@ test('consolidates deferred worker completion into one generation-fenced batch a
   let fencedBatch: CompletionBatch | undefined;
   try {
     await getStableWindow(first);
-    await ensureGatewayReady(first);
-    const workspace = await activeWorkspace(first);
-    workspaceId = workspace.id;
-    rootPath = workspace.rootPath;
-    const created = await hostInvoke<CreatedSession>(first, 'gateway', 'rpc', {
-      method: 'sessions.create',
-      params: { agentId: 'main', label: `delegation-${Date.now()}` },
-      timeoutMs: 60_000,
+    await configureSessionChainProvider(first, provider.port);
+    const project = await createSessionChainProject(first, testInfo.outputPath('workspace'), 'Completion continuation');
+    workspaceId = project.workspaceId;
+    rootPath = project.rootPath;
+    sessionKey = project.sessionKey;
+    sessionGeneration = project.generation;
+    expect(sessionGeneration).toBeTruthy();
+    const managedTask = await createSessionChainTask(first, workspaceId, `delegation-task-${Date.now()}`, {
+      objective: 'Exercise long-session delegation admission',
+      target: 'docs/delegation-note.md',
+      constraints: ['Worker completion does not accept the business task'],
+      acceptance: [{ id: 'owner-review', description: 'Review the recorded delegation result',
+        verification: { kind: 'owner-receipt', owner: 'delegation-review', files: ['docs/delegation-note.md'] } }],
     });
-    sessionKey = created.key ?? created.sessionKey ?? '';
-    if (!sessionKey) throw new Error('sessions.create returned no key');
-    sessionGeneration = created.entry?.sessionId ?? '';
-    if (!sessionGeneration) {
-      const described = await hostInvoke<{ session?: { sessionId?: string } }>(first, 'gateway', 'rpc', {
-        method: 'sessions.describe',
-        params: { key: sessionKey },
-        timeoutMs: 30_000,
-      });
-      sessionGeneration = described.session?.sessionId ?? '';
-    }
-    if (!sessionGeneration) throw new Error('Coordinator session has no generation');
-    await hostInvoke(first, 'workspaces', 'update', {
-      id: workspaceId,
-      agentId: 'main',
-      activeSessionKey: sessionKey,
-      sessionKey,
-    });
-    const led = await hostInvoke<LedgerSnapshot>(first, 'taskLedger', 'createNode', {
-      workspaceId,
-      node: { title: `Delegation task ${Date.now()}`, kind: 'task', status: 'todo' },
-      idempotencyKey: `delegation-task-${Date.now()}`,
-    });
-    const node = led.snapshot.nodes.at(-1);
-    if (!node) throw new Error('Task Ledger did not return the admission task');
+    const node = { id: managedTask.contract.taskNodeId };
     taskRef = node.id;
     await hostInvoke(first, 'taskLedger', 'linkSession', {
       workspaceId,
@@ -224,7 +206,15 @@ test('consolidates deferred worker completion into one generation-fenced batch a
     });
     expect(bound.recovery.state).toBe('ready');
     expect(bound.binding?.sessionGeneration).toBe(sessionGeneration);
+    const claimed = await hostInvoke<{ result: TaskView }>(first, 'taskLedger', 'command', {
+      workspaceId,
+      command: { action: 'claim', taskNodeId: taskRef, sessionKey, requestId: `delegation-claim-${taskRef}` },
+    });
+    expect(claimed.result?.claim, JSON.stringify(claimed)).toMatchObject({ sessionKey, generation: sessionGeneration });
+    expect(claimed.result.contract.state).toBe('doing');
 
+    const models = await hostInvoke<{ defaultModelRef: string }>(first, 'agents', 'list');
+    expect(models.defaultModelRef).toBeTruthy();
     it = `delegation-admission-${Date.now()}`;
     request = {
       sessionKey,
@@ -238,6 +228,7 @@ test('consolidates deferred worker completion into one generation-fenced batch a
       backend: 'subagent',
       worker: {
         roleName: 'architect',
+        modelRef: models.defaultModelRef,
         task: 'Review the admission boundary and report findings',
         isolation: 'shared',
         writeSet: ['docs/delegation-note.md'],
@@ -246,7 +237,7 @@ test('consolidates deferred worker completion into one generation-fenced batch a
     };
 
     const firstResult = await hostInvoke<DelegationResult>(first, 'sessions', 'delegate', request);
-    expect(firstResult.success).toBe(true);
+    expect(firstResult.success, firstResult.error).toBe(true);
     expect(firstResult.status).toBe('accepted');
     expect(firstResult.replayed).not.toBe(true);
     if (!firstResult.receipt) throw new Error('Accepted delegation returned no receipt');
@@ -277,7 +268,7 @@ test('consolidates deferred worker completion into one generation-fenced batch a
     expect(firstReceipt?.children[0]?.childRunId).toBeTruthy();
     const ledgerAfter = await hostInvoke<LedgerSnapshot>(first, 'taskLedger', 'snapshot', { workspaceId });
     taskLedgerStatusAfter = ledgerAfter.snapshot.nodes.find((candidate) => candidate.id === taskRef)?.status ?? '';
-    expect(taskLedgerStatusAfter).toBe('todo');
+    expect(taskLedgerStatusAfter).toBe('doing');
 
     const describedChild = await hostInvoke<{ session?: { sessionId?: string; key?: string } }>(first, 'gateway', 'rpc', {
       method: 'sessions.describe',
@@ -332,6 +323,7 @@ test('consolidates deferred worker completion into one generation-fenced batch a
     await closeElectronApp(first);
   }
 
+  const modelCallsBeforeRestart = provider.log.length;
   const second = await launchElectronApp({ skipSetup: true });
   try {
     await getStableWindow(second);
@@ -342,16 +334,29 @@ test('consolidates deferred worker completion into one generation-fenced batch a
     expect(restarted).toMatchObject({ success: true, status: 'accepted', replayed: true });
     expect(restarted.receipt?.orchestrationRunId).toBe(firstReceipt.orchestrationRunId);
     expect(restarted.receipt?.admissionId).toBe(firstReceipt.admissionId);
+    const modelCallsAfterReplay = provider.log.length;
+    expect(modelCallsAfterReplay).toBe(modelCallsBeforeRestart);
     if (!firstReceipt.orchestrationRunId) throw new Error('Missing orchestration run id');
     replayBatch = await waitForBatch(second, sessionKey, workspaceId, firstReceipt.orchestrationRunId);
     expect(replayBatch.consolidatedReceiptId).toBe(terminalBatch?.consolidatedReceiptId);
     expect(replayBatch.members).toEqual(terminalBatch?.members);
 
-    await hostInvoke(second, 'gateway', 'rpc', {
+    const reset = await hostInvoke<{ ok: boolean; key: string; entry: { sessionId: string } }>(second, 'gateway', 'rpc', {
       method: 'sessions.reset',
       params: { key: sessionKey, agentId: 'main', reason: 'reset' },
       timeoutMs: 30_000,
     });
+    expect(reset.ok).toBe(true);
+    expect(reset.entry.sessionId).toBeTruthy();
+    expect(reset.entry.sessionId).not.toBe(sessionGeneration);
+    const activityAfterReset = await hostInvoke<ActivitySnapshot>(second, 'gateway', 'rpc', {
+      method: 'session.activitySnapshot',
+      params: { sessionKey, workspaceId },
+      timeoutMs: 30_000,
+    });
+    expect(activityAfterReset.snapshot.session.sessionId).toBe(reset.entry.sessionId);
+    expect(activityAfterReset.snapshot.completionBatches.find((candidate) => candidate.orchestrationRunId === firstReceipt.orchestrationRunId))
+      .toMatchObject({ generationState: 'mismatch' });
     const stale = await hostInvoke<DelegationResult>(second, 'sessions', 'delegate', {
       ...request,
       idempotencyKey: `${it}-stale-generation`,
@@ -361,13 +366,21 @@ test('consolidates deferred worker completion into one generation-fenced batch a
     expect(stale.error).toMatch(/generation|ready|binding/i);
     if (!firstReceipt.orchestrationRunId) throw new Error('Missing orchestration run id');
     fencedBatch = await waitForBatch(second, sessionKey, workspaceId, firstReceipt.orchestrationRunId);
-    expect(fencedBatch).toMatchObject({ status: 'fenced', outcome: 'fenced', generationState: 'mismatch', consolidatedReceiptId: null });
+    expect(fencedBatch).toMatchObject({
+      status: 'fenced',
+      outcome: 'fenced',
+      generationState: 'mismatch',
+      consolidatedReceiptId: null,
+    });
 
     const output = testInfo.outputPath('completion-continuation-e2e.json');
     await writeFile(output, `${JSON.stringify({
       schema: 'clawx.long-session.completion-continuation-e2e/v1',
       driven_by: 'agent',
       actor: process.env.COMPASS_AGENT_NAME ?? 'clawx-e2e-agent',
+      provider: 'local-scripted',
+      modelCallsBeforeRestart,
+      modelCallsAfterReplay,
       workspaceId,
       rootPath,
       sessionKey,

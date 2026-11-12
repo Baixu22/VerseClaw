@@ -1,6 +1,7 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const SESSION_KEY = 'agent:main:main';
+const EXPECTED_SESSION_ID = 'checkpoints-session-generation';
 const CHECKPOINT_ID = 'mission:m1:tick:3';
 
 function stableStringify(value: unknown): string {
@@ -101,6 +102,7 @@ function baseHostApiMocks() {
     },
     [stableStringify(['sessions', 'restoreCheckpoint', {
       sessionKey: SESSION_KEY,
+      expectedSessionId: EXPECTED_SESSION_ID,
       agentId: 'main',
       checkpointId: CHECKPOINT_ID,
     }])]: {
@@ -138,7 +140,7 @@ test('checkpoints dialog lists and restores a session checkpoint', async ({ laun
     gatewayRpc: {
       [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
         success: true,
-        result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] },
+        result: { sessions: [{ key: SESSION_KEY, sessionId: EXPECTED_SESSION_ID, displayName: 'main' }] },
       },
       [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
         success: true,
@@ -164,6 +166,7 @@ test('checkpoints dialog lists and restores a session checkpoint', async ({ laun
 
     // Wait for the chat surface to settle before opening the session menu.
     await expect(page.getByText('Implement the checkpoint restore flow.')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', EXPECTED_SESSION_ID, { timeout: 30_000 });
     await page.getByTestId('chat-header-session-name').click();
     await expect(page.getByTestId('chat-session-checkpoints')).toBeVisible({ timeout: 30_000 });
     await page.getByTestId('chat-session-checkpoints').click();

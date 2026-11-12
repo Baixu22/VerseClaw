@@ -71,13 +71,16 @@ const rpc = vi.fn(async (method: string, params: Record<string, unknown>) => {
     delegation: { parentSessionKey: source, parentGeneration: 'source-generation', workspaceDir: state.root } };
   return {};
 });
-function services() {
+function services(beforeHandoffActivation?: () => Promise<void>) {
   const gatewayManager = { rpc } as never;
   const workspace = createWorkspacesApi({ gatewayManager, taskLedgerApi: createTaskLedgerApi(), gitApi: {
     status: async () => ({ success: true, status: { isRepository: false, workspaceRoot: state.root } }),
     worktrees: async () => ({ success: true, worktrees: [] }),
   } as never });
-  return { sessions: createSessionsApi({ gatewayManager, coordinatorLifecycle: workspace.coordinatorLifecycle,
+  return { sessions: createSessionsApi({ gatewayManager, coordinatorLifecycle: async (event) => {
+    if (event.type === 'handoff') await beforeHandoffActivation?.();
+    return workspace.coordinatorLifecycle(event);
+  },
     gatewayRpcForDelegation: (payload) => rpc(payload.method, payload.params as Record<string, unknown>) }),
   chat: createChatApi({ gatewayManager, selectSessionTask: workspace.selectSessionTask }) };
 }
@@ -195,6 +198,34 @@ describe('durable handoff owner', () => {
     const recovered = await services().sessions.createHandoff(payload());
     expect(recovered.sessionKey).toBe(pending.sessionKey);
     expect(recovered.operation?.phase).toBe('ready');
+    expect((await persisted(payload().operationId)).sessionGeneration).toBe(sessions.get(pending.sessionKey)?.sessionId);
+    expect(rpc.mock.calls.filter(([method]) => method === 'sessions.create')).toHaveLength(1);
+  });
+  it('keeps creation pending when the lifecycle owner is unavailable', async () => {
+    await expect(createSessionsApi({ gatewayManager: { rpc } as never }).createHandoff(payload()))
+      .rejects.toThrow('Lifecycle coordinator owner unavailable');
+    expect(await persisted(payload().operationId)).toMatchObject({ phase: 'creating', sessionGeneration: expect.any(String) });
+    expect(JSON.parse(await readFile(state.store, 'utf8')).profiles[0].projectCoordinatorSessionKey).toBe(source);
+  });
+  it('pins the child generation before activation and rejects a removed or reset child during recovery', async () => {
+    await expect(services(async () => { throw new Error('activation interrupted'); })
+      .sessions.createHandoff(payload())).rejects.toThrow('activation interrupted');
+    const pending = await persisted(payload().operationId);
+    const child = sessions.get(pending.sessionKey)!;
+    expect(pending).toMatchObject({ phase: 'creating', sessionGeneration: child.sessionId });
+    expect(JSON.parse(await readFile(state.store, 'utf8')).profiles[0].projectCoordinatorSessionKey).toBe(source);
+
+    sessions.delete(pending.sessionKey);
+    await expect(services().sessions.createHandoff(payload())).rejects.toThrow('HANDOFF_CHILD_GENERATION_CHANGED');
+    expect(rpc.mock.calls.filter(([method]) => method === 'sessions.create')).toHaveLength(1);
+    sessions.set(pending.sessionKey, { ...child, sessionId: 'reset-child-generation' });
+    await expect(services().sessions.createHandoff(payload())).rejects.toThrow('HANDOFF_CHILD_GENERATION_CHANGED');
+    expect((await persisted(payload().operationId)).phase).toBe('creating');
+
+    sessions.set(pending.sessionKey, child);
+    const recovered = await services().sessions.createHandoff(payload());
+    expect(recovered.operation).toMatchObject({ phase: 'ready', sessionKey: pending.sessionKey,
+      sessionGeneration: child.sessionId });
     expect(rpc.mock.calls.filter(([method]) => method === 'sessions.create')).toHaveLength(1);
   });
   it('rejects a changed source generation or draft without creating a second child', async () => {

@@ -327,7 +327,7 @@ describe('long-session coordinator binding', () => {
     expect(binding?.environment.canonicalRoot).toBe(resolve(workspace.rootPath));
   });
 
-  it('hands the binding to a child session while pausing the source', async () => {
+  it.each([undefined, 'confirmed-child-generation'])('hands the binding to a child session with generation %s while pausing the source', async (sessionGeneration) => {
     const workspace = state.profiles[0] as WorkspaceProfile;
     const api = await apiWith({ workspaceRoot: workspace.rootPath });
     await bindLocal(api);
@@ -337,13 +337,14 @@ describe('long-session coordinator binding', () => {
       sourceSessionKey: 'agent:main:main',
       sessionKey: 'agent:main:session-child',
       agentId: 'main',
+      ...(sessionGeneration ? { sessionGeneration } : {}),
     });
     const bindings = (state.profiles[0] as WorkspaceProfile).coordinatorBindings;
     expect((state.profiles[0] as WorkspaceProfile).projectCoordinatorSessionKey).toBe('agent:main:session-child');
     expect(bindings?.['agent:main:main'].state).toBe('paused');
     expect(bindings?.['agent:main:session-child']).toMatchObject({
       state: 'active',
-      sessionGeneration: null,
+      sessionGeneration: sessionGeneration ?? null,
       workspaceId: 'workspace-a',
       agentId: 'main',
     });
