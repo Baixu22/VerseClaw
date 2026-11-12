@@ -157,12 +157,13 @@ export async function failNextHandoffAcknowledgementWrite(app: ElectronApplicati
     const original = Store.prototype.set;
     Object.defineProperty(Store.prototype, 'set', { configurable: true, writable: true,
       value: function (this: { path?: string }, key: unknown, value: unknown) {
-        const profiles = Array.isArray(value) ? value as Array<{ handoffOperations?: Record<string, { phase?: string }> }> : [];
-        if (this.path && path.resolve(this.path) === expectedPath && key === 'profiles'
-          && profiles.some((profile) => profile.handoffOperations?.[id]?.phase === 'accepted')) {
-          if (descriptor) Object.defineProperty(Store.prototype, 'set', descriptor);
-          else delete Store.prototype.set;
-          throw new Error('agent injected acknowledgement persistence failure');
+        if (this.path && path.resolve(this.path) === expectedPath && key === 'profiles') {
+          const profiles = value as Array<{ handoffOperations?: Record<string, { phase?: string }> }>;
+          if (profiles.some((profile) => profile.handoffOperations?.[id]?.phase === 'accepted')) {
+            if (descriptor) Object.defineProperty(Store.prototype, 'set', descriptor);
+            else delete Store.prototype.set;
+            throw new Error('agent injected acknowledgement persistence failure');
+          }
         }
         return Reflect.apply(original, this, [key, value]);
       },

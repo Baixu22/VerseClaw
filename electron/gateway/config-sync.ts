@@ -933,6 +933,9 @@ function prepareSourceRuntimeIsolation(): {
 
   mkdirSync(fsPath(stateDir), { recursive: true });
   mkdirSync(fsPath(homeDir), { recursive: true });
+  // Agent defaults use ~/.openclaw/...; the source-runtime HOME must contain
+  // that directory before the Gateway resolves a newly-created agent there.
+  mkdirSync(join(homeDir, '.openclaw'), { recursive: true });
 
   // Read the user's actual config so we can inherit model, agent, and plugin
   // settings. The isolation sandbox must still be able to resolve the same
