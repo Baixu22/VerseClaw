@@ -1,0 +1,1625 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-final-independent-reader",
+  "candidate": {
+    "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+    "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+    "dirty": false
+  },
+  "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+  "windowLifecycle": {
+    "driven_by": "agent",
+    "actor": "codex",
+    "gateway": "idle transport fixture",
+    "windows": "real Electron",
+    "services": [
+      "sessionStorage",
+      "terminal",
+      "agentBrowser",
+      "efficiency",
+      "resourceTracker"
+    ],
+    "networkApproval": {
+      "sessionId": "agent:main:window-lifecycle",
+      "origin": "http://127.0.0.1:51819",
+      "grantedAt": 1794470503793,
+      "expiresAt": 1794471103793,
+      "grantedBy": "agent"
+    },
+    "visibility": {
+      "oneHiddenKeepsVisible": true,
+      "allHiddenSheds": true,
+      "restoreRecovers": true,
+      "browserReopened": true
+    },
+    "observation": {
+      "hiddenBefore": {
+        "resourcePolls": 1,
+        "stopControls": 0,
+        "efficiencyReads": 3
+      },
+      "hiddenAfter": {
+        "resourcePolls": 1,
+        "stopControls": 0,
+        "efficiencyReads": 3
+      },
+      "beforeLeave": {
+        "resourcePolls": 2,
+        "stopControls": 0,
+        "efficiencyReads": 7
+      },
+      "afterLeave": {
+        "resourcePolls": 2,
+        "stopControls": 0,
+        "efficiencyReads": 7
+      },
+      "observersBeforeLeave": 2,
+      "observersAfterLeave": 0,
+      "backgroundHeartbeat": 60
+    },
+    "cleanup": {
+      "terminalClosed": [],
+      "remainingWindows": 1
+    }
+  },
+  "cleanup": {
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "runRoot": "D:\\tmp\\r4nf12\\r\\verse-claw-e2e-run-Ier2qg",
+    "ledgerEntries": 15,
+    "checks": [
+      {
+        "pid": 41888,
+        "creationTime": 1794470475444,
+        "status": "exited"
+      },
+      {
+        "pid": 18796,
+        "creationTime": 1794470488935,
+        "status": "exited"
+      },
+      {
+        "pid": 11396,
+        "creationTime": 1794470489614,
+        "status": "exited"
+      },
+      {
+        "pid": 30148,
+        "creationTime": 1794470526950,
+        "status": "exited"
+      },
+      {
+        "pid": 31712,
+        "creationTime": 1794470532652,
+        "status": "exited"
+      },
+      {
+        "pid": 16952,
+        "creationTime": 1794470532940,
+        "status": "exited"
+      },
+      {
+        "pid": 11696,
+        "creationTime": 1794470605303,
+        "status": "exited"
+      },
+      {
+        "pid": 25528,
+        "creationTime": 1794470611102,
+        "status": "exited"
+      },
+      {
+        "pid": 26068,
+        "creationTime": 1794470611354,
+        "status": "exited"
+      }
+    ],
+    "processObservations": [
+      [
+        {
+          "pid": 41888,
+          "creationTime": 1794470475444,
+          "status": "exited"
+        },
+        {
+          "pid": 18796,
+          "creationTime": 1794470488935,
+          "status": "exited"
+        },
+        {
+          "pid": 11396,
+          "creationTime": 1794470489614,
+          "status": "exited"
+        },
+        {
+          "pid": 30148,
+          "creationTime": 1794470526950,
+          "status": "exited"
+        },
+        {
+          "pid": 31712,
+          "creationTime": 1794470532652,
+          "status": "exited"
+        },
+        {
+          "pid": 16952,
+          "creationTime": 1794470532940,
+          "status": "exited"
+        },
+        {
+          "pid": 11696,
+          "creationTime": 1794470605303,
+          "status": "exited"
+        },
+        {
+          "pid": 25528,
+          "creationTime": 1794470611102,
+          "status": "exited"
+        },
+        {
+          "pid": 26068,
+          "creationTime": 1794470611354,
+          "status": "exited"
+        }
+      ]
+    ],
+    "owned": [],
+    "remaining": [],
+    "survivors": [],
+    "pendingLaunches": 0,
+    "status": "passed"
+  },
+  "retainedHistory": {
+    "registry": [
+      {
+        "id": "left",
+        "generation": "79290764-a43b-4f27-9d28-80f512ada85e",
+        "root": "D:\\tmp\\r4nf12\\t\\unified-execution-traceabi-938d1-ceptance-and-source-cleanup\\fixture\\repository\\.openclaw\\worktrees\\left",
+        "baseRoot": "D:\\tmp\\r4nf12\\t\\unified-execution-traceabi-938d1-ceptance-and-source-cleanup\\fixture\\repository",
+        "createdAtMs": 1794470526079,
+        "status": "cleaned",
+        "writeSet": [
+          "checkpoint.txt",
+          "artifact.txt"
+        ],
+        "backend": "git",
+        "registration": {
+          "operationId": "tf0867-create-left",
+          "requestDigest": "ef5c3e80bc76640d768df924e3223864010f7c634b83011fcd745e602d5a54e2",
+          "phase": "ready",
+          "rootIdentity": "3325120695:5348024562392164:1794470526082034900",
+          "nativeIdentity": "6e2fd21913d3732d118c6243c28bfae8c485503030a380fe5cd57f6bba58bf7c"
+        },
+        "baseOid": "5603c89c19fe54d1d878dae52d47c5f8051b0320",
+        "mergeBaseline": {
+          "parent": {
+            ".gitattributes": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+            "README.fixture": "994570874668217c2b02974c2a4829b57cc8e6d8e3c7430c6532b463b6620eb9"
+          },
+          "worker": {
+            ".gitattributes": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+            "README.fixture": "994570874668217c2b02974c2a4829b57cc8e6d8e3c7430c6532b463b6620eb9"
+          },
+          "workerModes": {
+            "": 438,
+            ".gitattributes": 438,
+            "README.fixture": 438
+          }
+        },
+        "taskCleanup": {
+          "domain": {
+            "id": "27774b9ed644f579e68eb8e0030da29b71511e6ad40942a81b213be7bbef32c4",
+            "root": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+            "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+            "database": "d:\\tmp\\r4nf12\\t\\unified-execution-traceabi-938d1-ceptance-and-source-cleanup\\fixture\\repository\\.git\\verse-claw\\task-ledger.sqlite3"
+          },
+          "localDomainId": "27774b9ed644f579e68eb8e0030da29b71511e6ad40942a81b213be7bbef32c4",
+          "authorityRootIdentity": "3325120695:5348024562391746:1794470523831546400",
+          "databaseIdentity": "3325120695:7036874422672900:1794470564792131600",
+          "operationId": "worktree-cleanup:79290764-a43b-4f27-9d28-80f512ada85e:0316c780e95429d2d3c56c3aa6b270848be355b60c21e39004f6da028a589fd8",
+          "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left"
+        }
+      },
+      {
+        "id": "right",
+        "generation": "f837649e-c834-4656-ab94-10792e007118",
+        "root": "D:\\tmp\\r4nf12\\t\\unified-execution-traceabi-938d1-ceptance-and-source-cleanup\\fixture\\repository\\.openclaw\\worktrees\\right",
+        "baseRoot": "D:\\tmp\\r4nf12\\t\\unified-execution-traceabi-938d1-ceptance-and-source-cleanup\\fixture\\repository",
+        "createdAtMs": 1794470526518,
+        "status": "active",
+        "writeSet": [
+          "checkpoint.txt",
+          "artifact.txt"
+        ],
+        "backend": "git",
+        "registration": {
+          "operationId": "tf0867-create-right",
+          "requestDigest": "60902e3b456e07455f626a5a025de7e6f335cc7673353f0cb1adf0f712756ebb",
+          "phase": "ready",
+          "rootIdentity": "3325120695:17732923537660958:1794470526521115500",
+          "nativeIdentity": "43495cf6f75bbb6dc099d85efcde6f0f16572f0095e231c9b6060003edb7d0ee"
+        },
+        "baseOid": "5603c89c19fe54d1d878dae52d47c5f8051b0320",
+        "mergeBaseline": {
+          "parent": {
+            ".gitattributes": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+            "README.fixture": "994570874668217c2b02974c2a4829b57cc8e6d8e3c7430c6532b463b6620eb9"
+          },
+          "worker": {
+            ".gitattributes": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+            "README.fixture": "994570874668217c2b02974c2a4829b57cc8e6d8e3c7430c6532b463b6620eb9"
+          },
+          "workerModes": {
+            "": 438,
+            ".gitattributes": 438,
+            "README.fixture": 438
+          }
+        }
+      }
+    ],
+    "runtimeReceipt": {
+      "operationId": "tf0867-migration",
+      "sessionKey": "agent:main:session-1794470534024-tfleft",
+      "sourceGeneration": "5b12f95f-a928-469a-a68b-9e79faa737d0",
+      "targetGeneration": "ca4e8dbe-6e23-431f-ab88-3cd5b37a338d",
+      "sourceRoot": "D:\\tmp\\r4nf12\\t\\unified-execution-traceabi-938d1-ceptance-and-source-cleanup\\fixture\\repository\\.openclaw\\worktrees\\left",
+      "targetRoot": "D:\\tmp\\r4nf12\\t\\unified-execution-traceabi-938d1-ceptance-and-source-cleanup\\fixture\\repository\\.openclaw\\worktrees\\right",
+      "state": "confirmed",
+      "transcriptPath": "D:\\tmp\\r4nf12\\r\\verse-claw-e2e-run-Ier2qg\\verse-claw-e2e-user-data-UqkeJT\\openclaw-source-state\\agents\\main\\sessions\\ca4e8dbe-6e23-431f-ab88-3cd5b37a338d.jsonl",
+      "transcriptSha256": "262ff408754c4a06cbb2df88b2dfa9ac2cd9564ba40e276fcf45382a5b375c87"
+    },
+    "tasks": {
+      "success": true,
+      "tasks": [
+        {
+          "contract": {
+            "objective": "Continue the exact artifact across a fenced execution migration",
+            "constraints": [
+              "Preserve checkpoint bytes"
+            ],
+            "acceptance": [
+              {
+                "id": "input",
+                "description": "Retained exact checkpoint",
+                "verification": {
+                  "kind": "file-sha256",
+                  "path": "checkpoint.txt",
+                  "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+                }
+              },
+              {
+                "id": "output",
+                "description": "Exact continued output",
+                "verification": {
+                  "kind": "file-sha256",
+                  "path": "artifact.txt",
+                  "sha256": "6ca772afbff1ad8603cd4480c859e348dc40c40baf756d826eb642e5031c4e2b"
+                }
+              }
+            ],
+            "target": "artifact.txt",
+            "dependencies": [],
+            "origin": {
+              "source": "host-task-api",
+              "requestId": "tf0867-create-task"
+            },
+            "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+            "domain": "27774b9ed644f579e68eb8e0030da29b71511e6ad40942a81b213be7bbef32c4",
+            "revision": 1,
+            "digest": "01d0bef1c7c3827e21d7c22935c4a72ea5afd6d5068684fa33effc41dc85e8cf",
+            "state": "done",
+            "createdAt": 1794470564830,
+            "updatedAt": 1794470670513
+          },
+          "claim": {
+            "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+            "sessionKey": "agent:main:session-1794470534024-tfleft",
+            "generation": "ca4e8dbe-6e23-431f-ab88-3cd5b37a338d",
+            "epoch": 4,
+            "attemptId": "dff2ccaa-03f5-4c1a-a179-53aa825b5c4b",
+            "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right",
+            "contractRevision": 1,
+            "expiresAt": 1794470778215,
+            "state": "released"
+          },
+          "checkpoint": {
+            "nextAction": "Verify and accept this exact candidate",
+            "completed": [
+              "Retained A checkpoint in B",
+              "B produced exact output"
+            ],
+            "unresolved": [],
+            "artifacts": [
+              {
+                "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right/checkpoint.txt",
+                "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+              },
+              {
+                "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right/artifact.txt",
+                "sha256": "6ca772afbff1ad8603cd4480c859e348dc40c40baf756d826eb642e5031c4e2b"
+              }
+            ]
+          },
+          "pendingOperations": 0,
+          "pendingOperationDetails": [],
+          "childTaskNodeIds": []
+        }
+      ]
+    },
+    "taskEvents": {
+      "sequence": 0,
+      "events": [
+        {
+          "sequence": 1,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "created",
+          "at": 1794470564830,
+          "payload": {
+            "objective": "Continue the exact artifact across a fenced execution migration",
+            "constraints": [
+              "Preserve checkpoint bytes"
+            ],
+            "acceptance": [
+              {
+                "id": "input",
+                "description": "Retained exact checkpoint",
+                "verification": {
+                  "kind": "file-sha256",
+                  "path": "checkpoint.txt",
+                  "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+                }
+              },
+              {
+                "id": "output",
+                "description": "Exact continued output",
+                "verification": {
+                  "kind": "file-sha256",
+                  "path": "artifact.txt",
+                  "sha256": "6ca772afbff1ad8603cd4480c859e348dc40c40baf756d826eb642e5031c4e2b"
+                }
+              }
+            ],
+            "target": "artifact.txt",
+            "dependencies": [],
+            "origin": {
+              "source": "host-task-api",
+              "requestId": "tf0867-create-task"
+            },
+            "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+            "domain": "27774b9ed644f579e68eb8e0030da29b71511e6ad40942a81b213be7bbef32c4",
+            "revision": 1,
+            "digest": "01d0bef1c7c3827e21d7c22935c4a72ea5afd6d5068684fa33effc41dc85e8cf",
+            "state": "ready",
+            "createdAt": 1794470564830,
+            "updatedAt": 1794470564830
+          }
+        },
+        {
+          "sequence": 2,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "selected",
+          "at": 1794470566154,
+          "payload": {
+            "sessionKey": "agent:main:session-1794470534024-tfleft",
+            "generation": "5b12f95f-a928-469a-a68b-9e79faa737d0"
+          }
+        },
+        {
+          "sequence": 3,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "selected",
+          "at": 1794470569144,
+          "payload": {
+            "sessionKey": "agent:main:session-1794470548702-tfright",
+            "generation": "e3a84b73-1866-4b6b-bf53-593920aa3045"
+          }
+        },
+        {
+          "sequence": 4,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "claimed",
+          "at": 1794470569934,
+          "payload": {
+            "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+            "sessionKey": "agent:main:session-1794470534024-tfleft",
+            "generation": "5b12f95f-a928-469a-a68b-9e79faa737d0",
+            "epoch": 1,
+            "attemptId": "2b8f1e20-5aa0-4f0b-820b-2fe75e2eb1fd",
+            "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+            "contractRevision": 1,
+            "expiresAt": 1794470689922,
+            "state": "active"
+          }
+        },
+        {
+          "sequence": 5,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "context_rehydrated",
+          "at": 1794470592658,
+          "payload": {
+            "receiptId": "context:eed64dc96b10d87b9820f7bd2cc41df849cbaa33be1f12f1b81829f14110038a",
+            "sessionKey": "agent:main:session-1794470534024-tfleft",
+            "generation": "5b12f95f-a928-469a-a68b-9e79faa737d0",
+            "runId": "tf0867-send-A",
+            "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+            "revision": 1,
+            "epoch": 1,
+            "contextDigest": "81a9840d8fa05a017ac435c2655f40c71063714fa1a3429d70f8a104015c3214",
+            "characters": 870,
+            "at": 1794470592658,
+            "source": "runtime-context-restoration"
+          }
+        },
+        {
+          "sequence": 6,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "checkpoint",
+          "at": 1794470601886,
+          "payload": {
+            "nextAction": "Migrate, retain checkpoint and produce artifact.txt",
+            "completed": [
+              "A wrote checkpoint.txt"
+            ],
+            "unresolved": [],
+            "artifacts": [
+              {
+                "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+                "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+              }
+            ],
+            "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left"
+          }
+        },
+        {
+          "sequence": 7,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "pause",
+          "at": 1794470603083,
+          "payload": {
+            "epoch": 1
+          }
+        },
+        {
+          "sequence": 8,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "handoff",
+          "at": 1794470603352,
+          "payload": {
+            "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+            "sessionKey": "agent:main:session-1794470534024-tfleft",
+            "generation": "ca4e8dbe-6e23-431f-ab88-3cd5b37a338d",
+            "epoch": 3,
+            "attemptId": "dff2ccaa-03f5-4c1a-a179-53aa825b5c4b",
+            "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right",
+            "contractRevision": 1,
+            "expiresAt": 1794470723352,
+            "state": "active"
+          }
+        },
+        {
+          "sequence": 9,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "checkpoint",
+          "at": 1794470603375,
+          "payload": {
+            "nextAction": "Migrate, retain checkpoint and produce artifact.txt",
+            "completed": [
+              "A wrote checkpoint.txt"
+            ],
+            "unresolved": [],
+            "artifacts": [
+              {
+                "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+                "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+              }
+            ],
+            "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right"
+          }
+        },
+        {
+          "sequence": 10,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "context_rehydrated",
+          "at": 1794470648974,
+          "payload": {
+            "receiptId": "context:41298772d06dbe23c195d23004fd3bf7be9bfcfca24ef5569270c229fef2dfa6",
+            "sessionKey": "agent:main:session-1794470534024-tfleft",
+            "generation": "ca4e8dbe-6e23-431f-ab88-3cd5b37a338d",
+            "runId": "tf0867-send-B",
+            "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+            "revision": 1,
+            "epoch": 3,
+            "contextDigest": "1a5343a635267f330d2d8bb19f5ffe9aa2a60e717aad8b3c9a37b3d589c679f1",
+            "characters": 921,
+            "at": 1794470648974,
+            "source": "runtime-context-restoration"
+          }
+        },
+        {
+          "sequence": 11,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "checkpoint",
+          "at": 1794470668593,
+          "payload": {
+            "nextAction": "Verify and accept this exact candidate",
+            "completed": [
+              "Retained A checkpoint in B",
+              "B produced exact output"
+            ],
+            "unresolved": [],
+            "artifacts": [
+              {
+                "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right/checkpoint.txt",
+                "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+              },
+              {
+                "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right/artifact.txt",
+                "sha256": "6ca772afbff1ad8603cd4480c859e348dc40c40baf756d826eb642e5031c4e2b"
+              }
+            ],
+            "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right"
+          }
+        },
+        {
+          "sequence": 12,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "evidence",
+          "at": 1794470669037,
+          "payload": {
+            "receiptId": "f819b4f5-69b3-4fc7-8f04-105208cfc99e",
+            "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+            "revision": 1,
+            "epoch": 3,
+            "candidate": "ce92d2a2ef81e73e38e03f48da6df58c9f9b05ab5aaf06d6312fdd79b80c719e",
+            "criterionId": "input",
+            "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right/checkpoint.txt",
+            "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a",
+            "verifier": "host-file-verifier",
+            "createdAt": 1794470669036
+          }
+        },
+        {
+          "sequence": 13,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "evidence",
+          "at": 1794470669549,
+          "payload": {
+            "receiptId": "fb68d08c-7c88-4d1a-905e-32dff700bd64",
+            "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+            "revision": 1,
+            "epoch": 3,
+            "candidate": "ce92d2a2ef81e73e38e03f48da6df58c9f9b05ab5aaf06d6312fdd79b80c719e",
+            "criterionId": "output",
+            "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right/artifact.txt",
+            "sha256": "6ca772afbff1ad8603cd4480c859e348dc40c40baf756d826eb642e5031c4e2b",
+            "verifier": "host-file-verifier",
+            "createdAt": 1794470669549
+          }
+        },
+        {
+          "sequence": 14,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "submitted",
+          "at": 1794470670041,
+          "payload": {
+            "candidate": "ce92d2a2ef81e73e38e03f48da6df58c9f9b05ab5aaf06d6312fdd79b80c719e",
+            "revision": 1,
+            "epoch": 3
+          }
+        },
+        {
+          "sequence": 15,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "accepted",
+          "at": 1794470670513,
+          "payload": {
+            "candidate": "ce92d2a2ef81e73e38e03f48da6df58c9f9b05ab5aaf06d6312fdd79b80c719e",
+            "revision": 1
+          }
+        },
+        {
+          "sequence": 16,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "artifact_retained",
+          "at": 1794470673883,
+          "payload": {
+            "schemaVersion": 1,
+            "receiptId": "4e44c27357eb62c9735788d980b54f54f19e62edfdc30f9a18bc675915e99500",
+            "source": {
+              "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+              "sourceKey": "checkpoint:6:0",
+              "kind": "checkpoint",
+              "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+              "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+              "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+            },
+            "retained": {
+              "repository": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+              "repositoryIdentity": "3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+              "ref": "refs/agent-retention/tasks/8cd2356c0ae2a27a2b077d333745513d080ba102d87e55a43428ac157f855f4d",
+              "commitOid": "d0a88f5b99d580fa72dd5798915637c2d8b4a903",
+              "path": "checkpoint.txt",
+              "blobOid": "88bf815406e4f1c79a0f94b4451d78275b52c122",
+              "sizeBytes": 32
+            },
+            "actor": "agent",
+            "verifiedAt": 1794470673874
+          }
+        },
+        {
+          "sequence": 17,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "artifact_retained",
+          "at": 1794470675014,
+          "payload": {
+            "schemaVersion": 1,
+            "receiptId": "9c6ccd8e4b514a5ca93682c33f2dcf00763c39eed2f6bda667a90b6a4b152f92",
+            "source": {
+              "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+              "sourceKey": "checkpoint:9:0",
+              "kind": "checkpoint",
+              "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+              "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+              "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+            },
+            "retained": {
+              "repository": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+              "repositoryIdentity": "3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+              "ref": "refs/agent-retention/tasks/2f63f34459691222d28b37429ce2253bcad5e2f9ebee9e8f528cc2888a1997bc",
+              "commitOid": "d0a88f5b99d580fa72dd5798915637c2d8b4a903",
+              "path": "checkpoint.txt",
+              "blobOid": "88bf815406e4f1c79a0f94b4451d78275b52c122",
+              "sizeBytes": 32
+            },
+            "actor": "agent",
+            "verifiedAt": 1794470675014
+          }
+        },
+        {
+          "sequence": 18,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "worktree_cleanup_prepared",
+          "at": 1794470675015,
+          "payload": {
+            "operationId": "worktree-cleanup:79290764-a43b-4f27-9d28-80f512ada85e:0316c780e95429d2d3c56c3aa6b270848be355b60c21e39004f6da028a589fd8",
+            "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+            "receiptIds": [
+              "4e44c27357eb62c9735788d980b54f54f19e62edfdc30f9a18bc675915e99500",
+              "9c6ccd8e4b514a5ca93682c33f2dcf00763c39eed2f6bda667a90b6a4b152f92"
+            ],
+            "actor": "agent"
+          }
+        },
+        {
+          "sequence": 19,
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "kind": "worktree_cleanup_completed",
+          "at": 1794470678537,
+          "payload": {
+            "operationId": "worktree-cleanup:79290764-a43b-4f27-9d28-80f512ada85e:0316c780e95429d2d3c56c3aa6b270848be355b60c21e39004f6da028a589fd8",
+            "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+            "receiptIds": [
+              "4e44c27357eb62c9735788d980b54f54f19e62edfdc30f9a18bc675915e99500",
+              "9c6ccd8e4b514a5ca93682c33f2dcf00763c39eed2f6bda667a90b6a4b152f92"
+            ],
+            "actor": "agent"
+          }
+        }
+      ]
+    },
+    "originalAuthority": {
+      "id": "27774b9ed644f579e68eb8e0030da29b71511e6ad40942a81b213be7bbef32c4",
+      "root": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+      "database": "d:\\tmp\\r4nf12\\t\\unified-execution-traceabi-938d1-ceptance-and-source-cleanup\\fixture\\repository\\.git\\verse-claw\\task-ledger.sqlite3"
+    },
+    "sourceReferences": [
+      {
+        "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+        "sourceKey": "checkpoint:6:0",
+        "kind": "checkpoint",
+        "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+        "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+        "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+      },
+      {
+        "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+        "sourceKey": "checkpoint:9:0",
+        "kind": "checkpoint",
+        "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+        "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+        "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+      }
+    ],
+    "retainedReceipts": [
+      {
+        "schemaVersion": 1,
+        "receiptId": "4e44c27357eb62c9735788d980b54f54f19e62edfdc30f9a18bc675915e99500",
+        "source": {
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "sourceKey": "checkpoint:6:0",
+          "kind": "checkpoint",
+          "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+          "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+          "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+        },
+        "retained": {
+          "repository": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+          "repositoryIdentity": "3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+          "ref": "refs/agent-retention/tasks/8cd2356c0ae2a27a2b077d333745513d080ba102d87e55a43428ac157f855f4d",
+          "commitOid": "d0a88f5b99d580fa72dd5798915637c2d8b4a903",
+          "path": "checkpoint.txt",
+          "blobOid": "88bf815406e4f1c79a0f94b4451d78275b52c122",
+          "sizeBytes": 32
+        },
+        "actor": "agent",
+        "verifiedAt": 1794470673874
+      },
+      {
+        "schemaVersion": 1,
+        "receiptId": "9c6ccd8e4b514a5ca93682c33f2dcf00763c39eed2f6bda667a90b6a4b152f92",
+        "source": {
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "sourceKey": "checkpoint:9:0",
+          "kind": "checkpoint",
+          "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+          "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+          "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+        },
+        "retained": {
+          "repository": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+          "repositoryIdentity": "3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+          "ref": "refs/agent-retention/tasks/2f63f34459691222d28b37429ce2253bcad5e2f9ebee9e8f528cc2888a1997bc",
+          "commitOid": "d0a88f5b99d580fa72dd5798915637c2d8b4a903",
+          "path": "checkpoint.txt",
+          "blobOid": "88bf815406e4f1c79a0f94b4451d78275b52c122",
+          "sizeBytes": 32
+        },
+        "actor": "agent",
+        "verifiedAt": 1794470675014
+      }
+    ],
+    "retainedReadbacks": [
+      {
+        "source": {
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "sourceKey": "checkpoint:6:0",
+          "kind": "checkpoint",
+          "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+          "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+          "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+        },
+        "receiptId": "4e44c27357eb62c9735788d980b54f54f19e62edfdc30f9a18bc675915e99500",
+        "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a",
+        "sizeBytes": 32,
+        "bytesBase64": "VEYwODY3IGNoZWNrcG9pbnQgcHJvZHVjZWQgYnkgQQo="
+      },
+      {
+        "source": {
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "sourceKey": "checkpoint:9:0",
+          "kind": "checkpoint",
+          "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+          "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+          "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+        },
+        "receiptId": "9c6ccd8e4b514a5ca93682c33f2dcf00763c39eed2f6bda667a90b6a4b152f92",
+        "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a",
+        "sizeBytes": 32,
+        "bytesBase64": "VEYwODY3IGNoZWNrcG9pbnQgcHJvZHVjZWQgYnkgQQo="
+      }
+    ],
+    "hostHistoryPages": [
+      {
+        "afterSequence": 0,
+        "rows": [
+          {
+            "seq": 1,
+            "kind": "created",
+            "at": 1794470564830,
+            "json": "{\"objective\":\"Continue the exact artifact across a fenced execution migration\",\"constraints\":[\"Preserve checkpoint bytes\"],\"acceptance\":[{\"id\":\"input\",\"description\":\"Retained exact checkpoint\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"checkpoint.txt\",\"sha256\":\"1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a\"}},{\"id\":\"output\",\"description\":\"Exact continued output\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"artifact.txt\",\"sha256\":\"6ca772afbff1ad8603cd4480c859e348dc40c40baf756d826eb642e5031c4e2b\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"host-task-api\",\"requestId\":\"tf0867-create-task\"},\"taskNodeId\":\"d79bdda6-6317-4103-90a6-d5317dcc30dc\",\"domain\":\"27774b9ed644f579e68eb8e0030da29b71511e6ad40942a81b213be7bbef32c4\",\"revision\":1,\"digest\":\"01d0bef1c7c3827e21d7c22935c4a72ea5afd6d5068684fa33effc41dc85e8cf\",\"state\":\"ready\",\"createdAt\":1794470564830,\"updatedAt\":1794470564830}"
+          },
+          {
+            "seq": 2,
+            "kind": "selected",
+            "at": 1794470566154,
+            "json": "{\"sessionKey\":\"agent:main:session-1794470534024-tfleft\",\"generation\":\"5b12f95f-a928-469a-a68b-9e79faa737d0\"}"
+          },
+          {
+            "seq": 3,
+            "kind": "selected",
+            "at": 1794470569144,
+            "json": "{\"sessionKey\":\"agent:main:session-1794470548702-tfright\",\"generation\":\"e3a84b73-1866-4b6b-bf53-593920aa3045\"}"
+          }
+        ]
+      },
+      {
+        "afterSequence": 3,
+        "rows": [
+          {
+            "seq": 4,
+            "kind": "claimed",
+            "at": 1794470569934,
+            "json": "{\"taskNodeId\":\"d79bdda6-6317-4103-90a6-d5317dcc30dc\",\"sessionKey\":\"agent:main:session-1794470534024-tfleft\",\"generation\":\"5b12f95f-a928-469a-a68b-9e79faa737d0\",\"epoch\":1,\"attemptId\":\"2b8f1e20-5aa0-4f0b-820b-2fe75e2eb1fd\",\"worktree\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left\",\"contractRevision\":1,\"expiresAt\":1794470689922,\"state\":\"active\"}"
+          },
+          {
+            "seq": 5,
+            "kind": "context_rehydrated",
+            "at": 1794470592658,
+            "json": "{\"receiptId\":\"context:eed64dc96b10d87b9820f7bd2cc41df849cbaa33be1f12f1b81829f14110038a\",\"sessionKey\":\"agent:main:session-1794470534024-tfleft\",\"generation\":\"5b12f95f-a928-469a-a68b-9e79faa737d0\",\"runId\":\"tf0867-send-A\",\"taskNodeId\":\"d79bdda6-6317-4103-90a6-d5317dcc30dc\",\"revision\":1,\"epoch\":1,\"contextDigest\":\"81a9840d8fa05a017ac435c2655f40c71063714fa1a3429d70f8a104015c3214\",\"characters\":870,\"at\":1794470592658,\"source\":\"runtime-context-restoration\"}"
+          },
+          {
+            "seq": 6,
+            "kind": "checkpoint",
+            "at": 1794470601886,
+            "json": "{\"nextAction\":\"Migrate, retain checkpoint and produce artifact.txt\",\"completed\":[\"A wrote checkpoint.txt\"],\"unresolved\":[],\"artifacts\":[{\"path\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt\",\"sha256\":\"1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a\"}],\"worktree\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left\"}"
+          }
+        ]
+      },
+      {
+        "afterSequence": 6,
+        "rows": [
+          {
+            "seq": 7,
+            "kind": "pause",
+            "at": 1794470603083,
+            "json": "{\"epoch\":1}"
+          },
+          {
+            "seq": 8,
+            "kind": "handoff",
+            "at": 1794470603352,
+            "json": "{\"taskNodeId\":\"d79bdda6-6317-4103-90a6-d5317dcc30dc\",\"sessionKey\":\"agent:main:session-1794470534024-tfleft\",\"generation\":\"ca4e8dbe-6e23-431f-ab88-3cd5b37a338d\",\"epoch\":3,\"attemptId\":\"dff2ccaa-03f5-4c1a-a179-53aa825b5c4b\",\"worktree\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right\",\"contractRevision\":1,\"expiresAt\":1794470723352,\"state\":\"active\"}"
+          },
+          {
+            "seq": 9,
+            "kind": "checkpoint",
+            "at": 1794470603375,
+            "json": "{\"nextAction\":\"Migrate, retain checkpoint and produce artifact.txt\",\"completed\":[\"A wrote checkpoint.txt\"],\"unresolved\":[],\"artifacts\":[{\"path\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt\",\"sha256\":\"1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a\"}],\"worktree\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right\"}"
+          }
+        ]
+      },
+      {
+        "afterSequence": 9,
+        "rows": [
+          {
+            "seq": 10,
+            "kind": "context_rehydrated",
+            "at": 1794470648974,
+            "json": "{\"receiptId\":\"context:41298772d06dbe23c195d23004fd3bf7be9bfcfca24ef5569270c229fef2dfa6\",\"sessionKey\":\"agent:main:session-1794470534024-tfleft\",\"generation\":\"ca4e8dbe-6e23-431f-ab88-3cd5b37a338d\",\"runId\":\"tf0867-send-B\",\"taskNodeId\":\"d79bdda6-6317-4103-90a6-d5317dcc30dc\",\"revision\":1,\"epoch\":3,\"contextDigest\":\"1a5343a635267f330d2d8bb19f5ffe9aa2a60e717aad8b3c9a37b3d589c679f1\",\"characters\":921,\"at\":1794470648974,\"source\":\"runtime-context-restoration\"}"
+          },
+          {
+            "seq": 11,
+            "kind": "checkpoint",
+            "at": 1794470668593,
+            "json": "{\"nextAction\":\"Verify and accept this exact candidate\",\"completed\":[\"Retained A checkpoint in B\",\"B produced exact output\"],\"unresolved\":[],\"artifacts\":[{\"path\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right/checkpoint.txt\",\"sha256\":\"1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a\"},{\"path\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right/artifact.txt\",\"sha256\":\"6ca772afbff1ad8603cd4480c859e348dc40c40baf756d826eb642e5031c4e2b\"}],\"worktree\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right\"}"
+          },
+          {
+            "seq": 12,
+            "kind": "evidence",
+            "at": 1794470669037,
+            "json": "{\"receiptId\":\"f819b4f5-69b3-4fc7-8f04-105208cfc99e\",\"taskNodeId\":\"d79bdda6-6317-4103-90a6-d5317dcc30dc\",\"revision\":1,\"epoch\":3,\"candidate\":\"ce92d2a2ef81e73e38e03f48da6df58c9f9b05ab5aaf06d6312fdd79b80c719e\",\"criterionId\":\"input\",\"path\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right/checkpoint.txt\",\"sha256\":\"1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a\",\"verifier\":\"host-file-verifier\",\"createdAt\":1794470669036}"
+          }
+        ]
+      },
+      {
+        "afterSequence": 12,
+        "rows": [
+          {
+            "seq": 13,
+            "kind": "evidence",
+            "at": 1794470669549,
+            "json": "{\"receiptId\":\"fb68d08c-7c88-4d1a-905e-32dff700bd64\",\"taskNodeId\":\"d79bdda6-6317-4103-90a6-d5317dcc30dc\",\"revision\":1,\"epoch\":3,\"candidate\":\"ce92d2a2ef81e73e38e03f48da6df58c9f9b05ab5aaf06d6312fdd79b80c719e\",\"criterionId\":\"output\",\"path\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right/artifact.txt\",\"sha256\":\"6ca772afbff1ad8603cd4480c859e348dc40c40baf756d826eb642e5031c4e2b\",\"verifier\":\"host-file-verifier\",\"createdAt\":1794470669549}"
+          },
+          {
+            "seq": 14,
+            "kind": "submitted",
+            "at": 1794470670041,
+            "json": "{\"candidate\":\"ce92d2a2ef81e73e38e03f48da6df58c9f9b05ab5aaf06d6312fdd79b80c719e\",\"revision\":1,\"epoch\":3}"
+          },
+          {
+            "seq": 15,
+            "kind": "accepted",
+            "at": 1794470670513,
+            "json": "{\"candidate\":\"ce92d2a2ef81e73e38e03f48da6df58c9f9b05ab5aaf06d6312fdd79b80c719e\",\"revision\":1}"
+          }
+        ]
+      },
+      {
+        "afterSequence": 15,
+        "rows": [
+          {
+            "seq": 16,
+            "kind": "artifact_retained",
+            "at": 1794470673883,
+            "json": "{\"schemaVersion\":1,\"receiptId\":\"4e44c27357eb62c9735788d980b54f54f19e62edfdc30f9a18bc675915e99500\",\"source\":{\"taskNodeId\":\"d79bdda6-6317-4103-90a6-d5317dcc30dc\",\"sourceKey\":\"checkpoint:6:0\",\"kind\":\"checkpoint\",\"worktree\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left\",\"path\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt\",\"sha256\":\"1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a\"},\"retained\":{\"repository\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git\",\"repositoryIdentity\":\"3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git\",\"ref\":\"refs/agent-retention/tasks/8cd2356c0ae2a27a2b077d333745513d080ba102d87e55a43428ac157f855f4d\",\"commitOid\":\"d0a88f5b99d580fa72dd5798915637c2d8b4a903\",\"path\":\"checkpoint.txt\",\"blobOid\":\"88bf815406e4f1c79a0f94b4451d78275b52c122\",\"sizeBytes\":32},\"actor\":\"agent\",\"verifiedAt\":1794470673874}"
+          },
+          {
+            "seq": 17,
+            "kind": "artifact_retained",
+            "at": 1794470675014,
+            "json": "{\"schemaVersion\":1,\"receiptId\":\"9c6ccd8e4b514a5ca93682c33f2dcf00763c39eed2f6bda667a90b6a4b152f92\",\"source\":{\"taskNodeId\":\"d79bdda6-6317-4103-90a6-d5317dcc30dc\",\"sourceKey\":\"checkpoint:9:0\",\"kind\":\"checkpoint\",\"worktree\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left\",\"path\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt\",\"sha256\":\"1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a\"},\"retained\":{\"repository\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git\",\"repositoryIdentity\":\"3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git\",\"ref\":\"refs/agent-retention/tasks/2f63f34459691222d28b37429ce2253bcad5e2f9ebee9e8f528cc2888a1997bc\",\"commitOid\":\"d0a88f5b99d580fa72dd5798915637c2d8b4a903\",\"path\":\"checkpoint.txt\",\"blobOid\":\"88bf815406e4f1c79a0f94b4451d78275b52c122\",\"sizeBytes\":32},\"actor\":\"agent\",\"verifiedAt\":1794470675014}"
+          },
+          {
+            "seq": 18,
+            "kind": "worktree_cleanup_prepared",
+            "at": 1794470675015,
+            "json": "{\"operationId\":\"worktree-cleanup:79290764-a43b-4f27-9d28-80f512ada85e:0316c780e95429d2d3c56c3aa6b270848be355b60c21e39004f6da028a589fd8\",\"worktree\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left\",\"receiptIds\":[\"4e44c27357eb62c9735788d980b54f54f19e62edfdc30f9a18bc675915e99500\",\"9c6ccd8e4b514a5ca93682c33f2dcf00763c39eed2f6bda667a90b6a4b152f92\"],\"actor\":\"agent\"}"
+          }
+        ]
+      },
+      {
+        "afterSequence": 18,
+        "rows": [
+          {
+            "seq": 19,
+            "kind": "worktree_cleanup_completed",
+            "at": 1794470678537,
+            "json": "{\"operationId\":\"worktree-cleanup:79290764-a43b-4f27-9d28-80f512ada85e:0316c780e95429d2d3c56c3aa6b270848be355b60c21e39004f6da028a589fd8\",\"worktree\":\"d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left\",\"receiptIds\":[\"4e44c27357eb62c9735788d980b54f54f19e62edfdc30f9a18bc675915e99500\",\"9c6ccd8e4b514a5ca93682c33f2dcf00763c39eed2f6bda667a90b6a4b152f92\"],\"actor\":\"agent\"}"
+          }
+        ]
+      }
+    ],
+    "hostReceipts": [
+      {
+        "schemaVersion": 1,
+        "receiptId": "4e44c27357eb62c9735788d980b54f54f19e62edfdc30f9a18bc675915e99500",
+        "source": {
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "sourceKey": "checkpoint:6:0",
+          "kind": "checkpoint",
+          "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+          "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+          "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+        },
+        "retained": {
+          "repository": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+          "repositoryIdentity": "3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+          "ref": "refs/agent-retention/tasks/8cd2356c0ae2a27a2b077d333745513d080ba102d87e55a43428ac157f855f4d",
+          "commitOid": "d0a88f5b99d580fa72dd5798915637c2d8b4a903",
+          "path": "checkpoint.txt",
+          "blobOid": "88bf815406e4f1c79a0f94b4451d78275b52c122",
+          "sizeBytes": 32
+        },
+        "actor": "agent",
+        "verifiedAt": 1794470673874
+      },
+      {
+        "schemaVersion": 1,
+        "receiptId": "9c6ccd8e4b514a5ca93682c33f2dcf00763c39eed2f6bda667a90b6a4b152f92",
+        "source": {
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "sourceKey": "checkpoint:9:0",
+          "kind": "checkpoint",
+          "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+          "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+          "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+        },
+        "retained": {
+          "repository": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+          "repositoryIdentity": "3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+          "ref": "refs/agent-retention/tasks/2f63f34459691222d28b37429ce2253bcad5e2f9ebee9e8f528cc2888a1997bc",
+          "commitOid": "d0a88f5b99d580fa72dd5798915637c2d8b4a903",
+          "path": "checkpoint.txt",
+          "blobOid": "88bf815406e4f1c79a0f94b4451d78275b52c122",
+          "sizeBytes": 32
+        },
+        "actor": "agent",
+        "verifiedAt": 1794470675014
+      }
+    ],
+    "hostArtifactReadbacks": [
+      {
+        "receiptId": "4e44c27357eb62c9735788d980b54f54f19e62edfdc30f9a18bc675915e99500",
+        "pages": [
+          {
+            "receipt": {
+              "schemaVersion": 1,
+              "receiptId": "4e44c27357eb62c9735788d980b54f54f19e62edfdc30f9a18bc675915e99500",
+              "source": {
+                "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+                "sourceKey": "checkpoint:6:0",
+                "kind": "checkpoint",
+                "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+                "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+                "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+              },
+              "retained": {
+                "repository": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "repositoryIdentity": "3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "ref": "refs/agent-retention/tasks/8cd2356c0ae2a27a2b077d333745513d080ba102d87e55a43428ac157f855f4d",
+                "commitOid": "d0a88f5b99d580fa72dd5798915637c2d8b4a903",
+                "path": "checkpoint.txt",
+                "blobOid": "88bf815406e4f1c79a0f94b4451d78275b52c122",
+                "sizeBytes": 32
+              },
+              "actor": "agent",
+              "verifiedAt": 1794470673874
+            },
+            "offset": 0,
+            "sizeBytes": 32,
+            "nextOffset": 7,
+            "encoding": "base64",
+            "content": "VEYwODY3IA=="
+          },
+          {
+            "receipt": {
+              "schemaVersion": 1,
+              "receiptId": "4e44c27357eb62c9735788d980b54f54f19e62edfdc30f9a18bc675915e99500",
+              "source": {
+                "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+                "sourceKey": "checkpoint:6:0",
+                "kind": "checkpoint",
+                "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+                "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+                "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+              },
+              "retained": {
+                "repository": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "repositoryIdentity": "3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "ref": "refs/agent-retention/tasks/8cd2356c0ae2a27a2b077d333745513d080ba102d87e55a43428ac157f855f4d",
+                "commitOid": "d0a88f5b99d580fa72dd5798915637c2d8b4a903",
+                "path": "checkpoint.txt",
+                "blobOid": "88bf815406e4f1c79a0f94b4451d78275b52c122",
+                "sizeBytes": 32
+              },
+              "actor": "agent",
+              "verifiedAt": 1794470673874
+            },
+            "offset": 7,
+            "sizeBytes": 32,
+            "nextOffset": 14,
+            "encoding": "base64",
+            "content": "Y2hlY2twbw=="
+          },
+          {
+            "receipt": {
+              "schemaVersion": 1,
+              "receiptId": "4e44c27357eb62c9735788d980b54f54f19e62edfdc30f9a18bc675915e99500",
+              "source": {
+                "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+                "sourceKey": "checkpoint:6:0",
+                "kind": "checkpoint",
+                "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+                "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+                "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+              },
+              "retained": {
+                "repository": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "repositoryIdentity": "3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "ref": "refs/agent-retention/tasks/8cd2356c0ae2a27a2b077d333745513d080ba102d87e55a43428ac157f855f4d",
+                "commitOid": "d0a88f5b99d580fa72dd5798915637c2d8b4a903",
+                "path": "checkpoint.txt",
+                "blobOid": "88bf815406e4f1c79a0f94b4451d78275b52c122",
+                "sizeBytes": 32
+              },
+              "actor": "agent",
+              "verifiedAt": 1794470673874
+            },
+            "offset": 14,
+            "sizeBytes": 32,
+            "nextOffset": 21,
+            "encoding": "base64",
+            "content": "aW50IHBybw=="
+          },
+          {
+            "receipt": {
+              "schemaVersion": 1,
+              "receiptId": "4e44c27357eb62c9735788d980b54f54f19e62edfdc30f9a18bc675915e99500",
+              "source": {
+                "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+                "sourceKey": "checkpoint:6:0",
+                "kind": "checkpoint",
+                "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+                "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+                "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+              },
+              "retained": {
+                "repository": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "repositoryIdentity": "3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "ref": "refs/agent-retention/tasks/8cd2356c0ae2a27a2b077d333745513d080ba102d87e55a43428ac157f855f4d",
+                "commitOid": "d0a88f5b99d580fa72dd5798915637c2d8b4a903",
+                "path": "checkpoint.txt",
+                "blobOid": "88bf815406e4f1c79a0f94b4451d78275b52c122",
+                "sizeBytes": 32
+              },
+              "actor": "agent",
+              "verifiedAt": 1794470673874
+            },
+            "offset": 21,
+            "sizeBytes": 32,
+            "nextOffset": 28,
+            "encoding": "base64",
+            "content": "ZHVjZWQgYg=="
+          },
+          {
+            "receipt": {
+              "schemaVersion": 1,
+              "receiptId": "4e44c27357eb62c9735788d980b54f54f19e62edfdc30f9a18bc675915e99500",
+              "source": {
+                "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+                "sourceKey": "checkpoint:6:0",
+                "kind": "checkpoint",
+                "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+                "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+                "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+              },
+              "retained": {
+                "repository": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "repositoryIdentity": "3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "ref": "refs/agent-retention/tasks/8cd2356c0ae2a27a2b077d333745513d080ba102d87e55a43428ac157f855f4d",
+                "commitOid": "d0a88f5b99d580fa72dd5798915637c2d8b4a903",
+                "path": "checkpoint.txt",
+                "blobOid": "88bf815406e4f1c79a0f94b4451d78275b52c122",
+                "sizeBytes": 32
+              },
+              "actor": "agent",
+              "verifiedAt": 1794470673874
+            },
+            "offset": 28,
+            "sizeBytes": 32,
+            "nextOffset": null,
+            "encoding": "base64",
+            "content": "eSBBCg=="
+          }
+        ],
+        "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a",
+        "sizeBytes": 32,
+        "bytesBase64": "VEYwODY3IGNoZWNrcG9pbnQgcHJvZHVjZWQgYnkgQQo="
+      },
+      {
+        "receiptId": "9c6ccd8e4b514a5ca93682c33f2dcf00763c39eed2f6bda667a90b6a4b152f92",
+        "pages": [
+          {
+            "receipt": {
+              "schemaVersion": 1,
+              "receiptId": "9c6ccd8e4b514a5ca93682c33f2dcf00763c39eed2f6bda667a90b6a4b152f92",
+              "source": {
+                "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+                "sourceKey": "checkpoint:9:0",
+                "kind": "checkpoint",
+                "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+                "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+                "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+              },
+              "retained": {
+                "repository": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "repositoryIdentity": "3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "ref": "refs/agent-retention/tasks/2f63f34459691222d28b37429ce2253bcad5e2f9ebee9e8f528cc2888a1997bc",
+                "commitOid": "d0a88f5b99d580fa72dd5798915637c2d8b4a903",
+                "path": "checkpoint.txt",
+                "blobOid": "88bf815406e4f1c79a0f94b4451d78275b52c122",
+                "sizeBytes": 32
+              },
+              "actor": "agent",
+              "verifiedAt": 1794470675014
+            },
+            "offset": 0,
+            "sizeBytes": 32,
+            "nextOffset": 7,
+            "encoding": "base64",
+            "content": "VEYwODY3IA=="
+          },
+          {
+            "receipt": {
+              "schemaVersion": 1,
+              "receiptId": "9c6ccd8e4b514a5ca93682c33f2dcf00763c39eed2f6bda667a90b6a4b152f92",
+              "source": {
+                "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+                "sourceKey": "checkpoint:9:0",
+                "kind": "checkpoint",
+                "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+                "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+                "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+              },
+              "retained": {
+                "repository": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "repositoryIdentity": "3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "ref": "refs/agent-retention/tasks/2f63f34459691222d28b37429ce2253bcad5e2f9ebee9e8f528cc2888a1997bc",
+                "commitOid": "d0a88f5b99d580fa72dd5798915637c2d8b4a903",
+                "path": "checkpoint.txt",
+                "blobOid": "88bf815406e4f1c79a0f94b4451d78275b52c122",
+                "sizeBytes": 32
+              },
+              "actor": "agent",
+              "verifiedAt": 1794470675014
+            },
+            "offset": 7,
+            "sizeBytes": 32,
+            "nextOffset": 14,
+            "encoding": "base64",
+            "content": "Y2hlY2twbw=="
+          },
+          {
+            "receipt": {
+              "schemaVersion": 1,
+              "receiptId": "9c6ccd8e4b514a5ca93682c33f2dcf00763c39eed2f6bda667a90b6a4b152f92",
+              "source": {
+                "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+                "sourceKey": "checkpoint:9:0",
+                "kind": "checkpoint",
+                "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+                "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+                "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+              },
+              "retained": {
+                "repository": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "repositoryIdentity": "3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "ref": "refs/agent-retention/tasks/2f63f34459691222d28b37429ce2253bcad5e2f9ebee9e8f528cc2888a1997bc",
+                "commitOid": "d0a88f5b99d580fa72dd5798915637c2d8b4a903",
+                "path": "checkpoint.txt",
+                "blobOid": "88bf815406e4f1c79a0f94b4451d78275b52c122",
+                "sizeBytes": 32
+              },
+              "actor": "agent",
+              "verifiedAt": 1794470675014
+            },
+            "offset": 14,
+            "sizeBytes": 32,
+            "nextOffset": 21,
+            "encoding": "base64",
+            "content": "aW50IHBybw=="
+          },
+          {
+            "receipt": {
+              "schemaVersion": 1,
+              "receiptId": "9c6ccd8e4b514a5ca93682c33f2dcf00763c39eed2f6bda667a90b6a4b152f92",
+              "source": {
+                "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+                "sourceKey": "checkpoint:9:0",
+                "kind": "checkpoint",
+                "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+                "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+                "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+              },
+              "retained": {
+                "repository": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "repositoryIdentity": "3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "ref": "refs/agent-retention/tasks/2f63f34459691222d28b37429ce2253bcad5e2f9ebee9e8f528cc2888a1997bc",
+                "commitOid": "d0a88f5b99d580fa72dd5798915637c2d8b4a903",
+                "path": "checkpoint.txt",
+                "blobOid": "88bf815406e4f1c79a0f94b4451d78275b52c122",
+                "sizeBytes": 32
+              },
+              "actor": "agent",
+              "verifiedAt": 1794470675014
+            },
+            "offset": 21,
+            "sizeBytes": 32,
+            "nextOffset": 28,
+            "encoding": "base64",
+            "content": "ZHVjZWQgYg=="
+          },
+          {
+            "receipt": {
+              "schemaVersion": 1,
+              "receiptId": "9c6ccd8e4b514a5ca93682c33f2dcf00763c39eed2f6bda667a90b6a4b152f92",
+              "source": {
+                "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+                "sourceKey": "checkpoint:9:0",
+                "kind": "checkpoint",
+                "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+                "path": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left/checkpoint.txt",
+                "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+              },
+              "retained": {
+                "repository": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "repositoryIdentity": "3325120695:5348024562391746:1794470523831546400:d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+                "ref": "refs/agent-retention/tasks/2f63f34459691222d28b37429ce2253bcad5e2f9ebee9e8f528cc2888a1997bc",
+                "commitOid": "d0a88f5b99d580fa72dd5798915637c2d8b4a903",
+                "path": "checkpoint.txt",
+                "blobOid": "88bf815406e4f1c79a0f94b4451d78275b52c122",
+                "sizeBytes": 32
+              },
+              "actor": "agent",
+              "verifiedAt": 1794470675014
+            },
+            "offset": 28,
+            "sizeBytes": 32,
+            "nextOffset": null,
+            "encoding": "base64",
+            "content": "eSBBCg=="
+          }
+        ],
+        "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a",
+        "sizeBytes": 32,
+        "bytesBase64": "VEYwODY3IGNoZWNrcG9pbnQgcHJvZHVjZWQgYnkgQQo="
+      }
+    ],
+    "trace": {
+      "taskId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+      "actor": "main",
+      "runIds": [
+        "tf0867-send-A",
+        "tf0867-send-B"
+      ],
+      "binding": {
+        "schemaVersion": 1,
+        "workspaceId": "tf0867-right",
+        "agentId": "main",
+        "sessionKey": "agent:main:session-1794470534024-tfleft",
+        "sessionGeneration": "ca4e8dbe-6e23-431f-ab88-3cd5b37a338d",
+        "taskLedgerReferences": [
+          {
+            "direction": "workboard-to-task-ledger",
+            "taskLedgerNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+            "source": "runtime"
+          }
+        ],
+        "activeTaskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+        "writerClaim": {
+          "id": "dff2ccaa-03f5-4c1a-a179-53aa825b5c4b",
+          "run": {
+            "runId": "tf0867-send-B",
+            "scope": {
+              "workspaceId": "tf0867-right",
+              "projectId": "tf0867-right",
+              "sessionKey": "agent:main:session-1794470534024-tfleft"
+            }
+          },
+          "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+          "sessionGeneration": "ca4e8dbe-6e23-431f-ab88-3cd5b37a338d",
+          "createdAt": "2026-11-12T08:04:13.644Z",
+          "executionRevision": 2,
+          "credential": {
+            "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+            "sessionKey": "agent:main:session-1794470534024-tfleft",
+            "generation": "ca4e8dbe-6e23-431f-ab88-3cd5b37a338d",
+            "epoch": 3
+          }
+        },
+        "environment": {
+          "kind": "local",
+          "canonicalRoot": "D:\\tmp\\r4nf12\\t\\unified-execution-traceabi-938d1-ceptance-and-source-cleanup\\fixture\\repository\\.openclaw\\worktrees\\right",
+          "backend": "git",
+          "branch": null,
+          "detachedHead": true,
+          "setupProfile": null
+        },
+        "archiveRestorePolicy": "restore",
+        "state": "active",
+        "bindingRevision": 2,
+        "invalidationReason": null,
+        "createdAt": "2026-11-12T08:03:23.624Z",
+        "updatedAt": "2026-11-12T08:04:17.825Z"
+      },
+      "candidate": "ce92d2a2ef81e73e38e03f48da6df58c9f9b05ab5aaf06d6312fdd79b80c719e",
+      "inputManifest": {
+        "taskNodeId": "d79bdda6-6317-4103-90a6-d5317dcc30dc",
+        "revision": 1,
+        "contractDigest": "01d0bef1c7c3827e21d7c22935c4a72ea5afd6d5068684fa33effc41dc85e8cf",
+        "actor": "main",
+        "sessionKey": "agent:main:session-1794470534024-tfleft",
+        "generation": "ca4e8dbe-6e23-431f-ab88-3cd5b37a338d",
+        "runId": "tf0867-send-B",
+        "bindingRevision": 2,
+        "artifacts": [
+          {
+            "path": "checkpoint.txt",
+            "sha256": "1906af76aedce5a0dfc916bee857878bece81d2fcec1f3b00ecf2f97615a2d1a"
+          },
+          {
+            "path": "artifact.txt",
+            "sha256": "6ca772afbff1ad8603cd4480c859e348dc40c40baf756d826eb642e5031c4e2b"
+          }
+        ]
+      },
+      "checkReceiptIds": [
+        "f819b4f5-69b3-4fc7-8f04-105208cfc99e",
+        "fb68d08c-7c88-4d1a-905e-32dff700bd64"
+      ],
+      "migrationOperationId": "tf0867-migration"
+    }
+  },
+  "sourceRemoved": {
+    "registry": [
+      {
+        "id": "left",
+        "generation": "79290764-a43b-4f27-9d28-80f512ada85e",
+        "root": "D:\\tmp\\r4nf12\\t\\unified-execution-traceabi-938d1-ceptance-and-source-cleanup\\fixture\\repository\\.openclaw\\worktrees\\left",
+        "baseRoot": "D:\\tmp\\r4nf12\\t\\unified-execution-traceabi-938d1-ceptance-and-source-cleanup\\fixture\\repository",
+        "createdAtMs": 1794470526079,
+        "status": "cleaned",
+        "writeSet": [
+          "checkpoint.txt",
+          "artifact.txt"
+        ],
+        "backend": "git",
+        "registration": {
+          "operationId": "tf0867-create-left",
+          "requestDigest": "ef5c3e80bc76640d768df924e3223864010f7c634b83011fcd745e602d5a54e2",
+          "phase": "ready",
+          "rootIdentity": "3325120695:5348024562392164:1794470526082034900",
+          "nativeIdentity": "6e2fd21913d3732d118c6243c28bfae8c485503030a380fe5cd57f6bba58bf7c"
+        },
+        "baseOid": "5603c89c19fe54d1d878dae52d47c5f8051b0320",
+        "mergeBaseline": {
+          "parent": {
+            ".gitattributes": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+            "README.fixture": "994570874668217c2b02974c2a4829b57cc8e6d8e3c7430c6532b463b6620eb9"
+          },
+          "worker": {
+            ".gitattributes": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+            "README.fixture": "994570874668217c2b02974c2a4829b57cc8e6d8e3c7430c6532b463b6620eb9"
+          },
+          "workerModes": {
+            "": 438,
+            ".gitattributes": 438,
+            "README.fixture": 438
+          }
+        },
+        "taskCleanup": {
+          "domain": {
+            "id": "27774b9ed644f579e68eb8e0030da29b71511e6ad40942a81b213be7bbef32c4",
+            "root": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.git",
+            "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left",
+            "database": "d:\\tmp\\r4nf12\\t\\unified-execution-traceabi-938d1-ceptance-and-source-cleanup\\fixture\\repository\\.git\\verse-claw\\task-ledger.sqlite3"
+          },
+          "localDomainId": "27774b9ed644f579e68eb8e0030da29b71511e6ad40942a81b213be7bbef32c4",
+          "authorityRootIdentity": "3325120695:5348024562391746:1794470523831546400",
+          "databaseIdentity": "3325120695:7036874422672900:1794470564792131600",
+          "operationId": "worktree-cleanup:79290764-a43b-4f27-9d28-80f512ada85e:0316c780e95429d2d3c56c3aa6b270848be355b60c21e39004f6da028a589fd8",
+          "worktree": "d:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/left"
+        }
+      },
+      {
+        "id": "right",
+        "generation": "f837649e-c834-4656-ab94-10792e007118",
+        "root": "D:\\tmp\\r4nf12\\t\\unified-execution-traceabi-938d1-ceptance-and-source-cleanup\\fixture\\repository\\.openclaw\\worktrees\\right",
+        "baseRoot": "D:\\tmp\\r4nf12\\t\\unified-execution-traceabi-938d1-ceptance-and-source-cleanup\\fixture\\repository",
+        "createdAtMs": 1794470526518,
+        "status": "active",
+        "writeSet": [
+          "checkpoint.txt",
+          "artifact.txt"
+        ],
+        "backend": "git",
+        "registration": {
+          "operationId": "tf0867-create-right",
+          "requestDigest": "60902e3b456e07455f626a5a025de7e6f335cc7673353f0cb1adf0f712756ebb",
+          "phase": "ready",
+          "rootIdentity": "3325120695:17732923537660958:1794470526521115500",
+          "nativeIdentity": "43495cf6f75bbb6dc099d85efcde6f0f16572f0095e231c9b6060003edb7d0ee"
+        },
+        "baseOid": "5603c89c19fe54d1d878dae52d47c5f8051b0320",
+        "mergeBaseline": {
+          "parent": {
+            ".gitattributes": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+            "README.fixture": "994570874668217c2b02974c2a4829b57cc8e6d8e3c7430c6532b463b6620eb9"
+          },
+          "worker": {
+            ".gitattributes": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+            "README.fixture": "994570874668217c2b02974c2a4829b57cc8e6d8e3c7430c6532b463b6620eb9"
+          },
+          "workerModes": {
+            "": 438,
+            ".gitattributes": 438,
+            "README.fixture": 438
+          }
+        }
+      }
+    ],
+    "nativeWorktrees": "worktree D:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository\nHEAD 5603c89c19fe54d1d878dae52d47c5f8051b0320\nbranch refs/heads/tf0867-fixture\n\nworktree D:/tmp/r4nf12/t/unified-execution-traceabi-938d1-ceptance-and-source-cleanup/fixture/repository/.openclaw/worktrees/right\nHEAD 5603c89c19fe54d1d878dae52d47c5f8051b0320\ndetached"
+  },
+  "contention": {
+    "claim": {
+      "driven_by": "agent",
+      "actor": "r4-task-retention-process-test",
+      "input": {
+        "mode": "claim",
+        "workspace": "D:\\tmp\\task-retention-zEEZm9\\repository\\.openclaw\\worktrees\\claim",
+        "taskId": "ae4a660a-e864-46a8-b53b-b0a1cfb8fe3f"
+      },
+      "cleanupMs": 1857,
+      "exitCode": 0,
+      "proof": {
+        "pid": 22560,
+        "success": false,
+        "operation": "claim",
+        "operationStarted": true,
+        "stage": "claim",
+        "code": "ENOENT",
+        "retryable": false,
+        "rejected": "Error: ENOENT: no such file or directory, realpath 'D:\\tmp\\task-retention-zEEZm9\\repository\\.openclaw\\worktrees\\claim'",
+        "pathExists": false
+      },
+      "readback": {
+        "rootExists": false,
+        "taskDatabaseExists": true,
+        "registration": null,
+        "checkpointEvents": null,
+        "claimedEvents": [],
+        "persistedClaim": null
+      }
+    },
+    "register": {
+      "driven_by": "agent",
+      "actor": "r4-task-retention-process-test",
+      "input": {
+        "mode": "register",
+        "workspace": "D:\\tmp\\task-retention-g84RKX\\repository\\.openclaw\\worktrees\\register",
+        "taskId": null
+      },
+      "cleanupMs": 1797,
+      "exitCode": 0,
+      "proof": {
+        "pid": 28480,
+        "success": false,
+        "operation": "register",
+        "operationStarted": true,
+        "stage": "register",
+        "code": "ENOENT",
+        "retryable": false,
+        "rejected": "Error: ENOENT: no such file or directory, stat 'd:\\tmp\\task-retention-g84rkx\\repository\\.openclaw\\worktrees\\register'",
+        "pathExists": false
+      },
+      "readback": {
+        "rootExists": false,
+        "taskDatabaseExists": false,
+        "registration": "independent",
+        "checkpointEvents": null,
+        "claimedEvents": null,
+        "persistedClaim": null
+      }
+    },
+    "first-open": {
+      "driven_by": "agent",
+      "actor": "r4-task-retention-process-test",
+      "input": {
+        "mode": "first-open",
+        "workspace": "D:\\tmp\\task-retention-lpUeQl\\repository\\.openclaw\\worktrees\\first-open",
+        "taskId": null
+      },
+      "cleanupMs": 2031,
+      "exitCode": 0,
+      "proof": {
+        "pid": 37940,
+        "success": false,
+        "operation": "first-open",
+        "operationStarted": true,
+        "stage": "open",
+        "code": "ENOENT",
+        "retryable": false,
+        "rejected": "Error: ENOENT: no such file or directory, realpath 'D:\\tmp\\task-retention-lpUeQl\\repository\\.openclaw\\worktrees\\first-open'",
+        "pathExists": false
+      },
+      "readback": {
+        "rootExists": false,
+        "taskDatabaseExists": false,
+        "registration": null,
+        "checkpointEvents": null,
+        "claimedEvents": null,
+        "persistedClaim": null
+      }
+    },
+    "checkpoint": {
+      "driven_by": "agent",
+      "actor": "r4-task-retention-process-test",
+      "input": {
+        "mode": "checkpoint",
+        "workspace": "D:\\tmp\\task-retention-ewqsnE\\repository",
+        "taskId": null
+      },
+      "cleanupMs": 1423,
+      "exitCode": 0,
+      "proof": {
+        "pid": 2904,
+        "success": false,
+        "operation": "checkpoint",
+        "operationStarted": true,
+        "stage": "checkpoint",
+        "code": "ENOENT",
+        "retryable": false,
+        "rejected": "Error: ENOENT: no such file or directory, realpath 'D:\\tmp\\task-retention-ewqsnE\\repository\\.openclaw\\worktrees\\checkpoint\\artifact.txt'",
+        "pathExists": true
+      },
+      "readback": {
+        "rootExists": false,
+        "taskDatabaseExists": true,
+        "registration": null,
+        "checkpointEvents": [],
+        "claimedEvents": null,
+        "persistedClaim": null
+      }
+    }
+  }
+}

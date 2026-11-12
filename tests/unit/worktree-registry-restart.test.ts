@@ -108,7 +108,8 @@ describe('durable managed checkout registration', () => {
     const original = registry.saveWorktreeRegistryScope;
     const fault = vi.spyOn(registry, 'saveWorktreeRegistryScope').mockImplementation(scope => {
       original(scope);
-      if (scope.queue.some(item => item.reason === 'merge_outcome_unknown')) throw new Error('copy interrupted');
+      if (scope.queue.some(item => item.reason === 'merge_outcome_unknown')
+        && service.writer(null)?.operations.some(operation => operation.state !== 'settled' && operation.effectPrepared === true)) throw new Error('copy interrupted');
     });
     await expect(service.processMergeQueue()).rejects.toThrow('copy interrupted');
     fault.mockRestore(); closeOpenClawStateDatabaseForTest();

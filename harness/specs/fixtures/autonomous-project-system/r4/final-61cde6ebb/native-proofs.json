@@ -1,0 +1,4078 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-final-independent-reader",
+  "candidate": {
+    "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+    "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+    "dirty": false
+  },
+  "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+  "proofs": {
+    "actual-verifier-candidate-directory": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_ef3b6f689151a654ea39639a",
+            "baseOid": "03515718a05955cc09b23fcb2019a1077fa7cd60",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "actual-candidate-task",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "0edc9480-6d17-43e2-b930-620f8ecca774",
+                "headOid": "03515718a05955cc09b23fcb2019a1077fa7cd60",
+                "baseOid": "03515718a05955cc09b23fcb2019a1077fa7cd60",
+                "statusDigest": "sha256:61a8d1235a6e31a6f1f9d76484145354e376fbb4e8dab576dd6abf36eef668be",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "cca259bc2cb1352fcb5c321cf02de8ce18a35172f64d453f24fc12aec560b297"
+                },
+                "treeOid": "d096714a9596313b40ca9a37877370f9c1d677a4",
+                "commitOid": "cf356a7a60db51ebbe44963a0eeb5d27ece908ab"
+              }
+            ],
+            "candidateCommitOid": "aabfb47227643696f6a7474b0452d887f26888bb",
+            "candidateTreeOid": "d096714a9596313b40ca9a37877370f9c1d677a4",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "03515718a05955cc09b23fcb2019a1077fa7cd60"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "03515718a05955cc09b23fcb2019a1077fa7cd60"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:f78435ea6b8a897bedc91e81ea66793a12cbc62776ad574004d00060618524d8",
+            "mainStateAfterDigest": "sha256:f78435ea6b8a897bedc91e81ea66793a12cbc62776ad574004d00060618524d8",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-zhkibv\\repo\\.openclaw\\candidates\\vgc_ef3b6f689151a654ea39639a",
+              "nativeIdentity": "09c6a2d48ab1b7876ad7657134a7b7df9336868d02f6ce4e0a05cfca5a9eaf03"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:ba547ffb49f393c5cfde1150a6d29ec2082dcad32f0da6698db812ce0c952ebd"
+          },
+          "materializedPath": "d:\\tmp\\autonomy-r4-zhkibv\\repo\\.openclaw\\candidates\\vgc_ef3b6f689151a654ea39639a",
+          "baseRoot": "d:\\tmp\\autonomy-r4-zhkibv\\repo"
+        },
+        "verifierProof": {
+          "executionDirectory": "d:\\tmp\\autonomy-r4-zhkibv\\repo\\.openclaw\\candidates\\vgc_ef3b6f689151a654ea39639a",
+          "checkExit": 0
+        },
+        "roleDispatch": "injected",
+        "checkProcess": "native Node in dispatched candidate cwd"
+      }
+    },
+    "candidate-hidden-index-assume-unchanged": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "status": "frozen",
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_ece25b836b6ef2ae25774418",
+            "baseOid": "00f0ef47974f91e71cae59b70825225f919ae18c",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "hidden-candidate",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "6f5a4e2b-1706-4957-b4e6-90f09f2ffed6",
+                "headOid": "00f0ef47974f91e71cae59b70825225f919ae18c",
+                "baseOid": "00f0ef47974f91e71cae59b70825225f919ae18c",
+                "statusDigest": "sha256:8e9a1cea4ae8b57e7ba1f06cf1eead7623d4c7dd55ce127669c96fb97a97f13b",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+                },
+                "treeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+                "commitOid": "f8d51a08ecf12794253b678032848aad7f7f6206"
+              }
+            ],
+            "candidateCommitOid": "47a5bde6dbc881c781b34f3b55db8538ca78c81d",
+            "candidateTreeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "00f0ef47974f91e71cae59b70825225f919ae18c"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "00f0ef47974f91e71cae59b70825225f919ae18c"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:fc1e884b0b7d7e2bfeb8ecb9a23e73fa10999fe474dd2484bd893688a94c8c40",
+            "mainStateAfterDigest": "sha256:fc1e884b0b7d7e2bfeb8ecb9a23e73fa10999fe474dd2484bd893688a94c8c40",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-xjnqsn\\repo\\.openclaw\\candidates\\vgc_ece25b836b6ef2ae25774418",
+              "nativeIdentity": "5d2817189a3aedc4c824801c66bfdeaf44908f701f8478ba742a8afe2d7652eb"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:a019b97077a5d1933eff6b8b11e63b1146401c221ff2d3f275f1768435a08e42"
+          },
+          "materializedPath": "D:\\tmp\\autonomy-r4-XjNqsn\\repo\\.openclaw\\candidates\\vgc_ece25b836b6ef2ae25774418",
+          "issues": []
+        },
+        "hiddenIndexRejected": true
+      }
+    },
+    "candidate-hidden-index-skip-worktree": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "status": "frozen",
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_5c6ab97e034c72ee18f9ef63",
+            "baseOid": "f34e6efb51ac654306e2d79a547c8306936eab55",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "hidden-candidate",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "e485fbf8-a34c-4253-9ab6-6444a5849220",
+                "headOid": "f34e6efb51ac654306e2d79a547c8306936eab55",
+                "baseOid": "f34e6efb51ac654306e2d79a547c8306936eab55",
+                "statusDigest": "sha256:62161a50cff24a51f79b9a234eeb97451bd6e2dcc21998f602028b988341d996",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+                },
+                "treeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+                "commitOid": "864f8ea7309aeb8a3c138ce8ce2260ea936c65f7"
+              }
+            ],
+            "candidateCommitOid": "2c50a8e6bb40de693650d704a5c0cb3db868dc21",
+            "candidateTreeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "f34e6efb51ac654306e2d79a547c8306936eab55"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "f34e6efb51ac654306e2d79a547c8306936eab55"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:ce99ff207a5ad69b5661cdb99e031f5ed29ecf8184cabf6d063125639640c253",
+            "mainStateAfterDigest": "sha256:ce99ff207a5ad69b5661cdb99e031f5ed29ecf8184cabf6d063125639640c253",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-agh9oq\\repo\\.openclaw\\candidates\\vgc_5c6ab97e034c72ee18f9ef63",
+              "nativeIdentity": "0deeb9da7a90db7b662b48e02ec5efdce9690327efa04c9c5fd6106aa677d12e"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:ea22a583a7659639b0a79f97e3ddb78fd5c96f9bb914296838cbf11167731b3f"
+          },
+          "materializedPath": "D:\\tmp\\autonomy-r4-agh9OQ\\repo\\.openclaw\\candidates\\vgc_5c6ab97e034c72ee18f9ef63",
+          "issues": []
+        },
+        "hiddenIndexRejected": true
+      }
+    },
+    "candidate-ignored-allowlist-allowed-state": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "status": "frozen",
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_7dc5ceb68cc206b0a841980d",
+            "baseOid": "7cc7e7bece4265a8898bfea21db25f72eb4940b7",
+            "baseTreeOid": "5b40eb8f0dc872fd84eef7925ab56f2d206b3755",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "ignored-candidate",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "5a042682-7f65-4989-a008-8d16d7c1338d",
+                "headOid": "7cc7e7bece4265a8898bfea21db25f72eb4940b7",
+                "baseOid": "7cc7e7bece4265a8898bfea21db25f72eb4940b7",
+                "statusDigest": "sha256:3b458e7f30dad39176479c911c0ee0a183665bf87b58f32f1d851243e3df7cda",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+                },
+                "treeOid": "99d348f0123fd7dd5830b0c524826ee423d09223",
+                "commitOid": "3bccdf0d871389f9e095557726ed4a79bb073e7c"
+              }
+            ],
+            "candidateCommitOid": "6f5d22d6ece32d551b81a9f6d9dc217f9de56a52",
+            "candidateTreeOid": "99d348f0123fd7dd5830b0c524826ee423d09223",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "7cc7e7bece4265a8898bfea21db25f72eb4940b7"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "7cc7e7bece4265a8898bfea21db25f72eb4940b7"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:e3a1250a967186dfe7be0c736522cc452be261f29e05f35f05c47ba2e5534fde",
+            "mainStateAfterDigest": "sha256:e3a1250a967186dfe7be0c736522cc452be261f29e05f35f05c47ba2e5534fde",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-ua7dxu\\repo\\.openclaw\\candidates\\vgc_7dc5ceb68cc206b0a841980d",
+              "nativeIdentity": "f985c37d9f7f0054053315f2923ab4b971ee20cea6371a7423b722e900218a6d"
+            },
+            "allowedRuntimeIgnorePaths": [
+              "cache-ok/"
+            ],
+            "inputDigest": "sha256:8014f3d35937c4c8bca38e6068e37ef287a42ad899ffd20a709fa51a59f410f9"
+          },
+          "materializedPath": "D:\\tmp\\autonomy-r4-uA7dxu\\repo\\.openclaw\\candidates\\vgc_7dc5ceb68cc206b0a841980d",
+          "issues": []
+        },
+        "repeat": {
+          "status": "frozen",
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_7dc5ceb68cc206b0a841980d",
+            "baseOid": "7cc7e7bece4265a8898bfea21db25f72eb4940b7",
+            "baseTreeOid": "5b40eb8f0dc872fd84eef7925ab56f2d206b3755",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "ignored-candidate",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "5a042682-7f65-4989-a008-8d16d7c1338d",
+                "headOid": "7cc7e7bece4265a8898bfea21db25f72eb4940b7",
+                "baseOid": "7cc7e7bece4265a8898bfea21db25f72eb4940b7",
+                "statusDigest": "sha256:3b458e7f30dad39176479c911c0ee0a183665bf87b58f32f1d851243e3df7cda",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+                },
+                "treeOid": "99d348f0123fd7dd5830b0c524826ee423d09223",
+                "commitOid": "3bccdf0d871389f9e095557726ed4a79bb073e7c"
+              }
+            ],
+            "candidateCommitOid": "6f5d22d6ece32d551b81a9f6d9dc217f9de56a52",
+            "candidateTreeOid": "99d348f0123fd7dd5830b0c524826ee423d09223",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "7cc7e7bece4265a8898bfea21db25f72eb4940b7"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "7cc7e7bece4265a8898bfea21db25f72eb4940b7"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:e3a1250a967186dfe7be0c736522cc452be261f29e05f35f05c47ba2e5534fde",
+            "mainStateAfterDigest": "sha256:e3a1250a967186dfe7be0c736522cc452be261f29e05f35f05c47ba2e5534fde",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-ua7dxu\\repo\\.openclaw\\candidates\\vgc_7dc5ceb68cc206b0a841980d",
+              "nativeIdentity": "f985c37d9f7f0054053315f2923ab4b971ee20cea6371a7423b722e900218a6d"
+            },
+            "allowedRuntimeIgnorePaths": [
+              "cache-ok/"
+            ],
+            "inputDigest": "sha256:8014f3d35937c4c8bca38e6068e37ef287a42ad899ffd20a709fa51a59f410f9"
+          },
+          "materializedPath": "D:\\tmp\\autonomy-r4-uA7dxu\\repo\\.openclaw\\candidates\\vgc_7dc5ceb68cc206b0a841980d",
+          "issues": []
+        },
+        "ignoredPath": "cache-ok/state.json"
+      }
+    },
+    "candidate-ignored-allowlist-prefix-neighbor": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "status": "frozen",
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_8fe8625e69efb40e67e2d657",
+            "baseOid": "996cf1c98ba302f994509f667bf5f16a260950fb",
+            "baseTreeOid": "5b40eb8f0dc872fd84eef7925ab56f2d206b3755",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "ignored-candidate",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "842f1092-cb9c-4f49-839f-93542f347aaf",
+                "headOid": "996cf1c98ba302f994509f667bf5f16a260950fb",
+                "baseOid": "996cf1c98ba302f994509f667bf5f16a260950fb",
+                "statusDigest": "sha256:efe04a679165676d9573d23fc5cd38b7182cb5e3a6accd5684d57989218a433c",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+                },
+                "treeOid": "99d348f0123fd7dd5830b0c524826ee423d09223",
+                "commitOid": "a7e17dcb586a6bd9bfc915fd11b785dabd7dbd2d"
+              }
+            ],
+            "candidateCommitOid": "07ab8c7881b64247b89b61df47c5e924ffe0f74b",
+            "candidateTreeOid": "99d348f0123fd7dd5830b0c524826ee423d09223",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "996cf1c98ba302f994509f667bf5f16a260950fb"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "996cf1c98ba302f994509f667bf5f16a260950fb"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:2083130841261a9369e0a0426669829743eb1d4312ee5fa4d8523f35ccfa23e3",
+            "mainStateAfterDigest": "sha256:2083130841261a9369e0a0426669829743eb1d4312ee5fa4d8523f35ccfa23e3",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-gfozwu\\repo\\.openclaw\\candidates\\vgc_8fe8625e69efb40e67e2d657",
+              "nativeIdentity": "36a0c58ed61b6f369798685aade07156c8265b36f79f902947442241d647c184"
+            },
+            "allowedRuntimeIgnorePaths": [
+              "cache-ok/"
+            ],
+            "inputDigest": "sha256:878bdcb9aaf78d746b1a8195011cd6b548073554b6f2de747bc6ff572af47b50"
+          },
+          "materializedPath": "D:\\tmp\\autonomy-r4-gfozWu\\repo\\.openclaw\\candidates\\vgc_8fe8625e69efb40e67e2d657",
+          "issues": []
+        },
+        "repeat": {
+          "status": "rejected",
+          "reason": "candidate_path_exists",
+          "issues": [
+            "vgc_8fe8625e69efb40e67e2d657"
+          ],
+          "mainBefore": {
+            "headOid": "996cf1c98ba302f994509f667bf5f16a260950fb",
+            "refs": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "996cf1c98ba302f994509f667bf5f16a260950fb"
+              }
+            ],
+            "status": "",
+            "digest": "sha256:2083130841261a9369e0a0426669829743eb1d4312ee5fa4d8523f35ccfa23e3"
+          },
+          "mainAfter": {
+            "headOid": "996cf1c98ba302f994509f667bf5f16a260950fb",
+            "refs": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "996cf1c98ba302f994509f667bf5f16a260950fb"
+              }
+            ],
+            "status": "",
+            "digest": "sha256:2083130841261a9369e0a0426669829743eb1d4312ee5fa4d8523f35ccfa23e3"
+          },
+          "refsBefore": [
+            {
+              "ref": "refs/heads/master",
+              "oid": "996cf1c98ba302f994509f667bf5f16a260950fb"
+            }
+          ],
+          "refsAfter": [
+            {
+              "ref": "refs/heads/master",
+              "oid": "996cf1c98ba302f994509f667bf5f16a260950fb"
+            }
+          ]
+        },
+        "ignoredPath": "cache-ok-extra/state.json"
+      }
+    },
+    "candidate-ignored-allowlist-unlisted-file": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "status": "frozen",
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_61d1608bc08236b8f4a0ed75",
+            "baseOid": "b8749dbf03fb237b76f1472c0f7b20f710d31fa6",
+            "baseTreeOid": "5b40eb8f0dc872fd84eef7925ab56f2d206b3755",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "ignored-candidate",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "533e3dae-9adb-4daf-a978-8091e23a2494",
+                "headOid": "b8749dbf03fb237b76f1472c0f7b20f710d31fa6",
+                "baseOid": "b8749dbf03fb237b76f1472c0f7b20f710d31fa6",
+                "statusDigest": "sha256:033c69e929cb59c3a28f8bd00b20a9917bff3479f9b915f6f6cfe0c705f3ac6e",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+                },
+                "treeOid": "99d348f0123fd7dd5830b0c524826ee423d09223",
+                "commitOid": "b19117be0d73593c988384653d488b62308f81d0"
+              }
+            ],
+            "candidateCommitOid": "fb83b1f9713df82b374569bf720a027c3f3df1d2",
+            "candidateTreeOid": "99d348f0123fd7dd5830b0c524826ee423d09223",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "b8749dbf03fb237b76f1472c0f7b20f710d31fa6"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "b8749dbf03fb237b76f1472c0f7b20f710d31fa6"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:5d96744fa585c3485b2b0c03843cebdd280ea2d40eef7ab74147375a0736d109",
+            "mainStateAfterDigest": "sha256:5d96744fa585c3485b2b0c03843cebdd280ea2d40eef7ab74147375a0736d109",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-fu9atc\\repo\\.openclaw\\candidates\\vgc_61d1608bc08236b8f4a0ed75",
+              "nativeIdentity": "f451f27ce917f07b01adc9b6561e4f8e3b2956c2cfdbe3fcdee7536ae184c7fb"
+            },
+            "allowedRuntimeIgnorePaths": [
+              "cache-ok/"
+            ],
+            "inputDigest": "sha256:ef503e263c1c2c2c9766b68e71096e964294e29e5ae8b75d50b18eeb472db161"
+          },
+          "materializedPath": "D:\\tmp\\autonomy-r4-FU9ATC\\repo\\.openclaw\\candidates\\vgc_61d1608bc08236b8f4a0ed75",
+          "issues": []
+        },
+        "repeat": {
+          "status": "rejected",
+          "reason": "candidate_path_exists",
+          "issues": [
+            "vgc_61d1608bc08236b8f4a0ed75"
+          ],
+          "mainBefore": {
+            "headOid": "b8749dbf03fb237b76f1472c0f7b20f710d31fa6",
+            "refs": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "b8749dbf03fb237b76f1472c0f7b20f710d31fa6"
+              }
+            ],
+            "status": "",
+            "digest": "sha256:5d96744fa585c3485b2b0c03843cebdd280ea2d40eef7ab74147375a0736d109"
+          },
+          "mainAfter": {
+            "headOid": "b8749dbf03fb237b76f1472c0f7b20f710d31fa6",
+            "refs": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "b8749dbf03fb237b76f1472c0f7b20f710d31fa6"
+              }
+            ],
+            "status": "",
+            "digest": "sha256:5d96744fa585c3485b2b0c03843cebdd280ea2d40eef7ab74147375a0736d109"
+          },
+          "refsBefore": [
+            {
+              "ref": "refs/heads/master",
+              "oid": "b8749dbf03fb237b76f1472c0f7b20f710d31fa6"
+            }
+          ],
+          "refsAfter": [
+            {
+              "ref": "refs/heads/master",
+              "oid": "b8749dbf03fb237b76f1472c0f7b20f710d31fa6"
+            }
+          ]
+        },
+        "ignoredPath": "extra.runtime-config"
+      }
+    },
+    "candidate-native-identity-backpointer": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "identity": {
+          "rootPath": "d:\\tmp\\autonomy-r4-ss6hjl\\repo\\.openclaw\\candidates\\vgc_4a65af9b1cbce1055ff6880b",
+          "nativeIdentity": "193aa75a6bb4a7a13c90c867d9f9a56bf5c62a19e271386cbdc72756aa6b6498"
+        },
+        "unchangedCommit": "44773f5d2307e131ec8ffa66e7dfbe2e89e90a55",
+        "replacementRejected": true
+      }
+    },
+    "candidate-native-identity-environment-worktree": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "identity": {
+          "rootPath": "d:\\tmp\\autonomy-r4-cpnesc\\repo\\.openclaw\\candidates\\vgc_6964adbe4a5267aff6ee9186",
+          "nativeIdentity": "5d80403d96256f3caeca565bbcc690f6f457450c6b4a75d3a9074020bc43920d"
+        },
+        "unchangedCommit": "ba89eb6bf26a7a3f901acbdaccaddc38fed0a39c",
+        "replacementRejected": true
+      }
+    },
+    "candidate-native-identity-junction": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "identity": {
+          "rootPath": "d:\\tmp\\autonomy-r4-b1k6vu\\repo\\.openclaw\\candidates\\vgc_5976dc804ea4b2a84b740692",
+          "nativeIdentity": "66437e8e7d833472fcad0e6ef5093bf98be023e5b3cc3c87ceccfa83049cf02e"
+        },
+        "unchangedCommit": "7b91dcc5a68dfac890ba00717ffe80c578d11256",
+        "replacementRejected": true
+      }
+    },
+    "candidate-native-identity-replacement-worktree": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "identity": {
+          "rootPath": "d:\\tmp\\autonomy-r4-qyiyaw\\repo\\.openclaw\\candidates\\vgc_0d173af75f3ae7a7d0418f36",
+          "nativeIdentity": "24e0e1d69dce22fe5c973f0aa50591b08402b5c17bdde094ab8c3bc28ae6f721"
+        },
+        "unchangedCommit": "e56202ba5c718448c1a795761ab5c06bb3a99a8e",
+        "replacementRejected": true
+      }
+    },
+    "candidate-parent-boundary-.openclaw": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "outsideUnchanged": true,
+        "actor": "native-root-boundary-test"
+      }
+    },
+    "candidate-parent-boundary-candidates": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "outsideUnchanged": true,
+        "actor": "native-root-boundary-test"
+      }
+    },
+    "candidate-publication-retry": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "first": {
+          "status": "frozen",
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_9f8898d62f3eff03fadabc15",
+            "baseOid": "7580b0c640ccf814facf05cb9eb797303871c896",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "retry-candidate",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "b213514b-f204-4882-a650-47c51a3e9fda",
+                "headOid": "7580b0c640ccf814facf05cb9eb797303871c896",
+                "baseOid": "7580b0c640ccf814facf05cb9eb797303871c896",
+                "statusDigest": "sha256:90ebc83149ea0dd524187f575ab4a68c405c83a1e104d24ddfc0ad267ed209cc",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "230792824ffd73afc3eaf6c1db4a324eb5c3d27ae86b91cd92eb3a052d59ef48"
+                },
+                "treeOid": "ea8fbcb6f4dc74d551dced94d1b8d5300415285c",
+                "commitOid": "af304a123621e1c81eb77dee95f0c4e27805185b"
+              }
+            ],
+            "candidateCommitOid": "6d6ae53104c5f7858a150f7c8848dadb5e225a07",
+            "candidateTreeOid": "ea8fbcb6f4dc74d551dced94d1b8d5300415285c",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "7580b0c640ccf814facf05cb9eb797303871c896"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "7580b0c640ccf814facf05cb9eb797303871c896"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:bf0c34e89a1820c548c636f604a58711430e9baf969cfa395fe1046f717eeb2b",
+            "mainStateAfterDigest": "sha256:bf0c34e89a1820c548c636f604a58711430e9baf969cfa395fe1046f717eeb2b",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-ihcnr3\\repo\\.openclaw\\candidates\\vgc_9f8898d62f3eff03fadabc15",
+              "nativeIdentity": "bc2a7d85884d8c475ee0bc32e6eaaad96f14989e4fe3462b150a428c583dbd58"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:d2a9a1e7b0606169077621c264285db6eaebd18aa2aff4319f80805c978239d8"
+          },
+          "materializedPath": "D:\\tmp\\autonomy-r4-IHCnR3\\repo\\.openclaw\\candidates\\vgc_9f8898d62f3eff03fadabc15",
+          "issues": []
+        },
+        "second": {
+          "status": "frozen",
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_9f8898d62f3eff03fadabc15",
+            "baseOid": "7580b0c640ccf814facf05cb9eb797303871c896",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "retry-candidate",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "b213514b-f204-4882-a650-47c51a3e9fda",
+                "headOid": "7580b0c640ccf814facf05cb9eb797303871c896",
+                "baseOid": "7580b0c640ccf814facf05cb9eb797303871c896",
+                "statusDigest": "sha256:90ebc83149ea0dd524187f575ab4a68c405c83a1e104d24ddfc0ad267ed209cc",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "230792824ffd73afc3eaf6c1db4a324eb5c3d27ae86b91cd92eb3a052d59ef48"
+                },
+                "treeOid": "ea8fbcb6f4dc74d551dced94d1b8d5300415285c",
+                "commitOid": "af304a123621e1c81eb77dee95f0c4e27805185b"
+              }
+            ],
+            "candidateCommitOid": "6d6ae53104c5f7858a150f7c8848dadb5e225a07",
+            "candidateTreeOid": "ea8fbcb6f4dc74d551dced94d1b8d5300415285c",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "7580b0c640ccf814facf05cb9eb797303871c896"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "7580b0c640ccf814facf05cb9eb797303871c896"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:bf0c34e89a1820c548c636f604a58711430e9baf969cfa395fe1046f717eeb2b",
+            "mainStateAfterDigest": "sha256:bf0c34e89a1820c548c636f604a58711430e9baf969cfa395fe1046f717eeb2b",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-ihcnr3\\repo\\.openclaw\\candidates\\vgc_9f8898d62f3eff03fadabc15",
+              "nativeIdentity": "bc2a7d85884d8c475ee0bc32e6eaaad96f14989e4fe3462b150a428c583dbd58"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:d2a9a1e7b0606169077621c264285db6eaebd18aa2aff4319f80805c978239d8"
+          },
+          "materializedPath": "D:\\tmp\\autonomy-r4-IHCnR3\\repo\\.openclaw\\candidates\\vgc_9f8898d62f3eff03fadabc15",
+          "issues": []
+        }
+      }
+    },
+    "cleanup-contention-checkpoint": {
+      "driven_by": "agent",
+      "actor": "r4-task-retention-process-test",
+      "input": {
+        "mode": "checkpoint",
+        "workspace": "D:\\tmp\\task-retention-ewqsnE\\repository",
+        "taskId": null
+      },
+      "cleanupMs": 1423,
+      "exitCode": 0,
+      "proof": {
+        "pid": 2904,
+        "success": false,
+        "operation": "checkpoint",
+        "operationStarted": true,
+        "stage": "checkpoint",
+        "code": "ENOENT",
+        "retryable": false,
+        "rejected": "Error: ENOENT: no such file or directory, realpath 'D:\\tmp\\task-retention-ewqsnE\\repository\\.openclaw\\worktrees\\checkpoint\\artifact.txt'",
+        "pathExists": true
+      },
+      "readback": {
+        "rootExists": false,
+        "taskDatabaseExists": true,
+        "registration": null,
+        "checkpointEvents": [],
+        "claimedEvents": null,
+        "persistedClaim": null
+      }
+    },
+    "cleanup-contention-claim": {
+      "driven_by": "agent",
+      "actor": "r4-task-retention-process-test",
+      "input": {
+        "mode": "claim",
+        "workspace": "D:\\tmp\\task-retention-zEEZm9\\repository\\.openclaw\\worktrees\\claim",
+        "taskId": "ae4a660a-e864-46a8-b53b-b0a1cfb8fe3f"
+      },
+      "cleanupMs": 1857,
+      "exitCode": 0,
+      "proof": {
+        "pid": 22560,
+        "success": false,
+        "operation": "claim",
+        "operationStarted": true,
+        "stage": "claim",
+        "code": "ENOENT",
+        "retryable": false,
+        "rejected": "Error: ENOENT: no such file or directory, realpath 'D:\\tmp\\task-retention-zEEZm9\\repository\\.openclaw\\worktrees\\claim'",
+        "pathExists": false
+      },
+      "readback": {
+        "rootExists": false,
+        "taskDatabaseExists": true,
+        "registration": null,
+        "checkpointEvents": null,
+        "claimedEvents": [],
+        "persistedClaim": null
+      }
+    },
+    "cleanup-contention-first-open": {
+      "driven_by": "agent",
+      "actor": "r4-task-retention-process-test",
+      "input": {
+        "mode": "first-open",
+        "workspace": "D:\\tmp\\task-retention-lpUeQl\\repository\\.openclaw\\worktrees\\first-open",
+        "taskId": null
+      },
+      "cleanupMs": 2031,
+      "exitCode": 0,
+      "proof": {
+        "pid": 37940,
+        "success": false,
+        "operation": "first-open",
+        "operationStarted": true,
+        "stage": "open",
+        "code": "ENOENT",
+        "retryable": false,
+        "rejected": "Error: ENOENT: no such file or directory, realpath 'D:\\tmp\\task-retention-lpUeQl\\repository\\.openclaw\\worktrees\\first-open'",
+        "pathExists": false
+      },
+      "readback": {
+        "rootExists": false,
+        "taskDatabaseExists": false,
+        "registration": null,
+        "checkpointEvents": null,
+        "claimedEvents": null,
+        "persistedClaim": null
+      }
+    },
+    "cleanup-contention-register": {
+      "driven_by": "agent",
+      "actor": "r4-task-retention-process-test",
+      "input": {
+        "mode": "register",
+        "workspace": "D:\\tmp\\task-retention-g84RKX\\repository\\.openclaw\\worktrees\\register",
+        "taskId": null
+      },
+      "cleanupMs": 1797,
+      "exitCode": 0,
+      "proof": {
+        "pid": 28480,
+        "success": false,
+        "operation": "register",
+        "operationStarted": true,
+        "stage": "register",
+        "code": "ENOENT",
+        "retryable": false,
+        "rejected": "Error: ENOENT: no such file or directory, stat 'd:\\tmp\\task-retention-g84rkx\\repository\\.openclaw\\worktrees\\register'",
+        "pathExists": false
+      },
+      "readback": {
+        "rootExists": false,
+        "taskDatabaseExists": false,
+        "registration": "independent",
+        "checkpointEvents": null,
+        "claimedEvents": null,
+        "persistedClaim": null
+      }
+    },
+    "completed-prefix-preparation-conflict": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "workers": [
+          {
+            "isolation": "worktree",
+            "worktreeId": "first",
+            "worktreeGeneration": "a6bf7d39-e7bf-4d82-b9d9-0ff5ba252f63",
+            "taskNodeId": "prefix-first",
+            "worktreeWriteSet": [
+              "other.txt"
+            ],
+            "worktreeBackend": "git",
+            "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-mjicad\\repo",
+            "worktreeVerificationCandidate": {
+              "manifest": {
+                "schema": "clawx.versegit.candidate/v1",
+                "candidateId": "vgc_61a7cdb7c06a7dabf9a4e982",
+                "baseOid": "6e41cb71b51455ca311f71ffbc09a5f1f755a34a",
+                "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+                "workerSnapshots": [
+                  {
+                    "taskNodeId": "prefix-first",
+                    "parentOrder": 0,
+                    "worktreeRole": "first",
+                    "worktreeGeneration": "a6bf7d39-e7bf-4d82-b9d9-0ff5ba252f63",
+                    "headOid": "6e41cb71b51455ca311f71ffbc09a5f1f755a34a",
+                    "baseOid": "6e41cb71b51455ca311f71ffbc09a5f1f755a34a",
+                    "statusDigest": "sha256:8324177f1d0fc8f7a48209fafd13f2a5be405a3fc88c502508230dcaf2cca000",
+                    "changedFiles": [
+                      "other.txt"
+                    ],
+                    "postimageHashes": {
+                      "other.txt": "806c734071d8d93082a1c57c50a035b259a773aa27eece51f3c34321698f167e"
+                    },
+                    "treeOid": "4da35813fabd9f20357c5982c99a1b846c3006ec",
+                    "commitOid": "9026f693ad93fd013325756806876ceb51019ad1"
+                  },
+                  {
+                    "taskNodeId": "prefix-second",
+                    "parentOrder": 1,
+                    "worktreeRole": "second",
+                    "worktreeGeneration": "fa23c0b2-571c-4ffc-be26-fa8e02081de0",
+                    "headOid": "6e41cb71b51455ca311f71ffbc09a5f1f755a34a",
+                    "baseOid": "6e41cb71b51455ca311f71ffbc09a5f1f755a34a",
+                    "statusDigest": "sha256:6c404ace66fea178f22d98b1078b42373e6f08cfcd6a6b2c6667f60382612616",
+                    "changedFiles": [
+                      "new.txt"
+                    ],
+                    "postimageHashes": {
+                      "new.txt": "e26cfb11b683ba56a607a4b54bccb1a6bcc1df69d41abe6d9a1870ff71f973db"
+                    },
+                    "treeOid": "af81719f532ce5cfdb6a8e126772f03530da1705",
+                    "commitOid": "25537f5306219e2d01a45698bb20d19c068be171"
+                  }
+                ],
+                "candidateCommitOid": "9c0ba024c58b69f8a87ae22bfede8cdd9bf71366",
+                "candidateTreeOid": "b0438983159f761789c8dec0bdb58e54b9965fa0",
+                "refsBefore": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "6e41cb71b51455ca311f71ffbc09a5f1f755a34a"
+                  }
+                ],
+                "refsAfter": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "6e41cb71b51455ca311f71ffbc09a5f1f755a34a"
+                  }
+                ],
+                "mainStateBeforeDigest": "sha256:d104eeb91f36bcd39ecde36c7c1f4d1b220dc996240bb734ce5cc8e9fed908be",
+                "mainStateAfterDigest": "sha256:d104eeb91f36bcd39ecde36c7c1f4d1b220dc996240bb734ce5cc8e9fed908be",
+                "mainUnchanged": true,
+                "verificationCwdRole": "host-disposable-candidate",
+                "materializedPathRole": "candidate-verification-worktree",
+                "materializedIdentity": {
+                  "rootPath": "d:\\tmp\\autonomy-r4-mjicad\\repo\\.openclaw\\candidates\\vgc_61a7cdb7c06a7dabf9a4e982",
+                  "nativeIdentity": "0de39b69af05ae8c48b9902d117091c81b521e724d6dfe0f9910c4ed8ed266d6"
+                },
+                "allowedRuntimeIgnorePaths": [],
+                "inputDigest": "sha256:c4517906c0622a03df71c1710962449c68968697a342695a1b3a2ed8b00f58cf"
+              },
+              "materializedPath": "d:\\tmp\\autonomy-r4-mjicad\\repo\\.openclaw\\candidates\\vgc_61a7cdb7c06a7dabf9a4e982",
+              "baseRoot": "d:\\tmp\\autonomy-r4-mjicad\\repo"
+            },
+            "worktreeMergeStatus": "conflict",
+            "worktreeWriteSetMismatch": [],
+            "worktreeMergeReason": "preflight:worker_changes_not_in_merge_request",
+            "worktreeMergeProcessedAt": 1794467148532
+          },
+          {
+            "isolation": "worktree",
+            "worktreeId": "second",
+            "worktreeGeneration": "fa23c0b2-571c-4ffc-be26-fa8e02081de0",
+            "taskNodeId": "prefix-second",
+            "worktreeWriteSet": [
+              "new.txt"
+            ],
+            "worktreeBackend": "git",
+            "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-mjicad\\repo",
+            "worktreeVerificationCandidate": {
+              "manifest": {
+                "schema": "clawx.versegit.candidate/v1",
+                "candidateId": "vgc_61a7cdb7c06a7dabf9a4e982",
+                "baseOid": "6e41cb71b51455ca311f71ffbc09a5f1f755a34a",
+                "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+                "workerSnapshots": [
+                  {
+                    "taskNodeId": "prefix-first",
+                    "parentOrder": 0,
+                    "worktreeRole": "first",
+                    "worktreeGeneration": "a6bf7d39-e7bf-4d82-b9d9-0ff5ba252f63",
+                    "headOid": "6e41cb71b51455ca311f71ffbc09a5f1f755a34a",
+                    "baseOid": "6e41cb71b51455ca311f71ffbc09a5f1f755a34a",
+                    "statusDigest": "sha256:8324177f1d0fc8f7a48209fafd13f2a5be405a3fc88c502508230dcaf2cca000",
+                    "changedFiles": [
+                      "other.txt"
+                    ],
+                    "postimageHashes": {
+                      "other.txt": "806c734071d8d93082a1c57c50a035b259a773aa27eece51f3c34321698f167e"
+                    },
+                    "treeOid": "4da35813fabd9f20357c5982c99a1b846c3006ec",
+                    "commitOid": "9026f693ad93fd013325756806876ceb51019ad1"
+                  },
+                  {
+                    "taskNodeId": "prefix-second",
+                    "parentOrder": 1,
+                    "worktreeRole": "second",
+                    "worktreeGeneration": "fa23c0b2-571c-4ffc-be26-fa8e02081de0",
+                    "headOid": "6e41cb71b51455ca311f71ffbc09a5f1f755a34a",
+                    "baseOid": "6e41cb71b51455ca311f71ffbc09a5f1f755a34a",
+                    "statusDigest": "sha256:6c404ace66fea178f22d98b1078b42373e6f08cfcd6a6b2c6667f60382612616",
+                    "changedFiles": [
+                      "new.txt"
+                    ],
+                    "postimageHashes": {
+                      "new.txt": "e26cfb11b683ba56a607a4b54bccb1a6bcc1df69d41abe6d9a1870ff71f973db"
+                    },
+                    "treeOid": "af81719f532ce5cfdb6a8e126772f03530da1705",
+                    "commitOid": "25537f5306219e2d01a45698bb20d19c068be171"
+                  }
+                ],
+                "candidateCommitOid": "9c0ba024c58b69f8a87ae22bfede8cdd9bf71366",
+                "candidateTreeOid": "b0438983159f761789c8dec0bdb58e54b9965fa0",
+                "refsBefore": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "6e41cb71b51455ca311f71ffbc09a5f1f755a34a"
+                  }
+                ],
+                "refsAfter": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "6e41cb71b51455ca311f71ffbc09a5f1f755a34a"
+                  }
+                ],
+                "mainStateBeforeDigest": "sha256:d104eeb91f36bcd39ecde36c7c1f4d1b220dc996240bb734ce5cc8e9fed908be",
+                "mainStateAfterDigest": "sha256:d104eeb91f36bcd39ecde36c7c1f4d1b220dc996240bb734ce5cc8e9fed908be",
+                "mainUnchanged": true,
+                "verificationCwdRole": "host-disposable-candidate",
+                "materializedPathRole": "candidate-verification-worktree",
+                "materializedIdentity": {
+                  "rootPath": "d:\\tmp\\autonomy-r4-mjicad\\repo\\.openclaw\\candidates\\vgc_61a7cdb7c06a7dabf9a4e982",
+                  "nativeIdentity": "0de39b69af05ae8c48b9902d117091c81b521e724d6dfe0f9910c4ed8ed266d6"
+                },
+                "allowedRuntimeIgnorePaths": [],
+                "inputDigest": "sha256:c4517906c0622a03df71c1710962449c68968697a342695a1b3a2ed8b00f58cf"
+              },
+              "materializedPath": "d:\\tmp\\autonomy-r4-mjicad\\repo\\.openclaw\\candidates\\vgc_61a7cdb7c06a7dabf9a4e982",
+              "baseRoot": "d:\\tmp\\autonomy-r4-mjicad\\repo"
+            },
+            "worktreeMergeStatus": "error",
+            "worktreeWriteSetMismatch": [],
+            "worktreeMergeReason": "injected second worker queue validation failure"
+          }
+        ],
+        "faults": "injected",
+        "writesAndRegistry": "native"
+      }
+    },
+    "completed-prefix-preparation": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "phase": "preparation",
+        "workers": [
+          {
+            "isolation": "worktree",
+            "worktreeId": "first",
+            "worktreeGeneration": "a5624a76-e884-4280-ab82-aa802127e04c",
+            "taskNodeId": "prefix-first",
+            "worktreeWriteSet": [
+              "other.txt"
+            ],
+            "worktreeBackend": "git",
+            "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-klwadm\\repo",
+            "worktreeVerificationCandidate": {
+              "manifest": {
+                "schema": "clawx.versegit.candidate/v1",
+                "candidateId": "vgc_9c8c868003d6d2e15291137a",
+                "baseOid": "e6ca82dcdaedcc224f80bdddcf6304ed448681f6",
+                "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+                "workerSnapshots": [
+                  {
+                    "taskNodeId": "prefix-first",
+                    "parentOrder": 0,
+                    "worktreeRole": "first",
+                    "worktreeGeneration": "a5624a76-e884-4280-ab82-aa802127e04c",
+                    "headOid": "e6ca82dcdaedcc224f80bdddcf6304ed448681f6",
+                    "baseOid": "e6ca82dcdaedcc224f80bdddcf6304ed448681f6",
+                    "statusDigest": "sha256:0c20bdf215ed908f8480af321af3a0dd1cc4270a7fc70166ca020bd3b65115fb",
+                    "changedFiles": [
+                      "other.txt"
+                    ],
+                    "postimageHashes": {
+                      "other.txt": "806c734071d8d93082a1c57c50a035b259a773aa27eece51f3c34321698f167e"
+                    },
+                    "treeOid": "4da35813fabd9f20357c5982c99a1b846c3006ec",
+                    "commitOid": "7e3ad9322643fcadca6b520bc123b987e3a4a1e7"
+                  },
+                  {
+                    "taskNodeId": "prefix-second",
+                    "parentOrder": 1,
+                    "worktreeRole": "second",
+                    "worktreeGeneration": "284f3399-510a-43a7-bfcb-f343debeb966",
+                    "headOid": "e6ca82dcdaedcc224f80bdddcf6304ed448681f6",
+                    "baseOid": "e6ca82dcdaedcc224f80bdddcf6304ed448681f6",
+                    "statusDigest": "sha256:527202ca396998b50dd8c54d3242cbc5642e354596a801473626ac68e8f5e12a",
+                    "changedFiles": [
+                      "new.txt"
+                    ],
+                    "postimageHashes": {
+                      "new.txt": "e26cfb11b683ba56a607a4b54bccb1a6bcc1df69d41abe6d9a1870ff71f973db"
+                    },
+                    "treeOid": "af81719f532ce5cfdb6a8e126772f03530da1705",
+                    "commitOid": "0a690c462bfed04aea70dae49bbc6c741a0bb9b7"
+                  }
+                ],
+                "candidateCommitOid": "22cd721f60a0e532a988831d9df7b6cba7387ec2",
+                "candidateTreeOid": "b0438983159f761789c8dec0bdb58e54b9965fa0",
+                "refsBefore": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "e6ca82dcdaedcc224f80bdddcf6304ed448681f6"
+                  }
+                ],
+                "refsAfter": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "e6ca82dcdaedcc224f80bdddcf6304ed448681f6"
+                  }
+                ],
+                "mainStateBeforeDigest": "sha256:8f6ee8e60056b61d9c8f3d7882b60c18957e8690fa70540641f32c6af080a687",
+                "mainStateAfterDigest": "sha256:8f6ee8e60056b61d9c8f3d7882b60c18957e8690fa70540641f32c6af080a687",
+                "mainUnchanged": true,
+                "verificationCwdRole": "host-disposable-candidate",
+                "materializedPathRole": "candidate-verification-worktree",
+                "materializedIdentity": {
+                  "rootPath": "d:\\tmp\\autonomy-r4-klwadm\\repo\\.openclaw\\candidates\\vgc_9c8c868003d6d2e15291137a",
+                  "nativeIdentity": "1c1ab2e5e6e9b383708dcaa1a4a0c12927d10b0f700cad8ca077f5e824eb9ac7"
+                },
+                "allowedRuntimeIgnorePaths": [],
+                "inputDigest": "sha256:3d8b299ed9f1c4771533a7e6c6de6b8876e250404ba106e5404699e585d74230"
+              },
+              "materializedPath": "d:\\tmp\\autonomy-r4-klwadm\\repo\\.openclaw\\candidates\\vgc_9c8c868003d6d2e15291137a",
+              "baseRoot": "d:\\tmp\\autonomy-r4-klwadm\\repo"
+            },
+            "worktreeMergeStatus": "merged",
+            "worktreeWriteSetMismatch": [],
+            "worktreeMergeJournalRef": "write-journal:review-apply-c1acaa6c-b238-43da-9435-2f6f5fe28510:1",
+            "worktreeMergeHashes": {
+              "other.txt": "806c734071d8d93082a1c57c50a035b259a773aa27eece51f3c34321698f167e"
+            },
+            "worktreeMergeProcessedAt": 1794467127058
+          },
+          {
+            "isolation": "worktree",
+            "worktreeId": "second",
+            "worktreeGeneration": "284f3399-510a-43a7-bfcb-f343debeb966",
+            "taskNodeId": "prefix-second",
+            "worktreeWriteSet": [
+              "new.txt"
+            ],
+            "worktreeBackend": "git",
+            "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-klwadm\\repo",
+            "worktreeVerificationCandidate": {
+              "manifest": {
+                "schema": "clawx.versegit.candidate/v1",
+                "candidateId": "vgc_9c8c868003d6d2e15291137a",
+                "baseOid": "e6ca82dcdaedcc224f80bdddcf6304ed448681f6",
+                "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+                "workerSnapshots": [
+                  {
+                    "taskNodeId": "prefix-first",
+                    "parentOrder": 0,
+                    "worktreeRole": "first",
+                    "worktreeGeneration": "a5624a76-e884-4280-ab82-aa802127e04c",
+                    "headOid": "e6ca82dcdaedcc224f80bdddcf6304ed448681f6",
+                    "baseOid": "e6ca82dcdaedcc224f80bdddcf6304ed448681f6",
+                    "statusDigest": "sha256:0c20bdf215ed908f8480af321af3a0dd1cc4270a7fc70166ca020bd3b65115fb",
+                    "changedFiles": [
+                      "other.txt"
+                    ],
+                    "postimageHashes": {
+                      "other.txt": "806c734071d8d93082a1c57c50a035b259a773aa27eece51f3c34321698f167e"
+                    },
+                    "treeOid": "4da35813fabd9f20357c5982c99a1b846c3006ec",
+                    "commitOid": "7e3ad9322643fcadca6b520bc123b987e3a4a1e7"
+                  },
+                  {
+                    "taskNodeId": "prefix-second",
+                    "parentOrder": 1,
+                    "worktreeRole": "second",
+                    "worktreeGeneration": "284f3399-510a-43a7-bfcb-f343debeb966",
+                    "headOid": "e6ca82dcdaedcc224f80bdddcf6304ed448681f6",
+                    "baseOid": "e6ca82dcdaedcc224f80bdddcf6304ed448681f6",
+                    "statusDigest": "sha256:527202ca396998b50dd8c54d3242cbc5642e354596a801473626ac68e8f5e12a",
+                    "changedFiles": [
+                      "new.txt"
+                    ],
+                    "postimageHashes": {
+                      "new.txt": "e26cfb11b683ba56a607a4b54bccb1a6bcc1df69d41abe6d9a1870ff71f973db"
+                    },
+                    "treeOid": "af81719f532ce5cfdb6a8e126772f03530da1705",
+                    "commitOid": "0a690c462bfed04aea70dae49bbc6c741a0bb9b7"
+                  }
+                ],
+                "candidateCommitOid": "22cd721f60a0e532a988831d9df7b6cba7387ec2",
+                "candidateTreeOid": "b0438983159f761789c8dec0bdb58e54b9965fa0",
+                "refsBefore": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "e6ca82dcdaedcc224f80bdddcf6304ed448681f6"
+                  }
+                ],
+                "refsAfter": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "e6ca82dcdaedcc224f80bdddcf6304ed448681f6"
+                  }
+                ],
+                "mainStateBeforeDigest": "sha256:8f6ee8e60056b61d9c8f3d7882b60c18957e8690fa70540641f32c6af080a687",
+                "mainStateAfterDigest": "sha256:8f6ee8e60056b61d9c8f3d7882b60c18957e8690fa70540641f32c6af080a687",
+                "mainUnchanged": true,
+                "verificationCwdRole": "host-disposable-candidate",
+                "materializedPathRole": "candidate-verification-worktree",
+                "materializedIdentity": {
+                  "rootPath": "d:\\tmp\\autonomy-r4-klwadm\\repo\\.openclaw\\candidates\\vgc_9c8c868003d6d2e15291137a",
+                  "nativeIdentity": "1c1ab2e5e6e9b383708dcaa1a4a0c12927d10b0f700cad8ca077f5e824eb9ac7"
+                },
+                "allowedRuntimeIgnorePaths": [],
+                "inputDigest": "sha256:3d8b299ed9f1c4771533a7e6c6de6b8876e250404ba106e5404699e585d74230"
+              },
+              "materializedPath": "d:\\tmp\\autonomy-r4-klwadm\\repo\\.openclaw\\candidates\\vgc_9c8c868003d6d2e15291137a",
+              "baseRoot": "d:\\tmp\\autonomy-r4-klwadm\\repo"
+            },
+            "worktreeMergeJournalRef": "write-journal:review-apply-14abb807-01ed-4be9-ab25-36f0427fc263:1",
+            "worktreeMergeHashes": {
+              "new.txt": "e26cfb11b683ba56a607a4b54bccb1a6bcc1df69d41abe6d9a1870ff71f973db"
+            },
+            "worktreeMergeStatus": "merged",
+            "worktreeWriteSetMismatch": [],
+            "worktreeMergeProcessedAt": 1794467141005
+          }
+        ],
+        "faults": "injected",
+        "writesAndRegistry": "native"
+      }
+    },
+    "completed-prefix-processing": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "phase": "processing",
+        "workers": [
+          {
+            "isolation": "worktree",
+            "worktreeId": "first",
+            "worktreeGeneration": "7f019993-96f7-4543-8f0b-d6bab3ba7437",
+            "taskNodeId": "prefix-first",
+            "worktreeWriteSet": [
+              "other.txt"
+            ],
+            "worktreeBackend": "git",
+            "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-zmmbqd\\repo",
+            "worktreeVerificationCandidate": {
+              "manifest": {
+                "schema": "clawx.versegit.candidate/v1",
+                "candidateId": "vgc_0a7bc0aaeee76d680cad8155",
+                "baseOid": "1a2fbdc3ef3025d6110aa09fbda89ef5578a4c7a",
+                "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+                "workerSnapshots": [
+                  {
+                    "taskNodeId": "prefix-first",
+                    "parentOrder": 0,
+                    "worktreeRole": "first",
+                    "worktreeGeneration": "7f019993-96f7-4543-8f0b-d6bab3ba7437",
+                    "headOid": "1a2fbdc3ef3025d6110aa09fbda89ef5578a4c7a",
+                    "baseOid": "1a2fbdc3ef3025d6110aa09fbda89ef5578a4c7a",
+                    "statusDigest": "sha256:ad89cad4c69ab97d0e4a990f47921ebb94e506c91cd4fb195a246828d4cef485",
+                    "changedFiles": [
+                      "other.txt"
+                    ],
+                    "postimageHashes": {
+                      "other.txt": "806c734071d8d93082a1c57c50a035b259a773aa27eece51f3c34321698f167e"
+                    },
+                    "treeOid": "4da35813fabd9f20357c5982c99a1b846c3006ec",
+                    "commitOid": "4b14bcc5705e15fe96a712e9b231e64c667e22c0"
+                  },
+                  {
+                    "taskNodeId": "prefix-second",
+                    "parentOrder": 1,
+                    "worktreeRole": "second",
+                    "worktreeGeneration": "f1a88a19-1f8e-4c9b-941a-dd2e69d8a52a",
+                    "headOid": "1a2fbdc3ef3025d6110aa09fbda89ef5578a4c7a",
+                    "baseOid": "1a2fbdc3ef3025d6110aa09fbda89ef5578a4c7a",
+                    "statusDigest": "sha256:ed213742402e9962cce62bd790177e535bef05275d5ac799b88033269b26eb77",
+                    "changedFiles": [
+                      "new.txt"
+                    ],
+                    "postimageHashes": {
+                      "new.txt": "e26cfb11b683ba56a607a4b54bccb1a6bcc1df69d41abe6d9a1870ff71f973db"
+                    },
+                    "treeOid": "af81719f532ce5cfdb6a8e126772f03530da1705",
+                    "commitOid": "3fb14b23ff092dbf06d67efd51a6ffa21a1c9950"
+                  }
+                ],
+                "candidateCommitOid": "0b6524c8d80de318f70111b71a06a4b34bdca660",
+                "candidateTreeOid": "b0438983159f761789c8dec0bdb58e54b9965fa0",
+                "refsBefore": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "1a2fbdc3ef3025d6110aa09fbda89ef5578a4c7a"
+                  }
+                ],
+                "refsAfter": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "1a2fbdc3ef3025d6110aa09fbda89ef5578a4c7a"
+                  }
+                ],
+                "mainStateBeforeDigest": "sha256:bbc3662271ff00f518eb608f8454854c5bfc1055bbb1c69bb488dcb3bdc1a781",
+                "mainStateAfterDigest": "sha256:bbc3662271ff00f518eb608f8454854c5bfc1055bbb1c69bb488dcb3bdc1a781",
+                "mainUnchanged": true,
+                "verificationCwdRole": "host-disposable-candidate",
+                "materializedPathRole": "candidate-verification-worktree",
+                "materializedIdentity": {
+                  "rootPath": "d:\\tmp\\autonomy-r4-zmmbqd\\repo\\.openclaw\\candidates\\vgc_0a7bc0aaeee76d680cad8155",
+                  "nativeIdentity": "a52c22115b942bad68743d846ea5ae45a78dc395a18ffe380ab788f40704ba81"
+                },
+                "allowedRuntimeIgnorePaths": [],
+                "inputDigest": "sha256:df5ace8351af68e66e38fc8bc33368a35b834466beb05d50bf3291469396b096"
+              },
+              "materializedPath": "d:\\tmp\\autonomy-r4-zmmbqd\\repo\\.openclaw\\candidates\\vgc_0a7bc0aaeee76d680cad8155",
+              "baseRoot": "d:\\tmp\\autonomy-r4-zmmbqd\\repo"
+            },
+            "worktreeMergeStatus": "merged",
+            "worktreeWriteSetMismatch": [],
+            "worktreeMergeJournalRef": "write-journal:review-apply-67d128af-a710-4566-b66c-8722e268e010:1",
+            "worktreeMergeHashes": {
+              "other.txt": "806c734071d8d93082a1c57c50a035b259a773aa27eece51f3c34321698f167e"
+            },
+            "worktreeMergeProcessedAt": 1794467105350
+          },
+          {
+            "isolation": "worktree",
+            "worktreeId": "second",
+            "worktreeGeneration": "f1a88a19-1f8e-4c9b-941a-dd2e69d8a52a",
+            "taskNodeId": "prefix-second",
+            "worktreeWriteSet": [
+              "new.txt"
+            ],
+            "worktreeBackend": "git",
+            "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-zmmbqd\\repo",
+            "worktreeVerificationCandidate": {
+              "manifest": {
+                "schema": "clawx.versegit.candidate/v1",
+                "candidateId": "vgc_0a7bc0aaeee76d680cad8155",
+                "baseOid": "1a2fbdc3ef3025d6110aa09fbda89ef5578a4c7a",
+                "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+                "workerSnapshots": [
+                  {
+                    "taskNodeId": "prefix-first",
+                    "parentOrder": 0,
+                    "worktreeRole": "first",
+                    "worktreeGeneration": "7f019993-96f7-4543-8f0b-d6bab3ba7437",
+                    "headOid": "1a2fbdc3ef3025d6110aa09fbda89ef5578a4c7a",
+                    "baseOid": "1a2fbdc3ef3025d6110aa09fbda89ef5578a4c7a",
+                    "statusDigest": "sha256:ad89cad4c69ab97d0e4a990f47921ebb94e506c91cd4fb195a246828d4cef485",
+                    "changedFiles": [
+                      "other.txt"
+                    ],
+                    "postimageHashes": {
+                      "other.txt": "806c734071d8d93082a1c57c50a035b259a773aa27eece51f3c34321698f167e"
+                    },
+                    "treeOid": "4da35813fabd9f20357c5982c99a1b846c3006ec",
+                    "commitOid": "4b14bcc5705e15fe96a712e9b231e64c667e22c0"
+                  },
+                  {
+                    "taskNodeId": "prefix-second",
+                    "parentOrder": 1,
+                    "worktreeRole": "second",
+                    "worktreeGeneration": "f1a88a19-1f8e-4c9b-941a-dd2e69d8a52a",
+                    "headOid": "1a2fbdc3ef3025d6110aa09fbda89ef5578a4c7a",
+                    "baseOid": "1a2fbdc3ef3025d6110aa09fbda89ef5578a4c7a",
+                    "statusDigest": "sha256:ed213742402e9962cce62bd790177e535bef05275d5ac799b88033269b26eb77",
+                    "changedFiles": [
+                      "new.txt"
+                    ],
+                    "postimageHashes": {
+                      "new.txt": "e26cfb11b683ba56a607a4b54bccb1a6bcc1df69d41abe6d9a1870ff71f973db"
+                    },
+                    "treeOid": "af81719f532ce5cfdb6a8e126772f03530da1705",
+                    "commitOid": "3fb14b23ff092dbf06d67efd51a6ffa21a1c9950"
+                  }
+                ],
+                "candidateCommitOid": "0b6524c8d80de318f70111b71a06a4b34bdca660",
+                "candidateTreeOid": "b0438983159f761789c8dec0bdb58e54b9965fa0",
+                "refsBefore": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "1a2fbdc3ef3025d6110aa09fbda89ef5578a4c7a"
+                  }
+                ],
+                "refsAfter": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "1a2fbdc3ef3025d6110aa09fbda89ef5578a4c7a"
+                  }
+                ],
+                "mainStateBeforeDigest": "sha256:bbc3662271ff00f518eb608f8454854c5bfc1055bbb1c69bb488dcb3bdc1a781",
+                "mainStateAfterDigest": "sha256:bbc3662271ff00f518eb608f8454854c5bfc1055bbb1c69bb488dcb3bdc1a781",
+                "mainUnchanged": true,
+                "verificationCwdRole": "host-disposable-candidate",
+                "materializedPathRole": "candidate-verification-worktree",
+                "materializedIdentity": {
+                  "rootPath": "d:\\tmp\\autonomy-r4-zmmbqd\\repo\\.openclaw\\candidates\\vgc_0a7bc0aaeee76d680cad8155",
+                  "nativeIdentity": "a52c22115b942bad68743d846ea5ae45a78dc395a18ffe380ab788f40704ba81"
+                },
+                "allowedRuntimeIgnorePaths": [],
+                "inputDigest": "sha256:df5ace8351af68e66e38fc8bc33368a35b834466beb05d50bf3291469396b096"
+              },
+              "materializedPath": "d:\\tmp\\autonomy-r4-zmmbqd\\repo\\.openclaw\\candidates\\vgc_0a7bc0aaeee76d680cad8155",
+              "baseRoot": "d:\\tmp\\autonomy-r4-zmmbqd\\repo"
+            },
+            "worktreeMergeJournalRef": "write-journal:review-apply-6645e5d0-193f-4e80-bed9-00ce77358cdf:1",
+            "worktreeMergeHashes": {
+              "new.txt": "e26cfb11b683ba56a607a4b54bccb1a6bcc1df69d41abe6d9a1870ff71f973db"
+            },
+            "worktreeMergeStatus": "merged",
+            "worktreeWriteSetMismatch": [],
+            "worktreeMergeProcessedAt": 1794467119331
+          }
+        ],
+        "faults": "injected",
+        "writesAndRegistry": "native"
+      }
+    },
+    "frozen-path-set-new-file-removed": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "status": "frozen",
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_f20252b6556c806a8b5f259e",
+            "baseOid": "71720459f68e7bda9c39bc039869e4e5567c832a",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "frozen-paths",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "f7fde682-109b-4c46-8006-458c4c6c9099",
+                "headOid": "71720459f68e7bda9c39bc039869e4e5567c832a",
+                "baseOid": "71720459f68e7bda9c39bc039869e4e5567c832a",
+                "statusDigest": "sha256:ab3bdef345b3812d2eb97c71c470bd958ec6bb813de3f06565172d3d9ac273db",
+                "changedFiles": [
+                  "new-result.txt"
+                ],
+                "postimageHashes": {
+                  "new-result.txt": "af64a85324ac9c983a13d6ab5cce30a8a8ddf5d99bc7a4196845b51bbaaffcd2"
+                },
+                "treeOid": "6f32845019f3c82c6c634894fc906379aa46d682",
+                "commitOid": "1111643cfb59572cc260da0f125267bcce6948eb"
+              }
+            ],
+            "candidateCommitOid": "e11694c6d1cf105bc55d98a24df8c8b32550ce84",
+            "candidateTreeOid": "6f32845019f3c82c6c634894fc906379aa46d682",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "71720459f68e7bda9c39bc039869e4e5567c832a"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "71720459f68e7bda9c39bc039869e4e5567c832a"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:b9b4088eece94064f7508f78d1c578677c93b926efff12af063ccc827cad719d",
+            "mainStateAfterDigest": "sha256:b9b4088eece94064f7508f78d1c578677c93b926efff12af063ccc827cad719d",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-bnskvc\\repo\\.openclaw\\candidates\\vgc_f20252b6556c806a8b5f259e",
+              "nativeIdentity": "7055d2698f805c9494ea1925d540e9ca92385b72531d84220af6a0924178a178"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:ac10b6ff838e8cd00b64c9b23876c4358667528294f3a093c2ffcbf0acb8d8d9"
+          },
+          "materializedPath": "D:\\tmp\\autonomy-r4-BNSkVc\\repo\\.openclaw\\candidates\\vgc_f20252b6556c806a8b5f259e",
+          "issues": []
+        },
+        "expectedPostimages": {
+          "new-result.txt": "af64a85324ac9c983a13d6ab5cce30a8a8ddf5d99bc7a4196845b51bbaaffcd2"
+        },
+        "result": [
+          {
+            "taskNodeId": "frozen-paths",
+            "worktreeId": "worker",
+            "worktreeGeneration": "f7fde682-109b-4c46-8006-458c4c6c9099",
+            "changedFiles": [],
+            "changedFilesSource": "git-status",
+            "writeSetMismatch": [
+              "new-result.txt"
+            ],
+            "status": "conflict",
+            "reason": "writeSet_mismatch:new-result.txt;frozen_candidate_changed:paths"
+          }
+        ]
+      }
+    },
+    "frozen-path-set-tracked-restored": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "status": "frozen",
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_f8e32e3dbbe22c44a72c41b3",
+            "baseOid": "038f8babcd37c593676441749130d25ec74c725b",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "frozen-paths",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "79b4d320-7e09-4cd3-8466-5c2872d48723",
+                "headOid": "038f8babcd37c593676441749130d25ec74c725b",
+                "baseOid": "038f8babcd37c593676441749130d25ec74c725b",
+                "statusDigest": "sha256:5df55dabd791e00571f6b7da2d33de3c64000117656e73e415ccffd082d5f5c0",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "af64a85324ac9c983a13d6ab5cce30a8a8ddf5d99bc7a4196845b51bbaaffcd2"
+                },
+                "treeOid": "247bed171a855de42123ce0ce459f9eee6a12f69",
+                "commitOid": "59f501e68423cd994b04c941cf6778976432cc27"
+              }
+            ],
+            "candidateCommitOid": "c4f7bdd218d882a393548918bc02ba0372c62f62",
+            "candidateTreeOid": "247bed171a855de42123ce0ce459f9eee6a12f69",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "038f8babcd37c593676441749130d25ec74c725b"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "038f8babcd37c593676441749130d25ec74c725b"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:6d2ed2aa83ac3a7a7c3c8c101c56bf29f21b65e46c168cf838462756a2995a1f",
+            "mainStateAfterDigest": "sha256:6d2ed2aa83ac3a7a7c3c8c101c56bf29f21b65e46c168cf838462756a2995a1f",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-flqvia\\repo\\.openclaw\\candidates\\vgc_f8e32e3dbbe22c44a72c41b3",
+              "nativeIdentity": "6cc6aed6771e25f7fe478fc64d1f1b6a412b02fb9c12bb56b2bc1696f040951e"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:7b16e89b272df953a294208865c1754db9e93707297c5cae8c0db954fafa8e8e"
+          },
+          "materializedPath": "D:\\tmp\\autonomy-r4-flQviA\\repo\\.openclaw\\candidates\\vgc_f8e32e3dbbe22c44a72c41b3",
+          "issues": []
+        },
+        "expectedPostimages": {
+          "other.txt": "af64a85324ac9c983a13d6ab5cce30a8a8ddf5d99bc7a4196845b51bbaaffcd2"
+        },
+        "result": [
+          {
+            "taskNodeId": "frozen-paths",
+            "worktreeId": "worker",
+            "worktreeGeneration": "79b4d320-7e09-4cd3-8466-5c2872d48723",
+            "changedFiles": [],
+            "changedFilesSource": "git-status",
+            "writeSetMismatch": [
+              "other.txt"
+            ],
+            "status": "conflict",
+            "reason": "writeSet_mismatch:other.txt;frozen_candidate_changed:paths"
+          }
+        ]
+      }
+    },
+    "frozen-path-set-unexpected-path": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "status": "frozen",
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_776ac97d73ff4492be1989eb",
+            "baseOid": "aee81dce000d1c6c874dd8d1daa4b209fb2edd56",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "frozen-paths",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "e943535e-2892-45df-8bf7-63968fe11f01",
+                "headOid": "aee81dce000d1c6c874dd8d1daa4b209fb2edd56",
+                "baseOid": "aee81dce000d1c6c874dd8d1daa4b209fb2edd56",
+                "statusDigest": "sha256:e20ee1de809777e3eff5ff88070db6522828aaac24953856ba4b07aa74fbecd9",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "af64a85324ac9c983a13d6ab5cce30a8a8ddf5d99bc7a4196845b51bbaaffcd2"
+                },
+                "treeOid": "247bed171a855de42123ce0ce459f9eee6a12f69",
+                "commitOid": "89062e79876f08e2a2c5ab9fdaa175395da08043"
+              }
+            ],
+            "candidateCommitOid": "55e9804a3f1101a6b3ae0dab5c576d73fc13cb6c",
+            "candidateTreeOid": "247bed171a855de42123ce0ce459f9eee6a12f69",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "aee81dce000d1c6c874dd8d1daa4b209fb2edd56"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "aee81dce000d1c6c874dd8d1daa4b209fb2edd56"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:c2e0ac15c618cb24b64137370cfdb9b952ab7fcccba9d9616031ac1d9f17167f",
+            "mainStateAfterDigest": "sha256:c2e0ac15c618cb24b64137370cfdb9b952ab7fcccba9d9616031ac1d9f17167f",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-fl709c\\repo\\.openclaw\\candidates\\vgc_776ac97d73ff4492be1989eb",
+              "nativeIdentity": "4b42048a1a822974c256a1dccbebdebfde92f9df86b42dc293ff7e46e64451c0"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:dfd7106774e645c75f7f12930c56beaa76d14d65e07f0d792a5f45c95f2addef"
+          },
+          "materializedPath": "D:\\tmp\\autonomy-r4-fl709c\\repo\\.openclaw\\candidates\\vgc_776ac97d73ff4492be1989eb",
+          "issues": []
+        },
+        "expectedPostimages": {
+          "other.txt": "af64a85324ac9c983a13d6ab5cce30a8a8ddf5d99bc7a4196845b51bbaaffcd2"
+        },
+        "result": [
+          {
+            "taskNodeId": "frozen-paths",
+            "worktreeId": "worker",
+            "worktreeGeneration": "e943535e-2892-45df-8bf7-63968fe11f01",
+            "changedFiles": [
+              "extra-result.txt",
+              "other.txt"
+            ],
+            "changedFilesSource": "git-status",
+            "writeSetMismatch": [
+              "extra-result.txt"
+            ],
+            "status": "conflict",
+            "reason": "writeSet_mismatch:extra-result.txt;frozen_candidate_changed:paths"
+          }
+        ]
+      }
+    },
+    "frozen-postimage-refusal": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "status": "frozen",
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_c3fc930befc821fc2311bdfa",
+            "baseOid": "b70c2168d2cfcf3dade4516eb0296f51b8dc7342",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "frozen-input",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "55c5fdf3-2df8-4ceb-9448-81a98e575d33",
+                "headOid": "b70c2168d2cfcf3dade4516eb0296f51b8dc7342",
+                "baseOid": "b70c2168d2cfcf3dade4516eb0296f51b8dc7342",
+                "statusDigest": "sha256:74e16dd96c4fb58e8b2565c43e4a41a47cc6859ac76f9000637b7ddc169c19c9",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "230792824ffd73afc3eaf6c1db4a324eb5c3d27ae86b91cd92eb3a052d59ef48"
+                },
+                "treeOid": "ea8fbcb6f4dc74d551dced94d1b8d5300415285c",
+                "commitOid": "9611af2268669b023389b561bef7cbb99a0e8d87"
+              }
+            ],
+            "candidateCommitOid": "559d49a0327e87c93ae59f9a05c1b7aa7a054591",
+            "candidateTreeOid": "ea8fbcb6f4dc74d551dced94d1b8d5300415285c",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "b70c2168d2cfcf3dade4516eb0296f51b8dc7342"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "b70c2168d2cfcf3dade4516eb0296f51b8dc7342"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:bdeab88b71ca0c897c0a262b4ac9b4f76424070563ab9f28b8f453484ed2e4b2",
+            "mainStateAfterDigest": "sha256:bdeab88b71ca0c897c0a262b4ac9b4f76424070563ab9f28b8f453484ed2e4b2",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-7mxwsx\\repo\\.openclaw\\candidates\\vgc_c3fc930befc821fc2311bdfa",
+              "nativeIdentity": "4a28fef538586f6eaa43c38ed3c840d14019d1b27f6f58018f605a9ee214aacf"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:619cecb4522a94661acbf0410f920da712d3583a406b6e77bf1796095876048b"
+          },
+          "materializedPath": "D:\\tmp\\autonomy-r4-7Mxwsx\\repo\\.openclaw\\candidates\\vgc_c3fc930befc821fc2311bdfa",
+          "issues": []
+        },
+        "expectedPostimages": {
+          "other.txt": "230792824ffd73afc3eaf6c1db4a324eb5c3d27ae86b91cd92eb3a052d59ef48"
+        },
+        "result": [
+          {
+            "taskNodeId": "frozen-input",
+            "worktreeId": "worker",
+            "worktreeGeneration": "55c5fdf3-2df8-4ceb-9448-81a98e575d33",
+            "changedFiles": [
+              "other.txt"
+            ],
+            "changedFilesSource": "git-status",
+            "writeSetMismatch": [],
+            "status": "conflict",
+            "reason": "frozen_candidate_changed:other.txt"
+          }
+        ]
+      }
+    },
+    "inprocess-production-completion-base": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "metadata": {
+          "orchestrationRunId": "inprocess-completion-run-base",
+          "originalTask": "verify integrated content",
+          "phase": "worker",
+          "isolation": "worktree",
+          "worktreeId": "worker",
+          "worktreeGeneration": "48b4e6ba-3804-4589-8c2a-c86db6e18e80",
+          "worktreeBackend": "inprocess",
+          "taskNodeId": "inprocess-completion-task",
+          "worktreeWriteSet": [
+            "other.txt"
+          ],
+          "verifierRole": "verifier",
+          "worktreeMergeBaseRoot": "D:\\tmp\\autonomy-r4-fLteOc\\repo",
+          "worktreeMergeStatus": "merged",
+          "worktreeWriteSetMismatch": [],
+          "worktreeMergeJournalRef": "write-journal:review-apply-79ff1f30-aa0e-4843-bcd1-26b8b42e91b1:1",
+          "worktreeMergeHashes": {
+            "other.txt": "e0bb7563120dcf35c1a9e9c8b9d11d1d0269036f9db6aae61f63d31b87fb0141"
+          },
+          "worktreeMergeProcessedAt": 1794467043749,
+          "verifierStartedRunId": "inprocess-verifier",
+          "verifierStartedAt": 1794467043877
+        },
+        "roleDispatch": "injected"
+      }
+    },
+    "inprocess-production-completion-worker": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "metadata": {
+          "orchestrationRunId": "inprocess-completion-run-worker",
+          "originalTask": "verify integrated content",
+          "phase": "worker",
+          "isolation": "worktree",
+          "worktreeId": "worker",
+          "worktreeGeneration": "07c19424-40e2-4c33-bf5b-984b71e2fc86",
+          "worktreeBackend": "inprocess",
+          "taskNodeId": "inprocess-completion-task",
+          "worktreeWriteSet": [
+            "other.txt"
+          ],
+          "verifierRole": "verifier",
+          "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-tetavm\\repo",
+          "worktreeMergeStatus": "merged",
+          "worktreeWriteSetMismatch": [],
+          "worktreeMergeJournalRef": "write-journal:review-apply-58951696-9774-4960-8547-a313cb5b620d:1",
+          "worktreeMergeHashes": {
+            "other.txt": "e0bb7563120dcf35c1a9e9c8b9d11d1d0269036f9db6aae61f63d31b87fb0141"
+          },
+          "worktreeMergeProcessedAt": 1794467048582,
+          "verifierStartedRunId": "inprocess-verifier",
+          "verifierStartedAt": 1794467048652
+        },
+        "roleDispatch": "injected"
+      }
+    },
+    "late-generation-metadata-not-adopted": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "validGeneration": "4b5695b2-29e3-492f-8d48-ea966a6db233",
+        "metadata": {
+          "isolation": "worktree",
+          "worktreeId": "worker",
+          "worktreeGeneration": "stale-or-different-generation",
+          "taskNodeId": "late-generation-task",
+          "worktreeWriteSet": [
+            "other.txt"
+          ],
+          "worktreeBackend": "git",
+          "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-mx5c3h\\repo",
+          "worktreeVerificationCandidate": {
+            "manifest": {
+              "schema": "clawx.versegit.candidate/v1",
+              "candidateId": "vgc_c09318757b952987951c12cc",
+              "baseOid": "0018d5f7e1b05c340ddc9b1d3272af00ffe27cae",
+              "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+              "workerSnapshots": [
+                {
+                  "taskNodeId": "late-generation-task",
+                  "parentOrder": 0,
+                  "worktreeRole": "worker",
+                  "worktreeGeneration": "4b5695b2-29e3-492f-8d48-ea966a6db233",
+                  "headOid": "0018d5f7e1b05c340ddc9b1d3272af00ffe27cae",
+                  "baseOid": "0018d5f7e1b05c340ddc9b1d3272af00ffe27cae",
+                  "statusDigest": "sha256:4a6788d3fe29e061c6ea5d3077a15998d645a28a1e622c668f70597fd483b086",
+                  "changedFiles": [
+                    "other.txt"
+                  ],
+                  "postimageHashes": {
+                    "other.txt": "1705c88c0c904099fde59a54ba3d30017958241c5174d0dc2a320dc08b5b05cb"
+                  },
+                  "treeOid": "39f1a9f75d6a79e848c5638702db5346e4870284",
+                  "commitOid": "8696747d8efcc178f1d4b0a55657fb8f34f70baf"
+                }
+              ],
+              "candidateCommitOid": "4590cdf1208b5151eb0abcd787bbd1e35eff5abc",
+              "candidateTreeOid": "39f1a9f75d6a79e848c5638702db5346e4870284",
+              "refsBefore": [
+                {
+                  "ref": "refs/heads/master",
+                  "oid": "0018d5f7e1b05c340ddc9b1d3272af00ffe27cae"
+                }
+              ],
+              "refsAfter": [
+                {
+                  "ref": "refs/heads/master",
+                  "oid": "0018d5f7e1b05c340ddc9b1d3272af00ffe27cae"
+                }
+              ],
+              "mainStateBeforeDigest": "sha256:426e083fadfd7411206e6a0176041ce21393b0c83be69fd216fec2b225e9ed7f",
+              "mainStateAfterDigest": "sha256:426e083fadfd7411206e6a0176041ce21393b0c83be69fd216fec2b225e9ed7f",
+              "mainUnchanged": true,
+              "verificationCwdRole": "host-disposable-candidate",
+              "materializedPathRole": "candidate-verification-worktree",
+              "materializedIdentity": {
+                "rootPath": "d:\\tmp\\autonomy-r4-mx5c3h\\repo\\.openclaw\\candidates\\vgc_c09318757b952987951c12cc",
+                "nativeIdentity": "099a830913903fd6ab6f1f1a270c855eddec8b0dd1a59618e92a39513116deae"
+              },
+              "allowedRuntimeIgnorePaths": [],
+              "inputDigest": "sha256:773bbe77727539f1a50e4b17836de16ec1e86df9294d774eae58da46471c7aa2"
+            },
+            "materializedPath": "d:\\tmp\\autonomy-r4-mx5c3h\\repo\\.openclaw\\candidates\\vgc_c09318757b952987951c12cc",
+            "baseRoot": "d:\\tmp\\autonomy-r4-mx5c3h\\repo"
+          }
+        }
+      }
+    },
+    "mixed-registry-backends-git-first": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "workers": [
+          {
+            "orchestrationRunId": "mixed-backend-run-git-first",
+            "originalTask": "verify both integrated worker outputs",
+            "phase": "worker",
+            "verifierRole": "verifier",
+            "isolation": "worktree",
+            "worktreeId": "native",
+            "worktreeGeneration": "3de80a78-1bc9-4c46-9726-bee3db353932",
+            "taskNodeId": "mixed-native",
+            "worktreeWriteSet": [
+              "other.txt"
+            ],
+            "worktreeBackend": "git",
+            "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-emfuh6\\repo",
+            "worktreeVerificationCandidate": {
+              "manifest": {
+                "schema": "clawx.versegit.candidate/v1",
+                "candidateId": "vgc_3a50e09f6cdc973395d7212b",
+                "baseOid": "c1794b5e3569ae7e1fad8ece2a922cf156e1cd82",
+                "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+                "workerSnapshots": [
+                  {
+                    "taskNodeId": "mixed-native",
+                    "parentOrder": 0,
+                    "worktreeRole": "native",
+                    "worktreeGeneration": "3de80a78-1bc9-4c46-9726-bee3db353932",
+                    "headOid": "c1794b5e3569ae7e1fad8ece2a922cf156e1cd82",
+                    "baseOid": "c1794b5e3569ae7e1fad8ece2a922cf156e1cd82",
+                    "statusDigest": "sha256:cc7a43f0184d8c10924ece903e327b9031d300e8f9c53ef6e70b315aebee7e4b",
+                    "changedFiles": [
+                      "other.txt"
+                    ],
+                    "postimageHashes": {
+                      "other.txt": "b2af35955f70973be9cb83bb9267ff759eada0e50e49349ebf7ffaff6a2eccb5"
+                    },
+                    "treeOid": "707eb6058a35df8936e098a5f484764b86d48447",
+                    "commitOid": "704bbd80a83dbf11f6a3dfabed080e5957f5573a"
+                  }
+                ],
+                "candidateCommitOid": "8b33989579bc7229173046d221f4112af2aff626",
+                "candidateTreeOid": "707eb6058a35df8936e098a5f484764b86d48447",
+                "refsBefore": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "c1794b5e3569ae7e1fad8ece2a922cf156e1cd82"
+                  }
+                ],
+                "refsAfter": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "c1794b5e3569ae7e1fad8ece2a922cf156e1cd82"
+                  }
+                ],
+                "mainStateBeforeDigest": "sha256:6bf52275ad661ec0aa8e6b2b5e22eeda76fe4c7bbc6956e6aa9fcdb8b4824d6b",
+                "mainStateAfterDigest": "sha256:6bf52275ad661ec0aa8e6b2b5e22eeda76fe4c7bbc6956e6aa9fcdb8b4824d6b",
+                "mainUnchanged": true,
+                "verificationCwdRole": "host-disposable-candidate",
+                "materializedPathRole": "candidate-verification-worktree",
+                "materializedIdentity": {
+                  "rootPath": "d:\\tmp\\autonomy-r4-emfuh6\\repo\\.openclaw\\candidates\\vgc_3a50e09f6cdc973395d7212b",
+                  "nativeIdentity": "2924f1696fa9d4d928f8fcd8b628253255704f9b94defe631fb759a794272aab"
+                },
+                "allowedRuntimeIgnorePaths": [],
+                "inputDigest": "sha256:24dcfd43c1acd7b09f90dbf6432539c9a2995f0b9670ed9c2d5cfe6756ddd351"
+              },
+              "materializedPath": "d:\\tmp\\autonomy-r4-emfuh6\\repo\\.openclaw\\candidates\\vgc_3a50e09f6cdc973395d7212b",
+              "baseRoot": "d:\\tmp\\autonomy-r4-emfuh6\\repo"
+            },
+            "worktreeMergeStatus": "merged",
+            "worktreeWriteSetMismatch": [],
+            "worktreeMergeJournalRef": "write-journal:review-apply-02b1e8d0-9abe-4a0b-8826-54cc24f1fa2e:1",
+            "worktreeMergeHashes": {
+              "other.txt": "b2af35955f70973be9cb83bb9267ff759eada0e50e49349ebf7ffaff6a2eccb5"
+            },
+            "worktreeMergeProcessedAt": 1794467054807,
+            "verifierStartedRunId": "mixed-backend-verifier",
+            "verifierStartedAt": 1794467065327
+          },
+          {
+            "orchestrationRunId": "mixed-backend-run-git-first",
+            "originalTask": "verify both integrated worker outputs",
+            "phase": "worker",
+            "verifierRole": "verifier",
+            "isolation": "worktree",
+            "worktreeId": "copied",
+            "worktreeGeneration": "a9454751-316d-46e9-870c-603a918692eb",
+            "taskNodeId": "mixed-copied",
+            "worktreeWriteSet": [
+              "original.bin"
+            ],
+            "worktreeBackend": "inprocess",
+            "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-emfuh6\\repo",
+            "worktreeMergeStatus": "merged",
+            "worktreeWriteSetMismatch": [],
+            "worktreeMergeJournalRef": "write-journal:review-apply-3e0984af-3629-497b-a3b6-99f2f8642a32:1",
+            "worktreeMergeHashes": {
+              "original.bin": "9bc31a31b3edcdf96be0c7c6726d57c8562ff1226d759b767b817052d14e6953"
+            },
+            "worktreeMergeProcessedAt": 1794467054807,
+            "verifierStartedRunId": "mixed-backend-verifier",
+            "verifierStartedAt": 1794467065327
+          }
+        ],
+        "roleDispatch": "injected"
+      }
+    },
+    "mixed-registry-backends-inprocess-first": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "workers": [
+          {
+            "orchestrationRunId": "mixed-backend-run-inprocess-first",
+            "originalTask": "verify both integrated worker outputs",
+            "phase": "worker",
+            "verifierRole": "verifier",
+            "isolation": "worktree",
+            "worktreeId": "copied",
+            "worktreeGeneration": "8593afe5-8908-420f-964b-05b1bb33ee19",
+            "taskNodeId": "mixed-copied",
+            "worktreeWriteSet": [
+              "original.bin"
+            ],
+            "worktreeBackend": "inprocess",
+            "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-h0b9cu\\repo",
+            "worktreeMergeStatus": "merged",
+            "worktreeWriteSetMismatch": [],
+            "worktreeMergeJournalRef": "write-journal:review-apply-45f63a83-c457-400d-8df3-35079e29e5df:1",
+            "worktreeMergeHashes": {
+              "original.bin": "9bc31a31b3edcdf96be0c7c6726d57c8562ff1226d759b767b817052d14e6953"
+            },
+            "worktreeMergeProcessedAt": 1794467067173,
+            "verifierStartedRunId": "mixed-backend-verifier",
+            "verifierStartedAt": 1794467078796
+          },
+          {
+            "orchestrationRunId": "mixed-backend-run-inprocess-first",
+            "originalTask": "verify both integrated worker outputs",
+            "phase": "worker",
+            "verifierRole": "verifier",
+            "isolation": "worktree",
+            "worktreeId": "native",
+            "worktreeGeneration": "d2d1bdba-8a86-44e8-8f50-41c7bf2759b4",
+            "taskNodeId": "mixed-native",
+            "worktreeWriteSet": [
+              "other.txt"
+            ],
+            "worktreeBackend": "git",
+            "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-h0b9cu\\repo",
+            "worktreeVerificationCandidate": {
+              "manifest": {
+                "schema": "clawx.versegit.candidate/v1",
+                "candidateId": "vgc_716b4bae1524d39250d7e01a",
+                "baseOid": "b0da5cf6fa0390a8a64eb6dc404e13d0cf92ce59",
+                "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+                "workerSnapshots": [
+                  {
+                    "taskNodeId": "mixed-native",
+                    "parentOrder": 0,
+                    "worktreeRole": "native",
+                    "worktreeGeneration": "d2d1bdba-8a86-44e8-8f50-41c7bf2759b4",
+                    "headOid": "b0da5cf6fa0390a8a64eb6dc404e13d0cf92ce59",
+                    "baseOid": "b0da5cf6fa0390a8a64eb6dc404e13d0cf92ce59",
+                    "statusDigest": "sha256:77b23470894c1654e2838561ecab342fa05ede0ab3ccab6d5fbee5fc5d1b8a90",
+                    "changedFiles": [
+                      "other.txt"
+                    ],
+                    "postimageHashes": {
+                      "other.txt": "b2af35955f70973be9cb83bb9267ff759eada0e50e49349ebf7ffaff6a2eccb5"
+                    },
+                    "treeOid": "707eb6058a35df8936e098a5f484764b86d48447",
+                    "commitOid": "6ce248d2e302ba5ff41f23d89d2aa0109b7cdc34"
+                  }
+                ],
+                "candidateCommitOid": "70aa039175fd14519ba20a8882b9b321b1010ce0",
+                "candidateTreeOid": "707eb6058a35df8936e098a5f484764b86d48447",
+                "refsBefore": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "b0da5cf6fa0390a8a64eb6dc404e13d0cf92ce59"
+                  }
+                ],
+                "refsAfter": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "b0da5cf6fa0390a8a64eb6dc404e13d0cf92ce59"
+                  }
+                ],
+                "mainStateBeforeDigest": "sha256:49f29a6ff7a34241f2ce8c5196e2960fe694a55da00aa73bc766ab5e180e7e72",
+                "mainStateAfterDigest": "sha256:49f29a6ff7a34241f2ce8c5196e2960fe694a55da00aa73bc766ab5e180e7e72",
+                "mainUnchanged": true,
+                "verificationCwdRole": "host-disposable-candidate",
+                "materializedPathRole": "candidate-verification-worktree",
+                "materializedIdentity": {
+                  "rootPath": "d:\\tmp\\autonomy-r4-h0b9cu\\repo\\.openclaw\\candidates\\vgc_716b4bae1524d39250d7e01a",
+                  "nativeIdentity": "456477ac20eea7a95ada800fb54ed9a34ce0f7da7b23541b3ae365edf87a0c9b"
+                },
+                "allowedRuntimeIgnorePaths": [],
+                "inputDigest": "sha256:9366f41d90a13c7e96ddadc1c04ceb5e12ea95f7393dcdd13bd02aed0afee5a5"
+              },
+              "materializedPath": "d:\\tmp\\autonomy-r4-h0b9cu\\repo\\.openclaw\\candidates\\vgc_716b4bae1524d39250d7e01a",
+              "baseRoot": "d:\\tmp\\autonomy-r4-h0b9cu\\repo"
+            },
+            "worktreeMergeStatus": "merged",
+            "worktreeWriteSetMismatch": [],
+            "worktreeMergeJournalRef": "write-journal:review-apply-40e1d9b2-4bc4-4efb-83f5-13a9c745c6a0:1",
+            "worktreeMergeHashes": {
+              "other.txt": "b2af35955f70973be9cb83bb9267ff759eada0e50e49349ebf7ffaff6a2eccb5"
+            },
+            "worktreeMergeProcessedAt": 1794467067173,
+            "verifierStartedRunId": "mixed-backend-verifier",
+            "verifierStartedAt": 1794467078796
+          }
+        ],
+        "roleDispatch": "injected"
+      }
+    },
+    "mixed-worker-verifier-all-failed": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "order": "all-failed",
+        "good": {
+          "orchestrationRunId": "mixed-result-run",
+          "originalTask": "Verify all worker outcomes",
+          "phase": "worker",
+          "verifierRole": "verifier",
+          "isolation": "worktree",
+          "worktreeId": "worker",
+          "worktreeGeneration": "ffe07d19-0e24-4592-af1a-a6462c78d8e9",
+          "taskNodeId": "mixed-good-task",
+          "worktreeWriteSet": [
+            "other.txt"
+          ],
+          "worktreeMergeStatus": "error",
+          "worktreeWriteSetMismatch": [],
+          "worktreeMergeReason": "worker_failed:error",
+          "worktreeMergeProcessedAt": 1794467375691,
+          "verifierSkippedReason": "all-workers-failed",
+          "verifierSkippedAt": 1794467375691
+        },
+        "bad": {
+          "orchestrationRunId": "mixed-result-run",
+          "originalTask": "Verify all worker outcomes",
+          "phase": "worker",
+          "verifierRole": "verifier",
+          "isolation": "worktree",
+          "worktreeId": "failed-worker",
+          "worktreeGeneration": "ffe07d19-0e24-4592-af1a-a6462c78d8e9",
+          "taskNodeId": "mixed-bad-task",
+          "worktreeWriteSet": [
+            "other.txt"
+          ],
+          "worktreeMergeStatus": "error",
+          "worktreeWriteSetMismatch": [],
+          "worktreeMergeReason": "worker_failed:error",
+          "worktreeMergeProcessedAt": 1794467375691,
+          "verifierSkippedReason": "all-workers-failed",
+          "verifierSkippedAt": 1794467375691
+        },
+        "roleDispatch": "injected"
+      }
+    },
+    "mixed-worker-verifier-failed-first": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "order": "failed-first",
+        "good": {
+          "orchestrationRunId": "mixed-result-run",
+          "originalTask": "Verify all worker outcomes",
+          "phase": "worker",
+          "verifierRole": "verifier",
+          "isolation": "worktree",
+          "worktreeId": "worker",
+          "worktreeGeneration": "fc2319c8-4bd6-4454-b9fb-24dcb1b79167",
+          "taskNodeId": "mixed-good-task",
+          "worktreeWriteSet": [
+            "other.txt"
+          ],
+          "worktreeBackend": "git",
+          "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-hwsvea\\repo",
+          "worktreeVerificationCandidate": {
+            "manifest": {
+              "schema": "clawx.versegit.candidate/v1",
+              "candidateId": "vgc_897f2431f0d76179348843cd",
+              "baseOid": "7d7c67f2f4f4a8daf9a63a0866feb67b63f41cd1",
+              "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+              "workerSnapshots": [
+                {
+                  "taskNodeId": "mixed-good-task",
+                  "parentOrder": 0,
+                  "worktreeRole": "worker",
+                  "worktreeGeneration": "fc2319c8-4bd6-4454-b9fb-24dcb1b79167",
+                  "headOid": "7d7c67f2f4f4a8daf9a63a0866feb67b63f41cd1",
+                  "baseOid": "7d7c67f2f4f4a8daf9a63a0866feb67b63f41cd1",
+                  "statusDigest": "sha256:7167041177a825e8f350216d60dc7819f795a47f87e872ad16e1c7d482ba87d1",
+                  "changedFiles": [
+                    "other.txt"
+                  ],
+                  "postimageHashes": {
+                    "other.txt": "0231c5418de067a08eded68bf9b57aede70a756014189052a3a81ed2cae61d7f"
+                  },
+                  "treeOid": "f2c13bc075ba52cafff870ed55d422a58dc94009",
+                  "commitOid": "883b54378e71da8fc246f3401bc1d370b39510ea"
+                }
+              ],
+              "candidateCommitOid": "7fab8414f325687a8fb4a14aab0ceaa2a4140c2b",
+              "candidateTreeOid": "f2c13bc075ba52cafff870ed55d422a58dc94009",
+              "refsBefore": [
+                {
+                  "ref": "refs/heads/master",
+                  "oid": "7d7c67f2f4f4a8daf9a63a0866feb67b63f41cd1"
+                }
+              ],
+              "refsAfter": [
+                {
+                  "ref": "refs/heads/master",
+                  "oid": "7d7c67f2f4f4a8daf9a63a0866feb67b63f41cd1"
+                }
+              ],
+              "mainStateBeforeDigest": "sha256:81e09613c7473ee6317d6d42ec9f774b6852d4076104ef3d2469ddc85ae00ed9",
+              "mainStateAfterDigest": "sha256:81e09613c7473ee6317d6d42ec9f774b6852d4076104ef3d2469ddc85ae00ed9",
+              "mainUnchanged": true,
+              "verificationCwdRole": "host-disposable-candidate",
+              "materializedPathRole": "candidate-verification-worktree",
+              "materializedIdentity": {
+                "rootPath": "d:\\tmp\\autonomy-r4-hwsvea\\repo\\.openclaw\\candidates\\vgc_897f2431f0d76179348843cd",
+                "nativeIdentity": "e9dd6186192098f9bb22424e7ff0c11866b6b93dd2a5e231c8f719854ec15b27"
+              },
+              "allowedRuntimeIgnorePaths": [],
+              "inputDigest": "sha256:c7907c374e5572909b5ace365336b87f0af8c34f2b308837bfb9b6d4ba87e3c7"
+            },
+            "materializedPath": "d:\\tmp\\autonomy-r4-hwsvea\\repo\\.openclaw\\candidates\\vgc_897f2431f0d76179348843cd",
+            "baseRoot": "d:\\tmp\\autonomy-r4-hwsvea\\repo"
+          },
+          "worktreeMergeStatus": "merged",
+          "worktreeWriteSetMismatch": [],
+          "worktreeMergeJournalRef": "write-journal:review-apply-b85b6bdd-6c54-47ce-b36c-134f755a121f:1",
+          "worktreeMergeHashes": {
+            "other.txt": "0231c5418de067a08eded68bf9b57aede70a756014189052a3a81ed2cae61d7f"
+          },
+          "worktreeMergeProcessedAt": 1794467356323,
+          "verifierStartedRunId": "mixed-verifier",
+          "verifierStartedAt": 1794467364966
+        },
+        "bad": {
+          "orchestrationRunId": "mixed-result-run",
+          "originalTask": "Verify all worker outcomes",
+          "phase": "worker",
+          "verifierRole": "verifier",
+          "isolation": "worktree",
+          "worktreeId": "failed-worker",
+          "worktreeGeneration": "fc2319c8-4bd6-4454-b9fb-24dcb1b79167",
+          "taskNodeId": "mixed-bad-task",
+          "worktreeWriteSet": [
+            "other.txt"
+          ],
+          "worktreeMergeStatus": "error",
+          "worktreeWriteSetMismatch": [],
+          "worktreeMergeReason": "worker_failed:error",
+          "worktreeMergeProcessedAt": 1794467356323,
+          "verifierStartedRunId": "mixed-verifier",
+          "verifierStartedAt": 1794467364966
+        },
+        "roleDispatch": "injected"
+      }
+    },
+    "mixed-worker-verifier-failed-last": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "order": "failed-last",
+        "good": {
+          "orchestrationRunId": "mixed-result-run",
+          "originalTask": "Verify all worker outcomes",
+          "phase": "worker",
+          "verifierRole": "verifier",
+          "isolation": "worktree",
+          "worktreeId": "worker",
+          "worktreeGeneration": "bb493af2-3621-40a5-a8e8-8995f6dd7272",
+          "taskNodeId": "mixed-good-task",
+          "worktreeWriteSet": [
+            "other.txt"
+          ],
+          "worktreeBackend": "git",
+          "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-aigltu\\repo",
+          "worktreeVerificationCandidate": {
+            "manifest": {
+              "schema": "clawx.versegit.candidate/v1",
+              "candidateId": "vgc_c8a4558bdb86a86448b379cb",
+              "baseOid": "6366849b870542fa531f1be975f70f3f7b347a5e",
+              "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+              "workerSnapshots": [
+                {
+                  "taskNodeId": "mixed-good-task",
+                  "parentOrder": 0,
+                  "worktreeRole": "worker",
+                  "worktreeGeneration": "bb493af2-3621-40a5-a8e8-8995f6dd7272",
+                  "headOid": "6366849b870542fa531f1be975f70f3f7b347a5e",
+                  "baseOid": "6366849b870542fa531f1be975f70f3f7b347a5e",
+                  "statusDigest": "sha256:0f7385a2e10bdc820c3201b7031b3406b1df2e01cf732ed534c94ecd366b2c84",
+                  "changedFiles": [
+                    "other.txt"
+                  ],
+                  "postimageHashes": {
+                    "other.txt": "0231c5418de067a08eded68bf9b57aede70a756014189052a3a81ed2cae61d7f"
+                  },
+                  "treeOid": "f2c13bc075ba52cafff870ed55d422a58dc94009",
+                  "commitOid": "dec547c4e6e2404af60b039cf0957e76e837db08"
+                }
+              ],
+              "candidateCommitOid": "72c2c59aeab9e09045b902f637db428ac0626f83",
+              "candidateTreeOid": "f2c13bc075ba52cafff870ed55d422a58dc94009",
+              "refsBefore": [
+                {
+                  "ref": "refs/heads/master",
+                  "oid": "6366849b870542fa531f1be975f70f3f7b347a5e"
+                }
+              ],
+              "refsAfter": [
+                {
+                  "ref": "refs/heads/master",
+                  "oid": "6366849b870542fa531f1be975f70f3f7b347a5e"
+                }
+              ],
+              "mainStateBeforeDigest": "sha256:eac2756ae6f951f6c8bceac3654ef6fdb98b2d91afc788487298d56af9e321f8",
+              "mainStateAfterDigest": "sha256:eac2756ae6f951f6c8bceac3654ef6fdb98b2d91afc788487298d56af9e321f8",
+              "mainUnchanged": true,
+              "verificationCwdRole": "host-disposable-candidate",
+              "materializedPathRole": "candidate-verification-worktree",
+              "materializedIdentity": {
+                "rootPath": "d:\\tmp\\autonomy-r4-aigltu\\repo\\.openclaw\\candidates\\vgc_c8a4558bdb86a86448b379cb",
+                "nativeIdentity": "823a635cbf7471a7383e6865138409b16703b80094b1af1a201fa836e7036612"
+              },
+              "allowedRuntimeIgnorePaths": [],
+              "inputDigest": "sha256:9405b97f51dd567dbe1193932cf4086ddfe4a403a171b09fe9651e62eebd95b4"
+            },
+            "materializedPath": "d:\\tmp\\autonomy-r4-aigltu\\repo\\.openclaw\\candidates\\vgc_c8a4558bdb86a86448b379cb",
+            "baseRoot": "d:\\tmp\\autonomy-r4-aigltu\\repo"
+          },
+          "worktreeMergeStatus": "merged",
+          "worktreeWriteSetMismatch": [],
+          "worktreeMergeJournalRef": "write-journal:review-apply-233f760d-0443-496f-83e3-1bb1dd3528e1:1",
+          "worktreeMergeHashes": {
+            "other.txt": "0231c5418de067a08eded68bf9b57aede70a756014189052a3a81ed2cae61d7f"
+          },
+          "worktreeMergeProcessedAt": 1794467366024,
+          "verifierStartedRunId": "mixed-verifier",
+          "verifierStartedAt": 1794467374543
+        },
+        "bad": {
+          "orchestrationRunId": "mixed-result-run",
+          "originalTask": "Verify all worker outcomes",
+          "phase": "worker",
+          "verifierRole": "verifier",
+          "isolation": "worktree",
+          "worktreeId": "failed-worker",
+          "worktreeGeneration": "bb493af2-3621-40a5-a8e8-8995f6dd7272",
+          "taskNodeId": "mixed-bad-task",
+          "worktreeWriteSet": [
+            "other.txt"
+          ],
+          "worktreeMergeStatus": "error",
+          "worktreeWriteSetMismatch": [],
+          "worktreeMergeReason": "worker_failed:error",
+          "worktreeMergeProcessedAt": 1794467366024,
+          "verifierStartedRunId": "mixed-verifier",
+          "verifierStartedAt": 1794467374543
+        },
+        "roleDispatch": "injected"
+      }
+    },
+    "mixed-worker-verifier-failed-worktree-shared-success": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "order": "failed-worktree-shared-success",
+        "good": {
+          "orchestrationRunId": "mixed-result-run",
+          "originalTask": "Verify all worker outcomes",
+          "phase": "worker",
+          "verifierRole": "verifier",
+          "isolation": "shared",
+          "taskNodeId": "mixed-good-task",
+          "worktreeWriteSet": [
+            "other.txt"
+          ],
+          "verifierStartedRunId": "mixed-verifier",
+          "verifierStartedAt": 1794467376683
+        },
+        "bad": {
+          "orchestrationRunId": "mixed-result-run",
+          "originalTask": "Verify all worker outcomes",
+          "phase": "worker",
+          "verifierRole": "verifier",
+          "isolation": "worktree",
+          "worktreeId": "failed-worker",
+          "worktreeGeneration": "df2e2c40-28c1-4c09-8ec1-b3d7c7c73502",
+          "taskNodeId": "mixed-bad-task",
+          "worktreeWriteSet": [
+            "other.txt"
+          ],
+          "worktreeMergeStatus": "error",
+          "worktreeWriteSetMismatch": [],
+          "worktreeMergeReason": "worker_failed:error",
+          "worktreeMergeProcessedAt": 1794467376683,
+          "verifierStartedRunId": "mixed-verifier",
+          "verifierStartedAt": 1794467376683
+        },
+        "roleDispatch": "injected"
+      }
+    },
+    "native-missing-final-spelling": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "result": [
+          {
+            "taskNodeId": "nested-delete",
+            "worktreeId": "nested-delete",
+            "worktreeGeneration": "72803688-98a9-48a9-82ca-2be40b9ec94d",
+            "changedFiles": [
+              "src/a.ts"
+            ],
+            "changedFilesSource": "git-status",
+            "writeSetMismatch": [],
+            "status": "merged",
+            "journalRef": "write-journal:review-apply-62cbdd17-a9e9-45c1-9d2b-33f105e257fa:1",
+            "hashes": {
+              "src/a.ts": null
+            }
+          }
+        ],
+        "candidate": {
+          "status": "frozen",
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_1132e30253549d966ba12002",
+            "baseOid": "21ab89829473bba275fdadd40377a6d5186d8f88",
+            "baseTreeOid": "66a0fa051a01be05ba0a81bfcc7c90db63f3aa7c",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "nested-delete",
+                "parentOrder": 0,
+                "worktreeRole": "nested-delete",
+                "worktreeGeneration": "72803688-98a9-48a9-82ca-2be40b9ec94d",
+                "headOid": "21ab89829473bba275fdadd40377a6d5186d8f88",
+                "baseOid": "21ab89829473bba275fdadd40377a6d5186d8f88",
+                "statusDigest": "sha256:87a2b2cf9fe2af0531f39120b2f3af6bac63a9e56d92589dd6c0fbdf81275c4d",
+                "changedFiles": [
+                  "src/a.ts"
+                ],
+                "postimageHashes": {
+                  "src/a.ts": null
+                },
+                "treeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+                "commitOid": "61fe406fa1556a47984c58183bfd0cb1dd889448"
+              }
+            ],
+            "candidateCommitOid": "12a0aa93c5f081357379e6b942f5b4cae609e2d3",
+            "candidateTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "21ab89829473bba275fdadd40377a6d5186d8f88"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "21ab89829473bba275fdadd40377a6d5186d8f88"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:439d4c9b8e7eddfe8ea63e965a26c4629a0e3d6d52d42aa1fc9aace35b5851d4",
+            "mainStateAfterDigest": "sha256:439d4c9b8e7eddfe8ea63e965a26c4629a0e3d6d52d42aa1fc9aace35b5851d4",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-goq30b\\repo\\.openclaw\\candidates\\vgc_1132e30253549d966ba12002",
+              "nativeIdentity": "4655d6ca3fa0bd26ac842f644a5db917cf8adbfb9038e5e465a53b608286d738"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:df0b7b2e9b7b8220bfebdcd5ba78e9020fa015df5514771a52ebccf4b5398974"
+          },
+          "materializedPath": "D:\\tmp\\autonomy-r4-GOQ30B\\repo\\.openclaw\\candidates\\vgc_1132e30253549d966ba12002",
+          "issues": []
+        }
+      }
+    },
+    "native-new-directory-merge": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "platform": "win32",
+        "workerMode": 438,
+        "targetMode": 438,
+        "result": [
+          {
+            "taskNodeId": "native-directory",
+            "worktreeId": "worker",
+            "worktreeGeneration": "fa2866ea-552d-4101-b1aa-d2225c0a3bfa",
+            "changedFiles": [
+              "new-directory/receipt.txt"
+            ],
+            "changedFilesSource": "git-status",
+            "writeSetMismatch": [],
+            "status": "merged",
+            "journalRef": "write-journal:review-apply-d0f24745-2390-4545-a420-daa268525e85:1",
+            "hashes": {
+              "new-directory/receipt.txt": "92a7fc2f4e67da71be8af8ef9e1e571b16ff9ae6d80ed58983b837d17469f84e"
+            }
+          }
+        ]
+      }
+    },
+    "native-queued-worker-owner": {
+      "driven_by": "agent",
+      "actor": "r4-native-wave-test",
+      "nativeGit": true,
+      "agentRPC": "injected",
+      "workspace": "D:\\tmp\\r4-native-wave-aHk0fm\\repo\\.openclaw\\worktrees\\native-owner-wave-docs-writer-1",
+      "ownerBase": "d:\\tmp\\r4-native-wave-ahk0fm\\repo",
+      "worktreeId": "native-owner-wave-docs-writer-1",
+      "generation": "b6f53ab9-19e4-460a-a397-bc03e89b4c09",
+      "dispatched": [
+        {
+          "runId": "be69b610-93c6-45a1-9652-175d29ae8250",
+          "childSessionKey": "agent:main:subagent:3c2a7020-3e9b-4c0b-8c70-c6fcc060d56f"
+        },
+        {
+          "runId": "670e96b7-64de-4278-b8dc-7beb7e378c69",
+          "childSessionKey": "agent:main:subagent:08b87e61-a66d-465d-88dc-026c86e7392b"
+        }
+      ]
+    },
+    "native-restart": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "first": {
+          "driven_by": "agent",
+          "actor": "r4-native-merge-process",
+          "pid": 5332,
+          "queued": {
+            "worktreeId": "worker",
+            "worktreeGeneration": "62a33789-4356-4917-b1dc-79a35ea3fd9e",
+            "changedFiles": [
+              "other.txt"
+            ],
+            "status": "pending"
+          },
+          "processed": [
+            {
+              "worktreeId": "worker",
+              "worktreeGeneration": "62a33789-4356-4917-b1dc-79a35ea3fd9e",
+              "changedFiles": [
+                "other.txt"
+              ],
+              "status": "merged",
+              "journalRef": "write-journal:review-apply-b6846901-bc71-4751-a685-50828390bf72:1",
+              "hashes": {
+                "other.txt": "f142ca64fa88ebea950e57d13d12506faeee971888a064a706558e45ad03360f"
+              },
+              "recoveryRequired": false
+            }
+          ],
+          "records": [
+            {
+              "id": "worker",
+              "generation": "62a33789-4356-4917-b1dc-79a35ea3fd9e",
+              "root": "D:\\tmp\\autonomy-r4-Y6Gh0h\\repo\\.openclaw\\worktrees\\worker",
+              "baseRoot": "D:\\tmp\\autonomy-r4-Y6Gh0h\\repo",
+              "createdAtMs": 1794467377599,
+              "status": "merged",
+              "writeSet": [
+                "other.txt"
+              ],
+              "backend": "git",
+              "registration": {
+                "operationId": "f23e213f-57bb-4985-80f6-0cc5ce19ee27",
+                "requestDigest": "e2402f3f0710fe60a13164d37cec73885ca7c9c709c17d3aac3ece72d1c31d5f",
+                "phase": "ready",
+                "rootIdentity": "3325120695:5066549585953696:1794467377601588200",
+                "nativeIdentity": "100a9b94ac4e221dc62a63bd2cd864ae70d90297facec1708d90c42b4abcd5f6"
+              },
+              "baseOid": "eda89fb3ed6b9349800134ef56f04245ac39ef15",
+              "mergeBaseline": {
+                "parent": {
+                  ".gitignore": "cd6704c207ccdf5f5c865329a0de86c56a6b55ce32bd25d2cb675349a40b76e3",
+                  "original.bin": "5245ef8b8787b367a5b717431daf24b45683ffae63c54243e2e3fc6c5ec44a36",
+                  "other.txt": "3176fae3e14297cf87614d6d77952f3305c803867f474bc9d401912ea4c16c55"
+                },
+                "worker": {
+                  ".gitignore": "cd6704c207ccdf5f5c865329a0de86c56a6b55ce32bd25d2cb675349a40b76e3",
+                  "original.bin": "5245ef8b8787b367a5b717431daf24b45683ffae63c54243e2e3fc6c5ec44a36",
+                  "other.txt": "3176fae3e14297cf87614d6d77952f3305c803867f474bc9d401912ea4c16c55"
+                },
+                "workerModes": {
+                  "": 438,
+                  ".gitignore": 438,
+                  "original.bin": 438,
+                  "other.txt": 438
+                }
+              },
+              "mergeResult": {
+                "worktreeId": "worker",
+                "worktreeGeneration": "62a33789-4356-4917-b1dc-79a35ea3fd9e",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "status": "merged",
+                "journalRef": "write-journal:review-apply-b6846901-bc71-4751-a685-50828390bf72:1",
+                "hashes": {
+                  "other.txt": "f142ca64fa88ebea950e57d13d12506faeee971888a064a706558e45ad03360f"
+                },
+                "recoveryRequired": false
+              }
+            }
+          ],
+          "remaining": []
+        },
+        "second": {
+          "driven_by": "agent",
+          "actor": "r4-native-merge-process",
+          "pid": 34916,
+          "queued": {
+            "worktreeId": "worker",
+            "worktreeGeneration": "62a33789-4356-4917-b1dc-79a35ea3fd9e",
+            "changedFiles": [
+              "other.txt"
+            ],
+            "status": "merged",
+            "journalRef": "write-journal:review-apply-b6846901-bc71-4751-a685-50828390bf72:1",
+            "hashes": {
+              "other.txt": "f142ca64fa88ebea950e57d13d12506faeee971888a064a706558e45ad03360f"
+            },
+            "recoveryRequired": false
+          },
+          "processed": [],
+          "records": [
+            {
+              "id": "worker",
+              "generation": "62a33789-4356-4917-b1dc-79a35ea3fd9e",
+              "root": "D:\\tmp\\autonomy-r4-Y6Gh0h\\repo\\.openclaw\\worktrees\\worker",
+              "baseRoot": "D:\\tmp\\autonomy-r4-Y6Gh0h\\repo",
+              "createdAtMs": 1794467377599,
+              "status": "merged",
+              "writeSet": [
+                "other.txt"
+              ],
+              "backend": "git",
+              "registration": {
+                "operationId": "f23e213f-57bb-4985-80f6-0cc5ce19ee27",
+                "requestDigest": "e2402f3f0710fe60a13164d37cec73885ca7c9c709c17d3aac3ece72d1c31d5f",
+                "phase": "ready",
+                "rootIdentity": "3325120695:5066549585953696:1794467377601588200",
+                "nativeIdentity": "100a9b94ac4e221dc62a63bd2cd864ae70d90297facec1708d90c42b4abcd5f6"
+              },
+              "baseOid": "eda89fb3ed6b9349800134ef56f04245ac39ef15",
+              "mergeBaseline": {
+                "parent": {
+                  ".gitignore": "cd6704c207ccdf5f5c865329a0de86c56a6b55ce32bd25d2cb675349a40b76e3",
+                  "original.bin": "5245ef8b8787b367a5b717431daf24b45683ffae63c54243e2e3fc6c5ec44a36",
+                  "other.txt": "3176fae3e14297cf87614d6d77952f3305c803867f474bc9d401912ea4c16c55"
+                },
+                "worker": {
+                  ".gitignore": "cd6704c207ccdf5f5c865329a0de86c56a6b55ce32bd25d2cb675349a40b76e3",
+                  "original.bin": "5245ef8b8787b367a5b717431daf24b45683ffae63c54243e2e3fc6c5ec44a36",
+                  "other.txt": "3176fae3e14297cf87614d6d77952f3305c803867f474bc9d401912ea4c16c55"
+                },
+                "workerModes": {
+                  "": 438,
+                  ".gitignore": 438,
+                  "original.bin": 438,
+                  "other.txt": 438
+                }
+              },
+              "mergeResult": {
+                "worktreeId": "worker",
+                "worktreeGeneration": "62a33789-4356-4917-b1dc-79a35ea3fd9e",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "status": "merged",
+                "journalRef": "write-journal:review-apply-b6846901-bc71-4751-a685-50828390bf72:1",
+                "hashes": {
+                  "other.txt": "f142ca64fa88ebea950e57d13d12506faeee971888a064a706558e45ad03360f"
+                },
+                "recoveryRequired": false
+              }
+            }
+          ],
+          "remaining": []
+        }
+      }
+    },
+    "overlapping-production-completion": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "workers": [
+          {
+            "isolation": "worktree",
+            "worktreeId": "first",
+            "worktreeGeneration": "b19531ae-5b77-4b78-be79-f5848b274b5a",
+            "taskNodeId": "overlap-first",
+            "worktreeWriteSet": [
+              "other.txt"
+            ],
+            "worktreeBackend": "git",
+            "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-7xnorv\\repo",
+            "worktreeVerificationCandidate": {
+              "manifest": {
+                "schema": "clawx.versegit.candidate/v1",
+                "candidateId": "vgc_dc20f8ae57ac6ecaf7415696",
+                "baseOid": "2f3a6761ff80da7d9750d5b09262dbb36b961057",
+                "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+                "workerSnapshots": [
+                  {
+                    "taskNodeId": "overlap-first",
+                    "parentOrder": 0,
+                    "worktreeRole": "first",
+                    "worktreeGeneration": "b19531ae-5b77-4b78-be79-f5848b274b5a",
+                    "headOid": "2f3a6761ff80da7d9750d5b09262dbb36b961057",
+                    "baseOid": "2f3a6761ff80da7d9750d5b09262dbb36b961057",
+                    "statusDigest": "sha256:a121fcd2c383c08bcab2b74c1542d05cda7510106b390a26f2e13f245d153fa6",
+                    "changedFiles": [
+                      "other.txt"
+                    ],
+                    "postimageHashes": {
+                      "other.txt": "806c734071d8d93082a1c57c50a035b259a773aa27eece51f3c34321698f167e"
+                    },
+                    "treeOid": "4da35813fabd9f20357c5982c99a1b846c3006ec",
+                    "commitOid": "018f60fe5bf89350799cb397f7b65cb636f2c1a0"
+                  }
+                ],
+                "candidateCommitOid": "e53fcc36792f1392a9e4b40c92ea84207b766ab6",
+                "candidateTreeOid": "4da35813fabd9f20357c5982c99a1b846c3006ec",
+                "refsBefore": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "2f3a6761ff80da7d9750d5b09262dbb36b961057"
+                  }
+                ],
+                "refsAfter": [
+                  {
+                    "ref": "refs/heads/master",
+                    "oid": "2f3a6761ff80da7d9750d5b09262dbb36b961057"
+                  }
+                ],
+                "mainStateBeforeDigest": "sha256:a15b25c69a9f7cfc01c21e37d2cfe5de1e84015450584b420786fe2832e86fa5",
+                "mainStateAfterDigest": "sha256:a15b25c69a9f7cfc01c21e37d2cfe5de1e84015450584b420786fe2832e86fa5",
+                "mainUnchanged": true,
+                "verificationCwdRole": "host-disposable-candidate",
+                "materializedPathRole": "candidate-verification-worktree",
+                "materializedIdentity": {
+                  "rootPath": "d:\\tmp\\autonomy-r4-7xnorv\\repo\\.openclaw\\candidates\\vgc_dc20f8ae57ac6ecaf7415696",
+                  "nativeIdentity": "7ad96aa05e6e4f8d0515c033fef21179d0631ad80ab0b50dadf8b56cb65873a3"
+                },
+                "allowedRuntimeIgnorePaths": [],
+                "inputDigest": "sha256:bd8988a226b88adea03d6b7666b5510fe23b9fc38b2dca9654dc92f0d0f0b822"
+              },
+              "materializedPath": "d:\\tmp\\autonomy-r4-7xnorv\\repo\\.openclaw\\candidates\\vgc_dc20f8ae57ac6ecaf7415696",
+              "baseRoot": "d:\\tmp\\autonomy-r4-7xnorv\\repo"
+            },
+            "worktreeMergeStatus": "merged",
+            "worktreeWriteSetMismatch": [],
+            "worktreeMergeJournalRef": "write-journal:review-apply-d3292bc7-c2fd-4191-a596-93212e6f2807:1",
+            "worktreeMergeHashes": {
+              "other.txt": "806c734071d8d93082a1c57c50a035b259a773aa27eece51f3c34321698f167e"
+            },
+            "worktreeMergeProcessedAt": 1794467080758
+          },
+          {
+            "isolation": "worktree",
+            "worktreeId": "second",
+            "worktreeGeneration": "519449d1-2514-4013-ae5c-fa03f94566e5",
+            "taskNodeId": "overlap-second",
+            "worktreeWriteSet": [
+              "new.txt"
+            ],
+            "worktreeBackend": "git",
+            "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-7xnorv\\repo",
+            "worktreeMergeStatus": "conflict",
+            "worktreeWriteSetMismatch": [],
+            "worktreeMergeReason": "worktree_candidate_unavailable:main_worktree_dirty",
+            "worktreeMergeProcessedAt": 1794467087574
+          }
+        ],
+        "targetQueue": "original-owner"
+      }
+    },
+    "pre-effect-crash-recovery-crash-after-journal-ref": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "childExit": 30,
+        "remaining": []
+      }
+    },
+    "pre-effect-crash-recovery-crash-before-journal": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "childExit": 29,
+        "remaining": []
+      }
+    },
+    "production-all-candidate-paths-new-file": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_5deaac26197473ad7001679d",
+            "baseOid": "9ef7e22787d2b06f8be38de30d081af555ff3836",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "new-path-task",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "c8f5d69d-8955-4cb8-892a-f398185fe8e7",
+                "headOid": "9ef7e22787d2b06f8be38de30d081af555ff3836",
+                "baseOid": "9ef7e22787d2b06f8be38de30d081af555ff3836",
+                "statusDigest": "sha256:9b13af8f206dffb14fc9af3cf702fadc671d55bb48af26a4c3c70584727c26bc",
+                "changedFiles": [
+                  "new-output.txt"
+                ],
+                "postimageHashes": {
+                  "new-output.txt": "9946499d8a741e025ed4a4a455807bf839c4bc6820075db45f11c074874d7c36"
+                },
+                "treeOid": "6997917a3d531800faa1e89db6ee44b1b36f80d6",
+                "commitOid": "1079e5cb0638f8160af7cacf70a51224604ec2f3"
+              }
+            ],
+            "candidateCommitOid": "11fba5415d7e96bd4d038c8d8cfbac0daaef203d",
+            "candidateTreeOid": "6997917a3d531800faa1e89db6ee44b1b36f80d6",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "9ef7e22787d2b06f8be38de30d081af555ff3836"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "9ef7e22787d2b06f8be38de30d081af555ff3836"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:5f7fe56b226335ac2b78963582a557e8521991ebedb435161e43153a963cf24d",
+            "mainStateAfterDigest": "sha256:5f7fe56b226335ac2b78963582a557e8521991ebedb435161e43153a963cf24d",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-xoegns\\repo\\.openclaw\\candidates\\vgc_5deaac26197473ad7001679d",
+              "nativeIdentity": "58fbb5da3d37696a039733c90c7ee2d5645136a6e0b512e690150813b174bb4f"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:934d10260d8f137d012777ce28626d6469441a4f27fe173d4a1f655ee98ff4f4"
+          },
+          "materializedPath": "d:\\tmp\\autonomy-r4-xoegns\\repo\\.openclaw\\candidates\\vgc_5deaac26197473ad7001679d",
+          "baseRoot": "d:\\tmp\\autonomy-r4-xoegns\\repo"
+        },
+        "paths": [
+          "new-output.txt"
+        ],
+        "hashes": {
+          "new-output.txt": "9946499d8a741e025ed4a4a455807bf839c4bc6820075db45f11c074874d7c36"
+        }
+      }
+    },
+    "production-all-candidate-paths-unstaged-rename": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_ab343f7d9d49f4160b136ca3",
+            "baseOid": "75493b464933de8accb83db5ed524b0147985461",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "new-path-task",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "25bc6cbb-31e7-4c1c-8415-0747a21e948b",
+                "headOid": "75493b464933de8accb83db5ed524b0147985461",
+                "baseOid": "75493b464933de8accb83db5ed524b0147985461",
+                "statusDigest": "sha256:3aab08a659aa71c655a9f7f624f2e608892da91c068f9b930f16a76a8f88dd8d",
+                "changedFiles": [
+                  "other.txt",
+                  "renamed-output.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": null,
+                  "renamed-output.txt": "3176fae3e14297cf87614d6d77952f3305c803867f474bc9d401912ea4c16c55"
+                },
+                "treeOid": "e14b5f3752b17894dda5644824d376c483e3340c",
+                "commitOid": "9e1ab6d9ebe54e7f483cf00a702f5c55be03bd12"
+              }
+            ],
+            "candidateCommitOid": "f24ced3cf80a3bc88663f0b60e96e08f9aa2a39b",
+            "candidateTreeOid": "e14b5f3752b17894dda5644824d376c483e3340c",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "75493b464933de8accb83db5ed524b0147985461"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "75493b464933de8accb83db5ed524b0147985461"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:08a874f681a590317be5bb90ff8317fd0575a55b1d366a5938a9fe91689e5d70",
+            "mainStateAfterDigest": "sha256:08a874f681a590317be5bb90ff8317fd0575a55b1d366a5938a9fe91689e5d70",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-chnkpm\\repo\\.openclaw\\candidates\\vgc_ab343f7d9d49f4160b136ca3",
+              "nativeIdentity": "3fff5053163cb859a1bdda5b1516310f13b41ec1ce42317cf7b36c2bd938d0b6"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:86360a1c4cc1d5f88a09fb18c3b2bcc6d3988694817085197ec6f5a76de254d5"
+          },
+          "materializedPath": "d:\\tmp\\autonomy-r4-chnkpm\\repo\\.openclaw\\candidates\\vgc_ab343f7d9d49f4160b136ca3",
+          "baseRoot": "d:\\tmp\\autonomy-r4-chnkpm\\repo"
+        },
+        "paths": [
+          "other.txt",
+          "renamed-output.txt"
+        ],
+        "hashes": {
+          "other.txt": null,
+          "renamed-output.txt": "3176fae3e14297cf87614d6d77952f3305c803867f474bc9d401912ea4c16c55"
+        }
+      }
+    },
+    "production-candidate-binding": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_d0b4b5a9dcd51d4e873cf0c2",
+            "baseOid": "5c3b461a107ed5985d4572b14b89e3a48564ffe7",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "candidate-task",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "e8e2bebf-6bbf-4803-b2aa-6a57e90af15f",
+                "headOid": "5c3b461a107ed5985d4572b14b89e3a48564ffe7",
+                "baseOid": "5c3b461a107ed5985d4572b14b89e3a48564ffe7",
+                "statusDigest": "sha256:30db3b8b9f2b92d142fda8f22aa151f34ff01ef2bdfab91d8fbd9379d40dfb93",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "4a64777da0d7fe09d1b51b86f91781fdbf0dc39330bd6ccc86650b92bd37c36b"
+                },
+                "treeOid": "0fce489f9a2915f91c71efa89129562d494b776d",
+                "commitOid": "ea6074c250ccd6ff47429e3a11a2e6f14f6bc78b"
+              }
+            ],
+            "candidateCommitOid": "8a6a10d38ee7e5d2b3f0e4bacc578de17e1c11f4",
+            "candidateTreeOid": "0fce489f9a2915f91c71efa89129562d494b776d",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "5c3b461a107ed5985d4572b14b89e3a48564ffe7"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "5c3b461a107ed5985d4572b14b89e3a48564ffe7"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:8a5f194e1ec7bfa9db464322df3ee487ee7b745d5dde52623c5b02023ecddaab",
+            "mainStateAfterDigest": "sha256:8a5f194e1ec7bfa9db464322df3ee487ee7b745d5dde52623c5b02023ecddaab",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-neksro\\repo\\.openclaw\\candidates\\vgc_d0b4b5a9dcd51d4e873cf0c2",
+              "nativeIdentity": "eec3b169127340c0d251de436e1aaa9bcaf39906df358d548422f55d746b7df4"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:c2a47c1866eb5dc5716ce9dd95283368e817636058a51564790d7874bf86a2f0"
+          },
+          "materializedPath": "d:\\tmp\\autonomy-r4-neksro\\repo\\.openclaw\\candidates\\vgc_d0b4b5a9dcd51d4e873cf0c2",
+          "baseRoot": "d:\\tmp\\autonomy-r4-neksro\\repo"
+        },
+        "task": "Verify completion of: verify worker result\n\n\n\nUse only the worker evidence below. Do not expand scope or start new implementation work.\n\nReturn a final line exactly in this form: verificationVerdict=pass|fail|repair_required. Do not omit it.\n\n\n\n## Worker Result Bundle\n\n### Worker 1: candidate-worker\nroleName: unknown\nchildRunId: candidate-worker\nchildSessionKey: undefined\nstatus: ok\nworktreeIntegration: merged\nworktreeIntegrationReason: none\nworktreeJournal: write-journal:review-apply-02c9f734-4df4-41af-a974-140b69d6c62f:1\nintegratedPostimages: {\"other.txt\":\"4a64777da0d7fe09d1b51b86f91781fdbf0dc39330bd6ccc86650b92bd37c36b\"}\nworktreeBackend: git\nworktreeIntegrationBaseRoot: d:\\tmp\\autonomy-r4-neksro\\repo\nverificationCandidate: {\"manifest\":{\"schema\":\"clawx.versegit.candidate/v1\",\"candidateId\":\"vgc_d0b4b5a9dcd51d4e873cf0c2\",\"baseOid\":\"5c3b461a107ed5985d4572b14b89e3a48564ffe7\",\"baseTreeOid\":\"af9aef4dff050b5e1d09be6ea8945907a4199809\",\"workerSnapshots\":[{\"taskNodeId\":\"candidate-task\",\"parentOrder\":0,\"worktreeRole\":\"worker\",\"worktreeGeneration\":\"e8e2bebf-6bbf-4803-b2aa-6a57e90af15f\",\"headOid\":\"5c3b461a107ed5985d4572b14b89e3a48564ffe7\",\"baseOid\":\"5c3b461a107ed5985d4572b14b89e3a48564ffe7\",\"statusDigest\":\"sha256:30db3b8b9f2b92d142fda8f22aa151f34ff01ef2bdfab91d8fbd9379d40dfb93\",\"changedFiles\":[\"other.txt\"],\"postimageHashes\":{\"other.txt\":\"4a64777da0d7fe09d1b51b86f91781fdbf0dc39330bd6ccc86650b92bd37c36b\"},\"treeOid\":\"0fce489f9a2915f91c71efa89129562d494b776d\",\"commitOid\":\"ea6074c250ccd6ff47429e3a11a2e6f14f6bc78b\"}],\"candidateCommitOid\":\"8a6a10d38ee7e5d2b3f0e4bacc578de17e1c11f4\",\"candidateTreeOid\":\"0fce489f9a2915f91c71efa89129562d494b776d\",\"refsBefore\":[{\"ref\":\"refs/heads/master\",\"oid\":\"5c3b461a107ed5985d4572b14b89e3a48564ffe7\"}],\"refsAfter\":[{\"ref\":\"refs/heads/master\",\"oid\":\"5c3b461a107ed5985d4572b14b89e3a48564ffe7\"}],\"mainStateBeforeDigest\":\"sha256:8a5f194e1ec7bfa9db464322df3ee487ee7b745d5dde52623c5b02023ecddaab\",\"mainStateAfterDigest\":\"sha256:8a5f194e1ec7bfa9db464322df3ee487ee7b745d5dde52623c5b02023ecddaab\",\"mainUnchanged\":true,\"verificationCwdRole\":\"host-disposable-candidate\",\"materializedPathRole\":\"candidate-verification-worktree\",\"materializedIdentity\":{\"rootPath\":\"d:\\\\tmp\\\\autonomy-r4-neksro\\\\repo\\\\.openclaw\\\\candidates\\\\vgc_d0b4b5a9dcd51d4e873cf0c2\",\"nativeIdentity\":\"eec3b169127340c0d251de436e1aaa9bcaf39906df358d548422f55d746b7df4\"},\"allowedRuntimeIgnorePaths\":[],\"inputDigest\":\"sha256:c2a47c1866eb5dc5716ce9dd95283368e817636058a51564790d7874bf86a2f0\"},\"materializedPath\":\"d:\\\\tmp\\\\autonomy-r4-neksro\\\\repo\\\\.openclaw\\\\candidates\\\\vgc_d0b4b5a9dcd51d4e873cf0c2\",\"baseRoot\":\"d:\\\\tmp\\\\autonomy-r4-neksro\\\\repo\"}\nExecute checks in the exact materialized candidate directory and report its commit, tree, inputDigest and check artifacts; an unmerged or unknown result requires fail or repair_required.\n\nNo completion text was captured.",
+        "driftRefused": true
+      }
+    },
+    "production-journal-effect-order": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "order": [
+          "journal",
+          "effect"
+        ],
+        "writer": {
+          "schema": 1,
+          "root": "d:\\tmp\\autonomy-r4-2xepu9\\repo",
+          "incarnation": "3325120695:14355223817363347:1794467271811156100",
+          "generation": "base:3325120695:14355223817363347:1794467271811156100",
+          "epoch": 1,
+          "token": "7987e69d-0e18-4c57-890b-a2256868e119",
+          "owner": {
+            "kind": "maintenance",
+            "operation": "merge",
+            "operationId": "4a8821ba-2d4f-404c-a622-b56ed0023034"
+          },
+          "requestId": "4a8821ba-2d4f-404c-a622-b56ed0023034",
+          "requestDigest": "da11b09e6551beb13b239461292f107da8f071e034cd8b12a57c6e4afd1a02f9",
+          "state": "released",
+          "acquiredAt": 1794467272909,
+          "expiresAt": null,
+          "operations": [
+            {
+              "id": "4a8821ba-2d4f-404c-a622-b56ed0023034",
+              "digest": "cbc75d9a7bebee17d900dccdd4572537623e80d165ab1b47f2b192a41f186b08",
+              "state": "settled",
+              "effectPrepared": true,
+              "receipt": {
+                "outcome": "completed",
+                "ownerReceipt": "merge:4a8821ba-2d4f-404c-a622-b56ed0023034"
+              }
+            }
+          ],
+          "requests": [
+            {
+              "id": "4a8821ba-2d4f-404c-a622-b56ed0023034",
+              "digest": "da11b09e6551beb13b239461292f107da8f071e034cd8b12a57c6e4afd1a02f9",
+              "epoch": 1
+            }
+          ],
+          "holderPid": 20008,
+          "holderIncarnation": "134389404768222945"
+        }
+      }
+    },
+    "queued-verifier-dirty": {
+      "driven_by": "agent",
+      "actor": "r4-queued-verifier-test",
+      "nativeGit": true,
+      "agentRPC": "injected",
+      "state": "dirty",
+      "candidate": {
+        "status": "frozen",
+        "manifest": {
+          "schema": "clawx.versegit.candidate/v1",
+          "candidateId": "vgc_e48e3985c4279b53df9d3cf9",
+          "baseOid": "5c0c4f5ec0c534d590397cf02382e64caa22f2bd",
+          "baseTreeOid": "55a0a9a3be7646f04d546b757b2047ab2a2cef25",
+          "workerSnapshots": [
+            {
+              "taskNodeId": "candidate-task",
+              "parentOrder": 0,
+              "worktreeRole": "worker",
+              "worktreeGeneration": "00945843-94ac-481f-8512-3a8f0d25bc9a",
+              "headOid": "5c0c4f5ec0c534d590397cf02382e64caa22f2bd",
+              "baseOid": "5c0c4f5ec0c534d590397cf02382e64caa22f2bd",
+              "statusDigest": "sha256:b2f73259c207b93ddaaf5e8c9da52639be48feb4fc0fb15c6d8bdae9db58e06c",
+              "changedFiles": [
+                "out.txt"
+              ],
+              "postimageHashes": {
+                "out.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+              },
+              "treeOid": "bc1b167254e8a3810a1e26371b50c63a7cd68c76",
+              "commitOid": "5e68af07e12b50b8d4ece526714e71341f0eb217"
+            }
+          ],
+          "candidateCommitOid": "5f0d5f626903d09ac4545bf831771909d22ceafc",
+          "candidateTreeOid": "bc1b167254e8a3810a1e26371b50c63a7cd68c76",
+          "refsBefore": [
+            {
+              "ref": "refs/heads/master",
+              "oid": "5c0c4f5ec0c534d590397cf02382e64caa22f2bd"
+            }
+          ],
+          "refsAfter": [
+            {
+              "ref": "refs/heads/master",
+              "oid": "5c0c4f5ec0c534d590397cf02382e64caa22f2bd"
+            }
+          ],
+          "mainStateBeforeDigest": "sha256:d64f72f7ea85b3c3881004631d9faaef7303ad3f3523b8f7b56717b5a2b94f6b",
+          "mainStateAfterDigest": "sha256:d64f72f7ea85b3c3881004631d9faaef7303ad3f3523b8f7b56717b5a2b94f6b",
+          "mainUnchanged": true,
+          "verificationCwdRole": "host-disposable-candidate",
+          "materializedPathRole": "candidate-verification-worktree",
+          "materializedIdentity": {
+            "rootPath": "d:\\tmp\\r4-queued-verifier-h3nb3x\\repo\\.openclaw\\candidates\\vgc_e48e3985c4279b53df9d3cf9",
+            "nativeIdentity": "d39c7b58840b70378df767cfa1e7c78e04b7a8962e5bfab58d11412845deeb6e"
+          },
+          "allowedRuntimeIgnorePaths": [],
+          "inputDigest": "sha256:1e56b54b747ac2d1013434af94837d8a0f38f1353b5b792f2bb320e9d42d1615"
+        },
+        "materializedPath": "D:\\tmp\\r4-queued-verifier-h3nB3x\\repo\\.openclaw\\candidates\\vgc_e48e3985c4279b53df9d3cf9",
+        "issues": []
+      },
+      "executionDirectory": "D:\\tmp\\r4-queued-verifier-h3nB3x\\repo\\.openclaw\\candidates\\vgc_e48e3985c4279b53df9d3cf9",
+      "inheritedWorkerId": "worker",
+      "dispatchedResult": {
+        "status": "rejected",
+        "error": "verification candidate expired before dispatch"
+      }
+    },
+    "queued-verifier-ready": {
+      "driven_by": "agent",
+      "actor": "r4-queued-verifier-test",
+      "nativeGit": true,
+      "agentRPC": "injected",
+      "state": "ready",
+      "candidate": {
+        "status": "frozen",
+        "manifest": {
+          "schema": "clawx.versegit.candidate/v1",
+          "candidateId": "vgc_d51afd25b21bc4add1bb99de",
+          "baseOid": "962e7f5bbbb2b7773d898ad94f083614e1e3253c",
+          "baseTreeOid": "55a0a9a3be7646f04d546b757b2047ab2a2cef25",
+          "workerSnapshots": [
+            {
+              "taskNodeId": "candidate-task",
+              "parentOrder": 0,
+              "worktreeRole": "worker",
+              "worktreeGeneration": "9a2e2e25-2655-445b-a80a-02600654400f",
+              "headOid": "962e7f5bbbb2b7773d898ad94f083614e1e3253c",
+              "baseOid": "962e7f5bbbb2b7773d898ad94f083614e1e3253c",
+              "statusDigest": "sha256:9217f9c27f34bbe70c97f4a07170250a0d1d8648c2a9783ed4e77fa7255b39a6",
+              "changedFiles": [
+                "out.txt"
+              ],
+              "postimageHashes": {
+                "out.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+              },
+              "treeOid": "bc1b167254e8a3810a1e26371b50c63a7cd68c76",
+              "commitOid": "1fb08489de21b288efcb06b5e6f07535e7d9365b"
+            }
+          ],
+          "candidateCommitOid": "b99614946283fc8209b94cdef093ae2e949df335",
+          "candidateTreeOid": "bc1b167254e8a3810a1e26371b50c63a7cd68c76",
+          "refsBefore": [
+            {
+              "ref": "refs/heads/master",
+              "oid": "962e7f5bbbb2b7773d898ad94f083614e1e3253c"
+            }
+          ],
+          "refsAfter": [
+            {
+              "ref": "refs/heads/master",
+              "oid": "962e7f5bbbb2b7773d898ad94f083614e1e3253c"
+            }
+          ],
+          "mainStateBeforeDigest": "sha256:2e6f339c9a067b403303cf8df3d3b7cb5790ae152a3203b010eba77c9968b45f",
+          "mainStateAfterDigest": "sha256:2e6f339c9a067b403303cf8df3d3b7cb5790ae152a3203b010eba77c9968b45f",
+          "mainUnchanged": true,
+          "verificationCwdRole": "host-disposable-candidate",
+          "materializedPathRole": "candidate-verification-worktree",
+          "materializedIdentity": {
+            "rootPath": "d:\\tmp\\r4-queued-verifier-eyum8m\\repo\\.openclaw\\candidates\\vgc_d51afd25b21bc4add1bb99de",
+            "nativeIdentity": "a1741b7b1c01d85a8afc380e3f747214faecd16176fa48362d4779c65d9da5a3"
+          },
+          "allowedRuntimeIgnorePaths": [],
+          "inputDigest": "sha256:45a5f57fe49eba6baedd66243d4982fc7059cd64b59751e88fbe9308029f748c"
+        },
+        "materializedPath": "D:\\tmp\\r4-queued-verifier-EYUM8M\\repo\\.openclaw\\candidates\\vgc_d51afd25b21bc4add1bb99de",
+        "issues": []
+      },
+      "executionDirectory": "D:\\tmp\\r4-queued-verifier-EYUM8M\\repo\\.openclaw\\candidates\\vgc_d51afd25b21bc4add1bb99de",
+      "inheritedWorkerId": "worker",
+      "dispatchedResult": {
+        "status": "accepted",
+        "runId": "ec923589-1e25-46d8-8264-df8b2b97f05a"
+      }
+    },
+    "queued-verifier-redirected-directory": {
+      "driven_by": "agent",
+      "actor": "r4-queued-verifier-test",
+      "nativeGit": true,
+      "agentRPC": "injected",
+      "state": "redirected-directory",
+      "candidate": {
+        "status": "frozen",
+        "manifest": {
+          "schema": "clawx.versegit.candidate/v1",
+          "candidateId": "vgc_61bdcaea2aa723b86bf6a9fd",
+          "baseOid": "6694cb4592cfaebf39938788ac343fcb86eade09",
+          "baseTreeOid": "55a0a9a3be7646f04d546b757b2047ab2a2cef25",
+          "workerSnapshots": [
+            {
+              "taskNodeId": "candidate-task",
+              "parentOrder": 0,
+              "worktreeRole": "worker",
+              "worktreeGeneration": "eee90249-d1fc-41cf-8a9e-bd1a169080ed",
+              "headOid": "6694cb4592cfaebf39938788ac343fcb86eade09",
+              "baseOid": "6694cb4592cfaebf39938788ac343fcb86eade09",
+              "statusDigest": "sha256:ecb174ed56e399f3bde70333b253948e28291ada2b28c9e4f997197d2f7277c8",
+              "changedFiles": [
+                "out.txt"
+              ],
+              "postimageHashes": {
+                "out.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+              },
+              "treeOid": "bc1b167254e8a3810a1e26371b50c63a7cd68c76",
+              "commitOid": "a1d04c538b4f93bf0b0460579a50f52dd72fe5c6"
+            }
+          ],
+          "candidateCommitOid": "b27f7f56c2396991ad44ebec13c17fe8ce42b83d",
+          "candidateTreeOid": "bc1b167254e8a3810a1e26371b50c63a7cd68c76",
+          "refsBefore": [
+            {
+              "ref": "refs/heads/master",
+              "oid": "6694cb4592cfaebf39938788ac343fcb86eade09"
+            }
+          ],
+          "refsAfter": [
+            {
+              "ref": "refs/heads/master",
+              "oid": "6694cb4592cfaebf39938788ac343fcb86eade09"
+            }
+          ],
+          "mainStateBeforeDigest": "sha256:4e431f0e562475291f26002764c6aec95b81740f9b3d900bdc90283674ec4291",
+          "mainStateAfterDigest": "sha256:4e431f0e562475291f26002764c6aec95b81740f9b3d900bdc90283674ec4291",
+          "mainUnchanged": true,
+          "verificationCwdRole": "host-disposable-candidate",
+          "materializedPathRole": "candidate-verification-worktree",
+          "materializedIdentity": {
+            "rootPath": "d:\\tmp\\r4-queued-verifier-0w7zwe\\repo\\.openclaw\\candidates\\vgc_61bdcaea2aa723b86bf6a9fd",
+            "nativeIdentity": "4681643efce321b363b138dbcc5b500ee656686d159f230880fa68930a676ca2"
+          },
+          "allowedRuntimeIgnorePaths": [],
+          "inputDigest": "sha256:8608231eab214fc5b3b1d0464323c661c9346412e6604f293c357bb8684c621a"
+        },
+        "materializedPath": "D:\\tmp\\r4-queued-verifier-0W7zwe\\repo\\.openclaw\\candidates\\vgc_61bdcaea2aa723b86bf6a9fd",
+        "issues": []
+      },
+      "executionDirectory": "D:\\tmp\\r4-queued-verifier-0W7zwe\\repo\\.openclaw\\candidates\\vgc_61bdcaea2aa723b86bf6a9fd-alias",
+      "inheritedWorkerId": "worker",
+      "dispatchedResult": {
+        "status": "rejected",
+        "error": "verification candidate expired before dispatch"
+      }
+    },
+    "queued-verifier-wrong-directory": {
+      "driven_by": "agent",
+      "actor": "r4-queued-verifier-test",
+      "nativeGit": true,
+      "agentRPC": "injected",
+      "state": "wrong-directory",
+      "candidate": {
+        "status": "frozen",
+        "manifest": {
+          "schema": "clawx.versegit.candidate/v1",
+          "candidateId": "vgc_29bda4e16818fb6158d8c9ff",
+          "baseOid": "88cde2cad55105a10f26bbda598b7df6f3f2411a",
+          "baseTreeOid": "55a0a9a3be7646f04d546b757b2047ab2a2cef25",
+          "workerSnapshots": [
+            {
+              "taskNodeId": "candidate-task",
+              "parentOrder": 0,
+              "worktreeRole": "worker",
+              "worktreeGeneration": "e100b4bc-03ad-47c3-a516-8eae3767d467",
+              "headOid": "88cde2cad55105a10f26bbda598b7df6f3f2411a",
+              "baseOid": "88cde2cad55105a10f26bbda598b7df6f3f2411a",
+              "statusDigest": "sha256:61b1202dadfc03ee8ef1a843a05dc9fa7e7ceea2308a4eda7afda42570427324",
+              "changedFiles": [
+                "out.txt"
+              ],
+              "postimageHashes": {
+                "out.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+              },
+              "treeOid": "bc1b167254e8a3810a1e26371b50c63a7cd68c76",
+              "commitOid": "c5062571663ed23351dfffa287a460388caf7037"
+            }
+          ],
+          "candidateCommitOid": "8f6b659173fe2074d085650ad73f3ac27f0d4f66",
+          "candidateTreeOid": "bc1b167254e8a3810a1e26371b50c63a7cd68c76",
+          "refsBefore": [
+            {
+              "ref": "refs/heads/master",
+              "oid": "88cde2cad55105a10f26bbda598b7df6f3f2411a"
+            }
+          ],
+          "refsAfter": [
+            {
+              "ref": "refs/heads/master",
+              "oid": "88cde2cad55105a10f26bbda598b7df6f3f2411a"
+            }
+          ],
+          "mainStateBeforeDigest": "sha256:4b011eccc3f64e1d31dac9622d5454eb02b218a9ccb8077c346bce4c4bbcbad3",
+          "mainStateAfterDigest": "sha256:4b011eccc3f64e1d31dac9622d5454eb02b218a9ccb8077c346bce4c4bbcbad3",
+          "mainUnchanged": true,
+          "verificationCwdRole": "host-disposable-candidate",
+          "materializedPathRole": "candidate-verification-worktree",
+          "materializedIdentity": {
+            "rootPath": "d:\\tmp\\r4-queued-verifier-yxbbfy\\repo\\.openclaw\\candidates\\vgc_29bda4e16818fb6158d8c9ff",
+            "nativeIdentity": "715229151409c82a3db2a6569a45fc8b063b986fea6dbbaaebb00fdfdda43cd2"
+          },
+          "allowedRuntimeIgnorePaths": [],
+          "inputDigest": "sha256:c9b080b5b00629ac59cfcfd5bc85f1d346fcab7be08b6339b11d68f2ec6f39d6"
+        },
+        "materializedPath": "D:\\tmp\\r4-queued-verifier-YxBbFy\\repo\\.openclaw\\candidates\\vgc_29bda4e16818fb6158d8c9ff",
+        "issues": []
+      },
+      "executionDirectory": "D:\\tmp\\r4-queued-verifier-YxBbFy\\repo\\.openclaw\\worktrees\\worker",
+      "inheritedWorkerId": "worker",
+      "dispatchedResult": {
+        "status": "rejected",
+        "error": "verification candidate expired before dispatch"
+      }
+    },
+    "raw-crlf-candidate": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_40dd7f7c07794d2ec453721c",
+            "baseOid": "5a088f6405d0a2d84af5f136226b87f21e7234dd",
+            "baseTreeOid": "9054dc1769794a9aee8dc1fe49625c9db76a7e00",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "crlf-task",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "cab344f7-4b12-450a-90ef-57f4aa0fb25e",
+                "headOid": "5a088f6405d0a2d84af5f136226b87f21e7234dd",
+                "baseOid": "5a088f6405d0a2d84af5f136226b87f21e7234dd",
+                "statusDigest": "sha256:47e013478454d133bf6ad2ab9366f83a76b132b156f0bdfee9a73ff0a2a66d2c",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "f8e0f1568dd9254c3262d199d5dcfc9ff6d4855e18ec53a7176f9eab948ed93e"
+                },
+                "treeOid": "8aaef70d9bde9d2f9bcdadcd3dbba7fe9fe9c552",
+                "commitOid": "4180ff2201462de8c1940e33028503f31b319d48"
+              }
+            ],
+            "candidateCommitOid": "acacff4f5dc107593c3e1799413c4f6b7694c858",
+            "candidateTreeOid": "8aaef70d9bde9d2f9bcdadcd3dbba7fe9fe9c552",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "5a088f6405d0a2d84af5f136226b87f21e7234dd"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "5a088f6405d0a2d84af5f136226b87f21e7234dd"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:019cb15846700d653d623962bb159fed2e12a43baf1cc53574490c4ebfb17b0a",
+            "mainStateAfterDigest": "sha256:019cb15846700d653d623962bb159fed2e12a43baf1cc53574490c4ebfb17b0a",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-dj5sss\\repo\\.openclaw\\candidates\\vgc_40dd7f7c07794d2ec453721c",
+              "nativeIdentity": "59d58782b563ecbde94d7eeaa79a25ac66e8b8b45ec53a12cb4ce8d93489d2b9"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:ae90faba7f4e353e13021066a6dc013d73242e7847184a9ac54d4688b450948c"
+          },
+          "materializedPath": "d:\\tmp\\autonomy-r4-dj5sss\\repo\\.openclaw\\candidates\\vgc_40dd7f7c07794d2ec453721c",
+          "baseRoot": "d:\\tmp\\autonomy-r4-dj5sss\\repo"
+        },
+        "integratedRawSha256": "f8e0f1568dd9254c3262d199d5dcfc9ff6d4855e18ec53a7176f9eab948ed93e",
+        "normalizedDriftRefused": true
+      }
+    },
+    "saved-candidate-extra-target-reset-after-merged": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_d50108d733ecb49ebe35085e",
+            "baseOid": "d25239aa89d70b163fb0a8edd613c03bd9fed995",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "extra-target-task",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "1b6c7dcf-e96a-4d22-add4-e1da57837eea",
+                "headOid": "d25239aa89d70b163fb0a8edd613c03bd9fed995",
+                "baseOid": "d25239aa89d70b163fb0a8edd613c03bd9fed995",
+                "statusDigest": "sha256:b8c6bfae4321445837e31664689a690618ced47e605f704f4aed974ace3381f5",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+                },
+                "treeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+                "commitOid": "8a61b8f9d77441ef3c7c634e6ef3811ce7680d15"
+              }
+            ],
+            "candidateCommitOid": "fed86feaab3d4c0a84fff53f7972d3a5d32b18dc",
+            "candidateTreeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "d25239aa89d70b163fb0a8edd613c03bd9fed995"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "d25239aa89d70b163fb0a8edd613c03bd9fed995"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:1f415374acf0fd43b9dadf047c22be218a75a6b655d65b16126689ecc047d576",
+            "mainStateAfterDigest": "sha256:1f415374acf0fd43b9dadf047c22be218a75a6b655d65b16126689ecc047d576",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-nhuywm\\repo\\.openclaw\\candidates\\vgc_d50108d733ecb49ebe35085e",
+              "nativeIdentity": "ceef7a50d1186c1c231d697fe71f2b19cce0688b2156469313174b32111abd34"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:790a350d7b758fdf6ac0ad80f6d8ecbab5ab95b8a1aad95ca8a91e96c3c037ad"
+          },
+          "materializedPath": "d:\\tmp\\autonomy-r4-nhuywm\\repo\\.openclaw\\candidates\\vgc_d50108d733ecb49ebe35085e",
+          "baseRoot": "d:\\tmp\\autonomy-r4-nhuywm\\repo"
+        },
+        "metadata": {
+          "isolation": "worktree",
+          "worktreeId": "worker",
+          "worktreeGeneration": "1b6c7dcf-e96a-4d22-add4-e1da57837eea",
+          "taskNodeId": "extra-target-task",
+          "worktreeWriteSet": [
+            "other.txt"
+          ],
+          "worktreeBackend": "git",
+          "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-nhuywm\\repo",
+          "worktreeVerificationCandidate": {
+            "manifest": {
+              "schema": "clawx.versegit.candidate/v1",
+              "candidateId": "vgc_d50108d733ecb49ebe35085e",
+              "baseOid": "d25239aa89d70b163fb0a8edd613c03bd9fed995",
+              "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+              "workerSnapshots": [
+                {
+                  "taskNodeId": "extra-target-task",
+                  "parentOrder": 0,
+                  "worktreeRole": "worker",
+                  "worktreeGeneration": "1b6c7dcf-e96a-4d22-add4-e1da57837eea",
+                  "headOid": "d25239aa89d70b163fb0a8edd613c03bd9fed995",
+                  "baseOid": "d25239aa89d70b163fb0a8edd613c03bd9fed995",
+                  "statusDigest": "sha256:b8c6bfae4321445837e31664689a690618ced47e605f704f4aed974ace3381f5",
+                  "changedFiles": [
+                    "other.txt"
+                  ],
+                  "postimageHashes": {
+                    "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+                  },
+                  "treeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+                  "commitOid": "8a61b8f9d77441ef3c7c634e6ef3811ce7680d15"
+                }
+              ],
+              "candidateCommitOid": "fed86feaab3d4c0a84fff53f7972d3a5d32b18dc",
+              "candidateTreeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+              "refsBefore": [
+                {
+                  "ref": "refs/heads/master",
+                  "oid": "d25239aa89d70b163fb0a8edd613c03bd9fed995"
+                }
+              ],
+              "refsAfter": [
+                {
+                  "ref": "refs/heads/master",
+                  "oid": "d25239aa89d70b163fb0a8edd613c03bd9fed995"
+                }
+              ],
+              "mainStateBeforeDigest": "sha256:1f415374acf0fd43b9dadf047c22be218a75a6b655d65b16126689ecc047d576",
+              "mainStateAfterDigest": "sha256:1f415374acf0fd43b9dadf047c22be218a75a6b655d65b16126689ecc047d576",
+              "mainUnchanged": true,
+              "verificationCwdRole": "host-disposable-candidate",
+              "materializedPathRole": "candidate-verification-worktree",
+              "materializedIdentity": {
+                "rootPath": "d:\\tmp\\autonomy-r4-nhuywm\\repo\\.openclaw\\candidates\\vgc_d50108d733ecb49ebe35085e",
+                "nativeIdentity": "ceef7a50d1186c1c231d697fe71f2b19cce0688b2156469313174b32111abd34"
+              },
+              "allowedRuntimeIgnorePaths": [],
+              "inputDigest": "sha256:790a350d7b758fdf6ac0ad80f6d8ecbab5ab95b8a1aad95ca8a91e96c3c037ad"
+            },
+            "materializedPath": "d:\\tmp\\autonomy-r4-nhuywm\\repo\\.openclaw\\candidates\\vgc_d50108d733ecb49ebe35085e",
+            "baseRoot": "d:\\tmp\\autonomy-r4-nhuywm\\repo"
+          },
+          "worktreeMergeStatus": "conflict",
+          "worktreeWriteSetMismatch": [],
+          "worktreeMergeJournalRef": "write-journal:review-apply-074cfab2-05fc-45e4-8c47-589aa38325ea:1",
+          "worktreeMergeHashes": {
+            "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+          },
+          "worktreeMergeReason": "saved_candidate_target_changed",
+          "worktreeMergeProcessedAt": 1794467236900
+        }
+      }
+    },
+    "saved-candidate-extra-target-staged-only": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_e09796dfa39b08dd997f6fcd",
+            "baseOid": "548f0903e5b4057e8987f20f6de4cf2a13d05c7b",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "extra-target-task",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "a43f55b7-fd8f-4da8-9807-27c9fce2b7fc",
+                "headOid": "548f0903e5b4057e8987f20f6de4cf2a13d05c7b",
+                "baseOid": "548f0903e5b4057e8987f20f6de4cf2a13d05c7b",
+                "statusDigest": "sha256:f5c847bc90967f627db116ffc7f41a33490b7d915b8cd3e1b9eb4fbbe10ec034",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+                },
+                "treeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+                "commitOid": "6c45188576f4a1ca47aa521abd7155af98a37062"
+              }
+            ],
+            "candidateCommitOid": "28cc4bc63734025da295f081e6eba6a80a4dfcf7",
+            "candidateTreeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "548f0903e5b4057e8987f20f6de4cf2a13d05c7b"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "548f0903e5b4057e8987f20f6de4cf2a13d05c7b"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:e229605e89ab6ae840041fcdf8b6979d5f323384bef22df9d3db25d834c77e23",
+            "mainStateAfterDigest": "sha256:e229605e89ab6ae840041fcdf8b6979d5f323384bef22df9d3db25d834c77e23",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-rn57wf\\repo\\.openclaw\\candidates\\vgc_e09796dfa39b08dd997f6fcd",
+              "nativeIdentity": "a2deade7849a3c0caf0283ebf65f7b33727ef9ce1e1f2140ec76067c8550847c"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:ecfbb0e01e6f9b7b6ef18ef3bf68dc73ef57bbd6f7d3d29a90a177961b173be8"
+          },
+          "materializedPath": "d:\\tmp\\autonomy-r4-rn57wf\\repo\\.openclaw\\candidates\\vgc_e09796dfa39b08dd997f6fcd",
+          "baseRoot": "d:\\tmp\\autonomy-r4-rn57wf\\repo"
+        },
+        "metadata": {
+          "isolation": "worktree",
+          "worktreeId": "worker",
+          "worktreeGeneration": "a43f55b7-fd8f-4da8-9807-27c9fce2b7fc",
+          "taskNodeId": "extra-target-task",
+          "worktreeWriteSet": [
+            "other.txt"
+          ],
+          "worktreeBackend": "git",
+          "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-rn57wf\\repo",
+          "worktreeVerificationCandidate": {
+            "manifest": {
+              "schema": "clawx.versegit.candidate/v1",
+              "candidateId": "vgc_e09796dfa39b08dd997f6fcd",
+              "baseOid": "548f0903e5b4057e8987f20f6de4cf2a13d05c7b",
+              "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+              "workerSnapshots": [
+                {
+                  "taskNodeId": "extra-target-task",
+                  "parentOrder": 0,
+                  "worktreeRole": "worker",
+                  "worktreeGeneration": "a43f55b7-fd8f-4da8-9807-27c9fce2b7fc",
+                  "headOid": "548f0903e5b4057e8987f20f6de4cf2a13d05c7b",
+                  "baseOid": "548f0903e5b4057e8987f20f6de4cf2a13d05c7b",
+                  "statusDigest": "sha256:f5c847bc90967f627db116ffc7f41a33490b7d915b8cd3e1b9eb4fbbe10ec034",
+                  "changedFiles": [
+                    "other.txt"
+                  ],
+                  "postimageHashes": {
+                    "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+                  },
+                  "treeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+                  "commitOid": "6c45188576f4a1ca47aa521abd7155af98a37062"
+                }
+              ],
+              "candidateCommitOid": "28cc4bc63734025da295f081e6eba6a80a4dfcf7",
+              "candidateTreeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+              "refsBefore": [
+                {
+                  "ref": "refs/heads/master",
+                  "oid": "548f0903e5b4057e8987f20f6de4cf2a13d05c7b"
+                }
+              ],
+              "refsAfter": [
+                {
+                  "ref": "refs/heads/master",
+                  "oid": "548f0903e5b4057e8987f20f6de4cf2a13d05c7b"
+                }
+              ],
+              "mainStateBeforeDigest": "sha256:e229605e89ab6ae840041fcdf8b6979d5f323384bef22df9d3db25d834c77e23",
+              "mainStateAfterDigest": "sha256:e229605e89ab6ae840041fcdf8b6979d5f323384bef22df9d3db25d834c77e23",
+              "mainUnchanged": true,
+              "verificationCwdRole": "host-disposable-candidate",
+              "materializedPathRole": "candidate-verification-worktree",
+              "materializedIdentity": {
+                "rootPath": "d:\\tmp\\autonomy-r4-rn57wf\\repo\\.openclaw\\candidates\\vgc_e09796dfa39b08dd997f6fcd",
+                "nativeIdentity": "a2deade7849a3c0caf0283ebf65f7b33727ef9ce1e1f2140ec76067c8550847c"
+              },
+              "allowedRuntimeIgnorePaths": [],
+              "inputDigest": "sha256:ecfbb0e01e6f9b7b6ef18ef3bf68dc73ef57bbd6f7d3d29a90a177961b173be8"
+            },
+            "materializedPath": "d:\\tmp\\autonomy-r4-rn57wf\\repo\\.openclaw\\candidates\\vgc_e09796dfa39b08dd997f6fcd",
+            "baseRoot": "d:\\tmp\\autonomy-r4-rn57wf\\repo"
+          },
+          "worktreeMergeStatus": "conflict",
+          "worktreeWriteSetMismatch": [],
+          "worktreeMergeJournalRef": "write-journal:review-apply-ebdc4bff-b94a-4597-8ce5-32c207d6edc5:1",
+          "worktreeMergeHashes": {
+            "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+          },
+          "worktreeMergeReason": "saved_candidate_target_changed",
+          "worktreeMergeProcessedAt": 1794467225020
+        }
+      }
+    },
+    "saved-candidate-extra-target-tracked": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_1d716637f6961992643d9392",
+            "baseOid": "fd00574f06e8c91ead9264d397460967439823c1",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "extra-target-task",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "b90c6723-d870-4638-a05b-f6a810df0157",
+                "headOid": "fd00574f06e8c91ead9264d397460967439823c1",
+                "baseOid": "fd00574f06e8c91ead9264d397460967439823c1",
+                "statusDigest": "sha256:c5072b6df13169b11490b8ed47c27259f20cf37a1d83691eef9441954076ad6b",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+                },
+                "treeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+                "commitOid": "62a24bd9915951fb33fcc5cf1a0c4fd7dfcc6b1a"
+              }
+            ],
+            "candidateCommitOid": "bb5d4b02c5b99a6e7ff35f64ee05afc4dfdbdd40",
+            "candidateTreeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "fd00574f06e8c91ead9264d397460967439823c1"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "fd00574f06e8c91ead9264d397460967439823c1"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:2a763942362ab94cb8384cd5d59cc04af7cc7090e522b4c8951474f468f6186b",
+            "mainStateAfterDigest": "sha256:2a763942362ab94cb8384cd5d59cc04af7cc7090e522b4c8951474f468f6186b",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-bdcfhs\\repo\\.openclaw\\candidates\\vgc_1d716637f6961992643d9392",
+              "nativeIdentity": "eb5b36e7e977510b68e5f2d1ef333c5ad94c0727cc105e2afc1f3afc3e047d10"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:bf16950051435d42e2500a3ae49894f8d2feb1a438da14594df24c4525969902"
+          },
+          "materializedPath": "d:\\tmp\\autonomy-r4-bdcfhs\\repo\\.openclaw\\candidates\\vgc_1d716637f6961992643d9392",
+          "baseRoot": "d:\\tmp\\autonomy-r4-bdcfhs\\repo"
+        },
+        "metadata": {
+          "isolation": "worktree",
+          "worktreeId": "worker",
+          "worktreeGeneration": "b90c6723-d870-4638-a05b-f6a810df0157",
+          "taskNodeId": "extra-target-task",
+          "worktreeWriteSet": [
+            "other.txt"
+          ],
+          "worktreeBackend": "git",
+          "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-bdcfhs\\repo",
+          "worktreeVerificationCandidate": {
+            "manifest": {
+              "schema": "clawx.versegit.candidate/v1",
+              "candidateId": "vgc_1d716637f6961992643d9392",
+              "baseOid": "fd00574f06e8c91ead9264d397460967439823c1",
+              "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+              "workerSnapshots": [
+                {
+                  "taskNodeId": "extra-target-task",
+                  "parentOrder": 0,
+                  "worktreeRole": "worker",
+                  "worktreeGeneration": "b90c6723-d870-4638-a05b-f6a810df0157",
+                  "headOid": "fd00574f06e8c91ead9264d397460967439823c1",
+                  "baseOid": "fd00574f06e8c91ead9264d397460967439823c1",
+                  "statusDigest": "sha256:c5072b6df13169b11490b8ed47c27259f20cf37a1d83691eef9441954076ad6b",
+                  "changedFiles": [
+                    "other.txt"
+                  ],
+                  "postimageHashes": {
+                    "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+                  },
+                  "treeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+                  "commitOid": "62a24bd9915951fb33fcc5cf1a0c4fd7dfcc6b1a"
+                }
+              ],
+              "candidateCommitOid": "bb5d4b02c5b99a6e7ff35f64ee05afc4dfdbdd40",
+              "candidateTreeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+              "refsBefore": [
+                {
+                  "ref": "refs/heads/master",
+                  "oid": "fd00574f06e8c91ead9264d397460967439823c1"
+                }
+              ],
+              "refsAfter": [
+                {
+                  "ref": "refs/heads/master",
+                  "oid": "fd00574f06e8c91ead9264d397460967439823c1"
+                }
+              ],
+              "mainStateBeforeDigest": "sha256:2a763942362ab94cb8384cd5d59cc04af7cc7090e522b4c8951474f468f6186b",
+              "mainStateAfterDigest": "sha256:2a763942362ab94cb8384cd5d59cc04af7cc7090e522b4c8951474f468f6186b",
+              "mainUnchanged": true,
+              "verificationCwdRole": "host-disposable-candidate",
+              "materializedPathRole": "candidate-verification-worktree",
+              "materializedIdentity": {
+                "rootPath": "d:\\tmp\\autonomy-r4-bdcfhs\\repo\\.openclaw\\candidates\\vgc_1d716637f6961992643d9392",
+                "nativeIdentity": "eb5b36e7e977510b68e5f2d1ef333c5ad94c0727cc105e2afc1f3afc3e047d10"
+              },
+              "allowedRuntimeIgnorePaths": [],
+              "inputDigest": "sha256:bf16950051435d42e2500a3ae49894f8d2feb1a438da14594df24c4525969902"
+            },
+            "materializedPath": "d:\\tmp\\autonomy-r4-bdcfhs\\repo\\.openclaw\\candidates\\vgc_1d716637f6961992643d9392",
+            "baseRoot": "d:\\tmp\\autonomy-r4-bdcfhs\\repo"
+          },
+          "worktreeMergeStatus": "conflict",
+          "worktreeWriteSetMismatch": [],
+          "worktreeMergeJournalRef": "write-journal:review-apply-0fb5a747-396e-42f0-a27f-128bb6ac77fc:1",
+          "worktreeMergeHashes": {
+            "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+          },
+          "worktreeMergeReason": "saved_candidate_target_changed",
+          "worktreeMergeProcessedAt": 1794467201722
+        }
+      }
+    },
+    "saved-candidate-extra-target-untracked": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_0d82d187e1b2c00f9a4b6b1f",
+            "baseOid": "36521f9d2f23b374ff41b5a67803f29599d3293f",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "extra-target-task",
+                "parentOrder": 0,
+                "worktreeRole": "worker",
+                "worktreeGeneration": "06293e4b-7e6e-433e-897b-e820580a6260",
+                "headOid": "36521f9d2f23b374ff41b5a67803f29599d3293f",
+                "baseOid": "36521f9d2f23b374ff41b5a67803f29599d3293f",
+                "statusDigest": "sha256:f56cc37e77705a05a912a3869dd02b8b1d0ca7e3125d5c1fb8e64f29a99e3694",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+                },
+                "treeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+                "commitOid": "470d93c6b4912ef36fab0a11260c603e396ec9b4"
+              }
+            ],
+            "candidateCommitOid": "f337d788eef1d5ed69ed766030349c3bd9b1758c",
+            "candidateTreeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "36521f9d2f23b374ff41b5a67803f29599d3293f"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "36521f9d2f23b374ff41b5a67803f29599d3293f"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:03861946ceb45313decf6a224bc41aab3889f4524690e763617be99ea5c61555",
+            "mainStateAfterDigest": "sha256:03861946ceb45313decf6a224bc41aab3889f4524690e763617be99ea5c61555",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-gmymym\\repo\\.openclaw\\candidates\\vgc_0d82d187e1b2c00f9a4b6b1f",
+              "nativeIdentity": "56a7211385d87b2a6636a3a1b6b85b03d00bdc850782ea04944fe9cd1f3ce609"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:0b6893676e021c9cfd50f64373a6b7ad4d5d3c66c6809a9fd9843674b4f784f3"
+          },
+          "materializedPath": "d:\\tmp\\autonomy-r4-gmymym\\repo\\.openclaw\\candidates\\vgc_0d82d187e1b2c00f9a4b6b1f",
+          "baseRoot": "d:\\tmp\\autonomy-r4-gmymym\\repo"
+        },
+        "metadata": {
+          "isolation": "worktree",
+          "worktreeId": "worker",
+          "worktreeGeneration": "06293e4b-7e6e-433e-897b-e820580a6260",
+          "taskNodeId": "extra-target-task",
+          "worktreeWriteSet": [
+            "other.txt"
+          ],
+          "worktreeBackend": "git",
+          "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-gmymym\\repo",
+          "worktreeVerificationCandidate": {
+            "manifest": {
+              "schema": "clawx.versegit.candidate/v1",
+              "candidateId": "vgc_0d82d187e1b2c00f9a4b6b1f",
+              "baseOid": "36521f9d2f23b374ff41b5a67803f29599d3293f",
+              "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+              "workerSnapshots": [
+                {
+                  "taskNodeId": "extra-target-task",
+                  "parentOrder": 0,
+                  "worktreeRole": "worker",
+                  "worktreeGeneration": "06293e4b-7e6e-433e-897b-e820580a6260",
+                  "headOid": "36521f9d2f23b374ff41b5a67803f29599d3293f",
+                  "baseOid": "36521f9d2f23b374ff41b5a67803f29599d3293f",
+                  "statusDigest": "sha256:f56cc37e77705a05a912a3869dd02b8b1d0ca7e3125d5c1fb8e64f29a99e3694",
+                  "changedFiles": [
+                    "other.txt"
+                  ],
+                  "postimageHashes": {
+                    "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+                  },
+                  "treeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+                  "commitOid": "470d93c6b4912ef36fab0a11260c603e396ec9b4"
+                }
+              ],
+              "candidateCommitOid": "f337d788eef1d5ed69ed766030349c3bd9b1758c",
+              "candidateTreeOid": "596ceaf51ec30c061115c1f92c35791c47a09aa2",
+              "refsBefore": [
+                {
+                  "ref": "refs/heads/master",
+                  "oid": "36521f9d2f23b374ff41b5a67803f29599d3293f"
+                }
+              ],
+              "refsAfter": [
+                {
+                  "ref": "refs/heads/master",
+                  "oid": "36521f9d2f23b374ff41b5a67803f29599d3293f"
+                }
+              ],
+              "mainStateBeforeDigest": "sha256:03861946ceb45313decf6a224bc41aab3889f4524690e763617be99ea5c61555",
+              "mainStateAfterDigest": "sha256:03861946ceb45313decf6a224bc41aab3889f4524690e763617be99ea5c61555",
+              "mainUnchanged": true,
+              "verificationCwdRole": "host-disposable-candidate",
+              "materializedPathRole": "candidate-verification-worktree",
+              "materializedIdentity": {
+                "rootPath": "d:\\tmp\\autonomy-r4-gmymym\\repo\\.openclaw\\candidates\\vgc_0d82d187e1b2c00f9a4b6b1f",
+                "nativeIdentity": "56a7211385d87b2a6636a3a1b6b85b03d00bdc850782ea04944fe9cd1f3ce609"
+              },
+              "allowedRuntimeIgnorePaths": [],
+              "inputDigest": "sha256:0b6893676e021c9cfd50f64373a6b7ad4d5d3c66c6809a9fd9843674b4f784f3"
+            },
+            "materializedPath": "d:\\tmp\\autonomy-r4-gmymym\\repo\\.openclaw\\candidates\\vgc_0d82d187e1b2c00f9a4b6b1f",
+            "baseRoot": "d:\\tmp\\autonomy-r4-gmymym\\repo"
+          },
+          "worktreeMergeStatus": "conflict",
+          "worktreeWriteSetMismatch": [],
+          "worktreeMergeJournalRef": "write-journal:review-apply-72adae6f-f994-45a9-a7cf-c32550f7a566:1",
+          "worktreeMergeHashes": {
+            "other.txt": "de783d19c2bc8bf3df61aa16fe088b02a2161b713fc3f38a0409be3857657804"
+          },
+          "worktreeMergeReason": "saved_candidate_target_changed",
+          "worktreeMergeProcessedAt": 1794467213090
+        }
+      }
+    },
+    "shared-output-candidate-conflict": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "isolated": {
+          "isolation": "worktree",
+          "worktreeId": "worker",
+          "worktreeGeneration": "3a3ebee6-5841-47a4-8780-9097bdfd9ff6",
+          "taskNodeId": "dirty-base-task",
+          "worktreeWriteSet": [
+            "other.txt"
+          ],
+          "worktreeBackend": "git",
+          "worktreeMergeBaseRoot": "d:\\tmp\\autonomy-r4-zhze2l\\repo",
+          "worktreeMergeStatus": "conflict",
+          "worktreeWriteSetMismatch": [],
+          "worktreeMergeReason": "worktree_candidate_unavailable:main_worktree_dirty",
+          "worktreeMergeProcessedAt": 1794467049892
+        },
+        "shared": {
+          "isolation": "shared"
+        },
+        "workerRetained": true
+      }
+    },
+    "two-worktree-candidate": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "candidate": {
+          "status": "frozen",
+          "manifest": {
+            "schema": "clawx.versegit.candidate/v1",
+            "candidateId": "vgc_e8eb2c8b34535f2d2ef37c45",
+            "baseOid": "af8dcff60806e8ed71117575be1da77b3060306d",
+            "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+            "workerSnapshots": [
+              {
+                "taskNodeId": "task-first",
+                "parentOrder": 0,
+                "worktreeRole": "first",
+                "worktreeGeneration": "ee2ef38a-5e52-47df-a400-f3b59f8a23bf",
+                "headOid": "af8dcff60806e8ed71117575be1da77b3060306d",
+                "baseOid": "af8dcff60806e8ed71117575be1da77b3060306d",
+                "statusDigest": "sha256:6ea01e2923bdfa18d173dfad96a62d70bcc411fcf644d8516c040cd245d09088",
+                "changedFiles": [
+                  "other.txt"
+                ],
+                "postimageHashes": {
+                  "other.txt": "806c734071d8d93082a1c57c50a035b259a773aa27eece51f3c34321698f167e"
+                },
+                "treeOid": "4da35813fabd9f20357c5982c99a1b846c3006ec",
+                "commitOid": "3f03c5544434f9d94fe2e75e90280dc18ffb55af"
+              },
+              {
+                "taskNodeId": "task-second",
+                "parentOrder": 1,
+                "worktreeRole": "second",
+                "worktreeGeneration": "8b655f6d-12c3-49de-b35e-f62ca2080cdd",
+                "headOid": "af8dcff60806e8ed71117575be1da77b3060306d",
+                "baseOid": "af8dcff60806e8ed71117575be1da77b3060306d",
+                "statusDigest": "sha256:48917cf75c157b45225342f260ac1d48532b77f775f0d95bb0a31767645b549c",
+                "changedFiles": [
+                  "new.txt"
+                ],
+                "postimageHashes": {
+                  "new.txt": "e26cfb11b683ba56a607a4b54bccb1a6bcc1df69d41abe6d9a1870ff71f973db"
+                },
+                "treeOid": "af81719f532ce5cfdb6a8e126772f03530da1705",
+                "commitOid": "4be9c5162ddffc594a2decc89f4f68edb91c002a"
+              }
+            ],
+            "candidateCommitOid": "8183114aa73582c7c8d60cf1c4e186321372b191",
+            "candidateTreeOid": "b0438983159f761789c8dec0bdb58e54b9965fa0",
+            "refsBefore": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "af8dcff60806e8ed71117575be1da77b3060306d"
+              }
+            ],
+            "refsAfter": [
+              {
+                "ref": "refs/heads/master",
+                "oid": "af8dcff60806e8ed71117575be1da77b3060306d"
+              }
+            ],
+            "mainStateBeforeDigest": "sha256:78a66e9154d2adae68eaf34c9901cf9c442adfb61dad9715c40e4b20a4ff7723",
+            "mainStateAfterDigest": "sha256:78a66e9154d2adae68eaf34c9901cf9c442adfb61dad9715c40e4b20a4ff7723",
+            "mainUnchanged": true,
+            "verificationCwdRole": "host-disposable-candidate",
+            "materializedPathRole": "candidate-verification-worktree",
+            "materializedIdentity": {
+              "rootPath": "d:\\tmp\\autonomy-r4-xjvxmr\\repo\\.openclaw\\candidates\\vgc_e8eb2c8b34535f2d2ef37c45",
+              "nativeIdentity": "268a336b94a568aa7cc0a8693db8f04c672cac72ece22326ea79ac22affafa81"
+            },
+            "allowedRuntimeIgnorePaths": [],
+            "inputDigest": "sha256:de5b1419787421b64553c76bf682ba8ab2c26783394c89423d5bce0a00557af3"
+          },
+          "materializedPath": "D:\\tmp\\autonomy-r4-XJvxMr\\repo\\.openclaw\\candidates\\vgc_e8eb2c8b34535f2d2ef37c45",
+          "issues": []
+        },
+        "checks": {
+          "verificationCwd": "D:\\tmp\\autonomy-r4-XJvxMr\\repo\\.openclaw\\candidates\\vgc_e8eb2c8b34535f2d2ef37c45",
+          "exitCode": 0,
+          "originalHead": "af8dcff60806e8ed71117575be1da77b3060306d",
+          "integrated": [
+            {
+              "worktreeId": "first",
+              "worktreeGeneration": "ee2ef38a-5e52-47df-a400-f3b59f8a23bf",
+              "changedFiles": [
+                "other.txt"
+              ],
+              "status": "merged",
+              "journalRef": "write-journal:review-apply-fac2d39b-2122-45e2-a85f-802ae1039318:1",
+              "hashes": {
+                "other.txt": "806c734071d8d93082a1c57c50a035b259a773aa27eece51f3c34321698f167e"
+              },
+              "recoveryRequired": false
+            },
+            {
+              "worktreeId": "second",
+              "worktreeGeneration": "8b655f6d-12c3-49de-b35e-f62ca2080cdd",
+              "changedFiles": [
+                "new.txt"
+              ],
+              "status": "merged",
+              "journalRef": "write-journal:review-apply-19838112-94a0-4b7d-bcbc-eadd797711d0:1",
+              "hashes": {
+                "new.txt": "e26cfb11b683ba56a607a4b54bccb1a6bcc1df69d41abe6d9a1870ff71f973db"
+              },
+              "recoveryRequired": false
+            }
+          ],
+          "candidateCommitOid": "8183114aa73582c7c8d60cf1c4e186321372b191"
+        }
+      }
+    },
+    "unknown-effect": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "queue": [
+          {
+            "worktreeId": "worker",
+            "worktreeGeneration": "b6c555ef-dcfa-4048-98cc-1582834f4933",
+            "changedFiles": [
+              "other.txt"
+            ],
+            "status": "conflict",
+            "reason": "merge_outcome_unknown",
+            "journalRef": "write-journal:review-apply-6af37b17-2bf1-4842-9892-293703514575:1",
+            "hashes": {
+              "other.txt": "f142ca64fa88ebea950e57d13d12506faeee971888a064a706558e45ad03360f"
+            },
+            "recoveryRequired": true
+          }
+        ],
+        "writer": {
+          "state": "draining",
+          "epoch": 1,
+          "operations": [
+            {
+              "id": "a85b8bd3-a73e-408a-9080-2acf1663c588",
+              "state": "unknown"
+            }
+          ]
+        },
+        "replayRefused": true,
+        "cleanupRefused": true
+      }
+    },
+    "worker-hidden-index-assume-unchanged": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "results": [
+          {
+            "worktreeId": "worker",
+            "worktreeGeneration": "a3dc5463-ab25-4fab-a0ee-cc686f070cb5",
+            "changedFiles": [
+              "other.txt"
+            ],
+            "status": "conflict",
+            "reason": "preflight:worktree_cleanup_hidden_index_flags:original.bin"
+          }
+        ],
+        "workerGeneration": "a3dc5463-ab25-4fab-a0ee-cc686f070cb5",
+        "hiddenWorkerBytesRetained": true
+      }
+    },
+    "worker-hidden-index-skip-worktree": {
+      "driven_by": "agent",
+      "actor": "r4-integration-runtime-test",
+      "value": {
+        "results": [
+          {
+            "worktreeId": "worker",
+            "worktreeGeneration": "05c03c8b-b34c-4cb4-82b4-d7c0ff29d456",
+            "changedFiles": [
+              "other.txt"
+            ],
+            "status": "conflict",
+            "reason": "preflight:worktree_cleanup_hidden_index_flags:original.bin"
+          }
+        ],
+        "workerGeneration": "05c03c8b-b34c-4cb4-82b4-d7c0ff29d456",
+        "hiddenWorkerBytesRetained": true
+      }
+    }
+  }
+}

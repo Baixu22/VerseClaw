@@ -19,6 +19,12 @@ import { createOrchestratorPlan } from "./orchestrator.js";
 import { normalizeIsolationMode } from "./orchestration-protocol.js";
 import { BUILT_IN_ROLE_CONTRACTS } from "./role-contract.js";
 
+function retainFixtureResult(root: string, reference: string): void {
+  execFileSync('git', ['add', '-A'], { cwd: root, windowsHide: true });
+  execFileSync('git', ['-c', 'commit.gpgsign=false', 'commit', '-qm', 'retained fixture result'], { cwd: root, windowsHide: true });
+  execFileSync('git', ['update-ref', 'refs/heads/' + reference, 'HEAD'], { cwd: root, windowsHide: true });
+}
+
 function initGitRepo(root: string): void {
   execFileSync("git", ["init"], { cwd: root, stdio: "ignore" });
   execFileSync("git", ["config", "user.email", "test@example.com"], { cwd: root, stdio: "ignore" });
@@ -187,6 +193,8 @@ describe("worktree-service (C4 interface)", () => {
     const results = await svc.processMergeQueue();
     expect(results[0]?.status).toBe("merged");
     expect(readFileSync(path.join(root, "src", "a.ts"), "utf8")).toContain("a = 9");
+    expect(() => svc.cleanup("g1")).toThrow('worktree_cleanup_user_content_present');
+    retainFixtureResult(rec.root, 'retained-g1');
     svc.cleanup("g1");
     expect(svc.list().find((r) => r.id === "g1")?.status).toBe("cleaned");
     expect(listWorktreeDirs(root).includes("g1")).toBe(false);
@@ -329,7 +337,13 @@ describe("worktree-service C4-H hardening", () => {
     const results = await svc.processMergeQueue();
     expect(results[0]?.status).toBe("merged");
     expect(results[1]?.status).toBe("conflict");
+    expect(() => svc.cleanup("g-a")).toThrow('worktree_cleanup_user_content_present');
+    retainFixtureResult(w1.root, 'retained-ga');
     svc.cleanup("g-a");
+    expect(() => svc.cleanup("g-b")).toThrow('worktree_cleanup_user_content_present');
+    expect(readFileSync(path.join(w2.root, 'src', 'a.ts'), 'utf8')).toBe('export const a = 3;\n');
+    // Remove only this fixture's unintegrated change before exercising ordinary cleanup.
+    writeFileSync(path.join(w2.root, 'src', 'a.ts'), 'export const a = 1;\n');
     svc.cleanup("g-b");
     expect(listWorktreeDirs(root).includes("g-a")).toBe(false);
     expect(listWorktreeDirs(root).includes("g-b")).toBe(false);

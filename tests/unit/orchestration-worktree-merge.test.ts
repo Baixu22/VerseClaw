@@ -109,7 +109,7 @@ describe("worktree long-session ownership", () => {
     expectedSessionId: "generation-1",
   } as const;
 
-  it("cleans only explicit ephemeral worktrees for the exact generation", () => {
+  it("cleans only explicit ephemeral worktrees for the exact generation", async () => {
     const root = makeRoot();
     const service = createWorktreeService(root);
     const kept = service.create("wt-keep", { owner: { ...owner, retention: "keep" } });

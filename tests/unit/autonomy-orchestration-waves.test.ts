@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { copyFileSync, mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
@@ -13,6 +14,7 @@ import { runOrchestrationObserved } from '../../openclaw_runtime/src/agents/orch
 import { synthesizeOrchestrationResult } from '../../openclaw_runtime/src/agents/orchestration-synthesizer';
 import { subagentRuns } from '../../openclaw_runtime/src/agents/subagent-registry-memory';
 import { openOpenClawStateDatabase, closeOpenClawStateDatabase } from '../../openclaw_runtime/src/state/openclaw-state-db';
+import { closeOpenClawAgentDatabasesForTest } from '../../openclaw_runtime/src/state/openclaw-agent-db';
 
 const parent = 'agent:main:main';
 const config = { agents: { teams: undefined, defaults: { model: { primary: 'example/test-model' }, subagents: { maxChildrenPerAgent: 1 } } },
@@ -35,7 +37,7 @@ describe('orchestration waves follow actual registry terminal state', () => {
       return { ok: true };
     });
   });
-  afterEach(() => { resetSubagentRegistryForTests({ persist: false }); closeOpenClawStateDatabase(); vi.unstubAllEnvs(); });
+  afterEach(() => { resetSubagentRegistryForTests({ persist: false }); closeOpenClawAgentDatabasesForTest(); closeOpenClawStateDatabase(); vi.unstubAllEnvs(); });
 
   async function start() {
     const lifecycle: string[] = [];
@@ -203,6 +205,73 @@ describe('orchestration waves follow actual registry terminal state', () => {
     expect(getSubagentRunByRunId(second)?.execution?.status).toBe('queued');
   });
 
+  it('dispatches a queued native Git worker through its registered owner base', async () => {
+    const fixture = mkdtempSync(path.join(tmpdir(), 'r4-native-wave-')), repository = path.join(fixture, 'repo'); mkdirSync(repository);
+    vi.stubEnv('OPENCLAW_STATE_DIR', path.join(fixture, 'state'));
+    const nativeCfg = { ...config, runtime: { coding: { worktree: { backend: 'git' as const } } } } as Parameters<typeof setSessionsSpawnConfigOverride>[0];
+    setSessionsSpawnConfigOverride(nativeCfg);
+    const git = (...args: string[]) => execFileSync('git', args, { cwd: repository, encoding: 'utf8', windowsHide: true }).trim();
+    try {
+      git('init', '-q'); writeFileSync(path.join(repository, '.gitignore'), '.openclaw/\n'); writeFileSync(path.join(repository, 'shared.ts'), 'export const value=1;\n');
+      git('add', '.'); git('-c', 'user.name=Agent', '-c', 'user.email=agent@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-qm', 'native wave fixture');
+      const result = await runOrchestrationObserved({ task: 'check native queued worktree ownership', orchestrationRunId: 'native-owner-wave',
+        cfg: nativeCfg, maxWorkers: 2, includeVerifier: false, workers: [
+          { roleName: 'implementer', task: 'first native task', writeSet: ['shared.ts'], isolation: 'worktree' },
+          { roleName: 'docs-writer', task: 'second native task', writeSet: ['shared.ts'], isolation: 'worktree' },
+        ] }, { agentSessionKey: parent, workspaceDir: repository }, { spawn: (params, context) => spawnSubagentDirect(
+        { ...params, lightContext: true, expectsCompletionMessage: false }, context) });
+      await expect.poll(() => dispatched.length, { timeout: 15_000 }).toBe(1);
+      const secondId = result.outcomes.find(outcome => outcome.roleName === 'docs-writer')!.spawn.result!.runId!;
+      const queued = getSubagentRunByRunId(secondId)!;
+      expect(queued.execution?.status).toBe('queued'); expect(queued.workspaceDir).not.toBe(repository);
+      const { resolveExecutionCheckout } = await import('../../openclaw_runtime/src/agents/worktree-service');
+      const owner = resolveExecutionCheckout(queued.workspaceDir!);
+      expect(owner.worktreeId).toBe(queued.orchestration?.worktreeId); expect(owner.basis.generation).toBe(queued.orchestration?.worktreeGeneration);
+      const first = dispatched[0]; emitAgentEvent({ runId: first.runId, sessionKey: first.childSessionKey, stream: 'lifecycle', data: { phase: 'end', endedAt: Date.now() } });
+      await expect.poll(() => dispatched.length, { timeout: 15_000 }).toBe(2); expect(dispatched[1].runId).toBe(secondId);
+      const evidence = process.env.CLAWX_R4_EVIDENCE_DIR;
+      if (evidence) { mkdirSync(evidence, { recursive: true }); writeFileSync(path.join(evidence, 'native-queued-worker-owner.json'), JSON.stringify({
+        driven_by: 'agent', actor: 'r4-native-wave-test', nativeGit: true, agentRPC: 'injected',
+        workspace: queued.workspaceDir, ownerBase: owner.baseRoot, worktreeId: owner.worktreeId, generation: owner.basis.generation, dispatched,
+      }, null, 2)); }
+    } finally { resetSubagentRegistryForTests({ persist: false }); closeOpenClawAgentDatabasesForTest(); closeOpenClawStateDatabase(); rmSync(fixture, { recursive: true, force: true }); }
+  });
+  it.each(['ready', 'dirty', 'wrong-directory', 'redirected-directory'] as const)('checks the frozen candidate rather than inherited worker identity for a queued verifier (%s)', async state => {
+    const fixture = mkdtempSync(path.join(tmpdir(), 'r4-queued-verifier-')), repository = path.join(fixture, 'repo'); mkdirSync(repository);
+    vi.stubEnv('OPENCLAW_STATE_DIR', path.join(fixture, 'state'));
+    const git = (...args: string[]) => execFileSync('git', args, { cwd: repository, encoding: 'utf8', windowsHide: true }).trim();
+    try {
+      git('init', '-q'); writeFileSync(path.join(repository, '.gitignore'), '.openclaw/\n'); writeFileSync(path.join(repository, 'out.txt'), 'base');
+      git('add', '.'); git('-c', 'user.name=Agent', '-c', 'user.email=agent@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-qm', 'verifier fixture');
+      const { createWorktreeService } = await import('../../openclaw_runtime/src/agents/worktree-service');
+      const { freezeOrchestrationWorktreeCandidate } = await import('../../openclaw_runtime/src/agents/orchestration-worktree-merge');
+      const service = createWorktreeService(repository, { backend: 'git' }), worker = service.create('worker', { writeSet: ['out.txt'] });
+      writeFileSync(path.join(worker.root, 'out.txt'), 'candidate result');
+      const frozen = freezeOrchestrationWorktreeCandidate({ baseRoot: repository, workers: [{ taskNodeId: 'candidate-task',
+        worktreeId: worker.id, worktreeGeneration: worker.generation, declaredWriteSet: ['out.txt'] }] });
+      if (frozen.status !== 'frozen') throw new Error(JSON.stringify(frozen));
+      const result = await start(); await expect.poll(() => dispatched.length).toBe(1);
+      const runId = result.outcomes.find(outcome => outcome.roleName === 'docs-writer')!.spawn.result!.runId!;
+      const queued = subagentRuns.get(runId)!;
+      queued.workspaceDir = state === 'wrong-directory' ? worker.root : frozen.materializedPath;
+      if (state === 'redirected-directory') {
+        queued.workspaceDir = frozen.materializedPath + '-alias'; symlinkSync(frozen.materializedPath, queued.workspaceDir, 'junction');
+      }
+      queued.orchestration = { ...queued.orchestration!, phase: 'verifier', isVerifier: true, isolation: 'worktree',
+        worktreeBackend: 'git', worktreeId: worker.id, worktreeGeneration: worker.generation,
+        worktreeVerificationCandidate: { manifest: frozen.manifest, materializedPath: frozen.materializedPath, baseRoot: repository } };
+      if (state === 'dirty') writeFileSync(path.join(frozen.materializedPath, 'out.txt'), 'unexpected candidate drift');
+      const { dispatchQueuedSubagentRun } = await import('../../openclaw_runtime/src/agents/subagent-spawn');
+      const dispatchedResult = await dispatchQueuedSubagentRun(queued);
+      if (state === 'ready') { expect(dispatchedResult).toMatchObject({ status: 'accepted', runId }); expect(dispatched).toHaveLength(2); }
+      else { expect(dispatchedResult).toMatchObject({ status: 'rejected', error: expect.stringContaining('verification candidate expired') }); expect(dispatched).toHaveLength(1); }
+      const evidence = process.env.CLAWX_R4_EVIDENCE_DIR;
+      if (evidence) { mkdirSync(evidence, { recursive: true }); writeFileSync(path.join(evidence, 'queued-verifier-' + state + '.json'), JSON.stringify({
+        driven_by: 'agent', actor: 'r4-queued-verifier-test', nativeGit: true, agentRPC: 'injected', state,
+        candidate: frozen, executionDirectory: queued.workspaceDir, inheritedWorkerId: worker.id, dispatchedResult,
+      }, null, 2)); }
+    } finally { resetSubagentRegistryForTests({ persist: false }); closeOpenClawAgentDatabasesForTest(); closeOpenClawStateDatabase(); rmSync(fixture, { recursive: true, force: true }); }
+  });
   it('rejects a queued payload whose child identity no longer matches its owner row', async () => {
     const result = await start();
     await expect.poll(() => dispatched.length).toBe(1);

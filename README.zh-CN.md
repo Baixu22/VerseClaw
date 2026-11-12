@@ -332,3 +332,4 @@ Git 与存储页删除的最终归属检查和原生删除，与任务建库、�
 
 子代理恢复在 `OPENCLAW_RECOVERY_AUTHORITY_MODE=authority` 且两种 writer 都选择 `taskflow` 时，先提交决定和预算，再派发 RPC；未知结果保留为对账状态。恢复工具事件接入当前运行订阅，更新投递记录与完成状态。见[恢复准入指南](docs/dev/recovery-contract/GA-READINESS-20261106.md)。
 
+受管工作树的成果回流通过现有 Coding 日志保留删除、重命名和二进制字节；持久工作树回执核对重复完成与重启，目标内容漂移时拒绝覆盖。 清理会保留未声明和被 Git 忽略的本地文件。可执行权限变更在整合前被拒绝。
