@@ -1,0 +1,54 @@
+{
+  "runDir": "D:\\tmp\\windows-inline-closeout-20261112\\inline-r5-live\\2026-11-12T16-03-00-151Z-live",
+  "mode": "live",
+  "decision": {
+    "status": "mechanism-only",
+    "b1_mechanism_and_autonomy": true,
+    "b2_task_benefit": false,
+    "b3_retention_benefit": false,
+    "b4_non_inferiority": false,
+    "b5_no_fabrication": true,
+    "b6_budget": false,
+    "contextGrowthChars": 2553.6666666666642,
+    "tokenGrowthPct": 0.9487643210501924,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 0.8333333333333334,
+      "recallAttemptRate": 0.9444444444444444,
+      "meanMainContextChars": 1857.1666666666667,
+      "meanTotalTokens": 3128.2083333333335,
+      "p95LatencyMs": 34411.163
+    },
+    "reference-visible": {
+      "evidenceSuccessRate": 0.16666666666666666,
+      "controlSuccessRate": 1,
+      "recallAttemptRate": 1,
+      "meanMainContextChars": 19230.666666666668,
+      "meanTotalTokens": 19329.791666666668,
+      "p95LatencyMs": 66796.008
+    },
+    "recall-stable": {
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "recallAttemptRate": 1,
+      "meanMainContextChars": 64708.375,
+      "meanTotalTokens": 37669.208333333336,
+      "p95LatencyMs": 46539.414
+    },
+    "retention-off": {
+      "evidenceSuccessRate": 0.05555555555555555,
+      "controlSuccessRate": 1,
+      "recallAttemptRate": 1,
+      "meanMainContextChars": 62154.708333333336,
+      "meanTotalTokens": 34750.041666666664,
+      "p95LatencyMs": 55126.677
+    }
+  },
+  "credentialHits": 0
+}

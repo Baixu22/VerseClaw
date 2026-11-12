@@ -1,0 +1,30 @@
+{
+  "schema": "TF0585RustRebuildAttempt/v1",
+  "driven_by": "agent",
+  "actor": "codex/windows-inline-closeout",
+  "startedAt": "2026-11-13T00:21:00+08:00",
+  "command": [
+    "node",
+    "scripts/verseshell-bundle.mjs",
+    "rebuild",
+    "--mode",
+    "package",
+    "--source-mirror",
+    "D:/tmp/tf0782-relay-20261111/verseshell-c06f406e-source.bundle"
+  ],
+  "cwd": "C:/tf0782-final-work-20261111",
+  "environment": {
+    "RUSTUP_TOOLCHAIN": "1.94.0",
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp"
+  },
+  "status": "failed",
+  "exitCode": 1,
+  "failureClass": "environment-build-script-spawn-denied",
+  "log": "D:\\tmp\\windows-inline-closeout-20261112\\verseshell-rebuild.log",
+  "logSha256": "d2b6d5203dce2ad7025f44d43e3ce16993a3b6ea30c1ccc0bec67a93e68bc8e1",
+  "minimalProbe": "D:/tmp/tf0585-rust-probe-20261112/spawn-check",
+  "minimalProbeStatus": "passed",
+  "formalRebuildStatus": "failed",
+  "doesNotProveProductFailure": false
+}
