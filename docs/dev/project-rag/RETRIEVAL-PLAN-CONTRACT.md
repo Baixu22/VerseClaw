@@ -2,6 +2,8 @@
 
 Chat Preflight 通过 `knowledge.retrieve` / `wiki.retrieve` 使用统一检索计划。Main 从当前 workspace 和物理会话捕获读取身份；memory-wiki 提供原文复读与索引候选，`openclaw/plugin-sdk/knowledge-retrieval` 提供通用计划和融合函数。
 
+`shared/knowledge/retrieval.ts` 是纯类型合同。Host、renderer 和 runtime 使用同一份数据定义，renderer 不加载索引、数据库或 provider 实现。
+
 `RetrievalPlan/v2` 绑定本轮 policy、profile、owner namespace、query family、显式 SourceRef 和预算。显式 refs 只走 exact lane，普通问题并行召回 exact path、FTS5 和当前向量 generation。Off 和没有显式 refs 的 Manual 不启动召回。
 
 计划同时保存 requestId、admissionContextId 和当前词法 / 向量 generation、embedding space 与凭据代次。返回前再次比较 owner 身份和这些索引快照；运行中换代的结果返回 `snapshotStatus=changed` 和明确原因，随后请求重新使用当前 generation。

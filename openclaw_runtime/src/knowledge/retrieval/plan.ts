@@ -2,35 +2,36 @@ import { randomUUID } from "node:crypto";
 import { setMaxListeners } from "node:events";
 import type { SourceRefV2 } from "../../runtime-core/knowledge-owner-read.js";
 
-export type RetrievalProfile = "local" | "quality" | "research";
-export type RetrievalLane = "exact" | "lexical" | "dense";
-export type RetrievalMode = "off" | "manual" | "suggest" | "auto-read";
-export type RetrievalIntent =
-  | "lookup"
-  | "procedure"
-  | "decision"
-  | "troubleshooting"
-  | "relationship"
-  | "summary";
-export type RetrievalGeneration = {
-  namespaceId: string;
-  lane: "lexical" | "dense";
-  generation: string;
-  spaceId?: string;
-  credentialEpoch?: number;
-};
-export type RetrievalQuery = { text: string; family: string };
-export type RetrievalBudget = {
-  candidateK: number;
-  rerankK: number;
-  finalK: number;
-  maxPerParent: number;
-  maxTokens: number;
-  maxChars: number;
-  deadlineAtMs: number;
-  maxQueries: number;
-  maxModelCalls: number;
-};
+import type {
+  RankSignalsV2,
+  RetrievalFilter,
+  RetrievalGeneration,
+  RetrievalHit,
+  RetrievalIntent,
+  RetrievalLane,
+  RetrievalLaneResult,
+  RetrievalMode,
+  RetrievalPlanV2,
+  RetrievalProfile,
+  RetrievalQuery,
+  RetrievalResultV2,
+} from "../../../../shared/knowledge/retrieval.js";
+export type {
+  RankSignalsV2,
+  RetrievalBudget,
+  RetrievalFilter,
+  RetrievalGeneration,
+  RetrievalHit,
+  RetrievalIntent,
+  RetrievalLane,
+  RetrievalLaneReceipt,
+  RetrievalLaneResult,
+  RetrievalMode,
+  RetrievalPlanV2,
+  RetrievalProfile,
+  RetrievalQuery,
+  RetrievalResultV2,
+} from "../../../../shared/knowledge/retrieval.js";
 
 export const RETRIEVAL_PROFILES = Object.freeze({
   local: Object.freeze({
@@ -64,72 +65,6 @@ export const RETRIEVAL_PROFILES = Object.freeze({
     maxModelCalls: 2,
   }),
 } as const);
-
-export type RetrievalPlanV2 = {
-  schema: "RetrievalPlan/v2";
-  planId: string;
-  requestId: string;
-  admissionContextId: string | null;
-  policyVersion: "project-rag-rrf/v2";
-  mode: RetrievalMode;
-  profile: RetrievalProfile;
-  intent: RetrievalIntent;
-  namespaceIds: readonly string[];
-  queries: readonly RetrievalQuery[];
-  explicitRefs: readonly SourceRefV2[];
-  generations: readonly RetrievalGeneration[];
-  lanes: readonly RetrievalLane[];
-  budget: Readonly<RetrievalBudget>;
-};
-
-export type RankSignalsV2 = {
-  schema: "RankSignals/v2";
-  fusionScore: number;
-  lanes: Array<{
-    lane: RetrievalLane;
-    namespaceId: string;
-    queryFamily: string;
-    rank: number;
-    rawScore: number;
-    scoreKind: string;
-    contribution: number;
-  }>;
-};
-
-export type RetrievalHit<T> = {
-  id: string;
-  sourceRef: SourceRefV2;
-  rawScore: number;
-  scoreKind: string;
-  data: T;
-};
-export type RetrievalFilter = { namespaceId: string; subjectId: string; reason: string };
-export type RetrievalLaneResult<T> = {
-  status: "available" | "unavailable";
-  reason?: string;
-  hits: RetrievalHit<T>[];
-  denied?: RetrievalFilter[];
-};
-export type RetrievalLaneReceipt = {
-  lane: RetrievalLane;
-  namespaceId: string;
-  queryFamily: string;
-  status: "available" | "unavailable" | "cancelled";
-  reason?: string;
-  candidateCount: number;
-  elapsedMs: number;
-};
-export type RetrievalResultV2<T> = {
-  schema: "RetrievalResult/v2";
-  plan: RetrievalPlanV2;
-  status: "complete" | "partial" | "cancelled" | "disabled" | "unavailable";
-  effectiveProfile: RetrievalProfile | "hybrid" | "lexical" | "exact" | "none";
-  results: Array<RetrievalHit<T> & { rank: number; rankSignals: RankSignalsV2 }>;
-  lanes: RetrievalLaneReceipt[];
-  filters: RetrievalFilter[];
-  fallbackReasons: string[];
-  snapshotStatus: "current" | "changed";
-};
 
 export function createRetrievalPlan(input: {
   query: string;
