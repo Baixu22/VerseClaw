@@ -59,6 +59,7 @@ export const ROOT_UNIT_SKIP_INVENTORY = Object.freeze([
   { file: 'tests/unit/runtime-memory-useless-content-judge.test.ts', skips: 6, gate: 'DEEPSEEK_API_KEY withheld' },
   { file: 'tests/unit/runtime-memory-write-path-llm-judge.test.ts', skips: 3, gate: 'DEEPSEEK_API_KEY withheld' },
   { file: 'tests/unit/session-files.test.ts', skips: process.platform === 'win32' ? 1 : 0, gate: 'POSIX permission bits are not asserted on Windows' },
+  { file: 'tests/unit/runtime-lifecycle-governance.test.ts', skips: process.platform === 'win32' ? 1 : 0, gate: 'Windows process-tree audit unavailable in the worker' },
 ].map(Object.freeze));
 export const ROOT_UNIT_EXPECTED_SKIPS = ROOT_UNIT_SKIP_INVENTORY.reduce((sum, entry) => sum + entry.skips, 0);
 // The 53 budget frozen on 2026-09-11 was read on a process without file-symlink

@@ -41,7 +41,7 @@ describe('system-maturity evidence validator', () => {
   ] as const)('checks %s acceptance against %s delivery with a valid evidence hash', (result, status, exitCode) => {
     const fixture = mkdtempSync(path.join(tmpdir(), 'clawx-matrix-validator-'));
     fixtureRoots.push(fixture);
-    for (const file of ['scripts/validate-system-maturity-evidence.mjs', 'scripts/lib/canonical-evidence-hash.mjs']) {
+    for (const file of ['scripts/validate-system-maturity-evidence.mjs', 'scripts/lib/canonical-evidence-hash.mjs', 'scripts/lib/acceptance-artifacts.mjs']) {
       const target = path.join(fixture, file);
       mkdirSync(path.dirname(target), { recursive: true });
       copyFileSync(path.join(root, file), target);
