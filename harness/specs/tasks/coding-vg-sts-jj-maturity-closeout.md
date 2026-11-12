@@ -76,6 +76,10 @@ ownedPaths:
   - shared/host-api/host-action-timeouts.ts
   - tests/unit/host-action-timeouts.test.ts
   - tests/unit/agent-engineering-acceptance.test.ts
+  - tests/unit/versegit-wp9-global-acceptance.test.ts
+  - tests/unit/system-maturity-evidence-validator.test.ts
+  - tests/unit/rc01r-prerequisite-provenance.test.ts
+  - scripts/lib/agent-engineering-acceptance.d.mts
   - tests/unit/first-product-claims.test.ts
   - tests/unit/versegit-wp2-profile.test.ts
   - tests/unit/versegit-wp6-closeout.test.ts
@@ -159,6 +163,10 @@ touchedAreas:
   - shared/host-api/host-action-timeouts.ts
   - tests/unit/host-action-timeouts.test.ts
   - tests/unit/agent-engineering-acceptance.test.ts
+  - tests/unit/versegit-wp9-global-acceptance.test.ts
+  - tests/unit/system-maturity-evidence-validator.test.ts
+  - tests/unit/rc01r-prerequisite-provenance.test.ts
+  - scripts/lib/agent-engineering-acceptance.d.mts
   - tests/unit/first-product-claims.test.ts
   - tests/unit/versegit-wp2-profile.test.ts
   - tests/unit/versegit-wp6-closeout.test.ts
