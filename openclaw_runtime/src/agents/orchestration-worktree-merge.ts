@@ -9,6 +9,7 @@ import {
 import { freezeOrchestrationCandidate, type CreateCandidateWorker } from "./orchestration-candidate.js";
 import type { VerseGitCandidateResult } from "../../../shared/types/versegit.js";
 import { canonicalWorktreePath } from "./worktree-registry.js";
+import { readWorktreeFile, worktreeContentHash } from './worktree-merge-files.js';
 
 export type OrchestrationWorktreeMergeWorker = {
   taskNodeId: string;
@@ -105,6 +106,13 @@ async function mergeWorktrees(params: MergeParameters): Promise<OrchestrationWor
       if (!worker.worktreeGeneration) throw new Error("worktree_generation_required");
       const record = service.list().find(value => value.id === worker.worktreeId && value.generation === worker.worktreeGeneration);
       const terminal = record?.mergeResult?.status === 'merged' ? record.mergeResult : undefined;
+      if (terminal && record!.status !== 'cleaned'
+        && Object.entries(terminal.hashes ?? {}).some(([file, hash]) => worktreeContentHash(readWorktreeFile(params.baseRoot, file)) !== hash)) {
+        const changedFiles = normalizePaths(terminal.changedFiles);
+        pending.push({ worker, declaredWriteSet, changed: { files: changedFiles, source: record!.backend === 'git' ? 'git-status' : 'filesystem-snapshot' },
+          changedFiles, writeSetMismatch: [], queued: { ...terminal, status: 'conflict', reason: 'worktree_merge_target_changed' } });
+        continue;
+      }
       const changed: WorktreeChangedFiles = terminal
         ? { files: terminal.changedFiles, source: record!.backend === 'git' ? 'git-status' : 'filesystem-snapshot' }
         : service.listChangedFiles(worker.worktreeId, worker.worktreeGeneration);
@@ -158,7 +166,7 @@ async function mergeWorktrees(params: MergeParameters): Promise<OrchestrationWor
     const terminal = record?.generation === entry.worker.worktreeGeneration ? record.mergeResult : undefined;
     const sameFiles = terminal && JSON.stringify(terminal.changedFiles.map(file => worktreeRelPathKey(file, params.baseRoot, record?.root)).sort()) === JSON.stringify(entry.changedFiles.map(file => worktreeRelPathKey(file, params.baseRoot, record?.root)).sort());
     const item = processedByWorktree.get(identity(entry.worker.worktreeId, entry.worker.worktreeGeneration))
-      ?? (sameFiles ? terminal : entry.queued);
+      ?? (entry.queued.status === 'conflict' ? entry.queued : sameFiles ? terminal : entry.queued);
     const reasonParts: string[] = [];
     if (entry.writeSetMismatch.length > 0) {
       reasonParts.push(`writeSet_mismatch:${entry.writeSetMismatch.join(",")}`);
