@@ -27,7 +27,6 @@ import {
 import path from "node:path";
 import { withTaskLedgerJournalLock, withTaskLedgerJournalLockSync } from '../../../shared/task-ledger-journal-lock.js';
 import { assertNoSymlinkParentsSync, resolveRootPathSync, safePathSegmentHashed } from "@openclaw/fs-safe/advanced";
-import { acquirePatchBatchLocks } from "./apply-patch-batch-lock.js";
 import {
   LongSessionCoordinationError,
   decideLongSessionCoordination,
