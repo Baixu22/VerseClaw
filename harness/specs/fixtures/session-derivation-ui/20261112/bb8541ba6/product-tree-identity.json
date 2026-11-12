@@ -1,0 +1,54 @@
+{
+  "schema_version": "SessionDerivationUITreeIdentity/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0662-relay",
+  "product_commit": "a9d87862f5321fba6dc561ba1a491c9665aaa406",
+  "final_head": "bb8541ba6bba40fa18c5578f7818279cf0bead81",
+  "final_change_set": [
+    "tests/e2e/session-derivation-ui.spec.ts",
+    "tests/e2e/u6-interaction-metrics.final.spec.ts"
+  ],
+  "trees": [
+    {
+      "path": "src",
+      "product_commit_tree": "4bbd50f54cab4fffa8b5db2ada9712a9d691ff5d",
+      "final_commit_tree": "4bbd50f54cab4fffa8b5db2ada9712a9d691ff5d"
+    },
+    {
+      "path": "shared",
+      "product_commit_tree": "953386722762b3abc879a14531219346ed758269",
+      "final_commit_tree": "953386722762b3abc879a14531219346ed758269"
+    },
+    {
+      "path": "electron",
+      "product_commit_tree": "88abf62678c20a84f7260d9f77c2838e5cace9eb",
+      "final_commit_tree": "88abf62678c20a84f7260d9f77c2838e5cace9eb"
+    },
+    {
+      "path": "openclaw_runtime/src",
+      "product_commit_tree": "f11e5290a32e99af25fe830bc5a28d557bade19f",
+      "final_commit_tree": "f11e5290a32e99af25fe830bc5a28d557bade19f"
+    },
+    {
+      "path": "tests/e2e/fixtures",
+      "product_commit_tree": "a30fcafdbe7575f0e777e80722ca729c1972c3f7",
+      "final_commit_tree": "a30fcafdbe7575f0e777e80722ca729c1972c3f7"
+    },
+    {
+      "path": "harness/specs/tasks",
+      "product_commit_tree": "6a0112420823e10902b28a2165bbbe8763775423",
+      "final_commit_tree": "6a0112420823e10902b28a2165bbbe8763775423"
+    },
+    {
+      "path": "harness/specs/rules",
+      "product_commit_tree": "76f42fd067b9ded34084b88a83b8c9a083a145ae",
+      "final_commit_tree": "76f42fd067b9ded34084b88a83b8c9a083a145ae"
+    },
+    {
+      "path": "harness/specs/scenarios",
+      "product_commit_tree": "185344d6621488debfe3b39ba3af7ca38958d0b7",
+      "final_commit_tree": "185344d6621488debfe3b39ba3af7ca38958d0b7"
+    }
+  ],
+  "product_tree_unchanged": true
+}

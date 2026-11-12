@@ -1,0 +1,469 @@
+{
+  "schema_version": 2,
+  "driven_by": "agent",
+  "actor": "playwright-u6",
+  "requestmodel": "ccs-workbuddy/deepseek-v4.1-flash",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "author_backend": null,
+  "provider": "local-scripted",
+  "side": "candidate",
+  "journey": "archive-restore",
+  "status": "passed",
+  "source_head": "bb8541ba6bba40fa18c5578f7818279cf0bead81",
+  "homeDir": "D:\\tmp\\tf0662-verify\\.tmp\\e2e-runs\\u6-final-bb8541ba6\\verse-claw-e2e-run-xf5Avf\\verse-claw-e2e-home-kUzOro",
+  "profileDir": "D:\\tmp\\tf0662-verify\\.tmp\\e2e-runs\\u6-final-bb8541ba6\\verse-claw-e2e-run-xf5Avf\\verse-claw-e2e-user-data-OnZKl4",
+  "fixture": {
+    "id": "u6-goal-v1",
+    "objective": "Retain the approved U6 artifact",
+    "target": "artifact.txt",
+    "content_sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7",
+    "locale": "en",
+    "viewport": "1280x800"
+  },
+  "unsupportedProof": {},
+  "task_control_call_id": "u6archiverestoretaskcontrol",
+  "setup": [
+    "isolated profile and Git fixture",
+    "scripted provider",
+    "project/session/history",
+    "persistent task contract",
+    "task/reference"
+  ],
+  "owner": {
+    "session": {
+      "key": "agent:main:session-1794497578585-uproject",
+      "kind": "direct",
+      "label": "U6 project coordinator",
+      "displayName": "U6 project coordinator",
+      "updatedAt": 1794497657782,
+      "sessionId": "9b9bf131-9695-469b-b1c7-db0a4beadef8",
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium",
+      "totalTokens": 17,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 128000,
+      "hasActiveRun": false
+    }
+  },
+  "fault": null,
+  "events": [
+    {
+      "id": "e1",
+      "at": "2026-11-12T15:34:05.795Z",
+      "action": "hover",
+      "target": "session:source",
+      "operation": "archive:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e2",
+      "at": "2026-11-12T15:34:05.846Z",
+      "action": "click",
+      "target": "session:more",
+      "operation": "archive:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e3",
+      "at": "2026-11-12T15:34:06.163Z",
+      "action": "click",
+      "target": "testid:sidebar-session-context-delete",
+      "operation": "archive:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e4",
+      "at": "2026-11-12T15:34:06.419Z",
+      "action": "click",
+      "target": "testid:session-delete-dialog-archive",
+      "operation": "archive:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e5",
+      "at": "2026-11-12T15:34:15.356Z",
+      "action": "navigate",
+      "target": "#/",
+      "before": "",
+      "after": "#/",
+      "operation": "archive:goal-v1",
+      "success": true,
+      "source": "rendered_ui",
+      "metrics": [
+        "page_transition"
+      ],
+      "repeat_of": null,
+      "caused_by": "e4",
+      "rule": "主页面路由改变一次"
+    },
+    {
+      "id": "e6",
+      "at": "2026-11-12T15:34:15.664Z",
+      "action": "click",
+      "target": "testid:sidebar-footer-menu-trigger",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/"
+    },
+    {
+      "id": "e7",
+      "at": "2026-11-12T15:34:15.730Z",
+      "action": "click",
+      "target": "testid:sidebar-archive",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/settings/archived"
+    },
+    {
+      "id": "e8",
+      "at": "2026-11-12T15:34:15.948Z",
+      "action": "navigate",
+      "target": "#/settings/archived",
+      "before": "#/",
+      "after": "#/settings/archived",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "rendered_ui",
+      "metrics": [
+        "page_transition"
+      ],
+      "repeat_of": null,
+      "caused_by": "e7",
+      "rule": "主页面路由改变一次"
+    },
+    {
+      "id": "e9",
+      "at": "2026-11-12T15:34:15.987Z",
+      "action": "click",
+      "target": "testid:settings-archived-restore-agent:main:session-1794497578585-uproject",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [
+        "identity_selection"
+      ],
+      "repeat_of": null,
+      "rule": "显式选择项目/会话/任务/检出身份",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/settings/archived",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/settings/archived"
+    },
+    {
+      "id": "e10",
+      "at": "2026-11-12T15:34:20.808Z",
+      "action": "click",
+      "target": "testid:settings-back-button",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/settings/archived",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/"
+    },
+    {
+      "id": "e11",
+      "at": "2026-11-12T15:34:20.834Z",
+      "action": "navigate",
+      "target": "#/",
+      "before": "#/settings/archived",
+      "after": "#/",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "rendered_ui",
+      "metrics": [
+        "page_transition"
+      ],
+      "repeat_of": null,
+      "caused_by": "e10",
+      "rule": "主页面路由改变一次"
+    },
+    {
+      "id": "e12",
+      "at": "2026-11-12T15:34:20.849Z",
+      "action": "click",
+      "target": "testid:sidebar-session-agent:main:session-1794497578585-uproject",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [
+        "identity_selection"
+      ],
+      "repeat_of": null,
+      "rule": "显式选择项目/会话/任务/检出身份",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/"
+    }
+  ],
+  "tracked_product_and_helper_diff_empty": true,
+  "build": {
+    "main_sha256": "8f80b319387b35f274a98fb86b7006f4709e1dead405991321e3c6231f2f18cb",
+    "renderer_sha256": "7b35126e339cad353190859f0bb2d511fb8d79be9659df451bcb603e0725a799",
+    "runtime_entry_sha256": "a6d6a05fdd72eb1a91466c5a5bfa0211d4419473d17c1ab897d53435df73aef9",
+    "manifest_sha256": "c3a2d933ff77791a0eb5da1f469c1be6b2735dac818e7d717d2b21d21e99ba0e",
+    "manifest_path": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\candidate-build-manifest-bb8541ba6.json",
+    "side": "candidate",
+    "source_head": "bb8541ba6bba40fa18c5578f7818279cf0bead81"
+  },
+  "driver_sha256": "69f4492b3d788abb0adc5a829ffd8c06158a4fd5ddaec992190a28b6c3e67323",
+  "helpers": {
+    "electron.ts": "602720de6dd84ec2060d5a11df70016760e67ef9231bc5af74cc2da5d2783925",
+    "fp-p1-harness.ts": "31e96027ab5a10d5e510b026831a4f55fd2d65e1a77ff350a28f8c17208d0a14",
+    "session-task-chain.ts": "ba39bf738cbf7a2dda1c85854579bb80c0fbf40b055e19f830ee2b80116f4011",
+    "electron-process-cleanup.ts": "35864693cf9b6be10abc0f4ce5bb4db5a57974314967c425d2fd9ed166c9cc85",
+    "windows-process.ts": "27c7af68a5e580fc108018705711ef71994474a3bf40a7b838e764bdb0862dd9"
+  },
+  "identities": {
+    "project": {
+      "workspaceId": "u6-project",
+      "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\u6-final-bb8541ba6\\u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore\\fixture\\source",
+      "sessionKey": "agent:main:session-1794497578585-uproject",
+      "generation": "62b2b95d-6021-4168-bb86-5620c37553ea"
+    },
+    "child": null,
+    "taskNodeId": "57180d01-08f9-4374-88d3-ccb45c9a72d5",
+    "targetWorkspaceId": null
+  },
+  "task_readback": {
+    "success": true,
+    "tasks": [
+      {
+        "contract": {
+          "objective": "Retain the approved U6 artifact",
+          "constraints": [
+            "Retain prior progress"
+          ],
+          "acceptance": [
+            {
+              "id": "file",
+              "description": "Artifact contains the approved output",
+              "verification": {
+                "kind": "file-sha256",
+                "path": "artifact.txt",
+                "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+              }
+            }
+          ],
+          "target": "artifact.txt",
+          "dependencies": [],
+          "origin": {
+            "source": "host-task-api",
+            "requestId": "u6-create"
+          },
+          "taskNodeId": "57180d01-08f9-4374-88d3-ccb45c9a72d5",
+          "domain": "84cde0e542903c732274d71b91cce2d7fcfb5f9bf668bbef2296b767f598ec4e",
+          "revision": 1,
+          "digest": "61bb234ce249623141440f7f1d8d622ce0f087fafe9aeca69d7f3d73fc39c04b",
+          "state": "ready",
+          "createdAt": 1794497641397,
+          "updatedAt": 1794497641397
+        },
+        "claim": null,
+        "checkpoint": null,
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "childTaskNodeIds": []
+      }
+    ]
+  },
+  "archive": {
+    "before": {
+      "success": true,
+      "entries": [
+        {
+          "sessionKey": "agent:main:session-1794497578585-uproject",
+          "agentId": "main",
+          "transcriptPath": "D:\\tmp\\tf0662-verify\\.tmp\\e2e-runs\\u6-final-bb8541ba6\\verse-claw-e2e-run-xf5Avf\\verse-claw-e2e-user-data-OnZKl4\\openclaw-source-state\\agents\\main\\sessions\\62b2b95d-6021-4168-bb86-5620c37553ea.archived.jsonl",
+          "label": "U6 project coordinator",
+          "archivedAt": 1794497649897,
+          "originalWorkspaceId": null,
+          "originalFolderId": null,
+          "sessionsJsonSnapshot": {
+            "sessionId": "62b2b95d-6021-4168-bb86-5620c37553ea",
+            "updatedAt": 1794497644814,
+            "label": "U6 project coordinator",
+            "sessionFile": "D:\\tmp\\tf0662-verify\\.tmp\\e2e-runs\\u6-final-bb8541ba6\\verse-claw-e2e-run-xf5Avf\\verse-claw-e2e-user-data-OnZKl4\\openclaw-source-state\\agents\\main\\sessions\\62b2b95d-6021-4168-bb86-5620c37553ea.jsonl"
+          }
+        }
+      ],
+      "pendingMutations": []
+    },
+    "restored": {
+      "session": {
+        "key": "agent:main:session-1794497578585-uproject",
+        "kind": "direct",
+        "label": "U6 project coordinator",
+        "displayName": "U6 project coordinator",
+        "updatedAt": 1794497657782,
+        "sessionId": "9b9bf131-9695-469b-b1c7-db0a4beadef8",
+        "thinkingLevels": [
+          {
+            "id": "off",
+            "label": "off"
+          },
+          {
+            "id": "minimal",
+            "label": "minimal"
+          },
+          {
+            "id": "low",
+            "label": "low"
+          },
+          {
+            "id": "medium",
+            "label": "medium"
+          },
+          {
+            "id": "high",
+            "label": "high"
+          }
+        ],
+        "thinkingOptions": [
+          "off",
+          "minimal",
+          "low",
+          "medium",
+          "high"
+        ],
+        "thinkingDefault": "medium",
+        "totalTokens": 17,
+        "totalTokensFresh": true,
+        "estimatedCostUsd": 0,
+        "modelProvider": "custom-sessionc",
+        "model": "mock-coder",
+        "agentRuntime": {
+          "id": "auto",
+          "source": "implicit"
+        },
+        "contextTokens": 128000,
+        "hasActiveRun": false
+      }
+    },
+    "after": {
+      "success": true,
+      "entries": [],
+      "pendingMutations": []
+    },
+    "history": {
+      "success": true,
+      "messages": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "[agent fixture]\n\nRecorded objective: Retain the approved U6 artifact"
+            }
+          ],
+          "timestamp": 1794497643134,
+          "stopReason": "stop",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "totalTokens": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "api": "openai-responses",
+          "provider": "openclaw",
+          "model": "gateway-injected",
+          "__openclaw": {
+            "id": "02635f54-4be6-43eb-9a34-fd36a89b447b",
+            "recordTimestampMs": 1794497643134,
+            "seq": 1
+          }
+        }
+      ],
+      "model": "openclaw/gateway-injected",
+      "costUsd": 0
+    }
+  },
+  "provider_log": [
+    {
+      "turn": "[Thu 2026-11-12 23:33 GMT+8] [OpenClaw heartbeat poll]",
+      "toolResults": {},
+      "issued": "text:U6-ACK"
+    }
+  ],
+  "reason": null,
+  "counts_source": "successful_events",
+  "counts": {
+    "identity_selection": 2,
+    "page_transition": 3,
+    "repeat_confirmation": 0,
+    "goal_restatement": 0,
+    "repeat_reminder": 0
+  }
+}

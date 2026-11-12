@@ -1,0 +1,48 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-u2-state-proof",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "case": "AC8: an owner-created project without a coordinator names the missing association",
+  "evidenceType": "real-electron-production-owners",
+  "startedAt": "2026-11-12T17:27:05.762Z",
+  "owner": {
+    "id": "u2-unbound-project",
+    "name": "U2 unbound project",
+    "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-05-task-ui\\session-task-state-guidanc-1755b-mes-the-missing-association\\unbound-workspace",
+    "agentId": "main",
+    "selectedAgentId": "main",
+    "activeSessionKey": "agent:main:main",
+    "agentBindings": {
+      "main": {
+        "workspaceId": "u2-unbound-project",
+        "agentId": "main",
+        "sessionKey": "agent:main:main"
+      }
+    },
+    "permissionMode": "fullAccess",
+    "createdAt": 1794504434916,
+    "updatedAt": 1794504434916,
+    "lastOpenedAt": 1794504434916,
+    "state": {
+      "chatFooter": {
+        "contextRangeVisible": true,
+        "tokenUsageVisible": true,
+        "workContextVisible": true
+      }
+    },
+    "sessionStates": {
+      "agent:main:main": {
+        "chatFooter": {
+          "contextRangeVisible": true,
+          "tokenUsageVisible": true,
+          "workContextVisible": true
+        }
+      }
+    }
+  },
+  "ui": "No coordinator bound to this project.",
+  "faultEvents": [],
+  "status": "passed",
+  "errors": [],
+  "finishedAt": "2026-11-12T17:27:16.408Z"
+}

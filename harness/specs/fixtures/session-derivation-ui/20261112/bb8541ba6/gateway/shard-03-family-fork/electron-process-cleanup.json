@@ -1,0 +1,107 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\tf0662-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-fGBQl6",
+  "ledgerEntries": 15,
+  "checks": [
+    {
+      "pid": 27824,
+      "creationTime": 1794503154728,
+      "status": "exited"
+    },
+    {
+      "pid": 31052,
+      "creationTime": 1794503164851,
+      "status": "exited"
+    },
+    {
+      "pid": 23904,
+      "creationTime": 1794503165259,
+      "status": "exited"
+    },
+    {
+      "pid": 3524,
+      "creationTime": 1794503289009,
+      "status": "exited"
+    },
+    {
+      "pid": 27884,
+      "creationTime": 1794503297799,
+      "status": "exited"
+    },
+    {
+      "pid": 44216,
+      "creationTime": 1794503298093,
+      "status": "exited"
+    },
+    {
+      "pid": 45392,
+      "creationTime": 1794503464742,
+      "status": "exited"
+    },
+    {
+      "pid": 8448,
+      "creationTime": 1794503472468,
+      "status": "exited"
+    },
+    {
+      "pid": 45224,
+      "creationTime": 1794503472890,
+      "status": "exited"
+    }
+  ],
+  "processObservations": [
+    [
+      {
+        "pid": 27824,
+        "creationTime": 1794503154728,
+        "status": "exited"
+      },
+      {
+        "pid": 31052,
+        "creationTime": 1794503164851,
+        "status": "exited"
+      },
+      {
+        "pid": 23904,
+        "creationTime": 1794503165259,
+        "status": "exited"
+      },
+      {
+        "pid": 3524,
+        "creationTime": 1794503289009,
+        "status": "exited"
+      },
+      {
+        "pid": 27884,
+        "creationTime": 1794503297799,
+        "status": "exited"
+      },
+      {
+        "pid": 44216,
+        "creationTime": 1794503298093,
+        "status": "exited"
+      },
+      {
+        "pid": 45392,
+        "creationTime": 1794503464742,
+        "status": "exited"
+      },
+      {
+        "pid": 8448,
+        "creationTime": 1794503472468,
+        "status": "exited"
+      },
+      {
+        "pid": 45224,
+        "creationTime": 1794503472890,
+        "status": "exited"
+      }
+    ]
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

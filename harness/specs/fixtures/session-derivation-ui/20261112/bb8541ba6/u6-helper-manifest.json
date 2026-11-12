@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "driven_by": "agent",
+  "actor": "codex-tf0662-relay",
+  "required_identical": true,
+  "helpers": [
+    {
+      "name": "electron.ts",
+      "path": "tests/e2e/fixtures/electron.ts",
+      "sha256": "602720de6dd84ec2060d5a11df70016760e67ef9231bc5af74cc2da5d2783925",
+      "baseline_head_sha256": "7db2b01248292002a82ed18fc0198428c07799f71dbf6f8ebced388fbf4dbdce"
+    },
+    {
+      "name": "fp-p1-harness.ts",
+      "path": "tests/e2e/fixtures/fp-p1-harness.ts",
+      "sha256": "31e96027ab5a10d5e510b026831a4f55fd2d65e1a77ff350a28f8c17208d0a14",
+      "baseline_head_sha256": "721d302d70ccc43eeb8fc795193cfc1bfa7d3533ab07b3ce930e886375ea8878"
+    },
+    {
+      "name": "session-task-chain.ts",
+      "path": "tests/e2e/fixtures/session-task-chain.ts",
+      "sha256": "ba39bf738cbf7a2dda1c85854579bb80c0fbf40b055e19f830ee2b80116f4011",
+      "baseline_head_sha256": "eaa29bff7761bea46ab62d7e0ce5bcdaa5d3acf430d456a9decc7673e0e10527"
+    },
+    {
+      "name": "electron-process-cleanup.ts",
+      "path": "tests/e2e/fixtures/electron-process-cleanup.ts",
+      "sha256": "35864693cf9b6be10abc0f4ce5bb4db5a57974314967c425d2fd9ed166c9cc85",
+      "baseline_head_sha256": "24ef4b912c99194f6f59779fbf0e712540512b530afd8be446435dc025dbd0d4"
+    },
+    {
+      "name": "windows-process.ts",
+      "path": "tests/e2e/fixtures/windows-process.ts",
+      "sha256": "27c7af68a5e580fc108018705711ef71994474a3bf40a7b838e764bdb0862dd9",
+      "baseline_head_sha256": "8f706c9ed693815357c36afbd1e3a434db4825427a6468202028038e636f32ba"
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-u2-state-proof",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "case": "AC8: a held real Ledger response shows loading, permission denial and a reachable refresh",
+  "evidenceType": "real-electron-production-owners",
+  "startedAt": "2026-11-12T17:27:17.294Z",
+  "owner": {
+    "project": {
+      "workspaceId": "u2-permission-project",
+      "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-05-task-ui\\session-task-state-guidanc-59512-ial-and-a-reachable-refresh\\permission-workspace",
+      "sessionKey": "agent:main:session-1794504445329-upermissionproject",
+      "generation": "5915ea3d-4e06-4661-b88c-4e4039e7c98c"
+    },
+    "task": {
+      "contract": {
+        "objective": "U2 recorded task",
+        "constraints": [],
+        "acceptance": [
+          {
+            "id": "artifact",
+            "description": "Read the recorded proof file",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "proof.txt",
+              "sha256": "f6ed42a9d765eeb230a069bbc3d5dc346b2669594bb0b83cc6d14d5d967b8961"
+            }
+          }
+        ],
+        "target": "proof.txt",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "u2-permission-task"
+        },
+        "taskNodeId": "a565d11f-cbe2-48af-9962-9bbbbf051894",
+        "domain": "27722aab7fddd7a2d761a0d1eab30fed8d3806019128038acb684bef95388957",
+        "revision": 1,
+        "digest": "b63d55a5be63dcd01e50cc6fd46362147e81a3bbc21e01f9c634f6510fc2a135",
+        "state": "ready",
+        "createdAt": 1794504521623,
+        "updatedAt": 1794504521623
+      },
+      "claim": null,
+      "checkpoint": null,
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": []
+    }
+  },
+  "faultInjection": {
+    "driven_by": "agent",
+    "boundary": "Main host:invoke taskLedger.snapshot",
+    "behavior": "hold successful real owner response, then substitute PERMISSION_DENIED; restore original handler before refresh"
+  },
+  "permissionUi": "Permission denied when reading tasks. Refresh after access is restored.",
+  "recovered": {
+    "sourceWorkspaceId": "u2-permission-project",
+    "task": {
+      "id": "a565d11f-cbe2-48af-9962-9bbbbf051894",
+      "title": "U2 recorded task",
+      "description": "proof.txt",
+      "kind": "task",
+      "status": "todo",
+      "createdAt": "2026-11-12T17:28:41.623Z",
+      "updatedAt": "2026-11-12T17:28:41.623Z",
+      "metadata": {
+        "readonlyProjection": true,
+        "source": "task-ledger.execution-contract",
+        "contractRevision": 1
+      },
+      "parentId": null,
+      "evidenceRefs": []
+    },
+    "ui": "Project tasks\n1\nBusiness tasks linked\nOpen ledger"
+  },
+  "faultEvents": [
+    {
+      "requestId": "84afe108-d341-45f6-a02e-8d0616a96155",
+      "phase": "injected-permission-denial",
+      "ownerOk": true,
+      "sourceWorkspaceId": "u2-permission-project"
+    },
+    {
+      "requestId": "642d0037-5c6a-4f58-9cb7-b7ef6da7795d",
+      "phase": "injected-permission-denial",
+      "ownerOk": true,
+      "sourceWorkspaceId": "u2-permission-project"
+    },
+    {
+      "requestId": "fddd5383-3357-46ac-b6d5-36abecae1c4d",
+      "phase": "injected-permission-denial",
+      "ownerOk": true,
+      "sourceWorkspaceId": "u2-permission-project"
+    },
+    {
+      "requestId": "f2038616-533e-4bb8-9672-64c5e406b9db",
+      "phase": "injected-permission-denial",
+      "ownerOk": true,
+      "sourceWorkspaceId": "u2-permission-project"
+    },
+    {
+      "requestId": "4ee17410-6a64-4edf-b037-28967182d473",
+      "phase": "injected-permission-denial",
+      "ownerOk": true,
+      "sourceWorkspaceId": "u2-permission-project"
+    },
+    {
+      "requestId": "191650f1-4250-4e79-9fe4-0b25553b4733",
+      "phase": "injected-permission-denial",
+      "ownerOk": true,
+      "sourceWorkspaceId": "u2-permission-project"
+    },
+    {
+      "requestId": "f3b741d2-b90c-4e24-81c9-7aab44827812",
+      "phase": "injected-permission-denial",
+      "ownerOk": true,
+      "sourceWorkspaceId": "u2-permission-project"
+    },
+    {
+      "requestId": "a0ac8bac-cf36-46fe-88bb-e7ff792c72dd",
+      "phase": "injected-permission-denial",
+      "ownerOk": true,
+      "sourceWorkspaceId": "u2-permission-project"
+    }
+  ],
+  "status": "passed",
+  "errors": [],
+  "finishedAt": "2026-11-12T17:28:43.626Z"
+}

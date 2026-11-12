@@ -1,0 +1,197 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\tf0662-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-Bxafbh",
+  "ledgerEntries": 30,
+  "checks": [
+    {
+      "pid": 26836,
+      "creationTime": 1794503963170,
+      "status": "exited"
+    },
+    {
+      "pid": 36696,
+      "creationTime": 1794503972219,
+      "status": "exited"
+    },
+    {
+      "pid": 38804,
+      "creationTime": 1794503972586,
+      "status": "exited"
+    },
+    {
+      "pid": 31332,
+      "creationTime": 1794504112437,
+      "status": "exited"
+    },
+    {
+      "pid": 46056,
+      "creationTime": 1794504120824,
+      "status": "exited"
+    },
+    {
+      "pid": 42968,
+      "creationTime": 1794504121157,
+      "status": "exited"
+    },
+    {
+      "pid": 42688,
+      "creationTime": 1794504277810,
+      "status": "exited"
+    },
+    {
+      "pid": 44940,
+      "creationTime": 1794504288396,
+      "status": "exited"
+    },
+    {
+      "pid": 27968,
+      "creationTime": 1794504288748,
+      "status": "exited"
+    },
+    {
+      "pid": 36116,
+      "creationTime": 1794504425827,
+      "status": "exited"
+    },
+    {
+      "pid": 40800,
+      "creationTime": 1794504433605,
+      "status": "exited"
+    },
+    {
+      "pid": 35896,
+      "creationTime": 1794504433943,
+      "status": "exited"
+    },
+    {
+      "pid": 37092,
+      "creationTime": 1794504437360,
+      "status": "exited"
+    },
+    {
+      "pid": 43752,
+      "creationTime": 1794504443933,
+      "status": "exited"
+    },
+    {
+      "pid": 31724,
+      "creationTime": 1794504444353,
+      "status": "exited"
+    },
+    {
+      "pid": 30904,
+      "creationTime": 1794504525016,
+      "status": "exited"
+    },
+    {
+      "pid": 42908,
+      "creationTime": 1794504529454,
+      "status": "exited"
+    },
+    {
+      "pid": 32680,
+      "creationTime": 1794504529673,
+      "status": "exited"
+    }
+  ],
+  "processObservations": [
+    [
+      {
+        "pid": 26836,
+        "creationTime": 1794503963170,
+        "status": "exited"
+      },
+      {
+        "pid": 36696,
+        "creationTime": 1794503972219,
+        "status": "exited"
+      },
+      {
+        "pid": 38804,
+        "creationTime": 1794503972586,
+        "status": "exited"
+      },
+      {
+        "pid": 31332,
+        "creationTime": 1794504112437,
+        "status": "exited"
+      },
+      {
+        "pid": 46056,
+        "creationTime": 1794504120824,
+        "status": "exited"
+      },
+      {
+        "pid": 42968,
+        "creationTime": 1794504121157,
+        "status": "exited"
+      },
+      {
+        "pid": 42688,
+        "creationTime": 1794504277810,
+        "status": "exited"
+      },
+      {
+        "pid": 44940,
+        "creationTime": 1794504288396,
+        "status": "exited"
+      },
+      {
+        "pid": 27968,
+        "creationTime": 1794504288748,
+        "status": "exited"
+      },
+      {
+        "pid": 36116,
+        "creationTime": 1794504425827,
+        "status": "exited"
+      },
+      {
+        "pid": 40800,
+        "creationTime": 1794504433605,
+        "status": "exited"
+      },
+      {
+        "pid": 35896,
+        "creationTime": 1794504433943,
+        "status": "exited"
+      },
+      {
+        "pid": 37092,
+        "creationTime": 1794504437360,
+        "status": "exited"
+      },
+      {
+        "pid": 43752,
+        "creationTime": 1794504443933,
+        "status": "exited"
+      },
+      {
+        "pid": 31724,
+        "creationTime": 1794504444353,
+        "status": "exited"
+      },
+      {
+        "pid": 30904,
+        "creationTime": 1794504525016,
+        "status": "exited"
+      },
+      {
+        "pid": 42908,
+        "creationTime": 1794504529454,
+        "status": "exited"
+      },
+      {
+        "pid": 32680,
+        "creationTime": 1794504529673,
+        "status": "exited"
+      }
+    ]
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

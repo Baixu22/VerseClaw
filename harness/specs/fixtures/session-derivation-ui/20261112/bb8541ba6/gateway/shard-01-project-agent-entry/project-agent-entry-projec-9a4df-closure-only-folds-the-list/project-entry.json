@@ -1,0 +1,99 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-project-entry",
+  "provider": "local-scripted",
+  "savedOwner": {
+    "id": "project-a",
+    "name": "Project A",
+    "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-01-project-agent-entry\\project-agent-entry-projec-9a4df-closure-only-folds-the-list\\project-a",
+    "agentId": "main",
+    "selectedAgentId": "main",
+    "activeSessionKey": "agent:main:session-1794502208167-projecta",
+    "projectCoordinatorSessionKey": "agent:main:session-1794502208167-projecta",
+    "agentBindings": {
+      "main": {
+        "workspaceId": "project-a",
+        "agentId": "main",
+        "sessionKey": "agent:main:session-1794502208167-projecta"
+      }
+    },
+    "permissionMode": "fullAccess",
+    "createdAt": 1794502208170,
+    "updatedAt": 1794502292080,
+    "lastOpenedAt": 1794502208170,
+    "state": {
+      "chatFooter": {
+        "contextRangeVisible": true,
+        "tokenUsageVisible": true,
+        "workContextVisible": true
+      },
+      "composerRunState": "idle",
+      "activeTopicId": null,
+      "knowledgeScope": "none",
+      "knowledgeMode": "suggest",
+      "artifactPanel": {
+        "open": false,
+        "expanded": false,
+        "tabs": []
+      },
+      "turnSummaryExpanded": {},
+      "turnSummaryStepDetailsExpanded": {},
+      "readingPosition": {
+        "scrollTop": 0,
+        "pinned": true
+      },
+      "draftInput": "Source draft preserved"
+    },
+    "sessionStates": {
+      "agent:main:session-1794502208167-projecta": {
+        "chatFooter": {
+          "contextRangeVisible": true,
+          "tokenUsageVisible": true,
+          "workContextVisible": true
+        },
+        "composerRunState": "idle",
+        "activeTopicId": null,
+        "knowledgeScope": "none",
+        "knowledgeMode": "suggest",
+        "artifactPanel": {
+          "open": false,
+          "expanded": false,
+          "tabs": []
+        },
+        "turnSummaryExpanded": {},
+        "turnSummaryStepDetailsExpanded": {},
+        "readingPosition": {
+          "scrollTop": 0,
+          "pinned": true
+        },
+        "draftInput": "Source draft preserved"
+      },
+      "agent:main:dashboard:71ec7767-0ac0-4382-b4be-b2deb1a8a3b0": {
+        "draftInput": "Child 1 draft"
+      },
+      "agent:main:dashboard:9a6bf271-047d-4f1e-b639-d6d2ab63a15e": {
+        "draftInput": "Child 1 draft"
+      }
+    },
+    "sessionFolders": [],
+    "sessionFolderAssignments": {}
+  },
+  "projects": {
+    "a": {
+      "workspaceId": "project-a",
+      "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-01-project-agent-entry\\project-agent-entry-projec-9a4df-closure-only-folds-the-list\\project-a",
+      "sessionKey": "agent:main:session-1794502208167-projecta",
+      "generation": "0869b116-4fe9-4a94-9a89-928cdc35d384"
+    },
+    "b": {
+      "workspaceId": "project-b",
+      "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-01-project-agent-entry\\project-agent-entry-projec-9a4df-closure-only-folds-the-list\\project-b",
+      "sessionKey": "agent:main:session-1794502292097-projectb",
+      "generation": "8cd04461-ee2b-4bfa-8e31-d4ca609a5af5"
+    },
+    "child": "agent:main:dashboard:71ec7767-0ac0-4382-b4be-b2deb1a8a3b0",
+    "grandchild": "agent:main:dashboard:9a6bf271-047d-4f1e-b639-d6d2ab63a15e",
+    "taskId": "47d0c201-7511-40fa-b2be-fc9752d202f0"
+  },
+  "status": "passed"
+}

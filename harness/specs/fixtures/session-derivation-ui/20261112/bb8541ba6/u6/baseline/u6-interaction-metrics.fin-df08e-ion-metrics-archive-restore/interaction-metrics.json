@@ -1,0 +1,460 @@
+{
+  "schema_version": 2,
+  "driven_by": "agent",
+  "actor": "playwright-u6",
+  "requestmodel": "ccs-workbuddy/deepseek-v4.1-flash",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "author_backend": null,
+  "provider": "local-scripted",
+  "side": "baseline",
+  "journey": "archive-restore",
+  "status": "passed",
+  "source_head": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+  "homeDir": "D:\\ClawX-acceptance\\unified-baseline-5ffc-01a1ce4c\\.tmp\\e2e-runs\\u6-final-bb8541ba6-v2\\verse-claw-e2e-run-fQeLBG\\verse-claw-e2e-home-QRj6LS",
+  "profileDir": "D:\\ClawX-acceptance\\unified-baseline-5ffc-01a1ce4c\\.tmp\\e2e-runs\\u6-final-bb8541ba6-v2\\verse-claw-e2e-run-fQeLBG\\verse-claw-e2e-user-data-cAQpFC",
+  "fixture": {
+    "id": "u6-goal-v1",
+    "objective": "Retain the approved U6 artifact",
+    "target": "artifact.txt",
+    "content_sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7",
+    "locale": "en",
+    "viewport": "1280x800"
+  },
+  "unsupportedProof": {},
+  "task_control_call_id": "u6archiverestoretaskcontrol",
+  "setup": [
+    "isolated profile and Git fixture",
+    "scripted provider",
+    "project/session/history",
+    "persistent task contract",
+    "task/reference"
+  ],
+  "owner": {
+    "session": {
+      "key": "agent:main:session-1794498551650-uproject",
+      "kind": "direct",
+      "label": "U6 project coordinator",
+      "displayName": "U6 project coordinator",
+      "updatedAt": 1794498587020,
+      "sessionId": "03add625-86f5-4f52-b98c-c65c0afd60e5",
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium",
+      "totalTokens": 17,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 128000,
+      "hasActiveRun": false
+    }
+  },
+  "fault": null,
+  "events": [
+    {
+      "id": "e1",
+      "at": "2026-11-12T15:49:43.832Z",
+      "action": "hover",
+      "target": "session:source",
+      "operation": "archive:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e2",
+      "at": "2026-11-12T15:49:43.886Z",
+      "action": "click",
+      "target": "session:more",
+      "operation": "archive:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e3",
+      "at": "2026-11-12T15:49:44.120Z",
+      "action": "click",
+      "target": "testid:sidebar-session-context-delete",
+      "operation": "archive:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e4",
+      "at": "2026-11-12T15:49:44.384Z",
+      "action": "click",
+      "target": "testid:session-delete-dialog-archive",
+      "operation": "archive:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e5",
+      "at": "2026-11-12T15:49:45.823Z",
+      "action": "navigate",
+      "target": "#/",
+      "before": "",
+      "after": "#/",
+      "operation": "archive:goal-v1",
+      "success": true,
+      "source": "rendered_ui",
+      "metrics": [
+        "page_transition"
+      ],
+      "repeat_of": null,
+      "caused_by": "e4",
+      "rule": "主页面路由改变一次"
+    },
+    {
+      "id": "e6",
+      "at": "2026-11-12T15:49:46.608Z",
+      "action": "click",
+      "target": "testid:sidebar-footer-menu-trigger",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/",
+      "after": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/"
+    },
+    {
+      "id": "e7",
+      "at": "2026-11-12T15:49:46.673Z",
+      "action": "click",
+      "target": "testid:sidebar-archive",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/",
+      "after": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/settings/archived"
+    },
+    {
+      "id": "e8",
+      "at": "2026-11-12T15:49:46.895Z",
+      "action": "navigate",
+      "target": "#/settings/archived",
+      "before": "#/",
+      "after": "#/settings/archived",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "rendered_ui",
+      "metrics": [
+        "page_transition"
+      ],
+      "repeat_of": null,
+      "caused_by": "e7",
+      "rule": "主页面路由改变一次"
+    },
+    {
+      "id": "e9",
+      "at": "2026-11-12T15:49:46.951Z",
+      "action": "click",
+      "target": "testid:settings-archived-restore-agent:main:session-1794498551650-uproject",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [
+        "identity_selection"
+      ],
+      "repeat_of": null,
+      "rule": "显式选择项目/会话/任务/检出身份",
+      "before": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/settings/archived",
+      "after": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/settings/archived"
+    },
+    {
+      "id": "e10",
+      "at": "2026-11-12T15:49:49.627Z",
+      "action": "click",
+      "target": "testid:settings-back-button",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/settings/archived",
+      "after": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/"
+    },
+    {
+      "id": "e11",
+      "at": "2026-11-12T15:49:49.659Z",
+      "action": "navigate",
+      "target": "#/",
+      "before": "#/settings/archived",
+      "after": "#/",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "rendered_ui",
+      "metrics": [
+        "page_transition"
+      ],
+      "repeat_of": null,
+      "caused_by": "e10",
+      "rule": "主页面路由改变一次"
+    },
+    {
+      "id": "e12",
+      "at": "2026-11-12T15:49:49.680Z",
+      "action": "click",
+      "target": "testid:sidebar-session-agent:main:session-1794498551650-uproject",
+      "operation": "restore:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [
+        "identity_selection"
+      ],
+      "repeat_of": null,
+      "rule": "显式选择项目/会话/任务/检出身份",
+      "before": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/",
+      "after": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/"
+    }
+  ],
+  "tracked_product_and_helper_diff_empty": false,
+  "build": {
+    "main_sha256": "8765c7bb76e0e0c44199b8230da6e00d148fb8b95a93e3f631be9368e01c8201",
+    "renderer_sha256": "6c4e9972be89c6b9c3ea07d78f9c15d42b617d651ae9c0b33962723e1849ab42",
+    "runtime_entry_sha256": "efb0f78651b2bbedea50978a04bb268ae2c7b6faf78bbeafdad6eea81bdcb249",
+    "manifest_sha256": "cce1f6c0eb950d7ba1151c18a9a98af4224d7b4070cb04eddb43391fdf7e34ba",
+    "manifest_path": "D:\\tmp\\unified-relay-20261112-01a1ce4c\\baseline-build-manifest-5ffc-v1.json",
+    "side": "baseline",
+    "source_head": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976"
+  },
+  "driver_sha256": "69f4492b3d788abb0adc5a829ffd8c06158a4fd5ddaec992190a28b6c3e67323",
+  "helpers": {
+    "electron.ts": "602720de6dd84ec2060d5a11df70016760e67ef9231bc5af74cc2da5d2783925",
+    "fp-p1-harness.ts": "31e96027ab5a10d5e510b026831a4f55fd2d65e1a77ff350a28f8c17208d0a14",
+    "session-task-chain.ts": "ba39bf738cbf7a2dda1c85854579bb80c0fbf40b055e19f830ee2b80116f4011",
+    "electron-process-cleanup.ts": "35864693cf9b6be10abc0f4ce5bb4db5a57974314967c425d2fd9ed166c9cc85",
+    "windows-process.ts": "27c7af68a5e580fc108018705711ef71994474a3bf40a7b838e764bdb0862dd9"
+  },
+  "identities": {
+    "project": {
+      "workspaceId": "u6-project",
+      "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\u6-baseline-bb8541ba6-v2\\u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore\\fixture\\source",
+      "sessionKey": "agent:main:session-1794498551650-uproject",
+      "generation": "161103c9-0af4-4c5a-b8bc-2af96bb014d4"
+    },
+    "child": null,
+    "taskNodeId": "979a735e-6161-4b97-bdc8-047f5d80066c",
+    "targetWorkspaceId": null
+  },
+  "task_readback": {
+    "success": true,
+    "tasks": [
+      {
+        "contract": {
+          "objective": "Retain the approved U6 artifact",
+          "constraints": [
+            "Retain prior progress"
+          ],
+          "acceptance": [
+            {
+              "id": "file",
+              "description": "Artifact contains the approved output",
+              "verification": {
+                "kind": "file-sha256",
+                "path": "artifact.txt",
+                "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+              }
+            }
+          ],
+          "target": "artifact.txt",
+          "dependencies": [],
+          "origin": {
+            "source": "host-task-api",
+            "requestId": "u6-create"
+          },
+          "taskNodeId": "979a735e-6161-4b97-bdc8-047f5d80066c",
+          "domain": "411f4512e8394599bc976abfbe4486e3de16f0a4f86acd46f0f89d8d8c7716df",
+          "revision": 1,
+          "digest": "61bb234ce249623141440f7f1d8d622ce0f087fafe9aeca69d7f3d73fc39c04b",
+          "state": "ready",
+          "createdAt": 1794498578780,
+          "updatedAt": 1794498578780
+        },
+        "claim": null,
+        "checkpoint": null,
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "childTaskNodeIds": []
+      }
+    ]
+  },
+  "archive": {
+    "before": {
+      "success": true,
+      "entries": [
+        {
+          "sessionKey": "agent:main:session-1794498551650-uproject",
+          "agentId": "main",
+          "transcriptPath": "D:\\ClawX-acceptance\\unified-baseline-5ffc-01a1ce4c\\.tmp\\e2e-runs\\u6-final-bb8541ba6-v2\\verse-claw-e2e-run-fQeLBG\\verse-claw-e2e-user-data-cAQpFC\\openclaw-source-state\\agents\\main\\sessions\\161103c9-0af4-4c5a-b8bc-2af96bb014d4.archived.jsonl",
+          "label": "U6 project coordinator",
+          "archivedAt": 1794498585632,
+          "originalWorkspaceId": null,
+          "originalFolderId": null,
+          "sessionsJsonSnapshot": {
+            "sessionId": "161103c9-0af4-4c5a-b8bc-2af96bb014d4",
+            "updatedAt": 1794498578973,
+            "label": "U6 project coordinator",
+            "sessionFile": "D:\\ClawX-acceptance\\unified-baseline-5ffc-01a1ce4c\\.tmp\\e2e-runs\\u6-final-bb8541ba6-v2\\verse-claw-e2e-run-fQeLBG\\verse-claw-e2e-user-data-cAQpFC\\openclaw-source-state\\agents\\main\\sessions\\161103c9-0af4-4c5a-b8bc-2af96bb014d4.jsonl"
+          }
+        }
+      ]
+    },
+    "restored": {
+      "session": {
+        "key": "agent:main:session-1794498551650-uproject",
+        "kind": "direct",
+        "label": "U6 project coordinator",
+        "displayName": "U6 project coordinator",
+        "updatedAt": 1794498587020,
+        "sessionId": "03add625-86f5-4f52-b98c-c65c0afd60e5",
+        "thinkingLevels": [
+          {
+            "id": "off",
+            "label": "off"
+          },
+          {
+            "id": "minimal",
+            "label": "minimal"
+          },
+          {
+            "id": "low",
+            "label": "low"
+          },
+          {
+            "id": "medium",
+            "label": "medium"
+          },
+          {
+            "id": "high",
+            "label": "high"
+          }
+        ],
+        "thinkingOptions": [
+          "off",
+          "minimal",
+          "low",
+          "medium",
+          "high"
+        ],
+        "thinkingDefault": "medium",
+        "totalTokens": 17,
+        "totalTokensFresh": true,
+        "estimatedCostUsd": 0,
+        "modelProvider": "custom-sessionc",
+        "model": "mock-coder",
+        "agentRuntime": {
+          "id": "auto",
+          "source": "implicit"
+        },
+        "contextTokens": 128000,
+        "hasActiveRun": false
+      }
+    },
+    "after": {
+      "success": true,
+      "entries": []
+    },
+    "history": {
+      "success": true,
+      "messages": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "[agent fixture]\n\nRecorded objective: Retain the approved U6 artifact"
+            }
+          ],
+          "timestamp": 1794498578956,
+          "stopReason": "stop",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "totalTokens": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "api": "openai-responses",
+          "provider": "openclaw",
+          "model": "gateway-injected",
+          "__openclaw": {
+            "id": "574af364-f484-4a74-bab8-4bbc25396eff",
+            "recordTimestampMs": 1794498578956,
+            "seq": 1
+          }
+        }
+      ],
+      "model": "openclaw/gateway-injected"
+    }
+  },
+  "provider_log": [],
+  "reason": null,
+  "counts_source": "successful_events",
+  "counts": {
+    "identity_selection": 2,
+    "page_transition": 3,
+    "repeat_confirmation": 0,
+    "goal_restatement": 0,
+    "repeat_reminder": 0
+  }
+}

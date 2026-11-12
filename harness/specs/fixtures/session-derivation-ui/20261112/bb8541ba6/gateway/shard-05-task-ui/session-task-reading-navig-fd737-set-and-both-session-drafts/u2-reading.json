@@ -1,0 +1,304 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-u2-reading",
+  "provider": "local-scripted",
+  "acceptance": [
+    "TF-0658/AC3",
+    "TF-0658/AC6"
+  ],
+  "status": "passed",
+  "project": {
+    "workspaceId": "u2-reading",
+    "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-05-task-ui\\session-task-reading-navig-fd737-set-and-both-session-drafts\\workspace",
+    "sessionKey": "agent:main:session-1794504122385-ureading",
+    "generation": "e9f9184f-8662-4792-b4e0-37dafbefb91c"
+  },
+  "child": "agent:main:dashboard:9237018b-ab42-4b47-9a68-92fe2b0e900e",
+  "seedReceipts": [
+    {
+      "ok": true,
+      "messageId": "ad1a25c5-32da-4336-820c-c28ccc5686b5"
+    },
+    {
+      "ok": true,
+      "messageId": "fdb57fe9-7ac4-4a91-aece-3ef0294aa7f8"
+    },
+    {
+      "ok": true,
+      "messageId": "8340c9fd-a711-40be-89bb-ed0a118f2c85"
+    },
+    {
+      "ok": true,
+      "messageId": "1a42bdd1-42e6-4ae4-bdc9-2dba0ab96453"
+    },
+    {
+      "ok": true,
+      "messageId": "1b105cb6-89b8-4cd6-9685-1ad14a159e5e"
+    },
+    {
+      "ok": true,
+      "messageId": "96ed738c-a9b0-4d50-8b10-4955ab0574ea"
+    },
+    {
+      "ok": true,
+      "messageId": "9de59e40-751e-4546-a1a3-9cd3a69b5981"
+    },
+    {
+      "ok": true,
+      "messageId": "c9e0d728-1005-4172-81a6-2323eef522e9"
+    },
+    {
+      "ok": true,
+      "messageId": "8f1b444d-8dd4-43dd-b249-faac5b511ef5"
+    },
+    {
+      "ok": true,
+      "messageId": "cf203137-fd86-41e9-82e4-8668eafa8ec4"
+    },
+    {
+      "ok": true,
+      "messageId": "48d196c4-fb60-4f9d-8848-e57bfccb970b"
+    },
+    {
+      "ok": true,
+      "messageId": "f73f17db-cbb0-494a-b525-3cd8d17c6637"
+    },
+    {
+      "ok": true,
+      "messageId": "4adfa062-b8ff-499e-92f7-eb890445c64b"
+    },
+    {
+      "ok": true,
+      "messageId": "207b2544-8a8b-4e33-ba44-f4f0c5d131fa"
+    },
+    {
+      "ok": true,
+      "messageId": "65d791fa-f0ca-4e66-8bf3-4d668a8a25db"
+    },
+    {
+      "ok": true,
+      "messageId": "f4face1c-4731-41d4-a8ab-0ae159602a21"
+    },
+    {
+      "ok": true,
+      "messageId": "1cc4798b-c71c-4c02-814d-2c6c7935d430"
+    },
+    {
+      "ok": true,
+      "messageId": "0bc25238-3c5e-40ba-ab1b-6117530d2c85"
+    },
+    {
+      "ok": true,
+      "messageId": "2288af67-8a8a-4adb-baa7-058a8bedbe23"
+    },
+    {
+      "ok": true,
+      "messageId": "cf88e154-393e-400d-8aba-52796dc716da"
+    },
+    {
+      "ok": true,
+      "messageId": "40c8385e-dee8-4078-8488-dec816d82dd9"
+    },
+    {
+      "ok": true,
+      "messageId": "d8029554-ef03-4f6e-93be-7928d8b86b25"
+    },
+    {
+      "ok": true,
+      "messageId": "7f47c0af-d6c9-4078-865a-a761f4bdb09e"
+    },
+    {
+      "ok": true,
+      "messageId": "8c6f1e9e-8127-40a6-bb50-c438a737d6bd"
+    },
+    {
+      "ok": true,
+      "messageId": "2eaf0103-19e4-4c23-b4d1-d4a0b7017338"
+    },
+    {
+      "ok": true,
+      "messageId": "abf2f2fb-a2f6-44c7-85fa-a8b1521430ea"
+    },
+    {
+      "ok": true,
+      "messageId": "9adbdc0c-546c-422b-bb8e-22d0fa0ebef8"
+    },
+    {
+      "ok": true,
+      "messageId": "3f956fd8-6770-463b-9c89-b7f4c0b71c54"
+    }
+  ],
+  "before": {
+    "top": 6044,
+    "height": 560,
+    "bottomGap": 900,
+    "key": "msg-22",
+    "marker": "U2-READ-22",
+    "offset": -148,
+    "visible": true
+  },
+  "savedWhileInChild": {
+    "chatFooter": {
+      "contextRangeVisible": true,
+      "tokenUsageVisible": true,
+      "workContextVisible": true
+    },
+    "composerRunState": "idle",
+    "activeTopicId": null,
+    "knowledgeScope": "none",
+    "knowledgeMode": "suggest",
+    "artifactPanel": {
+      "open": false,
+      "expanded": false,
+      "tabs": []
+    },
+    "turnSummaryExpanded": {},
+    "turnSummaryStepDetailsExpanded": {},
+    "readingPosition": {
+      "generation": "e9f9184f-8662-4792-b4e0-37dafbefb91c",
+      "scrollTop": 6044,
+      "messageKey": "msg-22",
+      "offset": -148,
+      "pinned": false
+    },
+    "draftInput": "U2 parent draft must survive the reading round trip"
+  },
+  "after": {
+    "top": 6044,
+    "height": 560,
+    "bottomGap": 900,
+    "key": "msg-22",
+    "marker": "U2-READ-22",
+    "offset": -148,
+    "visible": true
+  },
+  "returnSamples": [
+    {
+      "top": 6044,
+      "height": 560,
+      "bottomGap": 900,
+      "key": "msg-22",
+      "marker": "U2-READ-22",
+      "offset": -148,
+      "visible": true
+    },
+    {
+      "top": 6044,
+      "height": 560,
+      "bottomGap": 900,
+      "key": "msg-22",
+      "marker": "U2-READ-22",
+      "offset": -148,
+      "visible": true
+    },
+    {
+      "top": 6044,
+      "height": 560,
+      "bottomGap": 900,
+      "key": "msg-22",
+      "marker": "U2-READ-22",
+      "offset": -148,
+      "visible": true
+    },
+    {
+      "top": 6044,
+      "height": 560,
+      "bottomGap": 900,
+      "key": "msg-22",
+      "marker": "U2-READ-22",
+      "offset": -148,
+      "visible": true
+    },
+    {
+      "top": 6044,
+      "height": 560,
+      "bottomGap": 900,
+      "key": "msg-22",
+      "marker": "U2-READ-22",
+      "offset": -148,
+      "visible": true
+    },
+    {
+      "top": 6044,
+      "height": 560,
+      "bottomGap": 900,
+      "key": "msg-22",
+      "marker": "U2-READ-22",
+      "offset": -148,
+      "visible": true
+    },
+    {
+      "top": 6044,
+      "height": 560,
+      "bottomGap": 900,
+      "key": "msg-22",
+      "marker": "U2-READ-22",
+      "offset": -148,
+      "visible": true
+    },
+    {
+      "top": 6044,
+      "height": 560,
+      "bottomGap": 900,
+      "key": "msg-22",
+      "marker": "U2-READ-22",
+      "offset": -148,
+      "visible": true
+    }
+  ],
+  "owner": {
+    "session": {
+      "key": "agent:main:session-1794504122385-ureading",
+      "kind": "direct",
+      "label": "U2 Reading coordinator",
+      "displayName": "U2 Reading coordinator",
+      "updatedAt": 1794504259932,
+      "sessionId": "e9f9184f-8662-4792-b4e0-37dafbefb91c",
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium",
+      "totalTokens": 4795,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "childSessions": [
+        "agent:main:dashboard:9237018b-ab42-4b47-9a68-92fe2b0e900e"
+      ],
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 128000,
+      "hasActiveRun": false
+    }
+  },
+  "providerLog": []
+}

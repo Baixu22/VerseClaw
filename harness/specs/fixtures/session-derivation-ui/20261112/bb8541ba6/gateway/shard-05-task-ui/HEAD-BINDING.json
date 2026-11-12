@@ -1,0 +1,56 @@
+{
+  "schema_version": "ElectronShardedRunHeadBinding/v1",
+  "driven_by": "agent",
+  "actor": "codex-tf0662-relay",
+  "shard": "shard-05-task-ui",
+  "expected_head": "bb8541ba6bba40fa18c5578f7818279cf0bead81",
+  "current_head": "bb8541ba6bba40fa18c5578f7818279cf0bead81",
+  "head_tree": "598c694cb58e7a549a5532871a7845c41f70b5b9",
+  "head_committed_at": "2026-11-12T23:23:55+08:00",
+  "worktree": "D:\\tmp\\tf0662-verify",
+  "worktree_gitdir": "gitdir: D:/ClawX/.git/worktrees/tf0662-verify",
+  "run_started_at": "2026-11-12T17:19:19.9803360Z",
+  "run_finished_at": "2026-11-12T17:29:53.6717794Z",
+  "head_reflog_entries_after_run_start": [],
+  "head_moved_during_run": false,
+  "head_binding_method": "head commit timestamp precedes run; no HEAD reflog entry during run window; worktree status/diff empty before and after; product tree and driver frozen",
+  "source_state": {
+    "status": "",
+    "trackedFilesSha256": "4a65f144c17ef0229aefe725113c5f29e7ec3bcbe0f377dd1dc63c68cd56c06f",
+    "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_guard": {
+    "ok": true,
+    "sourceChanged": false,
+    "before": {
+      "status": "",
+      "trackedFilesSha256": "4a65f144c17ef0229aefe725113c5f29e7ec3bcbe0f377dd1dc63c68cd56c06f",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "after": {
+      "status": "",
+      "trackedFilesSha256": "4a65f144c17ef0229aefe725113c5f29e7ec3bcbe0f377dd1dc63c68cd56c06f",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "cleanup": {
+    "status": "passed",
+    "remaining": 0,
+    "survivors": 0,
+    "pendingLaunches": 0
+  },
+  "tests": {
+    "expected": 6,
+    "status": "passed",
+    "failedTests": 0
+  },
+  "sha256": {
+    "source-state-before.json": "0163ac70c4512abaf7aa408460c26bca89ebe81e8eebb0b71cba29040e8fdd45",
+    "source-state-after.json": "0163ac70c4512abaf7aa408460c26bca89ebe81e8eebb0b71cba29040e8fdd45",
+    "source-mutation-guard.json": "1529b5337d6575bb8e716ace994c419ef63e57958dda27e5ab604065e524013a",
+    "electron-process-cleanup.json": "0b045cdc44dec51174b484b2fc1d5ed562a818f42cf85ad443b2195edde4687a",
+    ".last-run.json": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+    "shard-05-task-ui.log": "304294e734f79e3a861c7c0e670de8b503be28c654768a568236afa794e4a327"
+  },
+  "run_root": "D:\\tmp\\tf0662-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-Bxafbh"
+}

@@ -1,0 +1,40 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-session-locales",
+  "provider": "local-scripted",
+  "locales": [
+    {
+      "language": "en",
+      "project": "locale-project",
+      "session": "agent:main:session-1794503973890-localeproject",
+      "child": "agent:main:dashboard:ec03017f-1a9a-465f-bb31-287f1dc9f399",
+      "taskNodeId": "ce9d0c40-f15b-4936-afb0-1640861bd552",
+      "status": "passed"
+    },
+    {
+      "language": "zh",
+      "project": "locale-project",
+      "session": "agent:main:session-1794503973890-localeproject",
+      "child": "agent:main:dashboard:ec03017f-1a9a-465f-bb31-287f1dc9f399",
+      "taskNodeId": "ce9d0c40-f15b-4936-afb0-1640861bd552",
+      "status": "passed"
+    },
+    {
+      "language": "ja",
+      "project": "locale-project",
+      "session": "agent:main:session-1794503973890-localeproject",
+      "child": "agent:main:dashboard:ec03017f-1a9a-465f-bb31-287f1dc9f399",
+      "taskNodeId": "ce9d0c40-f15b-4936-afb0-1640861bd552",
+      "status": "passed"
+    },
+    {
+      "language": "ru",
+      "project": "locale-project",
+      "session": "agent:main:session-1794503973890-localeproject",
+      "child": "agent:main:dashboard:ec03017f-1a9a-465f-bb31-287f1dc9f399",
+      "taskNodeId": "ce9d0c40-f15b-4936-afb0-1640861bd552",
+      "status": "passed"
+    }
+  ],
+  "status": "passed"
+}

@@ -1,0 +1,47 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\tf0662-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-0el6wE",
+  "ledgerEntries": 5,
+  "checks": [
+    {
+      "pid": 21704,
+      "creationTime": 1794502199232,
+      "status": "exited"
+    },
+    {
+      "pid": 12824,
+      "creationTime": 1794502206290,
+      "status": "exited"
+    },
+    {
+      "pid": 45788,
+      "creationTime": 1794502206600,
+      "status": "exited"
+    }
+  ],
+  "processObservations": [
+    [
+      {
+        "pid": 21704,
+        "creationTime": 1794502199232,
+        "status": "exited"
+      },
+      {
+        "pid": 12824,
+        "creationTime": 1794502206290,
+        "status": "exited"
+      },
+      {
+        "pid": 45788,
+        "creationTime": 1794502206600,
+        "status": "exited"
+      }
+    ]
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

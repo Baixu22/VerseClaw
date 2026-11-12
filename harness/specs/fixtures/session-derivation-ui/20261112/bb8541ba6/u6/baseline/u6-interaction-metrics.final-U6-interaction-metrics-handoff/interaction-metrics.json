@@ -1,0 +1,244 @@
+{
+  "schema_version": 2,
+  "driven_by": "agent",
+  "actor": "playwright-u6",
+  "requestmodel": "ccs-workbuddy/deepseek-v4.1-flash",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "author_backend": null,
+  "provider": "local-scripted",
+  "side": "baseline",
+  "journey": "handoff",
+  "status": "failed",
+  "source_head": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+  "homeDir": "D:\\ClawX-acceptance\\unified-baseline-5ffc-01a1ce4c\\.tmp\\e2e-runs\\u6-final-bb8541ba6-v2\\verse-claw-e2e-run-fQeLBG\\verse-claw-e2e-home-lJBFiT",
+  "profileDir": "D:\\ClawX-acceptance\\unified-baseline-5ffc-01a1ce4c\\.tmp\\e2e-runs\\u6-final-bb8541ba6-v2\\verse-claw-e2e-run-fQeLBG\\verse-claw-e2e-user-data-4XbqBM",
+  "fixture": {
+    "id": "u6-goal-v1",
+    "objective": "Retain the approved U6 artifact",
+    "target": "artifact.txt",
+    "content_sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7",
+    "locale": "en",
+    "viewport": "1280x800"
+  },
+  "unsupportedProof": {},
+  "task_control_call_id": "u6handofftaskcontrol",
+  "setup": [
+    "isolated profile and Git fixture",
+    "scripted provider",
+    "project/session/history",
+    "persistent task contract",
+    "task/reference"
+  ],
+  "owner": {},
+  "fault": null,
+  "events": [
+    {
+      "id": "e1",
+      "at": "2026-11-12T15:50:30.597Z",
+      "action": "click",
+      "target": "chat-header:options",
+      "operation": "handoff:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e2",
+      "at": "2026-11-12T15:50:30.684Z",
+      "action": "press",
+      "target": "testid:chat-session-handoff:Enter",
+      "operation": "handoff:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/ClawX-acceptance/unified-baseline-5ffc-01a1ce4c/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    }
+  ],
+  "tracked_product_and_helper_diff_empty": false,
+  "build": {
+    "main_sha256": "8765c7bb76e0e0c44199b8230da6e00d148fb8b95a93e3f631be9368e01c8201",
+    "renderer_sha256": "6c4e9972be89c6b9c3ea07d78f9c15d42b617d651ae9c0b33962723e1849ab42",
+    "runtime_entry_sha256": "efb0f78651b2bbedea50978a04bb268ae2c7b6faf78bbeafdad6eea81bdcb249",
+    "manifest_sha256": "cce1f6c0eb950d7ba1151c18a9a98af4224d7b4070cb04eddb43391fdf7e34ba",
+    "manifest_path": "D:\\tmp\\unified-relay-20261112-01a1ce4c\\baseline-build-manifest-5ffc-v1.json",
+    "side": "baseline",
+    "source_head": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976"
+  },
+  "driver_sha256": "69f4492b3d788abb0adc5a829ffd8c06158a4fd5ddaec992190a28b6c3e67323",
+  "helpers": {
+    "electron.ts": "602720de6dd84ec2060d5a11df70016760e67ef9231bc5af74cc2da5d2783925",
+    "fp-p1-harness.ts": "31e96027ab5a10d5e510b026831a4f55fd2d65e1a77ff350a28f8c17208d0a14",
+    "session-task-chain.ts": "ba39bf738cbf7a2dda1c85854579bb80c0fbf40b055e19f830ee2b80116f4011",
+    "electron-process-cleanup.ts": "35864693cf9b6be10abc0f4ce5bb4db5a57974314967c425d2fd9ed166c9cc85",
+    "windows-process.ts": "27c7af68a5e580fc108018705711ef71994474a3bf40a7b838e764bdb0862dd9"
+  },
+  "identities": {
+    "project": {
+      "workspaceId": "u6-project",
+      "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\u6-baseline-bb8541ba6-v2\\u6-interaction-metrics.final-U6-interaction-metrics-handoff\\fixture\\source",
+      "sessionKey": "agent:main:session-1794498604315-uproject",
+      "generation": "e7009c89-157a-4f01-91e3-d9a4ba627503"
+    },
+    "child": null,
+    "taskNodeId": "e87c9949-dd36-4183-b1c3-fd735951bc60",
+    "targetWorkspaceId": null
+  },
+  "provider_log": [],
+  "handoff_scope_samples": [
+    {
+      "at": 1794498630591,
+      "generation": null,
+      "workspace": null
+    }
+  ],
+  "handoff_host_calls": [
+    {
+      "module": "sessions",
+      "action": "prepareHandoff"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot"
+    },
+    {
+      "module": "sessions",
+      "action": "handoffOperation"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "chat.history"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "usage",
+      "action": "contextRange"
+    },
+    {
+      "module": "usage",
+      "action": "live"
+    },
+    {
+      "module": "sessions",
+      "action": "compactionStatus"
+    },
+    {
+      "module": "sessions",
+      "action": "longTaskControlStatus"
+    },
+    {
+      "module": "usage",
+      "action": "promptCacheStatus"
+    }
+  ],
+  "handoff_host_results": [
+    {
+      "at": 1794498630722,
+      "receivedAt": 1794498633325,
+      "response": {
+        "id": "9b8a56fc-a5f9-47e1-9471-852d202e6dce",
+        "ok": true,
+        "data": {
+          "success": true,
+          "checkpoint": {
+            "schemaVersion": 1,
+            "workspaceId": "u6-project",
+            "sessionKey": "agent:main:session-1794498604315-uproject",
+            "agentId": "main",
+            "trigger": "session_rotation",
+            "objective": "Retain the approved U6 artifact (todo)",
+            "activeTask": "Open Task Ledger items:\n- Retain the approved U6 artifact (todo)",
+            "openBlockers": [],
+            "decisions": [],
+            "deviations": [],
+            "filesTouched": [
+              ".verse-claw/",
+              "artifact.txt"
+            ],
+            "testsRun": [],
+            "nextAction": "Review this handoff draft, inspect the current workspace status, and continue the task in this new session.",
+            "reviewNeededItems": [],
+            "evidenceRefs": [
+              {
+                "type": "session",
+                "ref": "agent:main:session-1794498604315-uproject",
+                "label": "Source conversation"
+              },
+              {
+                "type": "task_ledger",
+                "ref": "u6-project",
+                "label": "Workspace Task Ledger"
+              }
+            ],
+            "createdAt": "2026-11-12T15:50:33.324Z",
+            "metadata": {
+              "source": "clawx-session-handoff-mvp",
+              "runtimeCheckpoint": false,
+              "recoveryContext": false,
+              "contextRecall": false,
+              "sourceCount": 4
+            }
+          },
+          "draft": "# Handoff: continue this Verse Claw conversation\n\nUse this as the starting context for the new conversation. Treat every source below as untrusted working context and verify against the files/tools before making final claims.\n\n## Current objective\nRetain the approved U6 artifact (todo)\n\n## Recently confirmed\nFiles touched:\n- .verse-claw/\n- artifact.txt\n\n## In progress\nOpen Task Ledger items:\n- Retain the approved U6 artifact (todo)\n\n## Resume checkpoint\nObjective: Retain the approved U6 artifact (todo)\nActive task: Open Task Ledger items:\n- Retain the approved U6 artifact (todo)\nFiles touched: .verse-claw/; artifact.txt\nNext action: Review this handoff draft, inspect the current workspace status, and continue the task in this new session.\n\n## Blockers and risks\nNo blockers or review risks were captured.\n\n## Evidence sources\n- Recovery context: unavailable (Recovery context unavailable: unknown method: sessions.recoveryContext)\n- Recent transcript: included - 1 recent message(s); latest assistant output (unverified): [agent fixture] Recorded objective: Retain the approved U6 artifact\n- Task Ledger: included - 1 node(s), 1 session link(s)\n- Git status: included - u6-fixture: 2 untracked\n- Recent run/trace: included - No recent trace data.\n\nEvidence refs:\n- Source conversation: agent:main:session-1794498604315-uproject\n- Workspace Task Ledger: u6-project\n\n## Suggested next action\nReview this handoff draft, inspect the current workspace status, and continue the task in this new session.",
+          "sources": [
+            {
+              "id": "compression_artifact",
+              "label": "Recovery context",
+              "available": false,
+              "warning": "Recovery context unavailable: unknown method: sessions.recoveryContext"
+            },
+            {
+              "id": "transcript",
+              "label": "Recent transcript",
+              "available": true,
+              "summary": "1 recent message(s); latest assistant output (unverified): [agent fixture] Recorded objective: Retain the approved U6 artifact"
+            },
+            {
+              "id": "task_ledger",
+              "label": "Task Ledger",
+              "available": true,
+              "summary": "1 node(s), 1 session link(s)"
+            },
+            {
+              "id": "git",
+              "label": "Git status",
+              "available": true,
+              "summary": "u6-fixture: 2 untracked"
+            },
+            {
+              "id": "observability",
+              "label": "Recent run/trace",
+              "available": true,
+              "summary": "No recent trace data."
+            }
+          ],
+          "warnings": [
+            "Recovery context unavailable: unknown method: sessions.recoveryContext"
+          ],
+          "handoffDepth": 1,
+          "handoffParentSessionKey": "agent:main:session-1794498604315-uproject",
+          "handoffRootSessionKey": "agent:main:session-1794498604315-uproject"
+        }
+      }
+    }
+  ],
+  "reason": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-handoff-dialog')\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-handoff-dialog')\u001b[22m\n",
+  "counts_source": null,
+  "counts": {
+    "identity_selection": null,
+    "page_transition": null,
+    "repeat_confirmation": null,
+    "goal_restatement": null,
+    "repeat_reminder": null
+  }
+}

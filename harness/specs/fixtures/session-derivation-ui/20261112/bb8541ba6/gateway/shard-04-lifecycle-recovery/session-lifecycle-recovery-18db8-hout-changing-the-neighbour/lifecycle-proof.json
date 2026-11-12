@@ -1,0 +1,259 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-u5-lifecycle",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "case": "U5 current-run Stop retries without its old error and reconciles a lost reply without changing the neighbour",
+  "project": {
+    "workspaceId": "u5-lifecycle",
+    "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-18db8-hout-changing-the-neighbour\\workspace",
+    "sessionKey": "agent:main:session-1794503605945-ulifecycle",
+    "generation": "747179fd-7c00-4b04-ba9c-26fa0f6c6258"
+  },
+  "neighbour": "agent:main:dashboard:ddd7c0a0-2c4d-44f0-9b49-d22c1bbd730e",
+  "recovery": "existing owner reads; archive/restore/delete also retry the persisted Main gate operationId",
+  "faultInjection": "before: no forwarding; after: real Main success reply held/dropped; gate-clear: temp write fails only after real Runtime commit",
+  "runId": "u5-stop-run",
+  "rejection": {
+    "sessionKey": "agent:main:session-1794503605945-ulifecycle",
+    "action": "rpc",
+    "at": "before",
+    "module": "gateway",
+    "method": "chat.abort",
+    "hits": 1,
+    "request": {
+      "id": "e937c5c7-588a-4993-ae11-624b41f736c6",
+      "module": "gateway",
+      "action": "rpc",
+      "payload": {
+        "method": "chat.abort",
+        "params": {
+          "sessionKey": "agent:main:session-1794503605945-ulifecycle",
+          "runId": "u5-stop-run"
+        }
+      },
+      "deadline": {
+        "deadlineAtMs": 1794503776822,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "e937c5c7-588a-4993-ae11-624b41f736c6"
+      }
+    },
+    "phase": "finished",
+    "outcome": "reject"
+  },
+  "sameRunRetry": {
+    "fault": {
+      "sessionKey": "agent:main:session-1794503605945-ulifecycle",
+      "action": "rpc",
+      "at": "before",
+      "module": "gateway",
+      "method": "chat.abort",
+      "hits": 1,
+      "request": {
+        "id": "a03c0b4c-e4c0-4985-8b27-77a3e648d8cc",
+        "module": "gateway",
+        "action": "rpc",
+        "payload": {
+          "method": "chat.abort",
+          "params": {
+            "sessionKey": "agent:main:session-1794503605945-ulifecycle",
+            "runId": "u5-stop-run"
+          }
+        },
+        "deadline": {
+          "deadlineAtMs": 1794503777812,
+          "timeoutMs": 60000,
+          "stage": "renderer",
+          "requestId": "a03c0b4c-e4c0-4985-8b27-77a3e648d8cc"
+        }
+      },
+      "phase": "finished",
+      "outcome": "pass",
+      "reply": {
+        "id": "a03c0b4c-e4c0-4985-8b27-77a3e648d8cc",
+        "ok": true,
+        "data": {
+          "ok": true,
+          "aborted": true,
+          "runIds": [
+            "u5-stop-run"
+          ]
+        }
+      }
+    },
+    "paused": true,
+    "staleErrorVisible": false,
+    "operationId": "not_applicable: chat.abort accepts sessionKey/runId only"
+  },
+  "navigation": [
+    {
+      "target": "agent:main:dashboard:ddd7c0a0-2c4d-44f0-9b49-d22c1bbd730e",
+      "at": 1794503731697,
+      "selection": [],
+      "draft": "U5 draft B",
+      "workspace": {
+        "success": true,
+        "activeWorkspaceId": "u5-lifecycle",
+        "activeWorkspace": {
+          "id": "u5-lifecycle",
+          "name": "U5 lifecycle",
+          "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-18db8-hout-changing-the-neighbour\\workspace",
+          "agentId": "main",
+          "selectedAgentId": "main",
+          "activeSessionKey": "agent:main:dashboard:ddd7c0a0-2c4d-44f0-9b49-d22c1bbd730e",
+          "projectCoordinatorSessionKey": "agent:main:session-1794503605945-ulifecycle",
+          "agentBindings": {
+            "main": {
+              "workspaceId": "u5-lifecycle",
+              "agentId": "main",
+              "sessionKey": "agent:main:dashboard:ddd7c0a0-2c4d-44f0-9b49-d22c1bbd730e"
+            }
+          },
+          "permissionMode": "fullAccess",
+          "createdAt": 1794503605955,
+          "updatedAt": 1794503731656,
+          "lastOpenedAt": 1794503605955,
+          "state": {
+            "draftInput": "U5 draft B"
+          },
+          "sessionStates": {
+            "agent:main:session-1794503605945-ulifecycle": {
+              "chatFooter": {
+                "contextRangeVisible": true,
+                "tokenUsageVisible": true,
+                "workContextVisible": true
+              },
+              "composerRunState": "idle",
+              "activeTopicId": null,
+              "knowledgeScope": "none",
+              "knowledgeMode": "suggest",
+              "artifactPanel": {
+                "open": false,
+                "expanded": false,
+                "tabs": []
+              },
+              "turnSummaryExpanded": {},
+              "turnSummaryStepDetailsExpanded": {},
+              "readingPosition": {
+                "generation": "747179fd-7c00-4b04-ba9c-26fa0f6c6258",
+                "scrollTop": 0,
+                "messageKey": "msg-0",
+                "offset": 0,
+                "pinned": true
+              },
+              "draftInput": "U5 unsent A",
+              "sessionList": {
+                "unread": false,
+                "lastReadAt": 1794503700696
+              }
+            },
+            "agent:main:dashboard:ddd7c0a0-2c4d-44f0-9b49-d22c1bbd730e": {
+              "draftInput": "U5 draft B"
+            }
+          },
+          "sessionFolders": [],
+          "sessionFolderAssignments": {}
+        }
+      },
+      "selectedRows": [
+        "U5 neighbour"
+      ]
+    }
+  ],
+  "lostSuccess": {
+    "sessionKey": "agent:main:session-1794503605945-ulifecycle",
+    "action": "rpc",
+    "at": "after",
+    "module": "gateway",
+    "method": "chat.abort",
+    "hits": 1,
+    "request": {
+      "id": "e77ea1a3-610c-457f-ae94-3d602e3a9766",
+      "module": "gateway",
+      "action": "rpc",
+      "payload": {
+        "method": "chat.abort",
+        "params": {
+          "sessionKey": "agent:main:session-1794503605945-ulifecycle",
+          "runId": "u5-stop-second-run"
+        }
+      },
+      "deadline": {
+        "deadlineAtMs": 1794503791292,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "e77ea1a3-610c-457f-ae94-3d602e3a9766"
+      }
+    },
+    "reply": {
+      "id": "e77ea1a3-610c-457f-ae94-3d602e3a9766",
+      "ok": true,
+      "data": {
+        "ok": true,
+        "aborted": true,
+        "runIds": [
+          "u5-stop-second-run"
+        ]
+      }
+    },
+    "phase": "finished",
+    "outcome": "drop"
+  },
+  "reconciled": {
+    "sessionKey": "agent:main:session-1794503605945-ulifecycle",
+    "activeRun": false,
+    "via": "existing refresh + sessions.describe",
+    "operationReplay": "not_applicable: chat.abort has no lifecycle operationId"
+  },
+  "lastFault": {
+    "sessionKey": "agent:main:session-1794503605945-ulifecycle",
+    "action": "rpc",
+    "at": "after",
+    "module": "gateway",
+    "method": "chat.abort",
+    "hits": 1,
+    "request": {
+      "id": "e77ea1a3-610c-457f-ae94-3d602e3a9766",
+      "module": "gateway",
+      "action": "rpc",
+      "payload": {
+        "method": "chat.abort",
+        "params": {
+          "sessionKey": "agent:main:session-1794503605945-ulifecycle",
+          "runId": "u5-stop-second-run"
+        }
+      },
+      "deadline": {
+        "deadlineAtMs": 1794503791292,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "e77ea1a3-610c-457f-ae94-3d602e3a9766"
+      }
+    },
+    "reply": {
+      "id": "e77ea1a3-610c-457f-ae94-3d602e3a9766",
+      "ok": true,
+      "data": {
+        "ok": true,
+        "aborted": true,
+        "runIds": [
+          "u5-stop-second-run"
+        ]
+      }
+    },
+    "phase": "finished",
+    "outcome": "drop"
+  },
+  "lastGate": {
+    "error": "Error: electronApplication.evaluate: TypeError: Cannot read properties of undefined (reading 'path')\n    at eval (eval at evaluate (:302:30), <anonymous>:4:15)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at WritableState.get (node:internal/streams/writable:129:8)\n    at node:internal/streams/transform:187:14\n    at PassThrough._transform (node:internal/streams/passthrough:46:3)\n    at Transform._write (node:internal/streams/transform:171:8)\n    at writeOrBuffer (node:internal/streams/writable:570:12)\n    at _write (node:internal/streams/writable:499:10)\n    at Writable.write (node:internal/streams/writable:508:10)"
+  },
+  "ownerReadback": {
+    "live": {
+      "key": "agent:main:session-1794503605945-ulifecycle",
+      "sessionId": "747179fd-7c00-4b04-ba9c-26fa0f6c6258"
+    },
+    "archived": null
+  },
+  "status": "passed",
+  "errors": []
+}

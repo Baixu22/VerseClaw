@@ -1,0 +1,121 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-u3-fork-boundaries",
+  "provider": "local-scripted",
+  "acceptance": [
+    "TF-0659/AC1"
+  ],
+  "status": "passed",
+  "project": {
+    "workspaceId": "u3-fork",
+    "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-03-family-fork\\session-fork-intent-U3-rej-4c6c4-s-missing-entry-projections\\workspace",
+    "sessionKey": "agent:main:session-1794503299225-ufork",
+    "generation": "7efbcd6c-e2ba-4c38-ac16-34ac440df2c8"
+  },
+  "firstTurn": {
+    "sent": {
+      "success": true,
+      "result": {
+        "runId": "U3_FIRST_QUESTION"
+      }
+    },
+    "receipt": {
+      "runId": "U3_FIRST_QUESTION",
+      "status": "ok",
+      "endedAt": 1794503402197
+    }
+  },
+  "noAncestor": {
+    "firstId": "75f79aca",
+    "rejected": {
+      "success": false,
+      "error": "Error: [INTERNAL] failed to fork at fromLeafId \"75f79aca\": the id must exist on the source transcript and have an assistant turn at or before it. No fork was created."
+    },
+    "calls": [
+      {
+        "module": "workspaces",
+        "action": "saveState"
+      },
+      {
+        "module": "usage",
+        "action": "promptCacheStatus"
+      },
+      {
+        "module": "gateway",
+        "action": "rpc",
+        "method": "sessions.list"
+      },
+      {
+        "module": "sessions",
+        "action": "fork"
+      },
+      {
+        "module": "gateway",
+        "action": "rpc",
+        "method": "sessions.list"
+      }
+    ],
+    "sessionKeys": [
+      "agent:main:session-1794503299225-ufork"
+    ]
+  },
+  "secondTurn": {
+    "sent": {
+      "success": true,
+      "result": {
+        "runId": "U3_NO_ENTRY"
+      }
+    },
+    "receipt": {
+      "runId": "U3_NO_ENTRY",
+      "status": "ok",
+      "endedAt": 1794503427244
+    }
+  },
+  "readProjectionFault": {
+    "driven_by": "agent",
+    "kind": "fault-injected-read-projection",
+    "hits": 8,
+    "originalEntry": {
+      "role": "user",
+      "content": "U3_NO_ENTRY",
+      "timestamp": 1794503415193,
+      "idempotencyKey": "U3_NO_ENTRY:user",
+      "__openclaw": {
+        "id": "28296b1d",
+        "recordTimestampMs": 1794503418302,
+        "seq": 3
+      }
+    }
+  },
+  "locales": [
+    {
+      "language": "en",
+      "status": "passed"
+    },
+    {
+      "language": "zh",
+      "status": "passed"
+    },
+    {
+      "language": "ja",
+      "status": "passed"
+    },
+    {
+      "language": "ru",
+      "status": "passed"
+    }
+  ],
+  "providerLog": [
+    {
+      "turn": "[Fri 2026-11-13 01:09 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "text:U3_FIRST_ANSWER"
+    },
+    {
+      "turn": "[Fri 2026-11-13 01:09 GMT+8] U3_FIRST_QUESTION\n[Fri 2026-11-",
+      "toolResults": {},
+      "issued": "text:U3_SECOND_ANSWER"
+    }
+  ]
+}

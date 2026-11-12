@@ -1,0 +1,5 @@
+{
+  "status": " M tests/e2e/fixtures/electron-process-cleanup.ts\n M tests/e2e/fixtures/electron.ts\n M tests/e2e/fixtures/fp-p1-harness.ts\n M tests/e2e/fixtures/session-task-chain.ts\n M tests/e2e/fixtures/windows-process.ts\n",
+  "trackedFilesSha256": "6fac865ad8600bd4dca4beb958b663ed4c91dd4e4421d559defea925606ded6a",
+  "diffSha256": "3c71cb76654b6599620dfcd9ba1454b0f816e27774136664a0f3ea5350f6cba6"
+}

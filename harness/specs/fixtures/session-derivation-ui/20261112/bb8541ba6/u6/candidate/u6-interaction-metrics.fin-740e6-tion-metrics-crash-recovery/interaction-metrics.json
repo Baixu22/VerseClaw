@@ -1,0 +1,618 @@
+{
+  "schema_version": 2,
+  "driven_by": "agent",
+  "actor": "playwright-u6",
+  "requestmodel": "ccs-workbuddy/deepseek-v4.1-flash",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "author_backend": null,
+  "provider": "local-scripted",
+  "side": "candidate",
+  "journey": "crash-recovery",
+  "status": "passed",
+  "source_head": "bb8541ba6bba40fa18c5578f7818279cf0bead81",
+  "homeDir": "D:\\tmp\\tf0662-verify\\.tmp\\e2e-runs\\u6-final-bb8541ba6\\verse-claw-e2e-run-xf5Avf\\verse-claw-e2e-home-PKjQk2",
+  "profileDir": "D:\\tmp\\tf0662-verify\\.tmp\\e2e-runs\\u6-final-bb8541ba6\\verse-claw-e2e-run-xf5Avf\\verse-claw-e2e-user-data-yl8hfI",
+  "fixture": {
+    "id": "u6-goal-v1",
+    "objective": "Retain the approved U6 artifact",
+    "target": "artifact.txt",
+    "content_sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7",
+    "locale": "en",
+    "viewport": "1280x800"
+  },
+  "unsupportedProof": {},
+  "task_control_call_id": "u6crashrecoverytaskcontrol",
+  "setup": [
+    "isolated profile and Git fixture",
+    "scripted provider",
+    "project/session/history",
+    "persistent task contract",
+    "task/reference",
+    "persistent task owner claim/readback"
+  ],
+  "owner": {
+    "sessionKey": "agent:main:session-1794497409113-uproject",
+    "history": {
+      "success": true,
+      "messages": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "[agent fixture]\n\nRecorded objective: Retain the approved U6 artifact"
+            }
+          ],
+          "timestamp": 1794497457187,
+          "stopReason": "stop",
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "totalTokens": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "api": "openai-responses",
+          "provider": "openclaw",
+          "model": "gateway-injected",
+          "__openclaw": {
+            "id": "fbd1d8e9-461d-499b-acb3-34c55730993d",
+            "recordTimestampMs": 1794497457187,
+            "seq": 1
+          }
+        },
+        {
+          "role": "user",
+          "content": "Continuity context (owner-derived, bounded metadata; verify work with tools):\nschema=ContinuityContextPack/v1; status=unknown; complete=false; bindingRevision=1; chars=0/1800; truncated=false\n- No accepted continuity items were available. Do not infer task completion or missing facts.\nUnavailable/unknown sources: compression-artifact:unavailable\nOriginal history is not copied into this turn: transcript=session:agent:main:session-1794497409113-uproject; taskLedger=task-ledger:u6-project; taskLedgerEvents=1; compression=unavailable. Recall old evidence on demand through the owning session/task APIs.\n\nContinue from the recorded objective.",
+          "timestamp": 1794497552454,
+          "idempotencyKey": "54a15cd6-d6e8-4f0a-8172-4a68a3c6c2ad:user",
+          "__openclaw": {
+            "id": "59a80b98",
+            "recordTimestampMs": 1794497560712,
+            "seq": 2
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "toolCall",
+              "id": "u6crashrecoverytaskcontrol",
+              "name": "task_control",
+              "arguments": {
+                "action": "current"
+              }
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "toolUse",
+          "timestamp": 1794497563183,
+          "__openclaw": {
+            "id": "efcec327",
+            "recordTimestampMs": 1794497563237,
+            "seq": 3
+          }
+        },
+        {
+          "role": "toolResult",
+          "toolCallId": "u6crashrecoverytaskcontrol",
+          "toolName": "task_control",
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"contract\":{\"objective\":\"Retain the approved U6 artifact\",\"constraints\":[\"Retain prior progress\"],\"acceptance\":[{\"id\":\"file\",\"description\":\"Artifact contains the approved output\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"artifact.txt\",\"sha256\":\"57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"host-task-api\",\"requestId\":\"u6-create\"},\"taskNodeId\":\"3ddde793-6434-495b-875f-5b15236897ae\",\"domain\":\"cc3d0efc2ce88205e0d1b08d48e7945afc976122da4c4fb139b8fb0ae576ebec\",\"revision\":1,\"digest\":\"61bb234ce249623141440f7f1d8d622ce0f087fafe9aeca69d7f3d73fc39c04b\",\"state\":\"doing\",\"createdAt\":1794497456793,\"updatedAt\":1794497459457},\"claim\":{\"taskNodeId\":\"3ddde793-6434-495b-875f-5b15236897ae\",\"sessionKey\":\"agent:main:session-1794497409113-uproject\",\"generation\":\"9118adaa-0754-4d71-ba42-61e7cd7507ac\",\"epoch\":1,\"attemptId\":\"192a6dbe-4b79-4987-a2b5-ae2e9c9414a4\",\"worktree\":\"d:/tmp/tf0662-candidate-1d0d57ad3/u6-final-bb8541ba6/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source\",\"contractRevision\":1,\"expiresAt\":1794497672157,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+            }
+          ],
+          "isError": false,
+          "timestamp": 1794497565528,
+          "__openclaw": {
+            "id": "d6a7cae5",
+            "recordTimestampMs": 1794497565533,
+            "seq": 4
+          }
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "U6-ACK"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "custom-sessionc",
+          "model": "mock-coder",
+          "usage": {
+            "input": 120,
+            "output": 30,
+            "totalTokens": 150,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "cost": {
+              "total": 0
+            }
+          },
+          "stopReason": "stop",
+          "timestamp": 1794497565608,
+          "__openclaw": {
+            "id": "31c0db6a",
+            "recordTimestampMs": 1794497565632,
+            "seq": 5
+          }
+        }
+      ],
+      "model": "custom-sessionc/mock-coder",
+      "costUsd": 0
+    }
+  },
+  "fault": {
+    "kind": "main-process-kill-after-persisted-task-history",
+    "pid": 37380,
+    "observed_exit": true,
+    "launcher_exited": true,
+    "explicit_relaunch": true,
+    "gateway_start": {
+      "result": null,
+      "timeout": "Error: [TIMEOUT] Host action gateway.start timed out after 60s"
+    },
+    "gateway_ready_after_ms": 67330,
+    "same_session_generation": true,
+    "before": {
+      "described": {
+        "session": {
+          "key": "agent:main:session-1794497409113-uproject",
+          "kind": "direct",
+          "label": "U6 project coordinator",
+          "displayName": "U6 project coordinator",
+          "updatedAt": 1794497457554,
+          "sessionId": "9118adaa-0754-4d71-ba42-61e7cd7507ac",
+          "thinkingLevels": [
+            {
+              "id": "off",
+              "label": "off"
+            },
+            {
+              "id": "minimal",
+              "label": "minimal"
+            },
+            {
+              "id": "low",
+              "label": "low"
+            },
+            {
+              "id": "medium",
+              "label": "medium"
+            },
+            {
+              "id": "high",
+              "label": "high"
+            }
+          ],
+          "thinkingOptions": [
+            "off",
+            "minimal",
+            "low",
+            "medium",
+            "high"
+          ],
+          "thinkingDefault": "medium",
+          "totalTokens": 17,
+          "totalTokensFresh": true,
+          "estimatedCostUsd": 0,
+          "modelProvider": "custom-sessionc",
+          "model": "mock-coder",
+          "agentRuntime": {
+            "id": "auto",
+            "source": "implicit"
+          },
+          "contextTokens": 128000,
+          "hasActiveRun": false
+        }
+      },
+      "history": {
+        "success": true,
+        "messages": [
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "text",
+                "text": "[agent fixture]\n\nRecorded objective: Retain the approved U6 artifact"
+              }
+            ],
+            "timestamp": 1794497457187,
+            "stopReason": "stop",
+            "usage": {
+              "input": 0,
+              "output": 0,
+              "totalTokens": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "api": "openai-responses",
+            "provider": "openclaw",
+            "model": "gateway-injected",
+            "__openclaw": {
+              "id": "fbd1d8e9-461d-499b-acb3-34c55730993d",
+              "recordTimestampMs": 1794497457187,
+              "seq": 1
+            }
+          }
+        ],
+        "model": "openclaw/gateway-injected",
+        "costUsd": 0
+      }
+    },
+    "after": {
+      "described": {
+        "session": {
+          "key": "agent:main:session-1794497409113-uproject",
+          "kind": "direct",
+          "label": "U6 project coordinator",
+          "displayName": "U6 project coordinator",
+          "updatedAt": 1794497457554,
+          "sessionId": "9118adaa-0754-4d71-ba42-61e7cd7507ac",
+          "thinkingLevels": [
+            {
+              "id": "off",
+              "label": "off"
+            },
+            {
+              "id": "minimal",
+              "label": "minimal"
+            },
+            {
+              "id": "low",
+              "label": "low"
+            },
+            {
+              "id": "medium",
+              "label": "medium"
+            },
+            {
+              "id": "high",
+              "label": "high"
+            }
+          ],
+          "thinkingOptions": [
+            "off",
+            "minimal",
+            "low",
+            "medium",
+            "high"
+          ],
+          "thinkingDefault": "medium",
+          "totalTokens": 17,
+          "totalTokensFresh": true,
+          "estimatedCostUsd": 0,
+          "modelProvider": "custom-sessionc",
+          "model": "mock-coder",
+          "agentRuntime": {
+            "id": "auto",
+            "source": "implicit"
+          },
+          "contextTokens": 128000,
+          "hasActiveRun": false
+        }
+      },
+      "history": {
+        "success": true,
+        "messages": [
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "text",
+                "text": "[agent fixture]\n\nRecorded objective: Retain the approved U6 artifact"
+              }
+            ],
+            "timestamp": 1794497457187,
+            "stopReason": "stop",
+            "usage": {
+              "input": 0,
+              "output": 0,
+              "totalTokens": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "cost": {
+                "total": 0
+              }
+            },
+            "api": "openai-responses",
+            "provider": "openclaw",
+            "model": "gateway-injected",
+            "__openclaw": {
+              "id": "fbd1d8e9-461d-499b-acb3-34c55730993d",
+              "recordTimestampMs": 1794497457187,
+              "seq": 1
+            }
+          }
+        ],
+        "model": "openclaw/gateway-injected",
+        "costUsd": 0
+      }
+    },
+    "user_steps": false
+  },
+  "events": [
+    {
+      "id": "e1",
+      "at": "2026-11-12T15:32:25.661Z",
+      "action": "click",
+      "target": "testid:sidebar-session-agent:main:session-1794497409113-uproject",
+      "operation": "crash-recovery:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [
+        "identity_selection"
+      ],
+      "repeat_of": null,
+      "rule": "显式选择项目/会话/任务/检出身份",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/"
+    },
+    {
+      "id": "e2",
+      "at": "2026-11-12T15:32:26.524Z",
+      "action": "navigate",
+      "target": "#/",
+      "before": "",
+      "after": "#/",
+      "operation": "crash-recovery:goal-v1",
+      "success": true,
+      "source": "rendered_ui",
+      "metrics": [
+        "page_transition"
+      ],
+      "repeat_of": null,
+      "caused_by": "e1",
+      "rule": "主页面路由改变一次"
+    },
+    {
+      "id": "e3",
+      "at": "2026-11-12T15:32:27.467Z",
+      "action": "fill",
+      "target": "composer:continue",
+      "operation": "crash-recovery:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/"
+    },
+    {
+      "id": "e4",
+      "at": "2026-11-12T15:32:27.488Z",
+      "action": "click",
+      "target": "testid:chat-composer-send",
+      "operation": "crash-recovery:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/",
+      "value_sha256": "6ae00dbc73c5c61b277ea1f655e2c5f615db68a1310bb868afa39a9dbb40e8ed",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1#/"
+    }
+  ],
+  "tracked_product_and_helper_diff_empty": true,
+  "build": {
+    "main_sha256": "8f80b319387b35f274a98fb86b7006f4709e1dead405991321e3c6231f2f18cb",
+    "renderer_sha256": "7b35126e339cad353190859f0bb2d511fb8d79be9659df451bcb603e0725a799",
+    "runtime_entry_sha256": "a6d6a05fdd72eb1a91466c5a5bfa0211d4419473d17c1ab897d53435df73aef9",
+    "manifest_sha256": "c3a2d933ff77791a0eb5da1f469c1be6b2735dac818e7d717d2b21d21e99ba0e",
+    "manifest_path": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\candidate-build-manifest-bb8541ba6.json",
+    "side": "candidate",
+    "source_head": "bb8541ba6bba40fa18c5578f7818279cf0bead81"
+  },
+  "driver_sha256": "69f4492b3d788abb0adc5a829ffd8c06158a4fd5ddaec992190a28b6c3e67323",
+  "helpers": {
+    "electron.ts": "602720de6dd84ec2060d5a11df70016760e67ef9231bc5af74cc2da5d2783925",
+    "fp-p1-harness.ts": "31e96027ab5a10d5e510b026831a4f55fd2d65e1a77ff350a28f8c17208d0a14",
+    "session-task-chain.ts": "ba39bf738cbf7a2dda1c85854579bb80c0fbf40b055e19f830ee2b80116f4011",
+    "electron-process-cleanup.ts": "35864693cf9b6be10abc0f4ce5bb4db5a57974314967c425d2fd9ed166c9cc85",
+    "windows-process.ts": "27c7af68a5e580fc108018705711ef71994474a3bf40a7b838e764bdb0862dd9"
+  },
+  "persistent_task_owner": {
+    "binding": {
+      "success": true,
+      "binding": {
+        "schemaVersion": 1,
+        "workspaceId": "u6-project",
+        "agentId": "main",
+        "sessionKey": "agent:main:session-1794497409113-uproject",
+        "sessionGeneration": "9118adaa-0754-4d71-ba42-61e7cd7507ac",
+        "taskLedgerReferences": [
+          {
+            "direction": "workboard-to-task-ledger",
+            "taskLedgerNodeId": "3ddde793-6434-495b-875f-5b15236897ae",
+            "source": "runtime"
+          }
+        ],
+        "activeTaskNodeId": "3ddde793-6434-495b-875f-5b15236897ae",
+        "environment": {
+          "kind": "local",
+          "canonicalRoot": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\u6-final-bb8541ba6\\u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery\\fixture\\source",
+          "backend": "git",
+          "branch": "u6-fixture",
+          "detachedHead": false,
+          "setupProfile": null
+        },
+        "archiveRestorePolicy": "restore",
+        "state": "active",
+        "bindingRevision": 1,
+        "invalidationReason": null,
+        "createdAt": "2026-11-12T15:30:58.433Z",
+        "updatedAt": "2026-11-12T15:30:58.433Z"
+      },
+      "recovery": {
+        "state": "ready",
+        "reason": null,
+        "bindingRevision": 1
+      }
+    },
+    "sessionTask": {
+      "success": true,
+      "task": {
+        "contract": {
+          "objective": "Retain the approved U6 artifact",
+          "constraints": [
+            "Retain prior progress"
+          ],
+          "acceptance": [
+            {
+              "id": "file",
+              "description": "Artifact contains the approved output",
+              "verification": {
+                "kind": "file-sha256",
+                "path": "artifact.txt",
+                "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+              }
+            }
+          ],
+          "target": "artifact.txt",
+          "dependencies": [],
+          "origin": {
+            "source": "host-task-api",
+            "requestId": "u6-create"
+          },
+          "taskNodeId": "3ddde793-6434-495b-875f-5b15236897ae",
+          "domain": "cc3d0efc2ce88205e0d1b08d48e7945afc976122da4c4fb139b8fb0ae576ebec",
+          "revision": 1,
+          "digest": "61bb234ce249623141440f7f1d8d622ce0f087fafe9aeca69d7f3d73fc39c04b",
+          "state": "doing",
+          "createdAt": 1794497456793,
+          "updatedAt": 1794497459457
+        },
+        "claim": {
+          "taskNodeId": "3ddde793-6434-495b-875f-5b15236897ae",
+          "sessionKey": "agent:main:session-1794497409113-uproject",
+          "generation": "9118adaa-0754-4d71-ba42-61e7cd7507ac",
+          "epoch": 1,
+          "attemptId": "192a6dbe-4b79-4987-a2b5-ae2e9c9414a4",
+          "worktree": "d:/tmp/tf0662-candidate-1d0d57ad3/u6-final-bb8541ba6/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source",
+          "contractRevision": 1,
+          "expiresAt": 1794497579457,
+          "state": "active"
+        },
+        "checkpoint": null,
+        "pendingOperations": 0,
+        "pendingOperationDetails": [],
+        "childTaskNodeIds": []
+      },
+      "children": [],
+      "verificationReceipts": []
+    }
+  },
+  "identities": {
+    "project": {
+      "workspaceId": "u6-project",
+      "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\u6-final-bb8541ba6\\u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery\\fixture\\source",
+      "sessionKey": "agent:main:session-1794497409113-uproject",
+      "generation": "9118adaa-0754-4d71-ba42-61e7cd7507ac"
+    },
+    "child": null,
+    "taskNodeId": "3ddde793-6434-495b-875f-5b15236897ae",
+    "targetWorkspaceId": null
+  },
+  "task_readback": {
+    "success": true,
+    "task": {
+      "contract": {
+        "objective": "Retain the approved U6 artifact",
+        "constraints": [
+          "Retain prior progress"
+        ],
+        "acceptance": [
+          {
+            "id": "file",
+            "description": "Artifact contains the approved output",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "artifact.txt",
+              "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+            }
+          }
+        ],
+        "target": "artifact.txt",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "u6-create"
+        },
+        "taskNodeId": "3ddde793-6434-495b-875f-5b15236897ae",
+        "domain": "cc3d0efc2ce88205e0d1b08d48e7945afc976122da4c4fb139b8fb0ae576ebec",
+        "revision": 1,
+        "digest": "61bb234ce249623141440f7f1d8d622ce0f087fafe9aeca69d7f3d73fc39c04b",
+        "state": "doing",
+        "createdAt": 1794497456793,
+        "updatedAt": 1794497459457
+      },
+      "claim": {
+        "taskNodeId": "3ddde793-6434-495b-875f-5b15236897ae",
+        "sessionKey": "agent:main:session-1794497409113-uproject",
+        "generation": "9118adaa-0754-4d71-ba42-61e7cd7507ac",
+        "epoch": 1,
+        "attemptId": "192a6dbe-4b79-4987-a2b5-ae2e9c9414a4",
+        "worktree": "d:/tmp/tf0662-candidate-1d0d57ad3/u6-final-bb8541ba6/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source",
+        "contractRevision": 1,
+        "expiresAt": 1794497672157,
+        "state": "active"
+      },
+      "checkpoint": null,
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": []
+    },
+    "children": [],
+    "verificationReceipts": []
+  },
+  "task_control": {
+    "call_id": "u6crashrecoverytaskcontrol",
+    "result": "{\"contract\":{\"objective\":\"Retain the approved U6 artifact\",\"constraints\":[\"Retain prior progress\"],\"acceptance\":[{\"id\":\"file\",\"description\":\"Artifact contains the approved output\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"artifact.txt\",\"sha256\":\"57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"host-task-api\",\"requestId\":\"u6-create\"},\"taskNodeId\":\"3ddde793-6434-495b-875f-5b15236897ae\",\"domain\":\"cc3d0efc2ce88205e0d1b08d48e7945afc976122da4c4fb139b8fb0ae576ebec\",\"revision\":1,\"digest\":\"61bb234ce249623141440f7f1d8d622ce0f087fafe9aeca69d7f3d73fc39c04b\",\"state\":\"doing\",\"createdAt\":1794497456793,\"updatedAt\":1794497459457},\"claim\":{\"taskNodeId\":\"3ddde793-6434-495b-875f-5b15236897ae\",\"sessionKey\":\"agent:main:session-1794497409113-uproject\",\"generation\":\"9118adaa-0754-4d71-ba42-61e7cd7507ac\",\"epoch\":1,\"attemptId\":\"192a6dbe-4b79-4987-a2b5-ae2e9c9414a4\",\"worktree\":\"d:/tmp/tf0662-candidate-1d0d57ad3/u6-final-bb8541ba6/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source\",\"contractRevision\":1,\"expiresAt\":1794497672157,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+  },
+  "provider_log": [
+    {
+      "turn": "[Thu 2026-11-12 23:32 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "u6crashrecoverytaskcontrol"
+    },
+    {
+      "turn": "[Thu 2026-11-12 23:32 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {
+        "u6crashrecoverytaskcontrol": "{\"contract\":{\"objective\":\"Retain the approved U6 artifact\",\"constraints\":[\"Retain prior progress\"],\"acceptance\":[{\"id\":\"file\",\"description\":\"Artifact contains the approved output\",\"verification\":{\"kind\":\"file-sha256\",\"path\":\"artifact.txt\",\"sha256\":\"57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7\"}}],\"target\":\"artifact.txt\",\"dependencies\":[],\"origin\":{\"source\":\"host-task-api\",\"requestId\":\"u6-create\"},\"taskNodeId\":\"3ddde793-6434-495b-875f-5b15236897ae\",\"domain\":\"cc3d0efc2ce88205e0d1b08d48e7945afc976122da4c4fb139b8fb0ae576ebec\",\"revision\":1,\"digest\":\"61bb234ce249623141440f7f1d8d622ce0f087fafe9aeca69d7f3d73fc39c04b\",\"state\":\"doing\",\"createdAt\":1794497456793,\"updatedAt\":1794497459457},\"claim\":{\"taskNodeId\":\"3ddde793-6434-495b-875f-5b15236897ae\",\"sessionKey\":\"agent:main:session-1794497409113-uproject\",\"generation\":\"9118adaa-0754-4d71-ba42-61e7cd7507ac\",\"epoch\":1,\"attemptId\":\"192a6dbe-4b79-4987-a2b5-ae2e9c9414a4\",\"worktree\":\"d:/tmp/tf0662-candidate-1d0d57ad3/u6-final-bb8541ba6/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source\",\"contractRevision\":1,\"expiresAt\":1794497672157,\"state\":\"active\"},\"checkpoint\":null,\"pendingOperations\":0,\"pendingOperationDetails\":[],\"childTaskNodeIds\":[]}"
+      },
+      "issued": "text:U6-ACK"
+    }
+  ],
+  "reason": null,
+  "counts_source": "successful_events",
+  "counts": {
+    "identity_selection": 1,
+    "page_transition": 1,
+    "repeat_confirmation": 0,
+    "goal_restatement": 0,
+    "repeat_reminder": 0
+  }
+}

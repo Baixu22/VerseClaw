@@ -1,0 +1,713 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-u5-lifecycle",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "case": "U5 coordinator pause and resume reject before commit and recover lost acknowledgements through the scoped owner read",
+  "project": {
+    "workspaceId": "u5-lifecycle",
+    "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+    "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+    "generation": "d06c929c-08d1-4287-9ae6-6a9196406612"
+  },
+  "neighbour": "agent:main:dashboard:c0e44da3-0386-4578-b643-41b994170ddb",
+  "recovery": "existing owner reads; archive/restore/delete also retry the persisted Main gate operationId",
+  "faultInjection": "before: no forwarding; after: real Main success reply held/dropped; gate-clear: temp write fails only after real Runtime commit",
+  "coordinator": [
+    {
+      "action": "pauseCoordinator",
+      "rejection": {
+        "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+        "action": "pauseCoordinator",
+        "at": "before",
+        "module": "workspaces",
+        "hits": 1,
+        "request": {
+          "id": "7a8b751b-4e9a-4d6e-957e-461bbb2e548a",
+          "module": "workspaces",
+          "action": "pauseCoordinator",
+          "payload": {
+            "workspaceId": "u5-lifecycle",
+            "agentId": "main",
+            "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+            "expectedRevision": 1
+          },
+          "deadline": {
+            "deadlineAtMs": 1794503889667,
+            "timeoutMs": 60000,
+            "stage": "renderer",
+            "requestId": "7a8b751b-4e9a-4d6e-957e-461bbb2e548a"
+          }
+        },
+        "phase": "finished",
+        "outcome": "reject"
+      },
+      "lost": {
+        "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+        "action": "pauseCoordinator",
+        "at": "after",
+        "module": "workspaces",
+        "hits": 1,
+        "request": {
+          "id": "7fc2dbff-3f13-482c-bd81-4f717a96ea41",
+          "module": "workspaces",
+          "action": "pauseCoordinator",
+          "payload": {
+            "workspaceId": "u5-lifecycle",
+            "agentId": "main",
+            "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+            "expectedRevision": 1
+          },
+          "deadline": {
+            "deadlineAtMs": 1794503889902,
+            "timeoutMs": 60000,
+            "stage": "renderer",
+            "requestId": "7fc2dbff-3f13-482c-bd81-4f717a96ea41"
+          }
+        },
+        "reply": {
+          "id": "7fc2dbff-3f13-482c-bd81-4f717a96ea41",
+          "ok": true,
+          "data": {
+            "success": true,
+            "binding": {
+              "schemaVersion": 1,
+              "workspaceId": "u5-lifecycle",
+              "agentId": "main",
+              "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+              "sessionGeneration": "d06c929c-08d1-4287-9ae6-6a9196406612",
+              "taskLedgerReferences": [
+                {
+                  "direction": "workboard-to-task-ledger",
+                  "taskLedgerNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+                  "source": "runtime"
+                }
+              ],
+              "activeTaskNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+              "environment": {
+                "kind": "local",
+                "canonicalRoot": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+                "backend": "local-workspace",
+                "branch": null,
+                "detachedHead": false,
+                "setupProfile": null
+              },
+              "archiveRestorePolicy": "restore",
+              "state": "paused",
+              "bindingRevision": 2,
+              "invalidationReason": "user-paused",
+              "createdAt": "2026-11-12T17:17:07.924Z",
+              "updatedAt": "2026-11-12T17:17:09.905Z"
+            },
+            "recovery": {
+              "state": "paused",
+              "reason": "user-paused",
+              "bindingRevision": 2
+            }
+          }
+        },
+        "phase": "finished",
+        "outcome": "drop"
+      },
+      "committed": {
+        "success": true,
+        "binding": {
+          "schemaVersion": 1,
+          "workspaceId": "u5-lifecycle",
+          "agentId": "main",
+          "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+          "sessionGeneration": "d06c929c-08d1-4287-9ae6-6a9196406612",
+          "taskLedgerReferences": [
+            {
+              "direction": "workboard-to-task-ledger",
+              "taskLedgerNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+              "source": "runtime"
+            }
+          ],
+          "activeTaskNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+          "environment": {
+            "kind": "local",
+            "canonicalRoot": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+            "backend": "local-workspace",
+            "branch": null,
+            "detachedHead": false,
+            "setupProfile": null
+          },
+          "archiveRestorePolicy": "restore",
+          "state": "paused",
+          "bindingRevision": 2,
+          "invalidationReason": "user-paused",
+          "createdAt": "2026-11-12T17:17:07.924Z",
+          "updatedAt": "2026-11-12T17:17:09.905Z"
+        },
+        "recovery": {
+          "state": "paused",
+          "reason": "user-paused",
+          "bindingRevision": 2
+        }
+      },
+      "reread": {
+        "success": true,
+        "binding": {
+          "schemaVersion": 1,
+          "workspaceId": "u5-lifecycle",
+          "agentId": "main",
+          "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+          "sessionGeneration": "d06c929c-08d1-4287-9ae6-6a9196406612",
+          "taskLedgerReferences": [
+            {
+              "direction": "workboard-to-task-ledger",
+              "taskLedgerNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+              "source": "runtime"
+            }
+          ],
+          "activeTaskNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+          "environment": {
+            "kind": "local",
+            "canonicalRoot": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+            "backend": "local-workspace",
+            "branch": null,
+            "detachedHead": false,
+            "setupProfile": null
+          },
+          "archiveRestorePolicy": "restore",
+          "state": "paused",
+          "bindingRevision": 2,
+          "invalidationReason": "user-paused",
+          "createdAt": "2026-11-12T17:17:07.924Z",
+          "updatedAt": "2026-11-12T17:17:09.905Z"
+        },
+        "recovery": {
+          "state": "paused",
+          "reason": "user-paused",
+          "bindingRevision": 2
+        }
+      },
+      "via": "resolveCoordinator on existing resource-chip entry",
+      "operationId": "not_applicable: coordinator writes use expectedRevision; do not replay a stale revision as a new action"
+    },
+    {
+      "action": "bindCoordinator",
+      "rejection": {
+        "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+        "action": "bindCoordinator",
+        "at": "before",
+        "module": "workspaces",
+        "hits": 1,
+        "request": {
+          "id": "ba5b97f9-ae80-4fce-b6f8-e57dab72e87a",
+          "module": "workspaces",
+          "action": "bindCoordinator",
+          "payload": {
+            "workspaceId": "u5-lifecycle",
+            "agentId": "main",
+            "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+            "expectedRevision": 2,
+            "taskLedgerNodeIds": [
+              "87db0200-e181-490f-ad60-31b7171ab281"
+            ],
+            "environment": {
+              "kind": "local",
+              "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+              "setupProfile": null
+            },
+            "archiveRestorePolicy": "restore"
+          },
+          "deadline": {
+            "deadlineAtMs": 1794503891106,
+            "timeoutMs": 60000,
+            "stage": "renderer",
+            "requestId": "ba5b97f9-ae80-4fce-b6f8-e57dab72e87a"
+          }
+        },
+        "phase": "finished",
+        "outcome": "reject"
+      },
+      "lost": {
+        "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+        "action": "bindCoordinator",
+        "at": "after",
+        "module": "workspaces",
+        "hits": 1,
+        "request": {
+          "id": "1a47222f-fa9d-4800-aa50-f752b2f9ca19",
+          "module": "workspaces",
+          "action": "bindCoordinator",
+          "payload": {
+            "workspaceId": "u5-lifecycle",
+            "agentId": "main",
+            "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+            "expectedRevision": 2,
+            "taskLedgerNodeIds": [
+              "87db0200-e181-490f-ad60-31b7171ab281"
+            ],
+            "environment": {
+              "kind": "local",
+              "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+              "setupProfile": null
+            },
+            "archiveRestorePolicy": "restore"
+          },
+          "deadline": {
+            "deadlineAtMs": 1794503891205,
+            "timeoutMs": 60000,
+            "stage": "renderer",
+            "requestId": "1a47222f-fa9d-4800-aa50-f752b2f9ca19"
+          }
+        },
+        "reply": {
+          "id": "1a47222f-fa9d-4800-aa50-f752b2f9ca19",
+          "ok": true,
+          "data": {
+            "success": true,
+            "binding": {
+              "schemaVersion": 1,
+              "workspaceId": "u5-lifecycle",
+              "agentId": "main",
+              "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+              "sessionGeneration": "d06c929c-08d1-4287-9ae6-6a9196406612",
+              "taskLedgerReferences": [
+                {
+                  "direction": "workboard-to-task-ledger",
+                  "taskLedgerNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+                  "source": "runtime"
+                }
+              ],
+              "activeTaskNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+              "environment": {
+                "kind": "local",
+                "canonicalRoot": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+                "backend": "local-workspace",
+                "branch": null,
+                "detachedHead": false,
+                "setupProfile": null
+              },
+              "archiveRestorePolicy": "restore",
+              "state": "active",
+              "bindingRevision": 3,
+              "invalidationReason": null,
+              "createdAt": "2026-11-12T17:17:07.924Z",
+              "updatedAt": "2026-11-12T17:17:11.393Z"
+            },
+            "recovery": {
+              "state": "ready",
+              "reason": null,
+              "bindingRevision": 3
+            }
+          }
+        },
+        "phase": "finished",
+        "outcome": "drop"
+      },
+      "committed": {
+        "success": true,
+        "binding": {
+          "schemaVersion": 1,
+          "workspaceId": "u5-lifecycle",
+          "agentId": "main",
+          "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+          "sessionGeneration": "d06c929c-08d1-4287-9ae6-6a9196406612",
+          "taskLedgerReferences": [
+            {
+              "direction": "workboard-to-task-ledger",
+              "taskLedgerNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+              "source": "runtime"
+            }
+          ],
+          "activeTaskNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+          "environment": {
+            "kind": "local",
+            "canonicalRoot": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+            "backend": "local-workspace",
+            "branch": null,
+            "detachedHead": false,
+            "setupProfile": null
+          },
+          "archiveRestorePolicy": "restore",
+          "state": "active",
+          "bindingRevision": 3,
+          "invalidationReason": null,
+          "createdAt": "2026-11-12T17:17:07.924Z",
+          "updatedAt": "2026-11-12T17:17:11.393Z"
+        },
+        "recovery": {
+          "state": "ready",
+          "reason": null,
+          "bindingRevision": 3
+        }
+      },
+      "reread": {
+        "success": true,
+        "binding": {
+          "schemaVersion": 1,
+          "workspaceId": "u5-lifecycle",
+          "agentId": "main",
+          "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+          "sessionGeneration": "d06c929c-08d1-4287-9ae6-6a9196406612",
+          "taskLedgerReferences": [
+            {
+              "direction": "workboard-to-task-ledger",
+              "taskLedgerNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+              "source": "runtime"
+            }
+          ],
+          "activeTaskNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+          "environment": {
+            "kind": "local",
+            "canonicalRoot": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+            "backend": "local-workspace",
+            "branch": null,
+            "detachedHead": false,
+            "setupProfile": null
+          },
+          "archiveRestorePolicy": "restore",
+          "state": "active",
+          "bindingRevision": 3,
+          "invalidationReason": null,
+          "createdAt": "2026-11-12T17:17:07.924Z",
+          "updatedAt": "2026-11-12T17:17:11.393Z"
+        },
+        "recovery": {
+          "state": "ready",
+          "reason": null,
+          "bindingRevision": 3
+        }
+      },
+      "via": "resolveCoordinator on existing resource-chip entry",
+      "operationId": "not_applicable: coordinator writes use expectedRevision; do not replay a stale revision as a new action"
+    }
+  ],
+  "navigation": [
+    {
+      "target": "agent:main:dashboard:c0e44da3-0386-4578-b643-41b994170ddb",
+      "at": 1794503830296,
+      "selection": [],
+      "draft": "U5 draft B",
+      "workspace": {
+        "success": true,
+        "activeWorkspaceId": "u5-lifecycle",
+        "activeWorkspace": {
+          "id": "u5-lifecycle",
+          "name": "U5 lifecycle",
+          "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+          "agentId": "main",
+          "selectedAgentId": "main",
+          "activeSessionKey": "agent:main:dashboard:c0e44da3-0386-4578-b643-41b994170ddb",
+          "projectCoordinatorSessionKey": "agent:main:session-1794503747276-ulifecycle",
+          "agentBindings": {
+            "main": {
+              "workspaceId": "u5-lifecycle",
+              "agentId": "main",
+              "sessionKey": "agent:main:dashboard:c0e44da3-0386-4578-b643-41b994170ddb"
+            }
+          },
+          "permissionMode": "fullAccess",
+          "createdAt": 1794503747308,
+          "updatedAt": 1794503830282,
+          "lastOpenedAt": 1794503747308,
+          "state": {
+            "draftInput": "U5 draft B"
+          },
+          "sessionStates": {
+            "agent:main:session-1794503747276-ulifecycle": {
+              "chatFooter": {
+                "contextRangeVisible": true,
+                "tokenUsageVisible": true,
+                "workContextVisible": true
+              },
+              "composerRunState": "idle",
+              "activeTopicId": null,
+              "knowledgeScope": "none",
+              "knowledgeMode": "suggest",
+              "artifactPanel": {
+                "open": false,
+                "expanded": false,
+                "tabs": []
+              },
+              "turnSummaryExpanded": {},
+              "turnSummaryStepDetailsExpanded": {},
+              "readingPosition": {
+                "generation": "d06c929c-08d1-4287-9ae6-6a9196406612",
+                "scrollTop": 0,
+                "messageKey": "msg-0",
+                "offset": 0,
+                "pinned": true
+              },
+              "draftInput": "U5 draft A",
+              "sessionList": {
+                "unread": false,
+                "lastReadAt": 1794503829069
+              }
+            },
+            "agent:main:dashboard:c0e44da3-0386-4578-b643-41b994170ddb": {
+              "draftInput": "U5 draft B"
+            }
+          },
+          "sessionFolders": [],
+          "sessionFolderAssignments": {},
+          "coordinatorBindings": {
+            "agent:main:session-1794503747276-ulifecycle": {
+              "schemaVersion": 1,
+              "workspaceId": "u5-lifecycle",
+              "agentId": "main",
+              "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+              "sessionGeneration": "d06c929c-08d1-4287-9ae6-6a9196406612",
+              "taskLedgerReferences": [
+                {
+                  "direction": "workboard-to-task-ledger",
+                  "taskLedgerNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+                  "source": "runtime"
+                }
+              ],
+              "activeTaskNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+              "environment": {
+                "kind": "local",
+                "canonicalRoot": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+                "backend": "local-workspace",
+                "branch": null,
+                "detachedHead": false,
+                "setupProfile": null
+              },
+              "archiveRestorePolicy": "restore",
+              "state": "paused",
+              "bindingRevision": 2,
+              "invalidationReason": "user-paused",
+              "createdAt": "2026-11-12T17:17:07.924Z",
+              "updatedAt": "2026-11-12T17:17:09.905Z"
+            }
+          }
+        }
+      },
+      "selectedRows": [
+        "U5 neighbour"
+      ]
+    },
+    {
+      "target": "agent:main:dashboard:c0e44da3-0386-4578-b643-41b994170ddb",
+      "at": 1794503832442,
+      "selection": [],
+      "draft": "U5 draft B",
+      "workspace": {
+        "success": true,
+        "activeWorkspaceId": "u5-lifecycle",
+        "activeWorkspace": {
+          "id": "u5-lifecycle",
+          "name": "U5 lifecycle",
+          "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+          "agentId": "main",
+          "selectedAgentId": "main",
+          "activeSessionKey": "agent:main:dashboard:c0e44da3-0386-4578-b643-41b994170ddb",
+          "projectCoordinatorSessionKey": "agent:main:session-1794503747276-ulifecycle",
+          "agentBindings": {
+            "main": {
+              "workspaceId": "u5-lifecycle",
+              "agentId": "main",
+              "sessionKey": "agent:main:dashboard:c0e44da3-0386-4578-b643-41b994170ddb"
+            }
+          },
+          "permissionMode": "fullAccess",
+          "createdAt": 1794503747308,
+          "updatedAt": 1794503832460,
+          "lastOpenedAt": 1794503747308,
+          "state": {
+            "draftInput": "U5 draft B",
+            "readingPosition": {
+              "generation": "f24ace6e-58e0-4915-b32a-e1ffa47edc9f",
+              "scrollTop": 0,
+              "messageKey": "msg-0",
+              "offset": 0,
+              "pinned": true
+            },
+            "composerRunState": "idle",
+            "activeTopicId": null,
+            "knowledgeScope": "none",
+            "knowledgeMode": "suggest",
+            "artifactPanel": {
+              "open": false,
+              "expanded": false,
+              "tabs": []
+            },
+            "turnSummaryExpanded": {},
+            "turnSummaryStepDetailsExpanded": {}
+          },
+          "sessionStates": {
+            "agent:main:session-1794503747276-ulifecycle": {
+              "chatFooter": {
+                "contextRangeVisible": true,
+                "tokenUsageVisible": true,
+                "workContextVisible": true
+              },
+              "composerRunState": "idle",
+              "activeTopicId": null,
+              "knowledgeScope": "none",
+              "knowledgeMode": "suggest",
+              "artifactPanel": {
+                "open": false,
+                "expanded": false,
+                "tabs": []
+              },
+              "turnSummaryExpanded": {},
+              "turnSummaryStepDetailsExpanded": {},
+              "readingPosition": {
+                "generation": "d06c929c-08d1-4287-9ae6-6a9196406612",
+                "scrollTop": 0,
+                "messageKey": "msg-0",
+                "offset": 0,
+                "pinned": true
+              },
+              "draftInput": "U5 draft A",
+              "sessionList": {
+                "unread": false,
+                "lastReadAt": 1794503830457
+              }
+            },
+            "agent:main:dashboard:c0e44da3-0386-4578-b643-41b994170ddb": {
+              "draftInput": "U5 draft B",
+              "readingPosition": {
+                "generation": "f24ace6e-58e0-4915-b32a-e1ffa47edc9f",
+                "scrollTop": 0,
+                "messageKey": "msg-0",
+                "offset": 0,
+                "pinned": true
+              },
+              "composerRunState": "idle",
+              "activeTopicId": null,
+              "knowledgeScope": "none",
+              "knowledgeMode": "suggest",
+              "artifactPanel": {
+                "open": false,
+                "expanded": false,
+                "tabs": []
+              },
+              "turnSummaryExpanded": {},
+              "turnSummaryStepDetailsExpanded": {}
+            }
+          },
+          "sessionFolders": [],
+          "sessionFolderAssignments": {},
+          "coordinatorBindings": {
+            "agent:main:session-1794503747276-ulifecycle": {
+              "schemaVersion": 1,
+              "workspaceId": "u5-lifecycle",
+              "agentId": "main",
+              "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+              "sessionGeneration": "d06c929c-08d1-4287-9ae6-6a9196406612",
+              "taskLedgerReferences": [
+                {
+                  "direction": "workboard-to-task-ledger",
+                  "taskLedgerNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+                  "source": "runtime"
+                }
+              ],
+              "activeTaskNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+              "environment": {
+                "kind": "local",
+                "canonicalRoot": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+                "backend": "local-workspace",
+                "branch": null,
+                "detachedHead": false,
+                "setupProfile": null
+              },
+              "archiveRestorePolicy": "restore",
+              "state": "active",
+              "bindingRevision": 3,
+              "invalidationReason": null,
+              "createdAt": "2026-11-12T17:17:07.924Z",
+              "updatedAt": "2026-11-12T17:17:11.393Z"
+            }
+          }
+        }
+      },
+      "selectedRows": [
+        "U5 neighbour"
+      ]
+    }
+  ],
+  "lastFault": {
+    "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+    "action": "bindCoordinator",
+    "at": "after",
+    "module": "workspaces",
+    "hits": 1,
+    "request": {
+      "id": "1a47222f-fa9d-4800-aa50-f752b2f9ca19",
+      "module": "workspaces",
+      "action": "bindCoordinator",
+      "payload": {
+        "workspaceId": "u5-lifecycle",
+        "agentId": "main",
+        "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+        "expectedRevision": 2,
+        "taskLedgerNodeIds": [
+          "87db0200-e181-490f-ad60-31b7171ab281"
+        ],
+        "environment": {
+          "kind": "local",
+          "rootPath": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+          "setupProfile": null
+        },
+        "archiveRestorePolicy": "restore"
+      },
+      "deadline": {
+        "deadlineAtMs": 1794503891205,
+        "timeoutMs": 60000,
+        "stage": "renderer",
+        "requestId": "1a47222f-fa9d-4800-aa50-f752b2f9ca19"
+      }
+    },
+    "reply": {
+      "id": "1a47222f-fa9d-4800-aa50-f752b2f9ca19",
+      "ok": true,
+      "data": {
+        "success": true,
+        "binding": {
+          "schemaVersion": 1,
+          "workspaceId": "u5-lifecycle",
+          "agentId": "main",
+          "sessionKey": "agent:main:session-1794503747276-ulifecycle",
+          "sessionGeneration": "d06c929c-08d1-4287-9ae6-6a9196406612",
+          "taskLedgerReferences": [
+            {
+              "direction": "workboard-to-task-ledger",
+              "taskLedgerNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+              "source": "runtime"
+            }
+          ],
+          "activeTaskNodeId": "87db0200-e181-490f-ad60-31b7171ab281",
+          "environment": {
+            "kind": "local",
+            "canonicalRoot": "D:\\tmp\\tf0662-candidate-1d0d57ad3\\shard-04-lifecycle-recovery\\session-lifecycle-recovery-46dff-rough-the-scoped-owner-read\\workspace",
+            "backend": "local-workspace",
+            "branch": null,
+            "detachedHead": false,
+            "setupProfile": null
+          },
+          "archiveRestorePolicy": "restore",
+          "state": "active",
+          "bindingRevision": 3,
+          "invalidationReason": null,
+          "createdAt": "2026-11-12T17:17:07.924Z",
+          "updatedAt": "2026-11-12T17:17:11.393Z"
+        },
+        "recovery": {
+          "state": "ready",
+          "reason": null,
+          "bindingRevision": 3
+        }
+      }
+    },
+    "phase": "finished",
+    "outcome": "drop"
+  },
+  "lastGate": {
+    "error": "Error: electronApplication.evaluate: TypeError: Cannot read properties of undefined (reading 'path')\n    at eval (eval at evaluate (:302:30), <anonymous>:4:15)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  "ownerReadback": {
+    "live": {
+      "key": "agent:main:session-1794503747276-ulifecycle",
+      "sessionId": "d06c929c-08d1-4287-9ae6-6a9196406612"
+    },
+    "archived": null
+  },
+  "status": "passed",
+  "errors": []
+}

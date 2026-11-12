@@ -1,0 +1,172 @@
+{
+  "schema_version": "TF0662IndependentReview/v3",
+  "driven_by": "agent",
+  "reviewer": "codex-independent-review-agent",
+  "reviewed_at": "2026-11-13T01:50:11.2960637+08:00",
+  "final_head": "bb8541ba6bba40fa18c5578f7818279cf0bead81",
+  "status": "passed",
+  "findings": [],
+  "acceptance_criteria_checked": 11,
+  "checks": {
+    "v2_findings": {
+      "high_gateway_evidence_restored": true,
+      "medium_head_binding_added": true,
+      "evidence_files_restored": {
+        "gateway_png": 48,
+        "gateway_proof_json": 23,
+        "u6_png": 23,
+        "total_png": 71,
+        "all_png_valid": true
+      }
+    },
+    "sha256_manifest": {
+      "status": "passed",
+      "lines": 176,
+      "unique_entries": 176,
+      "hash_or_format_failures": 0,
+      "files_before_review": 177,
+      "unlisted_files_before_review_excluding_manifest": 0,
+      "note": "The independent review file is written after manifest generation and is therefore not part of the pre-review 176-entry manifest."
+    },
+    "head_binding": {
+      "status": "passed",
+      "head": "bb8541ba6bba40fa18c5578f7818279cf0bead81",
+      "tree": "598c694cb58e7a549a5532871a7845c41f70b5b9",
+      "head_committed_at": "2026-11-12T23:23:55+08:00",
+      "actual_git_head": "bb8541ba6bba40fa18c5578f7818279cf0bead81",
+      "actual_git_tree": "598c694cb58e7a549a5532871a7845c41f70b5b9",
+      "current_head_matches_expected": true,
+      "head_tree_matches_expected": true,
+      "shards": 5,
+      "all_shards_bound": true,
+      "all_binding_hashes_match_files": true,
+      "all_binding_logs_postdate_commit": true,
+      "all_run_starts_postdate_commit": true,
+      "all_log_mtime_match_binding_finish": true,
+      "all_reflog_entries_after_run_start": 0,
+      "all_source_state_before_after_equal": true,
+      "all_cleanup_zero": true,
+      "shard_test_counts": [1, 2, 3, 3, 6],
+      "total_test_count": 15
+    },
+    "gateway": {
+      "status": "passed",
+      "shards": 5,
+      "expected": 15,
+      "passed": 15,
+      "failed": 0,
+      "unexpected_skips": 0,
+      "files": 107,
+      "png": 48,
+      "proof_json": 23,
+      "proof_json_all_passed": true,
+      "source_guard_all_ok": true,
+      "cleanup_all_zero": true
+    },
+    "u6": {
+      "status": "passed",
+      "candidate_passed": 6,
+      "candidate_failed": 0,
+      "baseline_passed": 5,
+      "baseline_failed": 1,
+      "baseline_handoff_unavailable": true,
+      "baseline_handoff_reason": "chat-handoff-dialog not found",
+      "unexpected_skips": 0,
+      "driver_sha256": "69f4492b3d788abb0adc5a829ffd8c06158a4fd5ddaec992190a28b6c3e67323",
+      "driver_matches_final_head": true,
+      "helper_manifest_hashes_match": true,
+      "candidate_cleanup_zero": true,
+      "baseline_cleanup_zero": true
+    },
+    "unit": {
+      "status": "passed",
+      "files": 10,
+      "suites": 23,
+      "tests": 174,
+      "passed": 174,
+      "failed": 0,
+      "pending": 0,
+      "observer_tests": "2/2"
+    },
+    "gates": {
+      "status": "passed",
+      "typecheck": "success=true, all project exits 0",
+      "contract_check": "passed",
+      "i18n_lint": "passed",
+      "build_vite": "exit 0",
+      "comms_replay": "passed",
+      "comms_compare": "PASS",
+      "harness_validate": "passed",
+      "harness_dry_run": "passed"
+    },
+    "builds": {
+      "status": "passed",
+      "candidate": {
+        "head": "bb8541ba6bba40fa18c5578f7818279cf0bead81",
+        "artifacts": 4354,
+        "main_sha256": "8f80b319387b35f274a98fb86b7006f4709e1dead4059913213c6231f2f18cb",
+        "renderer_sha256": "7b35126e339cad353190859f0bb2d511fb8d79be9659df451bcb603e0725a799",
+        "runtime_entry_sha256": "a6d6a05fdd72eb1a91466c5a5bfa0211d4419473d17c1ab897d53435df73aef9",
+        "artifact_tree_sha256": "df8c95f32f6ceb72129887fda1b4d7c4a48f190183a2b90f0516a945cd024cbe",
+        "live_worktree_artifacts_match": true
+      },
+      "baseline": {
+        "head": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+        "artifacts": 8853,
+        "main_sha256": "8765c7bb76e0e0c44199b8230da6e00d148fb8b95a93e3f631be9368e01c8201",
+        "renderer_sha256": "6c4e9972be89c6b9c3ea07d78f9c15d42b617d651ae9c0b33962723e1849ab42",
+        "runtime_entry_sha256": "efb0f78651b2bbedea50978a04bb268ae2c7b6faf78bbeafdad6eea81bdcb249",
+        "artifact_tree_sha256": "c4f6958bdb6055b953ead77d8788a0d1ac94086cbaf61849ab2aa9bffa78d1ed",
+        "live_worktree_artifacts_match": true
+      },
+      "build_hash_compare": {
+        "same": true,
+        "main": "8f80b319387b35f274a98fb86b7006f4709e1dead4059913213c6231f2f18cb",
+        "renderer": "7b35126e339cad353190859f0bb2d511fb8d79be9659df451bcb603e0725a799",
+        "runtime": "a6d6a05fdd72eb1a91466c5a5bfa0211d4419473d17c1ab897d53435df73aef9"
+      }
+    },
+    "product_tree": {
+      "status": "passed",
+      "product_commit": "a9d87862f5321fba6dc561ba1a491c9665aaa406",
+      "final_head": "bb8541ba6bba40fa18c5578f7818279cf0bead81",
+      "product_tree_unchanged": true,
+      "all_recorded_subtrees_match_git": true,
+      "final_change_set": [
+        "tests/e2e/session-derivation-ui.spec.ts",
+        "tests/e2e/u6-interaction-metrics.final.spec.ts"
+      ]
+    },
+    "failure_history": {
+      "status": "passed",
+      "report_attempt_entries": 6,
+      "final_head_11_of_15_failure_preserved": true,
+      "u6_crash_timeout_preserved": true,
+      "u6_crash_ready_after_ms": 67330,
+      "u6_crash_same_generation": true,
+      "retry_history_present": true
+    },
+    "evidence_hygiene": {
+      "driven_by_agent": true,
+      "agent_marked_files": 53,
+      "real_human_claims": false,
+      "state_files": 0,
+      "empty_state_directories": 1,
+      "empty_state_directory_note": "An empty gateway/.../project-b/.openclaw directory remains; it contains no files and does not affect hashes or acceptance evidence."
+    },
+    "acceptance_criteria": [
+      {"index": 1, "status": "passed", "basis": "Five shards pass 15/15 with final-HEAD bindings, zero unexpected skips, source guards, and zero-residual cleanup."},
+      {"index": 2, "status": "passed", "basis": "Restored layout JSON and responsive PNG evidence cover 2/20/100, 960/1280, light/dark, collapsed/reduced-motion, and keyboard states."},
+      {"index": 3, "status": "passed", "basis": "U6 candidate is 6/6; baseline is 5 passed with explicit old-Handoff dialog unavailability."},
+      {"index": 4, "status": "passed", "basis": "174/174 focused tests, 2/2 observer tests, and all listed gate receipts pass."},
+      {"index": 5, "status": "passed", "basis": "Build identity, key screenshots, retry history, scope boundary, and independent agent readback are present; pre-review SHA manifest verifies all 176 entries."},
+      {"index": 6, "status": "passed", "basis": "Four README translations and the UI contract/scenario/task documents are updated; four-locale E2E passed."},
+      {"index": 7, "status": "passed", "basis": "Handoff recovery tests cover lost creation replies, pinned generations, unknown delivery, restart reconciliation, and child/send-key reuse."},
+      {"index": 8, "status": "passed", "basis": "Project-entry, reading-navigation, task-guidance, and background-child JSON evidence is present and passed."},
+      {"index": 9, "status": "passed", "basis": "Task binding, claim inheritance, acceptance/turn separation, and lifecycle evidence retention have passing tests and Gateway records."},
+      {"index": 10, "status": "passed", "basis": "2/20/100 layout JSON and performance observations are present; all leaf journeys were rerun in final-HEAD shards."},
+      {"index": 11, "status": "passed", "basis": "Candidate and baseline U6 metrics record all five event-derived counters; zero counts are explicit."}
+    ]
+  },
+  "conclusion": "The v2 high and medium findings are closed. The rebuilt package has complete SHA coverage before review, restored visual/journey evidence, verified final-HEAD shard bindings, passing U6 and focused tests, passing gates/build identities, preserved failure history, and agent-driven evidence. No blocking finding remains."
+}

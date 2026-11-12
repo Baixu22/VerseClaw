@@ -1,0 +1,212 @@
+{
+  "schema_version": "SessionDerivationUIAcceptance/v1",
+  "task_id": "TF-0662",
+  "title": "项目入口、任务清单和会话生命周期完整体验",
+  "generated_at": "2026-11-12T17:30:59.9664896Z",
+  "driven_by": "agent",
+  "actor": "codex-tf0662-relay",
+  "requestmodel": "ccs-workbuddy/deepseek-v4.1-flash",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "author_backend": null,
+  "product_commit": "a9d87862f5321fba6dc561ba1a491c9665aaa406",
+  "final_head": "bb8541ba6bba40fa18c5578f7818279cf0bead81",
+  "product_tree_unchanged": true,
+  "scope": "A4 plus U1-U5 已接通的真实 Electron/Main/Gateway 项目、任务、会话和生命周期体验；不含自治规划 V2 或发布授权。",
+  "gateway_aggregate": {
+    "mode": "shards",
+    "shards": 5,
+    "expected": 15,
+    "passed": 15,
+    "failed": 0,
+    "unexpected_skips": 0,
+    "total_duration": "39.4m",
+    "evidence": "gateway/shard-*/",
+    "cleanup_status": "passed",
+    "process_survivors": 0,
+    "source_guard": "gateway/shard-*/source-mutation-guard.json",
+    "head_binding": "gateway/HEAD-BINDING.json",
+    "head": "bb8541ba6bba40fa18c5578f7818279cf0bead81",
+    "screenshots_count": 48
+  },
+  "u6_candidate": {
+    "head": "bb8541ba6bba40fa18c5578f7818279cf0bead81",
+    "expected": 6,
+    "passed": 6,
+    "failed": 0,
+    "unexpected_skips": 0,
+    "cleanup_status": "passed"
+  },
+  "u6_baseline": {
+    "head": "5ffcdfe89f6bed36dd6ebc2f366990c1a05d3976",
+    "expected": 6,
+    "passed": 5,
+    "failed": 1,
+    "unsupported_journeys": [
+      "handoff"
+    ],
+    "unexpected_skips": 0,
+    "cleanup_status": "passed"
+  },
+  "unit": {
+    "files": 10,
+    "tests": 174,
+    "passed": 174,
+    "failed": 0,
+    "pending": 0,
+    "observer_tests": "2/2"
+  },
+  "candidate_build": {
+    "manifest": "candidate-build-manifest.json",
+    "head": "bb8541ba6bba40fa18c5578f7818279cf0bead81",
+    "artifacts": 4354,
+    "main_sha256": "8f80b319387b35f274a98fb86b7006f4709e1dead4059913213c6231f2f18cb",
+    "renderer_sha256": "7b35126e339cad353190859f0bb2d511fb8d79be9659df451bcb603e0725a799",
+    "runtime_entry_sha256": "a6d6a05fdd72eb1a91466c5a5bfa0211d4419473d17c1ab897d53435df73aef9",
+    "artifact_tree_sha256": "df8c95f32f6ceb72129887fda1b4d7c4a48f190183a2b90f0516a945cd024cbe"
+  },
+  "gates": [
+    {
+      "name": "typecheck",
+      "exit_code": 0,
+      "evidence": "typecheck.log"
+    },
+    {
+      "name": "contract:check",
+      "exit_code": 0,
+      "evidence": "contract-check.log"
+    },
+    {
+      "name": "i18n:lint",
+      "exit_code": 0,
+      "evidence": "i18n-lint.log"
+    },
+    {
+      "name": "build:vite",
+      "exit_code": 0,
+      "evidence": "build-vite.log"
+    },
+    {
+      "name": "comms:replay",
+      "exit_code": 0,
+      "evidence": "comms-replay.log"
+    },
+    {
+      "name": "comms:compare",
+      "exit_code": 0,
+      "evidence": "comms-compare.log"
+    },
+    {
+      "name": "harness validate",
+      "exit_code": 0,
+      "evidence": "harness-validate.log"
+    },
+    {
+      "name": "harness dry-run",
+      "exit_code": 0,
+      "evidence": "harness-run-dry.log"
+    }
+  ],
+  "acceptance_criteria": [
+    {
+      "index": 1,
+      "status": "passed",
+      "summary": "最终 HEAD 五片顺序回归 15/15，0 非预期 skip，逐片 source guard 与零残留清理。"
+    },
+    {
+      "index": 2,
+      "status": "passed",
+      "summary": "2/20/100、1280/960、明暗、collapsed、keyboard 与 reduced-motion 截图/布局 JSON 已保留。"
+    },
+    {
+      "index": 3,
+      "status": "passed",
+      "summary": "U6 候选 6/6；基线同 driver 5/5 可执行旅程，旧 Handoff 对话框不可用；指标来自事件计数。"
+    },
+    {
+      "index": 4,
+      "status": "passed",
+      "summary": "174/174 单测、2/2 observer、typecheck、contract、i18n、build、comms、harness 均有 0 退出码。"
+    },
+    {
+      "index": 5,
+      "status": "passed",
+      "summary": "本包含构建身份、关键截图、失败重试、范围边界与独立 agent 回读；SHA256SUMS 覆盖整包。"
+    },
+    {
+      "index": 6,
+      "status": "passed",
+      "summary": "四语、README 四语与 UI 合同已同步；未改变发布或冻结默认。"
+    },
+    {
+      "index": 7,
+      "status": "passed",
+      "summary": "覆盖 Spawn 双父字段、Handoff runtime 来源、创建响应丢失/unknown/进程重启与同 child/send key 回读。"
+    },
+    {
+      "index": 8,
+      "status": "passed",
+      "summary": "项目入口、负责人、任务清单、父子会话、来源与产物往返，以及空/错/stale 状态均有 E2E。"
+    },
+    {
+      "index": 9,
+      "status": "passed",
+      "summary": "任务绑定、claim 不继承、自动验收/turn 分离和归档保留证据均有负例；组件与真实 Gateway 分栏。"
+    },
+    {
+      "index": 10,
+      "status": "passed",
+      "summary": "新增 UI 由各叶 E2E 覆盖后按最终 HEAD 重跑；2/20/100 与性能观测保留。"
+    },
+    {
+      "index": 11,
+      "status": "passed",
+      "summary": "U6 配对记录五类 agent 操作负担指标，未写成人认知试验。"
+    }
+  ],
+  "attempt_history": [
+    {
+      "sequence": 1,
+      "status": "failed",
+      "scope": "15 条聚合",
+      "finding": "缺失 facade-activation-check.runtime.js；补齐同源码 runtime 产物后隔离重验。"
+    },
+    {
+      "sequence": 2,
+      "status": "passed",
+      "scope": "15 条聚合",
+      "finding": "补齐 runtime facade 后 15/15。"
+    },
+    {
+      "sequence": 3,
+      "status": "failed",
+      "scope": "U6 paired",
+      "finding": "crash-recovery 60s Host 超时后约 58.7s ready；driver 保留超时并轮询 owner 状态。"
+    },
+    {
+      "sequence": 4,
+      "status": "failed",
+      "scope": "15 条最终 HEAD 聚合",
+      "finding": "35.6m 单进程聚合出现 4 个窗口/RPC/启动资源失败；11/15 通过，未用于结论。"
+    },
+    {
+      "sequence": 5,
+      "status": "passed",
+      "scope": "15 条最终 HEAD 分片",
+      "finding": "五片独立清理顺序回归全部通过。"
+    },
+    {
+      "sequence": 6,
+      "status": "passed",
+      "scope": "U6 candidate",
+      "finding": "6/6；session generation/history 保持。"
+    }
+  ],
+  "independent_review": {
+    "report": "INDEPENDENT-REVIEW.json",
+    "status": "passed",
+    "reviewer": "codex-independent-review-agent",
+    "findings": 0,
+    "review_file_sha256": "f30f35c6a59b73d4fe998f4ccd4760542992fd3d66684c404afe0dada39f6f2a"
+  },
+  "manifest": "SHA256SUMS.txt"
+}
