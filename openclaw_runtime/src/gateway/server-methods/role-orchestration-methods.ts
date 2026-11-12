@@ -359,7 +359,7 @@ function readDelegationAdmission(value: unknown): DelegationAdmissionContext | u
   };
 }
 
-function readExplicitWorkers(
+export function readExplicitWorkers(
   params: Record<string, unknown>,
   respond: RespondFn,
   cfg: OpenClawConfig,
@@ -422,7 +422,7 @@ function readExplicitWorkers(
       task,
       ...(readString(rawWorker.label) ? { label: readString(rawWorker.label) } : {}),
       ...(readString(rawWorker.modelRef) ? { modelRef: readString(rawWorker.modelRef) } : {}),
-      ...(writeSet.length > 0 ? { writeSet } : {}),
+      ...(Array.isArray(rawWorker.writeSet) ? { writeSet } : {}),
       ...(isolation ? { isolation } : {}),
       ...(readString(rawWorker.worktreeId) ? { worktreeId: readString(rawWorker.worktreeId) } : {}),
     });

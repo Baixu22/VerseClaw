@@ -32,7 +32,10 @@ touchedAreas:
   - src/lib/host-api.ts
   - electron/services/sessions-api.ts
   - electron/services/workspaces-api.ts
+  - electron/gateway/config-sync.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts
+  - openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts
+  - openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.test.ts
   - shared/host-api/contract.ts
   - shared/types/session-derivation.ts
   - shared/types/session-activity.ts

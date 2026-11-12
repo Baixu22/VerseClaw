@@ -50,7 +50,7 @@ import type {
 import { appendTaskLedgerEvents, loadTaskLedgerSnapshot } from './task-ledger-service';
 import { assertManagedTaskAdmission, persistentTaskChatContext } from './task-system-service';
 import { createWorkspacesApi, getActiveWorkspaceProfile, readWorkspaceHandoffOperation, updateWorkspaceHandoffOperation,
-  getWorkspaceRootPathById, getPersistedCoordinatorBinding, materializeCoordinatorSessionGeneration, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
+  getWorkspaceRootPathById, getPersistedCoordinatorBinding, type WorkspaceCoordinatorLifecycleEvent } from './workspaces-api';
 import { handoffFirstSendKey, type SessionHandoffOperation } from '@shared/types/session-handoff';
 import { normalizeRunScope } from '@shared/types/identity-scope';
 import { classifyDerivation } from '@shared/types/session-derivation';
@@ -3177,11 +3177,19 @@ export function createSessionsApi(ctx: {
         const { sessionKey, id } = operation;
         let child = await ctx.gatewayManager.rpc<{ session?: { sessionId?: string; parentSessionKey?: string } | null }>('sessions.describe', { key: sessionKey }, 15_000);
         if (!child.session) {
+          if (operation.sessionGeneration) throw new Error('HANDOFF_CHILD_GENERATION_CHANGED');
           await ctx.gatewayManager.rpc('sessions.create', { key: sessionKey, agentId, parentSessionKey: sourceSessionKey }, 30_000);
           child = await ctx.gatewayManager.rpc('sessions.describe', { key: sessionKey }, 15_000);
         }
         if (!child.session?.sessionId || child.session.parentSessionKey !== sourceSessionKey) throw new Error('HANDOFF_RUNTIME_SOURCE_MISMATCH');
         if (operation.sessionGeneration && operation.sessionGeneration !== child.session.sessionId) throw new Error('HANDOFF_CHILD_GENERATION_CHANGED');
+        // Pin the runtime child before activation; interrupted activation must keep
+        // its creating phase and reject a reset child when the operation resumes.
+        if (!operation.sessionGeneration) {
+          operation = await updateWorkspaceHandoffOperation(workspaceId, id, (current) => ({
+            ...current!, sessionGeneration: child.session!.sessionId!,
+          }));
+        }
         const after = await ctx.gatewayManager.rpc<{ session?: { sessionId?: string; hasActiveRun?: boolean; status?: string } }>('sessions.describe', { key: sourceSessionKey }, 15_000);
         if (after.session?.sessionId !== sourceGeneration) throw new Error('HANDOFF_SOURCE_GENERATION_CHANGED');
         if (after.session.hasActiveRun || after.session.status === 'running') throw new Error('HANDOFF_SOURCE_ACTIVE');
@@ -3220,14 +3228,15 @@ export function createSessionsApi(ctx: {
           const workspaceRoot = sourceBinding?.environment.canonicalRoot ?? await getWorkspaceRootPathById(workspaceId);
           if (workspaceRoot) handoffManagedSessionTask({ workspaceRoot, sourceSessionKey, sourceGeneration,
             sessionKey, generation: child.session.sessionId });
+          // Ready enables first delivery, so activation must be confirmed by its owner.
           await observeCoordinatorLifecycle({
             type: 'handoff',
             workspaceId,
             sourceSessionKey,
             sessionKey,
             agentId,
-          });
-          await materializeCoordinatorSessionGeneration({ workspaceId, sessionKey, sessionId: child.session.sessionId });
+            sessionGeneration: child.session.sessionId,
+          }, true);
         }
         operation = await updateWorkspaceHandoffOperation(workspaceId, id, (current) => ({
           ...current!, sessionGeneration: child.session!.sessionId!,

@@ -319,9 +319,16 @@ test(`a real delegated worker receives its own task, reports separately and acce
 
     if (journey === 'isolation') {
     if (!secondAgent) throw new Error('Independent coordinator was not created');
+    await hostInvoke(app, 'workspaces', 'switch', { id: project.workspaceId });
     const second = await rpc<{ key: string; sessionId: string }>('sessions.create', { agentId: secondAgent.id, label: 'Independent coordinator' });
     await hostInvoke(app, 'workspaces', 'saveState', { id: project.workspaceId, sessionKey: second.key, state: {} });
     await hostInvoke(app, 'workspaces', 'update', { id: project.workspaceId, agentId: secondAgent.id, sessionKey: second.key, activeSessionKey: second.key });
+    await hostInvoke(app, 'chat', 'sendWithMedia', { workspaceId: project.workspaceId, sessionKey: second.key,
+      message: 'SECOND-COORDINATOR-READY', idempotencyKey: 'second-coordinator-ready' });
+    await expect.poll(async () => JSON.stringify(await rpc('chat.history', { sessionKey: second.key, limit: 50 }))
+      .includes('WORKER-RUN-FINISHED'), { timeout: 60_000 }).toBe(true);
+    await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>('sessions.describe', { key: second.key }))
+      .session.hasActiveRun, { timeout: 30_000 }).toBe(false);
     const secondContract = await createSessionChainTask(app, project.workspaceId, 'observer-task', {
       ...taskContract, objective: 'Independent coordinator task', target: 'Read the recorded transcript',
     });
@@ -410,10 +417,11 @@ test(`a real delegated worker receives its own task, reports separately and acce
     evidence.status = 'failed'; evidence.error = String(error);
     evidence.mainLog = await hostInvoke(app, 'logs', 'memory', { count: 500 }).catch(String);
     const receipt = (evidence.admission as SessionDelegationResult | undefined)?.receipt;
-    if (receipt?.children[0].childSessionKey) evidence.failureReadback = await hostInvoke(app, 'sessions', 'history', { sessionKey: receipt.children[0].childSessionKey }).catch(String);
-    if (receipt?.children[0].childSessionKey) {
-      evidence.failureControlHistory = await hostInvoke(app, 'sessions', 'longTaskControlHistory', { sessionKey: receipt.children[0].childSessionKey, limit: 200 }).catch(String);
-      evidence.failureControlStatus = await hostInvoke(app, 'sessions', 'longTaskControlStatus', { sessionKey: receipt.children[0].childSessionKey }).catch(String);
+    const failedChildSessionKey = receipt?.children?.[0]?.childSessionKey;
+    if (failedChildSessionKey) evidence.failureReadback = await hostInvoke(app, 'sessions', 'history', { sessionKey: failedChildSessionKey }).catch(String);
+    if (failedChildSessionKey) {
+      evidence.failureControlHistory = await hostInvoke(app, 'sessions', 'longTaskControlHistory', { sessionKey: failedChildSessionKey, limit: 200 }).catch(String);
+      evidence.failureControlStatus = await hostInvoke(app, 'sessions', 'longTaskControlStatus', { sessionKey: failedChildSessionKey }).catch(String);
       const control = evidence.failureControlStatus as { latestIntervention?: { idempotencyKey?: string } } | undefined;
       const eventKey = control?.latestIntervention?.idempotencyKey;
       if (eventKey?.startsWith('queue_drain_')) {

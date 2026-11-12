@@ -150,7 +150,7 @@ export type WorkspaceCoordinatorLifecycleEvent =
   | { type: 'archive'; workspaceId?: string | null; sessionKey: string }
   | { type: 'restore'; workspaceId?: string | null; sessionKey: string }
   | { type: 'delete'; workspaceId?: string | null; sessionKey: string }
-  | { type: 'handoff'; workspaceId?: string | null; sourceSessionKey: string; sessionKey: string; agentId: string };
+  | { type: 'handoff'; workspaceId?: string | null; sourceSessionKey: string; sessionKey: string; agentId: string; sessionGeneration?: string };
 
 export type WorkspaceCoordinatorLifecycleObserver = (event: WorkspaceCoordinatorLifecycleEvent) => Promise<void>;
 
@@ -1305,7 +1305,7 @@ async function applyCoordinatorLifecycle(
         ...source,
         sessionKey: event.sessionKey,
         writerClaim: undefined,
-        sessionGeneration: null,
+        sessionGeneration: event.sessionGeneration ?? null,
         state: 'active',
         invalidationReason: null,
         bindingRevision: source.bindingRevision + 1,

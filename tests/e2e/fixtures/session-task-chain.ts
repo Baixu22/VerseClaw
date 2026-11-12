@@ -62,8 +62,13 @@ export async function setSessionChainViewport(app: ElectronApplication, size: { 
     if (win.isMaximized()) win.unmaximize();
     if (win.isFullScreen()) win.setFullScreen(false);
     win.setContentSize(target.width, target.height);
-    await win.webContents.executeJavaScript('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))');
-    return win.webContents.executeJavaScript('({ width: window.innerWidth, height: window.innerHeight })');
+    const deadline = Date.now() + 10_000;
+    for (;;) {
+      const actual = await win.webContents.executeJavaScript('({ width: window.innerWidth, height: window.innerHeight })') as { width: number; height: number };
+      if (actual.width === target.width && actual.height === target.height) return actual;
+      if (Date.now() >= deadline) throw new Error(`Session viewport did not reach its target: ${JSON.stringify({ target, actual, contentSize: win.getContentSize(), windowId: win.id })}`);
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
   }, size);
 }
 
@@ -130,6 +135,9 @@ export async function loseNextHandoffCreationResponse(app: ElectronApplication, 
       const result = await original(event, request);
       if (request.module === 'sessions' && request.action === 'createHandoff' && request.payload?.operationId === id) {
         ipcMain.removeHandler('host:invoke'); ipcMain.handle('host:invoke', original);
+        const response = result as { ok?: boolean; data?: { success?: boolean; operation?: { phase?: string; sessionGeneration?: string | null } } };
+        if (response.ok !== true || response.data?.success !== true
+          || response.data.operation?.phase !== 'ready' || !response.data.operation.sessionGeneration) return result;
         throw new Error('agent injected creation response loss');
       }
       return result;
@@ -149,12 +157,13 @@ export async function failNextHandoffAcknowledgementWrite(app: ElectronApplicati
     const original = Store.prototype.set;
     Object.defineProperty(Store.prototype, 'set', { configurable: true, writable: true,
       value: function (this: { path?: string }, key: unknown, value: unknown) {
-        const profiles = Array.isArray(value) ? value as Array<{ handoffOperations?: Record<string, { phase?: string }> }> : [];
-        if (this.path && path.resolve(this.path) === expectedPath && key === 'profiles'
-          && profiles.some((profile) => profile.handoffOperations?.[id]?.phase === 'accepted')) {
-          if (descriptor) Object.defineProperty(Store.prototype, 'set', descriptor);
-          else delete Store.prototype.set;
-          throw new Error('agent injected acknowledgement persistence failure');
+        if (this.path && path.resolve(this.path) === expectedPath && key === 'profiles') {
+          const profiles = value as Array<{ handoffOperations?: Record<string, { phase?: string }> }>;
+          if (profiles.some((profile) => profile.handoffOperations?.[id]?.phase === 'accepted')) {
+            if (descriptor) Object.defineProperty(Store.prototype, 'set', descriptor);
+            else delete Store.prototype.set;
+            throw new Error('agent injected acknowledgement persistence failure');
+          }
         }
         return Reflect.apply(original, this, [key, value]);
       },
