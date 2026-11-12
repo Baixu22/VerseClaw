@@ -3,8 +3,6 @@ import { createHash } from "node:crypto";
 import { closeSync, existsSync, lstatSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { openRootFileSync } from "../infra/boundary-file-read.js";
-import { root as fsRoot } from "../infra/fs-safe.js";
-import { journaledGitApply } from "../plugin-sdk/journaled-git-apply.js";
 
 import { root as fsRoot } from "../infra/fs-safe.js";
 import { journaledGitApply } from "../plugin-sdk/journaled-git-apply.js";
