@@ -138,19 +138,19 @@
       "name": "typecheck-node",
       "command": "pnpm run typecheck:node",
       "exitCode": 0,
-      "evidence": "logs/typecheck-node.log"
+      "evidence": "command-output/typecheck-node.log"
     },
     {
       "name": "typecheck-web",
       "command": "pnpm run typecheck:web",
       "exitCode": 0,
-      "evidence": "logs/typecheck-web.log"
+      "evidence": "command-output/typecheck-web.log"
     },
     {
       "name": "typecheck-test",
       "command": "pnpm run typecheck:test",
       "exitCode": 0,
-      "evidence": "logs/typecheck-test.log"
+      "evidence": "command-output/typecheck-test.log"
     },
     {
       "name": "module-strict-typecheck",
@@ -161,13 +161,13 @@
       "name": "contract-check",
       "command": "pnpm contract:check",
       "exitCode": 0,
-      "evidence": "logs/contract-check.log"
+      "evidence": "command-output/contract-check.log"
     },
     {
       "name": "extension-bridge",
       "command": "node scripts/generate-ext-bridge.mjs",
       "exitCode": 0,
-      "evidence": "logs/ext-bridge.log"
+      "evidence": "command-output/ext-bridge.log"
     },
     {
       "name": "current-spec-structure",
@@ -182,17 +182,17 @@
         {
           "node": "TF-0709",
           "candidate": "3331ada708ca974909ed12aef6071acd85afb528",
-          "evidence": "logs/tf0709-clean-validate.log"
+          "evidence": "command-output/tf0709-clean-validate.log"
         },
         {
           "node": "TF-0713",
           "candidate": "bf3c987f171a33092ecbbaa10ab33dc4dd3c39b7",
-          "evidence": "logs/tf0713-clean-validate.log"
+          "evidence": "command-output/tf0713-clean-validate.log"
         },
         {
           "node": "TF-0717",
           "candidate": "4b1f615805bda17fc097f6d307ee347ce2ec2cd4",
-          "evidence": "logs/tf0717-clean-validate.log"
+          "evidence": "command-output/tf0717-clean-validate.log"
         }
       ]
     },
