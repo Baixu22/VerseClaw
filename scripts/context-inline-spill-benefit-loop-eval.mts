@@ -39,12 +39,14 @@ if (!["deterministic", "live"].includes(MODE)) throw new Error("mode must be det
 const RUN_ID = new Date().toISOString().replace(/[:.]/g, "-") + "-" + MODE;
 const runDir = resolve(argValue("--out") ?? "D:/tmp/context-inline-spill-benefit", RUN_ID);
 mkdirSync(runDir, { recursive: true });
-const ACTOR = "codex-inline-spill-benefit-r4-01a1b934";
+const ACTOR = "codex-inline-spill-benefit-r5-01a1d068";
 const API_KEY = process.env.CONTEXT_INLINE_SPILL_API_KEY;
 const BASE_URL = process.env.CONTEXT_INLINE_SPILL_BASE_URL ?? "http://127.0.0.1:3065/v1";
 const MODEL = process.env.CONTEXT_INLINE_SPILL_MODEL ?? "space-bunny";
 const REPEATS = Number(argValue("--repeats") ?? 3);
 const MAX_TURNS = Number(argValue("--max-turns") ?? 8);
+const MAX_OUTPUT_TOKENS = Number(argValue("--max-output-tokens") ?? 900);
+if (!Number.isSafeInteger(MAX_OUTPUT_TOKENS) || MAX_OUTPUT_TOKENS < 1) throw new Error("max-output-tokens must be a positive integer");
 const CONTEXT_WINDOW_TOKENS = 32_000;
 const TOOL_MAX_CHARS = 6_000;
 const AGGREGATE_MAX_CHARS = 16_000;
@@ -281,7 +283,7 @@ for (const fixture of fixtures) {
         const input = buildProjectedEvalInput(projected.visible, toolHistory, fixture.question);
         const inputJson = JSON.stringify(input);
         mainContextChars = inputJson.length;
-        const request = { model: MODEL, input, tools: [RECALL_TOOL_DEF], tool_choice: "auto", temperature: 0, max_output_tokens: 900 };
+        const request = { model: MODEL, input, tools: [RECALL_TOOL_DEF], tool_choice: "auto", temperature: 0, max_output_tokens: MAX_OUTPUT_TOKENS, reasoning: { effort: "low", summary: "auto" } };
         const requestBody = JSON.stringify(request);
         const outputIds = new Set(toolHistory.filter((item) => item.type === "function_call_output").map((item) => String(item.call_id)));
         const projectedToolOutputs = Object.fromEntries(projected.visible.filter((m) => m.role === "toolResult" && outputIds.has(m.toolCallId)).map((m) => [m.toolCallId, contentText(m)]));
@@ -462,7 +464,7 @@ const result = {
     : { kind: "deterministic-scripted-policy", endpoint_origin: null, model: null, credential_persisted: false },
   design: { repeats: REPEATS, maxTurns: MAX_TURNS, evidenceTasks, controlTasks, arms: ARM_CONFIG, contextWindowTokens: CONTEXT_WINDOW_TOKENS, toolMaxChars: TOOL_MAX_CHARS, aggregateMaxChars: AGGREGATE_MAX_CHARS, recallPageChars: RECALL_PAGE_CHARS },
   stats, comparisons,
-  inputIntegrity: { assembly: "production-projection-only/function-protocol/v3", mainContextCharsSource: "JSON.stringify(actual request.input).length", initialPairs, allInitialPairsByteIdentical: initialPairs.every((p) => p.byteIdentical), unprojectedOutputFallback: false },
+  inputIntegrity: { assembly: "production-projection-only/function-protocol/r5-low-reasoning", mainContextCharsSource: "JSON.stringify(actual request.input).length", initialPairs, allInitialPairsByteIdentical: initialPairs.every((p) => p.byteIdentical), unprojectedOutputFallback: false },
   decision: {
     status: decisionStatus,
     b1_mechanism_and_autonomy: b1,
