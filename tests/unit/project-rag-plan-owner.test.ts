@@ -91,14 +91,14 @@ describe('Project RAG owner-side plan', () => {
     await writeFile(f.file, f.raw('The gateway configuration uses port 18789.', true));
     let completeLexical!: () => void;
     const lexicalDone = new Promise<void>(resolve => { completeLexical = resolve; });
-    const guarded = { ...f.projection, search: async (...args: Parameters<typeof f.projection.search>) => {
+    const guarded = { ...f.projection, search: async (...args: Parameters<typeof f.projection.search>): ReturnType<typeof f.projection.search> => {
       // The watcher may tombstone the FTS row first; capture the owner's denial before restoring it.
       const denied = await getMemoryWikiPage({ config: f.config, lookup: f.sourceRef.subjectId, sourceRef: f.sourceRef, readIdentity: f.identity });
       expect(denied).toMatchObject({ status: 'denied', reason: 'acl_denied' });
       const result = await f.projection.search(...args);
       completeLexical();
       if (result.status !== 'available') throw new Error('Fixture FTS unavailable before denial capture');
-      return { ...result, denied: [{ namespaceId: f.sourceRef.namespaceId, subjectId: f.sourceRef.subjectId, reason: denied!.reason! }] };
+      return { ...result, status: 'available', denied: [{ namespaceId: f.sourceRef.namespaceId, subjectId: f.sourceRef.subjectId, reason: denied!.reason! }] };
     } };
     const result = await retrieveMemoryWiki({ ...f, projection: guarded, query: 'gateway', vector: { search: async () => {
       await lexicalDone;
