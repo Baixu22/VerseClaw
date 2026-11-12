@@ -78,6 +78,10 @@ test('Project RAG fuses real local lanes, retains owner rejection and shows evid
     receipt.fused = fused;
     expect(fused.status, JSON.stringify(fused)).toBe('complete');
     expect(fused.effectiveProfile).toBe('local');
+    expect(fused.snapshotStatus).toBe('current');
+    expect(fused.plan.admissionContextId).toBeTruthy();
+    expect(fused.plan.generations.some(generation => generation.lane === 'lexical')).toBe(true);
+    expect(fused.plan.generations.some(generation => generation.lane === 'dense' && generation.spaceId)).toBe(true);
     expect(fused.results[0].snippet).toContain('18789');
     expect(fused.results[0].rankSignals.lanes.map(lane => lane.lane)).toEqual(['lexical', 'dense']);
     expect(fused.results[0].scoreKind).toBe('rrf');

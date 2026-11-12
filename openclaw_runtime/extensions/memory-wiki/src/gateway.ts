@@ -173,6 +173,7 @@ export function registerMemoryWikiGatewayMethods(params: {
             ] as const),
             explicitRefs: refs.filter((ref) => ref !== undefined),
             deadlineAtMs: request.deadlineAtMs as number | undefined,
+            requestId: readStringParam(request, "requestId"),
             projection: params.projection,
             embedding: params.embedding,
             vector: params.vector,

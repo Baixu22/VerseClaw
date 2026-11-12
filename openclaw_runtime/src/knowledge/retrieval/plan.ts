@@ -5,6 +5,20 @@ import type { SourceRefV2 } from "../../runtime-core/knowledge-owner-read.js";
 export type RetrievalProfile = "local" | "quality" | "research";
 export type RetrievalLane = "exact" | "lexical" | "dense";
 export type RetrievalMode = "off" | "manual" | "suggest" | "auto-read";
+export type RetrievalIntent =
+  | "lookup"
+  | "procedure"
+  | "decision"
+  | "troubleshooting"
+  | "relationship"
+  | "summary";
+export type RetrievalGeneration = {
+  namespaceId: string;
+  lane: "lexical" | "dense";
+  generation: string;
+  spaceId?: string;
+  credentialEpoch?: number;
+};
 export type RetrievalQuery = { text: string; family: string };
 export type RetrievalBudget = {
   candidateK: number;
@@ -54,12 +68,16 @@ export const RETRIEVAL_PROFILES = Object.freeze({
 export type RetrievalPlanV2 = {
   schema: "RetrievalPlan/v2";
   planId: string;
+  requestId: string;
+  admissionContextId: string | null;
   policyVersion: "project-rag-rrf/v2";
   mode: RetrievalMode;
   profile: RetrievalProfile;
+  intent: RetrievalIntent;
   namespaceIds: readonly string[];
   queries: readonly RetrievalQuery[];
   explicitRefs: readonly SourceRefV2[];
+  generations: readonly RetrievalGeneration[];
   lanes: readonly RetrievalLane[];
   budget: Readonly<RetrievalBudget>;
 };
@@ -110,6 +128,7 @@ export type RetrievalResultV2<T> = {
   lanes: RetrievalLaneReceipt[];
   filters: RetrievalFilter[];
   fallbackReasons: string[];
+  snapshotStatus: "current" | "changed";
 };
 
 export function createRetrievalPlan(input: {
@@ -121,6 +140,10 @@ export function createRetrievalPlan(input: {
   queries?: readonly RetrievalQuery[];
   deadlineAtMs?: number;
   now?: number;
+  requestId?: string;
+  admissionContextId?: string;
+  generations?: readonly RetrievalGeneration[];
+  intent?: RetrievalIntent;
 }): RetrievalPlanV2 {
   const profile = input.profile ?? "local",
     mode = input.mode ?? "suggest";
@@ -162,9 +185,26 @@ export function createRetrievalPlan(input: {
   return Object.freeze({
     schema: "RetrievalPlan/v2",
     planId: randomUUID(),
+    requestId: input.requestId ?? randomUUID(),
+    admissionContextId: input.admissionContextId ?? null,
     policyVersion: "project-rag-rrf/v2",
     mode,
     profile,
+    intent:
+      input.intent ??
+      (explicitRefs.length
+        ? "lookup"
+        : /summary|summari|总结|概览/u.test(input.query.toLowerCase())
+          ? "summary"
+          : /relationship|depend|关系|依赖/u.test(input.query.toLowerCase())
+            ? "relationship"
+            : /troubleshoot|error|fail|排障|故障|报错/u.test(input.query.toLowerCase())
+              ? "troubleshooting"
+              : /decision|why|决定|为什么/u.test(input.query.toLowerCase())
+                ? "decision"
+                : /procedure|how|步骤|如何/u.test(input.query.toLowerCase())
+                  ? "procedure"
+                  : "lookup"),
     namespaceIds: Object.freeze([...new Set(input.namespaceIds)]),
     queries: Object.freeze(queries.map((query) => Object.freeze({ ...query }))),
     explicitRefs: Object.freeze(
@@ -174,6 +214,9 @@ export function createRetrievalPlan(input: {
           ...(ref.locator ? { locator: Object.freeze({ ...ref.locator }) } : {}),
         }),
       ),
+    ),
+    generations: Object.freeze(
+      (input.generations ?? []).map((generation) => Object.freeze({ ...generation })),
     ),
     lanes: Object.freeze(
       active
@@ -329,6 +372,7 @@ export async function runRetrievalPlan<T>(options: {
     lanes: [],
     filters: [],
     fallbackReasons: [],
+    snapshotStatus: "current",
   };
   if (!plan.lanes.length) return result;
   const deadline = new AbortController();

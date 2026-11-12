@@ -59,6 +59,24 @@ describe('Project RAG owner-side plan', () => {
     expect(result.results[0].snippet).toContain('18789');
     expect(result.results[0]).not.toHaveProperty('confidence');
     expect(result.results[0].autoReadAdmission.eligible).toBe(false);
+    expect(result.plan.admissionContextId).toBeTruthy();
+    expect(result.plan.generations.some(generation => generation.lane === 'lexical')).toBe(true);
+  });
+
+  it('rejects an index generation change before returning ranked results', async () => {
+    const f = await fixture(), rows = (await f.projection.search(f.identity, 'gateway')).candidates;
+    let generationId = 'generation-1';
+    const result = await retrieveMemoryWiki({ ...f, query: 'gateway', vector: {
+      snapshot: () => ({ generationId, spaceId: 'space-1', credentialEpoch: 1 }),
+      search: async () => {
+        generationId = 'generation-2';
+        return { status: 'available', candidates: rows.map(row => ({ ...row, id: row.chunkId, distance: 0.01 })) };
+      },
+    } as never });
+    expect(result.plan.generations).toContainEqual({ namespaceId: f.sourceRef.namespaceId, lane: 'dense', generation: 'generation-1', spaceId: 'space-1', credentialEpoch: 1 });
+    expect(result.results).toEqual([]);
+    expect(result.snapshotStatus).toBe('changed');
+    expect(result.fallbackReasons).toContain('owner-or-index-generation-changed');
   });
 
   it('returns owner-verified lexical evidence on dense provider failure', async () => {

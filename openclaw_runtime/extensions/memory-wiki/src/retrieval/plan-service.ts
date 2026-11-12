@@ -5,6 +5,7 @@ import {
   type RetrievalHit,
   type RetrievalMode,
   type RetrievalProfile,
+  type RetrievalGeneration,
 } from "openclaw/plugin-sdk/knowledge-retrieval";
 import {
   evaluateOwnerReadSnapshot,
@@ -47,6 +48,7 @@ export async function retrieveMemoryWiki(input: {
   projection?: MemoryWikiProjectionService;
   embedding?: MemoryWikiEmbeddingService;
   vector?: MemoryWikiVectorService;
+  requestId?: string;
 }) {
   const context = () =>
     createMemoryWikiReadContext({
@@ -55,6 +57,38 @@ export async function retrieveMemoryWiki(input: {
       identity: input.identity,
     });
   const initialContext = context();
+  const namespaceId = memoryWikiNamespaceId(input.config);
+  const generations = (): RetrievalGeneration[] => {
+    const result: RetrievalGeneration[] = [];
+    try {
+      const index = input.projection?.status(input.identity);
+      if (index && "sources" in index) {
+        for (const source of index.sources) {
+          if (source.eligible && source.activeGeneration)
+            result.push({ namespaceId, lane: "lexical", generation: source.activeGeneration });
+        }
+      }
+    } catch {
+      /* Unavailable owner scope has no active generation. */
+    }
+    try {
+      const vector = input.vector?.snapshot(input.identity);
+      if (vector)
+        result.push({
+          namespaceId,
+          lane: "dense",
+          generation: vector.generationId,
+          spaceId: vector.spaceId,
+          credentialEpoch: vector.credentialEpoch,
+        });
+    } catch {
+      /* Provider availability is returned by the dense lane. */
+    }
+    return result.sort(
+      (a, b) => a.lane.localeCompare(b.lane) || a.generation.localeCompare(b.generation),
+    );
+  };
+  const initialGenerations = generations();
   const scopeKey = (value: typeof initialContext) =>
     JSON.stringify([
       value.principalId,
@@ -71,6 +105,9 @@ export async function retrieveMemoryWiki(input: {
     explicitRefs: input.explicitRefs,
     namespaceIds: [memoryWikiNamespaceId(input.config)],
     deadlineAtMs: input.deadlineAtMs,
+    requestId: input.requestId,
+    admissionContextId: initialContext.contextId,
+    generations: initialGenerations,
   });
   const read = (lookup: string, signal: AbortSignal, sourceRef?: SourceRefV2) =>
     getMemoryWikiPage({
@@ -232,6 +269,16 @@ export async function retrieveMemoryWiki(input: {
       return undefined;
     },
   });
+  if (
+    scopeKey(context()) !== scopeKey(initialContext) ||
+    JSON.stringify(generations()) !== JSON.stringify(initialGenerations)
+  ) {
+    result.snapshotStatus = "changed";
+    result.status = "unavailable";
+    result.effectiveProfile = "none";
+    result.results = [];
+    result.fallbackReasons.push("owner-or-index-generation-changed");
+  }
   const exactParents = new Set(
     result.results
       .filter((hit) => hit.rankSignals.lanes.some((lane) => lane.lane === "exact"))

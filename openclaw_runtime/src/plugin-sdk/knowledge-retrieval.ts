@@ -66,6 +66,8 @@ export type {
   RetrievalMode,
   RetrievalPlanV2,
   RetrievalProfile,
+  RetrievalGeneration,
+  RetrievalIntent,
   RetrievalQuery,
   RetrievalResultV2,
 } from "../knowledge/retrieval/plan.js";

@@ -3329,6 +3329,7 @@ export function createKnowledgeApi({
       const retrieval = await rpc<KnowledgeRetrievalReport>('wiki.retrieve', {
         query: payload.query, profile, mode: payload.mode ?? 'suggest', sourceRefs: payload.sourceRefs,
         deadlineAtMs, readIdentity: scope.identity,
+        requestId: randomUUID(),
       }, Math.max(1, deadlineAtMs - Date.now()));
       signal.throwIfAborted();
       await assertKnowledgeReadScopeCurrent(gatewayManager, scope);

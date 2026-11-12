@@ -433,6 +433,19 @@ export function createMemoryWikiVectorService(options: {
         if (pending) maintenance.add("optimize");
         else void optimizeCurrent().catch(() => undefined);
       }),
+    snapshot(identity: MemoryWikiReadIdentity) {
+      assertScope(identity, true);
+      if (!selected?.enabled || !sameScope(identity)) return undefined;
+      const space = currentSpace(identity);
+      const generation = store.active(namespaceId, identity.workspaceId!, space.spaceId);
+      return generation
+        ? {
+            generationId: generation.generationId,
+            spaceId: space.spaceId,
+            credentialEpoch: options.embedding.status(identity).credentialEpoch,
+          }
+        : undefined;
+    },
     async status(identity: MemoryWikiReadIdentity) {
       assertScope(identity, true);
       if (!selected?.enabled || !sameScope(identity))

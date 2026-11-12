@@ -4,6 +4,8 @@ Chat Preflight 通过 `knowledge.retrieve` / `wiki.retrieve` 使用统一检索�
 
 `RetrievalPlan/v2` 绑定本轮 policy、profile、owner namespace、query family、显式 SourceRef 和预算。显式 refs 只走 exact lane，普通问题并行召回 exact path、FTS5 和当前向量 generation。Off 和没有显式 refs 的 Manual 不启动召回。
 
+计划同时保存 requestId、admissionContextId 和当前词法 / 向量 generation、embedding space 与凭据代次。返回前再次比较 owner 身份和这些索引快照；运行中换代的结果返回 `snapshotStatus=changed` 和明确原因，随后请求重新使用当前 generation。
+
 | Profile | 候选 | 重排池 | 最终候选 | 证据 tokens / chars | 总期限 |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | local | 40 | 0 | 4 | 1200 / 3200 | 900 ms |
