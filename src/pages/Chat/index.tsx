@@ -4050,7 +4050,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         </>
       )}
       <Suspense fallback={null}>
-        {checkpointsOpen && <CheckpointsDialog open onOpenChange={setCheckpointsOpen} sessionKey={currentSessionKey} agentId={currentAgentId} />}
+        {checkpointsOpen && <CheckpointsDialog open onOpenChange={setCheckpointsOpen} sessionKey={currentSessionKey} agentId={currentAgentId} generation={controlGeneration} />}
         {compressionEvidence && <CompactionArtifactViewer
           open onOpenChange={(open) => { if (!open) setCompressionEvidence(null); }}
           sessionKey={currentSessionKey} checkpointId={compressionEvidence.checkpointId}

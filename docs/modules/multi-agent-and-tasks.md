@@ -12,6 +12,8 @@
 
 Handoff 在激活前固定运行时确认的子会话代次。激活失败保留原操作与草稿；重试核对代次并复用原来的子会话，工作区确认激活后才开放首轮发送。
 
+检查点对话框读取当前会话代次，恢复请求携带同一代次供 Host 核对；身份尚未加载时保留列表并禁用恢复。
+
 > 面向问题：Agent、Persona、Role、Team、Subagent 分别是什么？普通 Chat 何时进入多智能体？Task Ledger、Task Loop、ClawGraph 和 Mission Control 各自拥有哪一层状态？
 
 ## 1. 身份模型

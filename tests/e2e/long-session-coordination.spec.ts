@@ -3,12 +3,14 @@ import { execFileSync } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import type { ElectronApplication, Page } from '@playwright/test';
 import { closeElectronApp, expect, getStableWindow, pinWindowContentSize, test } from './fixtures/electron';
+import { configureSessionChainProvider, createSessionChainTask } from './fixtures/session-task-chain';
+import { startScriptedLlm } from './fixtures/fp-p1-harness';
+import type { TaskView } from '../../shared/task-system/types';
 
 type HostResponse<T> = { ok: boolean; data?: T; error?: { code?: string; message?: string } };
 type GatewayStatus = { state?: string; gatewayReady?: boolean };
 type CreatedSession = { key?: string; sessionKey?: string; entry?: { sessionId?: string } };
 type DescribedSession = { session?: { sessionId?: string } };
-type LedgerSnapshot = { snapshot: { nodes: Array<{ id: string; title: string; status: string }> } };
 type BindingResult = {
   success: boolean;
   binding?: {
@@ -184,9 +186,11 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
   launchElectronApp,
 }, testInfo) => {
   test.setTimeout(600_000);
+  const provider = await startScriptedLlm(() => ({ text: 'Coordinator worker result is ready for review.' }));
   const app = await launchElectronApp({ skipSetup: true });
   try {
     const page = await getStableWindow(app);
+    await configureSessionChainProvider(app, provider.port);
     await ensureGatewayReady(app);
     const active = await hostInvoke<{
       activeWorkspace?: { id?: string; rootPath?: string };
@@ -207,7 +211,7 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
     const label = `Coordination ${Date.now()}`;
     const created = await hostInvoke<CreatedSession>(app, 'gateway', 'rpc', {
       method: 'sessions.create',
-      params: { agentId: 'main', label },
+      params: { agentId: 'main', label, workspaceDir: workspace.rootPath },
       timeoutMs: 60_000,
     });
     const sessionKey = created.key ?? created.sessionKey ?? '';
@@ -229,13 +233,14 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
       sessionKey,
     });
 
-    const ledger = await hostInvoke<LedgerSnapshot>(app, 'taskLedger', 'createNode', {
-      workspaceId: workspace.id,
-      node: { title: `Coordination task ${Date.now()}`, kind: 'task', status: 'todo' },
-      idempotencyKey: `coordination-task-${Date.now()}`,
+    const managedTask = await createSessionChainTask(app, workspace.id, `coordination-task-${Date.now()}`, {
+      objective: 'Exercise the long-session coordinator UI with an actual worker receipt',
+      target: 'docs/coordination-note.md',
+      constraints: ['Worker completion remains separate from task acceptance'],
+      acceptance: [{ id: 'owner-review', description: 'Review the coordinator worker result',
+        verification: { kind: 'owner-receipt', owner: 'coordination-review', files: ['docs/coordination-note.md'] } }],
     });
-    const task = ledger.snapshot.nodes.at(-1);
-    if (!task) throw new Error('Task Ledger returned no task');
+    const task = { id: managedTask.contract.taskNodeId };
     await hostInvoke(app, 'taskLedger', 'linkSession', {
       workspaceId: workspace.id,
       nodeId: task.id,
@@ -258,6 +263,12 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
     expect(bound.binding?.sessionGeneration).toBe(sessionGeneration);
     const bindingRevision = bound.binding?.bindingRevision;
     if (typeof bindingRevision !== 'number') throw new Error('Coordinator binding revision is missing');
+    const claimed = await hostInvoke<{ result: TaskView }>(app, 'taskLedger', 'command', {
+      workspaceId: workspace.id,
+      command: { action: 'claim', taskNodeId: task.id, sessionKey, requestId: `coordination-claim-${task.id}` },
+    });
+    expect(claimed.result.claim).toMatchObject({ sessionKey, generation: sessionGeneration });
+    expect(claimed.result.contract.state).toBe('doing');
 
     const idempotencyKey = `coordination-ui-${Date.now()}`;
     const delegated = await hostInvoke<DelegationResult>(app, 'sessions', 'delegate', {
@@ -278,7 +289,7 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
       },
       includeVerifier: false,
     });
-    expect(delegated.success).toBe(true);
+    expect(delegated.success, JSON.stringify(delegated)).toBe(true);
     expect(delegated.status).toBe('accepted');
     const orchestrationRunId = delegated.receipt?.orchestrationRunId;
     if (!orchestrationRunId) throw new Error('Delegation returned no orchestration run id');
@@ -529,5 +540,7 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
     await testInfo.attach('coordination-narrow', { path: narrowPath, contentType: 'image/png' });
   } finally {
     await closeElectronApp(app);
+    provider.server.closeAllConnections();
+    await new Promise<void>((resolve) => provider.server.close(() => resolve()));
   }
 });

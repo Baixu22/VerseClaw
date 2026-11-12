@@ -177,8 +177,20 @@ test('checkpoints dialog lists and restores a session checkpoint', async ({ laun
     await expect(page.getByText('Implement checkpoint restore flow')).toBeVisible();
 
     // Restore the checkpoint.
+    await expect(page.getByTestId(`chat-checkpoint-restore-${CHECKPOINT_ID}`)).toBeEnabled();
     await page.getByTestId(`chat-checkpoint-restore-${CHECKPOINT_ID}`).click();
     await expect(page.getByText(`Restored from checkpoint "${CHECKPOINT_ID}"`)).toBeVisible({ timeout: 30_000 });
+    const restoreCalls = await app.evaluate(() => (
+      (globalThis as unknown as { __verseClawE2eHostCalls?: Array<{ module?: string; action?: string; payload?: unknown }> })
+        .__verseClawE2eHostCalls ?? []
+    ).filter((call) => call.module === 'sessions' && call.action === 'restoreCheckpoint'));
+    expect(restoreCalls).toHaveLength(1);
+    expect(restoreCalls[0].payload).toEqual({
+      sessionKey: SESSION_KEY,
+      expectedSessionId: EXPECTED_SESSION_ID,
+      agentId: 'main',
+      checkpointId: CHECKPOINT_ID,
+    });
 
     // View what the checkpoint would undo (content diff panel).
     await page.getByTestId(`chat-checkpoint-diff-${CHECKPOINT_ID}`).click();

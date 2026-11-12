@@ -22,13 +22,17 @@ ownedPaths: &paths
   - tests/unit/session-handoff-recovery.test.ts
   - tests/unit/long-session-coordinator-binding.test.ts
   - tests/unit/host-services.test.ts
+  - src/pages/Chat/index.tsx
+  - tests/unit/checkpoints-dialog.test.tsx
   - vite.config.ts
   - tests/unit/vite-config-openclaw-runtime.test.ts
   - tests/e2e/chat-checkpoints.spec.ts
   - tests/e2e/chat-manual-compaction.spec.ts
   - tests/e2e/chat-session-compact-range.spec.ts
   - tests/e2e/chat-session-handoff.spec.ts
+  - tests/e2e/chat-session-fork.spec.ts
   - tests/e2e/long-session-completion-continuation.spec.ts
+  - tests/e2e/long-session-coordination.spec.ts
   - tests/e2e/long-session-delegation-admission.spec.ts
   - tests/e2e/long-session-lifecycle-faults.spec.ts
   - tests/e2e/runtime-lifecycle-governance.spec.ts
@@ -57,6 +61,8 @@ expectedUserBehavior:
   - Delegation uses a live task claim; task acceptance remains separate from worker completion.
   - Lifecycle operations retain their original workspace and retry operation identity.
 acceptance:
+  - Fork and Handoff regression journeys open the current session menu through its existing header control and retain the original action and rejection assertions.
+  - Chat passes the active session generation to its checkpoint dialog; restoring a checkpoint sends that exact generation through the Host API.
   - Electron Main bundles local media-core imports from checked-in runtime sources, so startup does not require a root node_modules copy of that private workspace package.
   - Handoff pins the runtime child generation while creation is pending; interrupted activation remains creating, a missing or reset confirmed child is rejected before replacement, and ready is published after activation succeeds.
   - Activity snapshots read the persisted session generation after reset even when the session-store cache still contains the previous generation; deleted-agent discovery obeys the same fresh-read option.
@@ -68,6 +74,7 @@ acceptance:
   - Visual fixtures wait for measured viewport dimensions; response-loss injection occurs only after committed Handoff creation.
   - Continuation verifies the public run-terminal receipt and a successful tool receipt before Handoff; missing or rejected effects cannot count as success.
 requiredTests:
+  - pnpm exec vitest run tests/unit/checkpoints-dialog.test.tsx --maxWorkers=1
   - pnpm exec vitest run tests/unit/vite-config-openclaw-runtime.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/session-handoff-recovery.test.ts tests/unit/long-session-coordinator-binding.test.ts tests/unit/host-services.test.ts tests/unit/workspace-session.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec vitest run tests/unit/session-generation-freshness.test.ts tests/unit/long-session-completion-continuation.test.ts --maxWorkers=1 --no-file-parallelism
