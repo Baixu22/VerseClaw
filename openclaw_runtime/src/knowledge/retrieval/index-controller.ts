@@ -324,6 +324,7 @@ export class KnowledgeProjectionController {
     if (result.status === "unavailable") return { ...result, candidates: [] };
     const candidates = [];
     const deniedParents = new Set<string>();
+    const denied: Array<{ namespaceId: string; subjectId: string; reason: string }> = [];
     for (const hit of result.candidates) {
       const parentKey = JSON.stringify([hit.chunk.source.namespaceId, hit.chunk.source.subjectId]);
       if (deniedParents.has(parentKey)) continue;
@@ -331,6 +332,11 @@ export class KnowledgeProjectionController {
       if (current.status !== "admitted") {
         this.#invalidate(hit.chunk.source, current.reason);
         deniedParents.add(parentKey);
+        denied.push({
+          namespaceId: hit.chunk.source.namespaceId,
+          subjectId: hit.chunk.source.subjectId,
+          reason: current.reason,
+        });
         continue;
       }
       const verified = verifyKnowledgeCitation({
@@ -341,6 +347,11 @@ export class KnowledgeProjectionController {
       if (verified.status !== "exact-match") {
         this.#invalidate(hit.chunk.source, verified.reason);
         deniedParents.add(parentKey);
+        denied.push({
+          namespaceId: hit.chunk.source.namespaceId,
+          subjectId: hit.chunk.source.subjectId,
+          reason: verified.reason,
+        });
         continue;
       }
       candidates.push({
@@ -356,6 +367,7 @@ export class KnowledgeProjectionController {
     const currentSources = this.#store.sources(this.#owner.namespaceId);
     return {
       status: "available" as const,
+      denied,
       candidates: candidates
         .filter(
           (hit) =>

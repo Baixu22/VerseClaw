@@ -209,6 +209,7 @@ Main layers：
 - 中国語検索、長文の制限付き続読、provider 別 embedding キャッシュ、版に紐付く Steward 所見を実装しています。任意の公開 GitHub ディレクトリ接続は更新と撤回を Inbox へ送ります。他の SaaS 接続は未実装です。
 - 設定 > モデルとプロバイダーから、プロジェクト検索用のローカル EmbeddingGemma または設定済みリモート Qwen VL を選択できます。インストール、検証、準備、キャンセル、認証情報の更新は [embedding ライフサイクル](docs/dev/project-rag/EMBEDDING-LIFECYCLE-CONTRACT.md) を参照してください。
 - プロジェクトのベクトル索引は SQLite 厳密検索とライブラリ単位の LanceDB ANN に対応し、generation 切替、資料の権限撤回、owner による引用再読込を行います。[ベクトル後端](docs/dev/project-rag/VECTOR-BACKEND-CONTRACT.md)を参照してください。
+- Chat Preflight は共通の検索計画で字句・ベクトルの順位を統合し、ソース権限を維持して順位の根拠と縮退理由を返します。[検索計画](docs/dev/project-rag/RETRIEVAL-PLAN-CONTRACT.md)を参照してください。
 - Log、trace、screenshot、Task Forest、handoff は明示的に curated されない限り local working data。
 
 Local storage は offline execution を意味しません。Online model、channel、browser、external tool は設定に従って data を受け取ります。Credential や private transcript を commit / public issue に含めないでください。

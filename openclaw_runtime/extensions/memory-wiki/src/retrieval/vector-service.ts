@@ -465,14 +465,21 @@ export function createMemoryWikiVectorService(options: {
         indexing: Boolean(pending),
       };
     },
-    async search(identity: MemoryWikiReadIdentity, text: string, limit = 10) {
+    async search(
+      identity: MemoryWikiReadIdentity,
+      text: string,
+      limit = 10,
+      request?: { signal?: AbortSignal; deadlineAt?: number },
+    ) {
       const context = assertScope(identity),
         space = currentSpace(identity);
       if (!selected?.enabled)
         return { status: "unavailable", reason: "vector_index_disabled", candidates: [] };
       // Keep this query attached to its original activation through every await.
       // A later enable must not replace the signal of a disabled query.
-      const signal = abort.signal;
+      const signal = request?.signal
+        ? AbortSignal.any([abort.signal, request.signal])
+        : abort.signal;
       signal.throwIfAborted();
       const active = store.active(namespaceId, identity.workspaceId!, space.spaceId);
       if (!active)
@@ -482,6 +489,7 @@ export function createMemoryWikiVectorService(options: {
         text,
         expectedSpaceId: space.spaceId,
         signal,
+        deadlineAt: request?.deadlineAt,
       });
       signal.throwIfAborted();
       const eligibleIds = store.eligibleIds(active);
@@ -505,6 +513,7 @@ export function createMemoryWikiVectorService(options: {
           .map((row) => [row.id, row]),
       );
       const denied = new Set<string>();
+      const deniedReasons: Array<{ namespaceId: string; subjectId: string; reason: string }> = [];
       const candidates: Array<{
         id: string;
         chunkId: string;
@@ -533,6 +542,11 @@ export function createMemoryWikiVectorService(options: {
           evaluateOwnerReadSnapshot(page.ownerSnapshot, freshContext)
         ) {
           denied.add(row.source.subjectId);
+          deniedReasons.push({
+            namespaceId,
+            subjectId: row.source.subjectId,
+            reason: page?.reason ?? "owner-read-rejected",
+          });
           continue;
         }
         candidates.push({
@@ -553,6 +567,7 @@ export function createMemoryWikiVectorService(options: {
       const stillEligible = new Set(store.eligibleIds(active));
       return {
         status: "available",
+        denied: deniedReasons,
         effectiveBackend: active.backend,
         generationId: active.generationId,
         contextId: context.contextId,

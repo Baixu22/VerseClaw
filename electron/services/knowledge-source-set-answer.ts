@@ -235,6 +235,7 @@ export async function retrieveSelectedSourceSetEvidence(input: {
   }
   const sourceSet = await retrieveSourceSet({
     sources: [...byRefId.values()].map((entry) => entry.candidate),
+    preserveOrder: true,
     query: {
       text: input.question, aclSubjects: ['operator'],
       ...([...byRefId.values()].some(entry => entry.candidate.ref.ownerSnapshot) ? { taskContext: (() => {

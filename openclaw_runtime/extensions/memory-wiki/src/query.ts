@@ -211,6 +211,8 @@ type WikiGetResult = {
   sourceRef?: SourceRefV2;
   ownerSnapshot?: OwnerReadSnapshotV1;
   reason?: string;
+  pageType?: string;
+  hasConflicts?: boolean;
 };
 
 export type QueryableWikiPage = WikiPageSummary & {
@@ -1735,6 +1737,10 @@ export async function getMemoryWikiPage(params: {
         totalLines,
         truncated,
         ...buildWikiResultMetadata(currentPage),
+        pageType: currentPage.pageType,
+        hasConflicts:
+          currentPage.contradictions.length > 0 ||
+          currentPage.claims.some((claim) => isClaimContestedStatus(claim.status)),
         sourceRef: snapshot.source,
         ownerSnapshot: snapshot,
       };

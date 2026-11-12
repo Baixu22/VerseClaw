@@ -403,4 +403,29 @@ describe("vector activation ownership", () => {
     await rejected;
     expect((await service.status(identity)).status).toBe("ready");
   });
+
+  it("passes a plan deadline and request cancellation without disabling the index", async () => {
+    const { service, identity, embedding } = fixture();
+    await service.enable(identity, "sqlite-flat");
+    await service.idle(identity);
+    const entered = deferred(), release = deferred();
+    const embed = embedding.embed;
+    let captured: Parameters<typeof embedding.embed>[1] | undefined;
+    embedding.embed = async (...args) => {
+      captured = args[1];
+      entered.resolve();
+      await release.promise;
+      return embed(...args);
+    };
+    const request = new AbortController(), deadlineAt = Date.now() + 900;
+    const query = service.search(identity, "query", 4, { signal: request.signal, deadlineAt });
+    const rejected = expect(query).rejects.toThrow("request cancelled");
+    await entered.promise;
+    expect(captured?.deadlineAt).toBe(deadlineAt);
+    request.abort(new Error("request cancelled"));
+    expect(captured?.signal?.aborted).toBe(true);
+    release.resolve();
+    await rejected;
+    expect((await service.status(identity)).status).toBe("ready");
+  });
 });

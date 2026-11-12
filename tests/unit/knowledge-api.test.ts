@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import { createOwnerReadSnapshot, deriveReadAdmissionContext, digestOwnerReadContent } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
+import { createRetrievalPlan } from '../../openclaw_runtime/src/knowledge/retrieval/plan';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -12,6 +13,25 @@ vi.mock('electron', () => ({
 }));
 
 const root = join(tmpdir(), `clawx-knowledge-api-${Date.now()}`);
+
+function retrievalFixture(rows: Array<Record<string, unknown>>) {
+  return {
+    schema: 'RetrievalResult/v2',
+    plan: createRetrievalPlan({ query: 'owner fixture', namespaceIds: ['wiki-owner-fixture'] }),
+    status: 'partial', effectiveProfile: 'lexical', filters: [],
+    fallbackReasons: ['lexical:page-lexical-fallback'],
+    lanes: [{ lane: 'lexical', namespaceId: 'wiki-owner-fixture', queryFamily: 'root', status: 'available', reason: 'page-lexical-fallback', candidateCount: rows.length, elapsedMs: 1 }],
+    results: rows.map((row, index) => ({
+      ...row, rank: index + 1, score: 1 / (61 + index), scoreKind: 'rrf',
+      rankSignals: { schema: 'RankSignals/v2', fusionScore: 1 / (61 + index), lanes: [
+        { lane: 'lexical', namespaceId: 'wiki-owner-fixture', queryFamily: 'root', rank: index + 1, rawScore: row.score ?? 0, scoreKind: 'page-lexical', contribution: 1 / (61 + index) },
+      ] },
+      sourceRef: row.sourceRef ?? { schema: 'SourceRef/v2', domain: 'wiki', authorityId: 'memory-wiki', namespaceId: 'wiki-owner-fixture',
+        subjectId: row.lookup, revision: '1', sourceDigest: `sha256:${'a'.repeat(64)}`, policyEpoch: `sha256:${'b'.repeat(64)}` },
+      autoReadAdmission: { eligible: row.autoReadEligible === true, contextId: 'owner-fixture', reason: 'fixture-owner-admission' },
+    })),
+  };
+}
 
 
 type FakeConfirmOptions = {
@@ -973,11 +993,10 @@ describe('knowledge host API', () => {
 
   it('routes knowledge context only when scope and mode allow read-only search', async () => {
     const gatewayManager = {
-      rpc: vi.fn(async (method: string) => {
+      rpc: vi.fn(async (method: string, _params?: unknown, _timeout?: number) => {
         if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
-        if (method === 'wiki.search') {
-          return {
-            results: [
+        if (method === 'wiki.retrieve') {
+          return retrievalFixture([
               {
                 id: 'route-1',
                 title: 'Architecture Decision',
@@ -1006,8 +1025,7 @@ describe('knowledge host API', () => {
                 score: 0.7,
                 metadata: { knowledgeKind: 'rule' },
               },
-            ],
-          };
+          ]);
         }
         throw new Error(`unexpected rpc ${method}`);
       }),
@@ -1064,7 +1082,8 @@ describe('knowledge host API', () => {
           attachKind: 'suggested',
           lookup: 'architecture/decision.md',
           routeGroup: 'docs',
-          confidence: 0.82,
+          scoreKind: 'rrf',
+          rank: 1,
         }),
         expect.objectContaining({
           lookup: 'troubleshooting/route-context.md',
@@ -1093,10 +1112,12 @@ describe('knowledge host API', () => {
         reason: 'not-requested',
       },
     });
-    expect(gatewayManager.rpc).toHaveBeenCalledWith('wiki.search', expect.objectContaining({
-      corpus: 'wiki',
-      maxResults: 3,
-    }), 30000);
+    expect(suggest.candidates.every(candidate => candidate.confidence === undefined)).toBe(true);
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('wiki.retrieve', expect.objectContaining({
+      profile: 'local', mode: 'suggest', readIdentity: expect.any(Object), deadlineAtMs: expect.any(Number),
+    }), expect.any(Number));
+    const retrievalCall = gatewayManager.rpc.mock.calls.find(call => call[0] === 'wiki.retrieve')!;
+    expect(retrievalCall[2]).toBeLessThanOrEqual(900);
     expect(gatewayManager.rpc).not.toHaveBeenCalledWith('wiki.apply', expect.anything(), expect.anything());
   });
 
@@ -1104,17 +1125,15 @@ describe('knowledge host API', () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
         if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
-        if (method === 'wiki.search') {
-          return {
-            results: [{
+        if (method === 'wiki.retrieve') {
+          return retrievalFixture([{
               id: 'route-1',
               title: 'Architecture Decision',
               lookup: 'architecture/decision.md',
               pagePath: 'architecture/decision.md',
               snippet: 'Use the managed wiki as read-only context.',
               score: 0.82,
-            }],
-          };
+          }]);
         }
         throw new Error(`unexpected rpc ${method}`);
       }),
@@ -1441,20 +1460,18 @@ describe('knowledge host API', () => {
     ]));
   });
 
-  it('auto-read routes only high-confidence fresh non-contradicted candidates', async () => {
+  it('auto-read uses owner admission and rejects raw scores without it', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
         if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
-        if (method === 'wiki.search') {
-          return {
-            results: [
-              { id: 'fresh', title: 'Fresh', lookup: 'fresh.md', score: 0.9, freshnessLevel: 'fresh', matchedClaimStatus: 'supported' },
+        if (method === 'wiki.retrieve') {
+          return retrievalFixture([
+              { id: 'fresh', title: 'Fresh', lookup: 'fresh.md', score: 0.9, freshnessLevel: 'fresh', matchedClaimStatus: 'supported', autoReadEligible: true },
               { id: 'low', title: 'Low', lookup: 'low.md', score: 0.2, freshnessLevel: 'fresh', matchedClaimStatus: 'supported' },
               { id: 'stale', title: 'Stale', lookup: 'stale.md', score: 0.9, freshnessLevel: 'stale', matchedClaimStatus: 'supported' },
               { id: 'conflict', title: 'Conflict', lookup: 'conflict.md', score: 0.9, freshnessLevel: 'fresh', matchedClaimStatus: 'contradicted' },
-              { id: 'extra', title: 'Extra', lookup: 'extra.md', score: 0.8, freshnessLevel: 'fresh', matchedClaimStatus: 'supported' },
-            ],
-          };
+              { id: 'extra', title: 'Extra', lookup: 'extra.md', score: 0.8, freshnessLevel: 'fresh', matchedClaimStatus: 'supported', autoReadEligible: true },
+          ]);
         }
         throw new Error(`unexpected rpc ${method}`);
       }),
@@ -1750,16 +1767,26 @@ describe('knowledge host API', () => {
 
   it('answers default and follow-up questions through the existing model-only Gateway with checked citations', async () => {
     const listeners = new Set<(value: unknown) => void>();
+    const body = '网关端口为8080。';
+    const snapshotFor = (identity: { workspaceId: string; sessionId: string; agentSessionKey: string }) => {
+      const context = deriveReadAdmissionContext({ principalId: 'operator', sessionId: identity.sessionId,
+        sessionKey: identity.agentSessionKey, workspaceId: identity.workspaceId, ownerNamespaces: ['wiki-owner-fixture'],
+        egressProviderRefs: [],
+        policyDigest: digestOwnerReadContent('qa-fixture'), expiresAt: new Date(Date.now() + 30000).toISOString() });
+      return createOwnerReadSnapshot({ raw: body, startChar: 0, endChar: body.length, title: 'Gateway port', context,
+        source: { domain: 'wiki', authorityId: 'memory-wiki', namespaceId: 'wiki-owner-fixture', subjectId: 'port.md', revision: '1' },
+        policy: { status: 'active', trust: 'confirmed', sensitivity: 'workspace', acl: { read: ['operator'] }, retention: { policy: 'source-coupled' } } });
+    };
     const gatewayManager = {
       on: vi.fn((_event: string, callback: (value: unknown) => void) => listeners.add(callback)),
       off: vi.fn((_event: string, callback: (value: unknown) => void) => listeners.delete(callback)),
-      rpc: vi.fn(async (method: string) => {
+      rpc: vi.fn(async (method: string, params: Record<string, unknown> = {}) => {
         if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
-        if (method === 'wiki.search') return { results: [{ pagePath: 'port.md', title: 'Gateway port' }] };
-        if (method === 'wiki.get') return { corpus: 'wiki', path: 'port.md', content: '网关端口为8080。', revision: 2, status: 'active' };
+        if (method === 'wiki.retrieve') return retrievalFixture([{ pagePath: 'port.md', lookup: 'port.md', title: 'Gateway port', sourceRef: snapshotFor(params.readIdentity as never).source }]);
+        if (method === 'wiki.get') return { corpus: 'wiki', path: 'port.md', content: body, revision: 1, status: 'active', ownerSnapshot: snapshotFor(params.readIdentity as never) };
         if (method === 'agent') return { runId: 'qa-run' };
         if (method === 'agent.wait') {
-          for (const callback of listeners) callback({ runId: 'qa-run', type: 'assistant.delta', text: JSON.stringify({ claims: [{ text: '网关端口为8080。', citations: [{ sourceId: 'memory-wiki:port.md', quote: '端口为8080' }] }], unknowns: [] }) });
+          for (const callback of listeners) callback({ runId: 'qa-run', type: 'assistant.delta', text: JSON.stringify({ claims: [{ text: '网关端口为8080。', citations: [{ sourceId: `memory-wiki:wiki-owner-fixture:port.md:0-${Buffer.byteLength(body)}`, quote: '端口为8080' }] }], unknowns: [] }) });
           return { status: 'completed' };
         }
         throw Error(`Unexpected RPC ${method}`);
@@ -1771,7 +1798,7 @@ describe('knowledge host API', () => {
     expect(answer).toMatchObject({ success: true, synthesisMode: 'model', model: { status: 'completed', runId: 'qa-run' }, groundingStatus: 'partial' });
     expect(answer.unknowns.join(' ')).toContain('no known freshness');
     expect(answer.answer).toContain('网关端口为8080');
-    expect(gatewayManager.rpc).toHaveBeenCalledWith('wiki.search', expect.objectContaining({ query: expect.stringContaining('讨论网关') }), 30000);
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('wiki.retrieve', expect.objectContaining({ query: expect.stringContaining('讨论网关') }), expect.any(Number));
     expect(gatewayManager.rpc).toHaveBeenCalledWith('agent', expect.objectContaining({ modelRun: true, promptMode: 'none', message: expect.stringContaining('讨论网关'), deliver: false }), 60000);
     expect(listeners.size).toBe(0);
   });
@@ -1889,7 +1916,7 @@ describe('knowledge host API', () => {
     }
     expect(answer.semanticLane, JSON.stringify(answer)).toMatchObject({ status: 'available', providerId: 'agent-fixture-provider' });
     expect(answer.retrievalDiagnostics.backend).toBe('semantic');
-    expect(answer.sources.map(source => source.lookup)).toEqual(['notes/decision.md', 'notes/procedure.md']);
+    expect(answer.sources.map(source => source.lookup)).toEqual(['notes/procedure.md', 'notes/decision.md']);
     const calls = gatewayManager.rpc.mock.calls.filter(call => call[0] === 'wiki.embedding.embed');
     expect(calls).toHaveLength(2);
     expect(calls[0][1]).toMatchObject({ kind: 'query', expectedSpaceId: 'agent-fixture-space' });

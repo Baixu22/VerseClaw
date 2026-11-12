@@ -49,3 +49,23 @@ export type {
   CitationLocatorV2,
   ChunkKnowledgeOptions,
 } from "../knowledge/retrieval/contracts.js";
+export {
+  createRetrievalPlan,
+  fuseRetrievalLanes,
+  runRetrievalPlan,
+  RETRIEVAL_PROFILES,
+} from "../knowledge/retrieval/plan.js";
+export type {
+  RankSignalsV2,
+  RetrievalBudget,
+  RetrievalFilter,
+  RetrievalHit,
+  RetrievalLane,
+  RetrievalLaneReceipt,
+  RetrievalLaneResult,
+  RetrievalMode,
+  RetrievalPlanV2,
+  RetrievalProfile,
+  RetrievalQuery,
+  RetrievalResultV2,
+} from "../knowledge/retrieval/plan.js";

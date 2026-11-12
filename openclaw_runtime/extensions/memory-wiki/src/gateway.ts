@@ -30,6 +30,7 @@ import type { MemoryWikiReadIdentity } from "./owner-read.js";
 import type { MemoryWikiProjectionService } from "./retrieval-index.js";
 import type { MemoryWikiEmbeddingService } from "./retrieval-embeddings.js";
 import type { MemoryWikiVectorService } from "./retrieval/vector-service.js";
+import { retrieveMemoryWiki } from "./retrieval/plan-service.js";
 
 const READ_SCOPE = "operator.read" as const;
 const WRITE_SCOPE = "operator.write" as const;
@@ -132,6 +133,57 @@ export function registerMemoryWikiGatewayMethods(params: {
   vector?: MemoryWikiVectorService;
 }) {
   const { api, config, appConfig } = params;
+  api.registerGatewayMethod(
+    "wiki.retrieve",
+    async ({ params: request, respond, client }) => {
+      try {
+        const identity = readIdentity(request, client);
+        if (!identity) throw new Error("Retrieval requires a backend-owned identity");
+        if (typeof request.query !== "string") throw new Error("Retrieval query must be a string");
+        for (const key of ["profile", "mode"] as const) {
+          if (request[key] !== undefined && (typeof request[key] !== "string" || !request[key]))
+            throw new Error(`Invalid retrieval ${key}`);
+        }
+        const refs = Array.isArray(request.sourceRefs)
+          ? request.sourceRefs.map(normalizeSourceRefV2)
+          : [];
+        if (
+          request.sourceRefs !== undefined &&
+          (!Array.isArray(request.sourceRefs) || refs.some((ref) => !ref))
+        )
+          throw new Error("Invalid retrieval source pins");
+        if (
+          request.deadlineAtMs !== undefined &&
+          (typeof request.deadlineAtMs !== "number" || !Number.isFinite(request.deadlineAtMs))
+        )
+          throw new Error("Invalid retrieval deadline");
+        respond(
+          true,
+          await retrieveMemoryWiki({
+            config,
+            appConfig,
+            identity,
+            query: readStringParam(request, "query") ?? "",
+            profile: readEnumParam(request, "profile", ["local", "quality", "research"] as const),
+            mode: readEnumParam(request, "mode", [
+              "off",
+              "manual",
+              "suggest",
+              "auto-read",
+            ] as const),
+            explicitRefs: refs.filter((ref) => ref !== undefined),
+            deadlineAtMs: request.deadlineAtMs as number | undefined,
+            projection: params.projection,
+            embedding: params.embedding,
+            vector: params.vector,
+          }),
+        );
+      } catch (error) {
+        respondError(respond, error);
+      }
+    },
+    { scope: READ_SCOPE },
+  );
   if (params.vector) {
     const vector = params.vector;
     for (const operation of [

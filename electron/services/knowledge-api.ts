@@ -55,6 +55,8 @@ export function stopAllKnowledgeSourceWatches(): void {
 }
 import type { RuntimeEmbeddingProvider } from '../../openclaw_runtime/src/runtime-core/memory-embedding-provider';
 import { resolveEmbeddingDeadlineMs } from './knowledge-embedding-provider';
+import { RETRIEVAL_PROFILES } from '../../openclaw_runtime/src/knowledge/retrieval/plan';
+import { waitForRetrievalOperation } from '../../openclaw_runtime/src/knowledge/retrieval/embedding-session';
 import type { ContextBlockSink } from '../../openclaw_runtime/src/context-engine/block';
 import type {
   HostSuccess,
@@ -64,6 +66,8 @@ import type {
   KnowledgeRouteCandidate,
   KnowledgeRouteContextPayload,
   KnowledgeRouteContextResult,
+  KnowledgeRetrievePayload,
+  KnowledgeRetrievalReport,
   KnowledgeRuntimeLessonsReportResult,
   KnowledgeSekbBatchDistillSuggestPayload,
   KnowledgeSekbBatchDistillSuggestResult,
@@ -2908,7 +2912,6 @@ function buildRetrievalDiagnostics(input: {
   const items = input.rows.map((row) => {
     const lookup = rowString(row, ['lookup', 'pagePath', 'path', 'id', 'pageId']);
     const score = rowNumber(row, ['score', 'rank', 'similarity'], 0);
-    const confidence = score > 0 ? Math.max(0, Math.min(1, score > 1 ? score / 100 : score)) : undefined;
     return {
       id: rowString(row, ['id', 'pageId']) || lookup || rowString(row, ['title', 'name']) || 'unknown',
       title: rowString(row, ['title', 'name', 'pageTitle']) || lookup || 'Untitled',
@@ -2916,7 +2919,6 @@ function buildRetrievalDiagnostics(input: {
       sourceKind: retrievalSourceKindFromRow(row),
       reason: lookup && selectedLookups.has(lookup) ? input.reason : 'available search result',
       ...(score > 0 ? { score } : {}),
-      ...(confidence != null ? { confidence } : {}),
       ...(rowString(row, ['sourcePath', 'pagePath', 'path']) ? { path: rowString(row, ['sourcePath', 'pagePath', 'path']) } : {}),
     };
   });
@@ -3029,8 +3031,7 @@ function routeCandidateFromRow(row: Record<string, unknown>, corpus: 'wiki' | 'm
   const lookup = rowString(row, ['lookup', 'pagePath', 'path', 'id', 'pageId']);
   if (!lookup) return null;
   const title = rowString(row, ['title', 'name', 'pageTitle']) || lookup;
-  const score = rowNumber(row, ['score', 'rank', 'similarity'], 0.7);
-  const confidence = Math.max(0, Math.min(1, score > 1 ? score / 100 : score));
+  const score = rowNumber(row, ['score', 'similarity'], 0);
   const snippet = rowString(row, ['snippet', 'bodyPreview', 'preview', 'text']).slice(0, ROUTER_BUDGET.maxSnippetChars);
   const freshnessLevel = rowString(row, ['freshnessLevel', 'freshness']);
   const matchedClaimStatus = rowString(row, ['matchedClaimStatus', 'claimStatus']);
@@ -3042,7 +3043,11 @@ function routeCandidateFromRow(row: Record<string, unknown>, corpus: 'wiki' | 'm
     attachKind,
     routingReason: reason,
     routeGroup: routeGroupForRow(row),
-    confidence,
+    ...(typeof row.rank === 'number' ? { rank: row.rank } : {}),
+    ...(typeof row.scoreKind === 'string' ? { scoreKind: row.scoreKind } : {}),
+    ...(isRecord(row.rankSignals) && row.rankSignals.schema === 'RankSignals/v2' ? { rankSignals: row.rankSignals as ChatKnowledgeReference['rankSignals'] } : {}),
+    ...(normalizeSourceRefV2(row.sourceRef) ? { sourceRef: normalizeSourceRefV2(row.sourceRef) } : {}),
+    ...(getString(row.revision) ? { revision: getString(row.revision) } : {}),
     ...(rowString(row, ['pageId']) ? { pageId: rowString(row, ['pageId']) } : {}),
     ...(rowString(row, ['pagePath', 'path']) ? { pagePath: rowString(row, ['pagePath', 'path']) } : {}),
     ...(rowString(row, ['sourcePath']) ? { sourcePath: rowString(row, ['sourcePath']) } : {}),
@@ -3055,17 +3060,13 @@ function routeCandidateFromRow(row: Record<string, unknown>, corpus: 'wiki' | 'm
 
 function routeCandidatesFromSearch(result: unknown, corpus: 'wiki' | 'memory' | 'all', mode: 'suggest' | 'auto-read', reason: string): KnowledgeRouteCandidate[] {
   const attachKind = mode === 'auto-read' ? 'auto' : 'suggested';
-  const candidates = getRouteSearchRows(result)
-    .map((row) => routeCandidateFromRow(row, corpus, attachKind, reason))
-    .filter((candidate): candidate is KnowledgeRouteCandidate => Boolean(candidate));
-  const filtered = mode === 'auto-read'
-    ? candidates.filter((candidate) => (
-      candidate.confidence >= 0.55
-      && candidate.freshnessLevel !== 'stale'
-      && candidate.matchedClaimStatus !== 'contradicted'
-    ))
-    : candidates;
-  return filtered.slice(0, ROUTER_BUDGET.maxReferences);
+  return getRouteSearchRows(result).flatMap(row => {
+    const candidate = routeCandidateFromRow(row, corpus, attachKind, reason);
+    if (!candidate) return [];
+    if (mode === 'auto-read' && (!isRecord(row.autoReadAdmission) || row.autoReadAdmission.eligible !== true
+      || !candidate.sourceRef || candidate.freshnessLevel === 'stale' || candidate.matchedClaimStatus === 'contradicted')) return [];
+    return [candidate];
+  }).slice(0, ROUTER_BUDGET.maxReferences);
 }
 
 function groupedRouteCandidates(candidates: KnowledgeRouteCandidate[]): KnowledgeRouteCandidateGroup[] {
@@ -3317,6 +3318,25 @@ export function createKnowledgeApi({
   const rpc = <T>(method: string, params: unknown = {}, timeoutMs = 30_000) =>
     gatewayManager.rpc(method, params, timeoutMs) as Promise<T>;
 
+  const retrieveFromOwner = async (payload: KnowledgeRetrievePayload): Promise<KnowledgeRetrievalReport> => {
+    const profile = payload.profile ?? 'local';
+    if (!Object.hasOwn(RETRIEVAL_PROFILES, profile)) throw new Error('Invalid retrieval profile');
+    const deadlineAtMs = Date.now() + RETRIEVAL_PROFILES[profile].deadlineMs;
+    const signal = AbortSignal.timeout(RETRIEVAL_PROFILES[profile].deadlineMs);
+    return waitForRetrievalOperation((async () => {
+      const scope = await prepareKnowledgeReadScope(gatewayManager, { sessionKey: payload.sessionKey, workspaceId: payload.workspaceId });
+      signal.throwIfAborted();
+      const retrieval = await rpc<KnowledgeRetrievalReport>('wiki.retrieve', {
+        query: payload.query, profile, mode: payload.mode ?? 'suggest', sourceRefs: payload.sourceRefs,
+        deadlineAtMs, readIdentity: scope.identity,
+      }, Math.max(1, deadlineAtMs - Date.now()));
+      signal.throwIfAborted();
+      await assertKnowledgeReadScopeCurrent(gatewayManager, scope);
+      signal.throwIfAborted();
+      return retrieval;
+    })(), signal);
+  };
+
   // KS-03: register the three governed target adapters once per process.
   registerHostGovernedAdapters();
 
@@ -3340,13 +3360,15 @@ export function createKnowledgeApi({
   }): Promise<KnowledgeAnswerFromSourceSetResult> {
     const question = input.question.trim();
     let sourceRefs = normalizeSourceRefs(input.sourceRefs);
+    let retrieval: KnowledgeRetrievalReport | undefined;
     if (sourceRefs.length === 0 && input.synthesis) {
       const previousQuestion = boundedKnowledgeHistory(input.history).filter(turn => turn.role === 'user').at(-1)?.content.slice(0, 500);
       const query = previousQuestion ? `${question}\n${previousQuestion}` : question;
-      const search = await rpc<Record<string, unknown>>('wiki.search', { query, maxResults: 6, corpus: 'wiki' });
-      sourceRefs = getRouteSearchRows(search).slice(0, 6).flatMap(row => {
+      retrieval = await retrieveFromOwner({ query, workspaceId: input.workspaceId, mode: 'suggest' });
+      sourceRefs = getRouteSearchRows(retrieval).slice(0, 6).flatMap(row => {
         const lookup = rowString(row, ['pagePath', 'path', 'lookup', 'id']);
-        return lookup ? [{ id: lookup, path: lookup, kind: 'wiki' as const, label: rowString(row, ['title', 'name']) || lookup }] : [];
+        return lookup ? [{ id: lookup, path: lookup, kind: 'wiki' as const, label: rowString(row, ['title', 'name']) || lookup,
+          ...(normalizeSourceRefV2(row.sourceRef) ? { sourceRef: normalizeSourceRefV2(row.sourceRef) } : {}) }] : [];
       });
     }
     const sourceSet = input.sourceSetId ? await readSourceSet(input.sourceSetId) : null;
@@ -3460,6 +3482,7 @@ export function createKnowledgeApi({
       rejections: evidence.sourceSet.rejections,
       conflictSet: evidence.sourceSet.conflictSet,
       retrievalDiagnostics, semanticRequested,
+      ...(retrieval ? { retrieval } : {}),
       ...(semanticRequested ? { semanticLane: evidence.sourceSet.semanticLane } : {}),
     };
   }
@@ -3626,7 +3649,6 @@ export function createKnowledgeApi({
 
   const retrieveRuntimeLessonsForRoute = async (
     query: string,
-    mode: 'manual' | 'suggest' | 'auto-read',
     reason: string,
   ): Promise<{
     candidates: KnowledgeRouteCandidate[];
@@ -3649,15 +3671,16 @@ export function createKnowledgeApi({
       const store = createHostSekbStore(sekb);
       const engine = new sekb.RetrievalEngine({ store });
       const principles = engine.retrieve_for_task(query, 'chat', [], ROUTER_BUDGET.maxReferences);
-      const candidates: KnowledgeRouteCandidate[] = principles.map((principle) => ({
+      const candidates: KnowledgeRouteCandidate[] = principles.map((principle, index) => ({
         id: `sekb:${principle.principle_id}`,
         title: principle.title,
         lookup: `sekb:${principle.principle_id}`,
         corpus: 'all',
-        attachKind: mode === 'auto-read' ? 'auto' : 'suggested',
+        attachKind: 'suggested',
         routingReason: reason,
         routeGroup: 'runtime_lessons',
-        confidence: 0.72,
+        rank: index + 1,
+        scoreKind: 'owner-rank',
         snippet: [
           `Condition: ${principle.condition}`,
           `Action: ${principle.action}`,
@@ -5025,6 +5048,11 @@ export function createKnowledgeApi({
       }
     },
 
+    retrieve: async (payload: KnowledgeRetrievePayload) => {
+      try { return { success: true, retrieval: await retrieveFromOwner(payload) }; }
+      catch (error) { return { success: false, error: sanitizeUiErrorText(error) }; }
+    },
+
     routeContext: async (payload: KnowledgeRouteContextPayload): Promise<KnowledgeRouteContextResult> => {
       const body: Record<string, unknown> = isRecord(payload) ? payload : {};
       const message = getString(body.message) ?? '';
@@ -5064,19 +5092,23 @@ export function createKnowledgeApi({
 
       try {
         const corpus = scope === 'memory' ? 'memory' : scope === 'all' ? 'all' : 'wiki';
-        const result = await rpc<Record<string, unknown>>('wiki.search', {
-          query: decision.query,
-          maxResults: ROUTER_BUDGET.maxReferences,
-          corpus,
-        }, 30_000);
+        const retrieval = scope !== 'memory' ? await retrieveFromOwner({
+          query: decision.query, mode, profile: payload.profile,
+          sessionKey: payload.sessionKey, workspaceId: payload.workspaceId,
+        }) : undefined;
+        const result = retrieval ?? await rpc<Record<string, unknown>>('wiki.search', {
+          query: decision.query, maxResults: ROUTER_BUDGET.maxReferences, corpus,
+        }, RETRIEVAL_PROFILES.local.deadlineMs);
         const rows = getRouteSearchRows(result);
         const wikiCandidates = routeCandidatesFromSearch(result, corpus, mode, decision.reason);
-        const runtimeLessonResult = runtimeLessonsRequested
-          ? await retrieveRuntimeLessonsForRoute(decision.query, mode, decision.reason)
+        const runtimeLessonResult = runtimeLessonsRequested && mode !== 'auto-read'
+          ? await waitForRetrievalOperation(retrieveRuntimeLessonsForRoute(decision.query, decision.reason),
+            AbortSignal.timeout(Math.max(1, (retrieval?.plan.budget.deadlineAtMs ?? Date.now() + RETRIEVAL_PROFILES.local.deadlineMs) - Date.now())))
+              .catch(() => ({ candidates: [], runtimeLessons: { requested: true, included: false, available: false, principleCount: 0, reason: 'deadline-exceeded' } }))
           : undefined;
         const candidates = runtimeLessonResult
           ? [...wikiCandidates, ...runtimeLessonResult.candidates]
-              .sort((left, right) => right.confidence - left.confidence)
+              .sort((left, right) => (right.rankSignals?.fusionScore ?? 1 / (60 + (right.rank ?? 1))) - (left.rankSignals?.fusionScore ?? 1 / (60 + (left.rank ?? 1))))
               .slice(0, ROUTER_BUDGET.maxReferences)
           : wikiCandidates;
         const candidateGroups = groupedRouteCandidates(candidates);
@@ -5110,9 +5142,12 @@ export function createKnowledgeApi({
             corpus,
             mode,
             rows,
+            backend: retrieval?.lanes.some(lane => lane.lane === 'dense' && lane.status === 'available') ? 'hybrid'
+              : retrieval?.lanes.some(lane => lane.lane === 'lexical' && lane.status === 'available' && !lane.reason) ? 'keyword' : 'fallback-keyword',
             selectedLookups: new Set(candidates.map((candidate) => candidate.lookup)),
             reason: candidates.length > 0 ? decision.reason : 'no relevant knowledge candidates found',
           }),
+          ...(retrieval ? { retrieval } : {}),
           budget: ROUTER_BUDGET,
           runtimeLessons: runtimeLessonResult?.runtimeLessons ?? {
             requested: runtimeLessonsRequested,

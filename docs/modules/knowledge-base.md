@@ -19,6 +19,8 @@ Verse Claw 的 Knowledge 是本地 Markdown/wiki-first 的受治理项目知识�
 
 长期检索目标按 [Project RAG ADR v2](../dev/adr/2026-11-09-project-rag-retrieval-plane.md) 和[完整工作包](../dev/project-rag/WORK-PACKAGES.md)实施，覆盖持久混合检索、重排、多来源、Research、交互、索引运维与独立验收。当前处于规划与分阶段开发，以下章节仍描述已有 page/snippet 行为。
 
+Chat Preflight 已使用统一的 owner 检索计划：FTS / dense 按 lane rank 做 RRF，显式 SourceRef 精确复读，候选记录原始分数、贡献和退化原因。SourceSet 保留检索次序，Preflight 展示来源和匹配原因，停止用检索分数生成百分比 confidence。接口与期限见[检索计划合同](../dev/project-rag/RETRIEVAL-PLAN-CONTRACT.md)。
+
 ## 2. 页面分区
 
 `src/pages/Knowledge/index.tsx` 当前有两个主入口：**Library** 和 **Review Queue**。

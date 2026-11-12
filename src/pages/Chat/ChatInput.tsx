@@ -3430,9 +3430,9 @@ export function ChatInput({
                             <div key={candidate.id} className="rounded-md border border-black/10 bg-surface-input px-2 py-1.5 dark:border-white/10" data-testid="chat-knowledge-preflight-item">
                               <div className="flex min-w-0 items-center justify-between gap-2">
                                 <span className="min-w-0 truncate text-xs font-medium text-foreground">{candidate.title}</span>
-                                <span className="shrink-0 text-[11px] tabular-nums text-muted-foreground">
+                                {typeof candidate.confidence === 'number' && <span className="shrink-0 text-[11px] tabular-nums text-muted-foreground">
                                   {t('composer.knowledgePreflight.confidence', { confidence: Math.round(candidate.confidence * 100) })}
-                                </span>
+                                </span>}
                               </div>
                               <div className="mt-1 grid gap-0.5 text-[11px] leading-4 text-muted-foreground">
                                 <span className="truncate">

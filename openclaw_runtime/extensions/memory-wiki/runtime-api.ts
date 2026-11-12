@@ -20,3 +20,4 @@ export {
   readMemoryWikiOwnerSnapshot,
   type MemoryWikiReadIdentity,
 } from "./src/owner-read.js";
+export { retrieveMemoryWiki } from "./src/retrieval/plan-service.js";

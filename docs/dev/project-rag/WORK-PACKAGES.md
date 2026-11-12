@@ -199,8 +199,9 @@
 - Owner：retrieval planner。
 - 契约：RetrievalPlan/v2、RankSignals/v2、RetrievalResult/v2。
 - 落点：`openclaw_runtime/src/knowledge/retrieval/**`、`openclaw_runtime/src/context-engine/source-set.ts`、`electron/services/knowledge-api.ts`、`shared/host-api/contract.ts`、`src/lib/host-api/knowledge/**`。
-- 新测试：`tests/unit/project-rag-plan-fusion.test.ts`。
-- Electron：由后续真实 Host/DCS/产品旅程集成包覆盖；本叶无新 UI。
+- 新测试：`tests/unit/project-rag-plan-fusion.test.ts`、`tests/unit/project-rag-plan-owner.test.ts`。
+- Electron：`tests/e2e/project-rag-plan-fusion.spec.ts` 覆盖实际 local hybrid、撤回、旧 pin 和 Preflight 的候选展示。
+- 接口与预算：[检索计划合同](RETRIEVAL-PLAN-CONTRACT.md)。
 - 回滚：关闭新 plan reader，沿相同 owner 准入回到 page 检索。
 
 验收：

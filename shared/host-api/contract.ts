@@ -1,6 +1,7 @@
 import type { RawMessage } from '../chat/types';
 import type { KnowledgeEmbeddingSelection, KnowledgeEmbeddingStatusResult } from '../knowledge/embedding';
 import type { KnowledgeVectorStatusResult } from '../knowledge/vector';
+import type { RankSignalsV2, RetrievalMode, RetrievalProfile, RetrievalResultV2 } from '../knowledge/retrieval';
 import type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
 export type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
 import type { SessionHandoffOperation } from '../types/session-handoff';
@@ -3673,6 +3674,9 @@ export type ChatKnowledgeReference = {
   sourceRef?: SourceRefV2;
   revision?: string;
   contentDigest?: string;
+  rank?: number;
+  scoreKind?: string;
+  rankSignals?: RankSignalsV2;
 };
 
 export type KnowledgeRouteCandidateGroupKey = 'docs' | 'pitfalls' | 'rules' | 'runtime_lessons';
@@ -3684,6 +3688,7 @@ export type KnowledgeRouteContextPayload = {
   selectedReferences?: ChatKnowledgeReference[];
   sessionKey?: string;
   workspaceId?: string | null;
+  profile?: RetrievalProfile;
   sourcePolicy?: {
     runtimeLessons?: boolean;
   };
@@ -3692,7 +3697,7 @@ export type KnowledgeRouteContextPayload = {
 export type KnowledgeRouteCandidate = ChatKnowledgeReference & {
   attachKind: 'suggested' | 'auto';
   routingReason: string;
-  confidence: number;
+  confidence?: number;
   routeGroup?: KnowledgeRouteCandidateGroupKey;
   freshnessLevel?: string;
   matchedClaimStatus?: string;
@@ -3719,6 +3724,7 @@ export type KnowledgeRouteContextResult = HostSuccess & {
   candidateGroups?: KnowledgeRouteCandidateGroup[];
   groupedCandidates?: Partial<Record<KnowledgeRouteCandidateGroupKey, KnowledgeRouteCandidate[]>>;
   retrievalDiagnostics?: KnowledgeRetrievalDiagnostics;
+  retrieval?: KnowledgeRetrievalReport;
   budget: {
     maxReferences: number;
     maxSnippetChars: number;
@@ -3731,6 +3737,25 @@ export type KnowledgeRouteContextResult = HostSuccess & {
     reason?: string;
   };
 };
+
+export type KnowledgeRetrievePayload = {
+  query: string;
+  profile?: RetrievalProfile;
+  mode?: RetrievalMode;
+  sourceRefs?: SourceRefV2[];
+  sessionKey?: string;
+  workspaceId?: string | null;
+};
+export type KnowledgeRetrievalRow = ChatKnowledgeReference & {
+  rank: number;
+  scoreKind: string;
+  rankSignals: RankSignalsV2;
+  sourceRef: SourceRefV2;
+  metadata?: Record<string, unknown>;
+  autoReadAdmission?: { eligible: boolean; contextId: string; reason: string };
+};
+export type KnowledgeRetrievalReport = Omit<RetrievalResultV2<unknown>, 'results'> & { results: KnowledgeRetrievalRow[] };
+export type KnowledgeRetrieveResult = HostSuccess & { retrieval?: KnowledgeRetrievalReport };
 
 export type KnowledgeRuntimeLessonsReportResult = HostSuccess & {
   available: boolean;
@@ -4659,6 +4684,7 @@ export type KnowledgeAnswerFromSourceSetResult = HostSuccess & {
   rejections?: Array<{ refId: string; owner: string; subjectId: string; reason: string; visibleReason: string }>;
   conflictSet?: Array<{ kind: 'claim' | 'source'; key: string; description: string; stances?: string[]; citations: KnowledgeSourceSetCitation[] }>;
   retrievalDiagnostics: KnowledgeRetrievalDiagnostics;
+  retrieval?: KnowledgeRetrievalReport;
   semanticRequested?: boolean;
   semanticLane?: {
     status: 'available' | 'unavailable' | 'error';
@@ -6244,6 +6270,7 @@ export type HostApiContract = {
     validateArtifact: (payload: WorkProviderValidateArtifactPayload) => WorkProviderValidateArtifactResult;
   };
   knowledge: {
+    retrieve: (payload: KnowledgeRetrievePayload) => KnowledgeRetrieveResult;
     vectorStatus: () => KnowledgeVectorStatusResult;
     vectorConfigure: (payload: { backend: 'sqlite-flat' | 'lancedb-ann' }) => KnowledgeVectorStatusResult;
     vectorDisable: () => KnowledgeVectorStatusResult;

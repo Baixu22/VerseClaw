@@ -243,6 +243,8 @@ export type SourceSetResult = {
 export type RetrieveSourceSetOptions = {
   query: SourceSetQuery;
   sources: readonly SourceSetCandidate[];
+  /** Trusted retrieval producers supply an admitted order; owner checks still run. */
+  preserveOrder?: boolean;
   embeddingProvider?: RuntimeEmbeddingProvider;
   now?: () => Date;
   runtimeMemoryShadow?: readonly RuntimeMemoryShadowCandidate[];
@@ -1017,26 +1019,27 @@ export async function retrieveSourceSet(
     };
   });
 
-  scored.sort((left, right) => {
-    if (right.combinedScore !== left.combinedScore) {
-      return right.combinedScore - left.combinedScore;
-    }
-    if (right.freshnessScore !== left.freshnessScore) {
-      return right.freshnessScore - left.freshnessScore;
-    }
-    const leftExactOrder =
-      exactOrderByRefId.get(left.candidate.ref.refId) ?? Number.MAX_SAFE_INTEGER;
-    const rightExactOrder =
-      exactOrderByRefId.get(right.candidate.ref.refId) ?? Number.MAX_SAFE_INTEGER;
-    if (leftExactOrder !== rightExactOrder) {
-      return leftExactOrder - rightExactOrder;
-    }
-    return left.candidate.ref.refId < right.candidate.ref.refId
-      ? -1
-      : left.candidate.ref.refId > right.candidate.ref.refId
-        ? 1
-        : 0;
-  });
+  if (!options.preserveOrder)
+    scored.sort((left, right) => {
+      if (right.combinedScore !== left.combinedScore) {
+        return right.combinedScore - left.combinedScore;
+      }
+      if (right.freshnessScore !== left.freshnessScore) {
+        return right.freshnessScore - left.freshnessScore;
+      }
+      const leftExactOrder =
+        exactOrderByRefId.get(left.candidate.ref.refId) ?? Number.MAX_SAFE_INTEGER;
+      const rightExactOrder =
+        exactOrderByRefId.get(right.candidate.ref.refId) ?? Number.MAX_SAFE_INTEGER;
+      if (leftExactOrder !== rightExactOrder) {
+        return leftExactOrder - rightExactOrder;
+      }
+      return left.candidate.ref.refId < right.candidate.ref.refId
+        ? -1
+        : left.candidate.ref.refId > right.candidate.ref.refId
+          ? 1
+          : 0;
+    });
 
   const isRetrievable = (entry: (typeof scored)[number]) =>
     entry.combinedScore > 0 &&
