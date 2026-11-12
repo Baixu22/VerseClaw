@@ -1,0 +1,77 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\tf0662-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-L9oWds",
+  "ledgerEntries": 10,
+  "checks": [
+    {
+      "pid": 42060,
+      "creationTime": 1794464130215,
+      "status": "exited"
+    },
+    {
+      "pid": 9696,
+      "creationTime": 1794464169838,
+      "status": "exited"
+    },
+    {
+      "pid": 26432,
+      "creationTime": 1794464170502,
+      "status": "exited"
+    },
+    {
+      "pid": 32692,
+      "creationTime": 1794464536320,
+      "status": "exited"
+    },
+    {
+      "pid": 26548,
+      "creationTime": 1794464544496,
+      "status": "exited"
+    },
+    {
+      "pid": 38832,
+      "creationTime": 1794464544984,
+      "status": "exited"
+    }
+  ],
+  "processObservations": [
+    [
+      {
+        "pid": 42060,
+        "creationTime": 1794464130215,
+        "status": "exited"
+      },
+      {
+        "pid": 9696,
+        "creationTime": 1794464169838,
+        "status": "exited"
+      },
+      {
+        "pid": 26432,
+        "creationTime": 1794464170502,
+        "status": "exited"
+      },
+      {
+        "pid": 32692,
+        "creationTime": 1794464536320,
+        "status": "exited"
+      },
+      {
+        "pid": 26548,
+        "creationTime": 1794464544496,
+        "status": "exited"
+      },
+      {
+        "pid": 38832,
+        "creationTime": 1794464544984,
+        "status": "exited"
+      }
+    ]
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

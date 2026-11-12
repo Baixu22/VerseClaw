@@ -88,6 +88,7 @@ test('U2 restores the visible transcript message, reading offset and both sessio
     await expect(page.getByTestId('session-family-children')).toBeVisible({ timeout: 30_000 });
     const scroller = page.getByTestId('chat-scroll-container');
     await expect(scroller).toBeVisible();
+    await expect(scroller).toContainText('U2-READ-27', { timeout: 30_000 });
     await page.getByTestId('chat-composer-input').fill('U2 parent draft must survive the reading round trip');
     // Scroll by a real pointer gesture; never set a saved position or change the DOM scrollTop here.
     await scroller.hover();

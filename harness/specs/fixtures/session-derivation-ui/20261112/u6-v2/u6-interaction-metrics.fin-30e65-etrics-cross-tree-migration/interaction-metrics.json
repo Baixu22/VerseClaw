@@ -1,0 +1,404 @@
+{
+  "schema_version": 2,
+  "driven_by": "agent",
+  "actor": "playwright-u6",
+  "requestmodel": "ccs-workbuddy/deepseek-v4.1-flash",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "author_backend": null,
+  "provider": "local-scripted",
+  "side": "candidate",
+  "journey": "cross-tree-migration",
+  "status": "passed",
+  "source_head": "ebcf5b317905f77706d6bf6abfd6700998352c58",
+  "homeDir": "D:\\tmp\\tf0662-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-y7D6F1\\verse-claw-e2e-home-tkllDI",
+  "profileDir": "D:\\tmp\\tf0662-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-y7D6F1\\verse-claw-e2e-user-data-xsuB2w",
+  "fixture": {
+    "id": "u6-goal-v1",
+    "objective": "Retain the approved U6 artifact",
+    "target": "artifact.txt",
+    "content_sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7",
+    "locale": "en",
+    "viewport": "1280x800"
+  },
+  "unsupportedProof": {},
+  "task_control_call_id": "u6crosstreemigrationtaskcontrol",
+  "setup": [
+    "isolated profile and Git fixture",
+    "scripted provider",
+    "project/session/history",
+    "persistent task contract",
+    "task/reference",
+    "linked checkout/claim/checkpoint",
+    "completed chat run binds source root"
+  ],
+  "owner": {
+    "success": true,
+    "operation": {
+      "schema": 1,
+      "id": "f8af20d8-305d-4d57-8718-55902174a18b",
+      "requestDigest": "696b62a48d6accc3e55b9781b3abbfa24c056244335366f9f16114b1068726fb",
+      "workspaceId": "u6-project",
+      "targetWorkspaceId": "u6-target",
+      "sessionKey": "agent:main:session-1794415742272-uproject",
+      "agentId": "main",
+      "sourceGeneration": "89b0e72d-2d50-4d0c-84f8-ebdc8cb6e1aa",
+      "targetGeneration": "437bbffe-c6ff-4027-92c0-256167eeb37c",
+      "sourceRoot": "D:\\tmp\\tf0662-verify-evidence\\u6-v2\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source",
+      "targetRoot": "D:\\tmp\\tf0662-verify-evidence\\u6-v2\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\target",
+      "sourceBindingRevision": 1,
+      "task": {
+        "credential": {
+          "taskNodeId": "703d47da-61ea-4ea4-9f29-9762df9e0e64",
+          "sessionKey": "agent:main:session-1794415742272-uproject",
+          "generation": "89b0e72d-2d50-4d0c-84f8-ebdc8cb6e1aa",
+          "epoch": 1,
+          "attemptId": "12c3c914-2d72-4014-90d6-13f17b1bea49",
+          "worktree": "d:/tmp/tf0662-verify-evidence/u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source",
+          "contractRevision": 1,
+          "expiresAt": 1794415896308,
+          "state": "active"
+        },
+        "revision": 1,
+        "digest": "61bb234ce249623141440f7f1d8d622ce0f087fafe9aeca69d7f3d73fc39c04b",
+        "authority": {
+          "localDomainId": "98cc4515b65a9528d82b4eed94cbff3b0d28246d1c05ce80eada4235e301a85e",
+          "authorityId": "98cc4515b65a9528d82b4eed94cbff3b0d28246d1c05ce80eada4235e301a85e",
+          "authorityDatabase": "d:\\tmp\\tf0662-verify-evidence\\u6-v2\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\.git\\verse-claw\\task-ledger.sqlite3",
+          "executionWorktree": "d:/tmp/tf0662-verify-evidence/u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source",
+          "registrationRevision": null,
+          "projectRevision": null,
+          "identityDigest": "b8acdd72b73661a06466f2a6237851613e60b14f73f2da38ad774544190f3fdc",
+          "databaseIdentity": "3325120695:11821949026755254:1794415763755716300"
+        },
+        "checkpoint": {
+          "nextAction": "Continue in target",
+          "completed": [
+            "Prior output retained"
+          ],
+          "unresolved": [],
+          "artifacts": [
+            {
+              "path": "d:\\tmp\\tf0662-verify-evidence\\u6-v2\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\artifact.txt",
+              "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+            }
+          ]
+        }
+      },
+      "phase": "confirmed",
+      "createdAt": "2026-11-11T16:50:16.558Z",
+      "updatedAt": "2026-11-11T16:50:19.006Z",
+      "pausedCredential": {
+        "taskNodeId": "703d47da-61ea-4ea4-9f29-9762df9e0e64",
+        "sessionKey": "agent:main:session-1794415742272-uproject",
+        "generation": "89b0e72d-2d50-4d0c-84f8-ebdc8cb6e1aa",
+        "epoch": 2,
+        "attemptId": "12c3c914-2d72-4014-90d6-13f17b1bea49",
+        "worktree": "d:/tmp/tf0662-verify-evidence/u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source",
+        "contractRevision": 1,
+        "expiresAt": 1794415896308,
+        "state": "paused"
+      },
+      "reservation": {
+        "baseRoot": "D:\\tmp\\tf0662-verify-evidence\\u6-v2\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\target",
+        "worktreeId": null,
+        "credential": {
+          "root": "d:\\tmp\\tf0662-verify-evidence\\u6-v2\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\target",
+          "incarnation": "3325120695:4222124655568101:1794415765207782400",
+          "generation": "base:3325120695:4222124655568101:1794415765207782400",
+          "epoch": 1,
+          "token": "3ee9fe5f-ef0f-4c8e-bb5c-d3050ddf1f99",
+          "owner": {
+            "kind": "run",
+            "run": {
+              "runId": "migration:f8af20d8-305d-4d57-8718-55902174a18b",
+              "scope": {
+                "workspaceId": "u6-target",
+                "projectId": "u6-target",
+                "sessionKey": "agent:main:session-1794415742272-uproject"
+              }
+            },
+            "agentId": "main",
+            "sessionGeneration": "437bbffe-c6ff-4027-92c0-256167eeb37c",
+            "bindingRevision": 2
+          }
+        }
+      },
+      "runtimeReceipt": {
+        "operationId": "f8af20d8-305d-4d57-8718-55902174a18b",
+        "sessionKey": "agent:main:session-1794415742272-uproject",
+        "sourceGeneration": "89b0e72d-2d50-4d0c-84f8-ebdc8cb6e1aa",
+        "targetGeneration": "437bbffe-c6ff-4027-92c0-256167eeb37c",
+        "sourceRoot": "D:\\tmp\\tf0662-verify-evidence\\u6-v2\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source",
+        "targetRoot": "D:\\tmp\\tf0662-verify-evidence\\u6-v2\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\target",
+        "state": "confirmed",
+        "transcriptPath": "D:\\tmp\\tf0662-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-y7D6F1\\verse-claw-e2e-user-data-xsuB2w\\openclaw-source-state\\agents\\main\\sessions\\437bbffe-c6ff-4027-92c0-256167eeb37c.jsonl",
+        "transcriptSha256": "08b3c6782b15fbe7dbbf0849772c19f4ff7bbced2380c0f578eb399a23c431ef"
+      },
+      "targetCredential": {
+        "taskNodeId": "703d47da-61ea-4ea4-9f29-9762df9e0e64",
+        "sessionKey": "agent:main:session-1794415742272-uproject",
+        "generation": "437bbffe-c6ff-4027-92c0-256167eeb37c",
+        "epoch": 3,
+        "attemptId": "2c89cad5-3995-4703-89c5-df0aec5cf693",
+        "worktree": "d:/tmp/tf0662-verify-evidence/u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target",
+        "contractRevision": 1,
+        "expiresAt": 1794415938138,
+        "state": "active"
+      },
+      "targetBindingRevision": 1,
+      "confirmation": {
+        "targetDigest": "61bb234ce249623141440f7f1d8d622ce0f087fafe9aeca69d7f3d73fc39c04b",
+        "candidateArtifacts": [
+          {
+            "path": "d:\\tmp\\tf0662-verify-evidence\\u6-v2\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\artifact.txt",
+            "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+          }
+        ],
+        "pendingOperations": 0,
+        "at": "2026-11-11T16:50:18.822Z"
+      },
+      "reservationReleased": true
+    }
+  },
+  "fault": null,
+  "events": [
+    {
+      "id": "e1",
+      "at": "2026-11-11T16:50:16.259Z",
+      "action": "click",
+      "target": "testid:execution-migration-open",
+      "operation": "cross-tree-migration:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e2",
+      "at": "2026-11-11T16:50:16.417Z",
+      "action": "selectOption",
+      "target": "checkout:target",
+      "operation": "cross-tree-migration:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [
+        "identity_selection"
+      ],
+      "repeat_of": null,
+      "rule": "显式选择项目/会话/任务/检出身份",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "value_sha256": "fdd562c7c20103d5ccbffdc556e44cb16eda2d53470714faa5d88ede6de91a5a",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e3",
+      "at": "2026-11-11T16:50:16.445Z",
+      "action": "click",
+      "target": "testid:execution-migration-start",
+      "operation": "cross-tree-migration:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "value_sha256": "fdd562c7c20103d5ccbffdc556e44cb16eda2d53470714faa5d88ede6de91a5a",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    }
+  ],
+  "tracked_product_and_helper_diff_empty": true,
+  "build": {
+    "main_sha256": "14666def901c0b5cd83e9343abd4870cf45e1b253f7d0bd2935f16308551836e",
+    "renderer_sha256": "1dd5f493918173388f1f2e1d42666fa6c385a921ce608ddcae6b5d5029e9374d",
+    "runtime_entry_sha256": "7837fe6297f44fc54e42f301cf76a8d377d05c0e594b9799133876e3cfbeea14",
+    "manifest_sha256": "bc41605b682dab6b59225a4321939268a27000b00d58978a168ddb4a13daf5ee",
+    "manifest_path": "D:\\tmp\\tf0662-verify-evidence\\candidate-build-manifest.json",
+    "side": "candidate",
+    "source_head": "ebcf5b317905f77706d6bf6abfd6700998352c58"
+  },
+  "driver_sha256": "521fc906e977844321fe064947672b359edd29c6cbe695bf2c31349c45022b5d",
+  "helpers": {
+    "electron.ts": "602720de6dd84ec2060d5a11df70016760e67ef9231bc5af74cc2da5d2783925",
+    "fp-p1-harness.ts": "31e96027ab5a10d5e510b026831a4f55fd2d65e1a77ff350a28f8c17208d0a14",
+    "session-task-chain.ts": "f2a284662312c70f5b0e3d3208ca348aeaa0840ab351af597c99942eba02e69e",
+    "electron-process-cleanup.ts": "35864693cf9b6be10abc0f4ce5bb4db5a57974314967c425d2fd9ed166c9cc85",
+    "windows-process.ts": "27c7af68a5e580fc108018705711ef71994474a3bf40a7b838e764bdb0862dd9"
+  },
+  "checkpoint_seed": {
+    "success": true,
+    "task": {
+      "contract": {
+        "objective": "Retain the approved U6 artifact",
+        "constraints": [
+          "Retain prior progress"
+        ],
+        "acceptance": [
+          {
+            "id": "file",
+            "description": "Artifact contains the approved output",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "artifact.txt",
+              "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+            }
+          }
+        ],
+        "target": "artifact.txt",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "u6-create"
+        },
+        "taskNodeId": "703d47da-61ea-4ea4-9f29-9762df9e0e64",
+        "domain": "98cc4515b65a9528d82b4eed94cbff3b0d28246d1c05ce80eada4235e301a85e",
+        "revision": 1,
+        "digest": "61bb234ce249623141440f7f1d8d622ce0f087fafe9aeca69d7f3d73fc39c04b",
+        "state": "doing",
+        "createdAt": 1794415763803,
+        "updatedAt": 1794415769389
+      },
+      "claim": {
+        "taskNodeId": "703d47da-61ea-4ea4-9f29-9762df9e0e64",
+        "sessionKey": "agent:main:session-1794415742272-uproject",
+        "generation": "89b0e72d-2d50-4d0c-84f8-ebdc8cb6e1aa",
+        "epoch": 1,
+        "attemptId": "12c3c914-2d72-4014-90d6-13f17b1bea49",
+        "worktree": "d:/tmp/tf0662-verify-evidence/u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source",
+        "contractRevision": 1,
+        "expiresAt": 1794415889389,
+        "state": "active"
+      },
+      "checkpoint": {
+        "nextAction": "Continue in target",
+        "completed": [
+          "Prior output retained"
+        ],
+        "unresolved": [],
+        "artifacts": [
+          {
+            "path": "d:/tmp/tf0662-verify-evidence/u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/artifact.txt",
+            "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+          }
+        ]
+      },
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": []
+    },
+    "children": [],
+    "verificationReceipts": [],
+    "artifact_identity": {
+      "old": "d:/tmp/tf0662-verify-evidence/u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/artifact.txt",
+      "actual": "D:\\tmp\\tf0662-verify-evidence\\u6-v2\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\artifact.txt",
+      "canonical": "d:/tmp/tf0662-verify-evidence/u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/artifact.txt",
+      "expected": "D:\\tmp\\tf0662-verify-evidence\\u6-v2\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\artifact.txt"
+    }
+  },
+  "migration_source_chat": {
+    "completed": true,
+    "sessionKey": "agent:main:session-1794415742272-uproject",
+    "expectedSessionGeneration": "89b0e72d-2d50-4d0c-84f8-ebdc8cb6e1aa",
+    "send": "U6-MIGRATION-INITIAL",
+    "reply": "U6-ACK"
+  },
+  "identities": {
+    "project": {
+      "workspaceId": "u6-project",
+      "rootPath": "D:\\tmp\\tf0662-verify-evidence\\u6-v2\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source",
+      "sessionKey": "agent:main:session-1794415742272-uproject",
+      "generation": "89b0e72d-2d50-4d0c-84f8-ebdc8cb6e1aa"
+    },
+    "child": null,
+    "taskNodeId": "703d47da-61ea-4ea4-9f29-9762df9e0e64",
+    "targetWorkspaceId": "u6-target"
+  },
+  "task_readback": {
+    "success": true,
+    "task": {
+      "contract": {
+        "objective": "Retain the approved U6 artifact",
+        "constraints": [
+          "Retain prior progress"
+        ],
+        "acceptance": [
+          {
+            "id": "file",
+            "description": "Artifact contains the approved output",
+            "verification": {
+              "kind": "file-sha256",
+              "path": "artifact.txt",
+              "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+            }
+          }
+        ],
+        "target": "artifact.txt",
+        "dependencies": [],
+        "origin": {
+          "source": "host-task-api",
+          "requestId": "u6-create"
+        },
+        "taskNodeId": "703d47da-61ea-4ea4-9f29-9762df9e0e64",
+        "domain": "98cc4515b65a9528d82b4eed94cbff3b0d28246d1c05ce80eada4235e301a85e",
+        "revision": 1,
+        "digest": "61bb234ce249623141440f7f1d8d622ce0f087fafe9aeca69d7f3d73fc39c04b",
+        "state": "doing",
+        "createdAt": 1794415763803,
+        "updatedAt": 1794415818138
+      },
+      "claim": {
+        "taskNodeId": "703d47da-61ea-4ea4-9f29-9762df9e0e64",
+        "sessionKey": "agent:main:session-1794415742272-uproject",
+        "generation": "437bbffe-c6ff-4027-92c0-256167eeb37c",
+        "epoch": 3,
+        "attemptId": "2c89cad5-3995-4703-89c5-df0aec5cf693",
+        "worktree": "d:/tmp/tf0662-verify-evidence/u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target",
+        "contractRevision": 1,
+        "expiresAt": 1794415938138,
+        "state": "active"
+      },
+      "checkpoint": {
+        "nextAction": "Continue in target",
+        "completed": [
+          "Prior output retained"
+        ],
+        "unresolved": [],
+        "artifacts": [
+          {
+            "path": "d:/tmp/tf0662-verify-evidence/u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/artifact.txt",
+            "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7"
+          }
+        ]
+      },
+      "pendingOperations": 0,
+      "pendingOperationDetails": [],
+      "childTaskNodeIds": []
+    },
+    "children": [],
+    "verificationReceipts": [],
+    "artifact_identity": {
+      "old": "d:/tmp/tf0662-verify-evidence/u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/artifact.txt",
+      "actual": "D:\\tmp\\tf0662-verify-evidence\\u6-v2\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\artifact.txt",
+      "canonical": "d:/tmp/tf0662-verify-evidence/u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/artifact.txt",
+      "expected": "D:\\tmp\\tf0662-verify-evidence\\u6-v2\\u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration\\fixture\\source\\artifact.txt"
+    }
+  },
+  "provider_log": [
+    {
+      "turn": "[Thu 2026-11-12 00:49 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "text:U6-ACK"
+    }
+  ],
+  "reason": null,
+  "counts_source": "successful_events",
+  "counts": {
+    "identity_selection": 1,
+    "page_transition": 0,
+    "repeat_confirmation": 0,
+    "goal_restatement": 0,
+    "repeat_reminder": 0
+  }
+}

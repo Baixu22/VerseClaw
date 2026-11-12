@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "driven_by": "agent",
+  "side": "candidate",
+  "source_head": "ebcf5b317905f77706d6bf6abfd6700998352c58",
+  "built_at": "2026-11-11T16:42:47.9410365Z",
+  "main_sha256": "14666def901c0b5cd83e9343abd4870cf45e1b253f7d0bd2935f16308551836e",
+  "renderer_sha256": "1dd5f493918173388f1f2e1d42666fa6c385a921ce608ddcae6b5d5029e9374d",
+  "runtime_entry_sha256": "7837fe6297f44fc54e42f301cf76a8d377d05c0e594b9799133876e3cfbeea14"
+}

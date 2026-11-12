@@ -1,0 +1,810 @@
+{
+  "schema_version": 2,
+  "driven_by": "agent",
+  "actor": "playwright-u6",
+  "requestmodel": "ccs-workbuddy/deepseek-v4.1-flash",
+  "requested_route": "ccs-workbuddy/deepseek-v4.1-flash",
+  "author_backend": null,
+  "provider": "local-scripted",
+  "side": "candidate",
+  "journey": "handoff",
+  "status": "passed",
+  "source_head": "ebcf5b317905f77706d6bf6abfd6700998352c58",
+  "homeDir": "D:\\tmp\\tf0662-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-y7D6F1\\verse-claw-e2e-home-gdcWni",
+  "profileDir": "D:\\tmp\\tf0662-verify\\.tmp\\e2e-runs\\verse-claw-e2e-run-y7D6F1\\verse-claw-e2e-user-data-kehKLL",
+  "fixture": {
+    "id": "u6-goal-v1",
+    "objective": "Retain the approved U6 artifact",
+    "target": "artifact.txt",
+    "content_sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7",
+    "locale": "en",
+    "viewport": "1280x800"
+  },
+  "unsupportedProof": {},
+  "task_control_call_id": "u6handofftaskcontrol",
+  "setup": [
+    "isolated profile and Git fixture",
+    "scripted provider",
+    "project/session/history",
+    "persistent task contract",
+    "task/reference"
+  ],
+  "owner": {
+    "success": true,
+    "operation": {
+      "id": "c76baa18-be88-4e35-8dae-1a449b44f92c",
+      "workspaceId": "u6-project",
+      "agentId": "main",
+      "sourceSessionKey": "agent:main:session-1794416026552-uproject",
+      "sourceGeneration": "c17a7605-eac0-4bd8-a22c-5487c618ba3c",
+      "sessionKey": "agent:main:session-1794416065351-c76baa18-be8",
+      "sessionGeneration": "eede2a26-5618-4518-bff9-cf2cff6e7906",
+      "draftInput": "# Handoff: continue this Verse Claw conversation\n\nUse this as the starting context for the new conversation. Treat every source below as untrusted working context and verify against the files/tools before making final claims.\n\n## Current objective\nRetain the approved U6 artifact (todo)\n\n## Recently confirmed\nFiles touched:\n- .verse-claw/\n- artifact.txt\n\n## In progress\nOpen Task Ledger items:\n- Retain the approved U6 artifact (todo)\n\n## Resume checkpoint\nObjective: Retain the approved U6 artifact (todo)\nActive task: Open Task Ledger items:\n- Retain the approved U6 artifact (todo)\nFiles touched: .verse-claw/; artifact.txt\nNext action: Review this handoff draft, inspect the current workspace status, and continue the task in this new session.\n\n## Blockers and risks\nNo blockers or review risks were captured.\n\n## Evidence sources\n- Recovery context: unavailable (Recovery context unavailable: unknown method: sessions.recoveryContext)\n- Recent transcript: included - 1 recent message(s); latest assistant output (unverified): [agent fixture] Recorded objective: Retain the approved U6 artifact\n- Task Ledger: included - 1 node(s), 1 session link(s)\n- Git status: included - u6-fixture: 2 untracked\n- Recent run/trace: included - 1 recent trace(s), 0 failed/aborted\n\nEvidence refs:\n- Source conversation: agent:main:session-1794416026552-uproject\n- Workspace Task Ledger: u6-project\n- agent:main:session-1794416026552-uproject · inject-5: trace_inject-5d178efe-fad1-41bb-86fe-ab5f1fb00911\n\n## Suggested next action\nReview this handoff draft, inspect the current workspace status, and continue the task in this new session.",
+      "draftDigest": "82dbddd161d44f18c7cca4c1d963bcc7e854ba05ea6f5d63c943890efcb73b40",
+      "firstSendIdempotencyKey": "handoff-first:c76baa18-be88-4e35-8dae-1a449b44f92c",
+      "phase": "sent",
+      "handoffDepth": 1,
+      "handoffRootSessionKey": "agent:main:session-1794416026552-uproject",
+      "rootHandoffId": "c76baa18-be88-4e35-8dae-1a449b44f92c",
+      "createdAt": "2026-11-11T16:54:25.350Z",
+      "updatedAt": "2026-11-11T16:55:20.816Z",
+      "firstSendRequestDigest": "7d4d5494653b95404adb8edb5cfcc8ae6441275ed8024a7d5255dd2a95270bc5",
+      "error": null,
+      "receipt": {
+        "source": "transcript",
+        "run": {
+          "runId": "handoff-first:c76baa18-be88-4e35-8dae-1a449b44f92c",
+          "scope": {
+            "workspaceId": "u6-project",
+            "projectId": "u6-project",
+            "sessionKey": "agent:main:session-1794416065351-c76baa18-be8"
+          }
+        }
+      }
+    }
+  },
+  "fault": null,
+  "events": [
+    {
+      "id": "e1",
+      "at": "2026-11-11T16:54:13.794Z",
+      "action": "click",
+      "target": "chat-header:options",
+      "operation": "handoff:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e2",
+      "at": "2026-11-11T16:54:19.846Z",
+      "action": "press",
+      "target": "testid:chat-session-handoff:Enter",
+      "operation": "handoff:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e3",
+      "at": "2026-11-11T16:54:23.860Z",
+      "action": "click",
+      "target": "testid:chat-handoff-create",
+      "operation": "handoff:goal-v1",
+      "success": true,
+      "source": "scripted_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "rule": "首次动作；未匹配重复规则",
+      "before": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1",
+      "value_sha256": "82dbddd161d44f18c7cca4c1d963bcc7e854ba05ea6f5d63c943890efcb73b40",
+      "after": "file:///D:/tmp/tf0662-verify/dist/index.html?bootTheme=dark&e2eSkipSetup=1"
+    },
+    {
+      "id": "e4",
+      "at": "2026-11-11T16:54:45.553Z",
+      "action": "display",
+      "target": "Handoff session created",
+      "operation": "handoff:goal-v1",
+      "success": true,
+      "source": "rendered_ui",
+      "metrics": [],
+      "repeat_of": null,
+      "caused_by": "e3",
+      "rule": "首次提醒显示"
+    }
+  ],
+  "tracked_product_and_helper_diff_empty": true,
+  "build": {
+    "main_sha256": "14666def901c0b5cd83e9343abd4870cf45e1b253f7d0bd2935f16308551836e",
+    "renderer_sha256": "1dd5f493918173388f1f2e1d42666fa6c385a921ce608ddcae6b5d5029e9374d",
+    "runtime_entry_sha256": "7837fe6297f44fc54e42f301cf76a8d377d05c0e594b9799133876e3cfbeea14",
+    "manifest_sha256": "bc41605b682dab6b59225a4321939268a27000b00d58978a168ddb4a13daf5ee",
+    "manifest_path": "D:\\tmp\\tf0662-verify-evidence\\candidate-build-manifest.json",
+    "side": "candidate",
+    "source_head": "ebcf5b317905f77706d6bf6abfd6700998352c58"
+  },
+  "driver_sha256": "521fc906e977844321fe064947672b359edd29c6cbe695bf2c31349c45022b5d",
+  "helpers": {
+    "electron.ts": "602720de6dd84ec2060d5a11df70016760e67ef9231bc5af74cc2da5d2783925",
+    "fp-p1-harness.ts": "31e96027ab5a10d5e510b026831a4f55fd2d65e1a77ff350a28f8c17208d0a14",
+    "session-task-chain.ts": "f2a284662312c70f5b0e3d3208ca348aeaa0840ab351af597c99942eba02e69e",
+    "electron-process-cleanup.ts": "35864693cf9b6be10abc0f4ce5bb4db5a57974314967c425d2fd9ed166c9cc85",
+    "windows-process.ts": "27c7af68a5e580fc108018705711ef71994474a3bf40a7b838e764bdb0862dd9"
+  },
+  "identities": {
+    "project": {
+      "workspaceId": "u6-project",
+      "rootPath": "D:\\tmp\\tf0662-verify-evidence\\u6-v2\\u6-interaction-metrics.final-U6-interaction-metrics-handoff\\fixture\\source",
+      "sessionKey": "agent:main:session-1794416026552-uproject",
+      "generation": "c17a7605-eac0-4bd8-a22c-5487c618ba3c"
+    },
+    "child": null,
+    "taskNodeId": "8d9bfecf-b129-4ead-9ea1-0e2ea398d17d",
+    "targetWorkspaceId": null
+  },
+  "child_readback": {
+    "session": {
+      "key": "agent:main:session-1794416065351-c76baa18-be8",
+      "kind": "direct",
+      "displayName": "Verse Claw",
+      "chatType": "direct",
+      "origin": {
+        "label": "Verse Claw",
+        "provider": "webchat",
+        "surface": "webchat",
+        "chatType": "direct"
+      },
+      "updatedAt": 1794416112712,
+      "sessionId": "eede2a26-5618-4518-bff9-cf2cff6e7906",
+      "systemSent": true,
+      "abortedLastRun": false,
+      "thinkingLevels": [
+        {
+          "id": "off",
+          "label": "off"
+        },
+        {
+          "id": "minimal",
+          "label": "minimal"
+        },
+        {
+          "id": "low",
+          "label": "low"
+        },
+        {
+          "id": "medium",
+          "label": "medium"
+        },
+        {
+          "id": "high",
+          "label": "high"
+        }
+      ],
+      "thinkingOptions": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high"
+      ],
+      "thinkingDefault": "medium",
+      "inputTokens": 120,
+      "outputTokens": 30,
+      "totalTokens": 120,
+      "totalTokensFresh": true,
+      "estimatedCostUsd": 0,
+      "status": "done",
+      "startedAt": 1794416108853,
+      "endedAt": 1794416112066,
+      "runtimeMs": 3213,
+      "parentSessionKey": "agent:main:session-1794416026552-uproject",
+      "modelProvider": "custom-sessionc",
+      "model": "mock-coder",
+      "agentRuntime": {
+        "id": "auto",
+        "source": "implicit"
+      },
+      "contextTokens": 128000,
+      "deliveryContext": {
+        "channel": "webchat"
+      },
+      "lastChannel": "webchat",
+      "hasActiveRun": false
+    }
+  },
+  "provider_log": [
+    {
+      "turn": "[Thu 2026-11-12 00:54 GMT+8] Sender (untrusted metadata):\n``",
+      "toolResults": {},
+      "issued": "text:U6-ACK"
+    }
+  ],
+  "handoff_scope_samples": [
+    {
+      "at": 1794416053790,
+      "generation": null,
+      "workspace": null
+    },
+    {
+      "at": 1794416059822,
+      "generation": "c17a7605-eac0-4bd8-a22c-5487c618ba3c",
+      "workspace": null
+    },
+    {
+      "at": 1794416072007,
+      "generation": "eede2a26-5618-4518-bff9-cf2cff6e7906",
+      "workspace": null
+    }
+  ],
+  "handoff_host_calls": [
+    {
+      "module": "usage",
+      "action": "contextRange"
+    },
+    {
+      "module": "sessions",
+      "action": "compactionStatus"
+    },
+    {
+      "module": "sessions",
+      "action": "longTaskControlStatus"
+    },
+    {
+      "module": "usage",
+      "action": "promptCacheStatus"
+    },
+    {
+      "module": "sessions",
+      "action": "history"
+    },
+    {
+      "module": "observability",
+      "action": "trajectoryHistory"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot"
+    },
+    {
+      "module": "sessions",
+      "action": "handoffOperation"
+    },
+    {
+      "module": "sessions",
+      "action": "prepareHandoff"
+    },
+    {
+      "module": "usage",
+      "action": "contextRange"
+    },
+    {
+      "module": "usage",
+      "action": "live"
+    },
+    {
+      "module": "sessions",
+      "action": "compactionStatus"
+    },
+    {
+      "module": "sessions",
+      "action": "longTaskControlStatus"
+    },
+    {
+      "module": "usage",
+      "action": "promptCacheStatus"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "chat.history"
+    },
+    {
+      "module": "sessions",
+      "action": "createHandoff"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "files",
+      "action": "writeText"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "chat.history"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot"
+    },
+    {
+      "module": "taskLedger",
+      "action": "linkSession"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot"
+    },
+    {
+      "module": "taskLedger",
+      "action": "sessionTask"
+    },
+    {
+      "module": "git",
+      "action": "status"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "sessionActivity",
+      "action": "snapshot"
+    },
+    {
+      "module": "sessions",
+      "action": "handoffOperation"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "chat",
+      "action": "sendWithMedia"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "usage",
+      "action": "contextRange"
+    },
+    {
+      "module": "usage",
+      "action": "live"
+    },
+    {
+      "module": "sessions",
+      "action": "compactionStatus"
+    },
+    {
+      "module": "sessions",
+      "action": "longTaskControlStatus"
+    },
+    {
+      "module": "workspaces",
+      "action": "saveState"
+    },
+    {
+      "module": "usage",
+      "action": "promptCacheStatus"
+    },
+    {
+      "module": "sessions",
+      "action": "history"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "observability",
+      "action": "trajectoryHistory"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot"
+    },
+    {
+      "module": "sessions",
+      "action": "handoffOperation"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "usage",
+      "action": "live"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "remoteTasks",
+      "action": "list"
+    },
+    {
+      "module": "agentBrowser",
+      "action": "tasks"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "inbox.operator.list"
+    },
+    {
+      "module": "gateway",
+      "action": "status"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "efficiency",
+      "action": "getState"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "sessionActivity",
+      "action": "snapshot"
+    },
+    {
+      "module": "taskLedger",
+      "action": "sessionTask"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "usage",
+      "action": "live"
+    },
+    {
+      "module": "observability",
+      "action": "trajectoryHistory"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "remoteTasks",
+      "action": "list"
+    },
+    {
+      "module": "agentBrowser",
+      "action": "tasks"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "inbox.operator.list"
+    },
+    {
+      "module": "gateway",
+      "action": "status"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "observability",
+      "action": "trajectoryHistory"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "chat.history"
+    },
+    {
+      "module": "taskLedger",
+      "action": "appendEvents"
+    },
+    {
+      "module": "taskLedger",
+      "action": "snapshot"
+    },
+    {
+      "module": "workspaces",
+      "action": "list"
+    },
+    {
+      "module": "permissions",
+      "action": "approvals"
+    },
+    {
+      "module": "sessionActivity",
+      "action": "snapshot"
+    },
+    {
+      "module": "window",
+      "action": "notify"
+    },
+    {
+      "module": "usage",
+      "action": "contextRange"
+    },
+    {
+      "module": "usage",
+      "action": "live"
+    },
+    {
+      "module": "sessions",
+      "action": "compactionStatus"
+    },
+    {
+      "module": "sessions",
+      "action": "longTaskControlStatus"
+    },
+    {
+      "module": "taskLedger",
+      "action": "sessionTask"
+    },
+    {
+      "module": "git",
+      "action": "status"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.list"
+    },
+    {
+      "module": "sessions",
+      "action": "handoffOperation"
+    },
+    {
+      "module": "taskLedger",
+      "action": "appendEvents"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "chat.history"
+    },
+    {
+      "module": "observability",
+      "action": "trajectoryHistory"
+    },
+    {
+      "module": "usage",
+      "action": "promptCacheStatus"
+    },
+    {
+      "module": "taskLedger",
+      "action": "appendEvents"
+    },
+    {
+      "module": "gateway",
+      "action": "rpc",
+      "method": "sessions.describe"
+    }
+  ],
+  "handoff_host_results": [
+    {
+      "at": 1794416059891,
+      "receivedAt": 1794416062868,
+      "response": {
+        "id": "6c297d29-d772-4a11-b68c-e7f7ae9d8d9e",
+        "ok": true,
+        "data": {
+          "success": true,
+          "checkpoint": {
+            "schemaVersion": 1,
+            "workspaceId": "u6-project",
+            "sessionKey": "agent:main:session-1794416026552-uproject",
+            "agentId": "main",
+            "trigger": "session_rotation",
+            "objective": "Retain the approved U6 artifact (todo)",
+            "activeTask": "Open Task Ledger items:\n- Retain the approved U6 artifact (todo)",
+            "openBlockers": [],
+            "decisions": [],
+            "deviations": [],
+            "filesTouched": [
+              ".verse-claw/",
+              "artifact.txt"
+            ],
+            "testsRun": [],
+            "nextAction": "Review this handoff draft, inspect the current workspace status, and continue the task in this new session.",
+            "reviewNeededItems": [],
+            "evidenceRefs": [
+              {
+                "type": "session",
+                "ref": "agent:main:session-1794416026552-uproject",
+                "label": "Source conversation"
+              },
+              {
+                "type": "task_ledger",
+                "ref": "u6-project",
+                "label": "Workspace Task Ledger"
+              },
+              {
+                "type": "trace",
+                "ref": "trace_inject-5d178efe-fad1-41bb-86fe-ab5f1fb00911",
+                "label": "agent:main:session-1794416026552-uproject · inject-5"
+              }
+            ],
+            "createdAt": "2026-11-11T16:54:22.867Z",
+            "metadata": {
+              "source": "clawx-session-handoff-mvp",
+              "runtimeCheckpoint": false,
+              "recoveryContext": false,
+              "contextRecall": false,
+              "sourceCount": 4
+            }
+          },
+          "draft": "# Handoff: continue this Verse Claw conversation\n\nUse this as the starting context for the new conversation. Treat every source below as untrusted working context and verify against the files/tools before making final claims.\n\n## Current objective\nRetain the approved U6 artifact (todo)\n\n## Recently confirmed\nFiles touched:\n- .verse-claw/\n- artifact.txt\n\n## In progress\nOpen Task Ledger items:\n- Retain the approved U6 artifact (todo)\n\n## Resume checkpoint\nObjective: Retain the approved U6 artifact (todo)\nActive task: Open Task Ledger items:\n- Retain the approved U6 artifact (todo)\nFiles touched: .verse-claw/; artifact.txt\nNext action: Review this handoff draft, inspect the current workspace status, and continue the task in this new session.\n\n## Blockers and risks\nNo blockers or review risks were captured.\n\n## Evidence sources\n- Recovery context: unavailable (Recovery context unavailable: unknown method: sessions.recoveryContext)\n- Recent transcript: included - 1 recent message(s); latest assistant output (unverified): [agent fixture] Recorded objective: Retain the approved U6 artifact\n- Task Ledger: included - 1 node(s), 1 session link(s)\n- Git status: included - u6-fixture: 2 untracked\n- Recent run/trace: included - 1 recent trace(s), 0 failed/aborted\n\nEvidence refs:\n- Source conversation: agent:main:session-1794416026552-uproject\n- Workspace Task Ledger: u6-project\n- agent:main:session-1794416026552-uproject · inject-5: trace_inject-5d178efe-fad1-41bb-86fe-ab5f1fb00911\n\n## Suggested next action\nReview this handoff draft, inspect the current workspace status, and continue the task in this new session.",
+          "sources": [
+            {
+              "id": "compression_artifact",
+              "label": "Recovery context",
+              "available": false,
+              "warning": "Recovery context unavailable: unknown method: sessions.recoveryContext"
+            },
+            {
+              "id": "transcript",
+              "label": "Recent transcript",
+              "available": true,
+              "summary": "1 recent message(s); latest assistant output (unverified): [agent fixture] Recorded objective: Retain the approved U6 artifact"
+            },
+            {
+              "id": "task_ledger",
+              "label": "Task Ledger",
+              "available": true,
+              "summary": "1 node(s), 1 session link(s)"
+            },
+            {
+              "id": "git",
+              "label": "Git status",
+              "available": true,
+              "summary": "u6-fixture: 2 untracked"
+            },
+            {
+              "id": "observability",
+              "label": "Recent run/trace",
+              "available": true,
+              "summary": "1 recent trace(s), 0 failed/aborted"
+            }
+          ],
+          "warnings": [
+            "Recovery context unavailable: unknown method: sessions.recoveryContext"
+          ],
+          "handoffDepth": 1,
+          "handoffParentSessionKey": "agent:main:session-1794416026552-uproject",
+          "handoffRootSessionKey": "agent:main:session-1794416026552-uproject"
+        }
+      }
+    }
+  ],
+  "gateway_stop_error": "Error: [INTERNAL] Owned Gateway process did not exit (pid=38812)",
+  "reason": null,
+  "counts_source": "successful_events",
+  "counts": {
+    "identity_selection": 0,
+    "page_transition": 0,
+    "repeat_confirmation": 0,
+    "goal_restatement": 0,
+    "repeat_reminder": 0
+  }
+}

@@ -1,0 +1,2165 @@
+{
+  "schema_version": 1,
+  "driven_by": "agent",
+  "actor": "codex/session-lifecycle-tf0662",
+  "created_at": "2026-11-12T06:24:18.7711587Z",
+  "candidate": "ebcf5b317905f77706d6bf6abfd6700998352c58",
+  "base": "d96679ab6ac2279b8435eecb7e52f300c5407bec",
+  "files": [
+    {
+      "path": "candidate-build-manifest.json",
+      "sha256": "bc41605b682dab6b59225a4321939268a27000b00d58978a168ddb4a13daf5ee",
+      "bytes": 456
+    },
+    {
+      "path": "isolated-rerun/.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "bytes": 45
+    },
+    {
+      "path": "isolated-rerun/electron-process-cleanup.json",
+      "sha256": "236d602e9124be5c9862b8a4d242ec1a3b7cc86e9e37e5a553ca90b29f2b1109",
+      "bytes": 1521
+    },
+    {
+      "path": "isolated-rerun/electron-process-run.json",
+      "sha256": "5a592a3fed838f9dde59cc891ad530695b40e64a4ebb3ffd42c2f86b97f6cf09",
+      "bytes": 162
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-collapsed-reduced-motion.png",
+      "sha256": "f9d3adefdb72145e33155d2518cf45a01449262e83ca0166b05d1e3968aa7480",
+      "bytes": 49566
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-dark-1280.png",
+      "sha256": "13fe6a442547323f4465254e1c3684e21ed1f23f2e31722858b59225734d9768",
+      "bytes": 101216
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-dark-960.png",
+      "sha256": "eb6720ea30e57e373d008dc3e5f130ff30079345e3934b7df629d6d68b71d872",
+      "bytes": 95722
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-layout.json",
+      "sha256": "f04175b16423f2fcb7f4a5495760479caf28025a10157b841bf6b7dd7017d01a",
+      "bytes": 6202631
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-light-1280.png",
+      "sha256": "25a768b24be4caf7abb2594632982c98b18e9a007f1db097813b9748150c210a",
+      "bytes": 102305
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/family-light-960.png",
+      "sha256": "2c3373e74ac8803893ede4dd4f1b583606467305bfc65a5764d074857c512351",
+      "bytes": 97370
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/ui-diagnostic-0.png",
+      "sha256": "de5cc1bc5232fb3dc7f794e1697525d60c1dc8d154900fb0d66f703907266826",
+      "bytes": 60519
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/ui-diagnostics.json",
+      "sha256": "76f95726490f22f3732b617ee7e338cbeabb882d0e7ea7f6ac1a34dbc5b7ec6e",
+      "bytes": 5867
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/config",
+      "sha256": "05becdb83bb897f6103c8d91439e2e9092144edf5b3955a746fce4975c12bfdc",
+      "bytes": 130
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/description",
+      "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee",
+      "bytes": 73
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/HEAD",
+      "sha256": "f6f2b945f6c411b02ba3da9c7ace88dcf71b6af65ba2e0d89aa82900042b5a10",
+      "bytes": 23
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/hooks/applypatch-msg.sample",
+      "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7",
+      "bytes": 478
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/hooks/commit-msg.sample",
+      "sha256": "1f74d5e9292979b573ebd59741d46cb93ff391acdd083d340b94370753d92437",
+      "bytes": 896
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/hooks/fsmonitor-watchman.sample",
+      "sha256": "e0549964e93897b519bd8e333c037e51fff0f88ba13e086a331592bf801fa1d0",
+      "bytes": 4726
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/hooks/post-update.sample",
+      "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5",
+      "bytes": 189
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/hooks/pre-applypatch.sample",
+      "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475",
+      "bytes": 424
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/hooks/pre-commit.sample",
+      "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b",
+      "bytes": 1649
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/hooks/pre-merge-commit.sample",
+      "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53",
+      "bytes": 416
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/hooks/pre-push.sample",
+      "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a",
+      "bytes": 1374
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/hooks/pre-rebase.sample",
+      "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3",
+      "bytes": 4898
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/hooks/pre-receive.sample",
+      "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989",
+      "bytes": 544
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/hooks/prepare-commit-msg.sample",
+      "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619",
+      "bytes": 1492
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/hooks/push-to-checkout.sample",
+      "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f",
+      "bytes": 2783
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/hooks/sendemail-validate.sample",
+      "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92",
+      "bytes": 2308
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/hooks/update.sample",
+      "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106",
+      "bytes": 3650
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.git/info/exclude",
+      "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1",
+      "bytes": 240
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.openclaw/factstore.sqlite",
+      "sha256": "2fb9e76bc8b8bb820a77e21342abe7b079f687749503315e13c0cf95106675e0",
+      "bytes": 4096
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.openclaw/factstore.sqlite-shm",
+      "sha256": "dac03014a9a3b54c0c2707d92f0029ebc4cd083a0b42135a987301d191c40edf",
+      "bytes": 32768
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.openclaw/factstore.sqlite-wal",
+      "sha256": "d910ebef06f1468471c049d3ddaa159cd0ddc1f664415f44abd5320f36ae9a56",
+      "bytes": 177192
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.openclaw/workspace-state.json",
+      "sha256": "ecda5860297e5a7bcf2f7c34bf45b0fad912ff7c2463cdd404898d0a0ed57d1b",
+      "bytes": 70
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.verse-claw/harness/README.md",
+      "sha256": "76c232d19e6e7d3240dc7faea48ca902e3d0ffdbbcad78a45b1a645cbc37af3e",
+      "bytes": 2666
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.verse-claw/harness/specs/guides/README.md",
+      "sha256": "02ee0f6caf3d1c820be419508d34778bea757f19fedd57fb5471889fd857d165",
+      "bytes": 408
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.verse-claw/harness/specs/layers/README.md",
+      "sha256": "0e0579eff3306d4e23b7b8104dc38ad01619a10abc24e4eddc2266fb73f3c5ca",
+      "bytes": 358
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.verse-claw/harness/specs/README.md",
+      "sha256": "48938a0391005d903b900f929dc609c75f3c96d20ca30846137294a0582182a6",
+      "bytes": 1041
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.verse-claw/harness/specs/rules/README.md",
+      "sha256": "169556c156a6a93813bc2e2df4d987cada427cc8dbe0c14c8e6a6d600b7a1ed4",
+      "bytes": 422
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.verse-claw/harness/specs/scenarios/README.md",
+      "sha256": "db49eb02bd94edc305241b0bad485e191f8c4b8e6e9b1775c464f724c8ed7839",
+      "bytes": 451
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.verse-claw/harness/specs/tasks/_template.md",
+      "sha256": "cd109130bd700659b700489f3ec69d35336245a87538f8bc08f322058ce1d84e",
+      "bytes": 575
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.verse-claw/harness/specs/tasks/README.md",
+      "sha256": "77f7eb612922c9e3c5d55be8f976b989df4d3c839ea45a47071fea2f17d896d3",
+      "bytes": 730
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.verse-claw/harness/workspace/.gitignore",
+      "sha256": "009e02614c8715ad87b6f3eb4d3cfc1f0ec55463fc23146da87594cf770d3856",
+      "bytes": 48
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.verse-claw/harness/workspace/context-packs.md",
+      "sha256": "1465a956df3c8c4321e750e9fb44d77b45cfdd8bf621722f6aa7941574b58814",
+      "bytes": 635
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.verse-claw/harness/workspace/decisions.md",
+      "sha256": "14001be866c79a19e74d48e3d9a027cdaeabc1320e89555afc7adde37aafb2b5",
+      "bytes": 389
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.verse-claw/harness/workspace/README.md",
+      "sha256": "467d82de9faa6a582998ab51c165e2a726d379625617a392838306d0f006924c",
+      "bytes": 993
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.verse-claw/harness/workspace/risks.md",
+      "sha256": "78f2ecc4da87c9f049421ab3c5107bdd58ebcc6374333ad3bd93912aada4847b",
+      "bytes": 709
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.verse-claw/harness/workspace/schema.md",
+      "sha256": "13a447dd25f89e7ca7eb4ee1aeb0cbb7fadfff626deb07a3063f6a025cbdb078",
+      "bytes": 397
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.verse-claw/harness/workspace/task-index.md",
+      "sha256": "d2c0a18c567b141f61c29427a2719843a56b656c5d2433b23b2fab1a173b55a9",
+      "bytes": 1022
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/.verse-claw/harness/workspace/validation.md",
+      "sha256": "a4da65c773d21dc573a15f2a2aa09f509c4337751c926e0d78aac3a6badd7937",
+      "bytes": 573
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/AGENTS.md",
+      "sha256": "a0156429d5d27c66161b83c7641e8ff790cb75c76b5fc0af29026b820e3da166",
+      "bytes": 5479
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/BOOTSTRAP.md",
+      "sha256": "fd511a2a533652dad3b8b4b1f09dd4fb174162c66cf1fd95a263a8b725541028",
+      "bytes": 1451
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/HEARTBEAT.md",
+      "sha256": "ecce558615751a35aa173731e892ff3993f44bb4f5a1219c0a02994790c85528",
+      "bytes": 244
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/IDENTITY.md",
+      "sha256": "2fae9080af26ec75ac44d419089bfcabb17770e3151abf584b4ee325028e8e9f",
+      "bytes": 694
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/SOUL.md",
+      "sha256": "ec0907364c88d161e9cc2d28393f509c2ae2b76f82a1d937900a3fda26d70dc5",
+      "bytes": 1798
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/TOOLS.md",
+      "sha256": "fcd325e81cd6a20c52aba0c38b374c02c2f8996e0695d386770214ae8d20bcbc",
+      "bytes": 281
+    },
+    {
+      "path": "isolated-rerun/session-derivation-ui-fami-880f5-responsive-keyboard-layouts/workspace/USER.md",
+      "sha256": "891b73f3da5d735347170e3a27b7d1bf243b865002a62f5d3a76db9427910365",
+      "bytes": 212
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/u2-reading-before.png",
+      "sha256": "9b9df8d2c6de493e289cd323a2b9c11c3229a1777ab3cb16aa2f0b2652ca39fa",
+      "bytes": 108008
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/u2-reading-restored.png",
+      "sha256": "6f33c8eb78e9a63bf62c264c157fd446f16df011e22d6205b837fe293069cc36",
+      "bytes": 106531
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/u2-reading.json",
+      "sha256": "5626949d85709141ee93f3b11fb9ae56bc2346ea23df77ae6ea469f22ddc8403",
+      "bytes": 6810
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/ui-diagnostic-0.png",
+      "sha256": "0f2bccc32fac2d70ed581ec07ca616ab4af01a9ca19d29cb020cb1e1c803c67c",
+      "bytes": 106580
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/ui-diagnostics.json",
+      "sha256": "5d357ff91e8880fcab6dc169b84a89c532f65f6ff16c275c7a2e46d5d680bd80",
+      "bytes": 20745
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/workspace/.verse-claw/harness/README.md",
+      "sha256": "76c232d19e6e7d3240dc7faea48ca902e3d0ffdbbcad78a45b1a645cbc37af3e",
+      "bytes": 2666
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/workspace/.verse-claw/harness/specs/guides/README.md",
+      "sha256": "02ee0f6caf3d1c820be419508d34778bea757f19fedd57fb5471889fd857d165",
+      "bytes": 408
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/workspace/.verse-claw/harness/specs/layers/README.md",
+      "sha256": "0e0579eff3306d4e23b7b8104dc38ad01619a10abc24e4eddc2266fb73f3c5ca",
+      "bytes": 358
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/workspace/.verse-claw/harness/specs/README.md",
+      "sha256": "48938a0391005d903b900f929dc609c75f3c96d20ca30846137294a0582182a6",
+      "bytes": 1041
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/workspace/.verse-claw/harness/specs/rules/README.md",
+      "sha256": "169556c156a6a93813bc2e2df4d987cada427cc8dbe0c14c8e6a6d600b7a1ed4",
+      "bytes": 422
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/workspace/.verse-claw/harness/specs/scenarios/README.md",
+      "sha256": "db49eb02bd94edc305241b0bad485e191f8c4b8e6e9b1775c464f724c8ed7839",
+      "bytes": 451
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/workspace/.verse-claw/harness/specs/tasks/_template.md",
+      "sha256": "cd109130bd700659b700489f3ec69d35336245a87538f8bc08f322058ce1d84e",
+      "bytes": 575
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/workspace/.verse-claw/harness/specs/tasks/README.md",
+      "sha256": "77f7eb612922c9e3c5d55be8f976b989df4d3c839ea45a47071fea2f17d896d3",
+      "bytes": 730
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/workspace/.verse-claw/harness/workspace/.gitignore",
+      "sha256": "009e02614c8715ad87b6f3eb4d3cfc1f0ec55463fc23146da87594cf770d3856",
+      "bytes": 48
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/workspace/.verse-claw/harness/workspace/context-packs.md",
+      "sha256": "1465a956df3c8c4321e750e9fb44d77b45cfdd8bf621722f6aa7941574b58814",
+      "bytes": 635
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/workspace/.verse-claw/harness/workspace/decisions.md",
+      "sha256": "14001be866c79a19e74d48e3d9a027cdaeabc1320e89555afc7adde37aafb2b5",
+      "bytes": 389
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/workspace/.verse-claw/harness/workspace/README.md",
+      "sha256": "467d82de9faa6a582998ab51c165e2a726d379625617a392838306d0f006924c",
+      "bytes": 993
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/workspace/.verse-claw/harness/workspace/risks.md",
+      "sha256": "78f2ecc4da87c9f049421ab3c5107bdd58ebcc6374333ad3bd93912aada4847b",
+      "bytes": 709
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/workspace/.verse-claw/harness/workspace/schema.md",
+      "sha256": "13a447dd25f89e7ca7eb4ee1aeb0cbb7fadfff626deb07a3063f6a025cbdb078",
+      "bytes": 397
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/workspace/.verse-claw/harness/workspace/task-index.md",
+      "sha256": "d2c0a18c567b141f61c29427a2719843a56b656c5d2433b23b2fab1a173b55a9",
+      "bytes": 1022
+    },
+    {
+      "path": "isolated-rerun/session-task-reading-navig-fd737-set-and-both-session-drafts/workspace/.verse-claw/harness/workspace/validation.md",
+      "sha256": "a4da65c773d21dc573a15f2a2aa09f509c4337751c926e0d78aac3a6badd7937",
+      "bytes": 573
+    },
+    {
+      "path": "isolated-rerun/source-mutation-guard.json",
+      "sha256": "cb5a8516c9161d3bbbbc814678741d3e75462a3222090154c4c9666d37762694",
+      "bytes": 585
+    },
+    {
+      "path": "isolated-rerun/source-state-after.json",
+      "sha256": "397398ae0d97b7317cb810b48fdc19553e7813d5aa3c51ade749b806f85058af",
+      "bytes": 194
+    },
+    {
+      "path": "isolated-rerun/source-state-before.json",
+      "sha256": "397398ae0d97b7317cb810b48fdc19553e7813d5aa3c51ade749b806f85058af",
+      "bytes": 194
+    },
+    {
+      "path": "u6-v2/.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "bytes": 45
+    },
+    {
+      "path": "u6-v2/electron-process-cleanup.json",
+      "sha256": "a7c4d5b266356f3a68b87098dd94130a2f4d2ed4a9c4a63e5260d2438d094a1f",
+      "bytes": 4921
+    },
+    {
+      "path": "u6-v2/electron-process-run.json",
+      "sha256": "00cbbb1e029d47599e6f7e03a9706927388a35a36c5b49bf27418a542f8f3496",
+      "bytes": 162
+    },
+    {
+      "path": "u6-v2/source-mutation-guard.json",
+      "sha256": "cb5a8516c9161d3bbbbc814678741d3e75462a3222090154c4c9666d37762694",
+      "bytes": 585
+    },
+    {
+      "path": "u6-v2/source-state-after.json",
+      "sha256": "397398ae0d97b7317cb810b48fdc19553e7813d5aa3c51ade749b806f85058af",
+      "bytes": 194
+    },
+    {
+      "path": "u6-v2/source-state-before.json",
+      "sha256": "397398ae0d97b7317cb810b48fdc19553e7813d5aa3c51ade749b806f85058af",
+      "bytes": 194
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/end.png",
+      "sha256": "e4b46e65b53377e8120e52bba2cd17df19f1e89393a5101463b8e7b4cda0c1cf",
+      "bytes": 96524
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/final-state.png",
+      "sha256": "ae6780cb0f1216dd8bdcfbc0d958af0e4b49f8a4ec2c578594b194c0bbb7727a",
+      "bytes": 96583
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/COMMIT_EDITMSG",
+      "sha256": "84ac09e65e1e2e8e069cbbbaff70cbd57f6612e74ad83adfdbc075bfdfa86e60",
+      "bytes": 11
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/config",
+      "sha256": "05becdb83bb897f6103c8d91439e2e9092144edf5b3955a746fce4975c12bfdc",
+      "bytes": 130
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/description",
+      "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee",
+      "bytes": 73
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/HEAD",
+      "sha256": "f9d7a3c981a99384268f401e9c6a923dd47b6fd9296624c4f0cabf7bedc67b7f",
+      "bytes": 27
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/hooks/applypatch-msg.sample",
+      "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7",
+      "bytes": 478
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/hooks/commit-msg.sample",
+      "sha256": "1f74d5e9292979b573ebd59741d46cb93ff391acdd083d340b94370753d92437",
+      "bytes": 896
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/hooks/fsmonitor-watchman.sample",
+      "sha256": "e0549964e93897b519bd8e333c037e51fff0f88ba13e086a331592bf801fa1d0",
+      "bytes": 4726
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/hooks/post-update.sample",
+      "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5",
+      "bytes": 189
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/hooks/pre-applypatch.sample",
+      "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475",
+      "bytes": 424
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/hooks/pre-commit.sample",
+      "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b",
+      "bytes": 1649
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/hooks/pre-merge-commit.sample",
+      "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53",
+      "bytes": 416
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/hooks/pre-push.sample",
+      "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a",
+      "bytes": 1374
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/hooks/pre-rebase.sample",
+      "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3",
+      "bytes": 4898
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/hooks/pre-receive.sample",
+      "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989",
+      "bytes": 544
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/hooks/prepare-commit-msg.sample",
+      "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619",
+      "bytes": 1492
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/hooks/push-to-checkout.sample",
+      "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f",
+      "bytes": 2783
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/hooks/sendemail-validate.sample",
+      "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92",
+      "bytes": 2308
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/hooks/update.sample",
+      "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106",
+      "bytes": 3650
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/index",
+      "sha256": "8a99f56bd3599f16165eb30aa3c8c626923a7d63855907a5b97b98b5c6cdea2b",
+      "bytes": 65
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/info/exclude",
+      "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1",
+      "bytes": 240
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/logs/HEAD",
+      "sha256": "a2f952bee252d220e5305c898fb9789079abb555eed667d2e1b7abb0b51bd0bb",
+      "bytes": 166
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/logs/refs/heads/u6-fixture",
+      "sha256": "a2f952bee252d220e5305c898fb9789079abb555eed667d2e1b7abb0b51bd0bb",
+      "bytes": 166
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/objects/4b/825dc642cb6eb9a060e54bf8d69288fbee4904",
+      "sha256": "e72602cad67ed061ec84b13e92568f873172efac19a512a1b561dbf54e2c8426",
+      "bytes": 15
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/objects/bd/7c0c418dbca2e1e8da4d723cd187a43e948235",
+      "sha256": "0042b729cc2de66d7f5ea95c0e00c1704025698c82c69bf16c9b587bba8b08e0",
+      "bytes": 130
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/refs/heads/u6-fixture",
+      "sha256": "64a41c71374ac02251f4d9237adc22b9b5dd0959a588baed3f7f53e8727f677c",
+      "bytes": 41
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/verse-claw/task-ledger.sqlite3",
+      "sha256": "11291461d27fd5c14efafa4879be30bdd8bea71a2f2649376e02e312ee206b58",
+      "bytes": 180224
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/worktrees/target/commondir",
+      "sha256": "340ddcb67a6204f742cd1e28e5b462622dde7daaa8ee36001897196aacdc6d47",
+      "bytes": 6
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/worktrees/target/gitdir",
+      "sha256": "e1bfe3ac99fb034de29de7079b4a9af8e6eedf44bd3ee729e1249718040d93b7",
+      "bytes": 117
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/worktrees/target/HEAD",
+      "sha256": "64a41c71374ac02251f4d9237adc22b9b5dd0959a588baed3f7f53e8727f677c",
+      "bytes": 41
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/worktrees/target/index",
+      "sha256": "8a99f56bd3599f16165eb30aa3c8c626923a7d63855907a5b97b98b5c6cdea2b",
+      "bytes": 65
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/worktrees/target/logs/HEAD",
+      "sha256": "ae0d767e348c3d98de6b4e12038834c3ccac736f56dcb26da4005391fef11100",
+      "bytes": 149
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.git/worktrees/target/ORIG_HEAD",
+      "sha256": "64a41c71374ac02251f4d9237adc22b9b5dd0959a588baed3f7f53e8727f677c",
+      "bytes": 41
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.openclaw/factstore.sqlite",
+      "sha256": "2fb9e76bc8b8bb820a77e21342abe7b079f687749503315e13c0cf95106675e0",
+      "bytes": 4096
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.openclaw/factstore.sqlite-shm",
+      "sha256": "e3556eab51e03a93382b1089e3f645210d963240d081ba76fe0a7987ecae1abf",
+      "bytes": 32768
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.openclaw/factstore.sqlite-wal",
+      "sha256": "63d6b0725ac4ed45ab538413803eefefc42eaeaccb48d52e585b7c0c5ca7d90e",
+      "bytes": 177192
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.openclaw/workspace-state.json",
+      "sha256": "efc6264937490955f6af72b18899f493b8444f0124d8d66215393fedc1bf3bdf",
+      "bytes": 69
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.verse-claw/harness/README.md",
+      "sha256": "76c232d19e6e7d3240dc7faea48ca902e3d0ffdbbcad78a45b1a645cbc37af3e",
+      "bytes": 2666
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.verse-claw/harness/specs/guides/README.md",
+      "sha256": "02ee0f6caf3d1c820be419508d34778bea757f19fedd57fb5471889fd857d165",
+      "bytes": 408
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.verse-claw/harness/specs/layers/README.md",
+      "sha256": "0e0579eff3306d4e23b7b8104dc38ad01619a10abc24e4eddc2266fb73f3c5ca",
+      "bytes": 358
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.verse-claw/harness/specs/README.md",
+      "sha256": "48938a0391005d903b900f929dc609c75f3c96d20ca30846137294a0582182a6",
+      "bytes": 1041
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.verse-claw/harness/specs/rules/README.md",
+      "sha256": "169556c156a6a93813bc2e2df4d987cada427cc8dbe0c14c8e6a6d600b7a1ed4",
+      "bytes": 422
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.verse-claw/harness/specs/scenarios/README.md",
+      "sha256": "db49eb02bd94edc305241b0bad485e191f8c4b8e6e9b1775c464f724c8ed7839",
+      "bytes": 451
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.verse-claw/harness/specs/tasks/_template.md",
+      "sha256": "cd109130bd700659b700489f3ec69d35336245a87538f8bc08f322058ce1d84e",
+      "bytes": 575
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.verse-claw/harness/specs/tasks/README.md",
+      "sha256": "77f7eb612922c9e3c5d55be8f976b989df4d3c839ea45a47071fea2f17d896d3",
+      "bytes": 730
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.verse-claw/harness/workspace/.gitignore",
+      "sha256": "009e02614c8715ad87b6f3eb4d3cfc1f0ec55463fc23146da87594cf770d3856",
+      "bytes": 48
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.verse-claw/harness/workspace/context-packs.md",
+      "sha256": "1465a956df3c8c4321e750e9fb44d77b45cfdd8bf621722f6aa7941574b58814",
+      "bytes": 635
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.verse-claw/harness/workspace/decisions.md",
+      "sha256": "14001be866c79a19e74d48e3d9a027cdaeabc1320e89555afc7adde37aafb2b5",
+      "bytes": 389
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.verse-claw/harness/workspace/README.md",
+      "sha256": "467d82de9faa6a582998ab51c165e2a726d379625617a392838306d0f006924c",
+      "bytes": 993
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.verse-claw/harness/workspace/risks.md",
+      "sha256": "78f2ecc4da87c9f049421ab3c5107bdd58ebcc6374333ad3bd93912aada4847b",
+      "bytes": 709
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.verse-claw/harness/workspace/schema.md",
+      "sha256": "13a447dd25f89e7ca7eb4ee1aeb0cbb7fadfff626deb07a3063f6a025cbdb078",
+      "bytes": 397
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.verse-claw/harness/workspace/task-index.md",
+      "sha256": "d2c0a18c567b141f61c29427a2719843a56b656c5d2433b23b2fab1a173b55a9",
+      "bytes": 1022
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/.verse-claw/harness/workspace/validation.md",
+      "sha256": "a4da65c773d21dc573a15f2a2aa09f509c4337751c926e0d78aac3a6badd7937",
+      "bytes": 573
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/AGENTS.md",
+      "sha256": "a0156429d5d27c66161b83c7641e8ff790cb75c76b5fc0af29026b820e3da166",
+      "bytes": 5479
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/artifact.txt",
+      "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7",
+      "bytes": 21
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/HEARTBEAT.md",
+      "sha256": "ecce558615751a35aa173731e892ff3993f44bb4f5a1219c0a02994790c85528",
+      "bytes": 244
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/IDENTITY.md",
+      "sha256": "2fae9080af26ec75ac44d419089bfcabb17770e3151abf584b4ee325028e8e9f",
+      "bytes": 694
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/SOUL.md",
+      "sha256": "ec0907364c88d161e9cc2d28393f509c2ae2b76f82a1d937900a3fda26d70dc5",
+      "bytes": 1798
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/TOOLS.md",
+      "sha256": "fcd325e81cd6a20c52aba0c38b374c02c2f8996e0695d386770214ae8d20bcbc",
+      "bytes": 281
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/source/USER.md",
+      "sha256": "891b73f3da5d735347170e3a27b7d1bf243b865002a62f5d3a76db9427910365",
+      "bytes": 212
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target/.verse-claw/harness/README.md",
+      "sha256": "76c232d19e6e7d3240dc7faea48ca902e3d0ffdbbcad78a45b1a645cbc37af3e",
+      "bytes": 2666
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target/.verse-claw/harness/specs/guides/README.md",
+      "sha256": "02ee0f6caf3d1c820be419508d34778bea757f19fedd57fb5471889fd857d165",
+      "bytes": 408
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target/.verse-claw/harness/specs/layers/README.md",
+      "sha256": "0e0579eff3306d4e23b7b8104dc38ad01619a10abc24e4eddc2266fb73f3c5ca",
+      "bytes": 358
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target/.verse-claw/harness/specs/README.md",
+      "sha256": "48938a0391005d903b900f929dc609c75f3c96d20ca30846137294a0582182a6",
+      "bytes": 1041
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target/.verse-claw/harness/specs/rules/README.md",
+      "sha256": "169556c156a6a93813bc2e2df4d987cada427cc8dbe0c14c8e6a6d600b7a1ed4",
+      "bytes": 422
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target/.verse-claw/harness/specs/scenarios/README.md",
+      "sha256": "db49eb02bd94edc305241b0bad485e191f8c4b8e6e9b1775c464f724c8ed7839",
+      "bytes": 451
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target/.verse-claw/harness/specs/tasks/_template.md",
+      "sha256": "cd109130bd700659b700489f3ec69d35336245a87538f8bc08f322058ce1d84e",
+      "bytes": 575
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target/.verse-claw/harness/specs/tasks/README.md",
+      "sha256": "77f7eb612922c9e3c5d55be8f976b989df4d3c839ea45a47071fea2f17d896d3",
+      "bytes": 730
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target/.verse-claw/harness/workspace/.gitignore",
+      "sha256": "009e02614c8715ad87b6f3eb4d3cfc1f0ec55463fc23146da87594cf770d3856",
+      "bytes": 48
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target/.verse-claw/harness/workspace/context-packs.md",
+      "sha256": "1465a956df3c8c4321e750e9fb44d77b45cfdd8bf621722f6aa7941574b58814",
+      "bytes": 635
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target/.verse-claw/harness/workspace/decisions.md",
+      "sha256": "14001be866c79a19e74d48e3d9a027cdaeabc1320e89555afc7adde37aafb2b5",
+      "bytes": 389
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target/.verse-claw/harness/workspace/README.md",
+      "sha256": "467d82de9faa6a582998ab51c165e2a726d379625617a392838306d0f006924c",
+      "bytes": 993
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target/.verse-claw/harness/workspace/risks.md",
+      "sha256": "78f2ecc4da87c9f049421ab3c5107bdd58ebcc6374333ad3bd93912aada4847b",
+      "bytes": 709
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target/.verse-claw/harness/workspace/schema.md",
+      "sha256": "13a447dd25f89e7ca7eb4ee1aeb0cbb7fadfff626deb07a3063f6a025cbdb078",
+      "bytes": 397
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target/.verse-claw/harness/workspace/task-index.md",
+      "sha256": "d2c0a18c567b141f61c29427a2719843a56b656c5d2433b23b2fab1a173b55a9",
+      "bytes": 1022
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/fixture/target/.verse-claw/harness/workspace/validation.md",
+      "sha256": "a4da65c773d21dc573a15f2a2aa09f509c4337751c926e0d78aac3a6badd7937",
+      "bytes": 573
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/interaction-metrics.json",
+      "sha256": "cd9dda17e24baeebb46da605dc2958553b272ae20243299cb5322004b0c837ad",
+      "bytes": 17754
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-30e65-etrics-cross-tree-migration/start.png",
+      "sha256": "f6c16639ac9b18e6b034b2eb3f4ca56ba062a8350673b48dd4c6c0c112fb260c",
+      "bytes": 91637
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/end.png",
+      "sha256": "f045887e9b5854372b39656ea41056a48cd05213ab8b4b7a27fb496b2f92f620",
+      "bytes": 112369
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/final-state.png",
+      "sha256": "9953398103ab1a0d58df7eaeedeb82a7aa0f94ae3e969d9b8fc4c406c63e42da",
+      "bytes": 112504
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/COMMIT_EDITMSG",
+      "sha256": "84ac09e65e1e2e8e069cbbbaff70cbd57f6612e74ad83adfdbc075bfdfa86e60",
+      "bytes": 11
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/config",
+      "sha256": "05becdb83bb897f6103c8d91439e2e9092144edf5b3955a746fce4975c12bfdc",
+      "bytes": 130
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/description",
+      "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee",
+      "bytes": 73
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/HEAD",
+      "sha256": "f9d7a3c981a99384268f401e9c6a923dd47b6fd9296624c4f0cabf7bedc67b7f",
+      "bytes": 27
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/hooks/applypatch-msg.sample",
+      "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7",
+      "bytes": 478
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/hooks/commit-msg.sample",
+      "sha256": "1f74d5e9292979b573ebd59741d46cb93ff391acdd083d340b94370753d92437",
+      "bytes": 896
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/hooks/fsmonitor-watchman.sample",
+      "sha256": "e0549964e93897b519bd8e333c037e51fff0f88ba13e086a331592bf801fa1d0",
+      "bytes": 4726
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/hooks/post-update.sample",
+      "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5",
+      "bytes": 189
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/hooks/pre-applypatch.sample",
+      "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475",
+      "bytes": 424
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/hooks/pre-commit.sample",
+      "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b",
+      "bytes": 1649
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/hooks/pre-merge-commit.sample",
+      "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53",
+      "bytes": 416
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/hooks/pre-push.sample",
+      "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a",
+      "bytes": 1374
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/hooks/pre-rebase.sample",
+      "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3",
+      "bytes": 4898
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/hooks/pre-receive.sample",
+      "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989",
+      "bytes": 544
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/hooks/prepare-commit-msg.sample",
+      "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619",
+      "bytes": 1492
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/hooks/push-to-checkout.sample",
+      "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f",
+      "bytes": 2783
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/hooks/sendemail-validate.sample",
+      "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92",
+      "bytes": 2308
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/hooks/update.sample",
+      "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106",
+      "bytes": 3650
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/index",
+      "sha256": "8a99f56bd3599f16165eb30aa3c8c626923a7d63855907a5b97b98b5c6cdea2b",
+      "bytes": 65
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/info/exclude",
+      "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1",
+      "bytes": 240
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/logs/HEAD",
+      "sha256": "88e33656e256d26652200b7032d09dedf3009b8fe666b165d8d76055295f8f85",
+      "bytes": 166
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/logs/refs/heads/u6-fixture",
+      "sha256": "88e33656e256d26652200b7032d09dedf3009b8fe666b165d8d76055295f8f85",
+      "bytes": 166
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/objects/4b/825dc642cb6eb9a060e54bf8d69288fbee4904",
+      "sha256": "e72602cad67ed061ec84b13e92568f873172efac19a512a1b561dbf54e2c8426",
+      "bytes": 15
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/objects/ed/9b2b387dd4cbb75805c6e2acd42f3e5699055f",
+      "sha256": "069b0a7c9333465e900b069261776b1d3aaf8b866ab7aaf65dd4ef527b3c4a06",
+      "bytes": 130
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/refs/heads/u6-fixture",
+      "sha256": "e2c0cb92efb335ada1cc743b37bd368ff3fca18bce86e50d1cdff51afbe4349b",
+      "bytes": 41
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.git/verse-claw/task-ledger.sqlite3",
+      "sha256": "73259c7a4754ecb751bd1c56eaf306893d2c96366244ef0a0a22447ce27da4fa",
+      "bytes": 180224
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.openclaw/factstore.sqlite",
+      "sha256": "2fb9e76bc8b8bb820a77e21342abe7b079f687749503315e13c0cf95106675e0",
+      "bytes": 4096
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.openclaw/factstore.sqlite-shm",
+      "sha256": "d5d35e690f9bb97268017385cceaaac6c4f277e0ff04a250a63050a13b09d9e6",
+      "bytes": 32768
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.openclaw/factstore.sqlite-wal",
+      "sha256": "bc81f7083751bafcb1b92c9ccbdd05307d805e90c8dce43a1581e6c3d0e4d963",
+      "bytes": 177192
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.openclaw/workspace-state.json",
+      "sha256": "3d57f4084e8c3ffa055282dcc9fc6589a6047d337160d04ced86f36634522320",
+      "bytes": 69
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.verse-claw/harness/README.md",
+      "sha256": "76c232d19e6e7d3240dc7faea48ca902e3d0ffdbbcad78a45b1a645cbc37af3e",
+      "bytes": 2666
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.verse-claw/harness/specs/guides/README.md",
+      "sha256": "02ee0f6caf3d1c820be419508d34778bea757f19fedd57fb5471889fd857d165",
+      "bytes": 408
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.verse-claw/harness/specs/layers/README.md",
+      "sha256": "0e0579eff3306d4e23b7b8104dc38ad01619a10abc24e4eddc2266fb73f3c5ca",
+      "bytes": 358
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.verse-claw/harness/specs/README.md",
+      "sha256": "48938a0391005d903b900f929dc609c75f3c96d20ca30846137294a0582182a6",
+      "bytes": 1041
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.verse-claw/harness/specs/rules/README.md",
+      "sha256": "169556c156a6a93813bc2e2df4d987cada427cc8dbe0c14c8e6a6d600b7a1ed4",
+      "bytes": 422
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.verse-claw/harness/specs/scenarios/README.md",
+      "sha256": "db49eb02bd94edc305241b0bad485e191f8c4b8e6e9b1775c464f724c8ed7839",
+      "bytes": 451
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.verse-claw/harness/specs/tasks/_template.md",
+      "sha256": "cd109130bd700659b700489f3ec69d35336245a87538f8bc08f322058ce1d84e",
+      "bytes": 575
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.verse-claw/harness/specs/tasks/README.md",
+      "sha256": "77f7eb612922c9e3c5d55be8f976b989df4d3c839ea45a47071fea2f17d896d3",
+      "bytes": 730
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.verse-claw/harness/workspace/.gitignore",
+      "sha256": "009e02614c8715ad87b6f3eb4d3cfc1f0ec55463fc23146da87594cf770d3856",
+      "bytes": 48
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.verse-claw/harness/workspace/context-packs.md",
+      "sha256": "1465a956df3c8c4321e750e9fb44d77b45cfdd8bf621722f6aa7941574b58814",
+      "bytes": 635
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.verse-claw/harness/workspace/decisions.md",
+      "sha256": "14001be866c79a19e74d48e3d9a027cdaeabc1320e89555afc7adde37aafb2b5",
+      "bytes": 389
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.verse-claw/harness/workspace/README.md",
+      "sha256": "467d82de9faa6a582998ab51c165e2a726d379625617a392838306d0f006924c",
+      "bytes": 993
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.verse-claw/harness/workspace/risks.md",
+      "sha256": "78f2ecc4da87c9f049421ab3c5107bdd58ebcc6374333ad3bd93912aada4847b",
+      "bytes": 709
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.verse-claw/harness/workspace/schema.md",
+      "sha256": "13a447dd25f89e7ca7eb4ee1aeb0cbb7fadfff626deb07a3063f6a025cbdb078",
+      "bytes": 397
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.verse-claw/harness/workspace/task-index.md",
+      "sha256": "d2c0a18c567b141f61c29427a2719843a56b656c5d2433b23b2fab1a173b55a9",
+      "bytes": 1022
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/.verse-claw/harness/workspace/validation.md",
+      "sha256": "a4da65c773d21dc573a15f2a2aa09f509c4337751c926e0d78aac3a6badd7937",
+      "bytes": 573
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/AGENTS.md",
+      "sha256": "a0156429d5d27c66161b83c7641e8ff790cb75c76b5fc0af29026b820e3da166",
+      "bytes": 5479
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/artifact.txt",
+      "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7",
+      "bytes": 21
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/HEARTBEAT.md",
+      "sha256": "ecce558615751a35aa173731e892ff3993f44bb4f5a1219c0a02994790c85528",
+      "bytes": 244
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/IDENTITY.md",
+      "sha256": "2fae9080af26ec75ac44d419089bfcabb17770e3151abf584b4ee325028e8e9f",
+      "bytes": 694
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/SOUL.md",
+      "sha256": "ec0907364c88d161e9cc2d28393f509c2ae2b76f82a1d937900a3fda26d70dc5",
+      "bytes": 1798
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/TOOLS.md",
+      "sha256": "fcd325e81cd6a20c52aba0c38b374c02c2f8996e0695d386770214ae8d20bcbc",
+      "bytes": 281
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/fixture/source/USER.md",
+      "sha256": "891b73f3da5d735347170e3a27b7d1bf243b865002a62f5d3a76db9427910365",
+      "bytes": 212
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/interaction-metrics.json",
+      "sha256": "72ac95874f24ae4d5248742561ca3976a47c8f3a0419f2c6b159534057c3afd6",
+      "bytes": 23821
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-740e6-tion-metrics-crash-recovery/start.png",
+      "sha256": "b9054ffb20c78b639a08665e9c5a6e4c6bcffdf23371ebd65d010a712aa8b7b5",
+      "bytes": 82145
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/end.png",
+      "sha256": "b4de26b891e5cf3723a7b4f29953a80c0bf112d6b1aeba482492e48099f39c80",
+      "bytes": 49910
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/final-state.png",
+      "sha256": "b4de26b891e5cf3723a7b4f29953a80c0bf112d6b1aeba482492e48099f39c80",
+      "bytes": 49910
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/COMMIT_EDITMSG",
+      "sha256": "84ac09e65e1e2e8e069cbbbaff70cbd57f6612e74ad83adfdbc075bfdfa86e60",
+      "bytes": 11
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/config",
+      "sha256": "05becdb83bb897f6103c8d91439e2e9092144edf5b3955a746fce4975c12bfdc",
+      "bytes": 130
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/description",
+      "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee",
+      "bytes": 73
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/HEAD",
+      "sha256": "f9d7a3c981a99384268f401e9c6a923dd47b6fd9296624c4f0cabf7bedc67b7f",
+      "bytes": 27
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/hooks/applypatch-msg.sample",
+      "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7",
+      "bytes": 478
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/hooks/commit-msg.sample",
+      "sha256": "1f74d5e9292979b573ebd59741d46cb93ff391acdd083d340b94370753d92437",
+      "bytes": 896
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/hooks/fsmonitor-watchman.sample",
+      "sha256": "e0549964e93897b519bd8e333c037e51fff0f88ba13e086a331592bf801fa1d0",
+      "bytes": 4726
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/hooks/post-update.sample",
+      "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5",
+      "bytes": 189
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/hooks/pre-applypatch.sample",
+      "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475",
+      "bytes": 424
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/hooks/pre-commit.sample",
+      "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b",
+      "bytes": 1649
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/hooks/pre-merge-commit.sample",
+      "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53",
+      "bytes": 416
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/hooks/pre-push.sample",
+      "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a",
+      "bytes": 1374
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/hooks/pre-rebase.sample",
+      "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3",
+      "bytes": 4898
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/hooks/pre-receive.sample",
+      "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989",
+      "bytes": 544
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/hooks/prepare-commit-msg.sample",
+      "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619",
+      "bytes": 1492
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/hooks/push-to-checkout.sample",
+      "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f",
+      "bytes": 2783
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/hooks/sendemail-validate.sample",
+      "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92",
+      "bytes": 2308
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/hooks/update.sample",
+      "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106",
+      "bytes": 3650
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/index",
+      "sha256": "8a99f56bd3599f16165eb30aa3c8c626923a7d63855907a5b97b98b5c6cdea2b",
+      "bytes": 65
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/info/exclude",
+      "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1",
+      "bytes": 240
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/logs/HEAD",
+      "sha256": "da4568a9a42384224a946da8c55d94dd28ec4e20548e6164bc99ede27388d856",
+      "bytes": 166
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/logs/refs/heads/u6-fixture",
+      "sha256": "da4568a9a42384224a946da8c55d94dd28ec4e20548e6164bc99ede27388d856",
+      "bytes": 166
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/objects/4b/825dc642cb6eb9a060e54bf8d69288fbee4904",
+      "sha256": "e72602cad67ed061ec84b13e92568f873172efac19a512a1b561dbf54e2c8426",
+      "bytes": 15
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/objects/6a/cd19ef81cade5a79a414322651f5bcf43a3d58",
+      "sha256": "6ae847238050d67899626c9cedd30cc70f0ceac395ca39bff590d976d3dabdaf",
+      "bytes": 130
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/refs/heads/u6-fixture",
+      "sha256": "b28b551db7746f457d2fd5c6f7e7ad42b85ab23c076647fd2066d5c97052addd",
+      "bytes": 41
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.git/verse-claw/task-ledger.sqlite3",
+      "sha256": "64ed3e26da94ccd31397ec1f3824764fd9e09bdd908127d98d9be21e2c7167ba",
+      "bytes": 180224
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.verse-claw/harness/README.md",
+      "sha256": "76c232d19e6e7d3240dc7faea48ca902e3d0ffdbbcad78a45b1a645cbc37af3e",
+      "bytes": 2666
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.verse-claw/harness/specs/guides/README.md",
+      "sha256": "02ee0f6caf3d1c820be419508d34778bea757f19fedd57fb5471889fd857d165",
+      "bytes": 408
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.verse-claw/harness/specs/layers/README.md",
+      "sha256": "0e0579eff3306d4e23b7b8104dc38ad01619a10abc24e4eddc2266fb73f3c5ca",
+      "bytes": 358
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.verse-claw/harness/specs/README.md",
+      "sha256": "48938a0391005d903b900f929dc609c75f3c96d20ca30846137294a0582182a6",
+      "bytes": 1041
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.verse-claw/harness/specs/rules/README.md",
+      "sha256": "169556c156a6a93813bc2e2df4d987cada427cc8dbe0c14c8e6a6d600b7a1ed4",
+      "bytes": 422
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.verse-claw/harness/specs/scenarios/README.md",
+      "sha256": "db49eb02bd94edc305241b0bad485e191f8c4b8e6e9b1775c464f724c8ed7839",
+      "bytes": 451
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.verse-claw/harness/specs/tasks/_template.md",
+      "sha256": "cd109130bd700659b700489f3ec69d35336245a87538f8bc08f322058ce1d84e",
+      "bytes": 575
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.verse-claw/harness/specs/tasks/README.md",
+      "sha256": "77f7eb612922c9e3c5d55be8f976b989df4d3c839ea45a47071fea2f17d896d3",
+      "bytes": 730
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.verse-claw/harness/workspace/.gitignore",
+      "sha256": "009e02614c8715ad87b6f3eb4d3cfc1f0ec55463fc23146da87594cf770d3856",
+      "bytes": 48
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.verse-claw/harness/workspace/context-packs.md",
+      "sha256": "1465a956df3c8c4321e750e9fb44d77b45cfdd8bf621722f6aa7941574b58814",
+      "bytes": 635
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.verse-claw/harness/workspace/decisions.md",
+      "sha256": "14001be866c79a19e74d48e3d9a027cdaeabc1320e89555afc7adde37aafb2b5",
+      "bytes": 389
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.verse-claw/harness/workspace/README.md",
+      "sha256": "467d82de9faa6a582998ab51c165e2a726d379625617a392838306d0f006924c",
+      "bytes": 993
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.verse-claw/harness/workspace/risks.md",
+      "sha256": "78f2ecc4da87c9f049421ab3c5107bdd58ebcc6374333ad3bd93912aada4847b",
+      "bytes": 709
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.verse-claw/harness/workspace/schema.md",
+      "sha256": "13a447dd25f89e7ca7eb4ee1aeb0cbb7fadfff626deb07a3063f6a025cbdb078",
+      "bytes": 397
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.verse-claw/harness/workspace/task-index.md",
+      "sha256": "d2c0a18c567b141f61c29427a2719843a56b656c5d2433b23b2fab1a173b55a9",
+      "bytes": 1022
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/.verse-claw/harness/workspace/validation.md",
+      "sha256": "a4da65c773d21dc573a15f2a2aa09f509c4337751c926e0d78aac3a6badd7937",
+      "bytes": 573
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/fixture/source/artifact.txt",
+      "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7",
+      "bytes": 21
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/interaction-metrics.json",
+      "sha256": "ee01c434d966a6dffd989598f939cacc5fe5c87a37eb1f9e2d93aea213ef9605",
+      "bytes": 15085
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.fin-df08e-ion-metrics-archive-restore/start.png",
+      "sha256": "36bb72b9dc11b7d192630b879364f4eb82a0096ea0a958956e1d581db63bfe13",
+      "bytes": 49305
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/end.png",
+      "sha256": "926bd85e3a7329de2ca708078bd1dfd764ecc700c8e896b438ec67a6feb88063",
+      "bytes": 95389
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/final-state.png",
+      "sha256": "e46875b58eb79cdcc443adc987a31a8a3f108b3c4f35936aa2c2adb31315a137",
+      "bytes": 95334
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/COMMIT_EDITMSG",
+      "sha256": "84ac09e65e1e2e8e069cbbbaff70cbd57f6612e74ad83adfdbc075bfdfa86e60",
+      "bytes": 11
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/config",
+      "sha256": "05becdb83bb897f6103c8d91439e2e9092144edf5b3955a746fce4975c12bfdc",
+      "bytes": 130
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/description",
+      "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee",
+      "bytes": 73
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/HEAD",
+      "sha256": "f9d7a3c981a99384268f401e9c6a923dd47b6fd9296624c4f0cabf7bedc67b7f",
+      "bytes": 27
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/hooks/applypatch-msg.sample",
+      "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7",
+      "bytes": 478
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/hooks/commit-msg.sample",
+      "sha256": "1f74d5e9292979b573ebd59741d46cb93ff391acdd083d340b94370753d92437",
+      "bytes": 896
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/hooks/fsmonitor-watchman.sample",
+      "sha256": "e0549964e93897b519bd8e333c037e51fff0f88ba13e086a331592bf801fa1d0",
+      "bytes": 4726
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/hooks/post-update.sample",
+      "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5",
+      "bytes": 189
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/hooks/pre-applypatch.sample",
+      "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475",
+      "bytes": 424
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/hooks/pre-commit.sample",
+      "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b",
+      "bytes": 1649
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/hooks/pre-merge-commit.sample",
+      "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53",
+      "bytes": 416
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/hooks/pre-push.sample",
+      "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a",
+      "bytes": 1374
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/hooks/pre-rebase.sample",
+      "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3",
+      "bytes": 4898
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/hooks/pre-receive.sample",
+      "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989",
+      "bytes": 544
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/hooks/prepare-commit-msg.sample",
+      "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619",
+      "bytes": 1492
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/hooks/push-to-checkout.sample",
+      "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f",
+      "bytes": 2783
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/hooks/sendemail-validate.sample",
+      "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92",
+      "bytes": 2308
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/hooks/update.sample",
+      "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106",
+      "bytes": 3650
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/index",
+      "sha256": "8a99f56bd3599f16165eb30aa3c8c626923a7d63855907a5b97b98b5c6cdea2b",
+      "bytes": 65
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/info/exclude",
+      "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1",
+      "bytes": 240
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/logs/HEAD",
+      "sha256": "6e8b23250476048cc259b2e4caa46d122870f690f8f5d7b2da99e330b66ff98e",
+      "bytes": 166
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/logs/refs/heads/u6-fixture",
+      "sha256": "6e8b23250476048cc259b2e4caa46d122870f690f8f5d7b2da99e330b66ff98e",
+      "bytes": 166
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/objects/39/6511464603ca86efdd461773fe860f5496c67e",
+      "sha256": "df7859b5c8de3c10f928dfcefbf947cc13a7eeb5cd3d481a0dbc9a32061bac73",
+      "bytes": 130
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/objects/4b/825dc642cb6eb9a060e54bf8d69288fbee4904",
+      "sha256": "e72602cad67ed061ec84b13e92568f873172efac19a512a1b561dbf54e2c8426",
+      "bytes": 15
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/refs/heads/u6-fixture",
+      "sha256": "f897e33ce3a804e163c7c4b38443993da261ec19f669ab1dea5220d458a5c400",
+      "bytes": 41
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.git/verse-claw/task-ledger.sqlite3",
+      "sha256": "8e907a5351df964ef502357712b77bead3cf470f30422236e6f74376e1a6d225",
+      "bytes": 180224
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.openclaw/factstore.sqlite",
+      "sha256": "2fb9e76bc8b8bb820a77e21342abe7b079f687749503315e13c0cf95106675e0",
+      "bytes": 4096
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.openclaw/factstore.sqlite-shm",
+      "sha256": "f5f70624e300fc179a5e8630c0986ddc0cd2a7fe727fe7940748051a22adeb97",
+      "bytes": 32768
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.openclaw/factstore.sqlite-wal",
+      "sha256": "f5dbe99e00eee98eb9ddea73d5482374102e4b186ffed4ccc9821157cb8e92c8",
+      "bytes": 177192
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.openclaw/workspace-state.json",
+      "sha256": "0dfae940c40dd88a2b727967348b465f535d175ee34a081e274d61eaa1f45171",
+      "bytes": 69
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.verse-claw/harness/README.md",
+      "sha256": "76c232d19e6e7d3240dc7faea48ca902e3d0ffdbbcad78a45b1a645cbc37af3e",
+      "bytes": 2666
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.verse-claw/harness/specs/guides/README.md",
+      "sha256": "02ee0f6caf3d1c820be419508d34778bea757f19fedd57fb5471889fd857d165",
+      "bytes": 408
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.verse-claw/harness/specs/layers/README.md",
+      "sha256": "0e0579eff3306d4e23b7b8104dc38ad01619a10abc24e4eddc2266fb73f3c5ca",
+      "bytes": 358
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.verse-claw/harness/specs/README.md",
+      "sha256": "48938a0391005d903b900f929dc609c75f3c96d20ca30846137294a0582182a6",
+      "bytes": 1041
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.verse-claw/harness/specs/rules/README.md",
+      "sha256": "169556c156a6a93813bc2e2df4d987cada427cc8dbe0c14c8e6a6d600b7a1ed4",
+      "bytes": 422
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.verse-claw/harness/specs/scenarios/README.md",
+      "sha256": "db49eb02bd94edc305241b0bad485e191f8c4b8e6e9b1775c464f724c8ed7839",
+      "bytes": 451
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.verse-claw/harness/specs/tasks/_template.md",
+      "sha256": "cd109130bd700659b700489f3ec69d35336245a87538f8bc08f322058ce1d84e",
+      "bytes": 575
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.verse-claw/harness/specs/tasks/README.md",
+      "sha256": "77f7eb612922c9e3c5d55be8f976b989df4d3c839ea45a47071fea2f17d896d3",
+      "bytes": 730
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.verse-claw/harness/workspace/.gitignore",
+      "sha256": "009e02614c8715ad87b6f3eb4d3cfc1f0ec55463fc23146da87594cf770d3856",
+      "bytes": 48
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.verse-claw/harness/workspace/context-packs.md",
+      "sha256": "1465a956df3c8c4321e750e9fb44d77b45cfdd8bf621722f6aa7941574b58814",
+      "bytes": 635
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.verse-claw/harness/workspace/decisions.md",
+      "sha256": "14001be866c79a19e74d48e3d9a027cdaeabc1320e89555afc7adde37aafb2b5",
+      "bytes": 389
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.verse-claw/harness/workspace/README.md",
+      "sha256": "467d82de9faa6a582998ab51c165e2a726d379625617a392838306d0f006924c",
+      "bytes": 993
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.verse-claw/harness/workspace/risks.md",
+      "sha256": "78f2ecc4da87c9f049421ab3c5107bdd58ebcc6374333ad3bd93912aada4847b",
+      "bytes": 709
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.verse-claw/harness/workspace/schema.md",
+      "sha256": "13a447dd25f89e7ca7eb4ee1aeb0cbb7fadfff626deb07a3063f6a025cbdb078",
+      "bytes": 397
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.verse-claw/harness/workspace/task-index.md",
+      "sha256": "d2c0a18c567b141f61c29427a2719843a56b656c5d2433b23b2fab1a173b55a9",
+      "bytes": 1022
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/.verse-claw/harness/workspace/validation.md",
+      "sha256": "a4da65c773d21dc573a15f2a2aa09f509c4337751c926e0d78aac3a6badd7937",
+      "bytes": 573
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/AGENTS.md",
+      "sha256": "a0156429d5d27c66161b83c7641e8ff790cb75c76b5fc0af29026b820e3da166",
+      "bytes": 5479
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/artifact.txt",
+      "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7",
+      "bytes": 21
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/HEARTBEAT.md",
+      "sha256": "ecce558615751a35aa173731e892ff3993f44bb4f5a1219c0a02994790c85528",
+      "bytes": 244
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/IDENTITY.md",
+      "sha256": "2fae9080af26ec75ac44d419089bfcabb17770e3151abf584b4ee325028e8e9f",
+      "bytes": 694
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/SOUL.md",
+      "sha256": "ec0907364c88d161e9cc2d28393f509c2ae2b76f82a1d937900a3fda26d70dc5",
+      "bytes": 1798
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/TOOLS.md",
+      "sha256": "fcd325e81cd6a20c52aba0c38b374c02c2f8996e0695d386770214ae8d20bcbc",
+      "bytes": 281
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/fixture/source/USER.md",
+      "sha256": "891b73f3da5d735347170e3a27b7d1bf243b865002a62f5d3a76db9427910365",
+      "bytes": 212
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/interaction-metrics.json",
+      "sha256": "75286af4bdd01e334f35877cd91749e6be9f5d0519851d4430d18e98e5248ca4",
+      "bytes": 18961
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-continue/start.png",
+      "sha256": "be9de7452eb67ebcb338e81edc49ddad6d2e4d1ccc77cde7bc3d46a93f534b77",
+      "bytes": 44651
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/end.png",
+      "sha256": "073c5e39c429e88966af9b62dc254516204a0fc19467b406d95e9c90244db004",
+      "bytes": 102534
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/final-state.png",
+      "sha256": "5de6a1ea787772b0c3dc67535e1ac07e46b3a95d0940c23d3f784cde1bb5acda",
+      "bytes": 102529
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/COMMIT_EDITMSG",
+      "sha256": "84ac09e65e1e2e8e069cbbbaff70cbd57f6612e74ad83adfdbc075bfdfa86e60",
+      "bytes": 11
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/config",
+      "sha256": "05becdb83bb897f6103c8d91439e2e9092144edf5b3955a746fce4975c12bfdc",
+      "bytes": 130
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/description",
+      "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee",
+      "bytes": 73
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/HEAD",
+      "sha256": "f9d7a3c981a99384268f401e9c6a923dd47b6fd9296624c4f0cabf7bedc67b7f",
+      "bytes": 27
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/hooks/applypatch-msg.sample",
+      "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7",
+      "bytes": 478
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/hooks/commit-msg.sample",
+      "sha256": "1f74d5e9292979b573ebd59741d46cb93ff391acdd083d340b94370753d92437",
+      "bytes": 896
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/hooks/fsmonitor-watchman.sample",
+      "sha256": "e0549964e93897b519bd8e333c037e51fff0f88ba13e086a331592bf801fa1d0",
+      "bytes": 4726
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/hooks/post-update.sample",
+      "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5",
+      "bytes": 189
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/hooks/pre-applypatch.sample",
+      "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475",
+      "bytes": 424
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/hooks/pre-commit.sample",
+      "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b",
+      "bytes": 1649
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/hooks/pre-merge-commit.sample",
+      "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53",
+      "bytes": 416
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/hooks/pre-push.sample",
+      "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a",
+      "bytes": 1374
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/hooks/pre-rebase.sample",
+      "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3",
+      "bytes": 4898
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/hooks/pre-receive.sample",
+      "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989",
+      "bytes": 544
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/hooks/prepare-commit-msg.sample",
+      "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619",
+      "bytes": 1492
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/hooks/push-to-checkout.sample",
+      "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f",
+      "bytes": 2783
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/hooks/sendemail-validate.sample",
+      "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92",
+      "bytes": 2308
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/hooks/update.sample",
+      "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106",
+      "bytes": 3650
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/index",
+      "sha256": "8a99f56bd3599f16165eb30aa3c8c626923a7d63855907a5b97b98b5c6cdea2b",
+      "bytes": 65
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/info/exclude",
+      "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1",
+      "bytes": 240
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/logs/HEAD",
+      "sha256": "c309be8348baf9b0ac4f66e285517a14e0b44ffe36d120a65a5d0e0ede4cf470",
+      "bytes": 166
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/logs/refs/heads/u6-fixture",
+      "sha256": "c309be8348baf9b0ac4f66e285517a14e0b44ffe36d120a65a5d0e0ede4cf470",
+      "bytes": 166
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/objects/4b/825dc642cb6eb9a060e54bf8d69288fbee4904",
+      "sha256": "e72602cad67ed061ec84b13e92568f873172efac19a512a1b561dbf54e2c8426",
+      "bytes": 15
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/objects/80/6bf40cbd533a02c78f3fa05dfe083d7f081d99",
+      "sha256": "19632aa963b17f7af00a70e720378688fd58aba84555fff836fcdb245ae3d1ff",
+      "bytes": 130
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/refs/heads/u6-fixture",
+      "sha256": "bf7134359be25435ec0cfbac1085eccb95007c6188316d1f56c4ba8eadb436ae",
+      "bytes": 41
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.git/verse-claw/task-ledger.sqlite3",
+      "sha256": "bbe9ece82d1c8a2c58e778c5abc879e592192f7efc8f4ff4e2130d0696ac43f3",
+      "bytes": 180224
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.openclaw/factstore.sqlite",
+      "sha256": "2fb9e76bc8b8bb820a77e21342abe7b079f687749503315e13c0cf95106675e0",
+      "bytes": 4096
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.openclaw/factstore.sqlite-shm",
+      "sha256": "4e3a9dd4f0aec9c4f955583da2a67e157e725d5511d261dbcf5eda81bfd7e079",
+      "bytes": 32768
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.openclaw/factstore.sqlite-wal",
+      "sha256": "f84a6746e23e83499a4afb2b51d4a8b91f6168990c5b6e1d8a8556fb989c11bc",
+      "bytes": 177192
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.openclaw/workspace-state.json",
+      "sha256": "c12dd81c4e8cf46cbb3054a43f035e884f0c1e6ea44d28793e9cc9301829fa7f",
+      "bytes": 69
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.verse-claw/harness/README.md",
+      "sha256": "76c232d19e6e7d3240dc7faea48ca902e3d0ffdbbcad78a45b1a645cbc37af3e",
+      "bytes": 2666
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.verse-claw/harness/specs/guides/README.md",
+      "sha256": "02ee0f6caf3d1c820be419508d34778bea757f19fedd57fb5471889fd857d165",
+      "bytes": 408
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.verse-claw/harness/specs/layers/README.md",
+      "sha256": "0e0579eff3306d4e23b7b8104dc38ad01619a10abc24e4eddc2266fb73f3c5ca",
+      "bytes": 358
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.verse-claw/harness/specs/README.md",
+      "sha256": "48938a0391005d903b900f929dc609c75f3c96d20ca30846137294a0582182a6",
+      "bytes": 1041
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.verse-claw/harness/specs/rules/README.md",
+      "sha256": "169556c156a6a93813bc2e2df4d987cada427cc8dbe0c14c8e6a6d600b7a1ed4",
+      "bytes": 422
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.verse-claw/harness/specs/scenarios/README.md",
+      "sha256": "db49eb02bd94edc305241b0bad485e191f8c4b8e6e9b1775c464f724c8ed7839",
+      "bytes": 451
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.verse-claw/harness/specs/tasks/_template.md",
+      "sha256": "cd109130bd700659b700489f3ec69d35336245a87538f8bc08f322058ce1d84e",
+      "bytes": 575
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.verse-claw/harness/specs/tasks/README.md",
+      "sha256": "77f7eb612922c9e3c5d55be8f976b989df4d3c839ea45a47071fea2f17d896d3",
+      "bytes": 730
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.verse-claw/harness/workspace/.gitignore",
+      "sha256": "009e02614c8715ad87b6f3eb4d3cfc1f0ec55463fc23146da87594cf770d3856",
+      "bytes": 48
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.verse-claw/harness/workspace/context-packs.md",
+      "sha256": "1465a956df3c8c4321e750e9fb44d77b45cfdd8bf621722f6aa7941574b58814",
+      "bytes": 635
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.verse-claw/harness/workspace/decisions.md",
+      "sha256": "14001be866c79a19e74d48e3d9a027cdaeabc1320e89555afc7adde37aafb2b5",
+      "bytes": 389
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.verse-claw/harness/workspace/README.md",
+      "sha256": "467d82de9faa6a582998ab51c165e2a726d379625617a392838306d0f006924c",
+      "bytes": 993
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.verse-claw/harness/workspace/risks.md",
+      "sha256": "78f2ecc4da87c9f049421ab3c5107bdd58ebcc6374333ad3bd93912aada4847b",
+      "bytes": 709
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.verse-claw/harness/workspace/schema.md",
+      "sha256": "13a447dd25f89e7ca7eb4ee1aeb0cbb7fadfff626deb07a3063f6a025cbdb078",
+      "bytes": 397
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.verse-claw/harness/workspace/task-index.md",
+      "sha256": "d2c0a18c567b141f61c29427a2719843a56b656c5d2433b23b2fab1a173b55a9",
+      "bytes": 1022
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/.verse-claw/harness/workspace/validation.md",
+      "sha256": "a4da65c773d21dc573a15f2a2aa09f509c4337751c926e0d78aac3a6badd7937",
+      "bytes": 573
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/AGENTS.md",
+      "sha256": "a0156429d5d27c66161b83c7641e8ff790cb75c76b5fc0af29026b820e3da166",
+      "bytes": 5479
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/artifact.txt",
+      "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7",
+      "bytes": 21
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/HEARTBEAT.md",
+      "sha256": "ecce558615751a35aa173731e892ff3993f44bb4f5a1219c0a02994790c85528",
+      "bytes": 244
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/IDENTITY.md",
+      "sha256": "2fae9080af26ec75ac44d419089bfcabb17770e3151abf584b4ee325028e8e9f",
+      "bytes": 694
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/SOUL.md",
+      "sha256": "ec0907364c88d161e9cc2d28393f509c2ae2b76f82a1d937900a3fda26d70dc5",
+      "bytes": 1798
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/TOOLS.md",
+      "sha256": "fcd325e81cd6a20c52aba0c38b374c02c2f8996e0695d386770214ae8d20bcbc",
+      "bytes": 281
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/fixture/source/USER.md",
+      "sha256": "891b73f3da5d735347170e3a27b7d1bf243b865002a62f5d3a76db9427910365",
+      "bytes": 212
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/interaction-metrics.json",
+      "sha256": "63d38cb3f85d38eaefcc8119dff10564d6fc25dca5dc165bded02119f9230deb",
+      "bytes": 23714
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-handoff/start.png",
+      "sha256": "a853d72ff74d050beb9829ad49c68d087546587d776b2d47ad0f5b535f7577da",
+      "bytes": 49035
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/end.png",
+      "sha256": "662cff7769c0504ecf97d35ea259ed032c177cc4e50e68855eec7d3d07797c20",
+      "bytes": 70532
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/final-state.png",
+      "sha256": "870833d3ab0e2aae08d2dfa7bec2f2a23e953ca31c30503a362b3efb199ef8bd",
+      "bytes": 70428
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/COMMIT_EDITMSG",
+      "sha256": "84ac09e65e1e2e8e069cbbbaff70cbd57f6612e74ad83adfdbc075bfdfa86e60",
+      "bytes": 11
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/config",
+      "sha256": "05becdb83bb897f6103c8d91439e2e9092144edf5b3955a746fce4975c12bfdc",
+      "bytes": 130
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/description",
+      "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee",
+      "bytes": 73
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/HEAD",
+      "sha256": "f9d7a3c981a99384268f401e9c6a923dd47b6fd9296624c4f0cabf7bedc67b7f",
+      "bytes": 27
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/hooks/applypatch-msg.sample",
+      "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7",
+      "bytes": 478
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/hooks/commit-msg.sample",
+      "sha256": "1f74d5e9292979b573ebd59741d46cb93ff391acdd083d340b94370753d92437",
+      "bytes": 896
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/hooks/fsmonitor-watchman.sample",
+      "sha256": "e0549964e93897b519bd8e333c037e51fff0f88ba13e086a331592bf801fa1d0",
+      "bytes": 4726
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/hooks/post-update.sample",
+      "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5",
+      "bytes": 189
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/hooks/pre-applypatch.sample",
+      "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475",
+      "bytes": 424
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/hooks/pre-commit.sample",
+      "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b",
+      "bytes": 1649
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/hooks/pre-merge-commit.sample",
+      "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53",
+      "bytes": 416
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/hooks/pre-push.sample",
+      "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a",
+      "bytes": 1374
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/hooks/pre-rebase.sample",
+      "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3",
+      "bytes": 4898
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/hooks/pre-receive.sample",
+      "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989",
+      "bytes": 544
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/hooks/prepare-commit-msg.sample",
+      "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619",
+      "bytes": 1492
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/hooks/push-to-checkout.sample",
+      "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f",
+      "bytes": 2783
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/hooks/sendemail-validate.sample",
+      "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92",
+      "bytes": 2308
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/hooks/update.sample",
+      "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106",
+      "bytes": 3650
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/index",
+      "sha256": "8a99f56bd3599f16165eb30aa3c8c626923a7d63855907a5b97b98b5c6cdea2b",
+      "bytes": 65
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/info/exclude",
+      "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1",
+      "bytes": 240
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/logs/HEAD",
+      "sha256": "494a7c9ae3a20a111aca675929cc08f11e46d1b11531fabfd598d6e1829bc272",
+      "bytes": 166
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/logs/refs/heads/u6-fixture",
+      "sha256": "494a7c9ae3a20a111aca675929cc08f11e46d1b11531fabfd598d6e1829bc272",
+      "bytes": 166
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/objects/4a/ee01dc9e965b433489ef71da594c69749fa092",
+      "sha256": "001626b63b16f84be725f01743e81c6e21d59907db9eda0f67b1cbaa0f71cc9c",
+      "bytes": 130
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/objects/4b/825dc642cb6eb9a060e54bf8d69288fbee4904",
+      "sha256": "e72602cad67ed061ec84b13e92568f873172efac19a512a1b561dbf54e2c8426",
+      "bytes": 15
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/refs/heads/u6-fixture",
+      "sha256": "27b313e09f4db6db6b1293473931e469e47be51713589d35def658c3dd118e43",
+      "bytes": 41
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.git/verse-claw/task-ledger.sqlite3",
+      "sha256": "a0cbf5204edf396f7fcfb3a54d1aa5008ec02f53cbcf484ef512d329d6e20a19",
+      "bytes": 180224
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.verse-claw/harness/README.md",
+      "sha256": "76c232d19e6e7d3240dc7faea48ca902e3d0ffdbbcad78a45b1a645cbc37af3e",
+      "bytes": 2666
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.verse-claw/harness/specs/guides/README.md",
+      "sha256": "02ee0f6caf3d1c820be419508d34778bea757f19fedd57fb5471889fd857d165",
+      "bytes": 408
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.verse-claw/harness/specs/layers/README.md",
+      "sha256": "0e0579eff3306d4e23b7b8104dc38ad01619a10abc24e4eddc2266fb73f3c5ca",
+      "bytes": 358
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.verse-claw/harness/specs/README.md",
+      "sha256": "48938a0391005d903b900f929dc609c75f3c96d20ca30846137294a0582182a6",
+      "bytes": 1041
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.verse-claw/harness/specs/rules/README.md",
+      "sha256": "169556c156a6a93813bc2e2df4d987cada427cc8dbe0c14c8e6a6d600b7a1ed4",
+      "bytes": 422
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.verse-claw/harness/specs/scenarios/README.md",
+      "sha256": "db49eb02bd94edc305241b0bad485e191f8c4b8e6e9b1775c464f724c8ed7839",
+      "bytes": 451
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.verse-claw/harness/specs/tasks/_template.md",
+      "sha256": "cd109130bd700659b700489f3ec69d35336245a87538f8bc08f322058ce1d84e",
+      "bytes": 575
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.verse-claw/harness/specs/tasks/README.md",
+      "sha256": "77f7eb612922c9e3c5d55be8f976b989df4d3c839ea45a47071fea2f17d896d3",
+      "bytes": 730
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.verse-claw/harness/workspace/.gitignore",
+      "sha256": "009e02614c8715ad87b6f3eb4d3cfc1f0ec55463fc23146da87594cf770d3856",
+      "bytes": 48
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.verse-claw/harness/workspace/context-packs.md",
+      "sha256": "1465a956df3c8c4321e750e9fb44d77b45cfdd8bf621722f6aa7941574b58814",
+      "bytes": 635
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.verse-claw/harness/workspace/decisions.md",
+      "sha256": "14001be866c79a19e74d48e3d9a027cdaeabc1320e89555afc7adde37aafb2b5",
+      "bytes": 389
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.verse-claw/harness/workspace/README.md",
+      "sha256": "467d82de9faa6a582998ab51c165e2a726d379625617a392838306d0f006924c",
+      "bytes": 993
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.verse-claw/harness/workspace/risks.md",
+      "sha256": "78f2ecc4da87c9f049421ab3c5107bdd58ebcc6374333ad3bd93912aada4847b",
+      "bytes": 709
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.verse-claw/harness/workspace/schema.md",
+      "sha256": "13a447dd25f89e7ca7eb4ee1aeb0cbb7fadfff626deb07a3063f6a025cbdb078",
+      "bytes": 397
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.verse-claw/harness/workspace/task-index.md",
+      "sha256": "d2c0a18c567b141f61c29427a2719843a56b656c5d2433b23b2fab1a173b55a9",
+      "bytes": 1022
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/.verse-claw/harness/workspace/validation.md",
+      "sha256": "a4da65c773d21dc573a15f2a2aa09f509c4337751c926e0d78aac3a6badd7937",
+      "bytes": 573
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/fixture/source/artifact.txt",
+      "sha256": "57b5af26d2743b2456721ae12352687ed07a22e77b6af26a8379b159bd47dcd7",
+      "bytes": 21
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/interaction-metrics.json",
+      "sha256": "0dd1ee84d702039350a9ec935c5061aa9a772ed750cd88cf0230643833a58121",
+      "bytes": 11719
+    },
+    {
+      "path": "u6-v2/u6-interaction-metrics.final-U6-interaction-metrics-new-task/start.png",
+      "sha256": "d3c73bbcc72bd5c86bad07338fbc63488794eebcb0d0393066d4a1932ccbcc73",
+      "bytes": 44275
+    }
+  ]
+}
