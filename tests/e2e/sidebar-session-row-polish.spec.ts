@@ -64,6 +64,7 @@ async function seed(app: ElectronApplication, hierarchy = false) {
       [stable(['workspaces', 'list', null])]: { success: true, profiles, activeWorkspaceId: workspace.id, activeWorkspace: profile },
       [stable(['workspaces', 'getActive', null])]: { success: true, activeWorkspaceId: workspace.id, activeWorkspace: profile },
       [stable(['workspaces', 'getSessionState', null])]: { success: true, sessionState: {} },
+      [stable(['workspaces', 'saveState', null])]: { success: true },
       [stable(['sessions', 'history', null])]: { messages: [], hasMore: false },
       [stable(['sessions', 'archive', null])]: { success: true },
       [stable(['sessions', 'restore', null])]: { success: true },

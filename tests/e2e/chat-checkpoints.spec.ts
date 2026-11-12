@@ -103,6 +103,7 @@ function baseHostApiMocks() {
     [stableStringify(['sessions', 'restoreCheckpoint', {
       sessionKey: SESSION_KEY,
       agentId: 'main',
+      expectedSessionId: EXPECTED_SESSION_ID,
       checkpointId: CHECKPOINT_ID,
     }])]: {
       success: true,
@@ -115,6 +116,7 @@ function baseHostApiMocks() {
     [stableStringify(['sessions', 'checkpointDiff', {
       sessionKey: SESSION_KEY,
       agentId: 'main',
+      expectedSessionId: EXPECTED_SESSION_ID,
       checkpointId: CHECKPOINT_ID,
     }])]: {
       success: true,
