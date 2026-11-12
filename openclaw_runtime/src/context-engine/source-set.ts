@@ -670,6 +670,7 @@ function resolveExact(
       ),
     };
   }
+  let pinRejection: SourceSetRejection | undefined;
   for (const candidate of revisionMatches) {
     const evaluation = evaluateCandidate(candidate, query);
     if (!evaluation.accepted) continue;
@@ -677,24 +678,29 @@ function resolveExact(
       const reason = candidate.ref.ownerSnapshot
         ? matchOwnerReadPin(candidate.ref.ownerSnapshot, pinned.sourceRef)
         : "denied";
-      if (reason)
-        return {
-          blockedRefIds: matches.map((source) => source.ref.refId),
-          rejection: makePinnedRejection(pinned, reason, `Pinned source is invalid (${reason}).`),
-        };
+      if (reason) {
+        // One owner subject can have several admitted ranges. A sibling range
+        // mismatch must not hide the exact pin later in the same candidate set.
+        pinRejection ??= makePinnedRejection(
+          pinned,
+          reason,
+          `Pinned source is invalid (${reason}).`,
+        );
+        continue;
+      }
     }
     if (pinned.contentDigest && pinned.contentDigest !== candidate.ref.contentDigest) {
-      return {
-        blockedRefIds: [candidate.ref.refId],
-        rejection: makePinnedRejection(
-          pinned,
-          "digest_mismatch",
-          `Pinned ref "${pinned.owner}:${pinned.subjectId}" expected digest "${pinned.contentDigest}" but the source carries "${candidate.ref.contentDigest}".`,
-        ),
-      };
+      pinRejection ??= makePinnedRejection(
+        pinned,
+        "digest_mismatch",
+        `Pinned ref "${pinned.owner}:${pinned.subjectId}" expected digest "${pinned.contentDigest}" but the source carries "${candidate.ref.contentDigest}".`,
+      );
+      continue;
     }
     return { blockedRefIds: [], resolution: { candidate, evaluation } };
   }
+  if (pinRejection)
+    return { blockedRefIds: matches.map((source) => source.ref.refId), rejection: pinRejection };
   const firstEvaluation = evaluateCandidate(matches[0]!, query);
   if (!firstEvaluation.accepted) {
     return { blockedRefIds: [], rejection: firstEvaluation.rejection };

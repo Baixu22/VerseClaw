@@ -6,6 +6,7 @@ import {
 } from '../../openclaw_runtime/src/knowledge/retrieval/plan';
 import { digestSourceSetContent, retrieveSourceSet, type SourceSetCandidate } from '../../openclaw_runtime/src/context-engine/source-set';
 import type { SourceRefV2 } from '../../shared/knowledge/owner-read-contract';
+import { createOwnerReadSnapshot, deriveReadAdmissionContext, digestOwnerReadContent } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
 
 const source = (parent = 'page.md', namespaceId = 'wiki-fixture'): SourceRefV2 => ({
   schema: 'SourceRef/v2', domain: 'wiki', authorityId: 'memory-wiki', namespaceId,
@@ -203,5 +204,29 @@ describe('SourceSet consumes the trusted retrieval order', () => {
     const result = await retrieveSourceSet({ sources, preserveOrder: true, query: { text: 'gateway', aclSubjects: ['operator'] }, verifyOwnerRead: async row => row.ref.refId === 'denied' ? 'acl_denied' : undefined });
     expect(result.retrieved.map(row => row.ref.refId)).toEqual(['allowed']);
     expect(result.rejections.some(row => row.reason === 'acl_denied')).toBe(true);
+  });
+
+  it('resolves multiple exact raw ranges from the same source without hiding a later pin', async () => {
+    const raw = 'gateway alpha\ngateway beta\n';
+    const context = deriveReadAdmissionContext({ principalId: 'operator', sessionId: 'physical', workspaceId: 'fixture',
+      ownerNamespaces: ['wiki-fixture'], egressProviderRefs: [], policyDigest: digestOwnerReadContent('fixture'), expiresAt: new Date(Date.now() + 30000).toISOString() });
+    const snapshots = [[0, 14], [14, raw.length]].map(([startChar, endChar]) => createOwnerReadSnapshot({
+      raw, startChar, endChar, title: 'Gateway', context,
+      source: { domain: 'wiki', authorityId: 'memory-wiki', namespaceId: 'wiki-fixture', subjectId: 'gateway.md', revision: '1' },
+      policy: { status: 'active', trust: 'confirmed', sensitivity: 'workspace', acl: { read: ['operator'] }, retention: { policy: 'source-coupled' } },
+    }));
+    const sources = snapshots.map((snapshot, index): SourceSetCandidate => ({
+      ...candidate(`range-${index}`, snapshot.content),
+      ref: { ...candidate(`range-${index}`, snapshot.content).ref, subjectId: 'gateway.md', sourceRef: snapshot.source, ownerSnapshot: snapshot,
+        sensitivity: snapshot.policy.sensitivity, retention: snapshot.policy.retention },
+    }));
+    const result = await retrieveSourceSet({ sources, preserveOrder: true, query: { text: 'gateway', aclSubjects: ['operator'],
+      taskContext: { workspaceId: 'fixture' }, pinnedRefs: snapshots.map(snapshot => ({ owner: 'memory-wiki', subjectId: 'gateway.md', sourceRef: snapshot.source })) } });
+    expect(result.unresolvedPinnedRefs, JSON.stringify(result.unresolvedPinnedRefs)).toEqual([]);
+    expect(result.retrieved.map(row => row.ref.refId)).toEqual(['range-0', 'range-1']);
+    const invalid = await retrieveSourceSet({ sources, preserveOrder: true, query: { text: 'gateway', aclSubjects: ['operator'],
+      taskContext: { workspaceId: 'fixture' }, pinnedRefs: [{ owner: 'memory-wiki', subjectId: 'gateway.md', sourceRef: { ...snapshots[1].source, sourceDigest: digestOwnerReadContent('changed') } }] } });
+    expect(invalid.retrieved).toEqual([]);
+    expect(invalid.unresolvedPinnedRefs[0].reason).toBe('digest_mismatch');
   });
 });
