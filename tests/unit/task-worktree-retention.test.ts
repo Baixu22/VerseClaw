@@ -267,7 +267,27 @@ describe('Task evidence retention and original checkout cleanup', () => {
       expect(existsSync(row.root)).toBe(false);
       if (mode === 'first-open') expect(existsSync(resolveTaskDomain(repository).database)).toBe(false);
       if (mode === 'register') expect(resolveExecutionDomain(repository).state).toBe('independent');
-      if (credential) expect(storeAt(repository).history(credential.taskNodeId).filter(event => event.kind === 'checkpoint')).toEqual([]);
+      const reader = credential || taskId ? storeAt(repository) : undefined;
+      const checkpointEvents = credential ? reader!.history(credential.taskNodeId).filter(event => event.kind === 'checkpoint') : null;
+      const claimedEvents = taskId ? reader!.history(taskId).filter(event => event.kind === 'claimed') : null;
+      const persistedClaim = taskId ? reader!.get(taskId).claim ?? null : null;
+      if (credential) expect(checkpointEvents).toEqual([]);
+      if (taskId) {
+        expect(claimedEvents).toEqual([]);
+        expect(persistedClaim).toBeNull();
+      }
+      const proofDirectory = process.env.CLAWX_R4_EVIDENCE_DIR;
+      if (proofDirectory) {
+        mkdirSync(proofDirectory, { recursive: true });
+        writeFileSync(path.join(proofDirectory, `cleanup-contention-${mode}.json`), JSON.stringify({
+          driven_by: 'agent', actor: 'r4-task-retention-process-test',
+          input: { mode, workspace: mode === 'checkpoint' ? repository : row.root, taskId: taskId ?? null },
+          cleanupMs, exitCode: run.worker.exitCode, proof,
+          readback: { rootExists: existsSync(row.root), taskDatabaseExists: existsSync(resolveTaskDomain(repository).database),
+            registration: mode === 'register' ? resolveExecutionDomain(repository).state : null,
+            checkpointEvents, claimedEvents, persistedClaim: persistedClaim ?? null },
+        }, null, 2));
+      }
     } finally {
       if (run.worker.exitCode === null && run.worker.signalCode === null) run.worker.kill('SIGKILL');
       await run.exited.catch(() => undefined);

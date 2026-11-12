@@ -14,3 +14,5 @@ type: ai-coding-rule
 - 混合后端按registry记录分别冻结和整合；候选目录沿原native identity校验根实例、Git反向引用和所属仓库，派发前拒绝替换及重定向。
 - 回收沿用现有Task、资源与工作树owner，保留未推送成果、活动引用和唯一证据。
 - 当前整合只应用受控文件后像；Git 多父/octopus merge、自动 `git gc` 和 `worktree prune` 未实现，必须明确不可用，不得用普通文件合并结果冒充支持。
+- 争抢拒绝同时回读持久副作用；claim无claimed事件及claim，checkpoint无checkpoint事件，登记保持独立。正式回执保存实际错误码、阶段、输入与清理耗时。
+- Electron Main内联的media-core根入口及子路径沿现有源码alias解析，不以被忽略的包dist作为构建前提。

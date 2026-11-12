@@ -21,6 +21,7 @@ export default defineConfig({
       'tests/unit/checkout-writer-ownership.test.ts',
       'tests/unit/versegit-host-apply.test.ts',
       'tests/unit/versegit-candidate-freeze.test.ts',
+      'tests/unit/vite-config-openclaw-runtime.test.ts',
     ],
   },
 });

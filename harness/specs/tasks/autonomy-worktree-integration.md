@@ -48,6 +48,7 @@ touchedAreas:
   - tests/unit/autonomy-orchestration-waves.test.ts
   - tests/unit/worktree-reclamation-preservation.test.ts
   - tests/unit/task-worktree-retention.test.ts
+  - tests/unit/vite-config-openclaw-runtime.test.ts
   - tests/unit/task-artifact-retention.test.ts
   - tests/unit/versegit-host-apply.test.ts
   - tests/unit/versegit-candidate-freeze.test.ts
@@ -81,6 +82,8 @@ acceptance:
   - 新候选身份与验证目录绑定；应用记录、任务验收和发布批准分别表达。
   - dirty/未推送/活动任务及唯一候选证据由既有回收owner保护；消费TF-0867的历史保留实现，不另建回收authority。
   - 原生争抢、失败与恢复产物标注driven_by agent，保留source/candidate、输入、exit/count和hash。
+  - claim争抢从共享Task数据库回读无claimed事件及无claim；四种争抢保留结构化错误、阶段、清理耗时和持久副作用回读。
+  - Electron Main中的media-core根入口及子路径从已跟踪源码解析，构建不依赖预生成的media-core dist。
 docs:
   required: true
   files:
