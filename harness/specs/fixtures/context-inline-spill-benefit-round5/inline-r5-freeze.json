@@ -1,0 +1,60 @@
+{
+  "schema": "ContextInlineSpillRound5Freeze/v1",
+  "driven_by": "agent",
+  "actor": "codex/windows-inline-closeout",
+  "recordedAt": "2026-11-12T16:05:51.128024+00:00",
+  "candidate": {
+    "commit": "603e21ce5b9293778a858f81d55503798e40eb09",
+    "tree": "86a9f2939089f888f17d252b9c704d658b60101b",
+    "dirty": true,
+    "changedBeforeCommit": "scripts/context-inline-spill-benefit-loop-eval.mts"
+  },
+  "sourceSha256": {
+    "scripts/context-inline-spill-benefit-loop-eval.mts": "59b1b7c21001e45cf0172e56e5d64899d5acf67cca83629929b4180ea9f2a640",
+    "scripts/context-inline-spill-benefit-input.mts": "a6322b9f46306f6c586e2d984ee26416cd13b13ea599b2498a2486c18f570b2d",
+    "scripts/context-inline-spill-benefit-scoring.mts": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+    "tests/unit/context-inline-spill-benefit-input.test.ts": "44f944a19372bfddc9a8d91278781d136b457af90d93c25c3983fe2a9f94aa93"
+  },
+  "preservedFromRound4": {
+    "corpus": "afe006f0ad486440d59397e4d2da0824a885800628bf4b778e91c165d7b07880",
+    "arms": "7c2e0afc7086752fe20ec789132fbec3504a4de6777ff85578aad2cdcdda0d7c",
+    "projection": "4fb9e5a996a97ff59a848fd08b3916442aea4639ec4380d82cf51b5174a774f3",
+    "pressure": "4a42671d18556409092519d3d7ed89e2cbbc62280e7ecce3dc31dff3cdca833b",
+    "inputAssemblyBody": "c0658927dc9944a5180d3a5fe339385ef771813d842b2a8dc54249d7dba12cbd",
+    "scoringSourceSha256": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+    "thresholds": "B1-B7 unchanged"
+  },
+  "design": {
+    "arms": 4,
+    "fixtures": 8,
+    "repeats": 3,
+    "runs": 96,
+    "maxTurns": 8,
+    "maxRequests": 768,
+    "temperature": 0,
+    "maxOutputTokens": 900,
+    "reasoning": {
+      "effort": "low",
+      "summary": "auto"
+    },
+    "recallPageChars": 5500,
+    "cost": "not-run unless provider returns billing rate/unit",
+    "failurePolicy": "all outcomes retained; no retries or selective removal"
+  },
+  "probe": {
+    "path": "inline-r5-probe.json",
+    "sha256": "8ce60b87f4960460b034d3462da0b473357e641a707f82e719aee30bb9f1df11",
+    "acceptedEffort": "low",
+    "completedJson": true,
+    "firstTimeoutRetained": true
+  },
+  "deterministic": {
+    "path": "D:\\tmp\\windows-inline-closeout-20261112\\inline-r5-deterministic\\2026-11-12T16-02-16-414Z-deterministic",
+    "resultSha256": "c70000727e53f8b92c10ac602004402828487dab88f682bd2a83430bbb028ea4",
+    "stableEvidenceSuccessRate": 1,
+    "baselineEvidenceSuccessRate": 0,
+    "stableControlSuccessRate": 1
+  },
+  "parentStatus": "in_progress until B1-B7 evidence proves the real task-benefit contract",
+  "priorEvidenceUnchanged": true
+}

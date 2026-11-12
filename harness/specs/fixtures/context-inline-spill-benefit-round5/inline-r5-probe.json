@@ -1,0 +1,32 @@
+{
+  "driven_by": "agent",
+  "actor": "codex/windows-inline-closeout",
+  "kind": "minimal-output-completion-probe",
+  "runs": [
+    {
+      "effort": "low",
+      "httpStatus": 200,
+      "status": "completed",
+      "reasoning": {
+        "effort": "low",
+        "summary": "auto"
+      },
+      "outputText": "{\"value\":\"probe-ok\"}",
+      "incompleteDetails": null,
+      "error": null,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 170,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 9,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 179
+      }
+    }
+  ],
+  "credentialPersisted": false
+}

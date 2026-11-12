@@ -1360,3 +1360,11 @@ Use this packet before any handoff, fork, or context-pressure continuation.
 - TF-0859 已完成显式 1–5500 字符页参数适配，以及 32 次 deterministic 和 96 次 live/367 次调用的评测。最大序列化结果 5944 字符、超页 0、24 对首轮请求相同、原始历史旁路与 baseline oracle 泄漏均为 0。
 - stable 证据正确 0/18、控制有效 null 3/6；B1–B6 全部失败，56 次响应耗尽 900 输出 token，token 增长 51.56%。TF-0749 保持 in_progress/80、NO-GO。
 - 50 项定向单测、三套串行无缓存类型、契约与定向 Harness 通过。完整 Harness CI 在 59 项测试通过后因四份 Agent Dev 历史证据过期退出 1。认证失败的首次 96 请求、测试夹具失败和类型内存失败均保留，详见[第四轮报告](../../harness/specs/fixtures/context-inline-spill-benefit-round4/REPORT.md)。
+
+## 2026-11-13 Inline/Spill 第五轮低推理收益实测
+
+- 同一模型、四臂、8 个任务与三次重复，900 输出 token 上限不变；显式 reasoning.effort=low。
+- 96 次运行/438 调用：436 completed、2 transport error、0 incomplete。stable 证据 0/18，控制 6/6。
+- B1/B5 通过；B2/B3/B4/B6 失败。总 token 相对 reference-visible 增长 94.88%，证据保留正向配对 0、反向 1。
+- 记录 dirty 候选身份限制、超页和复算工具失败，不把原始可复算改写为 B7 或产品收益通过。
+- 证据：harness/specs/fixtures/context-inline-spill-benefit-round5/REPORT.md。
