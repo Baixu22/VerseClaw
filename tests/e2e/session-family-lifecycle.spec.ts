@@ -1,3 +1,4 @@
+import { openSessionNavigation } from './fixtures/session-navigation';
 import { readFile, writeFile } from 'node:fs/promises';
 import type { TaskLedgerSnapshot } from '../../shared/types/task-ledger';
 import { closeElectronApp, expect, getStableWindow, hoverUntilVisible, test } from './fixtures/electron';
@@ -40,6 +41,7 @@ test('archiving, restoring and deleting a parent preserves child navigation, tas
     await expect(page.getByTestId(`sidebar-session-${child}`)).toBeVisible();
     await page.getByTestId(`sidebar-session-${child}`).click();
     await expect(page.getByText('Surviving child transcript', { exact: true })).toBeVisible();
+    await openSessionNavigation(page);
     await expect(page.getByTestId('session-family-source-unloaded')).toContainText('Source unavailable');
     await page.screenshot({ path: testInfo.outputPath('archived-parent-surviving-child.png') });
     const archived = await hostInvoke(app, 'sessions', 'listArchived', { agentId: 'main' });

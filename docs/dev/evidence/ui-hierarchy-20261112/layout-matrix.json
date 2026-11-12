@@ -1,0 +1,157 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-ego",
+  "source": "current Vite production build with repository mock Host API",
+  "samples": [
+    {
+      "theme": "dark",
+      "navigation": {
+        "width": 1280,
+        "headerHeight": 40,
+        "left": 442,
+        "right": 762,
+        "bottom": 227,
+        "titleRight": 516.0520935058594,
+        "actionsLeft": 1164,
+        "overflow": false,
+        "keyboardResult": "闲置草稿来自 主会话"
+      },
+      "surfaces": {
+        "frame": "rgb(29, 33, 36)",
+        "sidebar": "rgb(39, 41, 41)",
+        "canvas": "rgb(45, 45, 43)",
+        "header": "rgb(45, 45, 43)",
+        "composer": "rgb(71, 71, 69)",
+        "menu": "rgb(61, 61, 59)",
+        "left": 1012,
+        "right": 1268,
+        "bottom": 288.2708435058594
+      }
+    },
+    {
+      "theme": "dark",
+      "navigation": {
+        "width": 960,
+        "headerHeight": 40,
+        "left": 287,
+        "right": 607,
+        "bottom": 227,
+        "titleRight": 361,
+        "actionsLeft": 844,
+        "overflow": false,
+        "keyboardResult": "闲置草稿来自 主会话"
+      },
+      "surfaces": {
+        "frame": "rgb(29, 33, 36)",
+        "sidebar": "rgb(39, 41, 41)",
+        "canvas": "rgb(45, 45, 43)",
+        "header": "rgb(45, 45, 43)",
+        "composer": "rgb(71, 71, 69)",
+        "menu": "rgb(61, 61, 59)",
+        "left": 692,
+        "right": 948,
+        "bottom": 288.2708435058594
+      }
+    },
+    {
+      "theme": "dark",
+      "navigation": {
+        "width": 720,
+        "headerHeight": 40,
+        "left": 287,
+        "right": 607,
+        "bottom": 227,
+        "titleRight": 361,
+        "actionsLeft": 604,
+        "overflow": false,
+        "keyboardResult": "闲置草稿来自 主会话"
+      },
+      "surfaces": {
+        "frame": "rgb(29, 33, 36)",
+        "sidebar": "rgb(39, 41, 41)",
+        "canvas": "rgb(45, 45, 43)",
+        "header": "rgb(45, 45, 43)",
+        "composer": "rgb(71, 71, 69)",
+        "menu": "rgb(61, 61, 59)",
+        "left": 452,
+        "right": 708,
+        "bottom": 288.2708435058594
+      }
+    },
+    {
+      "theme": "light",
+      "navigation": {
+        "width": 1280,
+        "headerHeight": 40,
+        "left": 442,
+        "right": 762,
+        "bottom": 227,
+        "titleRight": 516.0520935058594,
+        "actionsLeft": 1164,
+        "overflow": false,
+        "keyboardResult": "闲置草稿来自 主会话"
+      },
+      "surfaces": {
+        "frame": "rgb(249, 250, 251)",
+        "sidebar": "rgb(249, 250, 251)",
+        "canvas": "rgb(255, 255, 255)",
+        "header": "rgb(255, 255, 255)",
+        "composer": "rgb(255, 255, 255)",
+        "menu": "rgb(255, 255, 255)",
+        "left": 1012,
+        "right": 1268,
+        "bottom": 288.2708435058594
+      }
+    },
+    {
+      "theme": "light",
+      "navigation": {
+        "width": 960,
+        "headerHeight": 40,
+        "left": 287,
+        "right": 607,
+        "bottom": 227,
+        "titleRight": 361,
+        "actionsLeft": 844,
+        "overflow": false,
+        "keyboardResult": "闲置草稿来自 主会话"
+      },
+      "surfaces": {
+        "frame": "rgb(249, 250, 251)",
+        "sidebar": "rgb(249, 250, 251)",
+        "canvas": "rgb(255, 255, 255)",
+        "header": "rgb(255, 255, 255)",
+        "composer": "rgb(255, 255, 255)",
+        "menu": "rgb(255, 255, 255)",
+        "left": 692,
+        "right": 948,
+        "bottom": 288.2708435058594
+      }
+    },
+    {
+      "theme": "light",
+      "navigation": {
+        "width": 720,
+        "headerHeight": 40,
+        "left": 287,
+        "right": 607,
+        "bottom": 227,
+        "titleRight": 361,
+        "actionsLeft": 604,
+        "overflow": false,
+        "keyboardResult": "闲置草稿来自 主会话"
+      },
+      "surfaces": {
+        "frame": "rgb(249, 250, 251)",
+        "sidebar": "rgb(249, 250, 251)",
+        "canvas": "rgb(255, 255, 255)",
+        "header": "rgb(255, 255, 255)",
+        "composer": "rgb(255, 255, 255)",
+        "menu": "rgb(255, 255, 255)",
+        "left": 452,
+        "right": 708,
+        "bottom": 288.2708435058594
+      }
+    }
+  ]
+}

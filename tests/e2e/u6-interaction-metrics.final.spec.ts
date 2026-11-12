@@ -310,7 +310,7 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
       const created = await hostInvoke<{ tasks: Array<{ contract: { taskNodeId: string; objective: string } }> }>(app, 'taskLedger', 'queryTasks', { workspaceId: project.workspaceId });
       expect(created.tasks).toHaveLength(1); expect(created.tasks[0].contract.objective).toBe(objective); evidence.owner = created;
     } else if (journey === 'cross-tree-migration') {
-      await need('execution-migration-open'); await click('execution-migration-open');
+      await click('chat-toolbar-more'); await need('execution-migration-open'); await click('execution-migration-open');
       await expect(id('execution-migration-dialog')).toBeVisible();
       if (await id('execution-migration-target').inputValue() !== targetWorkspaceId) await ui('selectOption', 'checkout:target',
         () => id('execution-migration-target').selectOption(targetWorkspaceId!), { identity: true, value: targetWorkspaceId! });
@@ -379,7 +379,7 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
           return response;
         });
       });
-      await ui('click', 'chat-header:options', () => id('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click());
+      await ui('click', 'chat-header:options', () => id('chat-toolbar-more').click());
       await need('chat-session-handoff');
       await expect(id('chat-session-handoff')).toBeEnabled();
       await ui('press', 'testid:chat-session-handoff:Enter', async () => {
@@ -400,8 +400,11 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
       expect(childRead.session.parentSessionKey).toBe(project.sessionKey); evidence.child_readback = childRead;
     } else {
       const currentKey = child ?? project.sessionKey;
-      if (child) { await need('session-family-children'); await ui('selectOption', 'session:child',
-        () => id('session-family-children').selectOption(child), { identity: true, value: child }); }
+      if (child) {
+        await ui('click', 'session:navigation', () => id('chat-header-session-name').click());
+        await need(`chat-session-derived-${child}`);
+        await ui('click', 'session:child', () => id(`chat-session-derived-${child}`).click(), { identity: true, value: child });
+      }
       if (!child && !await page.getByText(`Recorded objective: ${objective}`, { exact: true }).isVisible())
         await click(`sidebar-session-${currentKey}`, { identity: true });
       await expect(page.getByText(`Recorded objective: ${objective}`, { exact: true })).toBeVisible({ timeout: 30_000 });

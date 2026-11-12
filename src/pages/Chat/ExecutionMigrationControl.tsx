@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type RefObject } from 'react';
 import { ArrowRightLeft, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { hostApi } from '@/lib/host-api';
@@ -6,10 +6,12 @@ import { useWorkspacesStore } from '@/stores/workspaces';
 import { useChatStore } from '@/stores/chat';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { ExecutionMigrationOperation } from '@shared/types/execution-migration';
 
-export function ExecutionMigrationControl({ workspaceId, sessionKey, generation }: {
-  workspaceId?: string; sessionKey: string; generation?: string;
+export function ExecutionMigrationControl({ workspaceId, sessionKey, generation, menuItem = false, onOpen, returnFocusRef }: {
+  workspaceId?: string; sessionKey: string; generation?: string; menuItem?: boolean; onOpen?: () => void;
+  returnFocusRef?: RefObject<HTMLButtonElement | null>;
 }) {
   const { t }=useTranslation('chat');
   const profiles=useWorkspacesStore(state=>state.profiles);
@@ -49,21 +51,26 @@ export function ExecutionMigrationControl({ workspaceId, sessionKey, generation 
   };
   if(!workspaceId)return null;
   return <>
-    <button type="button" data-testid="execution-migration-open" className="rounded p-1 text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10"
+    <button type="button" data-testid="execution-migration-open" role={menuItem ? 'menuitem' : undefined}
+      className={menuItem ? 'codex-header-menu__item disabled:opacity-40' : 'rounded p-1 text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10'}
       aria-label={t(current?'migration.resume':'migration.open')} title={t(current?'migration.resume':'migration.open')}
       disabled={!current&&(!binding?.activeTaskNodeId||!generation||targets.length===0)}
-      onClick={()=>{setTarget(current?.targetWorkspaceId??targets[0]?.id??'');setOpen(true);}}>
+      onClick={()=>{setTarget(current?.targetWorkspaceId??targets[0]?.id??'');setOpen(true);onOpen?.();}}>
       <ArrowRightLeft className="size-4"/>
+      {menuItem && <span>{t(current?'migration.resume':'migration.open')}</span>}
     </button>
     <Dialog open={open} onOpenChange={value=>{if(!busy)setOpen(value);}}>
-      <DialogContent data-testid="execution-migration-dialog" className="max-w-xl space-y-4 rounded-lg border border-black/10 bg-surface-modal p-5 shadow-xl dark:border-white/10">
+      <DialogContent data-testid="execution-migration-dialog" className="max-w-xl space-y-4 rounded-xl border border-border bg-surface-modal p-5 shadow-xl"
+        onCloseAutoFocus={event => { if (returnFocusRef?.current) { event.preventDefault(); returnFocusRef.current.focus(); } }}>
         <DialogTitle className="font-serif text-xl font-normal tracking-tight text-foreground">{t('migration.title')}</DialogTitle>
         <DialogDescription className="text-sm text-muted-foreground">{t('migration.description')}</DialogDescription>
         <label className="block space-y-2 text-sm">{t('migration.target')}
-          <select data-testid="execution-migration-target" className="w-full rounded border border-border bg-surface-input p-2"
-            value={current?.targetWorkspaceId??target} disabled={busy||Boolean(current)} onChange={event=>setTarget(event.target.value)}>
-            {targets.map(profile=><option key={profile.id} value={profile.id}>{profile.name}</option>)}
-          </select>
+          <Select value={current?.targetWorkspaceId??target} disabled={busy||Boolean(current)} onValueChange={setTarget}>
+            <SelectTrigger data-testid="execution-migration-target" aria-label={t('migration.target')}><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {targets.map(profile=><SelectItem key={profile.id} value={profile.id}>{profile.name}</SelectItem>)}
+            </SelectContent>
+          </Select>
         </label>
         {current&&<p role="status" data-testid="execution-migration-phase" className="text-sm text-muted-foreground">{t(`migration.phase.${current.phase}`)}</p>}
         {retainedError&&<p role="alert" className="text-sm text-red-700 dark:text-red-400">{t('migration.retained')} {retainedError.includes('MIGRATION_ARTIFACT_CHANGED')?t('migration.artifactChanged'):retainedError}</p>}

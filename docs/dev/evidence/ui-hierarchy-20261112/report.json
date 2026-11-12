@@ -1,0 +1,436 @@
+{
+  "schemaVersion": 1,
+  "driven_by": "agent",
+  "actor": "codex",
+  "recordedAt": "2026-11-12T10:06:05.650205+00:00",
+  "baseHead": "d96679ab6ac2279b8435eecb7e52f300c5407bec",
+  "headAtCloseout": "d96679ab6ac2279b8435eecb7e52f300c5407bec",
+  "visualAcceptance": "passed",
+  "visualEnvironment": {
+    "browser": "ego-browser",
+    "renderer": "Vite production build",
+    "host": "repository browser mock Host API",
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "widths": [
+      1280,
+      960,
+      720
+    ]
+  },
+  "findingsAndChanges": [
+    {
+      "finding": "Header chips and native family select competed with the session title.",
+      "change": "40px unboxed identity header; source and derived navigation share the title picker.",
+      "beforeHeightPx": 48,
+      "afterHeightPx": 40,
+      "beforeRestingControls": 6,
+      "afterRestingControls": 5
+    },
+    {
+      "finding": "Management actions preceded search in the conversation picker.",
+      "change": "Search is focused on open; checkpoints, fork and handoff are in More."
+    },
+    {
+      "finding": "Closing More unmounted the execution migration dialog.",
+      "change": "Dialog owner stays mounted, cancellation returns focus, and target uses the shared Select."
+    },
+    {
+      "finding": "Sidebar and reading canvas used the same dark tone.",
+      "change": "Shared graphite palette follows the supplied Codex reference.",
+      "frame": "#1D2124",
+      "sidebar": "#272929",
+      "canvasAndHeader": "#2D2D2B",
+      "menu": "#3D3D3B",
+      "composer": "#474745"
+    },
+    {
+      "finding": "A 360px title could overlap header actions in a 720px window with the 275px sidebar expanded.",
+      "change": "Title width shrinks inside its bounded parent.",
+      "beforeOverlapPx": 43,
+      "afterGapPx": 8
+    },
+    {
+      "finding": "Expanded family counts repeated visible children and child typography differed from parent rows.",
+      "change": "Counts appear while collapsed; shared row typography and guides carry the hierarchy."
+    },
+    {
+      "finding": "Historical prompt-cache risk and workspace-panel animation kept unnecessary or inaccessible controls.",
+      "change": "Recovered cache warnings disappear; session environment stays accessible beside workspace tabs."
+    }
+  ],
+  "checks": {
+    "unit": {
+      "exitCode": 0,
+      "files": 9,
+      "tests": 76,
+      "log": "D:\\tmp\\clawx-ui-hierarchy-20261112\\unit-final.log"
+    },
+    "graphiteAndDialogRecheck": {
+      "exitCode": 0,
+      "files": 3,
+      "tests": 15,
+      "subsetOfUnitTotal": true,
+      "log": "D:\\tmp\\clawx-ui-hierarchy-20261112\\unit-graphite.log"
+    },
+    "build": {
+      "command": "pnpm run build:vite",
+      "exitCode": 0,
+      "log": "D:\\tmp\\clawx-ui-hierarchy-20261112\\build-delivery.log"
+    },
+    "typecheck": {
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "coverage": [
+        "node",
+        "web",
+        "test"
+      ],
+      "log": "D:\\tmp\\clawx-ui-hierarchy-20261112\\typecheck-final.log",
+      "afterFinalLayoutEdit": {
+        "web": 0,
+        "test": 0
+      }
+    },
+    "i18n": {
+      "command": "pnpm run i18n:lint",
+      "exitCode": 0
+    },
+    "lint": {
+      "exitCode": 0,
+      "errors": 0,
+      "existingRefreshWarnings": 2,
+      "log": "D:\\tmp\\clawx-ui-hierarchy-20261112\\lint.log"
+    },
+    "harness": {
+      "command": "pnpm harness validate --spec harness/specs/tasks/sidebar-session-row-polish.md --since HEAD",
+      "exitCode": 0,
+      "status": "pass-with-residual",
+      "residual": "Exact pre-existing paths remain declared in the task spec."
+    },
+    "ego": {
+      "layoutSamples": 6,
+      "draftRoundTrip": "passed",
+      "searchAndKeyboard": "passed",
+      "longTitleAndReducedMotion": "passed",
+      "migrationDialog": "passed-with-browser-fixture",
+      "nativeMigrationExecuted": false
+    },
+    "electron": {
+      "status": "startup-timeout",
+      "uiAssertions": "not-reached",
+      "reason": "electronApplication.firstWindow timed out after 30000ms",
+      "sameFailureBeforeEdits": true,
+      "log": "D:\\tmp\\clawx-ui-hierarchy-20261112\\e2e-final.log",
+      "ownedProcessesCleanedUp": true
+    }
+  },
+  "sourceDelta": [
+    {
+      "path": "README.ja-JP.md",
+      "beforeSha256": "aaac2cf1f3f03686ea1309df1b9b236627a9c9a73819621e9a37ff192ed5bb1c",
+      "afterSha256": "3fee16a43e87a75590fb89bb39b94483dccd51141ac38835897b43fa9f3ea829"
+    },
+    {
+      "path": "README.md",
+      "beforeSha256": "f4c98dc2c1f0566eb942b78cd9d9554df4bd4426419255cf2f896d708d37e16e",
+      "afterSha256": "bf546454b9ba1fdcffd8e6f9507977a8f6cc86b3f23a5959d43dc3f7001797f3"
+    },
+    {
+      "path": "README.ru-RU.md",
+      "beforeSha256": "fc57d9de3503fe23f9b791d3e5294c4b9520a389faa17b19eb5cd27cd7da95a2",
+      "afterSha256": "6adc810e7967db4c9c1566ef78458a5e5d55832dbec45a96f89fb7f9267d1cbd"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "beforeSha256": "b87f9a5b1f53eafdb0ac64025bf3742b8f02d2c1e1a5164ba6b9833433bc67c6",
+      "afterSha256": "3e437f5f58c9bbb5e8984e2ecbcc00bbc3b631a6569833e34e11da46c6836454"
+    },
+    {
+      "path": "docs/dev/rareui-interactions.md",
+      "beforeSha256": "62e5cf272797abae34d603551de32a534cdc031d41cc165b3902adbed9ec091c",
+      "afterSha256": "aa872d08df4609070baf4c7727d5a2e92e40834b5a7830b6b7b490d12ddbf28b"
+    },
+    {
+      "path": "harness/specs/rules/sidebar-session-row-controls.md",
+      "beforeSha256": "f742550826a0cf6a24c4f87c7a86900037bd9b56b1ba21641d6c98803faa6259",
+      "afterSha256": "430a5e551ed1b4e1ade939473a84be9f7985b93b819628da44c1b916e2f4df80"
+    },
+    {
+      "path": "harness/specs/scenarios/sidebar-session-row-management.md",
+      "beforeSha256": "2fd7e89471da9626124c30adf0ebce77deae8d21470fa93d5926e6b578d48b47",
+      "afterSha256": "6ff4406da7ec297cae06e37dec127ac9ecb4ff8cd23be28ced1b30d25c0edbf8"
+    },
+    {
+      "path": "harness/specs/tasks/sidebar-session-row-polish.md",
+      "beforeSha256": "01f9a9129cc42433c4f8fa4084d01b3e3334c68b55adf8a3516e8fbb0c0f8e08",
+      "afterSha256": "78712d723cbcae589e0ba11076d40142654f282d307fae1729048d235686cc97"
+    },
+    {
+      "path": "src/components/chat/SessionFamilyNavigation.tsx",
+      "beforeSha256": "eb99149cb8d0690fe4f4d03634553e2734e809b59535e4ced0abc0279222174c",
+      "afterSha256": "1be7324214e681b246a59d9a294b1401325aa52a6c8340c7cc71c3cc335a8993"
+    },
+    {
+      "path": "src/components/layout/SessionFolderTree.tsx",
+      "beforeSha256": "1764ba307388bc10c9a54077dd1601e3ea59462607325aabcde86992c6801b1e",
+      "afterSha256": "dd100816036e2563ff3dde7a22af832d2755d606e655a05afa98c28d04d2b755"
+    },
+    {
+      "path": "src/components/layout/TitleBar.tsx",
+      "beforeSha256": "8f57024ec1fa1774c386fa3a81e3c12458acf7dba8801905bf8b629c931461a4",
+      "afterSha256": "5c9eda43b675d949fbcf526eefb13a2dee83b888f8573e528d8760a577d8d2e1"
+    },
+    {
+      "path": "src/pages/Chat/ChatToolbar.tsx",
+      "beforeSha256": "b13d933303decbf075fc2cc81808a17b31c212605da5546720251d33fce8402e",
+      "afterSha256": "81575614eaf83988ce1e017557f9409b0b458d3039654ced39f0c0529098a494"
+    },
+    {
+      "path": "src/pages/Chat/ExecutionMigrationControl.tsx",
+      "beforeSha256": "c6d0a055d8c2f3ea7ff5daef7bfb1b23dc2707d85e411b2e4453d1802b452d72",
+      "afterSha256": "1169beae49d78f1e4532bb0cee3a46334944cf4bbdc4dbb2969354eba436f32e"
+    },
+    {
+      "path": "src/pages/Chat/index.tsx",
+      "beforeSha256": "a77e819d478e7946e724f14e870e4475266644cdff87d69618317d04bcfa087c",
+      "afterSha256": "4fd3f1c5ee7c9a3ac4582412d29aa9716f2004dd47bb4926732b553d11a50bc2"
+    },
+    {
+      "path": "src/styles/codex-composer-material.css",
+      "beforeSha256": "d38a9d285268bbfc079b81f4d2005d46236e408ccade0196bffac25086296e58",
+      "afterSha256": "1c4041de0cebda1e2765a8b6febbc163926048247c8831b0443306845752dd72"
+    },
+    {
+      "path": "src/styles/codex-composer-shell.css",
+      "beforeSha256": "b011375df4decf38ecf4767cfedcbdced50590ff4adbf9d3b251e9790f315e9a",
+      "afterSha256": "986ee28bc4688ec000af43d9da97928c18ebd182672f623ff4d733e91fd13ef8"
+    },
+    {
+      "path": "src/styles/codex-responsive.css",
+      "beforeSha256": "a5407c3c67ccd91743bfb74b7af6118f6bff6762f6708eea2cffb5b2c10fefa7",
+      "afterSha256": "691a02a5933fe6d5ead6207d557a99a5a6ee052187e5a84d2cf2c267c8454f3a"
+    },
+    {
+      "path": "src/styles/codex-sidebar.css",
+      "beforeSha256": "245bd801ab71cc41db0eb3ff85be3eb87baa69cbe232d339482a33c74cb20f31",
+      "afterSha256": "4a3dd0869e68fce8176d495ff9fa2729bb0d588bdc5be9b22456fb8c7bc5aec9"
+    },
+    {
+      "path": "src/styles/codex-tokens.css",
+      "beforeSha256": "f60ab1a0fbf82132bed390e13eac6936f187e4359b32bb69635b501926dd5e81",
+      "afterSha256": "b7907f9b8a40bfe310b3d21afbc58ee38070307ec083299bb313cadbfb16934d"
+    },
+    {
+      "path": "src/styles/codex-workspace-panel.css",
+      "beforeSha256": "bad1a49e42a6acd3b73a5a228c14a7484a1b174500ce5c1b4e4b501631eaf7d7",
+      "afterSha256": "d96bfd77437479eb6ccd7b40b759451e066fe74be3ff636b221f0218467d72d7"
+    },
+    {
+      "path": "src/styles/globals.css",
+      "beforeSha256": "df19a7f87b210c737e3027db36d0fe8dbe5d5107fffbf64195047f5de36b68d9",
+      "afterSha256": "c21d520a15e2a03ec8e6bb53bd128b07c41cfb2d2acd02c0fcab92924e3c891d"
+    },
+    {
+      "path": "tests/e2e/chat-checkpoints.spec.ts",
+      "beforeSha256": "8222db5b867b068a1730dd99a220e2be91fe9d36fb5e252254102cef15c783f0",
+      "afterSha256": "54c265d796c9cc7d5d8f47fcc97adf756ab69c6128315c5fc674d4d45ca1c902"
+    },
+    {
+      "path": "tests/e2e/chat-session-fork.spec.ts",
+      "beforeSha256": "368ae2522d4810738e3d47cc12d575c387d2c968ed91524130eb811b165b7edd",
+      "afterSha256": "bc10079b2e694603867d1bd2fe8ad65164ef792a46a0a749908cacf7b914e2c9"
+    },
+    {
+      "path": "tests/e2e/chat-session-handoff.spec.ts",
+      "beforeSha256": "ca82c763b056292f7787f8a663af8c76e7a7e3fc77c39fa467b0626b8126f2f1",
+      "afterSha256": "a9bb54c33ac2613580402314275f1cc14417bcb1a35ad948a3e50d9f345ad395"
+    },
+    {
+      "path": "tests/e2e/chat-worktree-session-navigation.spec.ts",
+      "beforeSha256": "75c2d1d819a32f16fd37b4b44c0d13df2dfe485f470bf7446c3d63244712475f",
+      "afterSha256": "ccc8e026b473621a9660a0505659e1d537091d0bcbb2cababce24e86c42c3ba5"
+    },
+    {
+      "path": "tests/e2e/execution-migration.spec.ts",
+      "beforeSha256": "76a5c8b0eebbecf63cbb0529fe6526a68d31299486134e4156c993d15e34dad1",
+      "afterSha256": "2a8d0457f9ec0c83ee6782ee31399fbf402c9ee7fa0d6e7d3c460d0a7d437dd9"
+    },
+    {
+      "path": "tests/e2e/project-agent-entry.spec.ts",
+      "beforeSha256": "b540a16b7d9e11a71c34100c5b812cbe502378650f54564c5938f8e2439648aa",
+      "afterSha256": "1f10cf3431bdf8d6cd5f18a1d71700fa0e0fa6bdbe202bcfe19a64de009c5ab7"
+    },
+    {
+      "path": "tests/e2e/session-chain-scope-faults.spec.ts",
+      "beforeSha256": "e9973857cf40666caf5a54aa312309924262e50ce7841171800a14fa4ccb4454",
+      "afterSha256": "c26a73a9e08aa9a9ec54b2e0cf01487cc66eb881d1aed9d8985252c1d734f316"
+    },
+    {
+      "path": "tests/e2e/session-context-commit-recovery.spec.ts",
+      "beforeSha256": "f4631915a8ca0c2cb86bb1c93191651c3170723f7984088038de1b2663787e10",
+      "afterSha256": "8154ef4d7943a2dbce3f38910fd165bffc99b30f39129b60d9a8f211915c056b"
+    },
+    {
+      "path": "tests/e2e/session-context-recovery.spec.ts",
+      "beforeSha256": "ead117b24e19004a23e5d4fa4c55693c2e2af8e7404aa353e010ff6daa5e5a26",
+      "afterSha256": "ff4f37ab4c7687500f6661fe7551352e70dc35d817628e94562510e9f0214e05"
+    },
+    {
+      "path": "tests/e2e/session-derivation-ui.spec.ts",
+      "beforeSha256": "6aca26523041ae6fbf138e08fca7ac39536a26da9e4650f6adf49ddf89a49592",
+      "afterSha256": "9a3027cc30fa104882b746eedfaf80951177eb42ddd7586d6cfdf01584184e4b"
+    },
+    {
+      "path": "tests/e2e/session-family-counter-layout.spec.ts",
+      "beforeSha256": "dd9b8eb742105c67e1ed406e3672cfe8f73419e0051bc24856dec7417f045559",
+      "afterSha256": "c5355ec069f638853022c934e6c7383e64bdfd9b5cfb0c5abf12fadced0e293a"
+    },
+    {
+      "path": "tests/e2e/session-family-lifecycle.spec.ts",
+      "beforeSha256": "b534cf9e7a5bac219f216a4ec686358dacfa8b481300d9a6d51d3edab84e173c",
+      "afterSha256": "cce66341815ecff366a5d53c29b90384fe08938225433c9937448c76bca7226b"
+    },
+    {
+      "path": "tests/e2e/session-fork-intent.spec.ts",
+      "beforeSha256": "edc5eb90520628a0ccb961c0b560846128a034d1b53be204b1a50e5920a33bf2",
+      "afterSha256": "dae99fbcb1f467f7ad50c825f3e3ed120bc346847b3acba3dbc84e5e3a3d505a"
+    },
+    {
+      "path": "tests/e2e/session-lifecycle-recovery.spec.ts",
+      "beforeSha256": "1c1a5f8819e4f5d47d31ec1d457f10fce0bdd2cbb30d959497c9a0c3f78c71f9",
+      "afterSha256": "0e6d8596218e5db3d5a9a326a24472cb3a47563b1bbbf7f93fae81de5cf9db3d"
+    },
+    {
+      "path": "tests/e2e/session-task-locales.spec.ts",
+      "beforeSha256": "76f1082bfe657667d898dd575c4890ce310b079c8ba48f46f956bdaa909d199f",
+      "afterSha256": "95bf6069a88b6029ed817158b20ce0445a8395da5eb83ba662dec5844f0b3288"
+    },
+    {
+      "path": "tests/e2e/session-task-reading-navigation.spec.ts",
+      "beforeSha256": "b54af109014ca1b291f4c31f6cc2bb0349775dcfc1600b61399ed2a81d84af3c",
+      "afterSha256": "d3bccf0534f3c95801ea7d79d7f2fb67b16418a60b1bdbf2afc5d745819b8e65"
+    },
+    {
+      "path": "tests/e2e/session-worker-task-journey.spec.ts",
+      "beforeSha256": "ef0ab3627fccb21213b97a536393e54ac18c3da003987178013a5df8fe63c413",
+      "afterSha256": "76d6e91ef5f022948d76397073b2c25d756bf2e76045345f0969f3b1e37f2b1d"
+    },
+    {
+      "path": "tests/e2e/sidebar-session-row-polish.spec.ts",
+      "beforeSha256": "609ce18e0cd8f37b45f170b496b43abfedf6584a96745f899ffe140d47776b92",
+      "afterSha256": "3271810e4c2e3ad70b825d70d3ab2ff1deca15f37ad19fccf4cceb7b9fcbb6c8"
+    },
+    {
+      "path": "tests/e2e/u6-interaction-metrics.final.spec.ts",
+      "beforeSha256": "dc9c2683bf69db1840bb52177f0e5c18d2544fa0995669006f36c4d22fdc9c70",
+      "afterSha256": "0bac4ab8f91e96ebacc44f2c28326ed08cc4d8968a868fff2f8a564d74427fd1"
+    },
+    {
+      "path": "tests/unit/execution-migration-control.test.tsx",
+      "beforeSha256": "023a45168d03b8bf5b22c74f55333530f0c78e8beb3ef00744df4295c477e512",
+      "afterSha256": "3f85682c2478032a9cd56328e0ecda7a115396312d86858235db955f7cf5aee4"
+    },
+    {
+      "path": "tests/unit/fakecoding-design-system.test.ts",
+      "beforeSha256": "4363d44dcba252b4a50aa21969ecf9f26540578a540a55ee3c351f5cd5e21bde",
+      "afterSha256": "0a85e22e68ba396da180dfb7b016bd0fa92c8f812e3f6f4846cd4bf0c9fcfc06"
+    },
+    {
+      "path": "tests/unit/session-family-navigation.test.tsx",
+      "beforeSha256": "e2de5c4b7e8391c65c2a88ead90f53145fefc272b213e2ff2e245a3182ae686a",
+      "afterSha256": "4e86d19967881779cf1fe16d4fcc696d315dc891cebf994f832749fe13d8e973"
+    },
+    {
+      "path": "tests/unit/sidebar-render-containment.test.tsx",
+      "beforeSha256": "8890f9331c8760e685e414771ab5b347d5dd84c658e4dd9f2023e347a661ea00",
+      "afterSha256": "cee972c11d72908354e92c2afad0c927d2e34aa1578ade0a409c82453776c410"
+    },
+    {
+      "path": "tests/e2e/fixtures/session-navigation.ts",
+      "beforeSha256": null,
+      "afterSha256": "70d61c4c1729101321bfc583d9c962542fed63ddebe9f05a3581cc39cffb2013"
+    },
+    {
+      "path": "tests/unit/chat-toolbar.test.tsx",
+      "beforeSha256": null,
+      "afterSha256": "c324b88215eae10d32462961839c538496413d9c0f748c116c82775d98589234"
+    }
+  ],
+  "preservedInitialChanges": [
+    "openclaw_runtime/src/agents/worktree-service.ts",
+    "shared/i18n/locales/en/settings.json",
+    "shared/i18n/locales/ja/settings.json",
+    "shared/i18n/locales/ru/settings.json",
+    "shared/i18n/locales/zh/settings.json",
+    "src/components/rareui/NotificationBell.tsx",
+    "src/components/task-ledger/TaskLedgerSummaryPanel.tsx",
+    "src/pages/Settings/sections/RecoverySettingsSection.tsx",
+    "src/styles/codex-settings-controls.css",
+    "src/styles/rareui-interactions.css",
+    "tests/e2e/chat-memory-injection-panel.spec.ts",
+    "tests/e2e/chat-recovery-assist.spec.ts",
+    "tests/e2e/sidebar-session-family-connectors.spec.ts",
+    "tests/unit/chat-save-to-knowledge.test.tsx",
+    "tests/unit/rareui-interactions.test.tsx",
+    "tests/unit/sidebar-session-context-menu.test.tsx",
+    "tests/unit/vite-config-openclaw-runtime.test.ts",
+    "vite.config.ts"
+  ],
+  "artifacts": [
+    {
+      "path": "dark.png",
+      "sha256": "0a6fc86f0bb044e7ae17e690cd7ea2dc8a17f4b5e421b040cd0c13b83023d576"
+    },
+    {
+      "path": "light.png",
+      "sha256": "12e8a97037429b6c7e119648fe9809fb37222f79e826ac84476922725a4ed1f9"
+    },
+    {
+      "path": "navigation.png",
+      "sha256": "e9093a5edcbcfb30e3ae1f40cbfae03e77d16207cd4b32e7c9f00d0f59b5d7ce"
+    },
+    {
+      "path": "more.png",
+      "sha256": "8e0bcf4e9dd84c01b4b362d198674e3d7cf4bb81f6623850b281035ae10b729f"
+    },
+    {
+      "path": "before-dark.png",
+      "sha256": "30da91b7738e5177906fb124991a3e2f7932c8df684dff4b0faca901a5f65344"
+    },
+    {
+      "path": "long-title-720.png",
+      "sha256": "0cc867c9723e6948c571b629d89782f333ba07217beca09efb79b9e81fb9df90"
+    },
+    {
+      "path": "migration-recovery.png",
+      "sha256": "ed1c480de5702aa6e2dcf56fdc8503837e4d09c44c8f1a63a60720d3432bb315"
+    },
+    {
+      "path": "layout-matrix.json",
+      "sha256": "fde2341f4dd1d2b6d3add521e9243ca4e29d8a6aa6222bf60a0b32b20dbb2e50"
+    },
+    {
+      "path": "draft-navigation.json",
+      "sha256": "aeb97d09515d73f86970d7ebf36660454e51590c7e03bb7835bf97a87a9ee2ba"
+    },
+    {
+      "path": "sidebar-checks.json",
+      "sha256": "de98d67931b6fdac496189230c29a81e5cad0d4364ff1b1039e31c2eea0d8058"
+    },
+    {
+      "path": "migration-checks.json",
+      "sha256": "b385b873d281df1b05174c2f1de8f75442340395f15878f4265c6117b0b45d9c"
+    },
+    {
+      "path": "graphite-surfaces.json",
+      "sha256": "3e7e68bc880706d8f7c99de30d136081b80d4244899c5c451b8e33504ce6c509"
+    },
+    {
+      "path": "final-render.json",
+      "sha256": "f9d15e663ca557c7d9f9461a01192384714b9fc3d3ed5e694cfbbc18c6646fbe"
+    }
+  ]
+}

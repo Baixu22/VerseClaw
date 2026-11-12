@@ -108,7 +108,7 @@ async function send(app: ElectronApplication, project: { workspaceId: string; se
   return result.result!.runId;
 }
 async function openCheckpoints(page: Page) {
-  await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click(); await page.getByTestId('chat-session-checkpoints').click();
+  await page.getByTestId('chat-toolbar-more').click(); await page.getByTestId('chat-session-checkpoints').click();
   await expect(page.getByTestId('chat-checkpoints-dialog')).toBeVisible();
 }
 async function finish(app: ElectronApplication, llm: Awaited<ReturnType<typeof startScriptedLlm>>, info: TestInfo, evidence: Record<string, unknown>) {
@@ -206,7 +206,7 @@ test('U5 compact and compactRange lose only committed replies; refresh reads cur
         await expect(page.getByTestId('chat-compaction-dialog')).toBeVisible();
         await page.getByTestId('chat-compaction-dialog').getByRole('button', { name: locale.composer.compaction.cancel, exact: true }).click();
       }
-      await page.getByTestId('chat-toolbar-refresh').click();
+      await page.getByTestId('chat-toolbar-more').click(); await page.getByTestId('chat-toolbar-refresh').click();
       await openCheckpoints(page); await page.getByTestId('chat-checkpoints-refresh').click();
       await expect(page.getByTestId('chat-checkpoints-dialog')).toHaveAttribute('aria-busy', 'false'); await page.getByTestId('chat-checkpoints-close').click();
       const after = await readOwner(app, project.sessionKey);
@@ -302,7 +302,7 @@ test('U5 real journal checkpoint restore changes v2 to v1 despite reply loss and
     expect(diffAfter).toMatchObject({ success: true, files: [], errors: [] });
     expect(after.described.session.sessionId).toBe(generation); expect(after.sessionKeys).toEqual(before.sessionKeys);
     expect(after.checkpoints.checkpoints.some(row => row.id === seed.record.id)).toBe(true); expect(await readFile(target, 'utf8')).toBe('v1\n');
-    await page.getByTestId('chat-checkpoints-close').click(); await page.getByTestId('chat-toolbar-refresh').click(); await page.waitForTimeout(1000);
+    await page.getByTestId('chat-checkpoints-close').click(); await page.getByTestId('chat-toolbar-more').click(); await page.getByTestId('chat-toolbar-refresh').click(); await page.waitForTimeout(1000);
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('U5 retained restore draft');
     const translations: Array<{ language: string; title: string; emptyDiff: string }> = [];
     evidence.restore = { before, after, lost, diffBefore, diffAfter, restoredFileSha256: sha(await readFile(target)), source: seed.source, translations };

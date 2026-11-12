@@ -1,0 +1,13 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-ego",
+  "data": "repository mock Host API",
+  "parentDraftRetained": true,
+  "childDraftRetained": true,
+  "sourceLabel": "来源会话 · 分支主会话",
+  "emptySearch": {
+    "text": "没有匹配的会话",
+    "rows": 0
+  },
+  "escapeReturnsFocus": true
+}

@@ -6,6 +6,7 @@ import type { ElectronApplication, Page, TestInfo } from '@playwright/test';
 import type { WorkspaceCoordinatorBindingResult } from '../../shared/host-api/contract';
 import type { WorkspaceProfile } from '../../shared/types/workspace';
 import { closeElectronApp, expect, getStableWindow, hoverUntilVisible, test } from './fixtures/electron';
+import { openSessionNavigation } from './fixtures/session-navigation';
 import { hostInvoke, startScriptedLlm } from './fixtures/fp-p1-harness';
 import { configureSessionChainProvider, createSessionChainProject, createSessionChainTask } from './fixtures/session-task-chain';
 
@@ -79,16 +80,17 @@ async function setup(launch: Launch, info: TestInfo, providerPort?: number) {
 async function select(c: Context, key: string) {
   const back = c.page.getByTestId('settings-back-button');
   if (await back.isVisible()) { await back.focus(); await back.press('Enter'); }
-  const family = c.page.getByTestId('session-family-children');
-  if (key === c.neighbour && await family.isVisible()) {
+  const family = c.page.getByTestId(`chat-session-derived-${key}`);
+  if (key === c.neighbour) {
+    await openSessionNavigation(c.page);
     const window = await c.app.browserWindow(c.page);
     await window.evaluate(window => { window.show(); window.focus(); }); await window.dispose();
     await c.page.bringToFront();
-    await family.selectOption(key);
+    await family.click();
     try { await expect(c.page.getByTestId('chat-composer-input')).toHaveValue('U5 draft B'); }
     finally {
       const navigation = c.facts.navigation as unknown[] ?? []; c.facts.navigation = navigation;
-      navigation.push({ target: key, at: Date.now(), selection: await family.evaluateAll(elements => elements.map(element => (element as HTMLSelectElement).value)),
+      navigation.push({ target: key, at: Date.now(), selection: await c.page.getByTestId('chat-header-session-name').textContent(),
         draft: await c.page.getByTestId('chat-composer-input').inputValue(),
         workspace: await hostInvoke(c.app, 'workspaces', 'getActive'),
         selectedRows: await c.page.locator('[data-hook-selected="true"]').evaluateAll(rows => rows.map(row => row.textContent)) });
@@ -290,7 +292,7 @@ test('U5 current-run Stop retries without its old error and reconciles a lost re
   await input.fill('U5 unsent A'); await select(c, c.neighbour); const neighbourUrl = c.page.url();
   await release(c, 'drop'); await neighbourUnchanged(c, neighbourUrl);
   c.facts.lostSuccess = await fault(c);
-  await select(c, c.project.sessionKey); await c.page.getByTestId('chat-toolbar-refresh').click();
+  await select(c, c.project.sessionKey); await c.page.getByTestId('chat-toolbar-more').click(); await c.page.getByTestId('chat-toolbar-refresh').click();
   await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>(c.app, 'sessions.describe', { key: c.project.sessionKey })).session.hasActiveRun).toBe(false);
   await expect(stop).not.toHaveAttribute('data-send-state', /^(running|running-with-draft|starting)$/);
   await expect(input).toHaveValue('U5 unsent A');
@@ -428,7 +430,7 @@ test('U5 archive restore and confirmed delete retry their retained operationId a
       await c.app.evaluate(() => { const f = (globalThis as Globals).u5Fault; if (f?.release) { f.outcome = 'pass'; f.release(); } });
       await retry.catch(() => undefined);
     }
-    await c.page.getByTestId('chat-toolbar-refresh').click();
+    await c.page.getByTestId('chat-toolbar-more').click(); await c.page.getByTestId('chat-toolbar-refresh').click();
     if (action === 'restore') { await archivePage(c); await c.page.getByTestId('settings-archived-refresh').click(); await expect(c.page.getByTestId(`settings-archived-item-${key}`)).toHaveCount(0); await select(c, c.neighbour); }
     else await expect(c.page.getByTestId(`sidebar-session-${key}`)).toHaveCount(0);
     expect(await lifecycleRead(c)).toEqual(committed);

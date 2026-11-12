@@ -1,3 +1,4 @@
+import { selectDerivedSession, openSourceSession } from './fixtures/session-navigation';
 import { writeFile } from 'node:fs/promises';
 import type { ElectronApplication, Page } from '@playwright/test';
 import type { WorkspaceProfile } from '../../shared/types/workspace';
@@ -85,7 +86,7 @@ test('U2 restores the visible transcript message, reading offset and both sessio
     const page = await getStableWindow(app);
     await setSessionChainViewport(app, { width: 1280, height: 800 });
     await page.reload();
-    await expect(page.getByTestId('session-family-children')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByTestId('chat-header-session-name')).toBeVisible({ timeout: 30_000 });
     const scroller = page.getByTestId('chat-scroll-container');
     await expect(scroller).toBeVisible();
     await page.getByTestId('chat-composer-input').fill('U2 parent draft must survive the reading round trip');
@@ -106,7 +107,7 @@ test('U2 restores the visible transcript message, reading offset and both sessio
     evidence.project = project; evidence.child = child; evidence.seedReceipts = seeded; evidence.before = before;
     await page.screenshot({ path: testInfo.outputPath('u2-reading-before.png') });
 
-    await page.getByTestId('session-family-children').selectOption(child);
+    await selectDerivedSession(page, child);
     await expect(page.getByTestId('chat-scroll-container')).toContainText('U2-CHILD-CONTEXT');
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Child 1 draft');
     await page.getByTestId('chat-composer-input').fill('U2 child draft stays separate');
@@ -117,7 +118,7 @@ test('U2 restores the visible transcript message, reading offset and both sessio
     expect(saved?.draftInput).toBe('U2 parent draft must survive the reading round trip');
     expect(Math.abs((saved?.readingPosition?.scrollTop ?? -1) - before.top)).toBeLessThanOrEqual(8);
 
-    await page.getByTestId('session-family-source').click();
+    await openSourceSession(page);
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('U2 parent draft must survive the reading round trip');
     // No click/scroll/focus on the transcript after returning: automatic restoration is the behavior under test.
     await expect.poll(async () => {

@@ -1,16 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, ArrowLeft, ChevronRight, GitFork } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ChevronRight } from 'lucide-react';
 import type { ChatSession } from '@shared/chat/types';
 import { classifyDerivation, deriveSessionLineage, type SessionDerivation } from '@shared/types/session-derivation';
 
-/*
- * Lineage lives inline in the chat header as quiet chips instead of a strip
- * pinned over the transcript: a source link for derived sessions, a picker
- * when there are descendants, and relation details only where the direct
- * parent is not the whole story (multi-generation chains or broken links).
- * Healthy roots without children render nothing.
- */
-const CHIP = 'inline-flex h-7 min-w-0 shrink-0 items-center gap-1.5 rounded-md px-1.5 text-xs leading-none text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10';
+// Source and ancestry share the conversation picker; descendants are listed by its owner.
+const ROW = 'codex-header-menu__item';
 
 export function SessionFamilyNavigation({ session, sessions, derivation, onNavigate, onRefresh }: {
   session: ChatSession;
@@ -22,37 +16,39 @@ export function SessionFamilyNavigation({ session, sessions, derivation, onNavig
   const { t } = useTranslation('chat');
   const relation = classifyDerivation(session);
   const parent = sessions.find((entry) => entry.key === relation.parentSessionKey);
-  const children = sessions.filter((entry) => classifyDerivation(entry).parentSessionKey === session.key && entry.key !== session.key);
   const problem = derivation?.hops.find((hop) => hop.status !== 'resolved')?.status;
   const hops = (derivation ?? deriveSessionLineage({ rootSessionKey: session.key,
     readEntry: (key) => sessions.find((entry) => entry.key === key) ?? null })).hops;
-  if (!relation.parentSessionKey && !relation.diagnostics?.length && !children.length) return null;
+  if (!relation.parentSessionKey && !relation.diagnostics?.length) return null;
   const name = (entry: ChatSession) => entry.displayName || entry.label || entry.derivedTitle || entry.key;
   const kind = t(`sessionFamily.kind.${relation.kind}`);
   const showRelations = hops.length > 1 || Boolean(problem);
   return <nav aria-label={t('sessionFamily.navigation')} data-testid="session-family-navigation"
-    className="session-family-nav flex min-w-0 items-center">
+    className="session-family-nav mb-1 flex min-w-0 flex-col border-b border-border/50 pb-1">
     {relation.parentSessionKey && (parent
       ? <button type="button" data-testid="session-family-source" onClick={() => onNavigate(parent.key)}
-          title={`${kind} · ${name(parent)}`} className={CHIP}>
+          title={`${kind} · ${name(parent)}`} aria-label={`${t('session.navigation.source')}: ${name(parent)}`} className={ROW}>
           <ArrowLeft className="size-3.5 shrink-0" aria-hidden="true" />
-          <span className="session-family-nav__name max-w-[128px] truncate">{name(parent)}</span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-2xs text-muted-foreground">{t('session.navigation.source')} · {kind}</span>
+            <span className="block truncate">{name(parent)}</span>
+          </span>
         </button>
-      : <button type="button" data-testid="session-family-source-unloaded" onClick={onRefresh} className={CHIP}>
+      : <button type="button" data-testid="session-family-source-unloaded" onClick={onRefresh} className={ROW}>
           <AlertTriangle className="size-3.5 shrink-0" aria-hidden="true" />
           <span className="truncate">{t(problem === 'parent-missing' ? 'sessionFamily.missing' : 'sessionFamily.unloaded')}</span>
         </button>)}
-    {relation.diagnostics?.length ? <span data-testid="session-family-conflict" className={CHIP}>
+    {relation.diagnostics?.length ? <span role="status" data-testid="session-family-conflict" className="flex items-center gap-2 px-2 py-1 text-xs text-amber-700 dark:text-amber-400">
       <AlertTriangle className="size-3.5 shrink-0" aria-hidden="true" />{t('sessionFamily.conflict')}
     </span> : null}
-    {problem && problem !== 'parent-missing' && <span className={CHIP}>
+    {problem && problem !== 'parent-missing' && <span role="status" className="flex items-center gap-2 px-2 py-1 text-xs text-amber-700 dark:text-amber-400">
       <AlertTriangle className="size-3.5 shrink-0" aria-hidden="true" />{t(`sessionFamily.${problem}`)}
     </span>}
-    {showRelations && hops.length > 0 && <details className="relative shrink-0" data-testid="session-family-relations">
-      <summary className={`${CHIP} cursor-pointer list-none [&::-webkit-details-marker]:hidden`}>
-        {t('sessionFamily.relations')}<ChevronRight className="size-3 shrink-0" aria-hidden="true" />
+    {showRelations && hops.length > 0 && <details className="group/relations min-w-0" data-testid="session-family-relations">
+      <summary className={`${ROW} cursor-pointer list-none [&::-webkit-details-marker]:hidden`}>
+        {t('sessionFamily.relations')}<ChevronRight className="ml-auto size-3 shrink-0 group-open/relations:rotate-90" aria-hidden="true" />
       </summary>
-      <ol className="absolute left-0 top-full z-40 mt-1 max-h-60 w-80 max-w-[80vw] space-y-1 overflow-auto rounded-lg border border-border bg-surface-modal p-2 text-xs text-muted-foreground shadow-lg">
+      <ol className="max-h-48 space-y-1 overflow-auto px-2 pb-2 text-xs text-muted-foreground">
         {hops.map((hop) => {
           const child = sessions.find((entry) => entry.key === hop.childSessionKey);
           const source = sessions.find((entry) => entry.key === hop.parentSessionKey);
@@ -67,15 +63,5 @@ export function SessionFamilyNavigation({ session, sessions, derivation, onNavig
         })}
       </ol>
     </details>}
-    {children.length > 0 && <span className="relative inline-flex min-w-0 shrink-0 items-center" title={t('sessionFamily.children', { count: children.length })}>
-      <GitFork className="pointer-events-none absolute left-1.5 size-3.5" aria-hidden="true" />
-      <select aria-label={t('sessionFamily.children', { count: children.length })} value=""
-        data-testid="session-family-children"
-        className={`${CHIP} session-family-nav__children w-7 max-w-7 cursor-pointer appearance-none bg-transparent px-0 outline-none focus-visible:ring-2 focus-visible:ring-ring`}
-        onChange={(event) => { if (event.target.value) onNavigate(event.target.value); }}>
-        <option value="">{t('sessionFamily.children', { count: children.length })}</option>
-        {children.map((entry) => <option key={entry.key} value={entry.key}>{name(entry)}</option>)}
-      </select>
-    </span>}
   </nav>;
 }

@@ -5,18 +5,20 @@
  * are in the toolbar; messages render with markdown + streaming.
  */
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { useShallow } from 'zustand/shallow';
 import { createChatContentCache } from '@/stores/chat/content-cache';
 import { useMessageViewport } from '@/hooks/use-message-viewport';
-import { classifyDerivation } from '@shared/types/session-derivation';
+import { classifyDerivation, type SessionDerivation } from '@shared/types/session-derivation';
 import { SessionFamilyNavigation } from '@/components/chat/SessionFamilyNavigation';
-import { ExecutionMigrationControl } from './ExecutionMigrationControl';
 import { TaskLedgerSummaryPanel } from '@/components/task-ledger/TaskLedgerSummaryPanel';
 import { useSessionReadingPosition } from './use-session-reading-position';
 import { getTranscriptEntryId } from '@/lib/session-read-model';
 import { handoffFirstSendKey, type SessionHandoffOperation } from '@shared/types/session-handoff';
-import { CornerUpLeft, MessagesSquare, Search, AlertTriangle, ArrowDownToLine, ArrowLeft, Check, ChevronDown, GitBranchPlus, Loader2, Pencil, RefreshCw, Users, Workflow, X } from 'lucide-react';
-import { FileText, ListChecks, Sparkles } from '@/components/icons/codex-icons';
+import { MessagesSquare, Search, AlertTriangle, ArrowDownToLine, Check, ChevronDown, Folder, Loader2, Pencil, RefreshCw, Users, X } from 'lucide-react';
+import { ListChecks, Sparkles } from '@/components/icons/codex-icons';
+import { usePopover } from '@/components/settings/primitives/usePopover';
+import { useOverlayPortalContainer } from '@/components/ui/overlay-portal';
 import {
   AssistantRuntimeProvider,
   AuiProvider,
@@ -66,7 +68,6 @@ import { ExecutionGraphCard } from './ExecutionGraphCard';
 import { TeamOrchestrationCard } from './TeamOrchestrationCard';
 import { ChatToolbar } from './ChatToolbar';
 import { MessageNavRail, type MessageNavRailItem } from './MessageNavRail';
-import { HookSidebar } from '@/components/rareui/HookSidebar';
 import { buildCompletionActivity } from '@/components/rareui/completion-activity';
 import { useCompletionActivityStore } from '@/components/rareui/completion-activity-store';
 import { SessionActivityPanel, type ActiveWorkspaceSubject } from './SessionActivityPanel';
@@ -76,7 +77,6 @@ import {
   classifySessionContinuityError,
   resolveSessionContinuityPreflight,
   type SessionContinuityErrorKind,
-  type SessionContinuityRecommendation,
 } from './session-continuity';
 import { startTaskLoopUpgradeRun } from './task-loop-upgrade';
 import { extractText, isInternalProcessNarration, normalizeMessageRole, splitThinkingIntoSegments } from './message-utils';
@@ -381,58 +381,42 @@ function getHeaderSessionDotState(input: {
 }
 
 function ProjectSessionHeader({
+  showProject = true,
   workspaceId,
   projectName,
   projectPath,
   workspaceProfiles,
   switchWorkspace,
   pickWorkspaceFolder,
-  onOpenTaskLedger,
-  onOpenClawGraph,
   sessions,
   currentSessionKey,
   sessionLabels,
   workspaceSessionKeys,
   switchSession,
   renameSession,
-  onHandoffSession,
-  onForkSession,
-  onCheckpoints,
-  forkDisabled,
-  forkBusy,
-  handoffDisabled,
-  handoffDisabledReason,
-  handoffBusy,
-  continuityRecommendation,
+  derivation,
+  onRefresh,
   runtimeRuns,
   activeRunId,
   sending,
   pendingFinal,
   runError,
 }: {
+  showProject?: boolean;
   workspaceId?: string;
   projectName: string;
   projectPath?: string;
   workspaceProfiles: Array<{ id: string; name: string; rootPath: string; lastOpenedAt?: number }>;
   switchWorkspace: (id: string) => Promise<unknown>;
   pickWorkspaceFolder: () => Promise<void>;
-  onOpenTaskLedger: () => void;
-  onOpenClawGraph: () => void;
   sessions: ChatSession[];
   currentSessionKey: string;
   sessionLabels: Record<string, string>;
   workspaceSessionKeys: string[];
   switchSession: (key: string) => void;
   renameSession: (key: string, label: string) => Promise<void>;
-  onHandoffSession: () => void | Promise<void>;
-  onForkSession: () => void | Promise<void>;
-  onCheckpoints: () => void;
-  forkDisabled?: boolean;
-  forkBusy?: boolean;
-  handoffDisabled?: boolean;
-  handoffDisabledReason?: string;
-  handoffBusy?: boolean;
-  continuityRecommendation?: SessionContinuityRecommendation;
+  derivation?: SessionDerivation;
+  onRefresh: () => void;
   runtimeRuns?: Record<string, ChatRuntimeRunState>;
   activeRunId?: string | null;
   sending?: boolean;
@@ -446,12 +430,10 @@ function ProjectSessionHeader({
   const [sessionSearch, setSessionSearch] = useState('');
   const [renaming, setRenaming] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const projectTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const { triggerRef: sessionTriggerRef, layerRef: sessionLayerRef, setOpen: setSessionMenuOpen, style: sessionMenuStyle } = usePopover<HTMLButtonElement>({ align: 'left', gap: 4 });
+  const overlayContainer = useOverlayPortalContainer();
   const sessionName = getSessionDisplayName(currentSessionKey, sessions, sessionLabels);
-  /**
-   * #180: sessions derived from the one on screen. The forked/spawned children are
-   * already in `sessions` (that is why their lineage line renders below), so this
-   * is a pure filter — no new query and no new host-api channel.
-   */
   const derivedSessions = sessions.filter((session) =>
     session.key !== currentSessionKey
     && classifyDerivation(session).parentSessionKey === currentSessionKey,
@@ -465,20 +447,28 @@ function ProjectSessionHeader({
   const sourceSession = sessions.find((session) => session.key === currentSource);
   const derivedKeys = new Set(derivedSessions.map((session) => session.key));
   const matchesSearch = (session: ChatSession) => getSessionDisplayName(session.key, sessions, sessionLabels).toLocaleLowerCase().includes(sessionSearch.trim().toLocaleLowerCase());
-  const recommendedContinuityAction = continuityRecommendation?.disabled ? null : continuityRecommendation?.action;
+  const matchingRecent = recentSessions.filter((session) => !derivedKeys.has(session.key) && session.key !== sourceSession?.key && matchesSearch(session));
+  const matchingDerived = derivedSessions.filter(matchesSearch);
+  const matchingSource = Boolean(sourceSession && matchesSearch(sourceSession));
+
+  useEffect(() => {
+    setSessionMenuOpen(open === 'session');
+    if (open === 'session' && sessionMenuStyle.visibility === 'visible') sessionLayerRef.current?.querySelector('input')?.focus();
+    if (open !== 'session') setSessionSearch('');
+  }, [open, sessionLayerRef, sessionMenuStyle.visibility, setSessionMenuOpen]);
 
   useEffect(() => {
     if (!open) return;
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target;
-      if (target instanceof Node && rootRef.current?.contains(target)) return;
+      if (target instanceof Node && (rootRef.current?.contains(target) || sessionLayerRef.current?.contains(target))) return;
       setOpen(null);
     };
-    const handleKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { setOpen(null); rootRef.current?.querySelector<HTMLButtonElement>('[data-testid="chat-header-session-name"]')?.focus(); } };
+    const handleKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { setOpen(null); (open === 'session' ? sessionTriggerRef : projectTriggerRef).current?.focus(); } };
     document.addEventListener('pointerdown', handlePointerDown);
     document.addEventListener('keydown', handleKey);
     return () => { document.removeEventListener('pointerdown', handlePointerDown); document.removeEventListener('keydown', handleKey); };
-  }, [open]);
+  }, [open, sessionLayerRef, sessionTriggerRef]);
 
   const startRenameSession = () => {
     setOpen(null);
@@ -507,12 +497,13 @@ function ProjectSessionHeader({
     const source = classifyDerivation(session).parentSessionKey;
     const dotState = getHeaderSessionDotState({ sessionKey: session.key, currentSessionKey, runtimeRuns, activeRunId, sending, pendingFinal, runError });
     return <button key={session.key} type="button" className="codex-header-menu__item chat-session-navigation-row" data-hook-key={session.key}
+      data-derived={derived || undefined}
       data-testid={derived ? `chat-session-derived-${session.key}` : `chat-session-item-${session.key}`}
       aria-current={session.key === currentSessionKey ? 'page' : undefined}
       onClick={() => { setOpen(null); setSessionSearch(''); switchSession(session.key); }}>
       {dotState ? <OrbStatus state={dotState} className="size-4 shrink-0" /> : <MessagesSquare className="h-4 w-4 shrink-0 opacity-60" aria-hidden="true" />}
       <span className="min-w-0 flex-1">
-        <span className="block break-words text-xs font-medium">{getSessionDisplayName(session.key, sessions, sessionLabels)}</span>
+        <span className="block truncate text-meta">{getSessionDisplayName(session.key, sessions, sessionLabels)}</span>
         {source && <span className="block truncate text-2xs text-muted-foreground" data-testid="chat-session-lineage">
           {t('session.navigation.from', { session: getSessionDisplayName(source, sessions, sessionLabels) })}
         </span>}
@@ -523,18 +514,21 @@ function ProjectSessionHeader({
 
   return (
     <div ref={rootRef} className="chat-project-session-header flex min-w-0 items-center gap-1 text-sm" data-testid="chat-project-session-header">
-      <div className="chat-header-environment-project relative order-1 min-w-0" data-testid="chat-header-environment-project">
+      {showProject && <div className="chat-header-environment-project relative order-1 min-w-0" data-testid="chat-header-environment-project">
         {/* Project selection stays secondary to the task header. */}
         <Tooltip>
           <TooltipTrigger asChild>
         <button
+          ref={projectTriggerRef}
           type="button"
-          className="inline-flex max-w-[200px] items-center gap-1 rounded-md px-1.5 py-1 text-xs font-normal text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10"
+          className={cn('chat-header-dropdown-trigger chat-header-project-trigger inline-flex max-w-[144px] items-center gap-1.5 px-1.5 py-1 text-xs font-normal text-muted-foreground hover:text-foreground', open === 'workspace' && 'is-open')}
+          aria-haspopup="menu"
+          aria-expanded={open === 'workspace'}
           onClick={() => setOpen((current) => current === 'workspace' ? null : 'workspace')}
         >
-          <ArrowLeft className="h-3.5 w-3.5 shrink-0" />
+          <Folder className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span className="truncate">{projectName}</span>
-          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+          <ChevronDown className="chat-header-session-chevron h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         </button>
           </TooltipTrigger>
           <TooltipContent side="bottom" collisionPadding={8} className="max-w-xs break-all text-xs">{projectPath}</TooltipContent>
@@ -552,26 +546,17 @@ function ProjectSessionHeader({
               return pickWorkspaceFolder();
             }}
             menuTestId="chat-header-workspace-menu"
-            className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:zoom-in-95 motion-safe:duration-150 motion-reduce:animate-none"
-            extraActions={(
-              <>
-                <button type="button" className="codex-header-menu__item codex-header-menu__item--muted" onClick={() => { setOpen(null); onOpenTaskLedger(); }}>
-                  <ListChecks className="h-4 w-4" />
-                  {t('workspace.actions.openTaskLedger')}
-                </button>
-                <button type="button" className="codex-header-menu__item codex-header-menu__item--muted" onClick={() => { setOpen(null); onOpenClawGraph(); }}>
-                  <Workflow className="h-4 w-4" />
-                  {t('workspace.actions.openClawGraph')}
-                </button>
-              </>
-            )}
+            className="chat-header-project-menu"
           />
         )}
-      </div>
-      <div className="relative order-2 min-w-0">
+      </div>}
+      {showProject && <span className="chat-header-separator order-1 text-muted-foreground/40" aria-hidden="true">/</span>}
+      <div className="relative order-2 min-w-0 max-w-[360px]">
         {editingSession ? (
-          <div className="inline-flex max-w-[380px] items-center gap-1 rounded-md bg-black/5 px-1 py-0.5 dark:bg-white/10">
+          <div className="inline-flex max-w-full items-center gap-1 rounded-md bg-black/5 px-1 py-0.5 dark:bg-white/10">
             <input
+              data-testid="chat-session-rename-input"
+              aria-label={t('session.renameCurrent')}
               value={sessionDraft}
               autoFocus
               onChange={(event) => setSessionDraft(event.target.value)}
@@ -592,8 +577,11 @@ function ProjectSessionHeader({
           <Tooltip>
             <TooltipTrigger asChild>
           <button
+            ref={sessionTriggerRef}
             type="button"
-            className="inline-flex max-w-[360px] items-center gap-1.5 rounded-md px-1.5 py-1 text-sm font-medium text-foreground transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+            className={cn('chat-header-dropdown-trigger chat-header-session-trigger inline-flex min-w-0 max-w-full items-center gap-1.5 px-1.5 py-1 text-sm font-medium text-foreground', open === 'session' && 'is-open')}
+            aria-haspopup="dialog"
+            aria-expanded={open === 'session'}
             onClick={() => setOpen((current) => current === 'session' ? null : 'session')}
             onDoubleClick={(event) => {
               event.preventDefault();
@@ -605,99 +593,56 @@ function ProjectSessionHeader({
             <ChevronDown className="chat-header-session-chevron h-3.5 w-3.5 shrink-0 text-muted-foreground" />
           </button>
             </TooltipTrigger>
-            <TooltipContent side="bottom" collisionPadding={8}>{t('session.renameHint')}</TooltipContent>
+            <TooltipContent side="bottom" collisionPadding={8} className="max-w-sm flex-col items-start gap-1">
+              <p>{sessionName}</p><p className="text-xs text-muted-foreground">{t('session.renameHint')}</p>
+            </TooltipContent>
           </Tooltip>
         )}
-        {open === 'session' && (
-            <div className="codex-header-menu chat-session-navigation-menu" data-testid="chat-session-navigation-menu" role="dialog" aria-label={t('session.navigation.title')}>
+        {open === 'session' && createPortal(
+            <div ref={sessionLayerRef} style={sessionMenuStyle} className="codex-header-menu chat-session-navigation-menu" data-testid="chat-session-navigation-menu" role="dialog" aria-label={t('session.navigation.title')}
+              onKeyDown={event => {
+                const editing = event.target instanceof HTMLInputElement;
+                if (!['ArrowDown', 'ArrowUp', ...(editing ? [] : ['Home', 'End'])].includes(event.key)) return;
+                event.preventDefault();
+                const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('.chat-session-navigation-list button:not(:disabled), .chat-session-navigation-list summary'))
+                  .filter(button => button.getClientRects().length > 0);
+                const index = items.indexOf(document.activeElement as HTMLElement);
+                const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1
+                  : index < 0 ? (event.key === 'ArrowDown' ? 0 : items.length - 1)
+                  : (index + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+                items[next]?.focus();
+              }}>
+            <div className="flex items-center justify-between gap-2 px-1">
+            <div className="codex-header-menu__label">{t('session.navigation.title')}</div>
             <button
               type="button"
-              className="codex-header-menu__item codex-header-menu__item--muted"
+              className="inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-white/10"
+              aria-label={t('session.renameCurrent')}
+              title={t('session.renameCurrent')}
               onClick={startRenameSession}
             >
-              <Pencil className="h-4 w-4" />
-              {t('session.renameCurrent')}
+              <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
             </button>
-            <button
-              type="button"
-              className="codex-header-menu__item codex-header-menu__item--muted"
-              data-testid="chat-session-checkpoints"
-              disabled={sending || pendingFinal}
-              onClick={() => { setOpen(null); onCheckpoints(); }}
-            >
-              <ListChecks className="h-4 w-4" />
-              {t('filePreview.checkpoints.title')}
-            </button>
-            <button
-              type="button"
-              className="codex-header-menu__item codex-header-menu__item--muted"
-              data-testid="chat-session-fork"
-              disabled={forkDisabled || forkBusy}
-              onClick={() => {
-                setOpen(null);
-                void onForkSession();
-              }}
-            >
-              <span className="flex min-w-0 items-center gap-2">
-                {forkBusy ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" /> : <GitBranchPlus className="h-4 w-4 shrink-0" />}
-                <span className="truncate">{t('composer.fork.action')}</span>
-              </span>
-              {recommendedContinuityAction === 'fork' && (
-                <span
-                  data-testid="chat-session-fork-recommended"
-                  className="shrink-0 rounded bg-black/5 px-1 py-0.5 text-2xs font-medium text-muted-foreground dark:bg-white/10"
-                >
-                  {t('composer.continuity.recommended')}
-                </span>
-              )}
-            </button>
-            <button
-              type="button"
-              className="codex-header-menu__item codex-header-menu__item--muted"
-              data-testid="chat-session-handoff"
-              disabled={handoffDisabled || handoffBusy}
-              title={handoffDisabledReason}
-              onClick={() => {
-                setOpen(null);
-                void onHandoffSession();
-              }}
-            >
-              <span className="flex min-w-0 items-center gap-2">
-                {handoffBusy ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" /> : <FileText className="h-4 w-4 shrink-0" />}
-                <span className="truncate">{t('composer.handoff.action')}</span>
-              </span>
-              {recommendedContinuityAction === 'handoff' && (
-                <span
-                  data-testid="chat-session-handoff-recommended"
-                  className="shrink-0 rounded bg-black/5 px-1 py-0.5 text-2xs font-medium text-muted-foreground dark:bg-white/10"
-                >
-                  {t('composer.continuity.recommended')}
-                </span>
-              )}
-            </button>
-            <hr className="codex-header-menu__sep" />
+            </div>
             <label className="codex-composer-search mx-1 mb-1">
               <Search className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
               <input value={sessionSearch} onChange={(event) => setSessionSearch(event.target.value)} aria-label={t('session.navigation.search')} placeholder={t('session.navigation.search')} className="min-w-0 flex-1 bg-transparent text-xs outline-none" data-testid="chat-session-navigation-search" />
             </label>
-            {sourceSession && <button type="button" className="codex-header-menu__item chat-session-source" data-testid="chat-session-source" onClick={() => { setOpen(null); switchSession(sourceSession.key); }}>
-              <CornerUpLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
-              <span className="min-w-0"><span className="block text-2xs text-muted-foreground">{t('session.navigation.source')}</span><span className="block truncate text-xs">{getSessionDisplayName(sourceSession.key, sessions, sessionLabels)}</span></span>
-            </button>}
             <div className="chat-session-navigation-list">
-            <HookSidebar activeKey={currentSessionKey}>
-            {recentSessions.filter((session) => !derivedKeys.has(session.key) && session.key !== sourceSession?.key && matchesSearch(session)).map((session) => renderNavigationRow(session, false))}
-            </HookSidebar>
-            {derivedSessions.length > 0 && (
+            {currentEntry && (!sessionSearch.trim() || matchingSource) && <SessionFamilyNavigation session={currentEntry} sessions={sessions} derivation={derivation}
+              onNavigate={(key) => { setOpen(null); switchSession(key); }} onRefresh={onRefresh} />}
+            {matchingRecent.map((session) => renderNavigationRow(session, false))}
+            {matchingDerived.length > 0 && (
               <>
                 <div className="codex-composer-menu__label codex-composer-menu__label--divider" data-testid="chat-derived-sessions-title">
-                  {t('session.derived.title', { count: derivedSessions.length })}
+                  {t('session.derived.title', { count: matchingDerived.length })}
                 </div>
-                {derivedSessions.filter(matchesSearch).map((session) => renderNavigationRow(session, true))}
+                {matchingDerived.map((session) => renderNavigationRow(session, true))}
               </>
             )}
+            {matchingRecent.length === 0 && matchingDerived.length === 0 && !matchingSource && <p role="status" className="px-2 py-3 text-xs text-muted-foreground">{t('archive.noMatches')}</p>}
             </div>
-          </div>
+          </div>, overlayContainer ?? document.body,
         )}
       </div>
     </div>
@@ -1750,10 +1695,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     });
   }, [activeWorkspaceId, currentSessionKey, openWorkspacePanel, saveWorkspaceState]);
 
-  const handleOpenTaskLedger = useCallback(() => {
-    const nodeId = longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId;
-    navigate(nodeId ? `/task-ledger?nodeId=${encodeURIComponent(nodeId)}` : '/task-ledger');
-  }, [longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId, navigate]);
   /** The task dock's ledger link: carries workspace and session, like the scope list. */
   const handleOpenSessionTask = useCallback((taskNodeId: string) => {
     const query = new URLSearchParams({
@@ -1763,10 +1704,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     });
     navigate(`/task-ledger?${query}`);
   }, [activeWorkspaceId, currentSessionKey, navigate]);
-  const handleOpenClawGraph = useCallback(() => {
-    const runId = longTaskControlStatus?.latestCheckpoint?.clawGraphRunId;
-    navigate(runId ? `/clawgraph?runId=${encodeURIComponent(runId)}` : '/clawgraph');
-  }, [longTaskControlStatus?.latestCheckpoint?.clawGraphRunId, navigate]);
 
   const handleAppendComposerDraft = useCallback((text: string) => {
     const nextDraft = composerDraft.trim()
@@ -3425,38 +3362,30 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         ref={chatToolbarRef}
         data-testid="chat-toolbar-shell"
         className={cn(
-        'chat-toolbar-shell relative flex shrink-0 items-center justify-between gap-3 px-4 py-2',
-        'min-h-11 bg-material-panel',
+        'chat-toolbar-shell relative flex shrink-0 items-center justify-between gap-2 px-3 py-1',
+        'min-h-10 bg-material-panel',
       )}
       >
         <div data-testid="chat-toolbar-drag-region" className="drag-region absolute inset-0 z-0" aria-hidden="true" />
-        <div className="no-drag relative z-10 flex min-w-0 items-center gap-1">
-          {!isEmpty && (
+        <div className="no-drag relative z-10 flex min-w-0 flex-1 items-center gap-1">
             <div className="flex min-w-0 items-center gap-1.5">
               <ProjectSessionHeader
+                key={`${activeWorkspaceId ?? ''}:${currentSessionKey}`}
+                showProject
                 workspaceId={activeWorkspaceId}
                 projectName={activeWorkspace?.name || basenameFromPath(activeWorkspace?.rootPath) || 'clawx'}
                 projectPath={activeWorkspace?.rootPath}
                 workspaceProfiles={workspaceProfiles}
                 switchWorkspace={handleSwitchWorkspace}
                  pickWorkspaceFolder={handlePickWorkspaceFolder}
-                 onOpenTaskLedger={handleOpenTaskLedger}
-                 onOpenClawGraph={handleOpenClawGraph}
                 sessions={sessions}
                 currentSessionKey={currentSessionKey}
                 sessionLabels={sessionLabels}
                 workspaceSessionKeys={Object.keys(activeWorkspace?.sessionStates ?? {})}
                 switchSession={(key) => { void openFamilySession(key); }}
                 renameSession={renameSession}
-                onForkSession={handleForkSession}
-                onCheckpoints={() => setCheckpointsOpen(true)}
-                forkDisabled={forkDisabled}
-                forkBusy={forkBusy}
-                onHandoffSession={handlePrepareHandoff}
-                handoffDisabled={handoffDisabled}
-                handoffDisabledReason={handoffDisabledReason}
-                handoffBusy={handoffBusy}
-                continuityRecommendation={continuityRecommendation}
+                derivation={sessionActivitySnapshot?.derivation}
+                onRefresh={() => { void loadSessions(); }}
                 runtimeRuns={runtimeRuns}
                 activeRunId={activeRunId}
                 sending={sending}
@@ -3464,23 +3393,12 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                 runError={runError}
               />
             </div>
-          )}
-          {/* Lineage rides in the header row as quiet chips (source link,
-            * descendants picker) instead of a strip pinned over the transcript;
-            * it stays outside the `isEmpty` gate so a derived session that has
-            * not spoken yet still shows where it came from. */}
-          <SessionFamilyNavigation session={currentSession} sessions={sessions} derivation={sessionActivitySnapshot?.derivation}
-            onNavigate={(key) => { void openFamilySession(key); }} onRefresh={() => { void loadSessions(); }} />
-          {/* The session's task container rides in the same row as a quiet
-            * chip: always present (empty / unavailable / stale stay distinct),
-            * but no longer a strip announcing "0 tasks" over the transcript.
-            * The running task itself is docked above the composer. */}
+        </div>
+        <div data-testid="chat-toolbar-actions" className="no-drag relative z-10 flex min-w-0 shrink-0 items-center gap-1">
           <TaskLedgerSummaryPanel workspaceId={activeWorkspace?.id} session={currentSession}
-            binding={activeWorkspace?.coordinatorBindings?.[currentSessionKey]} mode="bar" projectWide={Boolean(projectWorkspaceId)}
+            binding={activeWorkspace?.coordinatorBindings?.[currentSessionKey]} mode="bar" hideWhenEmpty projectWide={Boolean(projectWorkspaceId)}
             onTaskSelected={async () => { await fetchWorkspaces(); await loadSessions({ force: true }); }}
             refreshKey={`${activeRunId ?? ''}:${sending}:${pendingFinal}`} />
-        </div>
-        <div data-testid="chat-toolbar-actions" className="no-drag relative z-10 flex items-center gap-2">
           {showSyncStatus && (
             <div
               data-testid="chat-history-sync-status"
@@ -3488,7 +3406,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
               role="status"
             >
               <OrbStatus state="syncing" label={t('startup.syncing')} className="size-3.5" />
-              <span>{t('startup.syncing')}</span>
+              <span className="sr-only">{t('startup.syncing')}</span>
             </div>
           )}
           {/* The toggle is deliberately NOT gated on the workspace panel being
@@ -3497,13 +3415,25 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
             * because the card listing the workers vanished as soon as one of them
             * was on screen. Only the PASSIVE layer yields to the panel, because
             * only that layer takes width from the transcript. */}
-          <ExecutionMigrationControl workspaceId={activeWorkspace?.id} sessionKey={currentSessionKey} generation={currentSession.sessionId}/>
           <ChatToolbar
+            key={`${activeWorkspaceId ?? ''}:${currentSessionKey}`}
+            workspaceId={activeWorkspace?.id}
+            sessionGeneration={currentSession.sessionId}
             promptCacheStatus={promptCacheStatus}
             sessionActivityAvailable={hasSessionActivityEntry}
             sessionActivityOpen={sessionActivityRailOpen}
             sessionActivityNeedsAttention={sessionActivityLevel === 'attention'}
             onToggleSessionActivity={handleToggleSessionActivity}
+            onCheckpoints={() => setCheckpointsOpen(true)}
+            checkpointsDisabled={sending || pendingFinal}
+            onForkSession={handleForkSession}
+            forkDisabled={forkDisabled}
+            forkBusy={forkBusy}
+            onHandoffSession={handlePrepareHandoff}
+            handoffDisabled={handoffDisabled}
+            handoffDisabledReason={handoffDisabledReason}
+            handoffBusy={handoffBusy}
+            continuityRecommendation={continuityRecommendation}
           />
         </div>
       </div>
@@ -3511,7 +3441,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       {projectWorkspaceId && <div data-testid="project-coordinator-entry" className="relative px-4 pt-1 text-xs text-muted-foreground">
         {t('projectEntry.coordinator', { name: activeWorkspace?.name ?? '' })}
       </div>}
-      {handoffOperation && handoffOperation.phase !== 'sent' && <section data-testid="handoff-recovery" data-phase={handoffOperation.phase}
+      {handoffOperation && !handoffBusy && handoffOperation.phase !== 'sent' && <section data-testid="handoff-recovery" data-phase={handoffOperation.phase}
         className="relative flex min-w-0 flex-wrap items-center gap-2 border-b border-border/40 px-4 py-1 text-xs">
         <span role="status">{t(`handoffRecovery.phase.${handoffOperation.phase}`)}</span>
         {['creating', 'ready', 'failed'].includes(handoffOperation.phase) && <button type="button" data-testid="handoff-recovery-resume" className="underline"
