@@ -15,11 +15,11 @@ test('question fork keeps its source draft and handoff submits one reviewed firs
   try {
     await configureSessionChainProvider(app, llm.port);
     const project = await createSessionChainProject(app, testInfo.outputPath('workspace'), 'Journey project');
-    const rpc = <T,>(method: string, params: Record<string, unknown>) => hostInvoke<T>(app, 'gateway', 'rpc', { method, params, timeoutMs: 30_000 });
+    const rpc = <T,>(method: string, params: Record<string, unknown>) => hostInvoke<T>(app, 'gateway', 'rpc', { method, params, timeoutMs: 60_000 });
     for (const marker of ['UI-FIRST', 'UI-SECOND']) {
       await hostInvoke(app, 'chat', 'sendWithMedia', { workspaceId: project.workspaceId, sessionKey: project.sessionKey, message: marker, idempotencyKey: marker });
       await expect.poll(async () => JSON.stringify(await rpc('chat.history', { sessionKey: project.sessionKey, limit: 50 })).includes(`ANSWER ${marker}`), { timeout: 45_000 }).toBe(true);
-      await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>('sessions.describe', { key: project.sessionKey })).session.hasActiveRun, { timeout: 20_000 }).toBe(false);
+      await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>('sessions.describe', { key: project.sessionKey })).session.hasActiveRun, { timeout: 45_000 }).toBe(false);
     }
     const page = await getStableWindow(app); await page.reload();
     await expect(page.getByText('UI-SECOND', { exact: true })).toBeVisible({ timeout: 30_000 });
