@@ -14,7 +14,7 @@ import { canonicalWorktreePath, filesystemInstance } from "./worktree-registry.j
 
 const SCOPE = "worktree-writer/v1";
 type WriterDatabase = Pick<DB, "state_leases">;
-type WriteOperation = { id: string; digest: string; state: "running" | "unknown" | "settled"; receipt?: CheckoutWriteReceipt };
+type WriteOperation = { id: string; digest: string; state: "running" | "unknown" | "settled"; effectPrepared?: boolean; receipt?: CheckoutWriteReceipt };
 export type CheckoutWriterState = CheckoutWriterCredential & {
   schema: 1; requestId: string; requestDigest: string; state: "active" | "draining" | "released";
   acquiredAt: number; expiresAt: number | null; operations: WriteOperation[];
@@ -98,19 +98,32 @@ function assertAdmission(value: CheckoutWriterState): void {
 }
 
 function retireAbandonedMaintenance(value: CheckoutWriterState): void {
-  if (value.state === "released" || value.owner.kind !== "maintenance" || value.operations.length !== 0) return;
+  if (value.state === "released" || value.owner.kind !== "maintenance" || value.operations.some(op => op.state !== "settled" && op.effectPrepared !== false)) return;
   let exited = false;
   try { process.kill(value.holderPid, 0); }
   catch (error) { exited = (error as NodeJS.ErrnoException).code === "ESRCH"; }
   if (!exited) exited = taskLedgerOwnerWasReplaced({ pid: value.holderPid, incarnation: value.holderIncarnation, publishedAt: value.acquiredAt });
   if (!exited) return;
-  // Only a maintenance reservation with no admitted effect is recoverable by
-  // process death. Run writers and any in-flight operation remain occupied.
+  // A durable pre-effect permit is recoverable only after its exact holder exits.
+  for (const operation of value.operations) {
+    if (operation.state !== 'settled') {
+      operation.state = 'settled';
+      operation.receipt = { outcome: 'not-applied', ownerReceipt: 'pre-effect:' + operation.id };
+    }
+  }
   value.state = "released";
   save(value);
 }
 
 /** This resource credential does not grant Task Ledger, session or permission authority. */
+export function recoverPreparedCheckoutMaintenance(root: string): CheckoutWriterState | null {
+  return runOpenClawStateWriteTransaction(() => {
+    const row = read(canonicalWorktreePath(root));
+    if (row) retireAbandonedMaintenance(row);
+    return row;
+  });
+}
+
 export function claimCheckoutWriter(basis: CheckoutWriterBasis, owner: CheckoutWriterIdentity, requestId: string, expiresAt: number | null = null): CheckoutWriterCredential {
   const root = canonicalWorktreePath(basis.root);
   text(basis.generation); text(basis.incarnation); text(requestId);
@@ -201,7 +214,7 @@ export function finishRemovedCheckoutCleanup(basis: CheckoutWriterBasis): void {
   if (operation.state !== "settled") settleCheckoutWrite(row, operation.id, { outcome: "completed", ownerReceipt: `cleanup-absence:${row.owner.operationId}` });
   releaseCheckoutWriter(row);
 }
-export function beginCheckoutWrite(input: CheckoutWriterCredential, operationId: string, requestDigest: string): { state: "started" } | { state: "replayed"; receipt: CheckoutWriteReceipt } {
+export function beginCheckoutWrite(input: CheckoutWriterCredential, operationId: string, requestDigest: string, effectPrepared = true): { state: "started" } | { state: "replayed"; receipt: CheckoutWriteReceipt } {
   text(operationId); text(requestDigest);
   return runOpenClawStateWriteTransaction(() => {
     const row = current(input); assertAdmission(row);
@@ -212,7 +225,7 @@ export function beginCheckoutWrite(input: CheckoutWriterCredential, operationId:
       throw new Error("checkout_write_outcome_pending");
     }
     if (row.operations.some(op => op.state !== "settled")) throw new Error("checkout_write_outcome_pending");
-    row.operations.push({ id: operationId, digest: requestDigest, state: "running" }); save(row);
+    row.operations.push({ id: operationId, digest: requestDigest, state: "running", effectPrepared }); save(row);
     return { state: "started" };
   });
 }
@@ -273,7 +286,7 @@ export function releaseUnusedCheckoutWriter(input: CheckoutWriterCredential): vo
 }
 
 /** Acquire all roots before the first effect; compensations release only unused claims. */
-export function withCheckoutMaintenance<T>(bases: readonly CheckoutWriterBasis[], operation: "merge" | "freeze" | "cleanup", effect: () => T, prepare?: () => void, outcome?: (value: T) => CheckoutWriteReceipt['outcome']): T {
+function prepareCheckoutMaintenance(bases: readonly CheckoutWriterBasis[], operation: "merge" | "freeze" | "cleanup", prepare?: () => void, effectPrepared = true) {
   const operationId = randomUUID();
   const claims: CheckoutWriterCredential[] = [];
   try {
@@ -285,7 +298,7 @@ export function withCheckoutMaintenance<T>(bases: readonly CheckoutWriterBasis[]
     // Preparation records metadata only. A failure here cannot have reached the
     // filesystem effect, so its reserved claims can be safely returned.
     prepare?.();
-    for (const claim of claims) beginCheckoutWrite(claim, operationId, digest({ operation, roots: claims.map(c => [c.root, c.incarnation, c.generation]) }));
+    for (const claim of claims) beginCheckoutWrite(claim, operationId, digest({ operation, roots: claims.map(c => [c.root, c.incarnation, c.generation]) }), effectPrepared);
   } catch (error) {
     // No filesystem action has started. Settle only successfully admitted permits.
     for (const claim of claims) {
@@ -294,13 +307,49 @@ export function withCheckoutMaintenance<T>(bases: readonly CheckoutWriterBasis[]
     }
     throw error;
   }
+  return { operationId, claims };
+}
+
+function finishCheckoutMaintenance(state: ReturnType<typeof prepareCheckoutMaintenance>, operation: string, outcome: CheckoutWriteReceipt['outcome'] = 'completed', publish?: () => void): void {
+  runOpenClawStateWriteTransaction(() => {
+    for (const claim of state.claims) settleCheckoutWrite(claim, state.operationId, { outcome, ownerReceipt: `${operation}:${state.operationId}` });
+    for (const claim of state.claims) releaseCheckoutWriter(claim);
+    publish?.();
+  });
+}
+
+export function withCheckoutMaintenance<T>(bases: readonly CheckoutWriterBasis[], operation: "merge" | "freeze" | "cleanup", effect: () => T, prepare?: () => void, outcome?: (value: T) => CheckoutWriteReceipt['outcome']): T {
+  const state = prepareCheckoutMaintenance(bases, operation, prepare);
   let result: T;
   try {
     result = effect();
     if (result && typeof (result as { then?: unknown }).then === "function") throw new Error("checkout_maintenance_requires_sync_effect");
-  } catch (error) { for (const claim of claims) settleCheckoutWrite(claim, operationId, null); throw error; }
-  for (const claim of claims) settleCheckoutWrite(claim, operationId, { outcome: outcome?.(result) ?? "completed", ownerReceipt: `${operation}:${operationId}` });
-  for (const claim of claims) releaseCheckoutWriter(claim);
+  } catch (error) { for (const claim of state.claims) settleCheckoutWrite(claim, state.operationId, null); throw error; }
+  finishCheckoutMaintenance(state, operation, outcome?.(result));
+  return result;
+}
+
+/** The original writer holds exclusion until the journal's asynchronous effect settles. */
+export async function withAsyncCheckoutMaintenance<T>(bases: readonly CheckoutWriterBasis[], operation: "merge" | "freeze" | "cleanup", effect: (admit: () => void) => Promise<T>, prepare?: () => void, outcome?: (value: T) => CheckoutWriteReceipt['outcome'], publish?: (value: T) => void, journalPrepared = false): Promise<T> {
+  const state = prepareCheckoutMaintenance(bases, operation, prepare, !journalPrepared);
+  let admitted = !journalPrepared;
+  const admit = () => runOpenClawStateWriteTransaction(() => {
+    for (const claim of state.claims) {
+      const row = current(claim); assertAdmission(row);
+      const operation = row.operations.find(item => item.id === state.operationId)!;
+      operation.effectPrepared = true; save(row);
+    }
+  });
+  const admitEffect = () => { admit(); admitted = true; };
+  let result: T;
+  try { result = await effect(admitEffect); }
+  catch (error) {
+    if (!admitted) finishCheckoutMaintenance(state, operation, 'not-applied');
+    else for (const claim of state.claims) settleCheckoutWrite(claim, state.operationId, null);
+    throw error;
+  }
+  // Registry publication and writer settlement use the same existing SQLite transaction.
+  finishCheckoutMaintenance(state, operation, outcome?.(result), () => publish?.(result));
   return result;
 }
 

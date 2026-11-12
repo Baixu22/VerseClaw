@@ -1,0 +1,38 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-raw-archive-reader",
+  "archives": [
+    {
+      "candidate": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+      "archive": "D:\\ClawX-acceptance\\autonomy-r4\\final-61cde6ebb-20261112-01a1ce4c\\raw.zip",
+      "sha256": "affb11fdba1844ef4fcd600a2f71dc7301f177a0eff533554b0c7af9e69f30fc",
+      "index": "D:\\ClawX-acceptance\\autonomy-r4\\final-61cde6ebb-20261112-01a1ce4c\\index.json",
+      "indexSha256": "0ab2d6089b53bcfe8374e275f0aba4d54247deafd09994066dd6a95e2d150e70",
+      "sourceBundle": "D:\\ClawX-acceptance\\autonomy-r4\\final-61cde6ebb-20261112-01a1ce4c\\source.bundle",
+      "sourceBundleSha256": "7fc069a8523db061da3d96f1074f235144b16d1de4392941aa4ae798e6ded382",
+      "members": 2732,
+      "readbackVerified": {
+        "zipCrc": true,
+        "everyMemberSha256": true,
+        "sourceBlobs": true,
+        "gitBundle": true
+      }
+    },
+    {
+      "candidate": "42c54a7b22fe9963ccfc2656e641fc4f1fb18664",
+      "archive": "D:\\ClawX-acceptance\\autonomy-r4\\final-42c54a7b2-20261112-01a1ce4c\\raw.zip",
+      "sha256": "23817a51c916d268078206daa73151add4650c220677bc57c7d0839a39dab6fb",
+      "index": "D:\\ClawX-acceptance\\autonomy-r4\\final-42c54a7b2-20261112-01a1ce4c\\index.json",
+      "indexSha256": "35fa4a96711e6621a3287ce436682157a4d2a4bb283d231103f8c0d082d73634",
+      "sourceBundle": "D:\\ClawX-acceptance\\autonomy-r4\\final-42c54a7b2-20261112-01a1ce4c\\source.bundle",
+      "sourceBundleSha256": "8023c2b774411b5daa360ed3f7c91c2928b081d2ca16d2cc05de41ecda25576a",
+      "members": 2481,
+      "readbackVerified": {
+        "zipCrc": true,
+        "everyMemberSha256": true,
+        "sourceBlobs": true,
+        "gitBundle": true
+      }
+    }
+  ]
+}

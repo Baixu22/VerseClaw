@@ -90,6 +90,52 @@ describe('durable managed checkout registration', () => {
     expect(service.listOwned(owner)[0].generation).toBe(record.generation);
     expect(service.inventory().find(row => row.id === 'external')?.availability).toBe('unowned');
   });
+  it('migrates the persisted tuple baseline before applying a worker result', async () => {
+    writeFileSync(path.join(root, 'tracked.txt'), 'base');
+    const service = createWorktreeService(root);
+    const record = service.create('legacy-baseline', { seedFiles: ['tracked.txt'] });
+    const scope = registry.loadWorktreeRegistryScope(root);
+    const baseline = scope.records.get(record.id)!.mergeBaseline!;
+    baseline.parent = Object.entries(baseline.parent) as unknown as Record<string, string>;
+    baseline.worker = Object.entries(baseline.worker) as unknown as Record<string, string>;
+    registry.saveWorktreeRegistryScope(scope);
+    closeOpenClawStateDatabaseForTest();
+    writeFileSync(path.join(record.root, 'tracked.txt'), 'worker');
+    const restarted = createWorktreeService(root);
+    restarted.enqueueMerge({ worktreeId: record.id, worktreeGeneration: record.generation, changedFiles: ['tracked.txt'] });
+    expect((await restarted.processMergeQueue())[0]?.status).toBe('merged');
+    expect(readFileSync(path.join(root, 'tracked.txt'), 'utf8')).toBe('worker');
+  });
+  it('migrates the existing lastMerge receipt without applying the result again', async () => {
+    writeFileSync(path.join(root, 'tracked.txt'), 'base');
+    const service = createWorktreeService(root);
+    const record = service.create('legacy-receipt', { seedFiles: ['tracked.txt'] });
+    writeFileSync(path.join(record.root, 'tracked.txt'), 'worker');
+    const request = { worktreeId: record.id, worktreeGeneration: record.generation, changedFiles: ['tracked.txt'] };
+    service.enqueueMerge(request);
+    const receipt = (await service.processMergeQueue())[0];
+    expect(receipt.status).toBe('merged');
+    const scope = registry.loadWorktreeRegistryScope(root);
+    const saved = scope.records.get(record.id)! as import('../../openclaw_runtime/src/agents/worktree-service').WorktreeRecord & { lastMerge?: typeof receipt };
+    saved.lastMerge = saved.mergeResult;
+    delete saved.mergeResult;
+    registry.saveWorktreeRegistryScope(scope);
+    closeOpenClawStateDatabaseForTest();
+    const restarted = createWorktreeService(root);
+    expect(restarted.enqueueMerge(request)).toEqual(receipt);
+    expect(restarted.getMergeQueue()).toEqual([]);
+    expect(readFileSync(path.join(root, 'tracked.txt'), 'utf8')).toBe('worker');
+  });
+  it('rejects contradictory persisted legacy and current merge receipts', () => {
+    const record = createWorktreeService(root).create('receipt-conflict');
+    const scope = registry.loadWorktreeRegistryScope(root);
+    const saved = scope.records.get(record.id)! as import('../../openclaw_runtime/src/agents/worktree-service').WorktreeRecord & { lastMerge?: import('../../openclaw_runtime/src/agents/worktree-service').MergeQueueItem };
+    saved.mergeResult = { worktreeId: record.id, worktreeGeneration: record.generation, changedFiles: [], status: 'merged' };
+    saved.lastMerge = { ...saved.mergeResult, status: 'conflict' };
+    registry.saveWorktreeRegistryScope(scope);
+    closeOpenClawStateDatabaseForTest();
+    expect(() => registry.loadWorktreeRegistryScope(root)).toThrow('worktree_merge_receipt_conflict');
+  });
   it('retains missing records and gives recreated managed checkouts a new generation', () => {
     const service = createWorktreeService(root);
     const old = service.create('one');
@@ -108,7 +154,8 @@ describe('durable managed checkout registration', () => {
     const original = registry.saveWorktreeRegistryScope;
     const fault = vi.spyOn(registry, 'saveWorktreeRegistryScope').mockImplementation(scope => {
       original(scope);
-      if (scope.queue.some(item => item.reason === 'merge_outcome_unknown')) throw new Error('copy interrupted');
+      if (scope.queue.some(item => item.reason === 'merge_outcome_unknown')
+        && service.writer(null)?.operations.some(operation => operation.state !== 'settled' && operation.effectPrepared === true)) throw new Error('copy interrupted');
     });
     await expect(service.processMergeQueue()).rejects.toThrow('copy interrupted');
     fault.mockRestore(); closeOpenClawStateDatabaseForTest();

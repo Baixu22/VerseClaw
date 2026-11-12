@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { lstatSync, readFileSync, realpathSync, statSync } from "node:fs";
 import path from "node:path";
+import { isDeepStrictEqual } from "node:util";
 import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
@@ -95,6 +96,21 @@ export function loadWorktreeRegistryScope(baseRoot: string): WorktreeRegistrySco
     throw new Error("worktree_registry_invalid");
   }
   if (data.baseIdentity !== baseIdentity) throw new Error("worktree_base_incarnation_changed");
+  for (const record of data.records) {
+    const baseline = record.mergeBaseline;
+    if (baseline) {
+      if (Array.isArray(baseline.parent)) baseline.parent = Object.fromEntries(baseline.parent);
+      if (Array.isArray(baseline.worker)) baseline.worker = Object.fromEntries(baseline.worker);
+    }
+    const legacy = record as WorktreeRecord & { lastMerge?: MergeQueueItem };
+    if (legacy.lastMerge) {
+      if (record.mergeResult && !isDeepStrictEqual(record.mergeResult, legacy.lastMerge)) {
+        throw new Error('worktree_merge_receipt_conflict');
+      }
+      record.mergeResult = legacy.lastMerge;
+      delete legacy.lastMerge;
+    }
+  }
   return { key, baseIdentity, revision: row.revision, records: new Map(data.records.map(record => [record.id, record])), queue: data.queue };
 }
 
