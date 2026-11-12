@@ -13,17 +13,34 @@ import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/st
 import { freezeOrchestrationWorktreeCandidate, mergeOrchestrationWorktrees } from '../../openclaw_runtime/src/agents/orchestration-worktree-merge';
 import { journaledGitApply } from '../../openclaw_runtime/src/plugin-sdk/journaled-git-apply';
 import * as journal from '../../openclaw_runtime/src/agents/tools/write-journal-core';
+import * as config from '../../openclaw_runtime/src/config/config';
+import { clearSessionStoreCacheForTest } from '../../openclaw_runtime/src/config/sessions/store';
+import { closeSqliteSessionStoreDatabase, replaceSqliteSessionStore } from '../../openclaw_runtime/src/config/sessions/store-sqlite';
 
 describe('R4 durable worktree integration', () => {
   let fixture: string;
   let root: string;
+  const owner = { agentId: 'r4', sessionKey: 'agent:r4:main', expectedSessionId: 'r4-parent-generation' };
+  let sessionStore: string;
+  let serviceFactory: typeof worktrees.createWorktreeService;
+  let runtimeConfig: config.OpenClawConfig;
   beforeEach(() => {
     fixture = mkdtempSync(path.join(tmpdir(), 'autonomy-r4-'));
     root = path.join(fixture, 'repo'); mkdirSync(root);
     vi.stubEnv('OPENCLAW_STATE_DIR', path.join(fixture, 'state'));
+    sessionStore = path.join(fixture, 'sessions.json');
+    replaceSqliteSessionStore(sessionStore, { [owner.sessionKey]: { sessionId: owner.expectedSessionId, updatedAt: Date.now(), workspaceDir: root } });
+    clearSessionStoreCacheForTest();
+    serviceFactory = worktrees.createWorktreeService;
+    runtimeConfig = { session: { store: sessionStore } } as config.OpenClawConfig;
+    vi.spyOn(config, 'getRuntimeConfig').mockReturnValue(runtimeConfig);
+    vi.spyOn(worktrees, 'createWorktreeService').mockImplementation((base, options) => {
+      const service = serviceFactory(base, options), create = service.create;
+      return Object.assign(service, { create: (id: string, params?: Parameters<typeof create>[1]) => create(id, { ...params, owner: params?.owner ?? owner }) });
+    });
   });
   afterEach(() => {
-    vi.restoreAllMocks(); closeOpenClawStateDatabaseForTest(); vi.unstubAllEnvs();
+    vi.restoreAllMocks(); closeOpenClawStateDatabaseForTest(); clearSessionStoreCacheForTest(); closeSqliteSessionStoreDatabase(sessionStore); vi.unstubAllEnvs();
     rmSync(fixture, { recursive: true, force: true });
   });
   const git = (...args: string[]) => execFileSync('git', ['-C', root, ...args], { encoding: 'utf8', windowsHide: true }).trim();
@@ -272,7 +289,7 @@ describe('R4 durable worktree integration', () => {
       orchestration: { orchestrationRunId: 'started-verifier-run', originalTask: 'verify preserved decision', phase: 'worker',
         isolation: 'worktree', worktreeId: 'gone-worker', worktreeGeneration: 'original-generation',
         worktreeMergeProcessedAt: Date.now(), worktreeMergeStatus: 'merged', verifierStartedRunId: 'original-verifier' } } as unknown as import('../../openclaw_runtime/src/agents/subagent-registry.types').SubagentRunRecord;
-    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {} }); addSubagentRunForTests(row);
+    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => runtimeConfig }); addSubagentRunForTests(row);
     try {
       const original = structuredClone(row.orchestration);
       await testing.maybeStartDeferredOrchestrationVerifier(row.runId);
@@ -283,11 +300,11 @@ describe('R4 durable worktree integration', () => {
     nativeRepository(); const service = createWorktreeService(root, { backend: 'git' });
     const worker = service.create('worker', { writeSet: ['other.txt'] }); writeFileSync(path.join(worker.root, 'other.txt'), 'worker result');
     const { testing } = await import('../../openclaw_runtime/src/agents/subagent-registry');
-    const row = { runId: 'scope-worker', workspaceDir: worker.root, outcome: { status: 'ok' },
+    const row = { requesterSessionKey: owner.sessionKey, runId: 'scope-worker', workspaceDir: worker.root, outcome: { status: 'ok' },
       orchestration: { isolation: 'worktree', taskNodeId: 'scope-task', worktreeWriteSet: ['other.txt'],
         worktreeId: mismatch === 'id' ? 'different-worker' : worker.id,
         worktreeGeneration: mismatch === 'generation' ? 'stale-generation' : worker.generation } } as unknown as import('../../openclaw_runtime/src/agents/subagent-registry.types').SubagentRunRecord;
-    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {} });
+    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => runtimeConfig });
     try {
       await testing.processCompletedOrchestrationWorktrees([row]);
       expect(row.orchestration?.worktreeMergeStatus).toBe('error');
@@ -301,10 +318,10 @@ describe('R4 durable worktree integration', () => {
     writeFileSync(path.join(worker.root, 'other.txt'), 'production worker result');
     const { testing } = await import('../../openclaw_runtime/src/agents/subagent-registry');
     const { inspectOrchestrationCandidate } = await import('../../openclaw_runtime/src/agents/orchestration-candidate');
-    const row = { runId: 'candidate-worker', workspaceDir: location === 'worker' ? worker.root : root, outcome: { status: 'ok' },
+    const row = { requesterSessionKey: owner.sessionKey, runId: 'candidate-worker', workspaceDir: location === 'worker' ? worker.root : root, outcome: { status: 'ok' },
       orchestration: { isolation: 'worktree', worktreeId: worker.id, worktreeGeneration: worker.generation,
         taskNodeId: 'candidate-task', worktreeWriteSet: ['other.txt'] } } as unknown as import('../../openclaw_runtime/src/agents/subagent-registry.types').SubagentRunRecord;
-    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {} });
+    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => runtimeConfig });
     try {
       await testing.processCompletedOrchestrationWorktrees([row]);
       expect(row.orchestration?.worktreeMergeStatus).toBe('merged');
@@ -345,7 +362,7 @@ describe('R4 durable worktree integration', () => {
         isolation: 'worktree', worktreeId: worker.id, worktreeGeneration: worker.generation, worktreeBackend: 'git',
         taskNodeId: 'inprocess-completion-task', worktreeWriteSet: ['other.txt'], verifierRole: 'verifier' },
     } as unknown as import('../../openclaw_runtime/src/agents/subagent-registry.types').SubagentRunRecord;
-    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => ({}) });
+    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => runtimeConfig });
     const dispatch = vi.spyOn(roles, 'spawnRoleSubagent').mockImplementation(async (request, context) => {
       expect(registry.canonicalWorktreePath(context.workspaceDir!)).toBe(registry.canonicalWorktreePath(root));
       expect(request.task).toContain('worktreeIntegration: merged');
@@ -371,12 +388,12 @@ describe('R4 durable worktree integration', () => {
     writeFileSync(path.join(worker.root, 'other.txt'), 'isolated worker result');
     writeFileSync(path.join(root, 'original.bin'), 'shared worker result');
     const { testing } = await import('../../openclaw_runtime/src/agents/subagent-registry');
-    const isolated = { runId: 'dirty-base-isolated', workspaceDir: worker.root, outcome: { status: 'ok' }, orchestration: {
+    const isolated = { requesterSessionKey: owner.sessionKey, runId: 'dirty-base-isolated', workspaceDir: worker.root, outcome: { status: 'ok' }, orchestration: {
       isolation: 'worktree', worktreeId: worker.id, worktreeGeneration: worker.generation, taskNodeId: 'dirty-base-task', worktreeWriteSet: ['other.txt'],
     } } as unknown as import('../../openclaw_runtime/src/agents/subagent-registry.types').SubagentRunRecord;
-    const shared = { runId: 'dirty-base-shared', workspaceDir: root, outcome: { status: 'ok' }, orchestration: { isolation: 'shared' } } as typeof isolated;
+    const shared = { requesterSessionKey: owner.sessionKey, runId: 'dirty-base-shared', workspaceDir: root, outcome: { status: 'ok' }, orchestration: { isolation: 'shared' } } as typeof isolated;
     const originalShared = structuredClone(shared);
-    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {} });
+    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => runtimeConfig });
     try {
       await testing.processCompletedOrchestrationWorktrees([shared, isolated]);
       expect(isolated.orchestration?.worktreeMergeStatus).toBe('conflict');
@@ -399,7 +416,7 @@ describe('R4 durable worktree integration', () => {
         worktreeMergeProcessedAt: Date.now(), worktreeMergeStatus: 'merged',
       },
     } as unknown as import('../../openclaw_runtime/src/agents/subagent-registry.types').SubagentRunRecord;
-    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => ({}) });
+    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => runtimeConfig });
     const dispatch = vi.spyOn(roles, 'spawnRoleSubagent'); addSubagentRunForTests(row);
     try {
       await testing.maybeStartDeferredOrchestrationVerifier(row.runId);
@@ -414,7 +431,7 @@ describe('R4 durable worktree integration', () => {
     writeFileSync(path.join(copied.root, 'original.bin'), 'copied result'); writeFileSync(path.join(native.root, 'other.txt'), 'native result');
     const { testing, addSubagentRunForTests, releaseSubagentRun } = await import('../../openclaw_runtime/src/agents/subagent-registry');
     const roles = await import('../../openclaw_runtime/src/agents/role-spawn');
-    const rows = [native, copied].map(worker => ({ runId: 'mixed-backend-' + order + '-' + worker.id,
+    const rows = [native, copied].map(worker => ({ requesterSessionKey: owner.sessionKey, runId: 'mixed-backend-' + order + '-' + worker.id,
       childSessionKey: 'agent:r4:' + order + '-' + worker.id, requesterSessionKey: 'agent:r4:main', createdAt: Date.now(), endedAt: Date.now(),
       workspaceDir: worker.root, outcome: { status: 'ok' }, orchestration: {
         orchestrationRunId: 'mixed-backend-run-' + order, originalTask: 'verify both integrated worker outputs', phase: 'worker', verifierRole: 'verifier',
@@ -423,7 +440,7 @@ describe('R4 durable worktree integration', () => {
       },
     })) as unknown as import('../../openclaw_runtime/src/agents/subagent-registry.types').SubagentRunRecord[];
     if (order === 'inprocess-first') rows.reverse();
-    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => ({}) });
+    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => runtimeConfig });
     const dispatch = vi.spyOn(roles, 'spawnRoleSubagent').mockImplementation(async (request, context) => {
       const candidate = rows.find(row => row.orchestration?.worktreeBackend === 'git')!.orchestration!.worktreeVerificationCandidate!;
       expect(context.workspaceDir).toBe(candidate.materializedPath);
@@ -448,7 +465,7 @@ describe('R4 durable worktree integration', () => {
     nativeRepository(); const service = createWorktreeService(root, { backend: 'git' });
     const first = service.create('first', { writeSet: ['other.txt'] }), second = service.create('second', { writeSet: ['new.txt'] });
     writeFileSync(path.join(first.root, 'other.txt'), 'first result'); writeFileSync(path.join(second.root, 'new.txt'), 'second result');
-    const rows = [first, second].map(worker => ({ runId: 'overlap-' + worker.id, workspaceDir: worker.root, outcome: { status: 'ok' }, orchestration: {
+    const rows = [first, second].map(worker => ({ requesterSessionKey: owner.sessionKey, runId: 'overlap-' + worker.id, workspaceDir: worker.root, outcome: { status: 'ok' }, orchestration: {
       isolation: 'worktree', worktreeId: worker.id, worktreeGeneration: worker.generation, taskNodeId: 'overlap-' + worker.id,
       worktreeWriteSet: worker.id === 'first' ? ['other.txt'] : ['new.txt'],
     } })) as unknown as import('../../openclaw_runtime/src/agents/subagent-registry.types').SubagentRunRecord[];
@@ -460,7 +477,7 @@ describe('R4 durable worktree integration', () => {
       if (!held) { held = true; reached(); await new Promise<void>(resolve => { release = resolve; }); }
       return apply(input);
     });
-    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {} });
+    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => runtimeConfig });
     try {
       const a = testing.processCompletedOrchestrationWorktrees([rows[0]]); await started;
       const b = testing.processCompletedOrchestrationWorktrees(rows);
@@ -477,7 +494,7 @@ describe('R4 durable worktree integration', () => {
   it('does not publish a completed receipt onto metadata whose generation changed in flight', async () => {
     nativeRepository(); const service = createWorktreeService(root, { backend: 'git' }), worker = service.create('worker', { writeSet: ['other.txt'] });
     writeFileSync(path.join(worker.root, 'other.txt'), 'valid generation result');
-    const row = { runId: 'late-generation-worker', workspaceDir: worker.root, outcome: { status: 'ok' }, orchestration: {
+    const row = { requesterSessionKey: owner.sessionKey, runId: 'late-generation-worker', workspaceDir: worker.root, outcome: { status: 'ok' }, orchestration: {
       isolation: 'worktree', worktreeId: worker.id, worktreeGeneration: worker.generation, taskNodeId: 'late-generation-task', worktreeWriteSet: ['other.txt'],
     } } as unknown as import('../../openclaw_runtime/src/agents/subagent-registry.types').SubagentRunRecord;
     const { testing } = await import('../../openclaw_runtime/src/agents/subagent-registry');
@@ -486,7 +503,7 @@ describe('R4 durable worktree integration', () => {
     vi.spyOn(mergeFiles, 'applyWorktreeFiles').mockImplementation(async input => {
       reached(); await new Promise<void>(resolve => { release = resolve; }); return apply(input);
     });
-    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {} });
+    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => runtimeConfig });
     try {
       const running = testing.processCompletedOrchestrationWorktrees([row]); await reachedEffect;
       row.orchestration!.worktreeGeneration = 'stale-or-different-generation'; release(); await running;
@@ -501,11 +518,11 @@ describe('R4 durable worktree integration', () => {
     nativeRepository(); const service = createWorktreeService(root, { backend: 'git' });
     const first = service.create('first', { writeSet: ['other.txt'] }), second = service.create('second', { writeSet: ['new.txt'] });
     writeFileSync(path.join(first.root, 'other.txt'), 'first result'); writeFileSync(path.join(second.root, 'new.txt'), 'second result');
-    const rows = [first, second].map(worker => ({ runId: 'prefix-' + worker.id, workspaceDir: worker.root, outcome: { status: 'ok' }, orchestration: {
+    const rows = [first, second].map(worker => ({ requesterSessionKey: owner.sessionKey, runId: 'prefix-' + worker.id, workspaceDir: worker.root, outcome: { status: 'ok' }, orchestration: {
       isolation: 'worktree', worktreeId: worker.id, worktreeGeneration: worker.generation, taskNodeId: 'prefix-' + worker.id,
       worktreeWriteSet: worker.id === 'first' ? ['other.txt'] : ['new.txt'],
     } })) as unknown as import('../../openclaw_runtime/src/agents/subagent-registry.types').SubagentRunRecord[];
-    const originalFactory = worktrees.createWorktreeService; let inject = true;
+    const originalFactory = serviceFactory; let inject = true;
     vi.spyOn(worktrees, 'createWorktreeService').mockImplementation((base, options) => {
       const instance = originalFactory(base, options);
       const enqueue = instance.enqueueMerge.bind(instance), process = instance.processMergeQueue.bind(instance);
@@ -527,7 +544,7 @@ describe('R4 durable worktree integration', () => {
       return instance;
     });
     const { testing } = await import('../../openclaw_runtime/src/agents/subagent-registry');
-    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {} });
+    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => runtimeConfig });
     try {
       await testing.processCompletedOrchestrationWorktrees(rows);
       if (phase === 'preparation-conflict') {
@@ -578,10 +595,10 @@ describe('R4 durable worktree integration', () => {
     nativeRepository(); const worker = createWorktreeService(root, { backend: 'git' }).create('worker', { writeSet: ['other.txt'] });
     writeFileSync(path.join(worker.root, 'other.txt'), 'candidate result');
     const { testing } = await import('../../openclaw_runtime/src/agents/subagent-registry');
-    const row = { runId: 'extra-target-worker', workspaceDir: worker.root, outcome: { status: 'ok' }, orchestration: {
+    const row = { requesterSessionKey: owner.sessionKey, runId: 'extra-target-worker', workspaceDir: worker.root, outcome: { status: 'ok' }, orchestration: {
       isolation: 'worktree', worktreeId: worker.id, worktreeGeneration: worker.generation, taskNodeId: 'extra-target-task', worktreeWriteSet: ['other.txt'],
     } } as unknown as import('../../openclaw_runtime/src/agents/subagent-registry.types').SubagentRunRecord;
-    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {} });
+    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => runtimeConfig });
     try {
       await testing.processCompletedOrchestrationWorktrees([row]); expect(row.orchestration?.worktreeMergeStatus).toBe('merged');
       const candidate = row.orchestration!.worktreeVerificationCandidate!, receipt = row.orchestration!.worktreeMergeJournalRef;
@@ -724,7 +741,7 @@ describe('R4 durable worktree integration', () => {
       orchestration: { orchestrationRunId: 'actual-candidate-verifier', originalTask: 'verify immutable result', phase: 'worker',
         isolation: 'worktree', worktreeId: worker.id, worktreeGeneration: worker.generation, taskNodeId: 'actual-candidate-task',
         worktreeWriteSet: ['other.txt'], verifierRole: 'verifier' } } as unknown as import('../../openclaw_runtime/src/agents/subagent-registry.types').SubagentRunRecord;
-    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => ({}) });
+    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => runtimeConfig });
     let verifierProof: { executionDirectory?: string; checkExit: number | null } | undefined;
     try {
       await testing.processCompletedOrchestrationWorktrees([row]);
@@ -755,10 +772,10 @@ describe('R4 durable worktree integration', () => {
     if (scenario === 'new-file') writeFileSync(path.join(worker.root, 'new-output.txt'), 'new result');
     else renameSync(path.join(worker.root, 'other.txt'), path.join(worker.root, 'renamed-output.txt'));
     const { testing } = await import('../../openclaw_runtime/src/agents/subagent-registry');
-    const row = { runId: 'new-path-worker', workspaceDir: worker.root, outcome: { status: 'ok' },
+    const row = { requesterSessionKey: owner.sessionKey, runId: 'new-path-worker', workspaceDir: worker.root, outcome: { status: 'ok' },
       orchestration: { isolation: 'worktree', worktreeId: worker.id, worktreeGeneration: worker.generation,
         taskNodeId: 'new-path-task', worktreeWriteSet: paths } } as unknown as import('../../openclaw_runtime/src/agents/subagent-registry.types').SubagentRunRecord;
-    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {} });
+    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => runtimeConfig });
     try {
       await testing.processCompletedOrchestrationWorktrees([row]);
       expect(row.orchestration?.worktreeMergeStatus, row.orchestration?.worktreeMergeReason).toBe('merged');
@@ -798,10 +815,10 @@ describe('R4 durable worktree integration', () => {
     const wanted = Buffer.from('first\r\nsecond\r\n'); writeFileSync(path.join(worker.root, 'other.txt'), wanted);
     const { testing } = await import('../../openclaw_runtime/src/agents/subagent-registry');
     const { inspectOrchestrationCandidate } = await import('../../openclaw_runtime/src/agents/orchestration-candidate');
-    const row = { runId: 'crlf-worker', workspaceDir: worker.root, outcome: { status: 'ok' }, orchestration: {
+    const row = { requesterSessionKey: owner.sessionKey, runId: 'crlf-worker', workspaceDir: worker.root, outcome: { status: 'ok' }, orchestration: {
       isolation: 'worktree', worktreeId: worker.id, worktreeGeneration: worker.generation, taskNodeId: 'crlf-task', worktreeWriteSet: ['other.txt'],
     } } as unknown as import('../../openclaw_runtime/src/agents/subagent-registry.types').SubagentRunRecord;
-    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {} });
+    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => runtimeConfig });
     try {
       await testing.processCompletedOrchestrationWorktrees([row]);
       expect(row.orchestration?.worktreeMergeStatus, row.orchestration?.worktreeMergeReason).toBe('merged');
@@ -832,7 +849,7 @@ describe('R4 durable worktree integration', () => {
       orchestration: { ...good.orchestration!, taskNodeId: 'mixed-bad-task', worktreeId: 'failed-worker' } } as typeof good;
     if (order === 'failed-worktree-shared-success') { good.workspaceDir = root; good.orchestration = { ...good.orchestration!, isolation: 'shared', worktreeId: undefined, worktreeGeneration: undefined }; }
     const rows = order === 'failed-first' || order === 'failed-worktree-shared-success' ? [bad, good] : [good, bad];
-    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => ({}) });
+    testing.setDepsForTest({ persistSubagentRunsToDiskOrThrow: () => {}, getRuntimeConfig: () => runtimeConfig });
     const spawn = vi.spyOn(roles, 'spawnRoleSubagent').mockImplementation(async (request, context) => {
       expect(context.workspaceDir).toBe(good.orchestration!.worktreeVerificationCandidate?.materializedPath ?? root);
       expect(request.task).toContain('mixed-bad'); expect(request.task).toContain('worker failed');
@@ -967,7 +984,7 @@ describe('R4 durable worktree integration', () => {
     const service = createWorktreeService(root, { backend: 'git' });
     const worker = service.create('worker', { writeSet: ['other.txt'] });
     writeFileSync(path.join(worker.root, 'other.txt'), 'worker result');
-    const create = worktrees.createWorktreeService;
+    const create = serviceFactory;
     vi.spyOn(worktrees, 'createWorktreeService').mockImplementation((base, options) => {
       const owner = create(base, options);
       const processQueue = owner.processMergeQueue;
