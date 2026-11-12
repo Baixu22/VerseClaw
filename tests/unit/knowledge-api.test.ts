@@ -1935,7 +1935,7 @@ describe('knowledge host API', () => {
       expect(answer.semanticRequested).toBe(true);
       expect(answer.semanticLane).toMatchObject({
         status: 'available',
-        providerId: expect.stringContaining('siliconflow:Qwen/Qwen3-Embedding-8B:'),
+        providerId: expect.stringContaining('siliconflow:Qwen/Qwen3-VL-Embedding-8B:'),
       });
       expect(answer.retrievalDiagnostics.backend).toBe('semantic');
       expect(answer.sources.map((source) => source.lookup)).toEqual([
