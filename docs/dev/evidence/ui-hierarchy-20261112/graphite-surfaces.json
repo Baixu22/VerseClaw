@@ -1,0 +1,25 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-ego",
+  "reference": "User-supplied Codex screenshot",
+  "surfaces": {
+    "frame": "rgb(29, 33, 36)",
+    "sidebar": "rgb(39, 41, 41)",
+    "canvas": "rgb(45, 45, 43)",
+    "header": "rgb(45, 45, 43)",
+    "composer": "rgb(71, 71, 69)",
+    "headerHeight": 40,
+    "menu": "rgb(61, 61, 59)"
+  },
+  "family": {
+    "countHidden": true,
+    "children": [
+      {
+        "title": "闲置草稿",
+        "indent": "50px",
+        "font": "14px"
+      }
+    ],
+    "parentFont": "14px"
+  }
+}

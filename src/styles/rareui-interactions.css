@@ -21,51 +21,31 @@
 .rare-delete-button:hover, .rare-delete-button:focus-visible { color: var(--color-text-error); background: var(--color-background-row-hover); }
 /* ---------------------------------------------------------------- activity bell
  * The bell answers three questions at a glance, each from real state:
- *   - is anything running?    a blue comet orbiting the bell (amber, breathing,
- *                             while a session waits on the user)
+ *   - is anything running?    the bell swings gently; waiting is amber
  *   - how much is new?        a numeric badge, coloured by the most severe entry
  *   - did something just ask? the bell swings once
  * -------------------------------------------------------------------------- */
 .rare-notification-bell { width: 30px; height: 30px; border-radius: var(--radius-sm); }
 .rare-notification-bell:hover, .rare-notification-bell[aria-expanded='true'] { background: var(--color-background-row-hover); color: var(--color-text-foreground); }
+.rare-notification-bell:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 2px; }
 .rare-notification-bell > svg { position: relative; z-index: 1; }
-.rare-notification-bell[data-live='running'], .rare-notification-bell[data-live='waiting'] { color: var(--color-text-foreground); }
-.rare-notification-bell__live {
-  --live: var(--cdx-blue-300, #339cff);
-  position: absolute;
-  inset: 3px;
-  border-radius: 999px;
-  pointer-events: none;
-  /* Head at 12 o'clock, tail fading counter-clockwise behind it; rotating
-   * clockwise makes the bright end lead. A faint full track sits underneath. */
-  background:
-    conic-gradient(from 0turn, transparent 0turn 0.4turn, color-mix(in srgb, var(--live) 22%, transparent) 0.66turn, color-mix(in srgb, var(--live) 75%, transparent) 0.94turn, var(--live) 1turn),
-    color-mix(in srgb, var(--live) 12%, transparent);
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.75px), #000 calc(100% - 1.5px));
-  mask: radial-gradient(farthest-side, transparent calc(100% - 1.75px), #000 calc(100% - 1.5px));
-  animation: rare-bell-orbit 1.6s linear infinite;
-}
-.rare-notification-bell[data-live='waiting'] .rare-notification-bell__live {
-  --live: var(--color-text-warning);
-  background: var(--live);
-  animation: rare-bell-breathe 2.2s ease-in-out infinite;
-}
-@keyframes rare-bell-orbit { to { transform: rotate(1turn); } }
-@keyframes rare-bell-breathe { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+.rare-notification-bell[data-live='running'] { color: var(--color-text-foreground); }
+.rare-notification-bell[data-live='waiting'] { color: var(--color-text-warning); }
+.rare-notification-bell__waiting { position: absolute; top: 3px; right: 3px; width: 5px; height: 5px; border-radius: 50%; background: var(--color-text-warning); box-shadow: 0 0 0 2px hsl(var(--surface-sidebar)); pointer-events: none; }
 .rare-notification-bell__count {
   position: absolute;
-  top: 1px;
-  right: 0;
+  top: -3px;
+  right: -4px;
   z-index: 2;
   display: inline-flex;
-  min-width: 15px;
-  height: 15px;
-  padding: 0 4px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   border-radius: 999px;
-  /* The sidebar colour as a 2px gap separates the badge from the ring. */
+  /* Separate the badge from the bell silhouette. */
   box-shadow: 0 0 0 2px hsl(var(--surface-sidebar));
   background: var(--color-text-foreground);
   color: hsl(var(--surface-sidebar));
@@ -135,8 +115,7 @@
 .rare-activity-panel__foot-state { font-size: 12.5px; font-weight: 500; }
 .rare-activity-panel__foot-desc { color: var(--color-text-foreground-tertiary); font-size: 11px; line-height: 15px; }
 @media (prefers-reduced-motion: reduce) {
-  .rare-notification-bell__live { animation: none; }
-  .rare-notification-bell[data-live='running'] .rare-notification-bell__live { background: color-mix(in srgb, var(--live) 55%, transparent); }
+  .rare-notification-bell > svg { transform: none !important; }
   .rare-notification-bell__count-digit, .rare-activity-panel { animation: none; }
 }
 .rare-turn-rail { position: absolute; top: 0; bottom: 0; left: 0; z-index: 20; display: flex; align-items: center; width: 28px; }

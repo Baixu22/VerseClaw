@@ -96,6 +96,32 @@ beforeEach(() => {
 });
 
 describe("session activity handler", () => {
+  it("reads a fresh generation before projecting completed worker batches", async () => {
+    loadSessionEntry.mockImplementation((_key, options) => ({
+      entry: { sessionId: options?.skipCache ? "after-reset" : "before-reset", updatedAt: 1 },
+      canonicalKey: "agent:main:main",
+    }));
+
+    const respond = await callHandler({ sessionKey: "agent:main:main" }, new Map([
+      ["old-run", {
+        sessionKey: "agent:main:main",
+        sessionId: "before-reset",
+        agentId: "main",
+        controlUiVisible: true,
+        projectSessionActive: true,
+        startedAtMs: 1,
+      }],
+    ]));
+    expect(respond.mock.calls[0][1].snapshot.session.sessionId).toBe("after-reset");
+    expect(respond.mock.calls[0][1].snapshot.session).toMatchObject({ runId: null, status: "idle" });
+    expect(readRuntimeEffectiveCapabilityObservation).toHaveBeenCalledWith(
+      expect.objectContaining({ sessionId: "after-reset", runId: null }),
+    );
+    expect(listOrchestrationCompletionBatchesForRequester).toHaveBeenCalledWith(
+      "agent:main:main", "after-reset",
+    );
+  });
+
   it("retains a worker's own transcript key and reports errors separately", async () => {
     listSubagentRunsForRequester.mockReturnValue([
       {
@@ -240,11 +266,19 @@ describe("session activity handler", () => {
         "run-1",
         {
           sessionKey: "agent:main:main",
+          sessionId: "session-1",
           controlUiVisible: true,
           projectSessionActive: true,
           startedAtMs: 15,
         },
       ],
+      ["late-stale-run", {
+        sessionKey: "agent:main:main",
+        sessionId: "previous-generation",
+        controlUiVisible: true,
+        projectSessionActive: true,
+        startedAtMs: 16,
+      }],
     ]);
     const respond = await callHandler({ sessionKey: "agent:main:main" }, chatAbortControllers);
     const [ok, result] = respond.mock.calls[0];

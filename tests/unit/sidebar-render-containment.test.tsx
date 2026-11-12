@@ -508,7 +508,7 @@ describe('Sidebar re-render containment', () => {
     await waitFor(() => expect(view.getByTestId('session-family-toggle-' + parent)).toHaveAttribute('aria-expanded', 'true'));
     expect(mountedKeys(view.container)).toHaveLength(80);
     expect(mountedKeys(view.container)).toEqual(expect.arrayContaining([parent, selected]));
-    expect(view.getByTestId('session-family-toggle-' + parent)).toHaveTextContent(String(count));
+    expect(view.getByTestId('session-family-toggle-' + parent).parentElement?.querySelector('.session-family__count')).toBeNull();
     for (let chunk = 0; chunk < Math.ceil(sessions.length / 80) - 1; chunk += 1) await scrollToBottom(view.container);
     expect(mountedKeys(view.container).sort()).toEqual(sessions.map((session) => session.key).sort());
     expect(view.useChatStore.getState().sessions.map((session) => session.key).sort()).toEqual(sessions.map((session) => session.key).sort());

@@ -249,33 +249,33 @@
     --surface-sidebar: 210 17% 98%;
   }
 
-  /* Neutral deep-gray dark palette */
+  /* Dark hierarchy: frame, sidebar, reading surface, then raised controls. */
   .dark {
-    --background: 0 0% 9.4%;
+    --background: var(--graphite-canvas-hsl);
     --foreground: 210 20% 96%;
-    --card: 240 3% 14%;
+    --card: var(--graphite-elevated-hsl);
     --card-foreground: 210 20% 96%;
-    --popover: 240 3% 14%;
+    --popover: var(--graphite-elevated-hsl);
     --popover-foreground: 210 20% 96%;
     --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 9.4%;
-    --secondary: 240 3% 18%;
+    --primary-foreground: var(--graphite-canvas-hsl);
+    --secondary: var(--graphite-control-hsl);
     --secondary-foreground: 210 20% 96%;
-    --muted: 240 3% 18%;
+    --muted: var(--graphite-elevated-hsl);
     --muted-foreground: 220 8% 72%;
-    --accent: 240 3% 22%;
+    --accent: var(--graphite-control-hsl);
     --accent-foreground: 210 20% 96%;
     --destructive: 0 65% 42%;
     --destructive-foreground: 210 20% 96%;
     --border: 240 3% 24%;
-    --input: 240 3% 18%;
+    --input: var(--graphite-control-hsl);
     --ring: 217.2 91.2% 59.8%;
 
-    --material-canvas: 0 0% 9.4%;
-    --material-sidebar: 0 0% 9.4%;
-    --material-panel: 0 0% 13%;
-    --material-elevated: 0 0% 15.7%;
-    --material-control: 0 0% 15.7%;
+    --material-canvas: var(--graphite-canvas-hsl);
+    --material-sidebar: var(--graphite-sidebar-hsl);
+    --material-panel: var(--graphite-canvas-hsl);
+    --material-elevated: var(--graphite-elevated-hsl);
+    --material-control: var(--graphite-control-hsl);
     --material-scrim: 240 8% 3%;
     --shadow-floating: 0 28px 90px rgba(0, 0, 0, 0.5), 0 2px 14px rgba(0, 0, 0, 0.32), inset 0 1px rgba(255, 255, 255, 0.08);
     --conversation-text-body: 220 8% 72%;
@@ -285,17 +285,9 @@
     /* Hairline follows --color-border, which already inverts for dark, so it
      * needs no restatement; --shadow-subtle likewise tracks --shadow-sm. */
 
-    /* In dark mode the three cream surfaces collapse onto existing
-     * shadcn tokens:
-     *     modal   → card
-     *     input   → muted
-     *     sidebar → background
-     * This way every `bg-surface-*` utility resolves correctly in
-     * both themes, and components no longer need `dark:bg-card`-style
-     * companion classes for theme switching. */
-    --surface-modal: 0 0% 13%;
-    --surface-input: 0 0% 15.7%;
-    --surface-sidebar: 0 0% 9.4%;
+    --surface-modal: var(--graphite-elevated-hsl);
+    --surface-input: var(--graphite-control-hsl);
+    --surface-sidebar: var(--graphite-sidebar-hsl);
 
     /* Usage accents — lifted *-400-ish shades so bars stay vivid
      * against the deep-gray dark surfaces (see light block above

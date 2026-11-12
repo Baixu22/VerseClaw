@@ -28,6 +28,17 @@ function ledger(title: string): TaskLedgerSnapshot {
 }
 beforeEach(() => { vi.clearAllMocks(); });
 
+it('keeps an empty header task scope silent and surfaces a failed read', async () => {
+  const snapshot = { ...ledger('Task A'), nodes: [], sessionLinks: [], rootNodeIds: [] };
+  host.snapshot.mockResolvedValue({ success: true, snapshot });
+  const view = render(<MemoryRouter><TaskLedgerSummaryPanel workspaceId="workspace-a" session={sessions[0]} mode="bar" hideWhenEmpty /></MemoryRouter>);
+  await waitFor(() => expect(host.snapshot).toHaveBeenCalled());
+  expect(screen.queryByTestId('session-task-container')).toBeNull();
+  host.snapshot.mockRejectedValue(new Error('Snapshot unavailable'));
+  view.rerender(<MemoryRouter><TaskLedgerSummaryPanel workspaceId="workspace-a" session={sessions[0]} mode="bar" hideWhenEmpty refreshKey="retry" /></MemoryRouter>);
+  await waitFor(() => expect(screen.getByTestId('session-task-container')).toHaveAttribute('data-state', 'unavailable'));
+});
+
 describe('family navigation', () => {
   it('explicitly expands newly loaded children while retaining the order of other roots', () => {
     const renderTree = (loaded: boolean) => <SessionFolderTree workspace={workspace} currentSessionKey="parent"
@@ -62,7 +73,8 @@ describe('family navigation', () => {
     fireEvent.blur(screen.getByTestId('session-family-toggle-parent'),{relatedTarget:document.body});
     view.rerender(renderTree(true));
     expect(order()).toEqual(before);expect(screen.getByText('Older:error')).toBeVisible();
-    expect(screen.getByTestId('sidebar-session-family-parent')).toHaveTextContent('3');
+    expect(screen.getByTestId('session-family-toggle-parent')).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByTestId('sidebar-session-family-parent').querySelector('.session-family__count')).toBeNull();
     expect(screen.queryByText('New')).not.toBeInTheDocument();
     fireEvent.pointerLeave(treeNode,{relatedTarget:null});
     fireEvent.blur(screen.getByTestId('session-family-toggle-parent'),{relatedTarget:null});
@@ -76,9 +88,11 @@ describe('family navigation', () => {
     const toggle = screen.getByTestId('session-family-toggle-parent');
     fireEvent.keyDown(toggle, { key: 'ArrowRight' });
     expect(screen.getByText('Child')).toBeVisible();
+    expect(screen.getByTestId('sidebar-session-family-parent').querySelector('.session-family__count')).toBeNull();
     expect(toggle).toHaveAttribute('aria-expanded', 'true');
     fireEvent.keyDown(toggle, { key: 'ArrowLeft' });
     expect(screen.queryByText('Child')).not.toBeInTheDocument();
+    expect(screen.getByTestId('sidebar-session-family-parent').querySelector('.session-family__count')).toHaveTextContent('1');
     expect(actions.onDropSession).not.toHaveBeenCalled();
   });
   it('reveals a selected child and leaves an explicit collapse intact on later renders', async () => {

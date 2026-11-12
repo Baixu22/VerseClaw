@@ -45,7 +45,7 @@ for(const interrupted of [false,true])test(`moves one logical session and its ta
     const labels=JSON.parse(await readFile(`shared/i18n/locales/${language}/chat.json`,'utf8')).migration;
     await hostInvoke(app,'settings','set',{key:'language',value:language});await page.reload();
     await expect(page.locator('html')).toHaveAttribute('lang',language);
-    await page.getByTestId('execution-migration-open').click();
+    await page.getByTestId('chat-toolbar-more').click(); await page.getByTestId('execution-migration-open').click();
     const dialog=page.getByTestId('execution-migration-dialog');
     await expect(dialog).toContainText(labels.title);await expect(dialog).toContainText(labels.description);
     await expect(page.getByTestId('execution-migration-start')).toHaveText(labels.start);
@@ -57,8 +57,9 @@ for(const interrupted of [false,true])test(`moves one logical session and its ta
    }
    await writeFile(artifact,'artifact changed during migration\n');
   }
-  await page.getByTestId('execution-migration-open').click();
-  await page.getByTestId('execution-migration-target').selectOption(target.activeWorkspace.id);
+  await page.getByTestId('chat-toolbar-more').click(); await page.getByTestId('execution-migration-open').click();
+  await page.getByTestId('execution-migration-target').click();
+  await page.getByRole('option',{name:'Migration target',exact:true}).click();
   await page.getByTestId('execution-migration-start').click();
   if(interrupted){
    await expect.poll(async()=>{
@@ -78,7 +79,7 @@ for(const interrupted of [false,true])test(`moves one logical session and its ta
     await hostInvoke(app,'settings','set',{key:'language',value:language});await page.reload();
     await expect(page.locator('html')).toHaveAttribute('lang',language);
     await expect(page.getByTestId('execution-migration-open')).toHaveAttribute('aria-label',labels.resume);
-    await page.getByTestId('execution-migration-open').click();
+    await page.getByTestId('chat-toolbar-more').click(); await page.getByTestId('execution-migration-open').click();
     await expect(page.getByTestId('execution-migration-phase')).toHaveText(labels.phase['binding-committed']);
     await expect(page.getByTestId('execution-migration-dialog').getByRole('alert')).toContainText(labels.artifactChanged);
     await expect(page.getByTestId('execution-migration-target')).toBeDisabled();
@@ -87,7 +88,7 @@ for(const interrupted of [false,true])test(`moves one logical session and its ta
     await page.getByTestId('execution-migration-dialog').getByRole('button',{name:labels.cancel,exact:true}).click();
    }
    await writeFile(artifact,'prior accepted progress\n');
-   await page.getByTestId('execution-migration-open').click();await page.getByTestId('execution-migration-start').click();
+   await page.getByTestId('chat-toolbar-more').click(); await page.getByTestId('execution-migration-open').click();await page.getByTestId('execution-migration-start').click();
   }
   await expect(page.getByTestId('execution-migration-dialog')).toHaveCount(0,{timeout:60_000});
   const moved=await hostInvoke<{operation:ExecutionMigrationOperation}>(app,'workspaces','executionMigration',{workspaceId:source.workspaceId,sessionKey:source.sessionKey});

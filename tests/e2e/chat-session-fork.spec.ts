@@ -436,7 +436,7 @@ test.describe('Verse Claw chat session fork', () => {
       await expect(page.getByText('Design the runtime-backed fork flow.')).toBeVisible({ timeout: 30_000 });
       await page.getByTestId('chat-composer-input').fill(SOURCE_DRAFT);
 
-      await page.getByTestId('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click();
+      await page.getByTestId('chat-toolbar-more').click();
       await expect(page.getByTestId('chat-session-fork')).toBeVisible();
       await expect(page.getByTestId('chat-session-handoff')).toBeVisible();
       await expect(page.getByTestId('chat-session-fork-recommended')).toBeVisible();
@@ -460,7 +460,7 @@ test.describe('Verse Claw chat session fork', () => {
       )), { timeout: 30_000 }).toBeGreaterThan(0);
       await expect(page.getByText('Fork should preserve the active transcript branch.')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId('chat-composer-input')).toHaveValue(SOURCE_DRAFT);
-      await page.getByTestId('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click();
+      await page.getByTestId('chat-toolbar-more').click();
       // #180: the lineage line names the parent by its display name, not the raw
       // session key (the key is already shown on the line above it).
       const lineageLine = page.getByTestId('chat-session-lineage');
@@ -596,7 +596,7 @@ test.describe('Verse Claw chat session fork', () => {
       await page.reload();
       await page.waitForLoadState('domcontentloaded');
 
-      await page.getByTestId('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click();
+      await page.getByTestId('chat-toolbar-more').click();
       await page.getByTestId('chat-session-fork').click();
       await expect(page.getByText('Transcript is too large to fork')).toBeVisible({ timeout: 30_000 });
       await page.getByRole('button', { name: 'Prepare handoff' }).click();
@@ -672,7 +672,7 @@ test.describe('Verse Claw chat session fork', () => {
       await expect(page.getByTestId('chat-composer-fork')).toHaveCount(0);
       await expect(page.getByTestId('chat-composer-handoff')).toHaveCount(0);
 
-      await page.getByTestId('chat-project-session-header').getByRole('button', { name: 'Chat options', exact: true }).click();
+      await page.getByTestId('chat-toolbar-more').click();
       await expect(page.getByTestId('chat-session-fork')).toBeDisabled();
       await expect(page.getByTestId('chat-session-handoff')).toBeDisabled();
     } finally {

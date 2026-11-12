@@ -140,7 +140,7 @@ test('real Gateway keeps discussion empty, admits one write, and restores the sa
     const sessionKey = created.key;
     await hostInvoke(app, 'workspaces', 'update', { id: workspaceId, agentId: 'main', sessionKey, activeSessionKey: sessionKey });
     const send = async (key: string, marker: string, extra: Record<string, unknown> = {}) => {
-      const result = await hostInvoke<{ success: boolean; error?: string }>(app!, 'chat', 'sendWithMedia', {
+      const result = await hostInvoke<{ success: boolean; error?: string; result?: { runId?: string } }>(app!, 'chat', 'sendWithMedia', {
         workspaceId, sessionKey: key, message: marker, idempotencyKey: `acceptance-${marker}`, ...extra,
       });
       expect(result.success, result.error).toBe(true);
@@ -148,6 +148,16 @@ test('real Gateway keeps discussion empty, admits one write, and restores the sa
         .includes(`FINISHED ${marker}`), { timeout: 60_000 }).toBe(true);
       await expect.poll(async () => (await rpc<{ session?: { hasActiveRun?: boolean } }>('sessions.describe', { key })).session?.hasActiveRun ?? false,
         { timeout: 30_000 }).toBe(false);
+      if (marker === 'A4-EXECUTE' || marker === 'A4-CONTINUE') {
+        expect(result.result?.runId).toBeTruthy();
+        await expect.poll(async () => {
+          const state = await rpc<{ status: string }>('agent.wait', {
+            runId: result.result?.runId, timeoutMs: 1000,
+          });
+          await record(`completion-${marker}`, state);
+          return state.status;
+        }, { timeout: 30_000 }).toBe('ok');
+      }
     };
     for (let turn = 0; turn < 10; turn++) await send(sessionKey, `A4-DISCUSS-${turn}`);
     const discussion = await hostInvoke<{ snapshot: TaskLedgerSnapshot }>(app, 'taskLedger', 'snapshot', { workspaceId });
@@ -165,6 +175,10 @@ test('real Gateway keeps discussion empty, admits one write, and restores the sa
     await record('execution', { snapshot: execution.snapshot, binding: bound, effect: await readFile(target, 'utf8') });
     await send(sessionKey, 'A4-CONTINUE');
     expect(llm.log.filter(entry => entry.issued === 'a4-continue-write')).toHaveLength(1);
+    const continuedHistory = await rpc<{ messages?: Array<{ toolCallId?: string; toolName?: string; isError?: boolean }> }>('chat.history', { sessionKey, limit: 100 });
+    const continuedToolReceipt = continuedHistory.messages?.find(message => message.toolCallId === 'a4-continue-write');
+    await record('continuedToolReceipt', continuedToolReceipt ?? null);
+    expect(continuedToolReceipt).toMatchObject({ toolName: 'write', isError: false });
     const continued = await hostInvoke<{ snapshot: TaskLedgerSnapshot }>(app, 'taskLedger', 'snapshot', { workspaceId });
     expect(continued.snapshot.nodes.filter(node => node.kind === 'task').map(node => node.id)).toEqual(
       execution.snapshot.nodes.filter(node => node.kind === 'task').map(node => node.id));

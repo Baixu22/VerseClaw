@@ -1,6 +1,7 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const MAIN_SESSION_KEY = 'agent:main:main';
+const EXPECTED_SESSION_ID = 'manual-compaction-session-generation';
 
 function stableStringify(value: unknown): string {
   if (value == null || typeof value !== 'object') return JSON.stringify(value);
@@ -18,6 +19,14 @@ test.describe('Verse Claw chat manual compaction', () => {
     try {
       await installIpcMocks(app, {
         gatewayStatus: { state: 'running', port: 18789, pid: 12345, gatewayReady: true },
+        // loadSessions reads the Gateway owner, not the legacy HTTP manifest.
+        // Keep the mocked generation on that path so compaction carries it.
+        gatewayRpc: {
+          [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
+            success: true,
+            result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: EXPECTED_SESSION_ID, displayName: 'main' }] },
+          },
+        },
         hostApi: {
           [stableStringify(['gateway', 'status', null])]: {
             state: 'running',
@@ -32,7 +41,7 @@ test.describe('Verse Claw chat manual compaction', () => {
               ok: true,
               json: {
                 success: true,
-                result: { sessions: [{ key: MAIN_SESSION_KEY, displayName: 'main' }] },
+                result: { sessions: [{ key: MAIN_SESSION_KEY, sessionId: EXPECTED_SESSION_ID, displayName: 'main' }] },
               },
             },
           },
@@ -120,7 +129,7 @@ test.describe('Verse Claw chat manual compaction', () => {
           },
         },
       });
-      await app.evaluate(({ ipcMain }, sessionKey) => {
+      await app.evaluate(({ ipcMain }, { sessionKey, expectedSessionId }) => {
         const originalHostInvoke = (ipcMain as unknown as {
           _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
         })._invokeHandlers?.get('host:invoke');
@@ -139,6 +148,9 @@ test.describe('Verse Claw chat manual compaction', () => {
           payload?: Record<string, unknown>;
         }) => {
           if (request?.module === 'sessions' && request.action === 'compact') {
+            if (request.payload?.expectedSessionId !== expectedSessionId) {
+              throw new Error(`Unexpected compact expectedSessionId: ${String(request.payload?.expectedSessionId)}`);
+            }
             compactCalls.push(request.payload);
             return makeResponse(request.id, {
               success: true,
@@ -151,11 +163,12 @@ test.describe('Verse Claw chat manual compaction', () => {
           return originalHostInvoke?.(event, request) ?? makeResponse(request?.id, {});
         });
         (globalThis as typeof globalThis & { __manualCompactionCalls?: unknown[] }).__manualCompactionCalls = compactCalls;
-      }, MAIN_SESSION_KEY);
+      }, { sessionKey: MAIN_SESSION_KEY, expectedSessionId: EXPECTED_SESSION_ID });
 
       const page = await getStableWindow(app);
       // Discard status requests started before the Host API fixture was installed.
       await page.reload();
+      await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', EXPECTED_SESSION_ID, { timeout: 30_000 });
 
       // The composer compact icon was removed; the slash palette is the entry
       // point now (see tests/unit/chat-input.test.tsx). Open the dialog via /compact.
@@ -176,6 +189,7 @@ test.describe('Verse Claw chat manual compaction', () => {
       ));
       expect(calls).toContainEqual({
         sessionKey: MAIN_SESSION_KEY,
+        expectedSessionId: EXPECTED_SESSION_ID,
         agentId: 'main',
         customInstructions: 'Keep the deployment decision.',
         force: true,

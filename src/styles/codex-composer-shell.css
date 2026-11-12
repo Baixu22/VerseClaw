@@ -46,6 +46,7 @@
 /* On near-black the rim has to be light to read as a lit edge; the ink-based
  * mix above resolves to something darker than the surface and disappears. */
 .dark .codex-composer-shell {
+  --ccs-surface: var(--color-background-control-panel);
   --ccs-rim: color-mix(in oklab, var(--gray-0) 8%, transparent);
 }
 

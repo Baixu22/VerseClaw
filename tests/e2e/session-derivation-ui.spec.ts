@@ -1,3 +1,4 @@
+import { openSessionNavigation, openSourceSession } from './fixtures/session-navigation';
 import { writeFile } from 'node:fs/promises';
 import { HOST_EVENT_CHANNELS } from '../../shared/host-events/contract';
 import { readSessionListPages } from '../../src/lib/session-read-model';
@@ -38,6 +39,7 @@ test('question fork keeps its source draft and handoff submits one reviewed firs
     await page.getByTestId('question-fork-create').click();
     await expect(page.getByTestId('question-fork-dialog')).toHaveCount(0);
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('A new question held as a draft');
+    await openSessionNavigation(page);
     await expect(page.getByTestId('session-family-source')).toBeVisible();
     const listed = await rpc<{ sessions: Array<{ key: string; parentSessionKey?: string; forkedFromParent?: boolean }> }>('sessions.list', {});
     const fork = listed.sessions.find((session) => session.parentSessionKey === project.sessionKey && session.forkedFromParent);
@@ -47,9 +49,9 @@ test('question fork keeps its source draft and handoff submits one reviewed firs
     expect(JSON.stringify(forkHistory)).not.toContain('UI-SECOND');
     expect((await readSessionChainHostCalls(app)).filter((call) => call.module === 'chat' && call.action === 'sendWithMedia')).toHaveLength(0);
     await page.screenshot({ path: testInfo.outputPath('question-fork-draft.png') });
-    await page.getByTestId('session-family-source').click();
+    await openSourceSession(page);
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Keep the source draft');
-    await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+    await page.getByTestId('chat-toolbar-more').click();
     await page.getByTestId('chat-session-handoff').click();
     await expect(page.getByTestId('chat-handoff-dialog')).toBeVisible();
     await page.getByTestId('chat-handoff-draft').fill('UI-HANDOFF');
@@ -281,7 +283,7 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
       if (view === 'project') {
         const toggle = page.getByTestId('session-family-toggle-' + project.sessionKey);
         await expect(toggle).toBeVisible({ timeout: 30_000 });
-        await expect(toggle).toContainText(String(children.length));
+        await expect(toggle.locator('xpath=..').locator('.session-family__count')).toHaveText(String(children.length));
         if (await toggle.getAttribute('aria-expanded') !== 'true') { await toggle.focus(); await toggle.press('ArrowRight'); }
         await expect(toggle).toHaveAttribute('aria-expanded', 'true');
       } else await expect(page.getByTestId('session-family-toggle-' + project.sessionKey)).toHaveCount(0);
@@ -417,7 +419,7 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
       await instrumentSessionChainHost(app);
       const reloadStartedAt = Date.now(); await page.reload();
       const toggle = page.getByTestId('session-family-toggle-' + project.sessionKey);
-      await expect(toggle).toBeVisible({ timeout: 30_000 }); await expect(toggle).toContainText(String(count));
+      await expect(toggle).toBeVisible({ timeout: 30_000 }); await expect(toggle.locator('xpath=..').locator('.session-family__count')).toHaveText(String(count));
       const reloadEndedAt = Date.now();
       const sharedWarmup = { projection: 'project', coldReloadMs: reloadEndedAt - reloadStartedAt,
         rpc: await rpcWindow(reloadStartedAt, reloadEndedAt), excludedFromProjectionComparison: true };
@@ -485,7 +487,7 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
       measurement.historicalComparison = { status: 'reference-only', baselineCandidate: baseline.candidate,
         baselineSessionCount: baseline.fixture.sessionCount, switchP50DeltaMs: p50Ms - baseline.sessionSwitch.p50Ms,
         switchP95DeltaMs: p95Ms - baseline.sessionSwitch.p95Ms, scale20Reference: count === 20 ? attribution.runs.find((run) => run.sessionCount === 20) : null };
-      await page.getByTestId('session-family-source').click();
+      await openSourceSession(page);
       await expect(page.getByTestId('sidebar-session-' + project.sessionKey).locator('xpath=ancestor::div[@data-hook-key][1]')).toHaveAttribute('data-hook-selected', 'true');
       await page.locator('.sidebar-scroll').evaluate((element) => { element.scrollTop = 0; });
     }
@@ -500,7 +502,7 @@ test('family navigation preserves 2/20/100 runtime children and responsive keybo
         if (await sidebarToggle.getAttribute('aria-label') === 'Expand sidebar') await sidebarToggle.click();
         await chooseProjection('project'); await exposeProjection('project');
         const toggle = page.getByTestId('session-family-toggle-' + project.sessionKey);
-        await expect(toggle).toContainText(String(children.length));
+        await expect(toggle.locator('xpath=..').locator('.session-family__count')).toHaveText(String(children.length));
         const dom = await revealChildren();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
         const first = page.locator('.ws-family-row[data-lineage-depth="1"]').first();

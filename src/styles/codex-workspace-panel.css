@@ -753,38 +753,6 @@
   }
 }
 
-/* Wipe target. Width and opacity collapse together so the row closes up from
- * the right rather than leaving a hole where the button was. */
-.codex-toolbar-wipe {
-  display: inline-flex;
-  overflow: hidden;
-  flex: none;
-  max-width: 2rem;
-  opacity: 1;
-  transition:
-    max-width 200ms var(--ease-enter),
-    opacity 140ms ease,
-    margin 200ms var(--ease-enter);
-}
-
-.codex-toolbar-wipe[data-wiped='true'] {
-  max-width: 0;
-  margin-left: -0.125rem;
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Stagger: the edge reaches the rightmost control first. Refresh is the last
- * child, so it leads and 会话状态 follows a beat later. */
-.codex-toolbar-wipe[data-wiped='true'][data-wipe-order='1'] { transition-delay: 0ms; }
-.codex-toolbar-wipe[data-wiped='true'][data-wipe-order='2'] { transition-delay: 60ms; }
-
-/* Reappearing on close runs in the opposite order, so the row unpacks
- * left-to-right as the panel retreats. */
-.codex-toolbar-wipe[data-wiped='false'][data-wipe-order='1'] { transition-delay: 60ms; }
-.codex-toolbar-wipe[data-wiped='false'][data-wipe-order='2'] { transition-delay: 0ms; }
-
 @media (prefers-reduced-motion: reduce) {
   .codex-workspace-sweep { transition: none; }
-  .codex-toolbar-wipe { transition: none; }
 }

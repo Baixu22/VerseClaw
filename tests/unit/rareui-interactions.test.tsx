@@ -5,6 +5,7 @@ import MarkdownPreview, { markdownOutline } from '@/components/file-preview/Mark
 import { DurationPicker } from '@/components/rareui/DurationPicker';
 import { ThemeSelector, type ThemeSelectorOption } from '@/components/rareui/ThemeSelector';
 import { DeleteButton } from '@/components/rareui/DeleteButton';
+import { NotificationBell } from '@/components/rareui/NotificationBell';
 import { buildCompletionActivity } from '@/components/rareui/completion-activity';
 import { getInitialCronSchedule, readCronTime, writeCronTime } from '@/pages/Cron';
 import type { UserRunCard } from '@/pages/Chat/execution-projection';
@@ -189,7 +190,7 @@ describe('Rare UI production adaptations', () => {
     expect(formatElapsed(-5_000)).toBe('0:00');
   });
 
-  it('shows running sessions live, rings amber when one waits, and colours the badge by severity', async () => {
+  it('shows live sessions, marks waiting sessions, and colours unread activity by severity', async () => {
     vi.doMock('react-router-dom', async (importOriginal) => ({
       ...await importOriginal<typeof import('react-router-dom')>(),
       useNavigate: () => () => undefined,
@@ -213,7 +214,8 @@ describe('Rare UI production adaptations', () => {
     const view = render(<TooltipProvider><CompletionActivityMenu liveSessions={live} /></TooltipProvider>);
     const bell = screen.getByTestId('chat-completion-bell');
     expect(bell).toHaveAttribute('data-live', 'running');
-    expect(screen.getByTestId('chat-activity-live-ring')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-activity-bell-icon')).toBeInTheDocument();
+    expect(screen.queryByTestId('chat-activity-live-ring')).toBeNull();
     // Three unread, one of them an error: the badge says so in number and colour.
     expect(bell).toHaveAttribute('data-tone', 'error');
     expect(screen.getByTestId('chat-completion-unread-dot')).toHaveTextContent('3');
@@ -238,7 +240,19 @@ describe('Rare UI production adaptations', () => {
 
     view.rerender(<TooltipProvider><CompletionActivityMenu liveSessions={[{ ...live[0], state: 'waiting' }]} /></TooltipProvider>);
     expect(screen.getByTestId('chat-completion-bell')).toHaveAttribute('data-live', 'waiting');
+    expect(screen.getByTestId('chat-activity-waiting')).toBeInTheDocument();
     expect(screen.getByTestId('chat-activity-live-item')).toHaveAttribute('data-state', 'waiting');
+  });
+
+  it('uses one corner indicator for waiting and unread activity', async () => {
+    const view = render(<NotificationBell count={12} live="waiting" tone="error" aria-label="Activity" />);
+    expect(screen.getByTestId('chat-completion-unread-dot')).toHaveTextContent('9+');
+    expect(screen.queryByTestId('chat-activity-waiting')).toBeNull();
+    view.rerender(<NotificationBell count={0} live="waiting" aria-label="Activity" />);
+    await waitFor(() => expect(screen.queryByTestId('chat-completion-unread-dot')).toBeNull());
+    expect(screen.getByTestId('chat-activity-waiting')).toBeInTheDocument();
+    view.rerender(<NotificationBell count={0} live="idle" aria-label="Activity" />);
+    expect(screen.queryByTestId('chat-activity-waiting')).toBeNull();
   });
 
   it('shows an honest empty state when nothing ran and nothing is running', async () => {

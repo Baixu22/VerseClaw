@@ -1,6 +1,7 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const SESSION_KEY = 'agent:main:main';
+const EXPECTED_SESSION_ID = 'checkpoints-session-generation';
 const CHECKPOINT_ID = 'mission:m1:tick:3';
 
 function stableStringify(value: unknown): string {
@@ -164,7 +165,8 @@ test('checkpoints dialog lists and restores a session checkpoint', async ({ laun
 
     // Wait for the chat surface to settle before opening the session menu.
     await expect(page.getByText('Implement the checkpoint restore flow.')).toBeVisible({ timeout: 30_000 });
-    await page.getByTestId('chat-header-session-name').click();
+    await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', EXPECTED_SESSION_ID, { timeout: 30_000 });
+    await page.getByTestId('chat-toolbar-more').click();
     await expect(page.getByTestId('chat-session-checkpoints')).toBeVisible({ timeout: 30_000 });
     await page.getByTestId('chat-session-checkpoints').click();
 

@@ -88,8 +88,9 @@
   flex: none;
 }
 .codex-sidebar .sidebar-heading > .icon-button { margin-left: auto; }
-.codex-sidebar .sidebar-heading--collapsed { padding: 4px 2px 0; gap: 2px; }
-.codex-sidebar .sidebar-heading--collapsed .rare-notification-bell { width: 28px; height: 28px; }
+.codex-sidebar .sidebar-heading-actions { gap: 8px; }
+.codex-sidebar .sidebar-heading--collapsed { height: 86px; padding: 6px 0; }
+.codex-sidebar .sidebar-heading--collapsed .sidebar-heading-actions { flex-direction: column-reverse; margin-inline: auto; }
 
 /* styles.css:206-207 */
 .codex-sidebar .icon-button {
@@ -444,7 +445,7 @@
 .codex-sidebar .ws-family-toggle,
 .codex-sidebar .ws-family-kind { position: absolute; z-index: 4; left: 9px; top: 3px; height: 24px; display: flex; align-items: center; gap: 1px; color: var(--cdx-text-3); }
 .codex-sidebar .ws-family-toggle { font-size: 9px; }
-.codex-sidebar .ws-family-row:has(> .ws-family-toggle) .task-select { --task-indent: 36px; --task-title-gutter: 4px; }
+.codex-sidebar .ws-family-row:has(> .session-family__toggle) .task-select { --task-indent: 36px; --task-title-gutter: 4px; }
 .codex-sidebar .ws-family-toggle svg { width: 11px; height: 11px; flex-shrink: 0; }
 .codex-sidebar .ws-family-kind { width: 16px; pointer-events: none; }
 .codex-sidebar .ws-family-kind svg { width: 13px; height: 13px; }
@@ -1064,18 +1065,10 @@
  *
  * ## One signal per idea
  *
- * - Grouping is carried by INDENT + whitespace rhythm. The rail and elbows are
- *   gone: half-drawn connectors added speckle without ever completing the
- *   figure, and spacing does the same job silently (`gestalt proximity`).
- * - Group names are LABELS, not nodes: smaller, dimmer, no leading glyph, flush
- *   with the section heading. Session titles are the only bright text, so
- *   brightness finally ranks selected > session > label > meta instead of
- *   putting the most saturated pixels on decoration.
- * - The member count appears ONLY while a group is shut, where it answers "what
- *   am I hiding?". Open, the members are right there and the number restates
- *   them. The accent dot is gone from the list entirely; the accent survives as
- *   the drag/drop highlight and the move-menu swatch, where "which group" is
- *   the actual question being asked.
+ * - Grouping uses indentation, spacing and neutral text contrast. Accent hues
+ *   stay in the move menu and drag/drop feedback, not persistent list regions.
+ * - Group names are labels: smaller than session titles, with no leading glyph.
+ * - The member count appears only while a group is shut.
  */
 
 /* Sessions and labels each get ONE edge. `data-flat` is set when the workspace
@@ -1115,6 +1108,9 @@
 .codex-sidebar .ws-stream { margin-bottom: 12px; }
 .codex-sidebar .ws-stream:last-of-type { margin-bottom: 6px; }
 .codex-sidebar .ws-stream .ws-members > * { margin-top: 1px; }
+.codex-sidebar .ws-stream > div > .folder-row-wrap { background: transparent; }
+.codex-sidebar .ws-stream > div > .folder-row-wrap:hover { background: var(--cdx-bg-row-hover); }
+.codex-sidebar .ws-stream .folder-row-wrap .ws-label-select { color: var(--cdx-text-3); }
 
 .codex-sidebar .ws-rename-row {
   display: flex;
@@ -1283,13 +1279,12 @@
 .session-family__toggle:hover { background: var(--color-background-row-hover); color: var(--color-text-foreground); }
 .session-family__toggle:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 1px; }
 .session-family__count { position: absolute; top: 5px; right: 9px; z-index: 3; min-width: 18px; color: var(--color-text-foreground-tertiary); font-size: 11px; line-height: 20px; font-variant-numeric: tabular-nums; text-align: right; pointer-events: none; }
-.ws-family-row:has(> .ws-family-toggle) .task-title { padding-right: 22px; }
-.ws-family-row:has(> .ws-family-toggle) .task-row:hover .session-family__count,
-.ws-family-row:has(> .ws-family-toggle) .task-row:has(:focus-visible) .session-family__count,
-.ws-family-row:has(> .ws-family-toggle) .task-row[data-force-actions='true'] .session-family__count { opacity: 0; }
-.session-family__children { position: relative; margin-left: 17px; border-left: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent); }
-.session-family__connector { display: none; }
-.codex-sidebar .session-family__child .ws-family-kind { left: 13px; }
-.codex-sidebar .session-family__child .ws-family-kind svg { width: 11px; height: 11px; }
-.codex-sidebar .session-family__child .task-select { --task-indent: 33px; font-size: 13px; }
+.codex-sidebar .session-family__parent:has(> .session-family__count) .task-select { padding-right: 36px; }
+.codex-sidebar .session-family__parent:has(.task-row:hover, .task-row :focus-visible, .task-row[data-force-actions='true']) > .session-family__count { opacity: 0; }
+.codex-sidebar .session-family__parent .task-row:is(:hover, :has(:focus-visible), [data-force-actions='true']) .task-select { padding-right: var(--task-actions-w); }
+.session-family__children { position: relative; margin-left: 16px; }
+.session-family__children::before { content: ''; position: absolute; top: 2px; bottom: 8px; left: 7px; width: 1px; background: color-mix(in srgb, var(--color-text-foreground) 18%, transparent); pointer-events: none; }
+.codex-sidebar .session-family__child::before { content: ''; position: absolute; top: 15px; left: 0; width: 8px; border-top: 1px solid color-mix(in srgb, var(--color-text-foreground) 18%, transparent); pointer-events: none; }
+.codex-sidebar .session-family__child .task-select { --task-indent: 30px; --task-title-gutter: 4px; }
+.codex-sidebar .session-family__child .task-row:not(.selected) .task-title:not(.task-title--unread) { color: var(--cdx-text-2); font-weight: 400; }
 @media (prefers-reduced-motion: reduce) { .session-family__toggle svg { transition: none; } }

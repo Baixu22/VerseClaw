@@ -49,13 +49,35 @@ requiredTests:
 - A project containing session-family connectors uses those connectors and row
   selection backgrounds. Travelling selection/hover rails must not cross family
   disclosure buttons or duplicate the child connectors.
+- Family counts are visible while collapsed; expanding the family removes the
+  count and gives its title that space. Parent and child rows use the same type
+  scale, with indentation and a quiet connector carrying the relationship.
+
+## Conversation header
+
+- Keep the normal header at 40px. Project and session names are unboxed at rest.
+- The title opens the searchable conversation picker. Source links, ancestry
+  and derived sessions live in that picker; no additional native select or
+  relation strip occupies the resting header.
+- Checkpoints, fork, handoff, refresh, recovery settings, execution migration
+  and memory inspection use More. Their existing eligibility guards still apply.
+- Closing More must not unmount a dialog opened from it. Escape returns focus
+  to the originating trigger, and floating menus stay inside the viewport.
+- A recovered prompt cache returns to the quiet state. Session environment
+  remains reachable while workspace tabs are open.
+- Dark surfaces follow the graphite palette: frame, sidebar, conversation,
+  raised menu and composer. The header shares the conversation surface; sidebar,
+  canvas and composer must have distinct computed backgrounds.
 
 ## Activity bell
 
-- The live ring appears only while a session has a run in flight, derived from
-  the same runtime status projection as the row orbs: a blue comet while
-  running, a breathing amber ring while a run waits on the user. No timers,
-  guesses or fabricated progress.
+- Live activity comes from the same runtime status projection as the row orbs.
+  A running session gently swings the bell from side to side with pauses; a
+  waiting session uses amber ink and a corner dot when no unread badge is shown.
+  Opening the panel pauses the swing. Reduced motion keeps the icon still.
+- The bell and sidebar toggle share a horizontal row when expanded and stack
+  vertically when collapsed. The unread badge sits outside the bell silhouette;
+  a waiting dot and unread badge never occupy the corner together.
 - The badge counts unread feed entries and takes the colour of the most severe
   one. Opening the panel reads the listed entries; closing records them read.
 - The panel lists running sessions, with an elapsed clock where the runtime

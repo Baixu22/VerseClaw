@@ -15,6 +15,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   FolderPlus,
+  AlertTriangle,
   Pencil,
   Trash2,
   Check,
@@ -550,15 +551,14 @@ function SessionFolderTreeInner({
               }}>
               <ChevronRight aria-hidden="true" />
             </button>
-          ) : row.originKey ? (
-            <>
-              <CornerDownRight className="session-family__connector" aria-hidden="true" />
-              <span className="ws-family-kind" title={t(`chat:sessionFamily.kind.${relation?.kind ?? 'unknown'}`)}><Icon /></span>
-            </>
-          ) : relation?.kind !== 'unknown' || row.sourceStatus === 'source-unavailable' ? (
+          ) : row.originKey && row.sourceStatus !== 'resolved' ? (
+            <span className="ws-family-kind" title={t(`chat:sessionFamily.${row.sourceStatus === 'parent-missing' || row.sourceStatus === 'parent-unloaded' ? 'missing' : row.sourceStatus === 'bound-exceeded' ? 'bound-exceeded' : row.sourceStatus === 'cycle' ? 'cycle' : 'conflict'}`)}>
+              <AlertTriangle />
+            </span>
+          ) : !row.originKey && (relation?.kind && relation.kind !== 'unknown' || row.sourceStatus === 'source-unavailable') ? (
             <span className="ws-family-kind" title={t(`chat:sessionFamily.kind.${relation?.kind ?? 'unknown'}`)}><Icon /></span>
           ) : null}
-          {count > 0 && <span className="session-family__count" aria-hidden="true">{count}</span>}
+          {count > 0 && !expanded && <span className="session-family__count" aria-hidden="true">{count}</span>}
           {renderDraggableSession(entry)}
         </div>
       );

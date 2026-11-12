@@ -1,3 +1,4 @@
+import { selectDerivedSession, openSourceSession } from './fixtures/session-navigation';
 import { writeFile } from 'node:fs/promises';
 import type { ElectronApplication, Page } from '@playwright/test';
 import type { WorkspaceProfile } from '../../shared/types/workspace';
@@ -43,7 +44,7 @@ async function reading(page: Page, wantedKey?: string) {
       .map(row => ({ row, box: row.getBoundingClientRect(), marker: row.innerText.match(/U2-READ-\d{2}/)?.[0] }));
     const found = key
       ? rows.find(item => item.row.dataset.viewportKey === key)
-      : rows.find(item => item.marker && item.box.top >= viewport.top + 8 && item.box.top < viewport.bottom - 60);
+      : rows.find(item => item.marker && item.box.bottom > viewport.top + 8 && item.box.top < viewport.bottom - 60);
     return {
       top: scroller.scrollTop, height: scroller.clientHeight,
       bottomGap: scroller.scrollHeight - scroller.clientHeight - scroller.scrollTop,
@@ -85,7 +86,7 @@ test('U2 restores the visible transcript message, reading offset and both sessio
     const page = await getStableWindow(app);
     await setSessionChainViewport(app, { width: 1280, height: 800 });
     await page.reload();
-    await expect(page.getByTestId('session-family-children')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByTestId('chat-header-session-name')).toBeVisible({ timeout: 30_000 });
     const scroller = page.getByTestId('chat-scroll-container');
     await expect(scroller).toBeVisible();
     await page.getByTestId('chat-composer-input').fill('U2 parent draft must survive the reading round trip');
@@ -106,7 +107,7 @@ test('U2 restores the visible transcript message, reading offset and both sessio
     evidence.project = project; evidence.child = child; evidence.seedReceipts = seeded; evidence.before = before;
     await page.screenshot({ path: testInfo.outputPath('u2-reading-before.png') });
 
-    await page.getByTestId('session-family-children').selectOption(child);
+    await selectDerivedSession(page, child);
     await expect(page.getByTestId('chat-scroll-container')).toContainText('U2-CHILD-CONTEXT');
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Child 1 draft');
     await page.getByTestId('chat-composer-input').fill('U2 child draft stays separate');
@@ -117,7 +118,7 @@ test('U2 restores the visible transcript message, reading offset and both sessio
     expect(saved?.draftInput).toBe('U2 parent draft must survive the reading round trip');
     expect(Math.abs((saved?.readingPosition?.scrollTop ?? -1) - before.top)).toBeLessThanOrEqual(8);
 
-    await page.getByTestId('session-family-source').click();
+    await openSourceSession(page);
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('U2 parent draft must survive the reading round trip');
     // No click/scroll/focus on the transcript after returning: automatic restoration is the behavior under test.
     await expect.poll(async () => {
@@ -284,7 +285,7 @@ test('U2 background child creation, failure and completion preserve parent selec
     evidence.newChildOwner = childOwner;
     // Existing rows keep their geometry during pointer/keyboard interaction.
     // New membership is published on leaving the list; owner execution continues.
-    await expect(disclosure).toContainText('3');
+    await expect(disclosure.locator('xpath=..').locator('.session-family__count')).toHaveText('3');
     const successRun = await send(app, project.workspaceId, successChild, 'U2_CHILD_SUCCESS');
     await expect.poll(() => successRequested).toBeGreaterThan(0);
     releaseSuccess();

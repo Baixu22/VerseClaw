@@ -1,3 +1,4 @@
+import { openSessionNavigation, selectDerivedSession, openSourceSession } from './fixtures/session-navigation';
 import { writeFile } from 'node:fs/promises';
 import type { TaskLedgerSnapshot } from '../../shared/types/task-ledger';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
@@ -26,6 +27,10 @@ test('project entry keeps its coordinator, task scope and session drafts while d
     await hostInvoke(app, 'taskLedger', 'linkSession', { workspaceId: a.workspaceId, sessionKey: a.sessionKey,
       nodeId: task.id, sessionGeneration: a.generation });
     await hostInvoke(app, 'workspaces', 'saveState', { id: a.workspaceId, sessionKey: a.sessionKey, state: { draftInput: 'Source draft preserved' } });
+    const savedOwner = await hostInvoke<{ profiles: Array<{ id: string; sessionStates?: Record<string, { draftInput?: string }> }> }>(app, 'workspaces', 'list');
+    const savedProfile = savedOwner.profiles.find((profile) => profile.id === a.workspaceId);
+    observations.savedOwner = savedProfile;
+    expect(savedProfile?.sessionStates?.[a.sessionKey]?.draftInput).toBe('Source draft preserved');
     const b = await createSessionChainProject(app, testInfo.outputPath('project-b'), 'Project B');
     const page = await getStableWindow(app); await page.reload();
     await expect(page.getByTestId(`sidebar-project-open-${a.workspaceId}`)).toBeVisible({ timeout: 30_000 });
@@ -37,6 +42,7 @@ test('project entry keeps its coordinator, task scope and session drafts while d
     await disclosure.click();
     await page.getByTestId(`sidebar-project-open-${a.workspaceId}`).click();
     await expect(page.getByTestId('project-coordinator-entry')).toContainText('Project A');
+    await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', a.generation, { timeout: 30_000 });
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Source draft preserved');
     await page.getByTestId('session-tasks-toggle').click();
     await expect(page.getByTestId('session-task-list')).toContainText(task.title);
@@ -61,15 +67,16 @@ test('project entry keeps its coordinator, task scope and session drafts while d
     await page.keyboard.press('Escape');
     await expect(page.getByTestId('session-tasks-toggle')).toBeFocused();
     await setSessionChainViewport(app, { width: 1280, height: 800 });
-    await page.getByTestId('session-family-children').selectOption(child);
+    await selectDerivedSession(page, child);
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Child 1 draft');
     await page.getByTestId('chat-composer-input').fill('Child edited draft');
-    await page.getByTestId('session-family-children').selectOption(grandchild);
+    await selectDerivedSession(page, grandchild);
+    await openSessionNavigation(page);
     await page.getByTestId('session-family-relations').locator('summary').click();
     await expect(page.getByTestId('session-family-relations')).toContainText('Project A coordinator');
-    await page.getByTestId('session-family-source').click();
+    await openSourceSession(page);
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Child edited draft');
-    await page.getByTestId('session-family-source').click();
+    await openSourceSession(page);
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Source draft preserved');
     await page.getByTestId(`sidebar-project-open-${b.workspaceId}`).click();
     await expect(page.getByTestId('project-coordinator-entry')).toContainText('Project B');
@@ -77,6 +84,7 @@ test('project entry keeps its coordinator, task scope and session drafts while d
     await expect(page.getByText(task.title, { exact: true })).toHaveCount(0);
     await page.getByTestId(`sidebar-project-open-${a.workspaceId}`).click();
     await expect(page.getByTestId('project-coordinator-entry')).toContainText('Project A');
+    await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', a.generation, { timeout: 30_000 });
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Source draft preserved');
     const after = await hostInvoke<{ snapshot: TaskLedgerSnapshot }>(app, 'taskLedger', 'snapshot', { workspaceId: a.workspaceId });
     expect(after.snapshot.nodes.find((node) => node.id === task.id)?.status).toBe('done');

@@ -1,3 +1,4 @@
+import { selectDerivedSession } from './fixtures/session-navigation';
 import { readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { statSync } from 'node:fs';
@@ -226,7 +227,7 @@ test(`a real delegated worker receives its own task, reports separately and acce
     await expect(page.getByTestId('project-coordinator-entry')).toContainText('Worker project');
     const projectScope = page.locator('[data-project-workspace]');
     await expect(projectScope).toHaveAttribute('data-project-workspace', project.workspaceId);
-    expect(await page.getByTestId('session-family-children').selectOption(childKey)).toEqual([childKey]);
+    await selectDerivedSession(page, childKey);
     await expect(projectScope).toHaveAttribute('data-project-workspace', project.workspaceId);
     await expect(page.getByTestId('workspace-subagent-panel')).toBeVisible();
     await expect(page.getByTestId('workspace-subagent-panel')).toContainText('WORKER-RUN-FINISHED');
@@ -386,8 +387,8 @@ test(`a real delegated worker receives its own task, reports separately and acce
     await page.getByTestId(`sidebar-project-open-${project.workspaceId}`).click();
     await expect(page.getByTestId('project-coordinator-entry')).toContainText('Worker project');
     await page.getByTestId(`sidebar-session-${second.key}`).click();
-    await expect(page.getByTestId('session-family-children')).toBeVisible();
-    await page.getByTestId('session-family-children').selectOption(readOnlyKey);
+    await expect(page.getByTestId('chat-header-session-name')).toBeVisible();
+    await selectDerivedSession(page, readOnlyKey);
     await expect(page.getByTestId('workspace-subagent-panel')).toBeVisible();
     await expect(page.getByTestId('workspace-subagent-panel')).toContainText('WORKER-HOLD-FINISHED', { timeout: hostActionTimeoutMs('sessions', 'history') });
     const taskSummary = page.getByTestId('session-task-container');
@@ -574,9 +575,7 @@ for (const language of ['en', 'zh', 'ja', 'ru'] as const) {
         await expect(projectScope).toHaveAttribute('data-project-workspace', project.workspaceId);
         const draft = 'Keep the owner scope draft ' + language;
         await page.getByTestId('chat-composer-input').fill(draft);
-        const children = page.getByTestId('session-family-children');
-        await expect(children).toBeVisible();
-        expect(await children.selectOption(childKey)).toEqual([childKey]);
+        await selectDerivedSession(page, childKey);
         await expect(projectScope).toHaveAttribute('data-project-workspace', project.workspaceId);
         await expect(page.getByTestId('chat-composer-input')).toHaveValue(draft);
         const acceptedStage = page.getByTestId('workspace-subagent-panel').locator('[data-stage="acceptance"]');
