@@ -21,6 +21,47 @@ touchedAreas:
   - src/lib/mock-host-bridge.ts
   - src/styles/codex-sidebar.css
   - src/styles/rareui-interactions.css
+  - src/styles/codex-responsive.css
+  - src/styles/codex-tokens.css
+  - src/styles/globals.css
+  - src/styles/codex-composer-shell.css
+  - src/styles/codex-composer-material.css
+  - src/styles/codex-workspace-panel.css
+  - src/components/layout/TitleBar.tsx
+  - src/pages/Chat/index.tsx
+  - src/pages/Chat/ChatToolbar.tsx
+  - src/pages/Chat/ExecutionMigrationControl.tsx
+  - src/pages/Settings/sections/RecoverySettingsSection.tsx
+  - src/components/chat/SessionFamilyNavigation.tsx
+  - src/components/task-ledger/TaskLedgerSummaryPanel.tsx
+  - shared/i18n/locales/en/settings.json
+  - shared/i18n/locales/zh/settings.json
+  - shared/i18n/locales/ja/settings.json
+  - shared/i18n/locales/ru/settings.json
+  - tests/unit/sidebar-render-containment.test.tsx
+  - tests/unit/session-family-navigation.test.tsx
+  - tests/unit/chat-toolbar.test.tsx
+  - tests/unit/execution-migration-control.test.tsx
+  - tests/unit/fakecoding-design-system.test.ts
+  - tests/e2e/fixtures/session-navigation.ts
+  - tests/e2e/chat-checkpoints.spec.ts
+  - tests/e2e/chat-session-fork.spec.ts
+  - tests/e2e/chat-session-handoff.spec.ts
+  - tests/e2e/chat-worktree-session-navigation.spec.ts
+  - tests/e2e/execution-migration.spec.ts
+  - tests/e2e/project-agent-entry.spec.ts
+  - tests/e2e/session-chain-scope-faults.spec.ts
+  - tests/e2e/session-context-commit-recovery.spec.ts
+  - tests/e2e/session-context-recovery.spec.ts
+  - tests/e2e/session-derivation-ui.spec.ts
+  - tests/e2e/session-family-lifecycle.spec.ts
+  - tests/e2e/session-fork-intent.spec.ts
+  - tests/e2e/session-lifecycle-recovery.spec.ts
+  - tests/e2e/session-task-locales.spec.ts
+  - tests/e2e/session-task-reading-navigation.spec.ts
+  - tests/e2e/session-worker-task-journey.spec.ts
+  - tests/e2e/u6-interaction-metrics.final.spec.ts
+  - docs/dev/evidence/ui-hierarchy-20261112/**
   - shared/i18n/locales/en/chat.json
   - shared/i18n/locales/zh/chat.json
   - shared/i18n/locales/ja/chat.json
@@ -29,6 +70,8 @@ touchedAreas:
   - tests/unit/session-folder-tree.test.tsx
   - tests/unit/rareui-interactions.test.tsx
   - tests/e2e/sidebar-session-row-polish.spec.ts
+  - tests/e2e/sidebar-session-family-connectors.spec.ts
+  - tests/e2e/session-family-counter-layout.spec.ts
   - tests/e2e/sidebar-session-folders-archive.spec.ts
   - tests/e2e/dialog-transitions.spec.ts
   - tests/e2e/runtime-lifecycle-governance.spec.ts
@@ -37,13 +80,27 @@ touchedAreas:
   - README.zh-CN.md
   - README.ja-JP.md
   - README.ru-RU.md
+residualPaths:
+  - one
+  - openclaw_runtime/src/agents/worktree-service.ts
+  - src/styles/codex-settings-controls.css
+  - tests/e2e/chat-memory-injection-panel.spec.ts
+  - tests/e2e/chat-recovery-assist.spec.ts
+  - tests/unit/chat-save-to-knowledge.test.tsx
+  - tests/unit/vite-config-openclaw-runtime.test.ts
+  - vite.config.ts
 expectedUserBehavior:
   - Hovering a conversation shows Pin and ⋯ only; the title ends before them and a running conversation keeps its status orb.
   - ⋯ and right-click open the same session menu; it holds rename, move to a workgroup (including back out of one), unread, pin, fork, hand off, copy, archive and delete.
   - Archive is one click with an Undo toast; permanent delete keeps its confirmation dialog.
   - A title longer than its row scrolls as a seamless loop after a short hover and glides back when the pointer leaves; reduced motion keeps it still.
   - Hovering a conversation inside a workgroup no longer reveals the workgroup's own rename/delete.
-  - The header bell shows a blue ring while any conversation runs and an amber ring while one waits on the user; its badge counts unread activity in the colour of the most severe entry.
+  - The header bell gently swings while any conversation runs and uses amber ink while one waits; its corner badge counts unread activity in the colour of the most severe entry. Opening the panel or enabling reduced motion keeps the bell still.
+  - Collapsing the sidebar stacks the sidebar toggle above the bell. Parent conversation counts yield to hover controls and stay clear of titles.
+  - The 40px header uses unboxed project and conversation identity. The title opens search, source and derived-session navigation; More contains checkpoints, fork, handoff, refresh, execution migration, memory inspection and recovery settings. Empty task scopes load silently.
+  - Dark mode follows the owner-supplied Codex reference with a darker sidebar, a lighter conversation canvas and raised menus and composer. The header and transcript share one plane.
+  - Child conversations reuse SidebarRow with a shallow indent and one quiet guide; relation details remain in conversation navigation.
+  - Session and Recovery separates display from notifications and history. Quiet display applies the existing attention-only expansion and completed-detail collapse preferences; lifecycle explanations expand on demand.
   - The bell panel lists running conversations with elapsed time above the recent activity feed, and offers the desktop-notification switch in its footer.
 requiredRules:
   - sidebar-session-row-controls
@@ -62,6 +119,9 @@ requiredTests:
   - pnpm run build:vite
   - pnpm run test:e2e:run tests/e2e/sidebar-session-row-polish.spec.ts tests/e2e/sidebar-session-folders-archive.spec.ts tests/e2e/rareui-interactions.spec.ts
 acceptance:
+  - At 1280px, 960px and 720px the header remains 40px and floating menus stay within the viewport; dark sidebar, canvas and composer have distinct backgrounds.
+  - Opening execution migration from More retains its dialog after the menu closes; cancelling starts no migration and returns focus to More.
+  - Source and derived conversation navigation preserve each conversation's draft and existing lifecycle guards.
   - The session hover strip renders exactly Pin and ⋯; no retired move/rename/delete hover control remains in the DOM.
   - The ⋯ menu is anchored under its button (right edges aligned), keeps the row highlighted while open, and closes on a second press, Escape or an outside click.
   - Archive from the menu calls the existing host archive with the session's workspace and workgroup, and Undo calls the existing host restore; no new host route is added.
@@ -78,6 +138,11 @@ docs:
 ---
 
 # Sidebar session rows, title marquee and live activity bell
+
+The exact residual paths record changes already present at the 2026-11-12
+hierarchy review's starting revision. They are retained as concurrent work.
+The review's source delta and browser evidence are recorded under
+`docs/dev/evidence/ui-hierarchy-20261112/`.
 
 The owner asked on 2026-10-30 for an aesthetic and interaction pass over the
 conversation area of the sidebar: unclear management, weak hover controls, no

@@ -1,5 +1,7 @@
-import { Activity, Gauge, PackageOpen, RefreshCw } from 'lucide-react';
-import { useMemo, useState, type ReactNode } from 'react';
+import { Activity, Gauge, GitBranchPlus, Loader2, MoreHorizontal, PackageOpen, RefreshCw, Settings2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MemoryInjectionPanel } from '@/components/chat/MemoryInjectionPanel';
 import { ResourceChip } from '@/components/chat/ResourceChip';
@@ -10,50 +12,33 @@ import { cn } from '@/lib/utils';
 import { useAgentsStore } from '@/stores/agents';
 import { useArtifactPanel } from '@/stores/artifact-panel';
 import { useChatStore } from '@/stores/chat';
-import { PanelRightOpen } from '@/components/icons/codex-icons';
-import type { PromptCacheRiskAssessment, PromptCacheStatus } from '@shared/types/workspace';
+import { FileText, ListChecks, PanelRightOpen } from '@/components/icons/codex-icons';
+import { useDismissOnOutside, usePopover } from '@/components/settings/primitives/usePopover';
+import { useOverlayPortalContainer } from '@/components/ui/overlay-portal';
+import { ExecutionMigrationControl } from './ExecutionMigrationControl';
+import type { PromptCacheRiskAssessment } from '@shared/types/workspace';
+import type { SessionContinuityRecommendation } from './session-continuity';
 
 type ChatToolbarProps = {
+  workspaceId?: string;
+  sessionGeneration?: string;
   promptCacheStatus?: PromptCacheRiskAssessment | null;
   sessionActivityAvailable?: boolean;
   /** Reflects the rail's EFFECTIVE state, passive layer included. */
   sessionActivityOpen?: boolean;
   sessionActivityNeedsAttention?: boolean;
   onToggleSessionActivity?: () => void;
+  onCheckpoints?: () => void;
+  checkpointsDisabled?: boolean;
+  onForkSession?: () => void | Promise<void>;
+  forkDisabled?: boolean;
+  forkBusy?: boolean;
+  onHandoffSession?: () => void | Promise<void>;
+  handoffDisabled?: boolean;
+  handoffDisabledReason?: string;
+  handoffBusy?: boolean;
+  continuityRecommendation?: SessionContinuityRecommendation;
 };
-
-/**
- * A control the incoming workspace panel wipes away.
- *
- * The panel's leading edge crosses the toolbar as it slides in, and the controls
- * it passes over go with it. They stay mounted and collapse their own width to
- * zero from the right instead of unmounting, because unmounting would re-flow
- * the row and drag the surviving button sideways — the one thing that has to
- * hold still, since it is the switch the user is about to click again to close.
- *
- * `order` is the distance from the panel's edge: 1 is the rightmost control and
- * leads the wipe, 2 follows a beat later. See codex-workspace-panel.css.
- */
-function ToolbarWipe({
-  wiped,
-  order,
-  children,
-}: {
-  wiped: boolean;
-  order: 1 | 2;
-  children: ReactNode;
-}) {
-  return (
-    <span
-      className="codex-toolbar-wipe"
-      data-wiped={wiped ? 'true' : 'false'}
-      data-wipe-order={order}
-      aria-hidden={wiped || undefined}
-    >
-      {children}
-    </span>
-  );
-}
 
 function formatCacheTokens(value: number): string {
   if (!Number.isFinite(value) || value <= 0) return '0';
@@ -71,30 +56,29 @@ function formatCacheHitRate(value: number | null): string {
   return `${Math.round(value * 100)}%`;
 }
 
-function statusTone(status: PromptCacheStatus): string {
-  if (status === 'at-risk') return 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400';
-  if (status === 'warm' || status === 'warming') return 'border-border/60 bg-foreground/[0.035] text-muted-foreground';
-  return 'border-border/50 bg-transparent text-muted-foreground';
-}
-
-/* A healthy prompt cache is the normal case, so reporting it earns the user
- * nothing but another lit chip in the toolbar. Surface the chip only when the
- * cache actually needs attention: the current assessment says `at-risk`, or a
- * risk event fired earlier this session and is still worth explaining. Warm,
- * warming, and unknown states stay silent — the details remain reachable
- * through the same tooltip once the chip has a reason to appear. */
+// A recovered cache returns to the quiet state even when its history retains a risk event.
 function shouldShowPromptCacheChip(status?: PromptCacheRiskAssessment | null): status is PromptCacheRiskAssessment {
-  if (!status) return false;
-  if (status.status === 'at-risk') return true;
-  return Boolean(status.lastRiskEvent);
+  return status?.status === 'at-risk';
 }
 
 export function ChatToolbar({
+  workspaceId,
+  sessionGeneration,
   promptCacheStatus,
   sessionActivityAvailable = false,
   sessionActivityOpen = false,
   sessionActivityNeedsAttention = false,
   onToggleSessionActivity,
+  onCheckpoints,
+  checkpointsDisabled,
+  onForkSession,
+  forkDisabled,
+  forkBusy,
+  onHandoffSession,
+  handoffDisabled,
+  handoffDisabledReason,
+  handoffBusy,
+  continuityRecommendation,
 }: ChatToolbarProps = {}) {
   const refresh = useChatStore((state) => state.refresh);
   const loading = useChatStore((state) => state.loading);
@@ -107,6 +91,13 @@ export function ChatToolbar({
   const togglePanel = useArtifactPanel((state) => state.toggle);
   const hasPanelTabs = useArtifactPanel((state) => state.tabs.length > 0);
   const { t } = useTranslation('chat');
+  const navigate = useNavigate();
+  const { triggerRef: moreTriggerRef, layerRef: moreLayerRef, open: moreOpen, setOpen: setMoreOpen, style: moreStyle } = usePopover<HTMLButtonElement>({ gap: 4 });
+  const overlayContainer = useOverlayPortalContainer();
+  useDismissOnOutside({ open: moreOpen, onDismiss: () => setMoreOpen(false), refs: [moreTriggerRef, moreLayerRef] });
+  useEffect(() => {
+    if (moreOpen && moreStyle.visibility === 'visible') moreLayerRef.current?.focus({ preventScroll: true });
+  }, [moreOpen, moreStyle.visibility, moreLayerRef]);
   const currentAgent = useMemo(
     () => (agents ?? []).find((agent) => agent.id === currentAgentId) ?? null,
     [agents, currentAgentId],
@@ -117,6 +108,7 @@ export function ChatToolbar({
   const browserActive = WORKSPACE_BROWSER_ENABLED && panelOpen;
   const showPromptCacheChip = shouldShowPromptCacheChip(promptCacheStatus);
   const promptCacheReason = promptCacheStatus?.reason ?? promptCacheStatus?.lastRiskEvent?.reason;
+  const recommendedAction = continuityRecommendation?.disabled ? null : continuityRecommendation?.action;
 
   return (
     <div className="flex min-w-0 items-center gap-1">
@@ -126,10 +118,9 @@ export function ChatToolbar({
           <TooltipTrigger asChild>
             <span
               data-testid="chat-prompt-cache-status"
-              className={cn(
-                'inline-flex h-8 min-w-8 items-center justify-center gap-1 rounded-md border px-2 text-xs font-medium',
-                statusTone(promptCacheStatus.status),
-              )}
+              tabIndex={0}
+              role="status"
+              className="inline-flex h-8 min-w-8 items-center justify-center gap-1 rounded-md px-2 text-xs text-amber-700 dark:text-amber-400"
               aria-label={t('toolbar.promptCache.ariaLabel', {
                 status: t(`toolbar.promptCache.status.${promptCacheStatus.status}`),
               })}
@@ -182,12 +173,6 @@ export function ChatToolbar({
         </Tooltip>
       )}
       {sessionActivityAvailable && onToggleSessionActivity && (
-        <ToolbarWipe wiped={panelOpen} order={2}>
-        {/* Toggle only — the panel itself is the chat page's status rail, not a
-            dropdown owned by this button. A Radix dropdown would have re-parented
-            it into a portal, where it could not inset the transcript for the
-            passive layer, and its open state would have been the menu's rather
-            than the rail's. */}
         <span className="chat-session-activity-control" data-testid="chat-session-activity-control">
           <Tooltip>
             <TooltipTrigger asChild>
@@ -209,50 +194,77 @@ export function ChatToolbar({
             <TooltipContent side="bottom" collisionPadding={8}><p>{t('sessionActivity.title')}</p></TooltipContent>
           </Tooltip>
         </span>
-        </ToolbarWipe>
       )}
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            data-testid="chat-memory-injection-toggle"
-            variant="ghost"
-            size="icon"
-            className={cn(
-              'h-8 w-8 hover:bg-foreground/5 hover:text-foreground',
-              memoryInjectionOpen && 'bg-foreground/10 text-foreground',
-            )}
-            aria-label={t('memoryInjection.title')}
-            aria-expanded={memoryInjectionOpen}
-            onClick={() => setMemoryInjectionOpen(true)}
-          >
-            <PackageOpen className="h-4 w-4" aria-hidden="true" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom" collisionPadding={8}><p>{t('memoryInjection.title')}</p></TooltipContent>
-      </Tooltip>
       <MemoryInjectionPanel
         open={memoryInjectionOpen}
         onOpenChange={setMemoryInjectionOpen}
         sessionKey={currentSessionKey}
       />
-      <ToolbarWipe wiped={panelOpen} order={1}>
+      <span className="relative inline-flex">
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button
-              data-testid="chat-toolbar-refresh"
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 hover:bg-foreground/5 hover:text-foreground"
-              onClick={() => refresh()}
-              disabled={loading}
-              aria-label={t('toolbar.refresh')}
-            >
-              <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} aria-hidden="true" />
+            <Button ref={moreTriggerRef} data-testid="chat-toolbar-more" variant="ghost" size="icon"
+              className="h-8 w-8" aria-label={t('toolbar.moreActions')} aria-haspopup="menu" aria-expanded={moreOpen}
+              onClick={() => setMoreOpen(value => !value)}>
+              <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="bottom" collisionPadding={8}><p>{t('toolbar.refresh')}</p></TooltipContent>
+          <TooltipContent side="bottom">{t('toolbar.moreActions')}</TooltipContent>
         </Tooltip>
-      </ToolbarWipe>
+        {/* Keep dialog owners mounted when the menu closes. */}
+        {createPortal(
+          <div ref={moreLayerRef} role="menu" tabIndex={-1} aria-label={t('toolbar.moreActions')}
+            style={{ ...moreStyle, display: moreOpen ? undefined : 'none' }}
+            data-testid="chat-toolbar-more-menu" className="codex-header-menu chat-toolbar-more-menu"
+            onKeyDown={event => {
+              if (!moreOpen || !event.currentTarget.contains(event.target as Node)) return;
+              if (event.key === 'Escape') { setMoreOpen(false); moreTriggerRef.current?.focus(); }
+              if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+              event.preventDefault();
+              const items = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('button:not(:disabled)'));
+              const index = items.indexOf(document.activeElement as HTMLButtonElement);
+              const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1
+                : index < 0 ? (event.key === 'ArrowDown' ? 0 : items.length - 1)
+                : (index + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+              items[next]?.focus();
+            }}>
+          {onCheckpoints && <button type="button" role="menuitem" data-testid="chat-session-checkpoints" className="codex-header-menu__item"
+            disabled={checkpointsDisabled} onClick={() => { setMoreOpen(false); onCheckpoints(); }}>
+            <ListChecks className="h-4 w-4" aria-hidden="true" />{t('filePreview.checkpoints.title')}
+          </button>}
+          {onForkSession && <button type="button" role="menuitem" data-testid="chat-session-fork" className="codex-header-menu__item"
+            disabled={forkDisabled || forkBusy} onClick={() => { setMoreOpen(false); void onForkSession(); }}>
+            {forkBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <GitBranchPlus className="h-4 w-4" aria-hidden="true" />}
+            <span className="flex-1">{t('composer.fork.action')}</span>
+            {recommendedAction === 'fork' && <span data-testid="chat-session-fork-recommended" className="text-2xs text-muted-foreground">{t('composer.continuity.recommended')}</span>}
+          </button>}
+          {onHandoffSession && <button type="button" role="menuitem" data-testid="chat-session-handoff" className="codex-header-menu__item"
+            disabled={handoffDisabled || handoffBusy} title={handoffDisabledReason}
+            onClick={() => { setMoreOpen(false); void onHandoffSession(); }}>
+            {handoffBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" aria-hidden="true" />}
+            <span className="flex-1">{t('composer.handoff.action')}</span>
+            {recommendedAction === 'handoff' && <span data-testid="chat-session-handoff-recommended" className="text-2xs text-muted-foreground">{t('composer.continuity.recommended')}</span>}
+          </button>}
+          {(onCheckpoints || onForkSession || onHandoffSession) && <hr className="codex-header-menu__sep" />}
+          <button type="button" role="menuitem" data-testid="chat-toolbar-refresh" disabled={loading}
+            className="codex-header-menu__item disabled:opacity-40"
+            onClick={() => { setMoreOpen(false); void refresh(); }}>
+            <RefreshCw className="h-4 w-4" aria-hidden="true" />{t('toolbar.refresh')}
+          </button>
+          <button type="button" role="menuitem" data-testid="chat-session-settings" className="codex-header-menu__item"
+            onClick={() => { setMoreOpen(false); navigate(`/settings/recovery?sessionKey=${encodeURIComponent(currentSessionKey)}`); }}>
+            <Settings2 className="h-4 w-4" aria-hidden="true" />{t('settings:navigation.recovery.title')}
+          </button>
+          <ExecutionMigrationControl workspaceId={workspaceId} sessionKey={currentSessionKey} generation={sessionGeneration}
+            menuItem onOpen={() => setMoreOpen(false)} returnFocusRef={moreTriggerRef} />
+          <hr className="codex-header-menu__sep" />
+          <button type="button" role="menuitem" data-testid="chat-memory-injection-toggle" className="codex-header-menu__item"
+            onClick={() => { setMoreOpen(false); setMemoryInjectionOpen(true); }}>
+            <PackageOpen className="h-4 w-4" aria-hidden="true" />{t('memoryInjection.title')}
+          </button>
+          </div>, overlayContainer ?? document.body,
+        )}
+      </span>
     </div>
   );
 }

@@ -22,7 +22,7 @@ it.each(['binding-committed','confirmed'] as const)('reopens durable %s from the
   const view=render(<ExecutionMigrationControl workspaceId="target" sessionKey={operation.sessionKey}/>);
   expect(screen.getByTestId('execution-migration-open')).toHaveAttribute('aria-label','migration.resume');
   fireEvent.click(screen.getByTestId('execution-migration-open'));
-  expect(screen.getByTestId('execution-migration-target')).toHaveValue('target');
+  expect(screen.getByTestId('execution-migration-target')).toHaveTextContent('Target');
   view.rerender(<ExecutionMigrationControl workspaceId="target" sessionKey={operation.sessionKey} generation="new-generation"/>);
   expect(screen.getByTestId('execution-migration-dialog')).toBeInTheDocument();
   if(operation.error)expect(screen.getByRole('alert')).toHaveTextContent('migration.artifactChanged');

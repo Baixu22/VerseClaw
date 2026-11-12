@@ -27,6 +27,7 @@ import {
   releaseLeasedAgentSteeringItemsFromSubagentRuns,
 } from "./agent-steering-queue.js";
 import { makeTaskLedgerEntry, taskGraphVerifierNode } from "./orchestration-protocol.js";
+import { canonicalWorktreePath } from './worktree-registry.js';
 import { buildOrchestrationCompletionBatches } from "./orchestration-completion-batches.js";
 import { isAbortedAgentStopReason } from "./run-termination.js";
 import { hasReservedSubagentRecovery } from "./subagent-recovery-state.js";
@@ -518,30 +519,8 @@ async function processCompletedOrchestrationWorktrees(
     return;
   }
 
-  const { findManagedWorktree } = await import("./worktree-service.js");
-  const records = mergeable.map((worker) =>
-    worker.workspaceDir
-      ? findManagedWorktree(worker.workspaceDir, worker.orchestration!.worktreeId!)
-      : undefined,
-  );
-  const baseRoot = records[0]?.baseRoot;
-  if (
-    records.some(
-      (record, index) =>
-        !record ||
-        record.baseRoot !== baseRoot ||
-        record.owner?.sessionKey !== mergeable[index].requesterSessionKey,
-    )
-  ) {
-    for (const worker of mergeable)
-      applyOrchestrationWorkerPatch(worker, {
-        worktreeMergeStatus: "error",
-        worktreeMergeReason: "worktree-parent-owner-unavailable",
-        worktreeMergeProcessedAt: processedAt,
-      });
-    persistSubagentRuns();
-    return;
-  }
+  let baseRoot = mergeable.find(worker => worker.orchestration?.worktreeVerificationCandidate?.baseRoot)?.orchestration?.worktreeVerificationCandidate?.baseRoot
+    ?? mergeable.find(worker => worker.workspaceDir)?.workspaceDir;
   if (!baseRoot) {
     for (const worker of mergeable) {
       applyOrchestrationWorkerPatch(worker, {
@@ -556,58 +535,147 @@ async function processCompletedOrchestrationWorktrees(
   }
 
   try {
-    const { resolveOrchestrationContext } = await import("./orchestration-workspace-context.js");
-    const parents = records.map((record) =>
-      resolveOrchestrationContext(
-        {
-          sessionKey: record!.owner!.sessionKey,
-          expectedSessionGeneration: record!.owner!.expectedSessionId,
-          workspaceDir: baseRoot,
-        },
-        getRuntimeConfig,
-      ),
-    );
-    const { mergeOrchestrationWorktrees } = await import("./orchestration-worktree-merge.js");
-    const results = await mergeOrchestrationWorktrees({
-      baseRoot,
-      workers: mergeable.map((worker) => ({
+    const { createWorktreeService, resolveExecutionCheckout } = await import('./worktree-service.js');
+    const { resolveOrchestrationContext } = await import('./orchestration-workspace-context.js');
+    const resolveTarget = (worker: SubagentRunRecord, inspect: boolean) => {
+      const meta = worker.orchestration!;
+      const savedBase = meta.worktreeVerificationCandidate?.baseRoot;
+      if (savedBase) {
+        const original = createWorktreeService(savedBase).list().find(record => record.id === meta.worktreeId && record.generation === meta.worktreeGeneration);
+        // This is a terminal lookup: it neither recreates a checkout nor grants a writer.
+        if (original?.status === 'cleaned' && original.mergeResult?.status === 'merged') {
+          if (!original.owner || original.owner.sessionKey !== worker.requesterSessionKey) throw new Error('worktree-parent-owner-unavailable');
+          return { baseRoot: savedBase, backend: original.backend, record: original };
+        }
+      }
+      if (!worker.workspaceDir) throw new Error('workspaceDir-unavailable');
+      const checkout = resolveExecutionCheckout(worker.workspaceDir);
+      if (checkout.worktreeId !== null && (checkout.worktreeId !== meta.worktreeId || checkout.basis.generation !== meta.worktreeGeneration)) {
+        throw new Error('worktree_completion_scope_mismatch');
+      }
+      const record = checkout.service.list().find(value => value.id === meta.worktreeId && value.generation === meta.worktreeGeneration);
+      // The registry chooses the backend; only Git has physical checkout proof.
+      // Inprocess keeps its recorded generation and content baseline checks.
+      if (!record || (inspect && (record.backend === 'git'
+        ? checkout.service.inspectIsolation(record.id, record.generation).status !== 'verified'
+        : checkout.service.listChangedFiles(record.id, record.generation).source === 'unavailable'))) throw new Error('worktree_completion_isolation_unverified');
+      if (!record.owner || record.owner.sessionKey !== worker.requesterSessionKey) throw new Error('worktree-parent-owner-unavailable');
+      return { baseRoot: checkout.baseRoot, backend: record.backend, record };
+    };
+    // Resolve the target first; strict isolation waits for the preceding merge to settle.
+    const targets = mergeable.map(worker => resolveTarget(worker, false));
+    if (targets.some(target => canonicalWorktreePath(target.baseRoot) !== canonicalWorktreePath(targets[0]!.baseRoot))) throw new Error('worktree_completion_target_mismatch');
+    baseRoot = targets[0]!.baseRoot;
+    const parents = targets.map(target => resolveOrchestrationContext({
+      sessionKey: target.record.owner!.sessionKey,
+      expectedSessionGeneration: target.record.owner!.expectedSessionId,
+      workspaceDir: baseRoot,
+    }, () => subagentRegistryDeps.getRuntimeConfig()));
+    for (const [index, worker] of mergeable.entries()) applyOrchestrationWorkerPatch(worker, {
+      worktreeBackend: targets[index]!.backend, worktreeMergeBaseRoot: baseRoot,
+    });
+    const { mergeOrchestrationWorktrees, freezeOrchestrationWorktreeCandidate } = await import("./orchestration-worktree-merge.js");
+    const worktreeInputs: import('./orchestration-worktree-merge.js').OrchestrationWorktreeMergeWorker[] = mergeable.map((worker) => ({
         taskNodeId: worker.orchestration?.taskNodeId ?? worker.runId,
         worktreeId: worker.orchestration!.worktreeId!,
         worktreeGeneration: worker.orchestration?.worktreeGeneration ?? "",
         declaredWriteSet: worker.orchestration?.worktreeWriteSet ?? [],
-      })),
-      conflictPolicy: "mark_conflict",
-      assertParentCurrent: () => {
-        for (const parent of parents) parent.assertWorkspaceCurrent?.();
+      }));
+    await mergeOrchestrationWorktrees({
+      baseRoot, workers: worktreeInputs, conflictPolicy: "mark_conflict",
+      assertParentCurrent: () => { for (const parent of parents) parent.assertWorkspaceCurrent?.(); },
+      prepare: async () => {
+        const pendingIndexes = worktreeInputs.flatMap((_, index) => typeof mergeable[index]!.orchestration?.worktreeMergeProcessedAt === 'number' ? [] : [index]);
+        for (const index of pendingIndexes) {
+          const current = resolveTarget(mergeable[index]!, true);
+          if (canonicalWorktreePath(current.baseRoot) !== canonicalWorktreePath(baseRoot!)) throw new Error('worktree_completion_target_mismatch');
+          targets[index] = current;
+          applyOrchestrationWorkerPatch(mergeable[index]!, { worktreeBackend: current.backend, worktreeMergeBaseRoot: current.baseRoot });
+        }
+        const gitIndexes = pendingIndexes.filter(index => targets[index]!.backend === 'git');
+        const gitWorkers = gitIndexes.map(index => mergeable[index]!);
+        const gitInputs = gitIndexes.map(index => worktreeInputs[index]!);
+        if (gitWorkers.length > 0) {
+          const { inspectOrchestrationCandidate, inspectOrchestrationCandidateTarget } = await import('./orchestration-candidate.js');
+          const saved = gitWorkers.map(worker => worker.orchestration?.worktreeVerificationCandidate);
+          const previous = saved[0];
+          let candidate: import('../../../shared/types/versegit.js').VerseGitCandidateResult;
+          if (saved.some(Boolean)) {
+            if (!previous || saved.some(value => !value || value.manifest.candidateId !== previous.manifest.candidateId)
+              || !inspectOrchestrationCandidate(previous)) throw new Error('worktree_saved_candidate_unavailable');
+            if (inspectOrchestrationCandidateTarget(baseRoot!, previous.manifest)) {
+              candidate = { status: 'frozen', manifest: previous.manifest, materializedPath: previous.materializedPath, issues: [] };
+            } else {
+              for (const worker of gitWorkers) applyOrchestrationWorkerPatch(worker, {
+                worktreeMergeStatus: 'conflict', worktreeMergeReason: 'saved_candidate_target_changed',
+                worktreeWriteSetMismatch: [], worktreeMergeProcessedAt: processedAt,
+              });
+              return pendingIndexes.filter(index => typeof mergeable[index]!.orchestration?.worktreeMergeProcessedAt !== 'number').map(index => worktreeInputs[index]!);
+            }
+          } else candidate = freezeOrchestrationWorktreeCandidate({ baseRoot: baseRoot!, workers: gitInputs });
+          if (candidate.status !== "frozen") {
+            // Shared or external writes make the Git baseline dirty. Preserve both
+            // outputs as a conflict rather than implicitly committing host changes.
+            for (const worker of gitWorkers) applyOrchestrationWorkerPatch(worker, {
+              worktreeMergeStatus: candidate.status === 'conflict' || candidate.reason === 'main_worktree_dirty' ? 'conflict' : 'error',
+              worktreeWriteSetMismatch: [], worktreeMergeReason: "worktree_candidate_unavailable:" + candidate.reason,
+              worktreeMergeProcessedAt: processedAt,
+            });
+          } else {
+            const { orchestrationCandidatePostimages } = await import('./orchestration-candidate.js');
+            for (const input of gitInputs) {
+              const snapshot = candidate.manifest.workerSnapshots.find(worker => worker.taskNodeId === input.taskNodeId && worker.worktreeRole === input.worktreeId);
+              if (!snapshot) throw new Error('worktree_candidate_snapshot_missing');
+              input.expectedPostimages = orchestrationCandidatePostimages(baseRoot!, candidate.manifest, snapshot.changedFiles);
+            }
+            for (const worker of gitWorkers) applyOrchestrationWorkerPatch(worker, {
+              worktreeVerificationCandidate: { manifest: candidate.manifest, materializedPath: candidate.materializedPath, baseRoot },
+            });
+            persistSubagentRuns();
+          }
+        }
+        return pendingIndexes.filter(index => typeof mergeable[index]!.orchestration?.worktreeMergeProcessedAt !== 'number').map(index => worktreeInputs[index]!);
+      },
+      onComplete: results => {
+        const identity = (id: string | undefined, generation: string | undefined) => JSON.stringify([id, generation]);
+        const byWorktreeId = new Map(results.map((result) => [identity(result.worktreeId, result.worktreeGeneration), result]));
+        for (const worker of mergeable) {
+          if (typeof worker.orchestration?.worktreeMergeProcessedAt === 'number') continue;
+          const result = byWorktreeId.get(identity(worker.orchestration!.worktreeId, worker.orchestration!.worktreeGeneration));
+          if (!result || result.status === 'missing') continue;
+          applyOrchestrationWorkerPatch(worker, {
+            worktreeMergeStatus: result?.status ?? "error",
+            worktreeWriteSetMismatch: result?.writeSetMismatch ?? [],
+            worktreeMergeJournalRef: result?.journalRef,
+            worktreeMergeHashes: result?.hashes,
+            worktreeMergeRecoveryRequired: result?.recoveryRequired,
+            worktreeMergeReason: result?.reason,
+            worktreeMergeProcessedAt: processedAt,
+          });
+        }
+        persistSubagentRuns();
       },
     });
-    const byWorktreeId = new Map(results.map((result) => [result.worktreeId, result]));
+  } catch (error) {
+    log.warn("failed to process orchestration worktree merges", { error });
+    const carried = (error as { worktreeMergeResults?: import("./orchestration-worktree-merge.js").OrchestrationWorktreeMergeResult[] })?.worktreeMergeResults;
     for (const worker of mergeable) {
-      const result = byWorktreeId.get(worker.orchestration!.worktreeId!);
+      if (typeof worker.orchestration?.worktreeMergeProcessedAt === 'number') continue;
+      const result = Array.isArray(carried) ? carried.find(item => item.worktreeId === worker.orchestration?.worktreeId
+        && item.worktreeGeneration === worker.orchestration?.worktreeGeneration) : undefined;
       applyOrchestrationWorkerPatch(worker, {
-        worktreeMergeStatus: result?.status ?? "error",
-        worktreeWriteSetMismatch: result?.writeSetMismatch ?? [],
         worktreeMergeJournalRef: result?.journalRef,
         worktreeMergeHashes: result?.hashes,
         worktreeMergeRecoveryRequired: result?.recoveryRequired,
-        ...(result?.reason ? { worktreeMergeReason: result.reason } : {}),
-        worktreeMergeProcessedAt: processedAt,
+        worktreeMergeStatus: result && result.status !== 'missing' ? result.status : 'error',
+        worktreeWriteSetMismatch: result?.writeSetMismatch ?? [],
+        worktreeMergeReason: result && result.status !== 'missing' ? result.reason : (error instanceof Error ? error.message : String(error)),
+        ...(result && result.status !== 'missing' ? { worktreeMergeProcessedAt: processedAt } : {}),
       });
     }
-  } catch (error) {
-    log.warn("failed to process orchestration worktree merges", { error });
-    for (const worker of mergeable) {
-      applyOrchestrationWorkerPatch(worker, {
-        worktreeMergeStatus: "error",
-        worktreeWriteSetMismatch: [],
-        worktreeMergeReason: error instanceof Error ? error.message : String(error),
-        worktreeMergeProcessedAt: processedAt,
-      });
-    }
+    persistSubagentRuns();
   }
-  persistSubagentRuns();
-}
-function buildVerifierTask(params: { originalTask: string; workers: SubagentRunRecord[] }): string {
+}function buildVerifierTask(params: { originalTask: string; workers: SubagentRunRecord[] }): string {
   const sections = params.workers.map((worker, index) => {
     const meta = worker.orchestration;
     const status = worker.outcome?.status ?? "unknown";
@@ -618,6 +686,18 @@ function buildVerifierTask(params: { originalTask: string; workers: SubagentRunR
       `childRunId: ${worker.runId}`,
       `childSessionKey: ${worker.childSessionKey}`,
       `status: ${status}${error ? ` (${error})` : ""}`,
+      ...(meta?.worktreeId ? [
+        `worktreeIntegration: ${meta.worktreeMergeStatus ?? "missing"}`,
+        `worktreeIntegrationReason: ${meta.worktreeMergeReason ?? "none"}`,
+        `worktreeJournal: ${meta.worktreeMergeJournalRef ?? "unavailable"}`,
+        `integratedPostimages: ${JSON.stringify(meta.worktreeMergeHashes ?? {})}`,
+        `worktreeBackend: ${meta.worktreeBackend ?? 'unknown'}`,
+        `worktreeIntegrationBaseRoot: ${meta.worktreeMergeBaseRoot ?? 'unavailable'}`,
+        `verificationCandidate: ${JSON.stringify(meta.worktreeVerificationCandidate ?? null)}`,
+        meta.worktreeVerificationCandidate
+          ? "Execute checks in the exact materialized candidate directory and report its commit, tree, inputDigest and check artifacts; an unmerged or unknown result requires fail or repair_required."
+          : "Verify the integrated content and postimage hashes in worktreeIntegrationBaseRoot and report its check artifacts; an unmerged or unknown result requires fail or repair_required.",
+      ] : []),
       "",
       selectResultTextForOrchestration(worker),
     ].join("\n");
@@ -705,6 +785,28 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
   if (!latestMeta) {
     return;
   }
+  if (latestMeta.verifierStartedRunId || latestMeta.verifierSkippedReason) return;
+  const successfulWorkers = expectedWorkers.filter(worker => worker.outcome?.status === 'ok');
+  if (successfulWorkers.length === 0) {
+    markOrchestrationWorkers({ workers: expectedWorkers, patch: { verifierSkippedReason: 'all-workers-failed', verifierSkippedAt: Date.now() } });
+    return;
+  }
+  const successfulWorktrees = successfulWorkers.filter(worker => worker.orchestration?.isolation === 'worktree');
+  const successfulGitWorktrees = successfulWorktrees.filter(worker => worker.orchestration?.worktreeBackend !== 'inprocess');
+  latestMeta = (successfulGitWorktrees[0] ?? successfulWorktrees[0] ?? successfulWorkers[0])!.orchestration ?? latestMeta;
+  if (latestMeta.patchFlowExecution !== true && successfulGitWorktrees.length > 0) {
+    const candidates = successfulGitWorktrees.map(worker => worker.orchestration?.worktreeVerificationCandidate);
+    const candidate = candidates[0];
+    const { inspectOrchestrationCandidate } = await import('./orchestration-candidate.js');
+    latestMeta = expectedWorkers.find(worker => worker.orchestration)?.orchestration;
+    if (!latestMeta || latestMeta.verifierStartedRunId || latestMeta.verifierSkippedReason) return;
+    if (!candidate || candidates.some(value => !value || value.manifest.candidateId !== candidate.manifest.candidateId)
+      || !inspectOrchestrationCandidate(candidate)) {
+      markOrchestrationWorkers({ workers: expectedWorkers, patch: { verifierSkippedReason: 'worktree-candidate-unavailable', verifierSkippedAt: Date.now() } });
+      return;
+    }
+    latestMeta = successfulGitWorktrees[0]!.orchestration!;
+  }
   if (latestMeta.verifierStartedRunId || latestMeta.verifierSkippedReason) {
     return;
   }
@@ -712,14 +814,6 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
     markOrchestrationWorkers({
       workers: expectedWorkers,
       patch: { verifierSkippedReason: "no-verifier-role", verifierSkippedAt: Date.now() },
-    });
-    return;
-  }
-  const successfulWorkers = expectedWorkers.filter((worker) => worker.outcome?.status === "ok");
-  if (successfulWorkers.length === 0) {
-    markOrchestrationWorkers({
-      workers: expectedWorkers,
-      patch: { verifierSkippedReason: "all-workers-failed", verifierSkippedAt: Date.now() },
     });
     return;
   }
@@ -785,7 +879,8 @@ async function maybeStartDeferredOrchestrationVerifier(completedRunId: string): 
       {
         agentSessionKey: completed.controllerSessionKey ?? completed.requesterSessionKey,
         completionOwnerKey: completed.requesterSessionKey,
-        workspaceDir: completed.workspaceDir,
+        workspaceDir: latestMeta.worktreeVerificationCandidate?.materializedPath ?? latestMeta.worktreeMergeBaseRoot
+          ?? successfulWorkers[0]!.workspaceDir ?? completed.workspaceDir,
       },
       { spawn: spawnSubagentDirect },
     );
@@ -1771,6 +1866,9 @@ export function resetSubagentRegistryForTests(opts?: { persist?: boolean }) {
 }
 
 export const testing = {
+  processCompletedOrchestrationWorktrees,
+  buildVerifierTask,
+  maybeStartDeferredOrchestrationVerifier,
   async sweepOnceForTests() {
     await sweepSubagentRuns();
   },

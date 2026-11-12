@@ -35,10 +35,20 @@ pathPatterns:
    closes it.
 4. Choose Archive. The row leaves the list and a toast offers Undo, which
    restores it. Delete still asks for confirmation.
-5. Start a run in any conversation. The header bell shows a blue ring; when a
-   run waits for approval or input the ring turns amber and the bell swings
-   once. Open the bell: running conversations are listed with elapsed time
-   above the recent completions, errors and approval requests.
+5. Start a run in any conversation. The header bell gently swings from side to
+   side; waiting for approval or input turns it amber. Open it: the swing pauses,
+   and running conversations appear with elapsed time above recent completions,
+   errors and approval requests. Escape closes the panel and returns focus.
+6. Collapse the sidebar. The sidebar toggle sits above the bell, with both
+   controls centered. The activity panel stays inside the window; reduced
+   motion keeps the bell still.
+7. Open a conversation title. Search is focused; source and derived conversations
+   are shown in the same picker. Switching out and back preserves each draft.
+8. Open More to use a checkpoint, fork or handoff. Execution migration opens a
+   persistent dialog; cancelling it restores focus without starting migration.
+9. Check 1280px, 960px and 720px layouts in light and dark themes. The header
+   stays 40px high, both menus stay in bounds, and dark sidebar, reading surface,
+   menu and composer keep their distinct tones.
 
 Run with agent-driven Electron automation (`tests/e2e/sidebar-session-row-polish.spec.ts`)
 and record light, dark and reduced-motion states as `driven_by: agent`; do not

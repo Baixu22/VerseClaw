@@ -166,7 +166,8 @@ First session:
 5. Resolve approvals in Inbox.
 6. Use Knowledge or Memory only through their review surfaces.
 7. Manage a conversation from its row: hovering shows Pin and ⋯ (rename, move to a workgroup, mark unread, fork, hand off, copy, archive with Undo, delete); right-click opens the same menu, and long titles scroll while hovered.
-8. The sidebar bell shows activity: a ring while a conversation runs (amber when one needs you), a list of running conversations with elapsed time, and completion, error and approval events. System alerts can be toggled there or in Settings → Session & Recovery.
+   Related conversations use a shallow indent and a quiet guide; their count appears while collapsed. The compact header keeps unboxed workspace and conversation names. Click the title to search, switch or return to a source conversation; More holds checkpoints, fork, handoff, refresh, recovery, migration and memory tools. Dark mode separates the sidebar, reading surface and raised composer with graphite tones. Empty task scopes stay hidden. Settings → Session & Recovery offers a quiet display preset.
+8. The sidebar bell gently swings while a conversation runs and turns amber when it needs attention. Its corner badge counts unread activity. Opening the panel pauses the swing and shows running conversations with elapsed time, plus completion, error and approval events. System alerts can be toggled there or in Settings → Session & Recovery.
 
 Configured packages are listed in Releases. A build target does not guarantee a downloadable package for the current version.
 
@@ -334,3 +335,4 @@ Recovery implementation and evidence: the opt-in execution writer persists tool 
 
 Gated subagent recovery (`OPENCLAW_RECOVERY_AUTHORITY_MODE=authority`, with both writers selecting `taskflow`) commits its decision and budget before RPC and preserves unknown outcomes for reconciliation. Recovered tool events enter the current run subscription to update delivery and completion records. See the [recovery admission guide](docs/dev/recovery-contract/GA-READINESS-20261106.md).
 
+Managed worktree integration preserves deletions, renames and binary bytes through the existing Coding journal. Persistent worktree receipts reconcile duplicate completion and restart, while target drift refuses an overwrite. Cleanup preserves undeclared and ignored local files. Executable permission changes are refused before integration.

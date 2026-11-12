@@ -4,6 +4,7 @@
  * Defines execution, completion, delivery, pending-delivery, and attachment state stored for child runs.
  */
 import type { DeliveryContext } from "../utils/delivery-context.types.js";
+import type { VerseGitCandidateManifest } from "../../../shared/types/versegit.js";
 import type { SessionTaskRequesterReference } from "../../../shared/session-task-scope.js";
 import type { SubagentRunOutcome } from "./subagent-announce-output.js";
 import type { SubagentLifecycleEndedReason } from "./subagent-lifecycle-events.js";
@@ -61,6 +62,7 @@ export type TeamOrchestrationMetadata = {
   verifierModelRef?: string | null;
   verifierStartedRunId?: string;
   verifierSkippedReason?:
+    | "worktree-candidate-unavailable"
     | "all-workers-failed"
     | "no-verifier-role"
     | "spawn-failed"
@@ -93,10 +95,12 @@ export type TeamOrchestrationMetadata = {
   worktreeMergeStatus?: "merged" | "conflict" | "rework" | "missing" | "error";
   worktreeWriteSetMismatch?: string[];
   worktreeMergeReason?: string;
-  worktreeMergeProcessedAt?: number;
+  worktreeMergeBaseRoot?: string;
   worktreeMergeJournalRef?: string;
   worktreeMergeHashes?: Record<string, string | null>;
   worktreeMergeRecoveryRequired?: boolean;
+  worktreeMergeProcessedAt?: number;
+  worktreeVerificationCandidate?: { manifest: VerseGitCandidateManifest; materializedPath: string; baseRoot?: string };
   routeDiagnostics?: RouteDiagnostics;
   qualityPolicy?: OrchestrationQualityPolicy;
   repairPolicy?: OrchestrationRepairPolicy;

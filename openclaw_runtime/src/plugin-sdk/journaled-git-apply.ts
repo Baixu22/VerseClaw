@@ -1,6 +1,7 @@
 /** Host Git adapter: reuse Coding's journal and leases, never a second journal. */
 import { randomUUID } from 'node:crypto';
 import path from 'node:path';
+import { toRelativeWorkspacePath } from '../agents/path-policy.js';
 import { FsSafeError, root as fsRoot } from '../infra/fs-safe.js';
 import { acquirePatchBatchLocks } from '../agents/apply-patch-batch-lock.js';
 import {
@@ -17,6 +18,10 @@ export async function journaledGitApply<T extends { success: boolean; approvalRe
   apply: () => Promise<T>;
   /** Frozen binary postimages let rollback preserve a concurrent writer's different bytes. */
   expectedPostimages?: ReadonlyMap<string, Buffer | null>;
+  /** The effect owner records successful writes; equal external bytes do not prove ownership. */
+  appliedPaths?: ReadonlySet<string>;
+  onPrepared?: (journalRef: string) => void;
+  canRollback?: () => boolean;
 }): Promise<{ result?: T; journalRef?: string; error?: string; recoveryRequired?: boolean }> {
   const paths = [...new Set(input.paths.map((file) => path.resolve(input.workspaceRoot, file)))];
   const root = await fsRoot(input.workspaceRoot);
@@ -48,16 +53,21 @@ export async function journaledGitApply<T extends { success: boolean; approvalRe
       const original = entry.hadPrior ? await read(entry.snapshotPath) : null;
       if (equals(current, original)) continue;
       unchanged = false;
+      if (input.appliedPaths && !input.appliedPaths.has(entry.absPath)) {
+        return { recoveryRequired: true, journalRef: journalEntryId(sessionId, entries[0].seq) };
+      }
       if (input.expectedPostimages && (!input.expectedPostimages.has(entry.absPath)
         || !equals(current, input.expectedPostimages.get(entry.absPath)!))) {
         return { recoveryRequired: true, journalRef: journalEntryId(sessionId, entries[0].seq) };
       }
     }
     if (unchanged) {
+      if (input.canRollback?.() === false) return { recoveryRequired: true, journalRef: journalEntryId(sessionId, entries[0].seq) };
       discardPrepared();
       return {};
     }
-    const restored = await undoLastWrites({ workspaceRoot: input.workspaceRoot, sessionId, steps: entries.length, workspaceOnly: true });
+    if (input.canRollback?.() === false) return { recoveryRequired: true, journalRef: journalEntryId(sessionId, entries[0].seq) };
+    const restored = await undoLastWrites({ workspaceRoot: input.workspaceRoot, sessionId, steps: entries.length, workspaceOnly: true }, toRelativeWorkspacePath);
     if (restored.errors.length === 0) clearWriteJournal({ workspaceRoot: input.workspaceRoot, sessionId });
     return { recoveryRequired: restored.errors.length > 0,
       journalRef: restored.errors.length && entries[0] ? journalEntryId(sessionId, entries[0].seq) : undefined };
@@ -77,6 +87,7 @@ export async function journaledGitApply<T extends { success: boolean; approvalRe
     }
     await input.validate();
     if (entries.length === 0) return { result: await input.apply() };
+    input.onPrepared?.(journalEntryId(sessionId, entries[0].seq));
     applyStarted = true;
     const result = await input.apply();
     if (!result.success) {

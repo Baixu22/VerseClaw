@@ -1,3 +1,4 @@
+import { selectDerivedSession, openSourceSession } from './fixtures/session-navigation';
 import { readFile, writeFile } from 'node:fs/promises';
 import type { ElectronApplication, Page, TestInfo } from '@playwright/test';
 import type { RawMessage } from '../../shared/chat/types';
@@ -120,7 +121,7 @@ async function removeFault(app: ElectronApplication) {
   });
 }
 const openCheckpoints = async (page: Page) => {
-  await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+  await page.getByTestId('chat-toolbar-more').click();
   await page.getByTestId('chat-session-checkpoints').click();
   await expect(page.getByTestId('chat-checkpoints-dialog')).toBeVisible();
 };
@@ -231,13 +232,13 @@ test('U5 range compact keeps the exact boundary and draft, and ignores a late er
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('U5 range draft');
     await act(); await expect.poll(async () => (await faultState(app)).held, { timeout: 60_000 }).toBe(true);
     // Move through the existing family action while A's mutation response is still held.
-    await page.getByTestId('session-family-children').selectOption(child);
+    await selectDerivedSession(page, child);
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Child 1 draft');
     await releaseFault(app, 'reject'); await paint(page);
     await expect(page.getByText('U5_STALE_OWNER_REJECTED', { exact: true })).toHaveCount(0);
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Child 1 draft');
     // Return to the source before owner readback; no mutation is blindly retried.
-    await page.getByTestId('session-family-source').click();
+    await openSourceSession(page);
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('U5 range draft');
     await act(); await expect.poll(async () => (await faultState(app)).held, { timeout: 60_000 }).toBe(true);
     await releaseFault(app, 'accepted-pending');
@@ -257,7 +258,7 @@ test('U5 range compact keeps the exact boundary and draft, and ignores a late er
     const after = await ownerReadback(app, project.sessionKey); evidence.after = after;
     expect(after.history.messages).toEqual(before.history.messages);
     expect(after.described.session.sessionId).toBe(project.generation);
-    await page.getByTestId('chat-toolbar-refresh').click();
+    await page.getByTestId('chat-toolbar-more').click(); await page.getByTestId('chat-toolbar-refresh').click();
     await expect(page.getByText('U5_TARGET', { exact: true })).toBeVisible();
     evidence.project = project; evidence.entryId = entryId; evidence.status = 'passed';
   } catch (error) { evidence.status = 'failed'; evidence.error = String(error); throw error; }

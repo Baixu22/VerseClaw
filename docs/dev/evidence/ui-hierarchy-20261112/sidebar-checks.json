@@ -1,0 +1,30 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-ego",
+  "row": {
+    "buttons": [
+      "sidebar-session-pin-agent:main:long-title",
+      "sidebar-session-more-agent:main:long-title"
+    ],
+    "titleEndsBeforeActions": true
+  },
+  "menu": {
+    "background": "rgb(61, 61, 59)",
+    "radius": "15px",
+    "text": "侧边栏会话区域的交互与视觉打磨：悬停跑马灯、操作收纳与活动中心移至工作线重命名标为未读置顶会话分叉会话接力会话复制工作路径复制会话 ID归档删除"
+  },
+  "header": {
+    "viewport": 720,
+    "sidebarWidth": 275,
+    "titleLeft": 287,
+    "titleRight": 596,
+    "actionsLeft": 604,
+    "headerHeight": 40,
+    "overflow": false
+  },
+  "reduced": {
+    "matches": true,
+    "marquee": "off",
+    "bellTransform": "none"
+  }
+}

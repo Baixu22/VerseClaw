@@ -247,7 +247,7 @@ test('U3 plain model advice needs explicit Handoff preview and cancellation crea
 
     // Prose offers advice; only this explicit user action opens the existing Handoff preview.
     const locale = JSON.parse(await readFile('shared/i18n/locales/en/chat.json', 'utf8'));
-    await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+    await page.getByTestId('chat-toolbar-more').click();
     const handoffAction = page.getByTestId('chat-session-handoff');
     await expect(handoffAction).toBeEnabled();
     await handoffAction.click();

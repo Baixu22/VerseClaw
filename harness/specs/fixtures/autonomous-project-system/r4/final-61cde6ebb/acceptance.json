@@ -1,0 +1,84 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-final-independent-reader",
+  "candidate": {
+    "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+    "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+    "dirty": false
+  },
+  "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+  "originalCriteriaPreserved": true,
+  "criteria": [
+    {
+      "id": "AC1",
+      "criterion": "两个独立worktree执行互不覆盖；相同目标分支整合结果复验且证据绑定新candidate。",
+      "status": "passed",
+      "artifacts": [
+        "worktree-ownership.json",
+        "integration-candidate.json"
+      ]
+    },
+    {
+      "id": "AC2",
+      "criterion": "归档/取消不误删dirty或被验收引用的产物；重复回收幂等，失败保留可恢复记录。",
+      "status": "passed",
+      "artifacts": [
+        "native-proofs.json",
+        "resource-reclamation.json"
+      ]
+    },
+    {
+      "id": "AC3",
+      "criterion": "工作树、VB、VS、端口的释放状态统一可查但由各owner执行，不建第二清理权威。",
+      "status": "passed",
+      "artifacts": [
+        "resource-reclamation.json",
+        "gates.json"
+      ]
+    },
+    {
+      "id": "AC4",
+      "criterion": "负例：未推送成果误删；清理删除唯一artifact；TTL后旧writer仍写；合并成功但测试用旧树",
+      "status": "passed",
+      "artifacts": [
+        "cases.json",
+        "native-proofs.json"
+      ]
+    },
+    {
+      "id": "AC5",
+      "criterion": "证据包含driven_by:agent、真实actor、source/candidate/输入配置版本、命令/exit/count、artifact hash、负例与未测范围；不以stdout或模型自述收口。",
+      "status": "passed",
+      "artifacts": [
+        "source-manifest.json",
+        "gates.json",
+        "native.json",
+        "review.json",
+        "raw-archive.json"
+      ]
+    },
+    {
+      "id": "AC6",
+      "criterion": "所有移除入口对未完成任务、活动绑定和唯一候选/证据一致拒绝；创建/回收中断和路径实例替换保持可恢复。",
+      "status": "passed",
+      "artifacts": [
+        "resource-reclamation.json",
+        "native-proofs.json",
+        "gates.json"
+      ]
+    },
+    {
+      "id": "AC7",
+      "criterion": "保留TF-0769已交付删除/并发覆盖保护，整合结果在新candidate上复验；未证明支持的多父/GC路径保持显式不可用。",
+      "status": "passed",
+      "artifacts": [
+        "integration-candidate.json",
+        "source-manifest.json"
+      ]
+    }
+  ],
+  "decision": "accept",
+  "multiParentMerge": "unavailable",
+  "automaticGitGc": "unavailable",
+  "worktreePrune": "unavailable"
+}

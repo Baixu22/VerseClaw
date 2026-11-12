@@ -242,14 +242,52 @@ describe('Task evidence retention and original checkout cleanup', () => {
         }
         return save(scope);
       });
-      service.cleanup(row.id); spy.mockRestore();
+      let cleanupMs = -1;
+      try {
+        const cleanupStarted = Date.now();
+        service.cleanup(row.id);
+        cleanupMs = Date.now() - cleanupStarted;
+      } finally {
+        spy.mockRestore();
+      }
       expect(await run.exited, run.output()).toBe(0);
       const proof = JSON.parse(readFileSync(result, 'utf8'));
-      expect(proof.rejected).toMatch(/ENOENT|unavailable|STALE|no such file/i);
+      expect(proof).toMatchObject({ success: false, operation: mode, operationStarted: true });
+      expect(cleanupMs).toBeLessThan(20000);
+      if (mode === 'first-open') expect(['open', 'create']).toContain(proof.stage);
+      else expect(proof.stage).toBe(mode);
+      if (proof.code === 'LOCK_TIMEOUT') {
+        expect(proof.retryable).toBe(true);
+        expect(proof.rejected.toLowerCase()).toContain(lock.toLowerCase());
+      } else {
+        expect(proof.code).toBe('ENOENT');
+        expect(proof.retryable).toBe(false);
+        expect(proof.rejected.toLowerCase()).toContain(row.root.toLowerCase());
+      }
       expect(existsSync(row.root)).toBe(false);
       if (mode === 'first-open') expect(existsSync(resolveTaskDomain(repository).database)).toBe(false);
       if (mode === 'register') expect(resolveExecutionDomain(repository).state).toBe('independent');
-      if (credential) expect(storeAt(repository).history(credential.taskNodeId).filter(event => event.kind === 'checkpoint')).toEqual([]);
+      const reader = credential || taskId ? storeAt(repository) : undefined;
+      const checkpointEvents = credential ? reader!.history(credential.taskNodeId).filter(event => event.kind === 'checkpoint') : null;
+      const claimedEvents = taskId ? reader!.history(taskId).filter(event => event.kind === 'claimed') : null;
+      const persistedClaim = taskId ? reader!.get(taskId).claim ?? null : null;
+      if (credential) expect(checkpointEvents).toEqual([]);
+      if (taskId) {
+        expect(claimedEvents).toEqual([]);
+        expect(persistedClaim).toBeNull();
+      }
+      const proofDirectory = process.env.CLAWX_R4_EVIDENCE_DIR;
+      if (proofDirectory) {
+        mkdirSync(proofDirectory, { recursive: true });
+        writeFileSync(path.join(proofDirectory, `cleanup-contention-${mode}.json`), JSON.stringify({
+          driven_by: 'agent', actor: 'r4-task-retention-process-test',
+          input: { mode, workspace: mode === 'checkpoint' ? repository : row.root, taskId: taskId ?? null },
+          cleanupMs, exitCode: run.worker.exitCode, proof,
+          readback: { rootExists: existsSync(row.root), taskDatabaseExists: existsSync(resolveTaskDomain(repository).database),
+            registration: mode === 'register' ? resolveExecutionDomain(repository).state : null,
+            checkpointEvents, claimedEvents, persistedClaim: persistedClaim ?? null },
+        }, null, 2));
+      }
     } finally {
       if (run.worker.exitCode === null && run.worker.signalCode === null) run.worker.kill('SIGKILL');
       await run.exited.catch(() => undefined);

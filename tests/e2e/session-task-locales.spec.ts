@@ -1,3 +1,4 @@
+import { openSessionNavigation, selectDerivedSession, openSourceSession } from './fixtures/session-navigation';
 import { readFile, writeFile } from 'node:fs/promises';
 import { closeElectronApp, expect, getStableWindow, test } from './fixtures/electron';
 import { hostInvoke, startScriptedLlm } from './fixtures/fp-p1-harness';
@@ -34,12 +35,13 @@ test('project tasks and family navigation remain usable in all four interface la
       await page.getByTestId('session-tasks-toggle').click();
       await expect(page.getByTestId('session-task-list')).toContainText(task.contract.objective);
       await expect(page.getByTestId('session-task-ledger-open')).toHaveText(ledger.summary.open);
-      await page.getByTestId('session-family-children').selectOption(child);
+      await selectDerivedSession(page, child);
+      await openSessionNavigation(page);
       await expect(page.getByTestId('session-family-source')).toBeVisible();
       await expect(page.getByTestId('session-family-navigation')).toHaveAttribute('aria-label', chat.sessionFamily.navigation);
-      await page.getByTestId('session-family-source').click();
-      await expect(page.getByTestId('session-family-children')).toBeVisible();
-      await page.getByTestId('chat-project-session-header').getByRole('button').nth(1).click();
+      await openSourceSession(page);
+      await expect(page.getByTestId('chat-header-session-name')).toBeVisible();
+      await page.getByTestId('chat-toolbar-more').click();
       await page.getByTestId('chat-session-handoff').click();
       const dialog = page.getByTestId('chat-handoff-dialog');
       await expect(dialog).toContainText(chat.composer.handoff.dialogDescription);

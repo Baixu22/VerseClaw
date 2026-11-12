@@ -23,7 +23,9 @@ describe('FakeCoding design-system contract', () => {
     const globals = source('src/styles/globals.css');
 
     expect(globals).toContain("--material-canvas: 0 0% 100%");
-    expect(globals).toContain("--material-canvas: 0 0% 9.4%");
+    expect(globals).toContain('--material-canvas: var(--graphite-canvas-hsl)');
+    expect(globals).toContain('--material-sidebar: var(--graphite-sidebar-hsl)');
+    expect(globals).toContain('--material-control: var(--graphite-control-hsl)');
     expect(globals).toContain("--primary: 210 9% 11%");
     expect(globals).toContain("--primary: 0 0% 100%");
     expect(globals).toContain('background: hsl(var(--material-canvas));');

@@ -1,0 +1,279 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-final-independent-reader",
+  "candidate": {
+    "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+    "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+    "dirty": false
+  },
+  "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+  "twoIndependentWorktrees": {
+    "candidate": {
+      "status": "frozen",
+      "manifest": {
+        "schema": "clawx.versegit.candidate/v1",
+        "candidateId": "vgc_e8eb2c8b34535f2d2ef37c45",
+        "baseOid": "af8dcff60806e8ed71117575be1da77b3060306d",
+        "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+        "workerSnapshots": [
+          {
+            "taskNodeId": "task-first",
+            "parentOrder": 0,
+            "worktreeRole": "first",
+            "worktreeGeneration": "ee2ef38a-5e52-47df-a400-f3b59f8a23bf",
+            "headOid": "af8dcff60806e8ed71117575be1da77b3060306d",
+            "baseOid": "af8dcff60806e8ed71117575be1da77b3060306d",
+            "statusDigest": "sha256:6ea01e2923bdfa18d173dfad96a62d70bcc411fcf644d8516c040cd245d09088",
+            "changedFiles": [
+              "other.txt"
+            ],
+            "postimageHashes": {
+              "other.txt": "806c734071d8d93082a1c57c50a035b259a773aa27eece51f3c34321698f167e"
+            },
+            "treeOid": "4da35813fabd9f20357c5982c99a1b846c3006ec",
+            "commitOid": "3f03c5544434f9d94fe2e75e90280dc18ffb55af"
+          },
+          {
+            "taskNodeId": "task-second",
+            "parentOrder": 1,
+            "worktreeRole": "second",
+            "worktreeGeneration": "8b655f6d-12c3-49de-b35e-f62ca2080cdd",
+            "headOid": "af8dcff60806e8ed71117575be1da77b3060306d",
+            "baseOid": "af8dcff60806e8ed71117575be1da77b3060306d",
+            "statusDigest": "sha256:48917cf75c157b45225342f260ac1d48532b77f775f0d95bb0a31767645b549c",
+            "changedFiles": [
+              "new.txt"
+            ],
+            "postimageHashes": {
+              "new.txt": "e26cfb11b683ba56a607a4b54bccb1a6bcc1df69d41abe6d9a1870ff71f973db"
+            },
+            "treeOid": "af81719f532ce5cfdb6a8e126772f03530da1705",
+            "commitOid": "4be9c5162ddffc594a2decc89f4f68edb91c002a"
+          }
+        ],
+        "candidateCommitOid": "8183114aa73582c7c8d60cf1c4e186321372b191",
+        "candidateTreeOid": "b0438983159f761789c8dec0bdb58e54b9965fa0",
+        "refsBefore": [
+          {
+            "ref": "refs/heads/master",
+            "oid": "af8dcff60806e8ed71117575be1da77b3060306d"
+          }
+        ],
+        "refsAfter": [
+          {
+            "ref": "refs/heads/master",
+            "oid": "af8dcff60806e8ed71117575be1da77b3060306d"
+          }
+        ],
+        "mainStateBeforeDigest": "sha256:78a66e9154d2adae68eaf34c9901cf9c442adfb61dad9715c40e4b20a4ff7723",
+        "mainStateAfterDigest": "sha256:78a66e9154d2adae68eaf34c9901cf9c442adfb61dad9715c40e4b20a4ff7723",
+        "mainUnchanged": true,
+        "verificationCwdRole": "host-disposable-candidate",
+        "materializedPathRole": "candidate-verification-worktree",
+        "materializedIdentity": {
+          "rootPath": "d:\\tmp\\autonomy-r4-xjvxmr\\repo\\.openclaw\\candidates\\vgc_e8eb2c8b34535f2d2ef37c45",
+          "nativeIdentity": "268a336b94a568aa7cc0a8693db8f04c672cac72ece22326ea79ac22affafa81"
+        },
+        "allowedRuntimeIgnorePaths": [],
+        "inputDigest": "sha256:de5b1419787421b64553c76bf682ba8ab2c26783394c89423d5bce0a00557af3"
+      },
+      "materializedPath": "D:\\tmp\\autonomy-r4-XJvxMr\\repo\\.openclaw\\candidates\\vgc_e8eb2c8b34535f2d2ef37c45",
+      "issues": []
+    },
+    "checks": {
+      "verificationCwd": "D:\\tmp\\autonomy-r4-XJvxMr\\repo\\.openclaw\\candidates\\vgc_e8eb2c8b34535f2d2ef37c45",
+      "exitCode": 0,
+      "originalHead": "af8dcff60806e8ed71117575be1da77b3060306d",
+      "integrated": [
+        {
+          "worktreeId": "first",
+          "worktreeGeneration": "ee2ef38a-5e52-47df-a400-f3b59f8a23bf",
+          "changedFiles": [
+            "other.txt"
+          ],
+          "status": "merged",
+          "journalRef": "write-journal:review-apply-fac2d39b-2122-45e2-a85f-802ae1039318:1",
+          "hashes": {
+            "other.txt": "806c734071d8d93082a1c57c50a035b259a773aa27eece51f3c34321698f167e"
+          },
+          "recoveryRequired": false
+        },
+        {
+          "worktreeId": "second",
+          "worktreeGeneration": "8b655f6d-12c3-49de-b35e-f62ca2080cdd",
+          "changedFiles": [
+            "new.txt"
+          ],
+          "status": "merged",
+          "journalRef": "write-journal:review-apply-19838112-94a0-4b7d-bcbc-eadd797711d0:1",
+          "hashes": {
+            "new.txt": "e26cfb11b683ba56a607a4b54bccb1a6bcc1df69d41abe6d9a1870ff71f973db"
+          },
+          "recoveryRequired": false
+        }
+      ],
+      "candidateCommitOid": "8183114aa73582c7c8d60cf1c4e186321372b191"
+    }
+  },
+  "restart": {
+    "driven_by": "agent",
+    "actor": "r4-integration-runtime-test",
+    "value": {
+      "first": {
+        "driven_by": "agent",
+        "actor": "r4-native-merge-process",
+        "pid": 5332,
+        "queued": {
+          "worktreeId": "worker",
+          "worktreeGeneration": "62a33789-4356-4917-b1dc-79a35ea3fd9e",
+          "changedFiles": [
+            "other.txt"
+          ],
+          "status": "pending"
+        },
+        "processed": [
+          {
+            "worktreeId": "worker",
+            "worktreeGeneration": "62a33789-4356-4917-b1dc-79a35ea3fd9e",
+            "changedFiles": [
+              "other.txt"
+            ],
+            "status": "merged",
+            "journalRef": "write-journal:review-apply-b6846901-bc71-4751-a685-50828390bf72:1",
+            "hashes": {
+              "other.txt": "f142ca64fa88ebea950e57d13d12506faeee971888a064a706558e45ad03360f"
+            },
+            "recoveryRequired": false
+          }
+        ],
+        "records": [
+          {
+            "id": "worker",
+            "generation": "62a33789-4356-4917-b1dc-79a35ea3fd9e",
+            "root": "D:\\tmp\\autonomy-r4-Y6Gh0h\\repo\\.openclaw\\worktrees\\worker",
+            "baseRoot": "D:\\tmp\\autonomy-r4-Y6Gh0h\\repo",
+            "createdAtMs": 1794467377599,
+            "status": "merged",
+            "writeSet": [
+              "other.txt"
+            ],
+            "backend": "git",
+            "registration": {
+              "operationId": "f23e213f-57bb-4985-80f6-0cc5ce19ee27",
+              "requestDigest": "e2402f3f0710fe60a13164d37cec73885ca7c9c709c17d3aac3ece72d1c31d5f",
+              "phase": "ready",
+              "rootIdentity": "3325120695:5066549585953696:1794467377601588200",
+              "nativeIdentity": "100a9b94ac4e221dc62a63bd2cd864ae70d90297facec1708d90c42b4abcd5f6"
+            },
+            "baseOid": "eda89fb3ed6b9349800134ef56f04245ac39ef15",
+            "mergeBaseline": {
+              "parent": {
+                ".gitignore": "cd6704c207ccdf5f5c865329a0de86c56a6b55ce32bd25d2cb675349a40b76e3",
+                "original.bin": "5245ef8b8787b367a5b717431daf24b45683ffae63c54243e2e3fc6c5ec44a36",
+                "other.txt": "3176fae3e14297cf87614d6d77952f3305c803867f474bc9d401912ea4c16c55"
+              },
+              "worker": {
+                ".gitignore": "cd6704c207ccdf5f5c865329a0de86c56a6b55ce32bd25d2cb675349a40b76e3",
+                "original.bin": "5245ef8b8787b367a5b717431daf24b45683ffae63c54243e2e3fc6c5ec44a36",
+                "other.txt": "3176fae3e14297cf87614d6d77952f3305c803867f474bc9d401912ea4c16c55"
+              },
+              "workerModes": {
+                "": 438,
+                ".gitignore": 438,
+                "original.bin": 438,
+                "other.txt": 438
+              }
+            },
+            "mergeResult": {
+              "worktreeId": "worker",
+              "worktreeGeneration": "62a33789-4356-4917-b1dc-79a35ea3fd9e",
+              "changedFiles": [
+                "other.txt"
+              ],
+              "status": "merged",
+              "journalRef": "write-journal:review-apply-b6846901-bc71-4751-a685-50828390bf72:1",
+              "hashes": {
+                "other.txt": "f142ca64fa88ebea950e57d13d12506faeee971888a064a706558e45ad03360f"
+              },
+              "recoveryRequired": false
+            }
+          }
+        ],
+        "remaining": []
+      },
+      "second": {
+        "driven_by": "agent",
+        "actor": "r4-native-merge-process",
+        "pid": 34916,
+        "queued": {
+          "worktreeId": "worker",
+          "worktreeGeneration": "62a33789-4356-4917-b1dc-79a35ea3fd9e",
+          "changedFiles": [
+            "other.txt"
+          ],
+          "status": "merged",
+          "journalRef": "write-journal:review-apply-b6846901-bc71-4751-a685-50828390bf72:1",
+          "hashes": {
+            "other.txt": "f142ca64fa88ebea950e57d13d12506faeee971888a064a706558e45ad03360f"
+          },
+          "recoveryRequired": false
+        },
+        "processed": [],
+        "records": [
+          {
+            "id": "worker",
+            "generation": "62a33789-4356-4917-b1dc-79a35ea3fd9e",
+            "root": "D:\\tmp\\autonomy-r4-Y6Gh0h\\repo\\.openclaw\\worktrees\\worker",
+            "baseRoot": "D:\\tmp\\autonomy-r4-Y6Gh0h\\repo",
+            "createdAtMs": 1794467377599,
+            "status": "merged",
+            "writeSet": [
+              "other.txt"
+            ],
+            "backend": "git",
+            "registration": {
+              "operationId": "f23e213f-57bb-4985-80f6-0cc5ce19ee27",
+              "requestDigest": "e2402f3f0710fe60a13164d37cec73885ca7c9c709c17d3aac3ece72d1c31d5f",
+              "phase": "ready",
+              "rootIdentity": "3325120695:5066549585953696:1794467377601588200",
+              "nativeIdentity": "100a9b94ac4e221dc62a63bd2cd864ae70d90297facec1708d90c42b4abcd5f6"
+            },
+            "baseOid": "eda89fb3ed6b9349800134ef56f04245ac39ef15",
+            "mergeBaseline": {
+              "parent": {
+                ".gitignore": "cd6704c207ccdf5f5c865329a0de86c56a6b55ce32bd25d2cb675349a40b76e3",
+                "original.bin": "5245ef8b8787b367a5b717431daf24b45683ffae63c54243e2e3fc6c5ec44a36",
+                "other.txt": "3176fae3e14297cf87614d6d77952f3305c803867f474bc9d401912ea4c16c55"
+              },
+              "worker": {
+                ".gitignore": "cd6704c207ccdf5f5c865329a0de86c56a6b55ce32bd25d2cb675349a40b76e3",
+                "original.bin": "5245ef8b8787b367a5b717431daf24b45683ffae63c54243e2e3fc6c5ec44a36",
+                "other.txt": "3176fae3e14297cf87614d6d77952f3305c803867f474bc9d401912ea4c16c55"
+              },
+              "workerModes": {
+                "": 438,
+                ".gitignore": 438,
+                "original.bin": 438,
+                "other.txt": 438
+              }
+            },
+            "mergeResult": {
+              "worktreeId": "worker",
+              "worktreeGeneration": "62a33789-4356-4917-b1dc-79a35ea3fd9e",
+              "changedFiles": [
+                "other.txt"
+              ],
+              "status": "merged",
+              "journalRef": "write-journal:review-apply-b6846901-bc71-4751-a685-50828390bf72:1",
+              "hashes": {
+                "other.txt": "f142ca64fa88ebea950e57d13d12506faeee971888a064a706558e45ad03360f"
+              },
+              "recoveryRequired": false
+            }
+          }
+        ],
+        "remaining": []
+      }
+    }
+  }
+}

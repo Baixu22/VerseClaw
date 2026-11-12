@@ -93,6 +93,7 @@ async function openChatAndPanel(app: ElectronApplication) {
     win?.webContents.send('gateway:status-changed', { state: 'running', port: 18789, pid: 12345, gatewayReady: true });
   });
   await expect(page.getByTestId('chat-composer-input')).toBeVisible({ timeout: 30_000 });
+  await page.getByTestId('chat-toolbar-more').click();
   const toggle = page.getByTestId('chat-memory-injection-toggle');
   await expect(toggle).toBeVisible();
   await toggle.click();

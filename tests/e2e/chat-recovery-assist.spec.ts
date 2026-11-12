@@ -264,6 +264,14 @@ test.describe('Chat recovery assist', () => {
       await expect(section.getByTestId('settings-session-activity-show-commands')).toBeVisible();
       await expect(section.getByTestId('settings-session-recovery-notifications')).toBeVisible();
       await expect(section.getByTestId('settings-session-activity-retention')).toBeVisible();
+      const quiet = section.getByTestId('settings-session-quiet-mode');
+      if (await quiet.isEnabled()) await quiet.click();
+      await expect(quiet).toBeDisabled();
+      await expect(section.getByTestId('settings-session-activity-auto-expand')).toContainText('When attention is needed');
+      await expect(section.getByTestId('settings-run-activity-completed-expanded')).toHaveAttribute('aria-checked', 'false');
+      await expect(section.getByTestId('settings-recovery-boundary-abort')).toHaveCount(0);
+      await section.getByTestId('settings-recovery-boundaries').getByRole('button').click();
+      await expect(section.getByTestId('settings-recovery-boundary-abort')).toBeVisible();
 
       // Per-session recovery is scoped to the handed-over session.
       const sessionSelect = section.getByTestId('settings-recovery-session');

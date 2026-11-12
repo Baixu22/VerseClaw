@@ -1,0 +1,17 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-ego",
+  "fixture": "browser-only pending migration Host API fixture; no migration executed",
+  "dialog": {
+    "dialogVisible": true,
+    "menuClosed": true,
+    "background": "rgb(255, 255, 255)",
+    "selection": "UI 验收目标工作区",
+    "selectRole": "combobox",
+    "disabled": true,
+    "status": "正在确认目标",
+    "error": "进度已保存。处理提示的条件后可继续恢复。 已记录的产物发生了变化。恢复到检查点版本后可继续迁移。"
+  },
+  "cancellationReturnedFocus": true,
+  "migrateExecutionCalls": 0
+}

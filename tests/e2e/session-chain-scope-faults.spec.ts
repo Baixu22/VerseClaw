@@ -1,3 +1,4 @@
+import { openSessionNavigation } from './fixtures/session-navigation';
 import { createHash } from 'node:crypto';
 import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -352,6 +353,7 @@ test('automatic Handoff reconciliation ignores an old generation reply after ref
     }, { key: SOURCE_A, workspaceId: WORKSPACE_A });
     // loadSessions has a 1200 ms cooldown; repeat its existing read-only UI entry until the owner refresh completes.
     await expect.poll(async () => {
+      await openSessionNavigation(page);
       await page.getByTestId('session-family-source-unloaded').click();
       return (await fixtureState(app)).calls.some((call) => call.endedAt && call.module === 'gateway'
         && call.payload.method === 'sessions.list' && (call.data as { sessions?: FixtureSession[] })?.sessions?.some((session) => session.key === SOURCE_A && session.sessionId === 'generation-a-2'));

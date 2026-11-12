@@ -5,10 +5,12 @@ export type VerseGitCandidateSnapshot = {
   taskNodeId: string;
   parentOrder: number;
   worktreeRole: string;
+  worktreeGeneration?: string;
   headOid: string;
   baseOid: string;
   statusDigest: string;
   changedFiles: string[];
+  postimageHashes?: Record<string, string | null>;
   treeOid: string;
   commitOid: string;
 };
@@ -30,6 +32,7 @@ export type VerseGitCandidateManifest = {
   mainUnchanged: boolean;
   verificationCwdRole: "host-disposable-candidate";
   materializedPathRole: string;
+  materializedIdentity?: { rootPath: string; nativeIdentity: string };
   allowedRuntimeIgnorePaths: string[];
   inputDigest: string;
 };

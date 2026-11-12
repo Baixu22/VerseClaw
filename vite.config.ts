@@ -50,6 +50,7 @@ const bundledMainRuntimeDependencies = new Set([
   'tslog',
   'ipaddr.js',
   '@openclaw/fs-safe',
+  '@openclaw/media-core',
 ]);
 const alias = {
   '@': resolve(__dirname, 'src'),

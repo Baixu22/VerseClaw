@@ -93,19 +93,24 @@ test('checkout, transcript, children and drafts follow the selected conversation
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Main draft');
     await expect(page.getByTestId('chat-user-message-bubble')).toHaveText('History: Main conversation');
     await expect(page.getByTestId('chat-header-branch')).toContainText('main');
-    await page.getByTestId('sidebar-session-children-' + keys.main).click();
+    await page.getByTestId('session-family-toggle-' + keys.main).click();
     await expect(page.getByTestId('sidebar-session-' + keys.child)).toBeVisible();
     await capture('light-parent-family.png');
+    await expect(page.getByTestId('chat-header-session-name')).toHaveAttribute('aria-expanded', 'false');
     await page.getByTestId('chat-header-session-name').click();
+    await expect(page.getByTestId('chat-header-session-name')).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.getByTestId('chat-header-session-name')).toHaveClass(/is-open/);
+    await expect(page.getByTestId('chat-session-navigation-menu')).toContainText('Conversations in this workspace');
     await expect(page.getByTestId('chat-session-derived-' + keys.child)).toHaveCount(1);
+    await expect(page.getByTestId('chat-session-derived-' + keys.child)).toHaveAttribute('data-derived', 'true');
     await expect(page.getByTestId('chat-session-item-' + keys.child)).toHaveCount(0);
     await capture('light-parent-sessions.png');
     await page.getByTestId('chat-session-derived-' + keys.child).click();
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Child draft');
     await page.getByTestId('chat-header-session-name').click();
-    await expect(page.getByTestId('chat-session-source')).toContainText('Main conversation');
+    await expect(page.getByTestId('session-family-source')).toContainText('Main conversation');
     await capture('light-child-source.png');
-    await page.getByTestId('chat-session-source').click();
+    await page.getByTestId('session-family-source').click();
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Main draft');
     await page.getByTestId('chat-header-session-name').click();
     await page.getByTestId('chat-session-derived-' + keys.unfiled).click();
@@ -113,7 +118,7 @@ test('checkout, transcript, children and drafts follow the selected conversation
     await expect(page.getByTestId('chat-user-message-bubble')).toHaveText('History: New runtime child');
     expect((await invoke(page, 'workspaces', 'getActive')).activeWorkspaceId).toBe(a.id);
     await page.getByTestId('chat-header-session-name').click();
-    await page.getByTestId('chat-session-source').click();
+    await page.getByTestId('session-family-source').click();
     await expect(page.getByTestId('chat-composer-input')).toHaveValue('Main draft');
 
     // Navigate before the 250ms draft debounce: both write and restore must
@@ -156,7 +161,8 @@ test('checkout, transcript, children and drafts follow the selected conversation
         await capture(`${theme}-${width}-worktree-session.png`);
         await page.getByTestId('chat-header-session-name').click();
         await expect(page.getByTestId('chat-session-navigation-menu')).toBeInViewport();
-        await expect(page.getByTestId('chat-session-checkpoints')).toHaveText('Session checkpoints');
+        await expect(page.getByTestId(`chat-session-item-${keys.older}`)).toHaveAttribute('aria-current', 'page');
+        await expect(page.getByTestId('chat-session-navigation-menu').getByTestId('chat-session-checkpoints')).toHaveCount(0);
         await capture(`${theme}-${width}-sessions.png`);
         await page.keyboard.press('Escape');
         await expect(page.getByTestId('chat-session-navigation-menu')).toHaveCount(0);

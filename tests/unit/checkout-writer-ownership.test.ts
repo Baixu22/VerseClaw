@@ -6,7 +6,7 @@ import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { normalizeRunScope } from '../../shared/types/identity-scope';
 import { createWorktreeService, resolveExecutionCheckout } from '../../openclaw_runtime/src/agents/worktree-service';
-import { checkoutWriterSnapshot, releaseCheckoutWriter, settleCheckoutWrite, withCheckoutMaintenance } from '../../openclaw_runtime/src/agents/worktree-writer';
+import { checkoutWriterSnapshot, releaseCheckoutWriter, settleCheckoutWrite, withCheckoutMaintenance, withAsyncCheckoutMaintenance } from '../../openclaw_runtime/src/agents/worktree-writer';
 import * as registry from '../../openclaw_runtime/src/agents/worktree-registry';
 import { filesystemInstance } from '../../openclaw_runtime/src/agents/worktree-registry';
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
@@ -33,6 +33,13 @@ describe('checkout writer resource owner',()=>{
   runtime.service.settleWrite(writer,'effect',{outcome:'completed',ownerReceipt:'runtime-effect'});
   runtime.service.releaseWriter(writer);
   expect(s.writer(record.id)?.state).toBe('released');
+ });
+ it('releases a live pre-admission failure as not-applied without waiting for process exit',async()=>{
+  const s=service();
+  await expect(withAsyncCheckoutMaintenance([s.writerBasis(null)],'merge',async()=>{throw new Error('before-effect failure');},undefined,undefined,undefined,true)).rejects.toThrow('before-effect failure');
+  expect(s.writer(null)?.state).toBe('released');
+  expect(s.writer(null)?.operations.at(-1)).toMatchObject({effectPrepared:false,state:'settled',receipt:{outcome:'not-applied'}});
+  const writer=s.claimWriter(null,s.writerBasis(null).generation,owner('after-preflight'),'after-preflight');s.releaseWriter(writer);
  });
  it('uses the same base writer for ordinary effects and maintenance',()=>{
   const {service:s,worktreeId,basis}=resolveExecutionCheckout(root);
@@ -274,6 +281,11 @@ describe('U5 committed checkout retention', () => {
       git: git(base, '--version'), baseHead: git(base, 'rev-parse', 'HEAD'), externalPush: false };
   });
   afterEach(({ task }) => {
+    const cleanupRoot = path.resolve(fixtureRoot), cleanupParent = path.resolve(fixtureParent);
+    if (!cleanupRoot.startsWith(cleanupParent + path.sep)) {
+      closeOpenClawStateDatabaseForTest(); vi.unstubAllEnvs();
+      throw new Error('Fixture cleanup escaped its parent');
+    }
     try {
       const evidenceDir = process.env.U5_WORKTREE_EVIDENCE_DIR;
       if (evidenceDir) writeFileSync(path.join(evidenceDir, task.name.replace(/[^a-zA-Z0-9_-]+/g, '-').slice(0,150) + '.json'),
@@ -281,8 +293,7 @@ describe('U5 committed checkout retention', () => {
           errors: task.result?.errors?.map(error => error.message) ?? [] }, null, 2) + '\n');
     } finally {
       closeOpenClawStateDatabaseForTest(); vi.unstubAllEnvs();
-      if (!path.resolve(fixtureRoot).startsWith(path.resolve(fixtureParent) + path.sep)) throw new Error('Fixture cleanup escaped its parent');
-      rmSync(fixtureRoot, { recursive: true, force: true });
+      rmSync(cleanupRoot, { recursive: true, force: true });
     }
   });
 

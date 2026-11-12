@@ -62,6 +62,14 @@
     }
   },
   "recovery": {
+    "presentationTitle": "Conversation display",
+    "notificationsTitle": "Activity notifications and history",
+    "quiet": {
+      "title": "Quiet display",
+      "description": "Open activity only when attention is needed and fold execution details after completion. Background work continues.",
+      "apply": "Use quiet display",
+      "active": "Enabled"
+    },
     "activityTitle": "Session & Recovery",
     "currentTitle": "Current session recovery",
     "enabled": {

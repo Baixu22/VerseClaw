@@ -80,7 +80,7 @@ describe("orchestration worktree merge evidence", () => {
       ],
     });
 
-    expect(results[0]?.changedFilesSource).toBe("worktree-snapshot");
+    expect(results[0]?.changedFilesSource).toBe("git-status");
     expect(results[0]?.changedFiles).toContain("src/actual.ts");
     expect(results[0]?.writeSetMismatch).toEqual(["src/actual.ts", "src/declared.ts"]);
     expect(results[0]?.reason).toContain("writeSet_mismatch:src/actual.ts,src/declared.ts");
@@ -109,7 +109,7 @@ describe("worktree long-session ownership", () => {
     expectedSessionId: "generation-1",
   } as const;
 
-  it("cleans only explicit ephemeral worktrees for the exact generation", () => {
+  it("cleans only explicit ephemeral worktrees for the exact generation", async () => {
     const root = makeRoot();
     const service = createWorktreeService(root);
     const kept = service.create("wt-keep", { owner: { ...owner, retention: "keep" } });
@@ -230,10 +230,11 @@ describe.each(['inprocess', 'git'] as const)('TF-0769 %s merge contents', (backe
   it('repeated merges are idempotent and do not hide a later base edit', async () => {
     const { root, worker, merge } = fixture();
     writeFileSync(join(worker.root, 'a.txt'), 'worker');
-    expect((await merge())[0]?.status).toBe('merged');
+    const first = (await merge())[0];
+    expect(first?.status).toBe('merged');
     const second = await merge();
     expect(second[0]?.status).toBe('merged');
-    expect(second[0]?.journalRef).toBeUndefined();
+    expect(second[0]?.journalRef).toBe(first?.journalRef);
     writeFileSync(join(root, 'a.txt'), 'later user edit');
     expect((await merge())[0]?.status).toBe('conflict');
     expect(readFileSync(join(root, 'a.txt'), 'utf8')).toBe('later user edit');
