@@ -12,6 +12,8 @@ describe('vite Electron OpenClaw runtime aliases', () => {
     expect(viteConfig.isMainProcessExternal).toBeTypeOf('function');
     expect(viteConfig.isMainProcessExternal!('@openclaw/normalization-core')).toBe(false);
     expect(viteConfig.isMainProcessExternal!('@openclaw/normalization-core/record-coerce')).toBe(false);
+    expect(viteConfig.isMainProcessExternal!('@openclaw/media-core')).toBe(false);
+    expect(viteConfig.isMainProcessExternal!('@openclaw/media-core/media-source-url')).toBe(false);
     expect(viteConfig.isMainProcessExternal!('@openclaw/acp-core')).toBe(false);
     expect(viteConfig.isMainProcessExternal!('@openclaw/acp-core/runtime/session-identifiers')).toBe(false);
     expect(viteConfig.isMainProcessExternal!('json5')).toBe(false);
@@ -29,7 +31,10 @@ describe('vite Electron OpenClaw runtime aliases', () => {
       .toMatch(/openclaw_runtime\/packages\/normalization-core\/src$/);
     expect(viteConfig.localOpenClawRuntimeAliases!['@openclaw/acp-core'].replace(/\\/g, '/'))
       .toMatch(/openclaw_runtime\/packages\/acp-core\/src$/);
+    expect(viteConfig.localOpenClawRuntimeAliases!['@openclaw/media-core'].replace(/\\/g, '/'))
+      .toMatch(/openclaw_runtime\/packages\/media-core\/src$/);
     expect(existsSync(viteConfig.localOpenClawRuntimeAliases!['@openclaw/normalization-core'])).toBe(true);
     expect(existsSync(viteConfig.localOpenClawRuntimeAliases!['@openclaw/acp-core'])).toBe(true);
+    expect(existsSync(viteConfig.localOpenClawRuntimeAliases!['@openclaw/media-core'])).toBe(true);
   });
 });
