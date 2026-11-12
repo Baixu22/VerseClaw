@@ -140,7 +140,7 @@ async function mergeWorktrees(params: MergeParameters): Promise<OrchestrationWor
       // Finish only the admitted prefix. Failed preparation cannot strand its queue entries.
       try {
         completedPrefix = await service.processMergeQueue(undefined, { conflictPolicy: params.conflictPolicy ?? 'mark_conflict',
-          worktreeIds: pending.map(entry => entry.worker.worktreeId) });
+          worktreeIds: pending.map(entry => entry.worker.worktreeId), assertParentCurrent: params.assertParentCurrent });
       } catch (processingError) {
         const later = processingError instanceof Error ? processingError : new Error(String(processingError));
         failure = Object.assign(later, { preparationError: failure });

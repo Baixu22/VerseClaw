@@ -100,9 +100,6 @@ export type TeamOrchestrationMetadata = {
   worktreeMergeHashes?: Record<string, string | null>;
   worktreeMergeRecoveryRequired?: boolean;
   worktreeMergeProcessedAt?: number;
-  worktreeMergeJournalRef?: string;
-  worktreeMergeHashes?: Record<string, string | null>;
-  worktreeMergeRecoveryRequired?: boolean;
   worktreeVerificationCandidate?: { manifest: VerseGitCandidateManifest; materializedPath: string; baseRoot?: string };
   routeDiagnostics?: RouteDiagnostics;
   qualityPolicy?: OrchestrationQualityPolicy;

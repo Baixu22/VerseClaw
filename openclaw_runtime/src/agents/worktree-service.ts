@@ -753,15 +753,15 @@ export function createWorktreeService(
       if (!rec) return { files: [], source: "unavailable" as const };
       if (expectedGeneration !== undefined && rec.generation !== expectedGeneration) throw new Error("worktree_stale_generation");
       if (observeWorktree(rec) !== "ready") return { files: [], source: "unavailable" as const };
-      if (rec.mergeBaseline) {
-        return { files: changedWorktreeFiles(new Map(Object.entries(rec.mergeBaseline.worker)), captureWorktreeFiles(rec.root)), source: "filesystem-snapshot" as const };
-      }
       if (rec.backend === "git") {
         try {
           return { files: listChangedFilesFromGit(rec.root, false, rec.baseOid), source: "git-status" as const };
         } catch {
           return { files: [], source: "unavailable" as const };
         }
+      }
+      if (rec.mergeBaseline) {
+        return { files: changedWorktreeFiles(new Map(Object.entries(rec.mergeBaseline.worker)), captureWorktreeFiles(rec.root)), source: "filesystem-snapshot" as const };
       }
       return {
         files: [...(rec.writeSet ?? [])],
