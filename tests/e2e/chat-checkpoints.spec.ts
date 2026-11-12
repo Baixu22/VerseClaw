@@ -1,6 +1,7 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const SESSION_KEY = 'agent:main:main';
+const EXPECTED_SESSION_ID = 'checkpoints-session-generation';
 const CHECKPOINT_ID = 'mission:m1:tick:3';
 
 function stableStringify(value: unknown): string {
