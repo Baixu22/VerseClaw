@@ -24,10 +24,11 @@ async function seed(app: ElectronApplication, info: TestInfo, label: string) {
       workspaceId: project.workspaceId, sessionKey: project.sessionKey, message: marker, idempotencyKey: marker,
     });
     if (!sent.success || !sent.result?.runId) throw new Error('U5 seed turn was not acknowledged');
+    await expect.poll(async () => (await rpc<{ status: string }>(app, 'agent.wait', {
+      runId: sent.result!.runId!, timeoutMs: 1000,
+    })).status, { timeout: 90_000 }).toBe('ok');
     await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>(app,
       'sessions.describe', { key: project.sessionKey })).session.hasActiveRun, { timeout: 90_000 }).toBe(false);
-    const settled = await rpc<{ status: string }>(app, 'agent.wait', { runId: sent.result!.runId!, timeoutMs: 1000 });
-    expect(settled.status).toBe('ok');
   }
   await expect.poll(async () => (await rpc<{ session: { hasActiveRun: boolean } }>(app,
     'sessions.describe', { key: project.sessionKey })).session.hasActiveRun).toBe(false);

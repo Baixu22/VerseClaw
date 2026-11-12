@@ -169,6 +169,7 @@ test('AC8: a held real Ledger response shows loading, permission denial and a re
   await app.evaluate(() => (globalThis as FaultGlobal).__u2LedgerFault!.restore());
   await container.getByRole('button', { name: 'Refresh task scope', exact: true }).click();
   await expect(container).toHaveAttribute('data-state', 'ready');
+  await page.getByTestId('session-tasks-toggle').click();
   await expect(page.getByTestId('session-task-list')).toContainText(task.contract.objective);
   const recovered = await hostInvoke<{ snapshot: TaskLedgerSnapshot }>(app, 'taskLedger', 'snapshot', { workspaceId: project.workspaceId });
   expect(recovered.snapshot.nodes.some((node) => node.id === task.contract.taskNodeId)).toBe(true);

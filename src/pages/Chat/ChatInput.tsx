@@ -2253,14 +2253,14 @@ export function ChatInput({
   // in /loop sessions, otherwise into the renderer queue that drains when the
   // run settles. Uploading or failed attachments hold it back either way.
   const canSendDuringRun = sending && hasComposerDraft && allReady && !hasFailedAttachments && !inputDisabled && !capabilityExecuting && !switchingModelRef;
-  const composerSendState = paused
-    ? 'paused'
+  const composerSendState = sending
+    ? hasComposerDraft
+      ? 'running-with-draft'
+      : 'running'
     : runStarting
       ? 'starting'
-      : sending
-        ? hasComposerDraft
-          ? 'running-with-draft'
-          : 'running'
+      : paused
+        ? 'paused'
         : canSend
           ? 'ready'
           : 'idle';

@@ -164,6 +164,7 @@ test('checkpoints dialog lists and restores a session checkpoint', async ({ laun
 
     // Wait for the chat surface to settle before opening the session menu.
     await expect(page.getByText('Implement the checkpoint restore flow.')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', EXPECTED_SESSION_ID, { timeout: 30_000 });
     await page.getByTestId('chat-toolbar-more').click();
     await expect(page.getByTestId('chat-session-checkpoints')).toBeVisible({ timeout: 30_000 });
     await page.getByTestId('chat-session-checkpoints').click();

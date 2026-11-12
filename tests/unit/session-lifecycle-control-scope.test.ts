@@ -78,7 +78,29 @@ describe('session lifecycle result scope', () => {
     await useChatStore.getState().abortRun();
     expect(useChatStore.getState()).toMatchObject({ sending: false, activeRunId: null, error: null });
   });
-  it.each(['deleteSession', 'archiveSession'] as const)('keeps a restored generation when an old %s success arrives', async (action) => {
+  it('removes an archived current session after its owner rotates the generation', async () => {
+    let finish!: (value: unknown) => void;
+    const readSessions = useChatStore.getState().loadSessions;
+    const readArchived = useChatStore.getState().loadArchivedSessions;
+    const refresh = vi.fn(async () => undefined);
+    const refreshArchived = vi.fn(async () => {
+      useChatStore.setState({ archivedSessions: [{ sessionKey: source } as never] });
+    });
+    remote.archive.mockReturnValue(new Promise(resolve => { finish = resolve; }));
+    useChatStore.setState({ loadSessions: refresh, loadArchivedSessions: refreshArchived, archivedSessions: [] });
+    try {
+      const pending = useChatStore.getState().archiveSession(source);
+      useChatStore.setState({ sessions: [{ key: source, sessionId: 'generation-archived' }] });
+      finish({ success: true });
+      await pending;
+      expect(useChatStore.getState().sessions).toEqual([]);
+      expect(useChatStore.getState().currentSessionKey).not.toBe(source);
+      expect(refreshArchived).toHaveBeenCalledTimes(1);
+      expect(refresh).not.toHaveBeenCalled();
+    } finally {
+      useChatStore.setState({ loadSessions: readSessions, loadArchivedSessions: readArchived });
+    }
+  });  it.each(['deleteSession', 'archiveSession'] as const)('keeps a restored generation when an old %s success arrives', async (action) => {
     let finish!: (value: unknown) => void;
     const read = useChatStore.getState().loadSessions;
     const refresh = vi.fn(async () => undefined);

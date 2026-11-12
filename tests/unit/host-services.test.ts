@@ -1788,16 +1788,21 @@ describe('host services', () => {
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const { loadTaskLedgerSnapshot } = await import('@electron/services/task-ledger-service');
     const gateway = runtimeHandoffGateway();
-    const api = createSessionsApi({ gatewayManager: gateway as never });
+    const coordinatorLifecycle = vi.fn(async () => undefined);
+    const api = createSessionsApi({ gatewayManager: gateway as never, coordinatorLifecycle });
     const first = await api.createHandoff({ sessionKey: 'agent:main:root', workspaceId: 'a', draftInput: 'goal and evidence' });
     expect(first).toMatchObject({ success: true, handoffDepth: 1, handoffRootSessionKey: 'agent:main:root', rootHandoffId: expect.any(String) });
     expect(handoffWorkspaceUpdateMock).toHaveBeenCalledWith(expect.objectContaining({ sessionKey: first.sessionKey, state: { activeTopicId: null, draftInput: 'goal and evidence' } }));
-    const second = await createSessionsApi({ gatewayManager: gateway as never }).createHandoff({ sessionKey: first.sessionKey!, workspaceId: 'a', draftInput: 'continue' });
+    const second = await createSessionsApi({ gatewayManager: gateway as never, coordinatorLifecycle }).createHandoff({ sessionKey: first.sessionKey!, workspaceId: 'a', draftInput: 'continue' });
     expect(second).toMatchObject({ success: true, handoffDepth: 2, parentHandoffId: first.rootHandoffId, rootHandoffId: first.rootHandoffId });
     expect((await loadTaskLedgerSnapshot('a')).sessionLinks).toHaveLength(2);
     const denied = await api.createHandoff({ sessionKey: second.sessionKey!, workspaceId: 'a', draftInput: 'continue' });
     expect(denied).toMatchObject({ success: false, error: expect.stringContaining('Handoff depth 3 exceeds') });
     expect(handoffWorkspaceUpdateMock).toHaveBeenCalledTimes(2);
+    expect(coordinatorLifecycle).toHaveBeenCalledTimes(2);
+    expect(coordinatorLifecycle).toHaveBeenLastCalledWith(expect.objectContaining({
+      type: 'handoff', sessionKey: second.sessionKey, sessionGeneration: second.operation!.sessionGeneration,
+    }));
     expect((await loadTaskLedgerSnapshot('a')).sessionLinks).toHaveLength(2);
   });
 
@@ -1806,13 +1811,15 @@ describe('host services', () => {
     const { loadTaskLedgerSnapshot } = await import('@electron/services/task-ledger-service');
     let key = 'agent:main:root';
     const gateway = runtimeHandoffGateway();
+    const coordinatorLifecycle = vi.fn(async () => undefined);
     for (let depth = 1; depth <= 4; depth++) {
-      const next = await createSessionsApi({ gatewayManager: gateway as never }).createHandoff({ sessionKey: key, workspaceId: 'depth-default', draftInput: 'continue' });
+      const next = await createSessionsApi({ gatewayManager: gateway as never, coordinatorLifecycle }).createHandoff({ sessionKey: key, workspaceId: 'depth-default', draftInput: 'continue' });
       expect(next).toMatchObject({ success: true, handoffDepth: depth });
       key = next.sessionKey!;
     }
     expect((await loadTaskLedgerSnapshot('depth-default')).sessionLinks).toHaveLength(4);
     expect(handoffWorkspaceUpdateMock).toHaveBeenCalledTimes(4);
+    expect(coordinatorLifecycle).toHaveBeenCalledTimes(4);
     await expect(createSessionsApi({ gatewayManager: gateway as never }).createHandoff({ sessionKey: key, draftInput: 'continue' })).rejects.toThrow('HANDOFF_OWNER_UNAVAILABLE');
   });
 

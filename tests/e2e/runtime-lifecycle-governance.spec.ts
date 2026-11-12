@@ -146,6 +146,8 @@ test.describe('runtime lifecycle governance', () => {
           action: 'delete',
           payload: { id: sessionKey },
         });
+        const stopped = await handler(event, { id: 'stop-before-delete', module: 'gateway', action: 'stop', payload: null });
+        if ((stopped as { ok?: boolean }).ok !== true) throw new Error('Could not stop the Gateway for the transport failure fixture');
         const first = await handler(event, request('delete-1'));
         const second = await handler(event, request('delete-2'));
 
@@ -171,8 +173,10 @@ test.describe('runtime lifecycle governance', () => {
       const operationId = Object.values(gates)[0].operationId;
       expect(Object.values(gates)[0].sessionKey).toBe(SECOND_SESSION_KEY);
       expect(operationId).toBeTruthy();
+      expect((result.first as { data?: { operationId?: string } }).data?.operationId).toBe(operationId);
+      expect((result.second as { data?: { operationId?: string } }).data?.operationId).toBe(operationId);
       expect(String((result.second as { data?: { error?: unknown } }).data?.error)).toContain(
-        'did not return a committed receipt',
+        'Gateway not connected',
       );
     } finally {
       await closeElectronApp(app);
