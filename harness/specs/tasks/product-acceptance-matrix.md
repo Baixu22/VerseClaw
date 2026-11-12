@@ -5,7 +5,7 @@ title: Core product journey matrix and candidate-bound execution
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 intent: Give TF-0582 a reproducible nine-group inventory and compare its frozen Playwright collection with actual results, preserving missing, failed, skipped and stale evidence.
-diffBase: b84a6ec79254801d7809eeb4f5e69e32ee2e96aa
+diffBase: 42ad5e0b223d935e57630eb20c3501640721bf2e
 requiredRules:
   - backend-communication-boundary
   - repository-artifact-retention
@@ -23,6 +23,7 @@ touchedAreas:
   - scripts/product-matrix-judge.d.mts
   - tests/unit/product-acceptance-matrix.test.ts
   - tests/unit/knowledge-api.test.ts
+  - tests/unit/context-runtime-kit-active-engine.test.ts
   - electron/services/knowledge-api.ts
   - openclaw_runtime/src/entry.ts
   - openclaw_runtime/src/infra/source-doctor.ts
@@ -43,6 +44,12 @@ touchedAreas:
   - tests/e2e/product-matrix-memory.spec.ts
   - tests/e2e/product-matrix-knowledge.spec.ts
   - tests/e2e/product-matrix-tools.spec.ts
+  - tests/e2e/session-worker-task-journey.spec.ts
+  - tests/e2e/long-session-delegation-admission.spec.ts
+  - tests/e2e/long-session-completion-continuation.spec.ts
+  - tests/e2e/session-task-scope-completion.spec.ts
+  - tests/e2e/versegit-candidate-apply.spec.ts
+  - openclaw_runtime/src/context-engine/cvk/engine.ts
   - tests/exploration/product-matrix.config.ts
   - tests/exploration/product-matrix.session.spec.ts
   - harness/specs/tasks/product-acceptance-space-bunny.md
