@@ -1,0 +1,252 @@
+{
+  "schema": "RecoveryContractReviewReport/v1",
+  "generatedAt": "2026-11-12T15:04:12.477Z",
+  "driven_by": "agent",
+  "actor": "codex/recovery-contract-review-20261112",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "4da526c86b5f0a1dd22aece6f00adc2994a7b2d5",
+    "branch": "main",
+    "dirtyPathScope": "Pre-existing changes belonged to concurrent sessions. None of the reviewed recovery source or test paths were dirty; this review only added its evidence directory.",
+    "preexistingDirtyPaths": [
+      "M src/components/rareui/CompletionActivityMenu.tsx",
+      "M src/components/rareui/NotificationBell.tsx",
+      "M src/pages/Chat/SessionActivityPanel.tsx",
+      "M src/styles/codex-session-activity.css",
+      "M src/styles/rareui-interactions.css",
+      "?? one"
+    ],
+    "reviewEvidencePath": "harness/specs/fixtures/recovery-contract-eval/review-20261112/"
+  },
+  "selection": {
+    "excludedActiveWorkstreams": [
+      "TF-0662",
+      "TF-0664",
+      "TF-0862",
+      "TF-0884"
+    ],
+    "reviewedNodes": [
+      "TF-0709",
+      "TF-0711",
+      "TF-0713",
+      "TF-0717"
+    ],
+    "basis": "Cross-checked current Task Forest state, active Codex threads, process command lines, and Git worktrees before selection; no reviewed node or historical recovery worktree had a live process."
+  },
+  "checks": [
+    {
+      "name": "focused-contract-tests",
+      "command": "vitest run recovery-contract-eval + recovery-authority-contract + recovery-contract-execution-phase",
+      "exitCode": 0,
+      "evidence": "focused-contract-tests.json",
+      "summary": {
+        "total": 43,
+        "passed": 43,
+        "failed": 0,
+        "pending": 0,
+        "success": true,
+        "files": [
+          {
+            "file": "recovery-authority-contract.test.ts",
+            "status": "passed",
+            "assertions": 14
+          },
+          {
+            "file": "recovery-contract-eval.test.ts",
+            "status": "passed",
+            "assertions": 17
+          },
+          {
+            "file": "recovery-contract-execution-phase.test.ts",
+            "status": "passed",
+            "assertions": 12
+          }
+        ]
+      }
+    },
+    {
+      "name": "execution-phase-runtime-tests",
+      "command": "vitest run execution-phase/*.test.ts + tasks/task-flow-cas.test.ts",
+      "exitCode": 0,
+      "evidence": "execution-phase-runtime-tests.json",
+      "summary": {
+        "total": 71,
+        "passed": 71,
+        "failed": 0,
+        "pending": 0,
+        "success": true,
+        "files": [
+          {
+            "file": "recovery.test.ts",
+            "status": "passed",
+            "assertions": 11
+          },
+          {
+            "file": "redispatch-process.test.ts",
+            "status": "passed",
+            "assertions": 5
+          },
+          {
+            "file": "redispatch.test.ts",
+            "status": "passed",
+            "assertions": 14
+          },
+          {
+            "file": "store.test.ts",
+            "status": "passed",
+            "assertions": 8
+          },
+          {
+            "file": "user-intent.test.ts",
+            "status": "passed",
+            "assertions": 3
+          },
+          {
+            "file": "recovery-decision.test.ts",
+            "status": "passed",
+            "assertions": 12
+          },
+          {
+            "file": "task-flow-cas.test.ts",
+            "status": "passed",
+            "assertions": 18
+          }
+        ]
+      }
+    },
+    {
+      "name": "task-loop-lifecycle-cutover-tests",
+      "command": "vitest run src/agents/task-loop-lifecycle-cutover.test.ts",
+      "exitCode": 0,
+      "evidence": "task-loop-lifecycle-cutover-tests.json",
+      "summary": {
+        "total": 11,
+        "passed": 11,
+        "failed": 0,
+        "pending": 0,
+        "success": true,
+        "files": [
+          {
+            "file": "task-loop-lifecycle-cutover.test.ts",
+            "status": "passed",
+            "assertions": 11
+          }
+        ]
+      }
+    },
+    {
+      "name": "typecheck-node",
+      "command": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "evidence": "logs/typecheck-node.log"
+    },
+    {
+      "name": "typecheck-web",
+      "command": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "evidence": "logs/typecheck-web.log"
+    },
+    {
+      "name": "typecheck-test",
+      "command": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "evidence": "logs/typecheck-test.log"
+    },
+    {
+      "name": "module-strict-typecheck",
+      "command": "tsc --noEmit --strict over the three recovery contract modules",
+      "exitCode": 0
+    },
+    {
+      "name": "contract-check",
+      "command": "pnpm contract:check",
+      "exitCode": 0,
+      "evidence": "logs/contract-check.log"
+    },
+    {
+      "name": "extension-bridge",
+      "command": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "evidence": "logs/ext-bridge.log"
+    },
+    {
+      "name": "current-spec-structure",
+      "command": "harness validate --no-diff for TF-0709/TF-0713/TF-0717 specs",
+      "exitCode": 0
+    },
+    {
+      "name": "clean-candidate-changed-path-validation",
+      "command": "harness validate --since 99c142fef431fcc92a1a37f47aa1002f897f0b64 in isolated worktrees",
+      "exitCode": 0,
+      "details": [
+        {
+          "node": "TF-0709",
+          "candidate": "3331ada708ca974909ed12aef6071acd85afb528",
+          "evidence": "logs/tf0709-clean-validate.log"
+        },
+        {
+          "node": "TF-0713",
+          "candidate": "bf3c987f171a33092ecbbaa10ab33dc4dd3c39b7",
+          "evidence": "logs/tf0713-clean-validate.log"
+        },
+        {
+          "node": "TF-0717",
+          "candidate": "4b1f615805bda17fc097f6d307ee347ce2ec2cd4",
+          "evidence": "logs/tf0717-clean-validate.log"
+        }
+      ]
+    },
+    {
+      "name": "offline-evidence-reproduction",
+      "command": "node harness/specs/fixtures/recovery-contract-eval/final-20261105/offline-verify.mjs",
+      "exitCode": 0,
+      "evidence": "offline-verification.json"
+    }
+  ],
+  "nodeOutcomes": [
+    {
+      "id": "TF-0709",
+      "recommendedStatus": "done",
+      "basis": "Frozen 5-window/30-pair/9-metric contract, tamper rejection, 17 focused tests, strict module compile, current structure validation, clean changed-path validation, node/web/test typechecks, and contract check passed."
+    },
+    {
+      "id": "TF-0713",
+      "recommendedStatus": "done",
+      "basis": "Five-entry owner map and one-decision contract remain intact; 14 focused tests, strict module compile, current structure validation, clean changed-path validation, node/web/test typechecks, and contract check passed."
+    },
+    {
+      "id": "TF-0717",
+      "recommendedStatus": "done",
+      "basis": "Current runtime has persisted execution_phase, revision CAS, phase-aware writes, journal-first recovery, startup orphan settlement, legacy default, 12 pure-contract tests, 71 runtime tests, 11 lifecycle cutover tests, node/web/test typechecks, and clean changed-path validation."
+    },
+    {
+      "id": "TF-0711",
+      "recommendedStatus": "review_needed",
+      "basis": "Primary legacy matrix is complete, but independently repeated baseline remains 14/15 complete and only 12/15 structurally matched. The required two structurally consistent reruns are not proven."
+    }
+  ],
+  "limitations": [
+    "The exact parallel wrapper `pnpm run typecheck` was not used while another Playwright acceptance suite held memory. Its extension bridge and node, web, and test phases were run sequentially and all exited 0.",
+    "Changed-path Harness validation was run against each clean historical candidate because unrelated concurrent changes in the shared main worktree are outside each spec ownedPaths.",
+    "TF-0711 received no new live recovery run in this review. Existing retained evidence supports only the held status."
+  ],
+  "sourceHashes": {
+    "shared/recovery-contract-eval.ts": "d2358b26bca2fad21baf1c7f4bd95fe05859183e6b0c3224c4ead8066470c1ab",
+    "shared/recovery-authority/contract.ts": "be845ef1a4115e9357c9d8c049dcb3c9c8611720c361089fa83689e9d05e7a7a",
+    "shared/recovery-contract/execution-phase.ts": "008ed2b0f97888a0b29b88a9aeab81001df68e4bd855f0372f3b958dc40606af",
+    "tests/unit/recovery-contract-eval.test.ts": "72647b9965b2b32b839d6f21c673eb3fd6d2ee0c9180efe0a62960edbd00ce1a",
+    "tests/unit/recovery-authority-contract.test.ts": "484eeb1e6528b3e87432fe5494d436d9cf7910ce4a272cf1ccdeba162eaaf269",
+    "tests/unit/recovery-contract-execution-phase.test.ts": "2ebfb5247eed451629270f61fb851ba28f9922d7accfbb5f382c6e07ebee61db",
+    "openclaw_runtime/src/tasks/workflow-lifecycle-owner.ts": "e58db59d3e88e20bbbc6d929ca6366d1488ddc3d50332ef89d6262b92b676ae2",
+    "openclaw_runtime/src/tasks/task-flow-cas.ts": "b25508e3a304312c7bbac0bc81ffec796240184aaca720dc21589cd1000e7875",
+    "openclaw_runtime/src/agents/execution-phase/recovery-decision.ts": "59784001ce64d8b1474eca3b70abecec937a3304f6b8a40a2e8a9351216e149f",
+    "openclaw_runtime/src/agents/task-loop-controller.ts": "34aea2163e308bbcb70b4f2c5b6124277069663f35d30689a2e8ea5e8a35f818",
+    "openclaw_runtime/src/gateway/server.impl.ts": "b88cb354381b5b4906b8281fa88a64b0c5078e089038060bab43bd20676efb2a"
+  },
+  "credentialScan": {
+    "evidence": "credential-scan.json",
+    "scannedFiles": 14,
+    "hits": 0,
+    "result": "clean"
+  }
+}
