@@ -1,0 +1,11 @@
+
+ RUN  v4.1.7 D:/tmp/tf0662-verify/openclaw_runtime
+
+ ✓ |gateway-methods| src/gateway/server-methods/role-orchestration-methods.test.ts > orchestrator explicit workers > preserves an explicit empty writeSet for observer classification 11ms
+ ✓ |gateway-methods| src/gateway/server-methods/role-orchestration-methods.test.ts > orchestrator explicit workers > omits writeSet when the caller did not provide it 1ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  23:36:52
+   Duration  18.76s (transform 12.25s, setup 473ms, import 17.53s, tests 15ms, environment 0ms)
+

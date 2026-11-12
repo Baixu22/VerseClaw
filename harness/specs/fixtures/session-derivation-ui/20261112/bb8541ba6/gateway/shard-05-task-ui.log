@@ -1,0 +1,55 @@
+
+Running 6 tests using 1 worker
+
+(node:12736) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12736) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+  ok 1 tests\e2e\session-task-locales.spec.ts:6:5 › project tasks and family navigation remain usable in all four interface languages (2.5m)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+  ok 2 tests\e2e\session-task-reading-navigation.spec.ts:57:5 › U2 restores the visible transcript message, reading offset and both session drafts (2.8m)
+[fp-p1-harness] connection #1
+[fp-p1-harness] connection #2
+[fp-p1-harness] connection #3
+[fp-p1-harness] connection #4
+[fp-p1-harness] completions handler threw after 2 answered request(s): Error: U2 deterministic provider failure
+Error: U2 deterministic provider failure
+    at D:\tmp\tf0662-verify\tests\e2e\session-task-reading-navigation.spec.ts:223:13
+    at IncomingMessage.<anonymous> (D:\tmp\tf0662-verify\tests\e2e\fixtures\fp-p1-harness.ts:197:24)
+[fp-p1-harness] completions handler threw after 2 answered request(s): Error: U2 deterministic provider failure
+Error: U2 deterministic provider failure
+    at D:\tmp\tf0662-verify\tests\e2e\session-task-reading-navigation.spec.ts:223:13
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at IncomingMessage.<anonymous> (D:\tmp\tf0662-verify\tests\e2e\fixtures\fp-p1-harness.ts:197:24)
+[fp-p1-harness] completions handler threw after 2 answered request(s): Error: U2 deterministic provider failure
+Error: U2 deterministic provider failure
+    at D:\tmp\tf0662-verify\tests\e2e\session-task-reading-navigation.spec.ts:223:13
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at IncomingMessage.<anonymous> (D:\tmp\tf0662-verify\tests\e2e\fixtures\fp-p1-harness.ts:197:24)
+[fp-p1-harness] connection #5
+[fp-p1-harness] completions handler threw after 2 answered request(s): Error: U2 deterministic provider failure
+Error: U2 deterministic provider failure
+    at D:\tmp\tf0662-verify\tests\e2e\session-task-reading-navigation.spec.ts:223:13
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at IncomingMessage.<anonymous> (D:\tmp\tf0662-verify\tests\e2e\fixtures\fp-p1-harness.ts:197:24)
+[fp-p1-harness] completions handler threw after 2 answered request(s): Error: U2 deterministic provider failure
+Error: U2 deterministic provider failure
+    at D:\tmp\tf0662-verify\tests\e2e\session-task-reading-navigation.spec.ts:223:13
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at IncomingMessage.<anonymous> (D:\tmp\tf0662-verify\tests\e2e\fixtures\fp-p1-harness.ts:197:24)
+[fp-p1-harness] completions handler threw after 2 answered request(s): Error: U2 deterministic provider failure
+Error: U2 deterministic provider failure
+    at D:\tmp\tf0662-verify\tests\e2e\session-task-reading-navigation.spec.ts:223:13
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at IncomingMessage.<anonymous> (D:\tmp\tf0662-verify\tests\e2e\fixtures\fp-p1-harness.ts:197:24)
+  ok 3 tests\e2e\session-task-reading-navigation.spec.ts:209:5 › U2 background child creation, failure and completion preserve parent selection, own state and hovered rows (2.5m)
+  ok 4 tests\e2e\session-task-state-guidance.spec.ts:108:5 › AC8: an owner-created project without a coordinator names the missing association (11.5s)
+  ok 5 tests\e2e\session-task-state-guidance.spec.ts:133:5 › AC8: a held real Ledger response shows loading, permission denial and a reachable refresh (1.5m)
+  ok 6 tests\e2e\session-task-state-guidance.spec.ts:180:5 › AC9: a real dependency rejection names the prerequisite and opens its existing task action (1.1m)
+
+  Slow test file: tests\e2e\session-task-reading-navigation.spec.ts (5.2m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  6 passed (10.5m)

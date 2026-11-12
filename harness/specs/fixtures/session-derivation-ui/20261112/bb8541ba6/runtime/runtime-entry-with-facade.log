@@ -1,0 +1,14 @@
+Building openclaw_runtime with esbuild...
+  Source: D:\tmp\tf0662-verify\openclaw_runtime\src
+  Output: D:\tmp\tf0662-verify\openclaw_runtime\dist
+  Found 1157 npm packages (will keep external)
+
+  openclaw_runtime\dist\chunk-EWBD6ZVW.js  849.5kb
+  openclaw_runtime\dist\chunk-EIFDCCFA.js  821.5kb
+  openclaw_runtime\dist\chunk-AOUDPAJQ.js  552.6kb
+  openclaw_runtime\dist\chunk-IGSC2EW3.js  480.6kb
+  openclaw_runtime\dist\chunk-ZZGX2P67.js  426.9kb
+  ...and 1365 more output files...
+
+Done in 1889ms
+  Done in 2.0s

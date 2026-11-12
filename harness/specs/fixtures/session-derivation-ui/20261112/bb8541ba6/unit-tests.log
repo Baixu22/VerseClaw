@@ -1,0 +1,447 @@
+
+ RUN  v4.1.1 D:/tmp/tf0662-verify
+
+ ✓ tests/unit/session-task-scope-completion.test.ts (35 tests) 17129ms
+     ✓ uses the canonical parent reference after transfer even before its navigation link was persisted  962ms
+     ✓ admits an owned child while the fenced parent run remains active  520ms
+     ✓ starts a complete canonical contract through task_control without requiring a session bridge  577ms
+     ✓ associates a live isolated scheduled run with its canonical contract without replacing the project coordinator  360ms
+     ✓ uses a decomposed scheduled child contract under the recorded parent TaskRef  532ms
+     ✓ rejects a missing scheduled coordinator before claiming another task  358ms
+     ✓ rejects a paused scheduled coordinator before claiming another task  322ms
+     ✓ consumes a canonical business contract after a failed turn left a diagnostic deviation link  464ms
+     ✓ selects an existing completed task and preserves its status and historical links  653ms
+     ✓ uses the captured worker parent TaskRef with a real child contract despite a later parent selection  639ms
+     ✓ pauses new dispatch while retaining the already admitted writer and workgroup ownership  658ms
+     ✓ keeps ten discussion/read turns empty, then reuses one canonical contract at the guarded effect boundary  647ms
+     ✓ captures checkout execution revision while allowing the admitted run through coordinator pause  488ms
+     ✓ rejects effects on a completed canonical task, including after owner reconstruction  618ms
+     ✓ rejects a Legacy done node without creating a canonical replacement or changing it to doing  513ms
+     ✓ keeps a Fork reference read-only until an explicit fresh canonical claim, then fences the old token  799ms
+     ✓ does not release a live canonical claim because a new API instance or response settled  690ms
+     ✓ rejects an old claim after canonical epoch rotation even when the Workspace cache still has it  436ms
+     ✓ preserves writer fields across UI saves and transfers Handoff through the canonical epoch interface  778ms
+     ✓ rejects unknown session before writing a task  1040ms
+     ✓ rejects foreign workspace identity and a changed session generation without manufacturing a replacement  408ms
+     ✓ leaves a selected task unclaimed when the final run check fails  354ms
+     ✓ rejects a contract revision changed after resolution without claiming the revised task  500ms
+     ✓ blocks task selection and rebinding on session resources even without a Workspace writer  516ms
+     ✓ requires explicit canonical selection for multiple links and rejects an external reference as a task  759ms
+     ✓ does not silently switch a running canonical task through coordinator rebinding  345ms
+     ✓ cancels an effect after Main admission without releasing or upgrading its canonical claim  476ms
+stdout | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > persists the selected session before navigation can remount Chat
+🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > persists the selected session before navigation can remount Chat
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:1987:70
+    at readSessionListPages (D:/tmp/tf0662-verify/src/lib/session-read-model.ts:24:23)
+    at fetchChatSessionsList (D:/tmp/tf0662-verify/src/stores/chat.ts:1987:10)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2989:28
+    at Object.loadSessions (D:/tmp/tf0662-verify/src/stores/chat.ts:3170:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2915:19
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2952:5)
+    at D:/tmp/tf0662-verify/src/components/layout/Sidebar.tsx:623:10
+    at Object.react_stack_bottom_frame (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > persists the selected session before navigation can remount Chat
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/tmp/tf0662-verify/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/tmp/tf0662-verify/src/stores/chat.ts:462:7)
+    at applyLocalFallbackMessages (D:/tmp/tf0662-verify/src/stores/chat.ts:3931:40)
+    at loadGatewayHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4067:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:4115:7
+    at Object.loadHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4120:7)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2933:9
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2955:7)
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > does not re-render session rows as streamed runtime events arrive
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:1987:70
+    at readSessionListPages (D:/tmp/tf0662-verify/src/lib/session-read-model.ts:24:23)
+    at fetchChatSessionsList (D:/tmp/tf0662-verify/src/stores/chat.ts:1987:10)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2989:28
+    at Object.loadSessions (D:/tmp/tf0662-verify/src/stores/chat.ts:3170:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2915:19
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2952:5)
+    at D:/tmp/tf0662-verify/src/components/layout/Sidebar.tsx:623:10
+    at Object.react_stack_bottom_frame (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > does not re-render session rows as streamed runtime events arrive
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/tmp/tf0662-verify/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/tmp/tf0662-verify/src/stores/chat.ts:462:7)
+    at applyLocalFallbackMessages (D:/tmp/tf0662-verify/src/stores/chat.ts:3931:40)
+    at loadGatewayHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4067:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:4115:7
+    at Object.loadHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4120:7)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2933:9
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2955:7)
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > does not re-render session rows as streamed runtime events arrive
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:1987:70
+    at readSessionListPages (D:/tmp/tf0662-verify/src/lib/session-read-model.ts:24:23)
+    at fetchChatSessionsList (D:/tmp/tf0662-verify/src/stores/chat.ts:1987:10)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2989:28
+    at Object.loadSessions (D:/tmp/tf0662-verify/src/stores/chat.ts:3170:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2915:19
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2952:5)
+    at D:/tmp/tf0662-verify/src/components/layout/Sidebar.tsx:623:10
+    at Object.react_stack_bottom_frame (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > does not re-render session rows as streamed runtime events arrive
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/tmp/tf0662-verify/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/tmp/tf0662-verify/src/stores/chat.ts:462:7)
+    at applyLocalFallbackMessages (D:/tmp/tf0662-verify/src/stores/chat.ts:3931:40)
+    at loadGatewayHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4067:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:4115:7
+    at Object.loadHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4120:7)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2933:9
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2955:7)
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > rejects stale running projections while preserving newer run ownership
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:1987:70
+    at readSessionListPages (D:/tmp/tf0662-verify/src/lib/session-read-model.ts:24:23)
+    at fetchChatSessionsList (D:/tmp/tf0662-verify/src/stores/chat.ts:1987:10)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2989:28
+    at Object.loadSessions (D:/tmp/tf0662-verify/src/stores/chat.ts:3170:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2915:19
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2952:5)
+    at D:/tmp/tf0662-verify/src/components/layout/Sidebar.tsx:623:10
+    at Object.react_stack_bottom_frame (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > rejects stale running projections while preserving newer run ownership
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/tmp/tf0662-verify/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/tmp/tf0662-verify/src/stores/chat.ts:462:7)
+    at applyLocalFallbackMessages (D:/tmp/tf0662-verify/src/stores/chat.ts:3931:40)
+    at loadGatewayHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4067:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:4115:7
+    at Object.loadHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4120:7)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2933:9
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2955:7)
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > still re-renders rows when a session status actually changes
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:1987:70
+    at readSessionListPages (D:/tmp/tf0662-verify/src/lib/session-read-model.ts:24:23)
+    at fetchChatSessionsList (D:/tmp/tf0662-verify/src/stores/chat.ts:1987:10)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2989:28
+    at Object.loadSessions (D:/tmp/tf0662-verify/src/stores/chat.ts:3170:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2915:19
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2952:5)
+    at D:/tmp/tf0662-verify/src/components/layout/Sidebar.tsx:623:10
+    at Object.react_stack_bottom_frame (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > still re-renders rows when a session status actually changes
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/tmp/tf0662-verify/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/tmp/tf0662-verify/src/stores/chat.ts:462:7)
+    at applyLocalFallbackMessages (D:/tmp/tf0662-verify/src/stores/chat.ts:3931:40)
+    at loadGatewayHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4067:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:4115:7
+    at Object.loadHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4120:7)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2933:9
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2955:7)
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > mounts session rows incrementally instead of all at once
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:1987:70
+    at readSessionListPages (D:/tmp/tf0662-verify/src/lib/session-read-model.ts:24:23)
+    at fetchChatSessionsList (D:/tmp/tf0662-verify/src/stores/chat.ts:1987:10)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2989:28
+    at Object.loadSessions (D:/tmp/tf0662-verify/src/stores/chat.ts:3170:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2915:19
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2952:5)
+    at D:/tmp/tf0662-verify/src/components/layout/Sidebar.tsx:623:10
+    at Object.react_stack_bottom_frame (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > mounts session rows incrementally instead of all at once
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/tmp/tf0662-verify/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/tmp/tf0662-verify/src/stores/chat.ts:462:7)
+    at applyLocalFallbackMessages (D:/tmp/tf0662-verify/src/stores/chat.ts:3931:40)
+    at loadGatewayHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4067:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:4115:7
+    at Object.loadHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4120:7)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2933:9
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2955:7)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > shares 80 initial slots across two 80-row workgroups and ungrouped sessions
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:1987:70
+    at readSessionListPages (D:/tmp/tf0662-verify/src/lib/session-read-model.ts:24:23)
+    at fetchChatSessionsList (D:/tmp/tf0662-verify/src/stores/chat.ts:1987:10)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2989:28
+    at Object.loadSessions (D:/tmp/tf0662-verify/src/stores/chat.ts:3170:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2915:19
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2952:5)
+    at D:/tmp/tf0662-verify/src/components/layout/Sidebar.tsx:623:10
+    at Object.react_stack_bottom_frame (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > shares 80 initial slots across two 80-row workgroups and ungrouped sessions
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/tmp/tf0662-verify/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/tmp/tf0662-verify/src/stores/chat.ts:462:7)
+    at applyLocalFallbackMessages (D:/tmp/tf0662-verify/src/stores/chat.ts:3931:40)
+    at loadGatewayHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4067:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:4115:7
+    at Object.loadHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4120:7)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2933:9
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2955:7)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > unmounts collapsed workgroups without consuming their slots or losing their full count
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:1987:70
+    at readSessionListPages (D:/tmp/tf0662-verify/src/lib/session-read-model.ts:24:23)
+    at fetchChatSessionsList (D:/tmp/tf0662-verify/src/stores/chat.ts:1987:10)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2989:28
+    at Object.loadSessions (D:/tmp/tf0662-verify/src/stores/chat.ts:3170:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2915:19
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2952:5)
+    at D:/tmp/tf0662-verify/src/components/layout/Sidebar.tsx:623:10
+    at Object.react_stack_bottom_frame (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > unmounts collapsed workgroups without consuming their slots or losing their full count
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/tmp/tf0662-verify/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/tmp/tf0662-verify/src/stores/chat.ts:462:7)
+    at applyLocalFallbackMessages (D:/tmp/tf0662-verify/src/stores/chat.ts:3931:40)
+    at loadGatewayHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4067:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:4115:7
+    at Object.loadHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4120:7)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2933:9
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2955:7)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > preserves all 2 child keys and the selected family entry inside the shared budget
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:1987:70
+    at readSessionListPages (D:/tmp/tf0662-verify/src/lib/session-read-model.ts:24:23)
+    at fetchChatSessionsList (D:/tmp/tf0662-verify/src/stores/chat.ts:1987:10)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2989:28
+    at Object.loadSessions (D:/tmp/tf0662-verify/src/stores/chat.ts:3170:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2915:19
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2952:5)
+    at D:/tmp/tf0662-verify/src/components/layout/Sidebar.tsx:623:10
+    at Object.react_stack_bottom_frame (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > preserves all 2 child keys and the selected family entry inside the shared budget
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/tmp/tf0662-verify/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/tmp/tf0662-verify/src/stores/chat.ts:462:7)
+    at applyLocalFallbackMessages (D:/tmp/tf0662-verify/src/stores/chat.ts:3931:40)
+    at loadGatewayHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4067:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:4115:7
+    at Object.loadHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4120:7)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2933:9
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2955:7)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > preserves all 20 child keys and the selected family entry inside the shared budget
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:1987:70
+    at readSessionListPages (D:/tmp/tf0662-verify/src/lib/session-read-model.ts:24:23)
+    at fetchChatSessionsList (D:/tmp/tf0662-verify/src/stores/chat.ts:1987:10)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2989:28
+    at Object.loadSessions (D:/tmp/tf0662-verify/src/stores/chat.ts:3170:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2915:19
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2952:5)
+    at D:/tmp/tf0662-verify/src/components/layout/Sidebar.tsx:623:10
+    at Object.react_stack_bottom_frame (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > preserves all 20 child keys and the selected family entry inside the shared budget
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/tmp/tf0662-verify/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/tmp/tf0662-verify/src/stores/chat.ts:462:7)
+    at applyLocalFallbackMessages (D:/tmp/tf0662-verify/src/stores/chat.ts:3931:40)
+    at loadGatewayHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4067:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:4115:7
+    at Object.loadHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4120:7)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2933:9
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2955:7)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > preserves all 100 child keys and the selected family entry inside the shared budget
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:1987:70
+    at readSessionListPages (D:/tmp/tf0662-verify/src/lib/session-read-model.ts:24:23)
+    at fetchChatSessionsList (D:/tmp/tf0662-verify/src/stores/chat.ts:1987:10)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2989:28
+    at Object.loadSessions (D:/tmp/tf0662-verify/src/stores/chat.ts:3170:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2915:19
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2952:5)
+    at D:/tmp/tf0662-verify/src/components/layout/Sidebar.tsx:623:10
+    at Object.react_stack_bottom_frame (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > preserves all 100 child keys and the selected family entry inside the shared budget
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/tmp/tf0662-verify/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/tmp/tf0662-verify/src/stores/chat.ts:462:7)
+    at applyLocalFallbackMessages (D:/tmp/tf0662-verify/src/stores/chat.ts:3931:40)
+    at loadGatewayHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4067:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:4115:7
+    at Object.loadHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4120:7)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2933:9
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2955:7)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > reserves the selected session and its visible ancestors without adding slots
+Failed to load sessions: TypeError: __vite_ssr_import_4__.useGatewayStore.getState(...).rpc is not a function
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:1987:70
+    at readSessionListPages (D:/tmp/tf0662-verify/src/lib/session-read-model.ts:24:23)
+    at fetchChatSessionsList (D:/tmp/tf0662-verify/src/stores/chat.ts:1987:10)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2989:28
+    at Object.loadSessions (D:/tmp/tf0662-verify/src/stores/chat.ts:3170:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2915:19
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2952:5)
+    at D:/tmp/tf0662-verify/src/components/layout/Sidebar.tsx:623:10
+    at Object.react_stack_bottom_frame (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (C:\Users\27933\.codex\worktrees\session-lifecycle-tf0662-20261111\ClawX\node_modules\.pnpm\react-dom@19.2.4_react@19.2.4\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+
+stderr | tests/unit/sidebar-render-containment.test.tsx > Sidebar re-render containment > reserves the selected session and its visible ancestors without adding slots
+[chat.history] transcript fallback failed: TypeError: Cannot read properties of undefined (reading 'history')
+    at loadSessionTranscriptFallback (D:/tmp/tf0662-verify/src/stores/chat/history-transcript-fallback.ts:9:45)
+    at loadLocalHistoryFallback (D:/tmp/tf0662-verify/src/stores/chat.ts:462:7)
+    at applyLocalFallbackMessages (D:/tmp/tf0662-verify/src/stores/chat.ts:3931:40)
+    at loadGatewayHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4067:21)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:4115:7
+    at Object.loadHistory (D:/tmp/tf0662-verify/src/stores/chat.ts:4120:7)
+    at D:/tmp/tf0662-verify/src/stores/chat.ts:2933:9
+    at hydrateStartup (D:/tmp/tf0662-verify/src/stores/chat.ts:2955:7)
+
+ ✓ tests/unit/sidebar-render-containment.test.tsx (11 tests) 7605ms
+     ✓ persists the selected session before navigation can remount Chat  3280ms
+     ✓ does not re-render session rows as streamed runtime events arrive  392ms
+     ✓ mounts session rows incrementally instead of all at once  575ms
+     ✓ shares 80 initial slots across two 80-row workgroups and ungrouped sessions  692ms
+     ✓ unmounts collapsed workgroups without consuming their slots or losing their full count  774ms
+     ✓ preserves all 20 child keys and the selected family entry inside the shared budget  329ms
+     ✓ preserves all 100 child keys and the selected family entry inside the shared budget  611ms
+     ✓ reserves the selected session and its visible ancestors without adding slots  551ms
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > binds the task selected in the existing composer before dispatching chat effects
+[2026-11-12T15:37:31.698Z] [INFO] [chat:sendWithMedia] Sending: message="Continuity context (owner-derived, bounded metadata; verify work with tools):
+schema=ContinuityConte", attachments=0, fileRefs=0
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > binds the task selected in the existing composer before dispatching chat effects
+[2026-11-12T15:37:31.699Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"selected-task-send"}
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > pins the child generation before activation and rejects a removed or reset child during recovery
+[2026-11-12T15:37:33.038Z] [WARN] [session:coordinator-lifecycle] {"event":"handoff","sessionKey":"agent:main:session-1794497852992-operation-un","error":"Error: activation interrupted"}
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > records acknowledgement separately and confirms the exact persisted first-turn identity
+[2026-11-12T15:37:33.589Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > records acknowledgement separately and confirms the exact persisted first-turn identity
+[2026-11-12T15:37:33.592Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"handoff-first:operation-unique-1"}
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > records acknowledgement separately and confirms the exact persisted first-turn identity
+[2026-11-12T15:37:33.596Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > reconciles a lost send reply from the exact runtime transcript after restart
+[2026-11-12T15:37:33.763Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > reconciles a lost send reply from the exact runtime transcript after restart
+[2026-11-12T15:37:33.766Z] [ERROR] [chat:sendWithMedia] Error: Error: send response lost
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > retains an unknown delivery and prevents silent resends even when the text matches
+[2026-11-12T15:37:33.986Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > retains an unknown delivery and prevents silent resends even when the text matches
+[2026-11-12T15:37:33.988Z] [ERROR] [chat:sendWithMedia] Error: Error: request outcome unknown
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > retains an unknown delivery and prevents silent resends even when the text matches
+[2026-11-12T15:37:33.991Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > retains an unknown delivery and prevents silent resends even when the text matches
+[2026-11-12T15:37:33.993Z] [ERROR] [chat:sendWithMedia] Error: Error: HANDOFF_DELIVERY_REQUIRES_RECONCILIATION
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > allows an explicitly retried pre-effect rejection with the same child and send key
+[2026-11-12T15:37:34.186Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > allows an explicitly retried pre-effect rejection with the same child and send key
+[2026-11-12T15:37:34.189Z] [ERROR] [chat:sendWithMedia] Error: GatewayRpcError: rejected before effects
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > allows an explicitly retried pre-effect rejection with the same child and send key
+[2026-11-12T15:37:34.191Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > allows an explicitly retried pre-effect rejection with the same child and send key
+[2026-11-12T15:37:34.194Z] [INFO] [chat:sendWithMedia] RPC result: {"runId":"handoff-first:operation-unique-1"}
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > does not reuse a first-send key with a different compiled payload
+[2026-11-12T15:37:34.440Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > does not reuse a first-send key with a different compiled payload
+[2026-11-12T15:37:34.444Z] [ERROR] [chat:sendWithMedia] Error: GatewayRpcError: rejected before effects
+
+stdout | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > does not reuse a first-send key with a different compiled payload
+[2026-11-12T15:37:34.447Z] [INFO] [chat:sendWithMedia] Sending: message="Continue with the verified evidence.", attachments=0, fileRefs=0
+
+stderr | tests/unit/session-handoff-recovery.test.ts > durable handoff owner > does not reuse a first-send key with a different compiled payload
+[2026-11-12T15:37:34.448Z] [ERROR] [chat:sendWithMedia] Error: Error: HANDOFF_SEND_PAYLOAD_CHANGED
+
+ ✓ tests/unit/session-handoff-recovery.test.ts (23 tests) 3545ms
+     ✓ retains one pending child while source resources remain unresolved without a writer binding  360ms
+     ✓ creates independent children for different intent IDs and replays each ID without creating again  423ms
+     ✓ pins the child generation before activation and rejects a removed or reset child during recovery  332ms
+ ✓ tests/unit/durable-task-session-scope.test.ts (17 tests) 2529ms
+     ✓ reads actual verifier receipts without promoting a doing task to accepted  507ms
+     ✓ retains task identity and writer exclusivity when runtime bootstrap initializes Git  518ms
+ ✓ tests/unit/session-family-navigation.test.tsx (8 tests) 396ms
+ ✓ tests/unit/session-task-scope-bridge.test.ts (18 tests) 454ms
+ ✓ tests/unit/workspaces-store.test.ts (14 tests) 199ms
+ ✓ tests/unit/session-delegation-status.test.tsx (13 tests) 149ms
+stdout | tests/unit/session-lifecycle-control-scope.test.ts
+🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stderr | tests/unit/session-lifecycle-control-scope.test.ts > session lifecycle result scope > retains a still-active run when the abort receipt cannot confirm it
+[abortRun] chat.abort failed: Error: Could not confirm the stop. Refresh the session to check its status.
+
+ ✓ tests/unit/session-lifecycle-control-scope.test.ts (16 tests) 26ms
+ ✓ tests/unit/session-family-read-model.test.ts (19 tests) 21ms
+
+ Test Files  10 passed (10)
+      Tests  174 passed (174)
+   Start at  23:36:53
+   Duration  68.33s (transform 12.79s, setup 1.81s, import 20.23s, tests 32.05s, environment 10.19s)
+
+JSON report written to D:/tmp/tf0662-candidate-1d0d57ad3/unit-tests-bb8541ba6.json
