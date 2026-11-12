@@ -95,21 +95,20 @@ function SessionTaskScopeChip({
   list: React.ReactNode;
   t: ReturnType<typeof useTranslation<'taskLedger'>>['t'];
 }) {
-  const popover = usePopover<HTMLButtonElement>({ align: 'left', gap: 6 });
+  const { triggerRef, layerRef, setOpen, style: popoverStyle } = usePopover<HTMLButtonElement>({ align: 'left', gap: 6 });
   const overlayContainer = useOverlayPortalContainer();
   const open = expanded && !narrow;
-  useDismissOnOutside({ open, onDismiss: () => setExpanded(false), refs: [popover.triggerRef, popover.layerRef] });
-  const { setOpen } = popover;
+  useDismissOnOutside({ open, onDismiss: () => setExpanded(false), refs: [triggerRef, layerRef] });
   useEffect(() => { setOpen(open); }, [open, setOpen]);
   useEffect(() => {
     if (!open) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') popover.triggerRef.current?.focus();
+      if (event.key === 'Escape') triggerRef.current?.focus();
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [open, popover.triggerRef]);
-  const toggle = <button ref={popover.triggerRef} type="button" data-testid="session-tasks-toggle" aria-expanded={expanded}
+  }, [open, triggerRef]);
+  const toggle = <button ref={triggerRef} type="button" data-testid="session-tasks-toggle" aria-expanded={expanded}
     aria-haspopup="dialog" onClick={narrow ? undefined : () => setExpanded((value) => !value)} title={statusText}
     className={cn(SCOPE_CHIP, expanded && 'bg-black/5 text-foreground dark:bg-white/10', attention && 'text-amber-700 dark:text-amber-400')}>
     {attention
@@ -130,13 +129,12 @@ function SessionTaskScopeChip({
           {list}
         </SheetContent>
       </Sheet> : toggle}
-      <span className={cn('min-w-0 truncate', attention ? 'max-w-[220px] text-amber-700 dark:text-amber-400' : state === 'loading' ? 'max-w-[160px] text-muted-foreground' : 'sr-only')} role="status">
+      <span className="sr-only" role="status">
         {statusText}
       </span>
       {/* Secondary actions stay reachable for pointer and keyboard but only
         * claim attention when the scope needs it. */}
-      <span className={cn('inline-flex items-center transition-opacity duration-150',
-        attention ? 'opacity-100' : 'opacity-0 group-hover/task-scope:opacity-100 group-focus-within/task-scope:opacity-100')}>
+      <span className={cn('items-center', attention ? 'inline-flex' : 'hidden')}>
         <button type="button" aria-label={t('summary.refresh')} title={t('summary.refresh')} onClick={onRefresh} disabled={loading}
           className="inline-flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-black/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 dark:hover:bg-white/10">
           <RefreshCw className={cn('size-3.5', loading && 'animate-spin motion-reduce:animate-none')} aria-hidden="true" />
@@ -148,11 +146,14 @@ function SessionTaskScopeChip({
         </Link>
       </span>
       {open && createPortal(
-        <div ref={popover.layerRef} style={popover.style} role="dialog" aria-label={title} data-testid="session-task-popover"
+        <div ref={layerRef} style={popoverStyle} role="dialog" aria-label={title} data-testid="session-task-popover"
           className="w-[min(380px,calc(100vw-16px))] rounded-xl border border-border/70 bg-surface-modal p-1.5 text-xs shadow-lg motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:duration-150">
           <div className="flex min-w-0 items-center gap-2 px-2 pb-1 pt-1">
             <span className="shrink-0 font-medium text-foreground">{title}</span>
             <span className="min-w-0 flex-1 truncate text-muted-foreground">{statusText}</span>
+            <button type="button" onClick={onRefresh} disabled={loading} aria-label={t('summary.refresh')} className="rounded p-1 text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10">
+              <RefreshCw className={cn('size-3.5', loading && 'animate-spin motion-reduce:animate-none')} aria-hidden="true" />
+            </button>
             <Link to={ledgerPath} className="shrink-0 text-muted-foreground hover:text-foreground hover:underline">{t('summary.open')}</Link>
           </div>
           {list}
@@ -226,7 +227,7 @@ export function TaskLedgerSummaryPanel({
   }, [snapshot]);
 
   const hasContent = !!snapshot && snapshot.nodes.length > 0;
-  const visible = !hideWhenEmpty || hasContent || Boolean(loadError);
+  const visible = mode === 'bar' || !hideWhenEmpty || hasContent || Boolean(loadError);
   useEffect(() => {
     onVisibilityChange?.(visible);
   }, [onVisibilityChange, visible]);
@@ -240,6 +241,7 @@ export function TaskLedgerSummaryPanel({
     const projectReadable = projectWide && ['ready', 'empty'].includes(container.status);
     const nodes = projectReadable ? (snapshot?.nodes ?? []).filter((node) => node.kind === 'task') : container.nodes;
     const status = projectReadable ? nodes.length ? 'ready' : 'empty' : container.status;
+    if (hideWhenEmpty && !loadError && (status === 'empty' || (!snapshot && loading))) return null;
     const statusText = loading && !snapshot ? t('summary.loading')
       : status === 'unavailable' ? unavailableText : t(`summary.scope.${status}`);
     const scopeTitle = t(projectWide ? 'summary.projectTasks' : 'summary.sessionTasks');

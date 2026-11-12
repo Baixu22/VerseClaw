@@ -62,6 +62,14 @@
     }
   },
   "recovery": {
+    "presentationTitle": "会话展示",
+    "notificationsTitle": "活动通知与历史",
+    "quiet": {
+      "title": "安静展示",
+      "description": "仅在需要处理时展开活动，完成后收起执行详情，后台任务继续运行。",
+      "apply": "使用安静展示",
+      "active": "已启用"
+    },
     "activityTitle": "会话与恢复",
     "currentTitle": "当前会话恢复",
     "enabled": {

@@ -17,6 +17,7 @@ describe('vite Electron OpenClaw runtime aliases', () => {
     expect(viteConfig.isMainProcessExternal!('json5')).toBe(false);
     expect(viteConfig.isMainProcessExternal!('@pierre/diffs')).toBe(false);
     expect(viteConfig.isMainProcessExternal!('shiki')).toBe(false);
+    expect(viteConfig.isMainProcessExternal!('@openclaw/media-core/media-source-url')).toBe(false);
   });
 
   it('maps local OpenClaw package imports to checked-in runtime sources', async () => {
