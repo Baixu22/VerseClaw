@@ -145,11 +145,11 @@ test.describe('Sidebar session rows and activity bell', () => {
           expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
         }
       }
-      await page.getByTestId(`sidebar-session-${LONG}`).click();
-      await expect(page.getByTestId('chat-header-session-name')).toHaveText(LONG_TITLE);
       const sidebarToggle = page.getByTestId('sidebar-collapse-toggle');
       if (await sidebarToggle.getAttribute('aria-label') === 'Expand sidebar') await sidebarToggle.click();
       await expect.poll(async () => (await page.getByTestId('sidebar').boundingBox())!.width).toBeGreaterThan(250);
+      await page.getByTestId(`sidebar-session-${LONG}`).click();
+      await expect(page.getByTestId('chat-header-session-name')).toHaveText(LONG_TITLE);
       await expect.poll(() => page.evaluate(() => {
         const title = document.querySelector('[data-testid="chat-header-session-name"]')!.getBoundingClientRect();
         const actions = document.querySelector('[data-testid="chat-toolbar-actions"]')!.getBoundingClientRect();

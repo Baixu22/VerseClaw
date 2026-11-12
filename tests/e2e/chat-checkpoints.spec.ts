@@ -139,7 +139,7 @@ test('checkpoints dialog lists and restores a session checkpoint', async ({ laun
     gatewayRpc: {
       [stableStringify(['sessions.list', { includeDerivedTitles: true, includeLastMessage: true }])]: {
         success: true,
-        result: { sessions: [{ key: SESSION_KEY, displayName: 'main' }] },
+        result: { sessions: [{ key: SESSION_KEY, sessionId: EXPECTED_SESSION_ID, displayName: 'main' }] },
       },
       [stableStringify(['chat.history', { sessionKey: SESSION_KEY, limit: 200, maxChars: 500000 }])]: {
         success: true,
