@@ -194,7 +194,9 @@
     "archives": 771,
     "credentialHits": 0,
     "b7CleanCandidate": false,
-    "reason": "Live record retains dirty=true; copied verifier rejects that flag."
+    "reason": "Live record retains dirty=true; copied verifier rejects that flag.",
+    "portableVerifierPathFixed": true,
+    "finalVerifierExitCode": 1
   },
   "realHumanEvidence": false,
   "releaseApproved": false,

@@ -8,7 +8,7 @@ const [dir,out]=process.argv.slice(2);
 const design=JSON.parse(readFileSync(join(dir,'result.json'),'utf8')).design;
 const expectedOutputTokens=design.maxOutputTokens??900;
 const statsFile=out+'.stats.json';
-execFileSync(process.execPath,[join(dirname(fileURLToPath(import.meta.url)),'context-inline-spill-benefit-round5-recompute.mjs'),dir,'-',statsFile],{stdio:'inherit',windowsHide:true});
+execFileSync(process.execPath,[join(dirname(fileURLToPath(import.meta.url)),'recompute-stats.mjs'),dir,'-',statsFile],{stdio:'inherit',windowsHide:true});
 const result=JSON.parse(readFileSync(join(dir,'result.json'),'utf8'));
 const records=JSON.parse(readFileSync(join(dir,'runs.json'),'utf8')).records;
 assert.equal(result.design.evidenceTasks.length,6);assert.equal(result.design.controlTasks.length,2);
