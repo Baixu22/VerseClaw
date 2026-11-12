@@ -2716,7 +2716,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     pauseComposerPendingRef.current = true;
     try {
       const stopped = await abortRun();
-      if (!stopped) { setComposerPaused(false); return; }
+      if (!stopped) return;
       setComposerPaused(true);
       if (activeWorkspace?.id) {
         void saveWorkspaceState({
@@ -2729,7 +2729,6 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       pauseComposerPendingRef.current = false;
     }
   }, [abortRun, activeWorkspace?.id, currentSessionKey, inputRunActive, saveWorkspaceState]);
-
   const handleResumeComposerSession = useCallback(async () => {
     if (!composerPaused) return;
     setComposerPaused(false);
