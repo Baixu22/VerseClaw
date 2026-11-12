@@ -1,0 +1,13 @@
+[
+  {
+    "at": 1794503114215,
+    "event": "launched",
+    "pid": 45644
+  },
+  {
+    "at": 1794503144218,
+    "event": "error",
+    "message": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+    "stack": "electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at D:\\tmp\\windows-inline-closeout-20261112\\minimal-electron-launch.mjs:13:25"
+  }
+]

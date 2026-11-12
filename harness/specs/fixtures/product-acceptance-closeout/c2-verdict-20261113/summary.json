@@ -1,0 +1,89 @@
+{
+  "schema": "WindowsProductAcceptanceAttempt/v1",
+  "driven_by": "agent",
+  "actor": "codex/windows-inline-closeout",
+  "recordedAt": "2026-11-12T17:46:27.972680+00:00",
+  "candidate": {
+    "commit": "224199e45",
+    "matrixCommit": "2150b71b852290e82b0dceb19afaf1e9e4664d3f",
+    "codingCommit": "6c58b168eb6f8f0cf690418b0962f0439b838147",
+    "currentTree": "not-frozen-until-report-commit"
+  },
+  "matrix": {
+    "planned": 86,
+    "observed": 86,
+    "unexpected": 85,
+    "skipped": 1,
+    "errorCount": 1,
+    "passed": false,
+    "failureClasses": {
+      "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"": 67,
+      "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m": 1,
+      "AssertionError: Final acceptance needs a clean source candidate": 6,
+      "AssertionError: Acceptance requires a clean committed candidate": 8,
+      "Error: electronApplication.firstWindow: Target page, context or browser has been closed": 2,
+      "Error: {\"at\":\"2026-11-12T16:28:31.955Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"begin\",\"candidate\":{\"commit\":\"6eee064950273b393240a647702d6ee5652bae35\",\"tree\":\"9368072986699d208b3618efe4733bef89fdc437\",\"dirty\":true},\"scenario\":\"OPERATOR-ALL\",\"root\":\"D:\\\\tmp\\\\windows-inline-closeout-20261112\\\\matrix-seed\\\\test-results\\\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\\\rc10-operator\"}": 1,
+      "": 1
+    },
+    "sourceMutation": true,
+    "freshBuildProof": true,
+    "source": "matrix report and Playwright execution JSON"
+  },
+  "frozenStartupProbe": {
+    "candidate": "811bdab408bef0dacd894a1e1b5cc6421523fef2",
+    "passed": false,
+    "cases": 2,
+    "failure": "electron.launch timeout after inspector attached"
+  },
+  "coding": {
+    "runId": "25385b37-ab70-4375-b413-2d2af86848ba",
+    "candidate": {
+      "cleanAtPlan": true,
+      "commit": "6c58b168eb6f8f0cf690418b0962f0439b838147",
+      "ref": "codex/tf0782-maturity-final",
+      "tree": "b05a6ae4955dd6d1200bf01e9183357fcdfded6d"
+    },
+    "result": "NO-GO",
+    "engineeringAcceptedByAgent": false,
+    "verifierStarted": false,
+    "testCounts": {
+      "failed": 0,
+      "passed": 1756,
+      "skipped": 0,
+      "total": 1756,
+      "unavailableGates": 2
+    },
+    "failedGates": [
+      "provision-verseshell-resources",
+      "harness-validate",
+      "fast-typecheck",
+      "fast-unit-tests",
+      "agent-dev-audit",
+      "electron-e2e",
+      "release-baseline-validate",
+      "runtime-static-check",
+      "required-test-3",
+      "required-test-5"
+    ],
+    "rustRebuild": "failed os error 5",
+    "packageProfilesCurrentCandidate": false,
+    "releaseBaseline": "missing historical ref"
+  },
+  "conclusions": {
+    "functionalReadiness": "needs-fix",
+    "distributionReadiness": "not-proven",
+    "package": "not-proven-current-candidate",
+    "remainingShortfalls": [
+      "Electron startup",
+      "root full unit/typecheck",
+      "VerseShell rebuild",
+      "package evidence",
+      "independent verifier"
+    ],
+    "releaseApproved": false,
+    "productApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "realHumanEvidence": false
+}

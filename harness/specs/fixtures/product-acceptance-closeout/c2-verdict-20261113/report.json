@@ -1,0 +1,440 @@
+{
+  "schema": "ProductMatrixRun/v1",
+  "driven_by": "agent",
+  "actor": "product-matrix-runner",
+  "candidate": {
+    "commit": "2150b71b852290e82b0dceb19afaf1e9e4664d3f",
+    "tree": "e54b318b2b214299fa328e94b9522781bb18c4a1",
+    "ref": null,
+    "clean": true,
+    "status": ""
+  },
+  "candidateAfter": {
+    "commit": "6eee064950273b393240a647702d6ee5652bae35",
+    "tree": "9368072986699d208b3618efe4733bef89fdc437",
+    "ref": null,
+    "clean": false,
+    "status": "M harness/specs/tasks/product-acceptance-matrix.md\n M scripts/context-inline-spill-benefit-round5-verify.mjs\n?? scripts/context-inline-spill-benefit-round5-recompute.mjs"
+  },
+  "planSha256": "419aab7576f73b07744f65874efbe23a66350e897774d34082773a3a7d02df29",
+  "selectedSuiteResult": {
+    "passed": false,
+    "counts": {
+      "planned": 86,
+      "observed": 86,
+      "passed": 0,
+      "failed": 85,
+      "skipped": 1
+    },
+    "failures": [
+      "Playwright exit code: 1",
+      "Playwright reported collection or global errors",
+      "Test did not pass once without retries: channels-health-diagnostics.spec.ts > Channels health diagnostics > does not flash a stale gateway-not-running banner while status is running",
+      "Test did not pass once without retries: channels-health-diagnostics.spec.ts > Channels health diagnostics > shows degraded banner, restarts gateway, and copies diagnostics",
+      "Test did not pass once without retries: chat-new-session-date.spec.ts > Verse Claw chat session date grouping > lists every conversation newest-first, with no collapsible date buckets",
+      "Test did not pass once without retries: chat-new-session-date.spec.ts > Verse Claw chat session date grouping > new chat appears in Today only after the first message and lands without overshoot",
+      "Test did not pass once without retries: context-view-tool-surface.spec.ts > TF-0495 context view tool surface > keeps automatic discovery distinct from the explicit rollback control",
+      "Test did not pass once without retries: knowledge-ks04-chat-dcs.spec.ts > KS-04 Chat/DCS single consumption path > shows a visible reason toast when a selected knowledge reference is denied",
+      "Test did not pass once without retries: knowledge-lifecycle.spec.ts > Knowledge lifecycle update goes through Main wiki RPC and shows EffectReceipt",
+      "Test did not pass once without retries: knowledge-lifecycle.spec.ts > Knowledge lifecycle merge goes through Main wiki RPC and shows EffectReceipt",
+      "Test did not pass once without retries: knowledge-lifecycle.spec.ts > Knowledge lifecycle archive goes through Main wiki RPC and shows EffectReceipt",
+      "Test did not pass once without retries: knowledge-lifecycle.spec.ts > Knowledge lifecycle revoke goes through Main wiki RPC and shows EffectReceipt",
+      "Test did not pass once without retries: knowledge-lifecycle.spec.ts > Knowledge lifecycle delete goes through Main wiki RPC and shows EffectReceipt",
+      "Test did not pass once without retries: knowledge-lifecycle.spec.ts > Knowledge lifecycle restore goes through Main wiki RPC and shows EffectReceipt",
+      "Test did not pass once without retries: knowledge-review-queue.spec.ts > review selection prepares and approves only the corresponding proposal",
+      "Test did not pass once without retries: knowledge-review-queue.spec.ts > Knowledge editing and Chat round trip fit supported widths in light",
+      "Test did not pass once without retries: knowledge-review-queue.spec.ts > Knowledge editing and Chat round trip fit supported widths in dark",
+      "Test did not pass once without retries: knowledge-review-queue.spec.ts > KE-P1-3 Review Queue > confirm promotes a candidate and shows KE fields",
+      "Test did not pass once without retries: knowledge-review-queue.spec.ts > KE-P1-3 Review Queue > reject dismisses a candidate without persisting",
+      "Test did not pass once without retries: knowledge-review-queue.spec.ts > KE-P1-3 Review Queue > shows an empty state when there are no candidates",
+      "Test did not pass once without retries: knowledge-review-queue.spec.ts > KE-P1-3 Review Queue > flag off shows unavailable state and hides KE fields",
+      "Test did not pass once without retries: long-session-completion-continuation.spec.ts > consolidates deferred worker completion into one generation-fenced batch after restart",
+      "Test did not pass once without retries: long-session-continuity-context.spec.ts > real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback",
+      "Test did not pass once without retries: long-session-delegation-admission.spec.ts > delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts",
+      "Test did not pass once without retries: long-session-followup-scheduling.spec.ts > real Host/Gateway long-session follow-up is bound to one coordinator generation and cannot fire after it is invalidated",
+      "Test did not pass once without retries: memory-surface.spec.ts > TF-0498 unified Memory surface > exposes candidate review, export and tombstone deletion in one panel",
+      "Test did not pass once without retries: product-acceptance-moyu.spec.ts > TF-0581 real moyu product acceptance > live journey 1: cancel, fix, tests, restart readback and undo",
+      "Test did not pass once without retries: product-acceptance-moyu.spec.ts > TF-0581 real moyu product acceptance > live journey 2: cancel, fix, tests, restart readback and undo",
+      "Test did not pass once without retries: product-acceptance-moyu.spec.ts > TF-0581 real moyu product acceptance > live journey 3: cancel, fix, tests, restart readback and undo",
+      "Test did not pass once without retries: product-acceptance-moyu.spec.ts > TF-0581 real moyu product acceptance > readOnly policy denies a real edit without approval or file effect",
+      "Test did not pass once without retries: product-acceptance-moyu.spec.ts > TF-0581 real moyu product acceptance > the UI denies an actual outside-root exec approval and the next allowed edit succeeds",
+      "Test did not pass once without retries: product-acceptance-moyu.spec.ts > TF-0581 real moyu product acceptance > missing journal snapshot rejects undo and preserves the full edited file and metadata",
+      "Test did not pass once without retries: product-acceptance-space-bunny.spec.ts > space-bunny Responses acceptance > direct Responses text, SSE and ga_echo round trip",
+      "Test did not pass once without retries: product-acceptance-space-bunny.spec.ts > space-bunny Responses acceptance > cleanup failure still reclaims the owned Electron process and proxy",
+      "Test did not pass once without retries: product-acceptance-space-bunny.spec.ts > space-bunny Responses acceptance > product smoke 1: real read once, continuation and session isolation",
+      "Test did not pass once without retries: product-acceptance-space-bunny.spec.ts > space-bunny Responses acceptance > product smoke 2: real read once, continuation and session isolation",
+      "Test did not pass once without retries: product-acceptance-space-bunny.spec.ts > space-bunny Responses acceptance > product smoke 3: real read once, continuation and session isolation",
+      "Test did not pass once without retries: product-acceptance-space-bunny.spec.ts > space-bunny Responses acceptance > provider faults and cancellation fail visibly, then the next turn recovers",
+      "Test did not pass once without retries: product-acceptance-space-bunny.spec.ts > space-bunny Responses acceptance > cancellation repetition 2: the same session resumes without late effects",
+      "Test did not pass once without retries: product-acceptance-space-bunny.spec.ts > space-bunny Responses acceptance > cancellation repetition 3: the same session resumes without late effects",
+      "Test did not pass once without retries: product-matrix-delegation.spec.ts > a completed child resumes its idle parent with the actual result exactly once",
+      "Test did not pass once without retries: product-matrix-doctor.spec.ts > TF-0582 Settings Doctor real CLI > diagnoses a valid isolated profile through the real openclaw doctor CLI",
+      "Test did not pass once without retries: product-matrix-doctor.spec.ts > TF-0582 Settings Doctor real CLI > reports a reproducible CLI failure for corrupted isolated config",
+      "Test did not pass once without retries: product-matrix-knowledge.spec.ts > Matrix knowledge imports, indexes, searches, cites, and deletes through isolated Main and Gateway",
+      "Test did not pass once without retries: product-matrix-memory.spec.ts > TF-0582 product matrix memory acceptance > accepted workspace memory reaches the next real chat while rejected and cross-session memory stay out",
+      "Test did not pass once without retries: product-matrix-tools.spec.ts > TF-0582 VerseShell starts, reads input, exits, and cancels through the product owner",
+      "Test did not pass once without retries: product-matrix-tools.spec.ts > TF-0582 Tool Search expands a real schema and rejects absent or denied tools",
+      "Test did not pass once without retries: provider-lifecycle.spec.ts > Verse Claw provider lifecycle > recognizes an environment SecretRef without saving the API key",
+      "Test did not pass once without retries: provider-lifecycle.spec.ts > Verse Claw provider lifecycle > shows a saved provider and removes it cleanly after deletion",
+      "Test did not pass once without retries: provider-lifecycle.spec.ts > Verse Claw provider lifecycle > does not redisplay a deleted provider after relaunch",
+      "Test did not pass once without retries: provider-lifecycle.spec.ts > Verse Claw provider lifecycle > shows OpenAI OAuth and API key auth mode toggle in add-provider dialog",
+      "Test did not pass once without retries: provider-lifecycle.spec.ts > Verse Claw provider lifecycle > trims whitespace before validating and saving a custom provider key",
+      "Test did not pass once without retries: provider-lifecycle.spec.ts > Verse Claw provider lifecycle > edit form validates the new API key inline before saving (single button)",
+      "Test did not pass once without retries: provider-lifecycle.spec.ts > Verse Claw provider lifecycle > add dialog sends the custom-header auth format to validation and save",
+      "Test did not pass once without retries: provider-lifecycle.spec.ts > Verse Claw provider lifecycle > add dialog persists query auth and declared model capabilities",
+      "Test did not pass once without retries: rc10-operator-live.spec.ts > RC-10 real Cron, Inbox, IRC and recovery scenarios",
+      "Test did not pass once without retries: session-family-lifecycle.spec.ts > archiving, restoring and deleting a parent preserves child navigation, tasks and produced files",
+      "Test did not pass once without retries: session-task-scope-completion.spec.ts > a real isolated schedule admits its first write without replacing the project coordinator",
+      "Test did not pass once without retries: session-task-scope-completion.spec.ts > real Gateway keeps discussion empty, admits one write, and restores the same handoff child after restart",
+      "Test did not pass once without retries: session-task-scope-completion.spec.ts > explicit UI task selection executes the newly selected canonical contract",
+      "Test did not pass once without retries: session-worker-task-journey.spec.ts > a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (navigation)",
+      "Test did not pass once without retries: session-worker-task-journey.spec.ts > a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (controls)",
+      "Test did not pass once without retries: session-worker-task-journey.spec.ts > a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (isolation)",
+      "Test did not pass once without retries: session-worker-task-journey.spec.ts > the worker panel reads a real task acceptance after file verification and owner acceptance (en)",
+      "Test did not pass once without retries: session-worker-task-journey.spec.ts > the worker panel reads a real task acceptance after file verification and owner acceptance (zh)",
+      "Test did not pass once without retries: session-worker-task-journey.spec.ts > the worker panel reads a real task acceptance after file verification and owner acceptance (ja)",
+      "Test did not pass once without retries: session-worker-task-journey.spec.ts > the worker panel reads a real task acceptance after file verification and owner acceptance (ru)",
+      "Test did not pass once without retries: session-worker-task-journey.spec.ts > a child writes under the canonical transfer while its parent turn remains active",
+      "Test did not pass once without retries: settings-drawer.spec.ts > Settings theme selector > switches the live theme from the preview selector and keeps one roving tab stop",
+      "Test did not pass once without retries: settings-drawer.spec.ts > Windows full-page Settings > opens as a routed page and returns to the exact application route",
+      "Test did not pass once without retries: settings-drawer.spec.ts > Windows full-page Settings > supports direct links, nested Select portals, narrow geometry, and reduced motion",
+      "Test did not pass once without retries: setup-first-run-fp-p1-01.spec.ts > FP-P1-01 Setup provider/model verification (real Electron + real HTTP) > verified path plus all three failure classes in the Provider step",
+      "Test did not pass once without retries: setup-first-run-fp-p1-01.spec.ts > FP-P1-01 Setup provider/model verification (real Electron + real HTTP) > skip path: limited-mode Complete state and chat first-send interception",
+      "Test did not pass once without retries: sidebar-session-folders-archive.spec.ts > Sidebar session workgroups and archive > pins the project header instead of repeating it per row, and supports pinned, unread, priority, and active sorting",
+      "Test did not pass once without retries: sidebar-session-folders-archive.spec.ts > Sidebar session workgroups and archive > keeps workgroups inside the project and renders time sorting as a direct list",
+      "Test did not pass once without retries: sidebar-session-folders-archive.spec.ts > Sidebar session workgroups and archive > creates a workgroup, moves a running session into it, searches it, then deletes the workgroup",
+      "Test did not pass once without retries: sidebar-session-folders-archive.spec.ts > Sidebar session workgroups and archive > delete dialog offers archive and permanent delete; archive modal restores sessions",
+      "Test did not pass once without retries: sidebar-session-folders-archive.spec.ts > Sidebar session workgroups and archive > drags a conversation after another to auto-group, rename, and remove the group",
+      "Test did not pass once without retries: sidebar-session-folders-archive.spec.ts > Sidebar session workgroups and archive > permanent delete from the archived settings page removes the entry",
+      "Test did not pass once without retries: skills-packs.spec.ts > Skills feature plugins > shows managed packs and routes install and enable actions through host-api",
+      "Test did not pass once without retries: support-bundle-fp-p1-06.spec.ts > FP-P1-06 support bundle export (real Electron + real child) > one-click export is sanitized, child-mirrored, and self-reporting",
+      "Test did not pass once without retries: versebrowser-host-invocation.spec.ts > real embedded browser preserves actions, denials and unsupported outcomes",
+      "Test did not pass once without retries: versegit-candidate-apply.spec.ts > verified candidate host apply > runs completion, candidate verification, permission gate and journaled apply in order",
+      "Test did not pass once without retries: versegit-runtime-bindings.spec.ts > VerseGit runtime binding lifecycle > runs two real worktree workers through the product orchestrator and typed Main bridge",
+      "Test did not pass once without retries: workspace-context-settings.spec.ts > Workspace Context user settings > exposes one default-on profile and keeps low-level flags out of General settings",
+      "Test did not pass once without retries: workspace-git-mcp-runtime.spec.ts > Workspace Git MCP runtime > routes built-in clawx-git tools through the real Main Git service",
+      "Test did not pass once without retries: workspace-git-mcp-runtime.spec.ts > Workspace Git MCP runtime > applyPatch reports applied and conflicted paths against a real repo",
+      "Test did not pass once without retries: workspace-git-mcp-runtime.spec.ts > Workspace Git MCP runtime > diffToBase derives a base from a non-origin remote with no declared default",
+      "Candidate changed during execution",
+      "Candidate changed during build"
+    ]
+  },
+  "executionAttempted": true,
+  "nodeAcceptance": "incomplete",
+  "buildDigest": "08d1d73f5ba1f033aa074049d56d5bdc01dcb28734783c0b2f41d74ef4920bf1",
+  "inputDigest": "57e217918aaa7754dda2535a482ab877377df86645048bda0ce1917d26f1ff59",
+  "freshBuildProofSha256": "9535ef4fd4e728230235feab9b4a67f6ff087cc6a5f122268b85c4a35c144717",
+  "reusedBuildProof": null,
+  "commands": [
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\ClawX\\node_modules\\.pnpm\\@playwright+test@1.59.0\\node_modules\\@playwright\\test\\cli.js",
+        "test",
+        "tests/e2e/channels-health-diagnostics.spec.ts",
+        "tests/e2e/chat-new-session-date.spec.ts",
+        "tests/e2e/context-view-tool-surface.spec.ts",
+        "tests/e2e/knowledge-ks04-chat-dcs.spec.ts",
+        "tests/e2e/knowledge-lifecycle.spec.ts",
+        "tests/e2e/knowledge-review-queue.spec.ts",
+        "tests/e2e/long-session-completion-continuation.spec.ts",
+        "tests/e2e/long-session-continuity-context.spec.ts",
+        "tests/e2e/long-session-delegation-admission.spec.ts",
+        "tests/e2e/long-session-followup-scheduling.spec.ts",
+        "tests/e2e/memory-surface.spec.ts",
+        "tests/e2e/product-acceptance-moyu.spec.ts",
+        "tests/e2e/product-acceptance-space-bunny.spec.ts",
+        "tests/e2e/product-matrix-delegation.spec.ts",
+        "tests/e2e/product-matrix-doctor.spec.ts",
+        "tests/e2e/product-matrix-knowledge.spec.ts",
+        "tests/e2e/product-matrix-memory.spec.ts",
+        "tests/e2e/product-matrix-tools.spec.ts",
+        "tests/e2e/provider-lifecycle.spec.ts",
+        "tests/e2e/rc10-operator-live.spec.ts",
+        "tests/e2e/session-family-lifecycle.spec.ts",
+        "tests/e2e/session-task-scope-completion.spec.ts",
+        "tests/e2e/session-worker-task-journey.spec.ts",
+        "tests/e2e/settings-drawer.spec.ts",
+        "tests/e2e/setup-first-run-fp-p1-01.spec.ts",
+        "tests/e2e/sidebar-session-folders-archive.spec.ts",
+        "tests/e2e/skills-packs.spec.ts",
+        "tests/e2e/support-bundle-fp-p1-06.spec.ts",
+        "tests/e2e/versebrowser-host-invocation.spec.ts",
+        "tests/e2e/versegit-candidate-apply.spec.ts",
+        "tests/e2e/versegit-runtime-bindings.spec.ts",
+        "tests/e2e/workspace-context-settings.spec.ts",
+        "tests/e2e/workspace-git-mcp-runtime.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=D:\\tmp\\windows-inline-closeout-20261112\\matrix-seed\\test-results",
+        "--list"
+      ],
+      "startedAt": "2026-11-12T15:54:31.595Z",
+      "finishedAt": "2026-11-12T15:54:35.766Z",
+      "timeoutMs": 120000,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "artifacts": [
+        {
+          "path": "discovery.stdout.txt",
+          "sha256": "f03f89227c7facdf747c19afa9c25293c270f91867f00fd93cb2fcbd8e13944b"
+        },
+        {
+          "path": "discovery.stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "discovery.json",
+          "sha256": "c02652718e4b5093001d914ffa8030b4c9b4b08ad411bfd167d7ca88964ef100"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm run build:vite"
+      ],
+      "startedAt": "2026-11-12T15:54:36.432Z",
+      "finishedAt": "2026-11-12T15:56:26.076Z",
+      "timeoutMs": 3600000,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "artifacts": [
+        {
+          "path": "vite-build.stdout.txt",
+          "sha256": "6c0f2ed28808c0124687156f56d16f3121364e59ba9fe26f45634f9d53be8bf7"
+        },
+        {
+          "path": "vite-build.stderr.txt",
+          "sha256": "b71f105b7893335f9d37fe293234d79b4e9a2d2171f146b7958b1c9dba8b2821"
+        }
+      ],
+      "command": [
+        "pnpm",
+        "run",
+        "build:vite"
+      ],
+      "candidate": {
+        "commit": "2150b71b852290e82b0dceb19afaf1e9e4664d3f",
+        "tree": "e54b318b2b214299fa328e94b9522781bb18c4a1",
+        "dirty": false
+      }
+    },
+    {
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm run build:runtime"
+      ],
+      "startedAt": "2026-11-12T15:56:26.707Z",
+      "finishedAt": "2026-11-12T15:57:26.498Z",
+      "timeoutMs": 3600000,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "artifacts": [
+        {
+          "path": "runtime-build.stdout.txt",
+          "sha256": "ff6622bafb4e2f0a1e72e602fb5c65122b84537479c0d3aca209c111573342ca"
+        },
+        {
+          "path": "runtime-build.stderr.txt",
+          "sha256": "26e9b49fe7f10941a705cf44ac00c0ea5aaad7ec8d6ee9d7bd40193773606a83"
+        }
+      ],
+      "command": [
+        "pnpm",
+        "run",
+        "build:runtime"
+      ],
+      "candidate": {
+        "commit": "2150b71b852290e82b0dceb19afaf1e9e4664d3f",
+        "tree": "e54b318b2b214299fa328e94b9522781bb18c4a1",
+        "dirty": false
+      }
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\ClawX\\node_modules\\.pnpm\\@playwright+test@1.59.0\\node_modules\\@playwright\\test\\cli.js",
+        "test",
+        "tests/e2e/channels-health-diagnostics.spec.ts",
+        "tests/e2e/chat-new-session-date.spec.ts",
+        "tests/e2e/context-view-tool-surface.spec.ts",
+        "tests/e2e/knowledge-ks04-chat-dcs.spec.ts",
+        "tests/e2e/knowledge-lifecycle.spec.ts",
+        "tests/e2e/knowledge-review-queue.spec.ts",
+        "tests/e2e/long-session-completion-continuation.spec.ts",
+        "tests/e2e/long-session-continuity-context.spec.ts",
+        "tests/e2e/long-session-delegation-admission.spec.ts",
+        "tests/e2e/long-session-followup-scheduling.spec.ts",
+        "tests/e2e/memory-surface.spec.ts",
+        "tests/e2e/product-acceptance-moyu.spec.ts",
+        "tests/e2e/product-acceptance-space-bunny.spec.ts",
+        "tests/e2e/product-matrix-delegation.spec.ts",
+        "tests/e2e/product-matrix-doctor.spec.ts",
+        "tests/e2e/product-matrix-knowledge.spec.ts",
+        "tests/e2e/product-matrix-memory.spec.ts",
+        "tests/e2e/product-matrix-tools.spec.ts",
+        "tests/e2e/provider-lifecycle.spec.ts",
+        "tests/e2e/rc10-operator-live.spec.ts",
+        "tests/e2e/session-family-lifecycle.spec.ts",
+        "tests/e2e/session-task-scope-completion.spec.ts",
+        "tests/e2e/session-worker-task-journey.spec.ts",
+        "tests/e2e/settings-drawer.spec.ts",
+        "tests/e2e/setup-first-run-fp-p1-01.spec.ts",
+        "tests/e2e/sidebar-session-folders-archive.spec.ts",
+        "tests/e2e/skills-packs.spec.ts",
+        "tests/e2e/support-bundle-fp-p1-06.spec.ts",
+        "tests/e2e/versebrowser-host-invocation.spec.ts",
+        "tests/e2e/versegit-candidate-apply.spec.ts",
+        "tests/e2e/versegit-runtime-bindings.spec.ts",
+        "tests/e2e/workspace-context-settings.spec.ts",
+        "tests/e2e/workspace-git-mcp-runtime.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=D:\\tmp\\windows-inline-closeout-20261112\\matrix-seed\\test-results"
+      ],
+      "startedAt": "2026-11-12T15:57:36.858Z",
+      "finishedAt": "2026-11-12T16:51:35.741Z",
+      "timeoutMs": 55980000,
+      "exitCode": 1,
+      "signal": null,
+      "error": null,
+      "artifacts": [
+        {
+          "path": "execution.stdout.txt",
+          "sha256": "a6df80f35f286a3dc4697a7962a524fa6a0acf62dfd01b3a4e6c19bf2fab194b"
+        },
+        {
+          "path": "execution.stderr.txt",
+          "sha256": "eaf91a9aa4147d98a1dace02f94e962f4f5190e4a7464ef002f4e845e4327a56"
+        },
+        {
+          "path": "execution.json",
+          "sha256": "84b270727c3598a7c84df64ba4ec3ebb16cac2636278fd2133e1988015661407"
+        }
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "id": "provider",
+      "selected": true,
+      "suiteStatus": "failed",
+      "evidenceLayers": [
+        "real-electron-and-http",
+        "live-provider",
+        "mock-ui"
+      ],
+      "remainingChecks": [
+        "三次 live smoke 需当前候选的 fresh-build proof 和既有私有环境资源"
+      ]
+    },
+    {
+      "id": "sessions",
+      "selected": true,
+      "suiteStatus": "failed",
+      "evidenceLayers": [
+        "real-gateway-scripted-model",
+        "mock-ui"
+      ],
+      "remainingChecks": []
+    },
+    {
+      "id": "coding",
+      "selected": true,
+      "suiteStatus": "failed",
+      "evidenceLayers": [
+        "real-gateway-live-model",
+        "real-owner",
+        "mock-ui"
+      ],
+      "remainingChecks": [
+        "使用经过筛选的 moyu 临时副本及既有授权 provider；普通取消后续接的三次证据单独回读"
+      ]
+    },
+    {
+      "id": "knowledge",
+      "selected": true,
+      "suiteStatus": "failed",
+      "evidenceLayers": [
+        "mock-ui-and-gateway-seam",
+        "real-gateway-explicit-memory-wiki-local-vault"
+      ],
+      "remainingChecks": []
+    },
+    {
+      "id": "memory",
+      "selected": true,
+      "suiteStatus": "failed",
+      "evidenceLayers": [
+        "real-gateway-scripted-model",
+        "mock-ui",
+        "explicit-role-memory-pilot"
+      ],
+      "remainingChecks": []
+    },
+    {
+      "id": "delegation",
+      "selected": true,
+      "suiteStatus": "failed",
+      "evidenceLayers": [
+        "real-gateway-scripted-model"
+      ],
+      "remainingChecks": []
+    },
+    {
+      "id": "channels",
+      "selected": true,
+      "suiteStatus": "failed",
+      "evidenceLayers": [
+        "development-real-gateway-and-loopback-transport",
+        "real-gateway-scripted-model"
+      ],
+      "remainingChecks": []
+    },
+    {
+      "id": "tools",
+      "selected": true,
+      "suiteStatus": "failed",
+      "evidenceLayers": [
+        "real-embedded-browser",
+        "real-owner-and-binary",
+        "mock-ui",
+        "explicit-verseshell-and-tool-search-config"
+      ],
+      "remainingChecks": []
+    },
+    {
+      "id": "settings",
+      "selected": true,
+      "suiteStatus": "failed",
+      "evidenceLayers": [
+        "real-electron-and-gateway-child",
+        "mock-ui"
+      ],
+      "remainingChecks": [
+        "Doctor 超时路径尚未执行；当前核心负例覆盖损坏配置"
+      ]
+    }
+  ],
+  "remainingAcceptance": [
+    "普通 Chat 最终回复、moyu 编码/撤销、取消后续接各三次同候选 live 结果",
+    "至少 20 分钟 agent 驱动探索，记录动作、截图、console、最终状态和问题 owner",
+    "冻结 Judge rubric 并以正确、错误、无法判定样例校准；文件/DB/状态 oracle 优先",
+    "逐项处理当前 P0/P1，并回读全部原始结果、来源绑定和 SHA256",
+    "provider: 三次 live smoke 需当前候选的 fresh-build proof 和既有私有环境资源",
+    "coding: 使用经过筛选的 moyu 临时副本及既有授权 provider；普通取消后续接的三次证据单独回读",
+    "settings: Doctor 超时路径尚未执行；当前核心负例覆盖损坏配置"
+  ]
+}

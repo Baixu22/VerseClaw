@@ -1,0 +1,81 @@
+{
+  "schema": "TF0580FreshBuild/v1",
+  "candidate": {
+    "commit": "2150b71b852290e82b0dceb19afaf1e9e4664d3f",
+    "tree": "e54b318b2b214299fa328e94b9522781bb18c4a1",
+    "dirty": false
+  },
+  "inputDigest": "57e217918aaa7754dda2535a482ab877377df86645048bda0ce1917d26f1ff59",
+  "buildCommands": [
+    {
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm run build:vite"
+      ],
+      "startedAt": "2026-11-12T15:54:36.432Z",
+      "finishedAt": "2026-11-12T15:56:26.076Z",
+      "timeoutMs": 3600000,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "artifacts": [
+        {
+          "path": "vite-build.stdout.txt",
+          "sha256": "6c0f2ed28808c0124687156f56d16f3121364e59ba9fe26f45634f9d53be8bf7"
+        },
+        {
+          "path": "vite-build.stderr.txt",
+          "sha256": "b71f105b7893335f9d37fe293234d79b4e9a2d2171f146b7958b1c9dba8b2821"
+        }
+      ],
+      "command": [
+        "pnpm",
+        "run",
+        "build:vite"
+      ],
+      "candidate": {
+        "commit": "2150b71b852290e82b0dceb19afaf1e9e4664d3f",
+        "tree": "e54b318b2b214299fa328e94b9522781bb18c4a1",
+        "dirty": false
+      }
+    },
+    {
+      "argv": [
+        "cmd.exe",
+        "/d",
+        "/s",
+        "/c",
+        "pnpm run build:runtime"
+      ],
+      "startedAt": "2026-11-12T15:56:26.707Z",
+      "finishedAt": "2026-11-12T15:57:26.498Z",
+      "timeoutMs": 3600000,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "artifacts": [
+        {
+          "path": "runtime-build.stdout.txt",
+          "sha256": "ff6622bafb4e2f0a1e72e602fb5c65122b84537479c0d3aca209c111573342ca"
+        },
+        {
+          "path": "runtime-build.stderr.txt",
+          "sha256": "26e9b49fe7f10941a705cf44ac00c0ea5aaad7ec8d6ee9d7bd40193773606a83"
+        }
+      ],
+      "command": [
+        "pnpm",
+        "run",
+        "build:runtime"
+      ],
+      "candidate": {
+        "commit": "2150b71b852290e82b0dceb19afaf1e9e4664d3f",
+        "tree": "e54b318b2b214299fa328e94b9522781bb18c4a1",
+        "dirty": false
+      }
+    }
+  ]
+}

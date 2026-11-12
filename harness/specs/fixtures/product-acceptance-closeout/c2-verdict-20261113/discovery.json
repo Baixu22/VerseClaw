@@ -1,0 +1,2238 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/windows-inline-closeout/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {},
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/windows-inline-closeout-20261112/matrix-seed/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/windows-inline-closeout/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "channels-health-diagnostics.spec.ts",
+      "file": "channels-health-diagnostics.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Channels health diagnostics",
+          "file": "channels-health-diagnostics.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "does not flash a stale gateway-not-running banner while status is running",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e6c28bd82e45aa6593c1-b957853f3dddc3c62b48",
+              "file": "channels-health-diagnostics.spec.ts",
+              "line": 4,
+              "column": 7
+            },
+            {
+              "title": "shows degraded banner, restarts gateway, and copies diagnostics",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e6c28bd82e45aa6593c1-2c74fb0fc2a88eea5a3b",
+              "file": "channels-health-diagnostics.spec.ts",
+              "line": 62,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "chat-new-session-date.spec.ts",
+      "file": "chat-new-session-date.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw chat session date grouping",
+          "file": "chat-new-session-date.spec.ts",
+          "line": 19,
+          "column": 6,
+          "specs": [
+            {
+              "title": "lists every conversation newest-first, with no collapsible date buckets",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "8e49a1e2e72d97131c0d-f20917549a0e8cc5ef26",
+              "file": "chat-new-session-date.spec.ts",
+              "line": 20,
+              "column": 7
+            },
+            {
+              "title": "new chat appears in Today only after the first message and lands without overshoot",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "8e49a1e2e72d97131c0d-5d023906b90317654e9d",
+              "file": "chat-new-session-date.spec.ts",
+              "line": 132,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "context-view-tool-surface.spec.ts",
+      "file": "context-view-tool-surface.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "TF-0495 context view tool surface",
+          "file": "context-view-tool-surface.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "keeps automatic discovery distinct from the explicit rollback control",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "60da66c93d605dae1cc3-6cb333341bd78f9fa1a3",
+              "file": "context-view-tool-surface.spec.ts",
+              "line": 4,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "knowledge-ks04-chat-dcs.spec.ts",
+      "file": "knowledge-ks04-chat-dcs.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "KS-04 Chat/DCS single consumption path",
+          "file": "knowledge-ks04-chat-dcs.spec.ts",
+          "line": 69,
+          "column": 6,
+          "specs": [
+            {
+              "title": "shows a visible reason toast when a selected knowledge reference is denied",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c271816ce19ec840aa2f-1a5e2f9a6b3bee6be05f",
+              "file": "knowledge-ks04-chat-dcs.spec.ts",
+              "line": 70,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "knowledge-lifecycle.spec.ts",
+      "file": "knowledge-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Knowledge lifecycle update goes through Main wiki RPC and shows EffectReceipt",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "373c3d2faef32372cadf-3920642aa2eaefeed9e4",
+          "file": "knowledge-lifecycle.spec.ts",
+          "line": 55,
+          "column": 7
+        },
+        {
+          "title": "Knowledge lifecycle merge goes through Main wiki RPC and shows EffectReceipt",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "373c3d2faef32372cadf-2d1c761a19afb10b2c7c",
+          "file": "knowledge-lifecycle.spec.ts",
+          "line": 55,
+          "column": 7
+        },
+        {
+          "title": "Knowledge lifecycle archive goes through Main wiki RPC and shows EffectReceipt",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "373c3d2faef32372cadf-3097077e5299c4a2c2ef",
+          "file": "knowledge-lifecycle.spec.ts",
+          "line": 55,
+          "column": 7
+        },
+        {
+          "title": "Knowledge lifecycle revoke goes through Main wiki RPC and shows EffectReceipt",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "373c3d2faef32372cadf-7a89aa48a604280d4f0d",
+          "file": "knowledge-lifecycle.spec.ts",
+          "line": 55,
+          "column": 7
+        },
+        {
+          "title": "Knowledge lifecycle delete goes through Main wiki RPC and shows EffectReceipt",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "373c3d2faef32372cadf-d277fe222eac6ed0b058",
+          "file": "knowledge-lifecycle.spec.ts",
+          "line": 55,
+          "column": 7
+        },
+        {
+          "title": "Knowledge lifecycle restore goes through Main wiki RPC and shows EffectReceipt",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "373c3d2faef32372cadf-c6d05cde4d2b184703a2",
+          "file": "knowledge-lifecycle.spec.ts",
+          "line": 55,
+          "column": 7
+        }
+      ]
+    },
+    {
+      "title": "knowledge-review-queue.spec.ts",
+      "file": "knowledge-review-queue.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "review selection prepares and approves only the corresponding proposal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "e781d26563aaf58c679b-2a1ce1f58d63cba5c0b1",
+          "file": "knowledge-review-queue.spec.ts",
+          "line": 202,
+          "column": 5
+        },
+        {
+          "title": "Knowledge editing and Chat round trip fit supported widths in light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "e781d26563aaf58c679b-eda04db64e8bfb6b140b",
+          "file": "knowledge-review-queue.spec.ts",
+          "line": 267,
+          "column": 7
+        },
+        {
+          "title": "Knowledge editing and Chat round trip fit supported widths in dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "e781d26563aaf58c679b-aa0f4225962a7f16b1dd",
+          "file": "knowledge-review-queue.spec.ts",
+          "line": 267,
+          "column": 7
+        }
+      ],
+      "suites": [
+        {
+          "title": "KE-P1-3 Review Queue",
+          "file": "knowledge-review-queue.spec.ts",
+          "line": 70,
+          "column": 6,
+          "specs": [
+            {
+              "title": "confirm promotes a candidate and shows KE fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e781d26563aaf58c679b-c52ccffda63fb53899d2",
+              "file": "knowledge-review-queue.spec.ts",
+              "line": 71,
+              "column": 7
+            },
+            {
+              "title": "reject dismisses a candidate without persisting",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e781d26563aaf58c679b-716723055c1b663a4b42",
+              "file": "knowledge-review-queue.spec.ts",
+              "line": 103,
+              "column": 7
+            },
+            {
+              "title": "shows an empty state when there are no candidates",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e781d26563aaf58c679b-73086d4e097b7e77bbb6",
+              "file": "knowledge-review-queue.spec.ts",
+              "line": 132,
+              "column": 7
+            },
+            {
+              "title": "flag off shows unavailable state and hides KE fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e781d26563aaf58c679b-4439ac8f0014e468263f",
+              "file": "knowledge-review-queue.spec.ts",
+              "line": 152,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "long-session-completion-continuation.spec.ts",
+      "file": "long-session-completion-continuation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "consolidates deferred worker completion into one generation-fenced batch after restart",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "a27601a5486df8def39c-165b32d26fe1723a96fa",
+          "file": "long-session-completion-continuation.spec.ts",
+          "line": 153,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "long-session-continuity-context.spec.ts",
+      "file": "long-session-continuity-context.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "65da97443d18bad3cbc4-ddcf5c9e94569314a2d2",
+          "file": "long-session-continuity-context.spec.ts",
+          "line": 85,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "long-session-delegation-admission.spec.ts",
+      "file": "long-session-delegation-admission.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "b51d4b2cd8b1f54e31be-104b92a0e4fa4b33e829",
+          "file": "long-session-delegation-admission.spec.ts",
+          "line": 121,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "long-session-followup-scheduling.spec.ts",
+      "file": "long-session-followup-scheduling.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real Host/Gateway long-session follow-up is bound to one coordinator generation and cannot fire after it is invalidated",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "7dae58932291903060bd-f8452916502b604b2665",
+          "file": "long-session-followup-scheduling.spec.ts",
+          "line": 113,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "memory-surface.spec.ts",
+      "file": "memory-surface.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "TF-0498 unified Memory surface",
+          "file": "memory-surface.spec.ts",
+          "line": 177,
+          "column": 6,
+          "specs": [
+            {
+              "title": "exposes candidate review, export and tombstone deletion in one panel",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3588834ea4b0dcb4ef31-39cc4dafc32d09377384",
+              "file": "memory-surface.spec.ts",
+              "line": 178,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product-acceptance-moyu.spec.ts",
+      "file": "product-acceptance-moyu.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "TF-0581 real moyu product acceptance",
+          "file": "product-acceptance-moyu.spec.ts",
+          "line": 182,
+          "column": 6,
+          "specs": [
+            {
+              "title": "live journey 1: cancel, fix, tests, restart readback and undo",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 720000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a997ce86f64b0cbb74af-bfe03b43547d4951bbbf",
+              "file": "product-acceptance-moyu.spec.ts",
+              "line": 185,
+              "column": 9
+            },
+            {
+              "title": "live journey 2: cancel, fix, tests, restart readback and undo",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 720000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a997ce86f64b0cbb74af-ba4b3ca55750cae5a7f5",
+              "file": "product-acceptance-moyu.spec.ts",
+              "line": 185,
+              "column": 9
+            },
+            {
+              "title": "live journey 3: cancel, fix, tests, restart readback and undo",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 720000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a997ce86f64b0cbb74af-51e0306e985461f18d24",
+              "file": "product-acceptance-moyu.spec.ts",
+              "line": 185,
+              "column": 9
+            },
+            {
+              "title": "readOnly policy denies a real edit without approval or file effect",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 720000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a997ce86f64b0cbb74af-a9d7a18f428eb9eb8a9e",
+              "file": "product-acceptance-moyu.spec.ts",
+              "line": 319,
+              "column": 7
+            },
+            {
+              "title": "the UI denies an actual outside-root exec approval and the next allowed edit succeeds",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 720000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a997ce86f64b0cbb74af-1401865bf17366b22d68",
+              "file": "product-acceptance-moyu.spec.ts",
+              "line": 347,
+              "column": 7
+            },
+            {
+              "title": "missing journal snapshot rejects undo and preserves the full edited file and metadata",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 720000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a997ce86f64b0cbb74af-ebcaf29c92bf10cf0ed5",
+              "file": "product-acceptance-moyu.spec.ts",
+              "line": 384,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product-acceptance-space-bunny.spec.ts",
+      "file": "product-acceptance-space-bunny.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "space-bunny Responses acceptance",
+          "file": "product-acceptance-space-bunny.spec.ts",
+          "line": 294,
+          "column": 6,
+          "specs": [
+            {
+              "title": "direct Responses text, SSE and ga_echo round trip",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 720000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2840a70135ed13a92527-a6cce9a3bbf63df9cef9",
+              "file": "product-acceptance-space-bunny.spec.ts",
+              "line": 297,
+              "column": 7
+            },
+            {
+              "title": "cleanup failure still reclaims the owned Electron process and proxy",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 720000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2840a70135ed13a92527-fe299f7cfb337e094e02",
+              "file": "product-acceptance-space-bunny.spec.ts",
+              "line": 304,
+              "column": 7
+            },
+            {
+              "title": "product smoke 1: real read once, continuation and session isolation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 720000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2840a70135ed13a92527-0f7187ded9644d67cbbb",
+              "file": "product-acceptance-space-bunny.spec.ts",
+              "line": 326,
+              "column": 9
+            },
+            {
+              "title": "product smoke 2: real read once, continuation and session isolation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 720000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2840a70135ed13a92527-0aa2a3a2f1c0a5b95cf3",
+              "file": "product-acceptance-space-bunny.spec.ts",
+              "line": 326,
+              "column": 9
+            },
+            {
+              "title": "product smoke 3: real read once, continuation and session isolation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 720000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2840a70135ed13a92527-2e59f981f19e4186fd76",
+              "file": "product-acceptance-space-bunny.spec.ts",
+              "line": 326,
+              "column": 9
+            },
+            {
+              "title": "provider faults and cancellation fail visibly, then the next turn recovers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 720000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2840a70135ed13a92527-c2b26e37ba255abe6cd1",
+              "file": "product-acceptance-space-bunny.spec.ts",
+              "line": 414,
+              "column": 39
+            },
+            {
+              "title": "cancellation repetition 2: the same session resumes without late effects",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 720000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2840a70135ed13a92527-40c175fa2408af017051",
+              "file": "product-acceptance-space-bunny.spec.ts",
+              "line": 414,
+              "column": 39
+            },
+            {
+              "title": "cancellation repetition 3: the same session resumes without late effects",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 720000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2840a70135ed13a92527-c8ea4c661db0df3de5a8",
+              "file": "product-acceptance-space-bunny.spec.ts",
+              "line": 414,
+              "column": 39
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product-matrix-delegation.spec.ts",
+      "file": "product-matrix-delegation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a completed child resumes its idle parent with the actual result exactly once",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "034e475734d056c085f8-6597cc8fe5ec88566c7e",
+          "file": "product-matrix-delegation.spec.ts",
+          "line": 15,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "product-matrix-doctor.spec.ts",
+      "file": "product-matrix-doctor.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "TF-0582 Settings Doctor real CLI",
+          "file": "product-matrix-doctor.spec.ts",
+          "line": 199,
+          "column": 6,
+          "specs": [
+            {
+              "title": "diagnoses a valid isolated profile through the real openclaw doctor CLI",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "36bcf5f1e3907a9e10c4-9c04728a1250a71901d4",
+              "file": "product-matrix-doctor.spec.ts",
+              "line": 200,
+              "column": 7
+            },
+            {
+              "title": "reports a reproducible CLI failure for corrupted isolated config",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "36bcf5f1e3907a9e10c4-27f966fda6e2b99a5d0c",
+              "file": "product-matrix-doctor.spec.ts",
+              "line": 254,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product-matrix-knowledge.spec.ts",
+      "file": "product-matrix-knowledge.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Matrix knowledge imports, indexes, searches, cites, and deletes through isolated Main and Gateway",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "5c162ada8cd4757d3ffa-0ad541125256cd89111b",
+          "file": "product-matrix-knowledge.spec.ts",
+          "line": 101,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "product-matrix-memory.spec.ts",
+      "file": "product-matrix-memory.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "TF-0582 product matrix memory acceptance",
+          "file": "product-matrix-memory.spec.ts",
+          "line": 129,
+          "column": 6,
+          "specs": [
+            {
+              "title": "accepted workspace memory reaches the next real chat while rejected and cross-session memory stay out",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d9dc7511fcb19120c101-bc2fb46da2ccfc1a30b7",
+              "file": "product-matrix-memory.spec.ts",
+              "line": 130,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product-matrix-tools.spec.ts",
+      "file": "product-matrix-tools.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "TF-0582 VerseShell starts, reads input, exits, and cancels through the product owner",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "5c083a2afd4a01d40f93-09772683d26696dff545",
+          "file": "product-matrix-tools.spec.ts",
+          "line": 137,
+          "column": 5
+        },
+        {
+          "title": "TF-0582 Tool Search expands a real schema and rejects absent or denied tools",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "5c083a2afd4a01d40f93-f0396f862b2ae1a29cba",
+          "file": "product-matrix-tools.spec.ts",
+          "line": 481,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "provider-lifecycle.spec.ts",
+      "file": "provider-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Verse Claw provider lifecycle",
+          "file": "provider-lifecycle.spec.ts",
+          "line": 34,
+          "column": 6,
+          "specs": [
+            {
+              "title": "recognizes an environment SecretRef without saving the API key",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "18bbbb0b364bfa8f1899-40023a0d704d5ad7969e",
+              "file": "provider-lifecycle.spec.ts",
+              "line": 35,
+              "column": 7
+            },
+            {
+              "title": "shows a saved provider and removes it cleanly after deletion",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "18bbbb0b364bfa8f1899-ab56f3607b21ba068702",
+              "file": "provider-lifecycle.spec.ts",
+              "line": 74,
+              "column": 7
+            },
+            {
+              "title": "does not redisplay a deleted provider after relaunch",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "18bbbb0b364bfa8f1899-213b0a4fe515ac247b7c",
+              "file": "provider-lifecycle.spec.ts",
+              "line": 90,
+              "column": 7
+            },
+            {
+              "title": "shows OpenAI OAuth and API key auth mode toggle in add-provider dialog",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "18bbbb0b364bfa8f1899-694bb57201d7983b0e17",
+              "file": "provider-lifecycle.spec.ts",
+              "line": 120,
+              "column": 7
+            },
+            {
+              "title": "trims whitespace before validating and saving a custom provider key",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "18bbbb0b364bfa8f1899-dd854f94b7e5f87a386e",
+              "file": "provider-lifecycle.spec.ts",
+              "line": 139,
+              "column": 7
+            },
+            {
+              "title": "edit form validates the new API key inline before saving (single button)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "18bbbb0b364bfa8f1899-8d5fdfda59dcd23989e3",
+              "file": "provider-lifecycle.spec.ts",
+              "line": 233,
+              "column": 7
+            },
+            {
+              "title": "add dialog sends the custom-header auth format to validation and save",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "18bbbb0b364bfa8f1899-29edd052b2a3df75ac2f",
+              "file": "provider-lifecycle.spec.ts",
+              "line": 417,
+              "column": 7
+            },
+            {
+              "title": "add dialog persists query auth and declared model capabilities",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "18bbbb0b364bfa8f1899-268eaf0fbba74cf36efc",
+              "file": "provider-lifecycle.spec.ts",
+              "line": 447,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "rc10-operator-live.spec.ts",
+      "file": "rc10-operator-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "RC-10 real Cron, Inbox, IRC and recovery scenarios",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8d0d17bb2e8ae8c0a0d1-d5a9e5cb2aacad5c902f",
+          "file": "rc10-operator-live.spec.ts",
+          "line": 6,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "session-family-lifecycle.spec.ts",
+      "file": "session-family-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "archiving, restoring and deleting a parent preserves child navigation, tasks and produced files",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "5eb0442ece741ce6fc4e-d92e69437fd9ede579dc",
+          "file": "session-family-lifecycle.spec.ts",
+          "line": 8,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "session-task-scope-completion.spec.ts",
+      "file": "session-task-scope-completion.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a real isolated schedule admits its first write without replacing the project coordinator",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "0de84b390adbaeb1a792-488e9109ad4f00285dfa",
+          "file": "session-task-scope-completion.spec.ts",
+          "line": 14,
+          "column": 5
+        },
+        {
+          "title": "real Gateway keeps discussion empty, admits one write, and restores the same handoff child after restart",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "0de84b390adbaeb1a792-a546e14244bc50a92d24",
+          "file": "session-task-scope-completion.spec.ts",
+          "line": 88,
+          "column": 5
+        },
+        {
+          "title": "explicit UI task selection executes the newly selected canonical contract",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "0de84b390adbaeb1a792-21976b247ce0e75f7b2e",
+          "file": "session-task-scope-completion.spec.ts",
+          "line": 236,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "session-worker-task-journey.spec.ts",
+      "file": "session-worker-task-journey.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (navigation)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "04a4f7405a96e2494fb5-528844b59e0c12813d16",
+          "file": "session-worker-task-journey.spec.ts",
+          "line": 25,
+          "column": 5
+        },
+        {
+          "title": "a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (controls)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "04a4f7405a96e2494fb5-25e6b359ae06d8c33d94",
+          "file": "session-worker-task-journey.spec.ts",
+          "line": 25,
+          "column": 5
+        },
+        {
+          "title": "a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (isolation)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "04a4f7405a96e2494fb5-573bd9ff7539c77217db",
+          "file": "session-worker-task-journey.spec.ts",
+          "line": 25,
+          "column": 5
+        },
+        {
+          "title": "the worker panel reads a real task acceptance after file verification and owner acceptance (en)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "04a4f7405a96e2494fb5-29d80cb66f92749b6cab",
+          "file": "session-worker-task-journey.spec.ts",
+          "line": 455,
+          "column": 7
+        },
+        {
+          "title": "the worker panel reads a real task acceptance after file verification and owner acceptance (zh)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "04a4f7405a96e2494fb5-795b86641b0900e3c689",
+          "file": "session-worker-task-journey.spec.ts",
+          "line": 455,
+          "column": 7
+        },
+        {
+          "title": "the worker panel reads a real task acceptance after file verification and owner acceptance (ja)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "04a4f7405a96e2494fb5-47e78ae1f33be26da6ff",
+          "file": "session-worker-task-journey.spec.ts",
+          "line": 455,
+          "column": 7
+        },
+        {
+          "title": "the worker panel reads a real task acceptance after file verification and owner acceptance (ru)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "04a4f7405a96e2494fb5-b9aa6811438884a579a7",
+          "file": "session-worker-task-journey.spec.ts",
+          "line": 455,
+          "column": 7
+        },
+        {
+          "title": "a child writes under the canonical transfer while its parent turn remains active",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "04a4f7405a96e2494fb5-d4dcb951b8e77189f132",
+          "file": "session-worker-task-journey.spec.ts",
+          "line": 644,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "settings-drawer.spec.ts",
+      "file": "settings-drawer.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Settings theme selector",
+          "file": "settings-drawer.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "switches the live theme from the preview selector and keeps one roving tab stop",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5780a4f692704a8976ec-20b97fb88f7d136d9c1d",
+              "file": "settings-drawer.spec.ts",
+              "line": 6,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Windows full-page Settings",
+          "file": "settings-drawer.spec.ts",
+          "line": 80,
+          "column": 6,
+          "specs": [
+            {
+              "title": "opens as a routed page and returns to the exact application route",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5780a4f692704a8976ec-a35b46e00ab44075b514",
+              "file": "settings-drawer.spec.ts",
+              "line": 83,
+              "column": 7
+            },
+            {
+              "title": "supports direct links, nested Select portals, narrow geometry, and reduced motion",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5780a4f692704a8976ec-3f9a3d6cb97c70a517cf",
+              "file": "settings-drawer.spec.ts",
+              "line": 133,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "setup-first-run-fp-p1-01.spec.ts",
+      "file": "setup-first-run-fp-p1-01.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "FP-P1-01 Setup provider/model verification (real Electron + real HTTP)",
+          "file": "setup-first-run-fp-p1-01.spec.ts",
+          "line": 133,
+          "column": 6,
+          "specs": [
+            {
+              "title": "verified path plus all three failure classes in the Provider step",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dbcc0273777fd8d2eebb-bee0fc2048187e6def02",
+              "file": "setup-first-run-fp-p1-01.spec.ts",
+              "line": 134,
+              "column": 7
+            },
+            {
+              "title": "skip path: limited-mode Complete state and chat first-send interception",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dbcc0273777fd8d2eebb-050526115d4389430602",
+              "file": "setup-first-run-fp-p1-01.spec.ts",
+              "line": 279,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "sidebar-session-folders-archive.spec.ts",
+      "file": "sidebar-session-folders-archive.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Sidebar session workgroups and archive",
+          "file": "sidebar-session-folders-archive.spec.ts",
+          "line": 330,
+          "column": 6,
+          "specs": [
+            {
+              "title": "pins the project header instead of repeating it per row, and supports pinned, unread, priority, and active sorting",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a98f3a190092aced34a7-1a3bddc86e4d382c3a29",
+              "file": "sidebar-session-folders-archive.spec.ts",
+              "line": 331,
+              "column": 7
+            },
+            {
+              "title": "keeps workgroups inside the project and renders time sorting as a direct list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a98f3a190092aced34a7-bbdb45efe6fa941980a1",
+              "file": "sidebar-session-folders-archive.spec.ts",
+              "line": 394,
+              "column": 7
+            },
+            {
+              "title": "creates a workgroup, moves a running session into it, searches it, then deletes the workgroup",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a98f3a190092aced34a7-b3bd548106bbb50d2c78",
+              "file": "sidebar-session-folders-archive.spec.ts",
+              "line": 420,
+              "column": 7
+            },
+            {
+              "title": "delete dialog offers archive and permanent delete; archive modal restores sessions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a98f3a190092aced34a7-b8aeffd6d14af3326d5f",
+              "file": "sidebar-session-folders-archive.spec.ts",
+              "line": 517,
+              "column": 7
+            },
+            {
+              "title": "drags a conversation after another to auto-group, rename, and remove the group",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a98f3a190092aced34a7-8e443d2ea5d5ae1e6683",
+              "file": "sidebar-session-folders-archive.spec.ts",
+              "line": 563,
+              "column": 7
+            },
+            {
+              "title": "permanent delete from the archived settings page removes the entry",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a98f3a190092aced34a7-6d6eec3ee8c153c68c11",
+              "file": "sidebar-session-folders-archive.spec.ts",
+              "line": 645,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "skills-packs.spec.ts",
+      "file": "skills-packs.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Skills feature plugins",
+          "file": "skills-packs.spec.ts",
+          "line": 35,
+          "column": 6,
+          "specs": [
+            {
+              "title": "shows managed packs and routes install and enable actions through host-api",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "146b293ab05617ca3cdc-88b0244a02956c0a5cd7",
+              "file": "skills-packs.spec.ts",
+              "line": 36,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "support-bundle-fp-p1-06.spec.ts",
+      "file": "support-bundle-fp-p1-06.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "FP-P1-06 support bundle export (real Electron + real child)",
+          "file": "support-bundle-fp-p1-06.spec.ts",
+          "line": 96,
+          "column": 6,
+          "specs": [
+            {
+              "title": "one-click export is sanitized, child-mirrored, and self-reporting",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "be423af17e06b437c9fe-7f734059dfdad5103937",
+              "file": "support-bundle-fp-p1-06.spec.ts",
+              "line": 97,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "versebrowser-host-invocation.spec.ts",
+      "file": "versebrowser-host-invocation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real embedded browser preserves actions, denials and unsupported outcomes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "3d64f179fd0033536e9f-cfe167d7bbf408806bfc",
+          "file": "versebrowser-host-invocation.spec.ts",
+          "line": 6,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "versegit-candidate-apply.spec.ts",
+      "file": "versegit-candidate-apply.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "verified candidate host apply",
+          "file": "versegit-candidate-apply.spec.ts",
+          "line": 12,
+          "column": 6,
+          "specs": [
+            {
+              "title": "runs completion, candidate verification, permission gate and journaled apply in order",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d9b8eeb1a9c518c99eee-a9b61cbea89a2d106a13",
+              "file": "versegit-candidate-apply.spec.ts",
+              "line": 13,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "versegit-runtime-bindings.spec.ts",
+      "file": "versegit-runtime-bindings.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "VerseGit runtime binding lifecycle",
+          "file": "versegit-runtime-bindings.spec.ts",
+          "line": 31,
+          "column": 6,
+          "specs": [
+            {
+              "title": "runs two real worktree workers through the product orchestrator and typed Main bridge",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "8e6976362882aa0f0122-71cdaae097100f3c58e7",
+              "file": "versegit-runtime-bindings.spec.ts",
+              "line": 32,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "workspace-context-settings.spec.ts",
+      "file": "workspace-context-settings.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Workspace Context user settings",
+          "file": "workspace-context-settings.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "exposes one default-on profile and keeps low-level flags out of General settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7fb29d680c49cc615eaf-440beec2ecbc2d52c26b",
+              "file": "workspace-context-settings.spec.ts",
+              "line": 6,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "workspace-git-mcp-runtime.spec.ts",
+      "file": "workspace-git-mcp-runtime.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Workspace Git MCP runtime",
+          "file": "workspace-git-mcp-runtime.spec.ts",
+          "line": 61,
+          "column": 6,
+          "specs": [
+            {
+              "title": "routes built-in clawx-git tools through the real Main Git service",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "76fee2b268c1fee0eb97-9d20b0889da171b277e8",
+              "file": "workspace-git-mcp-runtime.spec.ts",
+              "line": 62,
+              "column": 7
+            },
+            {
+              "title": "applyPatch reports applied and conflicted paths against a real repo",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "76fee2b268c1fee0eb97-5f222715079b9554e748",
+              "file": "workspace-git-mcp-runtime.spec.ts",
+              "line": 195,
+              "column": 7
+            },
+            {
+              "title": "diffToBase derives a base from a non-origin remote with no declared default",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "76fee2b268c1fee0eb97-5ae5cc504072cfea2777",
+              "file": "workspace-git-mcp-runtime.spec.ts",
+              "line": 301,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-12T15:54:33.496Z",
+    "duration": 2222.1859999999997,
+    "expected": 0,
+    "skipped": 86,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

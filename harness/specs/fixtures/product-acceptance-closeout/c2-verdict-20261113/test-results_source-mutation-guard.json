@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "ok": false,
+  "sourceChanged": true,
+  "before": {
+    "status": "",
+    "trackedFilesSha256": "9b45e6aeef614f5ed0a618e53dd99d202f539612de99c9c74bdeadd0751fb74d",
+    "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "after": {
+    "status": " M harness/specs/tasks/product-acceptance-matrix.md\n M scripts/context-inline-spill-benefit-round5-verify.mjs\n",
+    "trackedFilesSha256": "dfcb103ae6ab650bdfec0b69e67a807d53ee3b90d96f5eaba7a2d2a73d9a874e",
+    "diffSha256": "803c14988c4fb99b56b336cd63df61cc9d463d0b5aa76ba4413da1ac8a5b542b"
+  }
+}

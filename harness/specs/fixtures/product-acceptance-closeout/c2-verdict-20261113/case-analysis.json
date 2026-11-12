@@ -1,0 +1,783 @@
+{
+  "counts": {
+    "failed": 84,
+    "timedOut": 1,
+    "skipped": 1
+  },
+  "cases": [
+    {
+      "file": "channels-health-diagnostics.spec.ts",
+      "title": "does not flash a stale gateway-not-running banner while status is running",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 63541,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "channels-health-diagnostics.spec.ts",
+      "title": "shows degraded banner, restarts gateway, and copies diagnostics",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 53889,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "chat-new-session-date.spec.ts",
+      "title": "lists every conversation newest-first, with no collapsible date buckets",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 65110,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\chat-new-session-date.spec.ts:21:17"
+    },
+    {
+      "file": "chat-new-session-date.spec.ts",
+      "title": "new chat appears in Today only after the first message and lands without overshoot",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 56917,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\chat-new-session-date.spec.ts:133:17"
+    },
+    {
+      "file": "context-view-tool-surface.spec.ts",
+      "title": "keeps automatic discovery distinct from the explicit rollback control",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 43319,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "knowledge-ks04-chat-dcs.spec.ts",
+      "title": "shows a visible reason toast when a selected knowledge reference is denied",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 39599,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "knowledge-lifecycle.spec.ts",
+      "title": "Knowledge lifecycle update goes through Main wiki RPC and shows EffectReceipt",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 36907,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "knowledge-lifecycle.spec.ts",
+      "title": "Knowledge lifecycle merge goes through Main wiki RPC and shows EffectReceipt",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 44326,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "knowledge-lifecycle.spec.ts",
+      "title": "Knowledge lifecycle archive goes through Main wiki RPC and shows EffectReceipt",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 37912,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "knowledge-lifecycle.spec.ts",
+      "title": "Knowledge lifecycle revoke goes through Main wiki RPC and shows EffectReceipt",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 38438,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "knowledge-lifecycle.spec.ts",
+      "title": "Knowledge lifecycle delete goes through Main wiki RPC and shows EffectReceipt",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 38589,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "knowledge-lifecycle.spec.ts",
+      "title": "Knowledge lifecycle restore goes through Main wiki RPC and shows EffectReceipt",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 38658,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "knowledge-review-queue.spec.ts",
+      "title": "review selection prepares and approves only the corresponding proposal",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 42822,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\knowledge-review-queue.spec.ts:203:15"
+    },
+    {
+      "file": "knowledge-review-queue.spec.ts",
+      "title": "Knowledge editing and Chat round trip fit supported widths in light",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 41206,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\knowledge-review-queue.spec.ts:268:17"
+    },
+    {
+      "file": "knowledge-review-queue.spec.ts",
+      "title": "Knowledge editing and Chat round trip fit supported widths in dark",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 40169,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\knowledge-review-queue.spec.ts:268:17"
+    },
+    {
+      "file": "knowledge-review-queue.spec.ts",
+      "title": "confirm promotes a candidate and shows KE fields",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 38909,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "knowledge-review-queue.spec.ts",
+      "title": "reject dismisses a candidate without persisting",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 54384,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "knowledge-review-queue.spec.ts",
+      "title": "shows an empty state when there are no candidates",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 45387,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "knowledge-review-queue.spec.ts",
+      "title": "flag off shows unavailable state and hides KE fields",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 42444,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "long-session-completion-continuation.spec.ts",
+      "title": "consolidates deferred worker completion into one generation-fenced batch after restart",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 41257,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\long-session-completion-continuation.spec.ts:157:17"
+    },
+    {
+      "file": "long-session-continuity-context.spec.ts",
+      "title": "real Host/Gateway continuity preview reads accepted owners and fails closed across scope/rollback",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 40259,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\long-session-continuity-context.spec.ts:95:11"
+    },
+    {
+      "file": "long-session-delegation-admission.spec.ts",
+      "title": "delegates through the real Host, Gateway, scheduler, and role-spawn owners with durable admission receipts",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 40672,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\long-session-delegation-admission.spec.ts:125:17"
+    },
+    {
+      "file": "long-session-followup-scheduling.spec.ts",
+      "title": "real Host/Gateway long-session follow-up is bound to one coordinator generation and cannot fire after it is invalidated",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 41762,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\long-session-followup-scheduling.spec.ts:124:11"
+    },
+    {
+      "file": "memory-surface.spec.ts",
+      "title": "exposes candidate review, export and tombstone deletion in one panel",
+      "expected": "passed",
+      "status": "timedOut",
+      "duration": 90020,
+      "error": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+      "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+    },
+    {
+      "file": "product-acceptance-moyu.spec.ts",
+      "title": "live journey 1: cancel, fix, tests, restart readback and undo",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 8126,
+      "error": "AssertionError: Final acceptance needs a clean source candidate\n\ntrue !== false\n",
+      "stack": "AssertionError: Final acceptance needs a clean source candidate\n\ntrue !== false\n\n    at begin (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-moyu.spec.ts:178:56)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-moyu.spec.ts:186:43"
+    },
+    {
+      "file": "product-acceptance-moyu.spec.ts",
+      "title": "live journey 2: cancel, fix, tests, restart readback and undo",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 6479,
+      "error": "AssertionError: Final acceptance needs a clean source candidate\n\ntrue !== false\n",
+      "stack": "AssertionError: Final acceptance needs a clean source candidate\n\ntrue !== false\n\n    at begin (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-moyu.spec.ts:178:56)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-moyu.spec.ts:186:43"
+    },
+    {
+      "file": "product-acceptance-moyu.spec.ts",
+      "title": "live journey 3: cancel, fix, tests, restart readback and undo",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 7727,
+      "error": "AssertionError: Final acceptance needs a clean source candidate\n\ntrue !== false\n",
+      "stack": "AssertionError: Final acceptance needs a clean source candidate\n\ntrue !== false\n\n    at begin (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-moyu.spec.ts:178:56)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-moyu.spec.ts:186:43"
+    },
+    {
+      "file": "product-acceptance-moyu.spec.ts",
+      "title": "readOnly policy denies a real edit without approval or file effect",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 8674,
+      "error": "AssertionError: Final acceptance needs a clean source candidate\n\ntrue !== false\n",
+      "stack": "AssertionError: Final acceptance needs a clean source candidate\n\ntrue !== false\n\n    at begin (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-moyu.spec.ts:178:56)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-moyu.spec.ts:320:41"
+    },
+    {
+      "file": "product-acceptance-moyu.spec.ts",
+      "title": "the UI denies an actual outside-root exec approval and the next allowed edit succeeds",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 13411,
+      "error": "AssertionError: Final acceptance needs a clean source candidate\n\ntrue !== false\n",
+      "stack": "AssertionError: Final acceptance needs a clean source candidate\n\ntrue !== false\n\n    at begin (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-moyu.spec.ts:178:56)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-moyu.spec.ts:348:41"
+    },
+    {
+      "file": "product-acceptance-moyu.spec.ts",
+      "title": "missing journal snapshot rejects undo and preserves the full edited file and metadata",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 11733,
+      "error": "AssertionError: Final acceptance needs a clean source candidate\n\ntrue !== false\n",
+      "stack": "AssertionError: Final acceptance needs a clean source candidate\n\ntrue !== false\n\n    at begin (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-moyu.spec.ts:178:56)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-moyu.spec.ts:385:41"
+    },
+    {
+      "file": "product-acceptance-space-bunny.spec.ts",
+      "title": "direct Responses text, SSE and ga_echo round trip",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 8615,
+      "error": "AssertionError: Acceptance requires a clean committed candidate",
+      "stack": "AssertionError: Acceptance requires a clean committed candidate\n    at candidate (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-space-bunny.spec.ts:30:9)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-space-bunny.spec.ts:298:27"
+    },
+    {
+      "file": "product-acceptance-space-bunny.spec.ts",
+      "title": "cleanup failure still reclaims the owned Electron process and proxy",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 3415,
+      "error": "AssertionError: Acceptance requires a clean committed candidate",
+      "stack": "AssertionError: Acceptance requires a clean committed candidate\n    at candidate (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-space-bunny.spec.ts:30:9)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-space-bunny.spec.ts:306:27"
+    },
+    {
+      "file": "product-acceptance-space-bunny.spec.ts",
+      "title": "product smoke 1: real read once, continuation and session isolation",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 2063,
+      "error": "AssertionError: Acceptance requires a clean committed candidate",
+      "stack": "AssertionError: Acceptance requires a clean committed candidate\n    at candidate (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-space-bunny.spec.ts:30:9)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-space-bunny.spec.ts:331:29"
+    },
+    {
+      "file": "product-acceptance-space-bunny.spec.ts",
+      "title": "product smoke 2: real read once, continuation and session isolation",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 2850,
+      "error": "AssertionError: Acceptance requires a clean committed candidate",
+      "stack": "AssertionError: Acceptance requires a clean committed candidate\n    at candidate (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-space-bunny.spec.ts:30:9)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-space-bunny.spec.ts:331:29"
+    },
+    {
+      "file": "product-acceptance-space-bunny.spec.ts",
+      "title": "product smoke 3: real read once, continuation and session isolation",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 1986,
+      "error": "AssertionError: Acceptance requires a clean committed candidate",
+      "stack": "AssertionError: Acceptance requires a clean committed candidate\n    at candidate (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-space-bunny.spec.ts:30:9)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-space-bunny.spec.ts:331:29"
+    },
+    {
+      "file": "product-acceptance-space-bunny.spec.ts",
+      "title": "provider faults and cancellation fail visibly, then the next turn recovers",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 1822,
+      "error": "AssertionError: Acceptance requires a clean committed candidate",
+      "stack": "AssertionError: Acceptance requires a clean committed candidate\n    at candidate (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-space-bunny.spec.ts:30:9)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-space-bunny.spec.ts:419:27"
+    },
+    {
+      "file": "product-acceptance-space-bunny.spec.ts",
+      "title": "cancellation repetition 2: the same session resumes without late effects",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 1557,
+      "error": "AssertionError: Acceptance requires a clean committed candidate",
+      "stack": "AssertionError: Acceptance requires a clean committed candidate\n    at candidate (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-space-bunny.spec.ts:30:9)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-space-bunny.spec.ts:419:27"
+    },
+    {
+      "file": "product-acceptance-space-bunny.spec.ts",
+      "title": "cancellation repetition 3: the same session resumes without late effects",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 1637,
+      "error": "AssertionError: Acceptance requires a clean committed candidate",
+      "stack": "AssertionError: Acceptance requires a clean committed candidate\n    at candidate (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-space-bunny.spec.ts:30:9)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-acceptance-space-bunny.spec.ts:419:27"
+    },
+    {
+      "file": "product-matrix-delegation.spec.ts",
+      "title": "a completed child resumes its idle parent with the actual result exactly once",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 43754,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-matrix-delegation.spec.ts:62:11"
+    },
+    {
+      "file": "product-matrix-doctor.spec.ts",
+      "title": "diagnoses a valid isolated profile through the real openclaw doctor CLI",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 38494,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at launchIsolatedDoctorApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-matrix-doctor.spec.ts:174:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-matrix-doctor.spec.ts:205:22"
+    },
+    {
+      "file": "product-matrix-doctor.spec.ts",
+      "title": "reports a reproducible CLI failure for corrupted isolated config",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 38548,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at launchIsolatedDoctorApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-matrix-doctor.spec.ts:174:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-matrix-doctor.spec.ts:259:22"
+    },
+    {
+      "file": "product-matrix-knowledge.spec.ts",
+      "title": "Matrix knowledge imports, indexes, searches, cites, and deletes through isolated Main and Gateway",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 41168,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-matrix-knowledge.spec.ts:150:11"
+    },
+    {
+      "file": "product-matrix-memory.spec.ts",
+      "title": "accepted workspace memory reaches the next real chat while rejected and cross-session memory stay out",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 29047,
+      "error": "Error: electronApplication.firstWindow: Target page, context or browser has been closed",
+      "stack": "Error: electronApplication.firstWindow: Target page, context or browser has been closed\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-matrix-memory.spec.ts:182:13"
+    },
+    {
+      "file": "product-matrix-tools.spec.ts",
+      "title": "TF-0582 VerseShell starts, reads input, exits, and cancels through the product owner",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 37080,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-matrix-tools.spec.ts:395:11"
+    },
+    {
+      "file": "product-matrix-tools.spec.ts",
+      "title": "TF-0582 Tool Search expands a real schema and rejects absent or denied tools",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 41389,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\product-matrix-tools.spec.ts:667:11"
+    },
+    {
+      "file": "provider-lifecycle.spec.ts",
+      "title": "recognizes an environment SecretRef without saving the API key",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 42335,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\provider-lifecycle.spec.ts:47:17"
+    },
+    {
+      "file": "provider-lifecycle.spec.ts",
+      "title": "shows a saved provider and removes it cleanly after deletion",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 45212,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "provider-lifecycle.spec.ts",
+      "title": "does not redisplay a deleted provider after relaunch",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 42837,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "provider-lifecycle.spec.ts",
+      "title": "shows OpenAI OAuth and API key auth mode toggle in add-provider dialog",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 40746,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "provider-lifecycle.spec.ts",
+      "title": "trims whitespace before validating and saving a custom provider key",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 42186,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "provider-lifecycle.spec.ts",
+      "title": "edit form validates the new API key inline before saving (single button)",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 45340,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "provider-lifecycle.spec.ts",
+      "title": "add dialog sends the custom-header auth format to validation and save",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 44700,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "provider-lifecycle.spec.ts",
+      "title": "add dialog persists query auth and declared model capabilities",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 41236,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "rc10-operator-live.spec.ts",
+      "title": "RC-10 real Cron, Inbox, IRC and recovery scenarios",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 2365,
+      "error": "Error: {\"at\":\"2026-11-12T16:28:31.955Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"begin\",\"candidate\":{\"commit\":\"6eee064950273b393240a647702d6ee5652bae35\",\"tree\":\"9368072986699d208b3618efe4733bef89fdc437\",\"dirty\":true},\"scenario\":\"OPERATOR-ALL\",\"root\":\"D:\\\\tmp\\\\windows-inline-closeout-20261112\\\\matrix-seed\\\\test-results\\\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\\\rc10-operator\"}\n\n(node:39820) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:39820) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/27933/.codex/worktrees/windows-inline-closeout/ClawX/tests/e2e/fixtures/fp-p1-harness.ts is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to \\\\?\\C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\package.json.\nD:\\ClawX\\node_modules\\.pnpm\\playwright-core@1.59.1\\node_modules\\playwright-core\\lib\\server\\electron\\electron.js:252\r\n  const failError = new Error(\"Process failed to launch!\");\r\n                    ^\r\n\r\nError: Process failed to launch!\r\n    at waitForLine (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\electron\\electron.js:252:21)\r\n    at Electron.launch (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\electron\\electron.js:200:32)\r\n    at async ElectronDispatcher.launch (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\dispatchers\\electronDispatcher.js:38:33)\r\n    at async ProgressController.run (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\progress.js:104:22)\r\n    at async ElectronDispatcher._runCommand (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\dispatchers\\dispatcher.js:91:14)\r\n    at async DispatcherConnection.dispatch (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\dispatchers\\dispatcher.js:325:22)\r\n\r\nNode.js v24.22.1\r\n\nCommand failed: C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\scripts\\rc10\\driver.mjs --repo C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX --development --scenario OPERATOR-ALL --data-root D:\\tmp\\windows-inline-closeout-20261112\\matrix-seed\\test-results\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\rc10-operator --timeout-min 8\n(node:39820) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:39820) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/27933/.codex/worktrees/windows-inline-closeout/ClawX/tests/e2e/fixtures/fp-p1-harness.ts is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to \\\\?\\C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\package.json.\nD:\\ClawX\\node_modules\\.pnpm\\playwright-core@1.59.1\\node_modules\\playwright-core\\lib\\server\\electron\\electron.js:252\r\n  const failError = new Error(\"Process failed to launch!\");\r\n                    ^\r\n\r\nError: Process failed to launch!\r\n    at waitForLine (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\electron\\electron.js:252:21)\r\n    at Electron.launch (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\electron\\electron.js:200:32)\r\n    at async ElectronDispatcher.launch (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\dispatchers\\electronDispatcher.js:38:33)\r\n    at async ProgressController.run (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\progress.js:104:22)\r\n    at async ElectronDispatcher._runCommand (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\dispatchers\\dispatcher.js:91:14)\r\n    at async DispatcherConnection.dispatch (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\dispatchers\\dispatcher.js:325:22)\r\n\r\nNode.js v24.22.1\r\n",
+      "stack": "Error: {\"at\":\"2026-11-12T16:28:31.955Z\",\"driven_by\":\"agent\",\"actor\":\"rc10-operator-driver\",\"event\":\"begin\",\"candidate\":{\"commit\":\"6eee064950273b393240a647702d6ee5652bae35\",\"tree\":\"9368072986699d208b3618efe4733bef89fdc437\",\"dirty\":true},\"scenario\":\"OPERATOR-ALL\",\"root\":\"D:\\\\tmp\\\\windows-inline-closeout-20261112\\\\matrix-seed\\\\test-results\\\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\\\rc10-operator\"}\n\n(node:39820) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:39820) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/27933/.codex/worktrees/windows-inline-closeout/ClawX/tests/e2e/fixtures/fp-p1-harness.ts is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to \\\\?\\C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\package.json.\nD:\\ClawX\\node_modules\\.pnpm\\playwright-core@1.59.1\\node_modules\\playwright-core\\lib\\server\\electron\\electron.js:252\r\n  const failError = new Error(\"Process failed to launch!\");\r\n                    ^\r\n\r\nError: Process failed to launch!\r\n    at waitForLine (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\electron\\electron.js:252:21)\r\n    at Electron.launch (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\electron\\electron.js:200:32)\r\n    at async ElectronDispatcher.launch (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\dispatchers\\electronDispatcher.js:38:33)\r\n    at async ProgressController.run (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\progress.js:104:22)\r\n    at async ElectronDispatcher._runCommand (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\dispatchers\\dispatcher.js:91:14)\r\n    at async DispatcherConnection.dispatch (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\dispatchers\\dispatcher.js:325:22)\r\n\r\nNode.js v24.22.1\r\n\nCommand failed: C:\\Program Files\\nodejs\\node.exe C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\scripts\\rc10\\driver.mjs --repo C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX --development --scenario OPERATOR-ALL --data-root D:\\tmp\\windows-inline-closeout-20261112\\matrix-seed\\test-results\\rc10-operator-live-RC-10-r-eb460--IRC-and-recovery-scenarios\\rc10-operator --timeout-min 8\n(node:39820) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:39820) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/27933/.codex/worktrees/windows-inline-closeout/ClawX/tests/e2e/fixtures/fp-p1-harness.ts is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to \\\\?\\C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\package.json.\nD:\\ClawX\\node_modules\\.pnpm\\playwright-core@1.59.1\\node_modules\\playwright-core\\lib\\server\\electron\\electron.js:252\r\n  const failError = new Error(\"Process failed to launch!\");\r\n                    ^\r\n\r\nError: Process failed to launch!\r\n    at waitForLine (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\electron\\electron.js:252:21)\r\n    at Electron.launch (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\electron\\electron.js:200:32)\r\n    at async ElectronDispatcher.launch (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\dispatchers\\electronDispatcher.js:38:33)\r\n    at async ProgressController.run (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\progress.js:104:22)\r\n    at async ElectronDispatcher._runCommand (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\dispatchers\\dispatcher.js:91:14)\r\n    at async DispatcherConnection.dispatch (D:\\ClawX\\node_modules\\\u001b[4m.pnpm\u001b[24m\\playwright-core@1.59.1\\node_modules\\\u001b[4mplaywright-core\u001b[24m\\lib\\server\\dispatchers\\dispatcher.js:325:22)\r\n\r\nNode.js v24.22.1\r\n\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\rc10-operator-live.spec.ts:16:23"
+    },
+    {
+      "file": "session-family-lifecycle.spec.ts",
+      "title": "archiving, restoring and deleting a parent preserves child navigation, tasks and produced files",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 42986,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\session-family-lifecycle.spec.ts:11:15"
+    },
+    {
+      "file": "session-task-scope-completion.spec.ts",
+      "title": "a real isolated schedule admits its first write without replacing the project coordinator",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 41991,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\session-task-scope-completion.spec.ts:34:15"
+    },
+    {
+      "file": "session-task-scope-completion.spec.ts",
+      "title": "real Gateway keeps discussion empty, admits one write, and restores the same handoff child after restart",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 39706,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\session-task-scope-completion.spec.ts:123:11"
+    },
+    {
+      "file": "session-task-scope-completion.spec.ts",
+      "title": "explicit UI task selection executes the newly selected canonical contract",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 42595,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\session-task-scope-completion.spec.ts:247:15"
+    },
+    {
+      "file": "session-worker-task-journey.spec.ts",
+      "title": "a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (navigation)",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 41684,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\session-worker-task-journey.spec.ts:48:15"
+    },
+    {
+      "file": "session-worker-task-journey.spec.ts",
+      "title": "a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (controls)",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 40539,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\session-worker-task-journey.spec.ts:48:15"
+    },
+    {
+      "file": "session-worker-task-journey.spec.ts",
+      "title": "a real delegated worker receives its own task, reports separately and accepts a scoped follow-up (isolation)",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 43779,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\session-worker-task-journey.spec.ts:48:15"
+    },
+    {
+      "file": "session-worker-task-journey.spec.ts",
+      "title": "the worker panel reads a real task acceptance after file verification and owner acceptance (en)",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 45390,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\session-worker-task-journey.spec.ts:468:17"
+    },
+    {
+      "file": "session-worker-task-journey.spec.ts",
+      "title": "the worker panel reads a real task acceptance after file verification and owner acceptance (zh)",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 43227,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\session-worker-task-journey.spec.ts:468:17"
+    },
+    {
+      "file": "session-worker-task-journey.spec.ts",
+      "title": "the worker panel reads a real task acceptance after file verification and owner acceptance (ja)",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 49090,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\session-worker-task-journey.spec.ts:468:17"
+    },
+    {
+      "file": "session-worker-task-journey.spec.ts",
+      "title": "the worker panel reads a real task acceptance after file verification and owner acceptance (ru)",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 48596,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\session-worker-task-journey.spec.ts:468:17"
+    },
+    {
+      "file": "session-worker-task-journey.spec.ts",
+      "title": "a child writes under the canonical transfer while its parent turn remains active",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 46951,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\session-worker-task-journey.spec.ts:680:15"
+    },
+    {
+      "file": "settings-drawer.spec.ts",
+      "title": "switches the live theme from the preview selector and keeps one roving tab stop",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 42385,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\settings-drawer.spec.ts:7:17"
+    },
+    {
+      "file": "settings-drawer.spec.ts",
+      "title": "opens as a routed page and returns to the exact application route",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 42576,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\settings-drawer.spec.ts:84:17"
+    },
+    {
+      "file": "settings-drawer.spec.ts",
+      "title": "supports direct links, nested Select portals, narrow geometry, and reduced motion",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 42494,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\settings-drawer.spec.ts:134:17"
+    },
+    {
+      "file": "setup-first-run-fp-p1-01.spec.ts",
+      "title": "verified path plus all three failure classes in the Provider step",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 48698,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\setup-first-run-fp-p1-01.spec.ts:141:17"
+    },
+    {
+      "file": "setup-first-run-fp-p1-01.spec.ts",
+      "title": "skip path: limited-mode Complete state and chat first-send interception",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 44054,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\setup-first-run-fp-p1-01.spec.ts:283:17"
+    },
+    {
+      "file": "sidebar-session-folders-archive.spec.ts",
+      "title": "pins the project header instead of repeating it per row, and supports pinned, unread, priority, and active sorting",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 45441,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "sidebar-session-folders-archive.spec.ts",
+      "title": "keeps workgroups inside the project and renders time sorting as a direct list",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 24252,
+      "error": "Error: electronApplication.firstWindow: Target page, context or browser has been closed",
+      "stack": "Error: electronApplication.firstWindow: Target page, context or browser has been closed\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "sidebar-session-folders-archive.spec.ts",
+      "title": "creates a workgroup, moves a running session into it, searches it, then deletes the workgroup",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 37119,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "sidebar-session-folders-archive.spec.ts",
+      "title": "delete dialog offers archive and permanent delete; archive modal restores sessions",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 38797,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "sidebar-session-folders-archive.spec.ts",
+      "title": "drags a conversation after another to auto-group, rename, and remove the group",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 39822,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "sidebar-session-folders-archive.spec.ts",
+      "title": "permanent delete from the archived settings page removes the entry",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 45808,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "skills-packs.spec.ts",
+      "title": "shows managed packs and routes install and enable actions through host-api",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 41423,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "support-bundle-fp-p1-06.spec.ts",
+      "title": "one-click export is sanitized, child-mirrored, and self-reporting",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 40119,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\support-bundle-fp-p1-06.spec.ts:110:17"
+    },
+    {
+      "file": "versebrowser-host-invocation.spec.ts",
+      "title": "real embedded browser preserves actions, denials and unsupported outcomes",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 39083,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "versegit-candidate-apply.spec.ts",
+      "title": "runs completion, candidate verification, permission gate and journaled apply in order",
+      "expected": "skipped",
+      "status": "skipped",
+      "duration": 9,
+      "error": null,
+      "stack": null
+    },
+    {
+      "file": "versegit-runtime-bindings.spec.ts",
+      "title": "runs two real worktree workers through the product orchestrator and typed Main bridge",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 41760,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\versegit-runtime-bindings.spec.ts:49:19"
+    },
+    {
+      "file": "workspace-context-settings.spec.ts",
+      "title": "exposes one default-on profile and keeps low-level flags out of General settings",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 40700,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at Object.electronApp (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:563:17)"
+    },
+    {
+      "file": "workspace-git-mcp-runtime.spec.ts",
+      "title": "routes built-in clawx-git tools through the real Main Git service",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 40104,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\workspace-git-mcp-runtime.spec.ts:70:17"
+    },
+    {
+      "file": "workspace-git-mcp-runtime.spec.ts",
+      "title": "applyPatch reports applied and conflicted paths against a real repo",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 37702,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\workspace-git-mcp-runtime.spec.ts:205:17"
+    },
+    {
+      "file": "workspace-git-mcp-runtime.spec.ts",
+      "title": "diffToBase derives a base from a non-origin remote with no declared default",
+      "expected": "passed",
+      "status": "failed",
+      "duration": 44984,
+      "error": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"",
+      "stack": "TimeoutError: electronApplication.firstWindow: Timeout 30000ms exceeded while waiting for event \"window\"\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:481:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\fixtures\\electron.ts:547:21\n    at C:\\Users\\27933\\.codex\\worktrees\\windows-inline-closeout\\ClawX\\tests\\e2e\\workspace-git-mcp-runtime.spec.ts:331:17"
+    }
+  ]
+}

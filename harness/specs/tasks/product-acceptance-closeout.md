@@ -28,6 +28,13 @@ touchedAreas:
   - harness/specs/fixtures/product-acceptance-shortfalls/**
   - harness/specs/fixtures/product-acceptance-research/**
   - harness/specs/fixtures/product-acceptance-closeout/**
+  - scripts/context-inline-spill-benefit-loop-eval.mts
+  - scripts/context-inline-spill-benefit-round5-verify.mjs
+  - scripts/context-inline-spill-benefit-round5-recompute.mjs
+  - harness/specs/tasks/inline-spill-real-benefit-eval-round5.md
+  - harness/specs/fixtures/context-inline-spill-benefit-round5/**
+  - docs/context-family/goal-progress.md
+
   - scripts/agent-engineering-acceptance.mjs
   - scripts/lib/agent-engineering-acceptance.mjs
   - scripts/lib/agent-engineering-acceptance.d.mts
