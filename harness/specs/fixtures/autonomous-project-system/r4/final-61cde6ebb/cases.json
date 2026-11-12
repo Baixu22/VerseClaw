@@ -1,0 +1,1474 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-final-independent-reader",
+  "candidate": {
+    "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+    "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+    "dirty": false
+  },
+  "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+  "suites": [
+    {
+      "path": "D:/tmp/r4v12/tests/unit/autonomy-orchestration-waves.test.ts",
+      "cases": [
+        {
+          "name": "orchestration waves follow actual registry terminal state returns queued nodes promptly and dispatches the next wave exactly once after a terminal event",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state does not project an accepted spawn bundle as a verified result",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state returns owner-backed handoff waves before a submission-side output capture settles",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state binds only an available frozen owner handoff (available=true)",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state binds only an available frozen owner handoff (available=false)",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state keeps successors queued while the previous accepted run has no terminal owner receipt",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state rejects queued work when the coordinator generation changes",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state does not dispatch a successor after cancellation of its predecessor",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state waits for agent.wait owner completion as well as lifecycle events",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state retains a lost dispatch acknowledgement without starting later waves",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state dispatches a queued native Git worker through its registered owner base",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state checks the frozen candidate rather than inherited worker identity for a queued verifier (ready)",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state checks the frozen candidate rather than inherited worker identity for a queued verifier (dirty)",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state checks the frozen candidate rather than inherited worker identity for a queued verifier (wrong-directory)",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state checks the frozen candidate rather than inherited worker identity for a queued verifier (redirected-directory)",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state rejects a queued payload whose child identity no longer matches its owner row",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration waves follow actual registry terminal state restores the queued wave from owner SQLite and advances only after the prior run ends",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/autonomy-worktree-integration.test.ts",
+      "cases": [
+        {
+          "name": "R4 durable worktree integration preserves deletion and rename through the actual inprocess owner",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration preserves deletion and rename through the actual git owner",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration refuses concurrent target content instead of overwriting it for inprocess",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration refuses concurrent target content instead of overwriting it for git",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration serializes duplicate completion and retains the same journal receipt after restart",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration retains the captured preimages across a real registry reload",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration shares in-flight duplicate callbacks and reuses their durable terminal result",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration serializes different worker callbacks on the same target without blocking the active merge",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration refuses sync cleanup promptly while the same process holds an async merge lock",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration retains permission-only worker results during cleanup",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration freezes a candidate with the actual filesystem spelling for an equivalent declared path",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration refuses a Git executable-mode change instead of reporting the unapplied metadata as merged",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration allows a preflight-only rework attempt once the original target is restored",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration recovers an exited pre-effect merge without replaying an unknown filesystem effect (crash-before-journal)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration recovers an exited pre-effect merge without replaying an unknown filesystem effect (crash-after-journal-ref)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration reconstructs a legacy Git baseline from its recorded commit before integration",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration cleans an unchanged legacy inprocess checkout only when the retained target proves its content and modes",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration integrates a new native directory using the verified platform mode",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration reuses a verified frozen candidate after an interrupted publication retry",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration refuses worker bytes that changed after the immutable candidate was frozen",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration retains an already-started verifier decision when the disposable candidate later disappears",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration refuses completion metadata outside the registered worker scope (id)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration refuses completion metadata outside the registered worker scope (generation)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration persists a real candidate in production completion metadata and names it in the verifier task (base workspace)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration persists a real candidate in production completion metadata and names it in the verifier task (worker workspace)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration completes an inprocess worker and verifies the registered base (base workspace)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration completes an inprocess worker and verifies the registered base (worker workspace)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration records a per-worker conflict when shared output changes the Git candidate baseline",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration requires a candidate for a completed worktree with unknown backend provenance",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration integrates mixed registry backends without sending inprocess to Git freeze (git-first)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration integrates mixed registry backends without sending inprocess to Git freeze (inprocess-first)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration preserves a successful completion when an overlapping callback waits on the same target",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration does not publish a completed receipt onto metadata whose generation changed in flight",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration retains completed prefix receipts and retries unfinished workers after batch processing fails",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration retains completed prefix receipts and retries unfinished workers after batch preparation fails",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration retains completed prefix receipts and retries unfinished workers after batch preparation-conflict fails",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration checks ignored candidate files against its frozen allowlist (unlisted-file)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration checks ignored candidate files against its frozen allowlist (allowed-state)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration checks ignored candidate files against its frozen allowlist (prefix-neighbor)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects extra target dirty writes before saved candidate reuse (tracked)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects extra target dirty writes before saved candidate reuse (untracked)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects extra target dirty writes before saved candidate reuse (staged-only)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects extra target dirty writes before saved candidate reuse (reset-after-merged)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration keeps the native parent spelling when the final declared component was deleted",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects hidden worker index edits before freeze and native merge (assume-unchanged)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects hidden worker index edits before freeze and native merge (skip-worktree)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects hidden index flags on untouched candidate files (assume-unchanged)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects hidden index flags on untouched candidate files (skip-worktree)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects a redirected candidate parent before external materialization (.openclaw)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects a redirected candidate parent before external materialization (candidates)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration records journal preparation before actual writer effect admission",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects candidate identity replacement with unchanged commit and bytes (junction)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects candidate identity replacement with unchanged commit and bytes (replacement-worktree)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects candidate identity replacement with unchanged commit and bytes (backpointer)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects candidate identity replacement with unchanged commit and bytes (environment-worktree)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration dispatches the original verifier into the immutable candidate directory",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration includes all declared disk paths in production candidate postimages (new-file)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration includes all declared disk paths in production candidate postimages (unstaged-rename)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects any frozen candidate path-set change (new-file-removed)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects any frozen candidate path-set change (tracked-restored)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects any frozen candidate path-set change (unexpected-path)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration preserves raw CRLF postimages and detects byte drift hidden by Git normalization",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration keeps the original verifier decision for mixed worker outcomes (failed-first)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration keeps the original verifier decision for mixed worker outcomes (failed-last)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration keeps the original verifier decision for mixed worker outcomes (all-failed)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration keeps the original verifier decision for mixed worker outcomes (failed-worktree-shared-success)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration reads the persisted baseline and returns the original receipt from a fresh native process",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration verifies two real worker results on the newly frozen candidate instead of the old base",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration retains unknown journal completion after restart and forbids replay or cleanup",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration carries recovery references on a rejected orchestration result for the existing verifier",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration includes both paths from a real staged Git rename at the orchestration entry",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration retains journal references when the process fails before the writer release",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration reads a completed native process receipt when the local queued copy is stale",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration does not change a new generation while rejecting an older queued item",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration does not resurrect a cleaned record when a late merge request arrives",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration returns a pre-journal target drift as known not-applied instead of unknown",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration preserves a leading space in actual Git paths through orchestration",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration preserves an undeclared file in the default inprocess checkout during cleanup",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration merges declared Git changes while retaining ignored files from cleanup",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration does not replace a genuine empty Git status with a declared ignored file",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration preserves ignored local content even when its path was declared in the write set",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rejects a direct queue request containing only an ignored Git file",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration does not leave unknown when the checkout writer refuses before any effect",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration returns a nonempty historical merge receipt after its original checkout is cleaned",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration uses Windows filename identity for duplicate requests and cleanup",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration applies a real Windows case-only filename rename at the production entry",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration integrates a clean committed worker delta instead of treating status as no work",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration applies case-only directory metadata without losing any contained file",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration preserves a successful receipt when an older different request was already pending",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration retains a successful empty receipt when a different no-effect request was already queued",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration retains the first successful receipt when later requests change the same generation write set",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration does not reinterpret a POSIX backslash filename as a directory separator",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration recovers the terminal registry receipt after the writer completion was committed",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration retains unintegrated conflicting worktree bytes during cleanup: inprocess",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration retains unintegrated conflicting worktree bytes during cleanup: git",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rechecks newly created ignored content after cleanup admission",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration retains a replacement directory introduced after cleanup admission",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration retains the prepared journal reference if the process fails as soon as applying returns",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration releases a rejected hardlink preflight without marking an unknown filesystem effect",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rolls back a failed journal application while preserving concurrent bytes: false",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration rolls back a failed journal application while preserving concurrent bytes: true",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration does not roll back an unwritten file with a matching external postimage: false",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration does not roll back an unwritten file with a matching external postimage: true",
+          "status": "passed"
+        },
+        {
+          "name": "R4 durable worktree integration retains the original journal when filename metadata cannot be safely rolled back",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/checkout-writer-ownership.test.ts",
+      "cases": [
+        {
+          "name": "checkout writer resource owner shares the same execution owner when the source runtime isolates its session state",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner releases a live pre-admission failure as not-applied without waiting for process exit",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner uses the same base writer for ordinary effects and maintenance",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner resolves managed roots back to their persistent generation after restart",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner does not reinterpret a failed managed registration as an independent checkout",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner rotates a drained writer without exposing the checkout to a competing task",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner retains captured task association in the resource identity across reopen",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner excludes a different writer and preserves exact request/owner/epoch identity",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner normalizes service aliases and releases only unused claims when multi-root admission fails",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner persists in-flight and unknown effects across restart until an explicit owner receipt settles them",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner replays a completed receipt without reauthorizing its effect and rejects operation payload drift",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner closes expired and draining admission without transferring ownership",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner rejects a replaced checkout and keeps epochs monotonic after managed recreation",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner gates real service merge, freeze and cleanup before filesystem effects",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner retains failed maintenance and does not free or replay an unknown filesystem effect",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner finishes only its interrupted cleanup after native removal and permits a new incarnation",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner serializes competing processes while different native checkouts keep independent writers",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner retains a crashed native writer and rejects a new process instead of stealing its lease",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner recovers an exited maintenance reservation that never admitted a filesystem operation",
+          "status": "passed"
+        },
+        {
+          "name": "checkout writer resource owner checks managed Git native identity in addition to directory instance",
+          "status": "passed"
+        },
+        {
+          "name": "U5 committed checkout retention retains an unpushed local branch and recreates its checkout after cleanup",
+          "status": "passed"
+        },
+        {
+          "name": "U5 committed checkout retention refuses a detached exclusive commit across owner reopen and lifecycle cleanup then allows a retained branch",
+          "status": "passed"
+        },
+        {
+          "name": "U5 committed checkout retention allows detached cleanup when main retains the commit",
+          "status": "passed"
+        },
+        {
+          "name": "U5 committed checkout retention allows detached cleanup when remote-tracking retains the commit",
+          "status": "passed"
+        },
+        {
+          "name": "U5 committed checkout retention allows detached cleanup when shared-ref retains the commit",
+          "status": "passed"
+        },
+        {
+          "name": "U5 committed checkout retention does not treat a worktree-local ref as persistent retention",
+          "status": "passed"
+        },
+        {
+          "name": "U5 committed checkout retention keeps the dirty-content guard ahead of cleanup even with a retained commit",
+          "status": "passed"
+        },
+        {
+          "name": "U5 committed checkout retention cleans an untouched detached checkout retained by main",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/orchestration-worktree-merge.test.ts",
+      "cases": [
+        {
+          "name": "orchestration worktree merge evidence merges the first overlapping worktree and records the conflict for the second",
+          "status": "passed"
+        },
+        {
+          "name": "orchestration worktree merge evidence reports declared-vs-actual write-set drift from the git worktree status",
+          "status": "passed"
+        },
+        {
+          "name": "rejects late merge, freeze and cleanup requests after the same id is recreated",
+          "status": "passed"
+        },
+        {
+          "name": "worktree long-session ownership cleans only explicit ephemeral worktrees for the exact generation",
+          "status": "passed"
+        },
+        {
+          "name": "worktree long-session ownership rejects a new owned worktree before filesystem creation when maxWorktrees is reached",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/task-artifact-retention.test.ts",
+      "cases": [
+        {
+          "name": "task artifact Git retention creates and reads retention refs when native repository paths exceed legacy Windows limits",
+          "status": "passed"
+        },
+        {
+          "name": "task artifact Git retention uses the same shared-ref classification as checkout cleanup (refs/agent-retention/proof)",
+          "status": "passed"
+        },
+        {
+          "name": "task artifact Git retention uses the same shared-ref classification as checkout cleanup (refs/worktree/temporary)",
+          "status": "passed"
+        },
+        {
+          "name": "task artifact Git retention resolves canonical lowercase Task paths to historical Git spelling (removed=false)",
+          "status": "passed"
+        },
+        {
+          "name": "task artifact Git retention resolves canonical lowercase Task paths to historical Git spelling (removed=true)",
+          "status": "passed"
+        },
+        {
+          "name": "task artifact Git retention retains a binary artifact larger than the default child-process buffer",
+          "status": "passed"
+        },
+        {
+          "name": "task artifact Git retention retains an older binary blob when the live file already contains different bytes",
+          "status": "passed"
+        },
+        {
+          "name": "task artifact Git retention retains historical bytes when the live artifact has already been deleted",
+          "status": "passed"
+        },
+        {
+          "name": "task artifact Git retention reads through the canonical common-dir after a linked checkout is removed",
+          "status": "passed"
+        },
+        {
+          "name": "task artifact Git retention reuses the existing ref before scanning identical bytes at a newer commit",
+          "status": "passed"
+        },
+        {
+          "name": "task artifact Git retention rejects a missing ref and a retention ref moved to another commit",
+          "status": "passed"
+        },
+        {
+          "name": "task artifact Git retention does not overwrite a conflicting existing retention ref",
+          "status": "passed"
+        },
+        {
+          "name": "task artifact Git retention rejects corrupted receipt metadata, blob identity, and source hash mismatches",
+          "status": "passed"
+        },
+        {
+          "name": "task artifact Git retention ignores a misbound core.worktree and preserves the live native bytes and config",
+          "status": "passed"
+        },
+        {
+          "name": "task artifact Git retention rejects paths outside the worktree and a different source repository",
+          "status": "passed"
+        },
+        {
+          "name": "task artifact Git retention detects repository replacement at the retained common-dir",
+          "status": "passed"
+        },
+        {
+          "name": "task artifact Git retention bounds lookup to 256 ref-tip and historical commits",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/task-worktree-retention.test.ts",
+      "cases": [
+        {
+          "name": "Task evidence retention and original checkout cleanup retains exact old bytes through newer HEAD, deletion, owner reopen and repeated cleanup",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup retains overwritten legacy checkpoint paths using their historical writer after handoff",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup keeps a tree when a persisted retention ref is lost and never substitutes another receipt",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup preserves an external edit inside the declared write set (before-cleanup)",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup preserves an external edit inside the declared write set (after-preparation)",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup reads cleanup history and retained binary pages through the production task tool",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup refuses active claims and pending effects before preparing historical receipts",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup rejects stale access after the same pathname is replaced",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup refuses shared core.worktree redirection at admission and cleanup",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup uses the registered Task authority while retaining bytes in the source clone",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup prevents authority reassignment with an external linked checkout reference (done=false)",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup prevents authority reassignment with an external linked checkout reference (done=true)",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup reconciles a real process exit after removal using committed retention receipts",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup serializes cleanup against a competing process first-open",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup serializes cleanup against a competing process checkpoint",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup serializes cleanup against a competing process claim",
+          "status": "passed"
+        },
+        {
+          "name": "Task evidence retention and original checkout cleanup serializes cleanup against a competing process register",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/versegit-candidate-freeze.test.ts",
+      "cases": [
+        {
+          "name": "E1 host Git candidate freeze freezes two real worker changes into a disposable candidate without touching main or refs",
+          "status": "passed"
+        },
+        {
+          "name": "E1 host Git candidate freeze turns the independent-worker / combined-failure counterexample into a frozen candidate, not a merge",
+          "status": "passed"
+        },
+        {
+          "name": "E1 host Git candidate freeze reports merge conflicts, user dirt, unexpected untracked files and base drift without mutation",
+          "status": "passed"
+        },
+        {
+          "name": "E1 host Git candidate freeze creates a new candidate identity after a worker refresh",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/versegit-host-apply.test.ts",
+      "cases": [
+        {
+          "name": "candidate-first host apply keeps the base and refs untouched when two valid proposals fail combined verification",
+          "status": "passed"
+        },
+        {
+          "name": "candidate-first host apply writes only after verification and preserves a recoverable journal record",
+          "status": "passed"
+        },
+        {
+          "name": "candidate-first host apply rejects target, candidate, epoch and revocation drift before the first write",
+          "status": "passed"
+        },
+        {
+          "name": "candidate-first host apply does not retry an unknown apply delivery",
+          "status": "passed"
+        },
+        {
+          "name": "candidate-first host apply keeps the legacy direct patch-flow path available when no candidate host is configured",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/vite-config-openclaw-runtime.test.ts",
+      "cases": [
+        {
+          "name": "vite Electron OpenClaw runtime aliases keeps local OpenClaw workspace packages bundled in Electron main",
+          "status": "passed"
+        },
+        {
+          "name": "vite Electron OpenClaw runtime aliases maps local OpenClaw package imports to checked-in runtime sources",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/worktree-reclamation-preservation.test.ts",
+      "cases": [
+        {
+          "name": "R4 independent reclamation preservation retains an undeclared inprocess file observed on disk",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation retains declared inprocess bytes until an exact copy exists in the retained target",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation retains permission-only inprocess changes",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation retains ignored Git content even when its path was declared",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation rechecks ignored content after admission and settles a known refusal as not-applied",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation preserves a path replacement introduced after admission",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation settles an actual native dirty refusal after the last inventory check as not-applied",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation keeps non-dirty native failures unknown with their writer occupied",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation uses shared Git refs for committed executable metadata while retaining uncommitted modes",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation retains unchanged seeded bytes when the target copy is removed",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation retains unchanged seeded bytes when the target copy is replaced",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation retains actual Git bytes hidden by --assume-unchanged",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation retains actual Git bytes hidden by --skip-worktree",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation uses the managed root baseline instead of unrelated repository permissions (changed=false)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation uses the managed root baseline instead of unrelated repository permissions (changed=true)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation keeps the original no-force Git dirty refusal for declared edits",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation preserves native modes for a newly committed directory (readonly=false)",
+          "status": "passed"
+        },
+        {
+          "name": "R4 independent reclamation preservation preserves native modes for a newly committed directory (readonly=true)",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/worktree-registry-restart.test.ts",
+      "cases": [
+        {
+          "name": "durable managed checkout registration recovers owner, generation and queue in a fresh process after abrupt exit",
+          "status": "passed"
+        },
+        {
+          "name": "durable managed checkout registration persists the intent crash boundary without claiming incomplete setup is ready",
+          "status": "passed"
+        },
+        {
+          "name": "durable managed checkout registration persists the allocated crash boundary without claiming incomplete setup is ready",
+          "status": "passed"
+        },
+        {
+          "name": "durable managed checkout registration persists the created crash boundary without claiming incomplete setup is ready",
+          "status": "passed"
+        },
+        {
+          "name": "durable managed checkout registration persists the registered crash boundary without claiming incomplete setup is ready",
+          "status": "passed"
+        },
+        {
+          "name": "durable managed checkout registration persists the ready crash boundary without claiming incomplete setup is ready",
+          "status": "passed"
+        },
+        {
+          "name": "durable managed checkout registration rejects an old incarnation after the same path is replaced and preserves the replacement",
+          "status": "passed"
+        },
+        {
+          "name": "durable managed checkout registration canonicalizes path aliases and keeps unowned directories visible",
+          "status": "passed"
+        },
+        {
+          "name": "durable managed checkout registration retains missing records and gives recreated managed checkouts a new generation",
+          "status": "passed"
+        },
+        {
+          "name": "durable managed checkout registration rejects same operation with different input and blocks merge replay after unknown copy outcome",
+          "status": "passed"
+        },
+        {
+          "name": "durable managed checkout registration resumes a recorded cleanup without reopening execution or adopting a replacement",
+          "status": "passed"
+        },
+        {
+          "name": "durable managed checkout registration rejects a changed Git binding before promoting registered to ready",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/openclaw_runtime/src/agents/worktree-service.test.ts",
+      "cases": [
+        {
+          "name": "worktree-service (C4 interface) create seeds files and cleanup removes tree (inprocess default)",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service (C4 interface) merge queue serializes and detects overlapping conflicts (2-worker same file)",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service (C4 interface) conflict policy can return work to worker",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service (C4 interface) merge missing worktree fails cleanly",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service (C4 interface) git backend creates isolated worktree when available (opt-in, not production default)",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service (C4 interface) git backend falls back to inprocess when not a git repo",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service (C4 interface) resolveWorktreeBackend defaults to inprocess",
+          "status": "passed"
+        },
+        {
+          "name": "C4 isolation request + HandoffPack coordinates normalizeIsolationMode defaults to shared",
+          "status": "passed"
+        },
+        {
+          "name": "C4 isolation request + HandoffPack coordinates orchestrator plan isolation defaults shared and accepts worktree",
+          "status": "passed"
+        },
+        {
+          "name": "C4 isolation request + HandoffPack coordinates HandoffPack carries writeSet/worktreeId/isolation and parse round-trips",
+          "status": "passed"
+        },
+        {
+          "name": "C4 isolation request + HandoffPack coordinates empty writeSet handoff remains compatible (omit field)",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service C4-H hardening exports PRODUCTION_GIT_WORKTREE_HARDENED without flipping defaults",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service C4-H hardening normalizes Windows separators and rejects traversal",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service C4-H hardening writeWorktreeFile accepts backslash rel paths",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service C4-H hardening git backend concurrent create/merge/cleanup stays isolated (C4-H)",
+          "status": "passed"
+        },
+        {
+          "name": "worktree-service C4-H hardening hardened git env disables repository hooks (C4-H parity with Codex info.rs)",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/agent-config.test.ts",
+      "cases": [
+        {
+          "name": "agent config lifecycle lists configured agent ids from openclaw.json",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle falls back to the implicit main agent when no list exists",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle keeps implicit main workspace inherited after model changes",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle keeps implicit main workspace inherited after name changes",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle keeps implicit main workspace inherited after create-agent changes",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle preserves an explicitly configured main workspace when its model changes",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle includes canonical per-agent main session keys in the snapshot",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle exposes effective and override model refs in the snapshot",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle updates and clears per-agent model overrides",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle rejects invalid model ref formats when updating agent model",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle updates reasoning effort through OpenClaw thinking defaults",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle uses legacy OpenClaw thinkingDefault as the displayed reasoning effort",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle deletes the config entry, bindings, runtime directory, and managed workspace for a removed agent",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle preserves unmanaged custom workspaces when deleting an agent",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle does not delete a legacy-named account when it is owned by another agent",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle allows the same agent to bind multiple different channels",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle keeps sibling account bindings for the same agent and channel",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle preserves original agentId casing when persisting bindings",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle keeps a single owner for the same channel account",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle can clear one channel account binding without affecting another channel on the same agent",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle avoids numeric-only ids when creating agents from CJK names",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle seeds a default Verse Claw IDENTITY.md for newly created agent workspaces",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle creates a managed DiceBear avatar for new non-main agents and keeps it stable after rename",
+          "status": "passed"
+        },
+        {
+          "name": "agent config lifecycle resets only the managed override and preserves a user-authored IDENTITY.md avatar",
+          "status": "passed"
+        },
+        {
+          "name": "role profile sidecar round-trip (Area 1 §3.3) write → read is identity via sidecar (lossless)",
+          "status": "passed"
+        },
+        {
+          "name": "role profile sidecar round-trip (Area 1 §3.3) sidecar file exists next to SOUL.md after write",
+          "status": "passed"
+        },
+        {
+          "name": "role profile sidecar round-trip (Area 1 §3.3) falls back to heuristic parse when sidecar is deleted (customStyle is lost)",
+          "status": "passed"
+        },
+        {
+          "name": "role profile sidecar round-trip (Area 1 §3.3) falls back to heuristic parse when SOUL.md is hand-edited (hash mismatch)",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/long-session-owner-reclamation-adapter.test.ts",
+      "cases": [
+        {
+          "name": "Main owner reclamation adapter closes only browser sessions for the exact session scope",
+          "status": "passed"
+        },
+        {
+          "name": "Main owner reclamation adapter leaves observed ports untouched and marks a remaining managed port for recovery",
+          "status": "passed"
+        },
+        {
+          "name": "Main owner reclamation adapter counts keep_on_leave terminals on archive without closing them",
+          "status": "passed"
+        },
+        {
+          "name": "desktop lifecycle helpers workspace delete closes only browser sessions in the removed workspace",
+          "status": "passed"
+        },
+        {
+          "name": "desktop lifecycle helpers app quit closes every process-scoped browser session",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/long-session-resource-reclamation.test.ts",
+      "cases": [
+        {
+          "name": "E2 resource owner inventory retains a failed terminal owner result when another terminal was reclaimed",
+          "status": "passed"
+        },
+        {
+          "name": "E2 resource owner inventory describes exactly the five existing owners, with no universal resource table",
+          "status": "passed"
+        },
+        {
+          "name": "E2 resource owner inventory keeps ui-unload, run-cancel, archive and delete as distinct contracts",
+          "status": "passed"
+        },
+        {
+          "name": "E2 resource owner inventory never honors keep_on_leave for a delete, only for life-cycle actions",
+          "status": "passed"
+        },
+        {
+          "name": "E2 reclamation receipts does not touch any owner on ui-unload and records keep_on_leave separately",
+          "status": "passed"
+        },
+        {
+          "name": "E2 reclamation receipts reclaims every owned handle on session-delete and honors a keep_on_leave terminal",
+          "status": "passed"
+        },
+        {
+          "name": "E2 reclamation receipts marks recovery_required with a retry identity on owner failure or unknown",
+          "status": "passed"
+        },
+        {
+          "name": "E2 reclamation receipts keeps unknown/unsupported owners explicit instead of claiming reclamation",
+          "status": "passed"
+        },
+        {
+          "name": "E2 50 create/stop/archive-restore cycles leaves zero lane residue after 50 cycles and counts keep_on_leave separately",
+          "status": "passed"
+        },
+        {
+          "name": "E2 explicit coordination policy reads only explicit session limits and preserves unset values as null",
+          "status": "passed"
+        },
+        {
+          "name": "E2 explicit coordination policy rejects an exceeded budget and never treats an unavailable measurement as zero",
+          "status": "passed"
+        },
+        {
+          "name": "E2 explicit coordination policy fails closed when an action needs an owner but that owner is unavailable",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/long-session-runtime-resource-inventory.test.ts",
+      "cases": [
+        {
+          "name": "runtime long-session resource inventory retains known session owners when the worktree root cannot be read",
+          "status": "passed"
+        },
+        {
+          "name": "runtime long-session resource inventory reads admission permits and generation-bound worktrees without inventing measurements",
+          "status": "passed"
+        },
+        {
+          "name": "runtime long-session resource inventory keeps missing generation and missing workspace ownership explicit as unknown",
+          "status": "passed"
+        },
+        {
+          "name": "runtime long-session process budget rejects a second lifecycle-owned process before spawn when maxProcesses is one",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/execution-domain-registry.test.ts",
+      "cases": [
+        {
+          "name": "explicit local task authority routing keeps independent roots separate, then returns the registered authority without copying task data",
+          "status": "passed"
+        },
+        {
+          "name": "explicit local task authority routing makes identical registration retries idempotent and rejects conflicts or stale revisions",
+          "status": "passed"
+        },
+        {
+          "name": "explicit local task authority routing does not fall back to a local database after the registered authority disappears or is copied",
+          "status": "passed"
+        },
+        {
+          "name": "explicit local task authority routing rejects uninitialized authorities and registration chains",
+          "status": "passed"
+        },
+        {
+          "name": "explicit local task authority routing shares common-dir identity across actual Git worktrees without explicit enrollment",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/long-session-lifecycle-barrier.test.ts",
+      "cases": [
+        {
+          "name": "long-session Main lifecycle barrier calls the runtime archive method and releases the mirror gate only after a committed receipt",
+          "status": "passed"
+        },
+        {
+          "name": "long-session Main lifecycle barrier keeps the same operationId open after an unknown archive RPC and resumes on retry",
+          "status": "passed"
+        },
+        {
+          "name": "long-session Main lifecycle barrier does not start a restore while an archive operation is pending for the same session",
+          "status": "passed"
+        },
+        {
+          "name": "long-session Main lifecycle barrier uses the same durable gate contract for restore",
+          "status": "passed"
+        },
+        {
+          "name": "long-session Main lifecycle barrier retains the gate for a missing-action archive receipt",
+          "status": "passed"
+        },
+        {
+          "name": "long-session Main lifecycle barrier retains the gate for a wrong-session archive receipt",
+          "status": "passed"
+        },
+        {
+          "name": "long-session Main lifecycle barrier releases a definitively refused pre-intent restore without releasing unknown mutations",
+          "status": "passed"
+        },
+        {
+          "name": "long-session Main lifecycle barrier releases a correlated definitive failure even when the runtime cannot claim noMutation",
+          "status": "passed"
+        },
+        {
+          "name": "long-session Main lifecycle barrier retains the gate for a correlated retryable failure",
+          "status": "passed"
+        },
+        {
+          "name": "long-session Main lifecycle barrier resumes the same archive operation after UI metadata changes",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/main-quit-lifecycle.test.ts",
+      "cases": [
+        {
+          "name": "main quit lifecycle coordination starts cleanup only once",
+          "status": "passed"
+        },
+        {
+          "name": "main quit lifecycle coordination allows quit after cleanup is marked complete",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/session-lifecycle-control-scope.test.ts",
+      "cases": [
+        {
+          "name": "session lifecycle result scope assigns a new renderer visit revision when a session view is reset",
+          "status": "passed"
+        },
+        {
+          "name": "session lifecycle result scope keeps queued messages attached to their original workspace, session and generation",
+          "status": "passed"
+        },
+        {
+          "name": "session lifecycle result scope does not clear a new session while the old abort response is pending",
+          "status": "passed"
+        },
+        {
+          "name": "session lifecycle result scope does not clear a new run while the old abort response is pending",
+          "status": "passed"
+        },
+        {
+          "name": "session lifecycle result scope does not clear a new generation while the old abort response is pending",
+          "status": "passed"
+        },
+        {
+          "name": "session lifecycle result scope clears the matching run only after owner confirmation",
+          "status": "passed"
+        },
+        {
+          "name": "session lifecycle result scope retains a still-active run when the abort receipt cannot confirm it",
+          "status": "passed"
+        },
+        {
+          "name": "session lifecycle result scope clears an old rejection on retry and accepts an owner-confirmed idle generation",
+          "status": "passed"
+        },
+        {
+          "name": "session lifecycle result scope keeps a restored generation when an old deleteSession success arrives",
+          "status": "passed"
+        },
+        {
+          "name": "session lifecycle result scope keeps a restored generation when an old archiveSession success arrives",
+          "status": "passed"
+        },
+        {
+          "name": "session lifecycle result scope preserves the source run cache after switching away from an unconfirmed Stop",
+          "status": "passed"
+        },
+        {
+          "name": "session lifecycle result scope rejects old-agent refreshes and ignores reads completing after an agent switch",
+          "status": "passed"
+        },
+        {
+          "name": "session lifecycle result scope keeps a later archive when an old restoreSession response arrives",
+          "status": "passed"
+        },
+        {
+          "name": "session lifecycle result scope keeps a later archive when an old permanentDeleteSession response arrives",
+          "status": "passed"
+        },
+        {
+          "name": "session lifecycle result scope preserves materialized empty sessions and only hides a local pending entry",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/session-storage-api.test.ts",
+      "cases": [
+        {
+          "name": "session storage with real Git and files measures files, marks bounded scans and never follows junctions",
+          "status": "passed"
+        },
+        {
+          "name": "session storage with real Git and files reports real worktrees and protects primary, dirty, locked and registered checkouts",
+          "status": "passed"
+        },
+        {
+          "name": "session storage with real Git and files retains the branch after approved idle removal and rejects stale cleanup of new changes",
+          "status": "passed"
+        },
+        {
+          "name": "session storage with real Git and files sizes session transcripts and releases only the exact workspace/session owners",
+          "status": "passed"
+        },
+        {
+          "name": "session storage with real Git and files waits for terminal owner exit and records a rejected cleanup as failed",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "D:/tmp/r4v12/tests/unit/versegit-completion-lifecycle.test.ts",
+      "cases": [
+        {
+          "name": "persistent host completion lifecycle maps applied, not-applied and unknown without claiming provider landed",
+          "status": "passed"
+        },
+        {
+          "name": "persistent host completion lifecycle survives restart, duplicate completion and late epoch without a second landing",
+          "status": "passed"
+        },
+        {
+          "name": "persistent host completion lifecycle requires explicit recovery for unknown and never turns unknown into implicit success",
+          "status": "passed"
+        },
+        {
+          "name": "persistent host completion lifecycle excludes completed and unknown sessions from active risk projection",
+          "status": "passed"
+        },
+        {
+          "name": "persistent host completion lifecycle reads legacy sessions and refuses to promote success without exact candidate/effect identity",
+          "status": "passed"
+        },
+        {
+          "name": "persistent host completion lifecycle is called by the production patch-flow completion seam",
+          "status": "passed"
+        },
+        {
+          "name": "persistent host completion lifecycle rejects unsupported persisted schema versions",
+          "status": "passed"
+        }
+      ]
+    }
+  ]
+}

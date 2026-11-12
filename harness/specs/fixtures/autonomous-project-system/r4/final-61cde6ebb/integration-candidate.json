@@ -1,0 +1,279 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-final-independent-reader",
+  "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+  "journal": {
+    "driven_by": "agent",
+    "actor": "r4-integration-runtime-test",
+    "value": {
+      "order": [
+        "journal",
+        "effect"
+      ],
+      "writer": {
+        "schema": 1,
+        "root": "d:\\tmp\\autonomy-r4-2xepu9\\repo",
+        "incarnation": "3325120695:14355223817363347:1794467271811156100",
+        "generation": "base:3325120695:14355223817363347:1794467271811156100",
+        "epoch": 1,
+        "token": "7987e69d-0e18-4c57-890b-a2256868e119",
+        "owner": {
+          "kind": "maintenance",
+          "operation": "merge",
+          "operationId": "4a8821ba-2d4f-404c-a622-b56ed0023034"
+        },
+        "requestId": "4a8821ba-2d4f-404c-a622-b56ed0023034",
+        "requestDigest": "da11b09e6551beb13b239461292f107da8f071e034cd8b12a57c6e4afd1a02f9",
+        "state": "released",
+        "acquiredAt": 1794467272909,
+        "expiresAt": null,
+        "operations": [
+          {
+            "id": "4a8821ba-2d4f-404c-a622-b56ed0023034",
+            "digest": "cbc75d9a7bebee17d900dccdd4572537623e80d165ab1b47f2b192a41f186b08",
+            "state": "settled",
+            "effectPrepared": true,
+            "receipt": {
+              "outcome": "completed",
+              "ownerReceipt": "merge:4a8821ba-2d4f-404c-a622-b56ed0023034"
+            }
+          }
+        ],
+        "requests": [
+          {
+            "id": "4a8821ba-2d4f-404c-a622-b56ed0023034",
+            "digest": "da11b09e6551beb13b239461292f107da8f071e034cd8b12a57c6e4afd1a02f9",
+            "epoch": 1
+          }
+        ],
+        "holderPid": 20008,
+        "holderIncarnation": "134389404768222945"
+      }
+    }
+  },
+  "sourceBuild": {
+    "driven_by": "agent",
+    "actor": "codex-r4-source-only-build-reader",
+    "candidate": {
+      "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+      "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+      "dirty": false
+    },
+    "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+    "mediaCoreDistBeforeBuild": false,
+    "mediaCoreDistAfterBuild": false,
+    "sourceProjectionReceiptSha256": "d21f28edbf37c67a7e809e24054dcc37fdbd9d107b9d370191977bfdaae46f58",
+    "mainExternalMediaReferences": [],
+    "mainOutputs": [
+      {
+        "path": "dist-electron/main/active-sandbox-high-risk-policy-BVM9-j2N.js",
+        "bytes": 2261,
+        "sha256": "a09309c14fda1499e7b3f719c525471a96bf8e2ee01fccdd51dfb2a69dd5afdb"
+      },
+      {
+        "path": "dist-electron/main/execution-checkout-admission-DhlsSZbt.js",
+        "bytes": 4485,
+        "sha256": "1102f3f4327869c2a0435824a714e901c4de1c3b7f5ec30fa5df1e4be5c18aff"
+      },
+      {
+        "path": "dist-electron/main/execution-migration-BPUF8yf0.js",
+        "bytes": 9675,
+        "sha256": "94e41c8d6f00710d0a2ea1c3667bb6fb1dbb97ad17b79298ab4f9d0ca28f0faf"
+      },
+      {
+        "path": "dist-electron/main/index-BWOXwVzU.js",
+        "bytes": 2409686,
+        "sha256": "92e685043d197f4c1e23aae4a85bdd1386459a2413ec03f511344a0114dca374"
+      },
+      {
+        "path": "dist-electron/main/index.js",
+        "bytes": 1375,
+        "sha256": "a9bb06a87646b25d8312e54a0d34d50b04bd8816404ad3bf65e4bd31c0ec5acb"
+      },
+      {
+        "path": "dist-electron/main/session-cascade-delete-L-9G9VHT.js",
+        "bytes": 3773,
+        "sha256": "49516e6e5764cc13780bc82b87b1f0031dba37f975f13a703d7cca879fe284ae"
+      }
+    ],
+    "gitStatus": "",
+    "buildReportSha256": "ac20c19afcb52a986e2128327fc64d6909e465e68f5d188b9936ad2c7f99e3a9"
+  },
+  "mediaAliasProbe": {
+    "driven_by": "agent",
+    "actor": "codex-r4-media-source-probe",
+    "candidate": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+    "alias": "D:\\tmp\\r4v12\\openclaw_runtime\\packages\\media-core\\src",
+    "mediaModules": [
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/base64.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/constants.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/content-length.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/file-name.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/inbound-path-policy.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/inline-image-data-url.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/media-source-url.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/lazy-import.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/mime.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/read-byte-stream-with-limit.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/read-response-with-limit.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/index.ts"
+    ],
+    "rootExports": [
+      "FILE_TYPE_SNIFF_MAX_BYTES",
+      "INLINE_IMAGE_DATA_URL_PREFIX",
+      "MAX_AUDIO_BYTES",
+      "MAX_DOCUMENT_BYTES",
+      "MAX_IMAGE_BYTES",
+      "MAX_VIDEO_BYTES",
+      "basenameFromAnyPath",
+      "canonicalizeBase64",
+      "detectMime",
+      "estimateBase64DecodedBytes",
+      "extensionForMime",
+      "extnameFromAnyPath",
+      "getFileExtension",
+      "imageMimeFromFormat",
+      "isAudioFileName",
+      "isGifMedia",
+      "isInboundPathAllowed",
+      "isPassThroughRemoteMediaSource",
+      "isValidInboundPathRootPattern",
+      "kindFromMime",
+      "maxBytesForKind",
+      "mediaKindFromMime",
+      "mergeInboundPathRoots",
+      "mimeTypeFromFilePath",
+      "nameFromAnyPath",
+      "normalizeInboundPathRoots",
+      "normalizeMimeType",
+      "parseMediaContentLength",
+      "readByteStreamWithLimit",
+      "readResponseTextSnippet",
+      "readResponseWithLimit",
+      "sanitizeInlineImageBase64",
+      "sanitizeInlineImageDataUrl",
+      "sanitizeInlineImageDataUrlForStorage",
+      "sliceMimeSniffBuffer",
+      "sniffInlineImageMime"
+    ],
+    "subpathExports": [
+      "isPassThroughRemoteMediaSource"
+    ],
+    "identical": true,
+    "outputSha256": "bcfcbae4efdbf25b27751d76c196016b69a44b5869b59501571bf4b6acfca702",
+    "status": "passed"
+  },
+  "integrationFixture": {
+    "candidate": {
+      "status": "frozen",
+      "manifest": {
+        "schema": "clawx.versegit.candidate/v1",
+        "candidateId": "vgc_e8eb2c8b34535f2d2ef37c45",
+        "baseOid": "af8dcff60806e8ed71117575be1da77b3060306d",
+        "baseTreeOid": "af9aef4dff050b5e1d09be6ea8945907a4199809",
+        "workerSnapshots": [
+          {
+            "taskNodeId": "task-first",
+            "parentOrder": 0,
+            "worktreeRole": "first",
+            "worktreeGeneration": "ee2ef38a-5e52-47df-a400-f3b59f8a23bf",
+            "headOid": "af8dcff60806e8ed71117575be1da77b3060306d",
+            "baseOid": "af8dcff60806e8ed71117575be1da77b3060306d",
+            "statusDigest": "sha256:6ea01e2923bdfa18d173dfad96a62d70bcc411fcf644d8516c040cd245d09088",
+            "changedFiles": [
+              "other.txt"
+            ],
+            "postimageHashes": {
+              "other.txt": "806c734071d8d93082a1c57c50a035b259a773aa27eece51f3c34321698f167e"
+            },
+            "treeOid": "4da35813fabd9f20357c5982c99a1b846c3006ec",
+            "commitOid": "3f03c5544434f9d94fe2e75e90280dc18ffb55af"
+          },
+          {
+            "taskNodeId": "task-second",
+            "parentOrder": 1,
+            "worktreeRole": "second",
+            "worktreeGeneration": "8b655f6d-12c3-49de-b35e-f62ca2080cdd",
+            "headOid": "af8dcff60806e8ed71117575be1da77b3060306d",
+            "baseOid": "af8dcff60806e8ed71117575be1da77b3060306d",
+            "statusDigest": "sha256:48917cf75c157b45225342f260ac1d48532b77f775f0d95bb0a31767645b549c",
+            "changedFiles": [
+              "new.txt"
+            ],
+            "postimageHashes": {
+              "new.txt": "e26cfb11b683ba56a607a4b54bccb1a6bcc1df69d41abe6d9a1870ff71f973db"
+            },
+            "treeOid": "af81719f532ce5cfdb6a8e126772f03530da1705",
+            "commitOid": "4be9c5162ddffc594a2decc89f4f68edb91c002a"
+          }
+        ],
+        "candidateCommitOid": "8183114aa73582c7c8d60cf1c4e186321372b191",
+        "candidateTreeOid": "b0438983159f761789c8dec0bdb58e54b9965fa0",
+        "refsBefore": [
+          {
+            "ref": "refs/heads/master",
+            "oid": "af8dcff60806e8ed71117575be1da77b3060306d"
+          }
+        ],
+        "refsAfter": [
+          {
+            "ref": "refs/heads/master",
+            "oid": "af8dcff60806e8ed71117575be1da77b3060306d"
+          }
+        ],
+        "mainStateBeforeDigest": "sha256:78a66e9154d2adae68eaf34c9901cf9c442adfb61dad9715c40e4b20a4ff7723",
+        "mainStateAfterDigest": "sha256:78a66e9154d2adae68eaf34c9901cf9c442adfb61dad9715c40e4b20a4ff7723",
+        "mainUnchanged": true,
+        "verificationCwdRole": "host-disposable-candidate",
+        "materializedPathRole": "candidate-verification-worktree",
+        "materializedIdentity": {
+          "rootPath": "d:\\tmp\\autonomy-r4-xjvxmr\\repo\\.openclaw\\candidates\\vgc_e8eb2c8b34535f2d2ef37c45",
+          "nativeIdentity": "268a336b94a568aa7cc0a8693db8f04c672cac72ece22326ea79ac22affafa81"
+        },
+        "allowedRuntimeIgnorePaths": [],
+        "inputDigest": "sha256:de5b1419787421b64553c76bf682ba8ab2c26783394c89423d5bce0a00557af3"
+      },
+      "materializedPath": "D:\\tmp\\autonomy-r4-XJvxMr\\repo\\.openclaw\\candidates\\vgc_e8eb2c8b34535f2d2ef37c45",
+      "issues": []
+    },
+    "checks": {
+      "verificationCwd": "D:\\tmp\\autonomy-r4-XJvxMr\\repo\\.openclaw\\candidates\\vgc_e8eb2c8b34535f2d2ef37c45",
+      "exitCode": 0,
+      "originalHead": "af8dcff60806e8ed71117575be1da77b3060306d",
+      "integrated": [
+        {
+          "worktreeId": "first",
+          "worktreeGeneration": "ee2ef38a-5e52-47df-a400-f3b59f8a23bf",
+          "changedFiles": [
+            "other.txt"
+          ],
+          "status": "merged",
+          "journalRef": "write-journal:review-apply-fac2d39b-2122-45e2-a85f-802ae1039318:1",
+          "hashes": {
+            "other.txt": "806c734071d8d93082a1c57c50a035b259a773aa27eece51f3c34321698f167e"
+          },
+          "recoveryRequired": false
+        },
+        {
+          "worktreeId": "second",
+          "worktreeGeneration": "8b655f6d-12c3-49de-b35e-f62ca2080cdd",
+          "changedFiles": [
+            "new.txt"
+          ],
+          "status": "merged",
+          "journalRef": "write-journal:review-apply-19838112-94a0-4b7d-bcbc-eadd797711d0:1",
+          "hashes": {
+            "new.txt": "e26cfb11b683ba56a607a4b54bccb1a6bcc1df69d41abe6d9a1870ff71f973db"
+          },
+          "recoveryRequired": false
+        }
+      ],
+      "candidateCommitOid": "8183114aa73582c7c8d60cf1c4e186321372b191"
+    }
+  },
+  "candidate": {
+    "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+    "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+    "dirty": false
+  }
+}

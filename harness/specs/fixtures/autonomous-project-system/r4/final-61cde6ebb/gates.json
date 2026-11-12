@@ -1,0 +1,518 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-final-independent-reader",
+  "candidate": {
+    "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+    "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+    "dirty": false
+  },
+  "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+  "scopeGates": {
+    "driven_by": "agent",
+    "actor": "codex-r4-full-fresh-source-gates",
+    "candidate": {
+      "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+      "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+      "dirty": false
+    },
+    "sourceManifest": "D:\\tmp\\autonomy-r4-closeout-20261112-01a1ce4c\\source-manifest-fresh-source-61cde6ebb.json",
+    "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+    "records": [
+      {
+        "name": "lint",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/eslint/bin/eslint.js",
+          "openclaw_runtime/src/agents/worktree-service.ts",
+          "openclaw_runtime/src/agents/worktree-writer.ts",
+          "openclaw_runtime/src/agents/worktree-merge-files.ts",
+          "openclaw_runtime/src/agents/orchestration-worktree-merge.ts",
+          "openclaw_runtime/src/agents/subagent-registry.ts",
+          "openclaw_runtime/src/agents/subagent-registry.types.ts",
+          "openclaw_runtime/src/plugin-sdk/journaled-git-apply.ts",
+          "tests/unit/autonomy-worktree-integration.test.ts",
+          "tests/fixtures/worktree-integration-process.ts",
+          "openclaw_runtime/src/agents/orchestration-candidate.ts",
+          "openclaw_runtime/src/agents/subagent-spawn.ts",
+          "tests/unit/autonomy-orchestration-waves.test.ts",
+          "--max-warnings",
+          "0",
+          "tests/unit/task-worktree-retention.test.ts",
+          "vite.config.ts",
+          "tests/unit/vite-config-openclaw-runtime.test.ts"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 45920,
+        "startedAt": "2026-11-12T06:58:14.321Z",
+        "endedAt": "2026-11-12T06:58:20.521Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "runtime-build",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "scripts/build-openclaw-runtime.mjs"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 24000,
+        "startedAt": "2026-11-12T06:58:20.549Z",
+        "endedAt": "2026-11-12T06:59:04.251Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "ext-bridge",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "scripts/generate-ext-bridge.mjs"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 24556,
+        "startedAt": "2026-11-12T06:59:04.299Z",
+        "endedAt": "2026-11-12T06:59:04.410Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "node-types",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/@typescript/native-preview/bin/tsgo.js",
+          "--noEmit",
+          "-p",
+          "tsconfig.node.json",
+          "--composite",
+          "false"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 11696,
+        "startedAt": "2026-11-12T06:59:04.446Z",
+        "endedAt": "2026-11-12T06:59:32.339Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "contract",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "scripts/contract-check.mjs"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 44916,
+        "startedAt": "2026-11-12T06:59:32.458Z",
+        "endedAt": "2026-11-12T06:59:37.290Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "comms-replay",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "run",
+          "comms:replay"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 43940,
+        "startedAt": "2026-11-12T06:59:37.318Z",
+        "endedAt": "2026-11-12T06:59:38.554Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "comms-compare",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "run",
+          "comms:compare"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 41568,
+        "startedAt": "2026-11-12T06:59:38.578Z",
+        "endedAt": "2026-11-12T06:59:39.606Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "harness",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "harness/src/cli.mjs",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/autonomy-worktree-integration.md"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 41104,
+        "startedAt": "2026-11-12T06:59:39.633Z",
+        "endedAt": "2026-11-12T06:59:40.643Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "harness-dry-run",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "harness/src/cli.mjs",
+          "run",
+          "--spec",
+          "harness/specs/tasks/autonomy-worktree-integration.md",
+          "--dry-run"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 43244,
+        "startedAt": "2026-11-12T06:59:40.670Z",
+        "endedAt": "2026-11-12T06:59:41.683Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "test-types",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/@typescript/native-preview/bin/tsgo.js",
+          "--noEmit",
+          "-p",
+          "tsconfig.test.json",
+          "--composite",
+          "false"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 32352,
+        "startedAt": "2026-11-12T06:59:41.723Z",
+        "endedAt": "2026-11-12T07:00:31.658Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "web-types",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/@typescript/native-preview/bin/tsgo.js",
+          "--noEmit",
+          "-p",
+          "tsconfig.web.json",
+          "--composite",
+          "false"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 34860,
+        "startedAt": "2026-11-12T07:00:31.729Z",
+        "endedAt": "2026-11-12T07:00:36.968Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "cross-owner-regressions",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/long-session-runtime-resource-inventory.test.ts",
+          "tests/unit/long-session-owner-reclamation-adapter.test.ts",
+          "tests/unit/long-session-resource-reclamation.test.ts",
+          "tests/unit/agent-config.test.ts",
+          "--maxWorkers=1",
+          "--reporter=default",
+          "--reporter=json",
+          "--outputFile.json=D:/tmp/autonomy-relay-20261109/r4/pipeline-on-sealed-increment/on-shared-ce8bc/final-checks-v21-candidate-42c54a7b2/cross-owner-regressions.json"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 16780,
+        "startedAt": "2026-11-12T07:00:37.013Z",
+        "endedAt": "2026-11-12T07:01:15.431Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "regressions",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "vitest.autonomy-r4.config.ts",
+          "--reporter=default",
+          "--reporter=json",
+          "--outputFile.json=D:/tmp/autonomy-relay-20261109/r4/pipeline-on-sealed-increment/on-shared-ce8bc/final-checks-v21-candidate-42c54a7b2/regressions.json"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 11520,
+        "startedAt": "2026-11-12T07:01:15.468Z",
+        "endedAt": "2026-11-12T07:16:02.821Z",
+        "exitCode": 0,
+        "signal": null
+      }
+    ],
+    "sourceInputsUnchanged": true,
+    "success": true,
+    "tests": {
+      "passed": 245,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "core": {
+    "passed": 245,
+    "failed": 0,
+    "skipped": 0,
+    "sha256": "9f1b4f269ee4b89c0c6155534846cfb8f426242eb43d81ea57e1e0eba84ffce1"
+  },
+  "crossOwner": {
+    "passed": 49,
+    "failed": 0,
+    "skipped": 0,
+    "sha256": "7e114279c86f64052a6035e56ba187047c000aa147b0a26b2bf974dc2c85a355"
+  },
+  "removal": {
+    "passed": 44,
+    "failed": 0,
+    "skipped": 0,
+    "sha256": "c6a228987aa1c5489743419f2e9fe1a6b6f3b2a22f6e701e3c3520fbc3d2f878"
+  },
+  "harnessCi": {
+    "driven_by": "agent",
+    "actor": "codex-r4-removal-contract-and-full-harness-ci",
+    "candidate": {
+      "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+      "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+      "dirty": false
+    },
+    "sourceManifest": "D:\\tmp\\autonomy-r4-closeout-20261112-01a1ce4c\\source-manifest-fresh-source-61cde6ebb.json",
+    "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+    "records": [
+      {
+        "name": "removal-entry-tests",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/session-storage-api.test.ts",
+          "tests/unit/execution-domain-registry.test.ts",
+          "tests/unit/session-lifecycle-control-scope.test.ts",
+          "tests/unit/long-session-lifecycle-barrier.test.ts",
+          "tests/unit/main-quit-lifecycle.test.ts",
+          "tests/unit/versegit-completion-lifecycle.test.ts",
+          "--maxWorkers=1",
+          "--reporter=default",
+          "--reporter=json",
+          "--outputFile.json=D:\\tmp\\autonomy-r4-closeout-20261112-01a1ce4c\\removal-and-harness-ci-61cde6ebb\\removal-entry-tests.json"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 37608,
+        "startedAt": "2026-11-12T08:05:02.321Z",
+        "endedAt": "2026-11-12T08:05:43.018Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "harness-list",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "harness",
+          "list"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 29352,
+        "startedAt": "2026-11-12T08:05:43.067Z",
+        "endedAt": "2026-11-12T08:05:44.427Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "harness-gateway-validate",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "harness",
+          "validate",
+          "--spec",
+          "harness/specs/scenarios/gateway-backend-communication.md"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 23136,
+        "startedAt": "2026-11-12T08:05:44.465Z",
+        "endedAt": "2026-11-12T08:05:47.175Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "harness-example-validate",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "harness",
+          "validate",
+          "--spec",
+          "harness/specs/tasks/fix-chat-history-gateway-timeout.example.md",
+          "--no-diff"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 40584,
+        "startedAt": "2026-11-12T08:05:47.200Z",
+        "endedAt": "2026-11-12T08:05:48.505Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "harness-gateway-dry-run",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "harness",
+          "run",
+          "--spec",
+          "harness/specs/scenarios/gateway-backend-communication.md",
+          "--dry-run"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 14264,
+        "startedAt": "2026-11-12T08:05:48.526Z",
+        "endedAt": "2026-11-12T08:05:50.591Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "harness-ci-unit",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "tests/unit/harness-specs.test.ts",
+          "tests/unit/harness-git.test.ts",
+          "tests/unit/harness-spec-lifecycle.test.ts",
+          "tests/unit/docs-index.test.ts",
+          "tests/unit/runtime-source-policy.test.ts",
+          "--maxWorkers=1",
+          "--reporter=default",
+          "--reporter=json",
+          "--outputFile.json=D:\\tmp\\autonomy-r4-closeout-20261112-01a1ce4c\\removal-and-harness-ci-61cde6ebb\\harness-ci-unit.json"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 37344,
+        "startedAt": "2026-11-12T08:05:50.614Z",
+        "endedAt": "2026-11-12T08:06:08.244Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "harness-lifecycle",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "harness:specs:lifecycle"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 22220,
+        "startedAt": "2026-11-12T08:06:08.272Z",
+        "endedAt": "2026-11-12T08:06:09.216Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "repository-duplicates",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "repo:duplicates:check"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 11872,
+        "startedAt": "2026-11-12T08:06:09.239Z",
+        "endedAt": "2026-11-12T08:06:13.592Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "docs-policy",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "docs:policy:validate"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 20184,
+        "startedAt": "2026-11-12T08:06:13.617Z",
+        "endedAt": "2026-11-12T08:06:14.458Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "catalogs",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "catalogs:check"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 43192,
+        "startedAt": "2026-11-12T08:06:14.486Z",
+        "endedAt": "2026-11-12T08:06:16.625Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "agent-dev-audit",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "agent-dev:audit"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 4516,
+        "startedAt": "2026-11-12T08:06:16.650Z",
+        "endedAt": "2026-11-12T08:06:20.418Z",
+        "exitCode": 1,
+        "signal": null
+      }
+    ],
+    "sourceInputsUnchanged": true,
+    "success": false
+  },
+  "harnessCiRemainingDiagnostic": {
+    "driven_by": "agent",
+    "actor": "codex-r4-harness-ci-remaining-diagnostic",
+    "candidate": {
+      "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+      "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+      "dirty": false
+    },
+    "sourceManifest": "D:\\tmp\\autonomy-r4-closeout-20261112-01a1ce4c\\source-manifest-fresh-source-61cde6ebb.json",
+    "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+    "records": [
+      {
+        "name": "repository-evidence",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "repo:evidence:check"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 46236,
+        "startedAt": "2026-11-12T08:12:17.102Z",
+        "endedAt": "2026-11-12T08:12:18.130Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "repository-test-coverage",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+          "repo:test-coverage:check"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 37296,
+        "startedAt": "2026-11-12T08:12:18.155Z",
+        "endedAt": "2026-11-12T08:12:19.931Z",
+        "exitCode": 0,
+        "signal": null
+      }
+    ],
+    "sourceInputsUnchanged": true,
+    "success": true
+  }
+}

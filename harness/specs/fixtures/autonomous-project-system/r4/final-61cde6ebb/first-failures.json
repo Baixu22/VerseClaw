@@ -1,0 +1,1241 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-final-independent-reader",
+  "candidate": {
+    "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+    "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+    "dirty": false
+  },
+  "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+  "nativeFirst": {
+    "execution": {
+      "driven_by": "agent",
+      "actor": "codex-r4-native-fresh-source-61cde6ebb",
+      "candidate": {
+        "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+        "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+        "dirty": false
+      },
+      "sourceManifest": "D:\\tmp\\autonomy-r4-closeout-20261112-01a1ce4c\\source-manifest-fresh-source-61cde6ebb.json",
+      "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+      "records": [
+        {
+          "name": "build-manifest",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\autonomy-relay-20261109\\r4\\pipeline-on-sealed-increment\\on-shared-ce8bc\\prepare-native-manifest-relay.mjs",
+            "D:\\tmp\\autonomy-r4-closeout-20261112-01a1ce4c\\native-fresh-61cde6ebb.config.json",
+            "D:\\tmp\\r4n12\\build-manifest.json"
+          ],
+          "cwd": "D:\\tmp\\r4v12",
+          "pid": 5020,
+          "startedAt": "2026-11-12T07:27:36.895Z",
+          "endedAt": "2026-11-12T07:27:37.275Z",
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "name": "native",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "node_modules/@playwright/test/cli.js",
+            "test",
+            "tests/e2e/unified-execution-traceability.spec.ts",
+            "tests/e2e/resource-window-lifecycle.spec.ts",
+            "--workers=1",
+            "--retries=0",
+            "--reporter=list,json",
+            "--output=D:\\tmp\\r4n12\\t"
+          ],
+          "cwd": "D:\\tmp\\r4v12",
+          "pid": 20492,
+          "startedAt": "2026-11-12T07:27:37.318Z",
+          "endedAt": "2026-11-12T07:32:11.781Z",
+          "exitCode": 1,
+          "signal": null
+        }
+      ],
+      "sourceInputsUnchanged": true,
+      "success": false
+    },
+    "stats": {
+      "startTime": "2026-11-12T07:27:38.612Z",
+      "duration": 272993.756,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 1,
+      "flaky": 0
+    }
+  },
+  "targetedRetry": {
+    "execution": {
+      "driven_by": "agent",
+      "actor": "codex-r4-traceability-targeted-retry",
+      "candidate": {
+        "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+        "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+        "dirty": false
+      },
+      "sourceManifest": "D:\\tmp\\autonomy-r4-closeout-20261112-01a1ce4c\\source-manifest-fresh-source-61cde6ebb.json",
+      "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+      "records": [
+        {
+          "name": "build-manifest",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\tmp\\autonomy-relay-20261109\\r4\\pipeline-on-sealed-increment\\on-shared-ce8bc\\prepare-native-manifest-relay.mjs",
+            "D:\\tmp\\autonomy-r4-closeout-20261112-01a1ce4c\\native-traceability-retry-61cde6ebb.config.json",
+            "D:\\tmp\\r4nt12\\build-manifest.json"
+          ],
+          "cwd": "D:\\tmp\\r4v12",
+          "pid": 5892,
+          "startedAt": "2026-11-12T07:54:00.783Z",
+          "endedAt": "2026-11-12T07:54:01.124Z",
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "name": "native",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "node_modules/@playwright/test/cli.js",
+            "test",
+            "tests/e2e/unified-execution-traceability.spec.ts",
+            "--workers=1",
+            "--retries=0",
+            "--reporter=list,json",
+            "--output=D:\\tmp\\r4nt12\\t"
+          ],
+          "cwd": "D:\\tmp\\r4v12",
+          "pid": 42872,
+          "startedAt": "2026-11-12T07:54:01.147Z",
+          "endedAt": "2026-11-12T07:56:41.157Z",
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "sourceInputsUnchanged": true,
+      "success": true
+    },
+    "stats": {
+      "startTime": "2026-11-12T07:54:02.454Z",
+      "duration": 158676.159,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  "processObservation": {
+    "driven_by": "agent",
+    "actor": "codex-r4-original-process-handle-observer",
+    "records": [
+      {
+        "pid": 31556,
+        "startLog": "[2026-11-12T07:54:26.340Z] [INFO] Gateway process started (pid=31556)",
+        "handleOpened": false,
+        "openError": 87
+      },
+      {
+        "pid": 23836,
+        "startLog": "[2026-11-12T07:54:38.681Z] [INFO] Gateway process started (pid=23836)",
+        "handleOpened": false,
+        "openError": 87
+      },
+      {
+        "pid": 33408,
+        "startLog": "[2026-11-12T07:55:24.506Z] [INFO] Gateway process started (pid=33408)",
+        "handleOpened": true,
+        "openError": null,
+        "osExitObservedAt": "2026-11-12T07:56:15.908203+00:00",
+        "exitCode": 1
+      },
+      {
+        "pid": 37384,
+        "startLog": "[2026-11-12T07:56:23.030Z] [INFO] Gateway process started (pid=37384)",
+        "handleOpened": true,
+        "openError": null,
+        "osExitObservedAt": "2026-11-12T07:56:39.714018+00:00",
+        "exitCode": 1
+      }
+    ],
+    "nativeLogs": [
+      {
+        "line": "[2026-11-12T07:54:37.272Z] [INFO] Sending kill to Gateway process (pid=31556)",
+        "latestPidInLog": 31556,
+        "log": "D:\\tmp\\r4nt12\\r\\verse-claw-e2e-run-YUXQsy\\verse-claw-e2e-user-data-nzt3EH\\logs\\verse-claw-2026-11-12.log"
+      },
+      {
+        "line": "[2026-11-12T07:54:37.909Z] [INFO] Gateway process exited (code=1, expected=yes)",
+        "latestPidInLog": 31556,
+        "log": "D:\\tmp\\r4nt12\\r\\verse-claw-e2e-run-YUXQsy\\verse-claw-e2e-user-data-nzt3EH\\logs\\verse-claw-2026-11-12.log"
+      },
+      {
+        "line": "[2026-11-12T07:55:16.757Z] [INFO] Sending kill to Gateway process (pid=23836)",
+        "latestPidInLog": 23836,
+        "log": "D:\\tmp\\r4nt12\\r\\verse-claw-e2e-run-YUXQsy\\verse-claw-e2e-user-data-nzt3EH\\logs\\verse-claw-2026-11-12.log"
+      },
+      {
+        "line": "[2026-11-12T07:55:17.402Z] [INFO] Gateway process exited (code=1, expected=yes)",
+        "latestPidInLog": 23836,
+        "log": "D:\\tmp\\r4nt12\\r\\verse-claw-e2e-run-YUXQsy\\verse-claw-e2e-user-data-nzt3EH\\logs\\verse-claw-2026-11-12.log"
+      },
+      {
+        "line": "[2026-11-12T07:56:15.229Z] [INFO] Sending kill to Gateway process (pid=33408)",
+        "latestPidInLog": 33408,
+        "log": "D:\\tmp\\r4nt12\\r\\verse-claw-e2e-run-YUXQsy\\verse-claw-e2e-user-data-nzt3EH\\logs\\verse-claw-2026-11-12.log"
+      },
+      {
+        "line": "[2026-11-12T07:56:15.875Z] [INFO] Gateway process exited (code=1, expected=yes)",
+        "latestPidInLog": 33408,
+        "log": "D:\\tmp\\r4nt12\\r\\verse-claw-e2e-run-YUXQsy\\verse-claw-e2e-user-data-nzt3EH\\logs\\verse-claw-2026-11-12.log"
+      },
+      {
+        "line": "[2026-11-12T07:56:38.923Z] [INFO] Sending kill to Gateway process (pid=37384)",
+        "latestPidInLog": 37384,
+        "log": "D:\\tmp\\r4nt12\\r\\verse-claw-e2e-run-YUXQsy\\verse-claw-e2e-user-data-nzt3EH\\logs\\verse-claw-2026-11-12.log"
+      },
+      {
+        "line": "[2026-11-12T07:56:39.504Z] [INFO] Gateway process exited (code=1, expected=yes)",
+        "latestPidInLog": 37384,
+        "log": "D:\\tmp\\r4nt12\\r\\verse-claw-e2e-run-YUXQsy\\verse-claw-e2e-user-data-nzt3EH\\logs\\verse-claw-2026-11-12.log"
+      }
+    ]
+  },
+  "outputPathRecovery": {
+    "driven_by": "agent",
+    "actor": "codex-r4-output-recovery",
+    "at": "2026-11-12T07:15:24.314501+00:00",
+    "recordedConfigPreserved": "D:\\tmp\\autonomy-r4-closeout-20261112-01a1ce4c\\full-gates-fresh-61cde6ebb.config.json",
+    "safeReplayConfig": "D:\\tmp\\autonomy-r4-closeout-20261112-01a1ce4c\\full-gates-fresh-61cde6ebb.replay.config.json",
+    "oldArchiveSha256": "23817a51c916d268078206daa73151add4650c220677bc57c7d0839a39dab6fb",
+    "operations": [
+      {
+        "name": "cross-owner-regressions.json",
+        "capturedFrom": "D:\\tmp\\autonomy-relay-20261109\\r4\\pipeline-on-sealed-increment\\on-shared-ce8bc\\final-checks-v21-candidate-42c54a7b2\\cross-owner-regressions.json",
+        "capturedTo": "D:\\tmp\\autonomy-r4-closeout-20261112-01a1ce4c\\full-gates-fresh-61cde6ebb\\cross-owner-regressions.json",
+        "capturedSha256": "7e114279c86f64052a6035e56ba187047c000aa147b0a26b2bf974dc2c85a355",
+        "originalRestoredSha256": "fdf0ebf2e07e91d81bc3cd2bd4474b4b1847788b53c8e877562e025b795d03e2"
+      },
+      {
+        "name": "regressions.json",
+        "temporaryOutputRoute": "hard-link to the actual Vitest output",
+        "terminalReportAlreadyPresent": false
+      },
+      {
+        "name": "regressions.json",
+        "capturedSha256": "9f1b4f269ee4b89c0c6155534846cfb8f426242eb43d81ea57e1e0eba84ffce1",
+        "capturedTo": "D:\\tmp\\autonomy-r4-closeout-20261112-01a1ce4c\\full-gates-fresh-61cde6ebb\\regressions.json",
+        "originalRestoredSha256": "b5e9cf3342ff5e083ff5ab088cf79d3d682492eef364abd4d2f3ad9cb2f8087b",
+        "freshOutputLinkCount": 1
+      }
+    ],
+    "completedAt": "2026-11-12T07:27:35.756281+00:00",
+    "originalFilesRestored": true
+  },
+  "mediaAliasRed": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 0,
+    "numFailedTestSuites": 2,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 2,
+    "numPassedTests": 1,
+    "numFailedTests": 1,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794465246173,
+    "success": false,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "vite Electron OpenClaw runtime aliases"
+            ],
+            "fullName": "vite Electron OpenClaw runtime aliases keeps local OpenClaw workspace packages bundled in Electron main",
+            "status": "passed",
+            "title": "keeps local OpenClaw workspace packages bundled in Electron main",
+            "duration": 364.88599999999997,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "vite Electron OpenClaw runtime aliases"
+            ],
+            "fullName": "vite Electron OpenClaw runtime aliases maps local OpenClaw package imports to checked-in runtime sources",
+            "status": "failed",
+            "title": "maps local OpenClaw package imports to checked-in runtime sources",
+            "duration": 3.7019000000000233,
+            "failureMessages": [
+              "AssertionError: expected undefined to be defined\n    at D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/tests/unit/vite-config-openclaw-runtime.test.ts:38:23\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at file:///D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:20"
+            ],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794465246701,
+        "endTime": 1794465247069.702,
+        "status": "failed",
+        "message": "",
+        "name": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/tests/unit/vite-config-openclaw-runtime.test.ts"
+      }
+    ]
+  },
+  "claimNullContractFirstResult": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 0,
+    "numFailedTestSuites": 2,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 17,
+    "numPassedTests": 3,
+    "numFailedTests": 1,
+    "numPendingTests": 13,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794465398408,
+    "success": false,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup retains exact old bytes through newer HEAD, deletion, owner reopen and repeated cleanup",
+            "status": "skipped",
+            "title": "retains exact old bytes through newer HEAD, deletion, owner reopen and repeated cleanup",
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup retains overwritten legacy checkpoint paths using their historical writer after handoff",
+            "status": "skipped",
+            "title": "retains overwritten legacy checkpoint paths using their historical writer after handoff",
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup keeps a tree when a persisted retention ref is lost and never substitutes another receipt",
+            "status": "skipped",
+            "title": "keeps a tree when a persisted retention ref is lost and never substitutes another receipt",
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup preserves an external edit inside the declared write set (before-cleanup)",
+            "status": "skipped",
+            "title": "preserves an external edit inside the declared write set (before-cleanup)",
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup preserves an external edit inside the declared write set (after-preparation)",
+            "status": "skipped",
+            "title": "preserves an external edit inside the declared write set (after-preparation)",
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup reads cleanup history and retained binary pages through the production task tool",
+            "status": "skipped",
+            "title": "reads cleanup history and retained binary pages through the production task tool",
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup refuses active claims and pending effects before preparing historical receipts",
+            "status": "skipped",
+            "title": "refuses active claims and pending effects before preparing historical receipts",
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup rejects stale access after the same pathname is replaced",
+            "status": "skipped",
+            "title": "rejects stale access after the same pathname is replaced",
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup refuses shared core.worktree redirection at admission and cleanup",
+            "status": "skipped",
+            "title": "refuses shared core.worktree redirection at admission and cleanup",
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup uses the registered Task authority while retaining bytes in the source clone",
+            "status": "skipped",
+            "title": "uses the registered Task authority while retaining bytes in the source clone",
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup prevents authority reassignment with an external linked checkout reference (done=false)",
+            "status": "skipped",
+            "title": "prevents authority reassignment with an external linked checkout reference (done=false)",
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup prevents authority reassignment with an external linked checkout reference (done=true)",
+            "status": "skipped",
+            "title": "prevents authority reassignment with an external linked checkout reference (done=true)",
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup reconciles a real process exit after removal using committed retention receipts",
+            "status": "skipped",
+            "title": "reconciles a real process exit after removal using committed retention receipts",
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup serializes cleanup against a competing process first-open",
+            "status": "passed",
+            "title": "serializes cleanup against a competing process first-open",
+            "duration": 6939.855600000001,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup serializes cleanup against a competing process checkpoint",
+            "status": "passed",
+            "title": "serializes cleanup against a competing process checkpoint",
+            "duration": 5565.4692,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup serializes cleanup against a competing process claim",
+            "status": "failed",
+            "title": "serializes cleanup against a competing process claim",
+            "duration": 5657.631599999997,
+            "failureMessages": [
+              "AssertionError: expected null to be undefined\n    at D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/tests/unit/task-worktree-retention.test.ts:277:32\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at file:///D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/node_modules/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:20"
+            ],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Task evidence retention and original checkout cleanup"
+            ],
+            "fullName": "Task evidence retention and original checkout cleanup serializes cleanup against a competing process register",
+            "status": "passed",
+            "title": "serializes cleanup against a competing process register",
+            "duration": 5583.426100000001,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794465406546,
+        "endTime": 1794465430292.426,
+        "status": "failed",
+        "message": "",
+        "name": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/tests/unit/task-worktree-retention.test.ts"
+      }
+    ]
+  },
+  "earlierEntryChecks": {
+    "numTotalTestSuites": 15,
+    "numPassedTestSuites": 15,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 49,
+    "numPassedTests": 48,
+    "numFailedTests": 0,
+    "numPendingTests": 1,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794464415803,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "explicit local task authority routing"
+            ],
+            "fullName": "explicit local task authority routing keeps independent roots separate, then returns the registered authority without copying task data",
+            "status": "passed",
+            "title": "keeps independent roots separate, then returns the registered authority without copying task data",
+            "duration": 770.4661999999998,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "explicit local task authority routing"
+            ],
+            "fullName": "explicit local task authority routing makes identical registration retries idempotent and rejects conflicts or stale revisions",
+            "status": "passed",
+            "title": "makes identical registration retries idempotent and rejects conflicts or stale revisions",
+            "duration": 449.37180000000035,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "explicit local task authority routing"
+            ],
+            "fullName": "explicit local task authority routing does not fall back to a local database after the registered authority disappears or is copied",
+            "status": "passed",
+            "title": "does not fall back to a local database after the registered authority disappears or is copied",
+            "duration": 220.8470000000002,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "explicit local task authority routing"
+            ],
+            "fullName": "explicit local task authority routing rejects uninitialized authorities and registration chains",
+            "status": "passed",
+            "title": "rejects uninitialized authorities and registration chains",
+            "duration": 519.4053999999996,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "explicit local task authority routing"
+            ],
+            "fullName": "explicit local task authority routing shares common-dir identity across actual Git worktrees without explicit enrollment",
+            "status": "passed",
+            "title": "shares common-dir identity across actual Git worktrees without explicit enrollment",
+            "duration": 982.1994000000004,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794464470328,
+        "endTime": 1794464473271.1995,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/tests/unit/execution-domain-registry.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "long-session Main lifecycle barrier"
+            ],
+            "fullName": "long-session Main lifecycle barrier calls the runtime archive method and releases the mirror gate only after a committed receipt",
+            "status": "passed",
+            "title": "calls the runtime archive method and releases the mirror gate only after a committed receipt",
+            "duration": 5697.119299999999,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session Main lifecycle barrier"
+            ],
+            "fullName": "long-session Main lifecycle barrier keeps the same operationId open after an unknown archive RPC and resumes on retry",
+            "status": "passed",
+            "title": "keeps the same operationId open after an unknown archive RPC and resumes on retry",
+            "duration": 158.9364000000005,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session Main lifecycle barrier"
+            ],
+            "fullName": "long-session Main lifecycle barrier does not start a restore while an archive operation is pending for the same session",
+            "status": "passed",
+            "title": "does not start a restore while an archive operation is pending for the same session",
+            "duration": 69.42739999999958,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session Main lifecycle barrier"
+            ],
+            "fullName": "long-session Main lifecycle barrier uses the same durable gate contract for restore",
+            "status": "passed",
+            "title": "uses the same durable gate contract for restore",
+            "duration": 84.65030000000024,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session Main lifecycle barrier"
+            ],
+            "fullName": "long-session Main lifecycle barrier retains the gate for a missing-action archive receipt",
+            "status": "passed",
+            "title": "retains the gate for a missing-action archive receipt",
+            "duration": 56.08300000000054,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session Main lifecycle barrier"
+            ],
+            "fullName": "long-session Main lifecycle barrier retains the gate for a wrong-session archive receipt",
+            "status": "passed",
+            "title": "retains the gate for a wrong-session archive receipt",
+            "duration": 54.97119999999995,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session Main lifecycle barrier"
+            ],
+            "fullName": "long-session Main lifecycle barrier releases a definitively refused pre-intent restore without releasing unknown mutations",
+            "status": "passed",
+            "title": "releases a definitively refused pre-intent restore without releasing unknown mutations",
+            "duration": 104.53309999999965,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session Main lifecycle barrier"
+            ],
+            "fullName": "long-session Main lifecycle barrier releases a correlated definitive failure even when the runtime cannot claim noMutation",
+            "status": "passed",
+            "title": "releases a correlated definitive failure even when the runtime cannot claim noMutation",
+            "duration": 44.81660000000011,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session Main lifecycle barrier"
+            ],
+            "fullName": "long-session Main lifecycle barrier retains the gate for a correlated retryable failure",
+            "status": "passed",
+            "title": "retains the gate for a correlated retryable failure",
+            "duration": 72.00849999999991,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session Main lifecycle barrier"
+            ],
+            "fullName": "long-session Main lifecycle barrier resumes the same archive operation after UI metadata changes",
+            "status": "passed",
+            "title": "resumes the same archive operation after UI metadata changes",
+            "duration": 110.03330000000005,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794464416698,
+        "endTime": 1794464423150.0332,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/tests/unit/long-session-lifecycle-barrier.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "main quit lifecycle coordination"
+            ],
+            "fullName": "main quit lifecycle coordination starts cleanup only once",
+            "status": "passed",
+            "title": "starts cleanup only once",
+            "duration": 1.229899999999816,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "main quit lifecycle coordination"
+            ],
+            "fullName": "main quit lifecycle coordination allows quit after cleanup is marked complete",
+            "status": "passed",
+            "title": "allows quit after cleanup is marked complete",
+            "duration": 0.2037000000000262,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794464474532,
+        "endTime": 1794464474533.23,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/tests/unit/main-quit-lifecycle.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "Runtime Lifecycle Governance — Phase 0 lifecycle safety contract"
+            ],
+            "fullName": "Runtime Lifecycle Governance — Phase 0 lifecycle safety contract required admission permit hook is live without an env opt-in",
+            "status": "passed",
+            "title": "required admission permit hook is live without an env opt-in",
+            "duration": 1.7743000000000393,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Runtime Lifecycle Governance — Phase 0 lifecycle safety contract"
+            ],
+            "fullName": "Runtime Lifecycle Governance — Phase 0 lifecycle safety contract mission fencing save path is default-off",
+            "status": "passed",
+            "title": "mission fencing save path is default-off",
+            "duration": 0.3538999999996122,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Runtime Lifecycle Governance — Phase 0 lifecycle safety contract"
+            ],
+            "fullName": "Runtime Lifecycle Governance — Phase 0 lifecycle safety contract goal wake arm path is default-off",
+            "status": "passed",
+            "title": "goal wake arm path is default-off",
+            "duration": 0.2363999999997759,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Runtime Lifecycle Governance — Phase 0 lifecycle safety contract"
+            ],
+            "fullName": "Runtime Lifecycle Governance — Phase 0 lifecycle safety contract remaining Goal-wake flags are kill switches and only turn on with explicit truthy values",
+            "status": "passed",
+            "title": "remaining Goal-wake flags are kill switches and only turn on with explicit truthy values",
+            "duration": 0.30429999999978463,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Runtime Lifecycle Governance — Phase 1 50-cycle leak fixture"
+            ],
+            "fullName": "Runtime Lifecycle Governance — Phase 1 50-cycle leak fixture drains 50 create/stop process-tree cycles without registry, timer, or heap leaks",
+            "status": "skipped",
+            "title": "drains 50 create/stop process-tree cycles without registry, timer, or heap leaks",
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794464468530,
+        "endTime": 1794464468533.3042,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/tests/unit/runtime-lifecycle-governance.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "session lifecycle result scope"
+            ],
+            "fullName": "session lifecycle result scope assigns a new renderer visit revision when a session view is reset",
+            "status": "passed",
+            "title": "assigns a new renderer visit revision when a session view is reset",
+            "duration": 4.065000000000055,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session lifecycle result scope"
+            ],
+            "fullName": "session lifecycle result scope keeps queued messages attached to their original workspace, session and generation",
+            "status": "passed",
+            "title": "keeps queued messages attached to their original workspace, session and generation",
+            "duration": 4.095599999999649,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session lifecycle result scope"
+            ],
+            "fullName": "session lifecycle result scope does not clear a new session while the old abort response is pending",
+            "status": "passed",
+            "title": "does not clear a new session while the old abort response is pending",
+            "duration": 1.1246000000001004,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session lifecycle result scope"
+            ],
+            "fullName": "session lifecycle result scope does not clear a new run while the old abort response is pending",
+            "status": "passed",
+            "title": "does not clear a new run while the old abort response is pending",
+            "duration": 0.4618999999997868,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session lifecycle result scope"
+            ],
+            "fullName": "session lifecycle result scope does not clear a new generation while the old abort response is pending",
+            "status": "passed",
+            "title": "does not clear a new generation while the old abort response is pending",
+            "duration": 0.3829999999998108,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session lifecycle result scope"
+            ],
+            "fullName": "session lifecycle result scope clears the matching run only after owner confirmation",
+            "status": "passed",
+            "title": "clears the matching run only after owner confirmation",
+            "duration": 0.4567000000001826,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session lifecycle result scope"
+            ],
+            "fullName": "session lifecycle result scope retains a still-active run when the abort receipt cannot confirm it",
+            "status": "passed",
+            "title": "retains a still-active run when the abort receipt cannot confirm it",
+            "duration": 3.0261999999997897,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session lifecycle result scope"
+            ],
+            "fullName": "session lifecycle result scope clears an old rejection on retry and accepts an owner-confirmed idle generation",
+            "status": "passed",
+            "title": "clears an old rejection on retry and accepts an owner-confirmed idle generation",
+            "duration": 0.5360999999998057,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session lifecycle result scope"
+            ],
+            "fullName": "session lifecycle result scope keeps a restored generation when an old deleteSession success arrives",
+            "status": "passed",
+            "title": "keeps a restored generation when an old deleteSession success arrives",
+            "duration": 0.8364000000001397,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session lifecycle result scope"
+            ],
+            "fullName": "session lifecycle result scope keeps a restored generation when an old archiveSession success arrives",
+            "status": "passed",
+            "title": "keeps a restored generation when an old archiveSession success arrives",
+            "duration": 0.8610999999996238,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session lifecycle result scope"
+            ],
+            "fullName": "session lifecycle result scope preserves the source run cache after switching away from an unconfirmed Stop",
+            "status": "passed",
+            "title": "preserves the source run cache after switching away from an unconfirmed Stop",
+            "duration": 1.4272000000000844,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session lifecycle result scope"
+            ],
+            "fullName": "session lifecycle result scope rejects old-agent refreshes and ignores reads completing after an agent switch",
+            "status": "passed",
+            "title": "rejects old-agent refreshes and ignores reads completing after an agent switch",
+            "duration": 0.4416999999998552,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session lifecycle result scope"
+            ],
+            "fullName": "session lifecycle result scope keeps a later archive when an old restoreSession response arrives",
+            "status": "passed",
+            "title": "keeps a later archive when an old restoreSession response arrives",
+            "duration": 0.6386999999999716,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session lifecycle result scope"
+            ],
+            "fullName": "session lifecycle result scope keeps a later archive when an old permanentDeleteSession response arrives",
+            "status": "passed",
+            "title": "keeps a later archive when an old permanentDeleteSession response arrives",
+            "duration": 0.407799999999952,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session lifecycle result scope"
+            ],
+            "fullName": "session lifecycle result scope preserves materialized empty sessions and only hides a local pending entry",
+            "status": "passed",
+            "title": "preserves materialized empty sessions and only hides a local pending entry",
+            "duration": 0.6453000000001339,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794464426731,
+        "endTime": 1794464426750.6453,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/tests/unit/session-lifecycle-control-scope.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "session storage with real Git and files"
+            ],
+            "fullName": "session storage with real Git and files measures files, marks bounded scans and never follows junctions",
+            "status": "passed",
+            "title": "measures files, marks bounded scans and never follows junctions",
+            "duration": 1242.0861999999997,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session storage with real Git and files"
+            ],
+            "fullName": "session storage with real Git and files reports real worktrees and protects primary, dirty, locked and registered checkouts",
+            "status": "passed",
+            "title": "reports real worktrees and protects primary, dirty, locked and registered checkouts",
+            "duration": 4928.586800000001,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session storage with real Git and files"
+            ],
+            "fullName": "session storage with real Git and files retains the branch after approved idle removal and rejects stale cleanup of new changes",
+            "status": "passed",
+            "title": "retains the branch after approved idle removal and rejects stale cleanup of new changes",
+            "duration": 15853.5614,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session storage with real Git and files"
+            ],
+            "fullName": "session storage with real Git and files sizes session transcripts and releases only the exact workspace/session owners",
+            "status": "passed",
+            "title": "sizes session transcripts and releases only the exact workspace/session owners",
+            "duration": 4456.327799999999,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "session storage with real Git and files"
+            ],
+            "fullName": "session storage with real Git and files waits for terminal owner exit and records a rejected cleanup as failed",
+            "status": "passed",
+            "title": "waits for terminal owner exit and records a rejected cleanup as failed",
+            "duration": 1042.0642999999982,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794464429269,
+        "endTime": 1794464456792.0642,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/tests/unit/session-storage-api.test.ts"
+      },
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "persistent host completion lifecycle"
+            ],
+            "fullName": "persistent host completion lifecycle maps applied, not-applied and unknown without claiming provider landed",
+            "status": "passed",
+            "title": "maps applied, not-applied and unknown without claiming provider landed",
+            "duration": 2065.8311000000003,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "persistent host completion lifecycle"
+            ],
+            "fullName": "persistent host completion lifecycle survives restart, duplicate completion and late epoch without a second landing",
+            "status": "passed",
+            "title": "survives restart, duplicate completion and late epoch without a second landing",
+            "duration": 1038.9544999999998,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "persistent host completion lifecycle"
+            ],
+            "fullName": "persistent host completion lifecycle requires explicit recovery for unknown and never turns unknown into implicit success",
+            "status": "passed",
+            "title": "requires explicit recovery for unknown and never turns unknown into implicit success",
+            "duration": 616.4256999999998,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "persistent host completion lifecycle"
+            ],
+            "fullName": "persistent host completion lifecycle excludes completed and unknown sessions from active risk projection",
+            "status": "passed",
+            "title": "excludes completed and unknown sessions from active risk projection",
+            "duration": 1988.0454,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "persistent host completion lifecycle"
+            ],
+            "fullName": "persistent host completion lifecycle reads legacy sessions and refuses to promote success without exact candidate/effect identity",
+            "status": "passed",
+            "title": "reads legacy sessions and refuses to promote success without exact candidate/effect identity",
+            "duration": 9.28360000000066,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "persistent host completion lifecycle"
+            ],
+            "fullName": "persistent host completion lifecycle is called by the production patch-flow completion seam",
+            "status": "passed",
+            "title": "is called by the production patch-flow completion seam",
+            "duration": 5.953500000000531,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "persistent host completion lifecycle"
+            ],
+            "fullName": "persistent host completion lifecycle rejects unsupported persisted schema versions",
+            "status": "passed",
+            "title": "rejects unsupported persisted schema versions",
+            "duration": 865.9030999999995,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794464459234,
+        "endTime": 1794464465824.903,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/tests/unit/versegit-completion-lifecycle.test.ts"
+      }
+    ]
+  },
+  "windowsAuditProbe": {
+    "driven_by": "agent",
+    "actor": "codex-r4-removal-entry-reader",
+    "originalProbeTimeoutMs": 1000,
+    "observations": [
+      {
+        "attempt": 1,
+        "elapsedMs": 1125,
+        "error": "probe-timeout",
+        "withinOriginal1000Ms": false
+      },
+      {
+        "attempt": 2,
+        "elapsedMs": 1078,
+        "error": "probe-timeout",
+        "withinOriginal1000Ms": false
+      },
+      {
+        "attempt": 3,
+        "elapsedMs": 1063,
+        "error": "probe-timeout",
+        "withinOriginal1000Ms": false
+      }
+    ]
+  }
+}

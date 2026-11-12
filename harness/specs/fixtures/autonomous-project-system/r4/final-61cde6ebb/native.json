@@ -1,0 +1,312 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-final-independent-reader",
+  "candidate": {
+    "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+    "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+    "dirty": false
+  },
+  "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+  "execution": {
+    "driven_by": "agent",
+    "actor": "codex-r4-native-final-complete-batch",
+    "candidate": {
+      "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+      "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+      "dirty": false
+    },
+    "sourceManifest": "D:\\tmp\\autonomy-r4-closeout-20261112-01a1ce4c\\source-manifest-fresh-source-61cde6ebb.json",
+    "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+    "records": [
+      {
+        "name": "build-manifest",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "D:\\tmp\\autonomy-relay-20261109\\r4\\pipeline-on-sealed-increment\\on-shared-ce8bc\\prepare-native-manifest-relay.mjs",
+          "D:\\tmp\\autonomy-r4-closeout-20261112-01a1ce4c\\native-final-complete-61cde6ebb.config.json",
+          "D:\\tmp\\r4nf12\\build-manifest.json"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 30228,
+        "startedAt": "2026-11-12T08:01:12.423Z",
+        "endedAt": "2026-11-12T08:01:12.770Z",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "name": "native",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "tests/e2e/unified-execution-traceability.spec.ts",
+          "tests/e2e/resource-window-lifecycle.spec.ts",
+          "--workers=1",
+          "--retries=0",
+          "--reporter=list,json",
+          "--output=D:\\tmp\\r4nf12\\t"
+        ],
+        "cwd": "D:\\tmp\\r4v12",
+        "pid": 34400,
+        "startedAt": "2026-11-12T08:01:12.792Z",
+        "endedAt": "2026-11-12T08:05:00.511Z",
+        "exitCode": 0,
+        "signal": null
+      }
+    ],
+    "sourceInputsUnchanged": true,
+    "success": true
+  },
+  "results": {
+    "config": {
+      "configFile": "D:\\tmp\\r4v12\\playwright.config.ts",
+      "rootDir": "D:/tmp/r4v12/tests/e2e",
+      "forbidOnly": false,
+      "fullyParallel": false,
+      "globalSetup": "D:\\tmp\\r4v12\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+      "globalTeardown": null,
+      "globalTimeout": 0,
+      "grep": {},
+      "grepInvert": null,
+      "maxFailures": 0,
+      "metadata": {
+        "actualWorkers": 1
+      },
+      "preserveOutput": "always",
+      "projects": [
+        {
+          "outputDir": "D:/tmp/r4nf12/t",
+          "repeatEach": 1,
+          "retries": 0,
+          "metadata": {
+            "actualWorkers": 1
+          },
+          "id": "",
+          "name": "",
+          "testDir": "D:/tmp/r4v12/tests/e2e",
+          "testIgnore": [
+            "**/resource-lifecycle-soak.spec.ts",
+            "**/product-acceptance-space-bunny.spec.ts",
+            "**/product-acceptance-moyu.spec.ts"
+          ],
+          "testMatch": [
+            "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+          ],
+          "timeout": 90000
+        }
+      ],
+      "quiet": false,
+      "reporter": [
+        [
+          "list"
+        ],
+        [
+          "json"
+        ]
+      ],
+      "reportSlowTests": {
+        "max": 5,
+        "threshold": 300000
+      },
+      "shard": null,
+      "tags": [],
+      "updateSnapshots": "missing",
+      "updateSourceMethod": "patch",
+      "version": "1.59.0",
+      "workers": 1,
+      "webServer": null
+    },
+    "suites": [
+      {
+        "title": "resource-window-lifecycle.spec.ts",
+        "file": "resource-window-lifecycle.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [
+          {
+            "title": "integrated main and browser windows retain visibility, observers and background execution",
+            "ok": true,
+            "tags": [],
+            "tests": [
+              {
+                "timeout": 240000,
+                "annotations": [],
+                "expectedStatus": "passed",
+                "projectId": "",
+                "projectName": "",
+                "results": [
+                  {
+                    "workerIndex": 0,
+                    "parallelIndex": 0,
+                    "status": "passed",
+                    "duration": 48447,
+                    "errors": [],
+                    "stdout": [],
+                    "stderr": [],
+                    "retry": 0,
+                    "startTime": "2026-11-12T08:01:14.989Z",
+                    "annotations": [],
+                    "attachments": []
+                  }
+                ],
+                "status": "expected"
+              }
+            ],
+            "id": "fe45c8a28f5815f10aa8-bec469a35cdb562f314c",
+            "file": "resource-window-lifecycle.spec.ts",
+            "line": 15,
+            "column": 5
+          }
+        ]
+      },
+      {
+        "title": "unified-execution-traceability.spec.ts",
+        "file": "unified-execution-traceability.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [
+          {
+            "title": "TF0867: exclusive claim, real writes, durable migration restart, acceptance and source cleanup",
+            "ok": true,
+            "tags": [],
+            "tests": [
+              {
+                "timeout": 420000,
+                "annotations": [],
+                "expectedStatus": "passed",
+                "projectId": "",
+                "projectName": "",
+                "results": [
+                  {
+                    "workerIndex": 0,
+                    "parallelIndex": 0,
+                    "status": "passed",
+                    "duration": 175927,
+                    "errors": [],
+                    "stdout": [],
+                    "stderr": [
+                      {
+                        "text": "[fp-p1-harness] connection #1\n"
+                      },
+                      {
+                        "text": "[fp-p1-harness] connection #2\n"
+                      },
+                      {
+                        "text": "[fp-p1-harness] connection #3\n"
+                      },
+                      {
+                        "text": "[fp-p1-harness] connection #4\n"
+                      },
+                      {
+                        "text": "[fp-p1-harness] connection #5\n"
+                      },
+                      {
+                        "text": "[fp-p1-harness] connection #6\n"
+                      }
+                    ],
+                    "retry": 0,
+                    "startTime": "2026-11-12T08:02:03.480Z",
+                    "annotations": [],
+                    "attachments": []
+                  }
+                ],
+                "status": "expected"
+              }
+            ],
+            "id": "2eedfddba38a4fc9a62f-26aa2d3222fb8cfcc531",
+            "file": "unified-execution-traceability.spec.ts",
+            "line": 97,
+            "column": 5
+          }
+        ]
+      }
+    ],
+    "errors": [],
+    "stats": {
+      "startTime": "2026-11-12T08:01:13.974Z",
+      "duration": 226482.473,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  "buildManifest": {
+    "schema_version": 1,
+    "driven_by": "agent",
+    "actor": "codex-r4-native-final-complete-batch",
+    "side": "candidate",
+    "source_head": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+    "built_at": "2026-11-12T08:01:12.744Z",
+    "main_sha256": "a9bb06a87646b25d8312e54a0d34d50b04bd8816404ad3bf65e4bd31c0ec5acb",
+    "renderer_sha256": "1f6362edfc5737177d1a73e708c49df19bc260a24cbc5bf25f18535769441070",
+    "runtime_entry_sha256": "061e9ebc4042d917edd2801c0fa0cb12b9232d5a7ab32349bf7b7fce330dc409"
+  },
+  "sourceMutationGuard": {
+    "schemaVersion": "ElectronE2ESourceMutationGuard/v1",
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "ok": true,
+    "sourceChanged": false,
+    "before": {
+      "status": "",
+      "trackedFilesSha256": "6084104d5bd04dfd69fc6cd621ff57ed67f344485a4f2947a4728be0d451ad4f",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "after": {
+      "status": "",
+      "trackedFilesSha256": "6084104d5bd04dfd69fc6cd621ff57ed67f344485a4f2947a4728be0d451ad4f",
+      "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "traceStatus": "passed",
+  "stages": [
+    "attemptStarted",
+    "frozenInputs",
+    "frontendBridgeReadDenied",
+    "claimReady",
+    "resourceSnapshots",
+    "claimRace",
+    "identities",
+    "sendA",
+    "aGitSnapshot",
+    "aExecution",
+    "interruptedOwnerReadback",
+    "interruptedAfterDiskCommit",
+    "recovered",
+    "sendB",
+    "bExecution",
+    "staleRejected",
+    "candidateInput",
+    "accepted",
+    "cleanupInputs",
+    "cleanupPreflight",
+    "sourceRemoved",
+    "hostHistoryPages",
+    "hostArtifactPages",
+    "afterCleanup",
+    "frozenInputsAfter"
+  ],
+  "timings": [
+    {
+      "phase": "tool-run-A",
+      "startedAt": 1794470570446,
+      "endedAt": 1794470600248,
+      "durationMs": 29802
+    },
+    {
+      "phase": "main-restart-to-confirmed",
+      "startedAt": 1794470604458,
+      "endedAt": 1794470627207,
+      "durationMs": 22749
+    },
+    {
+      "phase": "tool-run-B",
+      "startedAt": 1794470627216,
+      "endedAt": 1794470664855,
+      "durationMs": 37639
+    }
+  ],
+  "provider": "local-scripted",
+  "requestedModel": "ccs-workbuddy/deepseek-v4.1-flash"
+}

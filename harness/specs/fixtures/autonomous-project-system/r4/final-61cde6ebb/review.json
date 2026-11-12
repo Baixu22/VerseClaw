@@ -1,0 +1,344 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-r4-final-independent-reader",
+  "candidate": {
+    "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+    "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+    "dirty": false
+  },
+  "sourceManifestSha256": "69cc7af94cbac4146234e676a7fc01d29922df45bf9a13cc49c637126222423d",
+  "finalReview": {
+    "schemaVersion": 1,
+    "reviewType": "bounded-read-only-independent-review",
+    "driven_by": "agent",
+    "actor": "codex-r4-final-review-fixed-01a1ce4c",
+    "requestedModel": "ccs-workbuddy/deepseek-v4.1-flash",
+    "requestedModelNote": "本字段记录本轮工具调用显式请求的模型字符串；未被独立核验的后端真实身份见 backendIdentityVerified。",
+    "backendIdentityVerified": false,
+    "bounded": true,
+    "startedAt": "2026-11-12T14:50:00+08:00",
+    "executionPolicy": {
+      "testsRunByReviewer": 0,
+      "buildsRunByReviewer": 0,
+      "installsRunByReviewer": 0,
+      "sourceOrTaskGraphModified": false,
+      "gitIndexOrBranchModified": false,
+      "originalReviewModified": false
+    },
+    "scope": {
+      "node": "TF-0682/R4",
+      "question": "上一轮三项finding是否关闭；本增量是否引入可达问题",
+      "excluded": "不复做旧R4整体设计审计；不运行测试/build/install；不改源码、任务图、git索引或分支",
+      "originalReviewPath": "D:/tmp/r4-final-review-01a1ce4c/review.json",
+      "originalReviewSha256": "7dab4a3eaefed401f8f86b042c2a1a09bd2c27bef62941396bfc105a88984585"
+    },
+    "candidate": {
+      "repository": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated",
+      "parentCommit": "42c54a7b22fe9963ccfc2656e641fc4f1fb18664",
+      "commit": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+      "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+      "head": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+      "headTree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+      "branch": "codex/r4-final-review-fixes-20261112",
+      "statusClean": true,
+      "statusPorcelain": []
+    },
+    "increment": {
+      "range": "42c54a7b22fe9963ccfc2656e641fc4f1fb18664..61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+      "commitCount": 1,
+      "filesChanged": 8,
+      "insertions": 40,
+      "deletions": 2,
+      "files": [
+        "docs/modules/workspace-and-coding.md",
+        "harness/specs/rules/autonomy-worktree-integration.md",
+        "harness/specs/scenarios/autonomy-worktree-integration.md",
+        "harness/specs/tasks/autonomy-worktree-integration.md",
+        "tests/unit/task-worktree-retention.test.ts",
+        "tests/unit/vite-config-openclaw-runtime.test.ts",
+        "vite.config.ts",
+        "vitest.autonomy-r4.config.ts"
+      ]
+    },
+    "sources": {
+      "reviewedIncrementFiles": [
+        {
+          "path": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/docs/modules/workspace-and-coding.md",
+          "sha256": "59813ff51b7fd5abbfbef2620ba6e35927b4115187bf9de467395f07549c30f1"
+        },
+        {
+          "path": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/harness/specs/rules/autonomy-worktree-integration.md",
+          "sha256": "b0c4355455614c5f9f0ce1a8a5390177bf87360f9874ba6077b99c8b34fae926"
+        },
+        {
+          "path": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/harness/specs/scenarios/autonomy-worktree-integration.md",
+          "sha256": "efa27b930f552a100790f873ed2a7a0b1283518d94d87e944e587b6a9d723d2d"
+        },
+        {
+          "path": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/harness/specs/tasks/autonomy-worktree-integration.md",
+          "sha256": "9e202583b1812b01ac923d52288998f8f482d86c6fc4ffe90f3611344783d8c5"
+        },
+        {
+          "path": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/tests/unit/task-worktree-retention.test.ts",
+          "sha256": "47561cc2bd7363bd2fdac6a7c83ebe75f0ee533b837bee3e070a03821840ce92"
+        },
+        {
+          "path": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/tests/unit/vite-config-openclaw-runtime.test.ts",
+          "sha256": "b55a83c187ba02d2a6cc9a454809e3737dff1ecf42873c33e7e88c19903e72b0"
+        },
+        {
+          "path": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/vite.config.ts",
+          "sha256": "54859038a58e443003f3750596e59551da18be41e474c5f3a503e7ab4673f4d8"
+        },
+        {
+          "path": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/vitest.autonomy-r4.config.ts",
+          "sha256": "5c93d7c97d5439acf5cf36a4aaa8205a55ac1f84aee0eacc217aaf3f90bd2f72"
+        }
+      ],
+      "supportingReads": [
+        {
+          "path": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/openclaw_runtime/packages/media-core/package.json",
+          "sha256": "2a6ac5ffc76f7c3ef5afa632298ab65aed4bcdccb1c6075019b00fc73f72efed"
+        },
+        {
+          "path": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/openclaw_runtime/packages/media-core/src/index.ts",
+          "sha256": "9a8f7bd2c82f386ae867aa06d9a5a8820c4fbde23ddac2aedc3968c4f51042b7"
+        },
+        {
+          "path": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/openclaw_runtime/packages/media-core/src/media-source-url.ts",
+          "sha256": "45ef82ccdb1f4f207a3a60c06ae82fef7d2b9ecb169c81a56a18198f693a0243"
+        },
+        {
+          "path": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/shared/task-system/store.ts",
+          "sha256": "5b18d5ac8bfde8facc6d385d892bbc232285488ca7a6bd1ba66aa58149896fb4"
+        },
+        {
+          "path": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/shared/task-system/types.ts",
+          "sha256": "3b36bb8b324f5b64f3db8911f6a3de42710927195d2d3f7f2ac00f2cbf9d19c0"
+        },
+        {
+          "path": "D:/ClawX-acceptance/autonomy-r4/relay-20261111-isolated/tests/unit/fixtures/task-retention-worker.mts",
+          "sha256": "8cf4b9ef87e85ec72bc5b188ce82201b56621e9a192f254146f2a6493fd1b917"
+        }
+      ],
+      "evidenceRead": [
+        {
+          "path": "D:/tmp/autonomy-r4-closeout-20261112-01a1ce4c/source-manifest-final-review-fixes.json",
+          "sha256": "d335751a2e2300c525b5cc7c5f7d711b9a42d23b96dabb757041f7009dbb5746"
+        },
+        {
+          "path": "D:/tmp/autonomy-r4-closeout-20261112-01a1ce4c/contention-readback-final-v2.json",
+          "sha256": "f4804d8cf10f69cc8e884bd0764d27aa9f023b66b8f29b2ce0022a37fe8e3aed",
+          "note": "四项争抢定向通过原件；4 passed / 0 failed / 13 skipped"
+        },
+        {
+          "path": "D:/tmp/autonomy-r4-closeout-20261112-01a1ce4c/contention-readback-final-v2-proofs/cleanup-contention-{first-open,checkpoint,claim,register}.json",
+          "note": "四种争抢回执"
+        },
+        {
+          "path": "D:/tmp/autonomy-r4-closeout-20261112-01a1ce4c/media-alias-red.json",
+          "note": "alias测试先红：maps local OpenClaw package imports to checked-in runtime sources 失败于 line 38 expected undefined to be defined"
+        },
+        {
+          "path": "D:/tmp/autonomy-r4-closeout-20261112-01a1ce4c/media-alias-green.json",
+          "note": "alias测试后绿：2/2 passed"
+        },
+        {
+          "path": "D:/tmp/autonomy-r4-closeout-20261112-01a1ce4c/fresh-source-projection.json",
+          "note": "源码投影 root=D:/tmp/r4v12, mediaCoreDistPresent=false, sourceCommit=61cde6ebb"
+        },
+        {
+          "path": "D:/tmp/autonomy-r4-closeout-20261112-01a1ce4c/fresh-vite-build-61cde6ebb.config.json"
+        },
+        {
+          "path": "D:/tmp/autonomy-r4-closeout-20261112-01a1ce4c/fresh-vite-build-61cde6ebb/running.json",
+          "note": "build:vite exitCode=0 (06:52:15Z->06:53:33Z)"
+        },
+        {
+          "path": "D:/tmp/autonomy-r4-closeout-20261112-01a1ce4c/fresh-vite-build-61cde6ebb/build-vite.log",
+          "note": "vite v7.3.1 build 成功；dist-electron/main/index-BWOXwVzU.js 2409.69kB"
+        },
+        {
+          "path": "D:/tmp/autonomy-r4-closeout-20261112-01a1ce4c/contention-readback-green.json",
+          "note": "中间态：claim 断言失败 expected null to be undefined @ line 277"
+        },
+        {
+          "path": "D:/tmp/autonomy-r4-closeout-20261112-01a1ce4c/review-request-provenance.json"
+        }
+      ]
+    },
+    "findings": [
+      {
+        "id": "R4-FR-001",
+        "severity": "high",
+        "originalBlocking": true,
+        "category": "clean-checkout-packaging",
+        "verdict": "closed-with-note",
+        "basis": [
+          "vite.config.ts:35 新增 @openclaw/media-core -> resolve(__dirname, openclaw_runtime/packages/media-core/src)，进入 localOpenClawRuntimeAliases，被 main/preload 的 resolve.alias 与顶层 renderer resolve.alias 共同使用。",
+          "vite.config.ts 的 bundledMainRuntimeDependencies 移除了 @openclaw/media-core；isMainProcessExternal 先经 isLocalOpenClawRuntimeImport(alias key 前缀) 判定，故 @openclaw/media-core 与 @openclaw/media-core/<sub> 仍为非外部(打包)，@openclaw/media-core-extra 走前缀请求不匹配，仍为外部。集合项删除后外部化结果不变。",
+          "media-core/package.json 根入口与全部子路径导出指向 ./dist/*.mjs；alias 命中后 Vite 以 openclaw_runtime/packages/media-core/src 解析，根入口 -> src/index.ts，子路径 @openclaw/media-core/media-source-url -> src/media-source-url.ts，绕过 dist。",
+          "tests/unit/vite-config-openclaw-runtime.test.ts 增加根入口/@openclaw/media-core-extra(external) 断言与 alias 指向 media-core/src 及 index.ts、media-source-url.ts 存在性断言。red(media-alias-red.json)显示 alias 缺失时该用例失败，green(media-alias-green.json)2/2 通过。",
+          "独立佐证：源码投影 D:/tmp/r4v12 中 mediaCoreDistPresent=false，且 openclaw_runtime/node_modules/@openclaw/media-core 符号链接指向投影内 packages/media-core(dist 缺失)；该投影 build:vite 退出码 0 并产出 dist-electron/main。"
+        ],
+        "note": "静态导入图核查(见 observations)显示 media-core 当前未被三个 Vite 入口静态引用，故 main 包既不外部化也不内联 media-core；本 finding 在解析规则层已关闭，但上述源码投影构建并不能单独证明 alias 生效。"
+      },
+      {
+        "id": "R4-FR-002",
+        "severity": "medium",
+        "originalBlocking": true,
+        "category": "contention-side-effect-evidence",
+        "verdict": "closed",
+        "basis": [
+          "tests/unit/task-worktree-retention.test.ts:270-278 在 claim 模式从共享 Task store(storeAt(repository))回读 history(taskId).filter(kind===claimed) 与 get(taskId).claim；断言 claimedEvents 为空且 persistedClaim 为 null。",
+          "null/undefined 归一：get()->view() 的 claim 由 read<TaskClaim>() 返回 T | null；测试用 .claim ?? null 归一，再 toBeNull()。中间态 contention-readback-green.json 中 claim 用例失败于 line 277 \"expected null to be undefined\"，证明该回读断言对 null/undefined 差异敏感。",
+          "共享域依据与已放行的 register 模式一致：git linked worktree 与 repository 共享同一 Task domain id，故 storeAt(repository) 回读即被测子进程(row.root 域)的持久状态。",
+          "contention-readback-final-v2.json 四项争抢 4 passed / 0 failed；claim 回执 readback.claimedEvents=[] 且 persistedClaim=null。"
+        ]
+      },
+      {
+        "id": "R4-FR-003",
+        "severity": "low",
+        "originalBlocking": false,
+        "category": "evidence-auditability",
+        "verdict": "closed",
+        "basis": [
+          "tests/unit/task-worktree-retention.test.ts:279-290 在 CLAWX_R4_EVIDENCE_DIR 存在时为四种争抢各写 cleanup-contention-<mode>.json。",
+          "回执保留 input(mode/workspace/taskId)、cleanupMs、exitCode(run.worker.exitCode)、完整 proof(含 code/stage/retryable/rejected/success/operation/pathExists)与 readback(rootExists/taskDatabaseExists/registration/checkpointEvents/claimedEvents/persistedClaim)。",
+          "四份回执实际落盘于 contention-readback-final-v2-proofs/，含真实值：code=ENOENT、stage 与模式一致、cleanupMs 1734-2390、exitCode=0，claim 回执 claimedEvents=[] 且 persistedClaim=null，first-open 回执 taskDatabaseExists=false，register 回执 registration=independent。"
+        ]
+      }
+    ],
+    "newFindings": [],
+    "observations": [
+      {
+        "id": "OBS-1",
+        "severity": "info",
+        "introducedByThisIncrement": false,
+        "title": "media-core 未被任何 Vite 入口静态引用",
+        "basis": [
+          "静态导入图遍历：electron/main/index.ts 访问 409 文件、electron/preload/index.ts 54、src/main.tsx 599，均无 @openclaw/media-core 命中。",
+          "main 图命中的本地 alias 仅 @openclaw/net-policy、@openclaw/runtime-redaction、@openclaw/provider-request-auth。",
+          "构建产物 dist-electron/main/*.js(仓库既有与 D:/tmp/r4v12 新建一致)不含 mxc / buffer:// / readResponseWithLimit / detectMime / media-core 等 media-core 标记(计数 0)。",
+          "node_modules 内其它 @openclaw 包未发现 import @openclaw/media-core。"
+        ],
+        "impact": "本增量对 main/preload/renderer 的 media-core 解析规则正确，但在当前入口图下 alias 尚未被实际解析路径触发；因此“源码投影构建成功”当前不能单独作为 alias 生效的证据。不影响 finding 关闭判定，也不构成本增量引入的问题。"
+      }
+    ],
+    "conclusion": {
+      "decision": "findings_closed",
+      "priorFindingsClosed": 3,
+      "priorFindingsOpen": 0,
+      "introducedReachableProblems": 0,
+      "reason": "R4-FR-001/002/003 三项均在该 40 行增量中按各自 requiredResolution 关闭；增量未引入可达回归。附一条 info 级观察(media-core 当前未被 Vite 入口引用)。"
+    },
+    "finalSourceVerification": {
+      "checkedAt": "2026-11-12T06:57:05.597Z",
+      "head": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+      "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+      "branch": "codex/r4-final-review-fixes-20261112",
+      "workspaceStatusClean": true,
+      "statusPorcelain": [],
+      "headAndTreeUnchanged": true,
+      "readFilesHashMismatchCount": 0,
+      "originalReviewSha256": "7dab4a3eaefed401f8f86b042c2a1a09bd2c27bef62941396bfc105a88984585",
+      "originalReviewUnchanged": true,
+      "sourceManifestIncrementMatch": {
+        "matched": 8,
+        "expected": 8
+      }
+    },
+    "postWriteVerification": {
+      "checkedAt": "2026-11-12T06:57:05.597Z",
+      "head": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+      "tree": "fa39a3670b93297ded3207d6e091ade0da17a959",
+      "headAndTreeUnchanged": true,
+      "workspaceStatusClean": true,
+      "readFilesHashMismatchCount": 0,
+      "originalReviewUnchanged": true,
+      "outputs": [
+        "review.json",
+        "report.md",
+        "read-hashes-before.json",
+        "read-hashes-after.json"
+      ]
+    },
+    "completedAt": "2026-11-12T06:57:05.597Z"
+  },
+  "requestProvenance": {
+    "driven_by": "agent",
+    "actor": "codex-r4-model-request-reader",
+    "agentId": "01a1ce59-2f4e-7f61-9028-a5df99cbc91a",
+    "spawnRequestedModel": "ccs-workbuddy/deepseek-v4.1-flash",
+    "turnContextModel": "ccs-workbuddy/deepseek-v4.1-flash",
+    "turnContextTimestamp": "2026-11-12T06:01:54.654Z",
+    "reviewSelfReportedRequestedModel": "gpt-6",
+    "originalReviewPreserved": true,
+    "backendIdentityVerified": false
+  },
+  "originalReviewSha256": "7dab4a3eaefed401f8f86b042c2a1a09bd2c27bef62941396bfc105a88984585",
+  "mediaProbe": {
+    "driven_by": "agent",
+    "actor": "codex-r4-media-source-probe",
+    "candidate": "61cde6ebbeef0290f5b0a1fdf9d6174eb2167511",
+    "alias": "D:\\tmp\\r4v12\\openclaw_runtime\\packages\\media-core\\src",
+    "mediaModules": [
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/base64.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/constants.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/content-length.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/file-name.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/inbound-path-policy.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/inline-image-data-url.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/media-source-url.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/lazy-import.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/mime.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/read-byte-stream-with-limit.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/read-response-with-limit.ts",
+      "D:/tmp/r4v12/openclaw_runtime/packages/media-core/src/index.ts"
+    ],
+    "rootExports": [
+      "FILE_TYPE_SNIFF_MAX_BYTES",
+      "INLINE_IMAGE_DATA_URL_PREFIX",
+      "MAX_AUDIO_BYTES",
+      "MAX_DOCUMENT_BYTES",
+      "MAX_IMAGE_BYTES",
+      "MAX_VIDEO_BYTES",
+      "basenameFromAnyPath",
+      "canonicalizeBase64",
+      "detectMime",
+      "estimateBase64DecodedBytes",
+      "extensionForMime",
+      "extnameFromAnyPath",
+      "getFileExtension",
+      "imageMimeFromFormat",
+      "isAudioFileName",
+      "isGifMedia",
+      "isInboundPathAllowed",
+      "isPassThroughRemoteMediaSource",
+      "isValidInboundPathRootPattern",
+      "kindFromMime",
+      "maxBytesForKind",
+      "mediaKindFromMime",
+      "mergeInboundPathRoots",
+      "mimeTypeFromFilePath",
+      "nameFromAnyPath",
+      "normalizeInboundPathRoots",
+      "normalizeMimeType",
+      "parseMediaContentLength",
+      "readByteStreamWithLimit",
+      "readResponseTextSnippet",
+      "readResponseWithLimit",
+      "sanitizeInlineImageBase64",
+      "sanitizeInlineImageDataUrl",
+      "sanitizeInlineImageDataUrlForStorage",
+      "sliceMimeSniffBuffer",
+      "sniffInlineImageMime"
+    ],
+    "subpathExports": [
+      "isPassThroughRemoteMediaSource"
+    ],
+    "identical": true,
+    "outputSha256": "bcfcbae4efdbf25b27751d76c196016b69a44b5869b59501571bf4b6acfca702",
+    "status": "passed"
+  }
+}
