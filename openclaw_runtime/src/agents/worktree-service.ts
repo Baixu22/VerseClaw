@@ -1020,7 +1020,7 @@ export function createWorktreeService(
           if (rec.backend === "git") {
             // Git rechecks live modifications at removal; a refusal retains the checkout.
             const beforeRemoval = captureWorktreeFiles(rec.root, true);
-            try { removeNativeGitWorktree(resolved, ownership.root, true); }
+            try { removeNativeGitWorktree(resolved, ownership.root); }
             catch (error) {
               const failure = error as { status?: number; stderr?: Buffer | string };
               let retainedDirtyRefusal = false;
