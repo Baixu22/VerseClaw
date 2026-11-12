@@ -430,8 +430,8 @@ export function assertWorktreeIndexVisible(root: string): void {
 }
 
 /** Bounded native removal; callers hold their original ownership/admission guard. */
-export function removeNativeGitWorktree(repository: string, target: string, force = false): string {
-  return git(['worktree', 'remove', ...(force ? ['--force'] : []), '--', target], repository);
+export function removeNativeGitWorktree(repository: string, target: string): string {
+  return git(['worktree', 'remove', '--', target], repository);
 }
 
 export function assertCleanupCommitRetained(record: Pick<WorktreeRecord, "backend" | "root" | "baseRoot">): void {
@@ -481,7 +481,7 @@ function requireCleanupAuthorization(input: {
   }
   const allowed = new Set((input.record.writeSet ?? []).map((value) => normalizeWorktreeRelPath(value)));
   const files = input.record.backend === 'inprocess' ? listDirectoryFiles(root) : input.changed.files;
-  const unexpected = files.filter((value) => !allowed.has(normalizeWorktreeRelPath(value)));
+  const unexpected = input.record.backend === 'git' ? files : files.filter((value) => !allowed.has(normalizeWorktreeRelPath(value)));
   if (unexpected.length > 0) {
     throw new Error('worktree_cleanup_user_content_present:' + unexpected.slice(0, 8).join(','));
   }
@@ -1018,9 +1018,7 @@ export function createWorktreeService(
             rec.status = beforeCleanupStatus; saveWorktreeRegistryScope(s); return { error };
           }
           if (rec.backend === "git") {
-            // Git rechecks live modifications at removal. A dirty refusal is only
-            // overridden after re-reading the exact bytes and proving the base
-            // checkout already retains every changed file.
+            // Git rechecks live modifications at removal; a refusal retains the checkout.
             const beforeRemoval = captureWorktreeFiles(rec.root, true);
             try { removeNativeGitWorktree(resolved, ownership.root); }
             catch (error) {
@@ -1029,23 +1027,16 @@ export function createWorktreeService(
               if (failure.status === 128 && /contains modified or untracked files/i.test(String(failure.stderr ?? ''))) {
                 try {
                   const after = captureWorktreeFiles(rec.root, true);
-                  const changed = listChangedFilesFromGit(rec.root);
-                  // Dirty bytes include ignored files and whole-file additions that
-                  // Git status may collapse to one untracked directory. Compare both
-                  // observed snapshots instead of relying on status path granularity.
-                  const changedBytesRetained = [...after.entries()].every(([file, hash]) =>
-                    hash === beforeRemoval.get(file) &&
-                    (worktreeContentHash(readWorktreeFile(resolved, file)) === hash ||
-                      worktreeContentHash(readWorktreeFile(resolved, file)) === null));
                   retainedDirtyRefusal = filesystemInstance(rec.root) === rec.registration.rootIdentity
                     && worktreeNativeIdentity(rec.root, rec.backend) === rec.registration.nativeIdentity
                     && [...beforeRemoval.keys()].every(file => after.has(file))
-                    && changed.length > 0
-                    && changedBytesRetained;
+                    && listChangedFilesFromGit(rec.root).length > 0;
                 } catch { /* An unavailable observation retains the unknown outcome. */ }
               }
               if (!retainedDirtyRefusal) throw error;
-              removeNativeGitWorktree(resolved, ownership.root, true);
+              rec.status = beforeCleanupStatus;
+              saveWorktreeRegistryScope(s);
+              return { error };
             }
           } else {
             removePathWithRetries(ownership.root);
