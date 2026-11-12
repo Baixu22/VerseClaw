@@ -463,3 +463,5 @@ Git 工作树的生产完成链沿既有 `freezeOrchestrationWorktreeCandidate()
 当前整合接口只应用受控文件后像，不创建 Git 多父/octopus merge，也不提供自动 `git gc` 或 `worktree prune`。这些路径没有独立验收，属于明确不可用的能力，调用方不得宣称支持。
 
 Electron Main 的 media-core 根入口和子路径通过既有源码 alias 解析；开发与 Vite 构建直接消费 `openclaw_runtime/packages/media-core/src`。
+
+已有工作树记录中的 tuple baseline 和 `lastMerge` 回执由原 registry 读取时归一到当前结构；矛盾终态拒绝读取。整合前从父会话 owner 重核所属会话、代次及工作目录，原成功回执保持可读；目标后像漂移时返回冲突并保留当前字节。

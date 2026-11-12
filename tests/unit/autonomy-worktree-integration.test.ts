@@ -20,7 +20,7 @@ import { closeSqliteSessionStoreDatabase, replaceSqliteSessionStore } from '../.
 describe('R4 durable worktree integration', () => {
   let fixture: string;
   let root: string;
-  const owner = { agentId: 'r4', sessionKey: 'agent:r4:main', expectedSessionId: 'r4-parent-generation' };
+  const owner = { agentId: 'r4', sessionKey: 'agent:r4:main', expectedSessionId: 'r4-parent-generation', retention: 'delete' as const };
   let sessionStore: string;
   let serviceFactory: typeof worktrees.createWorktreeService;
   let runtimeConfig: config.OpenClawConfig;
@@ -431,7 +431,7 @@ describe('R4 durable worktree integration', () => {
     writeFileSync(path.join(copied.root, 'original.bin'), 'copied result'); writeFileSync(path.join(native.root, 'other.txt'), 'native result');
     const { testing, addSubagentRunForTests, releaseSubagentRun } = await import('../../openclaw_runtime/src/agents/subagent-registry');
     const roles = await import('../../openclaw_runtime/src/agents/role-spawn');
-    const rows = [native, copied].map(worker => ({ requesterSessionKey: owner.sessionKey, runId: 'mixed-backend-' + order + '-' + worker.id,
+    const rows = [native, copied].map(worker => ({ runId: 'mixed-backend-' + order + '-' + worker.id,
       childSessionKey: 'agent:r4:' + order + '-' + worker.id, requesterSessionKey: 'agent:r4:main', createdAt: Date.now(), endedAt: Date.now(),
       workspaceDir: worker.root, outcome: { status: 'ok' }, orchestration: {
         orchestrationRunId: 'mixed-backend-run-' + order, originalTask: 'verify both integrated worker outputs', phase: 'worker', verifierRole: 'verifier',

@@ -52,6 +52,7 @@ touchedAreas:
   - tests/unit/task-artifact-retention.test.ts
   - tests/unit/versegit-host-apply.test.ts
   - tests/unit/versegit-candidate-freeze.test.ts
+  - tests/unit/role-orchestration-methods.test.ts
   - tests/fixtures/worktree-integration-process.ts
   - tests/fixtures/worktree-registry-process.ts
   - tests/unit/fixtures/task-retention-worker.mts
@@ -84,6 +85,7 @@ acceptance:
   - 原生争抢、失败与恢复产物标注driven_by agent，保留source/candidate、输入、exit/count和hash。
   - claim争抢从共享Task数据库回读无claimed事件及无claim；四种争抢保留结构化错误、阶段、清理耗时和持久副作用回读。
   - Electron Main中的media-core根入口及子路径从已跟踪源码解析，构建不依赖预生成的media-core dist。
+  - 与主线整合后保留父会话owner及代次的效果前复验，旧tuple baseline及lastMerge回执可恢复并拒绝矛盾回执。
 docs:
   required: true
   files:
