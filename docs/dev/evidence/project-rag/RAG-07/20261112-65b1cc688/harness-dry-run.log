@@ -1,0 +1,4 @@
+$ pnpm --filter @verse-claw/harness start -- "run" "--spec" "harness/specs/tasks/project-rag-retrieval-plan-fusion.md" "--dry-run"
+$ node src/cli.mjs "--" "run" "--spec" "harness/specs/tasks/project-rag-retrieval-plan-fusion.md" "--dry-run"
+Harness report: C:\Users\27933\.codex\worktrees\project-rag-longterm-20261109\ClawX\artifacts\harness\latest.md
+Harness result: pass

@@ -1,0 +1,85 @@
+{
+  "schema": "ProjectRagPlanAcceptance/v1",
+  "node": "TF-0884",
+  "programKey": "RAG-07",
+  "status": "pass",
+  "candidate": "65b1cc68838fd484807bca9609923f308b1e6f31",
+  "actor": "codex/project-rag",
+  "driven_by": "agent",
+  "tests": {
+    "root": {
+      "passed": 293,
+      "total": 293,
+      "skipped": 0
+    },
+    "runtime": {
+      "passed": 33,
+      "total": 33,
+      "skipped": 0
+    },
+    "electron": {
+      "passed": 1,
+      "total": 1,
+      "skipped": 0,
+      "flaky": 0
+    }
+  },
+  "formalGates": {
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "notRun": 0
+  },
+  "acceptance": [
+    {
+      "criterion": 1,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "runtime-unit.json",
+        "electron.json"
+      ],
+      "result": "Profiles, current owner/index generations, one deadline and provider failure paths execute in production."
+    },
+    {
+      "criterion": 2,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "electron.json"
+      ],
+      "result": "Explicit range pins, query-family deduplication, RRF lane contributions and parent quotas pass their regressions."
+    },
+    {
+      "criterion": 3,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "electron.json"
+      ],
+      "result": "Raw BM25, cosine distance, RRF ranks and contributions are distinct; synthetic confidence is removed."
+    },
+    {
+      "criterion": 4,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "runtime-unit.json",
+        "electron.json"
+      ],
+      "result": "SourceSet retains trusted order, resolves sibling raw ranges, preserves owner denials and parameterizes FTS tokens."
+    },
+    {
+      "criterion": 5,
+      "status": "pass",
+      "evidence": [
+        "gates.json",
+        "harness-ci-report.json",
+        "source-inputs.json"
+      ],
+      "result": "New unit/Electron tests execute on the clean candidate and are required by its task spec."
+    }
+  ],
+  "sourceInputCount": 36,
+  "semanticQuality": "Rerank and full task effect evaluation continue in the frozen later leaves."
+}

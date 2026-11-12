@@ -1,0 +1,672 @@
+{
+  "actor": "codex/project-rag-plan-electron",
+  "driven_by": "agent",
+  "status": "pass",
+  "steps": {
+    "realHybrid": true,
+    "immediateRevocation": true,
+    "versionPin": true,
+    "qualityCapability": true,
+    "preflightNoSyntheticConfidence": true,
+    "draftPreserved": true
+  },
+  "freeMemoryAtStartMiB": 6060,
+  "freeMemoryBeforeModelMiB": 5430,
+  "lastEmbeddingStatus": {
+    "success": true,
+    "embedding": {
+      "mode": "local",
+      "status": "ready",
+      "credentialEpoch": 1,
+      "providerRef": "local:embeddinggemma-300m",
+      "model": "google/embeddinggemma-300m",
+      "dimensions": 768,
+      "spaceId": "sha256:5e25c7865d45bcde7cd60f0ab803a63647d99770d569108072d0d563247341e2",
+      "capability": {
+        "schema": "ProviderCapabilitySnapshot/v1",
+        "providerRef": "local:embeddinggemma-300m",
+        "transport": "local",
+        "credentialEpoch": 1,
+        "observedAt": "2026-11-12T17:36:06.825Z",
+        "status": "ready",
+        "space": {
+          "schema": "EmbeddingSpace/v1",
+          "spaceId": "sha256:5e25c7865d45bcde7cd60f0ab803a63647d99770d569108072d0d563247341e2",
+          "providerRef": "local:embeddinggemma-300m",
+          "model": "google/embeddinggemma-300m",
+          "modelRevision": "66f974f8cd48cc3b9c41c516b95508e75b4bee64/sha256:6fa0c02a9c302be6f977521d399b4de3a46310a4f2621ee0063747881b673f67",
+          "dimensions": 768,
+          "maxInputTokens": 2047,
+          "tokenizerId": "node-llama-cpp/calculateInputLength/v1",
+          "tokenizerDigest": "sha256:582cf5d4bcf3eed88b5468621bb07f634d32eb40d3a932588da4873b0590895e",
+          "inputFormat": {
+            "id": "embeddinggemma/search-v1",
+            "query": "task: search result | query: {text}",
+            "document": "title: {title} | text: {text}"
+          },
+          "normalization": "l2"
+        }
+      }
+    }
+  },
+  "fused": {
+    "schema": "RetrievalResult/v2",
+    "plan": {
+      "schema": "RetrievalPlan/v2",
+      "planId": "c9cb939f-d256-4491-a3f8-bf677c958910",
+      "requestId": "5659d439-f844-42e8-8a39-0d96bb8d3dbe",
+      "admissionContextId": "e05bfab2-bde7-4b27-b353-cde19e40fd9e",
+      "policyVersion": "project-rag-rrf/v2",
+      "mode": "suggest",
+      "profile": "local",
+      "intent": "lookup",
+      "namespaceIds": [
+        "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f"
+      ],
+      "queries": [
+        {
+          "text": "gateway deployment port",
+          "family": "root"
+        }
+      ],
+      "explicitRefs": [],
+      "generations": [
+        {
+          "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+          "lane": "dense",
+          "generation": "dbf54e66-c918-4b1c-beab-17384e5bbb43",
+          "spaceId": "sha256:5e25c7865d45bcde7cd60f0ab803a63647d99770d569108072d0d563247341e2",
+          "credentialEpoch": 1
+        },
+        {
+          "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+          "lane": "lexical",
+          "generation": "2ecdbbe8-0f7f-4047-8c76-dc9fc3ebabda"
+        }
+      ],
+      "lanes": [
+        "exact",
+        "lexical",
+        "dense"
+      ],
+      "budget": {
+        "candidateK": 40,
+        "rerankK": 0,
+        "finalK": 4,
+        "maxPerParent": 2,
+        "maxTokens": 1200,
+        "maxChars": 3200,
+        "maxQueries": 1,
+        "maxModelCalls": 0,
+        "deadlineAtMs": 1794504970331
+      }
+    },
+    "status": "complete",
+    "effectiveProfile": "local",
+    "results": [
+      {
+        "lookup": "concepts/source.md",
+        "title": "Gateway deployment",
+        "snippet": "The gateway deployment port is 18789.\n",
+        "freshnessLevel": "known",
+        "metadata": {
+          "type": "concept",
+          "knowledgeKind": "concept"
+        },
+        "id": "chunk:sha256:9f74860f0c23b57ad9bfc9e2716a1ad39fb00b9ac8d5d67a47b76e5852ae84c7",
+        "pagePath": "concepts/source.md",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+          "subjectId": "concepts/source.md",
+          "revision": "1",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:36ceb13d9096a780092f6d4fbaa62e2f067f0fa23c38094dd1d21f9798a6cce3",
+          "policyEpoch": "sha256:a94c8b0b7abce46fdbe053d12d6ba27853986ac05ad7fc9517a765a37ae3c93d",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 160,
+            "endByteExclusive": 198,
+            "startLine": 10,
+            "endLine": 10
+          }
+        },
+        "revision": "1",
+        "corpus": "wiki",
+        "rank": 1,
+        "score": 0.03278688524590164,
+        "scoreKind": "rrf",
+        "rankSignals": {
+          "schema": "RankSignals/v2",
+          "fusionScore": 0.03278688524590164,
+          "lanes": [
+            {
+              "lane": "lexical",
+              "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+              "queryFamily": "root",
+              "rank": 1,
+              "rawScore": -0.000004125,
+              "scoreKind": "bm25",
+              "contribution": 0.01639344262295082
+            },
+            {
+              "lane": "dense",
+              "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+              "queryFamily": "root",
+              "rank": 1,
+              "rawScore": 0.12166424016371968,
+              "scoreKind": "cosine-distance",
+              "contribution": 0.01639344262295082
+            }
+          ]
+        },
+        "autoReadAdmission": {
+          "eligible": false,
+          "contextId": "e05bfab2-bde7-4b27-b353-cde19e40fd9e",
+          "reason": "relevance-calibration-unavailable"
+        }
+      }
+    ],
+    "lanes": [
+      {
+        "lane": "exact",
+        "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+        "queryFamily": "root",
+        "status": "available",
+        "candidateCount": 0,
+        "elapsedMs": 9.11739999999918
+      },
+      {
+        "lane": "lexical",
+        "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+        "queryFamily": "root",
+        "status": "available",
+        "candidateCount": 1,
+        "elapsedMs": 33.798900000001595
+      },
+      {
+        "lane": "dense",
+        "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+        "queryFamily": "root",
+        "status": "available",
+        "candidateCount": 1,
+        "elapsedMs": 325.7374999999993
+      }
+    ],
+    "filters": [],
+    "fallbackReasons": [],
+    "snapshotStatus": "current"
+  },
+  "revoked": {
+    "schema": "RetrievalResult/v2",
+    "plan": {
+      "schema": "RetrievalPlan/v2",
+      "planId": "2a5aa790-3ff4-40e2-80df-c0d5f4fcdf77",
+      "requestId": "5d70519d-97dd-43c8-ae2e-c1b69f0ff90f",
+      "admissionContextId": "ebbbf2a1-13f6-45d6-bec0-0d842fa30ea1",
+      "policyVersion": "project-rag-rrf/v2",
+      "mode": "suggest",
+      "profile": "local",
+      "intent": "lookup",
+      "namespaceIds": [
+        "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f"
+      ],
+      "queries": [
+        {
+          "text": "gateway deployment port",
+          "family": "root"
+        }
+      ],
+      "explicitRefs": [],
+      "generations": [
+        {
+          "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+          "lane": "dense",
+          "generation": "dbf54e66-c918-4b1c-beab-17384e5bbb43",
+          "spaceId": "sha256:5e25c7865d45bcde7cd60f0ab803a63647d99770d569108072d0d563247341e2",
+          "credentialEpoch": 1
+        }
+      ],
+      "lanes": [
+        "exact",
+        "lexical",
+        "dense"
+      ],
+      "budget": {
+        "candidateK": 40,
+        "rerankK": 0,
+        "finalK": 4,
+        "maxPerParent": 2,
+        "maxTokens": 1200,
+        "maxChars": 3200,
+        "maxQueries": 1,
+        "maxModelCalls": 0,
+        "deadlineAtMs": 1794504970718
+      }
+    },
+    "status": "complete",
+    "effectiveProfile": "local",
+    "results": [],
+    "lanes": [
+      {
+        "lane": "exact",
+        "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+        "queryFamily": "root",
+        "status": "available",
+        "candidateCount": 0,
+        "elapsedMs": 6.365600000000995
+      },
+      {
+        "lane": "lexical",
+        "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+        "queryFamily": "root",
+        "status": "available",
+        "candidateCount": 0,
+        "elapsedMs": 6.324400000001333
+      },
+      {
+        "lane": "dense",
+        "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+        "queryFamily": "root",
+        "status": "available",
+        "candidateCount": 0,
+        "elapsedMs": 9.272099999998318
+      }
+    ],
+    "filters": [],
+    "fallbackReasons": [],
+    "snapshotStatus": "current"
+  },
+  "restored": {
+    "schema": "RetrievalResult/v2",
+    "plan": {
+      "schema": "RetrievalPlan/v2",
+      "planId": "a0ef3db6-df07-4c31-ab7c-22cac99f2576",
+      "requestId": "903f74a5-9309-440a-9f15-e789e187c389",
+      "admissionContextId": "b4c6665c-590c-4e4b-8ecc-288fdd2b9444",
+      "policyVersion": "project-rag-rrf/v2",
+      "mode": "suggest",
+      "profile": "local",
+      "intent": "lookup",
+      "namespaceIds": [
+        "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f"
+      ],
+      "queries": [
+        {
+          "text": "gateway deployment port",
+          "family": "root"
+        }
+      ],
+      "explicitRefs": [],
+      "generations": [
+        {
+          "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+          "lane": "dense",
+          "generation": "6e4d2183-e914-44dd-9581-01e6807b4553",
+          "spaceId": "sha256:5e25c7865d45bcde7cd60f0ab803a63647d99770d569108072d0d563247341e2",
+          "credentialEpoch": 1
+        },
+        {
+          "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+          "lane": "lexical",
+          "generation": "d305b477-930f-4f3b-b9ca-45d1c982b1a1"
+        }
+      ],
+      "lanes": [
+        "exact",
+        "lexical",
+        "dense"
+      ],
+      "budget": {
+        "candidateK": 40,
+        "rerankK": 0,
+        "finalK": 4,
+        "maxPerParent": 2,
+        "maxTokens": 1200,
+        "maxChars": 3200,
+        "maxQueries": 1,
+        "maxModelCalls": 0,
+        "deadlineAtMs": 1794504971641
+      }
+    },
+    "status": "complete",
+    "effectiveProfile": "local",
+    "results": [
+      {
+        "lookup": "concepts/source.md",
+        "title": "Gateway deployment",
+        "snippet": "The gateway deployment port is 19999.\n",
+        "freshnessLevel": "known",
+        "metadata": {
+          "type": "concept",
+          "knowledgeKind": "concept"
+        },
+        "id": "chunk:sha256:29c25aa36a695480c72f625a916d907527aef147cef020076e5700758b6aabc8",
+        "pagePath": "concepts/source.md",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+          "subjectId": "concepts/source.md",
+          "revision": "3",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:e59475e07c9ea4fea0e4b07349a13f317b7661910218be0d0dda7c229e24bea6",
+          "policyEpoch": "sha256:a94c8b0b7abce46fdbe053d12d6ba27853986ac05ad7fc9517a765a37ae3c93d",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 160,
+            "endByteExclusive": 198,
+            "startLine": 10,
+            "endLine": 10
+          }
+        },
+        "revision": "3",
+        "corpus": "wiki",
+        "rank": 1,
+        "score": 0.03278688524590164,
+        "scoreKind": "rrf",
+        "rankSignals": {
+          "schema": "RankSignals/v2",
+          "fusionScore": 0.03278688524590164,
+          "lanes": [
+            {
+              "lane": "lexical",
+              "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+              "queryFamily": "root",
+              "rank": 1,
+              "rawScore": -0.000004125,
+              "scoreKind": "bm25",
+              "contribution": 0.01639344262295082
+            },
+            {
+              "lane": "dense",
+              "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+              "queryFamily": "root",
+              "rank": 1,
+              "rawScore": 0.1295226804498154,
+              "scoreKind": "cosine-distance",
+              "contribution": 0.01639344262295082
+            }
+          ]
+        },
+        "autoReadAdmission": {
+          "eligible": false,
+          "contextId": "b4c6665c-590c-4e4b-8ecc-288fdd2b9444",
+          "reason": "relevance-calibration-unavailable"
+        }
+      }
+    ],
+    "lanes": [
+      {
+        "lane": "exact",
+        "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+        "queryFamily": "root",
+        "status": "available",
+        "candidateCount": 0,
+        "elapsedMs": 4.534800000001269
+      },
+      {
+        "lane": "lexical",
+        "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+        "queryFamily": "root",
+        "status": "available",
+        "candidateCount": 1,
+        "elapsedMs": 29.143400000000838
+      },
+      {
+        "lane": "dense",
+        "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+        "queryFamily": "root",
+        "status": "available",
+        "candidateCount": 1,
+        "elapsedMs": 33.01849999999831
+      }
+    ],
+    "filters": [],
+    "fallbackReasons": [],
+    "snapshotStatus": "current"
+  },
+  "stalePin": {
+    "schema": "RetrievalResult/v2",
+    "plan": {
+      "schema": "RetrievalPlan/v2",
+      "planId": "83974a4e-264c-4b15-92fc-ce8c332c1f86",
+      "requestId": "2747e9d4-bb3c-4123-bc3b-cc4316321224",
+      "admissionContextId": "c0764899-b7d6-4748-8ebb-99a7366f86dc",
+      "policyVersion": "project-rag-rrf/v2",
+      "mode": "manual",
+      "profile": "local",
+      "intent": "lookup",
+      "namespaceIds": [
+        "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f"
+      ],
+      "queries": [
+        {
+          "text": "",
+          "family": "root"
+        }
+      ],
+      "explicitRefs": [
+        {
+          "schema": "SourceRef/v2",
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+          "subjectId": "concepts/source.md",
+          "revision": "1",
+          "sourceDigest": "sha256:36ceb13d9096a780092f6d4fbaa62e2f067f0fa23c38094dd1d21f9798a6cce3",
+          "policyEpoch": "sha256:a94c8b0b7abce46fdbe053d12d6ba27853986ac05ad7fc9517a765a37ae3c93d",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 160,
+            "endByteExclusive": 198,
+            "startLine": 10,
+            "endLine": 10
+          }
+        }
+      ],
+      "generations": [
+        {
+          "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+          "lane": "dense",
+          "generation": "6e4d2183-e914-44dd-9581-01e6807b4553",
+          "spaceId": "sha256:5e25c7865d45bcde7cd60f0ab803a63647d99770d569108072d0d563247341e2",
+          "credentialEpoch": 1
+        },
+        {
+          "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+          "lane": "lexical",
+          "generation": "d305b477-930f-4f3b-b9ca-45d1c982b1a1"
+        }
+      ],
+      "lanes": [
+        "exact"
+      ],
+      "budget": {
+        "candidateK": 40,
+        "rerankK": 0,
+        "finalK": 4,
+        "maxPerParent": 2,
+        "maxTokens": 1200,
+        "maxChars": 3200,
+        "maxQueries": 1,
+        "maxModelCalls": 0,
+        "deadlineAtMs": 1794504971720
+      }
+    },
+    "status": "complete",
+    "effectiveProfile": "exact",
+    "results": [],
+    "lanes": [
+      {
+        "lane": "exact",
+        "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+        "queryFamily": "root",
+        "status": "available",
+        "candidateCount": 0,
+        "elapsedMs": 16.614400000002206
+      }
+    ],
+    "filters": [
+      {
+        "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+        "subjectId": "concepts/source.md",
+        "reason": "revision_mismatch"
+      }
+    ],
+    "fallbackReasons": [],
+    "snapshotStatus": "current"
+  },
+  "quality": {
+    "schema": "RetrievalResult/v2",
+    "plan": {
+      "schema": "RetrievalPlan/v2",
+      "planId": "7a3e2706-78a4-44d5-be40-519d9cfbd076",
+      "requestId": "0dbebadd-efc3-4e25-abaa-4737fc85a42e",
+      "admissionContextId": "28b18f72-da62-4068-987a-1238762050eb",
+      "policyVersion": "project-rag-rrf/v2",
+      "mode": "suggest",
+      "profile": "quality",
+      "intent": "lookup",
+      "namespaceIds": [
+        "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f"
+      ],
+      "queries": [
+        {
+          "text": "gateway deployment port",
+          "family": "root"
+        }
+      ],
+      "explicitRefs": [],
+      "generations": [
+        {
+          "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+          "lane": "dense",
+          "generation": "6e4d2183-e914-44dd-9581-01e6807b4553",
+          "spaceId": "sha256:5e25c7865d45bcde7cd60f0ab803a63647d99770d569108072d0d563247341e2",
+          "credentialEpoch": 1
+        },
+        {
+          "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+          "lane": "lexical",
+          "generation": "d305b477-930f-4f3b-b9ca-45d1c982b1a1"
+        }
+      ],
+      "lanes": [
+        "exact",
+        "lexical",
+        "dense"
+      ],
+      "budget": {
+        "candidateK": 80,
+        "rerankK": 30,
+        "finalK": 6,
+        "maxPerParent": 2,
+        "maxTokens": 2200,
+        "maxChars": 6000,
+        "maxQueries": 1,
+        "maxModelCalls": 0,
+        "deadlineAtMs": 1794504973358
+      }
+    },
+    "status": "partial",
+    "effectiveProfile": "hybrid",
+    "results": [
+      {
+        "lookup": "concepts/source.md",
+        "title": "Gateway deployment",
+        "snippet": "The gateway deployment port is 19999.\n",
+        "freshnessLevel": "known",
+        "metadata": {
+          "type": "concept",
+          "knowledgeKind": "concept"
+        },
+        "id": "chunk:sha256:29c25aa36a695480c72f625a916d907527aef147cef020076e5700758b6aabc8",
+        "pagePath": "concepts/source.md",
+        "sourceRef": {
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+          "subjectId": "concepts/source.md",
+          "revision": "3",
+          "schema": "SourceRef/v2",
+          "sourceDigest": "sha256:e59475e07c9ea4fea0e4b07349a13f317b7661910218be0d0dda7c229e24bea6",
+          "policyEpoch": "sha256:a94c8b0b7abce46fdbe053d12d6ba27853986ac05ad7fc9517a765a37ae3c93d",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 160,
+            "endByteExclusive": 198,
+            "startLine": 10,
+            "endLine": 10
+          }
+        },
+        "revision": "3",
+        "corpus": "wiki",
+        "rank": 1,
+        "score": 0.03278688524590164,
+        "scoreKind": "rrf",
+        "rankSignals": {
+          "schema": "RankSignals/v2",
+          "fusionScore": 0.03278688524590164,
+          "lanes": [
+            {
+              "lane": "lexical",
+              "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+              "queryFamily": "root",
+              "rank": 1,
+              "rawScore": -0.000004125,
+              "scoreKind": "bm25",
+              "contribution": 0.01639344262295082
+            },
+            {
+              "lane": "dense",
+              "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+              "queryFamily": "root",
+              "rank": 1,
+              "rawScore": 0.1295226804498154,
+              "scoreKind": "cosine-distance",
+              "contribution": 0.01639344262295082
+            }
+          ]
+        },
+        "autoReadAdmission": {
+          "eligible": false,
+          "contextId": "28b18f72-da62-4068-987a-1238762050eb",
+          "reason": "relevance-calibration-unavailable"
+        }
+      }
+    ],
+    "lanes": [
+      {
+        "lane": "exact",
+        "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+        "queryFamily": "root",
+        "status": "available",
+        "candidateCount": 0,
+        "elapsedMs": 5.1459000000031665
+      },
+      {
+        "lane": "lexical",
+        "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+        "queryFamily": "root",
+        "status": "available",
+        "candidateCount": 1,
+        "elapsedMs": 28.26550000000134
+      },
+      {
+        "lane": "dense",
+        "namespaceId": "memory-wiki:dbc0fb8c34cc7149beb68ba4e9cecb2ccfc39ad17cdf0ebdbb1b1690f335d89f",
+        "queryFamily": "root",
+        "status": "available",
+        "candidateCount": 1,
+        "elapsedMs": 33.694500000001426
+      }
+    ],
+    "filters": [],
+    "fallbackReasons": [
+      "rerank-unavailable"
+    ],
+    "snapshotStatus": "current"
+  }
+}

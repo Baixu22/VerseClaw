@@ -1,0 +1,9 @@
+{
+  "observedAt": "2026-11-12T17:35:25.9409581+00:00",
+  "otherHeavyPids": [
+    null
+  ],
+  "stage": "electron",
+  "freeMiB": 7147.0,
+  "minimumMiB": 3072
+}
