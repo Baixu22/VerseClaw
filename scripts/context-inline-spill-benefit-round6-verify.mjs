@@ -69,15 +69,17 @@ try {
   assert(preflight.designFreeze.commit !== candidate.commit, 'design and candidate must be separate commits');
   git(['merge-base', '--is-ancestor', preflight.designFreeze.commit, candidate.commit]);
   assert.equal(hash(execFileSync('git', ['show', preflight.designFreeze.commit + ':' + preflight.designFreeze.path], { cwd: root })), preflight.designFreeze.sha256);
-  const requiredSources = [...new Set([...Object.keys(freeze.unchangedSourcesSha256), preflight.designFreeze.path,
+  const requiredSources = [...new Set([...Object.keys(freeze.unchangedSourcesSha256), ...Object.keys(freeze.strategySourcesSha256 ?? {}), preflight.designFreeze.path,
     'scripts/context-inline-spill-benefit-loop-eval.mts', 'scripts/context-inline-spill-benefit-round5-verify.mjs',
     'scripts/context-inline-spill-benefit-round5-recompute.mjs', 'scripts/context-inline-spill-benefit-round6-verify.mjs',
     'tests/unit/context-inline-spill-benefit-clean-candidate.test.ts', 'harness/specs/tasks/inline-spill-real-benefit-eval-round6.md',
     'harness/specs/rules/inline-spill-eval-projected-input.md', 'harness/specs/scenarios/context-family.md',
     '.gitattributes', 'package.json', 'openclaw_runtime/package.json',
-    ...(freeze.schema === 'ContextInlineSpillRound7FrozenDesign/v1' ? ['scripts/context-inline-spill-benefit-strategy.mts',
+    ...(['ContextInlineSpillRound7FrozenDesign/v1', 'ContextInlineSpillRound8FrozenDesign/v1'].includes(freeze.schema) ? ['scripts/context-inline-spill-benefit-strategy.mts',
       'scripts/context-inline-spill-benefit-round7-verify.mjs', 'tests/unit/context-inline-spill-benefit-strategy.test.ts',
-      'harness/specs/tasks/inline-spill-real-benefit-eval-round7.md'] : [])])];
+      'harness/specs/tasks/inline-spill-real-benefit-eval-round7.md'] : []),
+    ...(freeze.schema === 'ContextInlineSpillRound8FrozenDesign/v1' ? ['scripts/context-inline-spill-benefit-round8-verify.mts',
+      'tests/unit/context-inline-spill-benefit-navigation.test.ts', 'harness/specs/tasks/inline-spill-real-benefit-eval-round8.md'] : [])])];
   assert.deepEqual(Object.keys(preflight.sourceInputs).sort(), requiredSources.sort());
   for (const path of requiredSources) {
     const identity = preflight.sourceInputs[path];
@@ -88,6 +90,7 @@ try {
     assert.equal(git(['hash-object', '--no-filters', path]), identity.worktreeBlob, path);
     assert.equal(identity.gitBlob, identity.worktreeBlob, path);
     if (Object.hasOwn(freeze.unchangedSourcesSha256, path)) assert.equal(identity.sha256, freeze.unchangedSourcesSha256[path]);
+    if (Object.hasOwn(freeze.strategySourcesSha256 ?? {}, path)) assert.equal(identity.sha256, freeze.strategySourcesSha256[path]);
   }
   const preservationFile = freeze.round5PreservationPath ? safePath(root, freeze.round5PreservationPath) : join(dirname(freezeFile), 'round5-preservation.json');
   assert.equal(hash(readFileSync(preservationFile)), freeze.round5PreservationSha256);

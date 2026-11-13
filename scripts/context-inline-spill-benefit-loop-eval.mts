@@ -20,7 +20,7 @@ import { performance } from "node:perf_hooks";
 import type { AgentMessage } from "../openclaw_runtime/src/agents/runtime/index.js";
 import { mcnemarExact, parseAnswer, wilson } from "./context-inline-spill-benefit-scoring.mjs";
 import { assertEvalRecallPage, buildProjectedEvalInput, contentText, EVAL_RECALL_PAGE_MAX_CHARS, pairedSessionId, RECALL_TOOL_DEF, textOf } from "./context-inline-spill-benefit-input.mjs";
-import { ANCHORED_RECALL_TOOL_DEF, anchoredDeterministicTurn, buildBenefitPressure, createAnchorPolicyState } from "./context-inline-spill-benefit-strategy.mjs";
+import { ANCHORED_RECALL_TOOL_DEF, anchoredDeterministicTurn, buildBenefitPressure, buildVisibleRecallNavigation, createAnchorPolicyState, navigatedDeterministicTurn } from "./context-inline-spill-benefit-strategy.mjs";
 
 const ROOT = process.cwd();
 const MODE = argValue("--mode") ?? "deterministic";
@@ -38,10 +38,10 @@ const MAX_OUTPUT_TOKENS = Number(argValue("--max-output-tokens") ?? 900);
 const STRATEGY = argValue("--strategy") ?? "legacy";
 const PRESSURE_SOURCE = argValue("--pressure-source") ?? "user";
 const PROVIDER_TIMEOUT_MS = Number(argValue("--provider-timeout-ms") ?? 120_000);
-if (!["legacy", "anchored"].includes(STRATEGY)) throw new Error("strategy must be legacy or anchored");
+if (!["legacy", "anchored", "navigated"].includes(STRATEGY)) throw new Error("strategy must be legacy, anchored or navigated");
 if (PRESSURE_SOURCE !== "user" && PRESSURE_SOURCE !== "tool") throw new Error("pressure-source must be user or tool");
 if (!Number.isSafeInteger(PROVIDER_TIMEOUT_MS) || PROVIDER_TIMEOUT_MS < 1) throw new Error("provider-timeout-ms must be a positive integer");
-const TOOL_DEF = STRATEGY === "anchored" ? ANCHORED_RECALL_TOOL_DEF : RECALL_TOOL_DEF;
+const TOOL_DEF = STRATEGY === "legacy" ? RECALL_TOOL_DEF : ANCHORED_RECALL_TOOL_DEF;
 if (!Number.isSafeInteger(MAX_OUTPUT_TOKENS) || MAX_OUTPUT_TOKENS < 1) throw new Error("max-output-tokens must be a positive integer");
 const CONTEXT_WINDOW_TOKENS = 32_000;
 const TOOL_MAX_CHARS = 6_000;
@@ -54,7 +54,7 @@ type SourceIdentity = { sha256: string; bytes: number; gitBlob: string; worktree
 type FrozenDesign = {
   schema: string; live: { maxTurns: number; repeats: number; maxOutputTokens: number; strategy?: string; pressureSource?: string; providerTimeoutMs?: number };
   deterministic: { maxTurns: number; repeats: number }; provider: { model: string; baseUrl: string };
-  unchangedSourcesSha256: Record<string, string>; protocolSectionsSha256: Record<string, string>;
+  unchangedSourcesSha256: Record<string, string>; protocolSectionsSha256: Record<string, string>; strategySourcesSha256?: Record<string, string>;
 };
 let sourceInputs: Record<string, SourceIdentity> = {};
 let frozenDesign: FrozenDesign | null = null;
@@ -64,7 +64,7 @@ if (freezePath) {
     const freezeFile = resolve(freezePath);
     const freezeBytes = readFileSync(freezeFile);
     frozenDesign = JSON.parse(freezeBytes.toString("utf8"));
-    assert(["ContextInlineSpillRound6FrozenDesign/v1", "ContextInlineSpillRound7FrozenDesign/v1"].includes(frozenDesign!.schema));
+    assert(["ContextInlineSpillRound6FrozenDesign/v1", "ContextInlineSpillRound7FrozenDesign/v1", "ContextInlineSpillRound8FrozenDesign/v1"].includes(frozenDesign!.schema));
     const modeDesign = MODE === "live" ? frozenDesign!.live : frozenDesign!.deterministic;
     assert.equal(MAX_TURNS, modeDesign.maxTurns, "frozen maxTurns changed");
     assert.equal(REPEATS, modeDesign.repeats, "frozen repeats changed");
@@ -80,7 +80,7 @@ if (freezePath) {
     assert(freezeCommit && freezeCommit !== candidateAtStart.commit, "design must be committed before the candidate");
     execGit(["merge-base", "--is-ancestor", freezeCommit, candidateAtStart.commit]);
     assert.equal(digest(execFileSync("git", ["show", candidateAtStart.commit + ":" + freezeRelative], { cwd: ROOT })), digest(freezeBytes));
-    for (const [path, expected] of Object.entries(frozenDesign!.unchangedSourcesSha256)) {
+    for (const [path, expected] of Object.entries({ ...frozenDesign!.unchangedSourcesSha256, ...frozenDesign!.strategySourcesSha256 })) {
       assert.equal(digest(readFileSync(resolve(ROOT, path))), expected, "frozen source changed: " + path);
     }
     const loopSource = readFileSync(resolve(ROOT, "scripts/context-inline-spill-benefit-loop-eval.mts"), "utf8").replaceAll("\r\n", "\n");
@@ -90,6 +90,7 @@ if (freezePath) {
       projection: ["// ---------------------------------------------------------------- projection", "// ---------------------------------------------------------------- provider"],
       request: ["const request = { model:", "\n        const requestBody ="],
       pressure: ["          if (cfg.pressure) {", "\n        }\n      }\n\n      const expected ="],
+      ...(frozenDesign!.schema === "ContextInlineSpillRound8FrozenDesign/v1" ? { navigation: ["        const projectedInput =", "\n        const inputJson ="] } : {}),
     };
     for (const [name, [start, end]] of Object.entries(sections)) {
       const from = loopSource.lastIndexOf(start!);
@@ -97,15 +98,17 @@ if (freezePath) {
       assert(from >= 0 && to > from, "missing frozen section: " + name);
       assert.equal(digest(loopSource.slice(from, to)), frozenDesign!.protocolSectionsSha256[name], "protocol changed: " + name);
     }
-    const paths = [...new Set([...Object.keys(frozenDesign!.unchangedSourcesSha256), freezeRelative,
+    const paths = [...new Set([...Object.keys(frozenDesign!.unchangedSourcesSha256), ...Object.keys(frozenDesign!.strategySourcesSha256 ?? {}), freezeRelative,
       "scripts/context-inline-spill-benefit-loop-eval.mts", "scripts/context-inline-spill-benefit-round5-verify.mjs",
       "scripts/context-inline-spill-benefit-round5-recompute.mjs", "scripts/context-inline-spill-benefit-round6-verify.mjs",
       "tests/unit/context-inline-spill-benefit-clean-candidate.test.ts", "harness/specs/tasks/inline-spill-real-benefit-eval-round6.md",
       "harness/specs/rules/inline-spill-eval-projected-input.md", "harness/specs/scenarios/context-family.md",
       ".gitattributes", "package.json", "openclaw_runtime/package.json",
-      ...(frozenDesign!.schema === "ContextInlineSpillRound7FrozenDesign/v1" ? ["scripts/context-inline-spill-benefit-strategy.mts",
+      ...(["ContextInlineSpillRound7FrozenDesign/v1", "ContextInlineSpillRound8FrozenDesign/v1"].includes(frozenDesign!.schema) ? ["scripts/context-inline-spill-benefit-strategy.mts",
         "scripts/context-inline-spill-benefit-round7-verify.mjs", "tests/unit/context-inline-spill-benefit-strategy.test.ts",
-        "harness/specs/tasks/inline-spill-real-benefit-eval-round7.md"] : [])] )];
+        "harness/specs/tasks/inline-spill-real-benefit-eval-round7.md"] : []),
+      ...(frozenDesign!.schema === "ContextInlineSpillRound8FrozenDesign/v1" ? ["scripts/context-inline-spill-benefit-round8-verify.mts",
+        "tests/unit/context-inline-spill-benefit-navigation.test.ts", "harness/specs/tasks/inline-spill-real-benefit-eval-round8.md"] : [])] )];
     sourceInputs = sourceIdentities(paths);
     for (const [path, identity] of Object.entries(sourceInputs)) assert.equal(identity.gitBlob, identity.worktreeBlob, "source differs from commit: " + path);
     designFreeze = { path: freezeRelative, sha256: digest(freezeBytes), commit: freezeCommit };
@@ -377,7 +380,8 @@ for (const fixture of fixtures) {
         const visibleText = textOf(projected.visible);
         projectedContextChars = visibleText.length;
         retainedAtEnd = projected.retained;
-        const input = buildProjectedEvalInput(projected.visible, toolHistory, fixture.question);
+        const projectedInput = buildProjectedEvalInput(projected.visible, toolHistory, fixture.question);
+        const { input, navigation } = STRATEGY === "navigated" ? buildVisibleRecallNavigation(projectedInput) : { input: projectedInput, navigation: null };
         const inputJson = JSON.stringify(input);
         mainContextChars = inputJson.length;
         const request = { model: MODEL, input, tools: [TOOL_DEF], tool_choice: "auto", temperature: 0, max_output_tokens: MAX_OUTPUT_TOKENS, reasoning: { effort: "low", summary: "auto" } };
@@ -388,6 +392,8 @@ for (const fixture of fixtures) {
         if (!cfg.reference && fixture.oracle && requestBody.includes(fixture.oracle)) throw new Error("baseline input contains oracle");
         const result = MODE === "live"
           ? await liveTurn(requestBody)
+          : STRATEGY === "navigated"
+            ? { ...navigatedDeterministicTurn(input), status: "executed" as const, usage: null, latencyMs: 0 }
           : STRATEGY === "anchored"
             ? { ...anchoredDeterministicTurn(input, anchorPolicy), status: "executed" as const, usage: null, latencyMs: 0 }
             : deterministicTurn(inputJson, fixture.oracle, toolCallLog.length, { uri: handle.uri, checksum: handle.checksum });
@@ -396,7 +402,7 @@ for (const fixture of fixtures) {
         outputTokens += Number((result.usage as { output_tokens?: number } | null)?.output_tokens ?? 0);
         totalTokens += Number((result.usage as { total_tokens?: number } | null)?.total_tokens ?? 0);
         latencyMs += result.latencyMs;
-        providerCalls.push({ turn, status: result.status, http_status: result.httpStatus ?? null, latency_ms: result.latencyMs, usage: result.usage, tool_call_count: result.toolCalls.length, text: result.text, failure_class: result.failureClass ?? null, request, request_sha256: digest(requestBody), input_chars: mainContextChars, input_bytes: Buffer.byteLength(inputJson), request_chars: requestBody.length, request_bytes: Buffer.byteLength(requestBody), projected_tool_outputs: projectedToolOutputs, raw_response: result.raw ?? null });
+        providerCalls.push({ turn, navigation, status: result.status, http_status: result.httpStatus ?? null, latency_ms: result.latencyMs, usage: result.usage, tool_call_count: result.toolCalls.length, text: result.text, failure_class: result.failureClass ?? null, request, request_sha256: digest(requestBody), input_chars: mainContextChars, input_bytes: Buffer.byteLength(inputJson), request_chars: requestBody.length, request_bytes: Buffer.byteLength(requestBody), projected_tool_outputs: projectedToolOutputs, raw_response: result.raw ?? null });
         appendFileSync(join(runDir, "provider-calls.jsonl"), redact(JSON.stringify({ driven_by: "agent", actor: ACTOR,
           realHumanEvidence: false, arm, fixtureId: fixture.id, repetition, ...providerCalls.at(-1) })) + "\n");
         if (result.status === "failed") { failureClass = result.failureClass ?? "provider_error"; break; }

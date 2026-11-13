@@ -8,6 +8,7 @@ appliesTo:
   - inline-spill-real-benefit-eval-round4
   - inline-spill-real-benefit-eval-round6
   - inline-spill-real-benefit-eval-round7
+  - inline-spill-real-benefit-eval-round8
 ---
 
 # 评测输入只有一个内容来源
@@ -39,3 +40,8 @@ URI/checksum 与可选 byte_length 匹配分类，原工具 content 命中和页
 工具压力增加且继续受既定聚合预算处理；旧 user 来源对照单独封存。原归档锚定说明在
 四臂一致，模型仍自行选择可见 URI/checksum 与页偏移，deterministic 策略仅读取可见输入。
 压力角色、日志摘要、工具定义和 240000ms 请求期限在 live 前冻结；原 B1–B7 阈值不变。
+
+第八轮允许在请求末尾追加可见导航提示。目标、偏移和字段位置必须只由该请求原有的
+可见引用、function-call参数和当轮投影function_call_output复算；不得保存第二份隐含
+上下文或恢复已淘汰的payload。完整private_evidence字段只提供call_id/input索引，不把
+字段值复制到提示、不与oracle比较。四臂同用该规则，原压力字节和B1–B7阈值不变。
