@@ -10,6 +10,8 @@ touchedAreas:
   - .gitattributes
   - harness/specs/tasks/inline-spill-real-benefit-eval-round6.md
   - harness/specs/fixtures/context-inline-spill-benefit-round6/**
+  - harness/specs/rules/inline-spill-eval-projected-input.md
+  - harness/specs/scenarios/context-family.md
   - scripts/context-inline-spill-benefit-loop-eval.mts
   - scripts/context-inline-spill-benefit-round5-verify.mjs
   - scripts/context-inline-spill-benefit-round5-recompute.mjs

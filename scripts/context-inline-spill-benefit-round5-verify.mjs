@@ -8,13 +8,13 @@ const [dir,out]=process.argv.slice(2);
 const design=JSON.parse(readFileSync(join(dir,'result.json'),'utf8')).design;
 const expectedOutputTokens=design.maxOutputTokens??900;
 const statsFile=out+'.stats.json';
-execFileSync(process.execPath,[join(dirname(fileURLToPath(import.meta.url)),'recompute-stats.mjs'),dir,'-',statsFile],{stdio:'inherit',windowsHide:true});
+execFileSync(process.execPath,[join(dirname(fileURLToPath(import.meta.url)),'context-inline-spill-benefit-round5-recompute.mjs'),dir,'-',statsFile],{stdio:'inherit',windowsHide:true});
 const result=JSON.parse(readFileSync(join(dir,'result.json'),'utf8'));
 const records=JSON.parse(readFileSync(join(dir,'runs.json'),'utf8')).records;
 assert.equal(result.design.evidenceTasks.length,6);assert.equal(result.design.controlTasks.length,2);
 assert.equal(records.length,4*8*result.design.repeats);
 assert.equal(result.design.repeats,result.mode==='live'?3:1);
-assert.equal(result.candidate.dirty,false,'primary fourth-round runs must use the clean candidate');
+assert.equal(result.candidate.dirty,false,'primary benefit runs must use the clean candidate');
 const hash=s=>createHash('sha256').update(s).digest('hex');
 const oracle={'deploy-token':'DEPLOY_TOKEN_7f31ab','db-passport':'DB_PASSPORT_9c02de','cache-seed':'CACHE_SEED_44aa10','signing-key':'SIGNING_KEY_b71c55','tenant-id':'TENANT_ID_3d9e77','migration-hash':'MIGRATION_HASH_a1f4c8'};
 let calls=0,outputs=0,baselineLeaks=0,incomplete=0,historyFallbacks=0,providerFailures=0;
@@ -68,6 +68,6 @@ for(const r of records){
 }
 assert.equal(baselineLeaks,0);assert.equal(historyFallbacks,0);
 for(const pair of result.inputIntegrity.initialPairs){const a=records.find(r=>r.arm==='recall-stable'&&r.fixtureId===pair.fixtureId&&r.repetition===pair.repetition),b=records.find(r=>r.arm==='retention-off'&&r.fixtureId===pair.fixtureId&&r.repetition===pair.repetition);assert.equal(JSON.stringify(a.providerCalls[0].request),JSON.stringify(b.providerCalls[0].request));assert.equal(a.initialRequestSha256,b.initialRequestSha256)}
-const facts={driven_by:'agent',actor:'codex-inline-spill-benefit-r4-relay',mode:result.mode,records:records.length,providerCalls:calls,protocolOutputs:outputs,initialPairs:result.inputIntegrity.initialPairs.length,allInitialPairsByteIdentical:true,actualInputCountsMatch:true,modelCallsAndRawUsageMatch:result.mode==='live',baselineOracleLeaks:baselineLeaks,unprojectedHistoryFallbacks:historyFallbacks,incompleteResponses:incomplete,providerFailures,retentionOffFinalOracleAbsent:evictedEvidence,stats:JSON.parse(readFileSync(statsFile,'utf8'))};
+const facts={driven_by:'agent',actor:result.actor,realHumanEvidence:false,mode:result.mode,records:records.length,providerCalls:calls,protocolOutputs:outputs,initialPairs:result.inputIntegrity.initialPairs.length,allInitialPairsByteIdentical:true,actualInputCountsMatch:true,modelCallsAndRawUsageMatch:result.mode==='live',baselineOracleLeaks:baselineLeaks,unprojectedHistoryFallbacks:historyFallbacks,incompleteResponses:incomplete,providerFailures,retentionOffFinalOracleAbsent:evictedEvidence,stats:JSON.parse(readFileSync(statsFile,'utf8'))};
 writeFileSync(out,JSON.stringify(facts,null,2)+'\n');
 console.log(JSON.stringify({mode:result.mode,records:records.length,providerCalls:calls,initialPairs:facts.initialPairs,baselineLeaks,historyFallbacks,incomplete,passed:true}));

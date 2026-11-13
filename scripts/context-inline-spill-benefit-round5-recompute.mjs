@@ -16,9 +16,23 @@ for(const arm of arms){const rows=records.filter(r=>r.arm===arm),ev=rows.filter(
 const comparisons={};
 for(const other of ['baseline-no-reference','retention-off','reference-visible']){const v={both:0,onlyA:0,onlyB:0,neither:0};for(const a of records.filter(r=>r.arm==='recall-stable')){const b=records.find(r=>r.arm===other&&r.fixtureId===a.fixtureId&&r.repetition===a.repetition);assert(b);v[a.success?(b.success?'both':'onlyA'):(b.success?'onlyB':'neither')]++}v.p=mc(v.onlyA,v.onlyB);const key='recall-stable_vs_'+(other==='baseline-no-reference'?'baseline':other);comparisons[key]=v;same(v,summary.comparisons[key],key)}
 const stable=stats['recall-stable'],ref=stats['reference-visible'],off=stats['retention-off'];const growth=stable.meanMainContextChars-off.meanMainContextChars,tokenGrowth=ref.meanTotalTokens?(stable.meanTotalTokens-ref.meanTotalTokens)/ref.meanTotalTokens:0;
-const b3Evidence=comparisons['recall-stable_vs_retention-off'];
-const decisions={b1_mechanism_and_autonomy:stable.recallAttemptRate>=.8&&stable.recallOkRate>=.95,b2_task_benefit:stable.evidenceSuccessRate-stats['baseline-no-reference'].evidenceSuccessRate>=.3&&comparisons['recall-stable_vs_baseline'].p<.05,b3_retention_benefit:stable.evidenceSuccessRate>off.evidenceSuccessRate&&b3Evidence.onlyA>=1&&b3Evidence.onlyB===0,b4_non_inferiority:stable.evidenceSuccessRate>=ref.evidenceSuccessRate-.05,b5_no_fabrication:stable.controlSuccessRate===1,b6_budget:growth<=16000&&tokenGrowth<=.25,contextGrowthChars:growth,tokenGrowthPct:tokenGrowth};same(decisions,summary.decision,'decision');
-const facts={driven_by:'agent',actor:'codex-inline-spill-benefit-r5-01a1d068',mode:summary.mode,records:records.length,allSummaryNumbersRecomputed:true,stats,comparisons,decisions,wire:null};
+const evidenceComparisons={};
+if(summary.evidenceComparisons){
+ for(const other of ['baseline-no-reference','retention-off','reference-visible']){
+  const value={both:0,onlyA:0,onlyB:0,neither:0};
+  for(const a of records.filter(r=>r.arm==='recall-stable'&&evidence.has(r.fixtureId))){
+   const b=records.find(r=>r.arm===other&&r.fixtureId===a.fixtureId&&r.repetition===a.repetition);assert(b);
+   value[a.success?(b.success?'both':'onlyA'):(b.success?'onlyB':'neither')]++;
+  }
+  value.p=mc(value.onlyA,value.onlyB);
+  const key='recall-stable_vs_'+(other==='baseline-no-reference'?'baseline':other);
+  evidenceComparisons[key]=value;same(value,summary.evidenceComparisons[key],key+'.evidence');
+ }
+}
+const gatePairs=summary.evidenceComparisons?evidenceComparisons:comparisons;
+const b3Evidence=gatePairs['recall-stable_vs_retention-off'];
+const decisions={b1_mechanism_and_autonomy:stable.recallAttemptRate>=.8&&stable.recallOkRate>=.95,b2_task_benefit:stable.evidenceSuccessRate-stats['baseline-no-reference'].evidenceSuccessRate>=.3&&gatePairs['recall-stable_vs_baseline'].p<.05,b3_retention_benefit:stable.evidenceSuccessRate>off.evidenceSuccessRate&&b3Evidence.onlyA>=1&&b3Evidence.onlyB===0,b4_non_inferiority:stable.evidenceSuccessRate>=ref.evidenceSuccessRate-.05,b5_no_fabrication:stable.controlSuccessRate===1,b6_budget:growth<=16000&&tokenGrowth<=.25,contextGrowthChars:growth,tokenGrowthPct:tokenGrowth};same(decisions,summary.decision,'decision');
+const facts={driven_by:'agent',actor:summary.actor,realHumanEvidence:false,mode:summary.mode,records:records.length,allSummaryNumbersRecomputed:true,stats,comparisons,evidenceComparisons,decisions,wire:null};
 if(wireFile!=='-'){
  const wires=readFileSync(wireFile,'utf8').trim().split(/\r?\n/).filter(Boolean).map(JSON.parse);assert.equal(wires.length,records.reduce((s,r)=>s+r.turns,0));let cursor=0;const perRun=[];const oracle={ 'deploy-token':'DEPLOY_TOKEN_7f31ab','db-passport':'DB_PASSPORT_9c02de','cache-seed':'CACHE_SEED_44aa10','signing-key':'SIGNING_KEY_b71c55','tenant-id':'TENANT_ID_3d9e77','migration-hash':'MIGRATION_HASH_a1f4c8'};
  for(const r of records){const calls=wires.slice(cursor,cursor+r.turns);cursor+=r.turns;let finalRaw=null;let input=0,output=0,total=0;let modelRecalls=0,maxParallel=0;for(let i=0;i<calls.length;i++){const w=calls[i],b=JSON.parse(w.response||'{}');const rawCalls=(b.output||[]).filter(x=>x.type==='function_call'&&x.name==='context_archive_recall');modelRecalls+=rawCalls.length;maxParallel=Math.max(maxParallel,rawCalls.length);for(const denied of rawCalls.slice(1)){assert(r.toolCalls.some(t=>t.call_id===denied.call_id&&t.failure_code==='parallel_recall_limit'&&t.ok===false),'parallel call was not rejected')};input+=Number(b.usage?.input_tokens||0);output+=Number(b.usage?.output_tokens||0);total+=Number(b.usage?.total_tokens||0);same(b.usage??null,r.providerCalls[i].usage,'usage');assert.equal(String(b.output_text??''),r.providerCalls[i].text);if(!(b.output||[]).some(x=>x.type==='function_call'))finalRaw=String(b.output_text??'');if(r.arm==='baseline-no-reference')for(const value of Object.values(oracle))assert(!JSON.stringify(w.request).includes(value),'baseline oracle leak')}
