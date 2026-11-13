@@ -12,6 +12,7 @@ import { pendingFinalDeliveryIdentity } from "../../agents/recovery-authority/fi
 import { closeOpenClawStateDatabase } from "../../state/openclaw-state-db.js";
 import { closeOpenClawAgentDatabasesForTest } from "../../state/openclaw-agent-db.js";
 import { closeTrackedSqliteHandlesUnder } from "../node-sqlite.js";
+import { sessionAdmissionRegistry } from "../../sessions/session-admission-registry.js";
 
 const transport = vi.hoisted(() => ({
   send: vi.fn(),
@@ -172,6 +173,162 @@ describe("final Session reply bound to the original durable send intent", () => 
     expect(competingAdmission).toBeNull();
     expect(await loadPendingDeliveries(stateDir)).toEqual([]);
     expect(transport.commit).toHaveBeenCalledOnce();
+  });
+
+  it("refuses a replaced reply after binding and before platform send", async () => {
+    transport.prepare.mockImplementationOnce(async () => {
+      expect(session().pendingFinalDeliveryIntentId).toBeTruthy();
+      await replaceReply({
+        pendingFinalDeliveryRunId: "new-producer",
+        pendingFinalDeliveryText: "new answer",
+        pendingFinalDeliveryIntentId: "new-intent",
+      });
+    });
+    expect((await send()).status).toBe("failed");
+    expect(transport.send).not.toHaveBeenCalled();
+    expect(transport.commit).not.toHaveBeenCalled();
+    expect(session()).toMatchObject({
+      pendingFinalDeliveryRunId: "new-producer",
+      pendingFinalDeliveryText: "new answer",
+      pendingFinalDeliveryIntentId: "new-intent",
+    });
+  });
+
+  it("keeps pre-platform recovery errors retryable without losing the attempt", async () => {
+    const pending = await failedSend();
+    transport.reconcile.mockResolvedValue({ status: "not_sent" });
+    expect((await recover()).deferredBackoff).toBe(1);
+    const deferred = await loadPendingDelivery(pending.id, stateDir);
+    if (!deferred) throw new Error("pre-platform recovery fixture missing");
+    upsertDeliveryQueueEntry({
+      queueName: "outbound",
+      stateDir,
+      entry: {
+        ...deferred,
+        lastAttemptAt: Date.now() - computeBackoffMs(deferred.retryCount + 1) - 1,
+      },
+    });
+    transport.prepare.mockRejectedValueOnce(new Error("adapter preparation failed"));
+    await recover();
+    const failed = await loadPendingDelivery(pending.id, stateDir);
+    expect(failed).toMatchObject({
+      retryCount: 2,
+      recoveryEffect: "not_applied",
+      recoveryAdmission: { attempts: 2, state: "failed" },
+    });
+    expect(session().pendingFinalDeliveryText).toBe("original answer");
+    expect(transport.send).toHaveBeenCalledOnce();
+    if (!failed) throw new Error("failed preparation lost its durable intent");
+    upsertDeliveryQueueEntry({
+      queueName: "outbound",
+      stateDir,
+      entry: {
+        ...failed,
+        lastAttemptAt: Date.now() - computeBackoffMs(failed.retryCount + 1) - 1,
+      },
+    });
+    expect((await recover()).recovered).toBe(1);
+    expect(transport.send).toHaveBeenCalledTimes(2);
+    expect(transport.commit).toHaveBeenCalledOnce();
+    expect(session().pendingFinalDeliveryText).toBeUndefined();
+    expect(await loadPendingDelivery(pending.id, stateDir)).toBeNull();
+  });
+
+  it("holds a Session permit through recovered callbacks and settlement", async () => {
+    const pending = await failedSend();
+    transport.reconcile.mockResolvedValue({ status: "not_sent" });
+    await recover();
+    const deferred = await loadPendingDelivery(pending.id, stateDir);
+    if (!deferred) throw new Error("recovered permit fixture missing");
+    upsertDeliveryQueueEntry({
+      queueName: "outbound",
+      stateDir,
+      entry: {
+        ...deferred,
+        lastAttemptAt: Date.now() - computeBackoffMs(deferred.retryCount + 1) - 1,
+      },
+    });
+    const identity = {
+      agentId: "main",
+      canonicalSessionKey: key,
+      expectedSessionId: original.sessionId,
+    };
+    let fencePromise: ReturnType<typeof sessionAdmissionRegistry.fence> | undefined;
+    let fenceCompleted = false;
+    transport.commit.mockImplementationOnce(async () => {
+      expect(sessionAdmissionRegistry.snapshot(identity)?.active).toBeGreaterThan(0);
+      fencePromise = sessionAdmissionRegistry.fence(identity).then((fence) => {
+        fenceCompleted = true;
+        return fence;
+      });
+      await Promise.resolve();
+      expect(fenceCompleted).toBe(false);
+    });
+    try {
+      expect((await recover()).recovered).toBe(1);
+      expect(transport.commit).toHaveBeenCalledOnce();
+      if (!fencePromise) throw new Error("recovered callback did not create its fence");
+      const fence = await fencePromise;
+      expect(fence.diagnostics.activeAtFence).toBeGreaterThan(0);
+      expect(session().pendingFinalDeliveryText).toBeUndefined();
+      expect(await loadPendingDelivery(pending.id, stateDir)).toBeNull();
+    } finally {
+      (await fencePromise)?.release();
+    }
+  });
+
+  it("preserves an earlier unknown send when a later pre-platform call fails", async () => {
+    const pending = await failedSend();
+    transport.prepare.mockRejectedValueOnce(new Error("adapter preparation failed"));
+    await expect(
+      deliverOutboundPayloadsInternal({
+        cfg: {},
+        channel: pending.channel,
+        to: pending.to,
+        payloads: pending.payloads,
+        deliveryQueueId: pending.id,
+        deliveryQueueStateDir: stateDir,
+        skipQueue: true,
+      }),
+    ).rejects.toThrow("adapter preparation failed");
+    expect(await loadPendingDelivery(pending.id, stateDir)).toMatchObject({
+      recoveryEffect: "unknown",
+      retryCount: pending.retryCount,
+    });
+    expect(transport.send).toHaveBeenCalledOnce();
+  });
+
+  it("stops remaining platform parts when the pending reply changes after a sent prefix", async () => {
+    transport.send.mockImplementationOnce(async () => {
+      await replaceReply({
+        pendingFinalDeliveryRunId: "new-producer",
+        pendingFinalDeliveryText: "new answer",
+        pendingFinalDeliveryIntentId: "new-intent",
+      });
+      return { messageId: "sent-prefix" };
+    });
+    const result = await sendDurableMessageBatch({
+      cfg: {},
+      channel: "telegram",
+      to: "fixture-chat",
+      payloads: [{ text: "first part" }, { text: "remaining part" }],
+      session: { key },
+      durability: "required",
+      deliveryQueueStateDir: stateDir,
+      pendingFinalDelivery: {
+        storePath,
+        sessionKey: key,
+        expected: pendingFinalDeliveryIdentity(original),
+      },
+    });
+    expect(result.status).toBe("partial_failed");
+    expect(transport.send).toHaveBeenCalledOnce();
+    expect(transport.commit).not.toHaveBeenCalled();
+    expect(session().pendingFinalDeliveryText).toBe("new answer");
+    expect(session().pendingFinalDeliveryIntentId).toBe("new-intent");
+    expect((await loadPendingDeliveries(stateDir))[0]).toMatchObject({
+      recoveryEffect: "unknown",
+    });
   });
 
   it("retains the same Session text and intent when platform reconciliation is unresolved", async () => {

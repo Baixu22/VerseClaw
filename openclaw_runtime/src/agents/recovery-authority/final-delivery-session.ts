@@ -1,6 +1,7 @@
 /** Session pending replies reference the existing outbound intent; queue effect truth owns settlement. */
 import type { SessionEntry } from "../../config/sessions/types.js";
 import type { OutboundDeliveryIntent } from "../../infra/outbound/deliver.js";
+import { acquireSessionAdmissionPermit } from "../../sessions/session-admission-registry.js";
 
 export type PendingFinalDeliveryIdentity = Pick<
   SessionEntry,
@@ -20,6 +21,19 @@ export type PendingFinalDeliveryBinding = {
   sessionKey: string;
   expected: PendingFinalDeliveryIdentity;
 };
+
+/** Reset/delete waits for this exact reply generation through delivery settlement. */
+export function acquirePendingFinalDeliveryPermit(
+  binding: PendingFinalDeliveryBinding,
+): () => void {
+  return acquireSessionAdmissionPermit(
+    {
+      canonicalSessionKey: binding.sessionKey,
+      expectedSessionId: binding.expected.sessionId,
+    },
+    "reply-turn",
+  );
+}
 
 export function pendingFinalDeliveryIdentity(entry: SessionEntry): PendingFinalDeliveryIdentity {
   const {

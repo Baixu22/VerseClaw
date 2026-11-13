@@ -7,6 +7,7 @@ export {
   loadPendingDeliveries,
   markDeliveryPlatformOutcomeUnknown,
   markDeliveryPlatformOutcomeApplied,
+  markDeliveryPlatformAttemptNotStarted,
   markDeliveryPlatformSendAttemptStarted,
   releaseQueuedDeliveryClaim,
   usesQueuedDeliveryAuthority,

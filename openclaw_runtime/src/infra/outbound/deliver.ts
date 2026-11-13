@@ -71,6 +71,7 @@ import {
   loadPendingDelivery,
   markDeliveryPlatformOutcomeUnknown,
   markDeliveryPlatformOutcomeApplied,
+  markDeliveryPlatformAttemptNotStarted,
   markDeliveryPlatformSendAttemptStarted,
   releaseQueuedDeliveryClaim,
   type QueuedReplyPayloadSendingHook,
@@ -686,7 +687,7 @@ type DeliverOutboundPayloadsCoreRuntimeParams = DeliverOutboundPayloadsCoreParam
 export type DeliverOutboundPayloadsParams = DeliverOutboundPayloadsCoreParams & {
   /** @internal Skip write-ahead queue (used by crash-recovery to avoid re-enqueueing). */
   skipQueue?: boolean;
-  /** @internal Let recovery run commit hooks after it has acked the recovered queue entry. */
+  /** @internal Let recovery run commit hooks after applied queue truth is durable. */
   deferCommitHooks?: boolean;
   queuePolicy?: OutboundDeliveryQueuePolicy;
   renderedBatchPlan?: QueuedRenderedMessageBatchPlan;
@@ -1382,14 +1383,35 @@ async function deliverOutboundPayloadsWithQueueCleanup(
   const queuePolicy =
     authority || params.pendingFinalDelivery ? "required" : (params.queuePolicy ?? "best_effort");
   let platformResultsReturned = false;
+  let platformSendStarted = false;
+  let releaseSessionPermit: (() => void) | undefined;
 
   try {
-    let platformSendStarted = false;
+    if (queuedEntry?.pendingFinalDelivery) {
+      const { acquirePendingFinalDeliveryPermit } =
+        await import("../../agents/recovery-authority/final-delivery-session.js");
+      releaseSessionPermit = acquirePendingFinalDeliveryPermit(queuedEntry.pendingFinalDelivery);
+    }
     const results = await deliverOutboundPayloadsCore({
       ...wrappedParams,
       ...(queueId
         ? {
             onPlatformSendStart: async () => {
+              if (queuedEntry?.pendingFinalDelivery) {
+                const { bindPendingFinalDeliveryIntent } =
+                  await import("../../agents/recovery-authority/final-delivery-session.js");
+                const bound = await bindPendingFinalDeliveryIntent({
+                  ...queuedEntry.pendingFinalDelivery,
+                  intent: {
+                    id: queueId,
+                    channel: queuedEntry.channel,
+                    to: queuedEntry.to,
+                    accountId: queuedEntry.accountId,
+                    queuePolicy: "required",
+                  },
+                });
+                if (!bound) throw new Error("final delivery no longer owns its pending reply");
+              }
               if (platformSendStarted) {
                 return;
               }
@@ -1465,6 +1487,13 @@ async function deliverOutboundPayloadsWithQueueCleanup(
     }
     return results;
   } catch (err) {
+    if (authority && queuedEntry && !platformSendStarted) {
+      markDeliveryPlatformAttemptNotStarted(
+        queuedEntry,
+        params.deliveryQueueStateDir,
+        params.recoveryAdmission,
+      );
+    }
     if (queueId && !params.skipQueue) {
       if (isDeliveryAbortError(err) && !authority) {
         await ackDelivery(queueId, params.deliveryQueueStateDir).catch(() => {});
@@ -1480,8 +1509,12 @@ async function deliverOutboundPayloadsWithQueueCleanup(
     }
     throw err;
   } finally {
-    if (queuedEntry && (!params.skipQueue || !params.deferCommitHooks)) {
-      releaseQueuedDeliveryClaim(queuedEntry, params.deliveryQueueStateDir);
+    try {
+      if (queuedEntry && (!params.skipQueue || !params.deferCommitHooks)) {
+        releaseQueuedDeliveryClaim(queuedEntry, params.deliveryQueueStateDir);
+      }
+    } finally {
+      releaseSessionPermit?.();
     }
   }
 }

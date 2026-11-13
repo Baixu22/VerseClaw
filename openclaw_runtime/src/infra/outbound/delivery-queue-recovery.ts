@@ -506,10 +506,18 @@ async function drainQueuedEntry(opts: {
 async function drainAdmittedQueuedEntry(
   opts: Parameters<typeof drainQueuedEntry>[0],
 ): Promise<DeliveryRecoveryOutcome> {
-  let prepared = admitQueuedDeliveryRecovery(opts.entry, opts.stateDir);
-  if (!prepared) return "already-gone";
-  let entry = prepared.entry;
+  let prepared: ReturnType<typeof admitQueuedDeliveryRecovery> | undefined;
+  let entry = opts.entry;
+  let releaseSessionPermit: (() => void) | undefined;
   try {
+    if (entry.pendingFinalDelivery) {
+      const { acquirePendingFinalDeliveryPermit } =
+        await import("../../agents/recovery-authority/final-delivery-session.js");
+      releaseSessionPermit = acquirePendingFinalDeliveryPermit(entry.pendingFinalDelivery);
+    }
+    prepared = admitQueuedDeliveryRecovery(entry, opts.stateDir);
+    if (!prepared) return "already-gone";
+    entry = prepared.entry;
     let reconciliation: ChannelMessageUnknownSendReconciliationResult | null = null;
     if (queuedDeliveryEffect(entry) === "unknown") {
       reconciliation = await reconcileUnknownQueuedDelivery({
@@ -553,6 +561,8 @@ async function drainAdmittedQueuedEntry(
       entry = prepared.entry;
     }
     if (prepared.decision.kind === "settle") {
+      // Commit hooks are process-local best-effort notifications. Applied
+      // restart recovery settles queue truth without replaying these callbacks.
       if (!(await ackDelivery(entry.id, opts.stateDir, entry)))
         return (await loadPendingDelivery(entry.id, opts.stateDir)) ? "failed" : "already-gone";
       opts.onRecovered?.(entry);
@@ -621,9 +631,11 @@ async function drainAdmittedQueuedEntry(
   } catch (error) {
     if (getErrnoCode(error) === "ENOENT") return "already-gone";
     const message = formatErrorMessage(error);
-    finishQueuedDeliveryRecovery(entry, message, opts.stateDir);
+    if (prepared) finishQueuedDeliveryRecovery(entry, message, opts.stateDir);
     opts.onFailed?.(entry, message);
     return "failed";
+  } finally {
+    releaseSessionPermit?.();
   }
 }
 

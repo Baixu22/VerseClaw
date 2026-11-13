@@ -456,6 +456,29 @@ export async function markDeliveryPlatformOutcomeApplied(
   if (!updated) throw new Error("delivery outcome no longer owns its intent");
 }
 
+/** Core observed that this owned attempt failed before entering any platform send. */
+export function markDeliveryPlatformAttemptNotStarted(
+  expected: QueuedDelivery,
+  stateDir?: string,
+  admission?: RecoveryAdmissionIdentity,
+): void {
+  updateQueuedRecovery(expected.id, stateDir, (current) => {
+    if (
+      !hasSameQueuedDelivery(current, expected) ||
+      ["applied", "reconciled"].includes(queuedDeliveryEffect(current)) ||
+      (current.activeSendProcessId && current.activeSendProcessId !== process.pid) ||
+      (current.recoveryAdmission && !expected.recoveryAdmission)
+    )
+      return null;
+    const knownUnstarted =
+      queuedDeliveryEffect(expected) === "not_applied" ||
+      (admission &&
+        matchesQueuedAdmission(current, admission) &&
+        current.recoveryAdmission?.decision.effect === "not_applied");
+    return knownUnstarted ? { ...current, recoveryEffect: "not_applied" } : null;
+  });
+}
+
 /** Release only this process's unchanged intent after callbacks and settlement. */
 export function releaseQueuedDeliveryClaim(expected: QueuedDelivery, stateDir?: string): void {
   updateQueuedRecovery(expected.id, stateDir, (current) => {
