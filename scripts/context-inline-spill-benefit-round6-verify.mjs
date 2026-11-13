@@ -75,11 +75,13 @@ try {
     'tests/unit/context-inline-spill-benefit-clean-candidate.test.ts', 'harness/specs/tasks/inline-spill-real-benefit-eval-round6.md',
     'harness/specs/rules/inline-spill-eval-projected-input.md', 'harness/specs/scenarios/context-family.md',
     '.gitattributes', 'package.json', 'openclaw_runtime/package.json',
-    ...(['ContextInlineSpillRound7FrozenDesign/v1', 'ContextInlineSpillRound8FrozenDesign/v1'].includes(freeze.schema) ? ['scripts/context-inline-spill-benefit-strategy.mts',
+    ...(['ContextInlineSpillRound7FrozenDesign/v1', 'ContextInlineSpillRound8FrozenDesign/v1', 'ContextInlineSpillRound9FrozenDesign/v1'].includes(freeze.schema) ? ['scripts/context-inline-spill-benefit-strategy.mts',
       'scripts/context-inline-spill-benefit-round7-verify.mjs', 'tests/unit/context-inline-spill-benefit-strategy.test.ts',
       'harness/specs/tasks/inline-spill-real-benefit-eval-round7.md'] : []),
-    ...(freeze.schema === 'ContextInlineSpillRound8FrozenDesign/v1' ? ['scripts/context-inline-spill-benefit-round8-verify.mts',
-      'tests/unit/context-inline-spill-benefit-navigation.test.ts', 'harness/specs/tasks/inline-spill-real-benefit-eval-round8.md'] : [])])];
+    ...(['ContextInlineSpillRound8FrozenDesign/v1', 'ContextInlineSpillRound9FrozenDesign/v1'].includes(freeze.schema) ? ['scripts/context-inline-spill-benefit-round8-verify.mts',
+      'tests/unit/context-inline-spill-benefit-navigation.test.ts', 'harness/specs/tasks/inline-spill-real-benefit-eval-round8.md'] : []),
+    ...(freeze.schema === 'ContextInlineSpillRound9FrozenDesign/v1' ? ['scripts/context-inline-spill-benefit-round9-verify.mts',
+      'tests/unit/context-inline-spill-benefit-bookmark.test.ts', 'harness/specs/tasks/inline-spill-real-benefit-eval-round9.md'] : [])])];
   assert.deepEqual(Object.keys(preflight.sourceInputs).sort(), requiredSources.sort());
   for (const path of requiredSources) {
     const identity = preflight.sourceInputs[path];

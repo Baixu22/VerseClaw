@@ -18,12 +18,14 @@ ownedPaths:
   - harness/specs/tasks/inline-spill-real-benefit-eval-round6.md
   - harness/specs/tasks/inline-spill-real-benefit-eval-round7.md
   - harness/specs/tasks/inline-spill-real-benefit-eval-round8.md
+  - harness/specs/tasks/inline-spill-real-benefit-eval-round9.md
   - harness/specs/tasks/inline-spill-real-benefit-closeout.md
   - harness/specs/rules/inline-spill-eval-projected-input.md
   - harness/specs/fixtures/context-inline-spill-benefit-round3/**
   - harness/specs/fixtures/context-inline-spill-benefit-round6/**
   - harness/specs/fixtures/context-inline-spill-benefit-round7/**
   - harness/specs/fixtures/context-inline-spill-benefit-round8/**
+  - harness/specs/fixtures/context-inline-spill-benefit-round9/**
   - harness/specs/fixtures/context-inline-spill-benefit-closeout-20261108/**
   - harness/specs/fixtures/context-inline-spill/**
 requiredRules:

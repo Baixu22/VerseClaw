@@ -9,6 +9,7 @@ appliesTo:
   - inline-spill-real-benefit-eval-round6
   - inline-spill-real-benefit-eval-round7
   - inline-spill-real-benefit-eval-round8
+  - inline-spill-real-benefit-eval-round9
 ---
 
 # 评测输入只有一个内容来源
@@ -45,3 +46,8 @@ URI/checksum 与可选 byte_length 匹配分类，原工具 content 命中和页
 可见引用、function-call参数和当轮投影function_call_output复算；不得保存第二份隐含
 上下文或恢复已淘汰的payload。完整private_evidence字段只提供call_id/input索引，不把
 字段值复制到提示、不与oracle比较。四臂同用该规则，原压力字节和B1–B7阈值不变。
+
+第九轮允许把最初实际可见exec结果中的URI/checksum复制到既有agent问题的有界导航
+书签（最多512字符）。当前生产投影继续提供该元数据，书签优先于错误模型参数；
+不包含payload或oracle值，不新建隐含context store，不静默改写模型原始参数。
+书签来源、每次当前问题及导航参数必须由首轮输入和原始记录复算，无引用基线不加书签。

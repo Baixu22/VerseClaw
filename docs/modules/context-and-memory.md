@@ -587,6 +587,11 @@ token相对reference减少22.56%，但原归档选择仍有39次原目标、49�
 B2/B3/B5/B7通过，B1/B4/B6失败；成功回读17/18，token增幅25.027526%超过25%，判定NO_GO。
 模型曾把URI文件名16位摘要扩写成64位checksum并沿用错误目标。原始失败保留于[第八轮报告](../../harness/specs/fixtures/context-inline-spill-benefit-round8/REPORT.md)。
 
+第九轮按[可见书签恢复任务](../../harness/specs/tasks/inline-spill-real-benefit-eval-round9.md)推进。
+最初可见exec引用的URI/checksum作为最多512字符的书签放入既有agent问题，当前投影
+持续提供这份元数据，使模型可从错误首次URI恢复。书签不包含payload或字段值，
+执行器继续使用模型返回的原始参数；生产默认和全部收益阈值保持原值。
+
 
 [第四轮评测](../../harness/specs/tasks/inline-spill-real-benefit-eval-round4.md)要求每次回读显式提供 1–5500 的 `max_chars`，缺失或超界参数返回 `invalid_arguments`。工具说明引导模型用 `offset + content.length` 翻页，取得精确值后输出最终 JSON。页尺寸与 6000 字符生产投影预算共同校验，收益按原 96 次样本与 900 输出 token 预算实测。
 
