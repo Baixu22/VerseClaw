@@ -197,12 +197,11 @@ test('conversation rail, hook selection, completion bell and Markdown TOC have r
     await page.getByTestId('chat-completion-item').first().click();
     await expect(page.getByTestId('chat-message-nav-rail-item-8')).toHaveAttribute('data-active', 'true');
     await page.getByTestId('chat-header-session-name').click();
-    const menuHook = page.locator('.codex-header-menu [data-slot="hook-sidebar"]');
-    await expect(menuHook).toBeVisible();
-    await menuHook.locator('[data-hook-key]').last().hover();
+    const sessionMenu = page.getByTestId('chat-session-navigation-menu');
+    await expect(sessionMenu).toBeVisible();
+    await sessionMenu.locator('[data-hook-key]').last().hover();
     await capture(page, 'session-hook-light');
     await page.keyboard.press('Escape');
-    await page.getByTestId('chat-header-session-name').click();
     await page.getByTestId('chat-workspace-toggle').click();
     await page.getByText('interaction-guide.md', { exact: true }).first().click();
     await expect(page.getByTestId('markdown-toc-toggle')).toBeVisible();

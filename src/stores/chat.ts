@@ -2874,7 +2874,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     }
 
     if (!isGatewayReadyForChat()) {
-      if (!hasCachedMessages) {
+      if (!hasCachedMessages && get().startupPhase !== 'ready') {
         // A previous foreground history attempt may have raced the Gateway
         // lifecycle. While it is starting, that transport failure is not a
         // user-facing Chat error; wait for the ready transition instead.

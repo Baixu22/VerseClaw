@@ -342,8 +342,8 @@ test.describe('Verse Claw combined model and reasoning settings', () => {
       expect(trackMetrics.light.background).not.toBe(trackMetrics.dark.background);
       expect(trackMetrics.light.background).not.toMatch(/rgb\((?:0|12), (?:0|12), (?:0|12)\)/);
       expect(trackMetrics.dark.background).not.toMatch(/rgb\((?:0|12), (?:0|12), (?:0|12)\)/);
-      expect(trackMetrics.light).toMatchObject({ borderRadius: '9999px', clipPath: 'none', height: '22px', thumbSize: '18px' });
-      expect(trackMetrics.dark).toMatchObject({ borderRadius: '9999px', clipPath: 'none', height: '22px', thumbSize: '18px' });
+      expect(trackMetrics.light).toMatchObject({ borderRadius: '9999px', clipPath: 'none', height: '28px', thumbSize: '24px' });
+      expect(trackMetrics.dark).toMatchObject({ borderRadius: '9999px', clipPath: 'none', height: '28px', thumbSize: '24px' });
 
       const card = popover.locator('.effort-card');
       await expect(card).toHaveClass(/effort-card--inline/);

@@ -72,6 +72,8 @@ test.describe('Cross-platform FakeCoding UI v2 shell', () => {
     try {
       const page = await getStableWindow(app);
       await expect(page.getByTestId('main-layout')).toHaveAttribute('data-ui-version', 'v2');
+      await expect(page.locator('html')).toHaveClass(/\bdark\b/);
+      await expect(page.locator('html')).not.toHaveClass(/\blight\b/);
       const darkColors = await page.evaluate(() => {
         const read = (testId: string) => getComputedStyle(document.querySelector<HTMLElement>(`[data-testid="${testId}"]`)!).backgroundColor;
         return { sidebar: read('sidebar'), chat: read('chat-page') };
@@ -95,6 +97,10 @@ test.describe('Cross-platform FakeCoding UI v2 shell', () => {
 
     try {
       const page = await getStableWindow(app);
+      await page.getByTestId('sidebar-nav-settings').click();
+      await page.getByTestId('settings-nav-developer').click();
+      await page.getByTestId('settings-dev-mode-switch').click();
+      await expect(page.getByTestId('settings-dev-mode-switch')).toHaveAttribute('data-state', 'checked');
       await openAgentDevScenario(page, 'ui-v2-showcase', { visualMode: true });
       await page.setViewportSize({ width: 1280, height: 800 });
       await expect(page.getByTestId('ui-v2-showcase')).toBeVisible();
@@ -186,10 +192,18 @@ test.describe('Cross-platform FakeCoding UI v2 shell', () => {
       await expect(page.locator('html')).toHaveClass(/dark/);
       await expect(page.getByTestId('ui-v2-theme-dark')).toHaveClass(/bg-material-elevated/);
       await expect.poll(async () => {
-        const color = await page.getByTestId('ui-v2-showcase-textarea').evaluate((element) => getComputedStyle(element).backgroundColor);
-        const channels = color.match(/\d+(?:\.\d+)?/g)?.slice(0, 3).map(Number) ?? [255];
-        return Math.max(...channels);
-      }).toBeLessThan(60);
+        return page.getByTestId('ui-v2-showcase-textarea').evaluate((element) => {
+          const probe = document.createElement('span');
+          probe.style.backgroundColor = 'hsl(var(--surface-input))';
+          document.body.append(probe);
+          const expected = getComputedStyle(probe).backgroundColor;
+          probe.remove();
+          const actual = getComputedStyle(element).backgroundColor;
+          const channels = actual.match(/\d+(?:\.\d+)?/g)?.slice(0, 3).map(Number) ?? [];
+          return actual === expected && channels.length === 3
+            && Math.max(...channels) < 128 && Math.max(...channels) - Math.min(...channels) <= 8;
+        });
+      }).toBe(true);
       await testInfo.attach('fakecoding-showcase-dark-960x800', {
         body: await page.screenshot(),
         contentType: 'image/png',

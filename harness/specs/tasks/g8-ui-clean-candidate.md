@@ -10,6 +10,11 @@ memberTasks:
   - harness/specs/tasks/chat-output-visual-hierarchy.md
   - harness/specs/tasks/chat-composer-popovers.md
   - harness/specs/tasks/sidebar-session-row-polish.md
+regressionRules:
+  - harness/specs/rules/ui-motion-material-system.md
+  - harness/specs/rules/rareui-interaction-adaptation.md
+integrationValidationPaths:
+  - tests/unit/chat-startup-hydration.test.ts
 touchedAreas:
   - README.md
   - README.zh-CN.md
@@ -20,6 +25,9 @@ touchedAreas:
   - harness/specs/scenarios/sidebar-session-row-management.md
   - harness/specs/tasks/sidebar-session-row-polish.md
   - harness/specs/tasks/g8-ui-clean-candidate.md
+  - harness/specs/tasks/chat-output-visual-hierarchy.md
+  - harness/specs/tasks/chat-composer-popovers.md
+  - harness/specs/scenarios/windows-ui-v2.md
   - harness/specs/fixtures/g8-ui-clean-candidate/**
   - src/components/brand/BrandLogo.tsx
   - src/components/chat/MemoryInjectionPanel.tsx
@@ -30,6 +38,7 @@ touchedAreas:
   - src/pages/Chat/ChatToolbar.tsx
   - src/pages/Chat/SessionActivityPanel.tsx
   - src/pages/Chat/index.tsx
+  - src/stores/chat.ts
   - src/styles/codex-composer-material.css
   - src/styles/codex-session-activity.css
   - src/styles/codex-sidebar.css
@@ -37,8 +46,18 @@ touchedAreas:
   - src/styles/rareui-interactions.css
   - tests/e2e/main-navigation.spec.ts
   - tests/e2e/sidebar-session-row-polish.spec.ts
+  - tests/e2e/chat-agent-effort.spec.ts
+  - tests/e2e/chat-composer-git-strip.spec.ts
+  - tests/e2e/chat-composer-popovers.spec.ts
+  - tests/e2e/chat-task-visualizer.spec.ts
+  - tests/e2e/chat-welcome-hero-fakecoding.spec.ts
+  - tests/e2e/chat-welcome-hero-verse-shot.spec.ts
+  - tests/e2e/rareui-interactions.spec.ts
+  - tests/e2e/session-activity-background-read.spec.ts
+  - tests/e2e/windows-ui-v2.spec.ts
   - tests/unit/rareui-interactions.test.tsx
   - tests/unit/chat-page-execution-graph.test.tsx
+  - tests/unit/chat-startup-hydration.test.ts
 requiredRules:
   - renderer-main-boundary
   - backend-communication-boundary
@@ -65,13 +84,16 @@ requiredTests:
   - pnpm run comms:replay
   - pnpm run comms:compare
   - pnpm exec vitest run tests/unit/session-task-scope.test.ts tests/unit/long-session-delegation-admission.test.ts --maxWorkers=1
+  - pnpm exec vitest run tests/unit/chat-startup-hydration.test.ts tests/unit/chat-load-sessions-startup.test.ts tests/unit/history-startup-retry.test.ts tests/unit/startup-loading-experience.test.tsx --maxWorkers=1
+  - pnpm run test:e2e:run tests/e2e/startup-loading-experience.spec.ts tests/e2e/windows-ui-v2.spec.ts tests/e2e/settings-drawer.spec.ts tests/e2e/rareui-interactions.spec.ts
 expectedUserBehavior:
   - Conversation output and composer menus retain the behavior required by their member task contracts after the sidebar and header changes are integrated.
   - The session environment, memory dialog and activity bell use the existing status glyphs and remain usable in light, dark, narrow and reduced-motion layouts.
 acceptance:
   - Run every required unit and Electron test of the three member tasks on one committed candidate, together with the listed type, locale, build and communication gates. Shared tests may have one result referenced by multiple members.
   - Read the original TF-0819 polish test inputs and include its model identity, Git identity and reasoning-menu regressions; historical counts and images do not count as current results.
-  - Compare the complete candidate delta to diffBase. Each changed source path must have an actual member-task owner; only this integration contract and its evidence are integration-owned. Retain the path-by-path ownership report and run the complete changed-path Harness flow.
+  - Compare the complete candidate delta to diffBase. Each changed source path must have an actual member-task owner. Shared rule regressions must be explicitly required by a listed regression rule; integrationValidationPaths declares the startup regression for this integration. Retain the path-by-path ownership report and run the complete changed-path Harness flow.
+  - After an empty session has been confirmed ready, disconnecting the Gateway preserves its project and worktree controls. Initial unconfirmed history still waits for readiness, and a restarted Gateway reloads history.
   - The fourteen paths in the old TF-0783 mixed snapshot remain outside this change set. Record each original owner, its current main blob and its zero candidate delta. Any new change to one requires that owner's acceptance before integration.
   - Recheck the existing generation/links and taskRef/sessionGeneration mapping through the production caller, delegation tests and full test typecheck; do not recreate a fix already present in main.
   - Capture current screenshots, popover opening/closing samples, source hashes and Electron cleanup results. Source, test inputs and four-language resources stay unchanged throughout the successful gate runs.

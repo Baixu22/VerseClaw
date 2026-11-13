@@ -1,4 +1,5 @@
 import { createEmptySessionActivitySnapshot } from '../../shared/types/session-activity';
+import type { GitRepositoryStatus } from '../../shared/types/git';
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, test } from './fixtures/electron';
 
 const SESSION_KEY = 'agent:main:main';
@@ -48,7 +49,7 @@ const worktreeWorkspace = {
   sessionStates: {},
 };
 
-const gitStatus = {
+const gitStatus: GitRepositoryStatus = {
   isRepository: true,
   workspaceRoot: '/workspace/demo',
   repoRoot: '/workspace/demo',
@@ -63,7 +64,11 @@ const gitStatus = {
   unstagedCount: 1,
   untrackedCount: 1,
   conflictedCount: 0,
-  changes: [],
+  changes: [
+    { path: 'src/staged.ts', absolutePath: '/workspace/demo/src/staged.ts', status: 'M', staged: true, unstaged: false, untracked: false, conflicted: false, bucket: 'staged' },
+    { path: 'src/edited.ts', absolutePath: '/workspace/demo/src/edited.ts', status: 'M', staged: false, unstaged: true, untracked: false, conflicted: false, bucket: 'unstaged' },
+    { path: 'src/new.ts', absolutePath: '/workspace/demo/src/new.ts', status: '??', staged: false, unstaged: false, untracked: true, conflicted: false, bucket: 'untracked' },
+  ],
 };
 
 const branches = [
@@ -176,6 +181,32 @@ async function installComposerGitMocks(
       },
     },
   });
+  await app.evaluate(({ ipcMain }, initialBranch) => {
+    const handlers = (ipcMain as unknown as { _invokeHandlers: Map<string, (event: unknown, request: {
+      id?: string; module: string; action: string; payload?: { name?: string };
+    }) => Promise<unknown>> })._invokeHandlers;
+    const original = handlers.get('host:invoke')!;
+    let selected = initialBranch;
+    ipcMain.removeHandler('host:invoke');
+    ipcMain.handle('host:invoke', async (event, request) => {
+      const response = await original(event, request) as { data?: {
+        success?: boolean; status?: { branch?: string }; branches?: Array<{ name: string; current: boolean }>;
+      } };
+      if (request.module !== 'git') return response;
+      if (['checkoutBranch', 'createBranch'].includes(request.action) && response.data?.success && request.payload?.name) {
+        selected = request.payload.name;
+      }
+      if (request.action === 'status' && response.data?.status) {
+        return { ...response, data: { ...response.data, status: { ...response.data.status, branch: selected } } };
+      }
+      if (request.action === 'branches' && response.data?.branches) {
+        const items = response.data.branches.map(entry => ({ ...entry, current: entry.name === selected }));
+        if (!items.some(entry => entry.name === selected)) items.push({ name: selected, current: true });
+        return { ...response, data: { ...response.data, branches: items } };
+      }
+      return response;
+    });
+  }, gitStatus.branch!);
 }
 
 test.describe('Chat composer Git strip', () => {
@@ -187,10 +218,10 @@ test.describe('Chat composer Git strip', () => {
         const page = await getStableWindow(app);
         await page.reload({ waitUntil: 'domcontentloaded' });
         await page.setViewportSize({ width: 1280, height: 820 });
-        await expect(page.getByTestId('composer-git-strip')).toHaveAttribute('data-git-kind', 'worktree');
-        await expect(page.getByTestId('composer-git-kind')).toHaveText('Worktree');
+        await expect(page.getByTestId('composer-git-strip')).toContainText('3 files changed');
         await page.getByTestId('composer-git-trigger').click();
         const menu = page.getByTestId('composer-git-menu');
+        await expect(menu.locator('.codex-git-kind')).toHaveText('Worktree');
         await expect(menu).toContainText('Linked worktree');
         await expect(menu).toHaveCSS('backdrop-filter', 'none');
         await expect(menu).toHaveCSS('opacity', '1');
@@ -269,7 +300,7 @@ test.describe('Chat composer Git strip', () => {
       await page.screenshot({ path: testInfo.outputPath('runtime-approval-inline-with-git.png') });
       await prompt.screenshot({ path: testInfo.outputPath('runtime-approval-inline-prompt.png') });
       const currentStripBox = (await strip.boundingBox())!;
-      expect(promptBox.y).toBeGreaterThan(currentStripBox.y);
+      expect(currentStripBox.y).toBeGreaterThanOrEqual(promptBox.y + promptBox.height);
 
       await page.getByTestId('runtime-approval-deny').click();
       await expect(prompt).toHaveCount(0);
@@ -297,10 +328,7 @@ test.describe('Chat composer Git strip', () => {
       await expect(page.getByTestId('chat-page')).toBeVisible();
       const strip = page.getByTestId('composer-git-strip');
       await expect(strip).toBeVisible({ timeout: 30_000 });
-      await expect(strip).toContainText('feature/current');
-      await expect(strip).toContainText('3 changes');
-      await expect(strip).toContainText('ahead 2 / behind 1');
-      await expect(strip).toContainText('demo');
+      await expect(strip).toContainText('3 files changed');
 
       const composerShell = page.getByTestId('chat-composer-shell');
       await expect(composerShell).toBeVisible();
@@ -321,6 +349,14 @@ test.describe('Chat composer Git strip', () => {
       await page.getByTestId('composer-git-trigger').click();
       const menu = page.getByTestId('composer-git-menu');
       await expect(menu).toBeVisible();
+      await expect(menu).toContainText('feature/current');
+      await expect(menu).toContainText('ahead 2 / behind 1');
+      await expect(menu).toContainText('demo');
+      const reopenMenu = async () => {
+        await expect(menu).toHaveCount(0);
+        await page.getByTestId('composer-git-trigger').click();
+        await expect(menu).toBeVisible();
+      };
       const menuBounds = await page.getByTestId('composer-git-menu').boundingBox();
       expect(menuBounds).toBeTruthy();
       expect(menuBounds!.y).toBeGreaterThanOrEqual(0);
@@ -343,6 +379,8 @@ test.describe('Chat composer Git strip', () => {
         action: 'checkoutBranch',
         payload: { name: 'main' },
       }));
+      await reopenMenu();
+      await expect(menu.locator('.codex-git-menu__head p').first()).toHaveText('main');
 
       await page.getByTestId('composer-git-new-branch').fill('feature/new-branch');
       await page.getByTestId('composer-git-create-branch').click();
@@ -354,6 +392,8 @@ test.describe('Chat composer Git strip', () => {
         action: 'createBranch',
         payload: { name: 'feature/new-branch', checkout: true },
       }));
+      await reopenMenu();
+      await expect(menu.locator('.codex-git-menu__head p').first()).toHaveText('feature/new-branch');
 
       await page.getByTestId('composer-git-worktree-branch').fill('feature/current');
       await expect(page.getByTestId('composer-git-worktree-blocked')).toContainText('Branch already exists');
@@ -371,8 +411,7 @@ test.describe('Chat composer Git strip', () => {
         payload: { branch: 'feature/new-worktree', checkoutNewBranch: true },
       }));
 
-      await page.getByTestId('composer-git-trigger').click();
-      await page.getByTestId('composer-git-trigger').click();
+      await reopenMenu();
       await page.getByRole('button', { name: 'Open Git Panel' }).click();
       await expect(page.getByTestId('artifact-panel')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId('workspace-git-panel')).toBeVisible({ timeout: 30_000 });

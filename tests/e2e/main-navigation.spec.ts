@@ -85,7 +85,7 @@ test.describe('Verse Claw main navigation without setup flow', () => {
       await page.getByTestId('settings-language-select').click();
       await page.getByRole('option', { name: '中文', exact: true }).click();
 
-      await expect(page.getByText('菜单语言已更新')).toBeVisible();
+      await expect(page.getByTestId('settings-language-select')).toContainText('中文');
       await expect.poll(() => readNativeMenuLabels(app)).toMatchObject({
         file: '文件',
         newChat: '新对话',

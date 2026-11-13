@@ -411,7 +411,8 @@ test('keeps environment summaries bounded and opens a worker only on demand', as
       })),
       backgroundRead: { state: 'known', readAt: READ_AT, failedAt: null },
     }) });
-    hostApi[stableStringify(['sessions', 'history', { sessionKey: 'agent:worker:environment-0', agentId: 'worker' }])] = {
+    hostApi[stableStringify(['sessions', 'history', { sessionKey: 'agent:worker:environment-0', agentId: 'worker', expectedParentSessionKey: SESSION_KEY }])] = {
+      success: true, sessionGeneration: 'environment-worker-generation-0',
       messages: [{ role: 'assistant', content: 'Worker evidence opened from the environment' }], hasMore: false,
     };
     hostApi[stableStringify(['settings', 'getAll', null])] = { success: true, data: { language: 'zh' } };

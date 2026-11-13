@@ -43,11 +43,11 @@ constrain the menu to available space with internal scrolling. Verify normal and
 reduced motion with `tests/e2e/chat-composer-popovers.spec.ts` and agent-driven
 Electron captures.
 
-Empty Chat uses one unboxed project / branch row below the composer. Branch selection
-uses the existing governed Git host routes, with search, explicit read failures and
-retry, detached HEAD support, and refreshed identity after checkout. The three
-starter actions live in a single Quick start disclosure; drafting hides this entry
-without shifting the composer. Conversation mode retains its full Git strip.
+Empty Chat uses an unboxed project picker below the composer, with worktree
+selection inside its menu. Observed file changes reveal a compact entry below
+the input; its details retain governed branch search, checkout and worktree
+actions. The three starter actions live in a single Quick start disclosure;
+drafting hides this entry without shifting the composer.
 
 Chat's assistant output has no avatar gutter. Progress text and the final answer
 share one reading column; active process details start folded and show only the

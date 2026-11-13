@@ -155,6 +155,33 @@ describe('chat startup hydration', () => {
     expect(useChatStore.getState().messages[0]?.content).toBe('fresh');
   });
 
+  it('keeps a confirmed empty session ready while disconnected and reloads after restart', async () => {
+    let history: Array<{ role: string; content: string }> = [];
+    gatewayRpcMock.mockImplementation(async (method: string) => {
+      if (method === 'sessions.list') return { sessions: [{ key: 'agent:main:main' }] };
+      if (method === 'chat.history') return { messages: history };
+      throw new Error(`Unexpected gateway RPC: ${method}`);
+    });
+    const { useChatStore } = await import('@/stores/chat');
+    await useChatStore.getState().hydrateStartup();
+    expect(useChatStore.getState()).toMatchObject({ startupPhase: 'ready', messages: [] });
+    const readsBeforeDisconnect = gatewayRpcMock.mock.calls.length;
+
+    runtimeStatus.state = 'stopped';
+    runtimeStatus.gatewayReady = false;
+    await useChatStore.getState().hydrateStartup();
+    expect(useChatStore.getState()).toMatchObject({ startupPhase: 'ready', messages: [], loading: false });
+    expect(gatewayRpcMock).toHaveBeenCalledTimes(readsBeforeDisconnect);
+
+    history = [{ role: 'assistant', content: 'History from the restarted gateway' }];
+    runtimeStatus.state = 'running';
+    runtimeStatus.gatewayReady = true;
+    runtimeStatus.connectedAt += 1;
+    await useChatStore.getState().hydrateStartup();
+    expect(useChatStore.getState().startupPhase).toBe('ready');
+    expect(useChatStore.getState().messages[0]?.content).toBe(history[0].content);
+  });
+
   it('exposes a retryable startup error when no history source succeeds', async () => {
     gatewayRpcMock.mockImplementation(async (method: string) => {
       if (method === 'sessions.list') return { sessions: [{ key: 'agent:main:main' }] };

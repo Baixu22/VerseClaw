@@ -54,7 +54,7 @@ expectedUserBehavior:
   - Composer menus use consistent neutral surfaces, rounded corners, spacing and trailing selection marks.
   - Composer cards use opaque soft-gray light and graphite dark surfaces. Ancestor backdrop filters must not leak transcript text through them.
   - Model names remain visible in narrow composers and wrap completely in the menu. LobeHub brand marks follow the model family even when a router provides it.
-  - Main checkouts and linked worktrees are identified consistently in the composer and session status; detached HEAD remains distinct from checkout identity.
+  - Main checkouts and linked worktrees are identified consistently in the project menu, changed-file details and session status; detached HEAD remains distinct from checkout identity.
   - Opening uses the add menu's subtle slide, scale and blur-to-clear transition. Closing fades out and immediately disables interaction on the outgoing surface.
   - Opening an adjacent control closes the previous menu. Escape and outside click dismiss menus; Escape restores the composer focus.
   - Menus choose the available space above or below the trigger and scroll internally without shifting the composer.
@@ -79,6 +79,8 @@ requiredTests:
   - pnpm run test:e2e:run tests/e2e/chat-composer-popovers.spec.ts
   - pnpm run test:e2e:run tests/e2e/chat-model-picker.spec.ts tests/e2e/chat-model-picker-tiers.spec.ts
   - pnpm exec vitest run tests/unit/chat-model-selection.test.ts tests/unit/chat-target-routing.test.ts
+  - pnpm exec vitest run tests/unit/model-brand.test.ts tests/unit/git-ui.test.ts tests/unit/composer-git-strip.test.tsx tests/unit/welcome-branch-picker.test.tsx tests/unit/session-activity-panel-sections.test.tsx tests/unit/chat-agent-effort-popover.test.tsx --maxWorkers=1
+  - pnpm run test:e2e:run tests/e2e/chat-agent-effort.spec.ts tests/e2e/chat-composer-git-strip.spec.ts
   - pnpm run comms:replay
   - pnpm run comms:compare
 acceptance:
@@ -89,7 +91,7 @@ acceptance:
   - The plus glyph is centered within its circular border at rest, including after closing. Selecting a model requires one choice with no scope-selection step.
   - Changing a saturated underlay beneath a settled menu produces identical interior screenshot pixels in both themes, including software-rendered Electron.
   - Long model names have no clipped lines or horizontal overflow at 1280 and 760 pixels; a selected long name remains readable after closing.
-  - Linked-worktree screenshots include the composer strip, branch/worktree menu and session environment identity in both themes.
+  - Linked-worktree screenshots include changed-file details, the project menu's nested worktree controls and session environment identity in both themes.
   - New-chat preference, existing-session restoration, removed-model fallback, failed persistence, queued sends and session-switch races have automated coverage.
 docs:
   required: true

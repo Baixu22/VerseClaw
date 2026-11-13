@@ -195,21 +195,23 @@ for (const theme of ['light', 'dark'] as const) {
       await page.keyboard.press('Escape');
       for (const size of [{ width: 1280, height: 800 }, { width: 760, height: 560 }]) {
         await page.setViewportSize(size);
-        for (const [triggerId, menuId] of [
-          ['welcome-branch-trigger', 'welcome-branch-menu'],
-          ['session-worktree-trigger', 'session-worktree-menu'],
-          ['welcome-project-trigger', 'welcome-project-menu'],
-        ]) {
-          await page.getByTestId(triggerId).click();
-          const menu = page.getByTestId(menuId);
-          await expect(menu).toBeInViewport();
-          await expect(menu).toHaveCSS('backdrop-filter', 'none');
-          if (menuId === 'welcome-branch-menu') await expect(page.getByTestId('welcome-branch-item-main')).toBeVisible();
-          if (menuId === 'session-worktree-menu') await expect(page.getByTestId(triggerId)).toHaveAttribute('data-git-kind', 'worktree');
-          await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-${menuId}.png`) });
-          await page.keyboard.press('Escape');
-          await expect(menu).toHaveCount(0);
-        }
+        await expect(page.getByTestId('welcome-branch-trigger')).toHaveCount(0);
+        await page.getByTestId('welcome-project-trigger').click();
+        const projectMenu = page.getByTestId('welcome-project-menu');
+        await expect(projectMenu).toBeInViewport();
+        await expect(projectMenu).toHaveCSS('backdrop-filter', 'none');
+        await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-welcome-project-menu.png`) });
+        const worktreeTrigger = projectMenu.getByTestId('session-worktree-trigger');
+        await expect(worktreeTrigger).toHaveAttribute('data-git-kind', 'worktree');
+        await worktreeTrigger.click();
+        const worktreeMenu = projectMenu.getByTestId('session-worktree-menu');
+        await expect(worktreeMenu).toBeInViewport();
+        await expect(worktreeMenu).toHaveCSS('backdrop-filter', 'none');
+        await expect(worktreeMenu.getByRole('button').filter({ hasText: 'feature/cards' })).toBeDisabled();
+        await expect(worktreeMenu.getByRole('button').filter({ hasText: 'D:/work/ClawX-main' })).toBeEnabled();
+        await page.screenshot({ path: testInfo.outputPath(`${theme}-${size.width}-session-worktree-menu.png`) });
+        await page.keyboard.press('Escape');
+        await expect(projectMenu).toHaveCount(0);
       }
     } finally {
       await closeElectronApp(app);

@@ -80,7 +80,7 @@ Session status uses a single surface, with completed processes folded into histo
 
 The session environment appears after actual changes or activity. It groups changes, observed MCP/skill usage and workers into short previews with details on demand. Automatic expansion sits beside the conversation; manual opening uses a compact overlay. Closing the workspace preserves its tabs and selected content.
 
-Empty Chat keeps project and Git branch selection in one quiet row below the composer. Starter actions open through Quick start; branch search and switching reuse the existing Git controls.
+Empty Chat shows a project picker below the composer; its menu includes local checkout and linked-worktree controls. Loaded empty chats retain these local controls when the Gateway disconnects. Starter actions open through Quick start. When files change, a compact entry below the composer opens branch search, checkout, and worktree actions.
 
 Composer model, knowledge and permission menus share a compact surface and the add menu's blur transition. Menus stay within the window, close when another opens, and support Escape and reduced motion.
 
