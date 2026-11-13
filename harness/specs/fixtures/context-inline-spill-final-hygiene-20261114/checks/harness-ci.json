@@ -1,0 +1,46 @@
+{
+  "schema": "G7FinalHygieneCommand/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "harness-ci",
+  "cwd": "C:/Users/27933/.codex/worktrees/g7-inline-spill-integration-20261113/ClawX",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+    "--config.verify-deps-before-run=false",
+    "run",
+    "harness:ci"
+  ],
+  "startedAt": "2026-11-13T18:17:03.882Z",
+  "status": "finished",
+  "before": {
+    "commit": "e4d43e587634fe819b2d9784cdfc7c4c9e22b6c1",
+    "branch": "codex/g7-inline-spill-main-integration-20261113-01a1d34c",
+    "status": "M .gitattributes\n M .gitignore\n M scripts/repository-artifacts.json\n?? harness/specs/fixtures/context-inline-spill-final-hygiene-20261114/\n?? harness/specs/tasks/inline-spill-final-hygiene-20261114.md",
+    "tree": "73d550bde87326bdef9b2879f1a51566bb8a6d88"
+  },
+  "temp": "D:/tmp",
+  "finishedAt": "2026-11-13T18:17:34.548Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "after": {
+    "commit": "e4d43e587634fe819b2d9784cdfc7c4c9e22b6c1",
+    "branch": "codex/g7-inline-spill-main-integration-20261113-01a1d34c",
+    "status": "M .gitattributes\n M .gitignore\n M scripts/repository-artifacts.json\n?? harness/specs/fixtures/context-inline-spill-final-hygiene-20261114/\n?? harness/specs/tasks/inline-spill-final-hygiene-20261114.md",
+    "tree": "73d550bde87326bdef9b2879f1a51566bb8a6d88"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-final-hygiene-20261114-01a1d34c\\checks\\harness-ci.stdout.txt",
+      "bytes": 20625,
+      "sha256": "88ffe012dacbccb8613ecdb4b366c3355bfb1c193a5e36df45037e86b20edd83"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-final-hygiene-20261114-01a1d34c\\checks\\harness-ci.stderr.txt",
+      "bytes": 1849,
+      "sha256": "40f79fdacabdffb3c7502cd5b3c08faa703619f29eedc45121d5ae9cabc52682"
+    }
+  }
+}

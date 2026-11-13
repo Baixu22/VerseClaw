@@ -1,0 +1,16 @@
+{
+  "schema": "G7FinalHygieneWorktrees/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "observedAt": "2026-11-13T18:17:13.668Z",
+  "oldArchivedWorktreePath": "C:/Users/27933/.codex/worktrees/g7-inline-spill-tf0749-20261113/ClawX",
+  "oldPathAbsent": true,
+  "retainedPrimary": "C:/Users/27933/.codex/worktrees/g7-inline-spill-integration-20261113/ClawX",
+  "retainedPrimaryReason": "Current task checkout; managed worktree archive tooling protects the primary checkout",
+  "oldDCheckoutsAlreadyRemoved": [
+    "D:/tmp/g7-closeout-pass-r9-01a1d34c/candidate-replay",
+    "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout",
+    "D:/ClawX-work/g7-inline-spill-tf0749-20261113-01a1d34c"
+  ]
+}

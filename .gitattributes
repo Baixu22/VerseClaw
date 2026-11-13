@@ -92,3 +92,4 @@ docs/modules/context-and-memory.md whitespace=blank-at-eol,blank-at-eof,space-be
 
 # G7 closeout manifests retain command output bytes, including Windows CRLF.
 harness/specs/fixtures/context-inline-spill-g7-closeout/** -text
+harness/specs/fixtures/context-inline-spill-final-hygiene-20261114/** -text

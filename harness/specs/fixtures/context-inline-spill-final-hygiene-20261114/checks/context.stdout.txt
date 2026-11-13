@@ -1,0 +1,20 @@
+Context for: harness\specs\tasks\inline-spill-final-hygiene-20261114.md
+Intent: 修复集成main中已提交验收证据的精确保留登记，验证原字节、清理归档空目录，并在无待提交变化后完成收尾。
+
+Read order:
+- inline-spill-final-hygiene-20261114 (task): harness\specs\tasks\inline-spill-final-hygiene-20261114.md
+- context-family (context-family-boundary): harness\specs\scenarios\context-family.md
+- context-family-boundary (ai-coding-rule): harness\specs\rules\context-family-boundary.md
+- context-runtime-kit-boundary (ai-coding-rule): harness\specs\rules\context-runtime-kit-boundary.md
+- disk-temp-policy (ai-coding-rule): harness\specs\rules\disk-temp-policy.md
+- repository-artifact-retention (ai-coding-rule): harness\specs\rules\repository-artifact-retention.md
+- task-forest-autoclose-and-roles (ai-coding-rule): harness\specs\rules\task-forest-autoclose-and-roles.md
+- workspace-harness-single-source (ai-coding-rule): harness\specs\rules\workspace-harness-single-source.md
+- agent-first-acceptance (guide): harness\specs\guides\agent-first-acceptance.md
+- agent-harness-routing (guide): harness\specs\guides\agent-harness-routing.md
+- pretext-text-measurement-integration (guide): harness\specs\guides\pretext-text-measurement-integration.md
+- product-acceptance-strategy (guide): harness\specs\guides\product-acceptance-strategy.md
+- scoped-development-validation (guide): harness\specs\guides\scoped-development-validation.md
+- spec-update (guide): harness\specs\guides\spec-update.md
+- sustained-development-continuity (guide): harness\specs\guides\sustained-development-continuity.md
+- harness (layer-spec): harness\specs\layers\harness.md

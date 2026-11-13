@@ -1,0 +1,2 @@
+Harness report: C:\Users\27933\.codex\worktrees\g7-inline-spill-integration-20261113\ClawX\artifacts\harness\latest.md
+Harness result: pass

@@ -1,0 +1,11 @@
+{
+  "schema": "G7FinalHygieneDriverFailure/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "exitCode": 1,
+  "failure": "SyntaxError: Invalid or unexpected token in generated wrapper",
+  "failedBeforeChildExecution": true,
+  "initialSource": "run-command.initial.mjs",
+  "repair": "Reused the archived tested command wrapper with task-specific output directory."
+}
