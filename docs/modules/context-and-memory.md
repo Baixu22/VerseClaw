@@ -577,6 +577,12 @@ stable证据1/18、控制6/6；B1/B3/B5/B6/B7通过，B2/B4失败，判定mechan
 token相对reference减少22.56%，但原归档选择仍有39次原目标、49次其他归档，原工具content命中1次。
 本轮结果与原始失败单独封存，见[第七轮收益复核](../../harness/specs/fixtures/context-inline-spill-benefit-round7/REPORT.md)。
 
+第八轮按[可见归档导航任务](../../harness/specs/tasks/inline-spill-real-benefit-eval-round8.md)推进。
+`--strategy navigated`从当前请求的可见引用或首个recall参数确定原归档，按可见页长度或
+被淘汰页的请求参数给出下一页建议。完整private_evidence字段只给出可见调用位置，
+模型读取当前工具内容并自行输出最终value。导航没有oracle或原始工具历史参数；四臂
+同用提示，原页/输出预算、模型、压力字节和B1–B7阈值保持原值。
+
 
 [第四轮评测](../../harness/specs/tasks/inline-spill-real-benefit-eval-round4.md)要求每次回读显式提供 1–5500 的 `max_chars`，缺失或超界参数返回 `invalid_arguments`。工具说明引导模型用 `offset + content.length` 翻页，取得精确值后输出最终 JSON。页尺寸与 6000 字符生产投影预算共同校验，收益按原 96 次样本与 900 输出 token 预算实测。
 

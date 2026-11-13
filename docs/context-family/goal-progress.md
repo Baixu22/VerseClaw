@@ -1386,3 +1386,9 @@ Use this packet before any handoff, fork, or context-pressure continuation.
 - TF-0749 在 B1–B7 全过、clean 候选被 verifier 接受且 base_graph_hash 匹配前保持 in_progress/80。
 - clean候选`89dff8ebd`已完成96次/416次调用，全部completed；stable证据1/18、控制6/6。B1/B3/B5/B6/B7通过，B2/B4失败，verifier接受候选，判定mechanism-only/NO_GO。
 - token相对reference减少22.56%，原归档仍有39次正确选择、49次其他归档，原工具content命中1次。工具日志来源修复解决了预算缺口，任务收益仍需修复原归档分页与可见字段识别。
+
+## 2026-11-13 Inline/Spill 第八轮可见导航修复
+
+- 只从实际请求的可见引用、首个recall参数与投影工具输出生成原归档分页建议和完整字段位置；不复制字段值、不比较oracle、不读取原始历史。
+- 导航提示在四臂一致，模型自行发起function_call并输出最终value；原模型、900输出token、5500字符页、压力字节、240000ms期限及B1–B7阈值保持原值。
+- 第五、六、七轮原始证据和失败保持；独立冻结并在clean候选上通过B1–B7及verifier后，才收口TF-0749。

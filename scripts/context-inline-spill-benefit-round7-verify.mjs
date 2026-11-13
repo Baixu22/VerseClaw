@@ -19,7 +19,7 @@ try {
   const records = json(join(dir, 'runs.json')).records;
   const pre = json(join(dir, 'preflight.json'));
   const freeze = json(resolve(root, pre.designFreeze.path));
-  assert.equal(freeze.schema, 'ContextInlineSpillRound7FrozenDesign/v1');
+  assert(['ContextInlineSpillRound7FrozenDesign/v1', 'ContextInlineSpillRound8FrozenDesign/v1'].includes(freeze.schema));
   assert.equal(result.design.strategy, freeze.live.strategy);
   assert.equal(result.design.pressureSource, freeze.live.pressureSource);
   assert.equal(result.design.providerTimeoutMs, freeze.live.providerTimeoutMs);
