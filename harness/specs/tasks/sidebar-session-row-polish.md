@@ -77,6 +77,7 @@ touchedAreas:
   - tests/unit/session-folder-tree.test.tsx
   - tests/unit/rareui-interactions.test.tsx
   - tests/e2e/sidebar-session-row-polish.spec.ts
+  - tests/e2e/main-navigation.spec.ts
   - tests/e2e/sidebar-session-family-connectors.spec.ts
   - tests/e2e/session-family-counter-layout.spec.ts
   - tests/e2e/sidebar-session-folders-archive.spec.ts
