@@ -122,7 +122,7 @@ const PERFORMANCE_BUDGETS = {
 
 const BASE_STEPS = [
   { id: 'typecheck', command: 'pnpm', args: ['run', 'typecheck'], goal: 'Compiled contract and renderer/Main type safety' },
-  { id: 'contract', command: 'pnpm', args: ['contract:check'], goal: 'Host-api contract/facade/service drift' },
+  { id: 'contract', command: 'node', args: ['scripts/contract-check.mjs'], goal: 'Host-api contract/facade/service drift' },
   { id: 'i18n', command: 'pnpm', args: ['i18n:lint'], goal: 'Four-locale namespace/key coverage' },
   { id: 'workbench', command: 'pnpm', args: ['agent-dev:workbench'], goal: 'Static Workbench evidence generation' },
   {

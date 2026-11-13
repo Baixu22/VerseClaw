@@ -22,7 +22,9 @@ it('fails on test type errors and invalidates cached checks when tests or runtim
       cwd: root, encoding: 'utf8', windowsHide: true, timeout: 20_000,
     });
     expect(result.error).toBeUndefined();
-    return { exitCode: result.status, report: JSON.parse(result.stdout) };
+    const reportStart = result.stdout.search(/^\{\r?\n  "success":/m);
+    expect(reportStart).toBeGreaterThanOrEqual(0);
+    return { exitCode: result.status, report: JSON.parse(result.stdout.slice(reportStart)) };
   };
   try {
     write('scripts/generate-ext-bridge.mjs', '');
@@ -37,6 +39,7 @@ process.exit(result.status ?? 1);`);
     write('tsconfig.test.json', JSON.stringify({ compilerOptions: { strict: true, types: [] }, include: ['tests/**/*.ts'] }));
     write('tests/check.ts', 'export const value: number = "wrong";');
     const broken = run();
+    expect(broken.report.cache).toMatchObject({ enabled: false, status: 'disabled', key: null, inputCount: 0 });
     expect(broken.report.testTypes.errorCount).toBe(1);
     expect(broken.exitCode).not.toBe(0);
     expect(broken.report.success).toBe(false);
