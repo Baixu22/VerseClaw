@@ -755,6 +755,8 @@ function knowledgeReferenceFromRow(row: KnowledgeSearchRow, corpus: 'wiki' | 'me
   const snippet = getString(row, ['snippet', 'excerpt', 'summary', 'text']);
   const score = getNumber(row, ['score', 'rank']);
   const sourceRef = asRecord(row.sourceRef);
+  const conflictGroupId = getString(row, ['conflictGroupId'])
+    || (row.hasConflicts === true || ['contested', 'contradicted', 'conflict'].includes(getString(row, ['matchedClaimStatus'])) ? 'known-conflicts' : '');
   return {
     id: pageId || pagePath || lookup,
     title,
@@ -768,6 +770,7 @@ function knowledgeReferenceFromRow(row: KnowledgeSearchRow, corpus: 'wiki' | 'me
     ...(sourceRef?.schema === 'SourceRef/v2' ? { sourceRef: sourceRef as import('@shared/knowledge/owner-read-contract').SourceRefV2 } : {}),
     ...(typeof row.revision === 'string' ? { revision: row.revision } : {}),
     ...(typeof row.contentDigest === 'string' ? { contentDigest: row.contentDigest } : {}),
+    ...(conflictGroupId ? { conflictGroupId } : {}),
   };
 }
 

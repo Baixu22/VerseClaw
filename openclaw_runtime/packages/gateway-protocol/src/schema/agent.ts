@@ -1,5 +1,6 @@
 // Gateway Protocol schema module defines protocol validation shapes.
 import { Type } from "typebox";
+import { ChatKnowledgeReferenceSchema } from "./logs-chat.js";
 import { InputProvenanceSchema, NonEmptyString, SessionLabelString } from "./primitives.js";
 
 /**
@@ -207,6 +208,7 @@ export const AgentParamsSchema = Type.Object(
     // agent requests; the gateway accepts but intentionally ignores it.
     cleanupBundleMcpOnRunEnd: Type.Optional(Type.Boolean()),
     modelRun: Type.Optional(Type.Boolean()),
+    knowledgeReferences: Type.Optional(Type.Array(ChatKnowledgeReferenceSchema, { maxItems: 8 })),
     promptMode: Type.Optional(
       Type.Union([Type.Literal("full"), Type.Literal("minimal"), Type.Literal("none")]),
     ),
@@ -224,6 +226,7 @@ export const AgentParamsSchema = Type.Object(
     inputProvenance: Type.Optional(InputProvenanceSchema),
     /** Trusted Backend-selected workspace root for a normal gateway session. */
     workspaceDir: Type.Optional(NonEmptyString),
+    workspaceId: Type.Optional(NonEmptyString),
     suppressPromptPersistence: Type.Optional(Type.Boolean()),
     sessionEffects: Type.Optional(Type.Union([Type.Literal("visible"), Type.Literal("internal")])),
     sourceReplyDeliveryMode: Type.Optional(

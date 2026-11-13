@@ -21,10 +21,8 @@ import {
   reopenContextCandidateCollection,
   type ContextCandidateProjection,
 } from "../../context-engine/context-candidate.js";
-import {
-  packResolvedChatKnowledgeRef,
-  type ResolvedChatKnowledgeRef,
-} from "../../context-engine/chat-knowledge-intent.js";
+import { type ResolvedChatKnowledgeRef } from "../../context-engine/chat-knowledge-intent.js";
+import { packKnowledgeCandidates } from "../../context-engine/project-rag-packing.js";
 import { revalidateChatKnowledgeRefs } from "../../context-engine/chat-knowledge-source-adapters.js";
 import { resolveKillSwitchConfig } from "../../context-engine/kill-switch-config-source.js";
 import { isContextEnhancementKillSwitchEngaged } from "../../context-engine/enhancement-kill-switch.js";
@@ -165,18 +163,21 @@ function buildAgentToolResultMiddlewareFactory(params: { runId?: string }): Exte
             const delivery = await enrichToolResultWithVerseGitFeedback({
               result,
               observe: () => observationPort.observe(request),
-              reportDelivery: (feedback) => observationPort.reportDelivery({
-                bindingId: binding.bindingId,
-                childRunId: params.runId!,
-                toolCallId,
-                evidenceId: feedback.evidenceId,
-                level: "host-delivered",
-                observedAt: new Date().toISOString(),
-              }),
+              reportDelivery: (feedback) =>
+                observationPort.reportDelivery({
+                  bindingId: binding.bindingId,
+                  childRunId: params.runId!,
+                  toolCallId,
+                  evidenceId: feedback.evidenceId,
+                  level: "host-delivered",
+                  observedAt: new Date().toISOString(),
+                }),
             });
             deliveredResult = delivery.result;
             if (delivery.error) {
-              log.warn(`VerseGit feedback unavailable; original tool result retained: ${delivery.error}`);
+              log.warn(
+                `VerseGit feedback unavailable; original tool result retained: ${delivery.error}`,
+              );
             }
           } catch (error) {
             log.warn(`VerseGit tool observation unavailable: ${String(error).slice(0, 240)}`);
@@ -362,22 +363,49 @@ function buildContextBlockFactory(params: {
   // dispositioned "duplicate" instead of injected twice.
   const injectedDedupKeys = new Set<string>();
   const deniedKnowledgeRefs = new Set<string>();
-  const projectedKnowledgeMessages = new Map<string, Array<{ content: string; timestamp: string | number }>>();
+  const projectedKnowledgeMessages = new Map<
+    string,
+    Array<{ content: string; timestamp: string | number }>
+  >();
   const verifyKnowledgeRefs = async () => {
-    const requested = (params.chatKnowledgeRefs ?? []).filter(ref => !deniedKnowledgeRefs.has(ref.refId));
+    const requested = (params.chatKnowledgeRefs ?? []).filter(
+      (ref) => !deniedKnowledgeRefs.has(ref.refId),
+    );
     let current: ResolvedChatKnowledgeRef[] = [];
-    try { current = await revalidateChatKnowledgeRefs({ refs: requested, cfg: params.cfg,
-      identity: { sessionId: params.sessionId, agentSessionKey: params.sessionKey,
-        workspaceId: params.workspaceId, workspaceDir: params.workspaceDir,
-        egressProviderRefs: params.provider ? [params.provider] : [] }, signal: params.abortSignal }); }
-    catch { /* The empty current set invalidates every requested source below. */ }
-    const ids = new Set(current.map(ref => ref.refId));
+    try {
+      current = await revalidateChatKnowledgeRefs({
+        refs: requested,
+        cfg: params.cfg,
+        identity: {
+          sessionId: params.sessionId,
+          agentSessionKey: params.sessionKey,
+          workspaceId: params.workspaceId,
+          workspaceDir: params.workspaceDir,
+          egressProviderRefs: params.provider ? [params.provider] : [],
+        },
+        signal: params.abortSignal,
+      });
+    } catch {
+      /* The empty current set invalidates every requested source below. */
+    }
+    const ids = new Set(current.map((ref) => ref.refId));
     for (const ref of requested) if (!ids.has(ref.refId)) deniedKnowledgeRefs.add(ref.refId);
     return current;
   };
-  const stripDeniedKnowledgeMessages = (messages: AgentMessage[]) => messages.filter(message => ![...deniedKnowledgeRefs].some(refId =>
-    projectedKnowledgeMessages.get(refId)?.some(projected => message.role === "user"
-      && message.content === projected.content && message.timestamp === projected.timestamp)));
+  const stripDeniedKnowledgeMessages = (messages: AgentMessage[]) =>
+    messages.filter(
+      (message) =>
+        ![...deniedKnowledgeRefs].some((refId) =>
+          projectedKnowledgeMessages
+            .get(refId)
+            ?.some(
+              (projected) =>
+                message.role === "user" &&
+                message.content === projected.content &&
+                message.timestamp === projected.timestamp,
+            ),
+        ),
+    );
   // RC-03: the provider-bound system prompt as it leaves before_agent_start;
   // every sealed model call binds its digest.
   let sealedSystemPrompt: string | undefined;
@@ -448,10 +476,9 @@ function buildContextBlockFactory(params: {
         // Owner reads run after asynchronous preparation and immediately before projection.
         currentKnowledgeRefs = await verifyKnowledgeRefs();
         if (!options.skipChannels?.includes("knowledge")) {
-          for (const ref of currentKnowledgeRefs) collectContextCandidate(turnId, createContextCandidate({
-            authorityObjectId: `chat-knowledge:${ref.refId}`, authorityVersion: ref.revision,
-            sourceId: "dcs-knowledge", channel: "knowledge", target: "message", text: packResolvedChatKnowledgeRef(ref),
-          }));
+          for (const input of packKnowledgeCandidates(currentKnowledgeRefs)) {
+            collectContextCandidate(turnId, createContextCandidate(input));
+          }
         }
       } catch (error) {
         // Optional source reads were isolated by ExtensionRunner before eager
@@ -461,7 +488,11 @@ function buildContextBlockFactory(params: {
       }
     }
     if (options.seal !== false) {
-      modelCallIndex = nextRc03ModelCallIndex(params.runId, params.attemptIndex ?? 0, modelCallIndex);
+      modelCallIndex = nextRc03ModelCallIndex(
+        params.runId,
+        params.attemptIndex ?? 0,
+        modelCallIndex,
+      );
     }
     messages = stripDeniedKnowledgeMessages(messages);
     const finalized = finalizeContextOrchestratorTurn({
@@ -481,9 +512,13 @@ function buildContextBlockFactory(params: {
     });
     for (const ref of currentKnowledgeRefs) {
       const prefix = `[Knowledge reference: ${ref.title} (${ref.lookup})]`;
-      const projected = finalized.projection.messages.flatMap(message => message.role === "user"
-        && typeof message.content === "string" && message.content.startsWith(prefix)
-        ? [{ content: message.content, timestamp: message.timestamp }] : []);
+      const projected = finalized.projection.messages.flatMap((message) =>
+        message.role === "user" &&
+        typeof message.content === "string" &&
+        message.content.startsWith(prefix)
+          ? [{ content: message.content, timestamp: message.timestamp }]
+          : [],
+      );
       if (projected.length) projectedKnowledgeMessages.set(ref.refId, projected);
     }
     // The projection that just sealed is the one that will enter the
@@ -941,9 +976,13 @@ function buildSekbFactory(params: {
             sessionId: params.sessionKey ?? params.sessionId,
           })?.lineage;
     installEmbeddedSekbHarnessHooks(agent as unknown as SekbInstallableAgent, runtime, lineage, {
-      runId: params.runId ?? null, sessionId: params.sessionId ?? null, sessionKey: params.sessionKey ?? null,
-      taskId: params.sekbAttribution?.taskId ?? null, experimentId: params.sekbAttribution?.experimentId ?? null,
-      arm: params.sekbAttribution?.arm ?? null, repeat: params.sekbAttribution?.repeat ?? null,
+      runId: params.runId ?? null,
+      sessionId: params.sessionId ?? null,
+      sessionKey: params.sessionKey ?? null,
+      taskId: params.sekbAttribution?.taskId ?? null,
+      experimentId: params.sekbAttribution?.experimentId ?? null,
+      arm: params.sekbAttribution?.arm ?? null,
+      repeat: params.sekbAttribution?.repeat ?? null,
     });
   };
 }

@@ -7,12 +7,33 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-09
 intent: 保证检索到的证据以可追踪、预算内且完整的形式进入模型。
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: a529c082f3af034c428ac395501936842de6f439
 touchedAreas:
   - "openclaw_runtime/src/context-engine/context-candidate.ts"
   - "openclaw_runtime/src/context-engine/turn-injection-budget.ts"
   - "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts"
   - "openclaw_runtime/src/context-engine/chat-knowledge-intent.ts"
+  - "openclaw_runtime/src/context-engine/project-rag-packing.ts"
+  - "openclaw_runtime/src/runtime-core/knowledge-packing-types.ts"
+  - "openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts"
+  - "openclaw_runtime/src/context-engine/context-final-snapshot.ts"
+  - "openclaw_runtime/src/agents/command/types.ts"
+  - "openclaw_runtime/src/agents/command/attempt-execution.ts"
+  - "openclaw_runtime/src/gateway/server-methods/agent.ts"
+  - "openclaw_runtime/src/gateway/server-methods/chat.ts"
+  - "openclaw_runtime/src/plugin-sdk/memory-owner-read-types.ts"
+  - "openclaw_runtime/packages/gateway-protocol/src/schema/agent.ts"
+  - "openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts"
+  - "shared/knowledge/packing.ts"
+  - "shared/host-api/contract.ts"
+  - "electron/services/knowledge-evidence-qa.ts"
+  - "electron/services/knowledge-api.ts"
+  - "electron/services/chat-api.ts"
+  - "src/pages/Chat/ChatInput.tsx"
+  - "src/stores/chat.ts"
+  - "src/stores/chat/runtime-send-actions.ts"
+  - "shared/chat/types.ts"
+  - "electron/services/knowledge-source-set-answer.ts"
   - "shared/dcs/prod-flags-catalog.ts"
   - "docs/generated/catalogs/prod-flags.md"
   - "docs/dev/evidence/project-rag-decision-20261109/source-review.json"
@@ -24,12 +45,22 @@ touchedAreas:
   - "docs/clawx-design-overview.md"
   - "docs/dev/runtime-control-planes.md"
   - "docs/dev/evidence/project-rag-longterm-20261109/**"
+  - "docs/dev/evidence/project-rag/RAG-09/**"
   - "harness/specs/tasks/project-rag-*.md"
   - "harness/specs/rules/project-rag-long-term-boundary.md"
+  - "harness/specs/scenarios/gateway-backend-communication.md"
   - ".gitignore"
   - "scripts/repository-artifacts.json"
   - "README*.md"
+  - "artifacts/agent-dev-workbench/**"
+  - "artifacts/agent-dev-deep-test/**"
+  - "artifacts/agent-dev-quality/**"
   - "tests/unit/chat-knowledge-scope.test.ts"
+  - "tests/unit/knowledge-evidence-qa.test.ts"
+  - "tests/unit/knowledge-api.test.ts"
+  - "tests/unit/chat-store-history-retry.test.ts"
+  - "openclaw_runtime/src/context-engine/chat-knowledge-intent.test.ts"
+  - "openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.test.ts"
   - "openclaw_runtime/src/context-engine/project-rag-packing.test.ts"
   - "tests/e2e/project-rag-dcs-citation.spec.ts"
 requiredProfiles:
@@ -42,6 +73,11 @@ requiredRules:
   - "project-rag-long-term-boundary"
 requiredTests:
   - "tests/unit/chat-knowledge-scope.test.ts"
+  - "tests/unit/knowledge-evidence-qa.test.ts"
+  - "tests/unit/knowledge-api.test.ts"
+  - "tests/unit/chat-store-history-retry.test.ts"
+  - "openclaw_runtime/src/context-engine/project-rag-packing.test.ts"
+  - "tests/e2e/project-rag-dcs-citation.spec.ts"
 plannedTests:
   - "openclaw_runtime/src/context-engine/project-rag-packing.test.ts"
 plannedE2E:
@@ -60,6 +96,7 @@ docs:
   files:
     - docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md
     - docs/dev/project-rag/WORK-PACKAGES.md
+    - docs/dev/project-rag/DCS-EVIDENCE-PACKING-CONTRACT.md
 ---
 
 # 让 DCS 保序装配完整证据并记录实际引用

@@ -70,6 +70,8 @@ Chat composer intent metadata, including per-message knowledge scope and work mo
 
 Tool cancellation must survive runtime adaptation, client delegation, policy evaluation, plugin approval registration, and process input waits. Cancelled calls must not return late success or a pending client handoff. Process polling preserves unread output and the execution owner's terminal status; removing a process prevents late exit callbacks from restoring its entry. Repeated delivery of the same tool outcome must not inflate loop evidence.
 
+Knowledge Librarian model-only QA sends owner-bound reference intent through the agent route. The runtime re-resolves it under the current session and selected provider, then DCS packs complete knowledge units in admitted order. The retained evidence manifest contains only bytes still present in the final context; source, chunk and DCS projection digests remain distinct.
+
 Pending preparation and policy promises must release their local wait on cancellation without waiting for the plugin to return. Input acknowledgements must report a process that exited during the write with its owner's terminal status and output. Session alias merges must not duplicate a tool call, and changes to process poll wait duration must not reset otherwise unchanged loop evidence.
 
 Long-session archive and restore mutations cross the same boundary but remain

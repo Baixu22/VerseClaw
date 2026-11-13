@@ -3067,7 +3067,8 @@
     "docs/dev/evidence/project-rag/RAG-08/20261113-2355b6c19/runtime-build.log",
     "docs/dev/evidence/project-rag/RAG-08/20261113-2355b6c19/SHA256SUMS",
     "docs/dev/evidence/project-rag/RAG-08/20261113-2355b6c19/source-inputs.json",
-    "docs/dev/evidence/project-rag/RAG-08/20261113-2355b6c19/typecheck.log"
+    "docs/dev/evidence/project-rag/RAG-08/20261113-2355b6c19/typecheck.log",
+    "docs/dev/project-rag/DCS-EVIDENCE-PACKING-CONTRACT.md"
   ],
   "artifactBatches": {}
 }

@@ -3,6 +3,12 @@ import { isDeepStrictEqual } from "node:util";
 import type { AgentMessage } from "../agents/runtime/index.js";
 import { computeNovelty } from "./context-health-monitor.js";
 import {
+  knowledgeTextUsage,
+  retainedKnowledgeManifest,
+  type KnowledgeCandidatePackingV2,
+  type RetainedEvidenceManifestV1,
+} from "./project-rag-packing.js";
+import {
   admitPromptContribution,
   getBuiltinPromptContributionDeclaration,
   resolvePromptAuthorityMode,
@@ -45,6 +51,8 @@ export type ContextCandidate = {
   channel: TurnInjectionChannel;
   target: ContextCandidateTarget;
   text: string;
+  ordinal?: number;
+  knowledgePacking?: KnowledgeCandidatePackingV2;
   messageReplacement?: ContextMessageReplacement;
 };
 
@@ -70,6 +78,10 @@ export type ContextCandidateLineage = {
   disposition: TurnInjectionDisposition | "pending" | "duplicate";
   charsRequested: number;
   charsApplied: number;
+  ordinal?: number;
+  estimatedTokensRequested?: number;
+  estimatedTokensApplied?: number;
+  utf8BytesApplied?: number;
   reason: ContextCandidateLineageReason;
   /**
    * B-4: information-novelty of this candidate against the projection window
@@ -99,6 +111,7 @@ export type ContextCandidateCollection = {
 };
 
 export type ContextCandidateProjection = {
+  retainedEvidence?: RetainedEvidenceManifestV1;
   messageReplacement?: ContextMessageReplacement;
   systemPromptAddition?: string;
   /** Ephemeral projected text for producer attribution; never persisted in lineage. */
@@ -124,6 +137,7 @@ export function createContextCandidate(input: {
   channel: TurnInjectionChannel;
   target: ContextCandidateTarget;
   text: string;
+  knowledgePacking?: KnowledgeCandidatePackingV2;
   messageReplacement?: ContextMessageReplacement;
 }): ContextCandidate {
   const contentDigest = digestText(input.text);
@@ -151,6 +165,7 @@ export function createContextCandidate(input: {
     channel: input.channel,
     target: input.target,
     text: input.text,
+    ...(input.knowledgePacking ? { knowledgePacking: input.knowledgePacking } : {}),
     ...(input.messageReplacement ? { messageReplacement: input.messageReplacement } : {}),
   };
 }
@@ -311,6 +326,9 @@ export function collectContextCandidate(
     requiredAuthority,
     resolvedAdmission,
   );
+  // Knowledge ordinal is assigned at DCS admission, never taken from renderer rank metadata.
+  const ordinal = candidate.channel === "knowledge" ? collection.candidates.length : undefined;
+  const usage = candidate.knowledgePacking ? knowledgeTextUsage(candidate.text) : undefined;
   const lineage: ContextCandidateLineage = {
     promptAuthority,
     candidateId: candidate.candidateId,
@@ -321,9 +339,11 @@ export function collectContextCandidate(
     disposition: "pending",
     charsRequested: candidate.text.length,
     charsApplied: 0,
+    ...(ordinal !== undefined ? { ordinal } : {}),
+    ...(usage ? { estimatedTokensRequested: usage.estimatedTokens } : {}),
     reason: "collected",
   };
-  collection.candidates.push(candidate);
+  collection.candidates.push(ordinal === undefined ? candidate : { ...candidate, ordinal });
   collection.lineage.push(lineage);
   collection.candidateLineageIndexes.push(collection.lineage.length - 1);
   collection.diagnostics.collected += 1;
@@ -338,6 +358,7 @@ function sortedCandidateIndexes(collection: ContextCandidateCollection): number[
       const right = collection.candidates[rightIndex]!;
       const precedence = precedenceIndexOf(left.channel) - precedenceIndexOf(right.channel);
       if (precedence !== 0) return precedence;
+      if (left.channel === "knowledge") return leftIndex - rightIndex;
       return left.candidateId < right.candidateId
         ? -1
         : left.candidateId > right.candidateId
@@ -431,13 +452,19 @@ export function finalizeContextCandidates(params: {
       params.ledger,
       candidate.channel,
       candidate.text,
-      candidate.target !== "message_replacement",
+      candidate.target !== "message_replacement" && !candidate.knowledgePacking,
     );
     const entry = params.ledger.entries.at(-1);
     lineage.disposition = entry?.disposition ?? "skip";
     lineage.charsRequested = entry?.charsRequested ?? 0;
     lineage.charsApplied = charged.charsApplied;
     lineage.reason = reasonForDisposition(lineage.disposition, params.ledger.killed);
+    if (candidate.knowledgePacking) {
+      params.ledger.knowledgeProjections ??= [];
+      const usage = knowledgeTextUsage(charged.text ?? "");
+      lineage.estimatedTokensApplied = usage.estimatedTokens;
+      lineage.utf8BytesApplied = usage.utf8Bytes;
+    }
     collection.diagnostics.charsRequested += lineage.charsRequested;
     collection.diagnostics.charsApplied += lineage.charsApplied;
 
@@ -449,7 +476,23 @@ export function finalizeContextCandidates(params: {
       systemPromptParts.push(charged.text);
       systemPromptContributions.push({ sourceId: candidate.sourceId, text: charged.text });
     } else {
-      messages.push({ role: "user", content: charged.text, timestamp: Date.now() });
+      const timestamp = Date.now();
+      messages.push({ role: "user", content: charged.text, timestamp });
+      if (candidate.knowledgePacking) {
+        const usage = knowledgeTextUsage(charged.text);
+        params.ledger.knowledgeProjections!.push({
+          timestamp,
+          unit: {
+            ...structuredClone(candidate.knowledgePacking),
+            candidateId: candidate.candidateId,
+            ordinal: candidate.ordinal!,
+            projectionDigest: digestText(charged.text),
+            retainedChars: usage.chars,
+            retainedUtf8Bytes: usage.utf8Bytes,
+            estimatedTokens: usage.estimatedTokens,
+          },
+        });
+      }
     }
   }
 
@@ -465,6 +508,7 @@ export function finalizeContextCandidates(params: {
   const orderedLineage = collection.lineage.toSorted((left, right) => {
     const precedence = precedenceIndexOf(left.channel) - precedenceIndexOf(right.channel);
     if (precedence !== 0) return precedence;
+    if (left.channel === "knowledge") return (left.ordinal ?? -1) - (right.ordinal ?? -1);
     return left.candidateId < right.candidateId ? -1 : left.candidateId > right.candidateId ? 1 : 0;
   });
   collection.lineage = orderedLineage;
@@ -494,13 +538,18 @@ export function projectContextCandidates(params: {
       ? `${params.systemPrompt}\n\n${projection.systemPromptAddition}`
       : projection.systemPromptAddition
     : params.systemPrompt;
+  const additions = projection.messages.filter(
+    (message) => !params.messages.some((previous) => isDeepStrictEqual(previous, message)),
+  );
+  const messages = additions.length ? [...params.messages, ...additions] : params.messages;
+  const retainedEvidence = params.ledger.knowledgeProjections
+    ? retainedKnowledgeManifest(params.turnId, params.ledger.knowledgeProjections, messages)
+    : undefined;
+  params.ledger.retainedEvidence = retainedEvidence;
   return {
     ...(systemPrompt !== undefined ? { systemPrompt } : {}),
-    messages:
-      projection.messages.length > 0
-        ? [...params.messages, ...projection.messages]
-        : params.messages,
-    projection,
+    messages,
+    projection: retainedEvidence ? { ...projection, retainedEvidence } : projection,
   };
 }
 

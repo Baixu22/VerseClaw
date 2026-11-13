@@ -30,6 +30,8 @@ export type ChatKnowledgeReferenceIntent = {
   sourceRef?: SourceRefV2;
   revision?: string;
   contentDigest?: string;
+  /** Packing constraint only; grouping never grants a source read. */
+  conflictGroupId?: string;
   invalidPin?: boolean;
 };
 
@@ -65,6 +67,7 @@ export type ResolvedChatKnowledgeRef = {
   sourceRefs: string[];
   evidenceRefs: string[];
   ownerSnapshot?: OwnerReadSnapshotV1;
+  conflictGroupId?: string;
 };
 
 export type ChatKnowledgeSourceAdapterResult =
@@ -141,6 +144,7 @@ export function normalizeChatKnowledgeReferences(value: unknown): ChatKnowledgeR
     const sourceRef = normalizeSourceRefV2(record.sourceRef);
     const revision = cleanString(record.revision);
     const contentDigest = cleanString(record.contentDigest);
+    const conflictGroupId = cleanString(record.conflictGroupId);
     const invalidPin =
       (record.sourceRef !== undefined && !sourceRef) ||
       (record.revision !== undefined && !revision) ||
@@ -162,6 +166,7 @@ export function normalizeChatKnowledgeReferences(value: unknown): ChatKnowledgeR
       ...(sourceRef ? { sourceRef } : {}),
       ...(revision ? { revision } : {}),
       ...(contentDigest ? { contentDigest } : {}),
+      ...(conflictGroupId ? { conflictGroupId } : {}),
       ...(invalidPin ? { invalidPin: true } : {}),
     });
     if (out.length >= 8) break;
@@ -357,7 +362,20 @@ export async function resolveChatKnowledgeIntent(params: {
     }
   }
 
-  return { scope, mode, references, admitted, denied };
+  const deniedIds = new Set(denied.map((ref) => ref.id));
+  const deniedGroups = new Set(
+    references
+      .filter((ref) => ref.conflictGroupId && deniedIds.has(ref.id))
+      .map((ref) => ref.conflictGroupId),
+  );
+  const complete = admitted.filter((ref) => {
+    if (!ref.conflictGroupId || !deniedGroups.has(ref.conflictGroupId)) return true;
+    const original = references.find((candidate) => candidate.id === ref.intentId);
+    if (original)
+      denied.push(denial(original, "denied", "A conflict group could not be read as a whole."));
+    return false;
+  });
+  return { scope, mode, references, admitted: complete, denied };
 }
 
 export function digestChatKnowledgeContent(content: string): string {
@@ -379,6 +397,7 @@ export function createResolvedChatKnowledgeRef(params: {
   materializedAt?: string;
   ownerSnapshot?: OwnerReadSnapshotV1;
   intentId?: string;
+  conflictGroupId?: string;
 }): ResolvedChatKnowledgeRef {
   const snapshot = params.ownerSnapshot;
   const content = snapshot?.content ?? params.content;
@@ -387,6 +406,7 @@ export function createResolvedChatKnowledgeRef(params: {
     throw new Error("Knowledge snapshot owner mismatch");
   return {
     ...(params.intentId ? { intentId: params.intentId } : {}),
+    ...(params.conflictGroupId ? { conflictGroupId: params.conflictGroupId } : {}),
     refId: snapshot
       ? `${params.owner}:${digestChatKnowledgeContent(JSON.stringify([snapshot.source.namespaceId, snapshot.source.subjectId, snapshot.source.locator])).slice(7, 39)}`
       : `${params.owner}:${params.subjectId}`,
@@ -419,17 +439,13 @@ export function packResolvedChatKnowledgeRef(ref: ResolvedChatKnowledgeRef): str
       ref.contentDigest !== ref.ownerSnapshot.contentDigest)
   )
     throw new Error("Knowledge snapshot is no longer admitted");
-  const content = ref.ownerSnapshot
-    ? ref.content
-    : ref.content.length > 1200
-      ? `${ref.content.slice(0, 1200)}\n...[knowledge ref truncated]`
-      : ref.content;
   return [
     `[Knowledge reference: ${ref.title} (${ref.lookup})]`,
+    "refId: " + (ref.intentId ?? ref.refId),
     `owner: ${ref.owner}; subjectId: ${ref.subjectId}; revision: ${ref.revision}; digest: ${ref.contentDigest}`,
     ...(ref.ownerSnapshot ? [`source: ${JSON.stringify(ref.ownerSnapshot.source)}`] : []),
     "---",
-    content,
+    ref.content,
   ].join("\n");
 }
 

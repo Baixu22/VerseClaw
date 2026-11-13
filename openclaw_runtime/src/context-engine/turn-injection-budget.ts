@@ -17,6 +17,10 @@
  * alert threshold).
  */
 import { dcsObservability } from "./dcs-observability.js";
+import type {
+  RetainedEvidenceManifestV1,
+  RetainedKnowledgeProjection,
+} from "./project-rag-packing.js";
 import {
   contextHealthScoreToScorecard,
   recordContextHealth,
@@ -188,6 +192,8 @@ export type TurnInjectionEntry = {
 };
 
 export type TurnInjectionLedger = {
+  knowledgeProjections?: RetainedKnowledgeProjection[];
+  retainedEvidence?: RetainedEvidenceManifestV1;
   /** Observed prompt writes outside the managed character limit. No raw text is stored. */
   promptAccounting?: TurnPromptAccounting;
   turnId: string;
@@ -225,6 +231,7 @@ export type TurnInjectionReservation = {
 };
 
 export type TurnInjectionAccounting = {
+  retainedEvidence?: RetainedEvidenceManifestV1;
   promptAccounting?: TurnPromptAccounting;
   turnId: string;
   total: number;
@@ -263,7 +270,7 @@ export type TurnPromptAccounting = {
 };
 
 function promptAccounting(ledger: TurnInjectionLedger): TurnPromptAccounting {
-  return ledger.promptAccounting ??= { managedSystemChars: 0, postOrchestrator: {} };
+  return (ledger.promptAccounting ??= { managedSystemChars: 0, postOrchestrator: {} });
 }
 
 export function recordManagedSystemChars(ledger: TurnInjectionLedger, chars: number): void {
@@ -280,12 +287,18 @@ export function recordPostOrchestratorContribution(
   promptAccounting(ledger).postOrchestrator[sourceId] = { target, charsApplied };
 }
 
-export function observeTurnSystemPromptBase(ledger: TurnInjectionLedger, systemPrompt: string): void {
+export function observeTurnSystemPromptBase(
+  ledger: TurnInjectionLedger,
+  systemPrompt: string,
+): void {
   const accounting = promptAccounting(ledger);
   const postSystemChars = Object.values(accounting.postOrchestrator)
-    .filter(entry => entry.target === "system_prompt")
+    .filter((entry) => entry.target === "system_prompt")
     .reduce((sum, entry) => sum + entry.charsApplied, 0);
-  accounting.basePromptChars = Math.max(0, systemPrompt.length - postSystemChars - accounting.managedSystemChars);
+  accounting.basePromptChars = Math.max(
+    0,
+    systemPrompt.length - postSystemChars - accounting.managedSystemChars,
+  );
 }
 
 /** Observe an actual successful write, separately from the unchanged managed budget. */
@@ -622,13 +635,22 @@ export function summarizeTurnInjection(ledger: TurnInjectionLedger): TurnInjecti
 
   return {
     turnId: ledger.turnId,
-    ...(ledger.promptAccounting ? {
-      promptAccounting: {
-        ...ledger.promptAccounting,
-        postOrchestrator: Object.fromEntries(Object.entries(ledger.promptAccounting.postOrchestrator)
-          .map(([id, entry]) => [id, { ...entry }])),
-      },
-    } : {}),
+    ...(ledger.retainedEvidence
+      ? { retainedEvidence: structuredClone(ledger.retainedEvidence) }
+      : {}),
+    ...(ledger.promptAccounting
+      ? {
+          promptAccounting: {
+            ...ledger.promptAccounting,
+            postOrchestrator: Object.fromEntries(
+              Object.entries(ledger.promptAccounting.postOrchestrator).map(([id, entry]) => [
+                id,
+                { ...entry },
+              ]),
+            ),
+          },
+        }
+      : {}),
     total,
     charsApplied,
     charsRequested,

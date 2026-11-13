@@ -17,10 +17,14 @@ export type PromptBudgetCoverage = {
   unbudgeted: boolean;
 };
 
-export function buildPromptBudgetCoverage(systemPrompt: string, budget: TurnInjectionAccounting): PromptBudgetCoverage {
+export function buildPromptBudgetCoverage(
+  systemPrompt: string,
+  budget: TurnInjectionAccounting,
+): PromptBudgetCoverage {
   const accounting = budget.promptAccounting;
   const postEntries = Object.values(accounting?.postOrchestrator ?? {});
-  const postMessageChars = postEntries.filter(entry => entry.target === "message")
+  const postMessageChars = postEntries
+    .filter((entry) => entry.target === "message")
     .reduce((sum, entry) => sum + entry.charsApplied, 0);
   const postOrchestratorChars = postEntries.reduce((sum, entry) => sum + entry.charsApplied, 0);
   const managedChars = budget.charsApplied;
@@ -28,9 +32,15 @@ export function buildPromptBudgetCoverage(systemPrompt: string, budget: TurnInje
   const totalPromptChars = systemPrompt.length + managedMessageChars + postMessageChars;
   const basePromptChars = accounting?.basePromptChars ?? 0;
   const delta = totalPromptChars - basePromptChars - managedChars - postOrchestratorChars;
-  return { managedChars, postOrchestratorChars, totalPromptChars, basePromptChars,
-    unaccountedChars: Math.max(0, delta), overaccountedChars: Math.max(0, -delta),
-    unbudgeted: accounting?.basePromptChars === undefined };
+  return {
+    managedChars,
+    postOrchestratorChars,
+    totalPromptChars,
+    basePromptChars,
+    unaccountedChars: Math.max(0, delta),
+    overaccountedChars: Math.max(0, -delta),
+    unbudgeted: accounting?.basePromptChars === undefined,
+  };
 }
 
 export type ContextFinalSnapshotInput = {
@@ -60,7 +70,7 @@ export type ContextFinalSnapshot = {
   modelCallIndex: number;
   /** Immutable finalization; RC-03 enforcement is reported separately. */
   sealed: true;
-  sealCoverage: 'disabled' | 'enforced';
+  sealCoverage: "disabled" | "enforced";
   systemPromptDigest: string;
   messagesDigest: string;
   contextCompositionDigest: string;
@@ -110,13 +120,17 @@ function createSnapshot(input: ContextFinalSnapshotInput): ContextFinalSnapshot 
   const systemPromptDigest = digest(systemPrompt ?? "");
   const messagesDigest = digest(input.messages);
   const contextCompositionDigest = digest({
+    retainedEvidence: input.projection.retainedEvidence,
     systemPromptAddition: input.projection.systemPromptAddition,
     systemPromptContributions: input.projection.systemPromptContributions ?? [],
     messageReplacement: input.projection.messageReplacement,
     lineage: input.projection.lineage,
   });
   const budgetDigest = digest(input.budget);
-  const providerRequestDigest = digest({ systemPrompt: systemPrompt ?? null, messages: input.messages });
+  const providerRequestDigest = digest({
+    systemPrompt: systemPrompt ?? null,
+    messages: input.messages,
+  });
   return {
     schema: CONTEXT_FINAL_SNAPSHOT_SCHEMA,
     snapshotId: `ctx-final-${createHash("sha256")
@@ -130,7 +144,7 @@ function createSnapshot(input: ContextFinalSnapshotInput): ContextFinalSnapshot 
     attemptIndex,
     modelCallIndex,
     sealed: true,
-    sealCoverage: input.rc03PlanId ? 'enforced' : 'disabled',
+    sealCoverage: input.rc03PlanId ? "enforced" : "disabled",
     systemPromptDigest,
     messagesDigest,
     contextCompositionDigest,

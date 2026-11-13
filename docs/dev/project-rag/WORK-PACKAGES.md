@@ -29,7 +29,7 @@
 | RAG-06 | [交付可移植向量检索与规模化 ANN](../../../harness/specs/tasks/project-rag-vector-projection-backends.md) | RAG-05 | vector projection |
 | RAG-07 | [实现按策略检索、融合和候选解释](../../../harness/specs/tasks/project-rag-retrieval-plan-fusion.md) | RAG-06 | retrieval planner |
 | RAG-08 | [实现多语言 cross-encoder 重排服务](../../../harness/specs/tasks/project-rag-cross-encoder-rerank.md) | RAG-07 | rerank provider / retrieval planner |
-| RAG-09 | [让 DCS 保序装配完整证据并记录实际引用](../../../harness/specs/tasks/project-rag-dcs-evidence-packing.md) | RAG-07 | DCS |
+| RAG-09 | [让 DCS 保序装配完整证据并记录实际引用](../../../harness/specs/tasks/project-rag-dcs-evidence-packing.md) · [装配合同](./DCS-EVIDENCE-PACKING-CONTRACT.md) | RAG-07 | DCS |
 | RAG-10 | [完成 strict/open 问答、冲突披露与引用回源](../../../harness/specs/tasks/project-rag-grounded-answer-citation.md) | RAG-08、RAG-09 | Knowledge QA / citation viewer |
 | RAG-11 | [完成按需知识交互和安全 Auto-read](../../../harness/specs/tasks/project-rag-chat-interactions.md) | RAG-10 | Chat UI / Host |
 | RAG-12 | [交付完整配置、索引运维和能力状态界面](../../../harness/specs/tasks/project-rag-config-and-operations.md) | RAG-11 | Settings / runtime config / retrieval operations |

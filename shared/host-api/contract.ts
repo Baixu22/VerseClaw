@@ -2,6 +2,7 @@ import type { RawMessage } from '../chat/types';
 import type { KnowledgeEmbeddingSelection, KnowledgeEmbeddingStatusResult } from '../knowledge/embedding';
 import type { KnowledgeVectorStatusResult } from '../knowledge/vector';
 import type { KnowledgeRerankSelection, KnowledgeRerankStatusResult } from '../knowledge/rerank';
+import type { RetainedEvidenceManifestV1 } from '../knowledge/packing';
 import type { RankSignalsV2, RetrievalMode, RetrievalProfile, RetrievalResultV2 } from '../knowledge/retrieval';
 import type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
 export type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
@@ -3675,6 +3676,7 @@ export type ChatKnowledgeReference = {
   sourceRef?: SourceRefV2;
   revision?: string;
   contentDigest?: string;
+  conflictGroupId?: string;
   rank?: number;
   scoreKind?: string;
   rankSignals?: RankSignalsV2;
@@ -4649,6 +4651,7 @@ export type KnowledgeSourceSetCitation = {
   sourceRef?: SourceRefV2;
 };
 export type KnowledgeSourceSetAnswerSource = {
+  conflictGroupId?: string;
   id: string;
   lookup: string;
   title: string;
@@ -4671,6 +4674,7 @@ export type KnowledgeAnswerFromSourceSetPayload = {
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
 };
 export type KnowledgeAnswerFromSourceSetResult = HostSuccess & {
+  retainedEvidence?: RetainedEvidenceManifestV1;
   question: string;
   answer: string;
   sources: KnowledgeSourceSetAnswerSource[];

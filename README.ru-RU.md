@@ -66,6 +66,7 @@ Verse Claw — Electron-приложение на встроенном OpenClaw 
 Важные defaults:
 
 - Workspace Context и read-only DCS context tools включены при заявленных health/permission gates.
+- DCS сохраняет порядок допущенных знаний, включает целые chunk или группы конфликтов в общий бюджет и записывает ссылки и байты, сохранённые Chat и model-only Knowledge QA. См. [контракт сборки доказательств](docs/dev/project-rag/DCS-EVIDENCE-PACKING-CONTRACT.md).
 - Runtime Memory injection, SEKB automatic writeback и Browser private network не default-on.
 - SEKB записывает явное применение принципа с его версией и запуском, отдельно сохраняя результат выполнения и независимую оценку задачи. Обратная связь используется для диагностики и не меняет поиск или сохранение памяти. См. [RSI evidence and boundaries](docs/dev/rsi-capability-and-boundaries.md).
 - Управляемые эксперименты RSI с prompt сохраняют родительские версии, атрибуцию тренировочных данных и решения по фиксированным проверкам. Кандидаты связываются с отдельным зафиксированным планом оценки.

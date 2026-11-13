@@ -9,3 +9,7 @@ export type {
   OwnerReadRejectionCode,
   OwnerReadStage,
 } from "../runtime-core/knowledge-owner-read.js";
+export type {
+  KnowledgeCandidatePackingV2,
+  RetainedEvidenceManifestV1,
+} from "../runtime-core/knowledge-packing-types.js";

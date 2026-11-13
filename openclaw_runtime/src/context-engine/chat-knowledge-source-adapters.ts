@@ -16,7 +16,6 @@ import {
   type MemoryWikiReadIdentity,
 } from "../../extensions/memory-wiki/runtime-api.js";
 import {
-  boundOwnerReadSnapshot,
   createOwnerReadSnapshot,
   digestOwnerReadContent,
   evaluateOwnerReadPolicy,
@@ -73,12 +72,12 @@ function resolved(
 ): ChatKnowledgeSourceAdapterResult {
   const reason = legacyPinReason(ref, snapshot);
   if (reason) return denied(reason);
-  const bounded = boundOwnerReadSnapshot(snapshot, 1200);
   const owner = snapshot.source.authorityId as ResolvedChatKnowledgeRef["owner"];
   return {
     status: "resolved",
     resolved: createResolvedChatKnowledgeRef({
       intentId: ref.id,
+      conflictGroupId: ref.conflictGroupId,
       owner,
       subjectKind:
         owner === "memory-wiki"
@@ -90,11 +89,11 @@ function resolved(
       revision: snapshot.source.revision,
       title: snapshot.title,
       lookup: snapshot.source.subjectId,
-      content: bounded.content,
+      content: snapshot.content,
       sourceRefs: [`${owner}:${snapshot.source.subjectId}`],
       evidenceRefs,
-      ownerSnapshot: bounded,
-      materializedAt: bounded.readAt,
+      ownerSnapshot: snapshot,
+      materializedAt: snapshot.readAt,
     }),
   };
 }
@@ -192,7 +191,14 @@ export class MemoryWikiChatKnowledgeSourceAdapter implements ChatKnowledgeSource
           : { status: "not_found" };
       }
       if (!isOwnerReadSnapshotV1(result.ownerSnapshot)) return denied("denied");
-      return resolved(ref, result.ownerSnapshot);
+      return resolved(
+        {
+          ...ref,
+          conflictGroupId:
+            ref.conflictGroupId ?? (result.hasConflicts ? "known-conflicts" : undefined),
+        },
+        result.ownerSnapshot,
+      );
     } catch {
       return denied("denied");
     }
@@ -366,10 +372,11 @@ export async function revalidateChatKnowledgeRefs(input: {
     let read: ChatKnowledgeSourceAdapterResult;
     try {
       read = await adapter.resolve({
-        id: previous.refId,
+        id: previous.intentId ?? previous.refId,
         title: previous.title,
         lookup: previous.lookup,
         sourceRef: snapshot.source,
+        conflictGroupId: previous.conflictGroupId,
       });
     } catch {
       continue;
@@ -392,5 +399,11 @@ export async function revalidateChatKnowledgeRefs(input: {
       continue;
     admitted.push(read.resolved);
   }
-  return admitted;
+  const ids = new Set(admitted.map((ref) => ref.intentId ?? ref.refId));
+  const deniedGroups = new Set(
+    input.refs
+      .filter((ref) => ref.conflictGroupId && !ids.has(ref.intentId ?? ref.refId))
+      .map((ref) => ref.conflictGroupId),
+  );
+  return admitted.filter((ref) => !ref.conflictGroupId || !deniedGroups.has(ref.conflictGroupId));
 }

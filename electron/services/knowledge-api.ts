@@ -48,7 +48,7 @@ import type { KnowledgeRerankSelection, KnowledgeRerankStatusResult } from '../.
 import type { KnowledgeRerankStatus } from '../../shared/knowledge/rerank';
 import { createKnowledgeSourceSync } from './knowledge-source-sync';
 import { createKnowledgeGithubConnector, validateGithubConnector } from './knowledge-github-connector';
-import { boundedKnowledgeHistory, buildKnowledgeQaPrompt, runKnowledgeModel, validateKnowledgeQaOutput, type KnowledgeConversationTurn, type KnowledgeQaEvidence } from './knowledge-evidence-qa';
+import { boundedKnowledgeHistory, buildKnowledgeQaPrompt, runKnowledgeModel, selectKnowledgeModelSources, validateKnowledgeQaOutput, type KnowledgeConversationTurn, type KnowledgeQaEvidence } from './knowledge-evidence-qa';
 
 const knowledgeSourceWatchDisposers = new Map<string, () => void>();
 export function stopAllKnowledgeSourceWatches(): void {
@@ -3037,6 +3037,8 @@ function routeCandidateFromRow(row: Record<string, unknown>, corpus: 'wiki' | 'm
   const snippet = rowString(row, ['snippet', 'bodyPreview', 'preview', 'text']).slice(0, ROUTER_BUDGET.maxSnippetChars);
   const freshnessLevel = rowString(row, ['freshnessLevel', 'freshness']);
   const matchedClaimStatus = rowString(row, ['matchedClaimStatus', 'claimStatus']);
+  const conflictGroupId = rowString(row, ['conflictGroupId'])
+    || (row.hasConflicts === true || ['contested', 'contradicted', 'conflict'].includes(matchedClaimStatus) ? 'known-conflicts' : '');
   return {
     id: rowString(row, ['id', 'pageId']) || lookup,
     title,
@@ -3057,6 +3059,7 @@ function routeCandidateFromRow(row: Record<string, unknown>, corpus: 'wiki' | 'm
     ...(score ? { score } : {}),
     ...(freshnessLevel ? { freshnessLevel } : {}),
     ...(matchedClaimStatus ? { matchedClaimStatus } : {}),
+    ...(conflictGroupId ? { conflictGroupId } : {}),
   };
 }
 
@@ -3425,6 +3428,8 @@ export function createKnowledgeApi({
     let model: KnowledgeAnswerFromSourceSetResult['model'];
     let claims: KnowledgeAnswerFromSourceSetResult['claims'];
     let synthesized: string | undefined;
+    let retainedEvidence: KnowledgeAnswerFromSourceSetResult['retainedEvidence'];
+    const packingUnknowns: string[] = [];
     if (input.synthesis && sources.length > 0 && evidence.sourceSet.conflictSet.length === 0) {
       try {
         const pinned = sources.map(source => ({ id: source.id, kind: 'wiki' as const, path: source.path,
@@ -3434,20 +3439,41 @@ export function createKnowledgeApi({
         sources = evidence.sources;
         if (!sources.length) throw new Error('Knowledge owner read was invalidated before prompt assembly');
         await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
-        const result = await runKnowledgeModel(gatewayManager, buildKnowledgeQaPrompt({ question, history: input.history, sources: evidence.modelSources }), 'Knowledge Librarian');
+        const sessionKey = readScope.identity.agentSessionKey;
+        if (!sessionKey) throw new Error('Knowledge model requires the current owner session');
+        const modelSelection = selectKnowledgeModelSources(evidence.modelSources);
+        if (modelSelection.dropped.length) packingUnknowns.push('Knowledge reference transport limit excluded: ' + modelSelection.dropped.join(', '));
+        if (!modelSelection.sources.length) throw new Error('No complete knowledge group fits the reference transport limit');
+        const references = modelSelection.sources.map(source => ({
+          id: source.citation!.refId, title: source.title, lookup: source.path ?? source.lookup, corpus: 'wiki' as const,
+          sourceRef: source.citation!.sourceRef, revision: source.citation!.revision, contentDigest: source.citation!.contentDigest,
+          ...(source.conflictGroupId ? { conflictGroupId: source.conflictGroupId } : {}),
+        }));
+        const result = await runKnowledgeModel(gatewayManager,
+          buildKnowledgeQaPrompt({ question, history: input.history, sources: modelSelection.sources }),
+          'Knowledge Librarian', 60_000, { sessionKey, workspaceId: readScope.identity.workspaceId, workspaceDir: readScope.identity.workspaceDir, references });
+        retainedEvidence = result.retainedEvidence;
         await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
         const after = await readEvidence(pinned);
         if (after.sources.length !== sources.length) { evidence = after; sources = after.sources; throw new Error('Knowledge source changed during model execution'); }
-        const validated = validateKnowledgeQaOutput(result.text, evidence.modelSources);
+        const retained = result.retainedEvidence!.units.flatMap(unit => unit.citations);
+        // Bind quote validation to the fresh owner bytes and the actual retained chunk.
+        evidence = after;
+        sources = after.sources;
+        const modelSources = after.modelSources.filter(source => retained.some(citation =>
+          (citation.intentId ?? citation.refId) === source.citation?.refId
+          && citation.chunkDigest === source.citation?.contentDigest));
+        if (!modelSources.length) throw new Error('DCS retained no source within the knowledge budget');
+        const validated = validateKnowledgeQaOutput(result.text, modelSources);
         claims = validated.claims;
         model = { status: 'completed', runId: result.runId };
         synthesized = claims.map(claim => `${claim.text} ${claim.citations.map(citation => `[${citation.sourceId}]`).join(' ')}`).join('\n\n');
-        unknowns = [...evidence.unknowns.filter(text => !text.includes('synthesized answer correctness')), ...validated.unknowns];
+        unknowns = [...evidence.unknowns.filter(text => !text.includes('synthesized answer correctness')), ...validated.unknowns, ...packingUnknowns];
         if (!claims.length) { synthesized = validated.unknowns.join('\n'); groundingStatus = 'missing_sources'; }
-        else groundingStatus = evidence.sourceSet.rejections.length || sources.some(source => source.readRange?.truncated || !source.updatedAt) || validated.unknowns.length ? 'partial' : 'grounded';
+        else groundingStatus = evidence.sourceSet.rejections.length || sources.some(source => source.readRange?.truncated || !source.updatedAt) || validated.unknowns.length || packingUnknowns.length ? 'partial' : 'grounded';
       } catch (error) {
         model = { status: 'error', reason: sanitizeUiErrorText(error) };
-        unknowns = [...unknowns, `Model synthesis unavailable: ${sanitizeUiErrorText(error)}. Source excerpts are shown instead.`];
+        unknowns = [...unknowns, ...packingUnknowns, `Model synthesis unavailable: ${sanitizeUiErrorText(error)}. Source excerpts are shown instead.`];
         if (!sources.length) groundingStatus = 'missing_sources';
       }
     } else if (input.synthesis) {
@@ -3481,6 +3507,7 @@ export function createKnowledgeApi({
       success: true, question, answer, sources, unknowns, groundingStatus,
       synthesisMode: synthesized === undefined ? 'source-excerpts' : 'model',
       ...(model ? { model } : {}), ...(claims ? { claims } : {}),
+      ...(retainedEvidence ? { retainedEvidence } : {}),
       suggestedNextActions: evidence.sourceSet.suggestedNextActions.map((entry) => entry.text),
       rejections: evidence.sourceSet.rejections,
       conflictSet: evidence.sourceSet.conflictSet,

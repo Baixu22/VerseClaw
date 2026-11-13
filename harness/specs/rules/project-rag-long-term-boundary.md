@@ -31,3 +31,4 @@ requiredTests:
 10. 索引重建/撤销/删除/崩溃/模型更换/平台缺包的恢复与回滚是实现合同的一部分。普通 Chat 在总期限内继续，不能把退化结果标成完整成功。
 11. 新增测试进入 requiredTests；plannedTests 必须实际实现。完成状态来自 clean candidate 的磁盘证据，保留 partial、unknown、未运行和失败。所有模拟与验收标为 agent 驱动。
 12. Task Forest 维护实际进度与工作树绑定，源码 program 只保存稳定工作包合同，不保存第二套运行进度。每叶开始重新核对绑定和 diffBase。
+13. DCS 按知识候选的准入 ordinal 保序，以 chunk/冲突组为完整预算单元。RetainedEvidenceManifest/v1 绑定实际 retained bytes；model-only QA 发送 owner pins，由相同的 DCS 路径装配正文。

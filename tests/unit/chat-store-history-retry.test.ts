@@ -50,6 +50,7 @@ vi.mock('@/lib/host-api', () => ({
       }),
       delete: vi.fn(async () => ({ success: true })),
       rename: vi.fn(async () => ({ success: true })),
+      truncate: vi.fn(async () => ({ success: true })),
     },
     chat: {
       sendWithMedia: vi.fn(async () => ({ success: true, result: { runId: 'run-media' } })),
@@ -78,6 +79,19 @@ describe('useChatStore startup history retry', () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+  it('resends the original owner pins and conflict group after resetting the transcript', async () => {
+    const { useChatStore } = await import('@/stores/chat');
+    const send = vi.fn(async () => {});
+    const references = [{ id: 'source', title: 'source', lookup: 'source.md', corpus: 'wiki' as const,
+      conflictGroupId: 'known-conflicts', revision: '1', contentDigest: 'sha256:' + 'a'.repeat(64) }];
+    useChatStore.setState({ currentSessionKey: 'agent:main:main', currentAgentId: 'main', sending: false,
+      activeRunId: null, pendingFinal: false, messages: [{ id: 'user-message', role: 'user', content: 'original',
+        _knowledgeRefs: references, _knowledgeScope: 'wiki', _knowledgeMode: 'manual' }], sendMessage: send });
+    await useChatStore.getState().resendUserMessage({ text: 'edited', messageIndex: 0, messageId: 'user-message' });
+    expect(send).toHaveBeenCalledWith('edited', expect.objectContaining({
+      knowledgeReferences: references, knowledgeScope: 'wiki', knowledgeMode: 'manual',
+    }));
   });
 
   it('uses the longer timeout only for the initial foreground history load', async () => {

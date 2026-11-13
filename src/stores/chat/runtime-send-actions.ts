@@ -124,6 +124,8 @@ export function createRuntimeSendActions(set: ChatSet, get: ChatGet): Pick<Runti
       const nowMs = Date.now();
       const userMsg: RawMessage = {
         role: 'user',
+        ...(knowledgeScope ? { _knowledgeScope: knowledgeScope } : {}),
+        ...(knowledgeMode ? { _knowledgeMode: knowledgeMode } : {}),
         content: trimmed || (attachments?.length ? '(file attached)' : ''),
         timestamp: nowMs / 1000,
         id: crypto.randomUUID(),

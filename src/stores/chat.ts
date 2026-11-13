@@ -4226,7 +4226,12 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       };
     });
 
-    await get().sendMessage(trimmed);
+    const references = targetMessage?._knowledgeRefs?.map(reference => ({ ...reference }));
+    await get().sendMessage(trimmed, references?.length ? {
+      knowledgeReferences: references,
+      knowledgeScope: targetMessage._knowledgeScope ?? (references.every(reference => reference.corpus === 'memory') ? 'memory' : 'wiki'),
+      knowledgeMode: targetMessage._knowledgeMode ?? 'manual',
+    } : undefined);
   },
 
   queuePendingMessage: (text, opts) => {
@@ -4332,6 +4337,8 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     const nowMs = Date.now();
     const userMsg: RawMessage = {
       role: 'user',
+      ...(knowledgeScope ? { _knowledgeScope: knowledgeScope } : {}),
+      ...(knowledgeMode ? { _knowledgeMode: knowledgeMode } : {}),
       content: trimmed || (attachments?.length ? '(file attached)' : ''),
       timestamp: nowMs / 1000,
       id: crypto.randomUUID(),

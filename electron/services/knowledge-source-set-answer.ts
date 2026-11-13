@@ -198,6 +198,7 @@ function materializeSource(ref: KnowledgeSourceRef, page: unknown): Materialized
     candidate,
     source: {
       id: ref.id, lookup, path, title,
+      ...(ownerValue('hasConflicts') === true ? { conflictGroupId: 'known-conflicts' } : {}),
       excerpt: content.replace(/\s+/g, ' ').trim().slice(0, 240),
       ...(updatedAt ? { updatedAt } : {}),
       readRange: snapshot ? { fromLine: snapshot.source.locator!.startLine, toLine: snapshot.source.locator!.endLine,

@@ -63,6 +63,8 @@ export interface RawMessage {
   _attachedFiles?: AttachedFileMeta[];
   /** Local-only: knowledge pages explicitly attached to this chat turn. */
   _knowledgeRefs?: ChatKnowledgeReference[];
+  _knowledgeScope?: WorkspaceKnowledgeScope;
+  _knowledgeMode?: KnowledgeInvocationMode;
   /** Local-only: selected tool results folded back into visible assistant tool-call turns. */
   _toolResults?: Array<{
     toolCallId?: string;

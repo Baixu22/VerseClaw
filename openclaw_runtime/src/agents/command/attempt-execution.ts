@@ -427,7 +427,7 @@ export async function persistCliTurnTranscript(params: {
   });
 }
 
-export function runAgentAttempt(params: {
+export async function runAgentAttempt(params: {
   providerOverride: string;
   modelOverride: string;
   originalProvider: string;
@@ -687,7 +687,39 @@ export function runAgentAttempt(params: {
     });
   }
 
+  let chatKnowledgeRefs:
+    | import("../../context-engine/chat-knowledge-intent.js").ResolvedChatKnowledgeRef[]
+    | undefined;
+  if (params.opts.knowledgeReferences?.length) {
+    const deadline = Date.now() + Math.min(5000, params.timeoutMs);
+    const { resolveChatKnowledgeIntent } =
+      await import("../../context-engine/chat-knowledge-intent.js");
+    const { createProductionChatKnowledgeSourceAdapters } =
+      await import("../../context-engine/chat-knowledge-source-adapters.js");
+    const signal = AbortSignal.any([
+      ...(params.opts.abortSignal ? [params.opts.abortSignal] : []),
+      AbortSignal.timeout(Math.max(1, deadline - Date.now())),
+    ]);
+    const resolution = await resolveChatKnowledgeIntent({
+      scope: "all",
+      mode: "manual",
+      references: params.opts.knowledgeReferences,
+      signal,
+      adapters: createProductionChatKnowledgeSourceAdapters(params.cfg, {
+        signal,
+        identity: {
+          sessionId: params.sessionId,
+          agentSessionKey: params.sessionKey,
+          workspaceId: params.opts.workspaceId ?? params.sessionEntry?.workspaceId,
+          workspaceDir: params.workspaceDir,
+          egressProviderRefs: [embeddedAgentProvider],
+        },
+      }),
+    });
+    chatKnowledgeRefs = resolution.admitted;
+  }
   return runEmbeddedAgent({
+    chatKnowledgeRefs,
     sessionId: params.sessionId,
     sessionKey: params.sessionKey,
     agentId: params.sessionAgentId,
@@ -711,7 +743,7 @@ export function runAgentAttempt(params: {
     senderIsOwner: params.opts.senderIsOwner,
     sessionFile: params.sessionFile,
     workspaceDir: params.workspaceDir,
-    workspaceId: params.sessionEntry?.workspaceId,
+    workspaceId: params.opts.workspaceId ?? params.sessionEntry?.workspaceId,
     cwd: params.cwd,
     config: params.cfg,
     agentHarnessId: embeddedAgentHarnessOverride,
@@ -903,7 +935,6 @@ export function emitAcpLifecycleError(params: {
     },
   });
 }
-
 
 export function emitAcpAssistantDelta(params: { runId: string; text: string; delta: string }) {
   emitAgentEvent({

@@ -1,6 +1,7 @@
 // Gateway agent methods implement agent.run, agent.wait, agent.reset, identity,
 // and related session-aware RPC handlers used by UI and operator clients.
 import { randomUUID } from "node:crypto";
+import { listContextFinalSnapshots } from "../../context-engine/context-final-snapshot.js";
 import { existsSync } from "node:fs";
 import {
   normalizeOptionalLowercaseString,
@@ -1059,6 +1060,7 @@ export const agentHandlers: GatewayRequestHandlers = {
       lane?: string;
       extraSystemPrompt?: string;
       modelRun?: boolean;
+      knowledgeReferences?: import("../../context-engine/chat-knowledge-intent.js").ChatKnowledgeReferenceIntent[];
       promptMode?: "full" | "minimal" | "none";
       bootstrapContextMode?: "full" | "lightweight";
       bootstrapContextRunKind?: "default" | "heartbeat" | "cron";
@@ -1077,10 +1079,23 @@ export const agentHandlers: GatewayRequestHandlers = {
       label?: string;
       inputProvenance?: InputProvenance;
       workspaceDir?: string;
+      workspaceId?: string;
       voiceWakeTrigger?: string;
     };
     const allowModelOverride = resolveAllowModelOverrideFromClient(client);
     const canUseInternalRuntimeHandoff = resolveCanUseInternalRuntimeHandoff(client);
+    if (
+      request.knowledgeReferences?.length &&
+      !clientHasAdminScope(client) &&
+      !client?.connect?.scopes?.includes("operator.read")
+    ) {
+      respond(
+        false,
+        undefined,
+        errorShape(ErrorCodes.INVALID_REQUEST, "Knowledge read requires operator.read scope."),
+      );
+      return;
+    }
     const requestedModelOverride = Boolean(request.provider || request.model);
     const requestedInternalSessionEffects = request.sessionEffects === "internal";
     const requestedPromptPersistenceSuppression = request.suppressPromptPersistence === true;
@@ -1110,11 +1125,14 @@ export const agentHandlers: GatewayRequestHandlers = {
       );
       return;
     }
-    if (request.workspaceDir && !canUseInternalRuntimeHandoff) {
+    if ((request.workspaceDir || request.workspaceId) && !canUseInternalRuntimeHandoff) {
       respond(
         false,
         undefined,
-        errorShape(ErrorCodes.INVALID_REQUEST, "workspaceDir is reserved for backend callers."),
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          "workspace selectors are reserved for backend callers.",
+        ),
       );
       return;
     }
@@ -2577,6 +2595,10 @@ export const agentHandlers: GatewayRequestHandlers = {
               runId,
               lane: request.lane,
               modelRun: request.modelRun === true,
+              knowledgeReferences: request.knowledgeReferences,
+              workspaceId: canUseInternalRuntimeHandoff
+                ? normalizeOptionalString(request.workspaceId)
+                : undefined,
               promptMode: request.promptMode,
               extraSystemPrompt: memoryExtraSystemPrompt,
               bootstrapContextMode: request.bootstrapContextMode,
@@ -2723,7 +2745,7 @@ export const agentHandlers: GatewayRequestHandlers = {
       undefined,
     );
   },
-  "agent.wait": async ({ params, respond, context }) => {
+  "agent.wait": async ({ params, respond, context, client }) => {
     if (!validateAgentWaitParams(params)) {
       respond(
         false,
@@ -2737,6 +2759,47 @@ export const agentHandlers: GatewayRequestHandlers = {
     }
     const p = params;
     const runId = (p.runId ?? "").trim();
+    const waitStartedAt = Date.now();
+    const respondWithEvidence = async (payload: Record<string, unknown>) => {
+      const canRead =
+        clientHasAdminScope(client) || client?.connect?.scopes?.includes("operator.read");
+      const retainedEvidence = canRead
+        ? listContextFinalSnapshots(runId).at(-1)?.budget.retainedEvidence
+        : undefined;
+      let text: string | undefined;
+      if (
+        retainedEvidence &&
+        (payload.status === "ok" || payload.status === "completed") &&
+        context.dedupe.has("agent:" + runId)
+      ) {
+        // Lifecycle completion can precede the final result cache by one microtask.
+        await waitForTerminalGatewayDedupe({
+          dedupe: context.dedupe,
+          runId,
+          timeoutMs: Math.max(0, timeoutMs - (Date.now() - waitStartedAt)),
+        });
+        const result = (
+          context.dedupe.get("agent:" + runId)?.payload as
+            | {
+                result?: {
+                  payloads?: Array<{ text?: string }>;
+                  meta?: { finalAssistantVisibleText?: string; finalAssistantRawText?: string };
+                };
+              }
+            | undefined
+        )?.result;
+        const output =
+          result?.payloads?.map((part) => part.text ?? "").join("\n") ||
+          result?.meta?.finalAssistantVisibleText ||
+          result?.meta?.finalAssistantRawText;
+        if (output && output.length <= 100000) text = output;
+      }
+      respond(true, {
+        ...payload,
+        ...(retainedEvidence ? { retainedEvidence } : {}),
+        ...(text ? { text } : {}),
+      });
+    };
     const timeoutMs =
       typeof p.timeoutMs === "number" && Number.isFinite(p.timeoutMs)
         ? Math.max(0, Math.floor(p.timeoutMs))
@@ -2753,7 +2816,7 @@ export const agentHandlers: GatewayRequestHandlers = {
       ignoreAgentTerminalSnapshot: hasActiveChatRun,
     });
     if (cachedGatewaySnapshot) {
-      respond(true, {
+      await respondWithEvidence({
         runId,
         status: cachedGatewaySnapshot.status,
         startedAt: cachedGatewaySnapshot.startedAt,
@@ -2783,14 +2846,14 @@ export const agentHandlers: GatewayRequestHandlers = {
       const snapshot = await dedupePromise;
       dedupeAbortController.abort();
       if (!snapshot) {
-        respond(true, {
+        await respondWithEvidence({
           runId,
           status: "timeout",
           timeoutPhase: "gateway_draining",
         });
         return;
       }
-      respond(true, {
+      await respondWithEvidence({
         runId,
         status: snapshot.status,
         startedAt: snapshot.startedAt,
@@ -2833,7 +2896,7 @@ export const agentHandlers: GatewayRequestHandlers = {
 
     if (!snapshot) {
       const activeRunRegistered = activeChatEntry !== undefined;
-      respond(true, {
+      await respondWithEvidence({
         runId,
         status: "timeout",
         timeoutPhase: activeRunRegistered ? "gateway_draining" : "queue",
@@ -2841,7 +2904,7 @@ export const agentHandlers: GatewayRequestHandlers = {
       });
       return;
     }
-    respond(true, {
+    await respondWithEvidence({
       runId,
       status: snapshot.status,
       startedAt: snapshot.startedAt,

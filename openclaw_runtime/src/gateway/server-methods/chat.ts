@@ -3250,9 +3250,19 @@ export const chatHandlers: GatewayRequestHandlers = {
       );
       return;
     }
-    if (p.workspaceId !== undefined && !canUseBackendWorkspaceDir(client)
-      && context.getRuntimeConfig().runtime?.providerBudget?.project) {
-      respond(false, undefined, errorShape(ErrorCodes.INVALID_REQUEST, 'Project budget workspaceId is reserved for backend callers.'));
+    if (
+      p.workspaceId !== undefined &&
+      !canUseBackendWorkspaceDir(client) &&
+      context.getRuntimeConfig().runtime?.providerBudget?.project
+    ) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          "Project budget workspaceId is reserved for backend callers.",
+        ),
+      );
       return;
     }
     const suppressCommandInterpretation = p.suppressCommandInterpretation === true;
@@ -3993,11 +4003,25 @@ export const chatHandlers: GatewayRequestHandlers = {
       );
       return;
     }
-    if (!backingSessionId && Array.isArray(p.knowledgeReferences) && p.knowledgeReferences.length
-      && (client?.connect?.scopes?.includes('operator.read') || client?.connect?.scopes?.includes('operator.admin'))) {
-      const prepared = await patchSessionEntry({ storePath: sessionLoadResult.storePath, sessionKey,
-        fallbackEntry: { sessionId: randomUUID(), updatedAt: Date.now(), ...(workspaceDir ? { workspaceDir } : {}),
-          ...(workspaceId ? { workspaceId } : {}) }, update: current => current, preserveActivity: true });
+    if (
+      !backingSessionId &&
+      Array.isArray(p.knowledgeReferences) &&
+      p.knowledgeReferences.length &&
+      (client?.connect?.scopes?.includes("operator.read") ||
+        client?.connect?.scopes?.includes("operator.admin"))
+    ) {
+      const prepared = await patchSessionEntry({
+        storePath: sessionLoadResult.storePath,
+        sessionKey,
+        fallbackEntry: {
+          sessionId: randomUUID(),
+          updatedAt: Date.now(),
+          ...(workspaceDir ? { workspaceDir } : {}),
+          ...(workspaceId ? { workspaceId } : {}),
+        },
+        update: (current) => current,
+        preserveActivity: true,
+      });
       backingSessionId = prepared?.sessionId;
     }
     const releaseChatAdmission = acquireSessionAdmissionPermit(
@@ -4046,20 +4070,36 @@ export const chatHandlers: GatewayRequestHandlers = {
     const readScopes = client?.connect?.scopes ?? [];
     if (Array.isArray(p.knowledgeReferences) && p.knowledgeReferences.length > 0) {
       if (!readScopes.includes("operator.read") && !readScopes.includes("operator.admin")) {
-        chatKnowledgeResolution.denied = normalizeChatKnowledgeReferences(p.knowledgeReferences).map(ref => ({
-          id: ref.id, title: ref.title, lookup: ref.lookup, reason: "acl_denied",
+        chatKnowledgeResolution.denied = normalizeChatKnowledgeReferences(
+          p.knowledgeReferences,
+        ).map((ref) => ({
+          id: ref.id,
+          title: ref.title,
+          lookup: ref.lookup,
+          reason: "acl_denied",
           visibleReason: "Knowledge read requires the authenticated operator.read scope.",
         }));
       } else {
         try {
           chatKnowledgeResolution = await resolveChatKnowledgeIntent({
-            scope: p.knowledgeScope, mode: p.knowledgeMode, references: p.knowledgeReferences, signal: activeRunAbort.controller.signal,
-            adapters: createProductionChatKnowledgeSourceAdapters(cfg, { signal: activeRunAbort.controller.signal, identity: {
-              sessionId: backingSessionId ?? clientRunId, agentSessionKey: sessionKey,
-              workspaceId, workspaceDir, egressProviderRefs: [resolvedSessionModel.provider],
-            } }),
+            scope: p.knowledgeScope,
+            mode: p.knowledgeMode,
+            references: p.knowledgeReferences,
+            signal: activeRunAbort.controller.signal,
+            adapters: createProductionChatKnowledgeSourceAdapters(cfg, {
+              signal: activeRunAbort.controller.signal,
+              identity: {
+                sessionId: backingSessionId ?? clientRunId,
+                agentSessionKey: sessionKey,
+                workspaceId,
+                workspaceDir,
+                egressProviderRefs: [resolvedSessionModel.provider],
+              },
+            }),
           });
-        } catch (error) { context.logGateway.warn(`chat.send knowledge ref resolution failed: ${String(error)}`); }
+        } catch (error) {
+          context.logGateway.warn(`chat.send knowledge ref resolution failed: ${String(error)}`);
+        }
       }
     }
     chatKnowledgeDenials = chatKnowledgeResolution.denied;
@@ -4220,11 +4260,25 @@ export const chatHandlers: GatewayRequestHandlers = {
         status: "started" as const,
         ...(serverTiming ? { serverTiming } : {}),
         ...(chatKnowledgeDenials.length > 0 ? { knowledgeDenials: chatKnowledgeDenials } : {}),
-        ...(Array.isArray(p.knowledgeReferences) && p.knowledgeReferences.length ? { knowledgeReferences: chatKnowledgeResolution.admitted.map(ref => ({
-          id: ref.intentId ?? ref.refId, title: ref.title, lookup: ref.lookup,
-          corpus: ref.owner === 'memory-wiki' ? 'wiki' : ref.owner === 'memory-slot' ? 'memory' : 'all',
-          revision: ref.revision, contentDigest: ref.contentDigest, sourceRef: ref.ownerSnapshot!.source,
-        })) } : {}),
+        ...(Array.isArray(p.knowledgeReferences) && p.knowledgeReferences.length
+          ? {
+              knowledgeReferences: chatKnowledgeResolution.admitted.map((ref) => ({
+                id: ref.intentId ?? ref.refId,
+                title: ref.title,
+                lookup: ref.lookup,
+                corpus:
+                  ref.owner === "memory-wiki"
+                    ? "wiki"
+                    : ref.owner === "memory-slot"
+                      ? "memory"
+                      : "all",
+                revision: ref.revision,
+                contentDigest: ref.contentDigest,
+                sourceRef: ref.ownerSnapshot!.source,
+                ...(ref.conflictGroupId ? { conflictGroupId: ref.conflictGroupId } : {}),
+              })),
+            }
+          : {}),
       };
       context.logGateway.info(
         `chat.send ack responding runId=${clientRunId} sessionKey=${sessionKey}`,

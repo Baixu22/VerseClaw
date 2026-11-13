@@ -115,6 +115,7 @@ type NormalizedKnowledgeReference = {
   sourceRef?: import('../../shared/knowledge/owner-read-contract').SourceRefV2;
   revision?: string;
   contentDigest?: string;
+  conflictGroupId?: string;
 };
 
 function capContextText(value: string, maxChars: number): string {

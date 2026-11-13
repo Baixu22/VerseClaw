@@ -1765,15 +1765,16 @@ describe('knowledge host API', () => {
     expect(answer.answer).not.toContain('OTHER_WORKSPACE_BODY');
   });
 
-  it('answers default and follow-up questions through the existing model-only Gateway with checked citations', async () => {
+  it.each([false, true])('checks default/follow-up citations after the model (source changed: %s)', async (sourceChanged) => {
     const listeners = new Set<(value: unknown) => void>();
     const body = '网关端口为8080。';
+    let sourceBody = body;
     const snapshotFor = (identity: { workspaceId: string; sessionId: string; agentSessionKey: string }) => {
       const context = deriveReadAdmissionContext({ principalId: 'operator', sessionId: identity.sessionId,
         sessionKey: identity.agentSessionKey, workspaceId: identity.workspaceId, ownerNamespaces: ['wiki-owner-fixture'],
         egressProviderRefs: [],
         policyDigest: digestOwnerReadContent('qa-fixture'), expiresAt: new Date(Date.now() + 30000).toISOString() });
-      return createOwnerReadSnapshot({ raw: body, startChar: 0, endChar: body.length, title: 'Gateway port', context,
+      return createOwnerReadSnapshot({ raw: sourceBody, startChar: 0, endChar: sourceBody.length, title: 'Gateway port', context,
         source: { domain: 'wiki', authorityId: 'memory-wiki', namespaceId: 'wiki-owner-fixture', subjectId: 'port.md', revision: '1' },
         policy: { status: 'active', trust: 'confirmed', sensitivity: 'workspace', acl: { read: ['operator'] }, retention: { policy: 'source-coupled' } } });
     };
@@ -1783,11 +1784,24 @@ describe('knowledge host API', () => {
       rpc: vi.fn(async (method: string, params: Record<string, unknown> = {}) => {
         if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.retrieve') return retrievalFixture([{ pagePath: 'port.md', lookup: 'port.md', title: 'Gateway port', sourceRef: snapshotFor(params.readIdentity as never).source }]);
-        if (method === 'wiki.get') return { corpus: 'wiki', path: 'port.md', content: body, revision: 1, status: 'active', ownerSnapshot: snapshotFor(params.readIdentity as never) };
+        if (method === 'wiki.get') return { corpus: 'wiki', path: 'port.md', content: sourceBody, revision: 1, status: 'active', ownerSnapshot: snapshotFor(params.readIdentity as never) };
         if (method === 'agent') return { runId: 'qa-run' };
         if (method === 'agent.wait') {
           for (const callback of listeners) callback({ runId: 'qa-run', type: 'assistant.delta', text: JSON.stringify({ claims: [{ text: '网关端口为8080。', citations: [{ sourceId: `memory-wiki:wiki-owner-fixture:port.md:0-${Buffer.byteLength(body)}`, quote: '端口为8080' }] }], unknowns: [] }) });
-          return { status: 'completed' };
+          const terminal = { status: 'completed', retainedEvidence: {
+            schema: 'RetainedEvidenceManifest/v1', turnId: 'qa-run', estimateMethod: 'utf8-bytes-div4',
+            retainedChars: body.length, retainedUtf8Bytes: Buffer.byteLength(body), estimatedTokens: Math.ceil(Buffer.byteLength(body) / 4),
+            units: [{ schema: 'KnowledgeCandidatePacking/v2', unitId: 'fixture-unit', candidateId: 'fixture-candidate', ordinal: 0,
+              projectionDigest: digestOwnerReadContent(body), retainedChars: body.length, retainedUtf8Bytes: Buffer.byteLength(body),
+              estimatedTokens: Math.ceil(Buffer.byteLength(body) / 4), citations: [{
+                refId: 'fixture-ref', intentId: 'memory-wiki:wiki-owner-fixture:port.md:0-' + Buffer.byteLength(body),
+                sourceRef: snapshotFor({ workspaceId: 'workspace-a', sessionId: '10000000-0000-4000-8000-000000000001', agentSessionKey: 'agent:main:main' }).source,
+                sourceDigest: digestOwnerReadContent(body), chunkDigest: digestOwnerReadContent(body),
+                retainedBodyChars: body.length, retainedBodyUtf8Bytes: Buffer.byteLength(body),
+              }] }],
+          } };
+          if (sourceChanged) sourceBody = body + '来源在模型执行后发生改变。';
+          return terminal;
         }
         throw Error(`Unexpected RPC ${method}`);
       }),
@@ -1795,6 +1809,13 @@ describe('knowledge host API', () => {
     const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
     const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
     const answer = await api.answerFromSourceSet({ question: '它的端口呢？', sourceRefs: [], synthesis: true, history: [{ role: 'user', content: '讨论网关' }] });
+    if (sourceChanged) {
+      expect(answer.model?.status).toBe('error');
+      expect(answer.synthesisMode).toBe('source-excerpts');
+      expect(answer.claims).toBeUndefined();
+      expect(answer.unknowns.join(' ')).toContain('changed during model execution');
+      return;
+    }
     expect(answer).toMatchObject({ success: true, synthesisMode: 'model', model: { status: 'completed', runId: 'qa-run' }, groundingStatus: 'partial' });
     expect(answer.unknowns.join(' ')).toContain('no known freshness');
     expect(answer.answer).toContain('网关端口为8080');

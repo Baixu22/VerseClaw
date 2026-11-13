@@ -126,6 +126,7 @@ export const ChatKnowledgeReferenceSchema = Type.Object(
     sourceRef: Type.Optional(SourceRefV2Schema),
     revision: Type.Optional(NonEmptyString),
     contentDigest: Type.Optional(Type.String({ pattern: "^sha256:[a-f0-9]{64}$" })),
+    conflictGroupId: Type.Optional(Type.String({ minLength: 1, maxLength: 400 })),
   },
   { additionalProperties: false },
 );
