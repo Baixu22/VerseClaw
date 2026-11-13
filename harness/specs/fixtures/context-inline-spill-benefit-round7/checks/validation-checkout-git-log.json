@@ -1,0 +1,45 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "validation-checkout-git-log",
+  "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+  "command": [
+    "git",
+    "log",
+    "-5",
+    "--oneline"
+  ],
+  "startedAt": "2026-11-13T08:45:02.029Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "d46cce0dc2331934d2fa7db912bee065485bbd64",
+    "tree": "59dee145966a5c4c437a9a81c50a528a35a7d151",
+    "branch": "",
+    "dirty": false
+  },
+  "finishedAt": "2026-11-13T08:45:02.540Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "d46cce0dc2331934d2fa7db912bee065485bbd64",
+    "tree": "59dee145966a5c4c437a9a81c50a528a35a7d151",
+    "branch": "",
+    "dirty": false
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\validation-checkout-git-log.stdout.txt",
+      "bytes": 371,
+      "sha256": "9f19042a47c3d9e3381f212047f4efcbe8b814d817305cdd87954a3a13c2f387"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\validation-checkout-git-log.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

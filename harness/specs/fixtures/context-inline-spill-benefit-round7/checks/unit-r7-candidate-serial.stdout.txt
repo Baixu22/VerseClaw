@@ -1,0 +1,11 @@
+
+ RUN  v4.1.1 D:/ClawX-work/g7-inline-spill-tf0749-20261113-01a1d34c
+
+ ❯ tests/unit/context-inline-spill-benefit-clean-candidate.test.ts (4 tests | 1 failed) 99919ms
+     × rejects a changed output budget before any provider call 61129ms
+
+ Test Files  1 failed | 6 passed (7)
+      Tests  1 failed | 59 passed (60)
+   Start at  16:49:42
+   Duration  166.80s (transform 14.81s, setup 1.89s, import 18.16s, tests 138.18s, environment 4.53s)
+

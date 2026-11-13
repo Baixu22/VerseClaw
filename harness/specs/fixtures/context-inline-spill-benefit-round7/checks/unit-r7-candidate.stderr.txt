@@ -1,0 +1,83 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/context-inline-spill-benefit-clean-candidate.test.ts > benefit eval clean-candidate evidence > rejects a changed output budget before any provider call
+AssertionError: expected Error: spawnSync C:\Program Files\nodejs\… { …(5) } to be undefined
+
+- Expected:
+undefined
+
++ Received:
+Error {
+  "message": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+  "errno": -4039,
+  "code": "ETIMEDOUT",
+  "syscall": "spawnSync C:\\Program Files\\nodejs\\node.exe",
+  "path": "C:\\Program Files\\nodejs\\node.exe",
+  "spawnargs": [
+    "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c\\openclaw_runtime\\node_modules\\tsx\\dist\\cli.mjs",
+    "--tsconfig",
+    "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c\\openclaw_runtime\\tsconfig.json",
+    "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c\\scripts\\context-inline-spill-benefit-loop-eval.mts",
+    "--mode",
+    "live",
+    "--out",
+    "D:\\tmp\\g7-budget-rejection-Z3L8qZ",
+    "--actor",
+    "codex-g7-inline-spill-tf0749-01a1d34c",
+    "--freeze",
+    "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c\\harness\\specs\\fixtures\\context-inline-spill-benefit-round6\\design.freeze.json",
+    "--max-output-tokens",
+    "901",
+  ],
+}
+
+ ❯ tests/unit/context-inline-spill-benefit-clean-candidate.test.ts:30:39
+     28|     const output = mkdtempSync(join(tmpdir(), "g7-budget-rejection-"));
+     29|     const child = execute(output, ["--freeze", freeze, "--max-output-t…
+     30|     expect(child.error, child.stderr).toBeUndefined();
+       |                                       ^
+     31|     expect(child.status).toBe(1);
+     32|     const rejection = JSON.parse(readFileSync(join(runDirectory(output…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/context-inline-spill-benefit-clean-candidate.test.ts > benefit eval clean-candidate evidence > reads and rejects an actually dirty temporary Git candidate before a request
+AssertionError: expected Error: spawnSync C:\Program Files\nodejs\… { …(5) } to be undefined
+
+- Expected:
+undefined
+
++ Received:
+Error {
+  "message": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+  "errno": -4039,
+  "code": "ETIMEDOUT",
+  "syscall": "spawnSync C:\\Program Files\\nodejs\\node.exe",
+  "path": "C:\\Program Files\\nodejs\\node.exe",
+  "spawnargs": [
+    "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c\\openclaw_runtime\\node_modules\\tsx\\dist\\cli.mjs",
+    "--tsconfig",
+    "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c\\openclaw_runtime\\tsconfig.json",
+    "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c\\scripts\\context-inline-spill-benefit-loop-eval.mts",
+    "--mode",
+    "live",
+    "--out",
+    "D:\\tmp\\g7-dirty-output-s0tJKU",
+    "--actor",
+    "codex-g7-inline-spill-tf0749-01a1d34c",
+    "--freeze",
+    "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c\\harness\\specs\\fixtures\\context-inline-spill-benefit-round6\\design.freeze.json",
+  ],
+}
+
+ ❯ tests/unit/context-inline-spill-benefit-clean-candidate.test.ts:46:39
+     44|     const output = mkdtempSync(join(tmpdir(), "g7-dirty-output-"));
+     45|     const child = execute(output, ["--freeze", freeze], candidate);
+     46|     expect(child.error, child.stderr).toBeUndefined();
+       |                                       ^
+     47|     expect(child.status).toBe(1);
+     48|     const rejection = JSON.parse(readFileSync(join(runDirectory(output…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

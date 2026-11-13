@@ -1,0 +1,45 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "commit-preflight-r7",
+  "cwd": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c",
+  "command": [
+    "git",
+    "commit",
+    "-m",
+    "fix(context-eval): reject frozen input drift before runtime imports"
+  ],
+  "startedAt": "2026-11-13T08:57:46.448Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "d46cce0dc2331934d2fa7db912bee065485bbd64",
+    "tree": "59dee145966a5c4c437a9a81c50a528a35a7d151",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": true
+  },
+  "finishedAt": "2026-11-13T08:57:47.461Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "89dff8ebd6d21fa279ab586c368d2132efa01940",
+    "tree": "b5502430f54a0d42fe8873264483d2e6814ef3fa",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\commit-preflight-r7.stdout.txt",
+      "bytes": 169,
+      "sha256": "24f79f0bfe6a15ae54b4ad5293665f1316fcfe2d9a2b4531522202e2c0df052c"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\commit-preflight-r7.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

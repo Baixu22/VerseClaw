@@ -1,0 +1,45 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "continuation-git-log",
+  "cwd": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c",
+  "command": [
+    "git",
+    "log",
+    "-5",
+    "--oneline"
+  ],
+  "startedAt": "2026-11-13T08:27:20.533Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "1a16bc17a6545bc5fd9a29dd7d314964d97493f3",
+    "tree": "2fb1175859d12a3dc078bfc01c2f4d5748fd0742",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": true
+  },
+  "finishedAt": "2026-11-13T08:27:21.079Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "1a16bc17a6545bc5fd9a29dd7d314964d97493f3",
+    "tree": "2fb1175859d12a3dc078bfc01c2f4d5748fd0742",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": true
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\continuation-git-log.stdout.txt",
+      "bytes": 345,
+      "sha256": "f304ace4fbc91dbb910bb65bdba2d9042283882d38ed449e159057fdef38a965"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\continuation-git-log.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

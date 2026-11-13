@@ -1,0 +1,5 @@
+89dff8ebd fix(context-eval): reject frozen input drift before runtime imports
+d46cce0dc fix(context-eval): keep original archive targets and tool log provenance
+449192523 eval(context): freeze G7 archive anchoring and tool pressure design
+1a16bc17a eval(context): retain clean G7 rerun and NO_GO verdict
+eb93671ab eval(context): compare G7 source blobs without EOL filtering

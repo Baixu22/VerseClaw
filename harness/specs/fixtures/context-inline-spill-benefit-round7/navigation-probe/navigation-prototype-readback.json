@@ -1,0 +1,181 @@
+{
+  "schema": "G7VisibleNavigationMechanismProbe/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "recordedAt": "2026-11-13T09:16:44.460Z",
+  "source": "D:/tmp/g7-closeout-pass-r7-01a1d34c/live/2026-11-13T09-05-58-153Z-live/runs.jsonl",
+  "capturedBytes": 4585730,
+  "capturedSha256": "8d5b560810e2ef1a4f6972735daf32322cb886d8ca0acdb76b8a334918fed077",
+  "checks": [
+    {
+      "fixtureId": "deploy-token",
+      "repetition": 0,
+      "inputSha256": "49724949f267ea2bcb636fdf807c71298283256b5e4948a4a216121e0c59ff4d",
+      "navigation": {
+        "source": "visible-call-metadata",
+        "targetSourceIndex": 1,
+        "offsetSourceIndex": 2,
+        "recallsUsed": 1,
+        "recommendedArguments": {
+          "archive_uri": "context-archive://benefit-deploy-token-recall-stable-0/deploy-token-0-5e36b1597128f7ef.context-archive.json",
+          "checksum": "sha256:5e36b1597128f7efb9082422589f9940ae038d36e2362b9e19e2bbf3f39cccc8",
+          "offset": 5500,
+          "max_chars": 5500
+        }
+      },
+      "observedNextCallOriginal": false
+    },
+    {
+      "fixtureId": "deploy-token",
+      "repetition": 1,
+      "inputSha256": "73e4fd993df82193e0dc6fdf7f9316bd11a394fc26c95e45def525825637b3a5",
+      "navigation": {
+        "source": "visible-call-metadata",
+        "targetSourceIndex": 1,
+        "offsetSourceIndex": 2,
+        "recallsUsed": 1,
+        "recommendedArguments": {
+          "archive_uri": "context-archive://benefit-deploy-token-recall-stable-1/deploy-token-1-5e36b1597128f7ef.context-archive.json",
+          "checksum": "sha256:5e36b1597128f7efb9082422589f9940ae038d36e2362b9e19e2bbf3f39cccc8",
+          "offset": 5500,
+          "max_chars": 5500
+        }
+      },
+      "observedNextCallOriginal": false
+    },
+    {
+      "fixtureId": "deploy-token",
+      "repetition": 2,
+      "inputSha256": "85003a86f3d41abf0efece155452541b9a062c6989161f731f882130d64aaa59",
+      "navigation": {
+        "source": "visible-call-metadata",
+        "targetSourceIndex": 1,
+        "offsetSourceIndex": 2,
+        "recallsUsed": 1,
+        "recommendedArguments": {
+          "archive_uri": "context-archive://benefit-deploy-token-recall-stable-2/deploy-token-2-5e36b1597128f7ef.context-archive.json",
+          "checksum": "sha256:5e36b1597128f7efb9082422589f9940ae038d36e2362b9e19e2bbf3f39cccc8",
+          "offset": 5500,
+          "max_chars": 5500
+        }
+      },
+      "observedNextCallOriginal": false
+    },
+    {
+      "fixtureId": "db-passport",
+      "repetition": 0,
+      "inputSha256": "befc33c784a48e9db30ea0624e47e94befc63a2f7bddf795eb640ff84792127b",
+      "navigation": {
+        "source": "visible-call-metadata",
+        "targetSourceIndex": 1,
+        "offsetSourceIndex": 2,
+        "recallsUsed": 1,
+        "recommendedArguments": {
+          "archive_uri": "context-archive://benefit-db-passport-recall-stable-0/db-passport-0-6806cbeba07d8155.context-archive.json",
+          "checksum": "sha256:6806cbeba07d81558e25027e5585135a1f80ed15bb17c86194d4a0ada23ae527",
+          "offset": 5500,
+          "max_chars": 5500
+        }
+      },
+      "observedNextCallOriginal": false
+    },
+    {
+      "fixtureId": "db-passport",
+      "repetition": 1,
+      "inputSha256": "ba640c86a28199a304635bc99721316085ac543b82fbf0e4863e0640503cc97b",
+      "navigation": {
+        "source": "visible-call-metadata",
+        "targetSourceIndex": 1,
+        "offsetSourceIndex": 2,
+        "recallsUsed": 1,
+        "recommendedArguments": {
+          "archive_uri": "context-archive://benefit-db-passport-recall-stable-1/db-passport-1-6806cbeba07d8155.context-archive.json",
+          "checksum": "sha256:6806cbeba07d81558e25027e5585135a1f80ed15bb17c86194d4a0ada23ae527",
+          "offset": 5500,
+          "max_chars": 5500
+        }
+      },
+      "observedNextCallOriginal": false
+    },
+    {
+      "fixtureId": "db-passport",
+      "repetition": 2,
+      "inputSha256": "84d81e392d8a8a8940076272c66dd4bdcc3433cf387b1f0ab700d302ba9e2361",
+      "navigation": {
+        "source": "visible-call-metadata",
+        "targetSourceIndex": 1,
+        "offsetSourceIndex": 2,
+        "recallsUsed": 1,
+        "recommendedArguments": {
+          "archive_uri": "context-archive://benefit-db-passport-recall-stable-2/db-passport-2-6806cbeba07d8155.context-archive.json",
+          "checksum": "sha256:6806cbeba07d81558e25027e5585135a1f80ed15bb17c86194d4a0ada23ae527",
+          "offset": 5500,
+          "max_chars": 5500
+        }
+      },
+      "observedNextCallOriginal": true
+    },
+    {
+      "fixtureId": "cache-seed",
+      "repetition": 0,
+      "inputSha256": "48b3e92d0d43b6da3ddcb9b0f31d5dd826113e0e4ced35a593c25e6b7aed6f63",
+      "navigation": {
+        "source": "visible-call-metadata",
+        "targetSourceIndex": 1,
+        "offsetSourceIndex": 2,
+        "recallsUsed": 1,
+        "recommendedArguments": {
+          "archive_uri": "context-archive://benefit-cache-seed-recall-stable-0/cache-seed-0-a30a6780c00bceab.context-archive.json",
+          "checksum": "sha256:a30a6780c00bceab64cc2be69b61b05c6a811a8860c41a971377d95249551fdb",
+          "offset": 5500,
+          "max_chars": 5500
+        }
+      },
+      "observedNextCallOriginal": false
+    },
+    {
+      "fixtureId": "cache-seed",
+      "repetition": 1,
+      "inputSha256": "b41ef57049b79f1b4254a472aff7c3ff0186678f5ced6fcff306b9ae79a399fd",
+      "navigation": {
+        "source": "visible-call-metadata",
+        "targetSourceIndex": 1,
+        "offsetSourceIndex": 2,
+        "recallsUsed": 1,
+        "recommendedArguments": {
+          "archive_uri": "context-archive://benefit-cache-seed-recall-stable-1/cache-seed-1-a30a6780c00bceab.context-archive.json",
+          "checksum": "sha256:a30a6780c00bceab64cc2be69b61b05c6a811a8860c41a971377d95249551fdb",
+          "offset": 5500,
+          "max_chars": 5500
+        }
+      },
+      "observedNextCallOriginal": false
+    },
+    {
+      "fixtureId": "cache-seed",
+      "repetition": 2,
+      "inputSha256": "985e40eb7fdae1d473cb7085be195763ccc3dc07606b4b1bbb923a78b2c699f7",
+      "navigation": {
+        "source": "visible-call-metadata",
+        "targetSourceIndex": 1,
+        "offsetSourceIndex": 2,
+        "recallsUsed": 1,
+        "recommendedArguments": {
+          "archive_uri": "context-archive://benefit-cache-seed-recall-stable-2/cache-seed-2-a30a6780c00bceab.context-archive.json",
+          "checksum": "sha256:a30a6780c00bceab64cc2be69b61b05c6a811a8860c41a971377d95249551fdb",
+          "offset": 5500,
+          "max_chars": 5500
+        }
+      },
+      "observedNextCallOriginal": true
+    }
+  ],
+  "sourceInputUnchanged": true,
+  "payloadValuesCopied": false,
+  "clearedOutputFallbackVerified": true,
+  "missingReferenceNullVerified": true,
+  "mode": "deterministic",
+  "liveBenefitEvaluated": false,
+  "taskForestUpdated": false
+}

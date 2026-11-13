@@ -1,0 +1,47 @@
+[ext-bridge] No external extensions configured — empty stubs up to date.
+{
+  "success": true,
+  "mode": "parallel",
+  "testTypes": {
+    "commandLine": "pnpm run typecheck:test",
+    "exitCode": 0,
+    "durationMs": 45308,
+    "observationMode": false,
+    "errorCount": 0,
+    "errorLog": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+  },
+  "cache": {
+    "enabled": false,
+    "status": "disabled",
+    "key": "7d6dd71b0b14393f250e47bc5486343e30a9f3a6347353254845ee99769dd6f6",
+    "inputCount": 13513,
+    "report": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c\\artifacts\\typecheck-cache\\report.json"
+  },
+  "totalDurationMs": 62205,
+  "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 131
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "durationMs": 50021
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "durationMs": 34931
+    },
+    {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 45308,
+      "observationMode": false,
+      "errorCount": 0,
+      "errorLog": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    }
+  ]
+}

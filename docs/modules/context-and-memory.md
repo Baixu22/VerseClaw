@@ -572,6 +572,11 @@ stable 证据 3/18、控制 6/6，证据保留正向配对 3、反向 0；B3/B4/
 B1–B7 阈值保持原值。deterministic 来源对照先验证机制，真实收益由独立冻结后的
 clean 候选实测及 `context-inline-spill-benefit-round7-verify.mjs` 复核。
 
+第七轮 clean 候选 `89dff8ebd` 完成96次运行、416次调用，全部completed。
+stable证据1/18、控制6/6；B1/B3/B5/B6/B7通过，B2/B4失败，判定mechanism-only/NO_GO。
+token相对reference减少22.56%，但原归档选择仍有39次原目标、49次其他归档，原工具content命中1次。
+本轮结果与原始失败单独封存，见[第七轮收益复核](../../harness/specs/fixtures/context-inline-spill-benefit-round7/REPORT.md)。
+
 
 [第四轮评测](../../harness/specs/tasks/inline-spill-real-benefit-eval-round4.md)要求每次回读显式提供 1–5500 的 `max_chars`，缺失或超界参数返回 `invalid_arguments`。工具说明引导模型用 `offset + content.length` 翻页，取得精确值后输出最终 JSON。页尺寸与 6000 字符生产投影预算共同校验，收益按原 96 次样本与 900 输出 token 预算实测。
 

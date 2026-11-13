@@ -1,0 +1,55 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "unit-r7-candidate",
+  "cwd": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+    "--config.verify-deps-before-run=false",
+    "exec",
+    "vitest",
+    "run",
+    "tests/unit/context-inline-spill-benefit-strategy.test.ts",
+    "tests/unit/context-inline-spill-benefit-clean-candidate.test.ts",
+    "tests/unit/context-inline-spill-benefit-input.test.ts",
+    "tests/unit/context-inline-spill-benefit-scoring.test.ts",
+    "tests/unit/context-inline-spill-retention.test.ts",
+    "tests/unit/context-inline-spill-eval-provider.test.ts",
+    "tests/unit/harness-spec-lifecycle.test.ts",
+    "--maxWorkers=1"
+  ],
+  "startedAt": "2026-11-13T08:40:33.850Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "d46cce0dc2331934d2fa7db912bee065485bbd64",
+    "tree": "59dee145966a5c4c437a9a81c50a528a35a7d151",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "finishedAt": "2026-11-13T08:44:37.406Z",
+  "exitCode": 1,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "d46cce0dc2331934d2fa7db912bee065485bbd64",
+    "tree": "59dee145966a5c4c437a9a81c50a528a35a7d151",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\unit-r7-candidate.stdout.txt",
+      "bytes": 537,
+      "sha256": "9320a8408f0d113b4f95d39dae13e099585bb5915be8d1c69a3297fd80e37859"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\unit-r7-candidate.stderr.txt",
+      "bytes": 3653,
+      "sha256": "54fafbe265dd62de1083a0d600eb02e67731fe7d9df1c1fc703f65b7384f9068"
+    }
+  }
+}

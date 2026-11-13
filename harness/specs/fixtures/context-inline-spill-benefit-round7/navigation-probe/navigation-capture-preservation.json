@@ -1,0 +1,13 @@
+{
+  "schema": "G7NavigationCapturePreservation/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "capturedSource": "D:/tmp/g7-closeout-pass-r7-01a1d34c/live/2026-11-13T09-05-58-153Z-live/runs.jsonl",
+  "bytes": 4585730,
+  "sha256": "8d5b560810e2ef1a4f6972735daf32322cb886d8ca0acdb76b8a334918fed077",
+  "bundleSha256": "33c1f55776b63bfce5d1193ed484bd05895d460e4c25fe1cfe4a438f4f7046bc",
+  "prototypeSha256": "f921fa3406db1f2ee0fb51fbb698ce041bffe45857ac873f00ec34c9ebb77af2",
+  "checksSha256": "773728171dd996ba41cb68586e427ed8184639fff178802764b5080067492c82",
+  "liveBenefitEvaluated": false
+}

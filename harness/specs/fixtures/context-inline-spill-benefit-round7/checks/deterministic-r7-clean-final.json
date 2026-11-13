@@ -1,0 +1,64 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "deterministic-r7-clean-final",
+  "cwd": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c",
+  "command": [
+    "node",
+    "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+    "scripts/context-inline-spill-benefit-loop-eval.mts",
+    "--mode",
+    "deterministic",
+    "--out",
+    "D:/tmp/g7-closeout-pass-r7-01a1d34c/deterministic-final",
+    "--repeats",
+    "1",
+    "--max-turns",
+    "8",
+    "--max-output-tokens",
+    "900",
+    "--strategy",
+    "anchored",
+    "--pressure-source",
+    "tool",
+    "--provider-timeout-ms",
+    "240000",
+    "--freeze",
+    "harness/specs/fixtures/context-inline-spill-benefit-round7/design.freeze.json",
+    "--actor",
+    "codex-g7-inline-spill-tf0749-01a1d34c"
+  ],
+  "startedAt": "2026-11-13T09:01:09.696Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "89dff8ebd6d21fa279ab586c368d2132efa01940",
+    "tree": "b5502430f54a0d42fe8873264483d2e6814ef3fa",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "finishedAt": "2026-11-13T09:01:38.019Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "89dff8ebd6d21fa279ab586c368d2132efa01940",
+    "tree": "b5502430f54a0d42fe8873264483d2e6814ef3fa",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\deterministic-r7-clean-final.stdout.txt",
+      "bytes": 1467,
+      "sha256": "aa7bb5658c050861f216b5e4d87a17573c57da8f77e3f0020d169dc9fa550549"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\deterministic-r7-clean-final.stderr.txt",
+      "bytes": 7008,
+      "sha256": "f3fba2dde9019b0d451f41650ec4070255e59408505ffeeb762d297ba6581fd7"
+    }
+  }
+}
