@@ -1,0 +1,54 @@
+{
+  "schema": "ProjectRagReviewAdjudication/v1",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "helperExitCode": 1,
+  "findings": [
+    {
+      "title": "Unsupported source claims still drop all open-mode claims including unrelated supported/general claims",
+      "location": {
+        "file_path": "electron/services/knowledge-evidence-qa.ts",
+        "line": 152
+      },
+      "disposition": "rejected",
+      "reason": "The cited function clears all claims only when mode===strict. Open filters each source claim by its own verdict and keeps non-source claims. The finding body contradicts the actual branch and its own premise."
+    },
+    {
+      "title": "Quote presence alone is treated as exact quotation correctness without checking whether the quote is complete or unambiguous",
+      "location": {
+        "file_path": "electron/services/knowledge-evidence-qa.ts",
+        "line": 101
+      },
+      "disposition": "rejected",
+      "reason": "ExactQuote verification establishes one contiguous byte-equal range, not sentence meaning. The chosen occurrence has deterministic coordinates; the separate support judge validates semantic relevance. No whole-sentence or unique-text requirement exists in Citation/v2."
+    },
+    {
+      "title": "Source citation navigation does not request the raw citation range",
+      "location": {
+        "file_path": "src/pages/Knowledge/index.tsx",
+        "line": 1048
+      },
+      "disposition": "rejected",
+      "reason": "The owner reader prioritizes pin.locator, decodes exactly startByte:endByteExclusive, and validates line coordinates. lineCount is used only without a pin. The Electron raw-range screenshot and receipt show only the quote at raw line10, with original headers excluded."
+    },
+    {
+      "title": "Open-mode source claims with no admitted sources are sent to the model without owner/DCS references",
+      "location": {
+        "file_path": "electron/services/knowledge-api.ts",
+        "line": 3464
+      },
+      "disposition": "rejected",
+      "reason": "runKnowledgeModel always sends modelRun=true, promptMode=none, disableMessageTool=true and internal session effects. Its optional knowledge argument carries pins/workspace selectors, not tool authority. Open empty-source claims can only be general/inference with no citations; source claims fail validation."
+    }
+  ],
+  "accepted": 0,
+  "rejected": 4,
+  "remainingAccepted": 0,
+  "status": "closed-after-source-verification",
+  "evidence": [
+    "rag10-unit-dev3.json",
+    "rag10-electron-dev3.json",
+    "rag10-review.json"
+  ]
+}

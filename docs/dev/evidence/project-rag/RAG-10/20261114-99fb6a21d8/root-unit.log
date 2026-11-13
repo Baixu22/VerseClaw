@@ -1,0 +1,4 @@
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+JSON report written to D:/tmp/project-rag-relay-01a1d438/rag10-formal-99fb6a21d8/root-unit.json

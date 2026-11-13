@@ -1,0 +1,42 @@
+
+C:\Users\27933\.codex\worktrees\project-rag-longterm-20261109\ClawX\electron\services\knowledge-api.ts
+  6004:35   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6007:32   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6018:50   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6018:79   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6024:39   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6024:77   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6025:45   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6025:89   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6042:41   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6043:47   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6043:100  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6044:52   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6045:54   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6060:38   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6061:44   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6062:49   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6063:51   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6078:36   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6079:42   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6080:47   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6081:49   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6095:38   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6096:44   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6096:91   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6096:115  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6097:53   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6097:77   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6098:55   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6098:79   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\project-rag-longterm-20261109\ClawX\src\pages\Knowledge\index.tsx
+  359:6   warning  React Hook useEffect has missing dependencies: 'editorMode' and 'selectedLookup'. Either include them or remove the dependency array                                                                        react-hooks/exhaustive-deps
+  421:60  warning  Unexpected any. Specify a different type                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  504:9   warning  The 'okfConcepts' logical expression could make the dependencies of useCallback Hook (at line 922) change on every render. To fix this, wrap the initialization of 'okfConcepts' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  790:35  warning  Unexpected any. Specify a different type                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  791:38  warning  Unexpected any. Specify a different type                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  797:45  warning  Unexpected any. Specify a different type                                                                                                                                                                    @typescript-eslint/no-explicit-any
+
+✖ 35 problems (0 errors, 35 warnings)
+

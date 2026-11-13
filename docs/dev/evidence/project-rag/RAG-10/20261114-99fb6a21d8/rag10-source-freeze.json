@@ -1,0 +1,8 @@
+{
+  "candidate": "ba271a1da83f89e85c9b1dc32544c351a2f4796c",
+  "review": "rag10-review.json",
+  "adjudication": "rag10-review-adjudication.json",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false
+}

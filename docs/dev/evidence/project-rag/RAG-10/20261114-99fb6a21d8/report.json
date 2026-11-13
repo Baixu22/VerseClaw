@@ -1,0 +1,105 @@
+{
+  "schema": "ProjectRagAnswerCitationAcceptance/v1",
+  "node": "TF-0887",
+  "programKey": "RAG-10",
+  "status": "pass",
+  "candidate": "99fb6a21d885ea7d4f2bb0abb68cd030d6d0988b",
+  "sourceCodeCommit": "ba271a1da83f89e85c9b1dc32544c351a2f4796c",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "tests": {
+    "root": {
+      "numTotalTests": 118,
+      "numPassedTests": 118,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    },
+    "runtime": {
+      "numTotalTests": 15,
+      "numPassedTests": 15,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    },
+    "electron": {
+      "startTime": "2026-11-13T22:49:14.099Z",
+      "duration": 84517.445,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  "formalGates": {
+    "total": 15,
+    "passed": 15,
+    "failed": 0,
+    "notRun": 0
+  },
+  "review": {
+    "helperExitCode": 1,
+    "findings": 4,
+    "accepted": 0,
+    "rejected": 4,
+    "remainingAccepted": 0,
+    "artifact": "rag10-review-adjudication.json",
+    "model": "ccs-workbuddy/deepseek-v4.1-flash"
+  },
+  "acceptance": [
+    {
+      "criterion": 1,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "electron.json",
+        "electron/project-rag-dcs-citation-P-3f869--retry-and-model-only-calls/dcs-lifecycle-receipt.json"
+      ],
+      "result": "Quote bytes/pins and agent-driven semantic support are separate; only the independent support result can mark a source claim supported."
+    },
+    {
+      "criterion": 2,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "electron.json",
+        "electron/project-rag-dcs-citation-P-3f869--retry-and-model-only-calls/dcs-lifecycle-receipt.json"
+      ],
+      "result": "Strict missing/conflicting/unsupported facts return unknown; open general/inference is uncited, and provider failure retains partial sources with the reason."
+    },
+    {
+      "criterion": 3,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "electron.json",
+        "electron/project-rag-dcs-citation-P-3f869--retry-and-model-only-calls/dcs-lifecycle-receipt.json"
+      ],
+      "result": "Citation clicks recheck owners and reopen the raw UTF-8 range; revoked pins clear the body and range. Original chunk pins remain available for governance."
+    },
+    {
+      "criterion": 4,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "electron.json",
+        "electron/project-rag-dcs-citation-P-3f869--retry-and-model-only-calls/dcs-lifecycle-receipt.json"
+      ],
+      "result": "Answers/support use independent internal model-only sessions without tools; produced artifacts remain agent-driven Draft/Inbox candidates in existing Proposal/apply governance."
+    },
+    {
+      "criterion": 5,
+      "status": "pass",
+      "evidence": [
+        "gates.json",
+        "harness-ci-report.json",
+        "source-inputs.json"
+      ],
+      "result": "New required unit and Electron interactions pass on this clean candidate, with screenshot review and four-locale labels."
+    }
+  ],
+  "providerEvidence": {
+    "kind": "scripted-local-fixture",
+    "driven_by": "agent",
+    "realHumanEvidence": false
+  }
+}

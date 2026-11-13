@@ -1,0 +1,26 @@
+{
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "attempts": [
+    {
+      "artifact": "failed-attempts/rag10-unit-dev.json",
+      "status": "fail",
+      "failed": 1,
+      "electronStats": null
+    },
+    {
+      "artifact": "failed-attempts/rag10-electron-dev.json",
+      "status": "fail",
+      "failed": null,
+      "electronStats": {
+        "startTime": "2026-11-13T21:47:25.488Z",
+        "duration": 74173.85,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      }
+    }
+  ]
+}

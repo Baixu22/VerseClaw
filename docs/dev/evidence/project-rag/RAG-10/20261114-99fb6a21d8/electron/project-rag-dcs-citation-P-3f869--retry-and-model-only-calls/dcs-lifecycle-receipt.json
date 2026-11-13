@@ -1,0 +1,1982 @@
+{
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "providerKind": "scripted-local-fixture",
+  "status": "pass",
+  "qa": {
+    "success": true,
+    "question": "What is the deployment port?",
+    "answer": "Deployment port is 18789. [1]",
+    "sources": [
+      {
+        "id": "concepts/z-first.md",
+        "lookup": "concepts/z-first.md",
+        "path": "concepts/z-first.md",
+        "title": "Z first",
+        "excerpt": "The deployment port is 18789. ## Related <!-- openclaw:wiki:related:start --> - No related pages yet. <!-- openclaw:wiki:related:end -->",
+        "updatedAt": "2026-11-13T00:00:00Z",
+        "readRange": {
+          "fromLine": 10,
+          "toLine": 15,
+          "totalLines": 16,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/z-first.md:144-282",
+          "owner": "memory-wiki",
+          "subjectId": "concepts/z-first.md",
+          "revision": "1",
+          "contentDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+          "sourceRefs": [
+            "concepts/z-first.md"
+          ],
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/z-first.md",
+            "revision": "1",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:4d548679ba05b1aaf7aa6c01f4706ec410eb60c6c34f47b30565de08ebedba75",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 144,
+              "endByteExclusive": 282,
+              "startLine": 10,
+              "endLine": 15
+            }
+          }
+        }
+      }
+    ],
+    "unknowns": [
+      "Grounding is page/snippet level."
+    ],
+    "groundingStatus": "partial",
+    "answerMode": "strict",
+    "synthesisMode": "model",
+    "model": {
+      "status": "completed",
+      "runId": "knowledge:8d501760-7aa4-4598-8165-51cba954371e"
+    },
+    "claims": [
+      {
+        "schema": "AnswerClaim/v1",
+        "kind": "source",
+        "text": "Deployment port is 18789.",
+        "evidenceStatus": {
+          "schema": "EvidenceStatus/v2",
+          "exactQuote": "verified",
+          "sourcePin": "verified",
+          "semanticSupport": "supported",
+          "verifier": {
+            "actor": "knowledge-claim-support",
+            "driven_by": "agent",
+            "runId": "knowledge:77c01710-4b28-481d-96a3-a52b65bce520",
+            "reason": "The deployment value is present in the cited source."
+          }
+        },
+        "citations": [
+          {
+            "schema": "Citation/v2",
+            "sourceId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/z-first.md:144-282",
+            "quote": "The deployment port is 18789.",
+            "sourceDigest": "sha256:4d548679ba05b1aaf7aa6c01f4706ec410eb60c6c34f47b30565de08ebedba75",
+            "chunkDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+            "quoteDigest": "sha256:78af5d1fe7aed4fd2b3f1f50d9658f99563eb4dd00420d66e07a6b214a4be8fb",
+            "sourceRef": {
+              "domain": "wiki",
+              "authorityId": "memory-wiki",
+              "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+              "subjectId": "concepts/z-first.md",
+              "revision": "1",
+              "schema": "SourceRef/v2",
+              "sourceDigest": "sha256:4d548679ba05b1aaf7aa6c01f4706ec410eb60c6c34f47b30565de08ebedba75",
+              "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+              "locator": {
+                "coordinateSpace": "raw-source-utf8-v1",
+                "startByte": 144,
+                "endByteExclusive": 173,
+                "startLine": 10,
+                "endLine": 10
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "claimSupport": {
+      "status": "completed",
+      "runId": "knowledge:77c01710-4b28-481d-96a3-a52b65bce520",
+      "actor": "knowledge-claim-support",
+      "driven_by": "agent"
+    },
+    "retainedEvidence": {
+      "schema": "RetainedEvidenceManifest/v1",
+      "turnId": "agent:main:knowledge-8d501760-7aa4-4598-8165-51cba954371e::knowledge:8d501760-7aa4-4598-8165-51cba954371e",
+      "estimateMethod": "utf8-bytes-div4",
+      "units": [
+        {
+          "schema": "KnowledgeCandidatePacking/v2",
+          "unitId": "chunk:memory-wiki:59d455c323bc8b466affb086862eea5b",
+          "citations": [
+            {
+              "refId": "memory-wiki:59d455c323bc8b466affb086862eea5b",
+              "intentId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/z-first.md:144-282",
+              "sourceRef": {
+                "domain": "wiki",
+                "authorityId": "memory-wiki",
+                "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+                "subjectId": "concepts/z-first.md",
+                "revision": "1",
+                "schema": "SourceRef/v2",
+                "sourceDigest": "sha256:4d548679ba05b1aaf7aa6c01f4706ec410eb60c6c34f47b30565de08ebedba75",
+                "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+                "locator": {
+                  "coordinateSpace": "raw-source-utf8-v1",
+                  "startByte": 144,
+                  "endByteExclusive": 282,
+                  "startLine": 10,
+                  "endLine": 15
+                }
+              },
+              "sourceDigest": "sha256:4d548679ba05b1aaf7aa6c01f4706ec410eb60c6c34f47b30565de08ebedba75",
+              "chunkDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+              "retainedBodyChars": 138,
+              "retainedBodyUtf8Bytes": 138
+            }
+          ],
+          "candidateId": "context-candidate:dcs-knowledge:knowledge:message:chat-knowledge%3A%5B%22memory-wiki%3A59d455c323bc8b466affb086862eea5b%22%5D:%5B%221%22%5D:sha256:0834551ba4604b4006db0c6132ebe4d4d62520c97a440cee2839c2dac5c8c0b0",
+          "ordinal": 0,
+          "projectionDigest": "sha256:0834551ba4604b4006db0c6132ebe4d4d62520c97a440cee2839c2dac5c8c0b0",
+          "retainedChars": 979,
+          "retainedUtf8Bytes": 979,
+          "estimatedTokens": 245
+        }
+      ],
+      "retainedChars": 979,
+      "retainedUtf8Bytes": 979,
+      "estimatedTokens": 245
+    },
+    "suggestedNextActions": [
+      "Configure a registered memory embedding provider through the existing adapter boundary to enable the semantic lane."
+    ],
+    "rejections": [],
+    "conflictSet": [],
+    "retrievalDiagnostics": {
+      "query": "What is the deployment port?",
+      "corpus": "wiki",
+      "mode": "source-set",
+      "backend": "fallback-keyword",
+      "resultCount": 1,
+      "selectedCount": 1,
+      "reason": "explicit Source Set selection after owner admission",
+      "items": [
+        {
+          "id": "concepts/z-first.md",
+          "title": "Z first",
+          "lookup": "concepts/z-first.md",
+          "sourceKind": "wiki-page",
+          "reason": "explicit Source Set selection after owner admission",
+          "path": "concepts/z-first.md"
+        }
+      ]
+    },
+    "semanticRequested": false
+  },
+  "manySources": {
+    "success": true,
+    "question": "What is the deployment port?",
+    "answer": "Deployment port is 18789. [1]",
+    "sources": [
+      {
+        "id": "concepts/z-first.md",
+        "lookup": "concepts/z-first.md",
+        "path": "concepts/z-first.md",
+        "title": "Z first",
+        "excerpt": "The deployment port is 18789. ## Related <!-- openclaw:wiki:related:start --> - No related pages yet. <!-- openclaw:wiki:related:end -->",
+        "updatedAt": "2026-11-13T00:00:00Z",
+        "readRange": {
+          "fromLine": 10,
+          "toLine": 15,
+          "totalLines": 16,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/z-first.md:144-282",
+          "owner": "memory-wiki",
+          "subjectId": "concepts/z-first.md",
+          "revision": "1",
+          "contentDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+          "sourceRefs": [
+            "concepts/z-first.md"
+          ],
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/z-first.md",
+            "revision": "1",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:4d548679ba05b1aaf7aa6c01f4706ec410eb60c6c34f47b30565de08ebedba75",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 144,
+              "endByteExclusive": 282,
+              "startLine": 10,
+              "endLine": 15
+            }
+          }
+        }
+      },
+      {
+        "id": "concepts/aux-0.md",
+        "lookup": "concepts/aux-0.md",
+        "path": "concepts/aux-0.md",
+        "title": "Aux 0",
+        "excerpt": "The deployment port is 18789. ## Related <!-- openclaw:wiki:related:start --> - No related pages yet. <!-- openclaw:wiki:related:end -->",
+        "updatedAt": "2026-11-13T00:00:00Z",
+        "readRange": {
+          "fromLine": 10,
+          "toLine": 15,
+          "totalLines": 16,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/aux-0.md:142-280",
+          "owner": "memory-wiki",
+          "subjectId": "concepts/aux-0.md",
+          "revision": "1",
+          "contentDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+          "sourceRefs": [
+            "concepts/aux-0.md"
+          ],
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/aux-0.md",
+            "revision": "1",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:07a10e3729cb99eb75da6cda5c03022a7af731cb59e653d01ef4d879fe72c3b9",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 142,
+              "endByteExclusive": 280,
+              "startLine": 10,
+              "endLine": 15
+            }
+          }
+        }
+      },
+      {
+        "id": "concepts/aux-1.md",
+        "lookup": "concepts/aux-1.md",
+        "path": "concepts/aux-1.md",
+        "title": "Aux 1",
+        "excerpt": "The deployment port is 18789. ## Related <!-- openclaw:wiki:related:start --> - No related pages yet. <!-- openclaw:wiki:related:end -->",
+        "updatedAt": "2026-11-13T00:00:00Z",
+        "readRange": {
+          "fromLine": 10,
+          "toLine": 15,
+          "totalLines": 16,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/aux-1.md:142-280",
+          "owner": "memory-wiki",
+          "subjectId": "concepts/aux-1.md",
+          "revision": "1",
+          "contentDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+          "sourceRefs": [
+            "concepts/aux-1.md"
+          ],
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/aux-1.md",
+            "revision": "1",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:ac0460ead77508aae8c6862e78882d2a5517165859ff8f49cc63a54bba61d706",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 142,
+              "endByteExclusive": 280,
+              "startLine": 10,
+              "endLine": 15
+            }
+          }
+        }
+      },
+      {
+        "id": "concepts/aux-2.md",
+        "lookup": "concepts/aux-2.md",
+        "path": "concepts/aux-2.md",
+        "title": "Aux 2",
+        "excerpt": "The deployment port is 18789. ## Related <!-- openclaw:wiki:related:start --> - No related pages yet. <!-- openclaw:wiki:related:end -->",
+        "updatedAt": "2026-11-13T00:00:00Z",
+        "readRange": {
+          "fromLine": 10,
+          "toLine": 15,
+          "totalLines": 16,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/aux-2.md:142-280",
+          "owner": "memory-wiki",
+          "subjectId": "concepts/aux-2.md",
+          "revision": "1",
+          "contentDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+          "sourceRefs": [
+            "concepts/aux-2.md"
+          ],
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/aux-2.md",
+            "revision": "1",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:a074e96388dc975c7230f142e0e38f6b8fd533549effbda8ebfd41a4207269a9",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 142,
+              "endByteExclusive": 280,
+              "startLine": 10,
+              "endLine": 15
+            }
+          }
+        }
+      },
+      {
+        "id": "concepts/aux-3.md",
+        "lookup": "concepts/aux-3.md",
+        "path": "concepts/aux-3.md",
+        "title": "Aux 3",
+        "excerpt": "The deployment port is 18789. ## Related <!-- openclaw:wiki:related:start --> - No related pages yet. <!-- openclaw:wiki:related:end -->",
+        "updatedAt": "2026-11-13T00:00:00Z",
+        "readRange": {
+          "fromLine": 10,
+          "toLine": 15,
+          "totalLines": 16,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/aux-3.md:142-280",
+          "owner": "memory-wiki",
+          "subjectId": "concepts/aux-3.md",
+          "revision": "1",
+          "contentDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+          "sourceRefs": [
+            "concepts/aux-3.md"
+          ],
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/aux-3.md",
+            "revision": "1",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:87a1622f3f23ebce1a54330c03414c1748f03b41412b2f6940c9ec53b4663309",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 142,
+              "endByteExclusive": 280,
+              "startLine": 10,
+              "endLine": 15
+            }
+          }
+        }
+      },
+      {
+        "id": "concepts/aux-4.md",
+        "lookup": "concepts/aux-4.md",
+        "path": "concepts/aux-4.md",
+        "title": "Aux 4",
+        "excerpt": "The deployment port is 18789. ## Related <!-- openclaw:wiki:related:start --> - No related pages yet. <!-- openclaw:wiki:related:end -->",
+        "updatedAt": "2026-11-13T00:00:00Z",
+        "readRange": {
+          "fromLine": 10,
+          "toLine": 15,
+          "totalLines": 16,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/aux-4.md:142-280",
+          "owner": "memory-wiki",
+          "subjectId": "concepts/aux-4.md",
+          "revision": "1",
+          "contentDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+          "sourceRefs": [
+            "concepts/aux-4.md"
+          ],
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/aux-4.md",
+            "revision": "1",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:1f0b35edf3b77ea44e4af6b191c1cfeaa981616f790feb4124590d5f5818eee4",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 142,
+              "endByteExclusive": 280,
+              "startLine": 10,
+              "endLine": 15
+            }
+          }
+        }
+      },
+      {
+        "id": "concepts/aux-5.md",
+        "lookup": "concepts/aux-5.md",
+        "path": "concepts/aux-5.md",
+        "title": "Aux 5",
+        "excerpt": "The deployment port is 18789. ## Related <!-- openclaw:wiki:related:start --> - No related pages yet. <!-- openclaw:wiki:related:end -->",
+        "updatedAt": "2026-11-13T00:00:00Z",
+        "readRange": {
+          "fromLine": 10,
+          "toLine": 15,
+          "totalLines": 16,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/aux-5.md:142-280",
+          "owner": "memory-wiki",
+          "subjectId": "concepts/aux-5.md",
+          "revision": "1",
+          "contentDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+          "sourceRefs": [
+            "concepts/aux-5.md"
+          ],
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/aux-5.md",
+            "revision": "1",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:e8df734d4288c8d209c5cbb7df35fe245596030c0e447033356136e07628ec29",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 142,
+              "endByteExclusive": 280,
+              "startLine": 10,
+              "endLine": 15
+            }
+          }
+        }
+      },
+      {
+        "id": "concepts/aux-6.md",
+        "lookup": "concepts/aux-6.md",
+        "path": "concepts/aux-6.md",
+        "title": "Aux 6",
+        "excerpt": "The deployment port is 18789. ## Related <!-- openclaw:wiki:related:start --> - No related pages yet. <!-- openclaw:wiki:related:end -->",
+        "updatedAt": "2026-11-13T00:00:00Z",
+        "readRange": {
+          "fromLine": 10,
+          "toLine": 15,
+          "totalLines": 16,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/aux-6.md:142-280",
+          "owner": "memory-wiki",
+          "subjectId": "concepts/aux-6.md",
+          "revision": "1",
+          "contentDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+          "sourceRefs": [
+            "concepts/aux-6.md"
+          ],
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/aux-6.md",
+            "revision": "1",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:5930b47ce0471b1aa8c914a8d4658261b9a4ca9c47affbf699a38775d69b01e3",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 142,
+              "endByteExclusive": 280,
+              "startLine": 10,
+              "endLine": 15
+            }
+          }
+        }
+      },
+      {
+        "id": "concepts/aux-7.md",
+        "lookup": "concepts/aux-7.md",
+        "path": "concepts/aux-7.md",
+        "title": "Aux 7",
+        "excerpt": "The deployment port is 18789. ## Related <!-- openclaw:wiki:related:start --> - No related pages yet. <!-- openclaw:wiki:related:end -->",
+        "updatedAt": "2026-11-13T00:00:00Z",
+        "readRange": {
+          "fromLine": 10,
+          "toLine": 15,
+          "totalLines": 16,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/aux-7.md:142-280",
+          "owner": "memory-wiki",
+          "subjectId": "concepts/aux-7.md",
+          "revision": "1",
+          "contentDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+          "sourceRefs": [
+            "concepts/aux-7.md"
+          ],
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/aux-7.md",
+            "revision": "1",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:35b6fc25914060d0635bc8d9f69cfb606e3a474de6b53a888903d3484ed2918c",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 142,
+              "endByteExclusive": 280,
+              "startLine": 10,
+              "endLine": 15
+            }
+          }
+        }
+      }
+    ],
+    "unknowns": [
+      "Grounding is page/snippet level.",
+      "Knowledge reference transport limit excluded: memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/aux-7.md:142-280"
+    ],
+    "groundingStatus": "partial",
+    "answerMode": "strict",
+    "synthesisMode": "model",
+    "model": {
+      "status": "completed",
+      "runId": "knowledge:984b9bc0-b89a-4d05-9205-a80a8c369f29"
+    },
+    "claims": [
+      {
+        "schema": "AnswerClaim/v1",
+        "kind": "source",
+        "text": "Deployment port is 18789.",
+        "evidenceStatus": {
+          "schema": "EvidenceStatus/v2",
+          "exactQuote": "verified",
+          "sourcePin": "verified",
+          "semanticSupport": "supported",
+          "verifier": {
+            "actor": "knowledge-claim-support",
+            "driven_by": "agent",
+            "runId": "knowledge:2d76cfdd-7e2d-44af-a021-c90062a727c5",
+            "reason": "The deployment value is present in the cited source."
+          }
+        },
+        "citations": [
+          {
+            "schema": "Citation/v2",
+            "sourceId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/z-first.md:144-282",
+            "quote": "The deployment port is 18789.",
+            "sourceDigest": "sha256:4d548679ba05b1aaf7aa6c01f4706ec410eb60c6c34f47b30565de08ebedba75",
+            "chunkDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+            "quoteDigest": "sha256:78af5d1fe7aed4fd2b3f1f50d9658f99563eb4dd00420d66e07a6b214a4be8fb",
+            "sourceRef": {
+              "domain": "wiki",
+              "authorityId": "memory-wiki",
+              "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+              "subjectId": "concepts/z-first.md",
+              "revision": "1",
+              "schema": "SourceRef/v2",
+              "sourceDigest": "sha256:4d548679ba05b1aaf7aa6c01f4706ec410eb60c6c34f47b30565de08ebedba75",
+              "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+              "locator": {
+                "coordinateSpace": "raw-source-utf8-v1",
+                "startByte": 144,
+                "endByteExclusive": 173,
+                "startLine": 10,
+                "endLine": 10
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "claimSupport": {
+      "status": "completed",
+      "runId": "knowledge:2d76cfdd-7e2d-44af-a021-c90062a727c5",
+      "actor": "knowledge-claim-support",
+      "driven_by": "agent"
+    },
+    "retainedEvidence": {
+      "schema": "RetainedEvidenceManifest/v1",
+      "turnId": "agent:main:knowledge-984b9bc0-b89a-4d05-9205-a80a8c369f29::knowledge:984b9bc0-b89a-4d05-9205-a80a8c369f29",
+      "estimateMethod": "utf8-bytes-div4",
+      "units": [
+        {
+          "schema": "KnowledgeCandidatePacking/v2",
+          "unitId": "chunk:memory-wiki:59d455c323bc8b466affb086862eea5b",
+          "citations": [
+            {
+              "refId": "memory-wiki:59d455c323bc8b466affb086862eea5b",
+              "intentId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/z-first.md:144-282",
+              "sourceRef": {
+                "domain": "wiki",
+                "authorityId": "memory-wiki",
+                "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+                "subjectId": "concepts/z-first.md",
+                "revision": "1",
+                "schema": "SourceRef/v2",
+                "sourceDigest": "sha256:4d548679ba05b1aaf7aa6c01f4706ec410eb60c6c34f47b30565de08ebedba75",
+                "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+                "locator": {
+                  "coordinateSpace": "raw-source-utf8-v1",
+                  "startByte": 144,
+                  "endByteExclusive": 282,
+                  "startLine": 10,
+                  "endLine": 15
+                }
+              },
+              "sourceDigest": "sha256:4d548679ba05b1aaf7aa6c01f4706ec410eb60c6c34f47b30565de08ebedba75",
+              "chunkDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+              "retainedBodyChars": 138,
+              "retainedBodyUtf8Bytes": 138
+            }
+          ],
+          "candidateId": "context-candidate:dcs-knowledge:knowledge:message:chat-knowledge%3A%5B%22memory-wiki%3A59d455c323bc8b466affb086862eea5b%22%5D:%5B%221%22%5D:sha256:0834551ba4604b4006db0c6132ebe4d4d62520c97a440cee2839c2dac5c8c0b0",
+          "ordinal": 0,
+          "projectionDigest": "sha256:0834551ba4604b4006db0c6132ebe4d4d62520c97a440cee2839c2dac5c8c0b0",
+          "retainedChars": 979,
+          "retainedUtf8Bytes": 979,
+          "estimatedTokens": 245
+        },
+        {
+          "schema": "KnowledgeCandidatePacking/v2",
+          "unitId": "chunk:memory-wiki:14768ec368387ea8739e6f3c74640db9",
+          "citations": [
+            {
+              "refId": "memory-wiki:14768ec368387ea8739e6f3c74640db9",
+              "intentId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/aux-0.md:142-280",
+              "sourceRef": {
+                "domain": "wiki",
+                "authorityId": "memory-wiki",
+                "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+                "subjectId": "concepts/aux-0.md",
+                "revision": "1",
+                "schema": "SourceRef/v2",
+                "sourceDigest": "sha256:07a10e3729cb99eb75da6cda5c03022a7af731cb59e653d01ef4d879fe72c3b9",
+                "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+                "locator": {
+                  "coordinateSpace": "raw-source-utf8-v1",
+                  "startByte": 142,
+                  "endByteExclusive": 280,
+                  "startLine": 10,
+                  "endLine": 15
+                }
+              },
+              "sourceDigest": "sha256:07a10e3729cb99eb75da6cda5c03022a7af731cb59e653d01ef4d879fe72c3b9",
+              "chunkDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+              "retainedBodyChars": 138,
+              "retainedBodyUtf8Bytes": 138
+            }
+          ],
+          "candidateId": "context-candidate:dcs-knowledge:knowledge:message:chat-knowledge%3A%5B%22memory-wiki%3A14768ec368387ea8739e6f3c74640db9%22%5D:%5B%221%22%5D:sha256:ae886c136b1a1dd6beab0a5b7d39ab4b4f254f3102cc3a6b360f51b487353fe9",
+          "ordinal": 1,
+          "projectionDigest": "sha256:ae886c136b1a1dd6beab0a5b7d39ab4b4f254f3102cc3a6b360f51b487353fe9",
+          "retainedChars": 969,
+          "retainedUtf8Bytes": 969,
+          "estimatedTokens": 243
+        }
+      ],
+      "retainedChars": 1948,
+      "retainedUtf8Bytes": 1948,
+      "estimatedTokens": 488
+    },
+    "suggestedNextActions": [
+      "Configure a registered memory embedding provider through the existing adapter boundary to enable the semantic lane."
+    ],
+    "rejections": [],
+    "conflictSet": [],
+    "retrievalDiagnostics": {
+      "query": "What is the deployment port?",
+      "corpus": "wiki",
+      "mode": "source-set",
+      "backend": "fallback-keyword",
+      "resultCount": 9,
+      "selectedCount": 9,
+      "reason": "explicit Source Set selection after owner admission",
+      "items": [
+        {
+          "id": "concepts/z-first.md",
+          "title": "Z first",
+          "lookup": "concepts/z-first.md",
+          "sourceKind": "wiki-page",
+          "reason": "explicit Source Set selection after owner admission",
+          "path": "concepts/z-first.md"
+        },
+        {
+          "id": "concepts/aux-0.md",
+          "title": "Aux 0",
+          "lookup": "concepts/aux-0.md",
+          "sourceKind": "wiki-page",
+          "reason": "explicit Source Set selection after owner admission",
+          "path": "concepts/aux-0.md"
+        },
+        {
+          "id": "concepts/aux-1.md",
+          "title": "Aux 1",
+          "lookup": "concepts/aux-1.md",
+          "sourceKind": "wiki-page",
+          "reason": "explicit Source Set selection after owner admission",
+          "path": "concepts/aux-1.md"
+        },
+        {
+          "id": "concepts/aux-2.md",
+          "title": "Aux 2",
+          "lookup": "concepts/aux-2.md",
+          "sourceKind": "wiki-page",
+          "reason": "explicit Source Set selection after owner admission",
+          "path": "concepts/aux-2.md"
+        },
+        {
+          "id": "concepts/aux-3.md",
+          "title": "Aux 3",
+          "lookup": "concepts/aux-3.md",
+          "sourceKind": "wiki-page",
+          "reason": "explicit Source Set selection after owner admission",
+          "path": "concepts/aux-3.md"
+        },
+        {
+          "id": "concepts/aux-4.md",
+          "title": "Aux 4",
+          "lookup": "concepts/aux-4.md",
+          "sourceKind": "wiki-page",
+          "reason": "explicit Source Set selection after owner admission",
+          "path": "concepts/aux-4.md"
+        },
+        {
+          "id": "concepts/aux-5.md",
+          "title": "Aux 5",
+          "lookup": "concepts/aux-5.md",
+          "sourceKind": "wiki-page",
+          "reason": "explicit Source Set selection after owner admission",
+          "path": "concepts/aux-5.md"
+        },
+        {
+          "id": "concepts/aux-6.md",
+          "title": "Aux 6",
+          "lookup": "concepts/aux-6.md",
+          "sourceKind": "wiki-page",
+          "reason": "explicit Source Set selection after owner admission",
+          "path": "concepts/aux-6.md"
+        },
+        {
+          "id": "concepts/aux-7.md",
+          "title": "Aux 7",
+          "lookup": "concepts/aux-7.md",
+          "sourceKind": "wiki-page",
+          "reason": "explicit Source Set selection after owner admission",
+          "path": "concepts/aux-7.md"
+        }
+      ]
+    },
+    "semanticRequested": false
+  },
+  "qaIsolation": {
+    "ownerSessionKey": "agent:main:main",
+    "ownerHistoryUnchanged": true
+  },
+  "answerContract": {
+    "unsupported": {
+      "success": true,
+      "question": "RAG10 unsupported deployment port",
+      "answer": "Grounding is page/snippet level.\nThe source states 18789 rather than 9999.\nThe requested facts are not fully supported by the retained sources.",
+      "sources": [
+        {
+          "id": "concepts/z-first.md",
+          "lookup": "concepts/z-first.md",
+          "path": "concepts/z-first.md",
+          "title": "Z first",
+          "excerpt": "The deployment port is 18789. ## Related <!-- openclaw:wiki:related:start --> - No related pages yet. <!-- openclaw:wiki:related:end -->",
+          "updatedAt": "2026-11-13T00:00:00Z",
+          "readRange": {
+            "fromLine": 10,
+            "toLine": 15,
+            "totalLines": 16,
+            "truncated": false
+          },
+          "citation": {
+            "refId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/z-first.md:144-282",
+            "owner": "memory-wiki",
+            "subjectId": "concepts/z-first.md",
+            "revision": "1",
+            "contentDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+            "sourceRefs": [
+              "concepts/z-first.md"
+            ],
+            "sourceRef": {
+              "domain": "wiki",
+              "authorityId": "memory-wiki",
+              "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+              "subjectId": "concepts/z-first.md",
+              "revision": "1",
+              "schema": "SourceRef/v2",
+              "sourceDigest": "sha256:4d548679ba05b1aaf7aa6c01f4706ec410eb60c6c34f47b30565de08ebedba75",
+              "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+              "locator": {
+                "coordinateSpace": "raw-source-utf8-v1",
+                "startByte": 144,
+                "endByteExclusive": 282,
+                "startLine": 10,
+                "endLine": 15
+              }
+            }
+          }
+        }
+      ],
+      "unknowns": [
+        "Grounding is page/snippet level.",
+        "The source states 18789 rather than 9999.",
+        "The requested facts are not fully supported by the retained sources."
+      ],
+      "groundingStatus": "partial",
+      "answerMode": "strict",
+      "synthesisMode": "unknown",
+      "model": {
+        "status": "completed",
+        "runId": "knowledge:8b211e03-d037-4839-b003-7ce0a886c680"
+      },
+      "claims": [],
+      "claimSupport": {
+        "status": "completed",
+        "runId": "knowledge:16d230c4-682d-4215-9479-58b22f18ffa5",
+        "actor": "knowledge-claim-support",
+        "driven_by": "agent"
+      },
+      "retainedEvidence": {
+        "schema": "RetainedEvidenceManifest/v1",
+        "turnId": "agent:main:knowledge-8b211e03-d037-4839-b003-7ce0a886c680::knowledge:8b211e03-d037-4839-b003-7ce0a886c680",
+        "estimateMethod": "utf8-bytes-div4",
+        "units": [
+          {
+            "schema": "KnowledgeCandidatePacking/v2",
+            "unitId": "chunk:memory-wiki:59d455c323bc8b466affb086862eea5b",
+            "citations": [
+              {
+                "refId": "memory-wiki:59d455c323bc8b466affb086862eea5b",
+                "intentId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/z-first.md:144-282",
+                "sourceRef": {
+                  "domain": "wiki",
+                  "authorityId": "memory-wiki",
+                  "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+                  "subjectId": "concepts/z-first.md",
+                  "revision": "1",
+                  "schema": "SourceRef/v2",
+                  "sourceDigest": "sha256:4d548679ba05b1aaf7aa6c01f4706ec410eb60c6c34f47b30565de08ebedba75",
+                  "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+                  "locator": {
+                    "coordinateSpace": "raw-source-utf8-v1",
+                    "startByte": 144,
+                    "endByteExclusive": 282,
+                    "startLine": 10,
+                    "endLine": 15
+                  }
+                },
+                "sourceDigest": "sha256:4d548679ba05b1aaf7aa6c01f4706ec410eb60c6c34f47b30565de08ebedba75",
+                "chunkDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+                "retainedBodyChars": 138,
+                "retainedBodyUtf8Bytes": 138
+              }
+            ],
+            "candidateId": "context-candidate:dcs-knowledge:knowledge:message:chat-knowledge%3A%5B%22memory-wiki%3A59d455c323bc8b466affb086862eea5b%22%5D:%5B%221%22%5D:sha256:0834551ba4604b4006db0c6132ebe4d4d62520c97a440cee2839c2dac5c8c0b0",
+            "ordinal": 0,
+            "projectionDigest": "sha256:0834551ba4604b4006db0c6132ebe4d4d62520c97a440cee2839c2dac5c8c0b0",
+            "retainedChars": 979,
+            "retainedUtf8Bytes": 979,
+            "estimatedTokens": 245
+          }
+        ],
+        "retainedChars": 979,
+        "retainedUtf8Bytes": 979,
+        "estimatedTokens": 245
+      },
+      "suggestedNextActions": [
+        "Configure a registered memory embedding provider through the existing adapter boundary to enable the semantic lane."
+      ],
+      "rejections": [],
+      "conflictSet": [],
+      "retrievalDiagnostics": {
+        "query": "RAG10 unsupported deployment port",
+        "corpus": "wiki",
+        "mode": "source-set",
+        "backend": "fallback-keyword",
+        "resultCount": 1,
+        "selectedCount": 1,
+        "reason": "explicit Source Set selection after owner admission",
+        "items": [
+          {
+            "id": "concepts/z-first.md",
+            "title": "Z first",
+            "lookup": "concepts/z-first.md",
+            "sourceKind": "wiki-page",
+            "reason": "explicit Source Set selection after owner admission",
+            "path": "concepts/z-first.md"
+          }
+        ]
+      },
+      "semanticRequested": false
+    },
+    "missing": {
+      "success": true,
+      "question": "RAG10 missing deployment value",
+      "answer": "The requested facts are unknown from the selected sources.\nGrounding is page/snippet level.\nPinned ref \"memory-wiki:concepts/absent.md\" could not be found in the source set.\nNo admitted source resolves query \"RAG10 missing deployment value\".",
+      "sources": [],
+      "unknowns": [
+        "Grounding is page/snippet level.",
+        "Pinned ref \"memory-wiki:concepts/absent.md\" could not be found in the source set.",
+        "No admitted source resolves query \"RAG10 missing deployment value\"."
+      ],
+      "groundingStatus": "missing_sources",
+      "answerMode": "strict",
+      "synthesisMode": "unknown",
+      "model": {
+        "status": "unavailable",
+        "reason": "no-admitted-sources"
+      },
+      "suggestedNextActions": [
+        "Verify owner, subjectId, revision, and digest against the canonical owner before pinning the ref.",
+        "Re-run with a broader task intent or review the Knowledge Hub for sources that are still missing.",
+        "Configure a registered memory embedding provider through the existing adapter boundary to enable the semantic lane."
+      ],
+      "rejections": [
+        {
+          "refId": "memory-wiki:concepts/absent.md",
+          "owner": "memory-wiki",
+          "subjectId": "concepts/absent.md",
+          "reason": "not_found",
+          "visibleReason": "Pinned ref \"memory-wiki:concepts/absent.md\" could not be found in the source set."
+        }
+      ],
+      "conflictSet": [],
+      "retrievalDiagnostics": {
+        "query": "RAG10 missing deployment value",
+        "corpus": "wiki",
+        "mode": "source-set",
+        "backend": "fallback-keyword",
+        "resultCount": 0,
+        "selectedCount": 0,
+        "reason": "explicit Source Set selection after owner admission",
+        "items": []
+      },
+      "semanticRequested": false
+    },
+    "general": {
+      "success": true,
+      "question": "RAG10 general network ports",
+      "answer": "Ports identify network services.",
+      "sources": [],
+      "unknowns": [
+        "Grounding is page/snippet level.",
+        "No admitted source resolves query \"RAG10 general network ports\".",
+        "This is general knowledge."
+      ],
+      "groundingStatus": "partial",
+      "answerMode": "open",
+      "synthesisMode": "model",
+      "model": {
+        "status": "completed",
+        "runId": "knowledge:6928ad8a-7e7d-4d02-a0d8-de57c7d16e7a"
+      },
+      "claims": [
+        {
+          "schema": "AnswerClaim/v1",
+          "kind": "general",
+          "text": "Ports identify network services.",
+          "evidenceStatus": {
+            "schema": "EvidenceStatus/v2",
+            "exactQuote": "not-applicable",
+            "sourcePin": "not-applicable",
+            "semanticSupport": "not-applicable"
+          },
+          "citations": []
+        }
+      ],
+      "suggestedNextActions": [
+        "Re-run with a broader task intent or review the Knowledge Hub for sources that are still missing.",
+        "Configure a registered memory embedding provider through the existing adapter boundary to enable the semantic lane."
+      ],
+      "rejections": [],
+      "conflictSet": [],
+      "retrievalDiagnostics": {
+        "query": "RAG10 general network ports",
+        "corpus": "wiki",
+        "mode": "source-set",
+        "backend": "fallback-keyword",
+        "resultCount": 0,
+        "selectedCount": 0,
+        "reason": "explicit Source Set selection after owner admission",
+        "items": []
+      },
+      "semanticRequested": false
+    },
+    "conflict": {
+      "success": true,
+      "question": "RAG10 conflict deployment ports",
+      "answer": "Grounding is page/snippet level.\nThe sources state different deployment ports.",
+      "sources": [
+        {
+          "id": "concepts/z-first.md",
+          "lookup": "concepts/z-first.md",
+          "path": "concepts/z-first.md",
+          "title": "Z first",
+          "excerpt": "The deployment port is 18789. ## Related <!-- openclaw:wiki:related:start --> - No related pages yet. <!-- openclaw:wiki:related:end -->",
+          "updatedAt": "2026-11-13T00:00:00Z",
+          "readRange": {
+            "fromLine": 10,
+            "toLine": 15,
+            "totalLines": 16,
+            "truncated": false
+          },
+          "citation": {
+            "refId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/z-first.md:144-282",
+            "owner": "memory-wiki",
+            "subjectId": "concepts/z-first.md",
+            "revision": "1",
+            "contentDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+            "sourceRefs": [
+              "concepts/z-first.md"
+            ],
+            "sourceRef": {
+              "domain": "wiki",
+              "authorityId": "memory-wiki",
+              "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+              "subjectId": "concepts/z-first.md",
+              "revision": "1",
+              "schema": "SourceRef/v2",
+              "sourceDigest": "sha256:4d548679ba05b1aaf7aa6c01f4706ec410eb60c6c34f47b30565de08ebedba75",
+              "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+              "locator": {
+                "coordinateSpace": "raw-source-utf8-v1",
+                "startByte": 144,
+                "endByteExclusive": 282,
+                "startLine": 10,
+                "endLine": 15
+              }
+            }
+          }
+        },
+        {
+          "id": "concepts/conflict-port.md",
+          "lookup": "concepts/conflict-port.md",
+          "path": "concepts/conflict-port.md",
+          "title": "Conflict port",
+          "excerpt": "The deployment port is 9999.",
+          "updatedAt": "2026-11-13T00:00:00Z",
+          "readRange": {
+            "fromLine": 10,
+            "toLine": 10,
+            "totalLines": 11,
+            "truncated": false
+          },
+          "citation": {
+            "refId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/conflict-port.md:150-179",
+            "owner": "memory-wiki",
+            "subjectId": "concepts/conflict-port.md",
+            "revision": "1",
+            "contentDigest": "sha256:9103c7092931adaf1baad3335903fde79a56987ca79d889392ad23d1473e079a",
+            "sourceRefs": [
+              "concepts/conflict-port.md"
+            ],
+            "sourceRef": {
+              "domain": "wiki",
+              "authorityId": "memory-wiki",
+              "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+              "subjectId": "concepts/conflict-port.md",
+              "revision": "1",
+              "schema": "SourceRef/v2",
+              "sourceDigest": "sha256:e0f23886f1752bfd6dcf73ab2bfb9e0bf947008029b51d4b3d4a22103dd77da5",
+              "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+              "locator": {
+                "coordinateSpace": "raw-source-utf8-v1",
+                "startByte": 150,
+                "endByteExclusive": 179,
+                "startLine": 10,
+                "endLine": 10
+              }
+            }
+          }
+        }
+      ],
+      "unknowns": [
+        "Grounding is page/snippet level.",
+        "The sources state different deployment ports."
+      ],
+      "groundingStatus": "partial",
+      "answerMode": "strict",
+      "synthesisMode": "unknown",
+      "model": {
+        "status": "completed",
+        "runId": "knowledge:6d9f74fa-f1e6-4fe7-b6e7-140b31c3019f"
+      },
+      "claims": [],
+      "retainedEvidence": {
+        "schema": "RetainedEvidenceManifest/v1",
+        "turnId": "agent:main:knowledge-6d9f74fa-f1e6-4fe7-b6e7-140b31c3019f::knowledge:6d9f74fa-f1e6-4fe7-b6e7-140b31c3019f",
+        "estimateMethod": "utf8-bytes-div4",
+        "units": [
+          {
+            "schema": "KnowledgeCandidatePacking/v2",
+            "unitId": "chunk:memory-wiki:59d455c323bc8b466affb086862eea5b",
+            "citations": [
+              {
+                "refId": "memory-wiki:59d455c323bc8b466affb086862eea5b",
+                "intentId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/z-first.md:144-282",
+                "sourceRef": {
+                  "domain": "wiki",
+                  "authorityId": "memory-wiki",
+                  "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+                  "subjectId": "concepts/z-first.md",
+                  "revision": "1",
+                  "schema": "SourceRef/v2",
+                  "sourceDigest": "sha256:4d548679ba05b1aaf7aa6c01f4706ec410eb60c6c34f47b30565de08ebedba75",
+                  "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+                  "locator": {
+                    "coordinateSpace": "raw-source-utf8-v1",
+                    "startByte": 144,
+                    "endByteExclusive": 282,
+                    "startLine": 10,
+                    "endLine": 15
+                  }
+                },
+                "sourceDigest": "sha256:4d548679ba05b1aaf7aa6c01f4706ec410eb60c6c34f47b30565de08ebedba75",
+                "chunkDigest": "sha256:0c2d8e024275c53fe1409d80edf067fbe05b28be3fc3f5445cea4526aa2472c3",
+                "retainedBodyChars": 138,
+                "retainedBodyUtf8Bytes": 138
+              }
+            ],
+            "candidateId": "context-candidate:dcs-knowledge:knowledge:message:chat-knowledge%3A%5B%22memory-wiki%3A59d455c323bc8b466affb086862eea5b%22%5D:%5B%221%22%5D:sha256:0834551ba4604b4006db0c6132ebe4d4d62520c97a440cee2839c2dac5c8c0b0",
+            "ordinal": 0,
+            "projectionDigest": "sha256:0834551ba4604b4006db0c6132ebe4d4d62520c97a440cee2839c2dac5c8c0b0",
+            "retainedChars": 979,
+            "retainedUtf8Bytes": 979,
+            "estimatedTokens": 245
+          },
+          {
+            "schema": "KnowledgeCandidatePacking/v2",
+            "unitId": "chunk:memory-wiki:2f800c673fa7b4732462b564e670d82a",
+            "citations": [
+              {
+                "refId": "memory-wiki:2f800c673fa7b4732462b564e670d82a",
+                "intentId": "memory-wiki:memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe:concepts/conflict-port.md:150-179",
+                "sourceRef": {
+                  "domain": "wiki",
+                  "authorityId": "memory-wiki",
+                  "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+                  "subjectId": "concepts/conflict-port.md",
+                  "revision": "1",
+                  "schema": "SourceRef/v2",
+                  "sourceDigest": "sha256:e0f23886f1752bfd6dcf73ab2bfb9e0bf947008029b51d4b3d4a22103dd77da5",
+                  "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+                  "locator": {
+                    "coordinateSpace": "raw-source-utf8-v1",
+                    "startByte": 150,
+                    "endByteExclusive": 179,
+                    "startLine": 10,
+                    "endLine": 10
+                  }
+                },
+                "sourceDigest": "sha256:e0f23886f1752bfd6dcf73ab2bfb9e0bf947008029b51d4b3d4a22103dd77da5",
+                "chunkDigest": "sha256:9103c7092931adaf1baad3335903fde79a56987ca79d889392ad23d1473e079a",
+                "retainedBodyChars": 29,
+                "retainedBodyUtf8Bytes": 29
+              }
+            ],
+            "candidateId": "context-candidate:dcs-knowledge:knowledge:message:chat-knowledge%3A%5B%22memory-wiki%3A2f800c673fa7b4732462b564e670d82a%22%5D:%5B%221%22%5D:sha256:af32edb492f16df804dec9f65373807d4f79b0b4991e5f82ff7fa6f775123a8e",
+            "ordinal": 1,
+            "projectionDigest": "sha256:af32edb492f16df804dec9f65373807d4f79b0b4991e5f82ff7fa6f775123a8e",
+            "retainedChars": 900,
+            "retainedUtf8Bytes": 900,
+            "estimatedTokens": 225
+          }
+        ],
+        "retainedChars": 1879,
+        "retainedUtf8Bytes": 1879,
+        "estimatedTokens": 470
+      },
+      "suggestedNextActions": [
+        "Configure a registered memory embedding provider through the existing adapter boundary to enable the semantic lane."
+      ],
+      "rejections": [],
+      "conflictSet": [],
+      "retrievalDiagnostics": {
+        "query": "RAG10 conflict deployment ports",
+        "corpus": "wiki",
+        "mode": "source-set",
+        "backend": "fallback-keyword",
+        "resultCount": 2,
+        "selectedCount": 2,
+        "reason": "explicit Source Set selection after owner admission",
+        "items": [
+          {
+            "id": "concepts/z-first.md",
+            "title": "Z first",
+            "lookup": "concepts/z-first.md",
+            "sourceKind": "wiki-page",
+            "reason": "explicit Source Set selection after owner admission",
+            "path": "concepts/z-first.md"
+          },
+          {
+            "id": "concepts/conflict-port.md",
+            "title": "Conflict port",
+            "lookup": "concepts/conflict-port.md",
+            "sourceKind": "wiki-page",
+            "reason": "explicit Source Set selection after owner admission",
+            "path": "concepts/conflict-port.md"
+          }
+        ]
+      },
+      "semanticRequested": false
+    }
+  },
+  "citationUi": {
+    "strictAndOpen": true,
+    "supportStatusVisible": true,
+    "rawRange": {
+      "startLine": 10,
+      "endLine": 10
+    }
+  },
+  "citationRevocation": {
+    "staleBodyCleared": true,
+    "oldRangeRemoved": true
+  },
+  "lastSend": {
+    "message": "DCS killed",
+    "result": {
+      "success": true,
+      "result": {
+        "runId": "rag09-killed"
+      },
+      "knowledgeDenials": [
+        {
+          "id": "z-first",
+          "title": "Z first",
+          "lookup": "concepts/z-first.md",
+          "reason": "revoked",
+          "visibleReason": "Knowledge source cannot be read (revoked)."
+        }
+      ],
+      "knowledgeReferences": [
+        {
+          "id": "a-second",
+          "title": "A second",
+          "lookup": "concepts/a-second.md",
+          "corpus": "wiki",
+          "sourceRef": {
+            "schema": "SourceRef/v2",
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/a-second.md",
+            "revision": "1",
+            "sourceDigest": "sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 145,
+              "endByteExclusive": 288,
+              "startLine": 10,
+              "endLine": 15
+            }
+          },
+          "revision": "1",
+          "contentDigest": "sha256:0c812da16511717cd328c73f2ed4719bda5583b9ed77dcb7ebcc2f3e3e029753"
+        },
+        {
+          "id": "large",
+          "title": "Too large",
+          "lookup": "concepts/large.md",
+          "corpus": "wiki",
+          "sourceRef": {
+            "schema": "SourceRef/v2",
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/large.md",
+            "revision": "1",
+            "sourceDigest": "sha256:d678d60629335eada1594f8764a1df00a0449a522dd3a7e4dad9fa09bcfc38c9",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 146,
+              "endByteExclusive": 5454,
+              "startLine": 10,
+              "endLine": 15
+            }
+          },
+          "revision": "1",
+          "contentDigest": "sha256:61c1d2a2c9d5d1c34c4e7adc51e6c7960cadf174a6decb0a522b5dac51a352e2"
+        }
+      ]
+    }
+  },
+  "ordinary": {
+    "runId": "rag09-ordinary",
+    "status": "ok",
+    "endedAt": 1794610199274,
+    "retainedEvidence": {
+      "schema": "RetainedEvidenceManifest/v1",
+      "turnId": "agent:main:main::rag09-ordinary",
+      "estimateMethod": "utf8-bytes-div4",
+      "units": [
+        {
+          "schema": "KnowledgeCandidatePacking/v2",
+          "unitId": "chunk:memory-wiki:9a047862ff6c987d89a0213cf56c776b",
+          "citations": [
+            {
+              "refId": "memory-wiki:9a047862ff6c987d89a0213cf56c776b",
+              "intentId": "z-first",
+              "sourceRef": {
+                "domain": "wiki",
+                "authorityId": "memory-wiki",
+                "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+                "subjectId": "concepts/z-first.md",
+                "revision": "1",
+                "schema": "SourceRef/v2",
+                "sourceDigest": "sha256:2b0f50a1376495d5869b964583416d4df83aa2c07ff7c230b275d34a99b33d0c",
+                "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+                "locator": {
+                  "coordinateSpace": "raw-source-utf8-v1",
+                  "startByte": 144,
+                  "endByteExclusive": 174,
+                  "startLine": 10,
+                  "endLine": 10
+                }
+              },
+              "sourceDigest": "sha256:2b0f50a1376495d5869b964583416d4df83aa2c07ff7c230b275d34a99b33d0c",
+              "chunkDigest": "sha256:05e7033df814ce011b887d2bbe1e478d4eb607f739164d50daf23631005da6ca",
+              "retainedBodyChars": 30,
+              "retainedBodyUtf8Bytes": 30
+            }
+          ],
+          "candidateId": "context-candidate:dcs-knowledge:knowledge:message:chat-knowledge%3A%5B%22memory-wiki%3A9a047862ff6c987d89a0213cf56c776b%22%5D:%5B%221%22%5D:sha256:f354973d63f37e7254ae631f235964e624c4696f67ea7e717b7915b8716e61b7",
+          "ordinal": 1,
+          "projectionDigest": "sha256:f354973d63f37e7254ae631f235964e624c4696f67ea7e717b7915b8716e61b7",
+          "retainedChars": 762,
+          "retainedUtf8Bytes": 762,
+          "estimatedTokens": 191
+        },
+        {
+          "schema": "KnowledgeCandidatePacking/v2",
+          "unitId": "chunk:memory-wiki:90f3c40c79f8b4fe7ad5385f2b49d235",
+          "citations": [
+            {
+              "refId": "memory-wiki:90f3c40c79f8b4fe7ad5385f2b49d235",
+              "intentId": "a-second",
+              "sourceRef": {
+                "domain": "wiki",
+                "authorityId": "memory-wiki",
+                "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+                "subjectId": "concepts/a-second.md",
+                "revision": "1",
+                "schema": "SourceRef/v2",
+                "sourceDigest": "sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54",
+                "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+                "locator": {
+                  "coordinateSpace": "raw-source-utf8-v1",
+                  "startByte": 145,
+                  "endByteExclusive": 288,
+                  "startLine": 10,
+                  "endLine": 15
+                }
+              },
+              "sourceDigest": "sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54",
+              "chunkDigest": "sha256:0c812da16511717cd328c73f2ed4719bda5583b9ed77dcb7ebcc2f3e3e029753",
+              "retainedBodyChars": 143,
+              "retainedBodyUtf8Bytes": 143
+            }
+          ],
+          "candidateId": "context-candidate:dcs-knowledge:knowledge:message:chat-knowledge%3A%5B%22memory-wiki%3A90f3c40c79f8b4fe7ad5385f2b49d235%22%5D:%5B%221%22%5D:sha256:1770df745f76e161faeca0b6fd9c81f6ad978abd2edb76eb343ef61c3d67304a",
+          "ordinal": 2,
+          "projectionDigest": "sha256:1770df745f76e161faeca0b6fd9c81f6ad978abd2edb76eb343ef61c3d67304a",
+          "retainedChars": 880,
+          "retainedUtf8Bytes": 880,
+          "estimatedTokens": 220
+        }
+      ],
+      "retainedChars": 1642,
+      "retainedUtf8Bytes": 1642,
+      "estimatedTokens": 411
+    }
+  },
+  "retry": {
+    "sameRun": true,
+    "providerCallsBefore": 12,
+    "providerCallsAfter": 12
+  },
+  "media": {
+    "runId": "rag09-media",
+    "status": "ok",
+    "endedAt": 1794610214998,
+    "retainedEvidence": {
+      "schema": "RetainedEvidenceManifest/v1",
+      "turnId": "agent:main:main::rag09-media",
+      "estimateMethod": "utf8-bytes-div4",
+      "units": [
+        {
+          "schema": "KnowledgeCandidatePacking/v2",
+          "unitId": "chunk:memory-wiki:9a047862ff6c987d89a0213cf56c776b",
+          "citations": [
+            {
+              "refId": "memory-wiki:9a047862ff6c987d89a0213cf56c776b",
+              "intentId": "z-first",
+              "sourceRef": {
+                "domain": "wiki",
+                "authorityId": "memory-wiki",
+                "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+                "subjectId": "concepts/z-first.md",
+                "revision": "1",
+                "schema": "SourceRef/v2",
+                "sourceDigest": "sha256:2b0f50a1376495d5869b964583416d4df83aa2c07ff7c230b275d34a99b33d0c",
+                "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+                "locator": {
+                  "coordinateSpace": "raw-source-utf8-v1",
+                  "startByte": 144,
+                  "endByteExclusive": 174,
+                  "startLine": 10,
+                  "endLine": 10
+                }
+              },
+              "sourceDigest": "sha256:2b0f50a1376495d5869b964583416d4df83aa2c07ff7c230b275d34a99b33d0c",
+              "chunkDigest": "sha256:05e7033df814ce011b887d2bbe1e478d4eb607f739164d50daf23631005da6ca",
+              "retainedBodyChars": 30,
+              "retainedBodyUtf8Bytes": 30
+            }
+          ],
+          "candidateId": "context-candidate:dcs-knowledge:knowledge:message:chat-knowledge%3A%5B%22memory-wiki%3A9a047862ff6c987d89a0213cf56c776b%22%5D:%5B%221%22%5D:sha256:f354973d63f37e7254ae631f235964e624c4696f67ea7e717b7915b8716e61b7",
+          "ordinal": 1,
+          "projectionDigest": "sha256:f354973d63f37e7254ae631f235964e624c4696f67ea7e717b7915b8716e61b7",
+          "retainedChars": 762,
+          "retainedUtf8Bytes": 762,
+          "estimatedTokens": 191
+        },
+        {
+          "schema": "KnowledgeCandidatePacking/v2",
+          "unitId": "chunk:memory-wiki:90f3c40c79f8b4fe7ad5385f2b49d235",
+          "citations": [
+            {
+              "refId": "memory-wiki:90f3c40c79f8b4fe7ad5385f2b49d235",
+              "intentId": "a-second",
+              "sourceRef": {
+                "domain": "wiki",
+                "authorityId": "memory-wiki",
+                "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+                "subjectId": "concepts/a-second.md",
+                "revision": "1",
+                "schema": "SourceRef/v2",
+                "sourceDigest": "sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54",
+                "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+                "locator": {
+                  "coordinateSpace": "raw-source-utf8-v1",
+                  "startByte": 145,
+                  "endByteExclusive": 288,
+                  "startLine": 10,
+                  "endLine": 15
+                }
+              },
+              "sourceDigest": "sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54",
+              "chunkDigest": "sha256:0c812da16511717cd328c73f2ed4719bda5583b9ed77dcb7ebcc2f3e3e029753",
+              "retainedBodyChars": 143,
+              "retainedBodyUtf8Bytes": 143
+            }
+          ],
+          "candidateId": "context-candidate:dcs-knowledge:knowledge:message:chat-knowledge%3A%5B%22memory-wiki%3A90f3c40c79f8b4fe7ad5385f2b49d235%22%5D:%5B%221%22%5D:sha256:1770df745f76e161faeca0b6fd9c81f6ad978abd2edb76eb343ef61c3d67304a",
+          "ordinal": 2,
+          "projectionDigest": "sha256:1770df745f76e161faeca0b6fd9c81f6ad978abd2edb76eb343ef61c3d67304a",
+          "retainedChars": 880,
+          "retainedUtf8Bytes": 880,
+          "estimatedTokens": 220
+        }
+      ],
+      "retainedChars": 1642,
+      "retainedUtf8Bytes": 1642,
+      "estimatedTokens": 411
+    }
+  },
+  "queueAcks": {
+    "beforeQueue": {
+      "success": true,
+      "result": {
+        "runId": "rag09-queue-before"
+      },
+      "knowledgeReferences": [
+        {
+          "id": "z-first",
+          "title": "Z first",
+          "lookup": "concepts/z-first.md",
+          "corpus": "wiki",
+          "sourceRef": {
+            "schema": "SourceRef/v2",
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/z-first.md",
+            "revision": "1",
+            "sourceDigest": "sha256:2b0f50a1376495d5869b964583416d4df83aa2c07ff7c230b275d34a99b33d0c",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 144,
+              "endByteExclusive": 174,
+              "startLine": 10,
+              "endLine": 10
+            }
+          },
+          "revision": "1",
+          "contentDigest": "sha256:05e7033df814ce011b887d2bbe1e478d4eb607f739164d50daf23631005da6ca"
+        },
+        {
+          "id": "a-second",
+          "title": "A second",
+          "lookup": "concepts/a-second.md",
+          "corpus": "wiki",
+          "sourceRef": {
+            "schema": "SourceRef/v2",
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/a-second.md",
+            "revision": "1",
+            "sourceDigest": "sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 145,
+              "endByteExclusive": 288,
+              "startLine": 10,
+              "endLine": 15
+            }
+          },
+          "revision": "1",
+          "contentDigest": "sha256:0c812da16511717cd328c73f2ed4719bda5583b9ed77dcb7ebcc2f3e3e029753"
+        },
+        {
+          "id": "large",
+          "title": "Too large",
+          "lookup": "concepts/large.md",
+          "corpus": "wiki",
+          "sourceRef": {
+            "schema": "SourceRef/v2",
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/large.md",
+            "revision": "1",
+            "sourceDigest": "sha256:d678d60629335eada1594f8764a1df00a0449a522dd3a7e4dad9fa09bcfc38c9",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 146,
+              "endByteExclusive": 5454,
+              "startLine": 10,
+              "endLine": 15
+            }
+          },
+          "revision": "1",
+          "contentDigest": "sha256:61c1d2a2c9d5d1c34c4e7adc51e6c7960cadf174a6decb0a522b5dac51a352e2"
+        }
+      ]
+    },
+    "queued": {
+      "success": true,
+      "result": {
+        "runId": "rag09-queued"
+      },
+      "knowledgeReferences": [
+        {
+          "id": "z-first",
+          "title": "Z first",
+          "lookup": "concepts/z-first.md",
+          "corpus": "wiki",
+          "sourceRef": {
+            "schema": "SourceRef/v2",
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/z-first.md",
+            "revision": "1",
+            "sourceDigest": "sha256:2b0f50a1376495d5869b964583416d4df83aa2c07ff7c230b275d34a99b33d0c",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 144,
+              "endByteExclusive": 174,
+              "startLine": 10,
+              "endLine": 10
+            }
+          },
+          "revision": "1",
+          "contentDigest": "sha256:05e7033df814ce011b887d2bbe1e478d4eb607f739164d50daf23631005da6ca"
+        },
+        {
+          "id": "a-second",
+          "title": "A second",
+          "lookup": "concepts/a-second.md",
+          "corpus": "wiki",
+          "sourceRef": {
+            "schema": "SourceRef/v2",
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/a-second.md",
+            "revision": "1",
+            "sourceDigest": "sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 145,
+              "endByteExclusive": 288,
+              "startLine": 10,
+              "endLine": 15
+            }
+          },
+          "revision": "1",
+          "contentDigest": "sha256:0c812da16511717cd328c73f2ed4719bda5583b9ed77dcb7ebcc2f3e3e029753"
+        },
+        {
+          "id": "large",
+          "title": "Too large",
+          "lookup": "concepts/large.md",
+          "corpus": "wiki",
+          "sourceRef": {
+            "schema": "SourceRef/v2",
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+            "subjectId": "concepts/large.md",
+            "revision": "1",
+            "sourceDigest": "sha256:d678d60629335eada1594f8764a1df00a0449a522dd3a7e4dad9fa09bcfc38c9",
+            "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 146,
+              "endByteExclusive": 5454,
+              "startLine": 10,
+              "endLine": 15
+            }
+          },
+          "revision": "1",
+          "contentDigest": "sha256:61c1d2a2c9d5d1c34c4e7adc51e6c7960cadf174a6decb0a522b5dac51a352e2"
+        }
+      ]
+    }
+  },
+  "queue": {
+    "runId": "rag09-queued",
+    "status": "ok",
+    "endedAt": 1794610218735,
+    "retainedEvidence": {
+      "schema": "RetainedEvidenceManifest/v1",
+      "turnId": "agent:main:main::rag09-queued",
+      "estimateMethod": "utf8-bytes-div4",
+      "units": [
+        {
+          "schema": "KnowledgeCandidatePacking/v2",
+          "unitId": "chunk:memory-wiki:9a047862ff6c987d89a0213cf56c776b",
+          "citations": [
+            {
+              "refId": "memory-wiki:9a047862ff6c987d89a0213cf56c776b",
+              "intentId": "z-first",
+              "sourceRef": {
+                "domain": "wiki",
+                "authorityId": "memory-wiki",
+                "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+                "subjectId": "concepts/z-first.md",
+                "revision": "1",
+                "schema": "SourceRef/v2",
+                "sourceDigest": "sha256:2b0f50a1376495d5869b964583416d4df83aa2c07ff7c230b275d34a99b33d0c",
+                "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+                "locator": {
+                  "coordinateSpace": "raw-source-utf8-v1",
+                  "startByte": 144,
+                  "endByteExclusive": 174,
+                  "startLine": 10,
+                  "endLine": 10
+                }
+              },
+              "sourceDigest": "sha256:2b0f50a1376495d5869b964583416d4df83aa2c07ff7c230b275d34a99b33d0c",
+              "chunkDigest": "sha256:05e7033df814ce011b887d2bbe1e478d4eb607f739164d50daf23631005da6ca",
+              "retainedBodyChars": 30,
+              "retainedBodyUtf8Bytes": 30
+            }
+          ],
+          "candidateId": "context-candidate:dcs-knowledge:knowledge:message:chat-knowledge%3A%5B%22memory-wiki%3A9a047862ff6c987d89a0213cf56c776b%22%5D:%5B%221%22%5D:sha256:f354973d63f37e7254ae631f235964e624c4696f67ea7e717b7915b8716e61b7",
+          "ordinal": 1,
+          "projectionDigest": "sha256:f354973d63f37e7254ae631f235964e624c4696f67ea7e717b7915b8716e61b7",
+          "retainedChars": 762,
+          "retainedUtf8Bytes": 762,
+          "estimatedTokens": 191
+        },
+        {
+          "schema": "KnowledgeCandidatePacking/v2",
+          "unitId": "chunk:memory-wiki:90f3c40c79f8b4fe7ad5385f2b49d235",
+          "citations": [
+            {
+              "refId": "memory-wiki:90f3c40c79f8b4fe7ad5385f2b49d235",
+              "intentId": "a-second",
+              "sourceRef": {
+                "domain": "wiki",
+                "authorityId": "memory-wiki",
+                "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+                "subjectId": "concepts/a-second.md",
+                "revision": "1",
+                "schema": "SourceRef/v2",
+                "sourceDigest": "sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54",
+                "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+                "locator": {
+                  "coordinateSpace": "raw-source-utf8-v1",
+                  "startByte": 145,
+                  "endByteExclusive": 288,
+                  "startLine": 10,
+                  "endLine": 15
+                }
+              },
+              "sourceDigest": "sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54",
+              "chunkDigest": "sha256:0c812da16511717cd328c73f2ed4719bda5583b9ed77dcb7ebcc2f3e3e029753",
+              "retainedBodyChars": 143,
+              "retainedBodyUtf8Bytes": 143
+            }
+          ],
+          "candidateId": "context-candidate:dcs-knowledge:knowledge:message:chat-knowledge%3A%5B%22memory-wiki%3A90f3c40c79f8b4fe7ad5385f2b49d235%22%5D:%5B%221%22%5D:sha256:1770df745f76e161faeca0b6fd9c81f6ad978abd2edb76eb343ef61c3d67304a",
+          "ordinal": 2,
+          "projectionDigest": "sha256:1770df745f76e161faeca0b6fd9c81f6ad978abd2edb76eb343ef61c3d67304a",
+          "retainedChars": 880,
+          "retainedUtf8Bytes": 880,
+          "estimatedTokens": 220
+        }
+      ],
+      "retainedChars": 1642,
+      "retainedUtf8Bytes": 1642,
+      "estimatedTokens": 411
+    }
+  },
+  "groupedAck": {
+    "success": true,
+    "result": {
+      "runId": "rag09-conflict-group"
+    },
+    "knowledgeReferences": [
+      {
+        "id": "z-first",
+        "title": "Z first",
+        "lookup": "concepts/z-first.md",
+        "corpus": "wiki",
+        "sourceRef": {
+          "schema": "SourceRef/v2",
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+          "subjectId": "concepts/z-first.md",
+          "revision": "1",
+          "sourceDigest": "sha256:2b0f50a1376495d5869b964583416d4df83aa2c07ff7c230b275d34a99b33d0c",
+          "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 144,
+            "endByteExclusive": 174,
+            "startLine": 10,
+            "endLine": 10
+          }
+        },
+        "revision": "1",
+        "contentDigest": "sha256:05e7033df814ce011b887d2bbe1e478d4eb607f739164d50daf23631005da6ca",
+        "conflictGroupId": "deployment"
+      },
+      {
+        "id": "a-second",
+        "title": "A second",
+        "lookup": "concepts/a-second.md",
+        "corpus": "wiki",
+        "sourceRef": {
+          "schema": "SourceRef/v2",
+          "domain": "wiki",
+          "authorityId": "memory-wiki",
+          "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+          "subjectId": "concepts/a-second.md",
+          "revision": "1",
+          "sourceDigest": "sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54",
+          "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+          "locator": {
+            "coordinateSpace": "raw-source-utf8-v1",
+            "startByte": 145,
+            "endByteExclusive": 288,
+            "startLine": 10,
+            "endLine": 15
+          }
+        },
+        "revision": "1",
+        "contentDigest": "sha256:0c812da16511717cd328c73f2ed4719bda5583b9ed77dcb7ebcc2f3e3e029753",
+        "conflictGroupId": "deployment"
+      }
+    ]
+  },
+  "grouped": {
+    "runId": "rag09-conflict-group",
+    "status": "ok",
+    "endedAt": 1794610220112,
+    "retainedEvidence": {
+      "schema": "RetainedEvidenceManifest/v1",
+      "turnId": "agent:main:main::rag09-conflict-group",
+      "estimateMethod": "utf8-bytes-div4",
+      "units": [
+        {
+          "schema": "KnowledgeCandidatePacking/v2",
+          "unitId": "conflict:deployment",
+          "citations": [
+            {
+              "refId": "memory-wiki:9a047862ff6c987d89a0213cf56c776b",
+              "intentId": "z-first",
+              "sourceRef": {
+                "domain": "wiki",
+                "authorityId": "memory-wiki",
+                "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+                "subjectId": "concepts/z-first.md",
+                "revision": "1",
+                "schema": "SourceRef/v2",
+                "sourceDigest": "sha256:2b0f50a1376495d5869b964583416d4df83aa2c07ff7c230b275d34a99b33d0c",
+                "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+                "locator": {
+                  "coordinateSpace": "raw-source-utf8-v1",
+                  "startByte": 144,
+                  "endByteExclusive": 174,
+                  "startLine": 10,
+                  "endLine": 10
+                }
+              },
+              "sourceDigest": "sha256:2b0f50a1376495d5869b964583416d4df83aa2c07ff7c230b275d34a99b33d0c",
+              "chunkDigest": "sha256:05e7033df814ce011b887d2bbe1e478d4eb607f739164d50daf23631005da6ca",
+              "retainedBodyChars": 30,
+              "retainedBodyUtf8Bytes": 30
+            },
+            {
+              "refId": "memory-wiki:90f3c40c79f8b4fe7ad5385f2b49d235",
+              "intentId": "a-second",
+              "sourceRef": {
+                "domain": "wiki",
+                "authorityId": "memory-wiki",
+                "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+                "subjectId": "concepts/a-second.md",
+                "revision": "1",
+                "schema": "SourceRef/v2",
+                "sourceDigest": "sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54",
+                "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+                "locator": {
+                  "coordinateSpace": "raw-source-utf8-v1",
+                  "startByte": 145,
+                  "endByteExclusive": 288,
+                  "startLine": 10,
+                  "endLine": 15
+                }
+              },
+              "sourceDigest": "sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54",
+              "chunkDigest": "sha256:0c812da16511717cd328c73f2ed4719bda5583b9ed77dcb7ebcc2f3e3e029753",
+              "retainedBodyChars": 143,
+              "retainedBodyUtf8Bytes": 143
+            }
+          ],
+          "candidateId": "context-candidate:dcs-knowledge:knowledge:message:chat-knowledge%3A%5B%22memory-wiki%3A9a047862ff6c987d89a0213cf56c776b%22%2C%22memory-wiki%3A90f3c40c79f8b4fe7ad5385f2b49d235%22%5D:%5B%221%22%2C%221%22%5D:sha256:4ab2532a476d9f9f93272301fc9e77d792e4acdd949a2b238435308960c53253",
+          "ordinal": 1,
+          "projectionDigest": "sha256:4ab2532a476d9f9f93272301fc9e77d792e4acdd949a2b238435308960c53253",
+          "retainedChars": 1644,
+          "retainedUtf8Bytes": 1644,
+          "estimatedTokens": 411
+        }
+      ],
+      "retainedChars": 1644,
+      "retainedUtf8Bytes": 1644,
+      "estimatedTokens": 411
+    }
+  },
+  "revoked": {
+    "runId": "rag09-revoked",
+    "status": "ok",
+    "endedAt": 1794610221517,
+    "retainedEvidence": {
+      "schema": "RetainedEvidenceManifest/v1",
+      "turnId": "agent:main:main::rag09-revoked",
+      "estimateMethod": "utf8-bytes-div4",
+      "units": [
+        {
+          "schema": "KnowledgeCandidatePacking/v2",
+          "unitId": "chunk:memory-wiki:90f3c40c79f8b4fe7ad5385f2b49d235",
+          "citations": [
+            {
+              "refId": "memory-wiki:90f3c40c79f8b4fe7ad5385f2b49d235",
+              "intentId": "a-second",
+              "sourceRef": {
+                "domain": "wiki",
+                "authorityId": "memory-wiki",
+                "namespaceId": "memory-wiki:3c3131c666733b5a6ab5105995b8b6a6595d90e203dde2586c4430871b12cbbe",
+                "subjectId": "concepts/a-second.md",
+                "revision": "1",
+                "schema": "SourceRef/v2",
+                "sourceDigest": "sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54",
+                "policyEpoch": "sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe",
+                "locator": {
+                  "coordinateSpace": "raw-source-utf8-v1",
+                  "startByte": 145,
+                  "endByteExclusive": 288,
+                  "startLine": 10,
+                  "endLine": 15
+                }
+              },
+              "sourceDigest": "sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54",
+              "chunkDigest": "sha256:0c812da16511717cd328c73f2ed4719bda5583b9ed77dcb7ebcc2f3e3e029753",
+              "retainedBodyChars": 143,
+              "retainedBodyUtf8Bytes": 143
+            }
+          ],
+          "candidateId": "context-candidate:dcs-knowledge:knowledge:message:chat-knowledge%3A%5B%22memory-wiki%3A90f3c40c79f8b4fe7ad5385f2b49d235%22%5D:%5B%221%22%5D:sha256:1770df745f76e161faeca0b6fd9c81f6ad978abd2edb76eb343ef61c3d67304a",
+          "ordinal": 1,
+          "projectionDigest": "sha256:1770df745f76e161faeca0b6fd9c81f6ad978abd2edb76eb343ef61c3d67304a",
+          "retainedChars": 880,
+          "retainedUtf8Bytes": 880,
+          "estimatedTokens": 220
+        }
+      ],
+      "retainedChars": 880,
+      "retainedUtf8Bytes": 880,
+      "estimatedTokens": 220
+    }
+  },
+  "killed": {
+    "runId": "rag09-killed",
+    "status": "ok",
+    "endedAt": 1794610235953,
+    "retainedEvidence": {
+      "schema": "RetainedEvidenceManifest/v1",
+      "turnId": "agent:main:main::rag09-killed",
+      "estimateMethod": "utf8-bytes-div4",
+      "units": [],
+      "retainedChars": 0,
+      "retainedUtf8Bytes": 0,
+      "estimatedTokens": 0
+    }
+  }
+}
