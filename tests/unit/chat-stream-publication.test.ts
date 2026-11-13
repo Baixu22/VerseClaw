@@ -81,6 +81,45 @@ describe('production chat stream publication', () => {
     expect(store.getState().activeRunId).toBeNull(); expect(frames.size).toBe(0);
   });
 
+  it.each(['recorded', 'missing owner', 'missing active id'])('ignores late legacy finals after cancellation with %s before and during recovery', async ownership => {
+    if (ownership !== 'recorded') store.setState({ runtimeRuns: {} });
+    if (ownership === 'missing active id') store.setState({ activeRunId: null });
+    await store.getState().abortRun();
+    const listener = observe();
+    const messages = store.getState().messages;
+    const loadHistory = store.getState().loadHistory;
+    const lateFinals = [
+      { state: 'final', sessionKey, runId: 'live', seq: 9001, message: {
+        role: 'assistant', stopReason: 'toolUse', content: [{
+          type: 'toolCall', id: 'late-call', name: 'write', arguments: { path: 'late.txt', content: 'late' },
+        }],
+      } },
+      { state: 'final', sessionKey, runId: 'live', seq: 9002,
+        message: { role: 'assistant', stopReason: 'stop', content: 'late' } },
+    ];
+    for (const event of lateFinals) {
+      store.getState().handleChatEvent(event);
+      expect(store.getState()).toMatchObject({ sending: false, activeRunId: null, pendingFinal: false, streamingTools: [] });
+    }
+    expect(store.getState()).toMatchObject({ sending: false, activeRunId: null, pendingFinal: false, streamingTools: [] });
+    expect(store.getState().messages).toBe(messages);
+    expect(listener).not.toHaveBeenCalled(); expect(loadHistory).not.toHaveBeenCalled();
+    store.setState({ sending: true, activeRunId: 'recovery', lastUserMessageAt: Date.now() });
+    listener.mockClear();
+    for (const event of lateFinals) store.getState().handleChatEvent({ ...event, seq: event.seq + 10 });
+    expect(store.getState()).toMatchObject({ sending: true, activeRunId: 'recovery', pendingFinal: false });
+    expect(listener).not.toHaveBeenCalled(); expect(loadHistory).not.toHaveBeenCalled();
+    expect(store.getState().runtimeRuns.live.status).toBe('aborted');
+  });
+
+  it('still receives legacy final text after the runtime completed', () => {
+    store.getState().handleRuntimeEvent({ type: 'run.ended', sessionKey, runId: 'live', seq: 1, status: 'completed' });
+    store.getState().handleChatEvent({ state: 'final', sessionKey, runId: 'live', seq: 2,
+      message: { role: 'assistant', stopReason: 'stop', content: 'completed answer' } });
+    expect(store.getState().messages.at(-1)).toMatchObject({ role: 'assistant', content: 'completed answer' });
+    expect(store.getState().runtimeRuns.live.status).toBe('completed');
+  });
+
   it('keeps a newly selected run intact while an earlier abort resolves', async () => {
     let resolve!: (result: unknown) => void;
     rpc.mockImplementation(() => new Promise(result => { resolve = result; }));

@@ -15,6 +15,10 @@ terminal runs. Repeated unsequenced incremental chunks are valid text, while
 repeated cumulative snapshots may be ignored. Session/run boundaries remain
 explicit and pending frame work is cancelled when its last observer leaves.
 
+After an acknowledged cancellation, discard all legacy frames for that aborted
+owner before adopting a run, changing messages or refreshing history. Delayed
+tool and text finals must leave the next turn's state and ownership intact.
+
 Reuse completed message projections only while their actual inputs match. History,
 workspace, labels, transcripts and execution evidence changes invalidate affected
 entries. Compare native rendering on the same workload and preserve failed runs.

@@ -268,7 +268,12 @@ async function send(page: Page, message: string) {
   const input = page.getByTestId('chat-composer-input');
   await expect(input).toBeEnabled({ timeout: 90_000 });
   await input.fill(message);
-  await page.getByTestId('chat-composer-send').click();
+  const primary = page.getByTestId('chat-composer-send');
+  if (await primary.getAttribute('data-send-state') === 'paused') {
+    await primary.click();
+    await expect(primary).toHaveAttribute('data-send-state', 'ready');
+  }
+  await primary.click();
 }
 
 async function idle(page: Page, timeout = 150_000) {

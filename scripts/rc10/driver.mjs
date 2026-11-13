@@ -19,6 +19,7 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import net from 'node:net';
 import { parseArgs } from 'node:util';
 import { evaluateRc10ChannelProbe, evaluateRc10H01, sealRc10Evidence, summarizeRc10Receipts } from '../lib/rc10-evidence.mjs';
+import { resolveE2EElectronExecutable } from '../../tests/e2e/fixtures/electron-executable.mjs';
 
 const { values: args } = parseArgs({
   options: Object.fromEntries(
@@ -125,7 +126,7 @@ const allocatePort = () =>
   });
 const hostApiPort = await allocatePort();
 const cdpPort = await allocatePort();
-const electronBinary = join(
+const electronBinary = resolveE2EElectronExecutable() ?? join(
   repo,
   'node_modules',
   'electron',

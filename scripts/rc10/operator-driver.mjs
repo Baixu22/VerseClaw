@@ -11,6 +11,7 @@ import { execFileSync } from 'node:child_process';
 import { DatabaseSync } from 'node:sqlite';
 import { startIrcServer } from './irc-server.mjs';
 import { allocatePort, startScriptedLlm, MOCK_MODEL_ID } from '../../tests/e2e/fixtures/fp-p1-harness.ts';
+import { resolveE2EElectronExecutable } from '../../tests/e2e/fixtures/electron-executable.mjs';
 
 const digest = (value) => createHash('sha256').update(value).digest('hex');
 const sleep = (ms) => new Promise((done) => setTimeout(done, ms));
@@ -253,7 +254,7 @@ export async function runOperatorDriver({ repo, scenario, development = false, d
       VERSE_CLAW_USER_DATA_DIR: userData, VERSE_CLAW_E2E: '1', VERSE_CLAW_E2E_SKIP_SETUP: '1', CLAWX_AGENT_DEV: '1',
       RC05_OPERATOR_SLICE: '1', OPENCLAW_RC02_SHADOW_CENSUS: '1', OPENCLAW_RC03_SEAL: '1', OPENCLAW_SKIP_CRON: '0',
     }).filter(([, value]) => value !== undefined));
-    app = await _electron.launch({ executablePath: require('electron'), args: ['--disable-gpu', '--in-process-gpu', join(repo, 'dist-electron/main/index.js')], env, timeout: 120000 });
+    app = await _electron.launch({ executablePath: resolveE2EElectronExecutable() ?? require('electron'), args: ['--disable-gpu', '--in-process-gpu', join(repo, 'dist-electron/main/index.js')], env, timeout: 120000 });
     appProcess = app.process();
     appProcess.stdout?.on('data', (v) => { appLog += v; });
     appProcess.stderr?.on('data', (v) => { appLog += v; });

@@ -112,7 +112,7 @@ test.describe('Verse Claw chat session date grouping', () => {
        */
       await expect(page.locator('[data-testid^="session-bucket-"]')).toHaveCount(0);
       for (const name of ['Today conversation', 'Week conversation', 'Month conversation', 'Older conversation']) {
-        await expect(page.getByText(name)).toBeVisible();
+        await expect(page.locator('[data-testid^="sidebar-session-agent:main:"]').filter({ hasText: name })).toBeVisible();
       }
 
       const orderedLabels = await page

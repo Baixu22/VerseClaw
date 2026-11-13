@@ -77,6 +77,10 @@ Tool cancellation must survive runtime adaptation, client delegation, policy eva
 
 Pending preparation and policy promises must release their local wait on cancellation without waiting for the plugin to return. Input acknowledgements must report a process that exited during the write with its owner's terminal status and output. Session alias merges must not duplicate a tool call, and changes to process poll wait duration must not reset otherwise unchanged loop evidence.
 
+An acknowledged cancelled chat run remains aborted when delayed Main-to-Renderer
+frames arrive. Its legacy text, tool and final frames are discarded before UI
+run adoption or history refresh so the same session can start its next turn.
+
 Tool admission checks the current session, workspace, configuration and approval before execution. A completed tool's known result retains its call association; configuration changes produced during the call apply to subsequent admissions.
 
 Long-session archive and restore mutations cross the same boundary but remain

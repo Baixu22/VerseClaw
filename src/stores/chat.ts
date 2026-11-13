@@ -4713,7 +4713,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     const isCurrentAbortTarget = () => get().viewRevision === viewRevision && get().currentSessionKey === currentSessionKey && get().activeRunId === activeRunId
       && get().sessions.find((session) => session.key === currentSessionKey)?.sessionId === generation;
     // A retry clears its previous request error before waiting, never a newer error on completion.
-    set({ error: null });
+    if (get().error !== null) set({ error: null });
 
     // R0-3: abort the run FIRST. Only release UI state once the Main process
     // confirms the abort — a failed stop must not masquerade as stopped.
@@ -4745,12 +4745,15 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     // Use the Gateway's acknowledged run identity; retain a result that arrived
     // while the abort request was pending.
     const generationUnchanged = get().sessions.find((session) => session.key === currentSessionKey)?.sessionId === generation;
-    const confirmed = generationUnchanged && activeRunId && receipt?.aborted === true
-      && (!receipt.runIds || receipt.runIds.includes(activeRunId))
-      && get().runtimeRuns[activeRunId]?.status === 'running';
-    const runtimeRuns = confirmed ? applyRuntimeEventToRuns(get().runtimeRuns, {
-      type: 'run.ended', runId: activeRunId, sessionKey: currentSessionKey, status: 'aborted', endedAt: Date.now(),
-    }) : get().runtimeRuns;
+    const confirmedRunIds = generationUnchanged && receipt?.aborted === true
+      ? receipt.runIds ?? (activeRunId ? [activeRunId] : []) : [];
+    let runtimeRuns = get().runtimeRuns;
+    for (const runId of confirmedRunIds) {
+      if (runtimeRuns[runId] && runtimeRuns[runId].status !== 'running') continue;
+      runtimeRuns = applyRuntimeEventToRuns(runtimeRuns, {
+        type: 'run.ended', runId, sessionKey: currentSessionKey, status: 'aborted', endedAt: Date.now(),
+      });
+    }
     if (!isCurrentAbortTarget()) {
       if (runtimeRuns !== get().runtimeRuns) set({ runtimeRuns });
       if (generationUnchanged && get().currentSessionKey !== currentSessionKey && activeRunId
@@ -4782,6 +4785,9 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     const eventState = String(event.state || '');
     const eventSessionKey = event.sessionKey != null ? String(event.sessionKey) : null;
     const { activeRunId, currentSessionKey } = get();
+
+    // Cancellation is final for every legacy frame, including tool and text finals.
+    if (runId && get().runtimeRuns[runId]?.status === 'aborted') return;
 
     // Only process events for the current session (when sessionKey is present)
     if (eventSessionKey != null && eventSessionKey !== currentSessionKey) {

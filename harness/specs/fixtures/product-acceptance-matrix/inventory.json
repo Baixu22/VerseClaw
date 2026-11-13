@@ -235,7 +235,7 @@
   ],
   "sourceHashes": {
     "tests/e2e/channels-health-diagnostics.spec.ts": "9eba3bac6e3b8eaef3e709fc7a9c77f4ef4e7d70e1a87f307f8be435f73e9a91",
-    "tests/e2e/chat-new-session-date.spec.ts": "6fb2658de650f6153e6e843aecb5f308a79c309ed4a00baacbaceaa37cc22b94",
+    "tests/e2e/chat-new-session-date.spec.ts": "42fba5090f7b2c2f431b7b00a8d27672ddc2f34d58fe2111397b092fae31aefd",
     "tests/e2e/context-view-tool-surface.spec.ts": "1713cf99c7416f5ffb05c54341990f092eeb132952a039bcccef1e60619760b2",
     "tests/e2e/knowledge-ks04-chat-dcs.spec.ts": "a2dcd9c2d8945aab99110d1774548510e8acfeb1e7f81f887df427ee7b14f56a",
     "tests/e2e/knowledge-lifecycle.spec.ts": "085b3c927a674b819a58df7cc494791e67caf9ef2fca6c6b72ff303de1816e06",
@@ -246,7 +246,7 @@
     "tests/e2e/long-session-followup-scheduling.spec.ts": "8bd76ae1072a0a5222518e33a05fd98dba9f6b2e50cc31ff4225e798514c9c69",
     "tests/e2e/memory-surface.spec.ts": "88ced3d438d20a1158a62b15c14692f369adf5a441bb85235e3704f7cba0e288",
     "tests/e2e/product-acceptance-moyu.spec.ts": "eb89b07934001aadbd40b8e141610c5d23f9e9e414b3b5e975db6ba1f0073ce9",
-    "tests/e2e/product-acceptance-space-bunny.spec.ts": "e4b8417b6bb2dad78005aea05294f7cf24bb8c463c09f6615cc499cdae554b27",
+    "tests/e2e/product-acceptance-space-bunny.spec.ts": "2314a234eb59c11b3d22d1050b78adf41229aacdc7d7b426c0e948b4b8782477",
     "tests/e2e/product-matrix-delegation.spec.ts": "49f8292f472db2fc1fb124f834322e855a232a40c6aaa028de1f55472e9d9d00",
     "tests/e2e/product-matrix-doctor.spec.ts": "48962f402ba3b4147c8db87e16d96604d013aa44a3d5317fdcc24a9aa9a10fcb",
     "tests/e2e/product-matrix-knowledge.spec.ts": "85ffbc0a44a86a48c52e18718a9b700d0eed23e96013a6f27f3ad1293ffa123c",
