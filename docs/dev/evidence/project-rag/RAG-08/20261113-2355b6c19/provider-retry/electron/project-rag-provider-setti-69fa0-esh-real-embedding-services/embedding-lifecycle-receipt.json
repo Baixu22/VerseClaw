@@ -1,0 +1,252 @@
+{
+  "actor": "codex/project-rag-embedding-electron",
+  "driven_by": "agent",
+  "status": "pass",
+  "steps": {
+    "localCancelled": true,
+    "localRetryReady": true,
+    "selectionFormRestored": true,
+    "localRestartRestored": true,
+    "ownerReadSemanticPath": true,
+    "disabled": true,
+    "unavailableProvider": true,
+    "realRemoteReady": true,
+    "credentialGenerationRefreshed": true
+  },
+  "localAnswer": {
+    "success": true,
+    "question": "Who checks access before embedding?",
+    "answer": "Selected source excerpts (partial response). Artifact focus: summary.\nQuestion: Who checks access before embedding?\n\n1. Embedding source: Project RAG source owners enforce access before embedding. ## Related <!-- openclaw:wiki:related:start --> - No related pages yet. <!-- openclaw:wiki:related:end -->",
+    "sources": [
+      {
+        "id": "concepts/embedding.md",
+        "lookup": "concepts/embedding.md",
+        "path": "concepts/embedding.md",
+        "title": "Embedding source",
+        "excerpt": "Project RAG source owners enforce access before embedding. ## Related <!-- openclaw:wiki:related:start --> - No related pages yet. <!-- openclaw:wiki:related:end -->",
+        "readRange": {
+          "fromLine": 9,
+          "toLine": 14,
+          "totalLines": 15,
+          "truncated": false
+        },
+        "citation": {
+          "refId": "memory-wiki:memory-wiki:36bbcc0f4186da37aeca55d1a094a02a3fdd563e62fcbbd9b1d3409f20aa2faf:concepts/embedding.md:128-295",
+          "owner": "memory-wiki",
+          "subjectId": "concepts/embedding.md",
+          "revision": "1",
+          "contentDigest": "sha256:350665872e5f4f156a1aee992be73dde5c6f7b4fba5acfc533fede65c42765a4",
+          "sourceRefs": [
+            "concepts/embedding.md"
+          ],
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:36bbcc0f4186da37aeca55d1a094a02a3fdd563e62fcbbd9b1d3409f20aa2faf",
+            "subjectId": "concepts/embedding.md",
+            "revision": "1",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:c5d22e44206529b9a172deffe642a6932b42853222d953ac5e8e84f67b7f017c",
+            "policyEpoch": "sha256:46191180be352ac46e5c86ffdcb04f72ee9c8a380aa64471753d303278c51675",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 128,
+              "endByteExclusive": 295,
+              "startLine": 9,
+              "endLine": 14
+            }
+          }
+        }
+      }
+    ],
+    "unknowns": [
+      "Grounding is page/snippet level.",
+      "This response contains source excerpts; synthesized answer correctness and unstructured contradictions have not been evaluated.",
+      "Source \"concepts/embedding.md\" has no known freshness timestamp."
+    ],
+    "groundingStatus": "partial",
+    "synthesisMode": "source-excerpts",
+    "suggestedNextActions": [],
+    "rejections": [],
+    "conflictSet": [],
+    "retrievalDiagnostics": {
+      "query": "Who checks access before embedding?",
+      "corpus": "wiki",
+      "mode": "source-set",
+      "backend": "semantic",
+      "resultCount": 1,
+      "selectedCount": 1,
+      "reason": "explicit Source Set selection after owner admission",
+      "items": [
+        {
+          "id": "concepts/embedding.md",
+          "title": "Embedding source",
+          "lookup": "concepts/embedding.md",
+          "sourceKind": "wiki-page",
+          "reason": "explicit Source Set selection after owner admission",
+          "path": "concepts/embedding.md"
+        }
+      ]
+    },
+    "semanticRequested": true,
+    "semanticLane": {
+      "status": "available",
+      "providerId": "local:embeddinggemma-300m",
+      "dimension": 768,
+      "similarities": [
+        {
+          "refId": "memory-wiki:memory-wiki:36bbcc0f4186da37aeca55d1a094a02a3fdd563e62fcbbd9b1d3409f20aa2faf:concepts/embedding.md:128-295",
+          "similarity": 0.6129664731049225
+        }
+      ]
+    }
+  },
+  "local": {
+    "success": true,
+    "embedding": {
+      "mode": "local",
+      "status": "ready",
+      "credentialEpoch": 2,
+      "providerRef": "local:embeddinggemma-300m",
+      "model": "google/embeddinggemma-300m",
+      "dimensions": 768,
+      "spaceId": "sha256:5e25c7865d45bcde7cd60f0ab803a63647d99770d569108072d0d563247341e2",
+      "capability": {
+        "schema": "ProviderCapabilitySnapshot/v1",
+        "providerRef": "local:embeddinggemma-300m",
+        "transport": "local",
+        "credentialEpoch": 2,
+        "observedAt": "2026-11-13T10:12:21.262Z",
+        "status": "ready",
+        "space": {
+          "schema": "EmbeddingSpace/v1",
+          "spaceId": "sha256:5e25c7865d45bcde7cd60f0ab803a63647d99770d569108072d0d563247341e2",
+          "providerRef": "local:embeddinggemma-300m",
+          "model": "google/embeddinggemma-300m",
+          "modelRevision": "66f974f8cd48cc3b9c41c516b95508e75b4bee64/sha256:6fa0c02a9c302be6f977521d399b4de3a46310a4f2621ee0063747881b673f67",
+          "dimensions": 768,
+          "maxInputTokens": 2047,
+          "tokenizerId": "node-llama-cpp/calculateInputLength/v1",
+          "tokenizerDigest": "sha256:582cf5d4bcf3eed88b5468621bb07f634d32eb40d3a932588da4873b0590895e",
+          "inputFormat": {
+            "id": "embeddinggemma/search-v1",
+            "query": "task: search result | query: {text}",
+            "document": "title: {title} | text: {text}"
+          },
+          "normalization": "l2"
+        }
+      }
+    }
+  },
+  "remote": {
+    "success": true,
+    "embedding": {
+      "mode": "remote",
+      "status": "ready",
+      "credentialEpoch": 2,
+      "providerRef": "siliconflow",
+      "model": "Qwen/Qwen3-VL-Embedding-8B",
+      "dimensions": 4096,
+      "spaceId": "sha256:11bd8f259bf85dacf51b766a61f6f7d3f42b6346fd165bc0f9eb4db5a60e98ec",
+      "capability": {
+        "schema": "ProviderCapabilitySnapshot/v1",
+        "providerRef": "siliconflow",
+        "transport": "remote",
+        "credentialEpoch": 2,
+        "observedAt": "2026-11-13T10:12:51.098Z",
+        "status": "ready",
+        "space": {
+          "schema": "EmbeddingSpace/v1",
+          "spaceId": "sha256:11bd8f259bf85dacf51b766a61f6f7d3f42b6346fd165bc0f9eb4db5a60e98ec",
+          "providerRef": "siliconflow",
+          "model": "Qwen/Qwen3-VL-Embedding-8B",
+          "modelRevision": "provider-unversioned/fingerprint-v1:sha256:1a6a0c5332ff8e3091bef9a972f40fc3100c924ab1377b72b476f624003b76a2",
+          "dimensions": 4096,
+          "maxInputTokens": 32768,
+          "tokenizerId": "Qwen3-VL-Embedding-8B/text-chat-wrapper-v1",
+          "tokenizerDigest": "sha256:65f984f5e19d316570bbb27cae44fc2a9fa29b38386bea6d7b23e1159fb7187f",
+          "inputFormat": {
+            "id": "qwen3-vl/text-search-v1",
+            "query": "Retrieve relevant documents for the query.\n{text}",
+            "document": "{text}"
+          },
+          "normalization": "l2"
+        }
+      }
+    }
+  },
+  "refreshed": {
+    "success": true,
+    "embedding": {
+      "mode": "remote",
+      "status": "ready",
+      "credentialEpoch": 3,
+      "providerRef": "siliconflow",
+      "model": "Qwen/Qwen3-VL-Embedding-8B",
+      "dimensions": 4096,
+      "spaceId": "sha256:432ea5407a633e3d22dcd683332351ae7dbf9b50aaff9947cec9e1082b501159",
+      "capability": {
+        "schema": "ProviderCapabilitySnapshot/v1",
+        "providerRef": "siliconflow",
+        "transport": "remote",
+        "credentialEpoch": 3,
+        "observedAt": "2026-11-13T10:12:53.042Z",
+        "status": "ready",
+        "space": {
+          "schema": "EmbeddingSpace/v1",
+          "spaceId": "sha256:432ea5407a633e3d22dcd683332351ae7dbf9b50aaff9947cec9e1082b501159",
+          "providerRef": "siliconflow",
+          "model": "Qwen/Qwen3-VL-Embedding-8B",
+          "modelRevision": "provider-unversioned/fingerprint-v1:sha256:9bce78af2b8577262ab64f3d87d2d76d8fa48bd4bb8ff3afce19771673c08a42",
+          "dimensions": 4096,
+          "maxInputTokens": 32768,
+          "tokenizerId": "Qwen3-VL-Embedding-8B/text-chat-wrapper-v1",
+          "tokenizerDigest": "sha256:65f984f5e19d316570bbb27cae44fc2a9fa29b38386bea6d7b23e1159fb7187f",
+          "inputFormat": {
+            "id": "qwen3-vl/text-search-v1",
+            "query": "Retrieve relevant documents for the query.\n{text}",
+            "document": "{text}"
+          },
+          "normalization": "l2"
+        }
+      }
+    }
+  },
+  "lastObservedStatus": {
+    "success": true,
+    "embedding": {
+      "mode": "remote",
+      "status": "ready",
+      "credentialEpoch": 3,
+      "providerRef": "siliconflow",
+      "model": "Qwen/Qwen3-VL-Embedding-8B",
+      "dimensions": 4096,
+      "spaceId": "sha256:432ea5407a633e3d22dcd683332351ae7dbf9b50aaff9947cec9e1082b501159",
+      "capability": {
+        "schema": "ProviderCapabilitySnapshot/v1",
+        "providerRef": "siliconflow",
+        "transport": "remote",
+        "credentialEpoch": 3,
+        "observedAt": "2026-11-13T10:12:53.042Z",
+        "status": "ready",
+        "space": {
+          "schema": "EmbeddingSpace/v1",
+          "spaceId": "sha256:432ea5407a633e3d22dcd683332351ae7dbf9b50aaff9947cec9e1082b501159",
+          "providerRef": "siliconflow",
+          "model": "Qwen/Qwen3-VL-Embedding-8B",
+          "modelRevision": "provider-unversioned/fingerprint-v1:sha256:9bce78af2b8577262ab64f3d87d2d76d8fa48bd4bb8ff3afce19771673c08a42",
+          "dimensions": 4096,
+          "maxInputTokens": 32768,
+          "tokenizerId": "Qwen3-VL-Embedding-8B/text-chat-wrapper-v1",
+          "tokenizerDigest": "sha256:65f984f5e19d316570bbb27cae44fc2a9fa29b38386bea6d7b23e1159fb7187f",
+          "inputFormat": {
+            "id": "qwen3-vl/text-search-v1",
+            "query": "Retrieve relevant documents for the query.\n{text}",
+            "document": "{text}"
+          },
+          "normalization": "l2"
+        }
+      }
+    }
+  }
+}

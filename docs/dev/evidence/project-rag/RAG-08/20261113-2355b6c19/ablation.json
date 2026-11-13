@@ -1,0 +1,24 @@
+{
+  "schema": "ProjectRagRerankAblation/v1",
+  "driven_by": "agent",
+  "actor": "codex/project-rag-g1",
+  "realHumanEvidence": false,
+  "model": "Qwen/Qwen3-Reranker-0.6B",
+  "fixedCandidatePool": true,
+  "caseCount": 4,
+  "baseline": {
+    "ndcgAt5": 0.6577324383928644,
+    "precisionAt5": 0.2
+  },
+  "modelArm": {
+    "ndcgAt5": 1,
+    "precisionAt5": 0.2
+  },
+  "costs": {
+    "elapsedMs": 570.0102999999981,
+    "inputTokens": null,
+    "providerReportsTokenUsage": false,
+    "providerMonetaryCost": null
+  },
+  "promotionDecision": "measured-only-no-policy-promotion"
+}

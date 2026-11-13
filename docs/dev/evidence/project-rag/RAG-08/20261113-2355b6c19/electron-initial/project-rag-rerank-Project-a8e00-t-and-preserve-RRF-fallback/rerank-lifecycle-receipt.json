@@ -1,0 +1,785 @@
+{
+  "actor": "codex/project-rag-g1-rerank-electron",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "status": "pass",
+  "configured": {
+    "success": true,
+    "rerank": {
+      "mode": "local",
+      "status": "ready",
+      "credentialEpoch": 1,
+      "providerRef": "local:rerank",
+      "model": "Qwen/Qwen3-Reranker-0.6B",
+      "endpoint": "http://127.0.0.1:60498/rerank",
+      "models": [
+        {
+          "model": "Qwen/Qwen3-Reranker-0.6B",
+          "architecture": "cross-encoder",
+          "languages": "100+",
+          "maxInputTokens": 32768
+        },
+        {
+          "model": "Qwen/Qwen3-Reranker-4B",
+          "architecture": "cross-encoder",
+          "languages": "100+",
+          "maxInputTokens": 32768
+        },
+        {
+          "model": "Qwen/Qwen3-Reranker-8B",
+          "architecture": "cross-encoder",
+          "languages": "100+",
+          "maxInputTokens": 32768
+        }
+      ]
+    }
+  },
+  "quality": {
+    "success": true,
+    "retrieval": {
+      "schema": "RetrievalResult/v2",
+      "plan": {
+        "schema": "RetrievalPlan/v2",
+        "planId": "9e2ab483-ae1e-4f27-821d-470449f72b41",
+        "requestId": "60f54e66-83dc-4694-a942-5b8876223180",
+        "admissionContextId": "e740c8d5-1452-4fe2-8725-15235aa6f55e",
+        "policyVersion": "project-rag-rrf/v2",
+        "mode": "suggest",
+        "profile": "quality",
+        "intent": "lookup",
+        "namespaceIds": [
+          "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe"
+        ],
+        "queries": [
+          {
+            "text": "gateway deployment port",
+            "family": "root"
+          }
+        ],
+        "explicitRefs": [],
+        "generations": [
+          {
+            "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+            "lane": "lexical",
+            "generation": "a3b183ca-347a-4aad-9121-78ab86add723"
+          }
+        ],
+        "lanes": [
+          "exact",
+          "lexical",
+          "dense"
+        ],
+        "budget": {
+          "candidateK": 80,
+          "rerankK": 30,
+          "finalK": 6,
+          "maxPerParent": 2,
+          "maxTokens": 2200,
+          "maxChars": 6000,
+          "maxQueries": 1,
+          "maxModelCalls": 0,
+          "deadlineAtMs": 1794563967555
+        }
+      },
+      "status": "partial",
+      "effectiveProfile": "lexical",
+      "results": [
+        {
+          "lookup": "concepts/evidence.md",
+          "title": "Gateway deployment",
+          "snippet": "The gateway deployment port is 18789.\n",
+          "freshnessLevel": "known",
+          "metadata": {
+            "type": "concept",
+            "knowledgeKind": "concept"
+          },
+          "id": "chunk:sha256:cc2878078ceaa9816aad3260b3c9a06c2b0d39efad30fcfcae156a41c4d174a9",
+          "pagePath": "concepts/evidence.md",
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+            "subjectId": "concepts/evidence.md",
+            "revision": "1",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:04b17cbd8f66b527003a37cdc0b441706b645b104e2944395507a96ec592279a",
+            "policyEpoch": "sha256:48765f121c2cf7e8815fcd933a2bc6e4f4632fb1653892d52abcf78762571548",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 158,
+              "endByteExclusive": 196,
+              "startLine": 10,
+              "endLine": 10
+            }
+          },
+          "revision": "1",
+          "corpus": "wiki",
+          "rank": 1,
+          "score": 0.01639344262295082,
+          "scoreKind": "rrf",
+          "rankSignals": {
+            "schema": "RankSignals/v2",
+            "fusionScore": 0.01639344262295082,
+            "lanes": [
+              {
+                "lane": "lexical",
+                "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+                "queryFamily": "root",
+                "rank": 1,
+                "rawScore": -0.000004125,
+                "scoreKind": "bm25",
+                "contribution": 0.01639344262295082
+              }
+            ]
+          },
+          "autoReadAdmission": {
+            "eligible": false,
+            "contextId": "e740c8d5-1452-4fe2-8725-15235aa6f55e",
+            "reason": "relevance-calibration-unavailable"
+          }
+        }
+      ],
+      "lanes": [
+        {
+          "lane": "exact",
+          "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+          "queryFamily": "root",
+          "status": "available",
+          "candidateCount": 0,
+          "elapsedMs": 6.798399999999674
+        },
+        {
+          "lane": "lexical",
+          "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+          "queryFamily": "root",
+          "status": "available",
+          "candidateCount": 1,
+          "elapsedMs": 31.022800000002462
+        },
+        {
+          "lane": "dense",
+          "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+          "queryFamily": "root",
+          "status": "unavailable",
+          "reason": "Embedding must be ready before vector indexing",
+          "candidateCount": 0,
+          "elapsedMs": 1.9160999999985506
+        }
+      ],
+      "filters": [],
+      "fallbackReasons": [
+        "dense:Embedding must be ready before vector indexing"
+      ],
+      "snapshotStatus": "current",
+      "rerank": {
+        "schema": "RerankResult/v1",
+        "status": "complete",
+        "providerRef": "local:rerank",
+        "model": "Qwen/Qwen3-Reranker-0.6B",
+        "scoreKind": "raw-relevance",
+        "calibrated": false,
+        "candidateCount": 1,
+        "batchCount": 1,
+        "elapsedMs": 115.2547999999988,
+        "results": [
+          {
+            "id": "chunk:sha256:cc2878078ceaa9816aad3260b3c9a06c2b0d39efad30fcfcae156a41c4d174a9",
+            "score": 1
+          }
+        ]
+      }
+    }
+  },
+  "research": {
+    "success": true,
+    "retrieval": {
+      "schema": "RetrievalResult/v2",
+      "plan": {
+        "schema": "RetrievalPlan/v2",
+        "planId": "a3640b70-b599-4c00-9676-4a1ce610c25e",
+        "requestId": "35a1baf4-6716-435f-8ed7-d6db56569440",
+        "admissionContextId": "60806e73-7afd-4e57-a5de-f60b967a3ea8",
+        "policyVersion": "project-rag-rrf/v2",
+        "mode": "suggest",
+        "profile": "research",
+        "intent": "lookup",
+        "namespaceIds": [
+          "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe"
+        ],
+        "queries": [
+          {
+            "text": "gateway deployment port",
+            "family": "root"
+          }
+        ],
+        "explicitRefs": [],
+        "generations": [
+          {
+            "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+            "lane": "lexical",
+            "generation": "a3b183ca-347a-4aad-9121-78ab86add723"
+          }
+        ],
+        "lanes": [
+          "exact",
+          "lexical",
+          "dense"
+        ],
+        "budget": {
+          "candidateK": 120,
+          "rerankK": 60,
+          "finalK": 12,
+          "maxPerParent": 2,
+          "maxTokens": 5000,
+          "maxChars": 15000,
+          "maxQueries": 8,
+          "maxModelCalls": 2,
+          "deadlineAtMs": 1794563995289
+        }
+      },
+      "status": "partial",
+      "effectiveProfile": "lexical",
+      "results": [
+        {
+          "lookup": "concepts/evidence.md",
+          "title": "Gateway deployment",
+          "snippet": "The gateway deployment port is 18789.\n",
+          "freshnessLevel": "known",
+          "metadata": {
+            "type": "concept",
+            "knowledgeKind": "concept"
+          },
+          "id": "chunk:sha256:cc2878078ceaa9816aad3260b3c9a06c2b0d39efad30fcfcae156a41c4d174a9",
+          "pagePath": "concepts/evidence.md",
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+            "subjectId": "concepts/evidence.md",
+            "revision": "1",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:04b17cbd8f66b527003a37cdc0b441706b645b104e2944395507a96ec592279a",
+            "policyEpoch": "sha256:48765f121c2cf7e8815fcd933a2bc6e4f4632fb1653892d52abcf78762571548",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 158,
+              "endByteExclusive": 196,
+              "startLine": 10,
+              "endLine": 10
+            }
+          },
+          "revision": "1",
+          "corpus": "wiki",
+          "rank": 1,
+          "score": 0.01639344262295082,
+          "scoreKind": "rrf",
+          "rankSignals": {
+            "schema": "RankSignals/v2",
+            "fusionScore": 0.01639344262295082,
+            "lanes": [
+              {
+                "lane": "lexical",
+                "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+                "queryFamily": "root",
+                "rank": 1,
+                "rawScore": -0.000004125,
+                "scoreKind": "bm25",
+                "contribution": 0.01639344262295082
+              }
+            ]
+          },
+          "autoReadAdmission": {
+            "eligible": false,
+            "contextId": "60806e73-7afd-4e57-a5de-f60b967a3ea8",
+            "reason": "relevance-calibration-unavailable"
+          }
+        }
+      ],
+      "lanes": [
+        {
+          "lane": "exact",
+          "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+          "queryFamily": "root",
+          "status": "available",
+          "candidateCount": 0,
+          "elapsedMs": 3.629799999998795
+        },
+        {
+          "lane": "lexical",
+          "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+          "queryFamily": "root",
+          "status": "available",
+          "candidateCount": 1,
+          "elapsedMs": 25.676699999999983
+        },
+        {
+          "lane": "dense",
+          "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+          "queryFamily": "root",
+          "status": "unavailable",
+          "reason": "Embedding must be ready before vector indexing",
+          "candidateCount": 0,
+          "elapsedMs": 1.7371000000021013
+        }
+      ],
+      "filters": [],
+      "fallbackReasons": [
+        "dense:Embedding must be ready before vector indexing"
+      ],
+      "snapshotStatus": "current",
+      "rerank": {
+        "schema": "RerankResult/v1",
+        "status": "complete",
+        "providerRef": "local:rerank",
+        "model": "Qwen/Qwen3-Reranker-0.6B",
+        "scoreKind": "raw-relevance",
+        "calibrated": false,
+        "candidateCount": 1,
+        "batchCount": 1,
+        "elapsedMs": 37.94389999999839,
+        "results": [
+          {
+            "id": "chunk:sha256:cc2878078ceaa9816aad3260b3c9a06c2b0d39efad30fcfcae156a41c4d174a9",
+            "score": 1
+          }
+        ]
+      }
+    }
+  },
+  "local": {
+    "success": true,
+    "retrieval": {
+      "schema": "RetrievalResult/v2",
+      "plan": {
+        "schema": "RetrievalPlan/v2",
+        "planId": "856dca91-efd8-4f97-87bf-bd906eb3455f",
+        "requestId": "7c5b631f-be95-4bac-aec4-689fc714545f",
+        "admissionContextId": "6927f74f-14b5-47e9-9d4e-74e4447e2d56",
+        "policyVersion": "project-rag-rrf/v2",
+        "mode": "suggest",
+        "profile": "local",
+        "intent": "lookup",
+        "namespaceIds": [
+          "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe"
+        ],
+        "queries": [
+          {
+            "text": "gateway deployment port",
+            "family": "root"
+          }
+        ],
+        "explicitRefs": [],
+        "generations": [
+          {
+            "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+            "lane": "lexical",
+            "generation": "a3b183ca-347a-4aad-9121-78ab86add723"
+          }
+        ],
+        "lanes": [
+          "exact",
+          "lexical",
+          "dense"
+        ],
+        "budget": {
+          "candidateK": 40,
+          "rerankK": 0,
+          "finalK": 4,
+          "maxPerParent": 2,
+          "maxTokens": 1200,
+          "maxChars": 3200,
+          "maxQueries": 1,
+          "maxModelCalls": 0,
+          "deadlineAtMs": 1794563966372
+        }
+      },
+      "status": "partial",
+      "effectiveProfile": "lexical",
+      "results": [
+        {
+          "lookup": "concepts/evidence.md",
+          "title": "Gateway deployment",
+          "snippet": "The gateway deployment port is 18789.\n",
+          "freshnessLevel": "known",
+          "metadata": {
+            "type": "concept",
+            "knowledgeKind": "concept"
+          },
+          "id": "chunk:sha256:cc2878078ceaa9816aad3260b3c9a06c2b0d39efad30fcfcae156a41c4d174a9",
+          "pagePath": "concepts/evidence.md",
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+            "subjectId": "concepts/evidence.md",
+            "revision": "1",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:04b17cbd8f66b527003a37cdc0b441706b645b104e2944395507a96ec592279a",
+            "policyEpoch": "sha256:48765f121c2cf7e8815fcd933a2bc6e4f4632fb1653892d52abcf78762571548",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 158,
+              "endByteExclusive": 196,
+              "startLine": 10,
+              "endLine": 10
+            }
+          },
+          "revision": "1",
+          "corpus": "wiki",
+          "rank": 1,
+          "score": 0.01639344262295082,
+          "scoreKind": "rrf",
+          "rankSignals": {
+            "schema": "RankSignals/v2",
+            "fusionScore": 0.01639344262295082,
+            "lanes": [
+              {
+                "lane": "lexical",
+                "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+                "queryFamily": "root",
+                "rank": 1,
+                "rawScore": -0.000004125,
+                "scoreKind": "bm25",
+                "contribution": 0.01639344262295082
+              }
+            ]
+          },
+          "autoReadAdmission": {
+            "eligible": false,
+            "contextId": "6927f74f-14b5-47e9-9d4e-74e4447e2d56",
+            "reason": "relevance-calibration-unavailable"
+          }
+        }
+      ],
+      "lanes": [
+        {
+          "lane": "exact",
+          "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+          "queryFamily": "root",
+          "status": "available",
+          "candidateCount": 0,
+          "elapsedMs": 3.2993999999998778
+        },
+        {
+          "lane": "lexical",
+          "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+          "queryFamily": "root",
+          "status": "available",
+          "candidateCount": 1,
+          "elapsedMs": 31.257699999998295
+        },
+        {
+          "lane": "dense",
+          "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+          "queryFamily": "root",
+          "status": "unavailable",
+          "reason": "Embedding must be ready before vector indexing",
+          "candidateCount": 0,
+          "elapsedMs": 2.0403000000005704
+        }
+      ],
+      "filters": [],
+      "fallbackReasons": [
+        "dense:Embedding must be ready before vector indexing"
+      ],
+      "snapshotStatus": "current"
+    }
+  },
+  "cancelled": {
+    "success": true,
+    "retrieval": {
+      "schema": "RetrievalResult/v2",
+      "plan": {
+        "schema": "RetrievalPlan/v2",
+        "planId": "d76d88c9-f1d3-4267-ac90-621973c91200",
+        "requestId": "f723ab80-5f2f-4600-a126-3df2cc9b2dfa",
+        "admissionContextId": "bc6e8be1-98b7-4fa7-923e-d5b13a6cf580",
+        "policyVersion": "project-rag-rrf/v2",
+        "mode": "suggest",
+        "profile": "quality",
+        "intent": "lookup",
+        "namespaceIds": [
+          "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe"
+        ],
+        "queries": [
+          {
+            "text": "gateway deployment port",
+            "family": "root"
+          }
+        ],
+        "explicitRefs": [],
+        "generations": [
+          {
+            "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+            "lane": "lexical",
+            "generation": "a3b183ca-347a-4aad-9121-78ab86add723"
+          }
+        ],
+        "lanes": [
+          "exact",
+          "lexical",
+          "dense"
+        ],
+        "budget": {
+          "candidateK": 80,
+          "rerankK": 30,
+          "finalK": 6,
+          "maxPerParent": 2,
+          "maxTokens": 2200,
+          "maxChars": 6000,
+          "maxQueries": 1,
+          "maxModelCalls": 0,
+          "deadlineAtMs": 1794563968216
+        }
+      },
+      "status": "partial",
+      "effectiveProfile": "lexical",
+      "results": [
+        {
+          "lookup": "concepts/evidence.md",
+          "title": "Gateway deployment",
+          "snippet": "The gateway deployment port is 18789.\n",
+          "freshnessLevel": "known",
+          "metadata": {
+            "type": "concept",
+            "knowledgeKind": "concept"
+          },
+          "id": "chunk:sha256:cc2878078ceaa9816aad3260b3c9a06c2b0d39efad30fcfcae156a41c4d174a9",
+          "pagePath": "concepts/evidence.md",
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+            "subjectId": "concepts/evidence.md",
+            "revision": "1",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:04b17cbd8f66b527003a37cdc0b441706b645b104e2944395507a96ec592279a",
+            "policyEpoch": "sha256:48765f121c2cf7e8815fcd933a2bc6e4f4632fb1653892d52abcf78762571548",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 158,
+              "endByteExclusive": 196,
+              "startLine": 10,
+              "endLine": 10
+            }
+          },
+          "revision": "1",
+          "corpus": "wiki",
+          "rank": 1,
+          "score": 0.01639344262295082,
+          "scoreKind": "rrf",
+          "rankSignals": {
+            "schema": "RankSignals/v2",
+            "fusionScore": 0.01639344262295082,
+            "lanes": [
+              {
+                "lane": "lexical",
+                "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+                "queryFamily": "root",
+                "rank": 1,
+                "rawScore": -0.000004125,
+                "scoreKind": "bm25",
+                "contribution": 0.01639344262295082
+              }
+            ]
+          },
+          "autoReadAdmission": {
+            "eligible": false,
+            "contextId": "bc6e8be1-98b7-4fa7-923e-d5b13a6cf580",
+            "reason": "relevance-calibration-unavailable"
+          }
+        }
+      ],
+      "lanes": [
+        {
+          "lane": "exact",
+          "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+          "queryFamily": "root",
+          "status": "available",
+          "candidateCount": 0,
+          "elapsedMs": 3.5887000000002445
+        },
+        {
+          "lane": "lexical",
+          "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+          "queryFamily": "root",
+          "status": "available",
+          "candidateCount": 1,
+          "elapsedMs": 40.88300000000163
+        },
+        {
+          "lane": "dense",
+          "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+          "queryFamily": "root",
+          "status": "unavailable",
+          "reason": "Embedding must be ready before vector indexing",
+          "candidateCount": 0,
+          "elapsedMs": 1.800200000001496
+        }
+      ],
+      "filters": [],
+      "fallbackReasons": [
+        "rerank-unavailable",
+        "dense:Embedding must be ready before vector indexing",
+        "rerank-unavailable:Rerank provider is not configured"
+      ],
+      "snapshotStatus": "current"
+    }
+  },
+  "retried": {
+    "success": true,
+    "retrieval": {
+      "schema": "RetrievalResult/v2",
+      "plan": {
+        "schema": "RetrievalPlan/v2",
+        "planId": "9a3ea5f0-77f7-43e8-b3c2-b4387796e97a",
+        "requestId": "8b12f68a-04a5-43d5-a17d-b7a2dc93cefd",
+        "admissionContextId": "ee49dd6b-7004-4a36-b6b0-2aafc0862ee5",
+        "policyVersion": "project-rag-rrf/v2",
+        "mode": "suggest",
+        "profile": "quality",
+        "intent": "lookup",
+        "namespaceIds": [
+          "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe"
+        ],
+        "queries": [
+          {
+            "text": "gateway deployment port",
+            "family": "root"
+          }
+        ],
+        "explicitRefs": [],
+        "generations": [
+          {
+            "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+            "lane": "lexical",
+            "generation": "a3b183ca-347a-4aad-9121-78ab86add723"
+          }
+        ],
+        "lanes": [
+          "exact",
+          "lexical",
+          "dense"
+        ],
+        "budget": {
+          "candidateK": 80,
+          "rerankK": 30,
+          "finalK": 6,
+          "maxPerParent": 2,
+          "maxTokens": 2200,
+          "maxChars": 6000,
+          "maxQueries": 1,
+          "maxModelCalls": 0,
+          "deadlineAtMs": 1794563968497
+        }
+      },
+      "status": "partial",
+      "effectiveProfile": "lexical",
+      "results": [
+        {
+          "lookup": "concepts/evidence.md",
+          "title": "Gateway deployment",
+          "snippet": "The gateway deployment port is 18789.\n",
+          "freshnessLevel": "known",
+          "metadata": {
+            "type": "concept",
+            "knowledgeKind": "concept"
+          },
+          "id": "chunk:sha256:cc2878078ceaa9816aad3260b3c9a06c2b0d39efad30fcfcae156a41c4d174a9",
+          "pagePath": "concepts/evidence.md",
+          "sourceRef": {
+            "domain": "wiki",
+            "authorityId": "memory-wiki",
+            "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+            "subjectId": "concepts/evidence.md",
+            "revision": "1",
+            "schema": "SourceRef/v2",
+            "sourceDigest": "sha256:04b17cbd8f66b527003a37cdc0b441706b645b104e2944395507a96ec592279a",
+            "policyEpoch": "sha256:48765f121c2cf7e8815fcd933a2bc6e4f4632fb1653892d52abcf78762571548",
+            "locator": {
+              "coordinateSpace": "raw-source-utf8-v1",
+              "startByte": 158,
+              "endByteExclusive": 196,
+              "startLine": 10,
+              "endLine": 10
+            }
+          },
+          "revision": "1",
+          "corpus": "wiki",
+          "rank": 1,
+          "score": 0.01639344262295082,
+          "scoreKind": "rrf",
+          "rankSignals": {
+            "schema": "RankSignals/v2",
+            "fusionScore": 0.01639344262295082,
+            "lanes": [
+              {
+                "lane": "lexical",
+                "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+                "queryFamily": "root",
+                "rank": 1,
+                "rawScore": -0.000004125,
+                "scoreKind": "bm25",
+                "contribution": 0.01639344262295082
+              }
+            ]
+          },
+          "autoReadAdmission": {
+            "eligible": false,
+            "contextId": "ee49dd6b-7004-4a36-b6b0-2aafc0862ee5",
+            "reason": "relevance-calibration-unavailable"
+          }
+        }
+      ],
+      "lanes": [
+        {
+          "lane": "exact",
+          "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+          "queryFamily": "root",
+          "status": "available",
+          "candidateCount": 0,
+          "elapsedMs": 5.201700000001438
+        },
+        {
+          "lane": "lexical",
+          "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+          "queryFamily": "root",
+          "status": "available",
+          "candidateCount": 1,
+          "elapsedMs": 36.716599999999744
+        },
+        {
+          "lane": "dense",
+          "namespaceId": "memory-wiki:82adb1893b10c3422da78085ee522a7915fc07b24627e0ae593f4aadbe40aebe",
+          "queryFamily": "root",
+          "status": "unavailable",
+          "reason": "Embedding must be ready before vector indexing",
+          "candidateCount": 0,
+          "elapsedMs": 2.399600000000646
+        }
+      ],
+      "filters": [],
+      "fallbackReasons": [
+        "dense:Embedding must be ready before vector indexing"
+      ],
+      "snapshotStatus": "current",
+      "rerank": {
+        "schema": "RerankResult/v1",
+        "status": "complete",
+        "providerRef": "local:rerank",
+        "model": "Qwen/Qwen3-Reranker-0.6B",
+        "scoreKind": "raw-relevance",
+        "calibrated": false,
+        "candidateCount": 1,
+        "batchCount": 1,
+        "elapsedMs": 4.985100000001694,
+        "results": [
+          {
+            "id": "chunk:sha256:cc2878078ceaa9816aad3260b3c9a06c2b0d39efad30fcfcae156a41c4d174a9",
+            "score": 1
+          }
+        ]
+      }
+    }
+  }
+}

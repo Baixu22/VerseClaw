@@ -1,0 +1,197 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-relay-01a1d438/rag08-2355b6c19/electron",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-provider-settings.spec.ts",
+      "file": "project-rag-provider-settings.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG model settings configure, cancel, retry and refresh real embedding services",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 420000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 167692,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('embedding-status')\nExpected: \u001b[32m\"ready\"\u001b[39m\nReceived: \u001b[31m\"unavailable\"\u001b[39m\nTimeout:  120000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 120000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('embedding-status')\u001b[22m\n\u001b[2m    2 × locator resolved to <p class=\"text-sm\" aria-live=\"polite\" data-state=\"cancelled\" data-testid=\"embedding-status\">Status: Cancelled</p>\u001b[22m\n\u001b[2m      - unexpected value \"cancelled\"\u001b[22m\n\u001b[2m    4 × locator resolved to <p class=\"text-sm\" aria-live=\"polite\" data-state=\"installing\" data-testid=\"embedding-status\">Status: Installing model</p>\u001b[22m\n\u001b[2m      - unexpected value \"installing\"\u001b[22m\n\u001b[2m    115 × locator resolved to <p class=\"text-sm\" aria-live=\"polite\" data-state=\"unavailable\" data-testid=\"embedding-status\">Status: Unavailable</p>\u001b[22m\n\u001b[2m        - unexpected value \"unavailable\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('embedding-status')\nExpected: \u001b[32m\"ready\"\u001b[39m\nReceived: \u001b[31m\"unavailable\"\u001b[39m\nTimeout:  120000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 120000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('embedding-status')\u001b[22m\n\u001b[2m    2 × locator resolved to <p class=\"text-sm\" aria-live=\"polite\" data-state=\"cancelled\" data-testid=\"embedding-status\">Status: Cancelled</p>\u001b[22m\n\u001b[2m      - unexpected value \"cancelled\"\u001b[22m\n\u001b[2m    4 × locator resolved to <p class=\"text-sm\" aria-live=\"polite\" data-state=\"installing\" data-testid=\"embedding-status\">Status: Installing model</p>\u001b[22m\n\u001b[2m      - unexpected value \"installing\"\u001b[22m\n\u001b[2m    115 × locator resolved to <p class=\"text-sm\" aria-live=\"polite\" data-state=\"unavailable\" data-testid=\"embedding-status\">Status: Unavailable</p>\u001b[22m\n\u001b[2m        - unexpected value \"unavailable\"\u001b[22m\n\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-provider-settings.spec.ts:59:56",
+                    "location": {
+                      "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-provider-settings.spec.ts",
+                      "column": 56,
+                      "line": 59
+                    },
+                    "snippet": "  57 |     await expect(page.getByTestId('embedding-status')).toHaveAttribute('data-state', 'cancelled', { timeout: 30_000 });\n  58 |     await page.getByTestId('embedding-retry').click();\n> 59 |     await expect(page.getByTestId('embedding-status')).toHaveAttribute('data-state', 'ready', { timeout: 120_000 });\n     |                                                        ^\n  60 |     const local = await host<KnowledgeEmbeddingStatusResult>(page, 'knowledge', 'embeddingStatus');\n  61 |     expect(local.embedding).toMatchObject({ mode: 'local', status: 'ready', dimensions: 768 });\n  62 |     await page.evaluate(() => { window.location.hash = '#/settings/general'; });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-provider-settings.spec.ts",
+                        "column": 56,
+                        "line": 59
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('embedding-status')\nExpected: \u001b[32m\"ready\"\u001b[39m\nReceived: \u001b[31m\"unavailable\"\u001b[39m\nTimeout:  120000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 120000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('embedding-status')\u001b[22m\n\u001b[2m    2 × locator resolved to <p class=\"text-sm\" aria-live=\"polite\" data-state=\"cancelled\" data-testid=\"embedding-status\">Status: Cancelled</p>\u001b[22m\n\u001b[2m      - unexpected value \"cancelled\"\u001b[22m\n\u001b[2m    4 × locator resolved to <p class=\"text-sm\" aria-live=\"polite\" data-state=\"installing\" data-testid=\"embedding-status\">Status: Installing model</p>\u001b[22m\n\u001b[2m      - unexpected value \"installing\"\u001b[22m\n\u001b[2m    115 × locator resolved to <p class=\"text-sm\" aria-live=\"polite\" data-state=\"unavailable\" data-testid=\"embedding-status\">Status: Unavailable</p>\u001b[22m\n\u001b[2m        - unexpected value \"unavailable\"\u001b[22m\n\n\n  57 |     await expect(page.getByTestId('embedding-status')).toHaveAttribute('data-state', 'cancelled', { timeout: 30_000 });\n  58 |     await page.getByTestId('embedding-retry').click();\n> 59 |     await expect(page.getByTestId('embedding-status')).toHaveAttribute('data-state', 'ready', { timeout: 120_000 });\n     |                                                        ^\n  60 |     const local = await host<KnowledgeEmbeddingStatusResult>(page, 'knowledge', 'embeddingStatus');\n  61 |     expect(local.embedding).toMatchObject({ mode: 'local', status: 'ready', dimensions: 768 });\n  62 |     await page.evaluate(() => { window.location.hash = '#/settings/general'; });\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-provider-settings.spec.ts:59:56"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T09:55:47.252Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "embedding-lifecycle-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJhY3RvciI6ICJjb2RleC9wcm9qZWN0LXJhZy1lbWJlZGRpbmctZWxlY3Ryb24iLAogICJkcml2ZW5fYnkiOiAiYWdlbnQiLAogICJzdGF0dXMiOiAiZmFpbCIsCiAgInN0ZXBzIjoge30sCiAgImxhc3RPYnNlcnZlZFN0YXR1cyI6IHsKICAgICJzdWNjZXNzIjogdHJ1ZSwKICAgICJlbWJlZGRpbmciOiB7CiAgICAgICJtb2RlIjogImxvY2FsIiwKICAgICAgImNyZWRlbnRpYWxFcG9jaCI6IDIsCiAgICAgICJzdGF0dXMiOiAidW5hdmFpbGFibGUiLAogICAgICAiZXJyb3IiOiAiRW1iZWRkaW5nIGluaXRpYWxpemF0aW9uIGZhaWxlZDogSW5zdWZmaWNpZW50IFJBTSBidWRnZXQgZm9yIGxvY2FsIGVtYmVkZGluZyB3YXJtdXAiCiAgICB9CiAgfQp9"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d438\\rag08-2355b6c19\\electron\\project-rag-provider-setti-69fa0-esh-real-embedding-services\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d438\\rag08-2355b6c19\\electron\\project-rag-provider-setti-69fa0-esh-real-embedding-services\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d438\\rag08-2355b6c19\\electron\\project-rag-provider-setti-69fa0-esh-real-embedding-services\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-provider-settings.spec.ts",
+                    "column": 56,
+                    "line": 59
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e42daccfedc4063de65e-781cc14c3089fbea2524",
+          "file": "project-rag-provider-settings.spec.ts",
+          "line": 18,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "project-rag-rerank.spec.ts",
+      "file": "project-rag-rerank.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG rerank settings call an admitted local endpoint and preserve RRF fallback",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 55671,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T09:58:36.352Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b4d8c2d423db1e5de833-7b80a08a8d972ac5b44f",
+          "file": "project-rag-rerank.spec.ts",
+          "line": 16,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-13T09:55:45.968Z",
+    "duration": 227822.848,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
