@@ -1,0 +1,132 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-artifact-panel-layout-tsx.json",
+  "sourceSha256": "46e9fc1d8668e1dc3ff8f2a2744793a2f12dddda43421bfa2a56187dc77ebe28",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 7,
+    "numPassedTests": 7,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563215037,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "Chat artifact panel layout"
+            ],
+            "fullName": "Chat artifact panel layout keeps the chat toolbar background draggable while actions remain clickable",
+            "status": "passed",
+            "title": "keeps the chat toolbar background draggable while actions remain clickable",
+            "duration": 153.5661,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat artifact panel layout"
+            ],
+            "fullName": "Chat artifact panel layout keeps the chat page as the positioned workspace surface on macOS",
+            "status": "passed",
+            "title": "keeps the chat page as the positioned workspace surface on macOS",
+            "duration": 39.92729999999938,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat artifact panel layout"
+            ],
+            "fullName": "Chat artifact panel layout renders the right artifact panel as a flex sibling that squeezes the chat",
+            "status": "passed",
+            "title": "renders the right artifact panel as a flex sibling that squeezes the chat",
+            "duration": 40.494400000000496,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat artifact panel layout"
+            ],
+            "fullName": "Chat artifact panel layout gives the side panel no surface of its own, so it stays co-planar with the chat",
+            "status": "passed",
+            "title": "gives the side panel no surface of its own, so it stays co-planar with the chat",
+            "duration": 36.174699999999575,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat artifact panel layout"
+            ],
+            "fullName": "Chat artifact panel layout keeps the conversation canvas plain without grid decoration",
+            "status": "passed",
+            "title": "keeps the conversation canvas plain without grid decoration",
+            "duration": 56.69590000000062,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat artifact panel layout"
+            ],
+            "fullName": "Chat artifact panel layout hides the chat assistive rail while the artifact panel is open",
+            "status": "passed",
+            "title": "hides the chat assistive rail while the artifact panel is open",
+            "duration": 38.937699999999495,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat artifact panel layout"
+            ],
+            "fullName": "Chat artifact panel layout does not show the chat assistive rail before work starts",
+            "status": "passed",
+            "title": "does not show the chat assistive rail before work starts",
+            "duration": 32.59130000000005,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563222851,
+        "endTime": 1794563223249.5913,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/chat-artifact-panel-layout.test.tsx"
+      }
+    ]
+  }
+}

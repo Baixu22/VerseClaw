@@ -1,0 +1,85 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\workspace\\output\\electron-process-cleanup.json",
+  "sourceSha256": "1f4af2df486b86ae5d81159259b7f9e3fe35d3257cba97da404d3850b80803c4",
+  "result": {
+    "driven_by": "agent",
+    "actor": "playwright-runner",
+    "runRoot": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\.tmp\\e2e-runs\\verse-claw-e2e-run-gdwiuc",
+    "ledgerEntries": 10,
+    "checks": [
+      {
+        "pid": 3748,
+        "creationTime": 1794564007162,
+        "status": "exited"
+      },
+      {
+        "pid": 43132,
+        "creationTime": 1794564012104,
+        "status": "exited"
+      },
+      {
+        "pid": 3480,
+        "creationTime": 1794564012357,
+        "status": "exited"
+      },
+      {
+        "pid": 30248,
+        "creationTime": 1794564019499,
+        "status": "exited"
+      },
+      {
+        "pid": 35916,
+        "creationTime": 1794564023968,
+        "status": "exited"
+      },
+      {
+        "pid": 4552,
+        "creationTime": 1794564024206,
+        "status": "exited"
+      }
+    ],
+    "processObservations": [
+      [
+        {
+          "pid": 3748,
+          "creationTime": 1794564007162,
+          "status": "exited"
+        },
+        {
+          "pid": 43132,
+          "creationTime": 1794564012104,
+          "status": "exited"
+        },
+        {
+          "pid": 3480,
+          "creationTime": 1794564012357,
+          "status": "exited"
+        },
+        {
+          "pid": 30248,
+          "creationTime": 1794564019499,
+          "status": "exited"
+        },
+        {
+          "pid": 35916,
+          "creationTime": 1794564023968,
+          "status": "exited"
+        },
+        {
+          "pid": 4552,
+          "creationTime": 1794564024206,
+          "status": "exited"
+        }
+      ]
+    ],
+    "owned": [],
+    "remaining": [],
+    "survivors": [],
+    "pendingLaunches": 0,
+    "status": "passed"
+  }
+}

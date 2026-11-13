@@ -1,0 +1,348 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-render-reachability-tsx.json",
+  "sourceSha256": "ee35cfbaaad291f7416509ce59709e8c391655ee52159272d6b232e0367d924d",
+  "result": {
+    "numTotalTestSuites": 9,
+    "numPassedTestSuites": 9,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 25,
+    "numPassedTests": 25,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563281184,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "Run-log replay provenance badge"
+            ],
+            "fullName": "Run-log replay provenance badge renders the translated badge instead of the raw i18n key",
+            "status": "passed",
+            "title": "renders the translated badge instead of the raw i18n key",
+            "duration": 179.16319999999996,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Tool UI cards emitted as tool calls inside a run segment"
+            ],
+            "fullName": "Tool UI cards emitted as tool calls inside a run segment renders a card from a tool-only assistant turn",
+            "status": "passed",
+            "title": "renders a card from a tool-only assistant turn",
+            "duration": 157.33729999999923,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Tool UI cards emitted as tool calls inside a run segment"
+            ],
+            "fullName": "Tool UI cards emitted as tool calls inside a run segment renders a card from a mixed text + tool_use turn whose text was folded into the graph",
+            "status": "passed",
+            "title": "renders a card from a mixed text + tool_use turn whose text was folded into the graph",
+            "duration": 158.21000000000004,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Tool UI cards emitted as tool calls inside a run segment"
+            ],
+            "fullName": "Tool UI cards emitted as tool calls inside a run segment renders a question the run is blocked on, with no final reply yet",
+            "status": "passed",
+            "title": "renders a question the run is blocked on, with no final reply yet",
+            "duration": 136.32499999999982,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Tool UI cards emitted as tool calls inside a run segment"
+            ],
+            "fullName": "Tool UI cards emitted as tool calls inside a run segment still hides a plain tool call that has no card renderer",
+            "status": "passed",
+            "title": "still hides a plain tool call that has no card renderer",
+            "duration": 118.88569999999982,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Plan surface"
+            ],
+            "fullName": "Plan surface replays an update_plan tool call from history into the turn summary",
+            "status": "passed",
+            "title": "replays an update_plan tool call from history into the turn summary",
+            "duration": 194.03220000000056,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Plan surface"
+            ],
+            "fullName": "Plan surface does not also render the plan as a message card",
+            "status": "passed",
+            "title": "does not also render the plan as a message card",
+            "duration": 117.56850000000031,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Plan surface"
+            ],
+            "fullName": "Plan surface omits the execution graph entirely when every row was promoted",
+            "status": "passed",
+            "title": "omits the execution graph entirely when every row was promoted",
+            "duration": 139.0059000000001,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Permission approvals"
+            ],
+            "fullName": "Permission approvals surfaces a pending host approval in the transcript",
+            "status": "passed",
+            "title": "surfaces a pending host approval in the transcript",
+            "duration": 156.02019999999993,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Permission approvals"
+            ],
+            "fullName": "Permission approvals renders exactly one approval card when a tool call also parses as one",
+            "status": "passed",
+            "title": "renders exactly one approval card when a tool call also parses as one",
+            "duration": 107.09619999999995,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Permission approvals"
+            ],
+            "fullName": "Permission approvals surfaces a pending approval even when no turn produced an activity card",
+            "status": "passed",
+            "title": "surfaces a pending approval even when no turn produced an activity card",
+            "duration": 135.58480000000054,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Permission approvals"
+            ],
+            "fullName": "Permission approvals keeps an undecided approval visible after the next run starts",
+            "status": "passed",
+            "title": "keeps an undecided approval visible after the next run starts",
+            "duration": 119.71100000000024,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Permission approvals"
+            ],
+            "fullName": "Permission approvals forces the turn summary open while an approval is pending",
+            "status": "passed",
+            "title": "forces the turn summary open while an approval is pending",
+            "duration": 83.26340000000073,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Thinking reasoning"
+            ],
+            "fullName": "Thinking reasoning shows reasoning from a message thinking block",
+            "status": "passed",
+            "title": "shows reasoning from a message thinking block",
+            "duration": 80.95419999999831,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Thinking reasoning"
+            ],
+            "fullName": "Thinking reasoning keeps reasoning on a turn whose narration text was folded away",
+            "status": "passed",
+            "title": "keeps reasoning on a turn whose narration text was folded away",
+            "duration": 86.05240000000049,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Thinking reasoning"
+            ],
+            "fullName": "Thinking reasoning hides reasoning entirely while the process fold is shut",
+            "status": "passed",
+            "title": "hides reasoning entirely while the process fold is shut",
+            "duration": 127.27379999999903,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Thinking reasoning"
+            ],
+            "fullName": "Thinking reasoning keeps thought counts out of the compact header while retaining reasoning details",
+            "status": "passed",
+            "title": "keeps thought counts out of the compact header while retaining reasoning details",
+            "duration": 103.13440000000082,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Thinking reasoning"
+            ],
+            "fullName": "Thinking reasoning merges reasoning from every message in the run segment into one panel",
+            "status": "passed",
+            "title": "merges reasoning from every message in the run segment into one panel",
+            "duration": 117.316499999999,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Thinking reasoning"
+            ],
+            "fullName": "Thinking reasoning keeps progress text visible when a referenced attachment fails to materialize",
+            "status": "passed",
+            "title": "keeps progress text visible when a referenced attachment fails to materialize",
+            "duration": 206.6894999999986,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Thinking reasoning"
+            ],
+            "fullName": "Thinking reasoning shows live reasoning from the runtime run while streaming",
+            "status": "passed",
+            "title": "shows live reasoning from the runtime run while streaming",
+            "duration": 105.63040000000001,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Generated file ownership"
+            ],
+            "fullName": "Generated file ownership shows a diffable file as a diff only, never also as a chip",
+            "status": "passed",
+            "title": "shows a diffable file as a diff only, never also as a chip",
+            "duration": 265.6272000000008,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Generated file ownership"
+            ],
+            "fullName": "Generated file ownership still chips a file the diff projection cannot render",
+            "status": "passed",
+            "title": "still chips a file the diff projection cannot render",
+            "duration": 73.3060000000005,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Turn summary contents badges"
+            ],
+            "fullName": "Turn summary contents badges labels contents while collapsed, then shows them when opened",
+            "status": "passed",
+            "title": "labels contents while collapsed, then shows them when opened",
+            "duration": 123.02980000000025,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Turn summary contents badges"
+            ],
+            "fullName": "Turn summary contents badges marks a pending approval in the badge row",
+            "status": "passed",
+            "title": "marks a pending approval in the badge row",
+            "duration": 126.8698000000004,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Turn disclosure survives the optimistic→server id swap"
+            ],
+            "fullName": "Turn disclosure survives the optimistic→server id swap keeps the turn open after the trigger message id changes",
+            "status": "passed",
+            "title": "keeps the turn open after the trigger message id changes",
+            "duration": 178.11419999999998,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563287698,
+        "endTime": 1794563291095.1143,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/chat-render-reachability.test.tsx"
+      }
+    ]
+  }
+}

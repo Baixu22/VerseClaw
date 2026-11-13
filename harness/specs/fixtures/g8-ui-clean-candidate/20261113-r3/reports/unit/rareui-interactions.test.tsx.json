@@ -1,0 +1,240 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\rareui-interactions-tsx.json",
+  "sourceSha256": "7a7b68f4f57f7ab7072ebc831932fba6b36e203a9ac472d648e9303a630a1848",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 16,
+    "numPassedTests": 16,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563352293,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "Rare UI production adaptations"
+            ],
+            "fullName": "Rare UI production adaptations builds unique nested Markdown anchors and ignores fenced headings",
+            "status": "passed",
+            "title": "builds unique nested Markdown anchors and ignores fenced headings",
+            "duration": 8.453599999999824,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Rare UI production adaptations"
+            ],
+            "fullName": "Rare UI production adaptations renders matching unique heading IDs for independent preview instances",
+            "status": "passed",
+            "title": "renders matching unique heading IDs for independent preview instances",
+            "duration": 135.07920000000013,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Rare UI production adaptations"
+            ],
+            "fullName": "Rare UI production adaptations keeps a time edit local until confirm and rejects fractional/out-of-range input",
+            "status": "passed",
+            "title": "keeps a time edit local until confirm and rejects fractional/out-of-range input",
+            "duration": 13.842200000000048,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Rare UI production adaptations"
+            ],
+            "fullName": "Rare UI production adaptations edits only cron hour and minute fields and preserves unsupported schedules",
+            "status": "passed",
+            "title": "edits only cron hour and minute fields and preserves unsupported schedules",
+            "duration": 0.41409999999996217,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Rare UI production adaptations"
+            ],
+            "fullName": "Rare UI production adaptations leaves deletion effects and success to the confirmation owner",
+            "status": "passed",
+            "title": "leaves deletion effects and success to the confirmation owner",
+            "duration": 13.05139999999983,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Rare UI production adaptations"
+            ],
+            "fullName": "Rare UI production adaptations sorts completed and failed runs newest first while excluding active runs",
+            "status": "passed",
+            "title": "sorts completed and failed runs newest first while excluding active runs",
+            "duration": 0.8370999999997366,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Rare UI production adaptations"
+            ],
+            "fullName": "Rare UI production adaptations theme selector exposes radios, single tab stop, and activation by mouse and keyboard",
+            "status": "passed",
+            "title": "theme selector exposes radios, single tab stop, and activation by mouse and keyboard",
+            "duration": 27.264700000000175,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Rare UI production adaptations"
+            ],
+            "fullName": "Rare UI production adaptations theme selector wraps arrow keys and honours Home/End without marking itself checked",
+            "status": "passed",
+            "title": "theme selector wraps arrow keys and honours Home/End without marking itself checked",
+            "duration": 28.693900000000212,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Rare UI production adaptations"
+            ],
+            "fullName": "Rare UI production adaptations theme selector still selects and accepts keyboard input when uncontrolled",
+            "status": "passed",
+            "title": "theme selector still selects and accepts keyboard input when uncontrolled",
+            "duration": 18.93209999999999,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Rare UI production adaptations"
+            ],
+            "fullName": "Rare UI production adaptations keeps the desktop notification switch in the attention menu",
+            "status": "passed",
+            "title": "keeps the desktop notification switch in the attention menu",
+            "duration": 107.60890000000018,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Rare UI production adaptations"
+            ],
+            "fullName": "Rare UI production adaptations groups only consecutive entries of one session, keeping the feed newest-first",
+            "status": "passed",
+            "title": "groups only consecutive entries of one session, keeping the feed newest-first",
+            "duration": 0.40380000000004657,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Rare UI production adaptations"
+            ],
+            "fullName": "Rare UI production adaptations formats a running clock with tabular minutes and seconds",
+            "status": "passed",
+            "title": "formats a running clock with tabular minutes and seconds",
+            "duration": 0.3334999999997308,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Rare UI production adaptations"
+            ],
+            "fullName": "Rare UI production adaptations shows live sessions, marks waiting sessions, and colours unread activity by severity",
+            "status": "passed",
+            "title": "shows live sessions, marks waiting sessions, and colours unread activity by severity",
+            "duration": 218.71579999999994,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Rare UI production adaptations"
+            ],
+            "fullName": "Rare UI production adaptations draws live state with the row orb and keeps the corner for the unread count only",
+            "status": "passed",
+            "title": "draws live state with the row orb and keeps the corner for the unread count only",
+            "duration": 193.88670000000002,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Rare UI production adaptations"
+            ],
+            "fullName": "Rare UI production adaptations shows an honest empty state when nothing ran and nothing is running",
+            "status": "passed",
+            "title": "shows an honest empty state when nothing ran and nothing is running",
+            "duration": 8.699200000000019,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Rare UI production adaptations"
+            ],
+            "fullName": "Rare UI production adaptations plans a title marquee only for titles that overflow, at a constant speed",
+            "status": "passed",
+            "title": "plans a title marquee only for titles that overflow, at a constant speed",
+            "duration": 6.860599999999977,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563355047,
+        "endTime": 1794563355829.8606,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/rareui-interactions.test.tsx"
+      }
+    ]
+  }
+}

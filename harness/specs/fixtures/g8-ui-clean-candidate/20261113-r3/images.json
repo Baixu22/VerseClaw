@@ -1,0 +1,1125 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "images": [
+    {
+      "group": "agent-dev-quality",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\agent-dev-quality\\output\\agent-dev-quality-agent-de-3bbb0-ifact-for-a-seeded-scenario\\agent-dev-visual-doctor-failed.png",
+      "sha256": "2a94152e8cc0473a1f053b30a8749f0bb747e133f5bdfcb08aa41eceead7b12d",
+      "width": 1440,
+      "height": 900,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\agent-dev-quality\\output\\agent-dev-quality-agent-de-3bbb0-ifact-for-a-seeded-scenario\\attachments\\agent-dev-visual-doctor-failed-6c2ac7ee20d9ca8672b781530f16b084d8dbb050.png"
+      ],
+      "retainedPath": "screenshots/agent-dev-quality/001-2a94152e8cc0.png"
+    },
+    {
+      "group": "agent-dev-quality",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\agent-dev-quality\\output\\agent-dev-quality-agent-de-bd8d6-s-with-aligned-card-styling\\attachments\\chat-welcome-suggestions-0a9b17442a46f66f160b258b0a30801efe378323.png",
+      "sha256": "e6c7f595d1fa25777c20511c8251c716a91c8d3dcbab033e675f5ba60b70b5ce",
+      "width": 1165,
+      "height": 28,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\agent-dev-quality\\output\\agent-dev-quality-agent-de-bd8d6-s-with-aligned-card-styling\\chat-welcome-suggestions.png"
+      ],
+      "retainedPath": "screenshots/agent-dev-quality/002-e6c7f595d1fa.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\output\\sidebar-session-folders-ar-7ac7e--then-deletes-the-workgroup\\workgroup-sidebar.png",
+      "sha256": "9972d9d6e3e2755b32d3f17e64b004b29c6802e5323372f63a931dfb98c0c426",
+      "width": 1922,
+      "height": 1202,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/003-9972d9d6e3e2.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\output\\sidebar-session-row-polish-6bdfa-d-retains-migration-dialogs\\long-title-expanded-sidebar-720.png",
+      "sha256": "dfd6e52ccbf07bfbc6fb2db840c2b90628d070cbe4d8a2c629781cbc4c17dee0",
+      "width": 1442,
+      "height": 1232,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/004-dfd6e52ccbf0.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\output\\sidebar-session-row-polish-6bdfa-d-retains-migration-dialogs\\migration-dialog.png",
+      "sha256": "92d3e6efbf6a31cc97b39cda27b2f5ce366177f27eb2e72653846d19f16133bf",
+      "width": 1442,
+      "height": 1232,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/005-92d3e6efbf6a.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\output\\sidebar-session-row-polish-6bdfa-d-retains-migration-dialogs\\navigation-dark-1280.png",
+      "sha256": "d5c43249e70709f69b82b26b4298f6f48c6286be99d1b2ab4d54f1a05ec89d53",
+      "width": 1922,
+      "height": 1232,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/006-d5c43249e707.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\output\\sidebar-session-row-polish-6bdfa-d-retains-migration-dialogs\\navigation-dark-720.png",
+      "sha256": "91bc6b5e4fad94922225984e208811d9fd3a7744950bfa1da900c84a7b6a3f1d",
+      "width": 1442,
+      "height": 1232,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/007-91bc6b5e4fad.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\output\\sidebar-session-row-polish-6bdfa-d-retains-migration-dialogs\\navigation-dark-960.png",
+      "sha256": "237c5dbb41aa45078f5e4240770d97cf020787228f7cbe42db37c48cf666f191",
+      "width": 1442,
+      "height": 1232,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/008-237c5dbb41aa.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\output\\sidebar-session-row-polish-6bdfa-d-retains-migration-dialogs\\navigation-light-1280.png",
+      "sha256": "54e83aae761ea5ca59b23e87bf749481a3631531403c93047aef9ae45522b88b",
+      "width": 1922,
+      "height": 1232,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/009-54e83aae761e.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\output\\sidebar-session-row-polish-6bdfa-d-retains-migration-dialogs\\navigation-light-720.png",
+      "sha256": "1cb0e8fde62ece42a935bca9c1a84c3eb097c0c094807ce0302985230dc5ee23",
+      "width": 1442,
+      "height": 1232,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/010-1cb0e8fde62e.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\output\\sidebar-session-row-polish-6bdfa-d-retains-migration-dialogs\\navigation-light-960.png",
+      "sha256": "e966158f64c0b2153270ac6c6e2c6533ea0892df38ad186c8f4a0863aceee483",
+      "width": 1442,
+      "height": 1232,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/011-e966158f64c0.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\rareui\\screenshots\\completion-bell-light.png",
+      "sha256": "f7853a7b3f07c7486b44da623511705d1a99d5981635c9735601e222cc9de577",
+      "width": 2162,
+      "height": 1442,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/012-f7853a7b3f07.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\rareui\\screenshots\\conversation-narrow-reduced-dark.png",
+      "sha256": "096362754d7c705d262d2dc4203cdbcba5cbfff33803cae67807af6e0245fc47",
+      "width": 1502,
+      "height": 1142,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/013-096362754d7c.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\rareui\\screenshots\\conversation-proximity-light.png",
+      "sha256": "9e5415636e81317b78ebc2e4823c65da0d5c9f4e4909db56522fcb0dadf65f16",
+      "width": 2162,
+      "height": 1442,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/014-9e5415636e81.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\rareui\\screenshots\\cron-duration-edit-light.png",
+      "sha256": "0bb0c50c911782b53ca150db2334e21e4c9ff7770aff9963ca69f75738748fcc",
+      "width": 2162,
+      "height": 1442,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/015-0bb0c50c9117.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\rareui\\screenshots\\delete-confirmation-light.png",
+      "sha256": "1fc504f8676e0c18374c7e273cb483b0169d2e7d8632ab1069ec815aa4b1bdb0",
+      "width": 2162,
+      "height": 1442,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/016-1fc504f8676e.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\rareui\\screenshots\\delete-hover-light.png",
+      "sha256": "5e8b940d6767ffba812f6238c9c08bd8b655f6fc35ad9db3d775b0a714737c21",
+      "width": 2162,
+      "height": 1442,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/017-5e8b940d6767.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\rareui\\screenshots\\markdown-toc-dark.png",
+      "sha256": "e64a6b429b5d65a1fb63cd6d8638652215fef62046aa450925ef9d5d22504e6d",
+      "width": 2162,
+      "height": 1442,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/018-e64a6b429b5d.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\rareui\\screenshots\\markdown-toc-light.png",
+      "sha256": "ae7d5dce7a78161745e5e114c769d34dfa08039a232b63df17ea72a56602c303",
+      "width": 2162,
+      "height": 1442,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/019-ae7d5dce7a78.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\rareui\\screenshots\\session-hook-light.png",
+      "sha256": "4ae97a92a2cabc71769cb72614d7615d933a3e8d79159e762828bc9762f3ec3e",
+      "width": 2162,
+      "height": 1442,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/020-4ae97a92a2ca.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\sidebar\\screenshots\\bell-collapsed-dark.png",
+      "sha256": "8d1129735730d8d64ada84f3a10c1fd72af0975568e77a9f40d8aa1c9a3c6220",
+      "width": 96,
+      "height": 1182,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/021-8d1129735730.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\sidebar\\screenshots\\bell-panel-light.png",
+      "sha256": "42a71af9fcfa3a4c5411224d2667c2402b865b3c895337a83cde312ab8ca932d",
+      "width": 630,
+      "height": 780,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/022-42a71af9fcfa.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\sidebar\\screenshots\\bell-running-dark.png",
+      "sha256": "91d020be276ae0b3678a57138b272c6f3c0eec862590355197872ea84089cc0a",
+      "width": 45,
+      "height": 45,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/023-91d020be276a.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\sidebar\\screenshots\\bell-running-light.png",
+      "sha256": "e38d3aa45c4816cac4e6aa6300654870fb8a61d8aa6745b05c04e8394e9e4070",
+      "width": 45,
+      "height": 45,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/024-e38d3aa45c48.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\sidebar\\screenshots\\more-menu-light.png",
+      "sha256": "106c9ae7a41543bbd24915b5bddd3be7e1994372de9e93b5878495c75579961a",
+      "width": 413,
+      "height": 1182,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/025-106c9ae7a415.png"
+    },
+    {
+      "group": "claude-ui",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\sidebar\\screenshots\\row-hover-marquee-light.png",
+      "sha256": "2e21a8fa7fae1b00107e3aab9f5992bf334db1fd075d92a4e1412e255da912fa",
+      "width": 413,
+      "height": 1182,
+      "aliases": [],
+      "retainedPath": "screenshots/claude-ui/026-2e21a8fa7fae.png"
+    },
+    {
+      "group": "environment",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\environment\\output\\session-activity-backgroun-2ba87--and-the-opened-output-pane\\process-output-dark.png",
+      "sha256": "d884912531de14789fe9a82835943191bffd53c86b368eabfb61bbbba3d88886",
+      "width": 1922,
+      "height": 1202,
+      "aliases": [],
+      "retainedPath": "screenshots/environment/027-d884912531de.png"
+    },
+    {
+      "group": "environment",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\environment\\output\\session-activity-backgroun-2ba87--and-the-opened-output-pane\\process-output-light.png",
+      "sha256": "1d031e282dc3aed15a132c867730a0ae6c1aeea990691223055abeae50cd53d3",
+      "width": 1922,
+      "height": 1202,
+      "aliases": [],
+      "retainedPath": "screenshots/environment/028-1d031e282dc3.png"
+    },
+    {
+      "group": "environment",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\environment\\output\\session-activity-backgroun-2ba87--and-the-opened-output-pane\\process-output-narrow.png",
+      "sha256": "3b2fc3430fbb25fae94bebec1a8e6f75649f02a36556b74eafa1bb61728fbe90",
+      "width": 352,
+      "height": 820,
+      "aliases": [],
+      "retainedPath": "screenshots/environment/029-3b2fc3430fbb.png"
+    },
+    {
+      "group": "environment",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\environment\\output\\session-activity-backgroun-2ba87--and-the-opened-output-pane\\session-status-dark.png",
+      "sha256": "301bd6273e8668e94742a3dd03ccd53faf872af3dd9c9766b084b71b9b7dc09d",
+      "width": 437,
+      "height": 539,
+      "aliases": [],
+      "retainedPath": "screenshots/environment/030-301bd6273e86.png"
+    },
+    {
+      "group": "environment",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\environment\\output\\session-activity-backgroun-2ba87--and-the-opened-output-pane\\session-status-light.png",
+      "sha256": "ab2f6c34a73b2a8878086a576c02cf0e996daccdb0a0c9b0221406526d66e815",
+      "width": 437,
+      "height": 539,
+      "aliases": [],
+      "retainedPath": "screenshots/environment/031-ab2f6c34a73b.png"
+    },
+    {
+      "group": "environment",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\environment\\output\\session-activity-backgroun-bd35f-respects-a-manual-dismissal\\environment-requested-light.png",
+      "sha256": "b2e8f076ebe9bd27661298798aefbac670f9f4375868a77a9fb885daa53edb44",
+      "width": 1600,
+      "height": 1000,
+      "aliases": [],
+      "retainedPath": "screenshots/environment/032-b2e8f076ebe9.png"
+    },
+    {
+      "group": "environment",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\environment\\output\\session-activity-backgroun-fe5a7-ens-a-worker-only-on-demand\\environment-narrow.png",
+      "sha256": "cf76f674c7467e7a7becbb5dc793cb9d07d60b251579b0720cd12f51c7df4ee1",
+      "width": 800,
+      "height": 900,
+      "aliases": [],
+      "retainedPath": "screenshots/environment/033-cf76f674c746.png"
+    },
+    {
+      "group": "environment",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\environment\\output\\session-activity-backgroun-fe5a7-ens-a-worker-only-on-demand\\environment-overlay-dark.png",
+      "sha256": "8c3ffa4876bb83363dc369d327f6db0f17e8840550f865ec3e57b1d63ab91c22",
+      "width": 300,
+      "height": 406,
+      "aliases": [],
+      "retainedPath": "screenshots/environment/034-8c3ffa4876bb.png"
+    },
+    {
+      "group": "environment",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\environment\\output\\session-activity-backgroun-fe5a7-ens-a-worker-only-on-demand\\environment-overlay-light.png",
+      "sha256": "45d24e4c3379ec25288394976ed6689737e9a76bfb47a4fa85da1e9ecd9604ed",
+      "width": 300,
+      "height": 406,
+      "aliases": [],
+      "retainedPath": "screenshots/environment/035-45d24e4c3379.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-file-changes-Verse-Cl-22b2f-ats-on-generated-file-cards\\attachments\\chat-git-diff-narrow-df668a639bf267cb91d5a9d96be05297a998d920.png",
+      "sha256": "6bbd18d56c1edb10f8b54b220905079e487878190894ef708ae69f30c583782c",
+      "width": 532,
+      "height": 384,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-file-changes-Verse-Cl-22b2f-ats-on-generated-file-cards\\chat-git-diff-narrow.png"
+      ],
+      "retainedPath": "screenshots/output/036-6bbd18d56c1e.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\attachments\\tool-ui-execution-640-8b775f26ea82ac0dae67bb4053d5d614b20ea86d.png",
+      "sha256": "693448896cb9c664b927997e9e06f23e3ac701fe0de3b5e5c64a1fba4900db04",
+      "width": 534,
+      "height": 1309,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\tool-ui-execution-640.png"
+      ],
+      "retainedPath": "screenshots/output/037-693448896cb9.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\attachments\\tool-ui-execution-dark-d66ac71f678e20b641c3e9235cebe9784e4ea5e9.png",
+      "sha256": "0ff5c3ffca3934773d3f79ba3e7d95902bafabb17a14748447a33691f2917910",
+      "width": 821,
+      "height": 1309,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\tool-ui-execution-dark.png"
+      ],
+      "retainedPath": "screenshots/output/038-0ff5c3ffca39.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\attachments\\tool-ui-execution-light-58f97324d99c044436a6dd8fe7d6c39458f17853.png",
+      "sha256": "c9ef596be23bf60f4a00b5e9312150059a9105a6a38dae725526455d1c7bf947",
+      "width": 821,
+      "height": 1309,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\tool-ui-execution-light.png"
+      ],
+      "retainedPath": "screenshots/output/039-c9ef596be23b.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\attachments\\tool-ui-execution-narrow-6a6037e5f7569a26f24d1ee0f3bdbd20fdee5b14.png",
+      "sha256": "a3e62c3b0726ba015e24f8fe29bcb0eea5ac706085a96c63fa425d26e45c4227",
+      "width": 694,
+      "height": 1309,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\tool-ui-execution-narrow.png"
+      ],
+      "retainedPath": "screenshots/output/040-a3e62c3b0726.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\diff-light.png",
+      "sha256": "77ca3296edd80547846af687d90b0eac92ef4753ea9b528b7e481312e21f41a1",
+      "width": 808,
+      "height": 328,
+      "aliases": [],
+      "retainedPath": "screenshots/output/041-77ca3296edd8.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\terminal-light.png",
+      "sha256": "fd7ef88e8fb48e879d75b56319eb6598066b44e4402d715c388c174fe1634c65",
+      "width": 808,
+      "height": 303,
+      "aliases": [],
+      "retainedPath": "screenshots/output/042-fd7ef88e8fb4.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-tool-ui-execution-sur-7b830-ght-dark-and-narrow-layouts\\web-search-light.png",
+      "sha256": "0b229b2a926930cd836c53a275afb2c37a848787bdc6f29210ceedefac4c1715",
+      "width": 821,
+      "height": 131,
+      "aliases": [],
+      "retainedPath": "screenshots/output/043-0b229b2a9269.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-turn-summary-collapse-a126f-d-expands-details-on-demand\\compact-output-completed.png",
+      "sha256": "3f5cb21d362635ae2606d52c0db306d1614be7a91e3c6a5b80fbc162d6f579d0",
+      "width": 1280,
+      "height": 900,
+      "aliases": [],
+      "retainedPath": "screenshots/output/044-3f5cb21d3626.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-turn-summary-collapse-a126f-d-expands-details-on-demand\\turn-process-expanded.png",
+      "sha256": "6a9048adb0a3adf8ea629ce50ccad33e83b99b64b2fb057b8f9b2ee734a3072b",
+      "width": 534,
+      "height": 526,
+      "aliases": [],
+      "retainedPath": "screenshots/output/045-6a9048adb0a3.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-turn-summary-collapse-a126f-d-expands-details-on-demand\\turn-summary-narrow.png",
+      "sha256": "c0622f7d5d56a9bafc0cfa9d865ac75fb5e71a40c465418a5aabc4490e2cf491",
+      "width": 544,
+      "height": 41,
+      "aliases": [],
+      "retainedPath": "screenshots/output/046-c0622f7d5d56.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-turn-summary-collapse-aa02a-e-without-assistant-avatars\\compact-output-dark.png",
+      "sha256": "13f5836e51c6351eee0707d155996cb4c9b77973c1c1ae83896d0ff2d96a2175",
+      "width": 1280,
+      "height": 900,
+      "aliases": [],
+      "retainedPath": "screenshots/output/047-13f5836e51c6.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-turn-summary-collapse-aa02a-e-without-assistant-avatars\\compact-output-light.png",
+      "sha256": "1c0d013ac40d62ffbb489f0165f376bd6e42c6f386e372d282dac32ff1cc8305",
+      "width": 1280,
+      "height": 900,
+      "aliases": [],
+      "retainedPath": "screenshots/output/048-1c0d013ac40d.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\chat-turn-summary-collapse-aa02a-e-without-assistant-avatars\\compact-output-narrow.png",
+      "sha256": "4c028e52a599db51e3e22cbfea565b71ea1345c2ee50d4d9fcd9f3b216f43c87",
+      "width": 640,
+      "height": 900,
+      "aliases": [],
+      "retainedPath": "screenshots/output/049-4c028e52a599.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval\\runtime-approval-dark.png",
+      "sha256": "0666047664480d5a22c178521baa39de3662ca94bc913d1b1f31b9f5cfb30704",
+      "width": 737,
+      "height": 270,
+      "aliases": [],
+      "retainedPath": "screenshots/output/050-066604766448.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval\\runtime-approval-light.png",
+      "sha256": "4129bc7edb9bf5984d9f52d1d59cbcbc1fd2eff7fbdc6ea0b9a30360deb1621e",
+      "width": 737,
+      "height": 270,
+      "aliases": [],
+      "retainedPath": "screenshots/output/051-4129bc7edb9b.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval\\runtime-approval-narrow.png",
+      "sha256": "d755b5e9bcb7210efe33664db71f550e41a5f4a280e718c3f30289381976bbdf",
+      "width": 544,
+      "height": 270,
+      "aliases": [],
+      "retainedPath": "screenshots/output/052-d755b5e9bcb7.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval\\runtime-approval-page-dark.png",
+      "sha256": "272d4a75ecdbe7deae08347775aed0df58f54b3167a08ac5f3b487d29c5f7eae",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/output/053-272d4a75ecdb.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval\\runtime-approval-page-light.png",
+      "sha256": "39a3d18f2dc4d63b6a763b121ba1ad2c733415a766158c2ebbf4a9df40411f60",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/output/054-39a3d18f2dc4.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval\\runtime-approval-page-narrow.png",
+      "sha256": "5a36ee89b529fe75cfd1f3fba7797a2f31ebf072ea437d1f9a7266ccfb633c06",
+      "width": 640,
+      "height": 700,
+      "aliases": [],
+      "retainedPath": "screenshots/output/055-5a36ee89b529.png"
+    },
+    {
+      "group": "output",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\output\\output\\runtime-approval-bridge-Ru-7dfe7-es-its-draft-after-approval\\runtime-approval-zoom150.png",
+      "sha256": "9e986f01d275bf3946ff73ca54d39617a5ea1a64fe0dd1a28265528b5e0a0200",
+      "width": 1442,
+      "height": 1202,
+      "aliases": [],
+      "retainedPath": "screenshots/output/056-9e986f01d275.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-agent-effort-Verse-Cl-c57e0-ides-to-max-and-commits-max\\attachments\\combined-effort-max-f829e1b23a1683f709274967b8b7dd1b7ca3f778.png",
+      "sha256": "c18ee8df2ada55e3f6a794434cf82d01e9723bfad38fabb8bb0e3c8c5279a884",
+      "width": 1922,
+      "height": 1202,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-agent-effort-Verse-Cl-c57e0-ides-to-max-and-commits-max\\combined-effort-max.png"
+      ],
+      "retainedPath": "screenshots/popovers/057-c18ee8df2ada.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-agent-effort-Verse-Cl-c57e0-ides-to-max-and-commits-max\\attachments\\combined-model-effort-menu-6ccb4a3e8c14f0444a1a70b21336e2bb21bb2982.png",
+      "sha256": "e19f616d962abca5d563cebe009d3e377aee27eaa4c0015209efab0e2ee6b66a",
+      "width": 1922,
+      "height": 1202,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-agent-effort-Verse-Cl-c57e0-ides-to-max-and-commits-max\\combined-model-effort-menu.png"
+      ],
+      "retainedPath": "screenshots/popovers/058-e19f616d962a.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-git-strip-Ch-21555--the-composer-and-Git-strip\\composer-aligned-with-strip.png",
+      "sha256": "44795d4765cdeb78ad1b2cfc58a23c89f7330e261ffa8596346fd84bcef7621f",
+      "width": 1280,
+      "height": 820,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/059-44795d4765cd.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-git-strip-Ch-21555--the-composer-and-Git-strip\\runtime-approval-inline-prompt.png",
+      "sha256": "ade7aa53a35db49ceeb4cb49b02d3d5994bcdbfa1631fe124d4060e74c07e7d3",
+      "width": 737,
+      "height": 260,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/060-ade7aa53a35d.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-git-strip-Ch-21555--the-composer-and-Git-strip\\runtime-approval-inline-with-git.png",
+      "sha256": "b1ae231dc5c25facb9c706f32b62b8cba6fd6eb63b04621fad5d39b2b6485e9e",
+      "width": 1280,
+      "height": 820,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/061-b1ae231dc5c2.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-git-strip-Ch-6b2d6-e-actions-through-host-APIs\\composer-git-layout.png",
+      "sha256": "5b3b8b5dd0f986c8faa46df4c3dd21e5e0d75be7bdec6a5ea49f088e05102ec5",
+      "width": 1280,
+      "height": 820,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/062-5b3b8b5dd0f9.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-git-strip-Ch-6b2d6-e-actions-through-host-APIs\\git-menu.png",
+      "sha256": "27605602b82ee629ab5ff99af57eeda04fe9401388ea3c471423418a4b99db55",
+      "width": 1280,
+      "height": 820,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/063-27605602b82e.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-git-strip-Ch-a8a44-r-and-session-status-light-\\light-session-worktree.png",
+      "sha256": "358b33dee2679595c6abf1b3ee4e3feab7c2f4443df8b35e1a805ea21857cdcc",
+      "width": 1280,
+      "height": 820,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/064-358b33dee267.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-git-strip-Ch-a8a44-r-and-session-status-light-\\light-worktree-menu.png",
+      "sha256": "2ae786efa15e6bd2578c9cdd6ad7bc927ee97fb7ac2a314c3d014f3dc07725f3",
+      "width": 1280,
+      "height": 820,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/065-2ae786efa15e.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-git-strip-Ch-e627a-er-and-session-status-dark-\\dark-session-worktree.png",
+      "sha256": "1d5ffac77bbfa9436e41ccf47edd5d5a954ed2ab95c410f3d5dba49c62301532",
+      "width": 1280,
+      "height": 820,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/066-1d5ffac77bbf.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-git-strip-Ch-e627a-er-and-session-status-dark-\\dark-worktree-menu.png",
+      "sha256": "38dbcd575642c532eae5d24261948a8b178b1774ff83c4fddafdb5b6c7c5a611",
+      "width": 1280,
+      "height": 820,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/067-38dbcd575642.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-1280-chat-composer-permission-menu.png",
+      "sha256": "4398e049c13da98feb91283dbedc51c561913362875ad12823d146379b2c9c26",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/068-4398e049c13d.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-1280-chat-knowledge-scope-menu.png",
+      "sha256": "a979a9f595dacf1bac0d44063f198c1b50027b6acc31adb564a6b785846e6030",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/069-a979a9f595da.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-1280-chat-model-picker-menu.png",
+      "sha256": "428699cba332d9cc9fa6898a75ffabe2c395ee41654ce0bc40052ba27108b20f",
+      "width": 1280,
+      "height": 800,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-1280-model-options.png"
+      ],
+      "retainedPath": "screenshots/popovers/070-428699cba332.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-1280-knowledge-search.png",
+      "sha256": "ecef73f29e86909a93c72510f54b0e763a829252805f2e829a67418e80e33935",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/071-ecef73f29e86.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-1280-selected-long-model.png",
+      "sha256": "57a29cf225cd2a5ab16bf234a36b2bed8364c12f33f8fdaaa05098ca6da45968",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/072-57a29cf225cd.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-1280-session-worktree-menu.png",
+      "sha256": "f9e0237977067ef654a52513af95d16867eeadb5013f2d779c3e20ca57625de2",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/073-f9e023797706.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-1280-welcome-project-menu.png",
+      "sha256": "76a80d31df5ba9ba7a059faf73a4f541049e62d6c1edf1bc0961f1315cfa4fa9",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/074-76a80d31df5b.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-760-chat-composer-permission-menu.png",
+      "sha256": "f21c593b1d46375d9a4290b5c08b65abaf5b74e3daf8ce1315fafd5fa8e4c3c0",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/075-f21c593b1d46.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-760-chat-knowledge-scope-menu.png",
+      "sha256": "0e950b0a09aa320f29b767e9f553070ae9a18beba39143abc3cc0f3fbd9058d1",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/076-0e950b0a09aa.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-760-chat-model-picker-menu.png",
+      "sha256": "0bc3050a7cd3a6707a5b7a04d8fb5b5ed5c1aaf1dedb4d79cd3e8c9aff0674c2",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/077-0bc3050a7cd3.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-760-knowledge-search.png",
+      "sha256": "147e05449410bc51dc66d966938468c72e746793ad3674b688757e8518ddcbf9",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/078-147e05449410.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-760-model-options.png",
+      "sha256": "9c8cd8272f4ab9df41b3a8278b3a6846c5ba151e32809f78c973b9dd243d098a",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/079-9c8cd8272f4a.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-760-selected-long-model.png",
+      "sha256": "6fce3db4d1fca45ac1b66882bab5597bf320c24c9d8cfb3e1a5876bd5f550132",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/080-6fce3db4d1fc.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-760-session-worktree-menu.png",
+      "sha256": "32ca148da723a3505f5ff4b3aedb2ceb97a8c69f9b346cae5194f7bfadc12f5c",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/081-32ca148da723.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-760-welcome-project-menu.png",
+      "sha256": "7187e08209a8e7c1dd4f4bb4895f0c4a64ee904c5804aef69b0d0486a55e0a1a",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/082-7187e08209a8.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-add.png",
+      "sha256": "a0c2f6627a9b72ddc71e649921a0f29d2c4fbb3d04e0cdc3b2e7c44adb919903",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/083-a0c2f6627a9b.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-b465c-nd-dismiss-accessibly-dark-\\dark-reasoning-reduced-motion.png",
+      "sha256": "78221025575c3872ad34986da0b31404825fa3ccf1455f1a3bfb2675e5f4403a",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/084-78221025575c.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-1280-chat-composer-permission-menu.png",
+      "sha256": "6635c8a37b0480c8abce9bf0fe3aa508ad3c7be978042da9b37b61f110398d0d",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/085-6635c8a37b04.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-1280-chat-knowledge-scope-menu.png",
+      "sha256": "ed1d110bacb0c23d4fb958741e2413bf98569fd4c98f80fe294e886c7a8082e9",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/086-ed1d110bacb0.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-1280-chat-model-picker-menu.png",
+      "sha256": "a1c20fea8218a4c0473a7d6e2312e962dfbf0e0c8a24aa96da54c3f9968a2b08",
+      "width": 1280,
+      "height": 800,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-1280-model-options.png"
+      ],
+      "retainedPath": "screenshots/popovers/087-a1c20fea8218.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-1280-knowledge-search.png",
+      "sha256": "a769a7876e24abeda3e60ea71123ad4095ac580a0cbde0b2bcc252f7c4c9dbb2",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/088-a769a7876e24.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-1280-selected-long-model.png",
+      "sha256": "22be184a96aadedbd982331ddb2a7bb7ba87ec94f591426d047d3da8898e86cb",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/089-22be184a96aa.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-1280-session-worktree-menu.png",
+      "sha256": "607ff05cf94ad35db7f688e3fa84971e2dfd3a8f134dde028ba7fdde6c2d1242",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/090-607ff05cf94a.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-1280-welcome-project-menu.png",
+      "sha256": "6c1e3da8e3c924e1bd86289efce0e163d0199eb1de3f99100d2b6a26cf4267fa",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/091-6c1e3da8e3c9.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-760-chat-composer-permission-menu.png",
+      "sha256": "a2b84864345a39df47884f63c4603b6351003fc02c4278a767d47fbe1da91b7d",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/092-a2b84864345a.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-760-chat-knowledge-scope-menu.png",
+      "sha256": "4da0af2560f53479e16999a102ed24d51eb35482977d092c5011ab1334f8604a",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/093-4da0af2560f5.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-760-chat-model-picker-menu.png",
+      "sha256": "b246120ff8ee24bf7d109ea361fb5bceb18376a14b1ce4b8d8a4780d90df0035",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/094-b246120ff8ee.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-760-knowledge-search.png",
+      "sha256": "be4e7b15d36a320aed24b7bad53cea75c9f287a72ef11087bb07c9f6444238c3",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/095-be4e7b15d36a.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-760-model-options.png",
+      "sha256": "6ba2dae4806cdcc8abb62ddffb01d45f0170bb28bebdda716051f8e1ab64c5ac",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/096-6ba2dae4806c.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-760-selected-long-model.png",
+      "sha256": "5033668a11323c0e756aeb3ae4828af0af6fdf7dba3774688634cea9c87d765d",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/097-5033668a1132.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-760-session-worktree-menu.png",
+      "sha256": "8c3c2b0e5d0fd52b538a18a666ab949cca4a5fa45161a7451560794ba28fcee1",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/098-8c3c2b0e5d0f.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-760-welcome-project-menu.png",
+      "sha256": "17ab53e5e76dface6728a503a3b28bd49ba9d19f4070860632f5970a236a274d",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/099-17ab53e5e76d.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-add.png",
+      "sha256": "95f293240bf56177b47bf2a9c0dae4e55eeafc2523a26b38c9ee547942f924e0",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/100-95f293240bf5.png"
+    },
+    {
+      "group": "popovers",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\output\\chat-composer-popovers-com-db938-d-dismiss-accessibly-light-\\light-reasoning-reduced-motion.png",
+      "sha256": "d848241165e1030bf68689af8f35c553ec86f186d6d8923bb9404e8ae18a2ead",
+      "width": 760,
+      "height": 560,
+      "aliases": [],
+      "retainedPath": "screenshots/popovers/101-d848241165e1.png"
+    },
+    {
+      "group": "ui-material-rules",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\ui-material-rules\\output\\settings-drawer-Settings-t-de49c-d-keeps-one-roving-tab-stop\\attachments\\settings-theme-selector-light-1433b0235ff14d72c747d9d02d37f5b78106c5b6.png",
+      "sha256": "3461f6d3a0c3c7e7cebb8472421b05c53543fbc0e5058ae33815252376549786",
+      "width": 1922,
+      "height": 1202,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\ui-material-rules\\output\\settings-drawer-Settings-t-de49c-d-keeps-one-roving-tab-stop\\settings-theme-selector-light.png"
+      ],
+      "retainedPath": "screenshots/ui-material-rules/102-3461f6d3a0c3.png"
+    },
+    {
+      "group": "ui-material-rules",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\ui-material-rules\\output\\settings-drawer-Windows-fu-edd05-the-exact-application-route\\attachments\\settings-page-light-6da807963369f54287dd0a5a1f1970664cfe3be6.png",
+      "sha256": "a598cee63bd91cf11a805d10ef276de6b3cc4516230b9fce6d09a1fd907d1b67",
+      "width": 1922,
+      "height": 1202,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\ui-material-rules\\output\\settings-drawer-Windows-fu-edd05-the-exact-application-route\\settings-page-light.png"
+      ],
+      "retainedPath": "screenshots/ui-material-rules/103-a598cee63bd9.png"
+    },
+    {
+      "group": "ui-material-rules",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\inline\\ui-material-rules\\26de0d833da8-fakecoding-ui-v2-light.png",
+      "sha256": "26de0d833da873000755ab38705f5893a0fa5f1d266bdf78c4e6f019042b6c8f",
+      "width": 1922,
+      "height": 1202,
+      "aliases": [],
+      "retainedPath": "screenshots/ui-material-rules/104-26de0d833da8.png"
+    },
+    {
+      "group": "ui-material-rules",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\inline\\ui-material-rules\\3939fa8bf50f-fakecoding-showcase-960x800.png",
+      "sha256": "3939fa8bf50fcdf11c111d61e8c9cc4728745dd84f4e1137e8eb0dca9bc77f7a",
+      "width": 960,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/ui-material-rules/105-3939fa8bf50f.png"
+    },
+    {
+      "group": "ui-material-rules",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\inline\\ui-material-rules\\3d6d1e4875e8-fakecoding-showcase-dark-1280x800.png",
+      "sha256": "3d6d1e4875e812ea3c980f424100132c8fb3d37d292e8b320a7d782a8d33edeb",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/ui-material-rules/106-3d6d1e4875e8.png"
+    },
+    {
+      "group": "ui-material-rules",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\inline\\ui-material-rules\\5bd380cdc7de-fakecoding-ui-v2-dark.png",
+      "sha256": "5bd380cdc7deaeb291fcbe0e474c242337027d793268892489f1a8cfd3657b85",
+      "width": 1922,
+      "height": 1202,
+      "aliases": [],
+      "retainedPath": "screenshots/ui-material-rules/107-5bd380cdc7de.png"
+    },
+    {
+      "group": "ui-material-rules",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\inline\\ui-material-rules\\9288c22ec6ad-fakecoding-showcase-dark-960x800.png",
+      "sha256": "9288c22ec6ada39f8d9d919ce8f63b62adcecc046eddbf80e7c12be4aad3c7ae",
+      "width": 960,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/ui-material-rules/108-9288c22ec6ad.png"
+    },
+    {
+      "group": "ui-material-rules",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\inline\\ui-material-rules\\cce9d8e1cf59-fakecoding-showcase-1280x800.png",
+      "sha256": "cce9d8e1cf592a8ba5cd849f4a05b74b900cc63ec9288293740e81ee7039589a",
+      "width": 1280,
+      "height": 800,
+      "aliases": [],
+      "retainedPath": "screenshots/ui-material-rules/109-cce9d8e1cf59.png"
+    },
+    {
+      "group": "welcome",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\welcome\\artifacts\\.design-staging\\verse-hero\\welcome-dark-drafting.png",
+      "sha256": "c031fcb8cf58335f113810ec87a4c7d38ee66a86645f7bc4298f0e37ac815d9e",
+      "width": 1285,
+      "height": 820,
+      "aliases": [],
+      "retainedPath": "screenshots/welcome/110-c031fcb8cf58.png"
+    },
+    {
+      "group": "welcome",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\welcome\\artifacts\\.design-staging\\verse-hero\\welcome-dark-focused.png",
+      "sha256": "7c922d4cb5e32ca90e442d7dd15351d7b67aafc18fad12d866b3d4629245e0e8",
+      "width": 1285,
+      "height": 820,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\welcome\\artifacts\\.design-staging\\verse-hero\\welcome-dark.png"
+      ],
+      "retainedPath": "screenshots/welcome/111-7c922d4cb5e3.png"
+    },
+    {
+      "group": "welcome",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\welcome\\artifacts\\.design-staging\\verse-hero\\welcome-light-drafting.png",
+      "sha256": "661ad2d92b54b4cf4b54d2ae67bb92f9522a725007d0b4514e2dd53c8f5509ec",
+      "width": 1285,
+      "height": 820,
+      "aliases": [],
+      "retainedPath": "screenshots/welcome/112-661ad2d92b54.png"
+    },
+    {
+      "group": "welcome",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\welcome\\artifacts\\.design-staging\\verse-hero\\welcome-light-focused.png",
+      "sha256": "b668e292b34734aa1cb06d807646fdaef14a518b097573fa3f57e02bf5fee2d1",
+      "width": 1285,
+      "height": 820,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\welcome\\artifacts\\.design-staging\\verse-hero\\welcome-light.png",
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\welcome\\output\\chat-welcome-hero-fakecodi-d42ab-ns-the-shared-picker-upward\\welcome-context-light.png"
+      ],
+      "retainedPath": "screenshots/welcome/113-b668e292b347.png"
+    },
+    {
+      "group": "welcome",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\welcome\\output\\chat-welcome-hero-fakecodi-d42ab-ns-the-shared-picker-upward\\welcome-context-dark.png",
+      "sha256": "b268217b65f7d64bca2b4dd26d392498f1d8c79f94f1083ca0a3e90819b71065",
+      "width": 1285,
+      "height": 820,
+      "aliases": [],
+      "retainedPath": "screenshots/welcome/114-b268217b65f7.png"
+    },
+    {
+      "group": "welcome",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\welcome\\output\\chat-welcome-hero-fakecodi-d42ab-ns-the-shared-picker-upward\\welcome-worktrees-narrow.png",
+      "sha256": "c7df9bd4187d96f5fe4cd0a3ba911114ab9df13cab8d65a308177ca3c05faf44",
+      "width": 600,
+      "height": 820,
+      "aliases": [],
+      "retainedPath": "screenshots/welcome/115-c7df9bd4187d.png"
+    },
+    {
+      "group": "workspace",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\workspace\\output\\chat-artifact-panel-keeps--1dd77-the-workspace-panel-expands\\workspace-expanded.png",
+      "sha256": "d3a13e8d7ddf12fadf1f4d59a029d9deec505f712d833b2b37edf3ac593e9dd3",
+      "width": 1440,
+      "height": 900,
+      "aliases": [],
+      "retainedPath": "screenshots/workspace/116-d3a13e8d7ddf.png"
+    },
+    {
+      "group": "workspace",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\workspace\\output\\chat-artifact-panel-keeps--1dd77-the-workspace-panel-expands\\workspace-hidden.png",
+      "sha256": "da9f5a8783cc62304ebefc1ecb77a6140b4ab880f08214efa98dd72a13e8ea78",
+      "width": 1440,
+      "height": 900,
+      "aliases": [],
+      "retainedPath": "screenshots/workspace/117-da9f5a8783cc.png"
+    },
+    {
+      "group": "yield",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\yield\\output\\chat-task-visualizer-Verse-c9a54-gent-branch-from-mocked-IPC\\assistant-ui-call-chip-dark.png",
+      "sha256": "c6a00c6a5c72af4c31562a4187f65eaf03322d669f6f30d8d9095e4a8c9bad88",
+      "width": 509,
+      "height": 574,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\yield\\output\\chat-task-visualizer-Verse-c9a54-gent-branch-from-mocked-IPC\\attachments\\assistant-ui-call-chip-dark-12187482bea492d47e45df4969fb90bd3b1f57dc.png"
+      ],
+      "retainedPath": "screenshots/yield/118-c6a00c6a5c72.png"
+    },
+    {
+      "group": "yield",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\yield\\output\\chat-task-visualizer-Verse-c9a54-gent-branch-from-mocked-IPC\\assistant-ui-call-chip-narrow.png",
+      "sha256": "71440471ef2caaee777271fb237dd2866ded0ca605227ed510bdb506f007284e",
+      "width": 509,
+      "height": 574,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\yield\\output\\chat-task-visualizer-Verse-c9a54-gent-branch-from-mocked-IPC\\attachments\\assistant-ui-call-chip-narrow-34a24f2ab554ab314ad7958c02015a19fb12e890.png"
+      ],
+      "retainedPath": "screenshots/yield/119-71440471ef2c.png"
+    },
+    {
+      "group": "yield",
+      "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\yield\\output\\chat-task-visualizer-Verse-c9a54-gent-branch-from-mocked-IPC\\assistant-ui-ghost-execution-graph.png",
+      "sha256": "8ec1f98d281e804e056b48f174313d69283d55be41681e6a9739e6f320d06052",
+      "width": 1194,
+      "height": 831,
+      "aliases": [
+        "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\yield\\output\\chat-task-visualizer-Verse-c9a54-gent-branch-from-mocked-IPC\\attachments\\assistant-ui-ghost-execution-graph-acf48c54d476d571cb2802ca3a0e2bbd93b655e7.png"
+      ],
+      "retainedPath": "screenshots/yield/120-8ec1f98d281e.png"
+    }
+  ]
+}

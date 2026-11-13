@@ -1,0 +1,288 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\long-session-delegation-admission-ts.json",
+  "sourceSha256": "3519f00a85c70b1095515eb477622c11aa5b262637626ddbb57100d57699aaf5",
+  "result": {
+    "numTotalTestSuites": 3,
+    "numPassedTestSuites": 3,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 20,
+    "numPassedTests": 20,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563333110,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "A4 delegation task-scope gate"
+            ],
+            "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'a current explicit task link'",
+            "status": "passed",
+            "title": "uses the Main default resolver for 'a current explicit task link'",
+            "duration": 6.149400000000242,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "A4 delegation task-scope gate"
+            ],
+            "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'the requested task after an unrelated…'",
+            "status": "passed",
+            "title": "uses the Main default resolver for 'the requested task after an unrelated…'",
+            "duration": 0.8342000000002372,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "A4 delegation task-scope gate"
+            ],
+            "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'a missing task'",
+            "status": "passed",
+            "title": "uses the Main default resolver for 'a missing task'",
+            "duration": 0.7725000000000364,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "A4 delegation task-scope gate"
+            ],
+            "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'a missing link'",
+            "status": "passed",
+            "title": "uses the Main default resolver for 'a missing link'",
+            "duration": 0.536300000000665,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "A4 delegation task-scope gate"
+            ],
+            "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'another session link'",
+            "status": "passed",
+            "title": "uses the Main default resolver for 'another session link'",
+            "duration": 0.7249999999994543,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "A4 delegation task-scope gate"
+            ],
+            "fullName": "A4 delegation task-scope gate uses the Main default resolver for 'an old-generation link'",
+            "status": "passed",
+            "title": "uses the Main default resolver for 'an old-generation link'",
+            "duration": 0.5920999999998457,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "A4 delegation task-scope gate"
+            ],
+            "fullName": "A4 delegation task-scope gate rejects before Gateway delegation when the explicit task scope is unavailable",
+            "status": "passed",
+            "title": "rejects before Gateway delegation when the explicit task scope is unavailable",
+            "duration": 0.5393999999996595,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session delegation admission"
+            ],
+            "fullName": "long-session delegation admission rejects task ownership before issuing a worker dispatch",
+            "status": "passed",
+            "title": "rejects task ownership before issuing a worker dispatch",
+            "duration": 0.3422999999993408,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session delegation admission"
+            ],
+            "fullName": "long-session delegation admission binds accepted children to coordinator, task, backend, permissions, and actual shared isolation without claiming completion",
+            "status": "passed",
+            "title": "binds accepted children to coordinator, task, backend, permissions, and actual shared isolation without claiming completion",
+            "duration": 0.6934999999994034,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session delegation admission"
+            ],
+            "fullName": "long-session delegation admission replays a terminal receipt after owner restart without issuing another spawn",
+            "status": "passed",
+            "title": "replays a terminal receipt after owner restart without issuing another spawn",
+            "duration": 0.70049999999992,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session delegation admission"
+            ],
+            "fullName": "long-session delegation admission coalesces a concurrent duplicate submission into one Gateway admission",
+            "status": "passed",
+            "title": "coalesces a concurrent duplicate submission into one Gateway admission",
+            "duration": 0.6314999999995052,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session delegation admission"
+            ],
+            "fullName": "long-session delegation admission turns an in-flight record left by a terminated owner into outcome-unknown without retrying",
+            "status": "passed",
+            "title": "turns an in-flight record left by a terminated owner into outcome-unknown without retrying",
+            "duration": 0.33849999999983993,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session delegation admission"
+            ],
+            "fullName": "long-session delegation admission rejects a parent reset that crosses admission without reporting an accepted worker",
+            "status": "passed",
+            "title": "rejects a parent reset that crosses admission without reporting an accepted worker",
+            "duration": 0.6028000000005704,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session delegation admission"
+            ],
+            "fullName": "long-session delegation admission rejects a concurrent stop and never upgrades the stale accepted evidence",
+            "status": "passed",
+            "title": "rejects a concurrent stop and never upgrades the stale accepted evidence",
+            "duration": 1.30370000000039,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session delegation admission"
+            ],
+            "fullName": "long-session delegation admission does not reuse an expired or revoked grant and allows retry only through a fresh owner-approved id",
+            "status": "passed",
+            "title": "does not reuse an expired or revoked grant and allows retry only through a fresh owner-approved id",
+            "duration": 0.7551999999996042,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session delegation admission"
+            ],
+            "fullName": "long-session delegation admission clamps child tool authorization to the parent allowlist",
+            "status": "passed",
+            "title": "clamps child tool authorization to the parent allowlist",
+            "duration": 1.0270000000000437,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session delegation admission"
+            ],
+            "fullName": "long-session delegation admission preserves owner scheduling reasons in the dispatch receipt without aliasing the plan",
+            "status": "passed",
+            "title": "preserves owner scheduling reasons in the dispatch receipt without aliasing the plan",
+            "duration": 1.190099999999802,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session delegation admission"
+            ],
+            "fullName": "long-session delegation admission marks an accepted spawn without both child session and run identifiers as rejected",
+            "status": "passed",
+            "title": "marks an accepted spawn without both child session and run identifiers as rejected",
+            "duration": 0.29579999999987194,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session delegation admission"
+            ],
+            "fullName": "long-session delegation admission records a refused spawn as rejected with no completion evidence",
+            "status": "passed",
+            "title": "records a refused spawn as rejected with no completion evidence",
+            "duration": 0.200699999999415,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "long-session delegation admission"
+            ],
+            "fullName": "long-session delegation admission records a real Git worktree as verified checkout isolation",
+            "status": "passed",
+            "title": "records a real Git worktree as verified checkout isolation",
+            "duration": 3304.447500000001,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563338239,
+        "endTime": 1794563341562.4475,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/long-session-delegation-admission.test.ts"
+      }
+    ]
+  }
+}

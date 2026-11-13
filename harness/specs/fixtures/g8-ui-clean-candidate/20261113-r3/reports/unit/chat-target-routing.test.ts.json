@@ -1,0 +1,144 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-target-routing-ts.json",
+  "sourceSha256": "92785ea5d593dc6bd0eb4fa1ebdce2caa1ff3a6be48795daf74391f245c1aa21",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 8,
+    "numPassedTests": 8,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563304808,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "chat target routing"
+            ],
+            "fullName": "chat target routing switches to the selected agent main session before sending text",
+            "status": "passed",
+            "title": "switches to the selected agent main session before sending text",
+            "duration": 498.2291999999999,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat target routing"
+            ],
+            "fullName": "chat target routing uses the selected agent main session for attachment sends",
+            "status": "passed",
+            "title": "uses the selected agent main session for attachment sends",
+            "duration": 14.63539999999989,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat target routing"
+            ],
+            "fullName": "chat target routing passes the selected knowledge scope through host chat send",
+            "status": "passed",
+            "title": "passes the selected knowledge scope through host chat send",
+            "duration": 11.712400000000116,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat target routing"
+            ],
+            "fullName": "chat target routing forwards turn-scoped modelRefOverride to host chat send (Area 2 §3.2)",
+            "status": "passed",
+            "title": "forwards turn-scoped modelRefOverride to host chat send (Area 2 §3.2)",
+            "duration": 12.626700000000028,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat target routing"
+            ],
+            "fullName": "chat target routing saves an inherited model before the first send and retains it in the conversation",
+            "status": "passed",
+            "title": "saves an inherited model before the first send and retains it in the conversation",
+            "duration": 13.158699999999953,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat target routing"
+            ],
+            "fullName": "chat target routing retains the previous choice and reports failure when persistence fails",
+            "status": "passed",
+            "title": "retains the previous choice and reports failure when persistence fails",
+            "duration": 13.20959999999991,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat target routing"
+            ],
+            "fullName": "chat target routing keeps a queued message bound to the visible model choice",
+            "status": "passed",
+            "title": "keeps a queued message bound to the visible model choice",
+            "duration": 18.23070000000007,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat target routing"
+            ],
+            "fullName": "chat target routing omits modelRef when no turn override is set (default path parity, Area 2 §6)",
+            "status": "passed",
+            "title": "omits modelRef when no turn override is set (default path parity, Area 2 §6)",
+            "duration": 16.81009999999992,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563305778,
+        "endTime": 1794563306376.81,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/chat-target-routing.test.ts"
+      }
+    ]
+  }
+}

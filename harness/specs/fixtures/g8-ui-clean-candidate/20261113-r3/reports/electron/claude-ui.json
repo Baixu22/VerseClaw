@@ -1,0 +1,767 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\claude-ui\\results.json",
+  "sourceSha256": "b9496bfbc4d36abe58cede627e5ea8d1ff19c8da4a270192ece5de9e387578ac",
+  "result": {
+    "config": {
+      "configFile": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\playwright.config.ts",
+      "rootDir": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/e2e",
+      "forbidOnly": false,
+      "fullyParallel": false,
+      "globalSetup": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+      "globalTeardown": null,
+      "globalTimeout": 0,
+      "grep": {},
+      "grepInvert": null,
+      "maxFailures": 0,
+      "metadata": {
+        "actualWorkers": 1
+      },
+      "preserveOutput": "always",
+      "projects": [
+        {
+          "outputDir": "D:/tmp/g8-ui-r3-20261113-01a1d351/electron/final/claude-ui/output",
+          "repeatEach": 1,
+          "retries": 0,
+          "metadata": {
+            "actualWorkers": 1
+          },
+          "id": "",
+          "name": "",
+          "testDir": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/e2e",
+          "testIgnore": [
+            "**/resource-lifecycle-soak.spec.ts",
+            "**/product-acceptance-space-bunny.spec.ts",
+            "**/product-acceptance-moyu.spec.ts"
+          ],
+          "testMatch": [
+            "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+          ],
+          "timeout": 90000
+        }
+      ],
+      "quiet": false,
+      "reporter": [
+        [
+          "line"
+        ],
+        [
+          "json"
+        ]
+      ],
+      "reportSlowTests": {
+        "max": 5,
+        "threshold": 300000
+      },
+      "shard": null,
+      "tags": [],
+      "updateSnapshots": "missing",
+      "updateSourceMethod": "patch",
+      "version": "1.59.0",
+      "workers": 1,
+      "webServer": null
+    },
+    "suites": [
+      {
+        "title": "chat-memory-injection-panel.spec.ts",
+        "file": "chat-memory-injection-panel.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [],
+        "suites": [
+          {
+            "title": "R3-2.2 memory-injection panel",
+            "file": "chat-memory-injection-panel.spec.ts",
+            "line": 103,
+            "column": 6,
+            "specs": [
+              {
+                "title": "injected: shows the source group with selected refs and budget",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 6810,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:05:43.373Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "e4c3fd2ee34c5c108c77-f8c79f405673ca7ddd6d",
+                "file": "chat-memory-injection-panel.spec.ts",
+                "line": 104,
+                "column": 7
+              },
+              {
+                "title": "none: a successful empty read shows the empty state",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 7278,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:05:50.200Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "e4c3fd2ee34c5c108c77-f7d6d933cdc6db6fd009",
+                "file": "chat-memory-injection-panel.spec.ts",
+                "line": 121,
+                "column": 7
+              },
+              {
+                "title": "timeout: a failed read shows a retryable error",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 6489,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:05:57.494Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "e4c3fd2ee34c5c108c77-dc559c4375e631de4381",
+                "file": "chat-memory-injection-panel.spec.ts",
+                "line": 135,
+                "column": 7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "main-navigation.spec.ts",
+        "file": "main-navigation.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [],
+        "suites": [
+          {
+            "title": "Verse Claw main navigation without setup flow",
+            "file": "main-navigation.spec.ts",
+            "line": 16,
+            "column": 6,
+            "specs": [
+              {
+                "title": "navigates between core pages with setup bypassed",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 7180,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:06:04.002Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "e7451d21ff44903f0df3-eb59851df507ae171fe1",
+                "file": "main-navigation.spec.ts",
+                "line": 17,
+                "column": 7
+              },
+              {
+                "title": "native New Chat menu opens the same chat route as the sidebar action",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 6716,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:06:11.194Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "e7451d21ff44903f0df3-4b91a5c68bd8eec2372b",
+                "file": "main-navigation.spec.ts",
+                "line": 45,
+                "column": 7
+              },
+              {
+                "title": "refreshes native menu labels after switching language",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 6843,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:06:17.922Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "e7451d21ff44903f0df3-f04eccd2727f2120535b",
+                "file": "main-navigation.spec.ts",
+                "line": 77,
+                "column": 7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "rareui-interactions.spec.ts",
+        "file": "rareui-interactions.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [
+          {
+            "title": "conversation rail, hook selection, completion bell and Markdown TOC have real Electron screenshot evidence",
+            "ok": true,
+            "tags": [],
+            "tests": [
+              {
+                "timeout": 90000,
+                "annotations": [],
+                "expectedStatus": "passed",
+                "projectId": "",
+                "projectName": "",
+                "results": [
+                  {
+                    "workerIndex": 0,
+                    "parallelIndex": 0,
+                    "status": "passed",
+                    "duration": 11934,
+                    "errors": [],
+                    "stdout": [],
+                    "stderr": [],
+                    "retry": 0,
+                    "startTime": "2026-11-13T10:06:24.786Z",
+                    "annotations": [],
+                    "attachments": []
+                  }
+                ],
+                "status": "expected"
+              }
+            ],
+            "id": "f7e49e4154c4255559c9-af3ec5660f663a800967",
+            "file": "rareui-interactions.spec.ts",
+            "line": 156,
+            "column": 5
+          },
+          {
+            "title": "Cron time edits persist and animated deletion retains confirmation and cancellation",
+            "ok": true,
+            "tags": [],
+            "tests": [
+              {
+                "timeout": 90000,
+                "annotations": [],
+                "expectedStatus": "passed",
+                "projectId": "",
+                "projectName": "",
+                "results": [
+                  {
+                    "workerIndex": 0,
+                    "parallelIndex": 0,
+                    "status": "passed",
+                    "duration": 11318,
+                    "errors": [],
+                    "stdout": [],
+                    "stderr": [],
+                    "retry": 0,
+                    "startTime": "2026-11-13T10:06:36.731Z",
+                    "annotations": [],
+                    "attachments": []
+                  }
+                ],
+                "status": "expected"
+              }
+            ],
+            "id": "f7e49e4154c4255559c9-a8ddeb06da533233a4d9",
+            "file": "rareui-interactions.spec.ts",
+            "line": 247,
+            "column": 5
+          }
+        ]
+      },
+      {
+        "title": "sidebar-session-folders-archive.spec.ts",
+        "file": "sidebar-session-folders-archive.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [],
+        "suites": [
+          {
+            "title": "Sidebar session workgroups and archive",
+            "file": "sidebar-session-folders-archive.spec.ts",
+            "line": 330,
+            "column": 6,
+            "specs": [
+              {
+                "title": "pins the project header instead of repeating it per row, and supports pinned, unread, priority, and active sorting",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 14161,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:06:48.076Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "a98f3a190092aced34a7-1a3bddc86e4d382c3a29",
+                "file": "sidebar-session-folders-archive.spec.ts",
+                "line": 331,
+                "column": 7
+              },
+              {
+                "title": "keeps workgroups inside the project and renders time sorting as a direct list",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 18031,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:07:02.251Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "a98f3a190092aced34a7-bbdb45efe6fa941980a1",
+                "file": "sidebar-session-folders-archive.spec.ts",
+                "line": 394,
+                "column": 7
+              },
+              {
+                "title": "creates a workgroup, moves a running session into it, searches it, then deletes the workgroup",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 13599,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:07:20.320Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "a98f3a190092aced34a7-b3bd548106bbb50d2c78",
+                "file": "sidebar-session-folders-archive.spec.ts",
+                "line": 420,
+                "column": 7
+              },
+              {
+                "title": "delete dialog offers archive and permanent delete; archive modal restores sessions",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 8464,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:07:33.946Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "a98f3a190092aced34a7-b8aeffd6d14af3326d5f",
+                "file": "sidebar-session-folders-archive.spec.ts",
+                "line": 517,
+                "column": 7
+              },
+              {
+                "title": "drags a conversation after another to auto-group, rename, and remove the group",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 8332,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:07:42.422Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "a98f3a190092aced34a7-8e443d2ea5d5ae1e6683",
+                "file": "sidebar-session-folders-archive.spec.ts",
+                "line": 563,
+                "column": 7
+              },
+              {
+                "title": "permanent delete from the archived settings page removes the entry",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 8521,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:07:50.766Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "a98f3a190092aced34a7-6d6eec3ee8c153c68c11",
+                "file": "sidebar-session-folders-archive.spec.ts",
+                "line": 645,
+                "column": 7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "sidebar-session-row-polish.spec.ts",
+        "file": "sidebar-session-row-polish.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [],
+        "suites": [
+          {
+            "title": "Sidebar session rows and activity bell",
+            "file": "sidebar-session-row-polish.spec.ts",
+            "line": 98,
+            "column": 6,
+            "specs": [
+              {
+                "title": "keeps the header compact, separates navigation from actions, and retains migration dialogs",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 11156,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:07:59.332Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "53ce56470b911493ec60-92cc62e1baee55b9fa8c",
+                "file": "sidebar-session-row-polish.spec.ts",
+                "line": 99,
+                "column": 7
+              },
+              {
+                "title": "hover shows pin + more, long titles loop and settle, and reduced motion keeps them still",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 10071,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:08:10.501Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "53ce56470b911493ec60-a57ce1051d4c94ef8929",
+                "file": "sidebar-session-row-polish.spec.ts",
+                "line": 175,
+                "column": 7
+              },
+              {
+                "title": "more menu opens under its button and archive offers an undo",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 16964,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:08:20.584Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "53ce56470b911493ec60-e4331c8cf502be2c3486",
+                "file": "sidebar-session-row-polish.spec.ts",
+                "line": 228,
+                "column": 7
+              },
+              {
+                "title": "bell shows the row status orb while running, and stays aligned in the collapsed sidebar",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 21337,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:08:37.568Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "53ce56470b911493ec60-6ba13240c64b613f1f76",
+                "file": "sidebar-session-row-polish.spec.ts",
+                "line": 276,
+                "column": 7
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "errors": [],
+    "stats": {
+      "startTime": "2026-11-13T10:05:42.367Z",
+      "duration": 198939.662,
+      "expected": 18,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\yield\\results.json",
+  "sourceSha256": "15ebcdfea1e78193ba2d55327778e143e7d4622abec44e7122128a892e24361d",
+  "result": {
+    "config": {
+      "configFile": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\playwright.config.ts",
+      "rootDir": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/e2e",
+      "forbidOnly": false,
+      "fullyParallel": false,
+      "globalSetup": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+      "globalTeardown": null,
+      "globalTimeout": 0,
+      "grep": {},
+      "grepInvert": null,
+      "maxFailures": 0,
+      "metadata": {
+        "actualWorkers": 1
+      },
+      "preserveOutput": "always",
+      "projects": [
+        {
+          "outputDir": "D:/tmp/g8-ui-r3-20261113-01a1d351/electron/final/yield/output",
+          "repeatEach": 1,
+          "retries": 0,
+          "metadata": {
+            "actualWorkers": 1
+          },
+          "id": "",
+          "name": "",
+          "testDir": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/e2e",
+          "testIgnore": [
+            "**/resource-lifecycle-soak.spec.ts",
+            "**/product-acceptance-space-bunny.spec.ts",
+            "**/product-acceptance-moyu.spec.ts"
+          ],
+          "testMatch": [
+            "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+          ],
+          "timeout": 90000
+        }
+      ],
+      "quiet": false,
+      "reporter": [
+        [
+          "line"
+        ],
+        [
+          "json"
+        ]
+      ],
+      "reportSlowTests": {
+        "max": 5,
+        "threshold": 300000
+      },
+      "shard": null,
+      "tags": [],
+      "updateSnapshots": "missing",
+      "updateSourceMethod": "patch",
+      "version": "1.59.0",
+      "workers": 1,
+      "webServer": null
+    },
+    "suites": [
+      {
+        "title": "chat-task-visualizer.spec.ts",
+        "file": "chat-task-visualizer.spec.ts",
+        "column": 0,
+        "line": 0,
+        "specs": [],
+        "suites": [
+          {
+            "title": "Verse Claw chat execution graph",
+            "file": "chat-task-visualizer.spec.ts",
+            "line": 287,
+            "column": 6,
+            "specs": [
+              {
+                "title": "renders internal yield status and linked subagent branch from mocked IPC",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 8665,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-13T10:05:31.396Z",
+                        "annotations": [],
+                        "attachments": [
+                          {
+                            "name": "assistant-ui-ghost-execution-graph",
+                            "contentType": "image/png",
+                            "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\yield\\output\\chat-task-visualizer-Verse-c9a54-gent-branch-from-mocked-IPC\\attachments\\assistant-ui-ghost-execution-graph-acf48c54d476d571cb2802ca3a0e2bbd93b655e7.png"
+                          },
+                          {
+                            "name": "assistant-ui-call-chip-narrow",
+                            "contentType": "image/png",
+                            "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\yield\\output\\chat-task-visualizer-Verse-c9a54-gent-branch-from-mocked-IPC\\attachments\\assistant-ui-call-chip-narrow-34a24f2ab554ab314ad7958c02015a19fb12e890.png"
+                          },
+                          {
+                            "name": "assistant-ui-call-chip-dark",
+                            "contentType": "image/png",
+                            "path": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\yield\\output\\chat-task-visualizer-Verse-c9a54-gent-branch-from-mocked-IPC\\attachments\\assistant-ui-call-chip-dark-12187482bea492d47e45df4969fb90bd3b1f57dc.png"
+                          }
+                        ]
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "149f62342d27f572e1ad-05d58eb0eaef810b8898",
+                "file": "chat-task-visualizer.spec.ts",
+                "line": 420,
+                "column": 7
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "errors": [],
+    "stats": {
+      "startTime": "2026-11-13T10:05:30.471Z",
+      "duration": 10369.488000000001,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  }
+}

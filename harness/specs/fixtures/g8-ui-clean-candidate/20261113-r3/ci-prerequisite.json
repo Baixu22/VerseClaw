@@ -1,0 +1,1053 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "acceptedCandidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "prerequisiteCommit": "7dcf31a44a1d9b3c16db19d84330d47d53d4bbc6",
+  "sourceCommit": "efbece9f28d5956e088bf57d284fe29032cdefd4",
+  "precursorRun": {
+    "schemaVersion": 1,
+    "driven_by": "agent",
+    "actor": "codex-g8-ui-01a1d351",
+    "realHumanEvidence": false,
+    "name": "accepted-agent-dev-deep-04",
+    "cwd": "D:\\ClawX-work\\g8-ui-closeout-20261113-01a1d351",
+    "command": [
+      "node",
+      "C:/Users/27933/AppData/Roaming/npm/node_modules/pnpm/bin/pnpm.cjs",
+      "agent-dev:deep-test"
+    ],
+    "startedAt": "2026-11-13T09:11:48.194917+00:00",
+    "before": {
+      "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+      "head": "414af909c67460f6ee4667812070a2051ce108a9",
+      "tree": "72d085f814b75a2c68ee12c24c58ef12ce2930b1",
+      "branch": "codex/g8-ui-closeout-20261113",
+      "status": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json"
+    },
+    "log": "D:\\tmp\\g8-ui-r2-20261113-01a1d351\\gates\\accepted-agent-dev-deep-04.log",
+    "exitCode": 0,
+    "environment": {
+      "TEMP": "D:/tmp",
+      "TMP": "D:/tmp",
+      "TMPDIR": "D:/tmp",
+      "VITEST_MAX_WORKERS": "2",
+      "GOMAXPROCS": "8",
+      "GOMEMLIMIT": "4GiB"
+    },
+    "pid": 34996,
+    "finishedAt": "2026-11-13T09:13:48.600284+00:00",
+    "durationSeconds": 120.406,
+    "after": {
+      "root": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351",
+      "head": "414af909c67460f6ee4667812070a2051ce108a9",
+      "tree": "72d085f814b75a2c68ee12c24c58ef12ce2930b1",
+      "branch": "codex/g8-ui-closeout-20261113",
+      "status": "M artifacts/agent-dev-deep-test/history.json\n M artifacts/agent-dev-deep-test/report.json\n M artifacts/agent-dev-deep-test/report.md\n M artifacts/agent-dev-quality/report.json\n M artifacts/agent-dev-workbench/evidence.json"
+    },
+    "candidateUnchanged": true,
+    "cleanCandidate": false,
+    "logSha256": "3549394a076ea2e35749cea66902e6d8379d42b135a5d484caef9b9555f4163d"
+  },
+  "precursorDescription": "Full Agent Dev run after committing executable changes; generated report files were the only pending changes.",
+  "candidateAudit": {
+    "schema": "clawx.agent-dev.audit.v1",
+    "generatedAt": "2026-11-13T09:53:56.073Z",
+    "policy": {
+      "schema": "clawx.agent-dev.audit.v1",
+      "passScore": 90,
+      "warnScore": 80,
+      "maxEvidenceAgeHours": 24,
+      "maxHistoryEntries": 20,
+      "hardVetoSeverities": [
+        "fail"
+      ],
+      "statusSemantics": {
+        "pass": "Score is at least 90 and no hard-veto findings exist.",
+        "warn": "Score is at least 80 and below 90 with no hard-veto findings.",
+        "fail": "Score is below 80 or at least one hard-veto finding exists."
+      }
+    },
+    "status": "warn",
+    "grade": "B",
+    "maturityLevel": "daily-loop-ready",
+    "confidence": {
+      "level": "high",
+      "reason": "Required generated evidence is present, parseable, and within the freshness window.",
+      "freshGeneratedCount": 4,
+      "generatedSourceCount": 4,
+      "staleGeneratedCount": 0
+    },
+    "totalScore": 88,
+    "maxScore": 100,
+    "summary": {
+      "pass": 5,
+      "warn": 0,
+      "fail": 1,
+      "disqualifierCount": 0
+    },
+    "dimensions": [
+      {
+        "id": "gate-integrity",
+        "title": "Gate Integrity",
+        "maxScore": 20,
+        "description": "Full gates remain available, fast paths are additive, and deep-test explains which full gates remain required.",
+        "score": 20,
+        "findings": [],
+        "status": "pass"
+      },
+      {
+        "id": "evidence-completeness",
+        "title": "Evidence Completeness",
+        "maxScore": 20,
+        "description": "Machine-readable Workbench, deep-test, quality, decision, and trend evidence exist.",
+        "score": 20,
+        "findings": [],
+        "status": "pass"
+      },
+      {
+        "id": "coverage-breadth",
+        "title": "Coverage Breadth",
+        "maxScore": 20,
+        "description": "Agent Dev has scenario, unit, E2E, contract, i18n, and host-api boundary coverage.",
+        "score": 20,
+        "findings": [],
+        "status": "pass"
+      },
+      {
+        "id": "performance-discipline",
+        "title": "Performance Discipline",
+        "maxScore": 20,
+        "description": "Latest timing evidence stays within budgets and refuses to treat over-limit runs as passing design evidence.",
+        "score": 8,
+        "findings": [
+          {
+            "id": "performance-watch:e2e-build",
+            "severity": "warn",
+            "priority": "P1",
+            "message": "e2e-build exceeded target: 53963ms > 25000ms.",
+            "recommendation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build."
+          },
+          {
+            "id": "performance-watch:vitest-agent-dev",
+            "severity": "warn",
+            "priority": "P1",
+            "message": "vitest-agent-dev exceeded target: 12925ms > 10000ms.",
+            "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+          },
+          {
+            "id": "performance-watch:contract",
+            "severity": "warn",
+            "priority": "P1",
+            "message": "contract exceeded target: 2185ms > 1000ms.",
+            "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+          },
+          {
+            "id": "performance-watch:typecheck",
+            "severity": "warn",
+            "priority": "P1",
+            "message": "typecheck exceeded target: 25578ms > 25000ms.",
+            "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+          }
+        ],
+        "status": "fail"
+      },
+      {
+        "id": "docs-runbook",
+        "title": "Docs And Runbook",
+        "maxScore": 10,
+        "description": "Developer docs explain daily loops, full gates, release evidence, and failure interpretation.",
+        "score": 10,
+        "findings": [],
+        "status": "pass"
+      },
+      {
+        "id": "maintainability",
+        "title": "Maintainability",
+        "maxScore": 10,
+        "description": "The system avoids parallel registries, has focused unit protection, and keeps generated evidence bounded.",
+        "score": 10,
+        "findings": [],
+        "status": "pass"
+      }
+    ],
+    "scoreBreakdown": [
+      {
+        "id": "gate-integrity",
+        "title": "Gate Integrity",
+        "score": 20,
+        "maxScore": 20,
+        "deducted": 0,
+        "status": "pass",
+        "reason": "No findings deducted points for this dimension.",
+        "findings": []
+      },
+      {
+        "id": "evidence-completeness",
+        "title": "Evidence Completeness",
+        "score": 20,
+        "maxScore": 20,
+        "deducted": 0,
+        "status": "pass",
+        "reason": "No findings deducted points for this dimension.",
+        "findings": []
+      },
+      {
+        "id": "coverage-breadth",
+        "title": "Coverage Breadth",
+        "score": 20,
+        "maxScore": 20,
+        "deducted": 0,
+        "status": "pass",
+        "reason": "No findings deducted points for this dimension.",
+        "findings": []
+      },
+      {
+        "id": "performance-discipline",
+        "title": "Performance Discipline",
+        "score": 8,
+        "maxScore": 20,
+        "deducted": 12,
+        "status": "fail",
+        "reason": "4 finding(s) deducted 12 point(s).",
+        "findings": [
+          {
+            "id": "performance-watch:e2e-build",
+            "severity": "warn",
+            "estimatedPenalty": 3,
+            "recommendation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build."
+          },
+          {
+            "id": "performance-watch:vitest-agent-dev",
+            "severity": "warn",
+            "estimatedPenalty": 3,
+            "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+          },
+          {
+            "id": "performance-watch:contract",
+            "severity": "warn",
+            "estimatedPenalty": 3,
+            "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+          },
+          {
+            "id": "performance-watch:typecheck",
+            "severity": "warn",
+            "estimatedPenalty": 3,
+            "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+          }
+        ]
+      },
+      {
+        "id": "docs-runbook",
+        "title": "Docs And Runbook",
+        "score": 10,
+        "maxScore": 10,
+        "deducted": 0,
+        "status": "pass",
+        "reason": "No findings deducted points for this dimension.",
+        "findings": []
+      },
+      {
+        "id": "maintainability",
+        "title": "Maintainability",
+        "score": 10,
+        "maxScore": 10,
+        "deducted": 0,
+        "status": "pass",
+        "reason": "No findings deducted points for this dimension.",
+        "findings": []
+      }
+    ],
+    "rubric": [
+      {
+        "id": "gate-integrity",
+        "title": "Gate Integrity",
+        "maxScore": 20,
+        "description": "Full gates remain available, fast paths are additive, and deep-test explains which full gates remain required."
+      },
+      {
+        "id": "evidence-completeness",
+        "title": "Evidence Completeness",
+        "maxScore": 20,
+        "description": "Machine-readable Workbench, deep-test, quality, decision, and trend evidence exist."
+      },
+      {
+        "id": "coverage-breadth",
+        "title": "Coverage Breadth",
+        "maxScore": 20,
+        "description": "Agent Dev has scenario, unit, E2E, contract, i18n, and host-api boundary coverage."
+      },
+      {
+        "id": "performance-discipline",
+        "title": "Performance Discipline",
+        "maxScore": 20,
+        "description": "Latest timing evidence stays within budgets and refuses to treat over-limit runs as passing design evidence."
+      },
+      {
+        "id": "docs-runbook",
+        "title": "Docs And Runbook",
+        "maxScore": 10,
+        "description": "Developer docs explain daily loops, full gates, release evidence, and failure interpretation."
+      },
+      {
+        "id": "maintainability",
+        "title": "Maintainability",
+        "maxScore": 10,
+        "description": "The system avoids parallel registries, has focused unit protection, and keeps generated evidence bounded."
+      }
+    ],
+    "evidenceInventory": [
+      {
+        "id": "workbench",
+        "path": "artifacts/agent-dev-workbench/evidence.json",
+        "required": true,
+        "generated": true,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T09:16:28.018Z",
+        "generatedAt": "2026-11-13T09:15:46.371Z",
+        "ageHours": 0.64,
+        "newestRelevantSource": {
+          "path": "package.json",
+          "mtime": "2026-11-13T09:11:30.000Z",
+          "mtimeMs": 1794561090000,
+          "timeSource": "git-commit"
+        },
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "deep-test",
+        "path": "artifacts/agent-dev-deep-test/report.json",
+        "required": true,
+        "generated": true,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T09:16:28.012Z",
+        "generatedAt": "2026-11-13T09:13:48.548Z",
+        "ageHours": 0.67,
+        "newestRelevantSource": {
+          "path": "package.json",
+          "mtime": "2026-11-13T09:11:30.000Z",
+          "mtimeMs": 1794561090000,
+          "timeSource": "git-commit"
+        },
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "deep-test-history",
+        "path": "artifacts/agent-dev-deep-test/history.json",
+        "required": true,
+        "generated": true,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T09:16:28.015Z",
+        "generatedAt": "2026-11-13T09:13:48.548Z",
+        "ageHours": 0.67,
+        "newestRelevantSource": {
+          "path": "package.json",
+          "mtime": "2026-11-13T09:11:30.000Z",
+          "mtimeMs": 1794561090000,
+          "timeSource": "git-commit"
+        },
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "quality",
+        "path": "artifacts/agent-dev-quality/report.json",
+        "required": true,
+        "generated": true,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T09:16:28.015Z",
+        "generatedAt": "2026-11-13T09:13:48.007Z",
+        "ageHours": 0.67,
+        "newestRelevantSource": {
+          "path": "package.json",
+          "mtime": "2026-11-13T09:11:30.000Z",
+          "mtimeMs": 1794561090000,
+          "timeSource": "git-commit"
+        },
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "package-scripts",
+        "path": "package.json",
+        "required": true,
+        "generated": false,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T08:55:15.584Z",
+        "generatedAt": null,
+        "ageHours": 0.98,
+        "newestRelevantSource": null,
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "agent-dev-runbook",
+        "path": "docs/agent-dev-control-plane.md",
+        "required": true,
+        "generated": false,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T05:13:40.518Z",
+        "generatedAt": null,
+        "ageHours": 4.67,
+        "newestRelevantSource": null,
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "agent-instructions",
+        "path": "AGENTS.md",
+        "required": true,
+        "generated": false,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T05:13:35.126Z",
+        "generatedAt": null,
+        "ageHours": 4.67,
+        "newestRelevantSource": null,
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "scenario-registry",
+        "path": "shared/agent-dev/scenarios.ts",
+        "required": true,
+        "generated": false,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T05:15:11.889Z",
+        "generatedAt": null,
+        "ageHours": 4.64,
+        "newestRelevantSource": null,
+        "sourceFresh": true,
+        "fresh": true
+      },
+      {
+        "id": "regularization-tests",
+        "path": "tests/unit/agent-dev-regularization.test.ts",
+        "required": true,
+        "generated": false,
+        "exists": true,
+        "parseable": true,
+        "mtime": "2026-11-13T05:15:15.935Z",
+        "generatedAt": null,
+        "ageHours": 4.64,
+        "newestRelevantSource": null,
+        "sourceFresh": true,
+        "fresh": true
+      }
+    ],
+    "prioritizedFindings": [
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-watch:contract",
+        "severity": "warn",
+        "priority": "P1",
+        "message": "contract exceeded target: 2185ms > 1000ms.",
+        "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources.",
+        "impact": "medium",
+        "effort": "low",
+        "validationCommands": [
+          "pnpm agent-dev:fast",
+          "pnpm agent-dev:audit:report"
+        ]
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-watch:e2e-build",
+        "severity": "warn",
+        "priority": "P1",
+        "message": "e2e-build exceeded target: 53963ms > 25000ms.",
+        "recommendation": "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build.",
+        "impact": "medium",
+        "effort": "low",
+        "validationCommands": [
+          "pnpm agent-dev:fast",
+          "pnpm agent-dev:audit:report"
+        ]
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-watch:typecheck",
+        "severity": "warn",
+        "priority": "P1",
+        "message": "typecheck exceeded target: 25578ms > 25000ms.",
+        "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
+        "impact": "medium",
+        "effort": "low",
+        "validationCommands": [
+          "pnpm agent-dev:fast",
+          "pnpm agent-dev:audit:report"
+        ]
+      },
+      {
+        "dimension": "performance-discipline",
+        "id": "performance-watch:vitest-agent-dev",
+        "severity": "warn",
+        "priority": "P1",
+        "message": "vitest-agent-dev exceeded target: 12925ms > 10000ms.",
+        "recommendation": "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe.",
+        "impact": "medium",
+        "effort": "low",
+        "validationCommands": [
+          "pnpm agent-dev:fast",
+          "pnpm agent-dev:audit:report"
+        ]
+      }
+    ],
+    "disqualifiers": [],
+    "recommendations": [
+      "Keep contract scanning text-based and bounded to host-api/service sources.",
+      "Reuse a fresh build with pnpm agent-dev:deep-test:reuse or pnpm run test:e2e:agent-dev-quality:run after a fresh build.",
+      "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
+      "Keep node-environment Agent Dev tests split from the jsdom host facade test so full unit coverage stays parallel where it is safe."
+    ]
+  },
+  "sourceCommitReceipt": {
+    "driven_by": "agent",
+    "actor": "codex-g8-ui-01a1d351",
+    "realHumanEvidence": false,
+    "base": "88c70ff339efee1c4b3880e9e7dd766c2981878e",
+    "commit": "efbece9f28d5956e088bf57d284fe29032cdefd4",
+    "tree": "f788717d1b0a051a49bc8cd10631ff4be9f7204a",
+    "branch": "refs/heads/codex/g8-ci-prerequisite-20261113",
+    "mode": "source",
+    "files": [
+      {
+        "path": "harness/specs/tasks/repository-ci-g8-prerequisites.md",
+        "blob": "53385697169a393f178ccb8e2d4a53a850e8a478",
+        "workingBytesSha256": "da841db20d32023f3e9937020da9ee64cf52b50fed59da191b610ce2f8227770"
+      },
+      {
+        "path": "harness/specs/rules/contract-first-boundary.md",
+        "blob": "215ed5e3c4feb1717165d43fb9ab1967bf03cb8f",
+        "workingBytesSha256": "42dc268699b437e0fbfd00ea708deb5be8eccaca51cebb5bf65c2b55c0067a6f"
+      },
+      {
+        "path": "harness/specs/rules/agent-dev-conformance-evidence.md",
+        "blob": "ecba3f8a36cc9752319cc51f703148f46dd518e2",
+        "workingBytesSha256": "f281787a4cc7f940863f587ed8ddd9efc01fbdc146e4a96b759f255245bdcc78"
+      },
+      {
+        "path": "scripts/contract-check.mjs",
+        "blob": "75d218b9f74f8c4a8634fff2519177c82eea48df",
+        "workingBytesSha256": "48a7ccca0682e6da6f283801b9a1a872533778042e798a21bba362b5df9ec78e"
+      },
+      {
+        "path": "scripts/typecheck-agent-dev.mjs",
+        "blob": "210c5af393c8991685fd0066992ca9a59beb824d",
+        "workingBytesSha256": "79b20352f81a97e6d8f8173b1620604aa0a0918068aace0fcc8f54b8a01dbae2"
+      },
+      {
+        "path": "scripts/agent-dev-deep-test.mjs",
+        "blob": "81c505da361e9d35e21c6387ce84b24a30310601",
+        "workingBytesSha256": "d6c4789a91afb5bded8e37d32e4a33cb34ac325e02497e9dfcb274a736a5a520"
+      },
+      {
+        "path": "tests/unit/contract-check.test.ts",
+        "blob": "3d78033b6783f0ae0a0df3092550196d580568d8",
+        "workingBytesSha256": "ac186447b057eb2e67e87013157270294513c1d7075c83057f4a5dcefdf4ae32"
+      },
+      {
+        "path": "tests/unit/typecheck-gate.test.ts",
+        "blob": "eb6fb139b631b9d57d6a107f9881effb7ba06b20",
+        "workingBytesSha256": "f9a68352dfdeaf01fa3ecdbdec46ab15b58fde43a6753a0ced22feeaa0e8204f"
+      },
+      {
+        "path": "package.json",
+        "blob": "140029ad9b6b0a743f2105d487d3d8f5057c3aac",
+        "workingBytesSha256": "07ec23b416fb92c5c3a9d311dbcf71719e6e3670dc8f1370979a151c5a32df16"
+      }
+    ],
+    "commands": [
+      {
+        "command": [
+          "git",
+          "rev-parse",
+          "refs/heads/codex/g8-ci-prerequisite-20261113"
+        ],
+        "exitCode": 0,
+        "stdout": "88c70ff339efee1c4b3880e9e7dd766c2981878e\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "read-tree",
+          "88c70ff339efee1c4b3880e9e7dd766c2981878e"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "hash-object",
+          "-w",
+          "--path=harness/specs/tasks/repository-ci-g8-prerequisites.md",
+          "--stdin"
+        ],
+        "exitCode": 0,
+        "stdout": "53385697169a393f178ccb8e2d4a53a850e8a478\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "update-index",
+          "--add",
+          "--cacheinfo",
+          "100644,53385697169a393f178ccb8e2d4a53a850e8a478,harness/specs/tasks/repository-ci-g8-prerequisites.md"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "hash-object",
+          "-w",
+          "--path=harness/specs/rules/contract-first-boundary.md",
+          "--stdin"
+        ],
+        "exitCode": 0,
+        "stdout": "215ed5e3c4feb1717165d43fb9ab1967bf03cb8f\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "update-index",
+          "--add",
+          "--cacheinfo",
+          "100644,215ed5e3c4feb1717165d43fb9ab1967bf03cb8f,harness/specs/rules/contract-first-boundary.md"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "hash-object",
+          "-w",
+          "--path=harness/specs/rules/agent-dev-conformance-evidence.md",
+          "--stdin"
+        ],
+        "exitCode": 0,
+        "stdout": "ecba3f8a36cc9752319cc51f703148f46dd518e2\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "update-index",
+          "--add",
+          "--cacheinfo",
+          "100644,ecba3f8a36cc9752319cc51f703148f46dd518e2,harness/specs/rules/agent-dev-conformance-evidence.md"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "hash-object",
+          "-w",
+          "--path=scripts/contract-check.mjs",
+          "--stdin"
+        ],
+        "exitCode": 0,
+        "stdout": "75d218b9f74f8c4a8634fff2519177c82eea48df\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "update-index",
+          "--add",
+          "--cacheinfo",
+          "100644,75d218b9f74f8c4a8634fff2519177c82eea48df,scripts/contract-check.mjs"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "hash-object",
+          "-w",
+          "--path=scripts/typecheck-agent-dev.mjs",
+          "--stdin"
+        ],
+        "exitCode": 0,
+        "stdout": "210c5af393c8991685fd0066992ca9a59beb824d\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "update-index",
+          "--add",
+          "--cacheinfo",
+          "100644,210c5af393c8991685fd0066992ca9a59beb824d,scripts/typecheck-agent-dev.mjs"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "hash-object",
+          "-w",
+          "--path=scripts/agent-dev-deep-test.mjs",
+          "--stdin"
+        ],
+        "exitCode": 0,
+        "stdout": "81c505da361e9d35e21c6387ce84b24a30310601\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "update-index",
+          "--add",
+          "--cacheinfo",
+          "100644,81c505da361e9d35e21c6387ce84b24a30310601,scripts/agent-dev-deep-test.mjs"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "hash-object",
+          "-w",
+          "--path=tests/unit/contract-check.test.ts",
+          "--stdin"
+        ],
+        "exitCode": 0,
+        "stdout": "3d78033b6783f0ae0a0df3092550196d580568d8\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "update-index",
+          "--add",
+          "--cacheinfo",
+          "100644,3d78033b6783f0ae0a0df3092550196d580568d8,tests/unit/contract-check.test.ts"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "hash-object",
+          "-w",
+          "--path=tests/unit/typecheck-gate.test.ts",
+          "--stdin"
+        ],
+        "exitCode": 0,
+        "stdout": "eb6fb139b631b9d57d6a107f9881effb7ba06b20\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "update-index",
+          "--add",
+          "--cacheinfo",
+          "100644,eb6fb139b631b9d57d6a107f9881effb7ba06b20,tests/unit/typecheck-gate.test.ts"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "hash-object",
+          "-w",
+          "--path=package.json",
+          "--stdin"
+        ],
+        "exitCode": 0,
+        "stdout": "140029ad9b6b0a743f2105d487d3d8f5057c3aac\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "update-index",
+          "--add",
+          "--cacheinfo",
+          "100644,140029ad9b6b0a743f2105d487d3d8f5057c3aac,package.json"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "write-tree"
+        ],
+        "exitCode": 0,
+        "stdout": "f788717d1b0a051a49bc8cd10631ff4be9f7204a\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "commit-tree",
+          "f788717d1b0a051a49bc8cd10631ff4be9f7204a",
+          "-p",
+          "88c70ff339efee1c4b3880e9e7dd766c2981878e"
+        ],
+        "exitCode": 0,
+        "stdout": "efbece9f28d5956e088bf57d284fe29032cdefd4\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "update-ref",
+          "refs/heads/codex/g8-ci-prerequisite-20261113",
+          "efbece9f28d5956e088bf57d284fe29032cdefd4",
+          "88c70ff339efee1c4b3880e9e7dd766c2981878e"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    ]
+  },
+  "evidenceCommitReceipt": {
+    "driven_by": "agent",
+    "actor": "codex-g8-ui-01a1d351",
+    "realHumanEvidence": false,
+    "base": "efbece9f28d5956e088bf57d284fe29032cdefd4",
+    "commit": "7dcf31a44a1d9b3c16db19d84330d47d53d4bbc6",
+    "tree": "ddf873987b582d8af1e4e32d8f993d013d0ea724",
+    "branch": "refs/heads/codex/g8-ci-prerequisite-20261113",
+    "mode": "evidence",
+    "files": [
+      {
+        "path": "artifacts/agent-dev-workbench/evidence.json",
+        "blob": "ada9e87c3ee4801fc1a7cd834e0309ad704f7b95",
+        "workingBytesSha256": "0ecd1c5fca202de8c62061b83eca36e37593f8bd42e38b7b717d20a61add8f3d"
+      },
+      {
+        "path": "artifacts/agent-dev-deep-test/report.json",
+        "blob": "688dd9b01a34652625a1ce1199dc8a8763001844",
+        "workingBytesSha256": "e4f7d1c28851a47ad77822af625fddf8f3b4f11d5a2fbfa53fded7261848bffe"
+      },
+      {
+        "path": "artifacts/agent-dev-deep-test/report.md",
+        "blob": "cb90a222fe6714b545c49ffdd5fa70efcbb9fbe4",
+        "workingBytesSha256": "0f9384710368a5cbeb4dcbdfeec896e63fb66ff37c58a14f5110f8798165d673"
+      },
+      {
+        "path": "artifacts/agent-dev-deep-test/history.json",
+        "blob": "e62fd155569f4e1eeff1e5d31ffef8dd6f3619e8",
+        "workingBytesSha256": "1922b3aae68732f66adf0e0bd3c82af28749117ea9d3fabb2e70c5c5e825f8e9"
+      },
+      {
+        "path": "artifacts/agent-dev-quality/report.json",
+        "blob": "7f4027e40cb361daa624b848961682ad5ae57147",
+        "workingBytesSha256": "b231c2ad9d0a6975845da158dfeb53e4ae1cc4bb8cbc483e98757d914f571ea1"
+      }
+    ],
+    "commands": [
+      {
+        "command": [
+          "git",
+          "rev-parse",
+          "refs/heads/codex/g8-ci-prerequisite-20261113"
+        ],
+        "exitCode": 0,
+        "stdout": "efbece9f28d5956e088bf57d284fe29032cdefd4\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "read-tree",
+          "efbece9f28d5956e088bf57d284fe29032cdefd4"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "hash-object",
+          "-w",
+          "--path=artifacts/agent-dev-workbench/evidence.json",
+          "--stdin"
+        ],
+        "exitCode": 0,
+        "stdout": "ada9e87c3ee4801fc1a7cd834e0309ad704f7b95\n",
+        "stderr": "warning: in the working copy of 'artifacts/agent-dev-workbench/evidence.json', CRLF will be replaced by LF the next time Git touches it\n"
+      },
+      {
+        "command": [
+          "git",
+          "update-index",
+          "--add",
+          "--cacheinfo",
+          "100644,ada9e87c3ee4801fc1a7cd834e0309ad704f7b95,artifacts/agent-dev-workbench/evidence.json"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "hash-object",
+          "-w",
+          "--path=artifacts/agent-dev-deep-test/report.json",
+          "--stdin"
+        ],
+        "exitCode": 0,
+        "stdout": "688dd9b01a34652625a1ce1199dc8a8763001844\n",
+        "stderr": "warning: in the working copy of 'artifacts/agent-dev-deep-test/report.json', CRLF will be replaced by LF the next time Git touches it\n"
+      },
+      {
+        "command": [
+          "git",
+          "update-index",
+          "--add",
+          "--cacheinfo",
+          "100644,688dd9b01a34652625a1ce1199dc8a8763001844,artifacts/agent-dev-deep-test/report.json"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "hash-object",
+          "-w",
+          "--path=artifacts/agent-dev-deep-test/report.md",
+          "--stdin"
+        ],
+        "exitCode": 0,
+        "stdout": "cb90a222fe6714b545c49ffdd5fa70efcbb9fbe4\n",
+        "stderr": "warning: in the working copy of 'artifacts/agent-dev-deep-test/report.md', CRLF will be replaced by LF the next time Git touches it\n"
+      },
+      {
+        "command": [
+          "git",
+          "update-index",
+          "--add",
+          "--cacheinfo",
+          "100644,cb90a222fe6714b545c49ffdd5fa70efcbb9fbe4,artifacts/agent-dev-deep-test/report.md"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "hash-object",
+          "-w",
+          "--path=artifacts/agent-dev-deep-test/history.json",
+          "--stdin"
+        ],
+        "exitCode": 0,
+        "stdout": "e62fd155569f4e1eeff1e5d31ffef8dd6f3619e8\n",
+        "stderr": "warning: in the working copy of 'artifacts/agent-dev-deep-test/history.json', CRLF will be replaced by LF the next time Git touches it\n"
+      },
+      {
+        "command": [
+          "git",
+          "update-index",
+          "--add",
+          "--cacheinfo",
+          "100644,e62fd155569f4e1eeff1e5d31ffef8dd6f3619e8,artifacts/agent-dev-deep-test/history.json"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "hash-object",
+          "-w",
+          "--path=artifacts/agent-dev-quality/report.json",
+          "--stdin"
+        ],
+        "exitCode": 0,
+        "stdout": "7f4027e40cb361daa624b848961682ad5ae57147\n",
+        "stderr": "warning: in the working copy of 'artifacts/agent-dev-quality/report.json', CRLF will be replaced by LF the next time Git touches it\n"
+      },
+      {
+        "command": [
+          "git",
+          "update-index",
+          "--add",
+          "--cacheinfo",
+          "100644,7f4027e40cb361daa624b848961682ad5ae57147,artifacts/agent-dev-quality/report.json"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "write-tree"
+        ],
+        "exitCode": 0,
+        "stdout": "ddf873987b582d8af1e4e32d8f993d013d0ea724\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "commit-tree",
+          "ddf873987b582d8af1e4e32d8f993d013d0ea724",
+          "-p",
+          "efbece9f28d5956e088bf57d284fe29032cdefd4"
+        ],
+        "exitCode": 0,
+        "stdout": "7dcf31a44a1d9b3c16db19d84330d47d53d4bbc6\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "update-ref",
+          "refs/heads/codex/g8-ci-prerequisite-20261113",
+          "7dcf31a44a1d9b3c16db19d84330d47d53d4bbc6",
+          "efbece9f28d5956e088bf57d284fe29032cdefd4"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    ]
+  }
+}

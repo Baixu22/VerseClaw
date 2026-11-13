@@ -1,0 +1,22 @@
+
+Running 10 tests using 1 worker
+
+[1A[2K(node:13696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:13696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/10] tests\e2e\chat-file-changes.spec.ts:125:7 › Verse Claw chat file changes › shows line stats on generated file cards
+[1A[2K[2/10] tests\e2e\chat-file-changes.spec.ts:219:7 › Verse Claw chat file changes › opens html files from chat as rendered previews
+[1A[2K[3/10] tests\e2e\chat-file-changes.spec.ts:328:7 › Verse Claw chat file changes › keeps an attached file selected after switching through workspace
+[1A[2K[4/10] tests\e2e\chat-tool-ui-execution-surfaces.spec.ts:108:7 › Tool UI execution surfaces › renders official execution surfaces in light, dark, and narrow layouts
+[1A[2K[5/10] tests\e2e\chat-turn-summary-collapse.spec.ts:150:7 › Verse Claw chat turn summary collapse › keeps live activity compact, animated and readable without assistant avatars
+[1A[2K[6/10] tests\e2e\chat-turn-summary-collapse.spec.ts:211:7 › Verse Claw chat turn summary collapse › collapses completed long task process and expands details on demand
+[1A[2K[7/10] tests\e2e\chat-turn-summary-collapse.spec.ts:287:7 › Verse Claw chat turn summary collapse › leaves short conversations unwrapped
+[1A[2K[8/10] tests\e2e\runtime-approval-bridge.spec.ts:29:7 › Runtime approval bridge › covers the composer without a modal and restores its draft after approval
+[1A[2K[9/10] tests\e2e\runtime-approval-bridge.spec.ts:161:7 › Runtime approval bridge › answers a pending runtime approval from the conversation input area
+[1A[2K[10/10] tests\e2e\runtime-approval-bridge.spec.ts:212:7 › Runtime approval bridge › offers only the decisions the runtime listed for the request
+[1A[2K  10 passed (3.6m)

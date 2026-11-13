@@ -1,0 +1,108 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\artifact-panel-subject-tabs-ts.json",
+  "sourceSha256": "d6e5f8aef918d4426ea2f45daea4fd008f74288b623b0482f8570e318a9e3dcf",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 5,
+    "numPassedTests": 5,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563196289,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "artifact panel multi-instance tabs"
+            ],
+            "fullName": "artifact panel multi-instance tabs opens one tab per sub-agent",
+            "status": "passed",
+            "title": "opens one tab per sub-agent",
+            "duration": 2.9384000000000015,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "artifact panel multi-instance tabs"
+            ],
+            "fullName": "artifact panel multi-instance tabs re-focuses an existing sub-agent tab instead of duplicating it",
+            "status": "passed",
+            "title": "re-focuses an existing sub-agent tab instead of duplicating it",
+            "duration": 1.286200000000008,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "artifact panel multi-instance tabs"
+            ],
+            "fullName": "artifact panel multi-instance tabs opens one tab per process and keeps them apart from sub-agents",
+            "status": "passed",
+            "title": "opens one tab per process and keeps them apart from sub-agents",
+            "duration": 0.4778000000001157,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "artifact panel multi-instance tabs"
+            ],
+            "fullName": "artifact panel multi-instance tabs keeps subject-less kinds single-instance",
+            "status": "passed",
+            "title": "keeps subject-less kinds single-instance",
+            "duration": 0.3648000000000593,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "artifact panel multi-instance tabs"
+            ],
+            "fullName": "artifact panel multi-instance tabs does not restore subject-bearing tabs from a saved session",
+            "status": "passed",
+            "title": "does not restore subject-bearing tabs from a saved session",
+            "duration": 0.6173000000001139,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563197774,
+        "endTime": 1794563197780.6172,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/artifact-panel-subject-tabs.test.ts"
+      }
+    ]
+  }
+}

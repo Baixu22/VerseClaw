@@ -1,0 +1,144 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\welcome-project-picker-tsx.json",
+  "sourceSha256": "ddb831231348a286a8b416036d81e611a62be4895440f7242c3112fdf7b58f05",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 8,
+    "numPassedTests": 8,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563400438,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "WelcomeProjectPicker"
+            ],
+            "fullName": "WelcomeProjectPicker names the active workspace on the trigger and keeps the menu closed until asked",
+            "status": "passed",
+            "title": "names the active workspace on the trigger and keeps the menu closed until asked",
+            "duration": 25.84270000000015,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "WelcomeProjectPicker"
+            ],
+            "fullName": "WelcomeProjectPicker switches workspace on selection and closes",
+            "status": "passed",
+            "title": "switches workspace on selection and closes",
+            "duration": 17.155899999999974,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "WelcomeProjectPicker"
+            ],
+            "fullName": "WelcomeProjectPicker does not re-switch when the active workspace is picked again",
+            "status": "passed",
+            "title": "does not re-switch when the active workspace is picked again",
+            "duration": 7.588999999999942,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "WelcomeProjectPicker"
+            ],
+            "fullName": "WelcomeProjectPicker uses the owning conversation switch handler when supplied",
+            "status": "passed",
+            "title": "uses the owning conversation switch handler when supplied",
+            "duration": 7.524999999999864,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "WelcomeProjectPicker"
+            ],
+            "fullName": "WelcomeProjectPicker shows the workspace path in each shared dropdown row",
+            "status": "passed",
+            "title": "shows the workspace path in each shared dropdown row",
+            "duration": 6.282699999999977,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "WelcomeProjectPicker"
+            ],
+            "fullName": "WelcomeProjectPicker closes on Escape",
+            "status": "passed",
+            "title": "closes on Escape",
+            "duration": 93.43249999999989,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "WelcomeProjectPicker"
+            ],
+            "fullName": "WelcomeProjectPicker offers the folder picker only when a handler is supplied",
+            "status": "passed",
+            "title": "offers the folder picker only when a handler is supplied",
+            "duration": 30.60609999999997,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "WelcomeProjectPicker"
+            ],
+            "fullName": "WelcomeProjectPicker falls back to the folder name when the workspace is unnamed",
+            "status": "passed",
+            "title": "falls back to the folder name when the workspace is unnamed",
+            "duration": 2.8629000000000815,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563402219,
+        "endTime": 1794563402410.8628,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/welcome-project-picker.test.tsx"
+      }
+    ]
+  }
+}

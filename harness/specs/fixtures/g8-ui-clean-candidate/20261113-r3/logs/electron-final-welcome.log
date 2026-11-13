@@ -1,0 +1,16 @@
+
+Running 4 tests using 1 worker
+
+[1A[2K(node:3292) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:3292) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/4] tests\e2e\chat-welcome-hero-fakecoding.spec.ts:45:7 › FakeCoding chat welcome hero alignment › names the workspace as a context-row token and opens the shared picker upward
+[1A[2K[2/4] tests\e2e\chat-welcome-hero-verse-shot.spec.ts:136:7 › verse welcome hero screenshot — dark
+[1A[2K[3/4] tests\e2e\chat-welcome-hero-verse-shot.spec.ts:136:7 › verse welcome hero screenshot — light
+[1A[2K[4/4] tests\e2e\chat-welcome-hero-verse-shot.spec.ts:185:5 › chips retract while the composer holds a draft and return when it is cleared
+[1A[2K  4 passed (1.4m)

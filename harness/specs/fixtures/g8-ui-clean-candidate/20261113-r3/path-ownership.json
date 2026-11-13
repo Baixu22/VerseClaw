@@ -1,0 +1,760 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\ownership-d07e97d96.json",
+  "sourceSha256": "3f59f28175892acaa72035f9365821009e46b806ea04a6a9dd327d319e83b16e",
+  "result": {
+    "schemaVersion": 1,
+    "driven_by": "agent",
+    "actor": "codex-g8-ui-01a1d351",
+    "realHumanEvidence": false,
+    "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+    "base": "7dcf31a44a1d9b3c16db19d84330d47d53d4bbc6",
+    "status": "",
+    "changedPaths": [
+      {
+        "path": "README.ja-JP.md",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [
+          "chat-output-visual-hierarchy",
+          "chat-composer-popovers"
+        ],
+        "sha256": "4583ec6e1b93dbb0b965729b3486c46ebd3458d51e68aee3b0d49a1075e01c89"
+      },
+      {
+        "path": "README.md",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [
+          "chat-output-visual-hierarchy",
+          "chat-composer-popovers"
+        ],
+        "sha256": "0e4086d251c90e8f0a68529de452321bf86bd1e9ada58c9f55393959a5b83c9d"
+      },
+      {
+        "path": "README.ru-RU.md",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [
+          "chat-output-visual-hierarchy"
+        ],
+        "sha256": "1cb8a2d481142ac441fafcd9976cf820bc1ed2df2ebacbcb5a41ac0d1e544502"
+      },
+      {
+        "path": "README.zh-CN.md",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [
+          "chat-output-visual-hierarchy",
+          "chat-composer-popovers"
+        ],
+        "sha256": "acfc5ceae072e03ffac2faf26bc620afe491ae72d47ca8e49e8df9edacc6419b"
+      },
+      {
+        "path": "docs/dev/rareui-interactions.md",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "5b677401934f3df3a51ede9539eb1ed60c7c4fabc8d49a7c7c23b6f6fbf9411a"
+      },
+      {
+        "path": "harness/specs/rules/sidebar-session-row-controls.md",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "d913a2a071350db7857a6c1ec29f3164720fa1d2519a8817173c32113aeb565b"
+      },
+      {
+        "path": "harness/specs/scenarios/sidebar-session-row-management.md",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "7d285fd50e469f8f0d2b134f38173649fe2b828030b20db4ef3389eb6cb9f1d2"
+      },
+      {
+        "path": "harness/specs/scenarios/windows-ui-v2.md",
+        "owner": "chat-output-visual-hierarchy",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [
+          "chat-composer-popovers"
+        ],
+        "sha256": "705f08d43e624214420a2ee4938b8506e9a6af5566c2980ff13c464cf863f51d"
+      },
+      {
+        "path": "harness/specs/tasks/chat-composer-popovers.md",
+        "owner": "chat-composer-popovers",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "e77d07b26ed0d2a2b1d20c69383c76d24a03ac3ac188b0c0da4fb82cdb92e8ad"
+      },
+      {
+        "path": "harness/specs/tasks/chat-output-visual-hierarchy.md",
+        "owner": "chat-output-visual-hierarchy",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "54ce716aa202db2bd0aa8cf3b034ffe140b874de5ac41a2b45121a6be453363e"
+      },
+      {
+        "path": "harness/specs/tasks/g8-ui-clean-candidate.md",
+        "owner": "g8-ui-clean-candidate",
+        "ownerKind": "integration",
+        "alsoCoveredBy": [],
+        "sha256": "f516ee160cfb80b247025e382dd8540c5a90f5d4933d43e4d44b8be72a1b3cfe"
+      },
+      {
+        "path": "harness/specs/tasks/sidebar-session-row-polish.md",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "382f55fab981c98bb187ef67c91618cf18fa814e5056bce7935b027e8df49f17"
+      },
+      {
+        "path": "src/components/brand/BrandLogo.tsx",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "5941f902e5bfb27bffe9903af1e0d8ab1b15a0046a4ce080d542a2cc1bafe042"
+      },
+      {
+        "path": "src/components/chat/MemoryInjectionPanel.tsx",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "5fc3b6fcfc59033d247c3b4fa936bae2bf6261aefca1f7dc68e597a7f9b49edb"
+      },
+      {
+        "path": "src/components/layout/Sidebar.tsx",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "8f6c06bea436ca4555c9f1cb91b3399bf8cf02e9cb3d986fdfeb02c8a3b0dbd8"
+      },
+      {
+        "path": "src/components/layout/TitleBar.tsx",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "cbfde32ded6a78402180434578a191ceb73573204b816645252576cd87d3ccac"
+      },
+      {
+        "path": "src/components/rareui/CompletionActivityMenu.tsx",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "5d6f15351bfa003e7f553a147c76280c9e322badeaef4df40c792b90cdcb8075"
+      },
+      {
+        "path": "src/components/rareui/NotificationBell.tsx",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "375f9b70acc1824a52aee8c4b6728ee6c1845cd8bba130cfda79919c25438bdf"
+      },
+      {
+        "path": "src/pages/Chat/ChatToolbar.tsx",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [
+          "chat-output-visual-hierarchy"
+        ],
+        "sha256": "414d039ac70d4b0322e12125e00cea070203d7be485ef4e2551226b081229d88"
+      },
+      {
+        "path": "src/pages/Chat/SessionActivityPanel.tsx",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [
+          "chat-output-visual-hierarchy",
+          "chat-composer-popovers"
+        ],
+        "sha256": "8ae1772877fcdecf692ddf57d503ebc5a79771ca1fc3c27e8225d522697d5ef4"
+      },
+      {
+        "path": "src/pages/Chat/index.tsx",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [
+          "chat-output-visual-hierarchy",
+          "chat-composer-popovers"
+        ],
+        "sha256": "ce1c401cf71d619f2138e44d78ce233f687d2e5df15e370fcfb29f961a86ed03"
+      },
+      {
+        "path": "src/stores/chat.ts",
+        "owner": "chat-composer-popovers",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "19ccebf7ac9554891abba69cae5c194c851b48b043690d57e16a4f0bc49370bb"
+      },
+      {
+        "path": "src/styles/codex-composer-material.css",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [
+          "chat-composer-popovers"
+        ],
+        "sha256": "61106280c0c7a9bfbf4703bdd6208e3e148ca5c5221110fa2cf75170aa9e264c"
+      },
+      {
+        "path": "src/styles/codex-session-activity.css",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [
+          "chat-output-visual-hierarchy",
+          "chat-composer-popovers"
+        ],
+        "sha256": "19ab61919e2374f94123a2411e64d6b92fc541cb31f864300ce2c2e156c9a5ce"
+      },
+      {
+        "path": "src/styles/codex-sidebar.css",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "3ced8d1c0cf877ddc0565be1989ee9f9c0355e9933b8fd8f6bb15f2ac69c8acf"
+      },
+      {
+        "path": "src/styles/globals.css",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "ea8e9a6ce1ab0d546625e45a78ffe57aa3a3962cf289b97e2d51e7408712637c"
+      },
+      {
+        "path": "src/styles/rareui-interactions.css",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "0bcaa6696db5d5b5ae7464bb7d1a7c1d5fc48a880e4da29b91b5be9c8894576f"
+      },
+      {
+        "path": "tests/e2e/chat-agent-effort.spec.ts",
+        "owner": "chat-composer-popovers",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "f81938cc0d952b7449f5584820d97215a6166bf67d4dd03394ea0e54c1aced1e"
+      },
+      {
+        "path": "tests/e2e/chat-composer-git-strip.spec.ts",
+        "owner": "chat-output-visual-hierarchy",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [
+          "chat-composer-popovers"
+        ],
+        "sha256": "3ec11f2f0efae8c71adefcef5ee186c09f43b9a75ed90165146ab5c6581b729e"
+      },
+      {
+        "path": "tests/e2e/chat-composer-popovers.spec.ts",
+        "owner": "chat-composer-popovers",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "7f10a503ec7a6fe885a624b899587407490771d2059288dd926c64c2a053f241"
+      },
+      {
+        "path": "tests/e2e/chat-task-visualizer.spec.ts",
+        "owner": "chat-output-visual-hierarchy",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "4e368dda0c05b16004b58736f173c255700f1f056fa00ffc6abe6fe27ca27840"
+      },
+      {
+        "path": "tests/e2e/chat-welcome-hero-fakecoding.spec.ts",
+        "owner": "chat-output-visual-hierarchy",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "36f718758d9645ef8f330ab7624f7469c32a71009dfdc23b39de94a7a2d9374d"
+      },
+      {
+        "path": "tests/e2e/chat-welcome-hero-verse-shot.spec.ts",
+        "owner": "chat-output-visual-hierarchy",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "97335f561ad46db2af586d285fd39c1bef2bd82c08c56fc4f173a57a336781cc"
+      },
+      {
+        "path": "tests/e2e/main-navigation.spec.ts",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "ddb217726b4e4860f78940e2133c06dcc1c6bf0c93a708920298d89cbeab7bfd"
+      },
+      {
+        "path": "tests/e2e/rareui-interactions.spec.ts",
+        "owner": "rareui-interaction-adaptation",
+        "ownerKind": "required-rule-regression",
+        "alsoCoveredBy": [],
+        "sha256": "ca292d68aa1940e710a6d7536060c10b1515d4ed81fb597b1618aa42f2eb3a59"
+      },
+      {
+        "path": "tests/e2e/runtime-approval-bridge.spec.ts",
+        "owner": "chat-output-visual-hierarchy",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "6645bd85584af1d485a5d2dc635a9b29d22bf94b2e5cf8a52ef932f964f1449b"
+      },
+      {
+        "path": "tests/e2e/session-activity-background-read.spec.ts",
+        "owner": "chat-output-visual-hierarchy",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "e78cf8f7ebd4758c3a681e6f42315062a0527c2dd4ae3df2ae830d62ab081ce2"
+      },
+      {
+        "path": "tests/e2e/sidebar-session-row-polish.spec.ts",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "4d9501be9ac863966d287623dc297a390d4d7a7f891b8a5b5f4a272cb2134f6e"
+      },
+      {
+        "path": "tests/e2e/windows-ui-v2.spec.ts",
+        "owner": "ui-motion-material-system",
+        "ownerKind": "required-rule-regression",
+        "alsoCoveredBy": [],
+        "sha256": "9a39c9ff22a9a6a84011e3e16751025e0e7ac4ead7299ba09a0c3366c9ef7413"
+      },
+      {
+        "path": "tests/unit/chat-page-execution-graph.test.tsx",
+        "owner": "chat-output-visual-hierarchy",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "0e62c76497bdb32be9aedd81ea5ba12447e18904dffb98fd2451ef861e1eabdd"
+      },
+      {
+        "path": "tests/unit/chat-startup-hydration.test.ts",
+        "owner": "g8-ui-clean-candidate",
+        "ownerKind": "integration",
+        "alsoCoveredBy": [],
+        "sha256": "a49c173043d1f8f94f81af26dcaf3e5507634c50b7988af87392524bb8532cfd"
+      },
+      {
+        "path": "tests/unit/rareui-interactions.test.tsx",
+        "owner": "sidebar-session-row-polish",
+        "ownerKind": "member-task",
+        "alsoCoveredBy": [],
+        "sha256": "66ac3dd23bd05f106509fa0ecf90026fdc6fbafe1ee46f538d613d1a13f15487"
+      }
+    ],
+    "excludedHistoricalPaths": [
+      {
+        "path": "electron/gateway/ws-client.ts",
+        "owner": "gateway-startup-performance",
+        "disposition": "excluded-from-write-set; retained-current-main-input",
+        "mainBlob": "feae4c69dc05187977d711696a7ca9b17130dba1",
+        "candidateBlob": "feae4c69dc05187977d711696a7ca9b17130dba1",
+        "unchanged": true,
+        "latestMainCommit": "5d3f84ca9a97102ea2b96f7b00eaac1c6cfc335b feat(sessions): integrate durable task scope and recoverable session journeys"
+      },
+      {
+        "path": "electron/services/session-delegation-admission.ts",
+        "owner": "long-session-delegation-admission",
+        "disposition": "excluded-from-write-set; retained-current-main-input",
+        "mainBlob": "8506b006fe9b9b6cb82e8238fb17cd2fd4c94ec9",
+        "candidateBlob": "8506b006fe9b9b6cb82e8238fb17cd2fd4c94ec9",
+        "unchanged": true,
+        "latestMainCommit": "5d3f84ca9a97102ea2b96f7b00eaac1c6cfc335b feat(sessions): integrate durable task scope and recoverable session journeys"
+      },
+      {
+        "path": "electron/services/sessions-api.ts",
+        "owner": "long-session-delegation-admission",
+        "disposition": "excluded-from-write-set; retained-current-main-input",
+        "mainBlob": "86f748161be0621756b7ae828766226f74503e25",
+        "candidateBlob": "86f748161be0621756b7ae828766226f74503e25",
+        "unchanged": true,
+        "latestMainCommit": "0738efa1349e3d320f219f9e57ded1bde49c29b8 fix(session): confirm handoff activation and fence current generations"
+      },
+      {
+        "path": "harness/specs/scenarios/gateway-startup-diagnostics.md",
+        "owner": "gateway-startup-performance",
+        "disposition": "excluded-from-write-set; retained-current-main-input",
+        "mainBlob": "f66c06d896d8cb4f03274c31cac262b3a9b8a709",
+        "candidateBlob": "f66c06d896d8cb4f03274c31cac262b3a9b8a709",
+        "unchanged": true,
+        "latestMainCommit": "7cb80d63c6398245abfb448d16ff7eca762a3c9e docs: preserve chat workflow specifications and notes"
+      },
+      {
+        "path": "harness/specs/tasks/coding-vg-sts-jj-convergence-plan.md",
+        "owner": "coding-vg-sts-jj-convergence-plan",
+        "disposition": "excluded-from-write-set; retained-current-main-input",
+        "mainBlob": "de8285643d29219c1531a871226745f635650537",
+        "candidateBlob": "de8285643d29219c1531a871226745f635650537",
+        "unchanged": true,
+        "latestMainCommit": "7cb80d63c6398245abfb448d16ff7eca762a3c9e docs: preserve chat workflow specifications and notes"
+      },
+      {
+        "path": "harness/specs/tasks/gateway-startup-performance.md",
+        "owner": "gateway-startup-performance",
+        "disposition": "excluded-from-write-set; retained-current-main-input",
+        "mainBlob": "793afdf842c119d2498cbc851b3b4d0622ce4b16",
+        "candidateBlob": "793afdf842c119d2498cbc851b3b4d0622ce4b16",
+        "unchanged": true,
+        "latestMainCommit": "aab4b9b33aeeb7fa626f2d7f2a83946d54550b4a perf(gateway): reduce contract loading and loopback startup waits"
+      },
+      {
+        "path": "openclaw_runtime/scripts/profile-extension-memory.mjs",
+        "owner": "gateway-startup-performance",
+        "disposition": "excluded-from-write-set; retained-current-main-input",
+        "mainBlob": "64490c761431aa08ea68a6d8d804cbb599bfd28c",
+        "candidateBlob": "64490c761431aa08ea68a6d8d804cbb599bfd28c",
+        "unchanged": true,
+        "latestMainCommit": "aab4b9b33aeeb7fa626f2d7f2a83946d54550b4a perf(gateway): reduce contract loading and loopback startup waits"
+      },
+      {
+        "path": "openclaw_runtime/src/plugins/doctor-contract-registry.ts",
+        "owner": "gateway-startup-performance",
+        "disposition": "excluded-from-write-set; retained-current-main-input",
+        "mainBlob": "8fa5f1f742768679143bab1374c8d3124e4a78dd",
+        "candidateBlob": "8fa5f1f742768679143bab1374c8d3124e4a78dd",
+        "unchanged": true,
+        "latestMainCommit": "aab4b9b33aeeb7fa626f2d7f2a83946d54550b4a perf(gateway): reduce contract loading and loopback startup waits"
+      },
+      {
+        "path": "scripts/measure-gateway-startup.mjs",
+        "owner": "gateway-startup-performance",
+        "disposition": "excluded-from-write-set; retained-current-main-input",
+        "mainBlob": "a676083bbbe32f1cfbb53eb736743fcef5fd8da4",
+        "candidateBlob": "a676083bbbe32f1cfbb53eb736743fcef5fd8da4",
+        "unchanged": true,
+        "latestMainCommit": "aab4b9b33aeeb7fa626f2d7f2a83946d54550b4a perf(gateway): reduce contract loading and loopback startup waits"
+      },
+      {
+        "path": "tests/e2e/gateway-startup-performance.spec.ts",
+        "owner": "gateway-startup-performance",
+        "disposition": "excluded-from-write-set; retained-current-main-input",
+        "mainBlob": "e4926bfd7177709a99f9254c621f24027fdbf10b",
+        "candidateBlob": "e4926bfd7177709a99f9254c621f24027fdbf10b",
+        "unchanged": true,
+        "latestMainCommit": "aab4b9b33aeeb7fa626f2d7f2a83946d54550b4a perf(gateway): reduce contract loading and loopback startup waits"
+      },
+      {
+        "path": "tests/unit/gateway-doctor-contract-loading.test.ts",
+        "owner": "gateway-startup-performance",
+        "disposition": "excluded-from-write-set; retained-current-main-input",
+        "mainBlob": "16b0092da2a0ab8e34465199e3748c7bdf132ead",
+        "candidateBlob": "16b0092da2a0ab8e34465199e3748c7bdf132ead",
+        "unchanged": true,
+        "latestMainCommit": "aab4b9b33aeeb7fa626f2d7f2a83946d54550b4a perf(gateway): reduce contract loading and loopback startup waits"
+      },
+      {
+        "path": "tests/unit/gateway-loopback-connect.test.ts",
+        "owner": "gateway-startup-performance",
+        "disposition": "excluded-from-write-set; retained-current-main-input",
+        "mainBlob": "6fa7644b1717bbef9c09625b06a39842c32cb221",
+        "candidateBlob": "6fa7644b1717bbef9c09625b06a39842c32cb221",
+        "unchanged": true,
+        "latestMainCommit": "aab4b9b33aeeb7fa626f2d7f2a83946d54550b4a perf(gateway): reduce contract loading and loopback startup waits"
+      },
+      {
+        "path": "tests/unit/gateway-ready-fallback.test.ts",
+        "owner": "gateway-startup-performance",
+        "disposition": "excluded-from-write-set; retained-current-main-input",
+        "mainBlob": "7e7c003dc4511a564bbc28633457551380ba7e43",
+        "candidateBlob": "7e7c003dc4511a564bbc28633457551380ba7e43",
+        "unchanged": true,
+        "latestMainCommit": "aab4b9b33aeeb7fa626f2d7f2a83946d54550b4a perf(gateway): reduce contract loading and loopback startup waits"
+      },
+      {
+        "path": "tests/unit/long-session-delegation-admission.test.ts",
+        "owner": "long-session-delegation-admission",
+        "disposition": "excluded-from-write-set; retained-current-main-input",
+        "mainBlob": "02025c970fd695cf61cc0438dd2472d68255f666",
+        "candidateBlob": "02025c970fd695cf61cc0438dd2472d68255f666",
+        "unchanged": true,
+        "latestMainCommit": "7d765d855c634210a35dc4c8c3dbdabbdeee87e6 feat(sessions): integrate stable navigation and task guidance"
+      }
+    ],
+    "mappingFixAlreadyInMain": "5d3f84ca9",
+    "uncovered": [],
+    "allHistoricalPathsExcluded": true,
+    "memberSpecs": [
+      {
+        "path": "harness\\specs\\tasks\\chat-output-visual-hierarchy.md",
+        "id": "chat-output-visual-hierarchy",
+        "requiredTests": [
+          "pnpm exec vitest run tests/unit/welcome-project-picker.test.tsx tests/unit/welcome-branch-picker.test.tsx",
+          "pnpm run test:e2e:run tests/e2e/chat-welcome-hero-fakecoding.spec.ts tests/e2e/chat-welcome-hero-verse-shot.spec.ts tests/e2e/chat-composer-git-strip.spec.ts",
+          "pnpm exec vitest run tests/unit/session-environment.test.ts tests/unit/artifact-panel-store.test.ts tests/unit/artifact-panel.test.tsx tests/unit/artifact-panel-subject-tabs.test.ts tests/unit/chat-artifact-panel-layout.test.tsx",
+          "pnpm run test:e2e:run tests/e2e/chat-artifact-panel.spec.ts --grep \"conversation column\"",
+          "pnpm run test:e2e:run tests/e2e/chat-artifact-panel.spec.ts --grep \"owned Windows child\"",
+          "pnpm exec vitest run tests/unit/session-activity-panel-sections.test.tsx tests/unit/session-activity-panel.test.tsx tests/unit/chat-session-status-rail.test.tsx",
+          "pnpm run test:e2e:run tests/e2e/session-activity-background-read.spec.ts",
+          "pnpm exec vitest run tests/unit/chat-message.test.tsx tests/unit/chat-render-reachability.test.tsx tests/unit/chat-tool-card-suppression.test.tsx",
+          "pnpm exec vitest run tests/unit/tool-ui-execution-surfaces.test.tsx tests/unit/execution-graph-card-badge.test.tsx tests/unit/runtime-approval-prompt.test.tsx tests/unit/chat-input.test.tsx tests/unit/chat-page-execution-graph.test.tsx tests/unit/composer-git-strip.test.tsx",
+          "pnpm run typecheck:web",
+          "pnpm run typecheck:test",
+          "pnpm run i18n:lint",
+          "pnpm run build:vite",
+          "pnpm run test:e2e:run tests/e2e/chat-turn-summary-collapse.spec.ts tests/e2e/chat-tool-ui-execution-surfaces.spec.ts tests/e2e/chat-file-changes.spec.ts tests/e2e/runtime-approval-bridge.spec.ts tests/e2e/chat-composer-git-strip.spec.ts",
+          "pnpm run test:e2e:run tests/e2e/chat-task-visualizer.spec.ts --grep \"internal yield\""
+        ],
+        "acceptance": [
+          "Agent-driven Electron evidence covers the welcome project picker and its nested worktree controls, successful branch switching in changed-file details, the three actions behind disclosure, light/dark/narrow layouts, and stable composer placement when drafting.",
+          "A successful empty status read shows no environment entry; an actual failed status read keeps its warning and retry. Sources do not leak across session keys, do not list configured-but-unused integrations, and never render raw tool arguments or environment values.",
+          "Dismissing the environment persists through later events in that session. Manual reopening uses an overlay without transcript inset; Escape, outside click and the close button dismiss it. Narrow windows keep the card within the conversation bounds.",
+          "Source and worker overflow remains keyboard-accessible. Agent-driven light/dark/narrow Electron captures show the two layers and source/worker hierarchy. A worker never opens a workspace tab automatically.",
+          "The workspace close control and toolbar toggle preserve the selected tab, its mounted content and expanded state. Opening/closing uses short transform/opacity motion, disabled by reduced motion.",
+          "An active tool keeps the existing call-chip progress wash in the collapsed view. Opening the full process renders that tool once. Reduced motion disables its transition; completing the tool removes the live chip without expanding the log.",
+          "While waiting for the next tool or reply, the existing particle status animation stays inline at 20px; it does not reserve an avatar gutter or compete with the active tool animation.",
+          "Native keyboard disclosure exposes passive command, diff, plan and test records; questions, approvals, failed commands and failed test reports stay directly accessible.",
+          "Agent-driven screenshots cover light, dark and narrow layouts with long paths, long command output and long file diffs.",
+          "Summary badges, file headers, command headers and their actions do not overflow their owning surface. File-change cards stay within the turn disclosure bounds at desktop and narrow widths; only an explicitly expanded diff may scroll inside its own region.",
+          "Keyboard activation can expand and collapse details and long previews without concealing the final response or losing copy content. Call chips preserve the tool target, status and expansion affordance without widening the transcript.",
+          "Structured code and output preserve leading indentation and trailing newlines; only native clipboard CRLF conversion is normalized in Windows assertions.",
+          "Existing approval and error states remain visible and retain their authority; no transport, runtime, product-lock or permission changes are made.",
+          "Long previews support keyboard scrolling without trapping the page, and final output and both sides of a replacement remain visible in the collapsed viewport.",
+          "Runtime approval is a nonmodal panel at the input location, with no global overlay. It shares the composer's column, followed by the optional changed-file entry, and keeps the original draft mounted while pending. Other conversations and transcript controls stay usable; each request retains its own rejection and busy state.",
+          "Copying the command or pressing Escape does not decide the request. The input stays hidden and inert until every pending request for its session resolves; its original draft and attachments remain intact."
+        ]
+      },
+      {
+        "path": "harness\\specs\\tasks\\chat-composer-popovers.md",
+        "id": "chat-composer-popovers",
+        "requiredTests": [
+          "pnpm exec vitest run tests/unit/chat-input.test.tsx --maxWorkers=1",
+          "pnpm run test:e2e:run tests/e2e/chat-composer-popovers.spec.ts",
+          "pnpm run test:e2e:run tests/e2e/chat-model-picker.spec.ts tests/e2e/chat-model-picker-tiers.spec.ts",
+          "pnpm exec vitest run tests/unit/chat-model-selection.test.ts tests/unit/chat-target-routing.test.ts",
+          "pnpm exec vitest run tests/unit/model-brand.test.ts tests/unit/git-ui.test.ts tests/unit/composer-git-strip.test.tsx tests/unit/welcome-branch-picker.test.tsx tests/unit/session-activity-panel-sections.test.tsx tests/unit/chat-agent-effort-popover.test.tsx --maxWorkers=1",
+          "pnpm run test:e2e:run tests/e2e/chat-agent-effort.spec.ts tests/e2e/chat-composer-git-strip.spec.ts",
+          "pnpm run comms:replay",
+          "pnpm run comms:compare"
+        ],
+        "acceptance": [
+          "Light and dark menus stay within the viewport at 1280x800 and 760x560. Long lists and knowledge search remain reachable by scrolling.",
+          "Model, knowledge and permission menus expose only one interactive expanded surface at a time, including rapid switching.",
+          "Reduced motion removes the popover's slide, scale and blur; menu content remains visible and interactive.",
+          "Agent-driven Electron screenshots verify the add, model, reasoning, knowledge and permission controls in light, dark and narrow layouts. Animation samples verify opening blur, settled sharpness and inert closing surfaces.",
+          "The plus glyph is centered within its circular border at rest, including after closing. Selecting a model requires one choice with no scope-selection step.",
+          "Changing a saturated underlay beneath a settled menu produces identical interior screenshot pixels in both themes, including software-rendered Electron.",
+          "Long model names have no clipped lines or horizontal overflow at 1280 and 760 pixels; a selected long name remains readable after closing.",
+          "Linked-worktree screenshots include changed-file details, the project menu's nested worktree controls and session environment identity in both themes.",
+          "New-chat preference, existing-session restoration, removed-model fallback, failed persistence, queued sends and session-switch races have automated coverage."
+        ]
+      },
+      {
+        "path": "harness\\specs\\tasks\\sidebar-session-row-polish.md",
+        "id": "sidebar-session-row-polish",
+        "requiredTests": [
+          "pnpm exec vitest run tests/unit/sidebar-session-context-menu.test.tsx tests/unit/sidebar-render-containment.test.tsx tests/unit/session-folder-tree.test.tsx tests/unit/rareui-interactions.test.tsx tests/unit/main-layout.test.tsx tests/unit/fakecoding-design-system.test.ts",
+          "pnpm run typecheck",
+          "pnpm run i18n:lint",
+          "pnpm run build:vite",
+          "pnpm run test:e2e:run tests/e2e/sidebar-session-row-polish.spec.ts tests/e2e/sidebar-session-folders-archive.spec.ts tests/e2e/rareui-interactions.spec.ts"
+        ],
+        "acceptance": [
+          "At 1280px, 960px and 720px the header remains 40px and floating menus stay within the viewport; dark sidebar, canvas and composer have distinct backgrounds.",
+          "Opening execution migration from More retains its dialog after the menu closes; cancelling starts no migration and returns focus to More.",
+          "Source and derived conversation navigation preserve each conversation's draft and existing lifecycle guards.",
+          "The session hover strip renders exactly Pin and ⋯; no retired move/rename/delete hover control remains in the DOM.",
+          "The ⋯ menu is anchored under its button (right edges aligned), keeps the row highlighted while open, and closes on a second press, Escape or an outside click.",
+          "Archive from the menu calls the existing host archive with the session's workspace and workgroup, and Undo calls the existing host restore; no new host route is added.",
+          "Bell live state is derived from the sidebar's value-frozen runtime status map; the bell is idle when nothing runs.",
+          "The renderer adds no direct IPC or Gateway HTTP; all text is in four locales; light, dark, collapsed and reduced-motion states were captured by agent-driven automation and are not claimed as human review."
+        ]
+      }
+    ],
+    "maintenanceChangedPaths": [
+      {
+        "path": "artifacts/agent-dev-deep-test/history.json",
+        "owner": "agent-dev-ecosystem-regularization",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "e62fd155569f4e1eeff1e5d31ffef8dd6f3619e8",
+        "candidateBlob": "e62fd155569f4e1eeff1e5d31ffef8dd6f3619e8",
+        "sha256": "1922b3aae68732f66adf0e0bd3c82af28749117ea9d3fabb2e70c5c5e825f8e9"
+      },
+      {
+        "path": "artifacts/agent-dev-deep-test/report.json",
+        "owner": "agent-dev-ecosystem-regularization",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "688dd9b01a34652625a1ce1199dc8a8763001844",
+        "candidateBlob": "688dd9b01a34652625a1ce1199dc8a8763001844",
+        "sha256": "e4f7d1c28851a47ad77822af625fddf8f3b4f11d5a2fbfa53fded7261848bffe"
+      },
+      {
+        "path": "artifacts/agent-dev-deep-test/report.md",
+        "owner": "agent-dev-ecosystem-regularization",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "cb90a222fe6714b545c49ffdd5fa70efcbb9fbe4",
+        "candidateBlob": "cb90a222fe6714b545c49ffdd5fa70efcbb9fbe4",
+        "sha256": "0f9384710368a5cbeb4dcbdfeec896e63fb66ff37c58a14f5110f8798165d673"
+      },
+      {
+        "path": "artifacts/agent-dev-quality/report.json",
+        "owner": "agent-dev-ecosystem-regularization",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "7f4027e40cb361daa624b848961682ad5ae57147",
+        "candidateBlob": "7f4027e40cb361daa624b848961682ad5ae57147",
+        "sha256": "b231c2ad9d0a6975845da158dfeb53e4ae1cc4bb8cbc483e98757d914f571ea1"
+      },
+      {
+        "path": "artifacts/agent-dev-workbench/evidence.json",
+        "owner": "agent-dev-ecosystem-regularization",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "ada9e87c3ee4801fc1a7cd834e0309ad704f7b95",
+        "candidateBlob": "ada9e87c3ee4801fc1a7cd834e0309ad704f7b95",
+        "sha256": "0ecd1c5fca202de8c62061b83eca36e37593f8bd42e38b7b717d20a61add8f3d"
+      },
+      {
+        "path": "harness/specs/rules/agent-dev-conformance-evidence.md",
+        "owner": "agent-dev-ecosystem-regularization",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "ecba3f8a36cc9752319cc51f703148f46dd518e2",
+        "candidateBlob": "ecba3f8a36cc9752319cc51f703148f46dd518e2",
+        "sha256": "f281787a4cc7f940863f587ed8ddd9efc01fbdc146e4a96b759f255245bdcc78"
+      },
+      {
+        "path": "harness/specs/rules/contract-first-boundary.md",
+        "owner": "architecture-review-and-integration",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "215ed5e3c4feb1717165d43fb9ab1967bf03cb8f",
+        "candidateBlob": "215ed5e3c4feb1717165d43fb9ab1967bf03cb8f",
+        "sha256": "42dc268699b437e0fbfd00ea708deb5be8eccaca51cebb5bf65c2b55c0067a6f"
+      },
+      {
+        "path": "harness/specs/tasks/audit-wiring-quick-fixes.md",
+        "owner": "audit-wiring-quick-fixes",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "7ae2093663875754df6373a54a5ba7f049be7db9",
+        "candidateBlob": "7ae2093663875754df6373a54a5ba7f049be7db9",
+        "sha256": "c4c92efe08796a79447778090043fab8639d26cd07e59b895475100401dcd1e7"
+      },
+      {
+        "path": "harness/specs/tasks/audit-wiring-remainder.md",
+        "owner": "audit-wiring-remainder",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "d50f64dbb91919bfd6cce838c258ac49f5c6f7ef",
+        "candidateBlob": "d50f64dbb91919bfd6cce838c258ac49f5c6f7ef",
+        "sha256": "56ee29c4951de5593a52012714afdf4063ce1f66f8343c38752bb8003936ec26"
+      },
+      {
+        "path": "harness/specs/tasks/committed-branch-integration-20261109.md",
+        "owner": "committed-branch-integration-20261109",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "6f9451dcf28f00738d0ab229490b45e4cc78052a",
+        "candidateBlob": "6f9451dcf28f00738d0ab229490b45e4cc78052a",
+        "sha256": "14b72c2fb45a913b87b4db9cd28defe16af8a4fe6b965944a9ae2a240efd9bfd"
+      },
+      {
+        "path": "harness/specs/tasks/repository-ci-g8-prerequisites.md",
+        "owner": "repository-ci-g8-prerequisites",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "53385697169a393f178ccb8e2d4a53a850e8a478",
+        "candidateBlob": "53385697169a393f178ccb8e2d4a53a850e8a478",
+        "sha256": "da841db20d32023f3e9937020da9ee64cf52b50fed59da191b610ce2f8227770"
+      },
+      {
+        "path": "package.json",
+        "owner": "agent-dev-ecosystem-regularization",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "140029ad9b6b0a743f2105d487d3d8f5057c3aac",
+        "candidateBlob": "140029ad9b6b0a743f2105d487d3d8f5057c3aac",
+        "sha256": "07ec23b416fb92c5c3a9d311dbcf71719e6e3670dc8f1370979a151c5a32df16"
+      },
+      {
+        "path": "scripts/agent-dev-deep-test.mjs",
+        "owner": "agent-dev-ecosystem-regularization",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "81c505da361e9d35e21c6387ce84b24a30310601",
+        "candidateBlob": "81c505da361e9d35e21c6387ce84b24a30310601",
+        "sha256": "d6c4789a91afb5bded8e37d32e4a33cb34ac325e02497e9dfcb274a736a5a520"
+      },
+      {
+        "path": "scripts/contract-check.mjs",
+        "owner": "architecture-review-and-integration",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "75d218b9f74f8c4a8634fff2519177c82eea48df",
+        "candidateBlob": "75d218b9f74f8c4a8634fff2519177c82eea48df",
+        "sha256": "48a7ccca0682e6da6f283801b9a1a872533778042e798a21bba362b5df9ec78e"
+      },
+      {
+        "path": "scripts/typecheck-agent-dev.mjs",
+        "owner": "agent-dev-ecosystem-regularization",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "210c5af393c8991685fd0066992ca9a59beb824d",
+        "candidateBlob": "210c5af393c8991685fd0066992ca9a59beb824d",
+        "sha256": "79b20352f81a97e6d8f8173b1620604aa0a0918068aace0fcc8f54b8a01dbae2"
+      },
+      {
+        "path": "tests/unit/contract-check.test.ts",
+        "owner": "architecture-review-and-integration",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "3d78033b6783f0ae0a0df3092550196d580568d8",
+        "candidateBlob": "3d78033b6783f0ae0a0df3092550196d580568d8",
+        "sha256": "ac186447b057eb2e67e87013157270294513c1d7075c83057f4a5dcefdf4ae32"
+      },
+      {
+        "path": "tests/unit/typecheck-gate.test.ts",
+        "owner": "agent-dev-ecosystem-regularization",
+        "coveredByMaintenanceSpec": true,
+        "prerequisiteBlob": "eb6fb139b631b9d57d6a107f9881effb7ba06b20",
+        "candidateBlob": "eb6fb139b631b9d57d6a107f9881effb7ba06b20",
+        "sha256": "f9a68352dfdeaf01fa3ecdbdec46ab15b58fde43a6753a0ced22feeaa0e8204f"
+      }
+    ],
+    "originalMain": "42ad5e0b223d935e57630eb20c3501640721bf2e",
+    "integrationChangedPaths": [
+      "README.ja-JP.md",
+      "README.md",
+      "README.ru-RU.md",
+      "README.zh-CN.md",
+      "artifacts/agent-dev-deep-test/history.json",
+      "artifacts/agent-dev-deep-test/report.json",
+      "artifacts/agent-dev-deep-test/report.md",
+      "artifacts/agent-dev-quality/report.json",
+      "artifacts/agent-dev-workbench/evidence.json",
+      "docs/dev/rareui-interactions.md",
+      "harness/specs/rules/agent-dev-conformance-evidence.md",
+      "harness/specs/rules/contract-first-boundary.md",
+      "harness/specs/rules/sidebar-session-row-controls.md",
+      "harness/specs/scenarios/sidebar-session-row-management.md",
+      "harness/specs/scenarios/windows-ui-v2.md",
+      "harness/specs/tasks/audit-wiring-quick-fixes.md",
+      "harness/specs/tasks/audit-wiring-remainder.md",
+      "harness/specs/tasks/chat-composer-popovers.md",
+      "harness/specs/tasks/chat-output-visual-hierarchy.md",
+      "harness/specs/tasks/committed-branch-integration-20261109.md",
+      "harness/specs/tasks/g8-ui-clean-candidate.md",
+      "harness/specs/tasks/repository-ci-g8-prerequisites.md",
+      "harness/specs/tasks/sidebar-session-row-polish.md",
+      "package.json",
+      "scripts/agent-dev-deep-test.mjs",
+      "scripts/contract-check.mjs",
+      "scripts/typecheck-agent-dev.mjs",
+      "src/components/brand/BrandLogo.tsx",
+      "src/components/chat/MemoryInjectionPanel.tsx",
+      "src/components/layout/Sidebar.tsx",
+      "src/components/layout/TitleBar.tsx",
+      "src/components/rareui/CompletionActivityMenu.tsx",
+      "src/components/rareui/NotificationBell.tsx",
+      "src/pages/Chat/ChatToolbar.tsx",
+      "src/pages/Chat/SessionActivityPanel.tsx",
+      "src/pages/Chat/index.tsx",
+      "src/stores/chat.ts",
+      "src/styles/codex-composer-material.css",
+      "src/styles/codex-session-activity.css",
+      "src/styles/codex-sidebar.css",
+      "src/styles/globals.css",
+      "src/styles/rareui-interactions.css",
+      "tests/e2e/chat-agent-effort.spec.ts",
+      "tests/e2e/chat-composer-git-strip.spec.ts",
+      "tests/e2e/chat-composer-popovers.spec.ts",
+      "tests/e2e/chat-task-visualizer.spec.ts",
+      "tests/e2e/chat-welcome-hero-fakecoding.spec.ts",
+      "tests/e2e/chat-welcome-hero-verse-shot.spec.ts",
+      "tests/e2e/main-navigation.spec.ts",
+      "tests/e2e/rareui-interactions.spec.ts",
+      "tests/e2e/runtime-approval-bridge.spec.ts",
+      "tests/e2e/session-activity-background-read.spec.ts",
+      "tests/e2e/sidebar-session-row-polish.spec.ts",
+      "tests/e2e/windows-ui-v2.spec.ts",
+      "tests/unit/chat-page-execution-graph.test.tsx",
+      "tests/unit/chat-startup-hydration.test.ts",
+      "tests/unit/contract-check.test.ts",
+      "tests/unit/rareui-interactions.test.tsx",
+      "tests/unit/typecheck-gate.test.ts"
+    ],
+    "completeIntegrationCovered": true
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-session-status-rail-tsx.json",
+  "sourceSha256": "f6e215e255f22a97ebb363a8560235a3a93838ef63d0b1675deb5841b974a859",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 8,
+    "numPassedTests": 8,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563293110,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "Chat session status rail"
+            ],
+            "fullName": "Chat session status rail keeps the sidebar closed when a plan arrives and leaves transcript width unchanged",
+            "status": "passed",
+            "title": "keeps the sidebar closed when a plan arrives and leaves transcript width unchanged",
+            "duration": 136.04250000000047,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat session status rail"
+            ],
+            "fullName": "Chat session status rail keeps changed environments quiet until the user opens status",
+            "status": "passed",
+            "title": "keeps changed environments quiet until the user opens status",
+            "duration": 47.46569999999974,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat session status rail"
+            ],
+            "fullName": "Chat session status rail keeps a clean environment hidden even while a reply is running",
+            "status": "passed",
+            "title": "keeps a clean environment hidden even while a reply is running",
+            "duration": 34.61110000000008,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat session status rail"
+            ],
+            "fullName": "Chat session status rail honors never-auto-expand and opens an overlay on demand",
+            "status": "passed",
+            "title": "honors never-auto-expand and opens an overlay on demand",
+            "duration": 95.76699999999983,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat session status rail"
+            ],
+            "fullName": "Chat session status rail uses the manual overlay at narrow widths without automatically covering the conversation",
+            "status": "passed",
+            "title": "uses the manual overlay at narrow widths without automatically covering the conversation",
+            "duration": 78.8719000000001,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat session status rail"
+            ],
+            "fullName": "Chat session status rail opens and closes the requested overlay without creating a passive sidebar",
+            "status": "passed",
+            "title": "opens and closes the requested overlay without creating a passive sidebar",
+            "duration": 112.89419999999973,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat session status rail"
+            ],
+            "fullName": "Chat session status rail never insets the transcript for the workspace panel and the rail at once",
+            "status": "passed",
+            "title": "never insets the transcript for the workspace panel and the rail at once",
+            "duration": 84.71799999999985,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat session status rail"
+            ],
+            "fullName": "Chat session status rail does not bring back the recovery-assist rail",
+            "status": "passed",
+            "title": "does not bring back the recovery-assist rail",
+            "duration": 22.067799999999806,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563298904,
+        "endTime": 1794563299517.0679,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/chat-session-status-rail.test.tsx"
+      }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+
+Running 7 tests using 1 worker
+
+[1A[2K(node:10876) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:10876) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/7] tests\e2e\settings-drawer.spec.ts:6:7 › Settings theme selector › switches the live theme from the preview selector and keeps one roving tab stop
+[1A[2K[2/7] tests\e2e\settings-drawer.spec.ts:83:7 › Windows full-page Settings › opens as a routed page and returns to the exact application route
+[1A[2K[3/7] tests\e2e\settings-drawer.spec.ts:133:7 › Windows full-page Settings › supports direct links, nested Select portals, narrow geometry, and reduced motion
+[1A[2K[4/7] tests\e2e\windows-ui-v2.spec.ts:4:7 › Cross-platform FakeCoding UI v2 shell › uses neutral work surfaces by default and keeps native titlebar controls outside the content stage
+[1A[2K[5/7] tests\e2e\windows-ui-v2.spec.ts:69:7 › Cross-platform FakeCoding UI v2 shell › keeps dark materials neutral without inheriting light-only overrides
+[1A[2K[6/7] tests\e2e\windows-ui-v2.spec.ts:95:7 › Cross-platform FakeCoding UI v2 shell › registers an interactive design-system showcase and enforces visual constraints
+[1A[2K[7/7] tests\e2e\windows-ui-v2.spec.ts:262:7 › Cross-platform FakeCoding UI v2 shell › keeps old visual query values on the current shell and workspace destinations
+[1A[2K  7 passed (1.2m)

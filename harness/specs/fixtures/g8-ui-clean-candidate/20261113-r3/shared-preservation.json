@@ -1,0 +1,309 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\shared-preservation-readback.json",
+  "sourceSha256": "5e4665f49565c09b59d7933e35e1b2aae6e1b86196db1fdcfec95f9f0583732d",
+  "result": {
+    "driven_by": "agent",
+    "actor": "codex-g8-ui-01a1d351",
+    "realHumanEvidence": false,
+    "root": "D:\\ClawX",
+    "gitReadOverride": "core.worktree=D:/ClawX",
+    "startingHead": "42ad5e0b223d935e57630eb20c3501640721bf2e",
+    "currentHead": "42ad5e0b223d935e57630eb20c3501640721bf2e",
+    "checks": [
+      {
+        "path": "README.ja-JP.md",
+        "originalSha256": "4299ddbda2a029b15e850719dd4f13af1793530b2c331ef1e343068eaac5566c",
+        "currentSha256": "4299ddbda2a029b15e850719dd4f13af1793530b2c331ef1e343068eaac5566c",
+        "matches": true
+      },
+      {
+        "path": "README.md",
+        "originalSha256": "4607c4ef4558ec68bb9e9014aa8aaac0fd52a51208cde7c45f0768c1a99da785",
+        "currentSha256": "4607c4ef4558ec68bb9e9014aa8aaac0fd52a51208cde7c45f0768c1a99da785",
+        "matches": true
+      },
+      {
+        "path": "README.ru-RU.md",
+        "originalSha256": "6aada12e680cb7fbb3d4ae5b20b4ffa4b77e0c6d5277dd5741f8e26e72881848",
+        "currentSha256": "6aada12e680cb7fbb3d4ae5b20b4ffa4b77e0c6d5277dd5741f8e26e72881848",
+        "matches": true
+      },
+      {
+        "path": "README.zh-CN.md",
+        "originalSha256": "f284719d22da6907298082efa7a16fefd23fa6f9e692899da0e90605080f4adc",
+        "currentSha256": "f284719d22da6907298082efa7a16fefd23fa6f9e692899da0e90605080f4adc",
+        "matches": true
+      },
+      {
+        "path": "docs/dev/rareui-interactions.md",
+        "originalSha256": "5b677401934f3df3a51ede9539eb1ed60c7c4fabc8d49a7c7c23b6f6fbf9411a",
+        "currentSha256": "5b677401934f3df3a51ede9539eb1ed60c7c4fabc8d49a7c7c23b6f6fbf9411a",
+        "matches": true
+      },
+      {
+        "path": "harness/specs/rules/sidebar-session-row-controls.md",
+        "originalSha256": "d913a2a071350db7857a6c1ec29f3164720fa1d2519a8817173c32113aeb565b",
+        "currentSha256": "d913a2a071350db7857a6c1ec29f3164720fa1d2519a8817173c32113aeb565b",
+        "matches": true
+      },
+      {
+        "path": "harness/specs/scenarios/sidebar-session-row-management.md",
+        "originalSha256": "7d285fd50e469f8f0d2b134f38173649fe2b828030b20db4ef3389eb6cb9f1d2",
+        "currentSha256": "7d285fd50e469f8f0d2b134f38173649fe2b828030b20db4ef3389eb6cb9f1d2",
+        "matches": true
+      },
+      {
+        "path": "harness/specs/tasks/sidebar-session-row-polish.md",
+        "originalSha256": "103be5d590d00450080cc181caa5ff06a569e0581de32a1dcfc0d283718f26fc",
+        "currentSha256": "103be5d590d00450080cc181caa5ff06a569e0581de32a1dcfc0d283718f26fc",
+        "matches": true
+      },
+      {
+        "path": "src/components/brand/BrandLogo.tsx",
+        "originalSha256": "5941f902e5bfb27bffe9903af1e0d8ab1b15a0046a4ce080d542a2cc1bafe042",
+        "currentSha256": "5941f902e5bfb27bffe9903af1e0d8ab1b15a0046a4ce080d542a2cc1bafe042",
+        "matches": true
+      },
+      {
+        "path": "src/components/chat/MemoryInjectionPanel.tsx",
+        "originalSha256": "5fc3b6fcfc59033d247c3b4fa936bae2bf6261aefca1f7dc68e597a7f9b49edb",
+        "currentSha256": "5fc3b6fcfc59033d247c3b4fa936bae2bf6261aefca1f7dc68e597a7f9b49edb",
+        "matches": true
+      },
+      {
+        "path": "src/components/layout/Sidebar.tsx",
+        "originalSha256": "8f6c06bea436ca4555c9f1cb91b3399bf8cf02e9cb3d986fdfeb02c8a3b0dbd8",
+        "currentSha256": "8f6c06bea436ca4555c9f1cb91b3399bf8cf02e9cb3d986fdfeb02c8a3b0dbd8",
+        "matches": true
+      },
+      {
+        "path": "src/components/layout/TitleBar.tsx",
+        "originalSha256": "cbfde32ded6a78402180434578a191ceb73573204b816645252576cd87d3ccac",
+        "currentSha256": "cbfde32ded6a78402180434578a191ceb73573204b816645252576cd87d3ccac",
+        "matches": true
+      },
+      {
+        "path": "src/components/rareui/CompletionActivityMenu.tsx",
+        "originalSha256": "5d6f15351bfa003e7f553a147c76280c9e322badeaef4df40c792b90cdcb8075",
+        "currentSha256": "5d6f15351bfa003e7f553a147c76280c9e322badeaef4df40c792b90cdcb8075",
+        "matches": true
+      },
+      {
+        "path": "src/components/rareui/NotificationBell.tsx",
+        "originalSha256": "375f9b70acc1824a52aee8c4b6728ee6c1845cd8bba130cfda79919c25438bdf",
+        "currentSha256": "375f9b70acc1824a52aee8c4b6728ee6c1845cd8bba130cfda79919c25438bdf",
+        "matches": true
+      },
+      {
+        "path": "src/pages/Chat/ChatToolbar.tsx",
+        "originalSha256": "414d039ac70d4b0322e12125e00cea070203d7be485ef4e2551226b081229d88",
+        "currentSha256": "414d039ac70d4b0322e12125e00cea070203d7be485ef4e2551226b081229d88",
+        "matches": true
+      },
+      {
+        "path": "src/pages/Chat/SessionActivityPanel.tsx",
+        "originalSha256": "8ae1772877fcdecf692ddf57d503ebc5a79771ca1fc3c27e8225d522697d5ef4",
+        "currentSha256": "8ae1772877fcdecf692ddf57d503ebc5a79771ca1fc3c27e8225d522697d5ef4",
+        "matches": true
+      },
+      {
+        "path": "src/pages/Chat/index.tsx",
+        "originalSha256": "ce1c401cf71d619f2138e44d78ce233f687d2e5df15e370fcfb29f961a86ed03",
+        "currentSha256": "ce1c401cf71d619f2138e44d78ce233f687d2e5df15e370fcfb29f961a86ed03",
+        "matches": true
+      },
+      {
+        "path": "src/styles/codex-composer-material.css",
+        "originalSha256": "61106280c0c7a9bfbf4703bdd6208e3e148ca5c5221110fa2cf75170aa9e264c",
+        "currentSha256": "61106280c0c7a9bfbf4703bdd6208e3e148ca5c5221110fa2cf75170aa9e264c",
+        "matches": true
+      },
+      {
+        "path": "src/styles/codex-session-activity.css",
+        "originalSha256": "19ab61919e2374f94123a2411e64d6b92fc541cb31f864300ce2c2e156c9a5ce",
+        "currentSha256": "19ab61919e2374f94123a2411e64d6b92fc541cb31f864300ce2c2e156c9a5ce",
+        "matches": true
+      },
+      {
+        "path": "src/styles/codex-sidebar.css",
+        "originalSha256": "3ced8d1c0cf877ddc0565be1989ee9f9c0355e9933b8fd8f6bb15f2ac69c8acf",
+        "currentSha256": "3ced8d1c0cf877ddc0565be1989ee9f9c0355e9933b8fd8f6bb15f2ac69c8acf",
+        "matches": true
+      },
+      {
+        "path": "src/styles/globals.css",
+        "originalSha256": "ea8e9a6ce1ab0d546625e45a78ffe57aa3a3962cf289b97e2d51e7408712637c",
+        "currentSha256": "ea8e9a6ce1ab0d546625e45a78ffe57aa3a3962cf289b97e2d51e7408712637c",
+        "matches": true
+      },
+      {
+        "path": "src/styles/rareui-interactions.css",
+        "originalSha256": "0bcaa6696db5d5b5ae7464bb7d1a7c1d5fc48a880e4da29b91b5be9c8894576f",
+        "currentSha256": "0bcaa6696db5d5b5ae7464bb7d1a7c1d5fc48a880e4da29b91b5be9c8894576f",
+        "matches": true
+      },
+      {
+        "path": "tests/e2e/main-navigation.spec.ts",
+        "originalSha256": "17d1b6bc255ced68075f32cec398cab8c23304e58e7ef6d367da932216d3e7ea",
+        "currentSha256": "17d1b6bc255ced68075f32cec398cab8c23304e58e7ef6d367da932216d3e7ea",
+        "matches": true
+      },
+      {
+        "path": "tests/e2e/sidebar-session-row-polish.spec.ts",
+        "originalSha256": "4d9501be9ac863966d287623dc297a390d4d7a7f891b8a5b5f4a272cb2134f6e",
+        "currentSha256": "4d9501be9ac863966d287623dc297a390d4d7a7f891b8a5b5f4a272cb2134f6e",
+        "matches": true
+      },
+      {
+        "path": "tests/unit/rareui-interactions.test.tsx",
+        "originalSha256": "66ac3dd23bd05f106509fa0ecf90026fdc6fbafe1ee46f538d613d1a13f15487",
+        "currentSha256": "66ac3dd23bd05f106509fa0ecf90026fdc6fbafe1ee46f538d613d1a13f15487",
+        "matches": true
+      },
+      {
+        "path": "one",
+        "originalSha256": "85c0895a1177c99e078ee83921bbbbd51b164b9985723df103b2483fad5af67d",
+        "currentSha256": "85c0895a1177c99e078ee83921bbbbd51b164b9985723df103b2483fad5af67d",
+        "matches": true
+      }
+    ],
+    "matchingFiles": 26,
+    "totalFiles": 26,
+    "stagingUnchanged": true,
+    "indexPatchSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status": "## main...origin/main [ahead 7]\n M README.ja-JP.md\n M README.md\n M README.ru-RU.md\n M README.zh-CN.md\n M docs/dev/rareui-interactions.md\n M harness/specs/rules/sidebar-session-row-controls.md\n M harness/specs/scenarios/sidebar-session-row-management.md\n M harness/specs/tasks/sidebar-session-row-polish.md\n M src/components/brand/BrandLogo.tsx\n M src/components/chat/MemoryInjectionPanel.tsx\n M src/components/layout/Sidebar.tsx\n M src/components/layout/TitleBar.tsx\n M src/components/rareui/CompletionActivityMenu.tsx\n M src/components/rareui/NotificationBell.tsx\n M src/pages/Chat/ChatToolbar.tsx\n M src/pages/Chat/SessionActivityPanel.tsx\n M src/pages/Chat/index.tsx\n M src/styles/codex-composer-material.css\n M src/styles/codex-session-activity.css\n M src/styles/codex-sidebar.css\n M src/styles/globals.css\n M src/styles/rareui-interactions.css\n M tests/e2e/main-navigation.spec.ts\n M tests/e2e/sidebar-session-row-polish.spec.ts\n M tests/unit/rareui-interactions.test.tsx\n?? one\n",
+    "claudeCommit": "d1905d1eb4b51e04d0af3e44d53e91e6c6d2face",
+    "claudeCommitChecks": [
+      {
+        "path": "README.ja-JP.md",
+        "originalGitBlob": "26a24e40ac0fd84db775ba83043983ae01318835",
+        "commitGitBlob": "26a24e40ac0fd84db775ba83043983ae01318835"
+      },
+      {
+        "path": "README.md",
+        "originalGitBlob": "947aa5296664c65636207a27e683cc22dd11101e",
+        "commitGitBlob": "947aa5296664c65636207a27e683cc22dd11101e"
+      },
+      {
+        "path": "README.ru-RU.md",
+        "originalGitBlob": "86c5acb4c3708d17499e3fa22a68557452356fe1",
+        "commitGitBlob": "86c5acb4c3708d17499e3fa22a68557452356fe1"
+      },
+      {
+        "path": "README.zh-CN.md",
+        "originalGitBlob": "390574f4537916d285d54e8f5bc1ef8fdc12e575",
+        "commitGitBlob": "390574f4537916d285d54e8f5bc1ef8fdc12e575"
+      },
+      {
+        "path": "docs/dev/rareui-interactions.md",
+        "originalGitBlob": "88c376bbe2739f72bf81fdd33b567dd9c1ceda63",
+        "commitGitBlob": "88c376bbe2739f72bf81fdd33b567dd9c1ceda63"
+      },
+      {
+        "path": "harness/specs/rules/sidebar-session-row-controls.md",
+        "originalGitBlob": "730c465690299d062067aeba8ec9202ea81d17fd",
+        "commitGitBlob": "730c465690299d062067aeba8ec9202ea81d17fd"
+      },
+      {
+        "path": "harness/specs/scenarios/sidebar-session-row-management.md",
+        "originalGitBlob": "82cea15e5708ae40453213cc26194c78073befeb",
+        "commitGitBlob": "82cea15e5708ae40453213cc26194c78073befeb"
+      },
+      {
+        "path": "harness/specs/tasks/sidebar-session-row-polish.md",
+        "originalGitBlob": "d29d3fa65713c4e790d8abbb1d8e317012264476",
+        "commitGitBlob": "d29d3fa65713c4e790d8abbb1d8e317012264476"
+      },
+      {
+        "path": "src/components/brand/BrandLogo.tsx",
+        "originalGitBlob": "fa4dedd66ec815888276373e3e45359f75f43720",
+        "commitGitBlob": "fa4dedd66ec815888276373e3e45359f75f43720"
+      },
+      {
+        "path": "src/components/chat/MemoryInjectionPanel.tsx",
+        "originalGitBlob": "67b32abb62eee4576b203895b8920f9dd6bdb770",
+        "commitGitBlob": "67b32abb62eee4576b203895b8920f9dd6bdb770"
+      },
+      {
+        "path": "src/components/layout/Sidebar.tsx",
+        "originalGitBlob": "2838ca248e0157c3f8ff989254c514c295f7d43f",
+        "commitGitBlob": "2838ca248e0157c3f8ff989254c514c295f7d43f"
+      },
+      {
+        "path": "src/components/layout/TitleBar.tsx",
+        "originalGitBlob": "a7af87e90b688db272ac3e7e5378505252018da2",
+        "commitGitBlob": "a7af87e90b688db272ac3e7e5378505252018da2"
+      },
+      {
+        "path": "src/components/rareui/CompletionActivityMenu.tsx",
+        "originalGitBlob": "84fa064d966fa2cee8be6337d390462f3cdd6f30",
+        "commitGitBlob": "84fa064d966fa2cee8be6337d390462f3cdd6f30"
+      },
+      {
+        "path": "src/components/rareui/NotificationBell.tsx",
+        "originalGitBlob": "c091fefd22419bf8cd0abbc6d9a77f840d94f762",
+        "commitGitBlob": "c091fefd22419bf8cd0abbc6d9a77f840d94f762"
+      },
+      {
+        "path": "src/pages/Chat/ChatToolbar.tsx",
+        "originalGitBlob": "b95bba59d06b79c9a570ac3a37367ef7bae6ebd1",
+        "commitGitBlob": "b95bba59d06b79c9a570ac3a37367ef7bae6ebd1"
+      },
+      {
+        "path": "src/pages/Chat/SessionActivityPanel.tsx",
+        "originalGitBlob": "4e96f2f5da3b4bc54bf89d27f415bec669b6ea79",
+        "commitGitBlob": "4e96f2f5da3b4bc54bf89d27f415bec669b6ea79"
+      },
+      {
+        "path": "src/pages/Chat/index.tsx",
+        "originalGitBlob": "8d6948b40cb7fa36ccd50d03a999a18e9f107cce",
+        "commitGitBlob": "8d6948b40cb7fa36ccd50d03a999a18e9f107cce"
+      },
+      {
+        "path": "src/styles/codex-composer-material.css",
+        "originalGitBlob": "90e98e90dce5328244b9f1e4135d4e28f09060b3",
+        "commitGitBlob": "90e98e90dce5328244b9f1e4135d4e28f09060b3"
+      },
+      {
+        "path": "src/styles/codex-session-activity.css",
+        "originalGitBlob": "f39beb7c9fa8a72b9eaef3ce4bc07870857ad56a",
+        "commitGitBlob": "f39beb7c9fa8a72b9eaef3ce4bc07870857ad56a"
+      },
+      {
+        "path": "src/styles/codex-sidebar.css",
+        "originalGitBlob": "41fb5b408b4c228673a182d3f89a7b9d6d82eb41",
+        "commitGitBlob": "41fb5b408b4c228673a182d3f89a7b9d6d82eb41"
+      },
+      {
+        "path": "src/styles/globals.css",
+        "originalGitBlob": "2577f4a956a077259fb12dd506395b17861da6cd",
+        "commitGitBlob": "2577f4a956a077259fb12dd506395b17861da6cd"
+      },
+      {
+        "path": "src/styles/rareui-interactions.css",
+        "originalGitBlob": "12330a8d8f21945fa4965efae87e46535d07852c",
+        "commitGitBlob": "12330a8d8f21945fa4965efae87e46535d07852c"
+      },
+      {
+        "path": "tests/e2e/main-navigation.spec.ts",
+        "originalGitBlob": "51798bb474dd16e9138440bbf6c69e278d483d1f",
+        "commitGitBlob": "51798bb474dd16e9138440bbf6c69e278d483d1f"
+      },
+      {
+        "path": "tests/e2e/sidebar-session-row-polish.spec.ts",
+        "originalGitBlob": "18472bc7c21a4578686a6f599911df3076fe7d98",
+        "commitGitBlob": "18472bc7c21a4578686a6f599911df3076fe7d98"
+      },
+      {
+        "path": "tests/unit/rareui-interactions.test.tsx",
+        "originalGitBlob": "5e9b99891b1bbe490a4fda10a29342b9caa1d3e0",
+        "commitGitBlob": "5e9b99891b1bbe490a4fda10a29342b9caa1d3e0"
+      }
+    ],
+    "claudeCommitMatchesSnapshot": true
+  }
+}

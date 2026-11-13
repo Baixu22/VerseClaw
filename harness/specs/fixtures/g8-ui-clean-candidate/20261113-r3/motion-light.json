@@ -1,0 +1,374 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\visual-final\\motion-light.json",
+  "sourceSha256": "91107a69525ebc855716cf0cf112dda8239c04db85056af59d41160447d56caf",
+  "result": {
+    "driven_by": "agent",
+    "actor": "codex-g8-ui-01a1d351",
+    "realHumanEvidence": false,
+    "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+    "sourceReport": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\electron\\final\\popovers\\results.json",
+    "sourceSha256": "b354174de8feccbeb263d209620731fa8c62bcc8fa448be541f016f7f1671f7f",
+    "samples": {
+      "opening": [
+        {
+          "time": 6.9000000059604645,
+          "filter": "blur(2px)",
+          "opacity": 0,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 9,
+          "filter": "blur(1.98088px)",
+          "opacity": 0.00956013,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 13.700000002980232,
+          "filter": "blur(1.89402px)",
+          "opacity": 0.0529889,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 26.600000008940697,
+          "filter": "blur(1.64827px)",
+          "opacity": 0.175863,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 38.70000000298023,
+          "filter": "blur(1.41721px)",
+          "opacity": 0.291396,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 51.70000000298023,
+          "filter": "blur(1.19954px)",
+          "opacity": 0.400229,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 67.30000001192093,
+          "filter": "blur(0.931244px)",
+          "opacity": 0.534378,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 80.30000001192093,
+          "filter": "blur(0.744199px)",
+          "opacity": 0.6279,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 94.5,
+          "filter": "blur(0.573952px)",
+          "opacity": 0.713024,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 106.6000000089407,
+          "filter": "blur(0.52167px)",
+          "opacity": 0.739165,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 122.40000000596046,
+          "filter": "blur(0.374035px)",
+          "opacity": 0.812983,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 134.80000001192093,
+          "filter": "blur(0.139923px)",
+          "opacity": 0.930039,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 145.20000000298023,
+          "filter": "blur(0.0600627px)",
+          "opacity": 0.969969,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 155.90000000596046,
+          "filter": "blur(0.0239194px)",
+          "opacity": 0.98804,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 164,
+          "filter": "blur(0.00342679px)",
+          "opacity": 0.998287,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 174.30000001192093,
+          "filter": "blur(0px)",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 183.1000000089407,
+          "filter": "blur(0px)",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 192,
+          "filter": "blur(0px)",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 202.1000000089407,
+          "filter": "blur(0px)",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 209.6000000089407,
+          "filter": "blur(0px)",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 216.30000001192093,
+          "filter": "blur(0px)",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 225.6000000089407,
+          "filter": "blur(0px)",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 235.20000000298023,
+          "filter": "blur(0px)",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 244.70000000298023,
+          "filter": "blur(0px)",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 255.6000000089407,
+          "filter": "blur(0px)",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 267.30000001192093,
+          "filter": "blur(0px)",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 277.30000001192093,
+          "filter": "blur(0px)",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 292.5,
+          "filter": "blur(0px)",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 302.1000000089407,
+          "filter": "blur(0px)",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 314,
+          "filter": "blur(0px)",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 324.70000000298023,
+          "filter": "blur(0px)",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        },
+        {
+          "time": 337.30000001192093,
+          "filter": "none",
+          "opacity": 1,
+          "state": "open",
+          "inert": false,
+          "pointerEvents": "auto"
+        }
+      ],
+      "closing": [
+        {
+          "time": 23.399999991059303,
+          "filter": "blur(0.29805px)",
+          "opacity": 0.850975,
+          "state": "closed",
+          "inert": true,
+          "pointerEvents": "none"
+        },
+        {
+          "time": 36.3999999910593,
+          "filter": "blur(0.378293px)",
+          "opacity": 0.810854,
+          "state": "closed",
+          "inert": true,
+          "pointerEvents": "none"
+        },
+        {
+          "time": 38.69999998807907,
+          "filter": "blur(0.606047px)",
+          "opacity": 0.696976,
+          "state": "closed",
+          "inert": true,
+          "pointerEvents": "none"
+        },
+        {
+          "time": 61.5,
+          "filter": "blur(1.0252px)",
+          "opacity": 0.487399,
+          "state": "closed",
+          "inert": true,
+          "pointerEvents": "none"
+        },
+        {
+          "time": 71.29999999701977,
+          "filter": "blur(1.15223px)",
+          "opacity": 0.423885,
+          "state": "closed",
+          "inert": true,
+          "pointerEvents": "none"
+        },
+        {
+          "time": 83.09999999403954,
+          "filter": "blur(1.33267px)",
+          "opacity": 0.333667,
+          "state": "closed",
+          "inert": true,
+          "pointerEvents": "none"
+        },
+        {
+          "time": 97.09999999403954,
+          "filter": "blur(1.49452px)",
+          "opacity": 0.252739,
+          "state": "closed",
+          "inert": true,
+          "pointerEvents": "none"
+        },
+        {
+          "time": 110.59999999403954,
+          "filter": "blur(1.64025px)",
+          "opacity": 0.179877,
+          "state": "closed",
+          "inert": true,
+          "pointerEvents": "none"
+        },
+        {
+          "time": 125.69999998807907,
+          "filter": "blur(1.68491px)",
+          "opacity": 0.157543,
+          "state": "closed",
+          "inert": true,
+          "pointerEvents": "none"
+        },
+        {
+          "time": 140,
+          "filter": "blur(1.8987px)",
+          "opacity": 0.0506523,
+          "state": "closed",
+          "inert": true,
+          "pointerEvents": "none"
+        },
+        {
+          "time": 155.5,
+          "filter": "blur(1.92398px)",
+          "opacity": 0.0380115,
+          "state": "closed",
+          "inert": true,
+          "pointerEvents": "none"
+        },
+        {
+          "time": 169,
+          "filter": "blur(2px)",
+          "opacity": 0,
+          "state": "closed",
+          "inert": true,
+          "pointerEvents": "none"
+        }
+      ]
+    }
+  }
+}

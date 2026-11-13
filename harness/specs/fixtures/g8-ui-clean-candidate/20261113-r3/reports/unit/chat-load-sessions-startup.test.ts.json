@@ -1,0 +1,84 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-load-sessions-startup-ts.json",
+  "sourceSha256": "bd2405b709333fd393d3d0470672298681ecd42977701bc099aa790c446a85c0",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 3,
+    "numPassedTests": 3,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563247965,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "chat store loadSessions startup selection"
+            ],
+            "fullName": "chat store loadSessions startup selection opens the latest non-cron session instead of a cron heartbeat session",
+            "status": "passed",
+            "title": "opens the latest non-cron session instead of a cron heartbeat session",
+            "duration": 662.4311,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat store loadSessions startup selection"
+            ],
+            "fullName": "chat store loadSessions startup selection clears the prior conversation when loadSessions retargets to another session",
+            "status": "passed",
+            "title": "clears the prior conversation when loadSessions retargets to another session",
+            "duration": 15.354399999999941,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "chat store loadSessions startup selection"
+            ],
+            "fullName": "chat store loadSessions startup selection keeps the default main ghost session when only cron sessions exist",
+            "status": "passed",
+            "title": "keeps the default main ghost session when only cron sessions exist",
+            "duration": 16.102100000000064,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563249151,
+        "endTime": 1794563249844.102,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/chat-load-sessions-startup.test.ts"
+      }
+    ]
+  }
+}

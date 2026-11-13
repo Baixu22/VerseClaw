@@ -1,0 +1,324 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\chat-page-execution-graph-tsx.json",
+  "sourceSha256": "09eb02e242fe653ca7573f5d4b364b690b53ed350a73386012fc9b0c05907a81",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 23,
+    "numPassedTests": 23,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563264778,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle collapses activity when the final reply starts streaming and shows only the reply suffix",
+            "status": "passed",
+            "title": "collapses activity when the final reply starts streaming and shows only the reply suffix",
+            "duration": 7237.0494,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle reads completed execution steps cached after the first page render",
+            "status": "passed",
+            "title": "reads completed execution steps cached after the first page render",
+            "duration": 153.32639999999992,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle does not reopen an old handoff draft after changing away and back",
+            "status": "passed",
+            "title": "does not reopen an old handoff draft after changing away and back",
+            "duration": 184.1259000000009,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle does not overwrite the new conversation status when old compression finishes",
+            "status": "passed",
+            "title": "does not overwrite the new conversation status when old compression finishes",
+            "duration": 1214.0121,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle keeps completed long task work visible by default and remembers a manual collapse",
+            "status": "passed",
+            "title": "keeps completed long task work visible by default and remembers a manual collapse",
+            "duration": 211.67439999999988,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle uses the completed-run preference only as a default and allows it to be disabled",
+            "status": "passed",
+            "title": "uses the completed-run preference only as a default and allows it to be disabled",
+            "duration": 129.09610000000066,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle keeps short conversations as normal messages without a turn summary card",
+            "status": "passed",
+            "title": "keeps short conversations as normal messages without a turn summary card",
+            "duration": 110.00380000000041,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle renders a team orchestration card for team_orchestrate task graph results",
+            "status": "passed",
+            "title": "renders a team orchestration card for team_orchestrate task graph results",
+            "duration": 157.8781999999992,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle renders ordinary orchestration diagnostics without Task Loop repair wording",
+            "status": "passed",
+            "title": "renders ordinary orchestration diagnostics without Task Loop repair wording",
+            "duration": 115.88500000000022,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle keeps only the current animated tool visible while process details are folded",
+            "status": "passed",
+            "title": "keeps only the current animated tool visible while process details are folded",
+            "duration": 514.676300000001,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle renders a single compact working status before any stream content arrives",
+            "status": "passed",
+            "title": "renders a single compact working status before any stream content arrives",
+            "duration": 110.22199999999975,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle renders generated file cards with line stats for edit tools",
+            "status": "passed",
+            "title": "renders generated file cards with line stats for edit tools",
+            "duration": 552.5109000000011,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle shows a scroll-to-latest button when the chat is scrolled away from the bottom",
+            "status": "passed",
+            "title": "shows a scroll-to-latest button when the chat is scrolled away from the bottom",
+            "duration": 385.3219000000008,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle stops showing trailing thinking and renders run error callout after terminal model error",
+            "status": "passed",
+            "title": "stops showing trailing thinking and renders run error callout after terminal model error",
+            "duration": 182.65040000000045,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle keeps history final reply folded while matching streamed text is still active",
+            "status": "passed",
+            "title": "keeps history final reply folded while matching streamed text is still active",
+            "duration": 150.5553,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle stops trailing thinking when history already contains the final reply but sending is stuck",
+            "status": "passed",
+            "title": "stops trailing thinking when history already contains the final reply but sending is stuck",
+            "duration": 190.65140000000065,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle settles composer when generated image media arrives without transcript tool calls",
+            "status": "passed",
+            "title": "settles composer when generated image media arrives without transcript tool calls",
+            "duration": 165.2517000000007,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle stops trailing thinking when generated image media arrives but session wake is missed",
+            "status": "passed",
+            "title": "stops trailing thinking when generated image media arrives but session wake is missed",
+            "duration": 131.45060000000012,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle shows the running tool without a second thinking indicator",
+            "status": "passed",
+            "title": "shows the running tool without a second thinking indicator",
+            "duration": 255.17380000000048,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle keeps one working summary while waiting for final history after completed tool status",
+            "status": "passed",
+            "title": "keeps one working summary while waiting for final history after completed tool status",
+            "duration": 132.0073999999986,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle settles image generation runs after message tool delivers generated media",
+            "status": "passed",
+            "title": "settles image generation runs after message tool delivers generated media",
+            "duration": 156.0469000000012,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle keeps image generation runs active after async task status narration",
+            "status": "passed",
+            "title": "keeps image generation runs active after async task status narration",
+            "duration": 126.96510000000126,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "Chat execution graph lifecycle"
+            ],
+            "fullName": "Chat execution graph lifecycle keeps the run active when narration landed in history before tools finished",
+            "status": "passed",
+            "title": "keeps the run active when narration landed in history before tools finished",
+            "duration": 95.94810000000143,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563266541,
+        "endTime": 1794563279208.948,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/chat-page-execution-graph.test.tsx"
+      }
+    ]
+  }
+}

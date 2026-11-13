@@ -1,0 +1,144 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g8-ui-01a1d351",
+  "realHumanEvidence": false,
+  "candidate": "d07e97d96d1f829130106c7efe0b8e7841c8074c",
+  "sourceFile": "D:\\tmp\\g8-ui-r3-20261113-01a1d351\\unit\\final\\model-brand-ts.json",
+  "sourceSha256": "506b3f1cc2298828c434a1aac347ba3dab39a18e04820248edfa5ffee548e834",
+  "result": {
+    "numTotalTestSuites": 2,
+    "numPassedTestSuites": 2,
+    "numFailedTestSuites": 0,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 8,
+    "numPassedTests": 8,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+      "added": 0,
+      "failure": false,
+      "filesAdded": 0,
+      "filesRemoved": 0,
+      "filesRemovedList": [],
+      "filesUnmatched": 0,
+      "filesUpdated": 0,
+      "matched": 0,
+      "total": 0,
+      "unchecked": 0,
+      "uncheckedKeysByFile": [],
+      "unmatched": 0,
+      "updated": 0,
+      "didUpdate": false
+    },
+    "startTime": 1794563349777,
+    "success": true,
+    "testResults": [
+      {
+        "assertionResults": [
+          {
+            "ancestorTitles": [
+              "composer model identity"
+            ],
+            "fullName": "composer model identity resolves openrouter/deepseek/deepseek-r1 by model family before provider",
+            "status": "passed",
+            "title": "resolves openrouter/deepseek/deepseek-r1 by model family before provider",
+            "duration": 1.2837999999999283,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "composer model identity"
+            ],
+            "fullName": "composer model identity resolves custom-account/x-ai/grok-4-fast-reasoning by model family before provider",
+            "status": "passed",
+            "title": "resolves custom-account/x-ai/grok-4-fast-reasoning by model family before provider",
+            "duration": 0.1995000000000573,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "composer model identity"
+            ],
+            "fullName": "composer model identity resolves openrouter/anthropic/claude-sonnet-4 by model family before provider",
+            "status": "passed",
+            "title": "resolves openrouter/anthropic/claude-sonnet-4 by model family before provider",
+            "duration": 0.1029999999999518,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "composer model identity"
+            ],
+            "fullName": "composer model identity resolves custom-test/gemini-2.5-pro by model family before provider",
+            "status": "passed",
+            "title": "resolves custom-test/gemini-2.5-pro by model family before provider",
+            "duration": 0.13859999999999673,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "composer model identity"
+            ],
+            "fullName": "composer model identity resolves openrouter/qwen/qwen3-coder-480b by model family before provider",
+            "status": "passed",
+            "title": "resolves openrouter/qwen/qwen3-coder-480b by model family before provider",
+            "duration": 0.2661000000000513,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "composer model identity"
+            ],
+            "fullName": "composer model identity resolves ollama-1234abcd/default by model family before provider",
+            "status": "passed",
+            "title": "resolves ollama-1234abcd/default by model family before provider",
+            "duration": 0.42450000000008004,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "composer model identity"
+            ],
+            "fullName": "composer model identity resolves custom-1234abcd/default by model family before provider",
+            "status": "passed",
+            "title": "resolves custom-1234abcd/default by model family before provider",
+            "duration": 0.33159999999998035,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          },
+          {
+            "ancestorTitles": [
+              "composer model identity"
+            ],
+            "fullName": "composer model identity preserves a complete long model name and its routing namespace",
+            "status": "passed",
+            "title": "preserves a complete long model name and its routing namespace",
+            "duration": 0.5307999999999993,
+            "failureMessages": [],
+            "meta": {},
+            "tags": []
+          }
+        ],
+        "startTime": 1794563350688,
+        "endTime": 1794563350690.5308,
+        "status": "passed",
+        "message": "",
+        "name": "D:/ClawX-work/g8-ui-closeout-20261113-01a1d351/tests/unit/model-brand.test.ts"
+      }
+    ]
+  }
+}
