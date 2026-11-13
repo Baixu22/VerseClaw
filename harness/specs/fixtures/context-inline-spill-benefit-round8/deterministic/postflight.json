@@ -1,0 +1,203 @@
+{
+  "schema": "ContextInlineSpillPostflight/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "finishedAt": "2026-11-13T10:52:26.870Z",
+  "candidate": {
+    "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+    "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false,
+    "status": ""
+  },
+  "sourceInputs": {
+    "scripts/context-inline-spill-benefit-input.mts": {
+      "sha256": "a6322b9f46306f6c586e2d984ee26416cd13b13ea599b2498a2486c18f570b2d",
+      "bytes": 4344,
+      "gitBlob": "1f5ea4beb65a5e68f8bb7b208ff66a3ecc20938b",
+      "worktreeBlob": "1f5ea4beb65a5e68f8bb7b208ff66a3ecc20938b"
+    },
+    "scripts/context-inline-spill-benefit-scoring.mts": {
+      "sha256": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+      "bytes": 1850,
+      "gitBlob": "71542a780e3b06371b5bda6d3eef8ce5047b5cea",
+      "worktreeBlob": "71542a780e3b06371b5bda6d3eef8ce5047b5cea"
+    },
+    "harness/specs/rules/inline-spill-benefit-quantification.md": {
+      "sha256": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f",
+      "bytes": 4952,
+      "gitBlob": "f59b18e53db180403413b7a9c6f10e8b7af0488f",
+      "worktreeBlob": "f59b18e53db180403413b7a9c6f10e8b7af0488f"
+    },
+    "openclaw_runtime/src/agents/archive-recall-retention.ts": {
+      "sha256": "83683a7a03edcdcabbf1c85fc35c23154060122b98298871d93be0b055ccf4c7",
+      "bytes": 5650,
+      "gitBlob": "edcf17f0656f0d4e636abeeaddeb7f2a0c5f4d92",
+      "worktreeBlob": "edcf17f0656f0d4e636abeeaddeb7f2a0c5f4d92"
+    },
+    "openclaw_runtime/src/agents/embedded-agent-runner/tool-result-truncation.ts": {
+      "sha256": "09f8fd19439b7d44e79b098727998ac52167208891783c92d4cf6b18d6bb3646",
+      "bytes": 37391,
+      "gitBlob": "09b7a94c36e5133229402278f707a737a607f90c",
+      "worktreeBlob": "09b7a94c36e5133229402278f707a737a607f90c"
+    },
+    "openclaw_runtime/src/agents/embedded-agent-runner/context-truncation-notice.ts": {
+      "sha256": "d2aed9e01c4dfe59628b5a190dfa4824449e5ada9b9e86285821c691b75eb3f6",
+      "bytes": 579,
+      "gitBlob": "13b09d23466c61f80ce1f83c171e980a0e86f07f",
+      "worktreeBlob": "13b09d23466c61f80ce1f83c171e980a0e86f07f"
+    },
+    "openclaw_runtime/src/agents/agent-hooks/context-pruning/pruner.ts": {
+      "sha256": "10ff98c53270eb1bcff2d066cc1e617901ebb4dbda3c0bd3632bb85c54a53e5c",
+      "bytes": 12220,
+      "gitBlob": "6819f23c0c5502818ea9abfcf83fe92428c0e3a6",
+      "worktreeBlob": "6819f23c0c5502818ea9abfcf83fe92428c0e3a6"
+    },
+    "openclaw_runtime/src/agents/agent-hooks/context-pruning/settings.ts": {
+      "sha256": "a15ab581a6fb78ada15e183043c2e4bb15029b49acfbcdc4f91686fd7348b7cc",
+      "bytes": 4352,
+      "gitBlob": "38ec3c340bdba64e64d0026cafdeb3286d6a794b",
+      "worktreeBlob": "38ec3c340bdba64e64d0026cafdeb3286d6a794b"
+    },
+    "openclaw_runtime/src/agents/tools/context-agent-tools.ts": {
+      "sha256": "3a2e59e7624dcc59880605123373aab9482dc2711665dbc12e50d25788b61e0b",
+      "bytes": 45472,
+      "gitBlob": "74fe0a0de549c6773b0e4b9a2daca616d7f6ebc0",
+      "worktreeBlob": "74fe0a0de549c6773b0e4b9a2daca616d7f6ebc0"
+    },
+    "openclaw_runtime/src/context-engine/registry/context-item-registry.ts": {
+      "sha256": "3f3ecd9f228fad0dee773698d165ac8fef299cbdd64a998f1c1f27ccf4115164",
+      "bytes": 22000,
+      "gitBlob": "4815d1eec62a5d86b72869847cccf37e1fda62c3",
+      "worktreeBlob": "4815d1eec62a5d86b72869847cccf37e1fda62c3"
+    },
+    "pnpm-lock.yaml": {
+      "sha256": "9a36ae57be4028d929b42b1461c67f3913fccdfb8e30c0bfe24b9379afab1ac4",
+      "bytes": 735178,
+      "gitBlob": "9d12d14da0ebf42aef8690dab96cb2dcbec33a57",
+      "worktreeBlob": "9d12d14da0ebf42aef8690dab96cb2dcbec33a57"
+    },
+    "openclaw_runtime/pnpm-lock.yaml": {
+      "sha256": "663afb8ca136834971505684403b8c98a0665e20b20d6ba9eec4a69abbfa9b0e",
+      "bytes": 456411,
+      "gitBlob": "7f33fa48de3006800829fc71c1ef4e5b7f6c8389",
+      "worktreeBlob": "7f33fa48de3006800829fc71c1ef4e5b7f6c8389"
+    },
+    "scripts/context-inline-spill-benefit-loop-eval.mts": {
+      "sha256": "9520141af63b71cea45e6a125de140480f203057a4c3e7f0b2e016c5fc1a8d4c",
+      "bytes": 41938,
+      "gitBlob": "a7d85f7594942b792547d200221dc02b6749809d",
+      "worktreeBlob": "a7d85f7594942b792547d200221dc02b6749809d"
+    },
+    "scripts/context-inline-spill-benefit-strategy.mts": {
+      "sha256": "26c8ac79ee339843727aefc2d87982da1f1dbce17f5aae88900031c321770cb0",
+      "bytes": 9288,
+      "gitBlob": "44786d5c8f6f9ddfa83ecbd61bce9ff763332325",
+      "worktreeBlob": "44786d5c8f6f9ddfa83ecbd61bce9ff763332325"
+    },
+    "scripts/context-inline-spill-benefit-round6-verify.mjs": {
+      "sha256": "577df27524ee0a45689d03e7d474426e3b878e86ddfd2e57db3c8eb28e4989db",
+      "bytes": 19938,
+      "gitBlob": "72db2c408bee752cd85614e4d0d15623a710d9ec",
+      "worktreeBlob": "72db2c408bee752cd85614e4d0d15623a710d9ec"
+    },
+    "scripts/context-inline-spill-benefit-round7-verify.mjs": {
+      "sha256": "40b06cabaee478ddb5cfa48632f1a8943729a297d016a5ff80d41c9d6ef1bf66",
+      "bytes": 4524,
+      "gitBlob": "b82cda35c2456d67b73c58b8f7b394f8867ff426",
+      "worktreeBlob": "b82cda35c2456d67b73c58b8f7b394f8867ff426"
+    },
+    "scripts/context-inline-spill-benefit-round8-verify.mts": {
+      "sha256": "5306c23442d219fed2ad79a16c926f298c41532385541536ac6cf47d0b4c61ea",
+      "bytes": 4685,
+      "gitBlob": "b4fa93fb1780451ebe3893339417710c7146bd25",
+      "worktreeBlob": "b4fa93fb1780451ebe3893339417710c7146bd25"
+    },
+    "tests/unit/context-inline-spill-benefit-navigation.test.ts": {
+      "sha256": "c14620f8952a8556fffcd8a4f721fcaee0027eab49c5b8a69d3e41afaa2b145e",
+      "bytes": 4064,
+      "gitBlob": "521614d4f827791389b1ee6a56311fa6134c5b1f",
+      "worktreeBlob": "521614d4f827791389b1ee6a56311fa6134c5b1f"
+    },
+    "harness/specs/tasks/inline-spill-real-benefit-eval-round8.md": {
+      "sha256": "0e292853d34e5b872e124c1f4883908503cfb532f40cf121fcade42d5d8b7f78",
+      "bytes": 4403,
+      "gitBlob": "0636a4ba5f74d1fc15e7b9d84c8330067afabcc1",
+      "worktreeBlob": "0636a4ba5f74d1fc15e7b9d84c8330067afabcc1"
+    },
+    "harness/specs/rules/inline-spill-eval-projected-input.md": {
+      "sha256": "cbde3564b84910fec3daee160005876899530c843be87e9033b337d480740017",
+      "bytes": 3803,
+      "gitBlob": "2e04914eec4730bc27ba589691ef293778053370",
+      "worktreeBlob": "2e04914eec4730bc27ba589691ef293778053370"
+    },
+    "harness/specs/scenarios/context-family.md": {
+      "sha256": "5958e4dd6623abac9dd5043da97e4cff1a6d9770d344b221d539d2ef0e2d2efa",
+      "bytes": 6778,
+      "gitBlob": "0e7101637ce39d1d5a7fa55ac76b18521a5d100f",
+      "worktreeBlob": "0e7101637ce39d1d5a7fa55ac76b18521a5d100f"
+    },
+    ".gitattributes": {
+      "sha256": "7dfb07b6efee0a33046f29d931f9e2f29fa38a86050bff041356479519aafe4a",
+      "bytes": 6086,
+      "gitBlob": "c4b6060e4e29f72c5e932cae0764be7a0ae07f6f",
+      "worktreeBlob": "c4b6060e4e29f72c5e932cae0764be7a0ae07f6f"
+    },
+    "harness/specs/fixtures/context-inline-spill-benefit-round8/design.freeze.json": {
+      "sha256": "98bd4cb4c0f243cb69c1d9e759e8245f60b1e973b6fcc7bb49cdb59d2852ad12",
+      "bytes": 12608,
+      "gitBlob": "09c67159504342608fa4cdcde0fc9bd0748f2ee1",
+      "worktreeBlob": "09c67159504342608fa4cdcde0fc9bd0748f2ee1"
+    },
+    "scripts/context-inline-spill-benefit-round5-verify.mjs": {
+      "sha256": "08c84cc7bb738f38a33a42f15d1d38cd0818b9537d651bf3d29481dfb860773d",
+      "bytes": 6679,
+      "gitBlob": "a8a1958e655f3f4d1399c4b3b6f3e5114abff64f",
+      "worktreeBlob": "a8a1958e655f3f4d1399c4b3b6f3e5114abff64f"
+    },
+    "scripts/context-inline-spill-benefit-round5-recompute.mjs": {
+      "sha256": "485c7db6daaa12429c7fb2ec069d42106e0b0b5141042316bd03cda397808a07",
+      "bytes": 8786,
+      "gitBlob": "c7ba1c577fdf5f7ef1b8700adf61bb021de6a8a0",
+      "worktreeBlob": "c7ba1c577fdf5f7ef1b8700adf61bb021de6a8a0"
+    },
+    "tests/unit/context-inline-spill-benefit-clean-candidate.test.ts": {
+      "sha256": "9be4bf3a97c37683255608c6c945e9c282aba42431d84869c4cb8379e61561b3",
+      "bytes": 5885,
+      "gitBlob": "b57994190134834bf88ad8cc61237b843a2eae9b",
+      "worktreeBlob": "b57994190134834bf88ad8cc61237b843a2eae9b"
+    },
+    "harness/specs/tasks/inline-spill-real-benefit-eval-round6.md": {
+      "sha256": "f62bdc545f49e8d3a24e5b9a6f49b8334698a0768876b0ef0682b27ce19f712f",
+      "bytes": 3825,
+      "gitBlob": "dfdea88448fb9f27cd5d9702b997e2b0daa7d3d5",
+      "worktreeBlob": "dfdea88448fb9f27cd5d9702b997e2b0daa7d3d5"
+    },
+    "package.json": {
+      "sha256": "acec123ba3bec7313fc0f43c9b8692a3f015b0ab76949358f0f6720809840735",
+      "bytes": 41473,
+      "gitBlob": "286cc5604d17240fffe6873b0f4571774d5e67a6",
+      "worktreeBlob": "286cc5604d17240fffe6873b0f4571774d5e67a6"
+    },
+    "openclaw_runtime/package.json": {
+      "sha256": "f364675abf528ae3e4ad9e5b654f92d05f88e6eefc581e3f6e4cd6fb853b230b",
+      "bytes": 106962,
+      "gitBlob": "e71e857dbc732d3b1a290494bb988c483c32d845",
+      "worktreeBlob": "e71e857dbc732d3b1a290494bb988c483c32d845"
+    },
+    "tests/unit/context-inline-spill-benefit-strategy.test.ts": {
+      "sha256": "126e5efe3c78be7e04442a2bf375ad602956d03b5b5d8248e770d773994d4891",
+      "bytes": 3398,
+      "gitBlob": "add82d19c62cce1e573ce92f49c844cdf5f4c7a3",
+      "worktreeBlob": "add82d19c62cce1e573ce92f49c844cdf5f4c7a3"
+    },
+    "harness/specs/tasks/inline-spill-real-benefit-eval-round7.md": {
+      "sha256": "16b0aaa99a46425da80a078bd35423bd2c5fa702f1cad33ddb1077906f05937b",
+      "bytes": 4363,
+      "gitBlob": "2f65600d397161ee895499f574c954ca5e118134",
+      "worktreeBlob": "2f65600d397161ee895499f574c954ca5e118134"
+    }
+  },
+  "sameCandidate": true
+}

@@ -1,0 +1,70 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "schema": "G7InlineSpillRound8Outcome/v1",
+  "recordedAt": "2026-11-13T11:20:12.458356+00:00",
+  "candidate": {
+    "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+    "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false,
+    "status": ""
+  },
+  "designFreeze": {
+    "path": "harness/specs/fixtures/context-inline-spill-benefit-round8/design.freeze.json",
+    "sha256": "98bd4cb4c0f243cb69c1d9e759e8245f60b1e973b6fcc7bb49cdb59d2852ad12",
+    "commit": "3e875f462ce16ca8b6ed4feb412397fe0f391311"
+  },
+  "decision": {
+    "status": "no-benefit",
+    "verdict": "NO_GO",
+    "b1_mechanism_and_autonomy": false,
+    "b2_task_benefit": true,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": false,
+    "b5_no_fabrication": true,
+    "b6_budget": false,
+    "contextGrowthChars": -400.6666666666679,
+    "tokenGrowthPct": 0.25027526431088676,
+    "b7_evidence": true
+  },
+  "providerRuns": 96,
+  "providerCalls": 349,
+  "failedBenefitGates": [
+    "b1_mechanism_and_autonomy",
+    "b4_non_inferiority",
+    "b6_budget"
+  ],
+  "verifierAcceptedCleanCandidate": true,
+  "requiredChecks": {
+    "unit-r8-final": 0,
+    "typecheck-r8-final": 0,
+    "contract-r8-final": 0,
+    "harness-validate-r8-final": 0,
+    "harness-dry-run-r8-final": 0,
+    "deterministic-r8-final": 0,
+    "verify-deterministic-r8": 0,
+    "completion-probe": 0,
+    "live": 0,
+    "verify-live-r8": 0
+  },
+  "round7EvidencePreserved": {
+    "files": 237,
+    "sha256": "5ddc7f8860fd732a51dc678ce8f38be019c87ed234d5336219d8704ba83c9276",
+    "verdict": "NO_GO",
+    "failedBenefitGates": [
+      "b2_task_benefit",
+      "b4_non_inferiority"
+    ]
+  },
+  "taskForest": {
+    "status": "in_progress",
+    "progress": 80,
+    "updated": false,
+    "reason": "B1/B4/B6失败"
+  },
+  "productDefaultsChanged": false,
+  "productLocksChanged": false,
+  "releaseApproved": false
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "commit-candidate-r8",
+  "cwd": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c",
+  "command": [
+    "git",
+    "commit",
+    "-m",
+    "fix(context-eval): guide recall from visible call metadata and field locations"
+  ],
+  "startedAt": "2026-11-13T10:37:01.561Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "486f078abdbaefe191c83d11c620cfed67ddbbec",
+    "tree": "ef1643bf2c674ef5dcf4ff6d3eda702d11c3f897",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": true
+  },
+  "finishedAt": "2026-11-13T10:37:02.309Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "a5972fdc9b89ff692ef2d76a744639c620b24fa2",
+    "tree": "f148b4cbf71916ad73180dac1b2b3c97f1201665",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-closeout-pass-r8-01a1d34c\\checks\\commit-candidate-r8.stdout.txt",
+      "bytes": 418,
+      "sha256": "cf0616e8f61e6ae61750064b73ea717024668b77b1400a7ce2e0f4d36fb7b8e2"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-closeout-pass-r8-01a1d34c\\checks\\commit-candidate-r8.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

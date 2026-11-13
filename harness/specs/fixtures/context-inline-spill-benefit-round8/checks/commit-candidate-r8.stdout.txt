@@ -1,0 +1,5 @@
+[codex/g7-inline-spill-tf0749-20261113 a5972fdc9] fix(context-eval): guide recall from visible call metadata and field locations
+ 11 files changed, 292 insertions(+), 16 deletions(-)
+ create mode 100644 harness/specs/tasks/inline-spill-real-benefit-eval-round8.md
+ create mode 100644 scripts/context-inline-spill-benefit-round8-verify.mts
+ create mode 100644 tests/unit/context-inline-spill-benefit-navigation.test.ts

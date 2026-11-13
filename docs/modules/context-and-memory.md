@@ -583,6 +583,10 @@ token相对reference减少22.56%，但原归档选择仍有39次原目标、49�
 模型读取当前工具内容并自行输出最终value。导航没有oracle或原始工具历史参数；四臂
 同用提示，原页/输出预算、模型、压力字节和B1–B7阈值保持原值。
 
+第八轮clean候选f8d41ddb2完成96次/349次调用，全部completed，stable证据14/18、reference16/18、控制6/6。
+B2/B3/B5/B7通过，B1/B4/B6失败；成功回读17/18，token增幅25.027526%超过25%，判定NO_GO。
+模型曾把URI文件名16位摘要扩写成64位checksum并沿用错误目标。原始失败保留于[第八轮报告](../../harness/specs/fixtures/context-inline-spill-benefit-round8/REPORT.md)。
+
 
 [第四轮评测](../../harness/specs/tasks/inline-spill-real-benefit-eval-round4.md)要求每次回读显式提供 1–5500 的 `max_chars`，缺失或超界参数返回 `invalid_arguments`。工具说明引导模型用 `offset + content.length` 翻页，取得精确值后输出最终 JSON。页尺寸与 6000 字符生产投影预算共同校验，收益按原 96 次样本与 900 输出 token 预算实测。
 
