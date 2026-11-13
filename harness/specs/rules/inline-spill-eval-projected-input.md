@@ -7,6 +7,7 @@ appliesTo:
   - inline-spill-real-benefit-eval-round3
   - inline-spill-real-benefit-eval-round4
   - inline-spill-real-benefit-eval-round6
+  - inline-spill-real-benefit-eval-round7
 ---
 
 # 评测输入只有一个内容来源
@@ -32,3 +33,9 @@ commit、tree、branch、dirty 和源码摘要；dirty、设计漂移或运行�
 URI/checksum 与可选 byte_length 匹配分类，原工具 content 命中和页覆盖只用于诊断；
 最终任务判分仍读取精确 value。新证据及第五轮原始字节封存包固定字节属性，SHA256
 清单与实际 Git blob、逐调用记录及原始归档共同构成复验输入。
+
+第七轮将 agent 生成的健康检查日志记录为 exec 工具观测，逐字节保留旧日志和两个
+干扰工具输出，保持原 user/assistant 回合节奏，并保留简短的 user 继续指令。
+工具压力增加且继续受既定聚合预算处理；旧 user 来源对照单独封存。原归档锚定说明在
+四臂一致，模型仍自行选择可见 URI/checksum 与页偏移，deterministic 策略仅读取可见输入。
+压力角色、日志摘要、工具定义和 240000ms 请求期限在 live 前冻结；原 B1–B7 阈值不变。

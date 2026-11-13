@@ -33,6 +33,7 @@ import {
 import type { AgentMessage } from "../openclaw_runtime/src/agents/runtime/index.js";
 import { mcnemarExact, parseAnswer, wilson } from "./context-inline-spill-benefit-scoring.mjs";
 import { assertEvalRecallPage, buildProjectedEvalInput, contentText, EVAL_RECALL_PAGE_MAX_CHARS, pairedSessionId, RECALL_TOOL_DEF, textOf } from "./context-inline-spill-benefit-input.mjs";
+import { ANCHORED_RECALL_TOOL_DEF, anchoredDeterministicTurn, buildBenefitPressure, createAnchorPolicyState } from "./context-inline-spill-benefit-strategy.mjs";
 
 const ROOT = process.cwd();
 const MODE = argValue("--mode") ?? "deterministic";
@@ -47,6 +48,13 @@ const MODEL = process.env.CONTEXT_INLINE_SPILL_MODEL ?? "space-bunny";
 const REPEATS = Number(argValue("--repeats") ?? 3);
 const MAX_TURNS = Number(argValue("--max-turns") ?? 8);
 const MAX_OUTPUT_TOKENS = Number(argValue("--max-output-tokens") ?? 900);
+const STRATEGY = argValue("--strategy") ?? "legacy";
+const PRESSURE_SOURCE = argValue("--pressure-source") ?? "user";
+const PROVIDER_TIMEOUT_MS = Number(argValue("--provider-timeout-ms") ?? 120_000);
+if (!["legacy", "anchored"].includes(STRATEGY)) throw new Error("strategy must be legacy or anchored");
+if (PRESSURE_SOURCE !== "user" && PRESSURE_SOURCE !== "tool") throw new Error("pressure-source must be user or tool");
+if (!Number.isSafeInteger(PROVIDER_TIMEOUT_MS) || PROVIDER_TIMEOUT_MS < 1) throw new Error("provider-timeout-ms must be a positive integer");
+const TOOL_DEF = STRATEGY === "anchored" ? ANCHORED_RECALL_TOOL_DEF : RECALL_TOOL_DEF;
 if (!Number.isSafeInteger(MAX_OUTPUT_TOKENS) || MAX_OUTPUT_TOKENS < 1) throw new Error("max-output-tokens must be a positive integer");
 const CONTEXT_WINDOW_TOKENS = 32_000;
 const TOOL_MAX_CHARS = 6_000;
@@ -57,7 +65,7 @@ const candidateAtStart = candidateIdentity();
 const freezePath = argValue("--freeze");
 type SourceIdentity = { sha256: string; bytes: number; gitBlob: string; worktreeBlob: string };
 type FrozenDesign = {
-  schema: string; live: { maxTurns: number; repeats: number; maxOutputTokens: number };
+  schema: string; live: { maxTurns: number; repeats: number; maxOutputTokens: number; strategy?: string; pressureSource?: string; providerTimeoutMs?: number };
   deterministic: { maxTurns: number; repeats: number }; provider: { model: string; baseUrl: string };
   unchangedSourcesSha256: Record<string, string>; protocolSectionsSha256: Record<string, string>;
 };
@@ -69,11 +77,14 @@ if (freezePath) {
     const freezeFile = resolve(freezePath);
     const freezeBytes = readFileSync(freezeFile);
     frozenDesign = JSON.parse(freezeBytes.toString("utf8"));
-    assert.equal(frozenDesign!.schema, "ContextInlineSpillRound6FrozenDesign/v1");
+    assert(["ContextInlineSpillRound6FrozenDesign/v1", "ContextInlineSpillRound7FrozenDesign/v1"].includes(frozenDesign!.schema));
     const modeDesign = MODE === "live" ? frozenDesign!.live : frozenDesign!.deterministic;
     assert.equal(MAX_TURNS, modeDesign.maxTurns, "frozen maxTurns changed");
     assert.equal(REPEATS, modeDesign.repeats, "frozen repeats changed");
     assert.equal(MAX_OUTPUT_TOKENS, frozenDesign!.live.maxOutputTokens, "frozen output budget changed");
+    assert.equal(STRATEGY, frozenDesign!.live.strategy ?? "legacy", "frozen recall strategy changed");
+    assert.equal(PRESSURE_SOURCE, frozenDesign!.live.pressureSource ?? "user", "frozen pressure source changed");
+    assert.equal(PROVIDER_TIMEOUT_MS, frozenDesign!.live.providerTimeoutMs ?? 120_000, "frozen provider deadline changed");
     assert.equal(MODE === "live" ? MODEL : frozenDesign!.provider.model, frozenDesign!.provider.model);
     if (MODE === "live") assert.equal(BASE_URL, frozenDesign!.provider.baseUrl, "frozen provider changed");
     assert.equal(candidateAtStart.dirty, false, "clean committed candidate required before any provider request");
@@ -104,13 +115,16 @@ if (freezePath) {
       "scripts/context-inline-spill-benefit-round5-recompute.mjs", "scripts/context-inline-spill-benefit-round6-verify.mjs",
       "tests/unit/context-inline-spill-benefit-clean-candidate.test.ts", "harness/specs/tasks/inline-spill-real-benefit-eval-round6.md",
       "harness/specs/rules/inline-spill-eval-projected-input.md", "harness/specs/scenarios/context-family.md",
-      ".gitattributes", "package.json", "openclaw_runtime/package.json"] )];
+      ".gitattributes", "package.json", "openclaw_runtime/package.json",
+      ...(frozenDesign!.schema === "ContextInlineSpillRound7FrozenDesign/v1" ? ["scripts/context-inline-spill-benefit-strategy.mts",
+        "scripts/context-inline-spill-benefit-round7-verify.mjs", "tests/unit/context-inline-spill-benefit-strategy.test.ts",
+        "harness/specs/tasks/inline-spill-real-benefit-eval-round7.md"] : [])] )];
     sourceInputs = sourceIdentities(paths);
     for (const [path, identity] of Object.entries(sourceInputs)) assert.equal(identity.gitBlob, identity.worktreeBlob, "source differs from commit: " + path);
     designFreeze = { path: freezeRelative, sha256: digest(freezeBytes), commit: freezeCommit };
     save("preflight.json", { schema: "ContextInlineSpillPreflight/v1", driven_by: "agent", actor: ACTOR,
       realHumanEvidence: false, startedAt: STARTED_AT, candidate: candidateAtStart, designFreeze, sourceInputs,
-      protocolUnchanged: true, providerRequests: 0, mode: MODE });
+      protocolMatchesFrozenDesign: true, providerRequests: 0, mode: MODE });
   } catch (error) {
     save("preflight-rejected.json", { schema: "ContextInlineSpillPreflightRejection/v1", driven_by: "agent", actor: ACTOR,
       realHumanEvidence: false, startedAt: STARTED_AT, candidate: candidateAtStart, providerRequests: 0,
@@ -148,9 +162,6 @@ function save(name: string, value: unknown): void {
 function user(text: string): AgentMessage {
   return { role: "user", content: text, timestamp: 1 } as AgentMessage;
 }
-function assistantText(text: string): AgentMessage {
-  return { role: "assistant", content: [{ type: "text", text }], timestamp: 1 } as AgentMessage;
-}
 function toolResult(id: string, name: string, text: string, details?: unknown): AgentMessage {
   return {
     role: "toolResult",
@@ -183,9 +194,9 @@ function buildFixtures(): Fixture[] {
   const fixtures: Fixture[] = [];
   let i = 0;
   for (const item of evidence) {
-    // The oracle sits at ~4800-5200 absolute: outside the initial truncated head
-    // (the payload has a summary tail, so the head is ~70% of the 6000 budget),
-    // inside one recall page (0..5500), and in the band aggregate soft-trim cuts.
+    // Positions 7000/8000/9000 are outside the initial truncated head and in
+    // the second 5500-character recall page. Aggregate pressure trims that
+    // evidence from a page when bounded recall retention is disabled.
     const offset = [7_000, 8_000, 9_000][i++ % 3]!;
     const before = FILLER.repeat(Math.ceil(offset / FILLER.length)).slice(0, offset);
     const payload = before + "private_evidence=" + item.oracle + "\n" + FILLER.repeat(120) + "summary: completed checks\n";
@@ -234,14 +245,18 @@ type ProviderTurn = {
 
 async function liveTurn(requestBody: string): Promise<ProviderTurn> {
   const started = performance.now();
+  let receivedRaw: string | undefined;
+  let receivedHttpStatus: number | undefined;
   try {
     const response = await fetch(BASE_URL.replace(/\/$/, "") + "/responses", {
       method: "POST",
       headers: { authorization: "Bearer " + API_KEY, "content-type": "application/json" },
       body: requestBody,
-      signal: AbortSignal.timeout(120_000),
+      signal: AbortSignal.timeout(PROVIDER_TIMEOUT_MS),
     });
     const raw = redact(await response.text());
+    receivedRaw = raw;
+    receivedHttpStatus = response.status;
     const latencyMs = Number((performance.now() - started).toFixed(3));
     if (!response.ok) {
       return { status: "failed", text: "", toolCalls: [], usage: null, latencyMs, httpStatus: response.status, failureClass: "provider_http_error", raw };
@@ -259,9 +274,11 @@ async function liveTurn(requestBody: string): Promise<ProviderTurn> {
         toolCalls.push({ callId: String(item.call_id ?? ""), name: String(item.name ?? ""), arguments: args });
       }
     }
-    return { status: "executed", text: String(body.output_text ?? ""), toolCalls, usage: body.usage ?? null, latencyMs, raw };
+    return { status: "executed", text: String(body.output_text ?? ""), toolCalls, usage: body.usage ?? null, latencyMs, httpStatus: response.status, raw };
   } catch (error) {
-    return { status: "failed", text: "", toolCalls: [], usage: null, latencyMs: Number((performance.now() - started).toFixed(3)), failureClass: "provider_transport_error", raw: redact(error instanceof Error ? error.message : String(error)) };
+    return { status: "failed", text: "", toolCalls: [], usage: null, latencyMs: Number((performance.now() - started).toFixed(3)),
+      httpStatus: receivedHttpStatus, failureClass: receivedRaw === undefined ? "provider_transport_error" : "provider_response_invalid",
+      raw: receivedRaw ?? redact(error instanceof Error ? error.message : String(error)) };
   }
 }
 
@@ -297,6 +314,7 @@ type RunRecord = {
   finalAnswer: { ok: boolean; value: string | null };
   providerCalls: Array<Record<string, unknown>>;
   toolCalls: Array<Record<string, unknown>>;
+  pressureEvents: Array<Record<string, unknown>>;
   archive: { uri: string; checksum: string; byteLength: number };
 };
 
@@ -333,6 +351,8 @@ for (const fixture of fixtures) {
       const toolHistory: Array<Record<string, unknown>> = [];
       const providerCalls: Array<Record<string, unknown>> = [];
       const toolCallLog: Array<Record<string, unknown>> = [];
+      const pressureEvents: Array<Record<string, unknown>> = [];
+      const anchorPolicy = createAnchorPolicyState();
       let recallAttempted = false;
       let recallOk = false;
       let turns = 0;
@@ -355,7 +375,7 @@ for (const fixture of fixtures) {
         const input = buildProjectedEvalInput(projected.visible, toolHistory, fixture.question);
         const inputJson = JSON.stringify(input);
         mainContextChars = inputJson.length;
-        const request = { model: MODEL, input, tools: [RECALL_TOOL_DEF], tool_choice: "auto", temperature: 0, max_output_tokens: MAX_OUTPUT_TOKENS, reasoning: { effort: "low", summary: "auto" } };
+        const request = { model: MODEL, input, tools: [TOOL_DEF], tool_choice: "auto", temperature: 0, max_output_tokens: MAX_OUTPUT_TOKENS, reasoning: { effort: "low", summary: "auto" } };
         const requestBody = JSON.stringify(request);
         const outputIds = new Set(toolHistory.filter((item) => item.type === "function_call_output").map((item) => String(item.call_id)));
         const projectedToolOutputs = Object.fromEntries(projected.visible.filter((m) => m.role === "toolResult" && outputIds.has(m.toolCallId)).map((m) => [m.toolCallId, contentText(m)]));
@@ -363,7 +383,9 @@ for (const fixture of fixtures) {
         if (!cfg.reference && fixture.oracle && requestBody.includes(fixture.oracle)) throw new Error("baseline input contains oracle");
         const result = MODE === "live"
           ? await liveTurn(requestBody)
-          : deterministicTurn(inputJson, fixture.oracle, toolCallLog.length, { uri: handle.uri, checksum: handle.checksum });
+          : STRATEGY === "anchored"
+            ? { ...anchoredDeterministicTurn(input, anchorPolicy), status: "executed" as const, usage: null, latencyMs: 0 }
+            : deterministicTurn(inputJson, fixture.oracle, toolCallLog.length, { uri: handle.uri, checksum: handle.checksum });
         turns++;
         inputTokens += Number((result.usage as { input_tokens?: number } | null)?.input_tokens ?? 0);
         outputTokens += Number((result.usage as { output_tokens?: number } | null)?.output_tokens ?? 0);
@@ -414,10 +436,12 @@ for (const fixture of fixtures) {
           toolHistory.push({ type: "function_call_output", call_id: call.callId });
           messages.push(toolResult(call.callId, "context_archive_recall", resultText, details));
           if (cfg.pressure) {
-            messages.push(assistantText("Acknowledged. Continuing with the remaining verification steps."));
-            messages.push(user("Additional context for the remaining checks: " + FILLER.repeat(40)));
-            messages.push(toolResult("distractor-1-" + turn, "exec", FILLER.repeat(33)));
-            messages.push(toolResult("distractor-2-" + turn, "exec", FILLER.repeat(33)));
+            const pressure = buildBenefitPressure(turn, FILLER, PRESSURE_SOURCE);
+            pressureEvents.push({ afterCallId: call.callId, source: PRESSURE_SOURCE,
+              roles: pressure.map(message => message.role),
+              messages: pressure.map(message => ({ role: message.role, toolName: message.role === "toolResult" ? message.toolName : null,
+                chars: contentText(message).length, sha256: digest(contentText(message)) })) });
+            messages.push(...pressure);
           }
         }
       }
@@ -436,7 +460,7 @@ for (const fixture of fixtures) {
       records.push({
         arm, fixtureId: fixture.id, repetition, sessionId, success, recallAttempted, recallOk, turns,
         mainContextChars, projectedContextChars, initialRequestSha256, retainedAtEnd, inputTokens, outputTokens, totalTokens,
-        latencyMs: Number(latencyMs.toFixed(3)),
+        latencyMs: Number(latencyMs.toFixed(3)), pressureEvents,
         cost: { status: "not-run", reason: "Provider billing rates were not supplied; token usage is recorded." },
         failureClass, finalAnswer, providerCalls, toolCalls: toolCallLog,
         archive: { uri: handle.uri, checksum: handle.checksum, byteLength: handle.byteLength },
@@ -553,7 +577,9 @@ const result = {
   provider: MODE === "live"
     ? { kind: "openai-compatible-responses", endpoint_origin: new URL(BASE_URL).origin, model: MODEL, credential_persisted: false }
     : { kind: "deterministic-scripted-policy", endpoint_origin: null, model: null, credential_persisted: false },
-  design: { repeats: REPEATS, maxTurns: MAX_TURNS, maxOutputTokens: MAX_OUTPUT_TOKENS, reasoning: { effort: "low", summary: "auto" }, evidenceTasks, controlTasks, arms: ARM_CONFIG, contextWindowTokens: CONTEXT_WINDOW_TOKENS, toolMaxChars: TOOL_MAX_CHARS, aggregateMaxChars: AGGREGATE_MAX_CHARS, recallPageChars: RECALL_PAGE_CHARS },
+  design: { repeats: REPEATS, maxTurns: MAX_TURNS, maxOutputTokens: MAX_OUTPUT_TOKENS, reasoning: { effort: "low", summary: "auto" },
+    strategy: STRATEGY, pressureSource: PRESSURE_SOURCE, providerTimeoutMs: PROVIDER_TIMEOUT_MS,
+    evidenceTasks, controlTasks, arms: ARM_CONFIG, contextWindowTokens: CONTEXT_WINDOW_TOKENS, toolMaxChars: TOOL_MAX_CHARS, aggregateMaxChars: AGGREGATE_MAX_CHARS, recallPageChars: RECALL_PAGE_CHARS },
   stats, comparisons, evidenceComparisons,
   inputIntegrity: { assembly: "production-projection-only/function-protocol/r5-low-reasoning", mainContextCharsSource: "JSON.stringify(actual request.input).length", initialPairs, allInitialPairsByteIdentical: initialPairs.every((p) => p.byteIdentical), unprojectedOutputFallback: false },
   decision: {

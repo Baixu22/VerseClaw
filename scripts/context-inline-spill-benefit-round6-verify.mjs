@@ -74,7 +74,10 @@ try {
     'scripts/context-inline-spill-benefit-round5-recompute.mjs', 'scripts/context-inline-spill-benefit-round6-verify.mjs',
     'tests/unit/context-inline-spill-benefit-clean-candidate.test.ts', 'harness/specs/tasks/inline-spill-real-benefit-eval-round6.md',
     'harness/specs/rules/inline-spill-eval-projected-input.md', 'harness/specs/scenarios/context-family.md',
-    '.gitattributes', 'package.json', 'openclaw_runtime/package.json'])];
+    '.gitattributes', 'package.json', 'openclaw_runtime/package.json',
+    ...(freeze.schema === 'ContextInlineSpillRound7FrozenDesign/v1' ? ['scripts/context-inline-spill-benefit-strategy.mts',
+      'scripts/context-inline-spill-benefit-round7-verify.mjs', 'tests/unit/context-inline-spill-benefit-strategy.test.ts',
+      'harness/specs/tasks/inline-spill-real-benefit-eval-round7.md'] : [])])];
   assert.deepEqual(Object.keys(preflight.sourceInputs).sort(), requiredSources.sort());
   for (const path of requiredSources) {
     const identity = preflight.sourceInputs[path];
@@ -86,10 +89,10 @@ try {
     assert.equal(identity.gitBlob, identity.worktreeBlob, path);
     if (Object.hasOwn(freeze.unchangedSourcesSha256, path)) assert.equal(identity.sha256, freeze.unchangedSourcesSha256[path]);
   }
-  const preservationFile = join(dirname(freezeFile), 'round5-preservation.json');
+  const preservationFile = freeze.round5PreservationPath ? safePath(root, freeze.round5PreservationPath) : join(dirname(freezeFile), 'round5-preservation.json');
   assert.equal(hash(readFileSync(preservationFile)), freeze.round5PreservationSha256);
   const preservation = json(preservationFile);
-  const historicalBytes = readFileSync(join(dirname(freezeFile), preservation.rawBundle.path));
+  const historicalBytes = readFileSync(join(dirname(preservationFile), preservation.rawBundle.path));
   assert.equal(hash(historicalBytes), preservation.rawBundle.sha256);
   const historical = gunzipSync(historicalBytes).toString('utf8').trim().split('\n').map(parse);
   assert.equal(historical.length, preservation.files.length);

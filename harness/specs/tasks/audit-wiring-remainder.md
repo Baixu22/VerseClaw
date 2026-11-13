@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: active
 id: audit-wiring-remainder
 title: Connect verifier and trajectory consumers and retire duplicate implementations
 scenario: gateway-backend-communication
