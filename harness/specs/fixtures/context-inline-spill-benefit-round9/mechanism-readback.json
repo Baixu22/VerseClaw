@@ -1,0 +1,236 @@
+{
+  "schema": "G7Round9MechanismReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "recordedAt": "2026-11-13T11:37:31.803Z",
+  "variants": [
+    {
+      "name": "mechanism",
+      "source": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\mechanism\\2026-11-13T11-13-05-317Z-deterministic",
+      "runsSha256": "9851b8f75163a04c6b969cf82b710111c317dc89ab043f61cbb86cdd33fa10ba",
+      "resultSha256": "d4bada65b8f2337eca0a7f6739c1a401fee6db2b9939282d66a961c24d54f5aa",
+      "stats": {
+        "baseline-no-reference": {
+          "arm": "baseline-no-reference",
+          "runs": 8,
+          "pass": 2,
+          "successRate": 0.25,
+          "wilson95": [
+            0.071479212752109,
+            0.5907245696898311
+          ],
+          "evidenceSuccessRate": 0,
+          "controlSuccessRate": 1,
+          "passAtK": 0,
+          "recallAttemptRate": 0,
+          "recallOkRate": 0,
+          "meanTurns": 1,
+          "meanMainContextChars": 1612.25,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "recall_not_attempted": 6,
+            "none": 2
+          }
+        },
+        "reference-visible": {
+          "arm": "reference-visible",
+          "runs": 8,
+          "pass": 8,
+          "successRate": 1,
+          "wilson95": [
+            0.6755924351161198,
+            1
+          ],
+          "evidenceSuccessRate": 1,
+          "controlSuccessRate": 1,
+          "passAtK": 1,
+          "recallAttemptRate": 1,
+          "recallOkRate": 1,
+          "meanTurns": 3.25,
+          "meanMainContextChars": 18844.25,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "none": 8
+          }
+        },
+        "recall-stable": {
+          "arm": "recall-stable",
+          "runs": 8,
+          "pass": 8,
+          "successRate": 1,
+          "wilson95": [
+            0.6755924351161198,
+            1
+          ],
+          "evidenceSuccessRate": 1,
+          "controlSuccessRate": 1,
+          "passAtK": 1,
+          "recallAttemptRate": 1,
+          "recallOkRate": 1,
+          "meanTurns": 3.25,
+          "meanMainContextChars": 19242.5,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "none": 8
+          }
+        },
+        "retention-off": {
+          "arm": "retention-off",
+          "runs": 8,
+          "pass": 2,
+          "successRate": 0.25,
+          "wilson95": [
+            0.071479212752109,
+            0.5907245696898311
+          ],
+          "evidenceSuccessRate": 0,
+          "controlSuccessRate": 1,
+          "passAtK": 0,
+          "recallAttemptRate": 1,
+          "recallOkRate": 1,
+          "meanTurns": 4,
+          "meanMainContextChars": 19616.25,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "recalled_text_evicted": 6,
+            "none": 2
+          }
+        }
+      },
+      "liveBenefitEvaluated": false,
+      "modelAutonomyEvaluated": false,
+      "tokenBudgetEvaluated": false
+    },
+    {
+      "name": "mechanism-fault",
+      "source": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\mechanism-fault\\2026-11-13T11-13-05-321Z-deterministic",
+      "runsSha256": "2dcd50ec24f0b90cc70fa0cf3e7c2b7fc62c3d9dcd54690e3833a879940ac17c",
+      "resultSha256": "01afc9a656d7c7adc942bba3c3c48ff964257178a0821883922ef26728a4a132",
+      "stats": {
+        "baseline-no-reference": {
+          "arm": "baseline-no-reference",
+          "runs": 8,
+          "pass": 2,
+          "successRate": 0.25,
+          "wilson95": [
+            0.071479212752109,
+            0.5907245696898311
+          ],
+          "evidenceSuccessRate": 0,
+          "controlSuccessRate": 1,
+          "passAtK": 0,
+          "recallAttemptRate": 0,
+          "recallOkRate": 0,
+          "meanTurns": 1,
+          "meanMainContextChars": 1612.25,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "recall_not_attempted": 6,
+            "none": 2
+          }
+        },
+        "reference-visible": {
+          "arm": "reference-visible",
+          "runs": 8,
+          "pass": 8,
+          "successRate": 1,
+          "wilson95": [
+            0.6755924351161198,
+            1
+          ],
+          "evidenceSuccessRate": 1,
+          "controlSuccessRate": 1,
+          "passAtK": 1,
+          "recallAttemptRate": 1,
+          "recallOkRate": 1,
+          "meanTurns": 4,
+          "meanMainContextChars": 19219.25,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "none": 8
+          }
+        },
+        "recall-stable": {
+          "arm": "recall-stable",
+          "runs": 8,
+          "pass": 8,
+          "successRate": 1,
+          "wilson95": [
+            0.6755924351161198,
+            1
+          ],
+          "evidenceSuccessRate": 1,
+          "controlSuccessRate": 1,
+          "passAtK": 1,
+          "recallAttemptRate": 1,
+          "recallOkRate": 1,
+          "meanTurns": 4,
+          "meanMainContextChars": 19744.25,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "none": 8
+          }
+        },
+        "retention-off": {
+          "arm": "retention-off",
+          "runs": 8,
+          "pass": 2,
+          "successRate": 0.25,
+          "wilson95": [
+            0.071479212752109,
+            0.5907245696898311
+          ],
+          "evidenceSuccessRate": 0,
+          "controlSuccessRate": 1,
+          "passAtK": 0,
+          "recallAttemptRate": 1,
+          "recallOkRate": 1,
+          "meanTurns": 4,
+          "meanMainContextChars": 19660.25,
+          "meanInputTokens": 0,
+          "meanOutputTokens": 0,
+          "meanTotalTokens": 0,
+          "p50LatencyMs": 0,
+          "p95LatencyMs": 0,
+          "failureClasses": {
+            "recalled_text_evicted": 6,
+            "none": 2
+          }
+        }
+      },
+      "liveBenefitEvaluated": false,
+      "modelAutonomyEvaluated": false,
+      "tokenBudgetEvaluated": false
+    }
+  ],
+  "repair": "Initial visible reference is retained as bounded metadata in the existing agent question. First malformed URI does not replace the authoritative current bookmark."
+}
