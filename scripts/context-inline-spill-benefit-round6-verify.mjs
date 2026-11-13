@@ -82,7 +82,7 @@ try {
     assert.equal(bytes.length, identity.bytes, path);
     assert.equal(hash(bytes), identity.sha256, path);
     assert.equal(git(['rev-parse', candidate.commit + ':' + path]), identity.gitBlob, path);
-    assert.equal(git(['hash-object', '--path=' + path, path]), identity.worktreeBlob, path);
+    assert.equal(git(['hash-object', '--no-filters', path]), identity.worktreeBlob, path);
     assert.equal(identity.gitBlob, identity.worktreeBlob, path);
     if (Object.hasOwn(freeze.unchangedSourcesSha256, path)) assert.equal(identity.sha256, freeze.unchangedSourcesSha256[path]);
   }
