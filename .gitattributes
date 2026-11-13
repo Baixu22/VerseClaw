@@ -80,3 +80,6 @@ harness/specs/fixtures/architecture-runtime-cycles/** -text
 harness/specs/fixtures/architecture-authority-convergence/** -text
 harness/specs/fixtures/architecture-convergence-final/** -text
 harness/specs/fixtures/architecture-review-integration/** -text
+
+# G7 frozen design, raw responses, and retained fifth-round bytes use SHA-256.
+harness/specs/fixtures/context-inline-spill-benefit-round6/** -text whitespace=-trailing-space,-blank-at-eof
