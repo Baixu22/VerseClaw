@@ -172,10 +172,18 @@ try {
   raceB.child.stdin.write("start\n");
   const race = await Promise.all([raceA.marker("admission"), raceB.marker("admission")]);
   assert.equal(race.filter((item) => item.prepared?.admitted).length, 1);
-  assert(race.every((item) => item.entry.retryCount === 1));
   const winner = race[0].prepared?.admitted ? raceA : raceB;
   const loser = winner === raceA ? raceB : raceA;
+  assert.equal(race.find((item) => item.prepared?.admitted).entry.retryCount, 1);
   assert.equal((await waitExit(loser)).exitCode, 0);
+  // A denied peer can read before the winner commits. Check the durable budget
+  // after both observations while the admitted owner still holds the claim.
+  const raceObserver = launch("inspect", raceDir);
+  const raceFinal = await raceObserver.marker("inspection");
+  assert.equal(raceFinal.entry.retryCount, 1);
+  assert.equal(raceFinal.entry.recoveryAdmission.attempts, 1);
+  assert.equal(raceFinal.entry.activeSendProcessId, winner.child.pid);
+  assert.equal((await waitExit(raceObserver)).exitCode, 0);
   await kill(winner);
 
   const stateDir = join(out, "restart");

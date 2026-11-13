@@ -32,6 +32,7 @@ if (
   !mode ||
   ![
     "init",
+    "inspect",
     "live-hold",
     "hold",
     "compete-live",
@@ -95,6 +96,9 @@ if (mode === "init" || mode === "live-hold") {
     session: loadSessionStore(storePath, { skipCache: true })[key],
   });
   if (mode === "live-hold") await hold();
+} else if (mode === "inspect") {
+  const { id } = JSON.parse(readFileSync(intentPath, "utf8")) as { id: string };
+  marker("inspection", { entry: await loadPendingDelivery(id, stateDir) });
 } else {
   if (mode.startsWith("race-")) {
     const start = new Promise<void>((resolve) => process.stdin.once("data", () => resolve()));
