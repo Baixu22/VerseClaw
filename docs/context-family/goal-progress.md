@@ -1377,3 +1377,10 @@ Use this packet before any handoff, fork, or context-pressure continuation.
 - clean 候选 `eb93671ab`：96 次运行/399 调用，394 completed、5 transport error、0 incomplete。stable 证据 3/18、控制 6/6，证据保留正向 3、反向 0。
 - B3/B4/B5/B7 通过，B1/B2/B6 失败：成功回读率 94.44%，McNemar p=0.25，总 token 增长 87.78%。verifier 接受 clean 候选并核验 555 个归档，判定 no-benefit/NO_GO；TF-0749 未收口。
 - 同候选 54 项定向测试、契约和定向 Harness 通过。完整 typecheck 退出 1（VerseBrowser 类型入口缺失），完整 Harness CI 58/59、退出 1（三份其他任务 spec 缺少 lifecycleStatus）；失败日志保留在第六轮证据包。
+
+## 2026-11-13 Inline/Spill 第七轮原归档与压力来源修复
+
+- 评测锚定初始可见 exec 归档，连续分页并在取得精确值后结束；四臂工具说明一致。
+- agent 健康检查日志保留全部原字节，改为 exec 工具观测并保留 user/assistant 回合节奏；新增工具压力继续受既定预算处理。旧 user 来源对照单独保留。
+- 900 输出 token、5500 字符页、原模型、四臂、语料及 B1–B7 阈值保持原值；240000ms 单次请求期限在 live 前冻结，无自动重试。
+- TF-0749 在 B1–B7 全过、clean 候选被 verifier 接受且 base_graph_hash 匹配前保持 in_progress/80。
