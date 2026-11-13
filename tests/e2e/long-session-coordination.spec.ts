@@ -379,6 +379,10 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
     await expect(childRow.locator(
       'xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " sidebar-row ")][1]',
     )).toHaveAttribute('data-hook-selected', 'true', { timeout: 30_000 });
+    const workerSelection = await hostInvoke<{ activeWorkspace: { id: string; activeSessionKey: string; projectCoordinatorSessionKey: string } }>(app, 'workspaces', 'getActive');
+    expect(workerSelection.activeWorkspace.id).toBe(workspace.id);
+    expect(workerSelection.activeWorkspace.activeSessionKey).toBe(worker.childSessionKey);
+    expect(workerSelection.activeWorkspace.projectCoordinatorSessionKey).toBe(sessionKey);
     if (await page.getByTestId('resource-popover-close').isVisible().catch(() => false)) {
       await page.getByTestId('resource-popover-close').click();
     }
@@ -495,7 +499,7 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
         },
         windowLifecycle,
         taskLedgerNavigation: { hash: taskLedgerHash, includesNodeId: taskLedgerHash.includes(`nodeId=${encodeURIComponent(task.id)}`) },
-        workerNavigation: { childSessionKey: worker.childSessionKey, sidebarSelected: true, returnedToCoordinator: true },
+        workerNavigation: { childSessionKey: worker.childSessionKey, workspaceReadback: workerSelection.activeWorkspace, sidebarSelected: true, returnedToCoordinator: true },
         locales,
         quietWindow: {
           durationMs: 2_500,

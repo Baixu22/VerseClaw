@@ -23,6 +23,7 @@ ownedPaths: &paths
   - openclaw_runtime/src/gateway/server-methods/session-active-runs.ts
   - openclaw_runtime/src/gateway/server-methods/sessions.workspace-binding.test.ts
   - src/components/chat/SessionFamilyNavigation.tsx
+  - src/components/chat/ResourceChip.tsx
   - src/components/layout/SessionFolderTree.tsx
   - src/components/task-ledger/TaskLedgerSummaryPanel.tsx
   - src/lib/workspace-session.ts
@@ -94,6 +95,8 @@ acceptance:
   - Replaced navigation and workspace selection are rejected before saving or activating the former source session.
   - Coordinator binding persists its paused workspace intent before Runtime or task selection effects; lost replies and failed activation writes recover the same revision and generation through the existing binding owner.
   - Empty task scope remains reachable, source navigation retains its timestamp, and family counts remain visible while expanded; all display text uses the existing four locales.
+  - Coordinator worker navigation uses the existing workspace session queue; the selected child is persisted without replacing the project coordinator anchor, and remains visible as the selected Sidebar row.
+  - Worker receipts without a child session key remain visible and cannot activate navigation; actual navigation errors use the existing coordinator alert.
 requiredTests:
   - pnpm exec vitest run tests/unit/checkpoints-dialog.test.tsx --maxWorkers=1
   - pnpm exec vitest run tests/unit/vite-config-openclaw-runtime.test.ts --maxWorkers=1
@@ -111,6 +114,7 @@ requiredTests:
   - pnpm run build:runtime
   - pnpm exec playwright test tests/e2e/chat-checkpoints.spec.ts tests/e2e/chat-manual-compaction.spec.ts tests/e2e/chat-session-compact-range.spec.ts tests/e2e/chat-session-handoff.spec.ts tests/e2e/long-session-completion-continuation.spec.ts tests/e2e/long-session-delegation-admission.spec.ts tests/e2e/long-session-lifecycle-faults.spec.ts tests/e2e/runtime-lifecycle-governance.spec.ts tests/e2e/project-agent-entry.spec.ts tests/e2e/session-task-scope-completion.spec.ts --workers=1
   - pnpm exec playwright test tests/e2e/session-context-recovery.spec.ts --workers=1
+  - pnpm exec playwright test tests/e2e/long-session-coordination.spec.ts --workers=1
   - pnpm harness validate --spec harness/specs/tasks/unified-acceptance-fixture-refresh.md
   - pnpm harness run --spec harness/specs/tasks/unified-acceptance-fixture-refresh.md --dry-run
 docs:
