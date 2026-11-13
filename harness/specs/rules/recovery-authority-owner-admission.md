@@ -60,8 +60,12 @@ budget to an older snapshot. Process evidence reads raw SQLite columns without
 schema repair and checks published peer claims against the same durable budget.
 Confirmed complete sends commit callbacks after durable applied truth, before
 Session reference cleanup; uncertain or partial sends do not run those callbacks.
-Every platform send rechecks the exact Session reply binding. Its lifecycle permit
-remains held through recovery callbacks and Session settlement. Core-proven failures
+Every platform send rechecks the exact Session reply binding. The permit uses the
+persisted outbound agent identity for global Session keys and remains held through
+live recovery callbacks and Session settlement. A retired reply reconciles its
+original queue truth without a new lifecycle notification; confirmed applied truth
+can settle through a reset/delete fence. A changed reply still referencing that
+intent retains its applied truth. Core-proven failures
 before platform entry retain not_applied truth and the already-consumed attempt;
 an error or absent output alone never clears an unknown outcome.
 Commit hooks are process-local best-effort notifications; applied restart recovery

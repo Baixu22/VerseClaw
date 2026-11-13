@@ -36,7 +36,7 @@
 
 投递进程验证使用原 Queue 与 Session SQLite、实际 PID 中断和 fsynced 本地效果日志，检查并发准入、派发前中断、效果后中断、未知答复保留与原 intent 结算。对账接管也原子绑定当前 PID/epoch；观察完成后释放原队列 claim，保持发送预算。初次入队或发送边界写入失败会停止平台发送。
 
-每次实际平台发送前重新核对 Session 待答复与 intent，生命周期 permit 覆盖恢复回调和引用结算。Core 确知尚未调用平台的预处理失败保留 `not_applied` 与已消耗预算；已开始的发送继续按未知效果对账。提交钩子是当前进程内的尽力通知，失败写日志；重启读取 applied 真值后直接结算原 intent。
+每次实际平台发送前重新核对 Session 待答复与 intent。permit 使用出站 Session 已保存的 agent 身份，支持 `global` 会话键，并覆盖有效答复的恢复回调和引用结算。过期答复沿原队列完成效果对账；已确认的 applied intent 可在旧世代被 reset/delete fence 后结算，仍引用该 intent 的不匹配答复保留 applied 真值。Core 确知尚未调用平台的预处理失败保留 `not_applied` 与已消耗预算；已开始的发送继续按未知效果对账。提交钩子是当前进程内的尽力通知，失败写日志；过期答复的对账和重启读取 applied 真值后的结算不重放回调。
 
 该命令使用 Session SQLite 和本地追加日志 fixture，执行并发领取、派发前 kill、效果写入后 kill 与对账回读，输出原始日志、源码哈希及 `report.json`。报告含实际 PID、尝试次数、效果计数和进程清理结果。
 

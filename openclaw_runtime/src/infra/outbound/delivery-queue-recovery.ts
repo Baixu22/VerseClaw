@@ -509,11 +509,23 @@ async function drainAdmittedQueuedEntry(
   let prepared: ReturnType<typeof admitQueuedDeliveryRecovery> | undefined;
   let entry = opts.entry;
   let releaseSessionPermit: (() => void) | undefined;
-  try {
-    if (entry.pendingFinalDelivery) {
+  const acquireReplyPermit = async () => {
+    if (entry.pendingFinalDelivery && !releaseSessionPermit) {
       const { acquirePendingFinalDeliveryPermit } =
         await import("../../agents/recovery-authority/final-delivery-session.js");
-      releaseSessionPermit = acquirePendingFinalDeliveryPermit(entry.pendingFinalDelivery);
+      releaseSessionPermit = acquirePendingFinalDeliveryPermit(
+        entry.pendingFinalDelivery,
+        entry.session?.agentId,
+      );
+    }
+  };
+  try {
+    const effect = queuedDeliveryEffect(entry);
+    if (entry.pendingFinalDelivery && effect !== "applied" && effect !== "reconciled") {
+      const { hasCurrentPendingFinalDelivery } =
+        await import("../../agents/recovery-authority/final-delivery-session.js");
+      if (await hasCurrentPendingFinalDelivery(entry.pendingFinalDelivery))
+        await acquireReplyPermit();
     }
     prepared = admitQueuedDeliveryRecovery(entry, opts.stateDir);
     if (!prepared) return "already-gone";
@@ -533,7 +545,12 @@ async function drainAdmittedQueuedEntry(
             : "unknown";
       const current = recordQueuedDeliveryEffect(entry, effect, opts.stateDir);
       if (!current) return "already-gone";
-      if (reconciliation?.status === "sent") {
+      // A retired Session cannot admit a new lifecycle notification. Its
+      // queue owner still reconciles and settles the confirmed platform effect.
+      if (
+        reconciliation?.status === "sent" &&
+        (!entry.pendingFinalDelivery || releaseSessionPermit)
+      ) {
         await runReconciledSentCommitHooks({
           entry: current,
           cfg: opts.cfg,
@@ -562,7 +579,8 @@ async function drainAdmittedQueuedEntry(
     }
     if (prepared.decision.kind === "settle") {
       // Commit hooks are process-local best-effort notifications. Applied
-      // restart recovery settles queue truth without replaying these callbacks.
+      // restart recovery settles queue truth without replaying these callbacks
+      // or requiring a permit from a fenced generation.
       if (!(await ackDelivery(entry.id, opts.stateDir, entry)))
         return (await loadPendingDelivery(entry.id, opts.stateDir)) ? "failed" : "already-gone";
       opts.onRecovered?.(entry);
@@ -599,6 +617,7 @@ async function drainAdmittedQueuedEntry(
         return "moved-to-failed";
       }
     }
+    await acquireReplyPermit();
     const boundary = recordQueuedDeliveryEffect(entry, "unknown", opts.stateDir);
     if (!boundary) return "already-gone";
     const result = await opts.deliver({

@@ -8,6 +8,7 @@ import {
   type SessionEntry,
   updateSessionStoreAtomic,
 } from "../../config/sessions.js";
+import { resolveSessionKey } from "../../config/sessions/session-key.js";
 import { pendingFinalDeliveryIdentity } from "../../agents/recovery-authority/final-delivery-session.js";
 import { closeOpenClawStateDatabase } from "../../state/openclaw-state-db.js";
 import { closeOpenClawAgentDatabasesForTest } from "../../state/openclaw-agent-db.js";
@@ -52,7 +53,7 @@ import {
 import { getRecoveryAdmissionIdentity } from "../../agents/recovery-authority/owner-admission.js";
 import { upsertDeliveryQueueEntry } from "../delivery-queue-sqlite.js";
 
-const key = "agent:main:final-session-proof";
+let key: string;
 const log = { info: vi.fn(), warn: vi.fn(), error: vi.fn() };
 let stateDir: string;
 let storePath: string;
@@ -68,7 +69,7 @@ function send() {
     channel: "telegram",
     to: "fixture-chat",
     payloads: [{ text: "original answer" }],
-    session: { key },
+    session: { key, agentId: "main" },
     durability: "required",
     deliveryQueueStateDir: stateDir,
     pendingFinalDelivery: {
@@ -104,6 +105,7 @@ async function failedSend() {
 
 describe("final Session reply bound to the original durable send intent", () => {
   beforeEach(async () => {
+    key = "agent:main:final-session-proof";
     stateDir = mkdtempSync(path.join(tmpdir(), "delivery-final-session-"));
     storePath = path.join(stateDir, "agents", "main", "sessions", "sessions.json");
     vi.stubEnv("OPENCLAW_STATE_DIR", stateDir);
@@ -153,6 +155,208 @@ describe("final Session reply bound to the original durable send intent", () => 
     expect(await loadPendingDeliveries(stateDir)).toEqual([]);
     expect(transport.send).toHaveBeenCalledOnce();
     expect(transport.commit).toHaveBeenCalledOnce();
+  });
+
+  it("delivers a global Session reply using its explicit outbound agent identity", async () => {
+    key = resolveSessionKey("global", { From: "fixture-chat" });
+    expect(key).toBe("global");
+    await updateSessionStoreAtomic(storePath, (store) => {
+      store[key] = original;
+    });
+    expect((await send()).status).toBe("sent");
+    expect(session().pendingFinalDeliveryText).toBeUndefined();
+    expect(await loadPendingDeliveries(stateDir)).toEqual([]);
+    expect(transport.send).toHaveBeenCalledOnce();
+    expect(transport.commit).toHaveBeenCalledOnce();
+  });
+
+  it("recovers a global Session reply using its persisted outbound agent identity", async () => {
+    key = resolveSessionKey("global", { From: "fixture-chat" });
+    await updateSessionStoreAtomic(storePath, (store) => {
+      store[key] = original;
+    });
+    const id = await enqueueDelivery(
+      {
+        channel: "telegram",
+        to: "fixture-chat",
+        payloads: [{ text: "original answer" }],
+        session: { key, agentId: "main" },
+        pendingFinalDelivery: {
+          storePath,
+          sessionKey: key,
+          expected: pendingFinalDeliveryIdentity(original),
+        },
+      },
+      stateDir,
+    );
+    expect((await recover()).recovered).toBe(1);
+    expect(await loadPendingDelivery(id, stateDir)).toBeNull();
+    expect(session().pendingFinalDeliveryText).toBeUndefined();
+    expect(transport.send).toHaveBeenCalledOnce();
+    expect(transport.commit).toHaveBeenCalledOnce();
+  });
+
+  it.each(["present", "deleted", "replaced"])(
+    "settles an applied intent for a fenced %s Session without another platform effect",
+    async (current) => {
+      const pending = await failedSend();
+      upsertDeliveryQueueEntry({
+        queueName: "outbound",
+        stateDir,
+        entry: { ...pending, recoveryEffect: "applied" },
+      });
+      const fence = await sessionAdmissionRegistry.fence({
+        agentId: "main",
+        canonicalSessionKey: key,
+        expectedSessionId: original.sessionId,
+      });
+      try {
+        if (current === "deleted") {
+          await updateSessionStoreAtomic(storePath, (store) => {
+            delete store[key];
+          });
+        } else if (current === "replaced") {
+          await replaceReply({
+            sessionId: "successor-session",
+            pendingFinalDeliveryText: "successor answer",
+            pendingFinalDeliveryRunId: "successor-run",
+            pendingFinalDeliveryIntentId: "successor-intent",
+          });
+        }
+        expect((await recover()).recovered).toBe(1);
+        expect(await loadPendingDelivery(pending.id, stateDir)).toBeNull();
+        expect(transport.send).toHaveBeenCalledOnce();
+        expect(transport.reconcile).not.toHaveBeenCalled();
+        expect(transport.commit).not.toHaveBeenCalled();
+        if (current === "present") {
+          expect(session().pendingFinalDeliveryText).toBeUndefined();
+        } else if (current === "replaced") {
+          expect(session()).toMatchObject({
+            sessionId: "successor-session",
+            pendingFinalDeliveryText: "successor answer",
+            pendingFinalDeliveryIntentId: "successor-intent",
+          });
+        }
+      } finally {
+        fence.release();
+      }
+    },
+  );
+
+  it("retains an unknown intent and its budget while its Session generation is fenced", async () => {
+    const pending = await failedSend();
+    const fence = await sessionAdmissionRegistry.fence({
+      agentId: "main",
+      canonicalSessionKey: key,
+      expectedSessionId: original.sessionId,
+    });
+    try {
+      await recover();
+      expect(await loadPendingDelivery(pending.id, stateDir)).toMatchObject({
+        recoveryEffect: "unknown",
+        retryCount: pending.retryCount,
+      });
+      expect(session().pendingFinalDeliveryText).toBe("original answer");
+      expect(transport.send).toHaveBeenCalledOnce();
+      expect(transport.reconcile).not.toHaveBeenCalled();
+      expect(transport.commit).not.toHaveBeenCalled();
+    } finally {
+      fence.release();
+    }
+  });
+
+  it("settles an applied intent when its Session is missing without a fence", async () => {
+    const pending = await failedSend();
+    upsertDeliveryQueueEntry({
+      queueName: "outbound",
+      stateDir,
+      entry: { ...pending, recoveryEffect: "applied" },
+    });
+    await updateSessionStoreAtomic(storePath, (store) => {
+      delete store[key];
+    });
+    expect((await recover()).recovered).toBe(1);
+    expect(await loadPendingDelivery(pending.id, stateDir)).toBeNull();
+    expect(transport.send).toHaveBeenCalledOnce();
+    expect(transport.commit).not.toHaveBeenCalled();
+  });
+
+  it.each(["sent", "not_sent", "unresolved"] as const)(
+    "reconciles an unknown intent for a deleted fenced Session as %s",
+    async (status) => {
+      const pending = await failedSend();
+      const fence = await sessionAdmissionRegistry.fence({
+        agentId: "main",
+        canonicalSessionKey: key,
+        expectedSessionId: original.sessionId,
+      });
+      try {
+        await updateSessionStoreAtomic(storePath, (store) => {
+          delete store[key];
+        });
+        transport.reconcile.mockResolvedValue({ status });
+        await recover();
+        const retained = await loadPendingDelivery(pending.id, stateDir);
+        if (status === "unresolved") {
+          expect(retained).toMatchObject({
+            recoveryEffect: "unknown",
+            retryCount: pending.retryCount,
+          });
+        } else if (status === "not_sent") {
+          expect(retained).toMatchObject({
+            recoveryEffect: "not_applied",
+            retryCount: pending.retryCount,
+          });
+          if (!retained) throw new Error("not-sent reconciliation lost its original intent");
+          upsertDeliveryQueueEntry({
+            queueName: "outbound",
+            stateDir,
+            entry: {
+              ...retained,
+              lastAttemptAt: Date.now() - computeBackoffMs(retained.retryCount + 1) - 1,
+            },
+          });
+          await recover();
+          expect(await loadPendingDelivery(pending.id, stateDir)).toBeNull();
+        } else {
+          expect(retained).toBeNull();
+        }
+        expect(transport.send).toHaveBeenCalledOnce();
+        expect(transport.reconcile).toHaveBeenCalledOnce();
+        expect(transport.commit).not.toHaveBeenCalled();
+        expect(session()).toBeUndefined();
+      } finally {
+        fence.release();
+      }
+    },
+  );
+
+  it("retains applied truth for an altered reply still referencing its fenced intent", async () => {
+    const pending = await failedSend();
+    upsertDeliveryQueueEntry({
+      queueName: "outbound",
+      stateDir,
+      entry: { ...pending, recoveryEffect: "applied" },
+    });
+    const fence = await sessionAdmissionRegistry.fence({
+      agentId: "main",
+      canonicalSessionKey: key,
+      expectedSessionId: original.sessionId,
+    });
+    try {
+      await replaceReply({ pendingFinalDeliveryText: "altered answer" });
+      await recover();
+      expect(await loadPendingDelivery(pending.id, stateDir)).toMatchObject({
+        recoveryEffect: "applied",
+        retryCount: pending.retryCount,
+      });
+      expect(session().pendingFinalDeliveryIntentId).toBe(pending.id);
+      expect(session().pendingFinalDeliveryText).toBe("altered answer");
+      expect(transport.send).toHaveBeenCalledOnce();
+      expect(transport.commit).not.toHaveBeenCalled();
+    } finally {
+      fence.release();
+    }
   });
 
   it("holds the live applied claim until commit callbacks and Session settlement finish", async () => {

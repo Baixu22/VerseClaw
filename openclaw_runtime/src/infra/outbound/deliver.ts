@@ -1390,7 +1390,10 @@ async function deliverOutboundPayloadsWithQueueCleanup(
     if (queuedEntry?.pendingFinalDelivery) {
       const { acquirePendingFinalDeliveryPermit } =
         await import("../../agents/recovery-authority/final-delivery-session.js");
-      releaseSessionPermit = acquirePendingFinalDeliveryPermit(queuedEntry.pendingFinalDelivery);
+      releaseSessionPermit = acquirePendingFinalDeliveryPermit(
+        queuedEntry.pendingFinalDelivery,
+        queuedEntry.session?.agentId,
+      );
     }
     const results = await deliverOutboundPayloadsCore({
       ...wrappedParams,

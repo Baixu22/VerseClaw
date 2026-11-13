@@ -25,9 +25,11 @@ export type PendingFinalDeliveryBinding = {
 /** Reset/delete waits for this exact reply generation through delivery settlement. */
 export function acquirePendingFinalDeliveryPermit(
   binding: PendingFinalDeliveryBinding,
+  agentId?: string,
 ): () => void {
   return acquireSessionAdmissionPermit(
     {
+      agentId,
       canonicalSessionKey: binding.sessionKey,
       expectedSessionId: binding.expected.sessionId,
     },
@@ -94,6 +96,36 @@ export function clearedPendingFinalDelivery(): Partial<SessionEntry> {
   };
 }
 
+function canBindPendingFinalDelivery(
+  current: SessionEntry | undefined,
+  expected: PendingFinalDeliveryIdentity,
+  intentId: string | undefined,
+): boolean {
+  return Boolean(
+    current &&
+    (hasSamePendingFinalDelivery(current, {
+      ...expected,
+      pendingFinalDeliveryIntentId: undefined,
+    }) ||
+      hasSamePendingFinalDelivery(current, {
+        ...expected,
+        pendingFinalDeliveryIntentId: intentId,
+      })),
+  );
+}
+
+/** A retired reply can reconcile queue truth without admitting its old lifecycle. */
+export async function hasCurrentPendingFinalDelivery(
+  binding: PendingFinalDeliveryBinding,
+): Promise<boolean> {
+  const { loadSessionStore } = await import("../../config/sessions/store.js");
+  return canBindPendingFinalDelivery(
+    loadSessionStore(binding.storePath, { skipCache: true })[binding.sessionKey],
+    binding.expected,
+    binding.expected.pendingFinalDeliveryIntentId,
+  );
+}
+
 export async function bindPendingFinalDeliveryIntent(params: {
   storePath: string;
   sessionKey: string;
@@ -108,19 +140,7 @@ export async function bindPendingFinalDeliveryIntent(params: {
   const { updateSessionStoreAtomic } = await import("../../config/sessions/store.js");
   return await updateSessionStoreAtomic(params.storePath, (store) => {
     const current = store[params.sessionKey];
-    if (
-      !current ||
-      !(
-        hasSamePendingFinalDelivery(current, {
-          ...params.expected,
-          pendingFinalDeliveryIntentId: undefined,
-        }) ||
-        hasSamePendingFinalDelivery(current, {
-          ...params.expected,
-          pendingFinalDeliveryIntentId: params.intent.id,
-        })
-      )
-    )
+    if (!current || !canBindPendingFinalDelivery(current, params.expected, params.intent.id))
       return false;
     current.pendingFinalDeliveryIntentId = params.intent.id;
     current.updatedAt = Date.now();
