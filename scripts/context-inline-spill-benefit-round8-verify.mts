@@ -49,7 +49,8 @@ try {
   const verified = json(out);
   verified.schema = "ContextInlineSpillRound8Verification/v1";
   verified.navigationFromVisibleInput = { frames: navigationFrames, fieldLocations, sourceInputsRecomputed: true,
-    oracleValuesCopied: false, baseInputBytesPreserved: true, toolCallsOrigin: "actual model function_call responses" };
+    oracleValuesCopied: false, baseInputBytesPreserved: true,
+    toolCallsOrigin: verified.mode === "live" ? "actual model function_call responses" : "deterministic scripted policy" };
   verified.round7EvidencePreserved = { files: oldFiles.length, sha256: freeze.round7Preservation.sha256,
     verdict: "NO_GO", failedBenefitGates: freeze.round7Preservation.failedBenefitGates };
   writeFileSync(out, JSON.stringify(verified, null, 2) + "\n");
