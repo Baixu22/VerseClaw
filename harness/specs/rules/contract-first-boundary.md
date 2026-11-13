@@ -29,6 +29,11 @@ Renderer/Main/Gateway/Runtime-facing features must declare or update their host-
   Comments and strings are not registrations. Every production JS/TS extension
   participates; an unresolved computed IPC method or a duplicate persistent
   `host:invoke` handler fails the existing `contract:check` entrypoint.
+- Fixture suites may use repeated `--fixture-batch <path>` arguments to evaluate
+  independent mutations against one source snapshot. Each case runs the same
+  checks, resets mutation state and reports its own exit code and diagnostics.
+  Batch reuse keys IPC parse results by exact source text; standalone parity and
+  malformed-fixture isolation remain regression requirements.
 
 ## Validation
 

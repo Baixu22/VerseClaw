@@ -4,7 +4,7 @@ import { execFile } from 'node:child_process';
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import {
   collectContractIssues,
   inlineModuleFacadeAliases,
@@ -502,6 +502,18 @@ describe('contract check: real gate entry (node scripts/contract-check.mjs)', ()
   const fixtures = readdirSync(`${ROOT}/${FIXTURE_DIR}`).filter((name) => name.endsWith('.json')).sort();
   const positiveFixtures = fixtures.filter((name) => JSON.parse(readFileSync(`${ROOT}/${FIXTURE_DIR}/${name}`, 'utf8')).expectCode === 0);
   const negativeFixtures = fixtures.filter((name) => !positiveFixtures.includes(name));
+  let batchResults: Map<string, Awaited<ReturnType<typeof runGate>>>;
+
+  beforeAll(async () => {
+    const result = await runGate(fixtures.flatMap((name) => ['--fixture-batch', `${FIXTURE_DIR}/${name}`]));
+    expect(result.code).toBe(1);
+    expect(result.stderr).toBe('');
+    const { results } = JSON.parse(result.stdout) as {
+      results: Array<Awaited<ReturnType<typeof runGate>> & { fixture: string }>;
+    };
+    expect(results.map((entry) => entry.fixture)).toEqual(fixtures.map((name) => `${FIXTURE_DIR}/${name}`));
+    batchResults = new Map(results.map((entry) => [entry.fixture, entry]));
+  }, 30_000);
 
   it('passes on the current repository without fixtures', async () => {
     const result = await runGate([]);
@@ -529,7 +541,7 @@ describe('contract check: real gate entry (node scripts/contract-check.mjs)', ()
 
   it.each(negativeFixtures)('rejects fixture %s through the real entry with a single locatable diagnostic', async (name) => {
     const fixture = JSON.parse(readFileSync(`${ROOT}/${FIXTURE_DIR}/${name}`, 'utf8'));
-    const result = await runGate(['--fixture', `${FIXTURE_DIR}/${name}`]);
+    const result = batchResults.get(`${FIXTURE_DIR}/${name}`)!;
     expect(result.code).toBe(1);
     expect(result.stdout).toBe('');
     expect(result.stderr).toContain(`Contract check fixtures applied: ${fixture.id}`);
@@ -541,7 +553,7 @@ describe('contract check: real gate entry (node scripts/contract-check.mjs)', ()
 
   it.each(positiveFixtures)('accepts fixture %s through the real entry without diagnostics', async (name) => {
     const fixture = JSON.parse(readFileSync(`${ROOT}/${FIXTURE_DIR}/${name}`, 'utf8'));
-    const result = await runGate(['--fixture', `${FIXTURE_DIR}/${name}`]);
+    const result = batchResults.get(`${FIXTURE_DIR}/${name}`)!;
     expect(result.code).toBe(0);
     expect(result.stdout.trim()).toBe('Contract check passed.');
     expect(result.stderr.trim()).toBe(`Contract check fixtures applied: ${fixture.id}`);
@@ -550,6 +562,23 @@ describe('contract check: real gate entry (node scripts/contract-check.mjs)', ()
   it.each(['ts', 'tsx', 'mts', 'cts', 'js', 'jsx', 'mjs', 'cjs'])('keeps virtual %s production probes off disk', (extension) => {
     expect(() => readFileSync(`${ROOT}/electron/contract-check-probe.${extension}`)).toThrow();
   });
+
+  it.concurrent.each([negativeFixtures[0], positiveFixtures[0]])('matches standalone and batch results for %s', async (name) => {
+    const path = `${FIXTURE_DIR}/${name}`;
+    const standalone = await runGate(['--fixture', path]);
+    const batched = batchResults.get(path)!;
+    expect(standalone).toEqual({ code: batched.code, stdout: batched.stdout, stderr: batched.stderr });
+  }, 30_000);
+
+  it('keeps a broken batch fixture separate from the next valid case', async () => {
+    const path = `${FIXTURE_DIR}/${positiveFixtures[0]}`;
+    const result = await runGate(['--fixture-batch', `${FIXTURE_DIR}/does-not-exist.json`, '--fixture-batch', path]);
+    expect(result.code).toBe(2);
+    const { results } = JSON.parse(result.stdout);
+    expect(results[0].code).toBe(2);
+    expect(results[0].stderr).toContain('Contract check fixture error:');
+    expect(results[1]).toEqual(batchResults.get(path));
+  }, 30_000);
 
   it('distinguishes a broken fixture (exit 2) from a gate failure (exit 1)', async () => {
     const result = await runGate(['--fixture', `${FIXTURE_DIR}/does-not-exist.json`]);

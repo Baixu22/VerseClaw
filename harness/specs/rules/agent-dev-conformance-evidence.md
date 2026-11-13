@@ -35,6 +35,11 @@ Agent Dev feature work must produce machine-readable evidence for scaffolds, sce
 - Built E2E loops should expose a no-build command such as `pnpm run test:e2e:agent-dev-quality:run` so repeated local diagnostics can reuse a fresh Vite/Electron build instead of hiding the build cost inside every Playwright run.
 - Deep diagnostics should be repeatable via `pnpm agent-dev:deep-test`, with machine-readable timing, separate build/runtime bottlenecks, and a quality report under `artifacts/agent-dev-quality/` for Workbench indexing.
 - The root typecheck gate must fail when node, web, or test typechecking fails. Cached checks must include test sources and imported runtime/package sources in their fingerprint; observation-only test failures must never produce a successful full gate.
+- Uncached typechecking compiles every project directly and omits the unused
+  cache fingerprint scan. Cached runs still hash all declared source inputs and
+  invalidate previous success after test or runtime dependency changes.
+  Node and web compile together; the test project follows them to bound peak
+  compiler memory while retaining all three results in the same gate.
 
 ## Validation
 
