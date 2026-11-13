@@ -89,3 +89,6 @@ harness/specs/fixtures/context-inline-spill-benefit-round9/** -text whitespace=-
 # Keep the runner's existing CRLF format visible to whitespace checks.
 scripts/context-inline-spill-benefit-loop-eval.mts whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 docs/modules/context-and-memory.md whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# G7 closeout manifests retain command output bytes, including Windows CRLF.
+harness/specs/fixtures/context-inline-spill-g7-closeout/** -text

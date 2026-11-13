@@ -40,3 +40,6 @@ G7完整Git历史已导入主仓库，并封存于D:/ClawX-archives/g7-inline-sp
 恢复索引在同归档目录raw-evidence-index.json，压缩包全部成员重新读取且SHA256一致。
 临时检出在clean、无占用且Git历史和唯一产物可恢复后清理；Task Forest历史保持本地。
 生产recall默认值、产品锁和发布状态保持原样。
+
+main回读发现新收尾包4份Windows日志被text规则转换换行。新目录追加-text字节锁后，
+从保留的原字节重新入库；原清单SHA256SUMS保持，历史第九轮与其它包均匹配。
