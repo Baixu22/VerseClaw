@@ -1,0 +1,58 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "deterministic",
+  "cwd": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c",
+  "command": [
+    "node",
+    "openclaw_runtime/node_modules/tsx/dist/cli.mjs",
+    "scripts/context-inline-spill-benefit-loop-eval.mts",
+    "--mode",
+    "deterministic",
+    "--out",
+    "D:/tmp/g7-inline-spill-benefit-round6",
+    "--repeats",
+    "1",
+    "--max-turns",
+    "8",
+    "--max-output-tokens",
+    "900",
+    "--freeze",
+    "harness/specs/fixtures/context-inline-spill-benefit-round6/design.freeze.json",
+    "--actor",
+    "codex-g7-inline-spill-tf0749-01a1d34c"
+  ],
+  "startedAt": "2026-11-13T06:05:50.593Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "1ad696a8fc7089b0e9a658d65b6b144b58506ea0",
+    "tree": "48420c07cd0d4ee5982c21b91c5c15bfc363f2ef",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "finishedAt": "2026-11-13T06:06:32.109Z",
+  "exitCode": 1,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "1ad696a8fc7089b0e9a658d65b6b144b58506ea0",
+    "tree": "48420c07cd0d4ee5982c21b91c5c15bfc363f2ef",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-inline-spill-tf0749-20261113-01a1d34c\\checks\\deterministic.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-inline-spill-tf0749-20261113-01a1d34c\\checks\\deterministic.stderr.txt",
+      "bytes": 221,
+      "sha256": "56950a9500e0df4e073622167bfe0f724d69224a94b92e99d61ef93a0e7d8d43"
+    }
+  }
+}

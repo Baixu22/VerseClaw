@@ -1,0 +1,81 @@
+{
+  "schema": "G7PreparationRecord/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "source": "tool execution results; runtime gate evidence is in commands.json",
+  "commands": [
+    {
+      "command": "git status --short --branch; git log -5 --oneline",
+      "cwd": "C:/Users/27933/.codex/worktrees/windows-inline-closeout/ClawX",
+      "exitCode": 0,
+      "head": "fcfd0721129c935df94a501ee4858622c38fa497",
+      "dirty": false
+    },
+    {
+      "command": "git clone --shared --no-checkout <round5-source> <own-D-checkout>",
+      "exitCode": 0
+    },
+    {
+      "command": "git checkout -b codex/g7-inline-spill-tf0749-20261113 fcfd0721129c935df94a501ee4858622c38fa497",
+      "exitCode": 0,
+      "filenameTooLongPaths": 8
+    },
+    {
+      "command": "git config --local core.longpaths true; git checkout-index -- <each missing checkout path>",
+      "exitCode": 0,
+      "createdOnlyMissingPaths": 8
+    },
+    {
+      "command": "pnpm harness context --spec harness/specs/tasks/inline-spill-real-benefit-eval-round5.md",
+      "exitCode": 1,
+      "reason": "pnpm automatic dependency repair aborted without TTY; shared dependency files preserved"
+    },
+    {
+      "command": "pnpm --config.verify-deps-before-run=false harness context --spec harness/specs/tasks/inline-spill-real-benefit-eval-round5.md",
+      "exitCode": 0
+    },
+    {
+      "command": "python prepare-design.py (initial byte comparison)",
+      "exitCode": 1,
+      "reason": "fresh-checkout LF differed from original CRLF evidence; original files remained unchanged"
+    },
+    {
+      "command": "copy exact round5 bytes to own checkout; python prepare-design.py",
+      "exitCode": 0,
+      "originalFilesPreserved": 32
+    },
+    {
+      "command": "python finish-preservation.py",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check (initial runner EOL validation)",
+      "exitCode": 2,
+      "reason": "CRLF whitespace handling; fixed before candidate execution"
+    },
+    {
+      "command": "node --check <round5-verifier/round5-recompute/round6-verifier>",
+      "exitCodes": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "command": "git commit design",
+      "exitCode": 0,
+      "head": "ab8605136618bd021c1cf8772c18aac92dd83411"
+    },
+    {
+      "command": "git commit clean candidate",
+      "exitCode": 0,
+      "head": "1ad696a8fc7089b0e9a658d65b6b144b58506ea0"
+    },
+    {
+      "command": "git commit raw Git blob comparison",
+      "exitCode": 0,
+      "head": "eb93671ab02bbae44b4e8981b3d68aeb3c98e438"
+    }
+  ]
+}

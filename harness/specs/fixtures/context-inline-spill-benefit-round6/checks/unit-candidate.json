@@ -1,0 +1,56 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "unit-candidate",
+  "cwd": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+    "--config.verify-deps-before-run=false",
+    "exec",
+    "vitest",
+    "run",
+    "tests/unit/context-inline-spill-benefit-clean-candidate.test.ts",
+    "tests/unit/context-inline-spill-benefit-input.test.ts",
+    "tests/unit/context-inline-spill-benefit-scoring.test.ts",
+    "tests/unit/context-inline-spill-retention.test.ts",
+    "tests/unit/context-inline-spill-eval-provider.test.ts",
+    "--maxWorkers=1",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile.json=D:/tmp/g7-inline-spill-tf0749-20261113-01a1d34c/unit-candidate-results.json"
+  ],
+  "startedAt": "2026-11-13T06:17:58.388Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "eb93671ab02bbae44b4e8981b3d68aeb3c98e438",
+    "tree": "888122eb7ee5be928d3c09c50dc3d998a81e40d3",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "finishedAt": "2026-11-13T06:18:53.962Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "eb93671ab02bbae44b4e8981b3d68aeb3c98e438",
+    "tree": "888122eb7ee5be928d3c09c50dc3d998a81e40d3",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-inline-spill-tf0749-20261113-01a1d34c\\checks\\unit-candidate.stdout.txt",
+      "bytes": 1183,
+      "sha256": "e96b71b2a17ef7949e06c5fbb261d19ab474b2459cee5014806fe41886614431"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-inline-spill-tf0749-20261113-01a1d34c\\checks\\unit-candidate.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

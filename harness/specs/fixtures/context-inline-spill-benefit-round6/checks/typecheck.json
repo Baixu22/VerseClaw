@@ -1,0 +1,34 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "typecheck",
+  "cwd": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+    "--config.verify-deps-before-run=false",
+    "run",
+    "typecheck"
+  ],
+  "startedAt": "2026-11-13T05:56:42.145Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "finishedAt": "2026-11-13T05:57:17.867Z",
+  "exitCode": 1,
+  "signal": null,
+  "error": null,
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-inline-spill-tf0749-20261113-01a1d34c\\checks\\typecheck.stdout.txt",
+      "bytes": 4164,
+      "sha256": "6b2dea7c9f072fd0496f06eaab59bd1b16d7e7527e923b7cb953985152d8e8bd"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-inline-spill-tf0749-20261113-01a1d34c\\checks\\typecheck.stderr.txt",
+      "bytes": 150,
+      "sha256": "1c03bb7b84acf5976682a98849c968453916f0c93004f0b512e3766d0de6c5b8"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "context-round6",
+  "cwd": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+    "--config.verify-deps-before-run=false",
+    "harness",
+    "context",
+    "--spec",
+    "harness/specs/tasks/inline-spill-real-benefit-eval-round6.md"
+  ],
+  "startedAt": "2026-11-13T05:42:50.902Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "finishedAt": "2026-11-13T05:42:53.294Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-inline-spill-tf0749-20261113-01a1d34c\\checks\\context-round6.stdout.txt",
+      "bytes": 2025,
+      "sha256": "11e95f56d2740b88592c03c0861dc8aebd31d7f2011735e1bdecc822a026db83"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-inline-spill-tf0749-20261113-01a1d34c\\checks\\context-round6.stderr.txt",
+      "bytes": 233,
+      "sha256": "8ee1127545dcafa9adfc117a471593d5f7a91203493ddb178bdaae1cab12f3bc"
+    }
+  }
+}
