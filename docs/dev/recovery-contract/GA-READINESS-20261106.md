@@ -24,7 +24,15 @@
 
 进程验证命令：
 
+最终投递沿用 `delivery_queue_entries` 的原 intent。队列原子提交恢复决定、已消耗尝试与 owner 身份，并保存 Session 待答复的准确引用；发送前绑定 intent，确认应用后先结算或确认替换该引用，再删除队列行。Session 仍引用同一 intent 但身份不匹配时，保留 applied 队列记录。后来产生的答复由 Session 代次、生产运行、文本、创建时间、路由与 intent 校验保护。
+
+未知或部分发送保留文本与 intent；渠道 owner 确认未发送后，仍按原五次上限与退避执行。已经应用的发送只结算，效果未知时预算耗尽也保留对账状态。切回 legacy 后保留这些已存入队列的统一恢复记录；新 legacy 发送继续沿原路径处理。
+
 `node scripts/recovery-owner-process-proof.mjs --out <fresh-output-directory>`
+
+`node scripts/recovery-delivery-process-proof.mjs --out <fresh-output-directory>`
+
+投递进程验证使用原 Queue 与 Session SQLite、实际 PID 中断和 fsynced 本地效果日志，检查并发准入、派发前中断、效果后中断、未知答复保留与原 intent 结算。对账接管也原子绑定当前 PID/epoch；观察完成后释放原队列 claim，保持发送预算。初次入队或发送边界写入失败会停止平台发送。
 
 该命令使用 Session SQLite 和本地追加日志 fixture，执行并发领取、派发前 kill、效果写入后 kill 与对账回读，输出原始日志、源码哈希及 `report.json`。报告含实际 PID、尝试次数、效果计数和进程清理结果。
 

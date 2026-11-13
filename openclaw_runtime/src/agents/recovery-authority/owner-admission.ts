@@ -134,6 +134,7 @@ export function prepareOwnerRecoveryAdmission(
   if (
     saved &&
     ["pending", "accepted", "reconcile"].includes(saved.state) &&
+    ["resume", "replay", "deliver"].includes(saved.decision.kind) &&
     !settledEffect &&
     !stoppedUnstartedOwner
   ) {

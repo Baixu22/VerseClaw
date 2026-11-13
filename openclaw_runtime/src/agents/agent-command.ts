@@ -28,6 +28,12 @@ import {
 } from "../infra/agent-events.js";
 import { persistGatewaySessionLifecycleEvent } from "../gateway/session-lifecycle-state.js";
 import { isRecoveryAuthorityEnabled } from "./recovery-authority/owner-admission.js";
+import {
+  clearedPendingFinalDelivery,
+  hasSamePendingFinalDelivery,
+  pendingFinalDeliveryIdentity,
+  type PendingFinalDeliveryIdentity,
+} from "./recovery-authority/final-delivery-session.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import {
   resolveAgentDeliveryPlan,
@@ -398,16 +404,7 @@ async function persistSessionEntry(
 function clearPendingFinalDeliveryFields(entry: SessionEntry, updatedAt: number): SessionEntry {
   return {
     ...entry,
-    pendingFinalDelivery: undefined,
-    pendingFinalDeliveryText: undefined,
-    pendingFinalDeliveryRunId: undefined,
-    pendingFinalDeliveryRecoveryRunId: undefined,
-    pendingFinalDeliveryCreatedAt: undefined,
-    pendingFinalDeliveryLastAttemptAt: undefined,
-    pendingFinalDeliveryAttemptCount: undefined,
-    pendingFinalDeliveryLastError: undefined,
-    pendingFinalDeliveryContext: undefined,
-    pendingFinalDeliveryIntentId: undefined,
+    ...clearedPendingFinalDelivery(),
     updatedAt,
   };
 }
@@ -2156,6 +2153,7 @@ async function agentCommandInternal(
 
       const payloads = result.payloads ?? [];
       let pendingFinalDeliveryTextForThisRun: string | undefined;
+      let pendingFinalDeliveryForThisRun: PendingFinalDeliveryIdentity | undefined;
 
       // Phase 2: Persist pending final delivery for main sessions before attempting delivery.
       // This ensures that if the process restarts during delivery, the payload is durable.
@@ -2184,6 +2182,7 @@ async function agentCommandInternal(
             pendingFinalDeliveryText: combinedPayload,
             pendingFinalDeliveryRunId: runId,
             pendingFinalDeliveryRecoveryRunId: undefined,
+            pendingFinalDeliveryIntentId: undefined,
             pendingFinalDeliveryContext: currentRunDeliveryContext,
             pendingFinalDeliveryCreatedAt: now,
             updatedAt: now,
@@ -2197,6 +2196,7 @@ async function agentCommandInternal(
               shouldPersistCurrentRunSessionCleanup(current, effectiveSessionId),
           });
           sessionEntry = persisted ?? sessionEntry;
+          if (persisted) pendingFinalDeliveryForThisRun = pendingFinalDeliveryIdentity(persisted);
         }
       }
 
@@ -2226,6 +2226,15 @@ async function agentCommandInternal(
         sessionEntry,
         result,
         payloads,
+        ...(isRecoveryAuthorityEnabled() && pendingFinalDeliveryForThisRun && sessionKey
+          ? {
+              pendingFinalDelivery: {
+                storePath,
+                sessionKey,
+                expected: pendingFinalDeliveryForThisRun,
+              },
+            }
+          : {}),
       };
       const deliveryResult = await deliverAgentCommandResult(
         resolveFreshSessionEntryForDelivery
@@ -2258,7 +2267,14 @@ async function agentCommandInternal(
             storePath,
             entry: next,
             shouldPersist: (current) =>
-              shouldPersistCurrentRunSessionCleanup(current, effectiveSessionId),
+              shouldPersistCurrentRunSessionCleanup(current, effectiveSessionId) &&
+              Boolean(
+                current &&
+                (pendingFinalDeliveryForThisRun
+                  ? hasSamePendingFinalDelivery(current, pendingFinalDeliveryForThisRun)
+                  : current.pendingFinalDeliveryRunId === runId &&
+                    !current.pendingFinalDeliveryText),
+              ),
           });
           sessionEntry = persisted ?? sessionEntry;
         }

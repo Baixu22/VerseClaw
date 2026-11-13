@@ -523,6 +523,7 @@ describe("RC-02R CLI entry (bounded bootstrap)", () => {
     "subagent-retry",
     "omitted-file",
     "pending-delivery",
+    "pending-delivery-replaced",
   ])(
     "persists a native compaction successor before retries (path=%s)",
     async (pathKind) => {
@@ -530,7 +531,7 @@ describe("RC-02R CLI entry (bounded bootstrap)", () => {
       const primaryProbe = pathKind === "primary-probe" || pathKind === "legacy-primary-probe";
       const subagent = pathKind === "subagent-retry";
       const omittedFile = pathKind === "omitted-file";
-      const pendingDelivery = pathKind === "pending-delivery";
+      const pendingDelivery = pathKind.startsWith("pending-delivery");
       const authority = !pathKind.startsWith("legacy-");
       vi.stubEnv("OPENCLAW_RECOVERY_AUTHORITY_MODE", authority ? "authority" : "legacy");
       const root = tempRoots.at(-1)!;
@@ -680,18 +681,35 @@ describe("RC-02R CLI entry (bounded bootstrap)", () => {
       }) as typeof fetch;
       const deliveryModule = pendingDelivery ? await import("./command/delivery.js") : undefined;
       const deliverSpy = deliveryModule
-        ? vi.spyOn(deliveryModule, "deliverAgentCommandResult").mockImplementation(async () => {
-            expect(
-              loadSessionStore(resolveStorePath(undefined, { agentId: "main" }), {
-                skipCache: true,
-              })[sessionKey],
-            ).toMatchObject({
-              sessionId: successor,
-              pendingFinalDelivery: true,
-              pendingFinalDeliveryText: "ok",
-            });
-            return { deliverySucceeded: true } as never;
-          })
+        ? vi
+            .spyOn(deliveryModule, "deliverAgentCommandResult")
+            .mockImplementation(async (params) => {
+              expect(
+                loadSessionStore(resolveStorePath(undefined, { agentId: "main" }), {
+                  skipCache: true,
+                })[sessionKey],
+              ).toMatchObject({
+                sessionId: successor,
+                pendingFinalDelivery: true,
+                pendingFinalDeliveryText: "ok",
+              });
+              expect(params.pendingFinalDelivery?.expected.sessionId).toBe(successor);
+              if (pathKind === "pending-delivery-replaced") {
+                await updateSessionStoreAtomic(
+                  resolveStorePath(undefined, { agentId: "main" }),
+                  (sessions) => {
+                    Object.assign(sessions[sessionKey], {
+                      pendingFinalDelivery: true,
+                      pendingFinalDeliveryText: "newer pending answer",
+                      pendingFinalDeliveryRunId: "newer-producer-run",
+                      pendingFinalDeliveryIntentId: "newer-intent",
+                      pendingFinalDeliveryCreatedAt: Date.now(),
+                    });
+                  },
+                );
+              }
+              return { deliverySucceeded: true } as never;
+            })
         : undefined;
       try {
         await agentCommand({
@@ -736,7 +754,16 @@ describe("RC-02R CLI entry (bounded bootstrap)", () => {
           const completed = loadSessionStore(resolveStorePath(undefined, { agentId: "main" }), {
             skipCache: true,
           })[sessionKey];
-          expect(completed.pendingFinalDelivery).toBeUndefined();
+          if (pathKind === "pending-delivery-replaced") {
+            expect(completed).toMatchObject({
+              pendingFinalDelivery: true,
+              pendingFinalDeliveryText: "newer pending answer",
+              pendingFinalDeliveryRunId: "newer-producer-run",
+              pendingFinalDeliveryIntentId: "newer-intent",
+            });
+          } else {
+            expect(completed.pendingFinalDelivery).toBeUndefined();
+          }
           expect(completed.restartRecoveryDeliveryContext).toBeUndefined();
         }
         if (primaryProbe) {

@@ -40,6 +40,20 @@ Unknown owner outcomes retain their registry row through terminal callbacks and
 cold-start pruning. Usage history is not a generation transfer: ordinary session
 rotations clear prior recovery ownership; compaction explicitly preserves it.
 
+Final delivery binds the exact pending Session reply to the existing queue intent
+before platform send. The queue commits its decision and consumed attempt together,
+then clears or confirms replacement of that Session reference before deleting a
+confirmed applied intent. An altered reply still referencing the same intent
+retains its applied queue truth until that reference is settled or replaced.
+Reply replacement clears the old intent reference; settlement checks the Session,
+producer, text, creation time, route and intent again. Unknown and partial sends
+remain pending after rollback or budget exhaustion. A not-sent reconciliation
+preserves the owner's existing backoff before consuming another dispatch attempt.
+Reconciliation commits its current PID/epoch and holds the original queue claim
+until the observation finishes, then releases it without consuming a send attempt.
+Authority sends cannot downgrade an initial queue or ownership write failure to
+best-effort delivery; the platform send must stop before effects.
+
 The default stays legacy. Read-only shadow never mutates an owner. One authority
 mode gate controls all five entry points and supports rollback. Frozen product
 locks and evaluation thresholds remain unchanged; a clean focused check is not GA.

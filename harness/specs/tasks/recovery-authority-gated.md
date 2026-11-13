@@ -69,11 +69,14 @@ touchedAreas:
   - openclaw_runtime/packages/gateway-protocol/src/schema/agent.workspace.test.ts
   - openclaw_runtime/src/plugins/session-entry-slot-keys.ts
   - openclaw_runtime/src/infra/outbound/**
+  - openclaw_runtime/src/infra/delivery-queue-sqlite.ts
   - tests/unit/recovery-authority*.test.ts
   - tests/unit/session-lifecycle-generation-barrier.test.ts
   - tests/e2e/recovery*.spec.ts
   - scripts/recovery*.mjs
   - scripts/recovery-owner-process-proof-child.mts
+  - scripts/recovery-delivery-process-proof-child.mts
+  - docs/modules/resources-and-observability.md
   - docs/dev/recovery-contract/**
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/**
   - scripts/repository-artifacts.json
@@ -81,6 +84,7 @@ touchedAreas:
   - README.md
   - README.zh-CN.md
   - README.ja-JP.md
+  - README.ru-RU.md
 requiredProfiles:
   - fast
   - comms
@@ -110,6 +114,10 @@ requiredTests:
   - openclaw_runtime/src/agents/subagent-registry-run-manager.recovery.test.ts
   - openclaw_runtime/src/config/sessions.owner-admission.test.ts
   - openclaw_runtime/src/agents/main-session-restart-recovery.flow.test.ts
+  - openclaw_runtime/src/agents/rc02-cli-entry.acceptance.test.ts
+  - openclaw_runtime/src/infra/outbound/delivery-recovery.flow.test.ts
+  - openclaw_runtime/src/infra/outbound/delivery-final-session.flow.test.ts
+  - node scripts/recovery-delivery-process-proof.mjs
   - openclaw_runtime/src/agents/goal-wake-recovery.test.ts
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
@@ -124,6 +132,8 @@ acceptance:
   - Goal-wake remains level-triggered and never respawns an uncertain durable helper; task terminal state and the wait reconciliation remain idempotent after restart.
   - ACP observed output prevents a fresh turn, and an early backend exit without effect truth is not treated as proof that no effect occurred.
   - Final delivery reuses the existing durable send owner and intent; pending text is preserved when the outcome is uncertain.
+  - Final-delivery reconciliation binds and releases one current PID/epoch in the original queue without consuming a dispatch attempt; an uncertain or failed observation remains recoverable.
+  - Authority queue write failures stop the platform send, and applied queue truth remains while an unmatched Session still references that intent.
   - A single authority-mode switch restores legacy behavior; no product default, product lock, frozen workload, retry limit, or acceptance threshold is relaxed.
   - A clean source candidate, production-path tests, fresh structured autoreview, source-bound artifacts, hash verification, and zero credential scan hits precede node closure.
   - GA readiness requires the unchanged five windows, at least three repeats per window, at least thirty live-provider pairs, nine passing frozen metrics, baseline repeat consistency, and required full source/package gates; incomplete evidence stays NO-GO.

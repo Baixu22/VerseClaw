@@ -173,6 +173,12 @@ Shed 原因：
 - stop 后再次尝试；
 - task/Task Ledger 真相不因清理失败而被重置。
 
+### 自动恢复与最终答复投递
+
+`OPENCLAW_RECOVERY_AUTHORITY_MODE=authority` 将最终投递的恢复准入接到原 `delivery_queue_entries`。队列行保存决定、已消耗尝试、owner 身份和 Session 待答复引用；发送前完成 intent 绑定。
+
+已确认应用的发送只结算。未知结果保留原文本与 intent，等待渠道 owner 对账；确认未发送后，继续遵守原五次上限与退避时间。Session 清理核对生产运行、代次、文本、创建时间和 intent，保留后来产生的答复；仍引用旧 intent 的不匹配答复保留 applied 队列记录。对账使用原队列的 PID/epoch claim，观察完成后释放，入队和发送边界写入失败时停止发送。切回 legacy 后，已保存的统一恢复 intent 继续按原效果真相处理。
+
 ## 8. 会话/渲染资源上限
 
 `shared/agent-resource-limits.ts`：

@@ -1,6 +1,9 @@
 // Outbound delivery core runs plugin hooks, queue durability, channel adapter
 // sends, commit hooks, diagnostics, transcript mirroring, and payload outcomes.
 import { resolveChunkMode, resolveTextChunkLimit } from "../../auto-reply/chunk.js";
+import type { RecoveryAdmissionIdentity } from "../../../../shared/recovery-authority/contract.js";
+import { isRecoveryAuthorityEnabled } from "../../agents/recovery-authority/owner-admission.js";
+import type { PendingFinalDeliveryBinding } from "../../agents/recovery-authority/final-delivery-session.js";
 import { runReplyPayloadSendingHook } from "../../auto-reply/reply/reply-payload-sending-hook.js";
 import type { ReplyPayload } from "../../auto-reply/types.js";
 import { createRenderedMessageBatchPlan } from "../../channels/message/rendered-batch.js";
@@ -65,11 +68,14 @@ import {
   ackDelivery,
   enqueueDelivery,
   failDelivery,
+  loadPendingDelivery,
   markDeliveryPlatformOutcomeUnknown,
+  markDeliveryPlatformOutcomeApplied,
   markDeliveryPlatformSendAttemptStarted,
   type QueuedReplyPayloadSendingHook,
   type QueuedRenderedMessageBatchPlan,
   withActiveDeliveryClaim,
+  usesQueuedDeliveryAuthority,
 } from "./delivery-queue.js";
 import type { OutboundDeliveryFormattingOptions } from "./formatting.js";
 import type { OutboundIdentity } from "./identity.js";
@@ -601,12 +607,15 @@ const isDeliveryAbortError = (err: unknown): boolean =>
 async function markQueuedPlatformSendAttemptStarted(params: {
   queueId: string;
   queuePolicy: OutboundDeliveryQueuePolicy;
+  stateDir?: string;
+  admission?: RecoveryAdmissionIdentity;
 }): Promise<boolean> {
   try {
-    await markDeliveryPlatformSendAttemptStarted(params.queueId);
+    await markDeliveryPlatformSendAttemptStarted(params.queueId, params.stateDir, params.admission);
     return true;
   } catch (err: unknown) {
-    if (params.queuePolicy === "required") {
+    // Best-effort payload delivery cannot waive the committed recovery owner's fence.
+    if (params.queuePolicy === "required" || params.admission) {
       throw err;
     }
     log.warn(
@@ -619,11 +628,13 @@ async function markQueuedPlatformSendAttemptStarted(params: {
 async function markQueuedPlatformOutcomeUnknown(params: {
   queueId: string;
   queuePolicy: OutboundDeliveryQueuePolicy;
+  stateDir?: string;
+  admission?: RecoveryAdmissionIdentity;
 }): Promise<void> {
   try {
-    await markDeliveryPlatformOutcomeUnknown(params.queueId);
+    await markDeliveryPlatformOutcomeUnknown(params.queueId, params.stateDir, params.admission);
   } catch (err: unknown) {
-    if (params.queuePolicy === "required") {
+    if (params.queuePolicy === "required" || params.admission) {
       throw err;
     }
     log.warn(
@@ -678,7 +689,12 @@ export type DeliverOutboundPayloadsParams = DeliverOutboundPayloadsCoreParams & 
   deferCommitHooks?: boolean;
   queuePolicy?: OutboundDeliveryQueuePolicy;
   renderedBatchPlan?: QueuedRenderedMessageBatchPlan;
-  onDeliveryIntent?: (intent: OutboundDeliveryIntent) => void;
+  onDeliveryIntent?: (intent: OutboundDeliveryIntent) => Promise<void> | void;
+  /** Recovery reuses the existing intent and defers acknowledgement to its owner. */
+  deliveryQueueId?: string;
+  deliveryQueueStateDir?: string;
+  recoveryAdmission?: RecoveryAdmissionIdentity;
+  pendingFinalDelivery?: PendingFinalDeliveryBinding;
 };
 
 type MessageSentEvent = {
@@ -1256,45 +1272,77 @@ export async function deliverOutboundPayloadsInternal(
 
   // Write-ahead delivery queue: persist before sending, remove after success.
   const queueId = params.skipQueue
-    ? null
-    : await enqueueDelivery({
-        channel,
-        to,
-        accountId: params.accountId,
-        payloads: queuePayloads,
-        renderedBatchPlan: queueRenderedBatchPlan,
-        threadId: params.threadId,
-        replyToId: params.replyToId,
-        replyToMode: params.replyToMode,
-        formatting: params.formatting,
-        identity: params.identity,
-        bestEffort: params.bestEffort,
-        gifPlayback: params.gifPlayback,
-        forceDocument: params.forceDocument,
-        replyPayloadSendingHook: params.replyPayloadSendingHook,
-        silent: params.silent,
-        mirror: params.mirror,
-        session: params.session,
-        gatewayClientScopes: params.gatewayClientScopes,
-      }).catch((err: unknown) => {
-        if (queuePolicy === "required") {
+    ? (params.deliveryQueueId ?? null)
+    : await enqueueDelivery(
+        {
+          channel,
+          to,
+          accountId: params.accountId,
+          payloads: queuePayloads,
+          renderedBatchPlan: queueRenderedBatchPlan,
+          threadId: params.threadId,
+          replyToId: params.replyToId,
+          replyToMode: params.replyToMode,
+          formatting: params.formatting,
+          identity: params.identity,
+          bestEffort: params.bestEffort,
+          gifPlayback: params.gifPlayback,
+          forceDocument: params.forceDocument,
+          replyPayloadSendingHook: params.replyPayloadSendingHook,
+          silent: params.silent,
+          mirror: params.mirror,
+          session: params.session,
+          gatewayClientScopes: params.gatewayClientScopes,
+          pendingFinalDelivery: params.pendingFinalDelivery,
+        },
+        params.deliveryQueueStateDir,
+        { activeSend: true },
+      ).catch((err: unknown) => {
+        if (
+          queuePolicy === "required" ||
+          isRecoveryAuthorityEnabled() ||
+          params.recoveryAdmission ||
+          params.pendingFinalDelivery
+        ) {
           throw err;
         }
         return null;
-      }); // Best-effort delivery falls back to direct send if the queue write fails.
+      }); // Legacy best-effort sends can proceed without a queue intent.
 
   if (queueId) {
-    params.onDeliveryIntent?.({
+    const intent: OutboundDeliveryIntent = {
       id: queueId,
       channel,
       to,
       ...(params.accountId ? { accountId: params.accountId } : {}),
       queuePolicy,
-    });
+    };
+    try {
+      if (params.pendingFinalDelivery && !params.skipQueue) {
+        const { bindPendingFinalDeliveryIntent } =
+          await import("../../agents/recovery-authority/final-delivery-session.js");
+        const bound = await bindPendingFinalDeliveryIntent({
+          ...params.pendingFinalDelivery,
+          intent,
+        });
+        if (!bound) {
+          await ackDelivery(queueId, params.deliveryQueueStateDir);
+          throw new Error("final delivery no longer owns its pending reply");
+        }
+      }
+      await params.onDeliveryIntent?.(intent);
+    } catch (error) {
+      if (!params.skipQueue) {
+        await failDelivery(queueId, formatErrorMessage(error), params.deliveryQueueStateDir).catch(
+          () => {},
+        );
+      }
+      throw error;
+    }
   }
 
-  if (!queueId) {
-    return await deliverOutboundPayloadsWithQueueCleanup(params, null);
+  if (!queueId || params.skipQueue) {
+    return await deliverOutboundPayloadsWithQueueCleanup(params, queueId);
   }
 
   // Hold the same in-process claim used by recovery/drain while the live send
@@ -1312,6 +1360,12 @@ async function deliverOutboundPayloadsWithQueueCleanup(
   params: DeliverOutboundPayloadsParams,
   queueId: string | null,
 ): Promise<OutboundDeliveryResult[]> {
+  const queuedEntry = queueId
+    ? await loadPendingDelivery(queueId, params.deliveryQueueStateDir)
+    : null;
+  const authority = queuedEntry
+    ? usesQueuedDeliveryAuthority(queuedEntry)
+    : isRecoveryAuthorityEnabled();
   // Wrap onError to detect partial failures under bestEffort mode.
   // When bestEffort is true, per-payload errors are caught and passed to onError
   // without throwing — so the outer try/catch never fires. We track whether any
@@ -1324,7 +1378,8 @@ async function deliverOutboundPayloadsWithQueueCleanup(
       params.onError?.(err, payload);
     },
   };
-  const queuePolicy = params.queuePolicy ?? "best_effort";
+  const queuePolicy =
+    authority || params.pendingFinalDelivery ? "required" : (params.queuePolicy ?? "best_effort");
   let platformResultsReturned = false;
 
   try {
@@ -1340,12 +1395,25 @@ async function deliverOutboundPayloadsWithQueueCleanup(
               platformSendStarted = await markQueuedPlatformSendAttemptStarted({
                 queueId,
                 queuePolicy,
+                stateDir: params.deliveryQueueStateDir,
+                admission: params.recoveryAdmission,
               });
             },
           }
         : {}),
     });
     platformResultsReturned = true;
+    if (params.skipQueue) {
+      if (queueId && !hadPartialFailure) {
+        await markDeliveryPlatformOutcomeApplied(
+          queueId,
+          params.deliveryQueueStateDir,
+          params.recoveryAdmission,
+        );
+      }
+      if (!params.deferCommitHooks) await runOutboundDeliveryCommitHooks(results);
+      return results;
+    }
     if (!queueId) {
       if (!params.deferCommitHooks) {
         await runOutboundDeliveryCommitHooks(results);
@@ -1354,23 +1422,27 @@ async function deliverOutboundPayloadsWithQueueCleanup(
     }
     if (queueId) {
       if (hadPartialFailure) {
-        await failDelivery(queueId, "partial delivery failure (bestEffort)").catch(
-          (err: unknown) => {
-            log.warn(
-              `failed to mark queued delivery ${queueId} as failed after partial failure; continuing best-effort delivery: ${formatErrorMessage(err)}`,
-            );
-          },
-        );
+        await failDelivery(
+          queueId,
+          "partial delivery failure (bestEffort)",
+          params.deliveryQueueStateDir,
+        ).catch((err: unknown) => {
+          log.warn(
+            `failed to mark queued delivery ${queueId} as failed after partial failure; continuing best-effort delivery: ${formatErrorMessage(err)}`,
+          );
+        });
       } else {
-        if (platformSendStarted) {
+        if (authority) {
+          await markDeliveryPlatformOutcomeApplied(queueId, params.deliveryQueueStateDir);
+        } else if (platformSendStarted) {
           await markQueuedPlatformOutcomeUnknown({
             queueId,
             queuePolicy,
+            stateDir: params.deliveryQueueStateDir,
           });
         }
-        const acked = await ackDelivery(queueId)
-          .then(() => true)
-          .catch((err: unknown) => {
+        const acked = await ackDelivery(queueId, params.deliveryQueueStateDir).catch(
+          (err: unknown) => {
             if (queuePolicy === "required") {
               throw err;
             }
@@ -1378,7 +1450,8 @@ async function deliverOutboundPayloadsWithQueueCleanup(
               `failed to ack queued delivery ${queueId}; continuing best-effort delivery: ${formatErrorMessage(err)}`,
             );
             return false;
-          });
+          },
+        );
         if (acked) {
           await runOutboundDeliveryCommitHooks(results);
         }
@@ -1386,15 +1459,17 @@ async function deliverOutboundPayloadsWithQueueCleanup(
     }
     return results;
   } catch (err) {
-    if (queueId) {
-      if (isDeliveryAbortError(err)) {
-        await ackDelivery(queueId).catch(() => {});
+    if (queueId && !params.skipQueue) {
+      if (isDeliveryAbortError(err) && !authority) {
+        await ackDelivery(queueId, params.deliveryQueueStateDir).catch(() => {});
       } else if (!platformResultsReturned) {
-        await failDelivery(queueId, formatErrorMessage(err)).catch((failErr: unknown) => {
-          log.warn(
-            `failed to mark queued delivery ${queueId} as failed: ${formatErrorMessage(failErr)}`,
-          );
-        });
+        await failDelivery(queueId, formatErrorMessage(err), params.deliveryQueueStateDir).catch(
+          (failErr: unknown) => {
+            log.warn(
+              `failed to mark queued delivery ${queueId} as failed: ${formatErrorMessage(failErr)}`,
+            );
+          },
+        );
       }
     }
     throw err;

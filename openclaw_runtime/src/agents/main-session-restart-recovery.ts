@@ -7,6 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { normalizeOptionalString } from "@openclaw/normalization-core/string-coerce";
 import { sanitizePendingFinalDeliveryText } from "../auto-reply/reply/pending-final-delivery.js";
+import { hasSamePendingFinalDelivery } from "./recovery-authority/final-delivery-session.js";
 import { resolveStateDir } from "../config/paths.js";
 import {
   type SessionEntry,
@@ -239,23 +240,6 @@ function buildResumeMessage(pendingFinalDeliveryText?: string | null): string {
     return `${base}\n\nNote: The interrupted final reply was captured: "${sanitizedPendingText}"`;
   }
   return base;
-}
-
-function hasSamePendingFinalDelivery(current: SessionEntry, expected: SessionEntry): boolean {
-  return (
-    current.pendingFinalDelivery === expected.pendingFinalDelivery &&
-    current.pendingFinalDeliveryRunId === expected.pendingFinalDeliveryRunId &&
-    current.pendingFinalDeliveryRecoveryRunId === expected.pendingFinalDeliveryRecoveryRunId &&
-    current.pendingFinalDeliveryText === expected.pendingFinalDeliveryText &&
-    current.pendingFinalDeliveryCreatedAt === expected.pendingFinalDeliveryCreatedAt &&
-    current.pendingFinalDeliveryIntentId === expected.pendingFinalDeliveryIntentId &&
-    current.pendingFinalDeliveryContext?.channel ===
-      expected.pendingFinalDeliveryContext?.channel &&
-    current.pendingFinalDeliveryContext?.to === expected.pendingFinalDeliveryContext?.to &&
-    current.pendingFinalDeliveryContext?.accountId ===
-      expected.pendingFinalDeliveryContext?.accountId &&
-    current.pendingFinalDeliveryContext?.threadId === expected.pendingFinalDeliveryContext?.threadId
-  );
 }
 
 async function markSessionFailed(params: {

@@ -1,6 +1,7 @@
 // Stores durable delivery queue entries in SQLite.
 import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
 import { openOpenClawStateDatabase } from "../state/openclaw-state-db.js";
+import { runSqliteImmediateTransactionSync } from "./sqlite-transaction.js";
 import {
   executeSqliteQuerySync,
   executeSqliteQueryTakeFirstSync,
@@ -209,17 +210,27 @@ export function loadDeliveryQueueEntries(
 }
 
 /** Delete a pending delivery queue entry after successful delivery. */
-export function deleteDeliveryQueueEntry(queueName: string, id: string, stateDir?: string): void {
+export function deleteDeliveryQueueEntry(
+  queueName: string,
+  id: string,
+  stateDir?: string,
+  shouldDelete?: (entry: DeliveryQueueEntryState) => boolean,
+): boolean {
   const database = openStateDatabase(stateDir);
   const queueDb = getNodeSqliteKysely<DeliveryQueueDatabase>(database.db);
-  executeSqliteQuerySync(
-    database.db,
-    queueDb
-      .deleteFrom("delivery_queue_entries")
-      .where("queue_name", "=", queueName)
-      .where("id", "=", id)
-      .where("status", "=", "pending"),
-  );
+  return runSqliteImmediateTransactionSync(database.db, () => {
+    const current = loadDeliveryQueueEntry(queueName, id, stateDir);
+    if (!current || (shouldDelete && !shouldDelete(current))) return false;
+    executeSqliteQuerySync(
+      database.db,
+      queueDb
+        .deleteFrom("delivery_queue_entries")
+        .where("queue_name", "=", queueName)
+        .where("id", "=", id)
+        .where("status", "=", "pending"),
+    );
+    return true;
+  });
 }
 
 /** Load, transform, and persist a pending delivery queue entry. */
@@ -227,13 +238,17 @@ export function updateDeliveryQueueEntry(
   queueName: string,
   id: string,
   stateDir: string | undefined,
-  update: (entry: DeliveryQueueEntryState) => DeliveryQueueEntryState,
-): void {
-  const current = loadDeliveryQueueEntry(queueName, id, stateDir);
-  if (!current) {
-    throw enoent(queueName, id);
-  }
-  upsertDeliveryQueueEntry({ queueName, entry: update(current), stateDir });
+  update: (entry: DeliveryQueueEntryState) => DeliveryQueueEntryState | null,
+): boolean {
+  const database = openStateDatabase(stateDir);
+  return runSqliteImmediateTransactionSync(database.db, () => {
+    const current = loadDeliveryQueueEntry(queueName, id, stateDir);
+    if (!current) throw enoent(queueName, id);
+    const next = update(current);
+    if (!next) return false;
+    upsertDeliveryQueueEntry({ queueName, entry: next, stateDir });
+    return true;
+  });
 }
 
 /** Mark a pending delivery queue entry as failed for later diagnostics. */
@@ -241,10 +256,14 @@ export function moveDeliveryQueueEntryToFailed(
   queueName: string,
   id: string,
   stateDir?: string,
-): void {
-  const current = loadDeliveryQueueEntry(queueName, id, stateDir);
-  if (!current) {
-    throw enoent(queueName, id);
-  }
-  upsertDeliveryQueueEntry({ queueName, entry: current, status: "failed", stateDir });
+  shouldMove?: (entry: DeliveryQueueEntryState) => boolean,
+): boolean {
+  const database = openStateDatabase(stateDir);
+  return runSqliteImmediateTransactionSync(database.db, () => {
+    const current = loadDeliveryQueueEntry(queueName, id, stateDir);
+    if (!current) throw enoent(queueName, id);
+    if (shouldMove && !shouldMove(current)) return false;
+    upsertDeliveryQueueEntry({ queueName, entry: current, status: "failed", stateDir });
+    return true;
+  });
 }

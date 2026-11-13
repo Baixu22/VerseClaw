@@ -257,3 +257,5 @@ Gated subagent recovery (`OPENCLAW_RECOVERY_AUTHORITY_MODE=authority`, with both
 Gated main-session recovery uses the same admission policy and preserves its existing three-attempt budget. Public-output boundaries are recorded by the Session owner before response data is dispatched; unknown output and pending replies stay available for reconciliation.
 
 Completed recoveries reject admission replay. Model fallback within an unfinished command keeps the same admission, and the command commits its final state after all attempts and persistence finish.
+
+Gated final delivery binds the pending Session reply to its existing durable send intent. The queue commits the recovery decision and consumed attempt before sending, preserves unknown outcomes for reconciliation, and settles confirmed sends without repeating them. Reply cleanup checks the producer, Session generation, text and intent; the five-attempt limit and existing backoff remain in force. Queue write failures stop sending. Reconciliation claims and releases the existing owner without consuming a send attempt.
