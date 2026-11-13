@@ -1,0 +1,54 @@
+{
+  "runDir": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\mechanism-user\\2026-11-13T08-07-10-185Z-deterministic",
+  "mode": "deterministic",
+  "decision": {
+    "status": "inconclusive",
+    "b1_mechanism_and_autonomy": true,
+    "b2_task_benefit": true,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": true,
+    "b5_no_fabrication": true,
+    "b6_budget": true,
+    "contextGrowthChars": -8934.75,
+    "tokenGrowthPct": 0,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "recallAttemptRate": 0,
+      "meanMainContextChars": 1091.25,
+      "meanTotalTokens": 0,
+      "p95LatencyMs": 0
+    },
+    "reference-visible": {
+      "evidenceSuccessRate": 1,
+      "controlSuccessRate": 1,
+      "recallAttemptRate": 1,
+      "meanMainContextChars": 18059.75,
+      "meanTotalTokens": 0,
+      "p95LatencyMs": 0
+    },
+    "recall-stable": {
+      "evidenceSuccessRate": 1,
+      "controlSuccessRate": 1,
+      "recallAttemptRate": 1,
+      "meanMainContextChars": 43965.75,
+      "meanTotalTokens": 0,
+      "p95LatencyMs": 0
+    },
+    "retention-off": {
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "recallAttemptRate": 1,
+      "meanMainContextChars": 52900.5,
+      "meanTotalTokens": 0,
+      "p95LatencyMs": 0
+    }
+  },
+  "credentialHits": 0
+}

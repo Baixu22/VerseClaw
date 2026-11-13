@@ -1384,3 +1384,5 @@ Use this packet before any handoff, fork, or context-pressure continuation.
 - agent 健康检查日志保留全部原字节，改为 exec 工具观测并保留 user/assistant 回合节奏；新增工具压力继续受既定预算处理。旧 user 来源对照单独保留。
 - 900 输出 token、5500 字符页、原模型、四臂、语料及 B1–B7 阈值保持原值；240000ms 单次请求期限在 live 前冻结，无自动重试。
 - TF-0749 在 B1–B7 全过、clean 候选被 verifier 接受且 base_graph_hash 匹配前保持 in_progress/80。
+- clean候选`89dff8ebd`已完成96次/416次调用，全部completed；stable证据1/18、控制6/6。B1/B3/B5/B6/B7通过，B2/B4失败，verifier接受候选，判定mechanism-only/NO_GO。
+- token相对reference减少22.56%，原归档仍有39次正确选择、49次其他归档，原工具content命中1次。工具日志来源修复解决了预算缺口，任务收益仍需修复原归档分页与可见字段识别。

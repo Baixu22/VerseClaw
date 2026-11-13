@@ -1,0 +1,46 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "harness-ci-r7",
+  "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+    "--config.verify-deps-before-run=false",
+    "run",
+    "harness:ci"
+  ],
+  "startedAt": "2026-11-13T09:04:42.613Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "89dff8ebd6d21fa279ab586c368d2132efa01940",
+    "tree": "b5502430f54a0d42fe8873264483d2e6814ef3fa",
+    "branch": "",
+    "dirty": false
+  },
+  "finishedAt": "2026-11-13T09:05:28.131Z",
+  "exitCode": 1,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "89dff8ebd6d21fa279ab586c368d2132efa01940",
+    "tree": "b5502430f54a0d42fe8873264483d2e6814ef3fa",
+    "branch": "",
+    "dirty": false
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\harness-ci-r7.stdout.txt",
+      "bytes": 23472,
+      "sha256": "a0bfdb653c116e788c5964d806bc8b3239a02bf2f180d611fda3cd9317dab244"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\checks\\harness-ci-r7.stderr.txt",
+      "bytes": 1762,
+      "sha256": "7926864688263608ce182cb4a4512bdf6153ab8b9faddf8b08e4a478e241b119"
+    }
+  }
+}
