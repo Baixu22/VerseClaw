@@ -4,7 +4,7 @@ id: g8-ui-clean-candidate
 title: Verify chat output, composer menus and the integrated UI changes on one clean commit
 taskType: runtime-bridge
 scenario: gateway-backend-communication
-diffBase: 42ad5e0b223d935e57630eb20c3501640721bf2e
+diffBase: 7dcf31a44a1d9b3c16db19d84330d47d53d4bbc6
 intent: Validate TF-0783 and TF-0819 against the current main implementation together with the separately committed sidebar and header changes.
 memberTasks:
   - harness/specs/tasks/chat-output-visual-hierarchy.md
@@ -93,6 +93,7 @@ acceptance:
   - Run every required unit and Electron test of the three member tasks on one committed candidate, together with the listed type, locale, build and communication gates. Shared tests may have one result referenced by multiple members.
   - Read the original TF-0819 polish test inputs and include its model identity, Git identity and reasoning-menu regressions; historical counts and images do not count as current results.
   - Compare the complete candidate delta to diffBase. Each changed source path must have an actual member-task owner. Shared rule regressions must be explicitly required by a listed regression rule; integrationValidationPaths declares the startup regression for this integration. Retain the path-by-path ownership report and run the complete changed-path Harness flow.
+  - Validate repository CI prerequisites under repository-ci-g8-prerequisites. Their delta from the original main baseline 42ad5e0b223d935e57630eb20c3501640721bf2e and the G8 delta from diffBase must cover the complete integration without uncovered paths.
   - After an empty session has been confirmed ready, disconnecting the Gateway preserves its project and worktree controls. Initial unconfirmed history still waits for readiness, and a restarted Gateway reloads history.
   - The fourteen paths in the old TF-0783 mixed snapshot remain outside this change set. Record each original owner, its current main blob and its zero candidate delta. Any new change to one requires that owner's acceptance before integration.
   - Recheck the existing generation/links and taskRef/sessionGeneration mapping through the production caller, delegation tests and full test typecheck; do not recreate a fix already present in main.
@@ -112,7 +113,9 @@ This is the acceptance contract for the combined candidate. The output hierarchy
 and composer-menu contracts retain their original ownership boundaries. The
 sidebar/header delta is committed separately and accepted by its own contract;
 the integration report records both ownership and the complete comparison to the
-main commit above.
+accepted repository prerequisite above. That prerequisite contains lifecycle
+metadata and independently validated contract/Agent Dev maintenance. Its source,
+unit, type and CI checks remain separate from UI ownership.
 
 The current main already contains the task-scope mapping repair from
 `5d3f84ca9`. The fourteen files in the earlier mixed snapshot belong to Gateway
