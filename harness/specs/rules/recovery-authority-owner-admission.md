@@ -64,7 +64,9 @@ Every platform send rechecks the exact Session reply binding. The permit uses th
 persisted outbound agent identity for global Session keys and remains held through
 live recovery callbacks and Session settlement. A retired reply reconciles its
 original queue truth without a new lifecycle notification; confirmed applied truth
-can settle through a reset/delete fence. A changed reply still referencing that
+can settle through a reset/delete fence. A notification admitted for a live reply
+confirms the original queue payload and receipt even if pending text later changes;
+Session reference settlement retains its identity/CAS check. A changed reply still referencing that
 intent retains its applied truth. Core-proven failures
 before platform entry retain not_applied truth and the already-consumed attempt;
 an error or absent output alone never clears an unknown outcome.

@@ -547,6 +547,8 @@ async function drainAdmittedQueuedEntry(
       if (!current) return "already-gone";
       // A retired Session cannot admit a new lifecycle notification. Its
       // queue owner still reconciles and settles the confirmed platform effect.
+      // An admitted notification describes the original queue payload and receipt;
+      // Session reference settlement independently protects a later reply.
       if (
         reconciliation?.status === "sent" &&
         (!entry.pendingFinalDelivery || releaseSessionPermit)

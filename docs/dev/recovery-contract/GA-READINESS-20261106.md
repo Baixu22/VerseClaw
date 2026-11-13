@@ -28,7 +28,7 @@
 
 未知或部分发送保留文本与 intent；渠道 owner 确认未发送后，仍按原五次上限与退避执行。已经应用的发送只结算，效果未知时预算耗尽也保留对账状态。切回 legacy 后保留这些已存入队列的统一恢复记录；新 legacy 发送继续沿原路径处理。
 
-整批发送确认后，提交钩子在 applied 真值落盘后执行；Session 引用需要延后结算时，仍保留该次已确认发送的回调。部分或未知结果继续保留 pending，不运行提交钩子。启动时回填队列索引列会比较原 `entry_json` 快照，避免较旧快照覆盖并发准入刚消耗的预算。进程核验使用不触发 schema 回填的只读 SQLite 连接，独立比较预算列与 JSON。
+整批发送确认后，提交钩子在 applied 真值落盘后执行；Session 引用需要延后结算时，仍保留该次已确认发送的回调。已准入的对账通知使用原 intent 的消息、目标和 receipt，引用结算通过 CAS 保护后来的答复。部分或未知结果继续保留 pending，不运行提交钩子。启动时回填队列索引列会比较原 `entry_json` 快照，避免较旧快照覆盖并发准入刚消耗的预算。进程核验使用不触发 schema 回填的只读 SQLite 连接，独立比较预算列与 JSON。
 
 `node scripts/recovery-owner-process-proof.mjs --out <fresh-output-directory>`
 

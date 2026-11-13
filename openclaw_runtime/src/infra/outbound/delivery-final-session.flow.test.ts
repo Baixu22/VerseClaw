@@ -103,6 +103,11 @@ async function failedSend() {
   return pending;
 }
 
+function recordApplied(entry: QueuedDelivery) {
+  const applied: QueuedDelivery = { ...entry, recoveryEffect: "applied" };
+  upsertDeliveryQueueEntry({ queueName: "outbound", stateDir, entry: applied });
+}
+
 describe("final Session reply bound to the original durable send intent", () => {
   beforeEach(async () => {
     key = "agent:main:final-session-proof";
@@ -200,11 +205,7 @@ describe("final Session reply bound to the original durable send intent", () => 
     "settles an applied intent for a fenced %s Session without another platform effect",
     async (current) => {
       const pending = await failedSend();
-      upsertDeliveryQueueEntry({
-        queueName: "outbound",
-        stateDir,
-        entry: { ...pending, recoveryEffect: "applied" },
-      });
+      recordApplied(pending);
       const fence = await sessionAdmissionRegistry.fence({
         agentId: "main",
         canonicalSessionKey: key,
@@ -267,11 +268,7 @@ describe("final Session reply bound to the original durable send intent", () => 
 
   it("settles an applied intent when its Session is missing without a fence", async () => {
     const pending = await failedSend();
-    upsertDeliveryQueueEntry({
-      queueName: "outbound",
-      stateDir,
-      entry: { ...pending, recoveryEffect: "applied" },
-    });
+    recordApplied(pending);
     await updateSessionStoreAtomic(storePath, (store) => {
       delete store[key];
     });
@@ -333,11 +330,7 @@ describe("final Session reply bound to the original durable send intent", () => 
 
   it("retains applied truth for an altered reply still referencing its fenced intent", async () => {
     const pending = await failedSend();
-    upsertDeliveryQueueEntry({
-      queueName: "outbound",
-      stateDir,
-      entry: { ...pending, recoveryEffect: "applied" },
-    });
+    recordApplied(pending);
     const fence = await sessionAdmissionRegistry.fence({
       agentId: "main",
       canonicalSessionKey: key,
@@ -358,6 +351,62 @@ describe("final Session reply bound to the original durable send intent", () => 
       fence.release();
     }
   });
+
+  it.each(["same-intent", "new-intent", "cleared", "deleted"] as const)(
+    "confirms the original queue message when reconciliation replaces its Session reference as %s",
+    async (replacement) => {
+      const pending = await failedSend();
+      transport.reconcile.mockImplementationOnce(async () => {
+        if (replacement === "deleted") {
+          await updateSessionStoreAtomic(storePath, (store) => {
+            delete store[key];
+          });
+        } else if (replacement === "cleared") {
+          await replaceReply({ pendingFinalDeliveryIntentId: undefined });
+        } else {
+          await replaceReply({
+            pendingFinalDeliveryText: "successor answer",
+            pendingFinalDeliveryRunId: "successor-run",
+            pendingFinalDeliveryCreatedAt: 2,
+            ...(replacement === "new-intent"
+              ? { pendingFinalDeliveryIntentId: "successor-intent" }
+              : {}),
+          });
+        }
+        return { status: "sent", messageId: "observed-message" };
+      });
+      await recover();
+      expect(transport.send).toHaveBeenCalledOnce();
+      expect(transport.commit).toHaveBeenCalledOnce();
+      expect(transport.commit.mock.calls[0][0]).toMatchObject({
+        kind: "text",
+        text: "original answer",
+        to: "fixture-chat",
+        result: { messageId: "observed-message" },
+      });
+      if (replacement === "same-intent") {
+        expect(await loadPendingDelivery(pending.id, stateDir)).toMatchObject({
+          recoveryEffect: "applied",
+          retryCount: pending.retryCount,
+        });
+        expect(session()).toMatchObject({
+          pendingFinalDeliveryText: "successor answer",
+          pendingFinalDeliveryIntentId: pending.id,
+        });
+      } else {
+        expect(await loadPendingDelivery(pending.id, stateDir)).toBeNull();
+        if (replacement === "new-intent") {
+          expect(session()).toMatchObject({
+            pendingFinalDeliveryText: "successor answer",
+            pendingFinalDeliveryIntentId: "successor-intent",
+          });
+        } else if (replacement === "cleared") {
+          expect(session().pendingFinalDeliveryText).toBe("original answer");
+          expect(session().pendingFinalDeliveryIntentId).toBeUndefined();
+        }
+      }
+    },
+  );
 
   it("holds the live applied claim until commit callbacks and Session settlement finish", async () => {
     let callbackEntry: QueuedDelivery | null = null;
