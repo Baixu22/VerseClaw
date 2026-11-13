@@ -155,7 +155,12 @@
     "harness/specs/fixtures/recovery-contract-eval/followup-20261106/report.json",
     "harness/specs/fixtures/recovery-contract-eval/followup-20261106/credential-scan.json",
     "harness/specs/fixtures/recovery-contract-eval/followup-20261106/verification.json",
-    "harness/specs/fixtures/recovery-contract-eval/followup-20261106/HASHES.json"
+    "harness/specs/fixtures/recovery-contract-eval/followup-20261106/HASHES.json",
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-delivery-20261113/manifest.json",
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-delivery-20261113/raw-evidence.json.gz",
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-delivery-20261113/README.md",
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-delivery-20261113/SHA256SUMS",
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-delivery-20261113-seal.json"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",

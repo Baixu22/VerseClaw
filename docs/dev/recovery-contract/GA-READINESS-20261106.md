@@ -42,6 +42,8 @@
 
 主会话节点 TF-0813 已于 2026-11-10 完成收口。源码候选为 `80af3990693d53f78d739e707e698f7b76cf8bd6`，主会话证据保存在 `harness/specs/fixtures/recovery-contract-eval/ga-20261106/main-session/`：26 项检查、221 个不同用例、225 次执行通过，干净源码投影中的 owner/CLI/Gateway 73 项通过，指定模型复审发现 0。实际 PID 中断证明保留效果 1、尝试 2、重复准入 0。
 
-GA 当前为 NO-GO，接下来需完成投递、ACP、goal-wake 接线和五入口验收。冻结验收要求 5 个故障窗口、每窗口至少 3 次、至少 30 对真实模型长会话、9 个指标，以及 P50 ≤ 5000ms、P95 ≤ 15000ms 和重复基线结构一致性。发布候选还需完成完整源码与打包门禁。当前默认 writer 为 legacy；默认值切换由发布者决定。
+最终投递节点 TF-0814 的源码候选为 `aacbe24397c6fd8d7b9d67f0147932de25ab8a72`，封存证据位于 `harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-delivery-20261113/`。主候选 241 项、独立检出 139 项回归通过；两份实际 PID/SQLite 证明均记录效果 1、尝试 2、重复准入 0。原生类型、严格 lint、构建、comms、目标 Harness 和指定模型 fresh autoreview 通过。首轮进程证明的空准入与后续原生探针、无探针复跑原样保留，封存内容可按 SHA256SUMS 回算。
+
+GA 当前为 NO-GO，接下来需完成 ACP、goal-wake 接线和五入口验收。冻结验收要求 5 个故障窗口、每窗口至少 3 次、至少 30 对真实模型长会话、9 个指标，以及 P50 ≤ 5000ms、P95 ≤ 15000ms 和重复基线结构一致性。发布候选还需完成完整源码与打包门禁。当前默认 writer 为 legacy；默认值切换由发布者决定。
 
 此前实测见 [恢复评测](FINAL-20261105.zh-CN.md) 与 [后续验证](FOLLOWUP-20261106.zh-CN.md)。最新节点证据完成后收录在 `harness/specs/fixtures/recovery-contract-eval/ga-20261106/`。
