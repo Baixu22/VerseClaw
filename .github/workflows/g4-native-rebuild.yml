@@ -1,0 +1,73 @@
+name: G4 Windows native rebuild
+
+on:
+  push:
+    branches:
+      - codex/g4-native-rebuild-20261114-01a1d438
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-rebuild:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout the frozen build inputs
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+
+      - name: Place temporary outputs on D
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force D:/tmp | Out-Null
+          'TEMP=D:/tmp', 'TMP=D:/tmp', 'CARGO_HOME=D:/tmp/cargo-home', 'RUSTUP_HOME=D:/tmp/rustup-home', 'PIP_CACHE_DIR=D:/tmp/pip-cache', 'PYTHONDONTWRITEBYTECODE=1', 'RUSTUP_TOOLCHAIN=1.94.0-x86_64-pc-windows-msvc' | Add-Content -Encoding utf8 $env:GITHUB_ENV
+
+      - name: Setup Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+
+      - name: Install the declared qualification tools
+        shell: pwsh
+        run: |
+          rustup toolchain install 1.94.0-x86_64-pc-windows-msvc --profile minimal
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -m pip install pytest
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git cat-file -e 'c06f406e83566bb968448222d9c8caf429e580a0^{commit}'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Reconstruct, qualify and compare two native builds
+        shell: pwsh
+        run: |
+          $g4Evidence = 'D:/tmp/g4-native-evidence'
+          New-Item -ItemType Directory -Force $g4Evidence | Out-Null
+          $g4Before = @{ commit = (git rev-parse HEAD).Trim(); tree = (git rev-parse 'HEAD^{tree}').Trim(); clean = -not [bool](git status --porcelain) }
+          $g4Started = (Get-Date).ToUniversalTime().ToString('o')
+          $g4Python = (python -c 'import sys; print(sys.executable)').Trim()
+          $g4Argv = @('scripts/verseshell-bundle.mjs', 'rebuild', '--platform', 'win32', '--arch', 'x64', '--mode', 'package', '--source-mirror', $env:GITHUB_WORKSPACE, '--python', $g4Python, '--keep-workdirs')
+          node @g4Argv *> "$g4Evidence/native-rebuild.log"
+          $g4Exit = $LASTEXITCODE
+          $g4Files = @('resources/verseshell/source-inputs.json', 'resources/verseshell/manifest.json', 'resources/bin/win32-x64/ae.exe') | ForEach-Object {
+            if (Test-Path -LiteralPath $_) { @{ path = $_; sha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $_).Hash.ToLowerInvariant(); bytes = (Get-Item -LiteralPath $_).Length } }
+            else { @{ path = $_; exists = $false } }
+          }
+          @{ schema = 'G4NativeBuildReceipt/v1'; driven_by = 'agent'; actor = 'g4-windows-native-builder'; issued_by = 'codex/01a1d438'; realHumanEvidence = $false; candidate = $g4Before; command = @('node') + $g4Argv; startedAt = $g4Started; completedAt = (Get-Date).ToUniversalTime().ToString('o'); exitCode = $g4Exit; runnerOs = $env:RUNNER_OS; runId = $env:GITHUB_RUN_ID; runAttempt = $env:GITHUB_RUN_ATTEMPT; sourceMirrorTag = 'codex/g4-vs-base-20261114-01a1d438'; files = $g4Files } | ConvertTo-Json -Depth 6 | Set-Content -Encoding utf8 "$g4Evidence/command.json"
+          Get-Content "$g4Evidence/native-rebuild.log" -Tail 20
+          exit $g4Exit
+
+      - name: Retain native build evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: g4-native-rebuild-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 7
+          if-no-files-found: warn
+          path: |
+            D:/tmp/g4-native-evidence/
+            resources/verseshell/manifest.json
+            resources/verseshell/source-inputs.json
+            resources/bin/win32-x64/ae.exe
