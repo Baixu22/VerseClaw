@@ -741,17 +741,7 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.codex-session-activity .codex-session-activity__pulse {
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: currentColor;
-  animation: codex-session-activity-pulse 1.4s ease-in-out infinite;
-}
-@keyframes codex-session-activity-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
-}
+.codex-session-activity .codex-session-activity__pulse { flex: none; }
 
 /* Text states share the command header's quiet treatment. Errors retain color. */
 .codex-session-activity .codex-session-activity__row:not(.is-stacked) > .codex-session-activity__row-value:is([data-state='ok'], [data-state='warn'], [data-state='error']):not(:empty) {
@@ -811,6 +801,22 @@
 .codex-session-activity .codex-session-activity__alerts[data-state='error'] {
   border-left-color: var(--csa-error);
 }
+/* A status query that is only unavailable right now is not an incident: no
+ * coloured bar, tertiary ink, and the retry sits inline with the sentence. */
+.codex-session-activity .codex-session-activity__alerts[data-state='quiet'] {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 2px 2px 6px;
+  border-left: 0;
+}
+.codex-session-activity .codex-session-activity__alerts[data-state='quiet'] .codex-session-activity__empty {
+  color: var(--csa-text-tertiary);
+}
+.codex-session-activity .codex-session-activity__alerts[data-state='quiet'] .codex-session-activity__retry {
+  margin: 0;
+}
 .codex-session-activity .codex-session-activity__alerts .codex-session-activity__empty {
   padding: 0 8px;
 }
@@ -819,7 +825,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .codex-session-activity .codex-session-activity__pulse { animation: none; }
   .codex-session-activity .codex-session-activity__collapse-icon { transition: none; }
 }
 
@@ -989,19 +994,8 @@
 .codex-session-activity .codex-session-activity__process-toggle[aria-expanded='true'] .codex-session-activity__collapse-icon {
   transform: rotate(90deg);
 }
-.codex-session-activity .codex-session-activity__process-dot {
-  justify-self: center;
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: currentColor;
-  opacity: 0.85;
-}
-.codex-session-activity .codex-session-activity__process-dot[data-state='running'] {
-  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 22%, transparent);
-  animation: codex-session-activity-pulse 1.4s ease-in-out infinite;
-}
-.codex-session-activity .codex-session-activity__process-dot[data-state='ok'] { color: var(--csa-success); }
+/* Process state uses the session rows' status orb (OrbStatus), sized like it. */
+.codex-session-activity .codex-session-activity__process-dot { justify-self: center; }
 .codex-session-activity .codex-session-activity__process-command {
   min-width: 0;
   overflow: hidden;
@@ -1047,7 +1041,6 @@
   line-height: 15px;
 }
 @media (prefers-reduced-motion: reduce) {
-  .codex-session-activity .codex-session-activity__process-dot[data-state='running'],
   .codex-session-activity .codex-session-activity__console { animation: none; }
 }
 
@@ -1240,3 +1233,54 @@
   .codex-session-activity .codex-session-activity__kv-body { animation: none; }
   .codex-session-activity .codex-session-activity__meter > span { transition: none; }
 }
+
+/* ── "本轮注入了什么" card ────────────────────────────────────────────────
+ * A modal, but the same floating material as the environment card above: one
+ * raised surface, a 20px corner, hairline + depth, 28px header actions, rows
+ * instead of boxes-in-boxes. Colour is reserved for budget trimming. */
+.memory-injection-card {
+  box-shadow: 0 0 0 0.5px var(--color-border), var(--shadow-2xl);
+}
+.memory-injection-card__action {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-foreground-tertiary);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.memory-injection-card__action:hover:not(:disabled) {
+  background: var(--color-background-row-hover);
+  color: var(--color-text-foreground);
+}
+.memory-injection-card__action:focus-visible,
+.memory-injection-card__pill:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 1px;
+}
+.memory-injection-card__action:disabled { opacity: 0.5; }
+.memory-injection-card__pill {
+  height: 26px;
+  padding: 0 12px;
+  border: 0.5px solid var(--color-border-heavy);
+  border-radius: 999px;
+  color: var(--color-text-foreground);
+  font-size: 12px;
+  transition: background-color 120ms ease;
+}
+.memory-injection-card__pill:hover:not(:disabled) { background: var(--color-background-row-hover); }
+.memory-injection-card__pill:disabled { opacity: 0.5; }
+.memory-injection-card__group + .memory-injection-card__group {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--color-border);
+}
+.memory-injection-card__receipt {
+  display: grid;
+  gap: 4px;
+  padding: 6px 8px;
+  border-radius: var(--radius-lg);
+  transition: background-color 100ms ease;
+}
+.memory-injection-card__receipt:hover { background: var(--color-background-row-hover); }

@@ -110,6 +110,19 @@
   outline-offset: 1px;
 }
 .chat-header-dropdown-trigger .chat-header-session-chevron { transition: transform 150ms ease; }
+.chat-toolbar-shell::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 11;
+  height: 1px;
+  background: var(--color-border);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+.chat-toolbar-shell[data-scrolled='true']::after { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .chat-toolbar-shell::after { transition: none; } }
 .chat-header-dropdown-trigger.is-open .chat-header-session-chevron { transform: rotate(180deg); }
 .chat-session-navigation-list { min-height: 0; max-height: 300px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 .chat-session-navigation-row { min-height: 32px; padding-block: 6px; }

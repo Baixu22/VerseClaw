@@ -528,7 +528,7 @@ function ProjectSessionHeader({
         >
           <Folder className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span className="truncate">{projectName}</span>
-          <ChevronDown className="chat-header-session-chevron h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+          <ChevronDown className="chat-header-session-chevron h-3 w-3 shrink-0 opacity-60" />
         </button>
           </TooltipTrigger>
           <TooltipContent side="bottom" collisionPadding={8} className="max-w-xs break-all text-xs">{projectPath}</TooltipContent>
@@ -550,7 +550,7 @@ function ProjectSessionHeader({
           />
         )}
       </div>}
-      {showProject && <span className="chat-header-separator order-1 text-muted-foreground/40" aria-hidden="true">/</span>}
+      {showProject && <span className="chat-header-separator order-1 text-muted-foreground/30" aria-hidden="true">/</span>}
       <div className="relative order-2 min-w-0 max-w-[360px]">
         {editingSession ? (
           <div className="inline-flex max-w-full items-center gap-1 rounded-md bg-black/5 px-1 py-0.5 dark:bg-white/10">
@@ -590,7 +590,7 @@ function ProjectSessionHeader({
             data-testid="chat-header-session-name"
           >
             <span className="chat-header-session-label truncate">{sessionName}</span>
-            <ChevronDown className="chat-header-session-chevron h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+            <ChevronDown className="chat-header-session-chevron h-3 w-3 shrink-0 text-muted-foreground opacity-70" />
           </button>
             </TooltipTrigger>
             <TooltipContent side="bottom" collisionPadding={8} className="max-w-sm flex-col items-start gap-1">
@@ -1317,7 +1317,22 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
   const scrollElementRef = useRef<HTMLElement | null>(null);
   useSessionReadingPosition({ workspaceId: activeWorkspace?.id, sessionKey: currentSessionKey,
     generation: currentSession.sessionId, loading, element: scrollElementRef });
+  /* The header shares the transcript's plane at rest; a hairline appears only
+   * once content has scrolled under it. Written straight to the DOM so a
+   * scroll never re-renders the page. */
+  const headerEdgeCleanupRef = useRef<(() => void) | null>(null);
   const attachScrollElement = useCallback((element: HTMLDivElement | null) => {
+    headerEdgeCleanupRef.current?.();
+    headerEdgeCleanupRef.current = null;
+    if (element) {
+      const syncHeaderEdge = () => {
+        const shell = chatToolbarRef.current;
+        if (shell) shell.dataset.scrolled = element.scrollTop > 2 ? 'true' : 'false';
+      };
+      element.addEventListener('scroll', syncHeaderEdge, { passive: true });
+      syncHeaderEdge();
+      headerEdgeCleanupRef.current = () => element.removeEventListener('scroll', syncHeaderEdge);
+    }
     scrollElementRef.current = element;
     if (typeof scrollRef === 'function') scrollRef(element);
     else (scrollRef as unknown as { current: HTMLElement | null }).current = element;

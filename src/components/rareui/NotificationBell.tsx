@@ -1,43 +1,32 @@
 /** Adapted from Rare UI Notification Bell. Copyright (c) 2026 Swami Malode.
  * MIT + Commons Clause + Attribution; see LICENSE in this directory. */
-import { forwardRef, useEffect, useRef, type ComponentProps } from 'react';
-import { animate, AnimatePresence, motion, useMotionValue, useReducedMotion } from 'motion/react';
+import { forwardRef, type ComponentProps } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { OrbStatus } from '@/components/assistant-ui/orb-status';
 import { cn } from '@/lib/utils';
 
 /** Badge colour = the most severe unread entry. */
 export type NotificationBellTone = 'neutral' | 'warning' | 'error';
-/** Runtime activity: a swinging bell while running, an amber marker while waiting. */
+/** Runtime activity, drawn with the same status glyph as the session rows. */
 export type NotificationBellLive = 'idle' | 'running' | 'waiting';
 
+/**
+ * The activity control speaks the session list's language: while a
+ * conversation runs (or waits for you) the bell gives way to the very orb that
+ * conversation's row shows, so "something is running" never has a second,
+ * private vocabulary (a swinging icon, a corner dot). At rest it is a quiet
+ * bell, and unread activity is a small count in the corner.
+ */
 export const NotificationBell = forwardRef<HTMLButtonElement, ComponentProps<'button'> & {
   count: number;
   tone?: NotificationBellTone;
   live?: NotificationBellLive;
+  /** Accessible name of the live orb (the row status label). */
+  liveLabel?: string;
 }>(
-  function NotificationBell({ count, tone = 'neutral', live = 'idle', className, ...props }, ref) {
+  function NotificationBell({ count, tone = 'neutral', live = 'idle', liveLabel, className, ...props }, ref) {
     const total = Number.isFinite(count) ? Math.max(0, Math.floor(count)) : 0;
-    const previous = useRef(total);
-    const previousLive = useRef(live);
-    const swing = useMotionValue(0);
     const reduced = useReducedMotion();
-    const expanded = props['aria-expanded'] === true || props['aria-expanded'] === 'true';
-    useEffect(() => {
-      const grew = total > previous.current;
-      const startedWaiting = live === 'waiting' && previousLive.current !== 'waiting';
-      previous.current = total;
-      previousLive.current = live;
-      swing.set(0);
-      if (reduced || expanded) return;
-      const running = live === 'running';
-      if (!running && !grew && !startedWaiting) return;
-      const animation = animate(swing, [0, -12, 10, -5, 0], {
-        duration: 0.6,
-        ease: 'easeInOut',
-        repeat: running ? Infinity : 0,
-        repeatDelay: 1.2,
-      });
-      return () => { animation.stop(); swing.set(0); };
-    }, [total, live, reduced, expanded, swing]);
     const badge = total > 9 ? '9+' : String(total);
     return (
       <button
@@ -49,12 +38,18 @@ export const NotificationBell = forwardRef<HTMLButtonElement, ComponentProps<'bu
         data-tone={tone}
         className={cn('rare-notification-bell', className)}
       >
-        <motion.svg data-testid="chat-activity-bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.65} strokeLinecap="round" strokeLinejoin="round" width="16" height="16" aria-hidden="true" style={{ rotate: swing, transformOrigin: '50% 10%' }}>
-          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-        </motion.svg>
-        {live === 'waiting' && total === 0 && (
-          <span aria-hidden="true" data-testid="chat-activity-waiting" className="rare-notification-bell__waiting" />
+        {live === 'idle' ? (
+          <svg data-testid="chat-activity-bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.65} strokeLinecap="round" strokeLinejoin="round" width="16" height="16" aria-hidden="true">
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+          </svg>
+        ) : (
+          <OrbStatus
+            data-testid="chat-activity-live-orb"
+            state={live === 'waiting' ? 'waiting' : 'streaming'}
+            label={liveLabel ?? live}
+            className="rare-notification-bell__orb size-4"
+          />
         )}
         <AnimatePresence initial={false}>
           {total > 0 && (

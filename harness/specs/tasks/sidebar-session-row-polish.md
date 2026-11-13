@@ -28,6 +28,13 @@ touchedAreas:
   - src/styles/codex-composer-material.css
   - src/styles/codex-workspace-panel.css
   - src/components/layout/TitleBar.tsx
+  - src/components/brand/BrandLogo.tsx
+  - src/pages/Chat/SessionActivityPanel.tsx
+  - src/styles/codex-session-activity.css
+  - src/components/chat/MemoryInjectionPanel.tsx
+  - tests/unit/memory-injection-panel.test.tsx
+  - tests/unit/session-activity-panel.test.tsx
+  - tests/unit/session-activity-panel-sections.test.tsx
   - src/pages/Chat/index.tsx
   - src/pages/Chat/ChatToolbar.tsx
   - src/pages/Chat/ExecutionMigrationControl.tsx
@@ -95,13 +102,15 @@ expectedUserBehavior:
   - Archive is one click with an Undo toast; permanent delete keeps its confirmation dialog.
   - A title longer than its row scrolls as a seamless loop after a short hover and glides back when the pointer leaves; reduced motion keeps it still.
   - Hovering a conversation inside a workgroup no longer reveals the workgroup's own rename/delete.
-  - The header bell gently swings while any conversation runs and uses amber ink while one waits; its corner badge counts unread activity in the colour of the most severe entry. Opening the panel or enabling reduced motion keeps the bell still.
+  - While any conversation runs or waits, the header bell shows the same status orb as that conversation's row; its corner badge counts unread activity in the colour of the most severe entry.
   - Collapsing the sidebar stacks the sidebar toggle above the bell. Parent conversation counts yield to hover controls and stay clear of titles.
   - The 40px header uses unboxed project and conversation identity. The title opens search, source and derived-session navigation; More contains checkpoints, fork, handoff, refresh, execution migration, memory inspection and recovery settings. Empty task scopes load silently.
   - Dark mode follows the owner-supplied Codex reference with a darker sidebar, a lighter conversation canvas and raised menus and composer. The header and transcript share one plane.
   - Child conversations reuse SidebarRow with a shallow indent and one quiet guide; relation details remain in conversation navigation.
   - Session and Recovery separates display from notifications and history. Quiet display applies the existing attention-only expansion and completed-detail collapse preferences; lifecycle explanations expand on demand.
-  - The bell panel lists running conversations with elapsed time above the recent activity feed, and offers the desktop-notification switch in its footer.
+  - The bell panel lists running conversations with elapsed time above the recent activity feed, using row status glyphs and neutral counts, and offers the desktop-notification switch in its footer.
+  - The titlebar and sidebar share one chrome tone; the conversation is a raised card with a rounded corner and hairline. The sidebar heading shares the 40px header line, header icon buttons share one recipe, and the header hairline appears only after scrolling.
+  - The session environment card and the "what was injected" dialog use the same status glyph and floating-card material; an unavailable status query is a quiet line with Retry.
 requiredRules:
   - sidebar-session-row-controls
   - rareui-interaction-adaptation

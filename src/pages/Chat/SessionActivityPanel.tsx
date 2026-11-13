@@ -5,7 +5,7 @@
  */
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BookOpen, ChevronRight, FilePlus2, FolderGit2, FolderOpen, GitBranch, GitCommitHorizontal, Loader2, PanelRightOpen, Plug, RotateCcw, Target, TerminalSquare } from 'lucide-react';
+import { BookOpen, ChevronRight, FilePlus2, FolderGit2, FolderOpen, GitBranch, GitCommitHorizontal, PanelRightOpen, Plug, RotateCcw, Target, TerminalSquare } from 'lucide-react';
 import { X } from '@/components/icons/codex-icons';
 import { AgentAvatar } from '@/components/agents/AgentAvatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -13,6 +13,7 @@ import { ToolUiPlanView } from '@/components/tool-ui/plan-view';
 import type { RunProcessSurface } from '@/components/tool-ui/run-surfaces';
 import type { RunPlanSurface } from '@/pages/Chat/run-surface-promotion';
 import { cn } from '@/lib/utils';
+import { OrbStatus, type OrbStatusState } from '@/components/assistant-ui/orb-status';
 import { hostApi } from '@/lib/host-api';
 import { isLinkedWorktreePath, pathEquals } from '@/lib/git-ui';
 import { subagentIdentity } from '@shared/subagent-identity';
@@ -101,6 +102,15 @@ function formatElapsed(ms: number): string {
  * runtime status cannot arrive with a hand-picked hue attached.
  */
 type RowState = 'idle' | 'running' | 'ok' | 'warn' | 'error';
+
+/** Row states drawn with the session list's own status glyph. */
+const ROW_ORB: Record<RowState, OrbStatusState> = {
+  running: 'streaming',
+  ok: 'success',
+  warn: 'waiting',
+  error: 'error',
+  idle: 'idle',
+};
 
 function rowState(status: string): RowState {
   if (status === 'running' || status === 'started' || status === 'starting') return 'running';
@@ -259,6 +269,17 @@ function Row({
  * A process as a small console: the head row toggles a live tail of its output
  * in place, and a separate action opens the full page in the workspace.
  */
+/** A one-second clock that ticks only while `active`; render stays pure. */
+function useRunningClock(active: boolean): number {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!active) return;
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, [active]);
+  return now;
+}
+
 function ProcessItem({
   entry,
   expanded,
@@ -276,6 +297,7 @@ function ProcessItem({
   const state = rowState(entry.status);
   const safeId = entry.id.replace(/[^a-zA-Z0-9_-]/g, '-');
   const tail = expanded ? outputTail(entry.output) : '';
+  const now = useRunningClock(entry.status === 'running' && entry.startedAt != null);
   const meta = [
     entry.cwd,
     entry.durationMs != null ? t('sessionActivity.processes.duration', { seconds: (entry.durationMs / 1000).toFixed(1) }) : null,
@@ -295,7 +317,8 @@ function ProcessItem({
           title={expanded ? t('sessionActivity.processes.hideOutput') : t('sessionActivity.processes.showOutput')}
           data-testid={`session-activity-process-toggle-${safeId}`}
         >
-          <span className="codex-session-activity__process-dot" data-state={state} aria-hidden="true" />
+          <OrbStatus state={ROW_ORB[state]} label={t(`processPanel.status.${entry.status}`, { defaultValue: entry.status })}
+            className="codex-session-activity__process-dot size-3.5" />
           <span className="codex-session-activity__process-command" title={entry.command}>
             {commandDigest(entry.command)}
           </span>
@@ -303,8 +326,9 @@ function ProcessItem({
             {entry.status === 'running'
               ? (
                 <span className="codex-session-activity__elapsed">
-                  {entry.startedAt != null ? <span data-testid={`session-activity-process-elapsed-${safeId}`}>{formatElapsed(Date.now() - entry.startedAt)}</span> : null}
-                  <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+                  {entry.startedAt != null
+                    ? <span data-testid={`session-activity-process-elapsed-${safeId}`}>{formatElapsed(now - entry.startedAt)}</span>
+                    : t('processPanel.status.running')}
                 </span>
               )
               : entry.exitCode != null && entry.exitCode !== 0
@@ -621,6 +645,10 @@ export function SessionActivityPanel({
   const alert = [snapshot.session.error, snapshot.continuity.blockedReason, ...availabilityErrors]
     .filter(Boolean)
     .join(' · ') || null;
+  /* A failed run or a blocked continuation is a fact about the session and
+   * leads the card in error ink. A status query that is merely unavailable
+   * right now is a fact about the panel: it stays a quiet line with a retry. */
+  const hardAlert = Boolean(snapshot.session.error || snapshot.continuity.blockedReason);
 
   const gitStats = useMemo(() => {
     if (!git) return null;
@@ -714,7 +742,7 @@ export function SessionActivityPanel({
               title={t('sessionActivity.runningCount', { count: runningTotal })}
               aria-label={t('sessionActivity.runningCount', { count: runningTotal })}
             >
-              <span className="codex-session-activity__pulse" aria-hidden="true" />
+              <OrbStatus state="streaming" label={t('sessionActivity.runningCount', { count: runningTotal })} className="codex-session-activity__pulse size-3.5" />
               <span aria-hidden="true">{runningTotal}</span>
             </span>
           ) : null}
@@ -750,7 +778,7 @@ export function SessionActivityPanel({
         </header>
 
         {alert || backgroundUnknown ? (
-          <div className="codex-session-activity__alerts" data-state={alert ? 'error' : 'warn'} role="status">
+          <div className="codex-session-activity__alerts" data-state={hardAlert ? 'error' : 'quiet'} role="status">
             {/* A failure must not be silently dropped just because it has no section
              * of its own. It leads the card — a scrolled-away error is a hidden one —
              * and it only renders when present, so a healthy run has no empty slot. */}
@@ -1007,7 +1035,7 @@ export function SessionActivityPanel({
                     .filter(Boolean)
                     .join(' · ')}
                   value={agent.status === 'started'
-                    ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+                    ? <OrbStatus state="streaming" label={t('sessionActivity.subagentStatus.started', { defaultValue: agent.status })} className="size-3.5" />
                     : t(`sessionActivity.subagentStatus.${agent.status}`, { defaultValue: agent.status })}
                   state={state}
                   active={Boolean(childSessionKey && isActiveSubject('subagent', childSessionKey))}

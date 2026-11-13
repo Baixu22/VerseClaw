@@ -78,17 +78,19 @@
 }
 
 /* styles.css:160 — heading strip above the primary nav. */
+/* 40px, the conversation header's height, so the brand and the session title
+ * share one horizon across the two planes. */
 .codex-sidebar .sidebar-heading {
-  height: 50px;
+  height: 40px;
   display: flex;
   align-items: center;
   gap: 7px;
-  padding: 4px 11px 0 14px;
+  padding: 0 7px 0 14px;
   position: relative;
   flex: none;
 }
 .codex-sidebar .sidebar-heading > .icon-button { margin-left: auto; }
-.codex-sidebar .sidebar-heading-actions { gap: 8px; }
+.codex-sidebar .sidebar-heading-actions { gap: 2px; }
 .codex-sidebar .sidebar-heading--collapsed { height: 86px; padding: 6px 0; }
 .codex-sidebar .sidebar-heading--collapsed .sidebar-heading-actions { flex-direction: column-reverse; margin-inline: auto; }
 
@@ -98,14 +100,14 @@
   height: 30px;
   display: grid;
   place-items: center;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   color: var(--cdx-text-3);
   transition: color 120ms ease, background 160ms ease;
 }
 .codex-sidebar .icon-button svg { width: 16px; height: 16px; }
 .codex-sidebar .icon-button:hover {
-  color: var(--cdx-text-2);
-  background: var(--cdx-bg-hover);
+  color: var(--cdx-text);
+  background: var(--cdx-bg-row-hover);
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -983,6 +985,9 @@
   font-size: 12px;
   font-weight: 400;
 }
+/* Shortcut hints appear on intent, like the primary nav's kbd. */
+.codex-sidebar .profile-menu-shortcut { opacity: 0; transition: opacity 120ms ease; }
+.codex-sidebar .profile-menu-trigger:is(:hover, :focus-visible, .open) .profile-menu-shortcut { opacity: 1; }
 .codex-sidebar .sidebar-footer-menu-trigger {
   display: inline-flex;
   width: 29px;
@@ -1091,7 +1096,7 @@
   overflow: hidden;
   box-sizing: border-box;
   font-size: 11.5px;
-  font-weight: 550;
+  font-weight: 500;
   letter-spacing: .02em;
   color: var(--cdx-text-4);
   transition: color .12s ease;
@@ -1110,7 +1115,8 @@
 .codex-sidebar .ws-stream .ws-members > * { margin-top: 1px; }
 .codex-sidebar .ws-stream > div > .folder-row-wrap { background: transparent; }
 .codex-sidebar .ws-stream > div > .folder-row-wrap:hover { background: var(--cdx-bg-row-hover); }
-.codex-sidebar .ws-stream .folder-row-wrap .ws-label-select { color: var(--cdx-text-3); }
+.codex-sidebar .ws-stream .folder-row-wrap .ws-label-select { color: var(--cdx-text-4); font-weight: 500; }
+.codex-sidebar .ws-stream .folder-row-wrap:hover .ws-label-select { color: var(--cdx-text-3); }
 
 .codex-sidebar .ws-rename-row {
   display: flex;
@@ -1243,7 +1249,7 @@
   margin: 12px 0 0;
   padding: 0 8px;
   font-size: 11.5px;
-  font-weight: 550;
+  font-weight: 500;
   letter-spacing: .02em;
   color: var(--cdx-text-4);
   user-select: none;

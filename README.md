@@ -167,7 +167,7 @@ First session:
 6. Use Knowledge or Memory only through their review surfaces.
 7. Manage a conversation from its row: hovering shows Pin and ⋯ (rename, move to a workgroup, mark unread, fork, hand off, copy, archive with Undo, delete); right-click opens the same menu, and long titles scroll while hovered.
    Related conversations use a shallow indent and a quiet guide; their count appears while collapsed. The compact header keeps unboxed workspace and conversation names. Click the title to search, switch or return to a source conversation; More holds checkpoints, fork, handoff, refresh, recovery, migration and memory tools. Dark mode separates the sidebar, reading surface and raised composer with graphite tones. Empty task scopes stay hidden. Settings → Session & Recovery offers a quiet display preset.
-8. The sidebar bell gently swings while a conversation runs and turns amber when it needs attention. Its corner badge counts unread activity. Opening the panel pauses the swing and shows running conversations with elapsed time, plus completion, error and approval events. System alerts can be toggled there or in Settings → Session & Recovery.
+8. While a conversation runs or waits for you, the sidebar bell shows the same status orb as that conversation's row. Its corner badge counts unread activity. The panel shows running conversations with elapsed time, plus completion, error and approval events. System alerts can be toggled there or in Settings → Session & Recovery.
 
 Configured packages are listed in Releases. A build target does not guarantee a downloadable package for the current version.
 

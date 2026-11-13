@@ -1326,7 +1326,7 @@ export function Sidebar() {
         {!sidebarCollapsed && (
           <div className="flex min-w-0 items-center gap-2 overflow-hidden">
             <BrandLogo size="sidebar" />
-            <span className="truncate whitespace-nowrap text-[17px] font-semibold leading-6 text-foreground/90">
+            <span className="truncate whitespace-nowrap text-[15px] font-semibold leading-6 text-foreground/90">
               Verse
             </span>
           </div>

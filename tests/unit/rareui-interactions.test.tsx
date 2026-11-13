@@ -214,7 +214,9 @@ describe('Rare UI production adaptations', () => {
     const view = render(<TooltipProvider><CompletionActivityMenu liveSessions={live} /></TooltipProvider>);
     const bell = screen.getByTestId('chat-completion-bell');
     expect(bell).toHaveAttribute('data-live', 'running');
-    expect(screen.getByTestId('chat-activity-bell-icon')).toBeInTheDocument();
+    // Running state is the session rows' own orb, not a private bell animation.
+    expect(screen.getByTestId('chat-activity-live-orb')).toHaveAttribute('data-state', 'streaming');
+    expect(screen.queryByTestId('chat-activity-bell-icon')).toBeNull();
     expect(screen.queryByTestId('chat-activity-live-ring')).toBeNull();
     // Three unread, one of them an error: the badge says so in number and colour.
     expect(bell).toHaveAttribute('data-tone', 'error');
@@ -237,22 +239,27 @@ describe('Rare UI production adaptations', () => {
     // Opening the panel reads the entries; they stay marked as fresh while it is open.
     await waitFor(() => expect(screen.queryByTestId('chat-completion-unread-dot')).toBeNull());
     expect(items.every((item) => item.getAttribute('data-fresh') === 'true')).toBe(true);
+    // Entry glyphs reuse the row status glyphs; no trailing unread dots.
+    expect(items.map((item) => item.querySelector('[data-state]')?.getAttribute('data-state'))).toEqual(['error', 'success', 'success']);
+    expect(document.querySelector('.rare-activity-entry__fresh')).toBeNull();
 
     view.rerender(<TooltipProvider><CompletionActivityMenu liveSessions={[{ ...live[0], state: 'waiting' }]} /></TooltipProvider>);
     expect(screen.getByTestId('chat-completion-bell')).toHaveAttribute('data-live', 'waiting');
-    expect(screen.getByTestId('chat-activity-waiting')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-activity-live-orb')).toHaveAttribute('data-state', 'waiting');
+    expect(screen.queryByTestId('chat-activity-waiting')).toBeNull();
     expect(screen.getByTestId('chat-activity-live-item')).toHaveAttribute('data-state', 'waiting');
   });
 
-  it('uses one corner indicator for waiting and unread activity', async () => {
+  it('draws live state with the row orb and keeps the corner for the unread count only', async () => {
     const view = render(<NotificationBell count={12} live="waiting" tone="error" aria-label="Activity" />);
     expect(screen.getByTestId('chat-completion-unread-dot')).toHaveTextContent('9+');
-    expect(screen.queryByTestId('chat-activity-waiting')).toBeNull();
+    expect(screen.getByTestId('chat-activity-live-orb')).toHaveAttribute('data-state', 'waiting');
     view.rerender(<NotificationBell count={0} live="waiting" aria-label="Activity" />);
     await waitFor(() => expect(screen.queryByTestId('chat-completion-unread-dot')).toBeNull());
-    expect(screen.getByTestId('chat-activity-waiting')).toBeInTheDocument();
-    view.rerender(<NotificationBell count={0} live="idle" aria-label="Activity" />);
     expect(screen.queryByTestId('chat-activity-waiting')).toBeNull();
+    view.rerender(<NotificationBell count={0} live="idle" aria-label="Activity" />);
+    expect(screen.queryByTestId('chat-activity-live-orb')).toBeNull();
+    expect(screen.getByTestId('chat-activity-bell-icon')).toBeInTheDocument();
   });
 
   it('shows an honest empty state when nothing ran and nothing is running', async () => {

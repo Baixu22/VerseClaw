@@ -273,7 +273,7 @@ test.describe('Sidebar session rows and activity bell', () => {
     }
   });
 
-  test('bell swings, rests while open, and stays aligned in the collapsed sidebar', async ({ launchElectronApp }) => {
+  test('bell shows the row status orb while running, and stays aligned in the collapsed sidebar', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true, visualMode: true, theme: 'light' });
     try {
       await seed(app);
@@ -292,22 +292,12 @@ test.describe('Sidebar session rows and activity bell', () => {
       const bell = page.getByTestId('chat-completion-bell');
       await expect(bell).toHaveAttribute('data-live', 'running');
       await expect(page.getByTestId('chat-activity-live-ring')).toHaveCount(0);
-      const icon = page.getByTestId('chat-activity-bell-icon');
-      await expect(icon).toBeVisible();
-      // Sample a full swing and pause: both directions must be visible.
-      const angles = await icon.evaluate((element) => new Promise<number[]>((resolve) => {
-        const values: number[] = [];
-        const start = performance.now();
-        const sample = () => {
-          const matrix = new DOMMatrixReadOnly(getComputedStyle(element).transform);
-          values.push(Math.atan2(matrix.b, matrix.a) * 180 / Math.PI);
-          if (performance.now() - start < 2200) requestAnimationFrame(sample);
-          else resolve(values);
-        };
-        sample();
-      }));
-      expect(Math.min(...angles)).toBeLessThan(-2);
-      expect(Math.max(...angles)).toBeGreaterThan(2);
+      // Live state reuses the session rows' status orb: no swing, no corner dot.
+      const orb = page.getByTestId('chat-activity-live-orb');
+      await expect(orb).toBeVisible();
+      await expect(orb).toHaveAttribute('data-state', 'streaming');
+      await expect(page.getByTestId('chat-activity-bell-icon')).toHaveCount(0);
+      await expect(page.getByTestId('chat-activity-waiting')).toHaveCount(0);
       await expect(bell).toHaveAttribute('aria-label', /1 running/);
       await mkdir(artifacts, { recursive: true });
       await bell.screenshot({ path: join(artifacts, 'bell-running-light.png') });
@@ -315,7 +305,6 @@ test.describe('Sidebar session rows and activity bell', () => {
       await bell.click();
       const panel = page.getByTestId('chat-completion-menu');
       await expect(panel).toBeVisible();
-      await expect(icon).toHaveCSS('transform', 'none');
       const liveItems = page.getByTestId('chat-activity-live-item');
       await expect(liveItems).toHaveCount(1);
       await expect(liveItems.first()).toContainText('Background build');
@@ -339,7 +328,7 @@ test.describe('Sidebar session rows and activity bell', () => {
       await page.evaluate(() => document.documentElement.classList.add('dark'));
       await bell.screenshot({ path: join(artifacts, 'bell-running-dark.png') });
       await page.emulateMedia({ reducedMotion: 'reduce' });
-      await expect(icon).toHaveCSS('transform', 'none');
+      await expect(orb).toBeVisible();
       await page.getByTestId('sidebar-collapse-toggle').click();
       const collapse = page.getByTestId('sidebar-collapse-toggle');
       await expect(collapse).toHaveAttribute('aria-label', 'Expand sidebar');

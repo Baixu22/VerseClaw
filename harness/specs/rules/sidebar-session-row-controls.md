@@ -71,18 +71,35 @@ requiredTests:
 
 ## Activity bell
 
-- Live activity comes from the same runtime status projection as the row orbs.
-  A running session gently swings the bell from side to side with pauses; a
-  waiting session uses amber ink and a corner dot when no unread badge is shown.
-  Opening the panel pauses the swing. Reduced motion keeps the icon still.
+- Live activity comes from the same runtime status projection as the row orbs
+  and is drawn with the same glyph: while a session runs or waits, the bell
+  icon gives way to the row's `OrbStatus` (streaming / waiting). No private
+  swing, ring or corner dot. At rest the control is a plain bell.
 - The bell and sidebar toggle share a horizontal row when expanded and stack
-  vertically when collapsed. The unread badge sits outside the bell silhouette;
-  a waiting dot and unread badge never occupy the corner together.
+  vertically when collapsed. The corner holds only the unread count.
 - The badge counts unread feed entries and takes the colour of the most severe
   one. Opening the panel reads the listed entries; closing records them read.
 - The panel lists running sessions, with an elapsed clock where the runtime
   reports a start, above the recent feed. The feed stays newest-first; only
-  consecutive entries of one session share a heading.
+  consecutive entries of one session share a heading. Feed entries use the row
+  status glyphs (success / error / waiting); unread entries carry full ink, not
+  a trailing dot. Counts are neutral text, not accent pills.
+
+## Status vocabulary and planes
+
+- Any surface that reports run state (bell, activity panel, session
+  environment card, header picker) uses `OrbStatus`. Do not add a bespoke dot,
+  pulse or spinner for "running".
+- The titlebar and sidebar are one chrome surface; the conversation is a raised
+  card with a rounded top-left corner and hairline edge. The sidebar heading
+  shares the conversation header's 40px line, and header icon buttons share
+  the sidebar `.icon-button` recipe (30px, radius-md, row-hover wash).
+- The conversation header gains its hairline only after the transcript scrolls.
+- A status query that is merely unavailable is a quiet line with Retry; only a
+  failed run or blocked continuation uses the error bar.
+- Floating cards opened from the header (session environment, memory
+  injection) share one material: raised surface, 20px corner, hairline plus
+  shadow, 28px header actions, rows rather than nested boxes.
 - All text routes through i18n in `en`, `zh`, `ja` and `ru`. Motion has a
   reduced-motion fallback, and the bell, panel and menus stay usable in the
   collapsed sidebar and by keyboard.
