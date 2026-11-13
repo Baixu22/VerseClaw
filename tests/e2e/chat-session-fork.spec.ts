@@ -463,13 +463,18 @@ test.describe('Verse Claw chat session fork', () => {
       await page.getByTestId('chat-toolbar-more').click();
       // #180: the lineage line names the parent by its display name, not the raw
       // session key (the key is already shown on the line above it).
+      await page.getByTestId('chat-header-session-name').click();
+      const navigationLine = page.getByTestId('chat-session-lineage-agent:main:fork-1711111111111');
+      await expect(navigationLine).toBeVisible();
+      await expect(navigationLine).toContainText('main');
+      await expect(navigationLine).not.toContainText(SOURCE_SESSION_KEY);
       const lineageLine = page.getByTestId('chat-session-lineage');
       await expect(lineageLine).toBeVisible();
       await expect(lineageLine).toContainText('main');
       await expect(lineageLine).not.toContainText(SOURCE_SESSION_KEY);
       // #180: the fork row carries the parent-message timestamp, so the lineage
       // line shows where in the parent's transcript the branch was cut.
-      const expectedForkTime = await page.evaluate((ms) => new Intl.DateTimeFormat(undefined, {
+      const expectedForkTime = await page.evaluate((ms) => new Intl.DateTimeFormat('en', {
         month: 'short',
         day: 'numeric',
         hour: '2-digit',

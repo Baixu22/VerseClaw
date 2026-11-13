@@ -558,7 +558,7 @@ function SessionFolderTreeInner({
           ) : !row.originKey && (relation?.kind && relation.kind !== 'unknown' || row.sourceStatus === 'source-unavailable') ? (
             <span className="ws-family-kind" title={t(`chat:sessionFamily.kind.${relation?.kind ?? 'unknown'}`)}><Icon /></span>
           ) : null}
-          {count > 0 && !expanded && <span className="session-family__count" aria-hidden="true">{count}</span>}
+          {count > 0 && <span className="session-family__count" aria-hidden="true">{count}</span>}
           {renderDraggableSession(entry)}
         </div>
       );

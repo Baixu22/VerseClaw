@@ -175,11 +175,17 @@ export function createWorkspaceScopedNewSession(): Promise<string | null> {
   const currentAgentId = chatState.currentAgentId || getAgentIdFromSessionKey(chatState.currentSessionKey);
   const sourceSessionKey = chatState.currentSessionKey;
   const sourceRevision = chatState.viewRevision;
+  const sourceWorkspaceId = useWorkspacesStore.getState().activeWorkspaceId;
   const isSourceCurrent = () => intent === navigationIntent && useChatStore.getState().currentSessionKey === sourceSessionKey
-    && useChatStore.getState().viewRevision === sourceRevision;
+    && useChatStore.getState().viewRevision === sourceRevision
+    && (!sourceWorkspaceId || useWorkspacesStore.getState().activeWorkspaceId === sourceWorkspaceId);
   const operation = navigationTail.catch(() => undefined).then(async () => {
     if (!isSourceCurrent()) return null;
     const workspace = await ensureActiveWorkspaceForSession();
+    if (!isSourceCurrent()) return null;
+    if (workspace?.id) await useWorkspacesStore.getState().saveWorkspaceState({
+      id: workspace.id, sessionKey: sourceSessionKey, activeSessionKey: sourceSessionKey,
+    });
     if (!isSourceCurrent()) return null;
     if (!workspace?.id) {
       chatState.newSession({ deferSessionEntry: true });

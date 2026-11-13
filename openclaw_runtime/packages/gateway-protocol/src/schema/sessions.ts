@@ -395,6 +395,8 @@ export const SessionsStopResultSchema = Type.Object(
 export const SessionsPatchParamsSchema = Type.Object(
   {
     key: NonEmptyString,
+    expectedSessionId: Type.Optional(NonEmptyString),
+    workspaceDir: Type.Optional(NonEmptyString),
     agentId: Type.Optional(NonEmptyString),
     label: Type.Optional(Type.Union([SessionLabelString, Type.Null()])),
     thinkingLevel: Type.Optional(Type.Union([NonEmptyString, Type.Null()])),

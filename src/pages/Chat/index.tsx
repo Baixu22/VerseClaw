@@ -130,6 +130,7 @@ import { promoteRunSurfaces } from './run-surface-promotion';
 import { useRunApprovals } from './use-run-approvals';
 import { WelcomeProjectPicker } from '@/components/chat/WelcomeProjectPicker';
 import { WorkspacePickerMenu } from '@/components/chat/WorkspacePickerMenu';
+import { SessionWorkspacePicker } from '@/components/chat/SessionWorkspacePicker';
 import { GeneratedFilesPanel } from '@/components/file-preview/GeneratedFilesPanel';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
@@ -394,6 +395,8 @@ function ProjectSessionHeader({
   workspaceSessionKeys,
   switchSession,
   renameSession,
+  onSelectWorktree,
+  worktreeSwitchDisabled = false,
   derivation,
   onRefresh,
   runtimeRuns,
@@ -415,6 +418,8 @@ function ProjectSessionHeader({
   workspaceSessionKeys: string[];
   switchSession: (key: string) => void;
   renameSession: (key: string, label: string) => Promise<void>;
+  onSelectWorktree?: (tree: GitWorktree) => Promise<void>;
+  worktreeSwitchDisabled?: boolean;
   derivation?: SessionDerivation;
   onRefresh: () => void;
   runtimeRuns?: Record<string, ChatRuntimeRunState>;
@@ -504,7 +509,7 @@ function ProjectSessionHeader({
       {dotState ? <OrbStatus state={dotState} className="size-4 shrink-0" /> : <MessagesSquare className="h-4 w-4 shrink-0 opacity-60" aria-hidden="true" />}
       <span className="min-w-0 flex-1">
         <span className="block truncate text-meta">{getSessionDisplayName(session.key, sessions, sessionLabels)}</span>
-        {source && <span className="block truncate text-2xs text-muted-foreground" data-testid="chat-session-lineage">
+        {source && <span className="block truncate text-2xs text-muted-foreground" data-testid={`chat-session-lineage-${session.key}`}>
           {t('session.navigation.from', { session: getSessionDisplayName(source, sessions, sessionLabels) })}
         </span>}
       </span>
@@ -545,6 +550,7 @@ function ProjectSessionHeader({
               setOpen(null);
               return pickWorkspaceFolder();
             }}
+            extraActions={onSelectWorktree ? <SessionWorkspacePicker embedded disabled={worktreeSwitchDisabled} onSelect={async tree => { setOpen(null); await onSelectWorktree(tree); }} /> : undefined}
             menuTestId="chat-header-workspace-menu"
             className="chat-header-project-menu"
           />
@@ -1257,10 +1263,18 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     }
   }, [createWorkspace, currentAgentId, currentSessionKey, handleSwitchWorkspace, persistCurrentWorkspaceSessionState, resetSessionView, t, workspaceProfiles]);
   const handleSwitchWorktreeWorkspace = async (worktree: GitWorktree) => {
-    await persistCurrentWorkspaceSessionState({ activeSessionKey: currentSessionKey, sessionKey: currentSessionKey });
+    const source = useChatStore.getState();
+    const isCurrent = () => {
+      const current = useChatStore.getState();
+      return !current.sending && !current.pendingFinal && current.currentSessionKey === source.currentSessionKey
+        && current.viewRevision === source.viewRevision;
+    };
+    if (inputRunActive || !isCurrent()) return;
+    await persistCurrentWorkspaceSessionState({ activeSessionKey: source.currentSessionKey, sessionKey: source.currentSessionKey });
+    if (!isCurrent()) return;
     const existing = workspaceProfiles.find((profile) => normalizeComparablePath(profile.rootPath) === normalizeComparablePath(worktree.path));
-    const profile = existing ?? await createWorkspace({ rootPath: worktree.path, name: worktree.branch || basenameFromPath(worktree.path), agentId: currentAgentId, activeSessionKey: createFreshWorkspaceSessionKey(currentAgentId) });
-    if (profile) await handleSwitchWorkspace(profile.id);
+    const profile = existing ?? await createWorkspace({ rootPath: worktree.path, name: worktree.branch || basenameFromPath(worktree.path), agentId: currentAgentId, activeSessionKey: createFreshWorkspaceSessionKey(currentAgentId), activate: false });
+    if (profile && isCurrent()) await handleSwitchWorkspace(profile.id);
   };
   useEffect(() => {
     const previousSessionKey = lastObservedSessionKeyRef.current;
@@ -3396,6 +3410,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
                 workspaceSessionKeys={Object.keys(activeWorkspace?.sessionStates ?? {})}
                 switchSession={(key) => { void openFamilySession(key); }}
                 renameSession={renameSession}
+                onSelectWorktree={handleSwitchWorktreeWorkspace}
+                worktreeSwitchDisabled={inputRunActive}
                 derivation={sessionActivitySnapshot?.derivation}
                 onRefresh={() => { void loadSessions(); }}
                 runtimeRuns={runtimeRuns}

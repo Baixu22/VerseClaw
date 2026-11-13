@@ -211,7 +211,7 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
     const label = `Coordination ${Date.now()}`;
     const created = await hostInvoke<CreatedSession>(app, 'gateway', 'rpc', {
       method: 'sessions.create',
-      params: { agentId: 'main', label, workspaceDir: workspace.rootPath },
+      params: { agentId: 'main', label },
       timeoutMs: 60_000,
     });
     const sessionKey = created.key ?? created.sessionKey ?? '';

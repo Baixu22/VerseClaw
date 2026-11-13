@@ -1,6 +1,11 @@
 import { closeElectronApp, expect, getStableWindow, installIpcMocks, revealSectionHeadingActionsFor, test } from './fixtures/electron';
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
+import { writeFile } from 'node:fs/promises';
+import { hostInvoke } from './fixtures/fp-p1-harness';
+import { createSessionChainProject, instrumentSessionChainHost, readSessionChainHostCalls } from './fixtures/session-task-chain';
+import type { WorkspaceProfile } from '../../shared/types/workspace';
 
 const SESSION_KEY = 'agent:main:main';
 const OTHER_SESSION_KEY = 'agent:main:other-project';
@@ -68,6 +73,42 @@ const MAIN_HISTORY = [
 ];
 
 test.describe('Verse Claw chat workspace header', () => {
+  test('opens an idle worktree from the header after saving its source session', async ({ launchElectronApp }, info) => {
+    test.setTimeout(240_000);
+    const app = await launchElectronApp({ skipSetup: true });
+    try {
+      const root = info.outputPath('header-base');
+      const target = info.outputPath('header-worktree');
+      mkdirSync(root, { recursive: true });
+      const git = (...args: string[]) => execFileSync('git', ['-C', root, ...args], { windowsHide: true, encoding: 'utf8' });
+      git('init'); git('config', 'user.name', 'G5 agent'); git('config', 'user.email', 'g5-agent@example.invalid');
+      await writeFile(join(root, 'header.txt'), 'G5 header fixture\n');
+      git('add', 'header.txt'); git('commit', '-m', 'G5 header fixture');
+      git('worktree', 'add', '--detach', target, 'HEAD');
+      const project = await createSessionChainProject(app, root, 'G5 Header base');
+      const page = await getStableWindow(app);
+      await page.reload();
+      await expect(page.getByTestId('chat-project-session-header')).toContainText('G5 Header base', { timeout: 60_000 });
+      const draft = 'G5 source draft survives the header worktree switch';
+      await instrumentSessionChainHost(app);
+      await page.getByTestId('chat-composer-input').fill(draft);
+      await page.getByTestId('chat-header-environment-project').getByRole('button').click();
+      const worktree = page.getByTestId('chat-header-workspace-menu').getByRole('button', { name: /header-worktree/ });
+      await expect(worktree).toBeEnabled(); await worktree.click();
+      await expect.poll(async () => (await hostInvoke<{ activeWorkspace: WorkspaceProfile }>(app, 'workspaces', 'getActive')).activeWorkspace.rootPath.replace(/\\/g, '/').toLowerCase())
+        .toBe(target.replace(/\\/g, '/').toLowerCase());
+      await expect(page.getByTestId('chat-project-session-header')).toContainText('header-worktree');
+      const owner = await hostInvoke<{ profiles: WorkspaceProfile[] }>(app, 'workspaces', 'list');
+      expect(owner.profiles.find(profile => profile.id === project.workspaceId)?.sessionStates?.[project.sessionKey]?.draftInput).toBe(draft);
+      const calls = await readSessionChainHostCalls(app);
+      const save = calls.findIndex(call => call.module === 'workspaces' && call.action === 'saveState');
+      const create = calls.findIndex(call => call.module === 'workspaces' && call.action === 'create');
+      const activate = calls.findIndex(call => call.module === 'workspaces' && call.action === 'switch');
+      expect(save).toBeGreaterThanOrEqual(0); expect(create).toBeGreaterThan(save); expect(activate).toBeGreaterThan(create);
+      await info.attach('header-worktree-owner-readback', { body: JSON.stringify({ driven_by: 'agent', actor: 'g5-unified-autonomy-20261113-01a1d34a', realHumanEvidence: false, project, target, owner, calls }), contentType: 'application/json' });
+    } finally { await closeElectronApp(app); }
+  });
+
   test('shows workspace and conversation without the legacy topic selector', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -103,6 +144,10 @@ test.describe('Verse Claw chat workspace header', () => {
           },
         },
         hostApi: {
+          [stableStringify(['git', 'status'])]: { success: true, status: { isRepository: true, workspaceRoot: WORKSPACE.rootPath,
+            repoRoot: WORKSPACE.rootPath, branch: 'main', detached: false, clean: true, changes: [] } },
+          [stableStringify(['git', 'worktrees'])]: { success: true, worktrees: [{ path: WORKSPACE.rootPath, branch: 'main' },
+            { path: '/tmp/demo-feature', branch: 'feature' }] },
           [stableStringify(['/api/settings', 'GET'])]: {
             ok: true,
             data: {
@@ -165,6 +210,10 @@ test.describe('Verse Claw chat workspace header', () => {
       }, SESSION_KEY);
       await expect(page.getByTestId(`sidebar-session-status-${SESSION_KEY}`)).toHaveAttribute('data-state', 'running');
       await expect(page.getByTestId('chat-current-session-status')).toHaveAttribute('data-state', 'streaming');
+      await page.getByTestId('chat-header-environment-project').getByRole('button').click();
+      await expect(page.getByTestId('session-worktree-create')).toBeDisabled();
+      await expect(page.getByTestId('chat-header-workspace-menu').getByRole('button', { name: /feature/ })).toBeDisabled();
+      await page.keyboard.press('Escape');
       await expect(page.getByTestId('chat-turn-summary-orb')).toBeVisible();
       await expect(page.getByTestId('assistant-stream-status')).toHaveCount(0);
       await expect(page.getByTestId('assistant-status-dot-matrix')).toHaveCount(0);
@@ -310,6 +359,7 @@ test.describe('Verse Claw chat workspace header', () => {
           workspaceUpdate: [] as Record<string, unknown>[],
           workspaceSaveState: [] as Record<string, unknown>[],
           rejectedUpdates: [] as Record<string, unknown>[],
+          sourceSavesBeforeRejection: [] as Record<string, unknown>[],
         };
         let activeWorkspace = params.workspace;
         const respond = (id: unknown, data: unknown) => ({ id: typeof id === 'string' ? id : undefined, ok: true, data });
@@ -333,6 +383,8 @@ test.describe('Verse Claw chat workspace header', () => {
         }) => {
           if (request.module === 'workspaces' && request.action === 'update') {
             if (calls.rejectedUpdates.length === 0) {
+              calls.sourceSavesBeforeRejection = calls.workspaceSaveState.filter(payload =>
+                payload.id === params.workspace.id && payload.sessionKey === params.workspace.activeSessionKey);
               calls.rejectedUpdates.push(request.payload ?? {});
               return { id: request.id, ok: false, error: { code: 'CONFLICT', message: 'U5_NEW_SESSION_REJECTED' } };
             }
@@ -397,6 +449,10 @@ test.describe('Verse Claw chat workspace header', () => {
       await create();
       await expect(page.getByText('U5_NEW_SESSION_REJECTED', { exact: false })).toBeVisible();
       await expect(page.getByTestId('chat-composer-input')).toHaveValue(draft);
+      const rejectedSourceSaves = await app.evaluate(() => (globalThis as unknown as {
+        __workspaceNewChatCalls: { sourceSavesBeforeRejection: Record<string, unknown>[] };
+      }).__workspaceNewChatCalls.sourceSavesBeforeRejection);
+      expect(rejectedSourceSaves).toContainEqual(expect.objectContaining({ id: WORKSPACE.id, sessionKey: SESSION_KEY }));
       expect(await app.evaluate(() => (globalThis as unknown as {
         __workspaceNewChatCalls: { workspaceUpdate: unknown[]; rejectedUpdates: unknown[] };
       }).__workspaceNewChatCalls)).toMatchObject({ workspaceUpdate: [], rejectedUpdates: [expect.objectContaining({ id: WORKSPACE.id })] });
@@ -408,6 +464,11 @@ test.describe('Verse Claw chat workspace header', () => {
         }).__workspaceNewChatCalls?.workspaceUpdate.length ?? 0
       ))).toBe(1);
 
+      await expect.poll(async () => app.evaluate(() => (
+        (globalThis as typeof globalThis & {
+          __workspaceNewChatCalls?: { workspaceSaveState?: unknown[] };
+        }).__workspaceNewChatCalls?.workspaceSaveState?.length ?? 0
+      ))).toBeGreaterThan(0);
       const calls = await app.evaluate(() => (
         (globalThis as typeof globalThis & {
           __workspaceNewChatCalls?: {

@@ -617,6 +617,7 @@ export type RuntimeResourceEnvelopeState = {
 };
 
 export type WorkspaceSnapshotResult = HostSuccess & WorkspaceSnapshot;
+export type WorkspaceCreateResult = WorkspaceSnapshotResult & { createdWorkspace: WorkspaceProfile };
 
 /** FP-P1-02: workspace preflight (run before accepting a directory as workspace). */
 export type WorkspacePreflightPayload = { rootPath: string };
@@ -636,6 +637,7 @@ export type WorkspacePreflightResult = {
   error?: string;
 };
 export type WorkspaceCreatePayload = {
+  activate?: boolean;
   name?: string;
   rootPath: string;
   agentId?: string;
@@ -5823,7 +5825,7 @@ export type HostApiContract = {
   workspaces: {
     list: () => WorkspaceSnapshotResult;
     getActive: () => WorkspaceActiveResult;
-    create: (payload: WorkspaceCreatePayload) => WorkspaceSnapshotResult;
+    create: (payload: WorkspaceCreatePayload) => WorkspaceCreateResult;
     update: (payload: WorkspaceUpdatePayload) => WorkspaceSnapshotResult;
     delete: (payload: WorkspaceDeletePayload) => WorkspaceSnapshotResult;
     switch: (payload: WorkspaceSwitchPayload) => WorkspaceActiveResult;

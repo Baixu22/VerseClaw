@@ -75,6 +75,7 @@ function publishWorkspaceNavigation(before:WorkspaceProfile[],after:WorkspacePro
 }
 
 type WorkspaceCreateBody = {
+  activate?: unknown;
   name?: unknown;
   rootPath?: unknown;
   agentId?: unknown;
@@ -1094,6 +1095,31 @@ async function persistCoordinatorBinding(
   return persisted!;
 }
 
+const COORDINATOR_WORKSPACE_BINDING_PENDING = 'workspace-binding-pending';
+
+async function activateCoordinatorWorkspaceBinding(
+  ctx: WorkspacesApiContext,
+  binding: WorkspaceCoordinatorBinding,
+): Promise<WorkspaceCoordinatorBinding> {
+  await ctx.gatewayManager!.rpc('sessions.patch', {
+    key: binding.sessionKey, agentId: binding.agentId,
+    workspaceDir: binding.environment.canonicalRoot, expectedSessionId: binding.sessionGeneration,
+  }, 15_000);
+  if (binding.taskLedgerReferences.length === 1) {
+    const { selectManagedSessionTask } = await import('./task-system-service');
+    selectManagedSessionTask({ workspaceRoot: binding.environment.canonicalRoot, sessionKey: binding.sessionKey,
+      generation: binding.sessionGeneration!, taskNodeId: binding.taskLedgerReferences[0].taskLedgerNodeId,
+      requestId: `coordinator-selection:${binding.sessionKey}:${binding.sessionGeneration}:${binding.bindingRevision}` });
+  }
+  return persistCoordinatorBinding(binding.workspaceId, binding.sessionKey, current => {
+    if (!current || current.bindingRevision !== binding.bindingRevision || current.state !== 'paused'
+      || current.invalidationReason !== COORDINATOR_WORKSPACE_BINDING_PENDING || current.sessionGeneration !== binding.sessionGeneration) {
+      throw coordinatorError('COORDINATOR_REVISION_CONFLICT', 'Coordinator binding changed before activation.');
+    }
+    return { ...current, state: 'active', invalidationReason: null, updatedAt: new Date().toISOString() };
+  });
+}
+
 async function markCoordinatorInvalid(
   workspaceId: string,
   sessionKey: string,
@@ -1188,7 +1214,8 @@ async function resolveCoordinatorBinding(
   if (binding.workspaceId !== input.workspaceId || binding.agentId !== input.agentId || binding.sessionKey !== input.sessionKey) {
     throw coordinatorError('COORDINATOR_SCOPE_MISMATCH', 'Coordinator binding belongs to another workspace, agent, or session.');
   }
-  if (binding.state === 'paused') {
+  const workspaceBindingPending = binding.state === 'paused' && binding.invalidationReason === COORDINATOR_WORKSPACE_BINDING_PENDING;
+  if (binding.state === 'paused' && !workspaceBindingPending) {
     return coordinatorResult(binding, coordinatorRecovery('paused', binding.invalidationReason ?? 'archive-restore-policy', binding));
   }
   if (binding.state === 'invalid') {
@@ -1231,6 +1258,15 @@ async function resolveCoordinatorBinding(
   if (!environment.ok) {
     const invalid = await markCoordinatorInvalid(input.workspaceId, input.sessionKey, environment.reason);
     return coordinatorResult(invalid, coordinatorRecovery('environment-missing', environment.reason, invalid));
+  }
+  if (workspaceBindingPending) {
+    try {
+      await validateCoordinatorTaskReferences(ctx, binding.workspaceId, binding.taskLedgerReferences.map(ref => ref.taskLedgerNodeId));
+      const active = await activateCoordinatorWorkspaceBinding(ctx, binding);
+      return coordinatorResult(active, coordinatorRecovery('ready', null, active));
+    } catch (error) {
+      return coordinatorResult(binding, coordinatorRecovery('unavailable', error instanceof Error ? error.message : 'workspace-binding-unavailable', binding));
+    }
   }
   return coordinatorResult(binding, coordinatorRecovery('ready', null, binding));
 }
@@ -1646,15 +1682,15 @@ export function createWorkspacesApi(
         },
       };
       const nextDocument = {
-        activeWorkspaceId: id,
+        activeWorkspaceId: body.activate === false ? document.activeWorkspaceId : id,
         profiles: [...document.profiles, profile],
       };
       await ensureVerseClawWorkspaceHarness(rootPath);
       await writeDocument(nextDocument);
       ctx.terminalManager?.registerWorkspace(profile);
       ctx.webPreviewManager?.registerWorkspace(profile);
-      await syncWorkspacePermissionBestEffort();
-      return successSnapshot(nextDocument);
+      if (body.activate !== false) await syncWorkspacePermissionBestEffort();
+      return { ...successSnapshot(nextDocument), createdWorkspace: profile };
     },
     update: async (payload) => {
       const body = isRecord(payload) ? payload as WorkspaceUpdateBody : {};
@@ -2024,7 +2060,9 @@ export function createWorkspacesApi(
         throw coordinatorError('COORDINATOR_SESSION_SCOPE_MISMATCH', 'The selected session is not the Workspace/Assistant main session.');
       }
       const existing = profile.coordinatorBindings?.[input.sessionKey];
-      if (existing && input.expectedRevision !== existing.bindingRevision) {
+      const workspaceBindingPending = existing?.state === 'paused' && existing.invalidationReason === COORDINATOR_WORKSPACE_BINDING_PENDING;
+      if (existing && input.expectedRevision !== existing.bindingRevision
+        && !(workspaceBindingPending && input.expectedRevision === existing.bindingRevision - 1)) {
         throw coordinatorError('COORDINATOR_REVISION_CONFLICT', `Expected revision ${input.expectedRevision ?? 'missing'} but found ${existing.bindingRevision}.`);
       }
       if (!existing && input.expectedRevision !== undefined && input.expectedRevision !== 0) {
@@ -2037,6 +2075,18 @@ export function createWorkspacesApi(
         input.taskLedgerNodeIds,
       );
       const environment = await resolveCoordinatorEnvironment(ctx, profile, input.environment);
+      if (workspaceBindingPending) {
+        if (existing!.sessionGeneration !== session.sessionId) {
+          throw coordinatorError('COORDINATOR_SESSION_SCOPE_MISMATCH', 'The pending binding belongs to another session generation.');
+        }
+        if (JSON.stringify(existing!.taskLedgerReferences) !== JSON.stringify(taskLedgerReferences)
+          || JSON.stringify(existing!.environment) !== JSON.stringify(environment)
+          || existing!.archiveRestorePolicy !== input.archiveRestorePolicy) {
+          throw coordinatorError('COORDINATOR_REVISION_CONFLICT', 'A pending binding must be recovered before replacing its intent.');
+        }
+        const active = await activateCoordinatorWorkspaceBinding(ctx, existing!);
+        return coordinatorResult(active, coordinatorRecovery('ready', null, active));
+      }
       const environmentChanged = Boolean(existing) && (
         existing!.environment.kind !== environment.kind
         || !isSamePath(existing!.environment.canonicalRoot, environment.canonicalRoot)
@@ -2057,12 +2107,6 @@ export function createWorkspacesApi(
         if (!writer.quiescent) throw new Error('TASK_SCOPE_TASK_SWITCH_BLOCKED');
       }
       const now = new Date().toISOString();
-      if (taskLedgerReferences.length === 1) {
-        const { selectManagedSessionTask } = await import('./task-system-service');
-        selectManagedSessionTask({ workspaceRoot: environment.canonicalRoot, sessionKey: input.sessionKey,
-          generation: session.sessionId, taskNodeId: taskLedgerReferences[0].taskLedgerNodeId,
-          requestId: `coordinator-selection:${input.sessionKey}:${session.sessionId}:${(existing?.bindingRevision ?? 0) + 1}` });
-      }
       const binding: WorkspaceCoordinatorBinding = {
         schemaVersion: 1,
         workspaceId: input.workspaceId,
@@ -2074,23 +2118,22 @@ export function createWorkspacesApi(
         ...(!environmentChanged && !tasksChanged && existing?.writerClaim ? { writerClaim: existing.writerClaim } : {}),
         environment,
         archiveRestorePolicy: input.archiveRestorePolicy,
-        state: 'active',
+        state: 'paused',
         bindingRevision: (existing?.bindingRevision ?? 0) + 1,
-        invalidationReason: null,
+        invalidationReason: COORDINATOR_WORKSPACE_BINDING_PENDING,
         createdAt: existing?.createdAt ?? now,
         updatedAt: now,
       };
-      const nextDocument = updateWorkspaceProfile(document, input.workspaceId, (current) => ({
-        ...current,
-        projectCoordinatorSessionKey: current.projectCoordinatorSessionKey ?? input.sessionKey,
-        coordinatorBindings: {
-          ...(current.coordinatorBindings ?? {}),
-          [input.sessionKey]: binding,
-        },
-        updatedAt: Date.now(),
-      }));
-      await writeDocument(nextDocument, true);
-      return coordinatorResult(binding, coordinatorRecovery('ready', null, binding));
+      // Persist the intent before changing Runtime or task references. A failed
+      // acknowledgement/activation leaves this same revision recoverable.
+      const pending = await persistCoordinatorBinding(input.workspaceId, input.sessionKey, current => {
+        if ((current?.bindingRevision ?? 0) !== (existing?.bindingRevision ?? 0)) {
+          throw coordinatorError('COORDINATOR_REVISION_CONFLICT', 'Coordinator binding changed before intent commit.');
+        }
+        return binding;
+      }, true);
+      const active = await activateCoordinatorWorkspaceBinding(ctx, pending);
+      return coordinatorResult(active, coordinatorRecovery('ready', null, active));
     }),
     resolveCoordinator: (payload) => withCoordinatorMutationLock(() => resolveCoordinatorBinding(ctx, payload)),
     pauseCoordinator: (payload) => withCoordinatorMutationLock(async () => {

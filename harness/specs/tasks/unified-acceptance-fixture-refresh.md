@@ -18,6 +18,18 @@ ownedPaths: &paths
   - openclaw_runtime/src/gateway/session-utils.ts
   - openclaw_runtime/src/gateway/server-methods/session-activity.ts
   - openclaw_runtime/src/gateway/server-methods/session-activity.test.ts
+  - openclaw_runtime/packages/gateway-protocol/src/schema/sessions.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.lifecycle.ts
+  - openclaw_runtime/src/gateway/server-methods/session-active-runs.ts
+  - openclaw_runtime/src/gateway/server-methods/sessions.workspace-binding.test.ts
+  - src/components/chat/SessionFamilyNavigation.tsx
+  - src/components/layout/SessionFolderTree.tsx
+  - src/components/task-ledger/TaskLedgerSummaryPanel.tsx
+  - src/lib/workspace-session.ts
+  - src/stores/workspaces.ts
+  - shared/host-api/contract.ts
+  - tests/unit/workspace-session.test.ts
+  - tests/unit/session-family-navigation.test.tsx
   - tests/unit/session-generation-freshness.test.ts
   - tests/unit/session-handoff-recovery.test.ts
   - tests/unit/long-session-coordinator-binding.test.ts
@@ -38,6 +50,9 @@ ownedPaths: &paths
   - tests/e2e/runtime-lifecycle-governance.spec.ts
   - tests/e2e/session-task-scope-completion.spec.ts
   - tests/e2e/session-context-recovery.spec.ts
+  - tests/e2e/chat-workspace-header.spec.ts
+  - tests/e2e/session-lifecycle-recovery.spec.ts
+  - tests/e2e/session-task-reading-navigation.spec.ts
   - tests/e2e/session-delegation-capacity.spec.ts
   - tests/e2e/fixtures/session-task-chain.ts
   - harness/specs/guides/long-session-delegation-admission.md
@@ -73,12 +88,19 @@ acceptance:
   - Archive fixtures identify a real assigned workspace; delete transport failures reuse the persisted operationId.
   - Visual fixtures wait for measured viewport dimensions; response-loss injection occurs only after committed Handoff creation.
   - Continuation verifies the public run-terminal receipt and a successful tool receipt before Handoff; missing or rejected effects cannot count as success.
+  - Coordinator workspace binding uses sessions.patch with a backend caller and the current session generation; it preserves the existing transcript and session identity.
+  - Directory changes reject visible and hidden current-generation runs and in-flight admissions; the existing admission fence remains held until the session metadata transaction commits.
+  - Both directory identities are resolved before comparison; same-directory aliases can bind without disturbing an active run.
+  - Replaced navigation and workspace selection are rejected before saving or activating the former source session.
+  - Coordinator binding persists its paused workspace intent before Runtime or task selection effects; lost replies and failed activation writes recover the same revision and generation through the existing binding owner.
+  - Empty task scope remains reachable, source navigation retains its timestamp, and family counts remain visible while expanded; all display text uses the existing four locales.
 requiredTests:
   - pnpm exec vitest run tests/unit/checkpoints-dialog.test.tsx --maxWorkers=1
   - pnpm exec vitest run tests/unit/vite-config-openclaw-runtime.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/session-handoff-recovery.test.ts tests/unit/long-session-coordinator-binding.test.ts tests/unit/host-services.test.ts tests/unit/workspace-session.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec vitest run tests/unit/session-generation-freshness.test.ts tests/unit/long-session-completion-continuation.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.gateway-methods.config.ts src/gateway/server-methods/session-activity.test.ts --maxWorkers=1
+  - pnpm --dir openclaw_runtime exec node scripts/run-vitest.mjs run --config test/vitest/vitest.gateway-methods.config.ts src/gateway/server-methods/sessions.workspace-binding.test.ts --maxWorkers=1
   - pnpm run typecheck
   - pnpm run typecheck:test
   - pnpm run contract:check

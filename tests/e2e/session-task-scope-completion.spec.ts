@@ -210,6 +210,7 @@ test('real Gateway keeps discussion empty, admits one write, and restores the sa
       workspaceId, sessionKey: recovered.sessionKey, operationId: input.operationId,
     });
     expect(unknown.operation.phase).toBe('unknown');
+    await expect.poll(async () => (await rpc<{ status: string }>('agent.wait', { runId: recovered.operation!.firstSendIdempotencyKey, timeoutMs: 1000 })).status, { timeout: 60_000 }).toBe('ok');
     await expect.poll(async () => JSON.stringify(await rpc('chat.history', { sessionKey: recovered.sessionKey, limit: 100 })).includes('FINISHED A4-HANDOFF'), { timeout: 60_000 }).toBe(true);
     await record('unknownBeforeSecondRestart', unknown);
     await hostInvoke(app, 'gateway', 'stop'); await closeElectronApp(app); app = undefined;
