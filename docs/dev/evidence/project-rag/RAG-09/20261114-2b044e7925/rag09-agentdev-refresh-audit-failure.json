@@ -1,0 +1,449 @@
+{
+  "schema": "clawx.agent-dev.audit.v1",
+  "generatedAt": "2026-11-13T20:09:20.431Z",
+  "policy": {
+    "schema": "clawx.agent-dev.audit.v1",
+    "passScore": 90,
+    "warnScore": 80,
+    "maxEvidenceAgeHours": 24,
+    "maxHistoryEntries": 20,
+    "hardVetoSeverities": [
+      "fail"
+    ],
+    "statusSemantics": {
+      "pass": "Score is at least 90 and no hard-veto findings exist.",
+      "warn": "Score is at least 80 and below 90 with no hard-veto findings.",
+      "fail": "Score is below 80 or at least one hard-veto finding exists."
+    }
+  },
+  "status": "fail",
+  "grade": "B",
+  "maturityLevel": "blocked",
+  "confidence": {
+    "level": "high",
+    "reason": "Required generated evidence is present, parseable, and within the freshness window.",
+    "freshGeneratedCount": 4,
+    "generatedSourceCount": 4,
+    "staleGeneratedCount": 0
+  },
+  "totalScore": 81,
+  "maxScore": 100,
+  "summary": {
+    "pass": 5,
+    "warn": 0,
+    "fail": 1,
+    "disqualifierCount": 2
+  },
+  "dimensions": [
+    {
+      "id": "gate-integrity",
+      "title": "Gate Integrity",
+      "maxScore": 20,
+      "description": "Full gates remain available, fast paths are additive, and deep-test explains which full gates remain required.",
+      "score": 20,
+      "findings": [],
+      "status": "pass"
+    },
+    {
+      "id": "evidence-completeness",
+      "title": "Evidence Completeness",
+      "maxScore": 20,
+      "description": "Machine-readable Workbench, deep-test, quality, decision, and trend evidence exist.",
+      "score": 20,
+      "findings": [],
+      "status": "pass"
+    },
+    {
+      "id": "coverage-breadth",
+      "title": "Coverage Breadth",
+      "maxScore": 20,
+      "description": "Agent Dev has scenario, unit, E2E, contract, i18n, and host-api boundary coverage.",
+      "score": 20,
+      "findings": [],
+      "status": "pass"
+    },
+    {
+      "id": "performance-discipline",
+      "title": "Performance Discipline",
+      "maxScore": 20,
+      "description": "Latest timing evidence stays within budgets and refuses to treat over-limit runs as passing design evidence.",
+      "score": 1,
+      "findings": [
+        {
+          "id": "latest-decision-blocked",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "Latest deep-test decision is blocked: typecheck exceeded hard performance limits.",
+          "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+        },
+        {
+          "id": "performance-limit:typecheck",
+          "severity": "fail",
+          "priority": "P0",
+          "message": "typecheck exceeded hard limit: 61325ms > 45000ms.",
+          "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+        },
+        {
+          "id": "performance-watch:contract",
+          "severity": "warn",
+          "priority": "P1",
+          "message": "contract exceeded target: 1191ms > 1000ms.",
+          "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+        }
+      ],
+      "status": "fail"
+    },
+    {
+      "id": "docs-runbook",
+      "title": "Docs And Runbook",
+      "maxScore": 10,
+      "description": "Developer docs explain daily loops, full gates, release evidence, and failure interpretation.",
+      "score": 10,
+      "findings": [],
+      "status": "pass"
+    },
+    {
+      "id": "maintainability",
+      "title": "Maintainability",
+      "maxScore": 10,
+      "description": "The system avoids parallel registries, has focused unit protection, and keeps generated evidence bounded.",
+      "score": 10,
+      "findings": [],
+      "status": "pass"
+    }
+  ],
+  "scoreBreakdown": [
+    {
+      "id": "gate-integrity",
+      "title": "Gate Integrity",
+      "score": 20,
+      "maxScore": 20,
+      "deducted": 0,
+      "status": "pass",
+      "reason": "No findings deducted points for this dimension.",
+      "findings": []
+    },
+    {
+      "id": "evidence-completeness",
+      "title": "Evidence Completeness",
+      "score": 20,
+      "maxScore": 20,
+      "deducted": 0,
+      "status": "pass",
+      "reason": "No findings deducted points for this dimension.",
+      "findings": []
+    },
+    {
+      "id": "coverage-breadth",
+      "title": "Coverage Breadth",
+      "score": 20,
+      "maxScore": 20,
+      "deducted": 0,
+      "status": "pass",
+      "reason": "No findings deducted points for this dimension.",
+      "findings": []
+    },
+    {
+      "id": "performance-discipline",
+      "title": "Performance Discipline",
+      "score": 1,
+      "maxScore": 20,
+      "deducted": 19,
+      "status": "fail",
+      "reason": "3 finding(s) deducted 19 point(s).",
+      "findings": [
+        {
+          "id": "latest-decision-blocked",
+          "severity": "fail",
+          "estimatedPenalty": 8,
+          "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+        },
+        {
+          "id": "performance-limit:typecheck",
+          "severity": "fail",
+          "estimatedPenalty": 8,
+          "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+        },
+        {
+          "id": "performance-watch:contract",
+          "severity": "warn",
+          "estimatedPenalty": 3,
+          "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources."
+        }
+      ]
+    },
+    {
+      "id": "docs-runbook",
+      "title": "Docs And Runbook",
+      "score": 10,
+      "maxScore": 10,
+      "deducted": 0,
+      "status": "pass",
+      "reason": "No findings deducted points for this dimension.",
+      "findings": []
+    },
+    {
+      "id": "maintainability",
+      "title": "Maintainability",
+      "score": 10,
+      "maxScore": 10,
+      "deducted": 0,
+      "status": "pass",
+      "reason": "No findings deducted points for this dimension.",
+      "findings": []
+    }
+  ],
+  "rubric": [
+    {
+      "id": "gate-integrity",
+      "title": "Gate Integrity",
+      "maxScore": 20,
+      "description": "Full gates remain available, fast paths are additive, and deep-test explains which full gates remain required."
+    },
+    {
+      "id": "evidence-completeness",
+      "title": "Evidence Completeness",
+      "maxScore": 20,
+      "description": "Machine-readable Workbench, deep-test, quality, decision, and trend evidence exist."
+    },
+    {
+      "id": "coverage-breadth",
+      "title": "Coverage Breadth",
+      "maxScore": 20,
+      "description": "Agent Dev has scenario, unit, E2E, contract, i18n, and host-api boundary coverage."
+    },
+    {
+      "id": "performance-discipline",
+      "title": "Performance Discipline",
+      "maxScore": 20,
+      "description": "Latest timing evidence stays within budgets and refuses to treat over-limit runs as passing design evidence."
+    },
+    {
+      "id": "docs-runbook",
+      "title": "Docs And Runbook",
+      "maxScore": 10,
+      "description": "Developer docs explain daily loops, full gates, release evidence, and failure interpretation."
+    },
+    {
+      "id": "maintainability",
+      "title": "Maintainability",
+      "maxScore": 10,
+      "description": "The system avoids parallel registries, has focused unit protection, and keeps generated evidence bounded."
+    }
+  ],
+  "evidenceInventory": [
+    {
+      "id": "workbench",
+      "path": "artifacts/agent-dev-workbench/evidence.json",
+      "required": true,
+      "generated": true,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-13T20:09:18.095Z",
+      "generatedAt": "2026-11-13T20:09:18.092Z",
+      "ageHours": 0,
+      "newestRelevantSource": {
+        "path": "shared/host-api/contract.ts",
+        "mtime": "2026-11-13T19:26:56.000Z",
+        "mtimeMs": 1794598016000,
+        "timeSource": "git-commit"
+      },
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "deep-test",
+      "path": "artifacts/agent-dev-deep-test/report.json",
+      "required": true,
+      "generated": true,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-13T20:09:18.144Z",
+      "generatedAt": "2026-11-13T20:09:18.141Z",
+      "ageHours": 0,
+      "newestRelevantSource": {
+        "path": "shared/host-api/contract.ts",
+        "mtime": "2026-11-13T19:26:56.000Z",
+        "mtimeMs": 1794598016000,
+        "timeSource": "git-commit"
+      },
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "deep-test-history",
+      "path": "artifacts/agent-dev-deep-test/history.json",
+      "required": true,
+      "generated": true,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-13T20:09:18.143Z",
+      "generatedAt": "2026-11-13T20:09:18.141Z",
+      "ageHours": 0,
+      "newestRelevantSource": {
+        "path": "shared/host-api/contract.ts",
+        "mtime": "2026-11-13T19:26:56.000Z",
+        "mtimeMs": 1794598016000,
+        "timeSource": "git-commit"
+      },
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "quality",
+      "path": "artifacts/agent-dev-quality/report.json",
+      "required": true,
+      "generated": true,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-13T20:09:17.616Z",
+      "generatedAt": "2026-11-13T20:09:17.614Z",
+      "ageHours": 0,
+      "newestRelevantSource": {
+        "path": "shared/host-api/contract.ts",
+        "mtime": "2026-11-13T19:26:56.000Z",
+        "mtimeMs": 1794598016000,
+        "timeSource": "git-commit"
+      },
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "package-scripts",
+      "path": "package.json",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-09T20:06:38.898Z",
+      "generatedAt": null,
+      "ageHours": 96.04,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "agent-dev-runbook",
+      "path": "docs/agent-dev-control-plane.md",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-09T20:50:04.044Z",
+      "generatedAt": null,
+      "ageHours": 95.32,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "agent-instructions",
+      "path": "AGENTS.md",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-10T14:54:45.637Z",
+      "generatedAt": null,
+      "ageHours": 77.24,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "scenario-registry",
+      "path": "shared/agent-dev/scenarios.ts",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-09T10:41:46.648Z",
+      "generatedAt": null,
+      "ageHours": 105.46,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    },
+    {
+      "id": "regularization-tests",
+      "path": "tests/unit/agent-dev-regularization.test.ts",
+      "required": true,
+      "generated": false,
+      "exists": true,
+      "parseable": true,
+      "mtime": "2026-11-09T19:25:01.035Z",
+      "generatedAt": null,
+      "ageHours": 96.74,
+      "newestRelevantSource": null,
+      "sourceFresh": true,
+      "fresh": true
+    }
+  ],
+  "prioritizedFindings": [
+    {
+      "dimension": "performance-discipline",
+      "id": "latest-decision-blocked",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "Latest deep-test decision is blocked: typecheck exceeded hard performance limits.",
+      "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence.",
+      "impact": "high",
+      "effort": "medium",
+      "validationCommands": [
+        "pnpm agent-dev:deep-test --reuse-build --fast-unit --fast-typecheck --smoke-e2e",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:typecheck",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "typecheck exceeded hard limit: 61325ms > 45000ms.",
+      "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
+      "impact": "high",
+      "effort": "medium",
+      "validationCommands": [
+        "pnpm agent-dev:deep-test --reuse-build --fast-unit --fast-typecheck --smoke-e2e",
+        "pnpm agent-dev:audit:report"
+      ]
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-watch:contract",
+      "severity": "warn",
+      "priority": "P1",
+      "message": "contract exceeded target: 1191ms > 1000ms.",
+      "recommendation": "Keep contract scanning text-based and bounded to host-api/service sources.",
+      "impact": "medium",
+      "effort": "low",
+      "validationCommands": [
+        "pnpm agent-dev:fast",
+        "pnpm agent-dev:audit:report"
+      ]
+    }
+  ],
+  "disqualifiers": [
+    {
+      "dimension": "performance-discipline",
+      "id": "latest-decision-blocked",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "Latest deep-test decision is blocked: typecheck exceeded hard performance limits.",
+      "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:typecheck",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "typecheck exceeded hard limit: 61325ms > 45000ms.",
+      "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+    }
+  ],
+  "recommendations": [
+    "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence.",
+    "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate.",
+    "Keep contract scanning text-based and bounded to host-api/service sources."
+  ]
+}

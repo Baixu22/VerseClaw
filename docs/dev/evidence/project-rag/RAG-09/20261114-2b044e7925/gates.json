@@ -1,0 +1,388 @@
+{
+  "schema": "ProjectRagGateReceipts/v1",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "2b044e79254e36712ff3c4f39dfbdd57730bf797",
+    "tree": "c862632351b9883b474e50f3880e72ee15f0fbae",
+    "branch": "codex/project-rag-longterm-20261109",
+    "status": "",
+    "dirty": false
+  },
+  "environment": {
+    "TEMP": "D:/tmp",
+    "TMP": "D:/tmp",
+    "GOMAXPROCS": "2",
+    "GOMEMLIMIT": "1024MiB",
+    "NODE_OPTIONS": "--max-old-space-size=768"
+  },
+  "processTableAdapter": {
+    "method": "Windows Toolhelp32 native snapshot",
+    "path": "D:/tmp/project-rag-relay-01a1d438/wmic-bin",
+    "scope": "this process PATH only"
+  },
+  "startedAt": "2026-11-13T20:30:44.639775+00:00",
+  "gates": [
+    {
+      "name": "root-unit",
+      "args": [
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/knowledge-evidence-qa.test.ts",
+        "tests/unit/knowledge-source-set-answer.test.ts",
+        "tests/unit/chat-knowledge-scope.test.ts",
+        "tests/unit/chat-store-history-retry.test.ts",
+        "tests/unit/project-rag-owner-read.test.ts",
+        "tests/unit/contract-check.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\project-rag-relay-01a1d438\\rag09-formal-2b044e7925\\root-unit.json"
+      ],
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/knowledge-evidence-qa.test.ts",
+        "tests/unit/knowledge-source-set-answer.test.ts",
+        "tests/unit/chat-knowledge-scope.test.ts",
+        "tests/unit/chat-store-history-retry.test.ts",
+        "tests/unit/project-rag-owner-read.test.ts",
+        "tests/unit/contract-check.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\project-rag-relay-01a1d438\\rag09-formal-2b044e7925\\root-unit.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 28990,
+      "log": "root-unit.log"
+    },
+    {
+      "name": "runtime-unit",
+      "args": [
+        "--dir",
+        "openclaw_runtime",
+        "exec",
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.unit-src.config.ts",
+        "src/context-engine/project-rag-packing.test.ts",
+        "src/context-engine/context-candidate.test.ts",
+        "src/context-engine/chat-knowledge-intent.test.ts",
+        "src/context-engine/turn-injection-budget.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\project-rag-relay-01a1d438\\rag09-formal-2b044e7925\\runtime-unit.json"
+      ],
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "--dir",
+        "openclaw_runtime",
+        "exec",
+        "node",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.unit-src.config.ts",
+        "src/context-engine/project-rag-packing.test.ts",
+        "src/context-engine/context-candidate.test.ts",
+        "src/context-engine/chat-knowledge-intent.test.ts",
+        "src/context-engine/turn-injection-budget.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\project-rag-relay-01a1d438\\rag09-formal-2b044e7925\\runtime-unit.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 3037,
+      "log": "runtime-unit.log"
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 56625,
+      "log": "typecheck.log"
+    },
+    {
+      "name": "contract",
+      "args": [
+        "contract:check"
+      ],
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "contract:check"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 1177,
+      "log": "contract.log"
+    },
+    {
+      "name": "i18n",
+      "args": [
+        "run",
+        "i18n:lint"
+      ],
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "run",
+        "i18n:lint"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 831,
+      "log": "i18n.log"
+    },
+    {
+      "name": "comms-replay",
+      "args": [
+        "run",
+        "comms:replay"
+      ],
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "run",
+        "comms:replay"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 689,
+      "log": "comms-replay.log"
+    },
+    {
+      "name": "comms-compare",
+      "args": [
+        "run",
+        "comms:compare"
+      ],
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "run",
+        "comms:compare"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 560,
+      "log": "comms-compare.log"
+    },
+    {
+      "name": "harness-validate",
+      "args": [
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/project-rag-dcs-evidence-packing.md"
+      ],
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/project-rag-dcs-evidence-packing.md"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 2008,
+      "log": "harness-validate.log"
+    },
+    {
+      "name": "harness-dry-run",
+      "args": [
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/project-rag-dcs-evidence-packing.md",
+        "--dry-run"
+      ],
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/project-rag-dcs-evidence-packing.md",
+        "--dry-run"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 1772,
+      "log": "harness-dry-run.log"
+    },
+    {
+      "name": "harness-ci",
+      "args": [
+        "run",
+        "harness:ci"
+      ],
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "run",
+        "harness:ci"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 27391,
+      "log": "harness-ci.log"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "exec",
+        "eslint",
+        "electron/services/knowledge-api.ts",
+        "electron/services/knowledge-evidence-qa.ts",
+        "electron/services/knowledge-source-set-answer.ts",
+        "electron/services/chat-api.ts",
+        "src/pages/Chat/ChatInput.tsx",
+        "src/stores/chat.ts",
+        "src/stores/chat/runtime-send-actions.ts",
+        "shared/chat/types.ts",
+        "shared/host-api/contract.ts",
+        "shared/knowledge/packing.ts",
+        "tests/unit/knowledge-evidence-qa.test.ts",
+        "tests/unit/chat-knowledge-scope.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/chat-store-history-retry.test.ts",
+        "tests/e2e/project-rag-dcs-citation.spec.ts"
+      ],
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "exec",
+        "eslint",
+        "electron/services/knowledge-api.ts",
+        "electron/services/knowledge-evidence-qa.ts",
+        "electron/services/knowledge-source-set-answer.ts",
+        "electron/services/chat-api.ts",
+        "src/pages/Chat/ChatInput.tsx",
+        "src/stores/chat.ts",
+        "src/stores/chat/runtime-send-actions.ts",
+        "shared/chat/types.ts",
+        "shared/host-api/contract.ts",
+        "shared/knowledge/packing.ts",
+        "tests/unit/knowledge-evidence-qa.test.ts",
+        "tests/unit/chat-knowledge-scope.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/chat-store-history-retry.test.ts",
+        "tests/e2e/project-rag-dcs-citation.spec.ts"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 6082,
+      "log": "lint.log"
+    },
+    {
+      "name": "artifact-retention",
+      "args": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "command": [
+        "node",
+        "scripts/check-repository-artifacts.mjs"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 2382,
+      "log": "artifact-retention.log"
+    },
+    {
+      "name": "runtime-build",
+      "args": [
+        "run",
+        "build:runtime"
+      ],
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "run",
+        "build:runtime"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 33249,
+      "log": "runtime-build.log"
+    },
+    {
+      "name": "desktop-build",
+      "args": [
+        "run",
+        "build:vite"
+      ],
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "run",
+        "build:vite"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 42711,
+      "log": "desktop-build.log"
+    },
+    {
+      "name": "electron",
+      "args": [
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/project-rag-dcs-citation.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output",
+        "D:\\tmp\\project-rag-relay-01a1d438\\rag09-formal-2b044e7925\\electron"
+      ],
+      "command": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\node_modules\\pnpm\\bin\\pnpm.mjs",
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/project-rag-dcs-citation.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output",
+        "D:\\tmp\\project-rag-relay-01a1d438\\rag09-formal-2b044e7925\\electron"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 82865,
+      "log": "electron.json"
+    }
+  ],
+  "after": {
+    "commit": "2b044e79254e36712ff3c4f39dfbdd57730bf797",
+    "tree": "c862632351b9883b474e50f3880e72ee15f0fbae",
+    "branch": "codex/project-rag-longterm-20261109",
+    "status": ""
+  },
+  "sourceUnchanged": true,
+  "completedAt": "2026-11-13T20:35:35.336538+00:00",
+  "status": "pass"
+}

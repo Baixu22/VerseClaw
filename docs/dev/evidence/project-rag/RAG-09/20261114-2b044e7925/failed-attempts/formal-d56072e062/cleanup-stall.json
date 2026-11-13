@@ -1,0 +1,54 @@
+{
+  "schema": "ProjectRagCleanupStall/v1",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "d56072e06264a1aad9a17d3d719e03c1d2d8b39c",
+  "reason": "pnpm 11 error cleanup stalled in WMIC process enumeration after source-freshness failure",
+  "status": "terminated",
+  "stoppedPids": [
+    28844,
+    44256,
+    34740,
+    30332,
+    13000
+  ],
+  "processTree": [
+    {
+      "pid": 14092,
+      "parent": 29416,
+      "exe": "python.exe",
+      "command": "\"C:\\Users\\27933\\AppData\\Local\\Programs\\Python\\Python310\\python.exe\" D:/tmp/project-rag-relay-01a1d438/run_gates.py D:/tmp/project-rag-relay-01a1d438/rag09-gates.json"
+    },
+    {
+      "pid": 28844,
+      "parent": 14092,
+      "exe": "node.exe",
+      "command": "\"C:\\Program Files\\nodejs\\node.EXE\" C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs run harness:ci"
+    },
+    {
+      "pid": 44256,
+      "parent": 28844,
+      "exe": "cmd.exe",
+      "command": "C:\\WINDOWS\\system32\\cmd.exe /d /s /c \"C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\bin\\pnpm ^\"run^\" ^\"harness:ci^\"\""
+    },
+    {
+      "pid": 34740,
+      "parent": 44256,
+      "exe": "node.exe",
+      "command": "node   \"C:\\Users\\27933\\AppData\\Local\\pnpm\\.tools\\pnpm\\11.2.2\\bin\\\\..\\node_modules\\pnpm\\bin\\pnpm.mjs\" \"run\" \"harness:ci\""
+    },
+    {
+      "pid": 30332,
+      "parent": 34740,
+      "exe": "WMIC.exe",
+      "command": "wmic PROCESS get ParentProcessId,ProcessId"
+    },
+    {
+      "pid": 13000,
+      "parent": 30332,
+      "exe": "conhost.exe",
+      "command": "\\??\\C:\\WINDOWS\\system32\\conhost.exe 0x4"
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+$ node scripts/comms/replay.mjs
+Wrote comms replay metrics to C:\Users\27933\.codex\worktrees\project-rag-longterm-20261109\ClawX\artifacts\comms\current-metrics.json

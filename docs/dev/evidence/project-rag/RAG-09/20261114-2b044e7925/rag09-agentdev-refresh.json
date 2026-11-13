@@ -1,0 +1,24 @@
+{
+  "schema": "ProjectRagEvidenceRefresh/v1",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "sourceCandidate": "d56072e06264a1aad9a17d3d719e03c1d2d8b39c",
+  "results": [
+    {
+      "name": "workbench",
+      "exitCode": 0,
+      "durationMs": 630
+    },
+    {
+      "name": "deep-test-reuse",
+      "exitCode": 0,
+      "durationMs": 26652
+    },
+    {
+      "name": "audit",
+      "exitCode": 0,
+      "durationMs": 1680
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\project-rag-relay-01a1d438\\rag09-formal-d56072e062\\electron-runtime\\verse-claw-e2e-run-vtV9KB",
+  "ledgerEntries": 6,
+  "checks": [
+    {
+      "pid": 31700,
+      "creationTime": 1794600109624,
+      "status": "exited"
+    },
+    {
+      "pid": 45064,
+      "creationTime": 1794600120226,
+      "status": "exited"
+    },
+    {
+      "pid": 12868,
+      "creationTime": 1794600121085,
+      "status": "exited"
+    },
+    {
+      "pid": 37948,
+      "creationTime": 1794600179505,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

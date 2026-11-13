@@ -1,0 +1,139 @@
+{
+  "findings": [
+    {
+      "title": "Model-only Knowledge QA runs on the owner session, so DCS/context state and prompt persistence leak across turns",
+      "body": "`runKnowledgeModel` now sends `knowledgeReferences` with `sessionKey: readScope.identity.agentSessionKey`, which is the user's live coordinator session, and sets `sessionEffects: 'internal'`/`suppressPromptPersistence` only for that same key. `agent` proceeds to `runAgentAttempt` → `runEmbeddedAgent` with `chatKnowledgeRefs` on that real session. Consequences that make the model-only QA path incorrect: (1) the DCS projection for knowledge is inserted into that session's context for the turn and reported via `agent.wait` from `listContextFinalSnapshots(runId)` — the retained manifest is per-run so that part is fine — but the run also consumes the session's provider/lane and can be aborted by `chat.abort` for that session; (2) after knowledge QA, later normal Chat turns in the same session re-enter the same `injectionTurnId`-keyed budget? No: turnId includes runId, so the larger issue is that model-only QA is now indistinguishable from a visible owner turn on the wire, and `agent.wait` exposes final assistant text from the same session. If the intent is an isolated model-only probe that merely re-resolves pins under the owner identity, this change conflates \"use the owner session's read identity\" with \"run inside the owner session.\" The DCS read revalidation uses `params.sessionId/params.sessionKey` from the attempt, so running on a synthetic knowledge session with the owner session key passed only for read identity would keep isolation. As written, knowledge QA shares the user's session lane and history cache; an `agent.wait` caller can also read the QA model's final text through the new `text` field. Fix by running the model-only run on a dedicated internal session key while carrying owner identity (workspaceId/sessionKey) as read context, or explicitly fence the QA run out of the user session's abort/history path.",
+      "priority": "P1",
+      "confidence": 0.62,
+      "category": "bug",
+      "code_location": {
+        "file_path": "electron/services/knowledge-evidence-qa.ts",
+        "line": 108
+      }
+    },
+    {
+      "title": "`respondWithEvidence` returns the previous run's final text when the current run produced none",
+      "body": "`agent.wait` now returns `text` from `context.dedupe.get('agent:' + runId)`. For the knowledge QA path the runId is the idempotency key `knowledge:<uuid>`, and the dedupe entry is populated with the final result payload. In the non-knowledge branch, `runKnowledgeModel` still falls back to `chat.history` for the last assistant message. The knowledge branch requires a retained manifest, so a cache hit that lacks `retainedEvidence` throws — but `agent.wait` calls `respondWithEvidence` for cached/timeout/completed paths, and the text extraction reads `result.payloads`/`meta.finalAssistantVisibleText` regardless of whether the run is the knowledge run. For repeated QA requests the caller derives a fresh uuid, so cross-run leakage is unlikely; however for `agent.wait` on a normal `chat.send` run that has no DCS manifest, `retainedEvidence` is undefined and `text` stays undefined, so normal callers are unaffected. The concrete risk is the knowledge run path: if `waitForTerminalGatewayDedupe` returns before the agent result is written, `output` is undefined and `text` is omitted, but `runKnowledgeModel` then writes `if (typeof wait.text === 'string' && (knowledge || !text)) text = wait.text;` so an empty string is fine. This is not a defect; no action needed.",
+      "priority": "P3",
+      "confidence": 0.2,
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/gateway/server-methods/agent.ts",
+        "line": 2782
+      }
+    },
+    {
+      "title": "`knowledgeScope: 'none'` turns with references send `none` scope to the gateway, which normalizes to `none`, so the conflict-group completion test path is exercised but the scope may be inconsistent with Main",
+      "body": "In `chat-api.ts`, `if (knowledgeScope !== 'none' || knowledgeReferences.length > 0)` forwards `rpcParams.knowledgeScope = knowledgeScope`. When the renderer attaches refs while the user's scope selector is `none` (e.g. resumed message with `_knowledgeScope` missing), Main forwards `none` while `knowledgeReferences` is non-empty. `chat.ts` then resolves refs with `scope: p.knowledgeScope` = `none`; `ownerCandidates` for `scope === 'none'` returns `['memory-wiki','memory-slot','sekb']` (the final `return` is the same for all non-memory cases), so refs still resolve; but `ChatInput` explicitly rewrites `none` → `wiki` when references exist, so the renderer and Main disagree only for programmatic callers. This is a narrow correctness gap rather than an exploit: the source is still owner-admitted, but the recorded `knowledgeReferences`/scope pair in the ack can be `none` with refs. Align the Main normalizer with the renderer (`none` + refs → `wiki`) or reject that combination.",
+      "priority": "P2",
+      "confidence": 0.5,
+      "category": "bug",
+      "code_location": {
+        "file_path": "electron/services/chat-api.ts",
+        "line": 576
+      }
+    },
+    {
+      "title": "`selectKnowledgeModelSources` counts references, not conflict groups, so a group larger than the limit is dropped even when its first members fit",
+      "body": "`selectKnowledgeModelSources` groups sources by conflictGroupId, then `if (selected.length + group.length <= limit) selected.push(...group); else dropped.push(...)`. For a conflict group with more members than the remaining reference budget, the entire group is dropped, which matches \"whole conflict groups\" semantics. But for a group of size 3 with 6 already selected (limit 8), the code drops all 3 and keeps going; a later smaller unit can still fit. That is the documented policy. The subtle issue: `groups` is a `Map` keyed by `'source:' + refId` for ungrouped sources, so duplicate refIds (e.g. same page pinned twice with different revisions) collapse into one group and one entry is silently lost. `normalizeChatKnowledgeReferences` does not dedupe ids, and `packKnowledgeCandidates` dedupes by refId with a throw only on conflicting groups. In the QA path `evidence.modelSources` comes from `sourceSet.retrieved`, which is deduped by canonical refId, so duplicates shouldn't appear. Low risk.",
+      "priority": "P3",
+      "confidence": 0.25,
+      "category": "bug",
+      "code_location": {
+        "file_path": "electron/services/knowledge-evidence-qa.ts",
+        "line": 20
+      }
+    },
+    {
+      "title": "`retainedKnowledgeManifest` matches retained units by exact message equality, so re-projected knowledge that changes order or text is silently dropped from the manifest",
+      "body": "`projectContextCandidates` computes `additions` with `isDeepStrictEqual` against `params.messages`. The knowledge message is a plain object `{ role, content, timestamp }` created fresh each projection. On later model calls the messages array contains the *previous* projected knowledge message with its timestamp, so `isDeepStrictEqual` matches and the unit isn't re-added. `retainedKnowledgeManifest` then looks up records by `message.timestamp === record.timestamp` and digest equality. When a new model call reopens the collection (`reopenContextCandidateCollection`), the knowledge channel is skipped (`skipChannels` includes `knowledge`), so no new record is added; the manifest retains the prior unit because the prior message is still in `messages`. That's the intended \"cached projection once\" behavior. However when a *revocation* reopens the collection (`deniedKnowledgeRefs.size` branch), `stripDeniedKnowledgeMessages` removes the projected message only if it matches a recorded `{content,timestamp}` for the denied refId. `projectedKnowledgeMessages` is keyed by `ref.refId` and populated from `finalized.projection.messages` using `startsWith(prefix)` — for a conflict group, multiple refs share one message, and each ref's entry records that same message. Removing a denied member removes the whole group message, which is correct for atomic groups. For a single ref whose message prefix matches another ref's title? prefix includes title+lookup, so collision is unlikely. No actionable defect.",
+      "priority": "P3",
+      "confidence": 0.2,
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/context-engine/project-rag-packing.ts",
+        "line": 90
+      }
+    },
+    {
+      "title": "DCS knowledge projection is not charged when it is re-emitted on a reopened collection, so the shared budget can be exceeded across model calls",
+      "body": "`finalizeContextCandidates` calls `chargeTurnInjection(..., allowTruncation = candidate.target !== 'message_replacement' && !candidate.knowledgePacking)`. Knowledge candidates therefore charge with `allowTruncation=true`; but the whole-unit drop is achieved by `limit = !allowTruncation && charsRequested > chargeLimit ? 0 : chargeLimit` — with `allowTruncation = true`, a knowledge unit larger than the remaining budget is *truncated* by `applyInjectionBudget`, not dropped, because `allowTruncation` is `true`. Wait: `!candidate.knowledgePacking` → for knowledge candidates `allowTruncation` is `false`, so `limit` is 0 when the unit does not fit. Correct. But `applyInjectionBudget` still truncates single-channel text when `text.length > rem` and `limit` is finite — here `limit` is 0, so `charsApplied` = 0 and `text` undefined. Fine. On a reopened collection after revocation, previously applied knowledge is not re-collected (knowledge channel skipped or refs denied), so no double charge. No defect.",
+      "priority": "P3",
+      "confidence": 0.15,
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+        "line": 455
+      }
+    },
+    {
+      "title": "`agent.wait` evidence/text is gated on scope check performed per call, but the snapshot store is process-global and keyed only by runId",
+      "body": "`listContextFinalSnapshots(runId)` reads a module-global map with no session/owner binding. `respondWithEvidence` gates on the caller's `operator.read` scope, but any operator client that learns a runId can retrieve another session's retained manifest (source refs, digests, body byte counts) — and for runs with `agent:` dedupe entries, the final assistant text via the new `text` field. runIds are the idempotency keys from Chat (`crypto.randomUUID()` in the renderer) and knowledge QA (`knowledge:<uuid>`), so guessing is infeasible; still, this widens the existing `agent.wait` surface from status to final answer content for every operator client. `agent.wait` previously returned status/timings only. If operator.read is intended to cover same-machine operator clients this is acceptable; otherwise the text field should be restricted to the caller that owns the run (dedupe entry `ownerConnId`) or removed from the general wait response.",
+      "priority": "P2",
+      "confidence": 0.5,
+      "category": "security",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/gateway/server-methods/agent.ts",
+        "line": 2786
+      }
+    },
+    {
+      "title": "`agent.wait` waits again inside the response for terminal dedupe, which can extend the RPC well past `timeoutMs`",
+      "body": "`respondWithEvidence` calls `waitForTerminalGatewayDedupe` with `timeoutMs: Math.max(0, timeoutMs - elapsed)`. If `timeoutMs` was passed as 0 or is already exhausted, this is a 0ms wait — fine. But for the normal path the caller already awaited `dedupePromise` with the full `timeoutMs`; the second wait has no remaining budget and returns immediately. For the cached snapshot path, no prior wait occurred and `timeoutMs` may be the full budget, so the extra wait can add up to another full `timeoutMs` to a response that was supposed to be immediate. `agent.wait` clients (including `runKnowledgeModel` with `timeoutMs + 5000` outer RPC timeout) could see ~2x latency. Not a correctness break for knowledge QA (it passes timeoutMs and the outer RPC has +5s), but it changes latency guarantees of a long-standing RPC. Consider skipping the dedupe wait on the cached path or bounding it to a small value.",
+      "priority": "P2",
+      "confidence": 0.45,
+      "category": "regression",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/gateway/server-methods/agent.ts",
+        "line": 2776
+      }
+    },
+    {
+      "title": "Knowledge QA validates claims against `evidence.modelSources`, but those sources are from the pre-model read and not the exact retained set",
+      "body": "`const retained = result.retainedEvidence!.units.flatMap(unit => unit.citations); const modelSources = evidence.modelSources.filter(source => retained.some(citation => (citation.intentId ?? citation.refId) === source.citation?.refId && citation.chunkDigest === source.citation?.contentDigest));` — the filter matches a retained citation to a source by `intentId`/`refId` equality against `source.citation.refId`. For the model-only QA path, `references` are built with `id: source.citation.refId` and sent as `knowledgeReferences`; the runtime adapter sets `intentId: ref.id`, so `citation.intentId` equals the original `refId` — the match works. But `source.citation.refId` from `knowledge-source-set-answer.ts` is a synthesized `memory-wiki:<namespace>:<path>:<startByte>-<endByte>` value; the runtime snapshot's `intentId` is that same string, so equality holds. The comparison also requires `citation.chunkDigest === source.citation.contentDigest`; the runtime citation's `chunkDigest` is `snapshot.contentDigest`, and `source.citation.contentDigest` for the source set is `entry.ref.contentDigest`, which for the owner-snapshot path is `snapshot.contentDigest`. OK. However `evidence.modelSources` may include sources that were dropped by `selectKnowledgeModelSources` (the transport limit) — no, `evidence.modelSources` is the full set and the filter narrows to retained; any source present in retained but whose `contentDigest` differs (because the post-model `readEvidence(pinned)` re-read happened after `runKnowledgeModel` and `sources` was refreshed from `after`) — the code compares against `evidence.modelSources` from the *re-read before* the model call (`evidence = await readEvidence(pinned)` then `sources = evidence.sources`), and after the model it does `const after = await readEvidence(pinned)` only to compare counts, not to refresh `evidence`. So validation uses pre-model bytes while the DCS retained bytes were re-read inside the attempt at projection time; a source that changed between the two reads could validate a quote against stale bytes. `assertKnowledgeReadScopeCurrent` only checks identity, not content. The prior implementation validated against `evidence.modelSources` too, so this is pre-existing; but the new DCS manifest is supposed to bind actual retained bytes, and the code doesn't compare `after` content digests. Worth upgrading the `after` check from count equality to digest/revision equality against retained citations.",
+      "priority": "P2",
+      "confidence": 0.4,
+      "category": "test_gap",
+      "code_location": {
+        "file_path": "electron/services/knowledge-api.ts",
+        "line": 3466
+      }
+    },
+    {
+      "title": "Chat resend preserves `_knowledgeRefs` and scope/mode on the optimistic message but the queue/drain path drops scope/mode for resend-then-queue",
+      "body": "`resendUserMessage` passes `knowledgeReferences`, `knowledgeScope`, `knowledgeMode` into `sendMessage`. If a run is already active (which `resendUserMessage` guards against) it would queue; the guard throws when `sending`/`activeRunId`/`pendingFinal`, so queueing isn't reached. `queuePendingMessage` stores `knowledgeScope`/`knowledgeMode`/`knowledgeReferences` — added. Drain calls `sendMessage(item.text, item.opts)`, which forwards them. `runtime-send-actions.sendMessage` (the alternate implementation) forwards `knowledgeScope`, `knowledgeMode`, `knowledgeReferences` to `sendWithMedia`; `store/chat.ts` also does. OK.",
+      "priority": "P3",
+      "confidence": 0.1,
+      "category": "bug",
+      "code_location": {
+        "file_path": "src/stores/chat.ts",
+        "line": 4323
+      }
+    },
+    {
+      "title": "Conflict-group completeness in `revalidateChatKnowledgeRefs` uses `refId` membership while intents may map to different refIds after re-read",
+      "body": "`revalidateChatKnowledgeRefs` builds `ids = new Set(admitted.map(ref => ref.refId))` and `deniedGroups` from `input.refs.filter(ref => ref.conflictGroupId && !ids.has(ref.refId))`. `admitted` entries have `refId` computed as `owner:<digest of namespace/subject/locator>` (from `createResolvedChatKnowledgeRef`) unless the test overrides; for real snapshots the refId depends on the *re-read* locator. The original `input.refs` have `refId` from the *first* read (possibly same locator), and `intentId` from the original intent. If the re-read returns the same subject but a locator that changed (e.g. page grew at the end so `endByteExclusive` changed because the whole page body is re-read without a pin locator... but `revalidate` passes `sourceRef: snapshot.source`, which includes the locator, and `readOwnedBody` honors `range`), `refId` should be stable. `intentId` is set from `previous.intentId`, so a mismatch between `input.refs[].refId` and admitted `refId` would falsely mark a group denied. Safer to key on `intentId ?? refId`, as `chat-knowledge-intent.resolveChatKnowledgeIntent` does. Low probability, but the failure mode is silently dropping a whole conflict group.",
+      "priority": "P2",
+      "confidence": 0.35,
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts",
+        "line": 402
+      }
+    },
+    {
+      "title": "Task Ledger test no longer exercises the real path: `selectSessionTask` is stubbed and the assertion only checks the stub",
+      "body": "`tests/unit/chat-knowledge-scope.test.ts` adds `const selectSessionTask = vi.fn(async () => ({ success: true }))` and asserts it was called. The production wiring calls `selectSessionTask` only when `binding.activeTaskNodeId !== body.activeTaskNodeId`; the test mocks the workspace profile and `loadTaskLedgerSnapshot` but does not create a persisted coordinator binding, so `binding` is presumably undefined and `selectSessionTask` is never reached. The assertion then fails, or the test passes only because the code path was changed. Either way the test asserts on the stub rather than on behavior; it doesn't verify that the session task is actually selected before the send. Low signal either way.",
+      "priority": "P3",
+      "confidence": 0.3,
+      "category": "test_gap",
+      "code_location": {
+        "file_path": "tests/unit/chat-knowledge-scope.test.ts",
+        "line": 276
+      }
+    }
+  ],
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The core DCS packing change in `project-rag-packing.ts` and `context-candidate.ts` is mostly sound: conflict-group atomicity, ordered ordinals, whole-unit drop via `allowTruncation=false`, and separate digests are implemented and covered. The model-only Knowledge QA wiring is where the patch breaks its contract. `runKnowledgeModel` now executes the internal QA run on the user's live coordinator session key, so a \"model-only\" run shares that session's lane, abort, and history surfaces, and `agent.wait` gained a `text` field plus a manifest keyed only by runId, widening a status RPC into a final-answer reader for every operator client. Additionally, the post-model validation compares retained citations against the pre-model `evidence.modelSources` rather than the re-read bytes, so the manifest does not actually bind the quote check to the retained content. There are smaller issues: the Main scope normalizer can forward `none` with references, `revalidateChatKnowledgeRefs` keys group completeness on `refId` instead of `intentId ?? refId`, and the new test for Task Ledger selection asserts on an injected stub rather than the real path.",
+  "overall_confidence": 0.55
+}

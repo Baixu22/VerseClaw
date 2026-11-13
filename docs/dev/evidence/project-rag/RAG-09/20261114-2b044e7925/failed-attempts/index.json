@@ -1,0 +1,108 @@
+{
+  "schema": "ProjectRagFailedAttempts/v1",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "attempts": [
+    {
+      "artifact": "failed-attempts/formal-d56072e062/gates.json",
+      "status": "fail",
+      "gatesFailed": [
+        {
+          "name": "harness-ci",
+          "args": [
+            "run",
+            "harness:ci"
+          ],
+          "command": [
+            "C:\\Program Files\\nodejs\\node.EXE",
+            "C:\\Users\\27933\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+            "run",
+            "harness:ci"
+          ],
+          "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+          "exitCode": 4294967295,
+          "durationMs": 1840824,
+          "log": "harness-ci.log"
+        }
+      ],
+      "sourceUnchanged": true
+    },
+    {
+      "artifact": "failed-attempts/rag09-electron-dev.json",
+      "status": "fail",
+      "testsFailed": null,
+      "electronStats": {
+        "startTime": "2026-11-13T12:03:57.845Z",
+        "duration": 50060.310000000005,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      }
+    },
+    {
+      "artifact": "failed-attempts/rag09-electron-dev2.json",
+      "status": "fail",
+      "testsFailed": null,
+      "electronStats": {
+        "startTime": "2026-11-13T12:30:10.314Z",
+        "duration": 77594.046,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      }
+    },
+    {
+      "artifact": "failed-attempts/rag09-electron-dev3.json",
+      "status": "fail",
+      "testsFailed": null,
+      "electronStats": {
+        "startTime": "2026-11-13T12:44:34.088Z",
+        "duration": 62573.442,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      }
+    },
+    {
+      "artifact": "failed-attempts/rag09-electron-dev4.json",
+      "status": "fail",
+      "testsFailed": null,
+      "electronStats": {
+        "startTime": "2026-11-13T13:14:01.969Z",
+        "duration": 32345.455,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      }
+    },
+    {
+      "artifact": "failed-attempts/rag09-root-dev.json",
+      "status": "fail",
+      "testsFailed": 6,
+      "electronStats": null
+    },
+    {
+      "artifact": "failed-attempts/rag09-root-dev2.json",
+      "status": "fail",
+      "testsFailed": 1,
+      "electronStats": null
+    },
+    {
+      "artifact": "failed-attempts/rag09-typecheck-dev4.log",
+      "status": "fail",
+      "reason": "memory allocation failure",
+      "childExitCode": 2
+    },
+    {
+      "artifact": "failed-attempts/rag09-runtime-dev2.log",
+      "status": "fail",
+      "reason": "nonexistent explicit test target",
+      "childExitCode": 1
+    }
+  ]
+}

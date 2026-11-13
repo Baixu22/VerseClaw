@@ -1,0 +1,13 @@
+{
+  "schema": "AutoReviewAttemptStatus/v1",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "status": "timed-out",
+  "processId": 29780,
+  "createdAt": "2026-11-13T17:52:23.8080840Z",
+  "elapsedMinutes": 50.487160465,
+  "structuredResultProduced": false,
+  "reason": "No structured result after the bounded review window"
+}

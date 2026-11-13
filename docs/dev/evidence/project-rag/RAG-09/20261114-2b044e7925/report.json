@@ -1,0 +1,109 @@
+{
+  "schema": "ProjectRagPackingAcceptance/v1",
+  "node": "TF-0886",
+  "programKey": "RAG-09",
+  "status": "pass",
+  "sourceCodeCommit": "d56072e06264a1aad9a17d3d719e03c1d2d8b39c",
+  "candidate": "2b044e79254e36712ff3c4f39dfbdd57730bf797",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "tests": {
+    "root": {
+      "numTotalTests": 275,
+      "numPassedTests": 275,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    },
+    "runtime": {
+      "numTotalTests": 54,
+      "numPassedTests": 54,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    },
+    "electron": {
+      "startTime": "2026-11-13T20:34:13.312Z",
+      "duration": 81672,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  "formalGates": {
+    "total": 15,
+    "passed": 15,
+    "failed": 0,
+    "notRun": 0
+  },
+  "review": {
+    "status": "clean",
+    "model": "ccs-workbuddy/deepseek-v4.1-flash",
+    "exitCode": 0,
+    "findings": 0,
+    "artifact": "rag09-review5.json",
+    "previousAttemptAdjudication": "rag09-review3-adjudication.json"
+  },
+  "acceptance": [
+    {
+      "criterion": 1,
+      "status": "pass",
+      "evidence": [
+        "electron/project-rag-dcs-citation-P-3f869--retry-and-model-only-calls/dcs-lifecycle-receipt.json",
+        "electron.json",
+        "runtime-unit.json",
+        "root-unit.json"
+      ],
+      "result": "Admitted ordinals stay ordered inside the knowledge channel; existing cross-channel precedence remains enforced."
+    },
+    {
+      "criterion": 2,
+      "status": "pass",
+      "evidence": [
+        "electron/project-rag-dcs-citation-P-3f869--retry-and-model-only-calls/dcs-lifecycle-receipt.json",
+        "electron.json",
+        "runtime-unit.json",
+        "root-unit.json"
+      ],
+      "result": "Whole chunks and conflict groups are budgeted and retained atomically; actual chars/UTF-8 bytes and declared token estimates are readable."
+    },
+    {
+      "criterion": 3,
+      "status": "pass",
+      "evidence": [
+        "electron/project-rag-dcs-citation-P-3f869--retry-and-model-only-calls/dcs-lifecycle-receipt.json",
+        "electron.json",
+        "runtime-unit.json",
+        "root-unit.json"
+      ],
+      "result": "Source, chunk and projection digests remain separate; manifests describe the complete bytes present in each model-call context."
+    },
+    {
+      "criterion": 4,
+      "status": "pass",
+      "evidence": [
+        "electron/project-rag-dcs-citation-P-3f869--retry-and-model-only-calls/dcs-lifecycle-receipt.json",
+        "electron.json",
+        "runtime-unit.json",
+        "root-unit.json"
+      ],
+      "result": "Ordinary Chat, media, normal queued sends, idempotent retries and isolated model-only QA use owner/DCS packing. Revocation and kill switch exclude evidence; owner Chat history is unchanged by QA."
+    },
+    {
+      "criterion": 5,
+      "status": "pass",
+      "evidence": [
+        "gates.json",
+        "harness-ci-report.json",
+        "source-inputs.json"
+      ],
+      "result": "Required new unit and Electron journeys execute on this clean source candidate, with zero skipped/flaky Electron cases."
+    }
+  ],
+  "providerEvidence": {
+    "kind": "scripted-local-fixture",
+    "driven_by": "agent",
+    "realHumanEvidence": false
+  },
+  "firstFailures": "failed-attempts/index.json"
+}

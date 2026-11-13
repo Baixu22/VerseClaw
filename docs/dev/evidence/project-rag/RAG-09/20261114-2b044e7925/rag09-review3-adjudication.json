@@ -1,0 +1,130 @@
+{
+  "schema": "ProjectRagReviewAdjudication/v1",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "attempt": "rag09-review3",
+  "attemptStatus": "invalid-schema",
+  "diagnostic": "finding 2 has invalid title",
+  "invalidTitleIndices": [
+    2,
+    3,
+    4,
+    5,
+    9
+  ],
+  "findings": [
+    {
+      "title": "Model-only Knowledge QA runs on the owner session, so DCS/context state and prompt persistence leak across turns",
+      "location": {
+        "file_path": "electron/services/knowledge-evidence-qa.ts",
+        "line": 108
+      },
+      "disposition": "fixed",
+      "reason": "QA now uses an independent agent session and the Main-owned workspaceId/workspaceDir; Electron verifies unchanged owner history."
+    },
+    {
+      "title": "`respondWithEvidence` returns the previous run's final text when the current run produced none",
+      "location": {
+        "file_path": "openclaw_runtime/src/gateway/server-methods/agent.ts",
+        "line": 2782
+      },
+      "disposition": "rejected",
+      "reason": "The dedupe lookup uses the exact current runId. Current QA does not read owner chat.history; the review body also concludes this is not actionable."
+    },
+    {
+      "title": "`knowledgeScope: 'none'` turns with references send `none` scope to the gateway, which normalizes to `none`, so the conflict-group completion test path is exercised but the scope may be inconsistent with Main",
+      "location": {
+        "file_path": "electron/services/chat-api.ts",
+        "line": 576
+      },
+      "disposition": "rejected",
+      "reason": "Explicit source pins are resolved through owners independently of automatic scope; none/suggest disables automatic retrieval. Off interaction policy is specified separately in RAG-11."
+    },
+    {
+      "title": "`selectKnowledgeModelSources` counts references, not conflict groups, so a group larger than the limit is dropped even when its first members fit",
+      "location": {
+        "file_path": "electron/services/knowledge-evidence-qa.ts",
+        "line": 20
+      },
+      "disposition": "rejected",
+      "reason": "The eight-reference transport cap and whole-group drop are the specified contract, and the large Source Set regression verifies this behavior."
+    },
+    {
+      "title": "`retainedKnowledgeManifest` matches retained units by exact message equality, so re-projected knowledge that changes order or text is silently dropped from the manifest",
+      "location": {
+        "file_path": "openclaw_runtime/src/context-engine/project-rag-packing.ts",
+        "line": 90
+      },
+      "disposition": "rejected",
+      "reason": "The manifest intentionally includes only exact complete retained messages; changed or removed projections are excluded. The review body identifies no concrete defect."
+    },
+    {
+      "title": "DCS knowledge projection is not charged when it is re-emitted on a reopened collection, so the shared budget can be exceeded across model calls",
+      "location": {
+        "file_path": "openclaw_runtime/src/context-engine/context-candidate.ts",
+        "line": 455
+      },
+      "disposition": "rejected",
+      "reason": "Knowledge packing passes allowTruncation=false. The review body corrects its own boolean interpretation and concludes whole-unit drop is implemented."
+    },
+    {
+      "title": "`agent.wait` evidence/text is gated on scope check performed per call, but the snapshot store is process-global and keyed only by runId",
+      "location": {
+        "file_path": "openclaw_runtime/src/gateway/server-methods/agent.ts",
+        "line": 2786
+      },
+      "disposition": "rejected",
+      "reason": "operator.read already authorizes session history and context reads. agent.wait checks that same scope before returning content; no removed authorization check was shown."
+    },
+    {
+      "title": "`agent.wait` waits again inside the response for terminal dedupe, which can extend the RPC well past `timeoutMs`",
+      "location": {
+        "file_path": "openclaw_runtime/src/gateway/server-methods/agent.ts",
+        "line": 2776
+      },
+      "disposition": "rejected",
+      "reason": "Final-result synchronization subtracts elapsed time from the original timeout and therefore cannot add a second full timeout."
+    },
+    {
+      "title": "Knowledge QA validates claims against `evidence.modelSources`, but those sources are from the pre-model read and not the exact retained set",
+      "location": {
+        "file_path": "electron/services/knowledge-api.ts",
+        "line": 3466
+      },
+      "disposition": "fixed",
+      "reason": "Quote validation now uses the post-model owner read filtered against retained intentId and chunkDigest, with a source-change regression."
+    },
+    {
+      "title": "Chat resend preserves `_knowledgeRefs` and scope/mode on the optimistic message but the queue/drain path drops scope/mode for resend-then-queue",
+      "location": {
+        "file_path": "src/stores/chat.ts",
+        "line": 4323
+      },
+      "disposition": "rejected",
+      "reason": "Resend is blocked during an active run and its queued/send options preserve references, scope and mode. The review body confirms both forwarding paths."
+    },
+    {
+      "title": "Conflict-group completeness in `revalidateChatKnowledgeRefs` uses `refId` membership while intents may map to different refIds after re-read",
+      "location": {
+        "file_path": "openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts",
+        "line": 402
+      },
+      "disposition": "fixed",
+      "reason": "Group completeness now uses intentId with refId fallback, matching the admission identity."
+    },
+    {
+      "title": "Task Ledger test no longer exercises the real path: `selectSessionTask` is stubbed and the assertion only checks the stub",
+      "location": {
+        "file_path": "tests/unit/chat-knowledge-scope.test.ts",
+        "line": 276
+      },
+      "disposition": "rejected",
+      "reason": "The fixture verifies the Main dispatch boundary selects its persisted session task before RPC. It passes; the claimed never-reached path is contradicted by execution."
+    }
+  ],
+  "fixed": 3,
+  "rejected": 9,
+  "remainingAccepted": 0,
+  "freshReview": "rag09-review4"
+}

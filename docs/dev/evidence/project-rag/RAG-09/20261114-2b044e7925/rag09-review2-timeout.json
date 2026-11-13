@@ -1,0 +1,11 @@
+{
+  "schema": "AutoReviewAttemptStatus/v1",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "status": "timed-out",
+  "processId": 37508,
+  "createdAt": "2026-11-13T22:44:10.902196+08:00",
+  "elapsedMinutes": 65.454333365,
+  "structuredResultProduced": false
+}

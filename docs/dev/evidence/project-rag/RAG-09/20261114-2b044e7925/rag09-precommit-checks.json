@@ -1,0 +1,79 @@
+{
+  "schema": "ProjectRagPrecommitChecks/v1",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "results": [
+    {
+      "name": "lint",
+      "exitCode": 0,
+      "durationMs": 5855,
+      "args": [
+        "exec",
+        "eslint",
+        "electron/services/knowledge-api.ts",
+        "electron/services/knowledge-evidence-qa.ts",
+        "electron/services/knowledge-source-set-answer.ts",
+        "electron/services/chat-api.ts",
+        "src/pages/Chat/ChatInput.tsx",
+        "src/stores/chat.ts",
+        "src/stores/chat/runtime-send-actions.ts",
+        "shared/chat/types.ts",
+        "shared/host-api/contract.ts",
+        "shared/knowledge/packing.ts",
+        "tests/unit/knowledge-evidence-qa.test.ts",
+        "tests/unit/chat-knowledge-scope.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/chat-store-history-retry.test.ts",
+        "tests/e2e/project-rag-dcs-citation.spec.ts",
+        "--format",
+        "json",
+        "--output-file",
+        "D:\\tmp\\project-rag-relay-01a1d438\\rag09-lint-dev-final.json"
+      ]
+    },
+    {
+      "name": "contract",
+      "exitCode": 0,
+      "durationMs": 1664,
+      "args": [
+        "contract:check"
+      ]
+    },
+    {
+      "name": "i18n",
+      "exitCode": 0,
+      "durationMs": 1141,
+      "args": [
+        "run",
+        "i18n:lint"
+      ]
+    },
+    {
+      "name": "harness-validate",
+      "exitCode": 0,
+      "durationMs": 2119,
+      "args": [
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/project-rag-dcs-evidence-packing.md"
+      ]
+    },
+    {
+      "name": "harness-dry-run",
+      "exitCode": 0,
+      "durationMs": 1773,
+      "args": [
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/tasks/project-rag-dcs-evidence-packing.md",
+        "--dry-run"
+      ]
+    }
+  ],
+  "lintErrors": 0,
+  "lintWarnings": 29,
+  "success": true
+}

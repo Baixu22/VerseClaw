@@ -1,0 +1,142 @@
+{
+  "schema": "ProjectRagReviewContext/v1",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "sourceHead": "a529c082f3af034c428ac395501936842de6f439",
+  "dirty": true,
+  "sourceInputs": {
+    ".gitignore": "854bce311db1f94e6608bf0fb6f88acfeb609abbaae410f091bbb8be902dcdf0",
+    "README.ja-JP.md": "96a2988b12e8cddc5bd3d9de11823cf19a76e95f258da31c9a8683f047857c77",
+    "README.md": "4cae0d97136ca6de64308c7447346bc3f6d14047a61bb82c0fdd248e42bf64ad",
+    "README.ru-RU.md": "7fd957fa58427fed56c97506e6f4942e6135db0222ea76b56abfc25457192baa",
+    "README.zh-CN.md": "70e9fffea5af917d8e80b462e2e88272501da5793dd2d2205879aa0c6153d724",
+    "artifacts/agent-dev-deep-test/history.json": "bd38354ed286b7b68553e648fe44e9081ad225628c6b2ecf2bf46b47b9de5702",
+    "artifacts/agent-dev-deep-test/report.json": "2135e5d6f48d1dfa58514b7e57a9eec3da423c57fde123502d5f53f1934ee5fe",
+    "artifacts/agent-dev-deep-test/report.md": "bb02db8b3e327f9b7161738ab5f91e30878fa2efa67bb51dc1a29be7502028e3",
+    "artifacts/agent-dev-quality/report.json": "0698f603524f9882e246fd1fc6ae8c7c5f72a31244727fd37b4c35445a439244",
+    "artifacts/agent-dev-workbench/evidence.json": "505f1019f17b9ea1707ba31f3284349a9d21c9320edafc901124a327faef8815",
+    "docs/dev/project-rag/DCS-EVIDENCE-PACKING-CONTRACT.md": "b8e9c7f940bf699cf4778f03198480870bb0be966b2a6cd64ee9711f5440221d",
+    "docs/dev/project-rag/WORK-PACKAGES.md": "2d740ecf504b4786667e6d89b93b3dbbdebd59e8864dd5d12c38c6ec8f61d137",
+    "electron/services/chat-api.ts": "a883154b906322c2f8e09178303dc6c929b0ac4654a9523dc1c3b77ea773a864",
+    "electron/services/knowledge-api.ts": "f5b12eec052071f6b149c66648d852fb42ac4a4f38a53c0231243a65c201ef17",
+    "electron/services/knowledge-evidence-qa.ts": "4d9c2c92bb18a1e8d582e8f9fb2697c009d42df0a277aec93bc00d7d178e1bcd",
+    "electron/services/knowledge-source-set-answer.ts": "621edcd6c8ed47eb7d7f29296e0e4e6298d4bcd43aab0b11c80eea5231a38b17",
+    "harness/specs/rules/project-rag-long-term-boundary.md": "3cec18fb57b2765bbb7462660f4f8128d82e06ba98dda080576fe2f3ee4f62b6",
+    "harness/specs/scenarios/gateway-backend-communication.md": "c52110b43b7246d1505abda7060b490370990f99aa1b9b6ce1f0e44f5bc4690e",
+    "harness/specs/tasks/project-rag-dcs-evidence-packing.md": "85589bc8e94d5f34aba6d45995309beca5cefd919fb8ffe17485dfbcd8026b65",
+    "openclaw_runtime/packages/gateway-protocol/src/schema/agent.ts": "6d28da43f479733be9894e1c2884693c8863f0f906af1a511bedabe4abac9d4d",
+    "openclaw_runtime/packages/gateway-protocol/src/schema/logs-chat.ts": "6f2d8f172b2d7f1660c3b6fcae5cdd47f6a36e62df00d0cdf104dccdbae3a793",
+    "openclaw_runtime/src/agents/command/attempt-execution.ts": "573540b0510953f01c410f15455228c1fbc1847f6e5b4a7929dab0836ccceac1",
+    "openclaw_runtime/src/agents/command/types.ts": "6e1209e51f632bfa45c2486a2e9c426bd4d4756ba749b96919ead09a4842965b",
+    "openclaw_runtime/src/agents/embedded-agent-runner/extensions.ts": "9e671db8cc7fe26539f4394d482afa7fe69e25ab6af288ac0fbd0c4ddf1b692a",
+    "openclaw_runtime/src/context-engine/chat-knowledge-intent.ts": "9f3b457d7044be94a941bba9169e76dd27a07b967cefda1c5243db4cef39d62b",
+    "openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts": "a666906231708b7c84cfe83a71b07a667507d2e1776860f7ee9f19530f7ff14b",
+    "openclaw_runtime/src/context-engine/context-candidate.ts": "1b11005625d43f6900df6d2356b1807f3f75cd4a230054703b4d060405c405a4",
+    "openclaw_runtime/src/context-engine/context-final-snapshot.ts": "832bd67bfe51fce5b26ca0e048b5f83e4d2774b35e520d2b21bbc12a3eb330b8",
+    "openclaw_runtime/src/context-engine/project-rag-packing.test.ts": "2267c65b7905488e6d09ed95455708d8f78079830cafe9448017ab2a656f8d70",
+    "openclaw_runtime/src/context-engine/project-rag-packing.ts": "30976f376e6512ebf701d612d63261d20fd8c04ad44f9955f70f945110ff61ba",
+    "openclaw_runtime/src/context-engine/turn-injection-budget.ts": "6f3ff109bb3232cb0b72569cc9fb97a7492727629bdf30c01a2d54bdd2fb6ad8",
+    "openclaw_runtime/src/gateway/server-methods/agent.ts": "c087cd6877246d98839980731180f9d6e1c666bff46656d4510970ce4dde0d59",
+    "openclaw_runtime/src/gateway/server-methods/chat.ts": "c702b0100c5975e2cfc27e38d0907425f4487433b3c42ed10072b3f7b1b8053e",
+    "openclaw_runtime/src/plugin-sdk/memory-owner-read-types.ts": "371f50c6d5781d210cafd459c1cfcb60732f349eb54329aacb739f5da19e26b6",
+    "openclaw_runtime/src/runtime-core/knowledge-packing-types.ts": "bf7cec466fa7e0a833fa2aa4c043ee4d667a0a22ad2e874b2cd19c60d865a90b",
+    "scripts/repository-artifacts.json": "bc83fe0943651d44c5d2fbf6c18b14a60abf4be2912807d06b097c1f3e547ec8",
+    "shared/chat/types.ts": "10b87bd573623787aef8e8bfca970ec2d2cdc818c488becc2c4d8507391862b1",
+    "shared/host-api/contract.ts": "13ac1679e448edf5d60a14ff2dcd5218f069561cfb16160356c1f27ac4ad19c2",
+    "shared/knowledge/packing.ts": "dae373f25c645e644a1313da7e62151d5a7463b9715a4ee3f45e3e44bf4735ec",
+    "src/pages/Chat/ChatInput.tsx": "9b41291617e65ef3368a0ca1b5134e7992423ea6445564f408ca7eb17e1d2dd6",
+    "src/stores/chat.ts": "a148b274b046b5d9b50b00632cdb5b890d5b0f38c88522383322d7a42f52e7b5",
+    "src/stores/chat/runtime-send-actions.ts": "93640508dc095e1cbe665076ce18834e2148d92c3c70ccfea445475853a65195",
+    "tests/e2e/project-rag-dcs-citation.spec.ts": "b3c4214ecb5e340baa90ca693036599f8916e55bdbd42e3203a950c20c684bd6",
+    "tests/unit/chat-knowledge-scope.test.ts": "aa50fc14e41eff166a76e4a4dc9e8b123155fa729a1f106f9b9273b258869e71",
+    "tests/unit/chat-store-history-retry.test.ts": "faea70a902fe81e5f9a3b00f0604b2bd9890b834f50aee07adcfa43f8fd10577",
+    "tests/unit/knowledge-api.test.ts": "db172fbcbed472c7b611e337fe82444960aa8e208fcd9ffc6a3cd3bee94cd8d2",
+    "tests/unit/knowledge-evidence-qa.test.ts": "2804b0c935800bf2c1015f1299c37db5c4c14da08fec1b72de00f8474cf8c0d1"
+  },
+  "proof": [
+    {
+      "path": "D:\\tmp\\project-rag-relay-01a1d438\\rag09-root-dev6.json",
+      "sha256": "f52e5bfb037ee5b95fdce75d35445bdb6c66a79d0d750abf8998c88e62dae342",
+      "total": 275,
+      "passed": 275,
+      "failed": 0,
+      "electronStats": null
+    },
+    {
+      "path": "D:\\tmp\\project-rag-relay-01a1d438\\rag09-runtime-dev3.json",
+      "sha256": "45fcdf8979fba67b56fc12602a062f6598780ccdd7c8c6bf13eecded48f8d1f2",
+      "total": 54,
+      "passed": 54,
+      "failed": 0,
+      "electronStats": null
+    },
+    {
+      "path": "D:\\tmp\\project-rag-relay-01a1d438\\rag09-electron-dev6.json",
+      "sha256": "14aacda08f77afaf0b9e8089f2e5e78fea112b92b389a009c34f4442efb92c03",
+      "total": null,
+      "passed": null,
+      "failed": null,
+      "electronStats": {
+        "startTime": "2026-11-13T18:07:19.383Z",
+        "duration": 109040.824,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  ],
+  "typecheck": {
+    "success": true,
+    "mode": "parallel",
+    "testTypes": {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 92241,
+      "observationMode": false,
+      "errorCount": 0,
+      "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    },
+    "cache": {
+      "enabled": false,
+      "status": "disabled",
+      "key": "7a77902529ae1bb77cfd4280a6da9a997f35707c8f9aaf41c79b023e37af880b",
+      "inputCount": 13452,
+      "report": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\artifacts\\typecheck-cache\\report.json"
+    },
+    "totalDurationMs": 105102,
+    "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+    "results": [
+      {
+        "commandLine": "node scripts/generate-ext-bridge.mjs",
+        "exitCode": 0,
+        "durationMs": 197
+      },
+      {
+        "commandLine": "pnpm run typecheck:node",
+        "exitCode": 0,
+        "durationMs": 60963
+      },
+      {
+        "commandLine": "pnpm run typecheck:web",
+        "exitCode": 0,
+        "durationMs": 30593
+      },
+      {
+        "commandLine": "pnpm run typecheck:test",
+        "exitCode": 0,
+        "durationMs": 92241,
+        "observationMode": false,
+        "errorCount": 0,
+        "errorLog": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+      }
+    ]
+  },
+  "typecheckEnvironment": {
+    "GOMAXPROCS": "2",
+    "GOMEMLIMIT": "1024MiB"
+  },
+  "providerEvidence": "scripted-local-fixture",
+  "adjudication": "D:\\tmp\\project-rag-relay-01a1d438\\rag09-review3-adjudication.json"
+}

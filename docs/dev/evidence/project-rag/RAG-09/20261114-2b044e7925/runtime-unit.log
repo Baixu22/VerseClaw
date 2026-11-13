@@ -1,0 +1,6 @@
+(node:45456) [PROMPT_CONTRIBUTION_AUTHORITY_DENIED] Warning: Prompt contribution authority violation: source=compass scope=system_prompt requires=append_instruction reason=undeclared
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:45456) [PROMPT_CONTRIBUTION_AUTHORITY_DENIED] Warning: Prompt contribution authority violation: source=compass scope=system_prompt requires=append_instruction reason=undeclared
+(node:45456) [PROMPT_CONTRIBUTION_AUTHORITY_DENIED] Warning: Prompt contribution authority violation: source=shared-source scope=system_prompt requires=append_instruction reason=undeclared
+(node:45456) [PROMPT_CONTRIBUTION_AUTHORITY_DENIED] Warning: Prompt contribution authority violation: source=vtoken-assembly scope=message requires=append_data reason=scope-mismatch
+JSON report written to D:/tmp/project-rag-relay-01a1d438/rag09-formal-2b044e7925/runtime-unit.json

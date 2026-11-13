@@ -1,0 +1,10 @@
+{
+  "schema": "ProjectRagSourceFreeze/v1",
+  "candidate": "d56072e06264a1aad9a17d3d719e03c1d2d8b39c",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "review": "rag09-review5.json",
+  "reviewedFiles": 47,
+  "config": "D:\\tmp\\project-rag-relay-01a1d438\\rag09-gates.json"
+}
