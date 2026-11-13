@@ -1,0 +1,429 @@
+{
+  "schema": "ContextInlineSpillBenefitLoopEval/v1",
+  "runId": "2026-11-13T06-18-10-544Z-live",
+  "mode": "live",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "loop_driver": "eval-harness (executes only the model-returned tool calls)",
+  "candidate": {
+    "commit": "eb93671ab02bbae44b4e8981b3d68aeb3c98e438",
+    "tree": "888122eb7ee5be928d3c09c50dc3d998a81e40d3",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false,
+    "status": ""
+  },
+  "designFreeze": {
+    "path": "harness/specs/fixtures/context-inline-spill-benefit-round6/design.freeze.json",
+    "sha256": "74fa9962f10ad1af65a79569dc6c51f6c49757fb45835c2cc9f3c7174a853e6d",
+    "commit": "ab8605136618bd021c1cf8772c18aac92dd83411"
+  },
+  "provider": {
+    "kind": "openai-compatible-responses",
+    "endpoint_origin": "http://127.0.0.1:3065",
+    "model": "space-bunny",
+    "credential_persisted": false
+  },
+  "design": {
+    "repeats": 3,
+    "maxTurns": 8,
+    "maxOutputTokens": 900,
+    "reasoning": {
+      "effort": "low",
+      "summary": "auto"
+    },
+    "evidenceTasks": [
+      "deploy-token",
+      "db-passport",
+      "cache-seed",
+      "signing-key",
+      "tenant-id",
+      "migration-hash"
+    ],
+    "controlTasks": [
+      "control-absent-1",
+      "control-absent-2"
+    ],
+    "arms": {
+      "baseline-no-reference": {
+        "reference": false,
+        "retention": false,
+        "pressure": false
+      },
+      "reference-visible": {
+        "reference": true,
+        "retention": false,
+        "pressure": false
+      },
+      "recall-stable": {
+        "reference": true,
+        "retention": true,
+        "pressure": true
+      },
+      "retention-off": {
+        "reference": true,
+        "retention": false,
+        "pressure": true
+      }
+    },
+    "contextWindowTokens": 32000,
+    "toolMaxChars": 6000,
+    "aggregateMaxChars": 16000,
+    "recallPageChars": 5500
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "arm": "baseline-no-reference",
+      "runs": 24,
+      "pass": 6,
+      "successRate": 0.25,
+      "wilson95": [
+        0.11999366228595004,
+        0.44899444005154004
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 0.9444444444444444,
+      "recallOkRate": 0,
+      "meanTurns": 3.2916666666666665,
+      "meanMainContextChars": 1894.625,
+      "meanInputTokens": 2890.7083333333335,
+      "meanOutputTokens": 330.6666666666667,
+      "meanTotalTokens": 3221.375,
+      "p50LatencyMs": 10828.139,
+      "p95LatencyMs": 34011.056,
+      "failureClasses": {
+        "answer_mismatch": 17,
+        "recall_not_attempted": 1,
+        "none": 6
+      }
+    },
+    "reference-visible": {
+      "arm": "reference-visible",
+      "runs": 24,
+      "pass": 8,
+      "successRate": 0.3333333333333333,
+      "wilson95": [
+        0.1797219032729775,
+        0.5329368316186824
+      ],
+      "evidenceSuccessRate": 0.1111111111111111,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 4.583333333333333,
+      "meanMainContextChars": 18739.333333333332,
+      "meanInputTokens": 14986.708333333334,
+      "meanOutputTokens": 719.1666666666666,
+      "meanTotalTokens": 15705.875,
+      "p50LatencyMs": 11955.642,
+      "p95LatencyMs": 32837.736,
+      "failureClasses": {
+        "recalled_text_evicted": 13,
+        "loop_budget_exceeded": 3,
+        "none": 8
+      }
+    },
+    "recall-stable": {
+      "arm": "recall-stable",
+      "runs": 24,
+      "pass": 9,
+      "successRate": 0.375,
+      "wilson95": [
+        0.21159367559548778,
+        0.5729003755732572
+      ],
+      "evidenceSuccessRate": 0.16666666666666666,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 0.9444444444444444,
+      "recallOkRate": 0.9444444444444444,
+      "meanTurns": 4.291666666666667,
+      "meanMainContextChars": 56232.75,
+      "meanInputTokens": 28699.541666666668,
+      "meanOutputTokens": 793.375,
+      "meanTotalTokens": 29492.916666666668,
+      "p50LatencyMs": 16996.072,
+      "p95LatencyMs": 120006.071,
+      "failureClasses": {
+        "none": 9,
+        "recalled_text_evicted": 10,
+        "loop_budget_exceeded": 2,
+        "provider_transport_error": 3
+      }
+    },
+    "retention-off": {
+      "arm": "retention-off",
+      "runs": 24,
+      "pass": 6,
+      "successRate": 0.25,
+      "wilson95": [
+        0.11999366228595004,
+        0.44899444005154004
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 4.458333333333333,
+      "meanMainContextChars": 58627.708333333336,
+      "meanInputTokens": 30077.125,
+      "meanOutputTokens": 897.3333333333334,
+      "meanTotalTokens": 30974.458333333332,
+      "p50LatencyMs": 14513.303,
+      "p95LatencyMs": 41315.954,
+      "failureClasses": {
+        "recalled_text_evicted": 13,
+        "loop_budget_exceeded": 3,
+        "provider_transport_error": 2,
+        "none": 6
+      }
+    }
+  },
+  "comparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 6,
+      "onlyA": 3,
+      "onlyB": 0,
+      "neither": 15,
+      "p": 0.25
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 6,
+      "onlyA": 3,
+      "onlyB": 0,
+      "neither": 15,
+      "p": 0.25
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 7,
+      "onlyA": 2,
+      "onlyB": 1,
+      "neither": 14,
+      "p": 1
+    }
+  },
+  "evidenceComparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 0,
+      "onlyA": 3,
+      "onlyB": 0,
+      "neither": 15,
+      "p": 0.25
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 0,
+      "onlyA": 3,
+      "onlyB": 0,
+      "neither": 15,
+      "p": 0.25
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 1,
+      "onlyA": 2,
+      "onlyB": 1,
+      "neither": 14,
+      "p": 1
+    }
+  },
+  "inputIntegrity": {
+    "assembly": "production-projection-only/function-protocol/r5-low-reasoning",
+    "mainContextCharsSource": "JSON.stringify(actual request.input).length",
+    "initialPairs": [
+      {
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "stableSha256": "fd5bff5c1164f34fb5d7d3f37b0110b5de9e69d04f55acdd25cb67fdc3682b0d",
+        "offSha256": "fd5bff5c1164f34fb5d7d3f37b0110b5de9e69d04f55acdd25cb67fdc3682b0d",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "deploy-token",
+        "repetition": 1,
+        "stableSha256": "58e01994fe2d0df6638678309c5113c76ff551c774a1f5d22a7fab698b69c47a",
+        "offSha256": "58e01994fe2d0df6638678309c5113c76ff551c774a1f5d22a7fab698b69c47a",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "deploy-token",
+        "repetition": 2,
+        "stableSha256": "343ddee4ba20e84fa833142f7fd95fd60c46a32a93ca1693787cf42a91c856fb",
+        "offSha256": "343ddee4ba20e84fa833142f7fd95fd60c46a32a93ca1693787cf42a91c856fb",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "stableSha256": "22e8ea81fbb196f97c226742850a6529572d46b5ce0c5a0b85ec869eede3d3e3",
+        "offSha256": "22e8ea81fbb196f97c226742850a6529572d46b5ce0c5a0b85ec869eede3d3e3",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "db-passport",
+        "repetition": 1,
+        "stableSha256": "6d9618048be6be997736b0aa9f9ba055bddd8d462b781fcc434bbc9250226786",
+        "offSha256": "6d9618048be6be997736b0aa9f9ba055bddd8d462b781fcc434bbc9250226786",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "db-passport",
+        "repetition": 2,
+        "stableSha256": "bcf6b604b3f1722ec7d84dfa0494d081c0f48624f24883d5ff97ca9a1f1d7dbc",
+        "offSha256": "bcf6b604b3f1722ec7d84dfa0494d081c0f48624f24883d5ff97ca9a1f1d7dbc",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "stableSha256": "159015510abaaff42c36576ecc204245970a5cffbc2bc7c81a26d1f078c4563f",
+        "offSha256": "159015510abaaff42c36576ecc204245970a5cffbc2bc7c81a26d1f078c4563f",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "cache-seed",
+        "repetition": 1,
+        "stableSha256": "94efc09e3e16fb91e3bf997c6c5409b2400fc7f386a2c22b370e8159738f425b",
+        "offSha256": "94efc09e3e16fb91e3bf997c6c5409b2400fc7f386a2c22b370e8159738f425b",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "cache-seed",
+        "repetition": 2,
+        "stableSha256": "dcdd1dcb07d0dd3676911cf02c682c93faa516390fe831803457e0475cb48d70",
+        "offSha256": "dcdd1dcb07d0dd3676911cf02c682c93faa516390fe831803457e0475cb48d70",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "stableSha256": "475ba9a5d9bc292109cab649ac7d15509a0d6e3965f16f163f3ac37fa6b6dec8",
+        "offSha256": "475ba9a5d9bc292109cab649ac7d15509a0d6e3965f16f163f3ac37fa6b6dec8",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "signing-key",
+        "repetition": 1,
+        "stableSha256": "4d3eecf451d2e8265bb3a9105d526c01d3fed8cd4c14e826ac029d65c1331505",
+        "offSha256": "4d3eecf451d2e8265bb3a9105d526c01d3fed8cd4c14e826ac029d65c1331505",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "signing-key",
+        "repetition": 2,
+        "stableSha256": "5bdc2efd75a963fa64f0e51dd3b2a83225c7f1ccee23197dab20314cc5846d1d",
+        "offSha256": "5bdc2efd75a963fa64f0e51dd3b2a83225c7f1ccee23197dab20314cc5846d1d",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "stableSha256": "804afa3a4495208aeaea6a574b121e6c0d4c0497b85019712a4134a5ef4c6bad",
+        "offSha256": "804afa3a4495208aeaea6a574b121e6c0d4c0497b85019712a4134a5ef4c6bad",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "tenant-id",
+        "repetition": 1,
+        "stableSha256": "6859758d944b7641da45f969e90bdd583aa40e458643455287efb465db3bd6e9",
+        "offSha256": "6859758d944b7641da45f969e90bdd583aa40e458643455287efb465db3bd6e9",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "tenant-id",
+        "repetition": 2,
+        "stableSha256": "24759cd83932df1f71765466482585a98e0d920181e1323c8c5d801ece572df9",
+        "offSha256": "24759cd83932df1f71765466482585a98e0d920181e1323c8c5d801ece572df9",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "stableSha256": "4fc44673b48c447105d7ab6e2bad27caf4f7895d9f49be863dd815ff288c57c0",
+        "offSha256": "4fc44673b48c447105d7ab6e2bad27caf4f7895d9f49be863dd815ff288c57c0",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "migration-hash",
+        "repetition": 1,
+        "stableSha256": "fade6d0f605b7d76d1ef5deab169e95b3354c29ea7e84b5d28d022e1ba91dcf4",
+        "offSha256": "fade6d0f605b7d76d1ef5deab169e95b3354c29ea7e84b5d28d022e1ba91dcf4",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "migration-hash",
+        "repetition": 2,
+        "stableSha256": "824bf8e511d4a33eeab94a9bbe891468ccf1d5df09b8834ca59a17d54bb545d8",
+        "offSha256": "824bf8e511d4a33eeab94a9bbe891468ccf1d5df09b8834ca59a17d54bb545d8",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "stableSha256": "ce6e53ffa2e01d61be4faef88bd2aa9aeb97e79480f3bc51bc618b18fbda5e37",
+        "offSha256": "ce6e53ffa2e01d61be4faef88bd2aa9aeb97e79480f3bc51bc618b18fbda5e37",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-1",
+        "repetition": 1,
+        "stableSha256": "89fe3d7ba4649632c708e787f99b8ff15c7058884fa8882b4dc9517b5610a47b",
+        "offSha256": "89fe3d7ba4649632c708e787f99b8ff15c7058884fa8882b4dc9517b5610a47b",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-1",
+        "repetition": 2,
+        "stableSha256": "056c73386b256751f51fc61efe395185ffa6f9151953fc67cb46b09797b4050c",
+        "offSha256": "056c73386b256751f51fc61efe395185ffa6f9151953fc67cb46b09797b4050c",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "stableSha256": "df5c8f291d5bc4a34211b61ba60b57c5efc4cf3990886c879f2abe397b023da8",
+        "offSha256": "df5c8f291d5bc4a34211b61ba60b57c5efc4cf3990886c879f2abe397b023da8",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 1,
+        "stableSha256": "68af1419b495de239da3c983939f7fa31ad31c0d881b48922e6a4477f2ba7ec1",
+        "offSha256": "68af1419b495de239da3c983939f7fa31ad31c0d881b48922e6a4477f2ba7ec1",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 2,
+        "stableSha256": "6025e78dfe95200309a0cc708c3dbe375a593f3922b256a381b92c26c8865f29",
+        "offSha256": "6025e78dfe95200309a0cc708c3dbe375a593f3922b256a381b92c26c8865f29",
+        "byteIdentical": true
+      }
+    ],
+    "allInitialPairsByteIdentical": true,
+    "unprojectedOutputFallback": false
+  },
+  "decision": {
+    "status": "no-benefit",
+    "b1_mechanism_and_autonomy": false,
+    "b2_task_benefit": false,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": true,
+    "b5_no_fabrication": true,
+    "b6_budget": false,
+    "contextGrowthChars": -2394.9583333333358,
+    "tokenGrowthPct": 0.8778270339389985,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "boundaries": [
+    "The loop driver is an eval harness: it executes only the tool calls the model returns, but it is not the Electron/Gateway product turn (no gateway approval, system prompt or bootstrap).",
+    "Deterministic mode uses a scripted policy and is harness self-test only, never evidence of model autonomy.",
+    "Cost is not-run unless the provider returns a billing unit; token usage is recorded per call.",
+    "Results cover this corpus and this model only; they do not establish product quality or GA."
+  ]
+}

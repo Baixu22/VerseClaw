@@ -559,6 +559,12 @@ reference-visible 增长 38.62%。原始请求、逐次记录、复算与实验�
 冻结设计与第五轮原始字节封存包位于
 `harness/specs/fixtures/context-inline-spill-benefit-round6/`。
 
+第六轮 clean 候选 `eb93671ab` 已完成 96 次运行、399 次调用：394 completed、5 transport error、0 incomplete。
+stable 证据 3/18、控制 6/6，证据保留正向配对 3、反向 0；B3/B4/B5/B7 通过，B1/B2/B6 失败，
+判定 no-benefit/NO_GO。成功回读率 17/18（94.44%）低于 95%，任务收益 McNemar p=0.25，
+总 token 相对 reference-visible 增长 87.78%。verifier 接受 clean 候选并核验 555 个归档；
+详见[第六轮收益复核](../../harness/specs/fixtures/context-inline-spill-benefit-round6/REPORT.md)。
+
 
 [第四轮评测](../../harness/specs/tasks/inline-spill-real-benefit-eval-round4.md)要求每次回读显式提供 1–5500 的 `max_chars`，缺失或超界参数返回 `invalid_arguments`。工具说明引导模型用 `offset + content.length` 翻页，取得精确值后输出最终 JSON。页尺寸与 6000 字符生产投影预算共同校验，收益按原 96 次样本与 900 输出 token 预算实测。
 

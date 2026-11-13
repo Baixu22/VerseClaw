@@ -1,0 +1,4624 @@
+{
+  "schema": "ContextInlineSpillRound6Verification/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "mode": "live",
+  "candidate": {
+    "commit": "eb93671ab02bbae44b4e8981b3d68aeb3c98e438",
+    "tree": "888122eb7ee5be928d3c09c50dc3d998a81e40d3",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false,
+    "status": ""
+  },
+  "designFreeze": {
+    "path": "harness/specs/fixtures/context-inline-spill-benefit-round6/design.freeze.json",
+    "sha256": "74fa9962f10ad1af65a79569dc6c51f6c49757fb45835c2cc9f3c7174a853e6d",
+    "commit": "ab8605136618bd021c1cf8772c18aac92dd83411"
+  },
+  "B7CleanCandidate": true,
+  "verifierAcceptedCleanCandidate": true,
+  "passed": true,
+  "sha256FilesVerified": 12,
+  "archivesVerified": 555,
+  "fifthRoundOriginalFilesPreserved": 32,
+  "fifthRoundVerdict": "mechanism-only / NO_GO",
+  "decision": {
+    "status": "no-benefit",
+    "verdict": "NO_GO",
+    "b1_mechanism_and_autonomy": false,
+    "b2_task_benefit": false,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": true,
+    "b5_no_fabrication": true,
+    "b6_budget": false,
+    "contextGrowthChars": -2394.9583333333358,
+    "tokenGrowthPct": 0.8778270339389985,
+    "b7_evidence": true
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "arm": "baseline-no-reference",
+      "runs": 24,
+      "pass": 6,
+      "successRate": 0.25,
+      "wilson95": [
+        0.11999366228595004,
+        0.44899444005154004
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 0.9444444444444444,
+      "recallOkRate": 0,
+      "meanTurns": 3.2916666666666665,
+      "meanMainContextChars": 1894.625,
+      "meanInputTokens": 2890.7083333333335,
+      "meanOutputTokens": 330.6666666666667,
+      "meanTotalTokens": 3221.375,
+      "p50LatencyMs": 10828.139,
+      "p95LatencyMs": 34011.056,
+      "failureClasses": {
+        "answer_mismatch": 17,
+        "recall_not_attempted": 1,
+        "none": 6
+      }
+    },
+    "reference-visible": {
+      "arm": "reference-visible",
+      "runs": 24,
+      "pass": 8,
+      "successRate": 0.3333333333333333,
+      "wilson95": [
+        0.1797219032729775,
+        0.5329368316186824
+      ],
+      "evidenceSuccessRate": 0.1111111111111111,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 4.583333333333333,
+      "meanMainContextChars": 18739.333333333332,
+      "meanInputTokens": 14986.708333333334,
+      "meanOutputTokens": 719.1666666666666,
+      "meanTotalTokens": 15705.875,
+      "p50LatencyMs": 11955.642,
+      "p95LatencyMs": 32837.736,
+      "failureClasses": {
+        "recalled_text_evicted": 13,
+        "loop_budget_exceeded": 3,
+        "none": 8
+      }
+    },
+    "recall-stable": {
+      "arm": "recall-stable",
+      "runs": 24,
+      "pass": 9,
+      "successRate": 0.375,
+      "wilson95": [
+        0.21159367559548778,
+        0.5729003755732572
+      ],
+      "evidenceSuccessRate": 0.16666666666666666,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 0.9444444444444444,
+      "recallOkRate": 0.9444444444444444,
+      "meanTurns": 4.291666666666667,
+      "meanMainContextChars": 56232.75,
+      "meanInputTokens": 28699.541666666668,
+      "meanOutputTokens": 793.375,
+      "meanTotalTokens": 29492.916666666668,
+      "p50LatencyMs": 16996.072,
+      "p95LatencyMs": 120006.071,
+      "failureClasses": {
+        "none": 9,
+        "recalled_text_evicted": 10,
+        "loop_budget_exceeded": 2,
+        "provider_transport_error": 3
+      }
+    },
+    "retention-off": {
+      "arm": "retention-off",
+      "runs": 24,
+      "pass": 6,
+      "successRate": 0.25,
+      "wilson95": [
+        0.11999366228595004,
+        0.44899444005154004
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 4.458333333333333,
+      "meanMainContextChars": 58627.708333333336,
+      "meanInputTokens": 30077.125,
+      "meanOutputTokens": 897.3333333333334,
+      "meanTotalTokens": 30974.458333333332,
+      "p50LatencyMs": 14513.303,
+      "p95LatencyMs": 41315.954,
+      "failureClasses": {
+        "recalled_text_evicted": 13,
+        "loop_budget_exceeded": 3,
+        "provider_transport_error": 2,
+        "none": 6
+      }
+    }
+  },
+  "comparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 6,
+      "onlyA": 3,
+      "onlyB": 0,
+      "neither": 15,
+      "p": 0.25
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 6,
+      "onlyA": 3,
+      "onlyB": 0,
+      "neither": 15,
+      "p": 0.25
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 7,
+      "onlyA": 2,
+      "onlyB": 1,
+      "neither": 14,
+      "p": 1
+    }
+  },
+  "evidenceComparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 0,
+      "onlyA": 3,
+      "onlyB": 0,
+      "neither": 15,
+      "p": 0.25
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 0,
+      "onlyA": 3,
+      "onlyB": 0,
+      "neither": 15,
+      "p": 0.25
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 1,
+      "onlyA": 2,
+      "onlyB": 1,
+      "neither": 14,
+      "p": 1
+    }
+  },
+  "diagnostics": {
+    "responseStatuses": {
+      "completed": 394,
+      "transport-error": 5
+    },
+    "incompleteReasons": {},
+    "returnedModels": {
+      "space-bunny": 394
+    },
+    "transportErrors": 5,
+    "missingUsage": 5,
+    "archiveSelection": {
+      "baseline-no-reference": {
+        "originalTarget": 0,
+        "otherArchive": 48,
+        "missingArchive": 7,
+        "invalidTargetMetadata": 0,
+        "originalOracleHits": 0,
+        "otherOracleHits": 0,
+        "maxSerializedResultChars": 60
+      },
+      "reference-visible": {
+        "originalTarget": 74,
+        "otherArchive": 15,
+        "missingArchive": 0,
+        "invalidTargetMetadata": 0,
+        "originalOracleHits": 3,
+        "otherOracleHits": 0,
+        "maxSerializedResultChars": 5938
+      },
+      "recall-stable": {
+        "originalTarget": 52,
+        "otherArchive": 29,
+        "missingArchive": 0,
+        "invalidTargetMetadata": 0,
+        "originalOracleHits": 5,
+        "otherOracleHits": 0,
+        "maxSerializedResultChars": 5909
+      },
+      "retention-off": {
+        "originalTarget": 50,
+        "otherArchive": 36,
+        "missingArchive": 0,
+        "invalidTargetMetadata": 0,
+        "originalOracleHits": 3,
+        "otherOracleHits": 0,
+        "maxSerializedResultChars": 5938
+      }
+    },
+    "perRun": [
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_01a1d38ea4f37424be2f66df",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d38eaee7749ba571979e",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d38eb830771889a5a2ab",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "deploy-token",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_01a1d38ecd6377e1ae227aa8",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d38ed6fa758cbb569958",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d38ee06372768c5ca466",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "deploy-token",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_01a1d38ef1b171f699de9dd5",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d38efadc715a8803296a",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d38f046d75cf81e5040a",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_496b290bbe5d8b9e8e33e0da",
+            "kind": "originalTarget",
+            "offset": 20000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_a0d7b72164d8062bed9e7848",
+            "kind": "originalTarget",
+            "offset": 35000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_95660c8a33bf54954bb7c906",
+            "kind": "originalTarget",
+            "offset": 25500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "deploy-token",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_6d0009c51b8f4b4f927bf469",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_2020fc4efa0b42959e6b21b6",
+            "kind": "originalTarget",
+            "offset": 35643,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-ad2367a7e390c2e4",
+            "kind": "originalTarget",
+            "offset": 24000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "deploy-token",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "loop_budget_exceeded",
+        "turns": 8,
+        "modelRecalls": 8,
+        "aboveThreeRecalls": true,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_01a1d38fdfb774bba8efd9c6",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d38fec3873a3acc5c344",
+            "kind": "originalTarget",
+            "offset": 35643,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_10e317f06a8b4e5c91a9b0f8",
+            "kind": "otherArchive",
+            "offset": 17000,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_b2f1c2cebe0445ffa4a57af5",
+            "kind": "originalTarget",
+            "offset": 17000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-8925febb213fca3b",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-a7aa5c1be7078e2a",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-9685eba0788a650a",
+            "kind": "originalTarget",
+            "offset": 40143,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 1000,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-987a724d58bc4c4f",
+            "kind": "originalTarget",
+            "offset": 6000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_01a1d3906404739b82618f25",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_7ee8f5a2b902453ebb5a3367",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          },
+          {
+            "callId": "call_59fd037cd00546c5ab4e4532",
+            "kind": "originalTarget",
+            "offset": 11000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "deploy-token",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_01a1d390987676e4a87e15f4",
+            "kind": "originalTarget",
+            "offset": 36000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5143,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d390b135716f89ab0462",
+            "kind": "otherArchive",
+            "offset": 500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_3994e3af9cfb41c8bed25792",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "deploy-token",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 6,
+        "modelRecalls": 5,
+        "aboveThreeRecalls": true,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_1cd6aadb297b3487320ec615",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_3d31e5f2aad0cc1459ae53be",
+            "kind": "originalTarget",
+            "offset": 39500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 1643,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d390e42771709ee60f66",
+            "kind": "otherArchive",
+            "offset": 5800,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 3618,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d390f3c870b9acfe4287",
+            "kind": "otherArchive",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 550,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_40d8c8bbbebf4d6f9bed95d0",
+            "kind": "otherArchive",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 550,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_01a1d3911b997714aa2fb938",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_Ge8tpc9e1N0U4RAwEKiBzEdm",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_cf61fda055a347a284b9438d",
+            "kind": "originalTarget",
+            "offset": 36000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5143,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "deploy-token",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_01a1d39149e374c9aa1d2d24",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d39153e07416a4ea52ad",
+            "kind": "otherArchive",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 3918,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d391635171b39399504e",
+            "kind": "originalTarget",
+            "offset": 3000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "deploy-token",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_e5f404d84a8729d67e2f94a0",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_2f845fe52763461782c6f994",
+            "kind": "otherArchive",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 3918,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-872618e6c7e22e17",
+            "kind": "otherArchive",
+            "offset": 5000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 4418,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_1RquxWLZn3yRauaVZJfRx2qt",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_2D0QPcLUf0mT5TBhePSoEJcq",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_47a1VGiWfHhZK7DB9ZBMHHbC",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "db-passport",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_0mOWX5E9A8tZSKwUB0AYUjHi",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_RX2yLhOqzvqWytvbMAW6RmgL",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "db-passport",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_zKOTrvXJmSs5UCFeqE21cxXr",
+            "kind": "missingArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_530Khvyqc8ZmbevdwhPWIxuD",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_taZTQRxuVE8FNeSpOQl0tqoh",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_01a1d39235b0731a85578f50",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3923fad7058a264c08b",
+            "kind": "originalTarget",
+            "offset": 40000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 2142,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3924a0d75039af7cbd2",
+            "kind": "originalTarget",
+            "offset": 20000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "db-passport",
+        "repetition": 1,
+        "success": true,
+        "failureClass": null,
+        "turns": 5,
+        "modelRecalls": 4,
+        "aboveThreeRecalls": true,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_01a1d39260917484bd6a39f5",
+            "kind": "originalTarget",
+            "offset": 40000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 2142,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d39269e773278d1ea4bb",
+            "kind": "originalTarget",
+            "offset": 18000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d39271e572b3a9042195",
+            "kind": "originalTarget",
+            "offset": 35000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_14a25db73dc0d0ccf8b741ae",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "db-passport",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_08b83dc4267f157298a35c1d",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_425bdaccc11bc1322a07ac3e",
+            "kind": "originalTarget",
+            "offset": 36000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d392a288706e80efc6ee",
+            "kind": "originalTarget",
+            "offset": 41500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 642,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_01a1d392b62170688e5f0e1a",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d392c08070e19f7d8424",
+            "kind": "originalTarget",
+            "offset": 34000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_4354e24f8a584d2e84fcd594",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "db-passport",
+        "repetition": 1,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_01a1d392e1ce761f99baf5b0",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_KOQt2GkgNDbl1N6uq4CgXNPQ",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "db-passport",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "loop_budget_exceeded",
+        "turns": 8,
+        "modelRecalls": 8,
+        "aboveThreeRecalls": true,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_01a1d392ff4975c7ad80df1b",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-b042a88cea92666e",
+            "kind": "originalTarget",
+            "offset": 36642,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d39318a9777d8baafefe",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-901a6a3e7a66817f",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3933eec729f9f4c6f13",
+            "kind": "originalTarget",
+            "offset": 39000,
+            "maxChars": 3000,
+            "ok": true,
+            "contentChars": 3000,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_qiy8AC6YotNPxE4TUzbynwHK",
+            "kind": "originalTarget",
+            "offset": 41500,
+            "maxChars": 3000,
+            "ok": true,
+            "contentChars": 642,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d393616b75c1a5582fa2",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-9b009e6df876d38c",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 2000,
+            "ok": true,
+            "contentChars": 2000,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_01a1d3937e0f73a78923648f",
+            "kind": "originalTarget",
+            "offset": 38000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 4142,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3938b1b770aa11d63ed",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_8119ad36cd3c4f9b8d70142e",
+            "kind": "otherArchive",
+            "offset": 3500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 2486,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "db-passport",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "loop_budget_exceeded",
+        "turns": 8,
+        "modelRecalls": 8,
+        "aboveThreeRecalls": true,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_01a1d393b74d75a78f62122d",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d393c32d7482b151caba",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_579dadbfba8944039315831b",
+            "kind": "otherArchive",
+            "offset": 8900,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 518,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call-43448c30-1dad-4497-9b28-68b09bbebf93",
+            "kind": "otherArchive",
+            "offset": 5400,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 650,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d394005c70399ee656c8",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_0413bed33197b26ff0402584",
+            "kind": "otherArchive",
+            "offset": 3000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d39421ec70a9a2b3df70",
+            "kind": "originalTarget",
+            "offset": 30000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call-3197e320-cd64-4f08-b942-b273c47bea05",
+            "kind": "originalTarget",
+            "offset": 39942,
+            "maxChars": 2200,
+            "ok": true,
+            "contentChars": 2200,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "db-passport",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_01a1d39441447517abcb351f",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_uhvBarvRZ3npUNPuYX7XFKwn",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_tEiirGMcMuFAAaJldenkgJMH",
+            "kind": "originalTarget",
+            "offset": 33000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call-dd58bfd8-639b-455a-a05f-046876b89720",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call-8d319d31-9170-48cd-80dc-3953a7b5dfb7",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call-414509a0-157f-47e7-b139-8f632cff00ee",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "cache-seed",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call-de93a99a-b739-4842-b5de-04a7239137c4",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call-bce3012c-9d83-4aad-8cf6-b6b32f78f55a",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "cache-seed",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "recall_not_attempted",
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "loop_budget_exceeded",
+        "turns": 8,
+        "modelRecalls": 8,
+        "aboveThreeRecalls": true,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_01a1d394ce697311b0141470",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d394d6c373febc3c63e3",
+            "kind": "originalTarget",
+            "offset": 37641,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_8e59c1c86b854feb826229f9",
+            "kind": "originalTarget",
+            "offset": 22000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_ztFuOklBeBc4iAmShkY64wAh",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_Dbe8Ghknca6u1GUmFipfxy9y",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_ujTOMG5iOc9lP4HyZEUAIK82",
+            "kind": "otherArchive",
+            "offset": 39141,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_KrnoMH03zKRnNC9lDRyeM6qY",
+            "kind": "originalTarget",
+            "offset": 39141,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 4000,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_cKCtBi5oz9UjH64Y0D9ELrAf",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "cache-seed",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_01a1d39531d374aa9e0e6ebf",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3953a4574498ef7c309",
+            "kind": "originalTarget",
+            "offset": 37641,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d395460e740c9131eef9",
+            "kind": "originalTarget",
+            "offset": 20000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "cache-seed",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_uJg8t754RNnSB3fPvrmEFvZu",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_Y26waTt1aeIHpJVmbDuUMSBB",
+            "kind": "originalTarget",
+            "offset": 37641,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call-80b06fbc-da8f-4744-b9f3-8f3766c1d461",
+            "kind": "originalTarget",
+            "offset": 19000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 6,
+        "modelRecalls": 5,
+        "aboveThreeRecalls": true,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_01a1d39593eb77a499a575a6",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_Asy8Lpx865Cvz2VFQronqZDt",
+            "kind": "originalTarget",
+            "offset": 40000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 3141,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d395a9ee71879aad9a4d",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d395b8cd75138ac4d4ae",
+            "kind": "originalTarget",
+            "offset": 20000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d395c62871d5aca89e5c",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 1200,
+            "ok": true,
+            "contentChars": 1200,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "cache-seed",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_UTP9YoaBMYirBAvF8sgVlppF",
+            "kind": "originalTarget",
+            "offset": 37641,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-ac82b459c5451e57",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_32835dbc16154f3d8250f868",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "cache-seed",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "provider_transport_error",
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "chatcmpl-tool-8e6c34e49bbe07e4",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-9951c34a03986296",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_01a1d39814ba748da1c12388",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d398220e722b9627f853",
+            "kind": "originalTarget",
+            "offset": 39000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 4141,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3982d8f72a182686f71",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "cache-seed",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "loop_budget_exceeded",
+        "turns": 8,
+        "modelRecalls": 8,
+        "aboveThreeRecalls": true,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_QugxqdBnMro4FF1xUMnU0lNm",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call-4cbfbf3e-b8bd-4021-9697-10bc54acad22",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d398899374c98788702b",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          },
+          {
+            "callId": "call_01a1d39898597172a121cd57",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 1200,
+            "ok": true,
+            "contentChars": 1200,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d398a65b751992d246e2",
+            "kind": "originalTarget",
+            "offset": 37641,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d398b3f67762bb61b56f",
+            "kind": "originalTarget",
+            "offset": 20000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_WLPTvqTonqxx1y6A90D8EFCe",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 2500,
+            "ok": true,
+            "contentChars": 2500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_qg8TJhUD5u3k4TNe7h1lg1zR",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 500,
+            "ok": true,
+            "contentChars": 500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "cache-seed",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "chatcmpl-tool-a08849e2990d5b26",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d398fc0272c58ba0c9e0",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_abbaf91fc8cc4c3e98e3ba23",
+            "kind": "originalTarget",
+            "offset": 38000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5141,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_01a1d3992331715ca61b9c4a",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d39940bf76b0ba015632",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d39963c274fa87f7b00e",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "signing-key",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_01a1d3997795715d981223a4",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d39989b377b68ee2a130",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3999242743894fcefd6",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "signing-key",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_01a1d399a5a4745395ba4693",
+            "kind": "missingArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d399b045762488d5d8ee",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_01a1d399e3f172df8b292d6c",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d399edfa73d880f615c5",
+            "kind": "originalTarget",
+            "offset": 35000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-840d2b4653c9ca34",
+            "kind": "originalTarget",
+            "offset": 40000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 1142,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "signing-key",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_01a1d39a0e2c77eb9db112cb",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d39a1ac976efacada3c7",
+            "kind": "originalTarget",
+            "offset": 38000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 3142,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d39a26c2750db2acac60",
+            "kind": "originalTarget",
+            "offset": 20000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "signing-key",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call-d28b89f7-9cb9-4bf6-964d-283a6c01ffc6",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call-d7631b24-8814-45a0-99bd-52c0d6decb2d",
+            "kind": "originalTarget",
+            "offset": 35000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_3QFM2GLbPpcSMEZM5kzjgBfr",
+            "kind": "originalTarget",
+            "offset": 40442,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 700,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_ek5rKg79V9CyxarMfzo7KO7j",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d39bfc6a7104a79ed3a9",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d39c081474f4b2f034c0",
+            "kind": "originalTarget",
+            "offset": 36000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5142,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "signing-key",
+        "repetition": 1,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call-773fb352-21c6-4d3e-ab9c-1ff9d6196312",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d39c39887228985db7c2",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          },
+          {
+            "callId": "call_cbd6c847fe6544688d2f50f9",
+            "kind": "otherArchive",
+            "offset": 4000,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "signing-key",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_01a1d39cec47754a9f7d6cfe",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d39cfc40737996547263",
+            "kind": "originalTarget",
+            "offset": 37000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 4142,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_I7nSnAkoHmrd0uetiXIzTDU6",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_EcZFdzmxuTILokASxezARi2k",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d39d44c5722b9127212c",
+            "kind": "originalTarget",
+            "offset": 30000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_6d82bebe72ed4606a85c00da",
+            "kind": "otherArchive",
+            "offset": 3000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "signing-key",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "provider_transport_error",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call-4a50f39d-c5ee-4906-8ede-5744bdb0b3da",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d39d7345709dbf46a3c2",
+            "kind": "originalTarget",
+            "offset": 35642,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_ZrzMxytxsThVCBXj4hn242dr",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "signing-key",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 7017,
+        "selected": [
+          {
+            "callId": "call_01a1d39f6346771e9ca83240",
+            "kind": "originalTarget",
+            "offset": 38000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 3142,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_FCwRQ6MQpaDLD7G5Kt0ghEkE",
+            "kind": "originalTarget",
+            "offset": 14000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_11888b1b54bc43f6bb38fcf1",
+            "kind": "otherArchive",
+            "offset": 6400,
+            "maxChars": 3000,
+            "ok": true,
+            "contentChars": 3000,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_01a1d39fe78376fea177096a",
+            "kind": "missingArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a024fb76b49d66417a",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a046a974429d77447a",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "tenant-id",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_01a1d3a05b0174e783d44cbc",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a06633750494a529c2",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a0715f74e195c93354",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "tenant-id",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_01a1d3a08cd574c9864db24b",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a095e477c798062852",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a0efe1749789ded0f2",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "loop_budget_exceeded",
+        "turns": 8,
+        "modelRecalls": 8,
+        "aboveThreeRecalls": true,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_01a1d3a10bbb71199c5d381a",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a120d37469bd925db1",
+            "kind": "originalTarget",
+            "offset": 36640,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a13323727b910907ad",
+            "kind": "otherArchive",
+            "offset": 20000,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-aade0e3557931946",
+            "kind": "originalTarget",
+            "offset": 20000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a15072719689d428c2",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a1652472ad8214c53f",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a175e574f1b4ea274b",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a181b271ab8efc8ee6",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "tenant-id",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_01a1d3a1a1f370e0acd3f818",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a1b29276fdbf95ee75",
+            "kind": "originalTarget",
+            "offset": 36000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call-3f9032b6-9805-4ae7-8bc2-8e7131a79908",
+            "kind": "originalTarget",
+            "offset": 41500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 640,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "tenant-id",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_01a1d3a1f6c474ad8c11373e",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a205e977aea42a730b",
+            "kind": "originalTarget",
+            "offset": 36640,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_W5FbJpsLqTKmmGfNkdkE5FUq",
+            "kind": "originalTarget",
+            "offset": 30000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "provider_transport_error",
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": []
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "tenant-id",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_a38553cb86974a8bb1e5d43d",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_0be8de7f628642fa93a26a50",
+            "kind": "originalTarget",
+            "offset": 36640,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a4109c75fb86d91097",
+            "kind": "otherArchive",
+            "offset": 4500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 1550,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "tenant-id",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "provider_transport_error",
+        "turns": 2,
+        "modelRecalls": 1,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_57208cf43bf4eb451c69301c",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_function_tubmutl4bgjs_1",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a6621c76b9a67631bd",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a66f9674449815ef03",
+            "kind": "originalTarget",
+            "offset": 36640,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "tenant-id",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "provider_transport_error",
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_oQRNwooCmsn7UUidwapXjiLd",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a691ee766081f5117f",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "tenant-id",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 8017,
+        "selected": [
+          {
+            "callId": "call_c4601e19e80cdc08e91e1a02",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-bb6b538d0cc7d7ce",
+            "kind": "otherArchive",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 3918,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a8b39f76c39c668574",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_01a1d3a9778d7455a9271ae5",
+            "kind": "missingArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a9bfc0776798636583",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3a9dfa673198e2e0ac4",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "migration-hash",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "chatcmpl-tool-bec2431a2984f07a",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-bccfc56244887828",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "migration-hash",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "answer_mismatch",
+        "turns": 2,
+        "modelRecalls": 1,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "chatcmpl-tool-976d209523705aa8",
+            "kind": "missingArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_01a1d3aa6b8777f5a5af06b1",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3aa76ab712c8cd9de20",
+            "kind": "originalTarget",
+            "offset": 37645,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_a59cd4b3a4e445eab780b799",
+            "kind": "originalTarget",
+            "offset": 19000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "migration-hash",
+        "repetition": 1,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_01a1d3aa978d75cf84a52a6e",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3aaa0b470109cc25412",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "migration-hash",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_01a1d3aab2117376bd6e5ef7",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3aabc38731d9fa9eaec",
+            "kind": "originalTarget",
+            "offset": 37645,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3aad3d171b19fd99f1e",
+            "kind": "originalTarget",
+            "offset": 32145,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 5,
+        "modelRecalls": 4,
+        "aboveThreeRecalls": true,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_01a1d3aae4c9700fb7549901",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_0a11e0a99ac4410ead7c58f5",
+            "kind": "originalTarget",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": true,
+            "originalPageCoversOracle": true
+          },
+          {
+            "callId": "call_01a1d3ab002c73659ba51e29",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_6cc1c29c5fe6ecddcf4124e1",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "migration-hash",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "loop_budget_exceeded",
+        "turns": 8,
+        "modelRecalls": 8,
+        "aboveThreeRecalls": true,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_01a1d3ab2e7371f58b3f7ba3",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-b191ba7c2d0ce811",
+            "kind": "originalTarget",
+            "offset": 37645,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ab470273d8a7c3f97a",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_EnEZmh5GUAfx2TcbPPt65Lv2",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ab677c76fd884960a1",
+            "kind": "otherArchive",
+            "offset": 5400,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 650,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ab761174299ad1749f",
+            "kind": "otherArchive",
+            "offset": 5400,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 650,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ab8345776caf25f717",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_dfef264c92f59dc9b397cf94",
+            "kind": "originalTarget",
+            "offset": 20000,
+            "maxChars": 3000,
+            "ok": true,
+            "contentChars": 3000,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "migration-hash",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_01a1d3ab98937129985f0752",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3aba26373ff96b5a953",
+            "kind": "originalTarget",
+            "offset": 40000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 3145,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ababac75d7aa15c7f8",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_01a1d3abc4eb74e591207fb7",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_Vexe2rsg2D3c8S6vLa4EWU9w",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3abee5073b0bac5bf7e",
+            "kind": "otherArchive",
+            "offset": 5900,
+            "maxChars": 3500,
+            "ok": true,
+            "contentChars": 3500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "migration-hash",
+        "repetition": 1,
+        "success": false,
+        "failureClass": "loop_budget_exceeded",
+        "turns": 8,
+        "modelRecalls": 8,
+        "aboveThreeRecalls": true,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_01a1d3ac05b973e8af0a60bf",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ac0fca76a0b388f9b0",
+            "kind": "originalTarget",
+            "offset": 38000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5145,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_3726523994af4bb1bb0b176e",
+            "kind": "otherArchive",
+            "offset": 5400,
+            "maxChars": 4000,
+            "ok": true,
+            "contentChars": 4000,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ac2b40750eacf04a42",
+            "kind": "otherArchive",
+            "offset": 8800,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 618,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_SBCARTgUCSR6MrlRjNFkuWDF",
+            "kind": "originalTarget",
+            "offset": 41945,
+            "maxChars": 1200,
+            "ok": true,
+            "contentChars": 1200,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_08f86506641549eba555e770",
+            "kind": "otherArchive",
+            "offset": 4800,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 1250,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_470b87f6116445918a9cead3",
+            "kind": "otherArchive",
+            "offset": 8800,
+            "maxChars": 1000,
+            "ok": true,
+            "contentChars": 618,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ac753370f1a3b3d5a9",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 1500,
+            "ok": true,
+            "contentChars": 1500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "migration-hash",
+        "repetition": 2,
+        "success": false,
+        "failureClass": "recalled_text_evicted",
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": 9017,
+        "selected": [
+          {
+            "callId": "call_01a1d3ac7e74745796dc0d55",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_59fb29f8793a40feb29b8dbd",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3aca230728b8b2179ec",
+            "kind": "originalTarget",
+            "offset": 20000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_01a1d3acb6ab760aa63b7eb9",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3accaad722dabcab674",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "control-absent-1",
+        "repetition": 1,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_01a1d3acdccd713cafd58ded",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ace8d47372b96536ee",
+            "kind": "otherArchive",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "control-absent-1",
+        "repetition": 2,
+        "success": true,
+        "failureClass": null,
+        "turns": 1,
+        "modelRecalls": 0,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": []
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_01a1d3ad03cf715898f49b91",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ad102673c2b9b9fb8b",
+            "kind": "originalTarget",
+            "offset": 44000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 1466,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "control-absent-1",
+        "repetition": 1,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_01a1d3ad204a7622bc711365",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ad287373f29d9926f4",
+            "kind": "originalTarget",
+            "offset": 33000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_70cbe420301ff7ceacbe48bd",
+            "kind": "originalTarget",
+            "offset": 40000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5466,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "control-absent-1",
+        "repetition": 2,
+        "success": true,
+        "failureClass": null,
+        "turns": 5,
+        "modelRecalls": 4,
+        "aboveThreeRecalls": true,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_01a1d3ad3fff7142a59e3bbf",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ad4805744c8f13f16d",
+            "kind": "otherArchive",
+            "offset": 40000,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ad50ad71dc98c360be",
+            "kind": "originalTarget",
+            "offset": 39000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ad5d327660b2dd584d",
+            "kind": "originalTarget",
+            "offset": 44500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 966,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_SWZa82VZjjPO0WriuqqgWdgC",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ad7a1a711eb20c9812",
+            "kind": "originalTarget",
+            "offset": 20000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ad83517380a5fcda32",
+            "kind": "originalTarget",
+            "offset": 40000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5466,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "control-absent-1",
+        "repetition": 1,
+        "success": true,
+        "failureClass": null,
+        "turns": 5,
+        "modelRecalls": 4,
+        "aboveThreeRecalls": true,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_01a1d3ad964b7185a97fffb1",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ada22a757e84eafcb7",
+            "kind": "originalTarget",
+            "offset": 40000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5466,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3adac5377fb88308604",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-87bfed012c661a1a",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "control-absent-1",
+        "repetition": 2,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_d7a406243a1659ef6f66c041",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_ncNwyOuy3yLe8k9CIdX7rBko",
+            "kind": "originalTarget",
+            "offset": 39966,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-90994731d0b40004",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_co4dm0aHVHqLhxwXUqjzcA6O",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_c4fece85e59f4325b4a3ae38",
+            "kind": "otherArchive",
+            "offset": 5000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 4418,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_9a1fd1e1f8364ddfb493efed",
+            "kind": "otherArchive",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 3918,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "control-absent-1",
+        "repetition": 1,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "chatcmpl-tool-ac5f512a1c01cc8a",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ae584974dd8cd5c7b7",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3ae62e472ed959a61e8",
+            "kind": "otherArchive",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 3918,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "control-absent-1",
+        "repetition": 2,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_dc604a5ae1ed6c665b067636",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "chatcmpl-tool-8f09cfc9fd6cf308",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_da27241c03ec47fcaf7c1bbd",
+            "kind": "originalTarget",
+            "offset": 40000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5466,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_01a1d3aeb24574d59898ce2c",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3aebbf0721d9fd65259",
+            "kind": "missingArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "control-absent-2",
+        "repetition": 1,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_01a1d3aed01c708287d64278",
+            "kind": "missingArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3aeda6d7222841151c2",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "baseline-no-reference",
+        "fixtureId": "control-absent-2",
+        "repetition": 2,
+        "success": true,
+        "failureClass": null,
+        "turns": 3,
+        "modelRecalls": 2,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_01a1d3aef85870f18defc63c",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3af018e749789d7466a",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_82623c3b7f8049018e4377fb",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_636c6ace93ef48a6b7e38227",
+            "kind": "originalTarget",
+            "offset": 39966,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3af2b137188820fafc4",
+            "kind": "originalTarget",
+            "offset": 22000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "control-absent-2",
+        "repetition": 1,
+        "success": true,
+        "failureClass": null,
+        "turns": 5,
+        "modelRecalls": 4,
+        "aboveThreeRecalls": true,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_01a1d3af3a56756fa005a724",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3af454e766faa281104",
+            "kind": "originalTarget",
+            "offset": 39900,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_383accada29140feae175911",
+            "kind": "otherArchive",
+            "offset": 20000,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_7577f52717e64bec8b0291ad",
+            "kind": "originalTarget",
+            "offset": 20000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "reference-visible",
+        "fixtureId": "control-absent-2",
+        "repetition": 2,
+        "success": true,
+        "failureClass": null,
+        "turns": 5,
+        "modelRecalls": 4,
+        "aboveThreeRecalls": true,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_01a1d3af63ce7291beecd04a",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3af6d247423af388263",
+            "kind": "originalTarget",
+            "offset": 40000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5466,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_fCOPfl0oDwDuZwQ27QvjkfQ3",
+            "kind": "otherArchive",
+            "offset": 22000,
+            "maxChars": 5500,
+            "ok": false,
+            "contentChars": 0,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3af988776c997aeb461",
+            "kind": "originalTarget",
+            "offset": 22000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_07141a20725c45a8b7d87db1",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3afb9a97008b3929012",
+            "kind": "originalTarget",
+            "offset": 40000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5466,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_a0015e59723ed8e99db84b75",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "control-absent-2",
+        "repetition": 1,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_01a1d3afd8e8747da5464f36",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_fffe21be6442050a07266271",
+            "kind": "otherArchive",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 550,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3b03b3f73bfb4c74cee",
+            "kind": "originalTarget",
+            "offset": 40000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5466,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "recall-stable",
+        "fixtureId": "control-absent-2",
+        "repetition": 2,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call-97f17890-510d-488d-9f34-903fbb129bd0",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_daa2f54e418441f0b9bc8549",
+            "kind": "otherArchive",
+            "offset": 8800,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 618,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_JcitWvfpRRyc0JiBhlpnq1Pl",
+            "kind": "originalTarget",
+            "offset": 39966,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_31371d3301824cb687e1ba31",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3b08ce0719fb8c39b9a",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3b097b572a1b43921ce",
+            "kind": "otherArchive",
+            "offset": 5000,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 4418,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "control-absent-2",
+        "repetition": 1,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call_01a1d3b0ae71749181a26042",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_3rbAF0vhOBju3o3kumTaHJf7",
+            "kind": "otherArchive",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call-0804ae01-5e1f-49f2-a321-04e861d5cf51",
+            "kind": "originalTarget",
+            "offset": 40000,
+            "maxChars": 3000,
+            "ok": true,
+            "contentChars": 3000,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      },
+      {
+        "arm": "retention-off",
+        "fixtureId": "control-absent-2",
+        "repetition": 2,
+        "success": true,
+        "failureClass": null,
+        "turns": 4,
+        "modelRecalls": 3,
+        "aboveThreeRecalls": false,
+        "originalOraclePosition": -1,
+        "selected": [
+          {
+            "callId": "call-1f82f780-3be9-4791-a0bc-d837b13fac7a",
+            "kind": "originalTarget",
+            "offset": 0,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3b1000c76c9b0eec2d3",
+            "kind": "otherArchive",
+            "offset": 5500,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 3918,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          },
+          {
+            "callId": "call_01a1d3b1155a75889880d0bb",
+            "kind": "originalTarget",
+            "offset": 39966,
+            "maxChars": 5500,
+            "ok": true,
+            "contentChars": 5500,
+            "rawOracleHit": false,
+            "originalPageCoversOracle": false
+          }
+        ]
+      }
+    ],
+    "retentionPairs": {
+      "evidence": {
+        "pairs": 18,
+        "both": 0,
+        "onlyStable": 3,
+        "onlyOff": 0,
+        "neither": 15
+      },
+      "controls": {
+        "pairs": 6,
+        "both": 6,
+        "onlyStable": 0,
+        "onlyOff": 0,
+        "neither": 0
+      }
+    }
+  },
+  "engineeringAcceptedByAgent": false,
+  "productDefaultsChanged": false,
+  "productLocksChanged": false,
+  "releaseApproved": false
+}

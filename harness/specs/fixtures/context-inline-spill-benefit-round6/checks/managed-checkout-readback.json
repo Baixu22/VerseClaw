@@ -1,0 +1,13 @@
+{
+  "schema": "G7ManagedCheckoutReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "workspace": "C:\\Users\\27933\\.codex\\worktrees\\g7-inline-spill-tf0749-20261113\\ClawX",
+  "head": "fcfd0721129c935df94a501ee4858622c38fa497",
+  "branch": null,
+  "dirty": false,
+  "usedForEvaluation": false,
+  "evaluationWorkspace": "D:/ClawX-work/g7-inline-spill-tf0749-20261113-01a1d34c",
+  "operationId": "969f518b-06d7-4717-ad46-b5f064ec7082"
+}
