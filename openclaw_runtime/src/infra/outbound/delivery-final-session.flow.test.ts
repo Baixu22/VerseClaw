@@ -286,6 +286,40 @@ describe("final Session reply bound to the original durable send intent", () => 
     expect(await loadPendingDelivery(pending.id, stateDir)).not.toBeNull();
   });
 
+  it.each([true, false])(
+    "commits direct recovery hooks only for a complete batch: partial=%s",
+    async (partial) => {
+      const payloads = [{ text: "first" }, { text: "second" }];
+      const id = await enqueueDelivery(
+        { channel: "telegram", to: "fixture-chat", payloads, bestEffort: true },
+        stateDir,
+      );
+      const entry = await loadPendingDelivery(id, stateDir);
+      if (!entry) throw new Error("direct recovery queue fixture missing");
+      const prepared = admitQueuedDeliveryRecovery(entry, stateDir);
+      if (!prepared?.admitted) throw new Error("direct recovery fixture was not admitted");
+      transport.send.mockResolvedValueOnce({ messageId: "first-message" });
+      if (partial) transport.send.mockRejectedValueOnce(new Error("second outcome unknown"));
+      const results = await deliverOutboundPayloadsInternal({
+        cfg: {},
+        channel: "telegram",
+        to: "fixture-chat",
+        payloads,
+        bestEffort: true,
+        deliveryQueueId: id,
+        deliveryQueueStateDir: stateDir,
+        skipQueue: true,
+        recoveryAdmission: getRecoveryAdmissionIdentity(prepared.record),
+      });
+      expect(transport.send).toHaveBeenCalledTimes(2);
+      expect(results).toHaveLength(partial ? 1 : 2);
+      expect((await loadPendingDelivery(id, stateDir))?.recoveryEffect).toBe(
+        partial ? "unknown" : "applied",
+      );
+      expect(transport.commit).toHaveBeenCalledTimes(partial ? 0 : 2);
+    },
+  );
+
   it.each([
     {
       pendingFinalDeliveryText: "new answer",
