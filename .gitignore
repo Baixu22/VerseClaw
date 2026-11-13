@@ -3073,6 +3073,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/evidence/project-rag/RAG-07/20261112-65b1cc688/electron/source-state-before.json
 !/docs/dev/evidence/project-rag/RAG-07/20261112-65b1cc688/electron/project-rag-plan-fusion-Pr-00a0c-ithout-synthetic-confidence/plan-lifecycle-receipt.json
 !/docs/dev/evidence/project-rag/RAG-07/20261112-65b1cc688/electron/project-rag-plan-fusion-Pr-00a0c-ithout-synthetic-confidence/plan-preflight.png
+!/docs/dev/project-rag/RERANK-PROVIDER-CONTRACT.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.

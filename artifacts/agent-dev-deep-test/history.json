@@ -1,11 +1,11 @@
 {
   "schema": "clawx.agent-dev.deep-test-history.v1",
-  "updatedAt": "2026-11-12T14:20:45.821Z",
+  "updatedAt": "2026-11-13T09:08:20.717Z",
   "maxEntries": 20,
   "latest": {
-    "generatedAt": "2026-11-12T14:20:45.821Z",
+    "generatedAt": "2026-11-13T09:08:20.717Z",
     "success": true,
-    "totalDurationMs": 58754,
+    "totalDurationMs": 61210,
     "decisionStatus": "needs-full-gate",
     "releaseReady": false,
     "modes": {
@@ -16,42 +16,42 @@
     },
     "stepDurations": {
       "typecheck": {
-        "durationMs": 29694,
+        "durationMs": 32186,
         "skipped": false,
         "ok": true
       },
       "contract": {
-        "durationMs": 1164,
+        "durationMs": 1529,
         "skipped": false,
         "ok": true
       },
       "i18n": {
-        "durationMs": 778,
+        "durationMs": 923,
         "skipped": false,
         "ok": true
       },
       "workbench": {
-        "durationMs": 481,
+        "durationMs": 558,
         "skipped": false,
         "ok": true
       },
       "harness-agent-dev": {
-        "durationMs": 3664,
+        "durationMs": 3062,
         "skipped": false,
         "ok": true
       },
       "vitest-agent-dev": {
-        "durationMs": 6381,
+        "durationMs": 6694,
         "skipped": false,
         "ok": true
       },
       "comms-replay": {
-        "durationMs": 733,
+        "durationMs": 727,
         "skipped": false,
         "ok": true
       },
       "comms-compare": {
-        "durationMs": 646,
+        "durationMs": 590,
         "skipped": false,
         "ok": true
       },
@@ -61,12 +61,12 @@
         "ok": true
       },
       "playwright-agent-dev": {
-        "durationMs": 14575,
+        "durationMs": 14278,
         "skipped": false,
         "ok": true
       },
       "workbench-refresh": {
-        "durationMs": 554,
+        "durationMs": 580,
         "skipped": false,
         "ok": true
       }
@@ -79,89 +79,14 @@
   },
   "trend": {
     "direction": "regressed",
-    "previousRunDeltaMs": -11452,
-    "sameModeDeltaMs": 20263,
-    "sameModeSampleCount": 10,
-    "previousRunGeneratedAt": "2026-11-12T12:21:45.309Z",
-    "previousSameModeGeneratedAt": "2026-11-11T14:05:37.166Z",
-    "note": "Compared with previous same-mode run 2026-11-11T14:05:37.166Z."
+    "previousRunDeltaMs": 2456,
+    "sameModeDeltaMs": 2456,
+    "sameModeSampleCount": 11,
+    "previousRunGeneratedAt": "2026-11-12T14:20:45.821Z",
+    "previousSameModeGeneratedAt": "2026-11-12T14:20:45.821Z",
+    "note": "Compared with previous same-mode run 2026-11-12T14:20:45.821Z."
   },
   "entries": [
-    {
-      "generatedAt": "2026-10-24T07:19:30.096Z",
-      "success": true,
-      "totalDurationMs": 57013,
-      "decisionStatus": "needs-full-gate",
-      "releaseReady": false,
-      "modes": {
-        "buildReuse": "reused",
-        "unit": "full",
-        "typecheck": "cached",
-        "e2e": "smoke"
-      },
-      "stepDurations": {
-        "typecheck": {
-          "durationMs": 31315,
-          "skipped": false,
-          "ok": true
-        },
-        "contract": {
-          "durationMs": 587,
-          "skipped": false,
-          "ok": true
-        },
-        "i18n": {
-          "durationMs": 839,
-          "skipped": false,
-          "ok": true
-        },
-        "workbench": {
-          "durationMs": 391,
-          "skipped": false,
-          "ok": true
-        },
-        "harness-agent-dev": {
-          "durationMs": 1656,
-          "skipped": false,
-          "ok": true
-        },
-        "vitest-agent-dev": {
-          "durationMs": 4196,
-          "skipped": false,
-          "ok": true
-        },
-        "comms-replay": {
-          "durationMs": 695,
-          "skipped": false,
-          "ok": true
-        },
-        "comms-compare": {
-          "durationMs": 594,
-          "skipped": false,
-          "ok": true
-        },
-        "e2e-build": {
-          "durationMs": 1,
-          "skipped": true,
-          "ok": true
-        },
-        "playwright-agent-dev": {
-          "durationMs": 16067,
-          "skipped": false,
-          "ok": true
-        },
-        "workbench-refresh": {
-          "durationMs": 595,
-          "skipped": false,
-          "ok": true
-        }
-      },
-      "budgetSummary": {
-        "ok": 9,
-        "watch": 2,
-        "limit": 0
-      }
-    },
     {
       "generatedAt": "2026-10-24T07:20:04.371Z",
       "success": true,
@@ -1402,6 +1327,81 @@
         },
         "workbench-refresh": {
           "durationMs": 554,
+          "skipped": false,
+          "ok": true
+        }
+      },
+      "budgetSummary": {
+        "ok": 8,
+        "watch": 3,
+        "limit": 0
+      }
+    },
+    {
+      "generatedAt": "2026-11-13T09:08:20.717Z",
+      "success": true,
+      "totalDurationMs": 61210,
+      "decisionStatus": "needs-full-gate",
+      "releaseReady": false,
+      "modes": {
+        "buildReuse": "reused",
+        "unit": "full",
+        "typecheck": "cached",
+        "e2e": "smoke"
+      },
+      "stepDurations": {
+        "typecheck": {
+          "durationMs": 32186,
+          "skipped": false,
+          "ok": true
+        },
+        "contract": {
+          "durationMs": 1529,
+          "skipped": false,
+          "ok": true
+        },
+        "i18n": {
+          "durationMs": 923,
+          "skipped": false,
+          "ok": true
+        },
+        "workbench": {
+          "durationMs": 558,
+          "skipped": false,
+          "ok": true
+        },
+        "harness-agent-dev": {
+          "durationMs": 3062,
+          "skipped": false,
+          "ok": true
+        },
+        "vitest-agent-dev": {
+          "durationMs": 6694,
+          "skipped": false,
+          "ok": true
+        },
+        "comms-replay": {
+          "durationMs": 727,
+          "skipped": false,
+          "ok": true
+        },
+        "comms-compare": {
+          "durationMs": 590,
+          "skipped": false,
+          "ok": true
+        },
+        "e2e-build": {
+          "durationMs": 1,
+          "skipped": true,
+          "ok": true
+        },
+        "playwright-agent-dev": {
+          "durationMs": 14278,
+          "skipped": false,
+          "ok": true
+        },
+        "workbench-refresh": {
+          "durationMs": 580,
           "skipped": false,
           "ok": true
         }

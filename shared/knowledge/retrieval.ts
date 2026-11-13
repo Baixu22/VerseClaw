@@ -1,5 +1,5 @@
-import type { SourceRefV2 } from './owner-read-contract';
-import type { RerankResultV1 } from './rerank';
+import type { SourceRefV2 } from './owner-read-contract.js';
+import type { RerankResultV1 } from './rerank.js';
 
 /** Data-only contract shared by runtime, Host and renderer. */
 export type RetrievalProfile = 'local' | 'quality' | 'research';
