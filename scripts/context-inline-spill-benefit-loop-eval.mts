@@ -588,7 +588,7 @@ function sourceIdentities(paths: string[]): Record<string, SourceIdentity> {
   return Object.fromEntries(paths.map((path) => {
     const bytes = readFileSync(resolve(ROOT, path));
     return [path, { sha256: digest(bytes), bytes: bytes.length,
-      gitBlob: execGit(["rev-parse", "HEAD:" + path]), worktreeBlob: execGit(["hash-object", "--path=" + path, path]) }];
+      gitBlob: execGit(["rev-parse", "HEAD:" + path]), worktreeBlob: execGit(["hash-object", "--no-filters", path]) }];
   }));
 }
 
