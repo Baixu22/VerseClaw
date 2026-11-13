@@ -16,6 +16,7 @@ import type {
   RetrievalQuery,
   RetrievalResultV2,
 } from "../../../../shared/knowledge/retrieval.js";
+import type { RerankCandidate, RerankProviderV1 } from "./rerank.js";
 export type {
   RankSignalsV2,
   RetrievalBudget,
@@ -296,6 +297,10 @@ export async function runRetrievalPlan<T>(options: {
     signal: AbortSignal;
   }) => Promise<RetrievalLaneResult<T>>;
   verify: (hit: RetrievalHit<T>, signal: AbortSignal) => Promise<string | undefined>;
+  rerank?: {
+    provider: RerankProviderV1;
+    candidates: (hit: RetrievalHit<T>) => RerankCandidate;
+  };
 }): Promise<RetrievalResultV2<T>> {
   const { plan } = options;
   const result: RetrievalResultV2<T> = {
@@ -412,6 +417,7 @@ export async function runRetrievalPlan<T>(options: {
     const fused = fuseRetrievalLanes(batches, result.filters);
     result.filters = fused.filters;
     const pool = fused.hits.slice(0, plan.budget.candidateK);
+    let ranked: typeof pool | undefined;
     const verified: typeof pool = [];
     for (const hit of pool) {
       if (signal.aborted) break;
@@ -432,9 +438,52 @@ export async function runRetrievalPlan<T>(options: {
         });
       }
     }
+    if (plan.budget.rerankK && !plan.explicitRefs.length && verified.length) {
+      if (!options.rerank) result.fallbackReasons.push("rerank-unavailable");
+      else {
+        const candidates = verified.slice(0, plan.budget.rerankK);
+        try {
+          const receipt = await bounded(() =>
+            options.rerank!.provider.rerank(
+              plan.queries[0].text,
+              candidates.map((hit) => options.rerank!.candidates(hit)),
+              {
+                signal,
+                deadlineAtMs: plan.budget.deadlineAtMs,
+                batchSize: 16,
+                batchChars: 16000,
+              },
+            ),
+          );
+          result.rerank = receipt;
+          if (receipt.status !== "complete") throw new Error(`rerank-${receipt.status}`);
+          const byId = new Map(candidates.map((hit) => [hit.id, hit]));
+          if (
+            receipt.candidateCount !== candidates.length ||
+            receipt.results.length !== candidates.length ||
+            new Set(receipt.results.map((row) => row.id)).size !== candidates.length ||
+            receipt.results.some((row) => !byId.has(row.id) || !Number.isFinite(row.score))
+          ) {
+            throw new Error("Rerank result does not match the admitted candidate set");
+          }
+          const ordered = receipt.results.map((row) => byId.get(row.id)!);
+          const checked: typeof pool = [];
+          for (const hit of ordered) {
+            const reason = await bounded(() => options.verify(hit, signal));
+            if (reason) throw new Error(`Rerank owner verification failed: ${reason}`);
+            checked.push(hit);
+          }
+          ranked = [...checked, ...verified.slice(candidates.length)];
+        } catch (error) {
+          result.fallbackReasons.push(
+            `rerank-failed:${error instanceof Error ? error.message : String(error)}`.slice(0, 240),
+          );
+        }
+      }
+    }
     const denied = new Set(result.filters.map(parentKey)),
       counts = new Map<string, number>();
-    for (const hit of verified) {
+    for (const hit of ranked ?? verified) {
       const parent = parentKey(hit.sourceRef),
         count = counts.get(parent) ?? 0;
       if (denied.has(parent)) continue;
@@ -457,13 +506,17 @@ export async function runRetrievalPlan<T>(options: {
         a.reason.localeCompare(b.reason),
     );
     result.fallbackReasons = [
-      ...new Set(
-        result.lanes
-          .filter((lane) => lane.status !== "available" || lane.reason)
-          .map((lane) => `${lane.lane}:${lane.reason ?? lane.status}`),
-      ),
-    ];
-    if (plan.budget.rerankK && !plan.explicitRefs.length)
+      ...result.fallbackReasons,
+      ...result.lanes
+        .filter((lane) => lane.status !== "available" || lane.reason)
+        .map((lane) => `${lane.lane}:${lane.reason ?? lane.status}`),
+    ].filter((reason, index, all) => all.indexOf(reason) === index);
+    if (
+      plan.budget.rerankK &&
+      !plan.explicitRefs.length &&
+      !ranked &&
+      !result.fallbackReasons.includes("rerank-unavailable")
+    )
       result.fallbackReasons.push("rerank-unavailable");
     if (signal.aborted)
       result.fallbackReasons.push(deadline.signal.aborted ? "deadline-exceeded" : "cancelled");

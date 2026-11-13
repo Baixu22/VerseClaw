@@ -1037,7 +1037,16 @@
       "cancelled": "已取消"
     }
   },
-  "vector": {
+    "rerank": {
+      "title": "项目证据重排",
+      "description": "使用本地端点或已配置的远端 cross-encoder 对已准入证据排序。local 检索不依赖此服务。",
+      "mode": "服务位置", "local": "本地端点", "remote": "远端服务",
+      "model": "Cross-encoder 模型", "provider": "已配置的服务", "endpoint": "本地端点",
+      "configure": "使用此服务", "retry": "重试 / 刷新凭据", "cancel": "取消", "disable": "禁用",
+      "status": "状态", "failed": "重排服务不可用。",
+      "states": { "disabled": "已禁用", "ready": "已就绪", "unavailable": "不可用", "cancelled": "已取消" }
+    },
+    "vector": {
     "title": "项目向量索引",
     "description": "向量模型就绪后，为获准的项目来源构建派生索引。",
     "backend": "索引后端",

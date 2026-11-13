@@ -23,6 +23,7 @@ import { getMemoryWikiPage, searchMemoryWiki } from "../query.js";
 import type { MemoryWikiProjectionService } from "../retrieval-index.js";
 import type { MemoryWikiEmbeddingService } from "../retrieval-embeddings.js";
 import type { MemoryWikiVectorService } from "./vector-service.js";
+import type { MemoryWikiRerankService } from "../retrieval-rerank.js";
 
 type WikiCandidate = {
   lookup: string;
@@ -48,6 +49,7 @@ export async function retrieveMemoryWiki(input: {
   projection?: MemoryWikiProjectionService;
   embedding?: MemoryWikiEmbeddingService;
   vector?: MemoryWikiVectorService;
+  rerank?: MemoryWikiRerankService;
   requestId?: string;
 }) {
   const context = () =>
@@ -56,7 +58,21 @@ export async function retrieveMemoryWiki(input: {
       appConfig: input.appConfig,
       identity: input.identity,
     });
-  const initialContext = context();
+  const initialRerankStatus = input.rerank?.status(input.identity);
+  const initialContext =
+    initialRerankStatus?.mode === "remote" && initialRerankStatus.providerRef
+      ? createMemoryWikiReadContext({
+          config: input.config,
+          appConfig: input.appConfig,
+          identity: {
+            ...input.identity,
+            egressProviderRefs: [
+              ...(input.identity.egressProviderRefs ?? []),
+              initialRerankStatus.providerRef,
+            ],
+          },
+        })
+      : context();
   const namespaceId = memoryWikiNamespaceId(input.config);
   const generations = (): RetrievalGeneration[] => {
     const result: RetrievalGeneration[] = [];
@@ -109,6 +125,8 @@ export async function retrieveMemoryWiki(input: {
     admissionContextId: initialContext.contextId,
     generations: initialGenerations,
   });
+  const rerankProviderRef =
+    initialRerankStatus?.mode === "remote" ? initialRerankStatus.providerRef : undefined;
   const read = (lookup: string, signal: AbortSignal, sourceRef?: SourceRefV2) =>
     getMemoryWikiPage({
       config: input.config,
@@ -120,6 +138,23 @@ export async function retrieveMemoryWiki(input: {
       lineCount: Number.MAX_SAFE_INTEGER,
       signal,
     });
+  let rerank:
+    | {
+        provider: Awaited<ReturnType<MemoryWikiRerankService["provider"]>>;
+        candidates: (hit: RetrievalHit<WikiCandidate>) => { id: string; text: string };
+      }
+    | undefined;
+  let rerankUnavailable: string | undefined;
+  if (input.rerank && !plan.explicitRefs.length && plan.budget.rerankK) {
+    try {
+      rerank = {
+        provider: await input.rerank.provider(input.identity),
+        candidates: (hit) => ({ id: hit.id, text: hit.data.snippet }),
+      };
+    } catch (error) {
+      rerankUnavailable = error instanceof Error ? error.message : String(error);
+    }
+  }
   const result = await runRetrievalPlan<WikiCandidate>({
     plan,
     signal: input.signal,
@@ -250,7 +285,14 @@ export async function retrieveMemoryWiki(input: {
       if (scopeKey(currentContext) !== scopeKey(initialContext)) return "identity-changed";
       const reason =
         matchOwnerReadPin(page.ownerSnapshot, hit.sourceRef) ??
-        evaluateOwnerReadSnapshot(page.ownerSnapshot, currentContext, { signal });
+        evaluateOwnerReadSnapshot(page.ownerSnapshot, currentContext, { signal }) ??
+        (rerankProviderRef
+          ? evaluateOwnerReadSnapshot(page.ownerSnapshot, currentContext, {
+              stage: "rerank",
+              providerRef: rerankProviderRef,
+              signal,
+            })
+          : undefined);
       if (reason) return reason;
       if (page.ownerSnapshot.content !== hit.data.snippet) return "chunk-content-changed";
       hit.data.title = page.title;
@@ -268,7 +310,12 @@ export async function retrieveMemoryWiki(input: {
       };
       return undefined;
     },
+    ...(rerank ? { rerank } : {}),
   });
+  if (rerankUnavailable) {
+    result.fallbackReasons.push(`rerank-unavailable:${rerankUnavailable}`);
+    if (result.status === "complete") result.status = "partial";
+  }
   if (
     scopeKey(context()) !== scopeKey(initialContext) ||
     JSON.stringify(generations()) !== JSON.stringify(initialGenerations)

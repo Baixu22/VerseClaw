@@ -44,6 +44,8 @@ import { prepareKnowledgeReadScope, assertKnowledgeReadScopeCurrent } from './kn
 import { normalizeSourceRefV2, isOwnerReadSnapshotV1, evaluateOwnerReadSnapshot } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
 import type { KnowledgeEmbeddingSelection, KnowledgeEmbeddingStatus, KnowledgeEmbeddingStatusResult } from '../../shared/knowledge/embedding';
 import type { KnowledgeVectorStatus, KnowledgeVectorStatusResult } from '../../shared/knowledge/vector';
+import type { KnowledgeRerankSelection, KnowledgeRerankStatusResult } from '../../shared/knowledge/rerank';
+import type { KnowledgeRerankStatus } from '../../shared/knowledge/rerank';
 import { createKnowledgeSourceSync } from './knowledge-source-sync';
 import { createKnowledgeGithubConnector, validateGithubConnector } from './knowledge-github-connector';
 import { boundedKnowledgeHistory, buildKnowledgeQaPrompt, runKnowledgeModel, validateKnowledgeQaOutput, type KnowledgeConversationTurn, type KnowledgeQaEvidence } from './knowledge-evidence-qa';
@@ -3751,6 +3753,24 @@ export function createKnowledgeApi({
       return { success: true, vector };
     } catch (error) { return { success: false, error: sanitizeUiErrorText(error) }; }
   };
+  const rerankOperation = async (operation: string, selection?: KnowledgeRerankSelection): Promise<KnowledgeRerankStatusResult> => {
+    try {
+      if (selection && !['local', 'remote'].includes(selection.mode)) throw new Error('Invalid rerank mode');
+      if (selection && ['providerRef', 'model', 'endpoint'].some(key => {
+        const value = selection[key as keyof KnowledgeRerankSelection];
+        return value !== undefined && (typeof value !== 'string' || value.length > 2048 || /[\r\n\0]/.test(value));
+      })) throw new Error('Invalid rerank provider selection');
+      const normalized = selection ? { mode: selection.mode,
+        ...(selection.providerRef?.trim() ? { providerRef: selection.providerRef.trim() } : {}),
+        ...(selection.model?.trim() ? { model: selection.model.trim() } : {}),
+        ...(selection.endpoint?.trim() ? { endpoint: selection.endpoint.trim() } : {}) } : undefined;
+      const egress = normalized?.mode === 'remote' ? [normalized.providerRef || 'siliconflow'] : [];
+      const scope = await prepareKnowledgeReadScope(gatewayManager, {}, egress);
+      const rerank = await rpc<KnowledgeRerankStatus>(`wiki.rerank.${operation}`, { ...(normalized ?? {}), readIdentity: scope.identity }, 30_000);
+      await assertKnowledgeReadScopeCurrent(gatewayManager, scope);
+      return { success: true, rerank };
+    } catch (error) { return { success: false, error: sanitizeUiErrorText(error) }; }
+  };
 
   return {
     vectorStatus: () => vectorOperation('status'),
@@ -3763,6 +3783,11 @@ export function createKnowledgeApi({
     embeddingCancel: () => embeddingOperation('cancel'),
     embeddingDisable: () => embeddingOperation('disable'),
     embeddingRetry: () => embeddingOperation('retry'),
+    rerankStatus: () => rerankOperation('status'),
+    rerankConfigure: payload => rerankOperation('configure', payload),
+    rerankCancel: () => rerankOperation('cancel'),
+    rerankDisable: () => rerankOperation('disable'),
+    rerankRetry: () => rerankOperation('retry'),
     status: async () => {
       try {
         return { success: true, status: await rpc('wiki.status', {}, 12_000) };

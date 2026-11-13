@@ -1,4 +1,5 @@
 import type { SourceRefV2 } from './owner-read-contract';
+import type { RerankResultV1 } from './rerank';
 
 /** Data-only contract shared by runtime, Host and renderer. */
 export type RetrievalProfile = 'local' | 'quality' | 'research';
@@ -85,5 +86,6 @@ export type RetrievalResultV2<T> = {
   lanes: RetrievalLaneReceipt[];
   filters: RetrievalFilter[];
   fallbackReasons: string[];
+  rerank?: RerankResultV1;
   snapshotStatus: 'current' | 'changed';
 };

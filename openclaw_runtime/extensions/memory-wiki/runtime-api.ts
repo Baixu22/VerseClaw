@@ -21,3 +21,4 @@ export {
   type MemoryWikiReadIdentity,
 } from "./src/owner-read.js";
 export { retrieveMemoryWiki } from "./src/retrieval/plan-service.js";
+export { createMemoryWikiRerankService } from "./src/retrieval-rerank.js";

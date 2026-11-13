@@ -1037,7 +1037,16 @@
       "cancelled": "キャンセル済み"
     }
   },
-  "vector": {
+    "rerank": {
+      "title": "プロジェクト証拠の再ランク付け",
+      "description": "許可された証拠をローカルエンドポイントまたは設定済みのリモート cross-encoder で並べ替えます。local 検索はこのサービスを必要としません。",
+      "mode": "サービスの場所", "local": "ローカルエンドポイント", "remote": "リモートサービス",
+      "model": "Cross-encoder モデル", "provider": "設定済みプロバイダー", "endpoint": "ローカルエンドポイント",
+      "configure": "このサービスを使用", "retry": "再試行 / 認証情報を更新", "cancel": "キャンセル", "disable": "無効化",
+      "status": "状態", "failed": "再ランク付けサービスを利用できません。",
+      "states": { "disabled": "無効", "ready": "準備完了", "unavailable": "利用不可", "cancelled": "キャンセル済み" }
+    },
+    "vector": {
     "title": "プロジェクトのベクトル索引",
     "description": "埋め込みモデルの準備後に、許可されたプロジェクト資料の索引を構築します。",
     "backend": "索引の方式",

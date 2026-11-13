@@ -55,6 +55,12 @@ export {
   runRetrievalPlan,
   RETRIEVAL_PROFILES,
 } from "../knowledge/retrieval/plan.js";
+export { createEndpointRerankProvider } from "../knowledge/retrieval/rerank.js";
+export type {
+  RerankCandidate,
+  RerankProviderV1,
+  RerankResultV1,
+} from "../knowledge/retrieval/rerank.js";
 export type {
   RankSignalsV2,
   RetrievalBudget,

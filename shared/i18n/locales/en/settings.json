@@ -1037,7 +1037,16 @@
       "cancelled": "Cancelled"
     }
   },
-  "vector": {
+    "rerank": {
+      "title": "Project evidence reranking",
+      "description": "Reorder admitted evidence with a local endpoint or a configured remote cross-encoder. Local retrieval does not require this service.",
+      "mode": "Service location", "local": "Local endpoint", "remote": "Remote service",
+      "model": "Cross-encoder model", "provider": "Configured provider", "endpoint": "Local endpoint",
+      "configure": "Use this service", "retry": "Retry / refresh credential", "cancel": "Cancel", "disable": "Disable",
+      "status": "Status", "failed": "Reranking service is unavailable.",
+      "states": { "disabled": "Disabled", "ready": "Ready", "unavailable": "Unavailable", "cancelled": "Cancelled" }
+    },
+    "vector": {
     "title": "Project vector index",
     "description": "Build a derived vector index from permitted project sources after the embedding model is ready.",
     "backend": "Index backend",

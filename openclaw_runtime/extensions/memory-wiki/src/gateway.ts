@@ -30,6 +30,7 @@ import type { MemoryWikiReadIdentity } from "./owner-read.js";
 import type { MemoryWikiProjectionService } from "./retrieval-index.js";
 import type { MemoryWikiEmbeddingService } from "./retrieval-embeddings.js";
 import type { MemoryWikiVectorService } from "./retrieval/vector-service.js";
+import type { MemoryWikiRerankService } from "./retrieval-rerank.js";
 import { retrieveMemoryWiki } from "./retrieval/plan-service.js";
 
 const READ_SCOPE = "operator.read" as const;
@@ -131,6 +132,7 @@ export function registerMemoryWikiGatewayMethods(params: {
   projection?: MemoryWikiProjectionService;
   embedding?: MemoryWikiEmbeddingService;
   vector?: MemoryWikiVectorService;
+  rerank?: MemoryWikiRerankService;
 }) {
   const { api, config, appConfig } = params;
   api.registerGatewayMethod(
@@ -177,6 +179,7 @@ export function registerMemoryWikiGatewayMethods(params: {
             projection: params.projection,
             embedding: params.embedding,
             vector: params.vector,
+            rerank: params.rerank,
           }),
         );
       } catch (error) {
@@ -229,6 +232,38 @@ export function registerMemoryWikiGatewayMethods(params: {
           }
         },
         { scope: ["status", "search"].includes(operation) ? READ_SCOPE : WRITE_SCOPE },
+      );
+    }
+  }
+  if (params.rerank) {
+    const rerank = params.rerank;
+    for (const operation of ["status", "configure", "retry", "cancel", "disable"] as const) {
+      api.registerGatewayMethod(
+        `wiki.rerank.${operation}`,
+        async ({ params: request, respond, client }) => {
+          try {
+            const identity = readIdentity(request, client);
+            if (!identity)
+              throw new Error("Rerank operations require a backend-owned read identity");
+            let result: unknown;
+            if (operation === "configure") {
+              result = await rerank.configure(
+                {
+                  mode: readEnumParam(request, "mode", ["local", "remote"] as const) ?? "remote",
+                  providerRef: readStringParam(request, "providerRef"),
+                  model: readStringParam(request, "model"),
+                  endpoint: readStringParam(request, "endpoint"),
+                },
+                identity,
+              );
+            } else if (operation === "status") result = rerank.status(identity);
+            else result = await rerank[operation](identity);
+            respond(true, result);
+          } catch (error) {
+            respondError(respond, error);
+          }
+        },
+        { scope: operation === "status" ? READ_SCOPE : WRITE_SCOPE },
       );
     }
   }

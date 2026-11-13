@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { ProvidersSettings } from '@/components/settings/ProvidersSettings';
 import { KnowledgeEmbeddingSettings } from '@/components/settings/KnowledgeEmbeddingSettings';
 import { KnowledgeVectorSettings } from '@/components/settings/KnowledgeVectorSettings';
+import { KnowledgeRerankSettings } from '@/components/settings/KnowledgeRerankSettings';
 import { FeedbackState } from '@/components/common/FeedbackState';
 import { ProgressiveLoadingSurface } from '@/components/loading/StructuralLoadingOverlay';
 import { ModelsUsageLoadingSkeleton } from '@/components/loading/PageLoadingSkeletons';
@@ -301,6 +302,7 @@ export function Models({ embedded = false }: { embedded?: boolean } = {}) {
           <ProvidersSettings />
           <KnowledgeEmbeddingSettings />
           <KnowledgeVectorSettings />
+          <KnowledgeRerankSettings />
 
           {/* Token Usage History Section */}
           <div>

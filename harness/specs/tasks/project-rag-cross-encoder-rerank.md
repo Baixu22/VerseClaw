@@ -7,10 +7,17 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-08
 intent: 在召回覆盖后提高实际送入模型的证据精度。
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: e292dd49b2844cf5da52865559e1feb227a74d9b
 touchedAreas:
   - "openclaw_runtime/src/knowledge/retrieval/**"
   - "openclaw_runtime/src/plugin-sdk/**"
+  - "openclaw_runtime/extensions/memory-wiki/**"
+  - "shared/knowledge/**"
+  - "shared/i18n/locales/*/settings.json"
+  - "src/components/settings/KnowledgeRerankSettings.tsx"
+  - "src/lib/host-api/knowledge/**"
+  - "src/pages/Models/index.tsx"
+  - "scripts/contract-check.mjs"
   - "electron/services/knowledge-api.ts"
   - "shared/host-api/contract.ts"
   - "shared/dcs/prod-flags-catalog.ts"
@@ -32,6 +39,7 @@ touchedAreas:
   - "tests/unit/knowledge-api.test.ts"
   - "tests/unit/project-rag-rerank-provider.test.ts"
   - "tests/e2e/project-rag-provider-settings.spec.ts"
+  - "tests/e2e/project-rag-rerank.spec.ts"
 requiredProfiles:
   - "fast"
   - "comms"
@@ -42,6 +50,9 @@ requiredRules:
   - "project-rag-long-term-boundary"
 requiredTests:
   - "tests/unit/knowledge-api.test.ts"
+  - "tests/unit/project-rag-rerank-provider.test.ts"
+  - "tests/e2e/project-rag-provider-settings.spec.ts"
+  - "tests/e2e/project-rag-rerank.spec.ts"
 plannedTests:
   - "tests/unit/project-rag-rerank-provider.test.ts"
 plannedE2E:

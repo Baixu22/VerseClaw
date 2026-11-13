@@ -1,6 +1,7 @@
 import type { RawMessage } from '../chat/types';
 import type { KnowledgeEmbeddingSelection, KnowledgeEmbeddingStatusResult } from '../knowledge/embedding';
 import type { KnowledgeVectorStatusResult } from '../knowledge/vector';
+import type { KnowledgeRerankSelection, KnowledgeRerankStatusResult } from '../knowledge/rerank';
 import type { RankSignalsV2, RetrievalMode, RetrievalProfile, RetrievalResultV2 } from '../knowledge/retrieval';
 import type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
 export type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
@@ -6281,6 +6282,11 @@ export type HostApiContract = {
     embeddingCancel: () => KnowledgeEmbeddingStatusResult;
     embeddingDisable: () => KnowledgeEmbeddingStatusResult;
     embeddingRetry: () => KnowledgeEmbeddingStatusResult;
+    rerankStatus: () => KnowledgeRerankStatusResult;
+    rerankConfigure: (payload: KnowledgeRerankSelection) => KnowledgeRerankStatusResult;
+    rerankCancel: () => KnowledgeRerankStatusResult;
+    rerankDisable: () => KnowledgeRerankStatusResult;
+    rerankRetry: () => KnowledgeRerankStatusResult;
     status: () => KnowledgeStatusResult;
     init: () => KnowledgeInitResult;
     configure: (payload?: KnowledgeConfigurePayload) => HostSuccess;

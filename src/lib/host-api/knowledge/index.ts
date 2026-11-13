@@ -11,9 +11,11 @@ import { knowledgeRoutingApi } from './routing';
 import { knowledgeConnectorsApi } from './connectors';
 import { knowledgeEmbeddingApi } from './embedding';
 import { knowledgeVectorApi } from './vector';
+import { knowledgeRerankApi } from './rerank';
 
 export const knowledgeHostApi = {
   ...knowledgeVectorApi,
+  ...knowledgeRerankApi,
   ...knowledgeEmbeddingApi,
   ...knowledgeConnectorsApi,
   ...knowledgeLibraryApi,

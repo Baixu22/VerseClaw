@@ -24,6 +24,8 @@ Source owner 在返回 quote 前复验当前 pin、权限、workspace 和物理�
 
 `RetrievalResult/v2` 包含计划、有效路径、lane 收据、过滤与退化原因。未启用索引时，已有 owner page reader 提供有界兼容召回并记录 `page-lexical-fallback`。现有原生 memory 搜索保留 owner 的只读入口；独立的多来源 planner adapter 按 RAG-13 接入。
 
-quality / research 的完整能力还需要重排和 Research controller。当前 hybrid 候选明确返回 `partial` 与 `rerank-unavailable`。自动附加要求 owner 确认、已知 freshness、无披露冲突且唯一 exact 命中；普通 RRF 候选等待有效相关性校准。
+quality / research 在未配置重排时返回 `partial` 与 `rerank-unavailable`；配置后按 `RerankProvider/v1` 重排已复核候选，失败保留 RRF 次序。Research controller 仍在后续工作包。重排原始分数不作为置信度。自动附加要求 owner 确认、已知 freshness、无披露冲突且唯一 exact 命中；普通 RRF 候选等待有效相关性校准。
+
+重排服务合同与固定池消融入口见 [RERANK-PROVIDER-CONTRACT.md](./RERANK-PROVIDER-CONTRACT.md)。
 
 源码回归入口：`tests/unit/project-rag-plan-fusion.test.ts`、`tests/unit/project-rag-plan-owner.test.ts`。真实本地模型、FTS / dense 融合、撤回、旧 pin 拒绝和 Preflight 的 Electron 入口为 `tests/e2e/project-rag-plan-fusion.spec.ts`，运行前设置已有模型资产目录 `PROJECT_RAG_E2E_ASSETS_DIR`。验证产物标记 `driven_by: agent`。
