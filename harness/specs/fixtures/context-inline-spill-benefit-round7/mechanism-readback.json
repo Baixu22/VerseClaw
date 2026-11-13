@@ -1,0 +1,159 @@
+{
+  "schema": "G7Round7MechanismReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "recordedAt": "2026-11-13T08:35:14.903Z",
+  "mode": "deterministic",
+  "candidateDirty": true,
+  "sourceDirectories": {
+    "user": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\mechanism-user\\2026-11-13T08-07-10-185Z-deterministic",
+    "tool": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\mechanism-tool\\2026-11-13T08-07-10-180Z-deterministic"
+  },
+  "sourceSha256": {
+    "user": {
+      "runs": "406d25ba617106198298c5e1ec1d21ca277e4143662ce024c99e82a3405345c1",
+      "result": "d5ed91c1d6fab7aaf5e05c21b639ce51418bb11191d3e43495af276dda2d42d7",
+      "manifest": "8ed6bbc96b9161039188b454de1daaa0a143b746deb7c91315d85f5e131a5daa"
+    },
+    "tool": {
+      "runs": "983f7f6a54840652baf561920b9c2f8916f392686bf7c0a399196537e5757d17",
+      "result": "0dd28a49f8b1d24d7c498fc90ec9d0c02017518f034abc16b59132758b2811d5",
+      "manifest": "d0fa2388c585b4f27680f2c484b010b107dd324844563d06b779444adfb6210d"
+    }
+  },
+  "logBytesPreserved": true,
+  "userAssistantCadencePreserved": true,
+  "perRunRecallCountsEqual": true,
+  "oldPressure": [
+    {
+      "role": "assistant",
+      "toolName": null,
+      "chars": 63,
+      "sha256": "dd18133f5e7f8b6565a60825b2896b0ed466938fc57a0c050068636ec8976c97"
+    },
+    {
+      "role": "user",
+      "toolName": null,
+      "chars": 11405,
+      "sha256": "3e3bb83745f7490c02b815b7963d2db1454ba434308d75e2e297ae73ea2cfde2"
+    },
+    {
+      "role": "toolResult",
+      "toolName": "exec",
+      "chars": 9372,
+      "sha256": "f7338b350119df20a20f263a188067220c372cabafa4ddfeeddda6af3fd4a46a"
+    },
+    {
+      "role": "toolResult",
+      "toolName": "exec",
+      "chars": 9372,
+      "sha256": "f7338b350119df20a20f263a188067220c372cabafa4ddfeeddda6af3fd4a46a"
+    }
+  ],
+  "repairedPressure": [
+    {
+      "role": "assistant",
+      "toolName": null,
+      "chars": 63,
+      "sha256": "dd18133f5e7f8b6565a60825b2896b0ed466938fc57a0c050068636ec8976c97"
+    },
+    {
+      "role": "user",
+      "toolName": null,
+      "chars": 54,
+      "sha256": "bd48af05ef0576e71e7b1bd4a53873dc64a744b80e0edd3c94a1c9cb4d0a1bd1"
+    },
+    {
+      "role": "toolResult",
+      "toolName": "exec",
+      "chars": 11405,
+      "sha256": "3e3bb83745f7490c02b815b7963d2db1454ba434308d75e2e297ae73ea2cfde2"
+    },
+    {
+      "role": "toolResult",
+      "toolName": "exec",
+      "chars": 9372,
+      "sha256": "f7338b350119df20a20f263a188067220c372cabafa4ddfeeddda6af3fd4a46a"
+    },
+    {
+      "role": "toolResult",
+      "toolName": "exec",
+      "chars": 9372,
+      "sha256": "f7338b350119df20a20f263a188067220c372cabafa4ddfeeddda6af3fd4a46a"
+    }
+  ],
+  "additionalToolObservationChars": 11405,
+  "stats": {
+    "user": {
+      "baseline-no-reference": {
+        "runs": 8,
+        "evidencePass": 0,
+        "controlPass": 2,
+        "recalls": 0,
+        "meanFinalInputChars": 1091.25,
+        "providerTokenUsageAvailable": false
+      },
+      "reference-visible": {
+        "runs": 8,
+        "evidencePass": 6,
+        "controlPass": 2,
+        "recalls": 18,
+        "meanFinalInputChars": 18059.75,
+        "providerTokenUsageAvailable": false
+      },
+      "recall-stable": {
+        "runs": 8,
+        "evidencePass": 6,
+        "controlPass": 2,
+        "recalls": 18,
+        "meanFinalInputChars": 43965.75,
+        "providerTokenUsageAvailable": false
+      },
+      "retention-off": {
+        "runs": 8,
+        "evidencePass": 0,
+        "controlPass": 2,
+        "recalls": 24,
+        "meanFinalInputChars": 52900.5,
+        "providerTokenUsageAvailable": false
+      }
+    },
+    "tool": {
+      "baseline-no-reference": {
+        "runs": 8,
+        "evidencePass": 0,
+        "controlPass": 2,
+        "recalls": 0,
+        "meanFinalInputChars": 1091.25,
+        "providerTokenUsageAvailable": false
+      },
+      "reference-visible": {
+        "runs": 8,
+        "evidencePass": 6,
+        "controlPass": 2,
+        "recalls": 18,
+        "meanFinalInputChars": 18059.75,
+        "providerTokenUsageAvailable": false
+      },
+      "recall-stable": {
+        "runs": 8,
+        "evidencePass": 6,
+        "controlPass": 2,
+        "recalls": 18,
+        "meanFinalInputChars": 18462,
+        "providerTokenUsageAvailable": false
+      },
+      "retention-off": {
+        "runs": 8,
+        "evidencePass": 0,
+        "controlPass": 2,
+        "recalls": 24,
+        "meanFinalInputChars": 18857.5,
+        "providerTokenUsageAvailable": false
+      }
+    }
+  },
+  "liveBenefitEvaluated": false,
+  "tokenBudgetEvaluated": false
+}
