@@ -1,0 +1,48 @@
+{
+  "schema": "G7MergeCommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "hygiene-validate",
+  "cwd": "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+    "--config.verify-deps-before-run=false",
+    "harness",
+    "validate",
+    "--spec",
+    "harness/specs/tasks/inline-spill-g7-integration-closeout.md"
+  ],
+  "startedAt": "2026-11-13T15:02:48.790Z",
+  "status": "finished",
+  "before": {
+    "commit": "4e6b5f4039c2e8006432f0ffa75e11738768d181",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "status": "M scripts/duplicate-assets-allowlist.json\n?? harness/specs/fixtures/context-inline-spill-g7-closeout/\n?? harness/specs/tasks/inline-spill-g7-integration-closeout.md",
+    "tree": "262bc9668ba5b38e04c85266e6d17f7441484736"
+  },
+  "temp": "D:/tmp",
+  "finishedAt": "2026-11-13T15:02:51.284Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "after": {
+    "commit": "4e6b5f4039c2e8006432f0ffa75e11738768d181",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "status": "M scripts/duplicate-assets-allowlist.json\n?? harness/specs/fixtures/context-inline-spill-g7-closeout/\n?? harness/specs/tasks/inline-spill-g7-integration-closeout.md",
+    "tree": "262bc9668ba5b38e04c85266e6d17f7441484736"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-merge-hygiene-01a1d34c\\checks\\hygiene-validate.stdout.txt",
+      "bytes": 75,
+      "sha256": "fe77a79b81c78503b268eb7026528d9a42ee70693d5b8936e95b5d7e9f77771a"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-merge-hygiene-01a1d34c\\checks\\hygiene-validate.stderr.txt",
+      "bytes": 233,
+      "sha256": "d8ec1ee4d021a797b7e47a4f55ea451f39e2afc93b2db581f57490b2067bc138"
+    }
+  }
+}

@@ -1,0 +1,2 @@
+Harness report: D:\tmp\g7-closeout-pass-r7-01a1d34c\validation-checkout\artifacts\harness\latest.md
+Harness result: pass

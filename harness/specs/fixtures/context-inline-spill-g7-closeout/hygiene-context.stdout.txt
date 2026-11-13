@@ -1,0 +1,20 @@
+Context for: harness\specs\tasks\inline-spill-g7-integration-closeout.md
+Intent: 保留原冻结候选及失败证据，登记有来源的重复归档，按G7写集合入main并保留可恢复Git历史，更新稳定证据路径后清理空闲隔离检出。
+
+Read order:
+- inline-spill-g7-integration-closeout (task): harness\specs\tasks\inline-spill-g7-integration-closeout.md
+- context-family (context-family-boundary): harness\specs\scenarios\context-family.md
+- context-family-boundary (ai-coding-rule): harness\specs\rules\context-family-boundary.md
+- context-runtime-kit-boundary (ai-coding-rule): harness\specs\rules\context-runtime-kit-boundary.md
+- disk-temp-policy (ai-coding-rule): harness\specs\rules\disk-temp-policy.md
+- repository-artifact-retention (ai-coding-rule): harness\specs\rules\repository-artifact-retention.md
+- task-forest-autoclose-and-roles (ai-coding-rule): harness\specs\rules\task-forest-autoclose-and-roles.md
+- workspace-harness-single-source (ai-coding-rule): harness\specs\rules\workspace-harness-single-source.md
+- agent-first-acceptance (guide): harness\specs\guides\agent-first-acceptance.md
+- agent-harness-routing (guide): harness\specs\guides\agent-harness-routing.md
+- pretext-text-measurement-integration (guide): harness\specs\guides\pretext-text-measurement-integration.md
+- product-acceptance-strategy (guide): harness\specs\guides\product-acceptance-strategy.md
+- scoped-development-validation (guide): harness\specs\guides\scoped-development-validation.md
+- spec-update (guide): harness\specs\guides\spec-update.md
+- sustained-development-continuity (guide): harness\specs\guides\sustained-development-continuity.md
+- harness (layer-spec): harness\specs\layers\harness.md

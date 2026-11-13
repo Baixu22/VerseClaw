@@ -1,0 +1,43 @@
+{
+  "schema": "G7MergeCommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "hygiene-artifacts",
+  "cwd": "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout",
+  "command": [
+    "node",
+    "scripts/check-repository-artifacts.mjs"
+  ],
+  "startedAt": "2026-11-13T15:00:06.114Z",
+  "status": "finished",
+  "before": {
+    "commit": "4e6b5f4039c2e8006432f0ffa75e11738768d181",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "status": "M scripts/duplicate-assets-allowlist.json\n?? harness/specs/tasks/inline-spill-g7-integration-closeout.md",
+    "tree": "262bc9668ba5b38e04c85266e6d17f7441484736"
+  },
+  "temp": "D:/tmp",
+  "finishedAt": "2026-11-13T15:00:09.752Z",
+  "exitCode": 1,
+  "signal": null,
+  "error": null,
+  "after": {
+    "commit": "4e6b5f4039c2e8006432f0ffa75e11738768d181",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "status": "M scripts/duplicate-assets-allowlist.json\n?? harness/specs/tasks/inline-spill-g7-integration-closeout.md",
+    "tree": "262bc9668ba5b38e04c85266e6d17f7441484736"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-merge-hygiene-01a1d34c\\checks\\hygiene-artifacts.stdout.txt",
+      "bytes": 2576,
+      "sha256": "b04df5c729010c0ca9f261d2e1a103460dc06e6fdd46408d2aa31fc7bc07f5cd"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-merge-hygiene-01a1d34c\\checks\\hygiene-artifacts.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

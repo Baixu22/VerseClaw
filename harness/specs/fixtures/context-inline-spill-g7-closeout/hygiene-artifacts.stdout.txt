@@ -1,0 +1,30 @@
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/README.zh-CN.md
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/before-dark.png
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/dark.png
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/draft-navigation.json
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/final-render.json
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/graphite-surfaces.json
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/layout-matrix.json
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/light.png
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/long-title-720.png
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/migration-checks.json
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/migration-recovery.png
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/more.png
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/navigation.png
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/report.json
+Local artifact is still tracked: docs/dev/evidence/ui-hierarchy-20261112/sidebar-checks.json
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/README.zh-CN.md
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/before-dark.png
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/dark.png
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/draft-navigation.json
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/final-render.json
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/graphite-surfaces.json
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/layout-matrix.json
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/light.png
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/long-title-720.png
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/migration-checks.json
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/migration-recovery.png
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/more.png
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/navigation.png
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/report.json
+Tracked path is ignored: docs/dev/evidence/ui-hierarchy-20261112/sidebar-checks.json

@@ -1,0 +1,48 @@
+{
+  "schema": "G7MergeCommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "hygiene-context",
+  "cwd": "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+    "--config.verify-deps-before-run=false",
+    "harness",
+    "context",
+    "--spec",
+    "harness/specs/tasks/inline-spill-g7-integration-closeout.md"
+  ],
+  "startedAt": "2026-11-13T14:55:51.398Z",
+  "status": "finished",
+  "before": {
+    "commit": "4e6b5f4039c2e8006432f0ffa75e11738768d181",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "status": "?? harness/specs/tasks/inline-spill-g7-integration-closeout.md",
+    "tree": "262bc9668ba5b38e04c85266e6d17f7441484736"
+  },
+  "temp": "D:/tmp",
+  "finishedAt": "2026-11-13T14:55:53.123Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "after": {
+    "commit": "4e6b5f4039c2e8006432f0ffa75e11738768d181",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "status": "?? harness/specs/tasks/inline-spill-g7-integration-closeout.md",
+    "tree": "262bc9668ba5b38e04c85266e6d17f7441484736"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-merge-hygiene-01a1d34c\\checks\\hygiene-context.stdout.txt",
+      "bytes": 1722,
+      "sha256": "0ef82a77fd126ee114897e6409054624b7131af93509b52cfe5cf46fbb56514c"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-merge-hygiene-01a1d34c\\checks\\hygiene-context.stderr.txt",
+      "bytes": 231,
+      "sha256": "d9793a536353ab0a356fbf120f1be2a965b875f55c5b63e021c12e4174f4177e"
+    }
+  }
+}
