@@ -1,0 +1,427 @@
+{
+  "schema": "ContextInlineSpillBenefitLoopEval/v1",
+  "runId": "2026-11-13T10-54-31-031Z-live",
+  "mode": "live",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "loop_driver": "eval-harness (executes only the model-returned tool calls)",
+  "candidate": {
+    "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+    "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false,
+    "status": ""
+  },
+  "designFreeze": {
+    "path": "harness/specs/fixtures/context-inline-spill-benefit-round8/design.freeze.json",
+    "sha256": "98bd4cb4c0f243cb69c1d9e759e8245f60b1e973b6fcc7bb49cdb59d2852ad12",
+    "commit": "3e875f462ce16ca8b6ed4feb412397fe0f391311"
+  },
+  "provider": {
+    "kind": "openai-compatible-responses",
+    "endpoint_origin": "http://127.0.0.1:3065",
+    "model": "space-bunny",
+    "credential_persisted": false
+  },
+  "design": {
+    "repeats": 3,
+    "maxTurns": 8,
+    "maxOutputTokens": 900,
+    "reasoning": {
+      "effort": "low",
+      "summary": "auto"
+    },
+    "strategy": "navigated",
+    "pressureSource": "tool",
+    "providerTimeoutMs": 240000,
+    "evidenceTasks": [
+      "deploy-token",
+      "db-passport",
+      "cache-seed",
+      "signing-key",
+      "tenant-id",
+      "migration-hash"
+    ],
+    "controlTasks": [
+      "control-absent-1",
+      "control-absent-2"
+    ],
+    "arms": {
+      "baseline-no-reference": {
+        "reference": false,
+        "retention": false,
+        "pressure": false
+      },
+      "reference-visible": {
+        "reference": true,
+        "retention": false,
+        "pressure": false
+      },
+      "recall-stable": {
+        "reference": true,
+        "retention": true,
+        "pressure": true
+      },
+      "retention-off": {
+        "reference": true,
+        "retention": false,
+        "pressure": true
+      }
+    },
+    "contextWindowTokens": 32000,
+    "toolMaxChars": 6000,
+    "aggregateMaxChars": 16000,
+    "recallPageChars": 5500
+  },
+  "stats": {
+    "baseline-no-reference": {
+      "arm": "baseline-no-reference",
+      "runs": 24,
+      "pass": 6,
+      "successRate": 0.25,
+      "wilson95": [
+        0.11999366228595004,
+        0.44899444005154004
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 0,
+      "meanTurns": 2.9166666666666665,
+      "meanMainContextChars": 2292.9166666666665,
+      "meanInputTokens": 2984.0416666666665,
+      "meanOutputTokens": 432.9166666666667,
+      "meanTotalTokens": 3416.9583333333335,
+      "p50LatencyMs": 8318.059,
+      "p95LatencyMs": 17495.425,
+      "failureClasses": {
+        "answer_mismatch": 18,
+        "none": 6
+      }
+    },
+    "reference-visible": {
+      "arm": "reference-visible",
+      "runs": 24,
+      "pass": 22,
+      "successRate": 0.9166666666666666,
+      "wilson95": [
+        0.741511978067893,
+        0.9768411847029567
+      ],
+      "evidenceSuccessRate": 0.8888888888888888,
+      "controlSuccessRate": 1,
+      "passAtK": 0.6666666666666666,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3.4583333333333335,
+      "meanMainContextChars": 17490.541666666668,
+      "meanInputTokens": 10452.916666666666,
+      "meanOutputTokens": 483.5416666666667,
+      "meanTotalTokens": 10936.458333333334,
+      "p50LatencyMs": 9623.858,
+      "p95LatencyMs": 14712.634,
+      "failureClasses": {
+        "recalled_text_evicted": 2,
+        "none": 22
+      }
+    },
+    "recall-stable": {
+      "arm": "recall-stable",
+      "runs": 24,
+      "pass": 20,
+      "successRate": 0.8333333333333334,
+      "wilson95": [
+        0.6414692935030095,
+        0.9332132367136705
+      ],
+      "evidenceSuccessRate": 0.7777777777777778,
+      "controlSuccessRate": 1,
+      "passAtK": 0.5,
+      "recallAttemptRate": 1,
+      "recallOkRate": 0.9444444444444444,
+      "meanTurns": 3.7083333333333335,
+      "meanMainContextChars": 19466.833333333332,
+      "meanInputTokens": 13080.625,
+      "meanOutputTokens": 592.9583333333334,
+      "meanTotalTokens": 13673.583333333334,
+      "p50LatencyMs": 10695.833,
+      "p95LatencyMs": 14069.86,
+      "failureClasses": {
+        "none": 20,
+        "recalled_text_evicted": 4
+      }
+    },
+    "retention-off": {
+      "arm": "retention-off",
+      "runs": 24,
+      "pass": 6,
+      "successRate": 0.25,
+      "wilson95": [
+        0.11999366228595004,
+        0.44899444005154004
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 0.9444444444444444,
+      "meanTurns": 4.458333333333333,
+      "meanMainContextChars": 19867.5,
+      "meanInputTokens": 16291.958333333334,
+      "meanOutputTokens": 727.0833333333334,
+      "meanTotalTokens": 17019.041666666668,
+      "p50LatencyMs": 11378.608,
+      "p95LatencyMs": 25202.954,
+      "failureClasses": {
+        "recalled_text_evicted": 17,
+        "loop_budget_exceeded": 1,
+        "none": 6
+      }
+    }
+  },
+  "comparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 6,
+      "onlyA": 14,
+      "onlyB": 0,
+      "neither": 4,
+      "p": 0.0001220703125
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 6,
+      "onlyA": 14,
+      "onlyB": 0,
+      "neither": 4,
+      "p": 0.0001220703125
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 18,
+      "onlyA": 2,
+      "onlyB": 4,
+      "neither": 0,
+      "p": 0.6875
+    }
+  },
+  "evidenceComparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 0,
+      "onlyA": 14,
+      "onlyB": 0,
+      "neither": 4,
+      "p": 0.0001220703125
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 0,
+      "onlyA": 14,
+      "onlyB": 0,
+      "neither": 4,
+      "p": 0.0001220703125
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 12,
+      "onlyA": 2,
+      "onlyB": 4,
+      "neither": 0,
+      "p": 0.6875
+    }
+  },
+  "inputIntegrity": {
+    "assembly": "production-projection-only/function-protocol/r5-low-reasoning",
+    "mainContextCharsSource": "JSON.stringify(actual request.input).length",
+    "initialPairs": [
+      {
+        "fixtureId": "deploy-token",
+        "repetition": 0,
+        "stableSha256": "a2ed33b9b2743bb0978e962d1b35cf5b520bd35d983027645cd63761df33087b",
+        "offSha256": "a2ed33b9b2743bb0978e962d1b35cf5b520bd35d983027645cd63761df33087b",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "deploy-token",
+        "repetition": 1,
+        "stableSha256": "05c14e8340adb809b2e95ed599fc6e5983f537b73acdd9424329691f83c3e896",
+        "offSha256": "05c14e8340adb809b2e95ed599fc6e5983f537b73acdd9424329691f83c3e896",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "deploy-token",
+        "repetition": 2,
+        "stableSha256": "258b7cca50b6636cedfed58c8ad898b6ee1ba8fbccd528ec60dd7da1ca24e5f1",
+        "offSha256": "258b7cca50b6636cedfed58c8ad898b6ee1ba8fbccd528ec60dd7da1ca24e5f1",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "db-passport",
+        "repetition": 0,
+        "stableSha256": "1e57655d9981ef442e1e45e1fe1b8aed980f636611ca351e885a1c801e3c76a5",
+        "offSha256": "1e57655d9981ef442e1e45e1fe1b8aed980f636611ca351e885a1c801e3c76a5",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "db-passport",
+        "repetition": 1,
+        "stableSha256": "aa10bfca202b93ffb8570800fdbf168b3b436fec59b5e7150a50ab3857ab17de",
+        "offSha256": "aa10bfca202b93ffb8570800fdbf168b3b436fec59b5e7150a50ab3857ab17de",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "db-passport",
+        "repetition": 2,
+        "stableSha256": "125db3c5a26b9c652d3b8026ffe32272c0676017965018d6686698656351d5be",
+        "offSha256": "125db3c5a26b9c652d3b8026ffe32272c0676017965018d6686698656351d5be",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "cache-seed",
+        "repetition": 0,
+        "stableSha256": "c024359806c8589d795e20b6f3d428788ec33496641fa52e01b87f79b78f3f3c",
+        "offSha256": "c024359806c8589d795e20b6f3d428788ec33496641fa52e01b87f79b78f3f3c",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "cache-seed",
+        "repetition": 1,
+        "stableSha256": "d8e9ec7f4aa063e55c849f651fe5a96ca663fd0609e8145c67e340650b1d3084",
+        "offSha256": "d8e9ec7f4aa063e55c849f651fe5a96ca663fd0609e8145c67e340650b1d3084",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "cache-seed",
+        "repetition": 2,
+        "stableSha256": "6c2b6b8c1d9676b1cb5dafda6f892567bdd737be58287bfe538305b42df2f4df",
+        "offSha256": "6c2b6b8c1d9676b1cb5dafda6f892567bdd737be58287bfe538305b42df2f4df",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "signing-key",
+        "repetition": 0,
+        "stableSha256": "6b4eaf00bb9185cefcc8f84e668e97861d616777a9f5c4ba1afee981c015d491",
+        "offSha256": "6b4eaf00bb9185cefcc8f84e668e97861d616777a9f5c4ba1afee981c015d491",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "signing-key",
+        "repetition": 1,
+        "stableSha256": "a0084312bcc701996a6bfdb5034e69ef44b5743ca821c34433d7e999c1d1801d",
+        "offSha256": "a0084312bcc701996a6bfdb5034e69ef44b5743ca821c34433d7e999c1d1801d",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "signing-key",
+        "repetition": 2,
+        "stableSha256": "e586cabb019969350b189bb15352b2c614cbe079d68d3cb2a9fe777898d3b3ed",
+        "offSha256": "e586cabb019969350b189bb15352b2c614cbe079d68d3cb2a9fe777898d3b3ed",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "tenant-id",
+        "repetition": 0,
+        "stableSha256": "3ec2a9c14913bcd9eb7be6fed35d143e263eac977e578501c7cbbfdae4b9b2c1",
+        "offSha256": "3ec2a9c14913bcd9eb7be6fed35d143e263eac977e578501c7cbbfdae4b9b2c1",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "tenant-id",
+        "repetition": 1,
+        "stableSha256": "1e17ff7f8458dfdfc1ad9f084d8ee0ef6250892bf4e2654c65e47962513cc3a9",
+        "offSha256": "1e17ff7f8458dfdfc1ad9f084d8ee0ef6250892bf4e2654c65e47962513cc3a9",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "tenant-id",
+        "repetition": 2,
+        "stableSha256": "6ca745a0422a5570b8bf7412544642dba28b770afea200370bd015ea9e69921c",
+        "offSha256": "6ca745a0422a5570b8bf7412544642dba28b770afea200370bd015ea9e69921c",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "migration-hash",
+        "repetition": 0,
+        "stableSha256": "b51807c31a0dfc62b94efbb8f768fe7a15bd554aa78c0312f8b2356be423066c",
+        "offSha256": "b51807c31a0dfc62b94efbb8f768fe7a15bd554aa78c0312f8b2356be423066c",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "migration-hash",
+        "repetition": 1,
+        "stableSha256": "cd40dc77d52e6ce1d9a44d2c4210c93972b051e7469a72fbc42df90bb7f43f81",
+        "offSha256": "cd40dc77d52e6ce1d9a44d2c4210c93972b051e7469a72fbc42df90bb7f43f81",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "migration-hash",
+        "repetition": 2,
+        "stableSha256": "501159cfe3fc3fb08c088dd246e92bcbe27cc26d02afa8c110888c6cbe6baa05",
+        "offSha256": "501159cfe3fc3fb08c088dd246e92bcbe27cc26d02afa8c110888c6cbe6baa05",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-1",
+        "repetition": 0,
+        "stableSha256": "d1a0fd8bd37075eadec43083aff28bf4205364f00727fd2a1ba6f93ce2c26847",
+        "offSha256": "d1a0fd8bd37075eadec43083aff28bf4205364f00727fd2a1ba6f93ce2c26847",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-1",
+        "repetition": 1,
+        "stableSha256": "4b38c243a031d978f0f5dddc873df90434bc6b77c3b0f88ade636ce56fdf70da",
+        "offSha256": "4b38c243a031d978f0f5dddc873df90434bc6b77c3b0f88ade636ce56fdf70da",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-1",
+        "repetition": 2,
+        "stableSha256": "70266e1745ae73db3eefa6c9b4065380fd0a4236e8250c174b50734bb641bd47",
+        "offSha256": "70266e1745ae73db3eefa6c9b4065380fd0a4236e8250c174b50734bb641bd47",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 0,
+        "stableSha256": "2fbc321986e48f0bf3734348bde3f025fbf1e4569f13cdc8e85f57e00d0ddf7a",
+        "offSha256": "2fbc321986e48f0bf3734348bde3f025fbf1e4569f13cdc8e85f57e00d0ddf7a",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 1,
+        "stableSha256": "c699d2f6fc94c05c781be856c90d72b7d3805a7e4cbb29d28332510c52e163c2",
+        "offSha256": "c699d2f6fc94c05c781be856c90d72b7d3805a7e4cbb29d28332510c52e163c2",
+        "byteIdentical": true
+      },
+      {
+        "fixtureId": "control-absent-2",
+        "repetition": 2,
+        "stableSha256": "165587e60549c6cf985ec845f8a11d6661e95902e9179cea1357bdd972d8cfc5",
+        "offSha256": "165587e60549c6cf985ec845f8a11d6661e95902e9179cea1357bdd972d8cfc5",
+        "byteIdentical": true
+      }
+    ],
+    "allInitialPairsByteIdentical": true,
+    "unprojectedOutputFallback": false
+  },
+  "decision": {
+    "status": "no-benefit",
+    "b1_mechanism_and_autonomy": false,
+    "b2_task_benefit": true,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": false,
+    "b5_no_fabrication": true,
+    "b6_budget": false,
+    "contextGrowthChars": -400.6666666666679,
+    "tokenGrowthPct": 0.25027526431088676,
+    "engineeringAcceptedByAgent": false,
+    "releaseApproved": false,
+    "liveReady": false,
+    "defaultOn": false
+  },
+  "boundaries": [
+    "The loop driver is an eval harness: it executes only the tool calls the model returns, but it is not the Electron/Gateway product turn (no gateway approval, system prompt or bootstrap).",
+    "Deterministic mode uses a scripted policy and is harness self-test only, never evidence of model autonomy.",
+    "Cost is not-run unless the provider returns a billing unit; token usage is recorded per call.",
+    "Results cover this corpus and this model only; they do not establish product quality or GA."
+  ]
+}

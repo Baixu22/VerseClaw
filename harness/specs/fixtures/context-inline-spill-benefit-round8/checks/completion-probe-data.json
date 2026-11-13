@@ -1,0 +1,42 @@
+{
+  "schema": "G7Round8CompletionProbe/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+    "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "designSha256": "98bd4cb4c0f243cb69c1d9e759e8245f60b1e973b6fcc7bb49cdb59d2852ad12",
+  "request": {
+    "model": "space-bunny",
+    "input": [
+      {
+        "role": "user",
+        "content": "Return only {\"value\":\"probe-ok\"}."
+      }
+    ],
+    "max_output_tokens": 900,
+    "reasoning": {
+      "effort": "low",
+      "summary": "auto"
+    },
+    "temperature": 0
+  },
+  "providerTimeoutMs": 240000,
+  "startedAt": "2026-11-13T10:53:50.775Z",
+  "httpStatus": 200,
+  "rawResponse": "{\"background\":false,\"completed_at\":1794567233,\"created_at\":1794567238,\"error\":null,\"id\":\"01a1d48ad580765b8511c3d31a3b7cd2\",\"incomplete_details\":null,\"instructions\":null,\"max_output_tokens\":900,\"max_tool_calls\":null,\"metadata\":{},\"model\":\"space-bunny\",\"object\":\"response\",\"output\":[{\"id\":\"rs_c409694fb3292ba129efc10cf2097564\",\"summary\":[{\"text\":\"We need comply exact JSON only.\",\"type\":\"summary_text\"}],\"type\":\"reasoning\"},{\"content\":[{\"annotations\":[],\"logprobs\":[],\"text\":\"{\\\"value\\\":\\\"probe-ok\\\"}\",\"type\":\"output_text\"}],\"id\":\"msg_ffcef6b89994a19265146e9f25f24997\",\"role\":\"assistant\",\"status\":\"completed\",\"type\":\"message\"}],\"output_text\":\"{\\\"value\\\":\\\"probe-ok\\\"}\",\"parallel_tool_calls\":true,\"previous_response_id\":null,\"reasoning\":{\"effort\":\"low\",\"summary\":\"auto\"},\"status\":\"completed\",\"store\":false,\"temperature\":0,\"text\":{\"format\":{\"type\":\"text\"}},\"tool_choice\":\"auto\",\"tools\":[],\"top_logprobs\":0,\"top_p\":1,\"truncation\":\"disabled\",\"usage\":{\"cache_creation_input_tokens\":0,\"input_tokens\":164,\"input_tokens_details\":{\"cached_tokens\":0},\"output_tokens\":17,\"output_tokens_details\":{\"reasoning_tokens\":7},\"total_tokens\":181},\"user\":null}",
+  "passed": true,
+  "candidateAtEnd": {
+    "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+    "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "sameCandidate": true,
+  "latencyMs": 2740.0714000000003,
+  "finishedAt": "2026-11-13T10:53:53.518Z"
+}

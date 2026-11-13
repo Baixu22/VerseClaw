@@ -1,0 +1,2 @@
+$ pnpm --filter @verse-claw/harness start -- "context" "--spec" "harness/specs/tasks/inline-spill-real-benefit-eval-round8.md"
+$ node src/cli.mjs "--" "context" "--spec" "harness/specs/tasks/inline-spill-real-benefit-eval-round8.md"

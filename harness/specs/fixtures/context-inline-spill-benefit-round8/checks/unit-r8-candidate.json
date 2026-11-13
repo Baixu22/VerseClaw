@@ -1,0 +1,56 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "unit-r8-candidate",
+  "cwd": "D:\\ClawX-work\\g7-inline-spill-tf0749-20261113-01a1d34c",
+  "command": [
+    "node",
+    "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+    "--config.verify-deps-before-run=false",
+    "exec",
+    "vitest",
+    "run",
+    "tests/unit/context-inline-spill-benefit-navigation.test.ts",
+    "tests/unit/context-inline-spill-benefit-strategy.test.ts",
+    "tests/unit/context-inline-spill-benefit-clean-candidate.test.ts",
+    "tests/unit/context-inline-spill-benefit-input.test.ts",
+    "tests/unit/context-inline-spill-benefit-scoring.test.ts",
+    "tests/unit/context-inline-spill-retention.test.ts",
+    "tests/unit/context-inline-spill-eval-provider.test.ts",
+    "tests/unit/harness-spec-lifecycle.test.ts",
+    "--maxWorkers=1"
+  ],
+  "startedAt": "2026-11-13T10:41:27.379Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "a5972fdc9b89ff692ef2d76a744639c620b24fa2",
+    "tree": "f148b4cbf71916ad73180dac1b2b3c97f1201665",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "finishedAt": "2026-11-13T10:42:54.819Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "a5972fdc9b89ff692ef2d76a744639c620b24fa2",
+    "tree": "f148b4cbf71916ad73180dac1b2b3c97f1201665",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": false
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-closeout-pass-r8-01a1d34c\\checks\\unit-r8-candidate.stdout.txt",
+      "bytes": 248,
+      "sha256": "430a2574b7e5f602fb7e3b7cb3cc8dd3956b468065c206a8ccbd7e6892796fbf"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-closeout-pass-r8-01a1d34c\\checks\\unit-r8-candidate.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

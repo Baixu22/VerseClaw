@@ -1392,3 +1392,5 @@ Use this packet before any handoff, fork, or context-pressure continuation.
 - 只从实际请求的可见引用、首个recall参数与投影工具输出生成原归档分页建议和完整字段位置；不复制字段值、不比较oracle、不读取原始历史。
 - 导航提示在四臂一致，模型自行发起function_call并输出最终value；原模型、900输出token、5500字符页、压力字节、240000ms期限及B1–B7阈值保持原值。
 - 第五、六、七轮原始证据和失败保持；独立冻结并在clean候选上通过B1–B7及verifier后，才收口TF-0749。
+- 第八轮f8d41ddb2完成96次/349次调用，全部completed；stable证据14/18、reference16/18、控制6/6。B1/B4/B6失败，token增幅25.027526%高于固定25%，NO_GO，父节点保持in_progress/80。
+- 当前故障是模型把URI文件名16位摘要扩写为64位checksum，missing后继续沿用错误目标。后续有界书签将最初可见引用放入既有agent问题，恢复建议不静默改写模型参数。
