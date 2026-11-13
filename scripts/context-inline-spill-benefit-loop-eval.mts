@@ -13,8 +13,9 @@
  */
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import assert from "node:assert/strict";
+import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join, relative, resolve } from "node:path";
 import { performance } from "node:perf_hooks";
 import {
   ARCHIVE_RECALL_RETENTION_MAX_CHARS,
@@ -39,7 +40,7 @@ if (!["deterministic", "live"].includes(MODE)) throw new Error("mode must be det
 const RUN_ID = new Date().toISOString().replace(/[:.]/g, "-") + "-" + MODE;
 const runDir = resolve(argValue("--out") ?? "D:/tmp/context-inline-spill-benefit", RUN_ID);
 mkdirSync(runDir, { recursive: true });
-const ACTOR = "codex-inline-spill-benefit-r5-01a1d068";
+const ACTOR = argValue("--actor") ?? "codex-inline-spill-benefit-r5-01a1d068";
 const API_KEY = process.env.CONTEXT_INLINE_SPILL_API_KEY;
 const BASE_URL = process.env.CONTEXT_INLINE_SPILL_BASE_URL ?? "http://127.0.0.1:3065/v1";
 const MODEL = process.env.CONTEXT_INLINE_SPILL_MODEL ?? "space-bunny";
@@ -51,6 +52,73 @@ const CONTEXT_WINDOW_TOKENS = 32_000;
 const TOOL_MAX_CHARS = 6_000;
 const AGGREGATE_MAX_CHARS = 16_000;
 const RECALL_PAGE_CHARS = EVAL_RECALL_PAGE_MAX_CHARS;
+const STARTED_AT = new Date().toISOString();
+const candidateAtStart = candidateIdentity();
+const freezePath = argValue("--freeze");
+type SourceIdentity = { sha256: string; bytes: number; gitBlob: string; worktreeBlob: string };
+type FrozenDesign = {
+  schema: string; live: { maxTurns: number; repeats: number; maxOutputTokens: number };
+  deterministic: { maxTurns: number; repeats: number }; provider: { model: string; baseUrl: string };
+  unchangedSourcesSha256: Record<string, string>; protocolSectionsSha256: Record<string, string>;
+};
+let sourceInputs: Record<string, SourceIdentity> = {};
+let frozenDesign: FrozenDesign | null = null;
+let designFreeze: { path: string; sha256: string; commit: string } | null = null;
+if (freezePath) {
+  try {
+    const freezeFile = resolve(freezePath);
+    const freezeBytes = readFileSync(freezeFile);
+    frozenDesign = JSON.parse(freezeBytes.toString("utf8"));
+    assert.equal(frozenDesign!.schema, "ContextInlineSpillRound6FrozenDesign/v1");
+    const modeDesign = MODE === "live" ? frozenDesign!.live : frozenDesign!.deterministic;
+    assert.equal(MAX_TURNS, modeDesign.maxTurns, "frozen maxTurns changed");
+    assert.equal(REPEATS, modeDesign.repeats, "frozen repeats changed");
+    assert.equal(MAX_OUTPUT_TOKENS, frozenDesign!.live.maxOutputTokens, "frozen output budget changed");
+    assert.equal(MODE === "live" ? MODEL : frozenDesign!.provider.model, frozenDesign!.provider.model);
+    if (MODE === "live") assert.equal(BASE_URL, frozenDesign!.provider.baseUrl, "frozen provider changed");
+    assert.equal(candidateAtStart.dirty, false, "clean committed candidate required before any provider request");
+    const freezeRelative = relative(ROOT, freezeFile).replaceAll("\\", "/");
+    const freezeCommit = execGit(["log", "-1", "--format=%H", "--", freezeRelative]);
+    assert(freezeCommit && freezeCommit !== candidateAtStart.commit, "design must be committed before the candidate");
+    execGit(["merge-base", "--is-ancestor", freezeCommit, candidateAtStart.commit]);
+    assert.equal(digest(execFileSync("git", ["show", candidateAtStart.commit + ":" + freezeRelative], { cwd: ROOT })), digest(freezeBytes));
+    for (const [path, expected] of Object.entries(frozenDesign!.unchangedSourcesSha256)) {
+      assert.equal(digest(readFileSync(resolve(ROOT, path))), expected, "frozen source changed: " + path);
+    }
+    const loopSource = readFileSync(resolve(ROOT, "scripts/context-inline-spill-benefit-loop-eval.mts"), "utf8").replaceAll("\r\n", "\n");
+    const sections = {
+      arms: ["type Arm =", "function argValue("],
+      corpus: ["// ---------------------------------------------------------------- fixtures", "// ---------------------------------------------------------------- projection"],
+      projection: ["// ---------------------------------------------------------------- projection", "// ---------------------------------------------------------------- provider"],
+      request: ["const request = { model:", "\n        const requestBody ="],
+      pressure: ["          if (cfg.pressure) {", "\n        }\n      }\n\n      const expected ="],
+    };
+    for (const [name, [start, end]] of Object.entries(sections)) {
+      const from = loopSource.lastIndexOf(start!);
+      const to = loopSource.indexOf(end!, from);
+      assert(from >= 0 && to > from, "missing frozen section: " + name);
+      assert.equal(digest(loopSource.slice(from, to)), frozenDesign!.protocolSectionsSha256[name], "protocol changed: " + name);
+    }
+    const paths = [...new Set([...Object.keys(frozenDesign!.unchangedSourcesSha256), freezeRelative,
+      "scripts/context-inline-spill-benefit-loop-eval.mts", "scripts/context-inline-spill-benefit-round5-verify.mjs",
+      "scripts/context-inline-spill-benefit-round5-recompute.mjs", "scripts/context-inline-spill-benefit-round6-verify.mjs",
+      "tests/unit/context-inline-spill-benefit-clean-candidate.test.ts", "harness/specs/tasks/inline-spill-real-benefit-eval-round6.md",
+      "harness/specs/rules/inline-spill-eval-projected-input.md", "harness/specs/scenarios/context-family.md",
+      ".gitattributes", "package.json", "openclaw_runtime/package.json"] )];
+    sourceInputs = sourceIdentities(paths);
+    for (const [path, identity] of Object.entries(sourceInputs)) assert.equal(identity.gitBlob, identity.worktreeBlob, "source differs from commit: " + path);
+    designFreeze = { path: freezeRelative, sha256: digest(freezeBytes), commit: freezeCommit };
+    save("preflight.json", { schema: "ContextInlineSpillPreflight/v1", driven_by: "agent", actor: ACTOR,
+      realHumanEvidence: false, startedAt: STARTED_AT, candidate: candidateAtStart, designFreeze, sourceInputs,
+      protocolUnchanged: true, providerRequests: 0, mode: MODE });
+  } catch (error) {
+    save("preflight-rejected.json", { schema: "ContextInlineSpillPreflightRejection/v1", driven_by: "agent", actor: ACTOR,
+      realHumanEvidence: false, startedAt: STARTED_AT, candidate: candidateAtStart, providerRequests: 0,
+      error: String(error), mode: MODE });
+    console.error(String(error));
+    process.exit(1);
+  }
+}
 process.env.OPENCLAW_CONTEXT_ARCHIVE_DIR = join(runDir, "archives");
 mkdirSync(join(runDir, "archives"), { recursive: true });
 
@@ -178,7 +246,11 @@ async function liveTurn(requestBody: string): Promise<ProviderTurn> {
     if (!response.ok) {
       return { status: "failed", text: "", toolCalls: [], usage: null, latencyMs, httpStatus: response.status, failureClass: "provider_http_error", raw };
     }
-    const body = JSON.parse(raw) as { output_text?: string; output?: Array<Record<string, unknown>>; usage?: Record<string, unknown> };
+    const body = JSON.parse(raw) as { status?: string; output_text?: string; output?: Array<Record<string, unknown>>; usage?: Record<string, unknown> };
+    if (body.status !== "completed") {
+      return { status: "failed", text: String(body.output_text ?? ""), toolCalls: [], usage: body.usage ?? null,
+        latencyMs, httpStatus: response.status, failureClass: body.status === "incomplete" ? "provider_incomplete" : "provider_response_not_completed", raw };
+    }
     const toolCalls: ToolCall[] = [];
     for (const item of body.output ?? []) {
       if (item.type === "function_call") {
@@ -298,6 +370,8 @@ for (const fixture of fixtures) {
         totalTokens += Number((result.usage as { total_tokens?: number } | null)?.total_tokens ?? 0);
         latencyMs += result.latencyMs;
         providerCalls.push({ turn, status: result.status, http_status: result.httpStatus ?? null, latency_ms: result.latencyMs, usage: result.usage, tool_call_count: result.toolCalls.length, text: result.text, failure_class: result.failureClass ?? null, request, request_sha256: digest(requestBody), input_chars: mainContextChars, input_bytes: Buffer.byteLength(inputJson), request_chars: requestBody.length, request_bytes: Buffer.byteLength(requestBody), projected_tool_outputs: projectedToolOutputs, raw_response: result.raw ?? null });
+        appendFileSync(join(runDir, "provider-calls.jsonl"), redact(JSON.stringify({ driven_by: "agent", actor: ACTOR,
+          realHumanEvidence: false, arm, fixtureId: fixture.id, repetition, ...providerCalls.at(-1) })) + "\n");
         if (result.status === "failed") { failureClass = result.failureClass ?? "provider_error"; break; }
         if (result.toolCalls.length === 0) {
           finalAnswer = parseAnswer(result.text);
@@ -349,6 +423,9 @@ for (const fixture of fixtures) {
       }
 
       const expected = fixture.oracle;
+      if (!finalAnswer.ok && !failureClass && turns === MAX_TURNS && Number(providerCalls.at(-1)?.tool_call_count) > 0) {
+        failureClass = "loop_budget_exceeded";
+      }
       const success = finalAnswer.ok && finalAnswer.value === expected;
       if (!success && !failureClass) {
         if (expected === null) failureClass = finalAnswer.value !== null ? "fabricated_absent_evidence" : "answer_mismatch";
@@ -364,6 +441,12 @@ for (const fixture of fixtures) {
         failureClass, finalAnswer, providerCalls, toolCalls: toolCallLog,
         archive: { uri: handle.uri, checksum: handle.checksum, byteLength: handle.byteLength },
       });
+      appendFileSync(join(runDir, "runs.jsonl"), redact(JSON.stringify({ driven_by: "agent", actor: ACTOR,
+        realHumanEvidence: false, record: records.at(-1) })) + "\n");
+      save("progress.json", { driven_by: "agent", actor: ACTOR, realHumanEvidence: false,
+        completedRuns: records.length, expectedRuns: fixtures.length * ARMS.length * REPEATS,
+        providerCalls: records.reduce((sum, row) => sum + row.turns, 0),
+        lastRun: { arm, fixtureId: fixture.id, repetition, success, failureClass } });
       console.error(redact(JSON.stringify({ arm, fixture: fixture.id, rep: repetition, success, recallAttempted, recallOk, turns, failureClass, finalValue: finalAnswer.value, mainContextChars, retainedAtEnd })));
     }
   }
@@ -412,9 +495,10 @@ const initialPairs = records.filter((r) => r.arm === "recall-stable").map((r) =>
   return { fixtureId: r.fixtureId, repetition: r.repetition, stableSha256: r.initialRequestSha256, offSha256: off.initialRequestSha256, byteIdentical: r.initialRequestSha256 === off.initialRequestSha256 };
 });
 
-function paired(a: Arm, b: Arm) {
+function paired(a: Arm, b: Arm, evidenceOnly = false) {
   let both = 0, onlyA = 0, onlyB = 0, neither = 0;
   for (const fixture of new Set(records.map((r) => r.fixtureId))) {
+    if (evidenceOnly && !evidenceTasks.includes(fixture)) continue;
     for (let rep = 0; rep < REPEATS; rep++) {
       const ra = records.find((r) => r.arm === a && r.fixtureId === fixture && r.repetition === rep);
       const rb = records.find((r) => r.arm === b && r.fixtureId === fixture && r.repetition === rep);
@@ -433,11 +517,16 @@ const comparisons = {
   "recall-stable_vs_retention-off": paired("recall-stable", "retention-off"),
   "recall-stable_vs_reference-visible": paired("recall-stable", "reference-visible"),
 };
+const evidenceComparisons = {
+  "recall-stable_vs_baseline": paired("recall-stable", "baseline-no-reference", true),
+  "recall-stable_vs_retention-off": paired("recall-stable", "retention-off", true),
+  "recall-stable_vs_reference-visible": paired("recall-stable", "reference-visible", true),
+};
 
 const controlPass = records.filter((r) => r.arm === "recall-stable" && controlTasks.includes(r.fixtureId)).every((r) => r.success);
 const b1 = stats["recall-stable"].recallAttemptRate >= 0.8 && stats["recall-stable"].recallOkRate >= 0.95;
-const b2 = stats["recall-stable"].evidenceSuccessRate - stats["baseline-no-reference"].evidenceSuccessRate >= 0.3 && comparisons["recall-stable_vs_baseline"].p < 0.05;
-const b3 = comparisons["recall-stable_vs_retention-off"].onlyA >= 1 && comparisons["recall-stable_vs_retention-off"].onlyB === 0;
+const b2 = stats["recall-stable"].evidenceSuccessRate - stats["baseline-no-reference"].evidenceSuccessRate >= 0.3 && evidenceComparisons["recall-stable_vs_baseline"].p < 0.05;
+const b3 = stats["recall-stable"].evidenceSuccessRate > stats["retention-off"].evidenceSuccessRate && evidenceComparisons["recall-stable_vs_retention-off"].onlyA >= 1 && evidenceComparisons["recall-stable_vs_retention-off"].onlyB === 0;
 const b4 = stats["recall-stable"].evidenceSuccessRate >= stats["reference-visible"].evidenceSuccessRate - 0.05;
 const b5 = controlPass;
 const contextGrowth = stats["recall-stable"].meanMainContextChars - stats["retention-off"].meanMainContextChars;
@@ -447,7 +536,7 @@ const tokenGrowthPct = stats["reference-visible"].meanTotalTokens > 0
 const b6 = contextGrowth <= ARCHIVE_RECALL_RETENTION_MAX_CHARS && tokenGrowthPct <= 0.25;
 const decisionStatus = MODE !== "live"
   ? "inconclusive"
-  : b1 && b2 && b3 && b4 && b5 && b6 ? "task-benefit-verified"
+  : b1 && b2 && b3 && b4 && b5 && b6 ? "inconclusive"
   : b1 ? "mechanism-only"
   : stats["recall-stable"].runs >= 18 ? "no-benefit" : "inconclusive";
 
@@ -457,13 +546,15 @@ const result = {
   mode: MODE,
   driven_by: "agent",
   actor: ACTOR,
+  realHumanEvidence: false,
   loop_driver: "eval-harness (executes only the model-returned tool calls)",
-  candidate: { commit: execGit(["rev-parse", "HEAD"]), tree: execGit(["rev-parse", "HEAD^{tree}"]), dirty: execGit(["status", "--porcelain=v1"]).length > 0 },
+  candidate: candidateAtStart,
+  designFreeze,
   provider: MODE === "live"
     ? { kind: "openai-compatible-responses", endpoint_origin: new URL(BASE_URL).origin, model: MODEL, credential_persisted: false }
     : { kind: "deterministic-scripted-policy", endpoint_origin: null, model: null, credential_persisted: false },
-  design: { repeats: REPEATS, maxTurns: MAX_TURNS, evidenceTasks, controlTasks, arms: ARM_CONFIG, contextWindowTokens: CONTEXT_WINDOW_TOKENS, toolMaxChars: TOOL_MAX_CHARS, aggregateMaxChars: AGGREGATE_MAX_CHARS, recallPageChars: RECALL_PAGE_CHARS },
-  stats, comparisons,
+  design: { repeats: REPEATS, maxTurns: MAX_TURNS, maxOutputTokens: MAX_OUTPUT_TOKENS, reasoning: { effort: "low", summary: "auto" }, evidenceTasks, controlTasks, arms: ARM_CONFIG, contextWindowTokens: CONTEXT_WINDOW_TOKENS, toolMaxChars: TOOL_MAX_CHARS, aggregateMaxChars: AGGREGATE_MAX_CHARS, recallPageChars: RECALL_PAGE_CHARS },
+  stats, comparisons, evidenceComparisons,
   inputIntegrity: { assembly: "production-projection-only/function-protocol/r5-low-reasoning", mainContextCharsSource: "JSON.stringify(actual request.input).length", initialPairs, allInitialPairsByteIdentical: initialPairs.every((p) => p.byteIdentical), unprojectedOutputFallback: false },
   decision: {
     status: decisionStatus,
@@ -488,18 +579,38 @@ const result = {
 function execGit(args: string[]): string {
   return execFileSync("git", args, { cwd: ROOT, encoding: "utf8", windowsHide: true }).trim();
 }
+function candidateIdentity() {
+  const status = execGit(["status", "--porcelain=v1"]);
+  return { commit: execGit(["rev-parse", "HEAD"]), tree: execGit(["rev-parse", "HEAD^{tree}"]),
+    branch: execGit(["branch", "--show-current"]), dirty: status.length > 0, status };
+}
+function sourceIdentities(paths: string[]): Record<string, SourceIdentity> {
+  return Object.fromEntries(paths.map((path) => {
+    const bytes = readFileSync(resolve(ROOT, path));
+    return [path, { sha256: digest(bytes), bytes: bytes.length,
+      gitBlob: execGit(["rev-parse", "HEAD:" + path]), worktreeBlob: execGit(["hash-object", "--path=" + path, path]) }];
+  }));
+}
+
+const candidateAtEnd = candidateIdentity();
+const sourcesAtEnd = freezePath ? sourceIdentities(Object.keys(sourceInputs)) : {};
+save("postflight.json", { schema: "ContextInlineSpillPostflight/v1", driven_by: "agent", actor: ACTOR,
+  realHumanEvidence: false, finishedAt: new Date().toISOString(), candidate: candidateAtEnd,
+  sourceInputs: sourcesAtEnd, sameCandidate: !candidateAtStart.dirty && !candidateAtEnd.dirty &&
+    candidateAtStart.commit === candidateAtEnd.commit && candidateAtStart.tree === candidateAtEnd.tree &&
+    JSON.stringify(sourceInputs) === JSON.stringify(sourcesAtEnd) });
 
 save("result.json", result);
-save("runs.json", { schema: "ContextInlineSpillBenefitRuns/v1", driven_by: "agent", actor: ACTOR, records });
+save("runs.json", { schema: "ContextInlineSpillBenefitRuns/v1", driven_by: "agent", actor: ACTOR, realHumanEvidence: false, records });
 const files = ["result.json", "runs.json"];
 const credentialHits = files.reduce((sum, name) => {
   const text = readFileSync(join(runDir, name), "utf8");
   return sum + Number(Boolean(API_KEY && text.includes(API_KEY))) + (text.match(/\bsk-[A-Za-z0-9_-]{16,}\b/g)?.length ?? 0);
 }, 0);
-save("credential-scan.json", { schema: "ContextInlineSpillBenefitCredentialScan/v1", driven_by: "agent", actor: ACTOR, files_scanned: files.length, hits: credentialHits, passed: credentialHits === 0 });
+save("credential-scan.json", { schema: "ContextInlineSpillBenefitCredentialScan/v1", driven_by: "agent", actor: ACTOR, realHumanEvidence: false, files_scanned: files.length, hits: credentialHits, passed: credentialHits === 0 });
 files.push("credential-scan.json");
 writeFileSync(join(runDir, "SHA256SUMS"), files.map((n) => digest(readFileSync(join(runDir, n))) + "  " + n).join("\n") + "\n");
 console.log(JSON.stringify({ runDir, mode: MODE, decision: result.decision, stats: Object.fromEntries(ARMS.map((a) => [a, { evidenceSuccessRate: stats[a].evidenceSuccessRate, controlSuccessRate: stats[a].controlSuccessRate, recallAttemptRate: stats[a].recallAttemptRate, meanMainContextChars: stats[a].meanMainContextChars, meanTotalTokens: stats[a].meanTotalTokens, p95LatencyMs: stats[a].p95LatencyMs }])), credentialHits }, null, 2));
-process.exitCode = credentialHits === 0 && result.inputIntegrity.allInitialPairsByteIdentical && (MODE === "deterministic" || result.decision.status !== "inconclusive") ? 0 : 1;
+process.exitCode = credentialHits === 0 && result.inputIntegrity.allInitialPairsByteIdentical && (MODE === "deterministic" || result.decision.status !== "inconclusive" || (b1 && b2 && b3 && b4 && b5 && b6)) ? 0 : 1;
 
 

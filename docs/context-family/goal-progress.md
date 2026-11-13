@@ -1368,3 +1368,9 @@ Use this packet before any handoff, fork, or context-pressure continuation.
 - B1/B5 通过；B2/B3/B4/B6 失败。总 token 相对 reference-visible 增长 94.88%，证据保留正向配对 0、反向 1。
 - 记录 dirty 候选身份限制、超页和复算工具失败，不把原始可复算改写为 B7 或产品收益通过。
 - 证据：harness/specs/fixtures/context-inline-spill-benefit-round5/REPORT.md。
+
+## 2026-11-13 Inline/Spill 第六轮 clean 候选复核
+
+- 冻结设计已单独提交为 `ab8605136`：96 次四臂、900 输出 token、低推理、8 轮和 5500 字符页，B1–B7 阈值保持原值。
+- 开跑/结束身份、原始 provider 状态和 usage、归档选择及逐调用记录由候选与磁盘证据绑定；B2/B3 使用 18 个证据配对，6 个控制配对单独报告。
+- 第五轮 32 份原始文件按字节封存，保留 mechanism-only/NO_GO 和 dirty 拒绝；第六轮完成判定读取独立 verifier 结果。TF-0749 保持 in_progress/80。

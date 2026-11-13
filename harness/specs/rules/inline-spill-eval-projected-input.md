@@ -6,6 +6,7 @@ severity: error
 appliesTo:
   - inline-spill-real-benefit-eval-round3
   - inline-spill-real-benefit-eval-round4
+  - inline-spill-real-benefit-eval-round6
 ---
 
 # 评测输入只有一个内容来源
@@ -21,3 +22,13 @@ mainContextChars 从实际发送 input 的序列化字符数计算，UTF8字节�
 第四轮评测的回读工具要求显式的整数 `max_chars`，范围为 1–5500；缺失或超界参数在访问归档前沿用 `invalid_arguments` 诊断。四臂工具定义一致，实际序列化页仍须进入既定 6000 字符生产投影预算。该契约仅用于评测入口，生产工具默认值仍为 12000。
 
 验证：输入装配单测、真实生产投影 deterministic 四臂、live 首轮请求配对哈希与逐调用请求/投影文本复算。
+
+第六轮在 provider 调用前单独提交冻结设计，再提交评测候选。开跑与结束均记录实际
+commit、tree、branch、dirty 和源码摘要；dirty、设计漂移或运行中的源码变化使 B7 失败，
+原始记录完整保留。`incomplete` 保留所有 usage 并判该次运行失败；8 轮耗尽仍有工具调用
+时记 `loop_budget_exceeded`。输出预算、工具定义和 B1–B7 阈值保持冻结。
+
+收益配对使用证据任务的 fixture/repetition，控制配对单独报告。归档选择按原目标
+URI/checksum 与可选 byte_length 匹配分类，原工具 content 命中和页覆盖只用于诊断；
+最终任务判分仍读取精确 value。新证据及第五轮原始字节封存包固定字节属性，SHA256
+清单与实际 Git blob、逐调用记录及原始归档共同构成复验输入。
