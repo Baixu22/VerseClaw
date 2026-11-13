@@ -1,0 +1,660 @@
+{
+  "schema": "G7LineInventory/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "readAt": "2026-11-13T14:39:34.003Z",
+  "nodes": [
+    {
+      "acceptance_criteria": [
+        "四个子节点按依赖完成，且各自 acceptance 都能从磁盘证据回读。",
+        "默认截断路径的模型可见文本包含可验证 archive 引用，且不能破坏 tool-call 结构和上下文预算。",
+        "回读后的短期稳定性有确定性负例与正例，且不改变普通未回读内容的历史行为。",
+        "确定性 paired eval 覆盖 baseline、reference-visible；质量不退、证据不丢、上下文和成本同时报告。",
+        "第三方模型 live-provider eval 有当前 provider/model、样本数、成功率、token、延迟、失败分类和未测边界；没有凭据时明确标 not-run。",
+        "focused tests、contract/typecheck、harness validate、comms replay/compare、E2E（若触及 UI）和凭证扫描通过；产品锁、发布批准和冻结默认值不变。"
+      ],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [
+        "TF-0701",
+        "TF-0702",
+        "TF-0703",
+        "TF-0704"
+      ],
+      "confidence": 0.9,
+      "context_tags": [
+        "context-family",
+        "inline-spill",
+        "archive-recall",
+        "eval-required",
+        "agent-driven",
+        "third-party-model-ready"
+      ],
+      "created_at": "2026-11-03T07:36:50.030777Z",
+      "deprecated_at": null,
+      "derived_progress": 100,
+      "desired_outcomes": [],
+      "deviations": [
+        "TFD-9014fa6347"
+      ],
+      "difficulty": "high",
+      "estimated_total_minutes": null,
+      "evidence": [
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/result-summary.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/SHA256SUMS",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/credential-scan.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/DELIVERY.md"
+      ],
+      "execution_hints": [
+        "runtime candidate 16da6fdf22b0bda023becffa4272373be610ab54; tree 13e352f499403ec9c2a7c1fbe700a67fbce4e8bf; branch codex/context-inline-spill; base 10dd6c472419437800bde7a07ff8e3440929bfc2",
+        "landed HEAD ddd66ced9f3d389bd03a476fcbdccfc2de759f33; tree cbcd93f60b96d40bd2161a0481c8971f8485de29; 后续提交只保留证据，不重签源码候选",
+        "2026-11-04 agent 已回读全部105个清单文件和17个指定门禁；SHA256SUMS 5f436c49c12197b2870ef0c00b3694a1cdfecdef25a83c406518000eef4227a2; result-summary dc62c9e8e6452b1b8040ef7ae9d7d1585a8b482d2680410929c1f203e9db86e8",
+        "证据按原始交接的指定完成门禁判定；全仓profile/CI诊断保留为较早候选3fd7fd92d的附加失败结果，正式profile不变",
+        "engineeringAcceptedByAgent=false; releaseApproved=false; liveReady=false; defaultOn=false; 未push"
+      ],
+      "id": "TF-0700",
+      "kind": "global_task",
+      "non_goals": [
+        "不重做 TF-0690 的显式 context_fold/context_expand 支线。",
+        "不把观察掩码默认开启。",
+        "不把 Tool Search 默认开启。",
+        "不把 CVK gate enforce 接到真实工具执行拒绝。",
+        "不声称真人证据、产品批准或 GA。"
+      ],
+      "primary_parent": null,
+      "priority": 1,
+      "progress": 100,
+      "progress_source": "manual",
+      "purpose": "用 Inline/Spill 的可见性、可达性、稳定性三条件诊断并修复当前主线默认上下文路径，而不是重建一套通用上下文系统。",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [
+        "只处理当前 main 的默认路径和现有 owner；复用 ArchiveHandle、context_archive_recall、tool-result truncation、Context Family 生命周期和现有 eval 基建。",
+        "不修改 observationMasking、Tool Search、compaction、产品锁或冻结默认值；不把 CVK tool-call-gate 接到执行拒绝。",
+        "所有新行为默认关闭或保持字节 parity；flag-off 必须与当前 main 一致，rollback 必须 disable-only。",
+        "真实任务 fixture 只读复制到 D:/tmp，不在 checked-in fixture 原地修改；所有 eval 证据标 driven_by: agent 和明确 actor。",
+        "第三方模型 live-provider eval 只使用所有者提供的端点或 provider，不声称真人 verdict，也不把 deterministic fake provider 结果标成 live。"
+      ],
+      "source_sessions": [],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "四个子节点依赖与验收一致；默认引用闭合和有界回读保留完成，指定聚焦/完整typecheck/contract/comms/Harness validate+dry-run门禁通过，code/evidence保持同分支。所有产物agent驱动；全仓诊断仍有118失败与陈旧Agent Dev证据，不声明正式双角色验收、产品GA、默认启用或发布。",
+      "title": "默认路径 Inline/Spill 引用闭合与回读稳定性",
+      "updated_at": "2026-11-04T02:08:00.832965Z"
+    },
+    {
+      "acceptance_criteria": [
+        "五个子节点按依赖完成，且各自 acceptance 可从磁盘证据回读。",
+        "至少一套真实循环评测证明模型自主 recall 的次数、成功率和失败分类，而不是脚本调用。",
+        "多任务多样本统计给出带置信区间的正确率与成本，并明确样本量与未覆盖范围。",
+        "第三方模型执行有 provider/model/endpoint/usage/延迟/费用口径；缺凭据时明确 not-run。",
+        "最终判定明确区分 mechanism benefit、task benefit 与未验证边界，且不宣称 GA。",
+        "用户2026-11-13指定：B1–B7全部满足，verifier接受clean已提交候选，证据链完整且base_graph_hash匹配才收口。"
+      ],
+      "alignment": {
+        "fit": "aligned",
+        "fit_confidence": 0.95,
+        "user_goal": "把已实现的上下文能力验证成真实收益，而不是只有机制证据",
+        "validation_plan": [
+          "逐节点 acceptance 回读",
+          "评测结果与基线同口径对比"
+        ],
+        "why_not_enough": "TF-0700 只证明机制可用，未证明任务收益。",
+        "why_this_task": "需要独立的收益评测程序，避免机制证据被误读为产品收益。"
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [
+        "TF-0750",
+        "TF-0751",
+        "TF-0752",
+        "TF-0753",
+        "TF-0754",
+        "TF-0755",
+        "TF-0859"
+      ],
+      "confidence": 0.9,
+      "context_tags": [
+        "context-family",
+        "inline-spill",
+        "benefit-eval",
+        "agent-driven",
+        "non-ga",
+        "task-benefit-verified",
+        "clean-candidate"
+      ],
+      "created_at": "2026-11-04T04:24:03.835004Z",
+      "deprecated_at": null,
+      "derived_progress": 100,
+      "desired_outcomes": [
+        "存在一套可复算的真实循环评测：模型自主决定是否 recall，而不是脚本替它调用。",
+        "质量、主上下文、token、延迟、成本在同一口径下同时报告，并带负例。",
+        "收益结论区分机制收益与任务收益，未测部分逐条列明。"
+      ],
+      "deviations": [
+        "TFD-inline-spill-benefit-r2-design-20261104",
+        "TFD-inline-spill-r3-budget-20261104",
+        "TFD-inline-spill-r4-outcome-20261108-01a1b97b",
+        "TFD-inline-spill-r9-aggregation-recovery-20261113-01a1d34c"
+      ],
+      "difficulty": "very_high",
+      "estimated_total_minutes": null,
+      "evidence": [
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/REPORT.md",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/freeze.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/live/result.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/live-verify.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/live-diagnostics.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/summary.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/SHA256SUMS",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/validation-readback.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/preservation-after.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round3/DELIVERY.md",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round3/live/result.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round3/live/diagnostics.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit/DELIVERY.md",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round4/REPORT.md",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round4/freeze.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round4/live/result.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round4/live-verify.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round4/live-diagnostics.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round4/summary.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round4/SHA256SUMS",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round4/validation-readback.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round4/preservation-after.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round3/DELIVERY.md",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round3/live/result.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round3/live/diagnostics.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit/DELIVERY.md",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round9/REPORT.md",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round9/outcome.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round9/design.freeze.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round9/verification/live-curated.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round9/verification/integrity-before-proposal.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round9/acceptance-readback.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round9/SHA256SUMS",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round9/credential-scan.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round9/commands.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round9/recovery/aggregation-recovery-receipt.json",
+        "D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout/harness/specs/fixtures/context-inline-spill-benefit-round9/live/recovery-provenance.json"
+      ],
+      "execution_hints": [
+        "本节点已按严格B1–B7收口；当前证据对应实测commit 27c1a91dd228369ca1427d2b30f39dd6222cee37。",
+        "复算须在同commit clean隔离检出运行context-inline-spill-benefit-round9-verify.mts；预算与原阈值保持冻结。",
+        "原live退出码未观测；恢复汇总原provider调用增量0，模型输出未改，恢复时Git/源码观察单独标注。",
+        "复核原第五轮用round6/round5-originals.jsonl.gz恢复32份原字节，当前第五轮目录派生差异单独记录。",
+        "生产recall默认值、产品锁、retention显式opt-in与发布状态保持原样；费用因无rate/unit记not-run。"
+      ],
+      "id": "TF-0749",
+      "kind": "global_task",
+      "non_goals": [
+        "不开启 observation masking、Tool Search 或改 compaction 默认值。",
+        "不把 CVK tool-call-gate 接到真实执行拒绝。",
+        "不恢复已退役的 Runtime Memory persist。",
+        "不声称 real-human 证据、产品批准或 GA。"
+      ],
+      "primary_parent": null,
+      "priority": 1,
+      "progress": 100,
+      "progress_source": "manual",
+      "purpose": "把 TF-0700 已证明的可见性/保留机制，推进到可复算的真实任务收益：模型在真实循环中自主选择 recall，并在多任务多样本上量化正确率、上下文成本与调用成本。",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [
+        "复用既有 ArchiveHandle、context_archive_recall、archive-recall-retention 与投影链，不新增第二套 memory/context authority。",
+        "评测通过真实 provider 的 function-calling 协议驱动真实工具，不允许脚本代替模型发起 recall。",
+        "每个收益数字都给出 baseline/after 与复算命令。",
+        "不改变产品锁、冻结默认值和 compaction 阈值；retention 仍为显式 opt-in。",
+        "所有证据标 driven_by: agent 与具体 actor，不声称真人证据或 GA。"
+      ],
+      "source_sessions": [
+        "01a1d34c-4d91-7841-a957-4663e8ab8b14"
+      ],
+      "status": "done",
+      "success_metrics": [
+        "机制层：引用可达率 100%，负臂不泄漏。",
+        "任务层：多任务正确率相对 baseline 有可复算提升或明确无提升。",
+        "成本层：token/延迟/费用逐臂报告。"
+      ],
+      "summary": "第九轮clean候选27c1a91dd完成96次真实运行、324份completed响应。稳定证据17/18、reference13/18、baseline与retention-off0/18；控制6/6，保留正向17/反向0，token相对reference下降5.6944%。B1–B7全部通过，未改动verifier接受同候选与归集证据；七个子节点验收回读完成。原汇总退出码未知，使用冻结源码零调用恢复。历史NO_GO与dirty拒绝保留；费用not-run，生产默认、产品锁和发布状态保持原值。完整Harness CI在59项测试后因6组历史证据重复文件退出1，节点声明门禁均通过。",
+      "title": "Inline/Spill 真实任务收益闭环（非 GA）",
+      "updated_at": "2026-11-13T13:49:55.452299Z"
+    },
+    {
+      "acceptance_criteria": [
+        "契约测试覆盖 round-trip、缺字段、错误 scope、错误 checksum、过期/缺失 archive 和重复回读。",
+        "off-mode parity 测试证明不开启 retention 时 prompt/tool/compaction 行为与当前 main 字节一致。",
+        "负例 fail closed，且不会伪造 archive、不跨 session、不把 summary 当完成权威。"
+      ],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.95,
+      "context_tags": [
+        "worktree:context-inline-spill",
+        "phase:contract",
+        "agent-driven"
+      ],
+      "created_at": "2026-11-03T07:36:50.030777Z",
+      "deprecated_at": null,
+      "derived_progress": 100,
+      "desired_outcomes": [],
+      "deviations": [],
+      "difficulty": "medium",
+      "estimated_total_minutes": null,
+      "evidence": [
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/result-summary.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/SHA256SUMS",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/credential-scan.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/DELIVERY.md"
+      ],
+      "execution_hints": [
+        "runtime candidate 16da6fdf22b0bda023becffa4272373be610ab54; tree 13e352f499403ec9c2a7c1fbe700a67fbce4e8bf; branch codex/context-inline-spill; base 10dd6c472419437800bde7a07ff8e3440929bfc2",
+        "landed HEAD ddd66ced9f3d389bd03a476fcbdccfc2de759f33; tree cbcd93f60b96d40bd2161a0481c8971f8485de29; 后续提交只保留证据，不重签源码候选",
+        "2026-11-04 agent 已回读全部105个清单文件和17个指定门禁；SHA256SUMS 5f436c49c12197b2870ef0c00b3694a1cdfecdef25a83c406518000eef4227a2; result-summary dc62c9e8e6452b1b8040ef7ae9d7d1585a8b482d2680410929c1f203e9db86e8",
+        "证据按原始交接的指定完成门禁判定；全仓profile/CI诊断保留为较早候选3fd7fd92d的附加失败结果，正式profile不变",
+        "engineeringAcceptedByAgent=false; releaseApproved=false; liveReady=false; defaultOn=false; 未push"
+      ],
+      "id": "TF-0701",
+      "kind": "task",
+      "non_goals": [
+        "不实现默认 observationMasking",
+        "不实现 Tool Search 默认开启",
+        "不改 CVK gate 执行权限"
+      ],
+      "primary_parent": "TF-0700",
+      "priority": 1,
+      "progress": 100,
+      "progress_source": "manual",
+      "purpose": "",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [
+        "定义 Additive contract，不新建持久化权威，不改变 Context Family 既有 ArchiveHandle 语义。",
+        "定义默认关闭的 retention 策略，明确只作用于刚回读的 archive 结果，并说明与 compaction/pruning 的边界。"
+      ],
+      "source_sessions": [],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "契约已验证：当前 session 与 archive checksum 绑定；仅非空 call-id 与非负安全整数页偏移可获得有界保留。关闭时 tool/pruner/truncation/reduction/compaction 与实现前冻结产物逐字节一致，缺失、校验和、跨 session 与过期负例均 fail closed。",
+      "title": "冻结 Inline/Spill 默认路径引用、回读和保留契约",
+      "updated_at": "2026-11-04T02:08:00.832965Z"
+    },
+    {
+      "acceptance_criteria": [
+        "oversized 和 aggregate 两类截断都有引用可达性测试。",
+        "handle 缺失/损坏/跨 session 时模型可见文本不回退成假成功。",
+        "引用增加后仍在既有 maxChars/aggregate 预算内，并有预算边界负例。",
+        "不改变普通未截断 tool-result 的实际内容。"
+      ],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.95,
+      "context_tags": [
+        "worktree:context-inline-spill",
+        "phase:truncation-visibility",
+        "agent-driven"
+      ],
+      "created_at": "2026-11-03T07:36:50.030777Z",
+      "deprecated_at": null,
+      "derived_progress": 100,
+      "desired_outcomes": [],
+      "deviations": [],
+      "difficulty": "medium",
+      "estimated_total_minutes": null,
+      "evidence": [
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/result-summary.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/SHA256SUMS",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/credential-scan.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/retention-final/tests/reference-family-candidate-c-vitest.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/DELIVERY.md"
+      ],
+      "execution_hints": [
+        "runtime candidate 16da6fdf22b0bda023becffa4272373be610ab54; tree 13e352f499403ec9c2a7c1fbe700a67fbce4e8bf; branch codex/context-inline-spill; base 10dd6c472419437800bde7a07ff8e3440929bfc2",
+        "landed HEAD ddd66ced9f3d389bd03a476fcbdccfc2de759f33; tree cbcd93f60b96d40bd2161a0481c8971f8485de29; 后续提交只保留证据，不重签源码候选",
+        "2026-11-04 agent 已回读全部105个清单文件和17个指定门禁；SHA256SUMS 5f436c49c12197b2870ef0c00b3694a1cdfecdef25a83c406518000eef4227a2; result-summary dc62c9e8e6452b1b8040ef7ae9d7d1585a8b482d2680410929c1f203e9db86e8",
+        "证据按原始交接的指定完成门禁判定；全仓profile/CI诊断保留为较早候选3fd7fd92d的附加失败结果，正式profile不变",
+        "engineeringAcceptedByAgent=false; releaseApproved=false; liveReady=false; defaultOn=false; 未push"
+      ],
+      "id": "TF-0702",
+      "kind": "task",
+      "non_goals": [],
+      "primary_parent": "TF-0700",
+      "priority": 1,
+      "progress": 100,
+      "progress_source": "manual",
+      "purpose": "",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [
+        "只修改 tool-result truncation 的引用投影和必要测试，不改变默认截断阈值或 compaction 触发。",
+        "保留 archive 失败时的 fail-safe：拿不到可验证 handle 时退回当前提示，不阻断 turn。",
+        "tool-call 结构、文本预算和既有生命周期事件必须保持兼容。"
+      ],
+      "source_sessions": [],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "默认 oversized/aggregate replacement 的可见文本在预算允许且 archive 可验证时提供 archive_uri/checksum/byte_length/context_archive_recall；缺失或预算不足时复用旧 notice。20 个引用/归档/registry 回归通过。",
+      "title": "让默认工具结果截断携带可回读 ArchiveHandle 引用",
+      "updated_at": "2026-11-04T02:08:00.832965Z"
+    },
+    {
+      "acceptance_criteria": [
+        "确定性 paired eval 有 baseline/reference-visible 结果，质量 oracle 通过且证据 refs 100% 可解析。",
+        "至少一个负例证明没有引用可见性或没有 retention 时结果会失败/降级，不被写成通过。",
+        "第三方模型 live-provider eval 有真实端点/模型信息、成功率、token、延迟、成本或 not-run 理由。",
+        "聚合证据、逐轮原始产物、SHA256SUMS、credential scan、agent provenance 和未验证边界可从磁盘回读。",
+        "不声称真人、产品发布批准、默认开启或 GA。"
+      ],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.9,
+      "context_tags": [
+        "worktree:context-inline-spill",
+        "phase:paired-eval",
+        "agent-driven",
+        "live-provider-optional"
+      ],
+      "created_at": "2026-11-03T07:36:50.030777Z",
+      "deprecated_at": null,
+      "derived_progress": 100,
+      "desired_outcomes": [],
+      "deviations": [
+        "TFD-9014fa6347"
+      ],
+      "difficulty": "high",
+      "estimated_total_minutes": null,
+      "evidence": [
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/result-summary.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/SHA256SUMS",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/credential-scan.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/retention-final/live/result.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/retention-final/provenance.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/DELIVERY.md"
+      ],
+      "execution_hints": [
+        "runtime candidate 16da6fdf22b0bda023becffa4272373be610ab54; tree 13e352f499403ec9c2a7c1fbe700a67fbce4e8bf; branch codex/context-inline-spill; base 10dd6c472419437800bde7a07ff8e3440929bfc2",
+        "landed HEAD ddd66ced9f3d389bd03a476fcbdccfc2de759f33; tree cbcd93f60b96d40bd2161a0481c8971f8485de29; 后续提交只保留证据，不重签源码候选",
+        "2026-11-04 agent 已回读全部105个清单文件和17个指定门禁；SHA256SUMS 5f436c49c12197b2870ef0c00b3694a1cdfecdef25a83c406518000eef4227a2; result-summary dc62c9e8e6452b1b8040ef7ae9d7d1585a8b482d2680410929c1f203e9db86e8",
+        "证据按原始交接的指定完成门禁判定；全仓profile/CI诊断保留为较早候选3fd7fd92d的附加失败结果，正式profile不变",
+        "engineeringAcceptedByAgent=false; releaseApproved=false; liveReady=false; defaultOn=false; 未push"
+      ],
+      "id": "TF-0703",
+      "kind": "task",
+      "non_goals": [],
+      "primary_parent": "TF-0700",
+      "priority": 1,
+      "progress": 100,
+      "progress_source": "manual",
+      "purpose": "",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [
+        "记录任务、fixture hash、模型/provider、样本数、重复次数、oracle、命令、exit code 和原始产物。",
+        "确定性层必须至少覆盖成功回读、缺失/损坏 handle、跨 session、再次淘汰和 off-mode parity。",
+        "live-provider 层只使用第三方模型，不把它和 deterministic fake provider 混写；凭据缺失时明确 not-run。",
+        "报告同时给出质量、主上下文、总 token、延迟、成本和失败分类，不用上下文节省替代质量。"
+      ],
+      "source_sessions": [],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "确定性与 space-bunny live 四臂均匹配预期：baseline/retention-off 缺失精确值，reference-visible/recall-stable 可回答。每臂1请求、1个fixture，live总token46676；成本因未提供费率为not-run。原始模型输入/响应、JSONL、archives、recovery index、provenance和SHA从磁盘复验。",
+      "title": "执行确定性 paired eval 与第三方模型 live-provider eval",
+      "updated_at": "2026-11-04T02:08:00.832965Z"
+    },
+    {
+      "acceptance_criteria": [
+        "至少一个负例复现未加保护时换入后再次被剪，至少一个正例证明保留窗口内不被同路径剪掉。",
+        "保护过期后回到原有 pruner 行为，且不出现无限常驻。",
+        "off-mode parity、memory/queue/leak 检查和跨 session 隔离通过。",
+        "不改变普通用户消息、assistant reasoning 和未回读 archive 内容的保留策略。"
+      ],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.82,
+      "context_tags": [
+        "worktree:context-inline-spill",
+        "phase:retention-stability",
+        "agent-driven",
+        "negative-control-required"
+      ],
+      "created_at": "2026-11-03T07:36:50.030777Z",
+      "deprecated_at": null,
+      "derived_progress": 100,
+      "desired_outcomes": [],
+      "deviations": [
+        "TFD-9014fa6347"
+      ],
+      "difficulty": "high",
+      "estimated_total_minutes": null,
+      "evidence": [
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/result-summary.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/SHA256SUMS",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/credential-scan.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/retention-final/deterministic/result.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/retention-final/development/malformed-lineage-after-fix.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill/DELIVERY.md"
+      ],
+      "execution_hints": [
+        "runtime candidate 16da6fdf22b0bda023becffa4272373be610ab54; tree 13e352f499403ec9c2a7c1fbe700a67fbce4e8bf; branch codex/context-inline-spill; base 10dd6c472419437800bde7a07ff8e3440929bfc2",
+        "landed HEAD ddd66ced9f3d389bd03a476fcbdccfc2de759f33; tree cbcd93f60b96d40bd2161a0481c8971f8485de29; 后续提交只保留证据，不重签源码候选",
+        "2026-11-04 agent 已回读全部105个清单文件和17个指定门禁；SHA256SUMS 5f436c49c12197b2870ef0c00b3694a1cdfecdef25a83c406518000eef4227a2; result-summary dc62c9e8e6452b1b8040ef7ae9d7d1585a8b482d2680410929c1f203e9db86e8",
+        "证据按原始交接的指定完成门禁判定；全仓profile/CI诊断保留为较早候选3fd7fd92d的附加失败结果，正式profile不变",
+        "engineeringAcceptedByAgent=false; releaseApproved=false; liveReady=false; defaultOn=false; 未push"
+      ],
+      "id": "TF-0704",
+      "kind": "task",
+      "non_goals": [],
+      "primary_parent": "TF-0700",
+      "priority": 2,
+      "progress": 100,
+      "progress_source": "manual",
+      "purpose": "",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [
+        "用确定性测试复现回读后再次被 pruner 淘汰的抖动，不以猜测代替证据。",
+        "只对刚回读的 archive 结果应用，避免扩大普通上下文常驻；保护窗口有明确上限。",
+        "retention 与 compaction/pruning 的 ownership 保持不重叠，关闭时恢复旧行为。"
+      ],
+      "source_sessions": [],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "已用实现前负例与真实 guarded JSONL 回放证明换入后再次淘汰；显式 opt-in 保留 ageTurns<4、总量最多16000字符，预算优先且 oldest-first 释放。175 个保留/provider/pruner/schema 测试通过；5000 次投影同数组且不修改内容，GC 增量低于2MiB，普通内容策略保持旧路径。",
+      "title": "验证并实现回读后的短期保留，避免换入即再换出",
+      "updated_at": "2026-11-04T02:08:00.832965Z"
+    },
+    {
+      "acceptance_criteria": [
+        "协议输出只能来自当轮生产投影，无原始历史回退且不在正文重复；单测覆盖淘汰、缺失与错误回传。",
+        "两压力臂24对live首轮完整请求逐字节相同，mainContextChars可由实际input复算。",
+        "deterministic四臂及控制复现；live96次完成并逐臂报告B1-B7、token、延迟、失败和未测费用。",
+        "第三轮证据全量哈希匹配、凭证0命中；原47文件与105文件不改。",
+        "所选spec门禁通过；未通过的收益判据不得被改阈值消除。"
+      ],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.6,
+      "context_tags": [
+        "context-family",
+        "inline-spill",
+        "benefit-eval",
+        "round3",
+        "agent-driven",
+        "non-ga"
+      ],
+      "created_at": "2026-11-04T08:46:49.869290Z",
+      "deprecated_at": null,
+      "derived_progress": 100,
+      "desired_outcomes": [],
+      "deviations": [
+        "TFD-inline-spill-r3-budget-20261104"
+      ],
+      "difficulty": "high",
+      "estimated_total_minutes": null,
+      "evidence": [
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round3/DELIVERY.md",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round3/live/result.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round3/live/verified.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round3/SHA256SUMS",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round3/provenance.json"
+      ],
+      "execution_hints": [
+        "输入修复与第三轮评测已完成，不重复本轮模型运行。",
+        "旧47文件与105文件、四个并行未跟踪文件保持原样；新证据独立封存。",
+        "B1/B7通过；B3原flag仅控制任务差异，B2/B4/B5/B6未通过；后续预算/模型说明适配归父节点。"
+      ],
+      "id": "TF-0755",
+      "kind": "task",
+      "non_goals": [],
+      "primary_parent": "TF-0749",
+      "priority": 1,
+      "progress": 100,
+      "progress_source": "manual",
+      "purpose": "让第三轮收益统计建立在真实投影输入与一致配对夹具上，消除第二轮负对照可从额外历史取回oracle的干扰。",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [
+        "只修评测器输入装配、配对身份和真实input计量，不修改冻结阈值、评分器、语料、压力消息或产品默认。",
+        "第二轮与旧机制证据保持原样，新证据单独封存。",
+        "由模型自主发出recall，产物标记agent驱动，原始失败计入统计。"
+      ],
+      "source_sessions": [],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "第三轮输入修复已验收：真实function_call_output只来自当轮生产投影，正文不重复回读；24对live首轮请求逐字节相同，实际input字符/UTF8字节可复算，原始历史回退和baseline oracle泄漏为0。干净候选491a957ad执行32条deterministic与96条live/360次provider；输入/评分9条、retention/provider39条、完整typecheck、contract与隔离候选真实diff Harness通过。37文件SHA全匹配、629个archive和原始请求/响应复算通过、凭证0命中。收益结论mechanism-only，未把该节点done解读为父节点收益通过。",
+      "title": "修复回读输入旁路并执行第三轮收益对照",
+      "updated_at": "2026-11-04T10:11:47.147988Z"
+    },
+    {
+      "acceptance_criteria": [
+        "边界参数单测与deterministic四臂通过；5500页序列化不超过6000字符，模型输入无原始历史旁路。",
+        "干净候选和固定输入/源码摘要在live前落盘；live96次执行并由原始文件复算B1-B7、usage、延迟和失败。",
+        "证据/控制保留配对、超页、oracle投影丢失与incomplete分别记录；费用按实际资源口径记录。",
+        "第四轮全包哈希匹配、凭证零命中，旧三包与四个既有未跟踪文件保持原样。",
+        "所选单测、类型、Harness与Task Forest校验/导出/读回有磁盘证据；收益失败时父节点保持未完成。"
+      ],
+      "alignment": {
+        "fit": "unknown",
+        "fit_confidence": 0,
+        "user_goal": "",
+        "validation_plan": [],
+        "why_not_enough": "",
+        "why_this_task": ""
+      },
+      "alignment_records": [],
+      "assumptions": [],
+      "children": [],
+      "confidence": 0.95,
+      "context_tags": [
+        "context-family",
+        "inline-spill",
+        "benefit-eval",
+        "round4",
+        "agent-driven"
+      ],
+      "created_at": "2026-11-08T04:18:26.351265Z",
+      "deprecated_at": null,
+      "derived_progress": 100,
+      "desired_outcomes": [],
+      "deviations": [
+        "TFD-inline-spill-r4-outcome-20261108-01a1b97b"
+      ],
+      "difficulty": "high",
+      "estimated_total_minutes": null,
+      "evidence": [
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/REPORT.md",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/freeze.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/live/result.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/live-verify.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/live-diagnostics.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/summary.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/SHA256SUMS",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/validation-readback.json",
+        "C:/Users/27933/.codex/worktrees/context-inline-spill/ClawX/harness/specs/fixtures/context-inline-spill-benefit-round4/preservation-after.json"
+      ],
+      "execution_hints": [
+        "本轮页适配与完整冻结评测已完成，不重复本轮provider抽样。",
+        "B1–B6失败；父节点保持in_progress/80。下一设计依据是56次900输出预算耗尽和0/18证据正确。",
+        "完整Harness CI的四份Agent Dev过期记录与原工作树四个历史未跟踪文件的Harness归属失败分别保存，干净候选检查用于本轮验收。"
+      ],
+      "id": "TF-0859",
+      "kind": "task",
+      "non_goals": [],
+      "primary_parent": "TF-0749",
+      "priority": 1,
+      "progress": 100,
+      "progress_source": "manual",
+      "purpose": "使模型自主回读的页面完整进入6000字符生产投影，并按原样本测量任务与保留收益。",
+      "remaining_minutes_max": null,
+      "remaining_minutes_min": null,
+      "requirements": [
+        "仅修改评测工具说明、必填1–5500页参数及入口校验。",
+        "语料、oracle、评分、四臂、压力、模型、900输出预算与产品默认保持原值。",
+        "全部样本、首次失败、原始请求/响应和工具投影保留并标记agent驱动。"
+      ],
+      "source_sessions": [
+        "01a1b934-a93e-7112-b0de-46b49c49d801",
+        "01a1b97b-1ef9-7b50-a872-be8f634980a5"
+      ],
+      "status": "done",
+      "success_metrics": [],
+      "summary": "显式1–5500页契约与归档前invalid_arguments校验完成。干净候选8fa33a84e执行32次deterministic和96次live/367次模型调用；24对首轮完整请求相同、旁路与baseline泄漏0、最大序列化页5944、超页0；8次缺页参数均拒绝。50单测、node/web/tests串行无缓存类型、契约、定向Harness与源码保留通过，完整Harness CI因四份Agent Dev旧证据过期失败并保留。B7归档/全包哈希及凭证检查通过；stable证据0/18、控制3/6、56次incomplete，B1–B6失败，判定NO_GO。原始401首轮96请求与环境/夹具失败记录完整保留。",
+      "title": "适配回读页预算并执行第四轮收益对照",
+      "updated_at": "2026-11-08T06:14:15.145432Z"
+    }
+  ]
+}

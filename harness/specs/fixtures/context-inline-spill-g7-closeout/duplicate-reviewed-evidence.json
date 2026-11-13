@@ -1,0 +1,227 @@
+{
+  "schema": "G7ReviewedDuplicateEvidence/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "oldAllowlistSha256": "080c97e8f823651396376f076f2a9a4d1e82165f4b69e21c16b18a4d478866f9",
+  "groups": [
+    {
+      "sha256": "0846f5a9c530b9fbc9c50d79cb0dde5fbfe4f60d37019c1ba6f183df33799bf2",
+      "reason": "Round nine retains the untouched pre-interruption live records beside the frozen-source recovered aggregate; identical provider calls, runs and archives demonstrate that recovery added no model calls or output changes.",
+      "files": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round9/live/runs.jsonl",
+          "rawSha256": "0846f5a9c530b9fbc9c50d79cb0dde5fbfe4f60d37019c1ba6f183df33799bf2",
+          "bytes": 9367161,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round9/SHA256SUMS"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round9/original-live/runs.jsonl",
+          "rawSha256": "0846f5a9c530b9fbc9c50d79cb0dde5fbfe4f60d37019c1ba6f183df33799bf2",
+          "bytes": 9367161,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round9/SHA256SUMS"
+        }
+      ]
+    },
+    {
+      "sha256": "18631c50fa9022ef1f14b10e06f0183c2997d3d210b654d09b4247f024e334f1",
+      "reason": "Round seven retains the candidate deterministic run, the tool-pressure mechanism comparison and its prior deterministic source under independent immutable manifests; the identical records preserve their original run provenance.",
+      "files": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round7/deterministic/runs.jsonl",
+          "rawSha256": "18631c50fa9022ef1f14b10e06f0183c2997d3d210b654d09b4247f024e334f1",
+          "bytes": 2165200,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round7/SHA256SUMS"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round7/mechanism/tool/runs.jsonl",
+          "rawSha256": "18631c50fa9022ef1f14b10e06f0183c2997d3d210b654d09b4247f024e334f1",
+          "bytes": 2165200,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round7/SHA256SUMS"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round7/prior-deterministic/2026-11-13T08-41-57-514Z-deterministic/runs.jsonl",
+          "rawSha256": "18631c50fa9022ef1f14b10e06f0183c2997d3d210b654d09b4247f024e334f1",
+          "bytes": 2165200,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round7/SHA256SUMS"
+        }
+      ]
+    },
+    {
+      "sha256": "727aa679f46127c188507b99148eb9a12f91a94429b0dee474d08e4c34502211",
+      "reason": "Round seven retains the candidate deterministic run, the tool-pressure mechanism comparison and its prior deterministic source under independent immutable manifests; the identical records preserve their original run provenance.",
+      "files": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round7/deterministic/provider-calls.jsonl",
+          "rawSha256": "727aa679f46127c188507b99148eb9a12f91a94429b0dee474d08e4c34502211",
+          "bytes": 1739885,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round7/SHA256SUMS"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round7/mechanism/tool/provider-calls.jsonl",
+          "rawSha256": "727aa679f46127c188507b99148eb9a12f91a94429b0dee474d08e4c34502211",
+          "bytes": 1739885,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round7/SHA256SUMS"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round7/prior-deterministic/2026-11-13T08-41-57-514Z-deterministic/provider-calls.jsonl",
+          "rawSha256": "727aa679f46127c188507b99148eb9a12f91a94429b0dee474d08e4c34502211",
+          "bytes": 1739885,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round7/SHA256SUMS"
+        }
+      ]
+    },
+    {
+      "sha256": "8be8bbf2e85d74eded7d06e6879f7dbfa2ea7ed721e72b7a3e0cd0c525bcf265",
+      "reason": "Round nine retains the candidate deterministic run and its pre-candidate bookmark mechanism comparison with their own immutable provenance and manifests.",
+      "files": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round9/deterministic/provider-calls.jsonl",
+          "rawSha256": "8be8bbf2e85d74eded7d06e6879f7dbfa2ea7ed721e72b7a3e0cd0c525bcf265",
+          "bytes": 1896025,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round9/SHA256SUMS"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round9/mechanism/provider-calls.jsonl",
+          "rawSha256": "8be8bbf2e85d74eded7d06e6879f7dbfa2ea7ed721e72b7a3e0cd0c525bcf265",
+          "bytes": 1896025,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round9/SHA256SUMS"
+        }
+      ]
+    },
+    {
+      "sha256": "8f7a4bf62fb27beeec2044a0561084f48679ce02ff99f8624296e802984989a6",
+      "reason": "Round eight retains the candidate deterministic run and the navigation mechanism comparison under independent immutable manifests; these matching raw records remain in their original evidence directories.",
+      "files": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round8/deterministic/runs.json",
+          "rawSha256": "8f7a4bf62fb27beeec2044a0561084f48679ce02ff99f8624296e802984989a6",
+          "bytes": 2457412,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round8/SHA256SUMS"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round8/mechanism/mechanism-navigation-fixed/runs.json",
+          "rawSha256": "8f7a4bf62fb27beeec2044a0561084f48679ce02ff99f8624296e802984989a6",
+          "bytes": 2457412,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round8/SHA256SUMS"
+        }
+      ]
+    },
+    {
+      "sha256": "983f7f6a54840652baf561920b9c2f8916f392686bf7c0a399196537e5757d17",
+      "reason": "Round seven retains the candidate deterministic run, the tool-pressure mechanism comparison and its prior deterministic source under independent immutable manifests; the identical records preserve their original run provenance.",
+      "files": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round7/deterministic/runs.json",
+          "rawSha256": "983f7f6a54840652baf561920b9c2f8916f392686bf7c0a399196537e5757d17",
+          "bytes": 2334154,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round7/SHA256SUMS"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round7/mechanism/tool/runs.json",
+          "rawSha256": "983f7f6a54840652baf561920b9c2f8916f392686bf7c0a399196537e5757d17",
+          "bytes": 2334154,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round7/SHA256SUMS"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round7/prior-deterministic/2026-11-13T08-41-57-514Z-deterministic/runs.json",
+          "rawSha256": "983f7f6a54840652baf561920b9c2f8916f392686bf7c0a399196537e5757d17",
+          "bytes": 2334154,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round7/SHA256SUMS"
+        }
+      ]
+    },
+    {
+      "sha256": "9f31589fbcbd1f77365dc1de976a84c9bb929ea050d243d357e98f4b11025c30",
+      "reason": "Round nine retains the untouched pre-interruption live records beside the frozen-source recovered aggregate; identical provider calls, runs and archives demonstrate that recovery added no model calls or output changes.",
+      "files": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round9/live/provider-calls.jsonl",
+          "rawSha256": "9f31589fbcbd1f77365dc1de976a84c9bb929ea050d243d357e98f4b11025c30",
+          "bytes": 7547223,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round9/SHA256SUMS"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round9/original-live/provider-calls.jsonl",
+          "rawSha256": "9f31589fbcbd1f77365dc1de976a84c9bb929ea050d243d357e98f4b11025c30",
+          "bytes": 7547223,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round9/SHA256SUMS"
+        }
+      ]
+    },
+    {
+      "sha256": "a2f8e5ebd01e0991133a15db78c88c6fe07e9a1870f3e8081f2f7c663638ffbf",
+      "reason": "Round nine retains the untouched pre-interruption live records beside the frozen-source recovered aggregate; identical provider calls, runs and archives demonstrate that recovery added no model calls or output changes.",
+      "files": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round9/live/archives.jsonl.gz",
+          "rawSha256": "a2f8e5ebd01e0991133a15db78c88c6fe07e9a1870f3e8081f2f7c663638ffbf",
+          "bytes": 146085,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round9/SHA256SUMS"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round9/original-live/archives.jsonl.gz",
+          "rawSha256": "a2f8e5ebd01e0991133a15db78c88c6fe07e9a1870f3e8081f2f7c663638ffbf",
+          "bytes": 146085,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round9/SHA256SUMS"
+        }
+      ]
+    },
+    {
+      "sha256": "cfb05e8e1c9a63575323b96673422de0f5d9ac1402fdeb1b8cf9348165b1a5dc",
+      "reason": "Round eight retains the candidate deterministic run and the navigation mechanism comparison under independent immutable manifests; these matching raw records remain in their original evidence directories.",
+      "files": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round8/deterministic/runs.jsonl",
+          "rawSha256": "cfb05e8e1c9a63575323b96673422de0f5d9ac1402fdeb1b8cf9348165b1a5dc",
+          "bytes": 2266634,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round8/SHA256SUMS"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round8/mechanism/mechanism-navigation-fixed/runs.jsonl",
+          "rawSha256": "cfb05e8e1c9a63575323b96673422de0f5d9ac1402fdeb1b8cf9348165b1a5dc",
+          "bytes": 2266634,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round8/SHA256SUMS"
+        }
+      ]
+    },
+    {
+      "sha256": "e0cc067dd6adff77cac1e1d34b7d29742c9bdec87eeac7bf55d35e11565c007c",
+      "reason": "Round nine retains independently rerun verifications of the recovered and curated bundles; identical verifier facts confirm same-candidate replay without rewriting either receipt.",
+      "files": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round9/verification/live-curated.json",
+          "rawSha256": "e0cc067dd6adff77cac1e1d34b7d29742c9bdec87eeac7bf55d35e11565c007c",
+          "bytes": 111541,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round9/SHA256SUMS"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round9/verification/live-recovered.json",
+          "rawSha256": "e0cc067dd6adff77cac1e1d34b7d29742c9bdec87eeac7bf55d35e11565c007c",
+          "bytes": 111541,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round9/SHA256SUMS"
+        }
+      ]
+    },
+    {
+      "sha256": "ed0dc2ec833abfc07918ea65fa9a996e5d08b2d43184d1a0870df6fb9ed820eb",
+      "reason": "Round eight retains the candidate deterministic run and the navigation mechanism comparison under independent immutable manifests; these matching raw records remain in their original evidence directories.",
+      "files": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round8/deterministic/provider-calls.jsonl",
+          "rawSha256": "ed0dc2ec833abfc07918ea65fa9a996e5d08b2d43184d1a0870df6fb9ed820eb",
+          "bytes": 1841217,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round8/SHA256SUMS"
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round8/mechanism/mechanism-navigation-fixed/provider-calls.jsonl",
+          "rawSha256": "ed0dc2ec833abfc07918ea65fa9a996e5d08b2d43184d1a0870df6fb9ed820eb",
+          "bytes": 1841217,
+          "originalManifest": "harness/specs/fixtures/context-inline-spill-benefit-round8/SHA256SUMS"
+        }
+      ]
+    }
+  ],
+  "oldGroupsPreserved": true,
+  "thresholdBytesUnchanged": 102400
+}
