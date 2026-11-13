@@ -70,6 +70,8 @@ touchedAreas:
   - openclaw_runtime/src/plugins/session-entry-slot-keys.ts
   - openclaw_runtime/src/infra/outbound/**
   - openclaw_runtime/src/infra/delivery-queue-sqlite.ts
+  - openclaw_runtime/src/state/openclaw-state-db.ts
+  - openclaw_runtime/src/state/openclaw-state-db.delivery-backfill.test.ts
   - tests/unit/recovery-authority*.test.ts
   - tests/unit/session-lifecycle-generation-barrier.test.ts
   - tests/e2e/recovery*.spec.ts
@@ -118,6 +120,7 @@ requiredTests:
   - openclaw_runtime/src/infra/outbound/delivery-recovery.flow.test.ts
   - openclaw_runtime/src/infra/outbound/delivery-final-session.flow.test.ts
   - node scripts/recovery-delivery-process-proof.mjs
+  - openclaw_runtime/src/state/openclaw-state-db.delivery-backfill.test.ts
   - openclaw_runtime/src/agents/goal-wake-recovery.test.ts
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts

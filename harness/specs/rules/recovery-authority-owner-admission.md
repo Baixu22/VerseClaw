@@ -54,6 +54,13 @@ until the observation finishes, then releases it without consuming a send attemp
 Authority sends cannot downgrade an initial queue or ownership write failure to
 best-effort delivery; the platform send must stop before effects.
 
+Startup queue metadata backfill must compare its original serialized snapshot
+before updating indexed fields. A concurrent admission cannot lose its consumed
+budget to an older snapshot. Process evidence reads raw SQLite columns without
+schema repair and checks published peer claims against the same durable budget.
+Confirmed complete sends commit callbacks after durable applied truth, before
+Session reference cleanup; uncertain or partial sends do not run those callbacks.
+
 The default stays legacy. Read-only shadow never mutates an owner. One authority
 mode gate controls all five entry points and supports rollback. Frozen product
 locks and evaluation thresholds remain unchanged; a clean focused check is not GA.

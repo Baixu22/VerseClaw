@@ -469,6 +469,7 @@ describe("final Session reply bound to the original durable send intent", () => 
     const id = session().pendingFinalDeliveryIntentId;
     expect(id).toBeTruthy();
     expect(await loadPendingDelivery(id!, stateDir)).toMatchObject({ recoveryEffect: "applied" });
+    expect(transport.commit).toHaveBeenCalledOnce();
     await recover();
     expect(await loadPendingDelivery(id!, stateDir)).toMatchObject({ recoveryEffect: "applied" });
     expect(session().pendingFinalDeliveryText).toBe("new answer");
@@ -478,7 +479,54 @@ describe("final Session reply bound to the original durable send intent", () => 
     expect(await loadPendingDelivery(id!, stateDir)).toBeNull();
     expect(session().pendingFinalDeliveryIntentId).toBe("new-intent");
     expect(transport.send).toHaveBeenCalledOnce();
+    expect(transport.commit).toHaveBeenCalledOnce();
   });
+
+  it.each(["dispatch", "reconcile"])(
+    "commits a confirmed %s once while Session settlement is deferred",
+    async (mode) => {
+      const pending = await failedSend();
+      if (mode === "dispatch") {
+        transport.reconcile.mockResolvedValue({ status: "not_sent" });
+        expect((await recover()).deferredBackoff).toBe(1);
+        const deferred = await loadPendingDelivery(pending.id, stateDir);
+        if (!deferred) throw new Error("deferred callback fixture missing");
+        upsertDeliveryQueueEntry({
+          queueName: "outbound",
+          stateDir,
+          entry: {
+            ...deferred,
+            lastAttemptAt: Date.now() - computeBackoffMs(deferred.retryCount + 1) - 1,
+          },
+        });
+        transport.send.mockImplementationOnce(async () => {
+          await replaceReply({ pendingFinalDeliveryText: "new answer" });
+          return { messageId: "confirmed-message" };
+        });
+      } else {
+        transport.reconcile.mockImplementationOnce(async () => {
+          await replaceReply({ pendingFinalDeliveryText: "new answer" });
+          return {
+            status: "sent",
+            receipt: createMessageReceiptFromOutboundResults({
+              results: [{ messageId: "confirmed-message" }],
+            }),
+          };
+        });
+      }
+      await recover();
+      expect(await loadPendingDelivery(pending.id, stateDir)).toMatchObject({
+        recoveryEffect: "applied",
+      });
+      expect(session().pendingFinalDeliveryText).toBe("new answer");
+      expect(transport.commit).toHaveBeenCalledOnce();
+      await replaceReply({ pendingFinalDeliveryIntentId: "replacement-intent" });
+      await recover();
+      expect(await loadPendingDelivery(pending.id, stateDir)).toBeNull();
+      expect(transport.commit).toHaveBeenCalledOnce();
+      expect(transport.send).toHaveBeenCalledTimes(mode === "dispatch" ? 2 : 1);
+    },
+  );
 
   it("lets the newer producer send after the old unstarted intent loses its Session binding", async () => {
     const id = await enqueueDelivery(

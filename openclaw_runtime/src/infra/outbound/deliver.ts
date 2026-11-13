@@ -1436,6 +1436,9 @@ async function deliverOutboundPayloadsWithQueueCleanup(
       } else {
         if (authority) {
           await markDeliveryPlatformOutcomeApplied(queueId, params.deliveryQueueStateDir);
+          // The send is durably applied even when its Session reference needs
+          // later settlement; callbacks belong to this confirmed result.
+          if (!params.deferCommitHooks) await runOutboundDeliveryCommitHooks(results);
         } else if (platformSendStarted) {
           await markQueuedPlatformOutcomeUnknown({
             queueId,
@@ -1454,7 +1457,7 @@ async function deliverOutboundPayloadsWithQueueCleanup(
             return false;
           },
         );
-        if (acked) {
+        if (acked && !authority) {
           await runOutboundDeliveryCommitHooks(results);
         }
       }

@@ -2,6 +2,7 @@
 import { appendFileSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
+import { DatabaseSync } from "node:sqlite";
 import {
   loadSessionStore,
   updateSessionStoreAtomic,
@@ -25,6 +26,7 @@ import {
 } from "../openclaw_runtime/src/infra/outbound/delivery-queue-storage.js";
 import { closeOpenClawAgentDatabasesForTest } from "../openclaw_runtime/src/state/openclaw-agent-db.js";
 import { closeOpenClawStateDatabase } from "../openclaw_runtime/src/state/openclaw-state-db.js";
+import { resolveOpenClawStateSqlitePath } from "../openclaw_runtime/src/state/openclaw-state-db.paths.js";
 
 const [stateDir, mode] = process.argv.slice(2);
 if (
@@ -98,7 +100,26 @@ if (mode === "init" || mode === "live-hold") {
   if (mode === "live-hold") await hold();
 } else if (mode === "inspect") {
   const { id } = JSON.parse(readFileSync(intentPath, "utf8")) as { id: string };
-  marker("inspection", { entry: await loadPendingDelivery(id, stateDir) });
+  const db = new DatabaseSync(
+    resolveOpenClawStateSqlitePath({ ...process.env, OPENCLAW_STATE_DIR: stateDir }),
+    { readOnly: true },
+  );
+  try {
+    db.exec("PRAGMA query_only = ON;");
+    const row = db
+      .prepare(`
+      SELECT retry_count, entry_json FROM delivery_queue_entries
+      WHERE queue_name = 'outbound' AND id = ? AND status = 'pending'
+    `)
+      .get(id) as { retry_count: number; entry_json: string };
+    marker("inspection", {
+      indexedRetryCount: Number(row.retry_count),
+      entry: JSON.parse(row.entry_json),
+      readOnly: true,
+    });
+  } finally {
+    db.close();
+  }
 } else {
   if (mode.startsWith("race-")) {
     const start = new Promise<void>((resolve) => process.stdin.once("data", () => resolve()));

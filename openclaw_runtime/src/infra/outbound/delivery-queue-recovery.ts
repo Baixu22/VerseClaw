@@ -545,10 +545,10 @@ async function drainAdmittedQueuedEntry(
       entry = prepared.entry;
     }
     if (prepared.decision.kind === "settle") {
-      if (!(await ackDelivery(entry.id, opts.stateDir, entry)))
-        return (await loadPendingDelivery(entry.id, opts.stateDir)) ? "failed" : "already-gone";
       if (reconciliation?.status === "sent")
         await runReconciledSentCommitHooks({ entry, cfg: opts.cfg, reconciliation, log: opts.log });
+      if (!(await ackDelivery(entry.id, opts.stateDir, entry)))
+        return (await loadPendingDelivery(entry.id, opts.stateDir)) ? "failed" : "already-gone";
       opts.onRecovered?.(entry);
       return "recovered";
     }
@@ -601,6 +601,7 @@ async function drainAdmittedQueuedEntry(
     }
     const applied = recordQueuedDeliveryEffect(entry, "applied", opts.stateDir);
     if (!applied) return "already-gone";
+    await runOutboundDeliveryCommitHooks(result);
     if (!(await ackDelivery(entry.id, opts.stateDir, applied))) {
       finishQueuedDeliveryRecovery(
         applied,
@@ -609,7 +610,6 @@ async function drainAdmittedQueuedEntry(
       );
       return (await loadPendingDelivery(entry.id, opts.stateDir)) ? "failed" : "already-gone";
     }
-    if (isOutboundDeliveryResultArray(result)) await runOutboundDeliveryCommitHooks(result);
     opts.onRecovered?.(entry);
     return "recovered";
   } catch (error) {
