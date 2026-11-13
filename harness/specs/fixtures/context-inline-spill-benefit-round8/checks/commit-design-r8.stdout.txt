@@ -1,0 +1,5 @@
+[codex/g7-inline-spill-tf0749-20261113 486f078ab] eval(context): freeze visible archive navigation and completion rules
+ 4 files changed, 614 insertions(+)
+ create mode 100644 harness/specs/fixtures/context-inline-spill-benefit-round8/DESIGN.md
+ create mode 100644 harness/specs/fixtures/context-inline-spill-benefit-round8/design.freeze.json
+ create mode 100644 harness/specs/fixtures/context-inline-spill-benefit-round8/mechanism-readback.json

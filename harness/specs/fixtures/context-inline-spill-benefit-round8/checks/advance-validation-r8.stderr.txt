@@ -1,0 +1,2 @@
+Previous HEAD position was 89dff8ebd fix(context-eval): reject frozen input drift before runtime imports
+HEAD is now at f8d41ddb2 fix(context-eval): label deterministic recall origins accurately

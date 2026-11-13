@@ -1,0 +1,16 @@
+{
+  "schema": "ContextInlineSpillPostflight/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "finishedAt": "2026-11-13T10:23:49.591Z",
+  "candidate": {
+    "commit": "1a12ad0cd23ab5873e6865f73c8e51f62ec71595",
+    "tree": "101d417edee81282fab5a999171763195f42cc66",
+    "branch": "codex/g7-inline-spill-tf0749-20261113",
+    "dirty": true,
+    "status": "M .gitattributes\n M docs/context-family/goal-progress.md\n M docs/modules/context-and-memory.md\n M harness/specs/rules/inline-spill-eval-projected-input.md\n M harness/specs/scenarios/context-family.md\n M scripts/context-inline-spill-benefit-loop-eval.mts\n M scripts/context-inline-spill-benefit-round6-verify.mjs\n M scripts/context-inline-spill-benefit-round7-verify.mjs\n M scripts/context-inline-spill-benefit-strategy.mts\n?? harness/specs/tasks/inline-spill-real-benefit-eval-round8.md\n?? scripts/context-inline-spill-benefit-round8-verify.mts\n?? tests/unit/context-inline-spill-benefit-navigation.test.ts"
+  },
+  "sourceInputs": {},
+  "sameCandidate": false
+}
