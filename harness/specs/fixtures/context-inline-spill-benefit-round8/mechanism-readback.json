@@ -3,7 +3,7 @@
   "driven_by": "agent",
   "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
   "realHumanEvidence": false,
-  "recordedAt": "2026-11-13T10:36:59.607Z",
+  "recordedAt": "2026-11-13T10:47:41.018Z",
   "variants": [
     {
       "variant": "mechanism-anchor",
