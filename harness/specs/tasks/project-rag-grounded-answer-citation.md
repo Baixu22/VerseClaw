@@ -7,8 +7,18 @@ scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-10
 intent: 让用户能区分有证据的事实、推断和未解决的问题。
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: f76c1110a11a2ca07286ef812577195aec333dbd
 touchedAreas:
+  - "electron/services/knowledge-api.ts"
+  - "shared/knowledge/answer.ts"
+  - "openclaw_runtime/src/gateway/server-methods/agent.ts"
+  - "shared/i18n/locales/*/knowledge.json"
+  - "artifacts/agent-dev-workbench/**"
+  - "artifacts/agent-dev-deep-test/**"
+  - "artifacts/agent-dev-quality/**"
+  - "docs/dev/evidence/project-rag/RAG-10/**"
+  - "tests/unit/knowledge-api.test.ts"
+  - "tests/unit/knowledge-librarian.test.ts"
   - "electron/services/knowledge-evidence-qa.ts"
   - "electron/services/knowledge-source-set-answer.ts"
   - "src/lib/knowledge-librarian.ts"
@@ -44,6 +54,10 @@ requiredRules:
   - "knowledge-source-set-read-admission"
   - "project-rag-long-term-boundary"
 requiredTests:
+  - "tests/unit/project-rag-answer-contract.test.ts"
+  - "tests/unit/knowledge-api.test.ts"
+  - "tests/unit/knowledge-librarian.test.ts"
+  - "tests/e2e/project-rag-dcs-citation.spec.ts"
   - "tests/unit/knowledge-evidence-qa.test.ts"
   - "tests/unit/knowledge-chat.test.tsx"
 plannedTests:
@@ -64,6 +78,7 @@ docs:
   files:
     - docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md
     - docs/dev/project-rag/WORK-PACKAGES.md
+    - docs/dev/project-rag/ANSWER-CITATION-CONTRACT.md
 ---
 
 # 完成 strict/open 问答、冲突披露与引用回源

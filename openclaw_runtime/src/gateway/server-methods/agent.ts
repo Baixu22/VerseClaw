@@ -2768,7 +2768,7 @@ export const agentHandlers: GatewayRequestHandlers = {
         : undefined;
       let text: string | undefined;
       if (
-        retainedEvidence &&
+        canRead &&
         (payload.status === "ok" || payload.status === "completed") &&
         context.dedupe.has("agent:" + runId)
       ) {

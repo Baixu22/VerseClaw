@@ -3,6 +3,7 @@ import type { KnowledgeEmbeddingSelection, KnowledgeEmbeddingStatusResult } from
 import type { KnowledgeVectorStatusResult } from '../knowledge/vector';
 import type { KnowledgeRerankSelection, KnowledgeRerankStatusResult } from '../knowledge/rerank';
 import type { RetainedEvidenceManifestV1 } from '../knowledge/packing';
+import type { AnswerClaimV1, KnowledgeAnswerMode } from '../knowledge/answer';
 import type { RankSignalsV2, RetrievalMode, RetrievalProfile, RetrievalResultV2 } from '../knowledge/retrieval';
 import type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
 export type { OwnerReadRejectionCode, OwnerReadSnapshotV1, SourceRefV2 } from '../knowledge/owner-read-contract';
@@ -4663,6 +4664,7 @@ export type KnowledgeSourceSetAnswerSource = {
   readRange?: { fromLine: number; toLine: number; totalLines?: number; truncated: boolean };
 };
 export type KnowledgeAnswerFromSourceSetPayload = {
+  answerMode?: KnowledgeAnswerMode;
   question: string;
   sourceRefs: KnowledgeSourceRef[];
   artifactType?: KnowledgeArtifactType;
@@ -4674,6 +4676,7 @@ export type KnowledgeAnswerFromSourceSetPayload = {
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
 };
 export type KnowledgeAnswerFromSourceSetResult = HostSuccess & {
+  answerMode?: KnowledgeAnswerMode;
   retainedEvidence?: RetainedEvidenceManifestV1;
   question: string;
   answer: string;
@@ -4683,9 +4686,10 @@ export type KnowledgeAnswerFromSourceSetResult = HostSuccess & {
   groundingStatus: 'grounded' | 'partial' | 'missing_sources';
   /** Populated only by a measured answer path; template excerpts omit it. */
   confidence?: number;
-  synthesisMode?: 'source-excerpts' | 'model';
+  synthesisMode?: 'source-excerpts' | 'model' | 'unknown';
   model?: { status: 'completed' | 'unavailable' | 'error'; runId?: string; reason?: string };
-  claims?: Array<{ text: string; citations: Array<{ sourceId: string; quote: string }> }>;
+  claims?: AnswerClaimV1[];
+  claimSupport?: { status: 'completed' | 'error'; runId?: string; reason?: string; actor: 'knowledge-claim-support'; driven_by: 'agent' };
   rejections?: Array<{ refId: string; owner: string; subjectId: string; reason: string; visibleReason: string }>;
   conflictSet?: Array<{ kind: 'claim' | 'source'; key: string; description: string; stances?: string[]; citations: KnowledgeSourceSetCitation[] }>;
   retrievalDiagnostics: KnowledgeRetrievalDiagnostics;

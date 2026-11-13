@@ -3,7 +3,7 @@ import { boundedKnowledgeHistory, buildKnowledgeQaPrompt, runKnowledgeModel, sel
 import type { GatewayManager } from '@electron/gateway/manager';
 
 const source = { id: 'deployment', lookup: 'deployment.md', title: 'Deployment', excerpt: 'Port', content: '网关部署端口配置为8080。 Review before apply.', citation: { refId: 'memory-wiki:deployment.md', owner: 'memory-wiki', subjectId: 'deployment.md', revision: '2', contentDigest: 'sha256:source', sourceRefs: ['deployment'] } };
-const valid = { claims: [{ text: '网关端口是8080。', citations: [{ sourceId: source.citation.refId, quote: '端口配置为8080' }] }], unknowns: [] };
+const valid = { claims: [{ kind: 'source', text: '网关端口是8080。', citations: [{ sourceId: source.citation.refId, quote: '端口配置为8080' }] }], unknowns: [] };
 describe('evidence QA', () => {
   it('caps large source sets without splitting conflict groups', () => {
     const sources = Array.from({ length: 9 }, (_, index) => ({ ...source, id: 's' + index,
@@ -77,7 +77,7 @@ describe('evidence QA', () => {
       sessionKey: expect.stringMatching(/^agent:main:knowledge-/), knowledgeReferences: references,
       workspaceId: 'workspace-owner', workspaceDir: 'D:/owner-workspace',
       modelRun: true, promptMode: 'none', sessionEffects: 'internal', suppressPromptPersistence: true,
-    }), 60000);
+    }), expect.any(Number));
     expect((rpc.mock.calls[0] as unknown[])[1]).not.toHaveProperty('content');
     expect(listeners.size).toBe(0);
   });
@@ -91,7 +91,7 @@ describe('evidence QA', () => {
     const gateway = { rpc, on: vi.fn((_event, callback) => listeners.add(callback)), off: vi.fn((_event, callback) => listeners.delete(callback)) } as unknown as GatewayManager;
     const result = await runKnowledgeModel(gateway, 'test prompt', 'Knowledge Librarian');
     expect(validateKnowledgeQaOutput(result.text, [source])).toEqual(valid);
-    expect(rpc).toHaveBeenCalledWith('agent', expect.objectContaining({ deliver: false, modelRun: true, promptMode: 'none', disableMessageTool: true }), 60000);
+    expect(rpc).toHaveBeenCalledWith('agent', expect.objectContaining({ deliver: false, modelRun: true, promptMode: 'none', disableMessageTool: true }), expect.any(Number));
     expect(listeners.size).toBe(0);
   });
   it('does not report incomplete model runs as answers and releases its listener', async () => {

@@ -40,8 +40,8 @@ describe('knowledge librarian grounded answers', () => {
       messages,
     });
 
-    expect(answer.groundingStatus).toBe('grounded');
-    expect(answer.confidence).toBeGreaterThan(0.8);
+    expect(answer.groundingStatus).toBe('partial');
+    expect(answer.confidence).toBeUndefined();
     expect(answer.sources).toEqual([source]);
     expect(answer.unknowns).toContain('Grounding is page/snippet level.');
     expect(answer.retrieval).toMatchObject({
@@ -68,7 +68,7 @@ describe('knowledge librarian grounded answers', () => {
     });
 
     expect(answer.groundingStatus).toBe('missing_sources');
-    expect(answer.confidence).toBe(0);
+    expect(answer.confidence).toBeUndefined();
     expect(answer.unknowns).toEqual(['No source was found.']);
     expect(answer.nextActions).toEqual(['Broaden search.']);
 
@@ -76,7 +76,7 @@ describe('knowledge librarian grounded answers', () => {
     expect(draft).toMatchObject({
       title: 'Grounded answer: What happened in the unknown incident?',
       type: 'synthesis',
-      createdBy: 'user',
+      createdBy: 'agent',
       metadata: {
         knowledgeKind: 'librarian-grounded-answer',
         groundingStatus: 'missing_sources',
@@ -89,7 +89,7 @@ describe('knowledge librarian grounded answers', () => {
     expect(inbox.metadata?.knowledgeKind).toBe('error-experience');
     expect(inbox.metadata?.errorExperience).toMatchObject({
       schemaVersion: 1,
-      applicability: { confidence: 0, severity: 'medium' },
+      applicability: { severity: 'medium' },
       effectiveness: {
         hitCount: 0,
         acceptedCount: 0,
@@ -99,5 +99,6 @@ describe('knowledge librarian grounded answers', () => {
       },
     });
     expect(inbox.warnings).toEqual(['No source citation was available when this candidate was created.']);
+    expect((inbox.metadata?.errorExperience as { applicability: { confidence?: number } }).applicability.confidence).toBeUndefined();
   });
 });

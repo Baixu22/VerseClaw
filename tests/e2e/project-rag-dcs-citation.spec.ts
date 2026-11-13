@@ -18,7 +18,7 @@ async function host<T = Json>(page: Page, module: string, action: string, payloa
 type WaitResult = { status: string; retainedEvidence?: RetainedEvidenceManifestV1 };
 
 test('Project RAG packs real owner evidence for ordinary, media, queued, retry and model-only calls', async ({ homeDir, userDataDir, launchElectronApp }, testInfo) => {
-  test.setTimeout(300000);
+  test.setTimeout(420000);
   const receipt: Json = { actor: 'codex/project-rag-relay-01a1d438', driven_by: 'agent',
     realHumanEvidence: false, providerKind: 'scripted-local-fixture', status: 'fail' };
   const wire: Array<{ text: string; messages: readonly LlmRequestMessage[] }> = [];
@@ -28,10 +28,20 @@ test('Project RAG packs real owner evidence for ordinary, media, queued, retry a
   const llm = await startScriptedLlm(async (userText, _tools, _index, messages) => {
     wire.push({ text: userText, messages: structuredClone(messages) });
     if (userText.includes('DCS queue-before')) await held;
+    const supportLine = userText.split('\n').find(line => line.startsWith('{"claimSupportReview":'));
+    if (supportLine) {
+      const support = JSON.parse(supportLine) as { question: string; claims: Array<{ index: number }> };
+      const unsupported = support.question.includes('RAG10 unsupported');
+      return { text: JSON.stringify({ answerability: unsupported ? 'insufficient' : 'answerable',
+        claims: support.claims.map(claim => ({ index: claim.index, status: unsupported ? 'unsupported' : 'supported',
+          reason: unsupported ? 'The source states 18789 rather than 9999.' : 'The deployment value is present in the cited source.' })) }) };
+    }
     const metadataLine = userText.split('\n').find(line => line.startsWith('{"currentQuestion":'));
     if (metadataLine) {
-      const metadata = JSON.parse(metadataLine) as { evidence: Array<{ sourceId: string }> };
-      return { text: JSON.stringify({ claims: [{ text: 'Deployment port is 18789.',
+      const metadata = JSON.parse(metadataLine) as { currentQuestion: string; answerMode: string; evidence: Array<{ sourceId: string }> };
+      if (metadata.currentQuestion.includes('RAG10 general')) return { text: JSON.stringify({ claims: [{ kind: 'general', text: 'Ports identify network services.', citations: [] }], unknowns: ['This is general knowledge.'] }) };
+      if (metadata.currentQuestion.includes('RAG10 conflict')) return { text: JSON.stringify({ claims: [], unknowns: ['The sources state different deployment ports.'] }) };
+      return { text: JSON.stringify({ claims: [{ kind: 'source', text: metadata.currentQuestion.includes('RAG10 unsupported') ? 'Deployment port is 9999.' : 'Deployment port is 18789.',
         citations: [{ sourceId: metadata.evidence[0].sourceId, quote }] }], unknowns: [] }) };
     }
     return { text: 'RAG09 fixture reply' };
@@ -104,7 +114,7 @@ test('Project RAG packs real owner evidence for ordinary, media, queued, retry a
     receipt.qa = qa;
     expect(qa.success).toBe(true); expect(qa.synthesisMode).toBe('model');
     expect(qa.retainedEvidence?.units).toHaveLength(1);
-    const qaWire = wire.at(-1)!;
+    const qaWire = wire.findLast(request => request.text.includes('"currentQuestion"'))!;
     const promptMessage = qaWire.messages.find(message => typeof message.content === 'string' && message.content.includes('currentQuestion'));
     expect(String(promptMessage?.content)).not.toContain(quote);
     expect(qaWire.text).toContain(quote);
@@ -120,6 +130,63 @@ test('Project RAG packs real owner evidence for ordinary, media, queued, retry a
     const historyAfterQa = await ownerHistory();
     expect(historyAfterQa.messages).toEqual(historyBeforeQa.messages);
     receipt.qaIsolation = { ownerSessionKey: owner.activeSessionKey, ownerHistoryUnchanged: true };
+
+    // RAG-10: strict/open and the separate support judge execute the same owner/DCS path.
+    const selected = [{ id: 'concepts/z-first.md', path: 'concepts/z-first.md', kind: 'wiki' }];
+    const qaAnswer = (question: string, answerMode: string, sourceRefs = selected) => host<Json>(page, 'knowledge', 'answerFromSourceSet',
+      { question, answerMode, sourceRefs, workspaceId: owner.id, synthesis: true });
+    const unsupported = await qaAnswer('RAG10 unsupported deployment port', 'strict');
+    expect(unsupported.synthesisMode).toBe('unknown'); expect(unsupported.claims).toEqual([]);
+    expect(JSON.stringify(unsupported.unknowns)).toContain('18789 rather than 9999');
+    const missingRefs = [{ id: 'concepts/absent.md', path: 'concepts/absent.md', kind: 'wiki' }];
+    const beforeMissing = wire.length;
+    const missing = await qaAnswer('RAG10 missing deployment value', 'strict', missingRefs);
+    expect(missing.synthesisMode).toBe('unknown'); expect(wire.length).toBe(beforeMissing);
+    const general = await qaAnswer('RAG10 general network ports', 'open', missingRefs);
+    expect(general.synthesisMode).toBe('model');
+    expect(general.claims).toEqual(expect.arrayContaining([expect.objectContaining({ kind: 'general', citations: [] })]));
+    await writeFile(join(vault, 'concepts/conflict-port.md'), document('Conflict port', 'The deployment port is 9999.'));
+    const conflict = await qaAnswer('RAG10 conflict deployment ports', 'strict', [...selected,
+      { id: 'concepts/conflict-port.md', path: 'concepts/conflict-port.md', kind: 'wiki' }]);
+    expect(conflict.synthesisMode).toBe('unknown'); expect(JSON.stringify(conflict.unknowns)).toContain('different deployment ports');
+    receipt.answerContract = { unsupported, missing, general, conflict };
+
+    await page.getByTestId('sidebar-nav-knowledge').click();
+    await expect(page.getByTestId('knowledge-page')).toBeVisible();
+    await page.getByTestId('knowledge-search-input').fill('concepts/z-first.md');
+    await page.getByTestId('knowledge-search-submit').click();
+    const resultRow = page.getByTestId('knowledge-search-result').filter({ hasText: 'Z first' }).first();
+    await expect(resultRow).toBeVisible();
+    await page.getByTestId('knowledge-source-set-add-result').first().click();
+    await page.getByTestId('knowledge-librarian-open').click();
+    await expect(page.getByTestId('knowledge-answer-mode')).toHaveValue('strict');
+    await page.getByTestId('knowledge-answer-mode').selectOption('open');
+    await page.getByTestId('knowledge-librarian-question').fill('RAG10 general network ports');
+    await page.getByTestId('knowledge-librarian-ask').click();
+    await expect(page.getByTestId('knowledge-librarian-message-assistant').last()).toContainText('General knowledge', { timeout: 60000 });
+    await page.getByTestId('knowledge-answer-mode').selectOption('strict');
+    await page.getByTestId('knowledge-librarian-question').fill('What is the deployment port?');
+    await page.getByTestId('knowledge-librarian-ask').click();
+    const uiAnswer = page.getByTestId('knowledge-librarian-message-assistant').last();
+    await expect(uiAnswer).toContainText('Model support checked', { timeout: 60000 });
+    await page.screenshot({ path: testInfo.outputPath('rag10-answer.png'), fullPage: true });
+    await uiAnswer.getByTestId('knowledge-librarian-source').first().click();
+    await page.getByTestId('knowledge-bot-close').click();
+    await expect(page.getByTestId('knowledge-markdown-preview')).toContainText(quote);
+    await expect(page.getByTestId('knowledge-citation-range')).toContainText('10–10');
+    await page.screenshot({ path: testInfo.outputPath('rag10-raw-range.png'), fullPage: true });
+    receipt.citationUi = { strictAndOpen: true, supportStatusVisible: true, rawRange: { startLine: 10, endLine: 10 } };
+    await writeFile(join(vault, 'concepts/z-first.md'), document('Z first', quote, 'revoked'));
+    await page.getByTestId('knowledge-librarian-open').click();
+    await page.getByTestId('knowledge-librarian-message-assistant').last().getByTestId('knowledge-librarian-source').first().click();
+    await page.getByTestId('knowledge-bot-close').click();
+    await expect(page.getByTestId('knowledge-citation-range')).toHaveCount(0);
+    await expect(page.getByTestId('knowledge-markdown-preview')).not.toContainText(quote);
+    await page.screenshot({ path: testInfo.outputPath('rag10-revoked-citation.png'), fullPage: true });
+    receipt.citationRevocation = { staleBodyCleared: true, oldRangeRemoved: true };
+    await writeFile(join(vault, 'concepts/z-first.md'), document('Z first', quote));
+    await page.evaluate(() => { window.location.hash = '/'; });
+    await expect(page.getByTestId('main-layout')).toBeVisible();
 
     const ordinaryResult = await send('DCS ordinary', 'rag09-ordinary');
     const ordinary = await wait(ordinaryResult);

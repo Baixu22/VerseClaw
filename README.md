@@ -300,3 +300,5 @@ Task Ledger → Persistent tasks saves objectives, constraints and acceptance ch
 Search and filter the task list, then load further pages. Agents can suggest related tasks and decompose a goal into dependent tasks while retaining the parent goal and constraints. Cancelling a plan waits for in-flight effects to settle. Acceptance and recovery read receipts from the existing runtime owners.
 
 Conversation tasks are managed by the agent. Identified work appears in one task header above the conversation, with verified step progress and a hide/reopen control. The plain canvas keeps the input clear; a small changed-file entry appears below the composer only when files change. Branches and worktree controls remain in its details.
+
+- Knowledge Librarian offers source-only and open answers. Exact quotes and version/range pins are checked separately from agent-driven claim support; citations reopen the owner-verified raw range. General knowledge and inference have no fabricated citations.

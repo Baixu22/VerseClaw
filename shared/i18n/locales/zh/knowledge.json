@@ -259,6 +259,25 @@
       "prompts": "提问建议",
       "empty": "有什么想找的知识？",
       "placeholder": "向知识库提问…"
+    },
+    "answerMode": {
+      "label": "回答模式",
+      "strict": "仅依据来源",
+      "open": "允许一般知识"
+    },
+    "claimKind": {
+      "source": "来源陈述",
+      "general": "一般知识",
+      "inference": "推断"
+    },
+    "evidence": {
+      "quote": "原文引句已核对",
+      "pin": "来源版本与范围已核对",
+      "supported": "模型支持核验通过",
+      "unsupported": "证据不支持",
+      "uncertain": "支持程度不明确",
+      "unverified": "尚未核验",
+      "rawRange": "原文第 {{from}}–{{to}} 行"
     }
   },
   "inbox": {

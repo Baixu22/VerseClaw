@@ -259,6 +259,25 @@
       "prompts": "質問の候補",
       "empty": "何を調べましょうか？",
       "placeholder": "ナレッジベースに質問…"
+    },
+    "answerMode": {
+      "label": "回答モード",
+      "strict": "資料のみ",
+      "open": "一般知識を許可"
+    },
+    "claimKind": {
+      "source": "引用した記述",
+      "general": "一般知識",
+      "inference": "推論"
+    },
+    "evidence": {
+      "quote": "原文引用を確認済み",
+      "pin": "資料の版と範囲を確認済み",
+      "supported": "モデルによる裏付け確認済み",
+      "unsupported": "裏付けなし",
+      "uncertain": "不確実",
+      "unverified": "未確認",
+      "rawRange": "原文 {{from}}–{{to}} 行"
     }
   },
   "inbox": {

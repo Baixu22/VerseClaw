@@ -1091,7 +1091,7 @@ export function Knowledge() {
     const search = new URLSearchParams(location.search);
     if (search.get('view') === 'review-queue' && !reviewQueueLoaded) return;
     restoredLocation.current = location.key;
-    const state = location.state as { knowledgeContext?: KnowledgeChatContext; knowledgeTitle?: string; stewardReview?: KnowledgeStewardReviewResult } | null;
+    const state = location.state as { knowledgeContext?: KnowledgeChatContext; knowledgeTitle?: string; knowledgeCitation?: { sourceRef?: import('@shared/knowledge/owner-read-contract').SourceRefV2 }; stewardReview?: KnowledgeStewardReviewResult } | null;
     const context = state?.knowledgeContext;
     if (context) {
       if (typeof context.editorTitle === 'string') setEditorTitle(context.editorTitle);
@@ -1124,7 +1124,7 @@ export function Knowledge() {
       }
     } else {
       const lookup = search.get('lookup');
-      if (lookup) void openResult({ title: state?.knowledgeTitle || lookup, pagePath: lookup });
+      if (lookup) void openResult({ title: state?.knowledgeTitle || lookup, pagePath: lookup, sourceRef: state?.knowledgeCitation?.sourceRef });
     }
   }, [location.key, location.search, location.state, openResult, openReviewItem, reviewQueueItems, reviewQueueLoaded]);
 
@@ -1770,6 +1770,10 @@ export function Knowledge() {
                     )}
                     {(effectiveEditorMode === 'preview' || effectiveEditorMode === 'split') && (
                       <div className="h-full min-h-0 overflow-auto border-border/60 bg-background p-5 text-sm leading-7 lg:border-l [&_a]:text-primary [&_blockquote]:border-l-2 [&_blockquote]:border-black/20 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground [&_code]:rounded [&_code]:bg-black/5 [&_code]:px-1 [&_h1]:mb-4 [&_h1]:font-serif [&_h1]:text-3xl [&_h1]:font-normal [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:font-normal [&_li]:ml-5 [&_ol]:list-decimal [&_p]:mb-3 [&_pre]:overflow-auto [&_pre]:rounded-lg [&_pre]:bg-black/5 [&_pre]:p-3 [&_ul]:list-disc" data-testid="knowledge-markdown-preview">
+                        {(asRecord(selectedPage)?.sourceRef as import('@shared/knowledge/owner-read-contract').SourceRefV2 | undefined)?.locator && <p className="text-tiny text-muted-foreground" data-testid="knowledge-citation-range">
+                          {t('librarian.evidence.rawRange', { from: (asRecord(selectedPage)?.sourceRef as import('@shared/knowledge/owner-read-contract').SourceRefV2).locator!.startLine,
+                            to: (asRecord(selectedPage)?.sourceRef as import('@shared/knowledge/owner-read-contract').SourceRefV2).locator!.endLine })}
+                        </p>}
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>{editorBody || t('workspace.emptyPreview')}</ReactMarkdown>
                       </div>
                     )}

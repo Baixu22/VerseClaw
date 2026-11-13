@@ -3154,7 +3154,8 @@
     "docs/dev/evidence/project-rag/RAG-09/20261114-2b044e7925/runtime-unit.log",
     "docs/dev/evidence/project-rag/RAG-09/20261114-2b044e7925/SHA256SUMS",
     "docs/dev/evidence/project-rag/RAG-09/20261114-2b044e7925/source-inputs.json",
-    "docs/dev/evidence/project-rag/RAG-09/20261114-2b044e7925/typecheck.log"
+    "docs/dev/evidence/project-rag/RAG-09/20261114-2b044e7925/typecheck.log",
+    "docs/dev/project-rag/ANSWER-CITATION-CONTRACT.md"
   ],
   "artifactBatches": {}
 }

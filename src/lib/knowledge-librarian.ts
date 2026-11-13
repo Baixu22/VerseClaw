@@ -5,6 +5,7 @@ import type {
   KnowledgeSourceRef,
   KnowledgeSourceSetAnswerSource,
 } from '@shared/host-api/contract';
+import type { AnswerClaimV1, CitationV2, KnowledgeAnswerMode } from '@shared/knowledge/answer';
 
 export type KnowledgeLibrarianGroundingStatus = 'grounded' | 'partial' | 'missing_sources';
 
@@ -18,6 +19,7 @@ export type KnowledgeLibrarianGroundedSource = {
   score?: number;
   reason?: string;
   citation?: KnowledgeSourceSetAnswerSource['citation'];
+  answerCitation?: CitationV2;
   readRange?: KnowledgeSourceSetAnswerSource['readRange'];
   updatedAt?: string;
 };
@@ -38,6 +40,8 @@ export type KnowledgeLibrarianGroundedAnswer = {
   suggestions: string[];
   nextActions: string[];
   confidence?: number;
+  answerMode?: KnowledgeAnswerMode;
+  claims?: AnswerClaimV1[];
   groundingStatus: KnowledgeLibrarianGroundingStatus;
   retrieval: KnowledgeLibrarianRetrievalInspector;
 };
@@ -60,11 +64,6 @@ export type BuildGroundedLibrarianAnswerInput = {
     suggestionBroadenSearch: string;
   };
 };
-
-function clampConfidence(value: number): number {
-  if (!Number.isFinite(value)) return 0;
-  return Math.max(0, Math.min(1, value));
-}
 
 function sourceRefsFromAnswer(answer: KnowledgeLibrarianGroundedAnswer): KnowledgeSourceRef[] {
   return answer.sources.map((source) => ({
@@ -100,9 +99,7 @@ export function buildGroundedLibrarianAnswer(input: BuildGroundedLibrarianAnswer
   const sources = input.sources.slice(0, 5);
   const groundingStatus: KnowledgeLibrarianGroundingStatus = sources.length === 0
     ? 'missing_sources'
-    : input.resultCount > sources.length
-      ? 'partial'
-      : 'grounded';
+    : 'partial';
   const answer = sources.length > 0
     ? [
       input.messages.answerIntro,
@@ -120,9 +117,6 @@ export function buildGroundedLibrarianAnswer(input: BuildGroundedLibrarianAnswer
       input.messages.suggestionSendToSteward,
     ]
     : [input.messages.suggestionBroadenSearch];
-  const confidence = sources.length > 0
-    ? clampConfidence(Math.max(0.35, Math.min(0.92, sources.reduce((sum, source) => sum + (source.score ?? 0.68), 0) / sources.length)))
-    : 0;
   return {
     question: input.question,
     answer,
@@ -130,7 +124,6 @@ export function buildGroundedLibrarianAnswer(input: BuildGroundedLibrarianAnswer
     unknowns,
     suggestions,
     nextActions: suggestions,
-    confidence,
     groundingStatus,
     retrieval: {
       query: input.question,
@@ -180,10 +173,11 @@ export function createDraftPayloadFromGroundedAnswer(answer: KnowledgeLibrarianG
     sourceIds: sourceIdsFromAnswer(answer),
     sourceRefs: sourceRefsFromAnswer(answer),
     tags: ['librarian', 'grounded-answer'],
-    createdBy: 'user',
-    confidence: answer.confidence,
+    createdBy: 'agent',
+    ...(answer.confidence === undefined ? {} : { confidence: answer.confidence }),
     metadata: {
       knowledgeKind: 'librarian-grounded-answer',
+      driven_by: 'agent', actor: 'knowledge-librarian',
       groundingStatus: answer.groundingStatus,
       retrieval: answer.retrieval,
     },
@@ -215,10 +209,11 @@ export function createErrorExperienceInboxPayloadFromGroundedAnswer(answer: Know
     sourceIds: sourceIdsFromAnswer(answer),
     sourceRefs,
     tags: ['error-experience', 'librarian'],
-    createdBy: 'user',
+    createdBy: 'agent',
     warnings: answer.sources.length === 0 ? ['No source citation was available when this candidate was created.'] : [],
     metadata: {
       knowledgeKind: 'error-experience',
+      driven_by: 'agent', actor: 'knowledge-librarian',
       captureKey: `librarian:error-experience:${slugText(answer.question) || Date.now()}`,
       errorExperience: {
         schemaVersion: 1,

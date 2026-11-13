@@ -287,6 +287,25 @@
       "prompts": "Suggested questions",
       "empty": "What would you like to find?",
       "placeholder": "Ask your knowledge base…"
+    },
+    "answerMode": {
+      "label": "Answer mode",
+      "strict": "Source only",
+      "open": "Allow general knowledge"
+    },
+    "claimKind": {
+      "source": "Cited statement",
+      "general": "General knowledge",
+      "inference": "Inference"
+    },
+    "evidence": {
+      "quote": "Exact quote checked",
+      "pin": "Source pin checked",
+      "supported": "Model support checked",
+      "unsupported": "Unsupported",
+      "uncertain": "Uncertain",
+      "unverified": "Not reviewed",
+      "rawRange": "Raw source lines {{from}}–{{to}}"
     }
   },
   "inbox": {

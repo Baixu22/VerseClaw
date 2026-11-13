@@ -1765,10 +1765,12 @@ describe('knowledge host API', () => {
     expect(answer.answer).not.toContain('OTHER_WORKSPACE_BODY');
   });
 
-  it.each([false, true])('checks default/follow-up citations after the model (source changed: %s)', async (sourceChanged) => {
+  it.each(['same', 'changed', 'provider-error', 'unsupported'])('checks source answers and support outcome: %s', async (outcome) => {
+    const sourceChanged = outcome === 'changed';
     const listeners = new Set<(value: unknown) => void>();
     const body = '网关端口为8080。';
     let sourceBody = body;
+    let isSupportRun = false;
     const snapshotFor = (identity: { workspaceId: string; sessionId: string; agentSessionKey: string }) => {
       const context = deriveReadAdmissionContext({ principalId: 'operator', sessionId: identity.sessionId,
         sessionKey: identity.agentSessionKey, workspaceId: identity.workspaceId, ownerNamespaces: ['wiki-owner-fixture'],
@@ -1785,10 +1787,15 @@ describe('knowledge host API', () => {
         if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'wiki.retrieve') return retrievalFixture([{ pagePath: 'port.md', lookup: 'port.md', title: 'Gateway port', sourceRef: snapshotFor(params.readIdentity as never).source }]);
         if (method === 'wiki.get') return { corpus: 'wiki', path: 'port.md', content: sourceBody, revision: 1, status: 'active', ownerSnapshot: snapshotFor(params.readIdentity as never) };
-        if (method === 'agent') return { runId: 'qa-run' };
+        if (method === 'agent') {
+          if (outcome === 'provider-error') throw Error('provider unavailable');
+          isSupportRun = params.label === 'Knowledge claim support'; return { runId: isSupportRun ? 'support-run' : 'qa-run' };
+        }
         if (method === 'agent.wait') {
           for (const callback of listeners) callback({ runId: 'qa-run', type: 'assistant.delta', text: JSON.stringify({ claims: [{ text: '网关端口为8080。', citations: [{ sourceId: `memory-wiki:wiki-owner-fixture:port.md:0-${Buffer.byteLength(body)}`, quote: '端口为8080' }] }], unknowns: [] }) });
-          const terminal = { status: 'completed', retainedEvidence: {
+          const terminal = { status: 'completed', text: JSON.stringify(isSupportRun
+            ? { answerability: outcome === 'unsupported' ? 'insufficient' : 'answerable', claims: [{ index: 0, status: outcome === 'unsupported' ? 'unsupported' : 'supported', reason: 'The cited source states 8080.' }] }
+            : { claims: [{ kind: 'source', text: outcome === 'unsupported' ? '网关端口为9999。' : '网关端口为8080。', citations: [{ sourceId: `memory-wiki:wiki-owner-fixture:port.md:0-${Buffer.byteLength(body)}`, quote: '端口为8080' }] }], unknowns: [] }), retainedEvidence: {
             schema: 'RetainedEvidenceManifest/v1', turnId: 'qa-run', estimateMethod: 'utf8-bytes-div4',
             retainedChars: body.length, retainedUtf8Bytes: Buffer.byteLength(body), estimatedTokens: Math.ceil(Buffer.byteLength(body) / 4),
             units: [{ schema: 'KnowledgeCandidatePacking/v2', unitId: 'fixture-unit', candidateId: 'fixture-candidate', ordinal: 0,
@@ -1809,9 +1816,19 @@ describe('knowledge host API', () => {
     const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
     const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
     const answer = await api.answerFromSourceSet({ question: '它的端口呢？', sourceRefs: [], synthesis: true, history: [{ role: 'user', content: '讨论网关' }] });
+    if (outcome === 'provider-error') {
+      expect(answer).toMatchObject({ synthesisMode: 'unknown', groundingStatus: 'partial', model: { status: 'error' } });
+      expect(answer.sources).toHaveLength(1); expect(answer.unknowns.join(' ')).toContain('provider unavailable');
+      return;
+    }
+    if (outcome === 'unsupported') {
+      expect(answer.synthesisMode).toBe('unknown'); expect(answer.claims).toEqual([]);
+      expect(answer.claimSupport?.status).toBe('completed'); expect(answer.answer).not.toContain('9999');
+      return;
+    }
     if (sourceChanged) {
       expect(answer.model?.status).toBe('error');
-      expect(answer.synthesisMode).toBe('source-excerpts');
+      expect(answer.synthesisMode).toBe('unknown');
       expect(answer.claims).toBeUndefined();
       expect(answer.unknowns.join(' ')).toContain('changed during model execution');
       return;
@@ -1820,7 +1837,8 @@ describe('knowledge host API', () => {
     expect(answer.unknowns.join(' ')).toContain('no known freshness');
     expect(answer.answer).toContain('网关端口为8080');
     expect(gatewayManager.rpc).toHaveBeenCalledWith('wiki.retrieve', expect.objectContaining({ query: expect.stringContaining('讨论网关') }), expect.any(Number));
-    expect(gatewayManager.rpc).toHaveBeenCalledWith('agent', expect.objectContaining({ modelRun: true, promptMode: 'none', message: expect.stringContaining('讨论网关'), deliver: false }), 60000);
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('agent', expect.objectContaining({ modelRun: true, promptMode: 'none', message: expect.stringContaining('讨论网关'), deliver: false }), expect.any(Number));
+    expect(answer.claims?.[0].evidenceStatus.semanticSupport).toBe('supported');
     expect(listeners.size).toBe(0);
   });
 

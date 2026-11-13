@@ -48,7 +48,8 @@ import type { KnowledgeRerankSelection, KnowledgeRerankStatusResult } from '../.
 import type { KnowledgeRerankStatus } from '../../shared/knowledge/rerank';
 import { createKnowledgeSourceSync } from './knowledge-source-sync';
 import { createKnowledgeGithubConnector, validateGithubConnector } from './knowledge-github-connector';
-import { boundedKnowledgeHistory, buildKnowledgeQaPrompt, runKnowledgeModel, selectKnowledgeModelSources, validateKnowledgeQaOutput, type KnowledgeConversationTurn, type KnowledgeQaEvidence } from './knowledge-evidence-qa';
+import { applyKnowledgeSupportReview, bindKnowledgeQaClaims, boundedKnowledgeHistory, buildKnowledgeQaPrompt, buildKnowledgeSupportPrompt, runKnowledgeModel, selectKnowledgeModelSources, validateKnowledgeQaOutput, validateKnowledgeSupportOutput, type KnowledgeConversationTurn, type KnowledgeQaEvidence } from './knowledge-evidence-qa';
+import type { KnowledgeAnswerMode } from '../../shared/knowledge/answer';
 
 const knowledgeSourceWatchDisposers = new Map<string, () => void>();
 export function stopAllKnowledgeSourceWatches(): void {
@@ -3355,6 +3356,7 @@ export function createKnowledgeApi({
   }
 
   async function buildAnswerFromSourceSet(input: {
+    answerMode?: KnowledgeAnswerMode;
     question: string;
     sourceRefs: KnowledgeSourceRef[];
     artifactType?: KnowledgeArtifactType;
@@ -3365,6 +3367,7 @@ export function createKnowledgeApi({
     history?: KnowledgeConversationTurn[];
   }): Promise<KnowledgeAnswerFromSourceSetResult> {
     const question = input.question.trim();
+    const answerMode = input.answerMode ?? 'strict';
     let sourceRefs = normalizeSourceRefs(input.sourceRefs);
     let retrieval: KnowledgeRetrievalReport | undefined;
     if (sourceRefs.length === 0 && input.synthesis) {
@@ -3427,53 +3430,89 @@ export function createKnowledgeApi({
     let groundingStatus: KnowledgeAnswerFromSourceSetResult['groundingStatus'] = evidence.groundingStatus;
     let model: KnowledgeAnswerFromSourceSetResult['model'];
     let claims: KnowledgeAnswerFromSourceSetResult['claims'];
+    let claimSupport: KnowledgeAnswerFromSourceSetResult['claimSupport'];
     let synthesized: string | undefined;
     let retainedEvidence: KnowledgeAnswerFromSourceSetResult['retainedEvidence'];
     const packingUnknowns: string[] = [];
-    if (input.synthesis && sources.length > 0 && evidence.sourceSet.conflictSet.length === 0) {
+    if (input.synthesis && (sources.length > 0 || answerMode === 'open') && (answerMode === 'open' || evidence.sourceSet.conflictSet.length === 0)) {
       try {
+        const modelDeadline = Date.now() + 60_000;
+        const modelRemaining = () => {
+          const remaining = modelDeadline - Date.now();
+          if (remaining <= 0) throw new Error('Knowledge answer model budget expired');
+          return remaining;
+        };
         const pinned = sources.map(source => ({ id: source.id, kind: 'wiki' as const, path: source.path,
           ...(source.citation ? { revision: source.citation.revision, contentDigest: source.citation.contentDigest } : {}),
           ...(source.citation?.sourceRef ? { sourceRef: source.citation.sourceRef } : {}) }));
         evidence = await readEvidence(pinned);
         sources = evidence.sources;
-        if (!sources.length) throw new Error('Knowledge owner read was invalidated before prompt assembly');
+        if (!sources.length && answerMode === 'strict') throw new Error('Knowledge owner read was invalidated before prompt assembly');
         await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
         const sessionKey = readScope.identity.agentSessionKey;
-        if (!sessionKey) throw new Error('Knowledge model requires the current owner session');
+        if (!sessionKey && sources.length) throw new Error('Knowledge model requires the current owner session');
         const modelSelection = selectKnowledgeModelSources(evidence.modelSources);
         if (modelSelection.dropped.length) packingUnknowns.push('Knowledge reference transport limit excluded: ' + modelSelection.dropped.join(', '));
-        if (!modelSelection.sources.length) throw new Error('No complete knowledge group fits the reference transport limit');
+        if (!modelSelection.sources.length && answerMode === 'strict') throw new Error('No complete knowledge group fits the reference transport limit');
         const references = modelSelection.sources.map(source => ({
           id: source.citation!.refId, title: source.title, lookup: source.path ?? source.lookup, corpus: 'wiki' as const,
           sourceRef: source.citation!.sourceRef, revision: source.citation!.revision, contentDigest: source.citation!.contentDigest,
           ...(source.conflictGroupId ? { conflictGroupId: source.conflictGroupId } : {}),
         }));
         const result = await runKnowledgeModel(gatewayManager,
-          buildKnowledgeQaPrompt({ question, history: input.history, sources: modelSelection.sources }),
-          'Knowledge Librarian', 60_000, { sessionKey, workspaceId: readScope.identity.workspaceId, workspaceDir: readScope.identity.workspaceDir, references });
+          buildKnowledgeQaPrompt({ question, history: input.history, sources: modelSelection.sources, answerMode }),
+          'Knowledge Librarian', modelRemaining(), sessionKey ? { sessionKey, workspaceId: readScope.identity.workspaceId, workspaceDir: readScope.identity.workspaceDir, references } : undefined);
         retainedEvidence = result.retainedEvidence;
         await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
         const after = await readEvidence(pinned);
         if (after.sources.length !== sources.length) { evidence = after; sources = after.sources; throw new Error('Knowledge source changed during model execution'); }
-        const retained = result.retainedEvidence!.units.flatMap(unit => unit.citations);
+        const retained = result.retainedEvidence?.units.flatMap(unit => unit.citations) ?? [];
         // Bind quote validation to the fresh owner bytes and the actual retained chunk.
         evidence = after;
         sources = after.sources;
         const modelSources = after.modelSources.filter(source => retained.some(citation =>
           (citation.intentId ?? citation.refId) === source.citation?.refId
           && citation.chunkDigest === source.citation?.contentDigest));
-        if (!modelSources.length) throw new Error('DCS retained no source within the knowledge budget');
-        const validated = validateKnowledgeQaOutput(result.text, modelSources);
-        claims = validated.claims;
+        if (!modelSources.length && answerMode === 'strict') throw new Error('DCS retained no source within the knowledge budget');
+        const validated = validateKnowledgeQaOutput(result.text, modelSources, answerMode);
+        let bound = bindKnowledgeQaClaims(validated, modelSources);
+        const supportUnknowns: string[] = [];
+        if (bound.some(claim => claim.kind === 'source')) {
+          const supportRefs = references.filter(ref => modelSources.some(source => source.citation?.refId === ref.id));
+          try {
+            const support = await runKnowledgeModel(gatewayManager, buildKnowledgeSupportPrompt(question, bound, modelSources),
+              'Knowledge claim support', modelRemaining(), { sessionKey: sessionKey!, workspaceId: readScope.identity.workspaceId,
+                workspaceDir: readScope.identity.workspaceDir, references: supportRefs });
+            const supportCitations = support.retainedEvidence?.units.flatMap(unit => unit.citations) ?? [];
+            const latest = await readEvidence(pinned);
+            await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
+            evidence = latest;
+            sources = latest.sources;
+            for (const citation of bound.flatMap(claim => claim.citations)) {
+              if (!supportCitations.some(retained => (retained.intentId ?? retained.refId) === citation.sourceId && retained.chunkDigest === citation.chunkDigest)
+                || !latest.modelSources.some(source => source.citation?.refId === citation.sourceId && source.citation.contentDigest === citation.chunkDigest)) {
+                throw new Error('Claim-support source changed or was excluded by DCS');
+              }
+            }
+            const reviewed = applyKnowledgeSupportReview(bound, validateKnowledgeSupportOutput(support.text, bound), support.runId, answerMode);
+            bound = reviewed.claims;
+            supportUnknowns.push(...reviewed.unknowns);
+            claimSupport = { status: 'completed', runId: support.runId, actor: 'knowledge-claim-support', driven_by: 'agent' };
+          } catch (error) {
+            claimSupport = { status: 'error', reason: sanitizeUiErrorText(error), actor: 'knowledge-claim-support', driven_by: 'agent' };
+            throw error;
+          }
+        }
+        claims = bound;
         model = { status: 'completed', runId: result.runId };
-        synthesized = claims.map(claim => `${claim.text} ${claim.citations.map(citation => `[${citation.sourceId}]`).join(' ')}`).join('\n\n');
-        unknowns = [...evidence.unknowns.filter(text => !text.includes('synthesized answer correctness')), ...validated.unknowns, ...packingUnknowns];
-        if (!claims.length) { synthesized = validated.unknowns.join('\n'); groundingStatus = 'missing_sources'; }
-        else groundingStatus = evidence.sourceSet.rejections.length || sources.some(source => source.readRange?.truncated || !source.updatedAt) || validated.unknowns.length || packingUnknowns.length ? 'partial' : 'grounded';
+        const citationNumbers = new Map(sources.map((source, index) => [source.citation?.refId, index + 1]));
+        synthesized = claims.map(claim => `${claim.text}${claim.citations.length ? ' ' + claim.citations.map(citation => `[${citationNumbers.get(citation.sourceId)}]`).join(' ') : ''}`).join('\n\n');
+        unknowns = [...evidence.unknowns.filter(text => !text.includes('synthesized answer correctness')), ...validated.unknowns, ...supportUnknowns, ...packingUnknowns];
+        if (!claims.length) { synthesized = unknowns.join('\n') || 'The requested facts are unknown from the retained sources.'; groundingStatus = sources.length ? 'partial' : 'missing_sources'; }
+        else groundingStatus = !claims.some(claim => claim.kind === 'source') || evidence.sourceSet.rejections.length || sources.some(source => source.readRange?.truncated || !source.updatedAt) || unknowns.length ? 'partial' : 'grounded';
       } catch (error) {
         model = { status: 'error', reason: sanitizeUiErrorText(error) };
-        unknowns = [...unknowns, ...packingUnknowns, `Model synthesis unavailable: ${sanitizeUiErrorText(error)}. Source excerpts are shown instead.`];
+        unknowns = [...unknowns, ...packingUnknowns, `Model synthesis unavailable: ${sanitizeUiErrorText(error)}.`];
         if (!sources.length) groundingStatus = 'missing_sources';
       }
     } else if (input.synthesis) {
@@ -3489,7 +3528,9 @@ export function createKnowledgeApi({
       backend: semanticRequested && evidence.sourceSet.semanticLane.status === 'available' ? 'semantic' : 'fallback-keyword',
     });
     const artifactHint = input.artifactType ? ` Artifact focus: ${input.artifactType}.` : '';
-    const answer = synthesized ?? (sources.length > 0
+    const answer = synthesized ?? (input.synthesis && answerMode === 'strict'
+      ? ['The requested facts are unknown from the selected sources.', ...unknowns].join('\n')
+      : sources.length > 0
       ? [
         `Selected source excerpts (partial response).${artifactHint}`,
         `Question: ${question}`, '',
@@ -3504,9 +3545,10 @@ export function createKnowledgeApi({
     }
     await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
     return {
-      success: true, question, answer, sources, unknowns, groundingStatus,
-      synthesisMode: synthesized === undefined ? 'source-excerpts' : 'model',
+      success: true, question, answer, sources, unknowns, groundingStatus, answerMode,
+      synthesisMode: input.synthesis && answerMode === 'strict' && !claims?.length ? 'unknown' : synthesized === undefined ? 'source-excerpts' : 'model',
       ...(model ? { model } : {}), ...(claims ? { claims } : {}),
+      ...(claimSupport ? { claimSupport } : {}),
       ...(retainedEvidence ? { retainedEvidence } : {}),
       suggestedNextActions: evidence.sourceSet.suggestedNextActions.map((entry) => entry.text),
       rejections: evidence.sourceSet.rejections,
@@ -4408,6 +4450,7 @@ export function createKnowledgeApi({
         workspaceId: getString(body.workspaceId),
         synthesis: body.synthesis === true,
         history: boundedKnowledgeHistory(body.history),
+        answerMode: body.answerMode === 'open' ? 'open' : 'strict',
       });
     },
 
