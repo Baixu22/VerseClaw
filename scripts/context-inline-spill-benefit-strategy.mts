@@ -6,6 +6,19 @@ export const ANCHORED_RECALL_TOOL_DEF = {
   description: "The target is the original exec output archive in the initial visible context. Copy that archive_uri and checksum, then keep that same pair for every page. Archives from later routine health checks or previous recall projections are distractors. If the initial context has no archive pair, return {\"value\":null} without guessing a handle. Start at offset 0 with max_chars 5500. When the requested exact value is absent, continue with offset equal to the preceding offset plus returned content.length; if that page was cleared by projection, use the preceding requested offset plus max_chars. Stop immediately after reading the exact value and output only {\"value\":\"exact value\"}. After at most 3 recalls without it, output {\"value\":null}. Call only once per response.",
 };
 
+export const BOOKMARK_RECALL_TOOL_DEF = {
+  ...ANCHORED_RECALL_TOOL_DEF,
+  description: ANCHORED_RECALL_TOOL_DEF.description + " archive_uri is an opaque literal locator. Never construct its filename from checksum: the URI filename contains a 16-character suffix, while checksum contains all 64 characters. Copy the original_exec_archive_uri and original_exec_checksum from the visible agent question exactly. After a missing response, use that visible bookmark rather than repeating an invented URI.",
+};
+export const VISIBLE_EXEC_BOOKMARK_MAX_CHARS = 512;
+export function appendVisibleExecBookmark(question: string, visibleText: string) {
+  const uri = visibleText.match(/context-archive:\/\/[^\s"<>;,]+/)?.[0];
+  const checksum = visibleText.match(/sha256:[a-f0-9]{64}/)?.[0];
+  if (!uri || !checksum) return question;
+  const bookmark = "\noriginal_exec_archive_uri=" + uri + "\noriginal_exec_checksum=" + checksum;
+  return bookmark.length <= VISIBLE_EXEC_BOOKMARK_MAX_CHARS ? question + bookmark : question;
+}
+
 export type AnchorPolicyState = { anchor: { uri: string; checksum: string } | null; calls: number; offset: number };
 export function createAnchorPolicyState(): AnchorPolicyState { return { anchor: null, calls: 0, offset: 0 }; }
 
@@ -64,7 +77,11 @@ export function buildVisibleRecallNavigation(input: readonly NavigationInput[]) 
   const text = String(input[0]?.content ?? "");
   const uri = text.match(/context-archive:\/\/[^\s"<>;,]+/)?.[0];
   const checksum = text.match(/sha256:[a-f0-9]{64}/)?.[0];
-  const pair = first ? { uri: String(first.args!.archive_uri), checksum: String(first.args!.checksum) }
+  const bookmarkUri = text.match(/^original_exec_archive_uri=(context-archive:\/\/[^\s"<>;,]+)$/m)?.[1];
+  const bookmarkChecksum = text.match(/^original_exec_checksum=(sha256:[a-f0-9]{64})$/m)?.[1];
+  const bookmarked = Boolean(bookmarkUri && bookmarkChecksum);
+  const pair = bookmarked ? { uri: bookmarkUri!, checksum: bookmarkChecksum! }
+    : first ? { uri: String(first.args!.archive_uri), checksum: String(first.args!.checksum) }
     : uri && checksum ? { uri, checksum } : null;
   const same = calls.filter(call => pair && call.args && call.args.archive_uri === pair.uri && call.args.checksum === pair.checksum);
   let fieldSourceIndex: number | null = null;
@@ -94,8 +111,8 @@ export function buildVisibleRecallNavigation(input: readonly NavigationInput[]) 
   }
   const recommendedArguments: NavigationArguments | null = pair && calls.length < 3 && fieldSourceIndex === null && validOffset
     ? { archive_uri: pair.uri, checksum: pair.checksum, offset, max_chars: EVAL_RECALL_PAGE_MAX_CHARS } : null;
-  const navigation = { source: first ? "visible-call-metadata" : pair ? "visible-context" : "no-visible-reference",
-    targetSourceIndex: first?.index ?? (pair ? 0 : null), offsetSourceIndex, fieldSourceIndex, fieldCallId,
+  const navigation = { source: bookmarked ? "visible-agent-question-bookmark" : first ? "visible-call-metadata" : pair ? "visible-context" : "no-visible-reference",
+    targetSourceIndex: bookmarked ? 0 : first?.index ?? (pair ? 0 : null), offsetSourceIndex, fieldSourceIndex, fieldCallId,
     recallsUsed: calls.length, recommendedArguments };
   const instruction = VISIBLE_RECALL_NAVIGATION_RULE + " " + (fieldSourceIndex !== null
     ? "A complete field is visible in " + JSON.stringify({ call_id: fieldCallId, input_index: fieldSourceIndex }) + ". Read that visible content and answer now; no next page is needed."

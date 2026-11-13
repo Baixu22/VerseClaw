@@ -16,8 +16,8 @@ mkdirSync(dirname(out), { recursive: true });
 try {
   const result = json(join(dir, "result.json")), records = json(join(dir, "runs.json")).records;
   const pre = json(join(dir, "preflight.json")), freeze = json(resolve(root, pre.designFreeze.path));
-  assert.equal(freeze.schema, "ContextInlineSpillRound8FrozenDesign/v1");
-  assert.equal(result.design.strategy, "navigated");
+  assert(["ContextInlineSpillRound8FrozenDesign/v1", "ContextInlineSpillRound9FrozenDesign/v1"].includes(freeze.schema));
+  assert(["navigated", "bookmarked"].includes(result.design.strategy));
   assert.equal(hash(VISIBLE_RECALL_NAVIGATION_RULE), freeze.navigation.ruleSha256);
   const oldRoot = resolve(root, freeze.round7Preservation.path);
   assert.equal(hash(readFileSync(join(oldRoot, "SHA256SUMS"))), freeze.round7Preservation.sha256);

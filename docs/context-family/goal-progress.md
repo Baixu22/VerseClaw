@@ -1394,3 +1394,9 @@ Use this packet before any handoff, fork, or context-pressure continuation.
 - 第五、六、七轮原始证据和失败保持；独立冻结并在clean候选上通过B1–B7及verifier后，才收口TF-0749。
 - 第八轮f8d41ddb2完成96次/349次调用，全部completed；stable证据14/18、reference16/18、控制6/6。B1/B4/B6失败，token增幅25.027526%高于固定25%，NO_GO，父节点保持in_progress/80。
 - 当前故障是模型把URI文件名16位摘要扩写为64位checksum，missing后继续沿用错误目标。后续有界书签将最初可见引用放入既有agent问题，恢复建议不静默改写模型参数。
+
+## 2026-11-13 Inline/Spill 第九轮可见书签恢复
+
+- 书签只复制初始已可见URI/checksum到既有agent问题，长度不超过512字符，优先于错误模型参数；无引用基线不增加引用，payload和oracle值不进入书签。
+- 正常与首次URI扩写故障的deterministic对照均为reference/stable 6/6、off0/6，控制全对；该结果只证明恢复路径，真实收益由独立冻结后的clean候选96次live判定。
+- 原模型、语料、压力字节、900输出token、5500页、240000ms期限及B1–B7阈值保持；第五至第八轮失败完整保留。
