@@ -1657,6 +1657,8 @@ export async function runEmbeddedAgent(
             sessionFile: activeSessionFile,
             workspaceDir: resolvedWorkspace,
             workspaceId: params.workspaceId,
+            workspaceFingerprint: params.workspaceFingerprint,
+            chatKnowledgeRefs: params.chatKnowledgeRefs,
             cwd: params.cwd,
             agentDir,
             config: params.config,

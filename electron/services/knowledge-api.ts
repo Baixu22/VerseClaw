@@ -4769,6 +4769,7 @@ export function createKnowledgeApi({
         reviewBundle: buildReviewBundle(appliedProposal, appliedDraft),
         ...(receipt ? { receipt, compensation: receipt.compensation } : {}),
         ...wikiResult,
+        operation: proposal.operation,
       };
     }),
 

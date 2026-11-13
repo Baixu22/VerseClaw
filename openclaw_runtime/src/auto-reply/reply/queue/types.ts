@@ -120,6 +120,8 @@ export type FollowupRun = {
      * Absent → agent-config fallback path uses the local compute.
      */
     workspaceFingerprint?: string;
+    /** DCS-admitted typed knowledge references forwarded from Chat. */
+    chatKnowledgeRefs?: import("../../../context-engine/chat-knowledge-intent.js").ResolvedChatKnowledgeRef[];
     config: OpenClawConfig;
     skillsSnapshot?: SkillSnapshot;
     provider: string;

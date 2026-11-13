@@ -1011,6 +1011,8 @@ export function createFollowupRunner(params: {
                 agentDir: run.agentDir,
                 workspaceDir: run.workspaceDir,
                 cwd: run.cwd,
+                workspaceFingerprint: run.workspaceFingerprint,
+                chatKnowledgeRefs: run.chatKnowledgeRefs,
                 config: runtimeConfig,
                 skillsSnapshot: run.skillsSnapshot,
                 prompt: queued.prompt,

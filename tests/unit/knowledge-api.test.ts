@@ -959,6 +959,35 @@ describe('knowledge host API', () => {
     }), 120000);
   });
 
+    it('preserves the public delete operation when the wiki owner returns delete_page', async () => {
+      const gatewayManager = {
+        rpc: vi.fn(async (method: string) => {
+          if (method === 'wiki.get') return { corpus: 'wiki', path: 'notes/delete.md', revision: 1, status: 'active' };
+          if (method === 'wiki.delete') return { operation: 'delete_page', pagePath: 'notes/delete.md' };
+          throw new Error(`unexpected rpc ${method}`);
+        }),
+      };
+      const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+      const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+      const draft = await api.createDraft({
+        title: 'Delete decision', body: 'Remove this reviewed page.', type: 'decision',
+        sourceIds: ['source.delete'], createdBy: 'agent',
+      });
+      const proposal = await api.proposeChange({
+        operation: 'delete', draftId: draft.draft!.id, targetPageIds: ['notes/delete.md'],
+        reason: 'Agent-approved fixture deletion',
+        sources: [{ id: 'notes/delete.md', kind: 'wiki' }],
+      });
+      await api.reviewDraft({ id: draft.draft!.id, action: 'approve' });
+      const applied = await api.applyReviewedChange({
+        reviewBundleId: `kb_${proposal.proposal!.id}_${draft.draft!.id}`,
+      });
+      expect(applied).toMatchObject({
+        success: true, changed: true, operation: 'delete', pagePath: 'notes/delete.md',
+        receipt: { operation: 'delete', owner: 'memory-wiki', status: 'committed' },
+      });
+    });
+
   it('converts legacy applyDraft calls into review-gated drafts without direct wiki apply', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
