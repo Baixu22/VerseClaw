@@ -17,19 +17,6 @@ import assert from "node:assert/strict";
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { performance } from "node:perf_hooks";
-import {
-  ARCHIVE_RECALL_RETENTION_MAX_CHARS,
-  getRetainedArchiveRecalls,
-} from "../openclaw_runtime/src/agents/archive-recall-retention.js";
-import { pruneContextMessages } from "../openclaw_runtime/src/agents/agent-hooks/context-pruning/pruner.js";
-import { DEFAULT_CONTEXT_PRUNING_SETTINGS } from "../openclaw_runtime/src/agents/agent-hooks/context-pruning/settings.js";
-import { truncateOversizedToolResultsInMessages } from "../openclaw_runtime/src/agents/embedded-agent-runner/tool-result-truncation.js";
-import { formatContextLimitTruncationNotice } from "../openclaw_runtime/src/agents/embedded-agent-runner/context-truncation-notice.js";
-import { createContextArchiveRecallTool } from "../openclaw_runtime/src/agents/tools/context-agent-tools.js";
-import {
-  createContextArchiveHandleForPayloadSync,
-  verifyContextArchiveHandle,
-} from "../openclaw_runtime/src/context-engine/registry/context-item-registry.js";
 import type { AgentMessage } from "../openclaw_runtime/src/agents/runtime/index.js";
 import { mcnemarExact, parseAnswer, wilson } from "./context-inline-spill-benefit-scoring.mjs";
 import { assertEvalRecallPage, buildProjectedEvalInput, contentText, EVAL_RECALL_PAGE_MAX_CHARS, pairedSessionId, RECALL_TOOL_DEF, textOf } from "./context-inline-spill-benefit-input.mjs";
@@ -133,6 +120,24 @@ if (freezePath) {
     process.exit(1);
   }
 }
+// Reject invalid or dirty candidates before loading the runtime tool graph.
+const [
+  { ARCHIVE_RECALL_RETENTION_MAX_CHARS, getRetainedArchiveRecalls },
+  { pruneContextMessages },
+  { DEFAULT_CONTEXT_PRUNING_SETTINGS },
+  { truncateOversizedToolResultsInMessages },
+  { formatContextLimitTruncationNotice },
+  { createContextArchiveRecallTool },
+  { createContextArchiveHandleForPayloadSync, verifyContextArchiveHandle },
+] = await Promise.all([
+  import("../openclaw_runtime/src/agents/archive-recall-retention.js"),
+  import("../openclaw_runtime/src/agents/agent-hooks/context-pruning/pruner.js"),
+  import("../openclaw_runtime/src/agents/agent-hooks/context-pruning/settings.js"),
+  import("../openclaw_runtime/src/agents/embedded-agent-runner/tool-result-truncation.js"),
+  import("../openclaw_runtime/src/agents/embedded-agent-runner/context-truncation-notice.js"),
+  import("../openclaw_runtime/src/agents/tools/context-agent-tools.js"),
+  import("../openclaw_runtime/src/context-engine/registry/context-item-registry.js"),
+]);
 process.env.OPENCLAW_CONTEXT_ARCHIVE_DIR = join(runDir, "archives");
 mkdirSync(join(runDir, "archives"), { recursive: true });
 
