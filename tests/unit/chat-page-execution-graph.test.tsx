@@ -325,7 +325,8 @@ describe('Chat execution graph lifecycle', () => {
     const { Chat } = await import('@/pages/Chat/index');
     let finish!: (result: unknown) => void;
     Object.assign(hostApi.sessions, { prepareHandoff: vi.fn(() => new Promise(resolve => { finish = resolve; })) });
-    useChatStore.setState({ currentSessionKey: 'agent:main:a', currentAgentId: 'main', messages: [], sending: false, pendingFinal: false, streamingMessage: null, activeRunId: null });
+    useChatStore.setState({ currentSessionKey: 'agent:main:a', currentAgentId: 'main', messages: [], sending: false, pendingFinal: false, streamingMessage: null, activeRunId: null,
+      sessions: [{ key: 'agent:main:a', sessionId: 'generation-a' }, { key: 'agent:main:b', sessionId: 'generation-b' }] });
     render(<Chat />);
     fireEvent.click(screen.getByTestId('mock-prepare-handoff'));
     await waitFor(() => expect(hostApi.sessions.prepareHandoff).toHaveBeenCalledTimes(1));
@@ -342,11 +343,13 @@ describe('Chat execution graph lifecycle', () => {
     let finish!: (result: unknown) => void;
     Object.assign(hostApi.sessions, { compact: vi.fn(() => new Promise(resolve => { finish = resolve; })) });
     vi.mocked(hostApi.sessions.compactionStatus).mockImplementation(async ({ sessionKey }) => ({ success: true, available: true, canCompact: true, inProgress: false, usedTokens: sessionKey === 'agent:main:a' ? 111 : 222, pressure: 'low', truncatedMessageCount: 0, warnings: [] }));
-    useChatStore.setState({ currentSessionKey: 'agent:main:a', currentAgentId: 'main', messages: [], sending: false, pendingFinal: false, streamingMessage: null, activeRunId: null, loadHistory: vi.fn(async () => undefined), loadSessions: vi.fn(async () => undefined) });
+    useChatStore.setState({ currentSessionKey: 'agent:main:a', currentAgentId: 'main', messages: [], sending: false, pendingFinal: false, streamingMessage: null, activeRunId: null, loadHistory: vi.fn(async () => undefined), loadSessions: vi.fn(async () => undefined),
+      sessions: [{ key: 'agent:main:a', sessionId: 'generation-a' }, { key: 'agent:main:b', sessionId: 'generation-b' }] });
     render(<Chat />);
     await waitFor(() => expect(screen.getByTestId('mock-chat-input')).toHaveAttribute('data-used-tokens', '111'));
     fireEvent.click(screen.getByTestId('mock-compact'));
     await waitFor(() => expect(hostApi.sessions.compact).toHaveBeenCalledTimes(1));
+    expect(hostApi.sessions.compact).toHaveBeenCalledWith(expect.objectContaining({ sessionKey: 'agent:main:a', expectedSessionId: 'generation-a' }));
     act(() => useChatStore.setState({ currentSessionKey: 'agent:main:b' }));
     await waitFor(() => expect(screen.getByTestId('mock-chat-input')).toHaveAttribute('data-used-tokens', '222'));
     await act(async () => { finish({ success: true, compacted: true, tokensBefore: 111, tokensAfter: 10 }); });

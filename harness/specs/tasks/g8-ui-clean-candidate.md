@@ -38,6 +38,7 @@ touchedAreas:
   - tests/e2e/main-navigation.spec.ts
   - tests/e2e/sidebar-session-row-polish.spec.ts
   - tests/unit/rareui-interactions.test.tsx
+  - tests/unit/chat-page-execution-graph.test.tsx
 requiredRules:
   - renderer-main-boundary
   - backend-communication-boundary
