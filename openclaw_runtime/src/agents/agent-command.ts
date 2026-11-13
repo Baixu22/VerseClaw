@@ -2260,6 +2260,8 @@ async function agentCommandInternal(
           entry.pendingFinalDelivery === true &&
           !entry.pendingFinalDeliveryText;
         if (deliveryResult?.deliverySucceeded === true || noPendingTextForThisRun) {
+          // The queue may already have settled its bound intent. This guard
+          // protects pending payloads; restart route cleanup has its own finally fence.
           const next = clearPendingFinalDeliveryFields(entry, Date.now());
           const persisted = await persistSessionEntry({
             sessionStore,

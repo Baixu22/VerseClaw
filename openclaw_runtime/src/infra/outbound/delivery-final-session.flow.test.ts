@@ -154,6 +154,26 @@ describe("final Session reply bound to the original durable send intent", () => 
     expect(transport.commit).toHaveBeenCalledOnce();
   });
 
+  it("holds the live applied claim until commit callbacks and Session settlement finish", async () => {
+    let callbackEntry: QueuedDelivery | null = null;
+    let competingAdmission: ReturnType<typeof admitQueuedDeliveryRecovery> | undefined;
+    transport.commit.mockImplementationOnce(async () => {
+      const id = session().pendingFinalDeliveryIntentId;
+      callbackEntry = id ? await loadPendingDelivery(id, stateDir) : null;
+      competingAdmission = callbackEntry
+        ? admitQueuedDeliveryRecovery(callbackEntry, stateDir)
+        : undefined;
+    });
+    expect((await send()).status).toBe("sent");
+    expect(callbackEntry).toMatchObject({
+      recoveryEffect: "applied",
+      activeSendProcessId: process.pid,
+    });
+    expect(competingAdmission).toBeNull();
+    expect(await loadPendingDeliveries(stateDir)).toEqual([]);
+    expect(transport.commit).toHaveBeenCalledOnce();
+  });
+
   it("retains the same Session text and intent when platform reconciliation is unresolved", async () => {
     const pending = await failedSend();
     transport.reconcile.mockResolvedValue({ status: "unresolved", retryable: false });

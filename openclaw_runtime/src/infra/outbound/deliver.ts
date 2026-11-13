@@ -72,6 +72,7 @@ import {
   markDeliveryPlatformOutcomeUnknown,
   markDeliveryPlatformOutcomeApplied,
   markDeliveryPlatformSendAttemptStarted,
+  releaseQueuedDeliveryClaim,
   type QueuedReplyPayloadSendingHook,
   type QueuedRenderedMessageBatchPlan,
   withActiveDeliveryClaim,
@@ -1478,6 +1479,10 @@ async function deliverOutboundPayloadsWithQueueCleanup(
       }
     }
     throw err;
+  } finally {
+    if (queuedEntry && (!params.skipQueue || !params.deferCommitHooks)) {
+      releaseQueuedDeliveryClaim(queuedEntry, params.deliveryQueueStateDir);
+    }
   }
 }
 

@@ -525,6 +525,14 @@ async function drainAdmittedQueuedEntry(
             : "unknown";
       const current = recordQueuedDeliveryEffect(entry, effect, opts.stateDir);
       if (!current) return "already-gone";
+      if (reconciliation?.status === "sent") {
+        await runReconciledSentCommitHooks({
+          entry: current,
+          cfg: opts.cfg,
+          reconciliation,
+          log: opts.log,
+        });
+      }
       finishQueuedDeliveryRecovery(
         current,
         effect === "unknown"
@@ -545,8 +553,6 @@ async function drainAdmittedQueuedEntry(
       entry = prepared.entry;
     }
     if (prepared.decision.kind === "settle") {
-      if (reconciliation?.status === "sent")
-        await runReconciledSentCommitHooks({ entry, cfg: opts.cfg, reconciliation, log: opts.log });
       if (!(await ackDelivery(entry.id, opts.stateDir, entry)))
         return (await loadPendingDelivery(entry.id, opts.stateDir)) ? "failed" : "already-gone";
       opts.onRecovered?.(entry);

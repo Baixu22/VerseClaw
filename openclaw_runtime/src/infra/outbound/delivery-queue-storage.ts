@@ -450,11 +450,26 @@ export async function markDeliveryPlatformOutcomeApplied(
       ? {
           ...entry,
           ...(usesQueuedDeliveryAuthority(entry) ? { recoveryEffect: "applied" as const } : {}),
-          activeSendProcessId: undefined,
         }
       : null,
   );
   if (!updated) throw new Error("delivery outcome no longer owns its intent");
+}
+
+/** Release only this process's unchanged intent after callbacks and settlement. */
+export function releaseQueuedDeliveryClaim(expected: QueuedDelivery, stateDir?: string): void {
+  updateQueuedRecovery(expected.id, stateDir, (current) => {
+    if (
+      current.activeSendProcessId !== process.pid ||
+      !hasSameQueuedDelivery(current, expected) ||
+      (expected.recoveryAdmission &&
+        (current.recoveryAdmission?.idempotencyKey !== expected.recoveryAdmission.idempotencyKey ||
+          current.recoveryAdmission.attempts !== expected.recoveryAdmission.attempts ||
+          current.recoveryAdmission.ownerEpoch !== expected.recoveryAdmission.ownerEpoch))
+    )
+      return null;
+    return { ...current, activeSendProcessId: undefined };
+  });
 }
 
 /** Load a single pending delivery entry by ID from the queue directory. */

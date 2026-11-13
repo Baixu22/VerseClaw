@@ -524,6 +524,7 @@ describe("RC-02R CLI entry (bounded bootstrap)", () => {
     "omitted-file",
     "pending-delivery",
     "pending-delivery-replaced",
+    "pending-delivery-settled",
   ])(
     "persists a native compaction successor before retries (path=%s)",
     async (pathKind) => {
@@ -707,6 +708,26 @@ describe("RC-02R CLI entry (bounded bootstrap)", () => {
                     });
                   },
                 );
+              }
+              if (pathKind === "pending-delivery-settled") {
+                const { bindPendingFinalDeliveryIntent, settlePendingFinalDeliveryIntent } =
+                  await import("./recovery-authority/final-delivery-session.js");
+                const binding = params.pendingFinalDelivery;
+                if (!binding) throw new Error("pending delivery binding missing");
+                const intentId = "completed-intent";
+                await bindPendingFinalDeliveryIntent({
+                  ...binding,
+                  intent: {
+                    id: intentId,
+                    channel: "telegram",
+                    to: "fixture-target",
+                    queuePolicy: "required",
+                  },
+                });
+                await settlePendingFinalDeliveryIntent({
+                  ...binding,
+                  expected: { ...binding.expected, pendingFinalDeliveryIntentId: intentId },
+                });
               }
               return { deliverySucceeded: true } as never;
             })

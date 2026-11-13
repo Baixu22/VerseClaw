@@ -8,6 +8,7 @@ export {
   markDeliveryPlatformOutcomeUnknown,
   markDeliveryPlatformOutcomeApplied,
   markDeliveryPlatformSendAttemptStarted,
+  releaseQueuedDeliveryClaim,
   usesQueuedDeliveryAuthority,
   moveToFailed,
 } from "./delivery-queue-storage.js";
