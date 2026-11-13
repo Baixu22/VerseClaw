@@ -1400,3 +1400,9 @@ Use this packet before any handoff, fork, or context-pressure continuation.
 - 书签只复制初始已可见URI/checksum到既有agent问题，长度不超过512字符，优先于错误模型参数；无引用基线不增加引用，payload和oracle值不进入书签。
 - 正常与首次URI扩写故障的deterministic对照均为reference/stable 6/6、off0/6，控制全对；该结果只证明恢复路径，真实收益由独立冻结后的clean候选96次live判定。
 - 原模型、语料、压力字节、900输出token、5500页、240000ms期限及B1–B7阈值保持；第五至第八轮失败完整保留。
+
+- 第九轮 clean 候选 `27c1a91dd228369ca1427d2b30f39dd6222cee37` 完成96次真实运行、324份completed响应。稳定证据17/18、reference13/18、baseline与retention-off0/18，控制6/6；保留正向17、反向0，总token相对reference下降5.694417567%。B1–B7全部通过，同候选clean检出的未改动verifier接受归集证据。
+- TF-0749已按严格B1–B7收口为done/100；七个子节点25条验收、父节点5条验收及固定收益条件完成磁盘回读。
+- 原live汇总与提案应用命令的退出码未观测，原回执保留；冻结源码恢复增加provider调用0，节点done/100及validate退出0已有独立回读。
+- 本轮产物`driven_by: agent`、`actor: codex-g7-inline-spill-tf0749-01a1d34c`、`realHumanEvidence: false`。证据与命令见[第九轮报告](../../harness/specs/fixtures/context-inline-spill-benefit-round9/REPORT.md)。
+- Task Forest export退出0；HTML当前投影与历史末帧读回TF-0749 done/100，七个子节点均done/100。完整Task Forest历史和导出留在本地。

@@ -1,0 +1,30 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "closeout-proposal-apply",
+  "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+  "command": [
+    "python",
+    "C:/Users/27933/.codex/skills/task-forest/scripts/task_forest.py",
+    "proposal-apply",
+    "TFP-g7-inline-spill-r9-close-20261113-01a1d34c",
+    "--yes",
+    "--workspace",
+    "D:/ClawX",
+    "--actor",
+    "codex-g7-inline-spill-tf0749-01a1d34c",
+    "--lock-timeout",
+    "10"
+  ],
+  "startedAt": "2026-11-13T13:49:54.142Z",
+  "status": "running",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+    "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "dirty": true
+  }
+}

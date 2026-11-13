@@ -1,0 +1,16 @@
+{
+  "schema": "ContextInlineSpillPostflight/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "finishedAt": "2026-11-13T11:13:20.272Z",
+  "candidate": {
+    "commit": "f8d41ddb2355ee366fe23058d8c40f61ee6f4d86",
+    "tree": "fcc18d0eee144516b3f1abf467908d4cab566787",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "dirty": true,
+    "status": "M scripts/context-inline-spill-benefit-loop-eval.mts\n M scripts/context-inline-spill-benefit-strategy.mts\n?? harness/specs/tasks/inline-spill-real-benefit-eval-round9.md\n?? tests/unit/context-inline-spill-benefit-bookmark.test.ts"
+  },
+  "sourceInputs": {},
+  "sameCandidate": false
+}

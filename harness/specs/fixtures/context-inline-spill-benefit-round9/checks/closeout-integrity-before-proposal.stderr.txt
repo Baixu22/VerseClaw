@@ -1,0 +1,1 @@
+Error: ENOENT: no such file or directory, open 'D:\tmp\g7-closeout-pass-r7-01a1d34c\validation-checkout\harness\specs\fixtures\context-inline-spill-benefit-round5\contract-check.log'

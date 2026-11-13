@@ -1,0 +1,36 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "schema": "G7AggregationRecovery/v1",
+  "recordedAt": "2026-11-13T12:46:32.852Z",
+  "originalDirectory": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\live\\2026-11-13T11-48-49-224Z-live",
+  "recoveredDirectory": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\recovered\\2026-11-13T11-48-49-224Z-live-2026-11-13T12-46-29-966Z",
+  "originalExitCodeObserved": false,
+  "originalExitCode": null,
+  "originalPostflightObserved": false,
+  "reason": "Executor process absent after host generation reload; all96 runs and324 model responses had already been written.",
+  "sourceCommit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+  "originalRunFiles": [
+    {
+      "file": "preflight.json",
+      "sha256": "99b2c60aa1fecadab1b879a4e1d00c84181b872abb10d51d489ae040093ee025"
+    },
+    {
+      "file": "progress.json",
+      "sha256": "5f7aa397c8c395efda99349addae34adc915650d1392487c86e5cbade276e9c9"
+    },
+    {
+      "file": "provider-calls.jsonl",
+      "sha256": "9f31589fbcbd1f77365dc1de976a84c9bb929ea050d243d357e98f4b11025c30"
+    },
+    {
+      "file": "runs.jsonl",
+      "sha256": "0846f5a9c530b9fbc9c50d79cb0dde5fbfe4f60d37019c1ba6f183df33799bf2"
+    }
+  ],
+  "frozenCorpusSha256": "d3457e58aa3e39a777b371e41b76cd5253f380fa1845ee244edde508d2960f01",
+  "frozenSummarySha256": "b81b7aa47345dbc458bb5a262faec1a38557edf6f7e00a5c53e8e8a08489effc",
+  "providerCallsAdded": 0,
+  "modelOutputsChanged": false
+}

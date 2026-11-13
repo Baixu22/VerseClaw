@@ -1,0 +1,5 @@
+27c1a91dd fix(context-eval): recover original locators from visible question bookmarks
+69884a18a eval(context): freeze bounded visible exec bookmark recovery
+7ef31b1a5 eval(context): retain eighth-round benefit gains and remaining NO_GO gates
+f8d41ddb2 fix(context-eval): label deterministic recall origins accurately
+3e875f462 eval(context): freeze source labels for scripted and live recall evidence

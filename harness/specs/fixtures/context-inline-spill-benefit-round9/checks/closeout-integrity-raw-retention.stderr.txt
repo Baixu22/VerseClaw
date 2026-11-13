@@ -1,0 +1,6 @@
+AssertionError [ERR_ASSERTION]: deterministic/archive-manifest.json
++ actual - expected
+
++ 'ad0f92587653f0133a1e13e3a1f7af133382ff242a5b3d376fc6dfd6a5543726'
+- 'a0bb121db17eb88696ca7ce48a1aeb7ae054243cca32ee6dd4becc3989a75c17'
+

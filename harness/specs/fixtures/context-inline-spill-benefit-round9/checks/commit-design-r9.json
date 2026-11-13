@@ -1,0 +1,45 @@
+{
+  "schema": "G7CommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "commit-design-r9",
+  "cwd": "D:\\tmp\\g7-closeout-pass-r7-01a1d34c\\validation-checkout",
+  "command": [
+    "git",
+    "commit",
+    "-m",
+    "eval(context): freeze bounded visible exec bookmark recovery"
+  ],
+  "startedAt": "2026-11-13T11:37:32.596Z",
+  "status": "finished",
+  "temp": "D:/tmp",
+  "candidateAtStart": {
+    "commit": "7ef31b1a5f15bf402f1f7393abcc7c2181fff0b9",
+    "tree": "fc5431f009c5bde432a8a99814bac3553a17007e",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "dirty": true
+  },
+  "finishedAt": "2026-11-13T11:37:33.226Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "candidateAtEnd": {
+    "commit": "69884a18a614886ad1712331b860465cb9a644a7",
+    "tree": "2d44774394a1cece4a10c930d70db8595467dfca",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "dirty": true
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\commit-design-r9.stdout.txt",
+      "bytes": 449,
+      "sha256": "bb38e1140967dbab84044fcfa114bf068ecdf60ebff31d31f99b6357ea20833c"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\checks\\commit-design-r9.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}
