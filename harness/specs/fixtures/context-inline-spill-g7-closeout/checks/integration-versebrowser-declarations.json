@@ -1,0 +1,45 @@
+{
+  "schema": "G7MergeCommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "integration-versebrowser-declarations",
+  "cwd": "C:/Users/27933/.codex/worktrees/g7-inline-spill-integration-20261113/ClawX",
+  "command": [
+    "node",
+    "node_modules/typescript/bin/tsc",
+    "-p",
+    "packages/versebrowser/tsconfig.build.json"
+  ],
+  "startedAt": "2026-11-13T15:27:10.042Z",
+  "status": "finished",
+  "before": {
+    "commit": "46d2e27df3cc9b9bbe82ab5a1038735261a9daf7",
+    "branch": "codex/g7-inline-spill-main-integration-20261113-01a1d34c",
+    "status": "M harness/specs/tasks/inline-spill-g7-integration-closeout.md",
+    "tree": "a0f8511b513554aa7ece4c99d65b4bd28e168225"
+  },
+  "temp": "D:/tmp",
+  "finishedAt": "2026-11-13T15:27:18.473Z",
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "after": {
+    "commit": "46d2e27df3cc9b9bbe82ab5a1038735261a9daf7",
+    "branch": "codex/g7-inline-spill-main-integration-20261113-01a1d34c",
+    "status": "M harness/specs/tasks/inline-spill-g7-integration-closeout.md",
+    "tree": "a0f8511b513554aa7ece4c99d65b4bd28e168225"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-merge-hygiene-01a1d34c\\checks\\integration-versebrowser-declarations.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-merge-hygiene-01a1d34c\\checks\\integration-versebrowser-declarations.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

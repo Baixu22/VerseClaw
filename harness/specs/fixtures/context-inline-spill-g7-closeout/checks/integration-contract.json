@@ -1,0 +1,43 @@
+{
+  "schema": "G7MergeCommandReceipt/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "name": "integration-contract",
+  "cwd": "C:/Users/27933/.codex/worktrees/g7-inline-spill-integration-20261113/ClawX",
+  "command": [
+    "node",
+    "scripts/check-host-api-contract.mjs"
+  ],
+  "startedAt": "2026-11-13T15:12:24.798Z",
+  "status": "finished",
+  "before": {
+    "commit": "46d2e27df3cc9b9bbe82ab5a1038735261a9daf7",
+    "branch": "codex/g7-inline-spill-main-integration-20261113-01a1d34c",
+    "status": "",
+    "tree": "a0f8511b513554aa7ece4c99d65b4bd28e168225"
+  },
+  "temp": "D:/tmp",
+  "finishedAt": "2026-11-13T15:12:25.611Z",
+  "exitCode": 1,
+  "signal": null,
+  "error": null,
+  "after": {
+    "commit": "46d2e27df3cc9b9bbe82ab5a1038735261a9daf7",
+    "branch": "codex/g7-inline-spill-main-integration-20261113-01a1d34c",
+    "status": "",
+    "tree": "a0f8511b513554aa7ece4c99d65b4bd28e168225"
+  },
+  "logs": {
+    "stdout": {
+      "path": "D:\\tmp\\g7-merge-hygiene-01a1d34c\\checks\\integration-contract.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "D:\\tmp\\g7-merge-hygiene-01a1d34c\\checks\\integration-contract.stderr.txt",
+      "bytes": 843,
+      "sha256": "2abd72e7fe1c1efece03f63ffa7d5d1b306462f9c145e13f99e378ee9e308dbe"
+    }
+  }
+}

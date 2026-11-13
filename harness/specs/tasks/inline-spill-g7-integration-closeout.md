@@ -4,12 +4,38 @@ id: inline-spill-g7-integration-closeout
 title: G7 Inline/Spill 合并与证据卫生收尾
 scenario: context-family
 taskType: documentation
-diffBase: 4e6b5f4039c2e8006432f0ffa75e11738768d181
+diffBase: fda6346dd998b11b7f256d24c18d541c9b2a0ebf
 intent: 保留原冻结候选及失败证据，登记有来源的重复归档，按G7写集合入main并保留可恢复Git历史，更新稳定证据路径后清理空闲隔离检出。
 touchedAreas:
+  - scripts/context-inline-spill-benefit-loop-eval.mts
+  - scripts/context-inline-spill-benefit-strategy.mts
+  - scripts/context-inline-spill-benefit-input.mts
+  - scripts/context-inline-spill-benefit-scoring.mts
+  - scripts/context-inline-spill-benefit-round5-verify.mjs
+  - scripts/context-inline-spill-benefit-round5-recompute.mjs
+  - scripts/context-inline-spill-benefit-round6-verify.mjs
+  - scripts/context-inline-spill-benefit-round7-verify.mjs
+  - scripts/context-inline-spill-benefit-round8-verify.mts
+  - scripts/context-inline-spill-benefit-round9-verify.mts
   - scripts/duplicate-assets-allowlist.json
+  - tests/unit/context-inline-spill-benefit-*.test.ts
+  - harness/specs/tasks/inline-spill-real-benefit-eval-round5.md
+  - harness/specs/tasks/inline-spill-real-benefit-eval-round6.md
+  - harness/specs/tasks/inline-spill-real-benefit-eval-round7.md
+  - harness/specs/tasks/inline-spill-real-benefit-eval-round8.md
+  - harness/specs/tasks/inline-spill-real-benefit-eval-round9.md
   - harness/specs/tasks/inline-spill-g7-integration-closeout.md
+  - harness/specs/rules/inline-spill-eval-projected-input.md
+  - harness/specs/scenarios/context-family.md
+  - harness/specs/fixtures/context-inline-spill-benefit-round5/**
+  - harness/specs/fixtures/context-inline-spill-benefit-round6/**
+  - harness/specs/fixtures/context-inline-spill-benefit-round7/**
+  - harness/specs/fixtures/context-inline-spill-benefit-round8/**
+  - harness/specs/fixtures/context-inline-spill-benefit-round9/**
   - harness/specs/fixtures/context-inline-spill-g7-closeout/**
+  - docs/modules/context-and-memory.md
+  - docs/context-family/goal-progress.md
+  - .gitattributes
 requiredProfiles:
   - fast
 requiredRules:

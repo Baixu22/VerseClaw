@@ -1,0 +1,20 @@
+{
+  "schema": "G7RawEvidenceRecoverySummary/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "path": "D:/ClawX-archives/g7-inline-spill-20261113-01a1d34c/raw-evidence.tar.gz",
+  "indexPath": "D:/ClawX-archives/g7-inline-spill-20261113-01a1d34c/raw-evidence-index.json",
+  "sha256": "4ecb21358e577fd25c31522a8b981da039cd37f1bb50fd88037028188de34940",
+  "files": 6197,
+  "originalBytes": 301458178,
+  "archiveBytes": 12498844,
+  "verifiedFromArchive": true,
+  "roots": [
+    "D:/tmp/g7-inline-spill-tf0749-20261113-01a1d34c",
+    "D:/tmp/g7-inline-spill-benefit-round6",
+    "D:/tmp/g7-closeout-pass-r7-01a1d34c",
+    "D:/tmp/g7-closeout-pass-r8-01a1d34c",
+    "D:/tmp/g7-closeout-pass-r9-01a1d34c"
+  ]
+}

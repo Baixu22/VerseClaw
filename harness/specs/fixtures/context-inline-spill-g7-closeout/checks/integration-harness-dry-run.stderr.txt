@@ -1,0 +1,2 @@
+$ pnpm --filter @verse-claw/harness start -- "run" "--spec" "harness/specs/tasks/inline-spill-g7-integration-closeout.md" "--dry-run"
+$ node src/cli.mjs "--" "run" "--spec" "harness/specs/tasks/inline-spill-g7-integration-closeout.md" "--dry-run"

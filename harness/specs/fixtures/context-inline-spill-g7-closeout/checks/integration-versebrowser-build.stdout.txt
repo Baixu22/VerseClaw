@@ -1,0 +1,5 @@
+C:\Users\27933\.codex\worktrees\g7-inline-spill-integration-20261113\ClawX\packages\versebrowser:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @verse-claw/versebrowser@0.3.1 build: `node scripts/patch-upstream.mjs && tsc -p tsconfig.build.json`
+Exit status 1
+[WARN]  Local package.json exists, but node_modules missing, did you mean to install?
+[ELIFECYCLE] Command failed with exit code 1.
