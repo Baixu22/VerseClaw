@@ -1,4 +1,5 @@
 ---
+lifecycleStatus: active
 id: audit-wiring-quick-fixes
 title: Restore skill configuration, managed uninstall, and Agent Dev event collection
 scenario: gateway-backend-communication
