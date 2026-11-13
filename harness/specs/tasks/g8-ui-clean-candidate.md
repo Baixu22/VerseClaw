@@ -54,6 +54,7 @@ touchedAreas:
   - tests/e2e/chat-welcome-hero-verse-shot.spec.ts
   - tests/e2e/rareui-interactions.spec.ts
   - tests/e2e/session-activity-background-read.spec.ts
+  - tests/e2e/runtime-approval-bridge.spec.ts
   - tests/e2e/windows-ui-v2.spec.ts
   - tests/unit/rareui-interactions.test.tsx
   - tests/unit/chat-page-execution-graph.test.tsx
