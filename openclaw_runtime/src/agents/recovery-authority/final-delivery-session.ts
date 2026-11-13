@@ -99,7 +99,7 @@ export function clearedPendingFinalDelivery(): Partial<SessionEntry> {
 function canBindPendingFinalDelivery(
   current: SessionEntry | undefined,
   expected: PendingFinalDeliveryIdentity,
-  intentId: string | undefined,
+  intentId: PendingFinalDeliveryIdentity["pendingFinalDeliveryIntentId"],
 ): boolean {
   return Boolean(
     current &&
