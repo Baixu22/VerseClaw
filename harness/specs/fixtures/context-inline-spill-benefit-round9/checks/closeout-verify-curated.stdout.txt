@@ -1,0 +1,6 @@
+{"mode":"live","records":96,"allSummaryNumbersRecomputed":true,"decisions":{"b1_mechanism_and_autonomy":true,"b2_task_benefit":true,"b3_retention_benefit":true,"b4_non_inferiority":true,"b5_no_fabrication":true,"b6_budget":true,"contextGrowthChars":-530.125,"tokenGrowthPct":-0.05694417567357514}}
+{"mode":"live","records":96,"providerCalls":324,"initialPairs":24,"baselineLeaks":0,"historyFallbacks":0,"incomplete":0,"passed":true}
+{"output":"D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\closeout\\live-curated-verification.json","acceptedCleanCandidate":true,"mode":"live","records":96,"providerCalls":324,"status":"task-benefit-verified","verdict":"GO","B7CleanCandidate":true}
+{"output":"D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\closeout\\live-curated-verification.json","mode":"live","pressureEvents":135,"cleanCandidate":true,"status":"task-benefit-verified","verdict":"GO"}
+{"output":"D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\closeout\\live-curated-verification.json","frames":324,"fieldLocations":33,"cleanCandidate":true,"status":"task-benefit-verified","verdict":"GO"}
+{"output":"D:\\tmp\\g7-closeout-pass-r9-01a1d34c\\closeout\\live-curated-verification.json","bookmarks":72,"maxAddedChars":241,"clean":true,"status":"task-benefit-verified","verdict":"GO"}

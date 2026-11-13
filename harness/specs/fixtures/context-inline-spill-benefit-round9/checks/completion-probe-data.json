@@ -1,0 +1,42 @@
+{
+  "schema": "G7Round9CompletionProbe/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+    "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "dirty": false
+  },
+  "designSha256": "72a5e7d4d8c6bc74b1d35340b01c0aca5508c39b3bf3448cc33ba42014436241",
+  "request": {
+    "model": "space-bunny",
+    "input": [
+      {
+        "role": "user",
+        "content": "Return only {\"value\":\"probe-ok\"}."
+      }
+    ],
+    "max_output_tokens": 900,
+    "reasoning": {
+      "effort": "low",
+      "summary": "auto"
+    },
+    "temperature": 0
+  },
+  "providerTimeoutMs": 240000,
+  "startedAt": "2026-11-13T11:48:44.998Z",
+  "httpStatus": 200,
+  "rawResponse": "{\"background\":false,\"completed_at\":1794570527,\"created_at\":1794570532,\"error\":null,\"id\":\"01a1d4bd19a17e098e8510118cbf79f6\",\"incomplete_details\":null,\"instructions\":null,\"max_output_tokens\":900,\"max_tool_calls\":null,\"metadata\":{},\"model\":\"space-bunny\",\"object\":\"response\",\"output\":[{\"content\":[{\"annotations\":[],\"logprobs\":[],\"text\":\"{\\\"value\\\":\\\"probe-ok\\\"}\",\"type\":\"output_text\"}],\"id\":\"msg_d798cd0a9cd5d07631f634a34c5ead8e\",\"role\":\"assistant\",\"status\":\"completed\",\"type\":\"message\"}],\"output_text\":\"{\\\"value\\\":\\\"probe-ok\\\"}\",\"parallel_tool_calls\":true,\"previous_response_id\":null,\"reasoning\":{\"effort\":\"low\",\"summary\":\"auto\"},\"status\":\"completed\",\"store\":false,\"temperature\":0,\"text\":{\"format\":{\"type\":\"text\"}},\"tool_choice\":\"auto\",\"tools\":[],\"top_logprobs\":0,\"top_p\":1,\"truncation\":\"disabled\",\"usage\":{\"cache_creation_input_tokens\":0,\"input_tokens\":164,\"input_tokens_details\":{\"cached_tokens\":0},\"output_tokens\":9,\"output_tokens_details\":{\"reasoning_tokens\":0},\"total_tokens\":173},\"user\":null}",
+  "passed": true,
+  "candidateAtEnd": {
+    "commit": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+    "tree": "ebfd020d4c6b32d43debd59753eef9bdf7dce168",
+    "branch": "codex/g7-inline-spill-tf0749-r9-20261113-01a1d34c",
+    "dirty": false
+  },
+  "sameCandidate": true,
+  "latencyMs": 2903.4382,
+  "finishedAt": "2026-11-13T11:48:47.905Z"
+}

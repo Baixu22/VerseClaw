@@ -1,0 +1,425 @@
+{
+  "schema": "G7Round9AcceptanceReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "checkedAt": "2026-11-13T13:44:59.569Z",
+  "measuredCandidate": "27c1a91dd228369ca1427d2b30f39dd6222cee37",
+  "cleanReplayVerification": "harness/specs/fixtures/context-inline-spill-benefit-round9/verification/live-curated.json",
+  "baselineActualInputOracleLeaks": 0,
+  "children": [
+    {
+      "id": "TF-0750",
+      "criterionChecks": [
+        {
+          "criterion": "存在契约文档，明确每项指标的定义、单位、来源和不可声称的边界。",
+          "passed": true,
+          "observation": "原指标契约与B1–B7阈值在design.freeze.json中保持原值。"
+        },
+        {
+          "criterion": "评分器对正例与负例都给出确定结果，并有单测固定。",
+          "passed": true,
+          "observation": "同候选68项测试包含评分正例、负例和边界；完整回执退出0。"
+        },
+        {
+          "criterion": "基线结果在改动前采集并以 digest 冻结。",
+          "passed": true,
+          "observation": "off-mode-baseline.json绑定实现前commit 10dd6c472及source_reproduction_sha256，原清单保存并回读。"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "harness/specs/rules/inline-spill-benefit-quantification.md",
+          "sha256": "8d0ed528e2b0b5e287ee4411c4b2849d21caa17ce89bc9cb17a8f25636c3bd5f",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/tasks/inline-spill-real-benefit-eval.md",
+          "sha256": "a41c2d469eac76310ce1353c488b421057a6a1f7d32d3de894ece70cfcc15065",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "tests/unit/context-inline-spill-benefit-scoring.test.ts",
+          "sha256": "e4ce05755953667522e58bd020a801d74f77346841d8f7c8a20777870e03a27c",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "scripts/context-inline-spill-benefit-scoring.mts",
+          "sha256": "bcb3741271dfc5086f6c7ac675ee1720768eb307c457f147476b4982bc3ed276",
+          "matchesHistoricalRecoveryIndex": true
+        }
+      ]
+    },
+    {
+      "id": "TF-0751",
+      "criterionChecks": [
+        {
+          "criterion": "真实循环跑通，记录模型自主发起 recall 的次数与参数。",
+          "passed": true,
+          "observation": "96次真实循环、324份原始模型响应，stable 18/18自主发起recall；原参数和真实工具结果由verifier逐次复算。"
+        },
+        {
+          "criterion": "负臂不泄漏私有值；正臂在允许 recall 时命中精确值。",
+          "passed": true,
+          "observation": "baseline与retention-off证据0/18，stable17/18；baseline实际请求oracle泄漏回读为0。"
+        },
+        {
+          "criterion": "连续多轮对话中保留窗口内的回读内容仍可用，窗口外回到旧行为。",
+          "passed": true,
+          "observation": "同候选retention测试固定ageTurns=3保留、ageTurns=4释放，并复现真实pruner的off行为。"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/DELIVERY.md",
+          "sha256": "5c3c2bf1907a2f40c11f28f00840530f19e7fff18fa8aae05d14e612a5c66d3c",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/live/runs.json",
+          "sha256": "0599996b67c7cadeda504e12e1f312c27b2565d3947ea5a3f5d3d44f59ff8e05",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/live/provider-wire.jsonl.gz",
+          "sha256": "4ad12d6317ad7838263d3026522681bcc9c4350bdbfb7ab676a4b7d41753861a",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/design-diagnostics.json",
+          "sha256": "0644e6630cf94bd1e94645105d4606b56452ceab0b82d50b70ff8593ba1ee359",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/convergence-check.mjs",
+          "sha256": "44b5218457e311b091184c57bdf610f72b1ad49fe09c23432fb8cda0ad9b06b8",
+          "matchesHistoricalRecoveryIndex": true
+        }
+      ]
+    },
+    {
+      "id": "TF-0752",
+      "criterionChecks": [
+        {
+          "criterion": "统计结果可从原始逐次运行记录复算。",
+          "passed": true,
+          "observation": "未改动的同候选verifier从runs/provider-calls、usage与archive重算逐臂结果。"
+        },
+        {
+          "criterion": "样本量与未覆盖范围被明确写出，不以单例外推。",
+          "passed": true,
+          "observation": "四臂各24次、证据各18次、控制各6次；结果提供各臂24次正确率的Wilson95区间和延迟p50/p95。"
+        },
+        {
+          "criterion": "成本口径区分实测 usage 与估算代理值。",
+          "passed": true,
+          "observation": "input/output/total均来自324次原始usage，missingUsage=0；费用因无rate/unit记not-run。"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/DELIVERY.md",
+          "sha256": "5c3c2bf1907a2f40c11f28f00840530f19e7fff18fa8aae05d14e612a5c66d3c",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/live/result.json",
+          "sha256": "48dbf0e85aeb59bd1c4420704a3214f73f7acb0ca9438e615374addc6a8b8805",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/live/recomputed.json",
+          "sha256": "8160fc3e097480de2a8a0422f3b101f0378975a8daf19c7974b4f6602596a2d5",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/deterministic/result.json",
+          "sha256": "cdc60d977311938f2e8147d4913e49e7d00f692d08c7bcd9046d6dd17f60419a",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/checks/deterministic-default/result.json",
+          "sha256": "1f5781ac11b1a8491a89b56fe43c577caa740ac5090aa56ac2f6e5da42814e5b",
+          "matchesHistoricalRecoveryIndex": true
+        }
+      ]
+    },
+    {
+      "id": "TF-0753",
+      "criterionChecks": [
+        {
+          "criterion": "live 执行有完整原始响应与 usage。",
+          "passed": true,
+          "observation": "live请求/响应/usage、96次运行和609个归档均可从已归集磁盘回读。"
+        },
+        {
+          "criterion": "凭证扫描零命中。",
+          "passed": true,
+          "observation": "inner live封存扫描及收尾全包扫描均核验凭证0命中。"
+        },
+        {
+          "criterion": "证据包有 SHA256SUMS 且可从磁盘复验。",
+          "passed": true,
+          "observation": "root和live清单完整；同候选clean回放verifier接受原13项live封存与609个归档。"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/DELIVERY.md",
+          "sha256": "5c3c2bf1907a2f40c11f28f00840530f19e7fff18fa8aae05d14e612a5c66d3c",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/live/result.json",
+          "sha256": "48dbf0e85aeb59bd1c4420704a3214f73f7acb0ca9438e615374addc6a8b8805",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/live/runs.json",
+          "sha256": "0599996b67c7cadeda504e12e1f312c27b2565d3947ea5a3f5d3d44f59ff8e05",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/live/provider-wire.jsonl.gz",
+          "sha256": "4ad12d6317ad7838263d3026522681bcc9c4350bdbfb7ab676a4b7d41753861a",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/live/archives.jsonl.gz",
+          "sha256": "d34ffe845d6dc3ba69161943217cdf2d8bc297c31a1c69f41b7540f455270bd1",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/credential-scan.json",
+          "sha256": "3be6be963b96cfbfc372605873c24694bceebb3e519d1322c4b70308254c68ea",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/SHA256SUMS",
+          "sha256": "88542d63e053bf37d466d722c1dc8964b4930b86ff3a1fd292a6184ddbcd8bd0",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/provenance.json",
+          "sha256": "e0705de791e5d35c478ff43da6b06ac2581c8521e01fe31ac19786050ae68fd0",
+          "matchesHistoricalRecoveryIndex": true
+        }
+      ]
+    },
+    {
+      "id": "TF-0754",
+      "criterionChecks": [
+        {
+          "criterion": "存在最终报告，含 decision.status 与未测边界。",
+          "passed": true,
+          "observation": "第九轮报告及outcome包含task-benefit-verified/GO、费用not-run和固定语料/模型范围。"
+        },
+        {
+          "criterion": "每个结论都能从证据文件回读。",
+          "passed": true,
+          "observation": "17/18、13/18、0/18、6/6、token-5.694417567%均由同候选verifier原始证据复算。"
+        },
+        {
+          "criterion": "不宣称 GA、产品批准或真人证据。",
+          "passed": true,
+          "observation": "产物driven_by=agent、realHumanEvidence=false；production defaults/locks/releaseApproved保持原值。"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/DELIVERY.md",
+          "sha256": "5c3c2bf1907a2f40c11f28f00840530f19e7fff18fa8aae05d14e612a5c66d3c",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/live/result.json",
+          "sha256": "48dbf0e85aeb59bd1c4420704a3214f73f7acb0ca9438e615374addc6a8b8805",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/live/recomputed.json",
+          "sha256": "8160fc3e097480de2a8a0422f3b101f0378975a8daf19c7974b4f6602596a2d5",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/design-diagnostics.json",
+          "sha256": "0644e6630cf94bd1e94645105d4606b56452ceab0b82d50b70ff8593ba1ee359",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit/verify-evidence.mjs",
+          "sha256": "940dd71e9994252b480b5faa5fb15680a461f6d09cd300f4671e36d0df9174d7",
+          "matchesHistoricalRecoveryIndex": true
+        }
+      ]
+    },
+    {
+      "id": "TF-0755",
+      "criterionChecks": [
+        {
+          "criterion": "协议输出只能来自当轮生产投影，无原始历史回退且不在正文重复；单测覆盖淘汰、缺失与错误回传。",
+          "passed": true,
+          "observation": "第三轮原verified记录unprojectedHistoryFallbacks=0、baselineOracleLeaks=0；现候选输入测试和模型调用协议复核通过。"
+        },
+        {
+          "criterion": "两压力臂24对live首轮完整请求逐字节相同，mainContextChars可由实际input复算。",
+          "passed": true,
+          "observation": "第三轮与第九轮各24对首轮请求逐字节相同，实际输入计量由verifier复算。"
+        },
+        {
+          "criterion": "deterministic四臂及控制复现；live96次完成并逐臂报告B1-B7、token、延迟、失败和未测费用。",
+          "passed": true,
+          "observation": "第三轮96次/360调用原失败保留；第九轮96次/324调用及32次同候选deterministic完整回读。"
+        },
+        {
+          "criterion": "第三轮证据全量哈希匹配、凭证0命中；原47文件与105文件不改。",
+          "passed": true,
+          "observation": "第三轮37文件原清单、旧47/105文件及原凭证扫描保持；全部历史清单独立回读。"
+        },
+        {
+          "criterion": "所选spec门禁通过；未通过的收益判据不得被改阈值消除。",
+          "passed": true,
+          "observation": "同候选定向spec、68测试、完整类型、契约通过；各历史NO_GO及原阈值保留。"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/DELIVERY.md",
+          "sha256": "153d05d075b4ce50f5f151292e89b27aec9e73732808fac786617730d7d62afd",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/live/result.json",
+          "sha256": "9dbe29c6a5743fa42a764b29ca3f6b63c3c35d908acbb8aa14a245993912dc1f",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/live/verified.json",
+          "sha256": "3628850485c9dee3172411c61311e089b186f4dbccbcdb34a82fd9815b726919",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/SHA256SUMS",
+          "sha256": "e6ef8c3226c551fb893b8579d28755c0caf3609106f46b5d359b0599a12f6553",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round3/provenance.json",
+          "sha256": "1784a749ac23c973afb13d76f5f8b2a4d992209887983856f686c1f9b22c5faa",
+          "matchesHistoricalRecoveryIndex": true
+        }
+      ]
+    },
+    {
+      "id": "TF-0859",
+      "criterionChecks": [
+        {
+          "criterion": "边界参数单测与deterministic四臂通过；5500页序列化不超过6000字符，模型输入无原始历史旁路。",
+          "passed": true,
+          "observation": "第四轮pageContract/页参数统计和deterministic记录保存，最大序列化页5944、超页0；当前页最大5946<=6000。"
+        },
+        {
+          "criterion": "干净候选和固定输入/源码摘要在live前落盘；live96次执行并由原始文件复算B1-B7、usage、延迟和失败。",
+          "passed": true,
+          "observation": "第四轮freeze与acceptance记录8fa33a84e clean候选，96次/367调用由原数据复算；本轮同样绑定独立冻结和clean候选。"
+        },
+        {
+          "criterion": "证据/控制保留配对、超页、oracle投影丢失与incomplete分别记录；费用按实际资源口径记录。",
+          "passed": true,
+          "observation": "第四轮保留配对、pageContract与56次incomplete分别保留，当前24对配对/324 completed单独报告。"
+        },
+        {
+          "criterion": "第四轮全包哈希匹配、凭证零命中，旧三包与四个既有未跟踪文件保持原样。",
+          "passed": true,
+          "observation": "第四轮171文件、旧105/47/37等原清单和preservation-after全量回读。"
+        },
+        {
+          "criterion": "所选单测、类型、Harness与Task Forest校验/导出/读回有磁盘证据；收益失败时父节点保持未完成。",
+          "passed": true,
+          "observation": "第四轮50测试/串行类型/定向Harness及当时TaskForest验收记录保留；历史父节点in_progress/80，本轮B1–B7全过才更新。"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round4/REPORT.md",
+          "sha256": "df580860bdaf47e52abb4b1fd24aadf5ad490b4bcdc21b495d23c0dd718cad35",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round4/freeze.json",
+          "sha256": "474b813cd2e116ccb1fc5b61db33f787500624de3a1f6b030b1ce28364bd2cd8",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round4/live/result.json",
+          "sha256": "acbfd0c4c9a4ae1400ddf365fa1b57595035a09135109e883f110b68f93643d8",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round4/live-verify.json",
+          "sha256": "5a0916bda04b7f50247aa6f3e72f64f3ea52766a3a5b00c553b0aadfc3f749ec",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round4/live-diagnostics.json",
+          "sha256": "3b5d460ad9837a0df6a0477d7b12f1f9936c0e5cf851bc6d6cc58bb721311dc1",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round4/summary.json",
+          "sha256": "6e99e8622434f4da2a45d67a270af4139f8ace749afb58350efaa61941c0fa44",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round4/SHA256SUMS",
+          "sha256": "d920aa57748d045c6f7e7bd45d1baac8db40cc168cc3ff44165619d5617a8204",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round4/validation-readback.json",
+          "sha256": "36871c99bdae64fa47b814de416876411659fb9b361732e6c768dbbb71f37531",
+          "matchesHistoricalRecoveryIndex": true
+        },
+        {
+          "path": "harness/specs/fixtures/context-inline-spill-benefit-round4/preservation-after.json",
+          "sha256": "c8eda07267c3ca9238000395c6dc7cd2fc99097d3cd56135dc348055022c27ee",
+          "matchesHistoricalRecoveryIndex": true
+        }
+      ]
+    }
+  ],
+  "parentCriteria": [
+    {
+      "criterion": "五个子节点按依赖完成，且各自 acceptance 可从磁盘证据回读。",
+      "passed": true,
+      "observation": "七个既有子节点done/100，各条验收按上述原证据及同候选补充逐条回读。"
+    },
+    {
+      "criterion": "至少一套真实循环评测证明模型自主 recall 的次数、成功率和失败分类，而不是脚本调用。",
+      "passed": true,
+      "observation": "stable证据18/18自主recall、56次原目标调用、原工具oracle命中18；最终答案17/18按原标准评分。"
+    },
+    {
+      "criterion": "多任务多样本统计给出带置信区间的正确率与成本，并明确样本量与未覆盖范围。",
+      "passed": true,
+      "observation": "6证据/2控制×4臂×3重复；逐臂正确率/Wilson95、token与延迟均来自原始记录。"
+    },
+    {
+      "criterion": "第三方模型执行有 provider/model/endpoint/usage/延迟/费用口径；缺凭据时明确 not-run。",
+      "passed": true,
+      "observation": "provider=openai-compatible-responses，space-bunny，endpoint http://127.0.0.1:3065；324份原usage，费用not-run。"
+    },
+    {
+      "criterion": "最终判定明确区分 mechanism benefit、task benefit 与未验证边界，且不宣称 GA。",
+      "passed": true,
+      "observation": "第九轮B1–B7全部true且clean verifier通过，task-benefit-verified/GO；历史机制与NO_GO保持，生产默认/产品锁/发布原值。"
+    }
+  ],
+  "strictUserClosure": {
+    "B1toB7AllPassed": true,
+    "cleanCandidateAccepted": true,
+    "taskForestApplyRequiresFreshBaseGraphHash": true
+  },
+  "historicalReferencesReadBack": 41,
+  "allHistoricalReferencesDigestMatched": true
+}

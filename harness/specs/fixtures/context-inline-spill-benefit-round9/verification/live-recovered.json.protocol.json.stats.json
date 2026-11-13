@@ -1,0 +1,172 @@
+{
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "mode": "live",
+  "records": 96,
+  "allSummaryNumbersRecomputed": true,
+  "stats": {
+    "baseline-no-reference": {
+      "arm": "baseline-no-reference",
+      "runs": 24,
+      "pass": 6,
+      "successRate": 0.25,
+      "wilson95": [
+        0.11999366228595004,
+        0.44899444005154004
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 0.7777777777777778,
+      "recallOkRate": 0,
+      "meanTurns": 2.2083333333333335,
+      "meanMainContextChars": 2059.4583333333335,
+      "meanInputTokens": 2358.7083333333335,
+      "meanOutputTokens": 346.7083333333333,
+      "meanTotalTokens": 2705.4166666666665,
+      "p50LatencyMs": 8505.491,
+      "p95LatencyMs": 12987.208,
+      "failureClasses": {
+        "recall_not_attempted": 4,
+        "answer_mismatch": 14,
+        "none": 6
+      }
+    },
+    "reference-visible": {
+      "arm": "reference-visible",
+      "runs": 24,
+      "pass": 19,
+      "successRate": 0.7916666666666666,
+      "wilson95": [
+        0.5952954674681133,
+        0.9075517464714814
+      ],
+      "evidenceSuccessRate": 0.7222222222222222,
+      "controlSuccessRate": 1,
+      "passAtK": 0.16666666666666666,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3.6666666666666665,
+      "meanMainContextChars": 19171.458333333332,
+      "meanInputTokens": 12571.5,
+      "meanOutputTokens": 562.7083333333334,
+      "meanTotalTokens": 13134.208333333334,
+      "p50LatencyMs": 10317.383,
+      "p95LatencyMs": 17297.526,
+      "failureClasses": {
+        "none": 19,
+        "recalled_text_evicted": 5
+      }
+    },
+    "recall-stable": {
+      "arm": "recall-stable",
+      "runs": 24,
+      "pass": 23,
+      "successRate": 0.9583333333333334,
+      "wilson95": [
+        0.7975819352134406,
+        0.9926065438344942
+      ],
+      "evidenceSuccessRate": 0.9444444444444444,
+      "controlSuccessRate": 1,
+      "passAtK": 0.8333333333333334,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 3.3333333333333335,
+      "meanMainContextChars": 19417.75,
+      "meanInputTokens": 11922.416666666666,
+      "meanOutputTokens": 463.875,
+      "meanTotalTokens": 12386.291666666666,
+      "p50LatencyMs": 8495.777,
+      "p95LatencyMs": 12921.587,
+      "failureClasses": {
+        "none": 23,
+        "answer_mismatch": 1
+      }
+    },
+    "retention-off": {
+      "arm": "retention-off",
+      "runs": 24,
+      "pass": 6,
+      "successRate": 0.25,
+      "wilson95": [
+        0.11999366228595004,
+        0.44899444005154004
+      ],
+      "evidenceSuccessRate": 0,
+      "controlSuccessRate": 1,
+      "passAtK": 0,
+      "recallAttemptRate": 1,
+      "recallOkRate": 1,
+      "meanTurns": 4.291666666666667,
+      "meanMainContextChars": 19947.875,
+      "meanInputTokens": 16101.791666666666,
+      "meanOutputTokens": 626.375,
+      "meanTotalTokens": 16728.166666666668,
+      "p50LatencyMs": 11959.335,
+      "p95LatencyMs": 16973.834,
+      "failureClasses": {
+        "recalled_text_evicted": 18,
+        "none": 6
+      }
+    }
+  },
+  "comparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 6,
+      "onlyA": 17,
+      "onlyB": 0,
+      "neither": 1,
+      "p": 0.0000152587890625
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 6,
+      "onlyA": 17,
+      "onlyB": 0,
+      "neither": 1,
+      "p": 0.0000152587890625
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 18,
+      "onlyA": 5,
+      "onlyB": 1,
+      "neither": 0,
+      "p": 0.21875
+    }
+  },
+  "evidenceComparisons": {
+    "recall-stable_vs_baseline": {
+      "both": 0,
+      "onlyA": 17,
+      "onlyB": 0,
+      "neither": 1,
+      "p": 0.0000152587890625
+    },
+    "recall-stable_vs_retention-off": {
+      "both": 0,
+      "onlyA": 17,
+      "onlyB": 0,
+      "neither": 1,
+      "p": 0.0000152587890625
+    },
+    "recall-stable_vs_reference-visible": {
+      "both": 12,
+      "onlyA": 5,
+      "onlyB": 1,
+      "neither": 0,
+      "p": 0.21875
+    }
+  },
+  "decisions": {
+    "b1_mechanism_and_autonomy": true,
+    "b2_task_benefit": true,
+    "b3_retention_benefit": true,
+    "b4_non_inferiority": true,
+    "b5_no_fabrication": true,
+    "b6_budget": true,
+    "contextGrowthChars": -530.125,
+    "tokenGrowthPct": -0.05694417567357514
+  },
+  "wire": null
+}

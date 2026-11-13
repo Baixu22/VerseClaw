@@ -1,0 +1,9 @@
+
+ RUN  v4.1.1 D:/tmp/g7-closeout-pass-r7-01a1d34c/validation-checkout
+
+
+ Test Files  9 passed (9)
+      Tests  68 passed (68)
+   Start at  19:27:16
+   Duration  54.20s (transform 9.30s, setup 1.08s, import 11.77s, tests 37.23s, environment 2.02s)
+

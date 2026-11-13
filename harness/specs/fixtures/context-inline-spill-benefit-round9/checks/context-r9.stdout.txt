@@ -1,0 +1,22 @@
+Context for: harness\specs\tasks\inline-spill-real-benefit-eval-round9.md
+Intent: 修复模型扩写URI摘要后错误目标被锁定的问题，把最初可见引用作为有界书签放入既有agent问题，独立冻结后在clean候选完成原四臂B1–B7并收口TF-0749。
+
+Read order:
+- inline-spill-real-benefit-eval-round9 (task): harness\specs\tasks\inline-spill-real-benefit-eval-round9.md
+- context-family (context-family-boundary): harness\specs\scenarios\context-family.md
+- context-family-boundary (ai-coding-rule): harness\specs\rules\context-family-boundary.md
+- context-runtime-kit-boundary (ai-coding-rule): harness\specs\rules\context-runtime-kit-boundary.md
+- disk-temp-policy (ai-coding-rule): harness\specs\rules\disk-temp-policy.md
+- inline-spill-benefit-quantification (ai-coding-rule): harness\specs\rules\inline-spill-benefit-quantification.md
+- inline-spill-eval-projected-input (ai-coding-rule): harness\specs\rules\inline-spill-eval-projected-input.md
+- repository-artifact-retention (ai-coding-rule): harness\specs\rules\repository-artifact-retention.md
+- task-forest-autoclose-and-roles (ai-coding-rule): harness\specs\rules\task-forest-autoclose-and-roles.md
+- workspace-harness-single-source (ai-coding-rule): harness\specs\rules\workspace-harness-single-source.md
+- agent-first-acceptance (guide): harness\specs\guides\agent-first-acceptance.md
+- agent-harness-routing (guide): harness\specs\guides\agent-harness-routing.md
+- pretext-text-measurement-integration (guide): harness\specs\guides\pretext-text-measurement-integration.md
+- product-acceptance-strategy (guide): harness\specs\guides\product-acceptance-strategy.md
+- scoped-development-validation (guide): harness\specs\guides\scoped-development-validation.md
+- spec-update (guide): harness\specs\guides\spec-update.md
+- sustained-development-continuity (guide): harness\specs\guides\sustained-development-continuity.md
+- harness (layer-spec): harness\specs\layers\harness.md

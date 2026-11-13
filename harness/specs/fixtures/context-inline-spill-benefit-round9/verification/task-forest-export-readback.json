@@ -1,0 +1,62 @@
+{
+  "schema": "G7TaskForestExportReadback/v1",
+  "driven_by": "agent",
+  "actor": "codex-g7-inline-spill-tf0749-01a1d34c",
+  "realHumanEvidence": false,
+  "checkedAt": "2026-11-13T14:07:20.171932+00:00",
+  "passed": true,
+  "nodes": {
+    "TF-0749": {
+      "status": "done",
+      "progress": 100.0
+    },
+    "TF-0750": {
+      "status": "done",
+      "progress": 100.0
+    },
+    "TF-0751": {
+      "status": "done",
+      "progress": 100.0
+    },
+    "TF-0752": {
+      "status": "done",
+      "progress": 100.0
+    },
+    "TF-0753": {
+      "status": "done",
+      "progress": 100.0
+    },
+    "TF-0754": {
+      "status": "done",
+      "progress": 100.0
+    },
+    "TF-0755": {
+      "status": "done",
+      "progress": 100.0
+    },
+    "TF-0859": {
+      "status": "done",
+      "progress": 100.0
+    }
+  },
+  "graph": {
+    "path": "D:/ClawX/.agent-workbench/task-forest/exports/task-forest.graph.json",
+    "bytes": 5613956,
+    "sha256": "8a8e061bdc4b1e955450e341df115666adc3a23bab4e001226703658667ef2fc"
+  },
+  "html": {
+    "path": "D:/ClawX/.agent-workbench/task-forest/exports/task-forest.html",
+    "bytes": 822467416,
+    "sha256": "83997cc37780aff591adc21790d53bf6a7bf802e3fa2c8b416f8a2007055ac60"
+  },
+  "latestSnapshot": {
+    "path": "D:/ClawX/.agent-workbench/task-forest/snapshots/1529.json",
+    "bytes": 5954498,
+    "sha256": "5a6324f101bc16e89dc1c8cc7432319f323bcce16388a17022414c30abf84414"
+  },
+  "currentAndLastHtmlFrameMatch": true,
+  "lastFrameType": "current_snapshot",
+  "lastFrameSaved": true,
+  "lastFrameSnapshotId": "1529",
+  "timelineBytes": 3851194675
+}

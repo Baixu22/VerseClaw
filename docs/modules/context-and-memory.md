@@ -592,6 +592,13 @@ B2/B3/B5/B7通过，B1/B4/B6失败；成功回读17/18，token增幅25.027526%�
 持续提供这份元数据，使模型可从错误首次URI恢复。书签不包含payload或字段值，
 执行器继续使用模型返回的原始参数；生产默认和全部收益阈值保持原值。
 
+第九轮 clean 候选 `27c1a91dd228369ca1427d2b30f39dd6222cee37` 完成96次真实运行、324份completed响应。稳定证据17/18、reference13/18、baseline与retention-off0/18，控制6/6；保留正向17、反向0，总token相对reference下降5.694417567%。B1–B7全部通过，同候选clean检出的未改动verifier接受归集证据。
+
+TF-0749已按严格收益条件收口为done/100，七个子节点验收回读完成。原汇总退出码未观测，
+冻结源码恢复没有新增provider调用或修改模型输出；原第五至第八轮失败与dirty拒绝均保留。
+本轮产物标记`driven_by: agent`、`actor: codex-g7-inline-spill-tf0749-01a1d34c`、
+`realHumanEvidence: false`；完整证据见[第九轮收益报告](../../harness/specs/fixtures/context-inline-spill-benefit-round9/REPORT.md)。
+
 
 [第四轮评测](../../harness/specs/tasks/inline-spill-real-benefit-eval-round4.md)要求每次回读显式提供 1–5500 的 `max_chars`，缺失或超界参数返回 `invalid_arguments`。工具说明引导模型用 `offset + content.length` 翻页，取得精确值后输出最终 JSON。页尺寸与 6000 字符生产投影预算共同校验，收益按原 96 次样本与 900 输出 token 预算实测。
 
