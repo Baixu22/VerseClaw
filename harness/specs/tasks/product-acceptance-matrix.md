@@ -34,6 +34,10 @@ touchedAreas:
   - openclaw_runtime/src/context-engine/memory-pilot-relevance.test.ts
   - openclaw_runtime/src/memory/context-pack.ts
   - tests/e2e/fixtures/product-candidate.ts
+  - docs/agent-dev-control-plane.md
+  - tests/e2e/fixtures/electron.ts
+  - tests/e2e/fixtures/electron-executable.mjs
+  - tests/unit/electron-executable.test.ts
   - tests/e2e/fixtures/space-bunny-responses.ts
   - tests/e2e/fixtures/fp-p1-harness.ts
   - tests/e2e/fixtures/session-task-chain.ts
