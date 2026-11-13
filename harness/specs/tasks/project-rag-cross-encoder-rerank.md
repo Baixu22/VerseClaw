@@ -60,6 +60,7 @@ plannedTests:
   - "tests/unit/project-rag-rerank-provider.test.ts"
 plannedE2E:
   - "tests/e2e/project-rag-provider-settings.spec.ts"
+  - "tests/e2e/project-rag-rerank.spec.ts"
 expectedUserBehavior:
   - "在召回覆盖后提高实际送入模型的证据精度。"
 acceptance:

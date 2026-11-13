@@ -1,0 +1,13 @@
+{
+  "schema": "ProjectRagRelayReview/v1",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "initialCandidate": "748c4c9d177a51467ff8943f8fc407302b39e31d",
+  "verifiedSourceInputs": 33,
+  "initialHashRowsVerified": 30,
+  "missingRequiredE2E": [
+    "tests/e2e/project-rag-provider-settings.spec.ts"
+  ],
+  "decision": "rerun-all-required-gates-on-clean-candidate"
+}

@@ -1,0 +1,85 @@
+{
+  "schema": "ProjectRagRerankAcceptance/v1",
+  "node": "TF-0885",
+  "programKey": "RAG-08",
+  "status": "pass",
+  "candidate": "748c4c9d177a51467ff8943f8fc407302b39e31d",
+  "actor": "codex/project-rag-g1",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "tests": {
+    "root": {
+      "passed": 180,
+      "total": 181,
+      "skipped": 1,
+      "failed": 0
+    },
+    "liveAblation": {
+      "passed": 1,
+      "total": 1,
+      "failed": 0
+    },
+    "electron": {
+      "passed": 1,
+      "total": 1,
+      "skipped": 0,
+      "flaky": 0
+    }
+  },
+  "formalGates": {
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "notRun": 0
+  },
+  "acceptance": [
+    {
+      "criterion": 1,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "electron.json"
+      ],
+      "result": "Model manifest, local loopback/remote SecretRef endpoint adapters, batch budgets, cancellation and deadlines execute through production settings and provider."
+    },
+    {
+      "criterion": 2,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "electron.json"
+      ],
+      "result": "Only admitted candidates enter rerank; batch ID/index/order/count and finite score are validated, scores remain raw and uncalibrated, and post-rank owner verification executes."
+    },
+    {
+      "criterion": 3,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "electron.json"
+      ],
+      "result": "quality and research invoke the provider; local does not; unavailable/cancelled providers preserve RRF and return explicit reasons."
+    },
+    {
+      "criterion": 4,
+      "status": "pass",
+      "evidence": [
+        "ablation.json",
+        "ablation-test.json"
+      ],
+      "result": "Real Qwen3-Reranker-0.6B fixed-pool ablation records nDCG@5, precision@5 and elapsed provider cost; unavailable token/monetary usage remains null and no promotion is inferred."
+    },
+    {
+      "criterion": 5,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "electron.json",
+        "harness-ci-report.json",
+        "source-inputs.json"
+      ],
+      "result": "plannedTests and the new plannedE2E execute on the clean source candidate and are required by the task spec."
+    }
+  ],
+  "semanticQuality": "Observed four-query ablation only; no policy promotion or broad quality claim."
+}
