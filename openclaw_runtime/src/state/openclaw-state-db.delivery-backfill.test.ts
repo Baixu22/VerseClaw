@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { DatabaseSync } from "node:sqlite";
+import { DatabaseSync, type SQLInputValue } from "node:sqlite";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const control = vi.hoisted(() => ({
@@ -16,8 +16,8 @@ vi.mock("../infra/node-sqlite.js", async (importOriginal) => {
       const statement = super.prepare(sql);
       if (sql.includes("SELECT queue_name, id, entry_json") && control.afterSnapshot) {
         const all = statement.all.bind(statement);
-        statement.all = (...args: Parameters<typeof statement.all>) => {
-          const rows = all(...args);
+        statement.all = (...args: Array<SQLInputValue | Record<string, SQLInputValue>>) => {
+          const rows = Reflect.apply(all, statement, args) as ReturnType<typeof all>;
           const afterSnapshot = control.afterSnapshot;
           control.afterSnapshot = undefined;
           afterSnapshot?.();
@@ -26,8 +26,8 @@ vi.mock("../infra/node-sqlite.js", async (importOriginal) => {
       }
       if (sql.includes("UPDATE delivery_queue_entries") && sql.includes("COALESCE")) {
         const run = statement.run.bind(statement);
-        statement.run = (...args: Parameters<typeof statement.run>) => {
-          const result = run(...args);
+        statement.run = (...args: Array<SQLInputValue | Record<string, SQLInputValue>>) => {
+          const result = Reflect.apply(run, statement, args) as ReturnType<typeof run>;
           const row = super
             .prepare(`
             SELECT retry_count, entry_json FROM delivery_queue_entries
