@@ -1411,7 +1411,9 @@ async function deliverOutboundPayloadsWithQueueCleanup(
           params.recoveryAdmission,
         );
       }
-      if (!params.deferCommitHooks) await runOutboundDeliveryCommitHooks(results);
+      if (!hadPartialFailure && !params.deferCommitHooks) {
+        await runOutboundDeliveryCommitHooks(results);
+      }
       return results;
     }
     if (!queueId) {
