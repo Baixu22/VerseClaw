@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
+import { acceptanceArtifactPath } from './lib/acceptance-artifacts.mjs';
 import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
@@ -8,11 +9,11 @@ import { performance } from 'node:perf_hooks';
 import { pathToFileURL } from 'node:url';
 
 const ROOT = process.cwd();
-const OUT_DIR = resolve(ROOT, 'artifacts', 'agent-dev-deep-test');
+const OUT_DIR = acceptanceArtifactPath(ROOT, 'agent-dev-deep-test');
 const REPORT_JSON = resolve(OUT_DIR, 'report.json');
 const REPORT_MD = resolve(OUT_DIR, 'report.md');
 const HISTORY_JSON = resolve(OUT_DIR, 'history.json');
-const QUALITY_DIR = resolve(ROOT, 'artifacts', 'agent-dev-quality');
+const QUALITY_DIR = acceptanceArtifactPath(ROOT, 'agent-dev-quality');
 const QUALITY_REPORT_JSON = resolve(QUALITY_DIR, 'report.json');
 
 const REQUIRED_BUILD_ARTIFACTS = [

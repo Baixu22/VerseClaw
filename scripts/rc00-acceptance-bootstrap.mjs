@@ -35,6 +35,10 @@ for (const path of [
   'artifacts/uas-06-single-local-exec-canary/live-observations.json',
   'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json',
   'openclaw_runtime/apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json',
+  'resources/bin/win32-x64/vg.exe',
+  'release/win-unpacked/Verse Claw.exe',
+  'release/win-unpacked/resources/openclaw-runtime/extensions/codex/package.json',
+  'release/win-unpacked/resources/openclaw-runtime/extensions/codex/node_modules/@openai/codex/node_modules/@openai/codex-win32-x64/vendor/x86_64-pc-windows-msvc/bin/codex.exe',
 ]) {
   mkdirSync(join(fixtureRoot, path, '..'), { recursive: true });
   writeFileSync(join(fixtureRoot, path), '{}\n');

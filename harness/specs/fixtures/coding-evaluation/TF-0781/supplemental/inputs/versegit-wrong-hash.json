@@ -1,0 +1,87 @@
+{
+  "schema": "clawx.versegit.sidecar-package/v1",
+  "packageId": "vg-0.1.0-win32-x64-release-6fef0fab309702fa",
+  "driven_by": "agent",
+  "actor": "codex",
+  "source": {
+    "repository": "https://github.com/Baixu22/VerseGit",
+    "commit": "d9c38a8659274c24ea776b56480a260831b4537f",
+    "tree": "0d2d50c1175dca6d245d77fe53416771737f5791",
+    "archiveSha256": "ad4e5d619c43f9925981e00ca19254f2f911f62800c412daa64fd2a91f0b2e16",
+    "archiveBytes": 92006536,
+    "sourceInputsDigest": "5e4844d25468288262ce91877e89c5883b4d8cff23eb7bf6b1b9df1e0f12bbbc",
+    "effectivePatchSet": [
+      "resources/versegit/patches/TF-0776-colocated-import.patch"
+    ]
+  },
+  "build": {
+    "profile": "release",
+    "command": [
+      "/mnt/d/tmp/coding-relay-01a1b68a-20261107/TF-0776/cross-tools/cargo-xwin/cargo-xwin",
+      "build",
+      "--locked",
+      "--release",
+      "--target",
+      "x86_64-pc-windows-msvc",
+      "--bin",
+      "vg",
+      "--jobs",
+      "2"
+    ],
+    "recipeDigest": "807c71e13cb0d9f53bb7e3020f944b136367e57b908a85596649101ed39366a0",
+    "sourceDateEpoch": 1794207538,
+    "lockfileSha256": "cc01521aac87a5451274efc99da874748876fe648ff5b79b536019a95b66337a",
+    "toolchain": {
+      "cargo": "cargo 1.98.1 (Linux host)",
+      "rustc": "rustc 1.98.1, host x86_64-unknown-linux-gnu, target x86_64-pc-windows-msvc"
+    },
+    "independentBuildRoots": 1,
+    "byteIdentical": false,
+    "buildHashes": {
+      "a": "6fef0fab309702fafdcc716c0f8518257440efafd0a46809930fe33be865c2b4",
+      "b": ""
+    },
+    "semanticIdentityEqual": false
+  },
+  "artifact": {
+    "devPath": "resources/bin/win32-x64/vg.exe",
+    "packagedPath": "bin/vg.exe",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "bytes": 40831488,
+    "format": "pe32+",
+    "platform": "win32",
+    "arch": "x64",
+    "version": "vg 0.1.0"
+  },
+  "provider": {
+    "capabilitiesSchema": "versegit.capabilities/v1",
+    "capabilitiesSha256": "c2d2c9490d4b10f4bdf6f7620fe4c0bd48c65d95931f07fb13275bc4a8219b26",
+    "capabilitiesBytes": 3737,
+    "contractVersion": "clawx.versegit.consumer-contract/v1",
+    "contractDigest": "77471d662b10f49d2e5b0f95ff13599df378ea79a0ab74b709dda42475768df3",
+    "schemaVersions": [
+      1,
+      2
+    ],
+    "ledgerSchemaVersion": 2,
+    "goldenDigest": "323f58a6ad891ed20d507168494c773eeb7266bd0c1bef99137a0cb838279f72"
+  },
+  "profiles": [
+    "M1"
+  ],
+  "license": {
+    "spdx": "Apache-2.0",
+    "path": "resources/versegit/LICENSE-APACHE-2.0.txt",
+    "sha256": "f81c8de6cfc5091c69fd68229215a93e1b31ee73940e355876257bf0db7ca33e"
+  },
+  "retention": {
+    "codeCopied": true,
+    "gitDirectoryCopied": false,
+    "taskForestCopied": false,
+    "privateEvidenceCopied": false,
+    "supportedTargets": [
+      "win32-x64"
+    ],
+    "sourcePatchIncluded": true
+  }
+}

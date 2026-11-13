@@ -1,0 +1,74 @@
+vg 二进制：/home/bai/.cache/clawx-coding-jj-20261108/target/debug/vg（来源：环境变量 VG_BIN）
+PASS   readme_tables                exit=0  0.164s
+PASS   agenticflict_recompute       exit=0  0.115s
+PASS   oracle                       exit=0  0.064s
+PASS   jev_gate                     exit=0  0.064s
+PASS   jev_consistency              exit=0  0.115s
+PASS   verdict_shape                exit=0  0.032s
+PASS   evidence_registry            exit=0  0.165s
+PASS   secret_scan                  exit=0  9.941s
+PASS   evidence_negative_control    exit=0  1.874s
+PASS   secret_negative_control      exit=0  0.215s
+PASS   claims_same_source           exit=0  0.165s
+PASS   freeze_delivery              exit=0  0.315s
+PASS   scenario_determinism         exit=0  2.119s
+PASS   quality_gates                exit=0  2.176s
+PASS   clean_tree_smoke             exit=0  21.556s
+PASS   clean_tree_build_smoke       exit=0  1010.002s
+PASS   clean_tree_build_negative_control exit=0  0.240s
+PASS   oracle_runlist               exit=0  0.065s
+PASS   oracle_runlist_selftest      exit=0  0.065s
+PASS   synthetic_attribution        exit=0  0.114s
+PASS   synthetic_attribution_selftest exit=0  0.065s
+PASS   hook_transcript_selftest     exit=0  0.064s
+PASS   gate_parity                  exit=0  0.033s
+PASS   gate_parity_selftest         exit=0  0.032s
+PASS   candidate_pilot_real_gate    exit=0  0.033s
+PASS   candidate_batch_classes      exit=0  0.032s
+PASS   candidate_batch_classes_negative_control exit=0  0.115s
+PASS   candidate_pilot_real_negative_control exit=0  0.288s
+PASS   sts_workspace_selftest       exit=0  0.115s
+PASS   freeze_readonly_negative_control exit=0  0.218s
+PASS   sts_v2_draft_review          exit=0  0.064s
+PASS   sts_v2_draft_review_selftest exit=0  0.265s
+PASS   sts_workspace                exit=0  0.144s
+PASS   sts_dev_outputs              exit=0  0.165s
+PASS   retained_evidence            exit=0  0.165s
+PASS   retained_evidence_selftest   exit=0  0.064s
+SKIPPED_EXTERNAL_INPUT distill_drift                参考仓库 should gitignore/{clash-main,foremerge-main} 被 .gitignore 排除；干净 checkout 下无输入，必须显式 skip 而不是记为 pass
+PASS   read_basis_ablation          exit=0
+PASS   read_basis_negative_control  exit=0
+PASS   candidate_pilot_gate         exit=0
+SKIPPED_EXTERNAL_INPUT candidate_staleness_expectations 陈旧预筛的期望值表（TF-0191 给 norman#111 的回归落点）要读候选缓存仓 `eval/agenticflict/cache/`——它是被 .gitignore 排除的库外输入，干净 checkout 与 CI 上都没有，必须显式 skip 而不是记为 pass。**两个仓都列进 requires**：期望值表同时钉着 `norman#111`（必须陈旧）与 `glimpser#2006/#2034`（必须不陈旧，第一版误报反例），只具备其中一个就不该声称核过。**必须放在 external_checks 里**：`requires` 只有这一节被 freeze_check 与 clean_tree_smoke 真正读取，写进组内门的 `requires` 会被静默丢弃（两条脚本现在都对这种写法直接报错拒绝）。脚本自己在缓存根缺失时打印可见 SKIP 并退出 0；缓存根在盘上但有期望值没被核到时**退出 2 并拒绝声称通过**（实测假绿形态：缓存根部分填充时旧实现会打印「全部与实测一致」而其实一条没核）
+PASS   candidate_pilot_negative_control exit=0
+SKIPPED_SELF_REPORTED jj_vg_sts_isolation          exit=0
+SKIPPED_SELF_REPORTED jj_isolation_negative_control exit=0
+PASS   jj_vg_sts_budget             exit=0
+PASS   jj_vg_sts_land               exit=0
+PASS   jj_vg_sts_bisect             exit=0
+PASS   jj_vg_sts_regression         exit=0
+PASS   jj_vg_sts_security           exit=0
+PASS   jj_vg_sts_real_data          exit=0
+PASS   jj_vg_sts_pilot              exit=0
+PASS   jj_vg_sts_risks              exit=0
+PASS   git_diff_check               exit=0
+PASS   git_diff_check_selftest      exit=0
+PASS   rust_clippy                  exit=0
+PASS   ci_split_contract            exit=0
+PASS   ci_split_contract_selftest   exit=0
+PASS   ci_evidence_selftest         exit=0
+PASS   third_party_inventory        exit=0
+PASS   dependency_audit             exit=0
+PASS   dependency_audit_selftest    exit=0
+PASS   freeze_summary_accounting_selftest exit=0
+PASS   response_timeline_selftest   exit=0
+
+⚠ 自报未核验（退出码 0，但子门说有条目没核到）——不计为 pass：
+   jj_vg_sts_isolation: live 攻击载体属于 --suite isolation，本 suite 不执行（不是本机缺后端）
+   jj_isolation_negative_control: live 攻击载体属于 --suite isolation，本 suite 不执行（不是本机缺后端）
+
+记分卡已写 ../../../../../mnt/d/tmp/coding-relay-01a1b68a-20261107/TF-0776/native-freeze-final.json
+核心 10 道门：10/10 通过
+全部门：63 道（组内 36 + 库外 27），pass=59 fail=0；库外 skip=['distill_drift', 'candidate_staleness_expectations']；自报未核验=['jj_vg_sts_isolation', 'jj_isolation_negative_control']
+✓ 记分卡：没有失败门
+✓ 只读判据：检查前后跟踪文件未变

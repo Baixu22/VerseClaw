@@ -1,0 +1,431 @@
+{
+  "schema": "CodingStsAcceptance/v1",
+  "taskId": "TF-0778",
+  "driven_by": "agent",
+  "actor": "codex-coding-sts-evaluator",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "41a1180d8cbb6fe5bb6375a7a02a061f4c119983",
+    "tree": "b9a9ab9250a933f57a450abfb12e4f66f7c7e45c",
+    "dirty": false,
+    "changedPaths": [],
+    "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "reportDigest": "c32ffc2047754b64f76656681eeaf20e3b7ee47ef63cecf461173b0ee2a03d86",
+  "source": {
+    "commit": "d9c38a8659274c24ea776b56480a260831b4537f",
+    "tree": "0d2d50c1175dca6d245d77fe53416771737f5791",
+    "dirty": false,
+    "changedPaths": [],
+    "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "vgArtifact": "inputs/vg.exe",
+    "wheelArtifact": "inputs/smart_test_sorter.whl",
+    "vgSha256": "7c8b05f9c7eb295f5e8006e98e123047f70e5f03dbbdfe05c5cb53748eb70d20",
+    "wheelSha256": "f2799600b8d1d42a9c475c80f823b75f3c4312d7155a67983eda2796c558d6fe",
+    "contracts": {
+      "v1ManifestSha256": "51f247c2cbcd3da6d63f09615d3229515829c0f9b96d5746486633379da5f152",
+      "v2ManifestSha256": "10423dd31a16e4cacc387b2fbbc07a8f330e83e1f72f4e590e173e96640edd87"
+    }
+  },
+  "unitEvidenceOrigin": {
+    "mode": "reused-same-native-source",
+    "sourceDirectory": "D:\\tmp\\tf0778-formal-20261110-002638",
+    "sourceReportSha256": "7d4f38bf79eeb6b87856879801f09a32d515af78044adbc62ddda604eb10f46e"
+  },
+  "unitTests": {
+    "passed": 503,
+    "skipped": 1,
+    "returnCode": 0,
+    "manifestMatched": true,
+    "historicalAuditPassed": true,
+    "origin": {
+      "mode": "reused-same-native-source",
+      "sourceDirectory": "D:\\tmp\\tf0778-formal-20261110-002638",
+      "sourceReportSha256": "7d4f38bf79eeb6b87856879801f09a32d515af78044adbc62ddda604eb10f46e"
+    }
+  },
+  "cleanInstall": {
+    "ok": true,
+    "installedRequired": true,
+    "module": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Lib\\site-packages\\smart_sorter\\__init__.py",
+    "python": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+    "protocols": {
+      "1.1": {
+        "consumeOk": true,
+        "hostPlanOk": true,
+        "hostSelectionOk": true,
+        "hostBinding": "unverified",
+        "completeness": "complete",
+        "validity": "valid",
+        "stabilityRepeats": 2,
+        "negativeControls": 0
+      },
+      "2.0": {
+        "consumeOk": true,
+        "hostPlanOk": true,
+        "hostSelectionOk": true,
+        "hostBinding": "confirmed",
+        "completeness": "complete",
+        "validity": "valid",
+        "stabilityRepeats": 2,
+        "negativeControls": 4
+      }
+    }
+  },
+  "negativeCases": {
+    "flaky": {
+      "passed": true,
+      "kind": "indeterminate",
+      "commandIds": [
+        "scenario-make-flaky",
+        "scenario-stability-flaky",
+        "scenario-shadow-indeterminate"
+      ],
+      "evidence": [
+        "scenarios/stability.json",
+        "scenarios/indeterminate.json"
+      ],
+      "observed": {
+        "stability": {
+          "tests": 4,
+          "repeats": 3,
+          "runs_valid_and_complete": true,
+          "verdict_counts": {
+            "stable-pass": 2,
+            "environment-error": 1,
+            "flaky": 1
+          },
+          "instability_detected": true,
+          "run_errors_detected": true,
+          "definite_failures": 0,
+          "not_definite": 2,
+          "undecidable": false
+        },
+        "indeterminate": [
+          "tests/test_env.py::test_env",
+          "tests/test_flaky.py::test_intermittent"
+        ]
+      }
+    },
+    "zero-selection": {
+      "passed": true,
+      "kind": "refusal",
+      "commandIds": [
+        "negative-zero-selection"
+      ],
+      "evidence": [
+        "outputs/negative-zero-selection.stdout.bin",
+        "outputs/negative-zero-selection.stderr.bin"
+      ],
+      "observed": {
+        "nodes": [
+          "tests/test_run_plan.py::test_zero_execution_is_not_a_pass"
+        ]
+      }
+    },
+    "collection-failure": {
+      "passed": true,
+      "kind": "refusal",
+      "commandIds": [
+        "negative-collection-failure"
+      ],
+      "evidence": [
+        "outputs/negative-collection-failure.stdout.bin",
+        "outputs/negative-collection-failure.stderr.bin"
+      ],
+      "observed": {
+        "nodes": [
+          "tests/test_plan_request.py::test_collection_error_is_refused"
+        ]
+      }
+    },
+    "nodeid-drift": {
+      "passed": true,
+      "kind": "refusal",
+      "commandIds": [
+        "negative-nodeid-drift"
+      ],
+      "evidence": [
+        "outputs/negative-nodeid-drift.stdout.bin",
+        "outputs/negative-nodeid-drift.stderr.bin"
+      ],
+      "observed": {
+        "nodes": [
+          "tests/test_run_plan.py::test_stale_plan_is_refused_and_marked_invalid"
+        ]
+      }
+    },
+    "dynamic-parameterization": {
+      "passed": true,
+      "kind": "variants-preserved",
+      "commandIds": [
+        "negative-dynamic-parameterization"
+      ],
+      "evidence": [
+        "outputs/negative-dynamic-parameterization.stdout.bin",
+        "outputs/negative-dynamic-parameterization.stderr.bin"
+      ],
+      "observed": {
+        "nodes": [
+          "tests/test_plan.py::test_select_affected_name_level_matches_param_variant",
+          "tests/test_per_test_dependency.py::test_parametrized_nodeids_are_preserved"
+        ]
+      }
+    },
+    "conftest-plugin-change": {
+      "passed": true,
+      "kind": "full-fallback",
+      "commandIds": [
+        "negative-conftest-plugin-change"
+      ],
+      "evidence": [
+        "outputs/negative-conftest-plugin-change.stdout.bin",
+        "outputs/negative-conftest-plugin-change.stderr.bin"
+      ],
+      "observed": {
+        "nodes": [
+          "tests/test_plan.py::test_assemble_explicit_fallback_is_full",
+          "tests/test_shadow.py::test_isolated_arm_does_not_inherit_plugin_global_state"
+        ]
+      }
+    },
+    "timeout": {
+      "passed": true,
+      "kind": "incomparable",
+      "commandIds": [
+        "negative-timeout"
+      ],
+      "evidence": [
+        "outputs/negative-timeout.stdout.bin",
+        "outputs/negative-timeout.stderr.bin"
+      ],
+      "observed": {
+        "nodes": [
+          "tests/test_shadow.py::test_timeout_makes_the_report_incomparable"
+        ]
+      }
+    },
+    "environment-drift": {
+      "passed": true,
+      "kind": "refusal",
+      "commandIds": [
+        "negative-environment-drift"
+      ],
+      "evidence": [
+        "outputs/negative-environment-drift.stdout.bin",
+        "outputs/negative-environment-drift.stderr.bin",
+        "package/artifacts/wrong-environment.json"
+      ],
+      "observed": {
+        "nodes": [
+          "tests/test_environment.py::test_binding_rejects_dependency_drift_and_missing_dependency_identity",
+          "tests/test_environment.py::test_planning_refuses_a_declared_environment_from_another_interpreter"
+        ],
+        "packageArtifact": {
+          "contentConfirmed": false,
+          "conservativeFullAvailable": false
+        }
+      }
+    },
+    "missed-failure": {
+      "passed": true,
+      "kind": "miss-detected",
+      "commandIds": [
+        "scenario-make-missed",
+        "scenario-shadow-missed"
+      ],
+      "evidence": [
+        "scenarios/missed.json"
+      ],
+      "observed": {
+        "missedFailures": 1
+      }
+    }
+  },
+  "controls": {
+    "missed": {
+      "passed": true,
+      "missedFailures": 1,
+      "commandIds": [
+        "scenario-make-missed",
+        "scenario-shadow-missed"
+      ],
+      "evidence": [
+        "scenarios/missed.json"
+      ]
+    },
+    "covered": {
+      "passed": true,
+      "missedFailures": 0,
+      "commandIds": [
+        "scenario-make-covered",
+        "scenario-shadow-covered"
+      ],
+      "evidence": [
+        "scenarios/covered.json"
+      ]
+    },
+    "full": {
+      "passed": true,
+      "commandIds": [
+        "scenario-shadow-full"
+      ],
+      "evidence": [
+        "scenarios/full.json"
+      ]
+    }
+  },
+  "selectionInvariant": {
+    "selectedUpgradesToFull": 0,
+    "zeroSelectionPublishedAsPass": false,
+    "skipCountedAsPass": false
+  },
+  "benchmarks": {
+    "minColdWarmRepeats": 5,
+    "projects": {
+      "httpx": {
+        "commit": "326b9431c761e1ef1e00b9f760d1f654c8db48c6",
+        "tree": "40173b1c8fd3f7895fb2e5ae91f41cf66f1d2cb8",
+        "changedPaths": [
+          "tests/test_tf0778_candidate.py"
+        ],
+        "diffSha256": "c38bf3d47bc1972927bbbcfd3681c7f67dc0f431172ffddfe1b967fb39984b2c",
+        "interpreter": {
+          "path": "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+          "version": "3.10.3",
+          "module": "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Lib\\site-packages\\smart_sorter\\__init__.py",
+          "pytest": "8.0.0",
+          "moduleInsideVenv": true
+        },
+        "environmentSetupSeconds": 69.28435707092285,
+        "collected": 1,
+        "selected": 1,
+        "samples": 20,
+        "cold": {
+          "selectedWallSecondsMean": 22.553644359999453,
+          "fullWallSecondsMean": 16.61841419999837
+        },
+        "warm": {
+          "selectedWallSecondsMean": 20.45000869999931,
+          "fullWallSecondsMean": 16.305791699999826
+        },
+        "peakTreeRssBytesMax": 203239424,
+        "trialWallSecondsTotal": 379.6392947999848,
+        "wallSecondsWithSetup": 448.92365187090763
+      },
+      "packaging": {
+        "commit": "7b898d9f0b343ca06993157fc328d7caad51d5c2",
+        "tree": "37d527564c7c335232e4bd594161917955b13f3e",
+        "changedPaths": [
+          "tests/test_tf0778_candidate.py"
+        ],
+        "diffSha256": "1f960e026a7716d85421117e13692d127c1c450105956de7545e675cff484651",
+        "interpreter": {
+          "path": "D:\\tmp\\tf0778-real-20261109-230000\\packaging-venv-final\\Scripts\\python.exe",
+          "version": "3.10.3",
+          "module": "D:\\tmp\\tf0778-real-20261109-230000\\packaging-venv-final\\Lib\\site-packages\\smart_sorter\\__init__.py",
+          "pytest": "9.2.0",
+          "moduleInsideVenv": true
+        },
+        "environmentSetupSeconds": 8.625272035598755,
+        "collected": 1,
+        "selected": 1,
+        "samples": 20,
+        "cold": {
+          "selectedWallSecondsMean": 18.26798730000155,
+          "fullWallSecondsMean": 14.732111759996041
+        },
+        "warm": {
+          "selectedWallSecondsMean": 15.022765780001645,
+          "fullWallSecondsMean": 12.8940224400023
+        },
+        "peakTreeRssBytesMax": 208424960,
+        "trialWallSecondsTotal": 304.5844364000077,
+        "wallSecondsWithSetup": 313.20970843560644
+      }
+    },
+    "claim": "improvement-unproven",
+    "sampleCount": 40,
+    "missedFailureRate": 0,
+    "falsePositiveRate": 0
+  },
+  "temporaryCleanup": {
+    "removedFiles": 55,
+    "removedBytes": 38153,
+    "remaining": 0
+  },
+  "independentVerification": {
+    "ok": true,
+    "acceptanceEligible": true,
+    "issues": [],
+    "negativeChecks": [
+      {
+        "case": "delete-negative-case",
+        "rejected": true,
+        "issues": [
+          "negative case not handled: timeout",
+          "negative case kind mismatch: timeout",
+          "negative command binding missing: timeout",
+          "negative artifact binding missing: timeout"
+        ]
+      },
+      {
+        "case": "wrong-candidate",
+        "rejected": true,
+        "issues": [
+          "candidate commit mismatch"
+        ]
+      },
+      {
+        "case": "artifact-digest-tamper",
+        "rejected": true,
+        "issues": [
+          "artifact digest mismatch: benchmarks/httpx/full-cold-1.json.gz"
+        ]
+      },
+      {
+        "case": "flaky-as-pass",
+        "rejected": true,
+        "issues": [
+          "negative case not handled: flaky"
+        ]
+      },
+      {
+        "case": "selected-upgraded",
+        "rejected": true,
+        "issues": [
+          "selected upgraded to full"
+        ]
+      },
+      {
+        "case": "missing-benchmark-arm",
+        "rejected": true,
+        "issues": [
+          "httpx trial count mismatch",
+          "httpx/full/warm sample count too small",
+          "httpx aggregate mismatch: full_warm.samples",
+          "httpx aggregate mismatch: full_warm.wallSecondsMean",
+          "httpx aggregate mismatch: full_warm.peakTreeRssBytesMean",
+          "httpx aggregate mismatch: samples",
+          "httpx aggregate mismatch: wallSecondsTotal"
+        ]
+      },
+      {
+        "case": "self-consistent-forgery",
+        "rejected": true,
+        "issues": [
+          "canonical report digest mismatch",
+          "summary missed failure rate is not zero"
+        ]
+      }
+    ]
+  },
+  "decision": {
+    "status": "accepted-task-evidence",
+    "defaultSelection": "off",
+    "claim": "improvement-unproven",
+    "releaseApproved": false,
+    "ga": false,
+    "benefit": false
+  }
+}

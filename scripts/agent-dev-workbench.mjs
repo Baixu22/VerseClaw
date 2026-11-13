@@ -1,4 +1,5 @@
 import { isMainEntrypoint } from './lib/entrypoint.mjs';
+import { acceptanceArtifactPath } from './lib/acceptance-artifacts.mjs';
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -10,14 +11,14 @@ const CONTRACT_PATH = resolve(ROOT, 'shared/host-api/contract.ts');
 const HOST_API_PATH = resolve(ROOT, 'src/lib/host-api.ts');
 const AGENT_DEV_SERVICE_PATH = resolve(ROOT, 'electron/services/agent-dev-api.ts');
 const TRACE_CONTRACT_PATH = resolve(ROOT, 'shared/agent-dev/trace-contract.ts');
-const OUT_DIR = resolve(ROOT, 'artifacts/agent-dev-workbench');
+const OUT_DIR = acceptanceArtifactPath(ROOT, 'agent-dev-workbench');
 const OUT_FILE = resolve(OUT_DIR, 'index.html');
 const OUT_EVIDENCE_FILE = resolve(OUT_DIR, 'evidence.json');
 const PACKAGE_PATH = resolve(ROOT, 'package.json');
-const DEEP_TEST_REPORT_PATH = resolve(ROOT, 'artifacts', 'agent-dev-deep-test', 'report.json');
-const DEEP_TEST_HISTORY_PATH = resolve(ROOT, 'artifacts', 'agent-dev-deep-test', 'history.json');
-const AUDIT_REPORT_PATH = resolve(ROOT, 'artifacts', 'agent-dev-audit', 'report.json');
-const QUALITY_REPORT_PATH = resolve(ROOT, 'artifacts', 'agent-dev-quality', 'report.json');
+const DEEP_TEST_REPORT_PATH = acceptanceArtifactPath(ROOT, 'agent-dev-deep-test/report.json');
+const DEEP_TEST_HISTORY_PATH = acceptanceArtifactPath(ROOT, 'agent-dev-deep-test/history.json');
+const AUDIT_REPORT_PATH = acceptanceArtifactPath(ROOT, 'agent-dev-audit/report.json');
+const QUALITY_REPORT_PATH = acceptanceArtifactPath(ROOT, 'agent-dev-quality/report.json');
 
 function extractScenarios(registryText) {
   const match = registryText.match(/export const AGENT_DEV_SCENARIOS = \[([\s\S]*?)\] as const/);

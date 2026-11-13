@@ -1,0 +1,15 @@
+{
+  "protocol_version": "1.1",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "req-bind-200",
+  "mode": "candidate",
+  "repo": { "path": "C:/cand/vg-merge-200" },
+  "target": {
+    "candidate_dir": "C:/cand/vg-merge-200/wt",
+    "base_oid": "aaaaaaa000111222333444555666777888999abc",
+    "ours_oid": "bbbbbbb000111222333444555666777888999abc",
+    "theirs_oid": "ccccccc000111222333444555666777888999abc",
+    "candidate_tree_oid": "ddddddd000111222333444555666777888999abc"
+  },
+  "identities": { "code_oid": "ddddddd000111222333444555666777888999abc" }
+}

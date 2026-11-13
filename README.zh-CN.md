@@ -111,6 +111,7 @@ Verse Claw 是基于嵌入式 OpenClaw Runtime 的 Electron 桌面应用。它�
 - VToken 已退役；旧环境变量/配置不能重新启用生产 assembly 或 sidecar。
 - VerseGit 与 VerseShell 仍默认关闭；宿主接入保留下述职责与权限边界。
 - Dreams 已退役；Image Generation 是开发者/测试门槛，不是正常产品导航。
+- VerseGit 有界编码闭环默认关闭，尚未批准全面可用；当前证据仅在 Windows win32-x64 M1 覆盖 write journal 与 Git apply。TF-0782 另覆盖 A1-A10 修复谱系、源码与包内编码控制、VG/JJ/STS/VerseShell 评测、崩溃恢复，以及三套 fresh Windows win32-x64 M1 win-unpacked profile。STS 选择未测出速度收益并保持 opt-in；Python 与独立 JJ 不随包提供，managed 路径需要显式可用输入。installer 尚未执行；M4、land/准入权限仍不可用，扩大可用范围或发布均未获批准，liveReady=false、productApproved=false。
 - `liveReady=false`、`productApproved=false`、`defaultOn=false` 仍是产品锁。
 
 <!-- VERSE-TOOLS-BOUNDARY-START -->

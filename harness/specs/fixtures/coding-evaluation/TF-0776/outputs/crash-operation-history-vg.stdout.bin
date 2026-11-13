@@ -1,0 +1,51 @@
+{
+  "entries": [
+    {
+      "description": "vg: snapshot",
+      "hostname": "versegit.invalid",
+      "is_head": true,
+      "is_snapshot": false,
+      "operation_id": "4ceb41934f80dfd466447ccc03238e6cde50d34f5a2843180040d7293fb75d03ff2121a01cc1c312d520a64e0a53d259eb4f55123ba78bbfc0ce74d394923c65",
+      "parent_ids": [
+        "822e285254460eea9f4f3c09624bc3acea2a8b169b2d63d3400893c1ba79176394fa05f3ffd6ee7024db74adea60ad8230cf95b723985e2c8bac906482a5e60d"
+      ],
+      "time_end_millis": 1794218048985,
+      "time_start_millis": 1794218048959,
+      "username": "versegit",
+      "view_id": "0ee4fefc8039a6084c8641bcd765c280f2cb95837f6db616923b3c9b8b3d5a8b7d941c59c53293804e8250217a57174b4b255538d2c8d8bab679ad650e4f85f0",
+      "workspace_name": null
+    },
+    {
+      "description": "add workspace 'default'",
+      "hostname": "versegit.invalid",
+      "is_head": false,
+      "is_snapshot": false,
+      "operation_id": "822e285254460eea9f4f3c09624bc3acea2a8b169b2d63d3400893c1ba79176394fa05f3ffd6ee7024db74adea60ad8230cf95b723985e2c8bac906482a5e60d",
+      "parent_ids": [
+        "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "time_end_millis": 1794218047999,
+      "time_start_millis": 1794218047958,
+      "username": "versegit",
+      "view_id": "bb148265755775d2028a04aaa1bea96c411d602218b831825e2e41048a60e4920531df42a61445a4b21c5691de77a93b165d42a799ab8435e6caab95393d86d8",
+      "workspace_name": null
+    },
+    {
+      "description": "",
+      "hostname": "",
+      "is_head": false,
+      "is_snapshot": false,
+      "operation_id": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "parent_ids": [],
+      "time_end_millis": 0,
+      "time_start_millis": 0,
+      "username": "",
+      "view_id": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "workspace_name": null
+    }
+  ],
+  "kind": "operation-log",
+  "limit": 100,
+  "next_after": null,
+  "schema": "versegit.vg-json/v1"
+}

@@ -1,0 +1,32 @@
+{
+  "protocol_version": "1.0",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "req-workspace-norisk-001",
+  "plan_id": "plan-001",
+  "target_identity": "worktree@99cba6a1f2+dirty:2",
+  "rules_id": "smart-select/v1",
+  "selection_scope": "selected",
+  "collected": [
+    "tests/test_content.py::test_iter_text",
+    "tests/test_content.py::test_iter_text[utf-8]",
+    "tests/test_client.py::test_get",
+    "tests/test_urls.py::test_join"
+  ],
+  "selected": [
+    "tests/test_content.py::test_iter_text",
+    "tests/test_content.py::test_iter_text[utf-8]"
+  ],
+  "excluded": [
+    "tests/test_client.py::test_get",
+    "tests/test_urls.py::test_join"
+  ],
+  "order": [
+    "tests/test_content.py::test_iter_text[utf-8]",
+    "tests/test_content.py::test_iter_text"
+  ],
+  "reasons": {
+    "tests/test_content.py::test_iter_text": "name-level: 引用被改函数 iter_text",
+    "tests/test_content.py::test_iter_text[utf-8]": "name-level: 引用被改函数 iter_text"
+  },
+  "supported_run_modes": ["pytest-nodeids"]
+}

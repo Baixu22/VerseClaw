@@ -1,0 +1,20 @@
+{
+  "schema": "CodingJjNativeFinalSourceGuard/v1",
+  "driven_by": "agent",
+  "actor": "codex-01a1b68a",
+  "realHumanEvidence": false,
+  "commit": "d9c38a8659274c24ea776b56480a260831b4537f",
+  "lockSha256": "cc01521aac87a5451274efc99da874748876fe648ff5b79b536019a95b66337a",
+  "inputs": {
+    "Cargo.lock": "cc01521aac87a5451274efc99da874748876fe648ff5b79b536019a95b66337a",
+    "crates/vg-battery-verify/src/interrupt.rs": "3b67508f9704b4b2ccc6efc23d1512faf25a3a000d35b54f507fb3597170747d",
+    "crates/vg-cli/src/main.rs": "0e3a066515640d921d9f73c82779d822a96686462ec4cf836aee323cb7b53216",
+    "crates/vg-cli/src/sts_manifest.rs": "7d876b2b9527f0d67bbaa3cfa95f536a23eba5b6bd8d7fd5707f82e1efbcd3e6",
+    "crates/vg-cli/tests/jj_workspace_lifecycle.rs": "7a8bc4cfab61dd45c2028074a3f986447dc5a60bf6e65e6cff5c3b4be7a57053",
+    "crates/vg-jj/src/lib.rs": "8aa384c28c5c434b9d6725f4f56701452aa660289146c190d7c45b528703f982",
+    "docs/jj-vg-sts-rollout.md": "ec0ad765394cfd5725af271d9c88a0f927308dc2800758f72ea0f0b89b1c054b",
+    "scripts/check_hook_transcript.py": "e906a1d98c7234b90adda8030a72c91021c57fca7721b85ebbaa151791fd4973"
+  },
+  "worktreeClean": true,
+  "finishedAt": "2026-11-09T08:32:56.588581+00:00"
+}

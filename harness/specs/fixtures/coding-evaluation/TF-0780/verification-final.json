@@ -1,0 +1,81 @@
+{
+  "ok": true,
+  "issues": [],
+  "acceptanceEligible": true,
+  "reportDigest": "c6c9cb9b02713d3f57c4a4b4ac6a36bd58e25896cba579128a9096c550738fa4",
+  "negativeChecks": [
+    {
+      "case": "delete-window",
+      "rejected": true,
+      "issues": [
+        "five-window row count mismatch",
+        "five-window coverage is incomplete"
+      ]
+    },
+    {
+      "case": "wrong-candidate",
+      "rejected": true,
+      "issues": [
+        "candidate commit mismatch"
+      ]
+    },
+    {
+      "case": "artifact-digest-tamper",
+      "rejected": true,
+      "issues": [
+        "artifact digest mismatch: baseline/journal-kill-results.json"
+      ]
+    },
+    {
+      "case": "fake-epoch",
+      "rejected": true,
+      "issues": [
+        "old epoch rejection not retained: intent/1"
+      ]
+    },
+    {
+      "case": "missing-receipt",
+      "rejected": true,
+      "issues": [
+        "VG receipt presence mismatch: materialized/1",
+        "VG materialization missing: materialized/1",
+        "VG candidate binding mismatch: materialized/1"
+      ]
+    },
+    {
+      "case": "forged-candidate-binding",
+      "rejected": true,
+      "issues": [
+        "VG candidate binding mismatch: materialized/1"
+      ]
+    },
+    {
+      "case": "duplicate-undo",
+      "rejected": true,
+      "issues": [
+        "second recovery replayed: intent/1"
+      ]
+    },
+    {
+      "case": "false-completion",
+      "rejected": true,
+      "issues": [
+        "final ledger is not recoverable non-completion: intent/1"
+      ]
+    },
+    {
+      "case": "cleanup-survivor",
+      "rejected": true,
+      "issues": [
+        "recovery safety counters nonzero"
+      ]
+    },
+    {
+      "case": "retained-digest-mismatch",
+      "rejected": true,
+      "issues": [
+        "canonical report digest mismatch"
+      ]
+    }
+  ]
+}

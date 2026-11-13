@@ -1,0 +1,460 @@
+{
+  "schema": "CodingVsExecution/v1",
+  "driven_by": "agent",
+  "actor": "codex-01a1b68a",
+  "realHumanEvidence": false,
+  "candidate": "abaa5f79d3daaf107324c90f42028945db8c94d3",
+  "sources": {
+    "clawx": {
+      "commit": "abaa5f79d3daaf107324c90f42028945db8c94d3",
+      "tree": "3cc794aad485bd21be09244edaafe410fb51481b",
+      "dirty": false,
+      "inputs": {
+        "tests/unit/coding-vs-evaluation.test.ts": "c9894632fa005c7c8414d7110da91cc7dabef32787c22db9572b7d27c5caa139",
+        "harness/specs/tasks/coding-vs-execution-evaluation.md": "0a6011a1b7f052e36582b188f2fba1a1949311166c9561b5f665eaf963ca6479",
+        "scripts/coding-evaluation/verify-vs.py": "c6f856bcc8d949fd7619bb4debb4b91acc74101574a1ced4ad79cd7bae5d7892",
+        "scripts/coding-evaluation/test_vs_evidence.py": "2f88c0929ba4222a31d50d81a0939fa1fd55b4a4fc083cfec89b7712441b13fb"
+      }
+    },
+    "sts": {
+      "commit": "d9c38a8659274c24ea776b56480a260831b4537f",
+      "tree": "0d2d50c1175dca6d245d77fe53416771737f5791",
+      "interpreterSha256": "272448c5844564aa5bebc8d8dd0065f859b9fba9f499996eec2a1cf17496f250",
+      "packageRoot": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\extensions\\sts\\src",
+      "moduleSha256": "3e91a688839d1e99db979338ec550d6c303c7775385e6810b26699523351b476"
+    }
+  },
+  "binaries": {
+    "verseshell": {
+      "path": "resources/bin/win32-x64/ae.exe",
+      "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+      "bytes": 15144448
+    },
+    "vg": {
+      "path": "resources/bin/win32-x64/vg.exe",
+      "sha256": "6fef0fab309702fafdcc716c0f8518257440efafd0a46809930fe33be865c2b4",
+      "bytes": 40831488
+    }
+  },
+  "fixtures": {
+    "stsRepository": {
+      "commit": "87aead5c4fd6bb5011bfc967983bb5800c2586ba",
+      "tree": "dcb38863ade8eee3694554601ca8949144f906a1",
+      "refsDigest": "4d4c6869bba92cdeaa77d125391bb907d6da54edc3461f804ddd4d7986b12b28"
+    }
+  },
+  "processes": [
+    {
+      "kind": "exit",
+      "aePid": 38164,
+      "childPid": null,
+      "exit": {
+        "state": "exited",
+        "exitCode": 0,
+        "timedOut": false,
+        "artifacts": [
+          "result://sha256/83d7d4df18591f6a966c7999355338c625e5a2f7c9cb0c35f11d3ed9f725e022"
+        ]
+      },
+      "aeAlive": false,
+      "childAlive": null
+    },
+    {
+      "kind": "cancel",
+      "aePid": 30288,
+      "childPid": 25424,
+      "exit": {
+        "state": "killed",
+        "exitCode": 1,
+        "timedOut": false,
+        "terminationReason": "agent_abort",
+        "artifacts": []
+      },
+      "aeAlive": false,
+      "childAlive": false
+    },
+    {
+      "kind": "timeout",
+      "aePid": 42756,
+      "childPid": 32592,
+      "exit": {
+        "state": "killed",
+        "exitCode": 1,
+        "timedOut": true,
+        "terminationReason": "timeout",
+        "artifacts": []
+      },
+      "aeAlive": false,
+      "childAlive": false
+    }
+  ],
+  "restart": {
+    "firstAePid": 15944,
+    "firstChildPid": 29156,
+    "firstExit": {
+      "state": "killed",
+      "exitCode": 1,
+      "timedOut": false,
+      "terminationReason": "agent_abort",
+      "artifacts": []
+    },
+    "firstDead": true,
+    "afterAePid": 43204,
+    "afterExit": {
+      "state": "exited",
+      "exitCode": 0,
+      "timedOut": false,
+      "artifacts": [
+        "result://sha256/4a0a23d1b66fa729d2c14f63f9232046efcd34a334638f756737f74886881787"
+      ]
+    },
+    "afterStdout": "restart-ok\n",
+    "afterDead": true
+  },
+  "crossTask": {
+    "leftAePid": 24964,
+    "leftChildPid": 47204,
+    "rightAePid": 21168,
+    "rightChildPid": 32004,
+    "rightStillAlive": true,
+    "leftDead": true,
+    "rightDead": true
+  },
+  "sentinel": {
+    "unknownPid": 19200,
+    "unknownPreserved": true,
+    "managedPid": 16044,
+    "managedDead": true
+  },
+  "cases": [
+    {
+      "id": "process-normal",
+      "passed": true
+    },
+    {
+      "id": "process-timeout",
+      "passed": true
+    },
+    {
+      "id": "process-cancel",
+      "passed": true
+    },
+    {
+      "id": "gateway-restart-boundary",
+      "passed": true
+    },
+    {
+      "id": "cross-task-cancel-isolated",
+      "passed": true
+    },
+    {
+      "id": "unknown-pid-preserved",
+      "passed": true
+    },
+    {
+      "id": "sts-pytest-exit0",
+      "passed": true
+    },
+    {
+      "id": "sts-failed-exit7",
+      "passed": true
+    },
+    {
+      "id": "live-receipt-accepted",
+      "passed": true
+    },
+    {
+      "id": "cleanup-zero",
+      "passed": true
+    },
+    {
+      "id": "negative-old-candidate",
+      "passed": true
+    },
+    {
+      "id": "negative-observation-digest",
+      "passed": true
+    },
+    {
+      "id": "negative-forged-live-without-authority",
+      "passed": true
+    },
+    {
+      "id": "negative-fake-exit0",
+      "passed": true
+    },
+    {
+      "id": "negative-artifact-summary",
+      "passed": true
+    },
+    {
+      "id": "negative-late-frame",
+      "passed": true
+    },
+    {
+      "id": "negative-no-native-fallback",
+      "passed": true
+    }
+  ],
+  "commands": [
+    {
+      "id": "process-exit-authority",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\tmp\\tf0777-exit-UKdzTv\\probe.cjs"
+      ],
+      "cwd": "D:\\tmp\\tf0777-exit-UKdzTv",
+      "exitCode": 0,
+      "waitedForExit": true,
+      "stdoutArtifact": "outputs/process-exit-authority.stdout.bin",
+      "stderrArtifact": "outputs/process-exit-authority.stderr.bin",
+      "stdoutSha256": "83d7d4df18591f6a966c7999355338c625e5a2f7c9cb0c35f11d3ed9f725e022",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "aePid": 38164,
+      "childPid": null,
+      "state": "exited",
+      "timedOut": false,
+      "terminationReason": null
+    },
+    {
+      "id": "process-cancel-authority",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\tmp\\tf0777-cancel-ol3Plo\\probe.cjs"
+      ],
+      "cwd": "D:\\tmp\\tf0777-cancel-ol3Plo",
+      "exitCode": 1,
+      "waitedForExit": true,
+      "stdoutArtifact": "outputs/process-cancel-authority.stdout.bin",
+      "stderrArtifact": "outputs/process-cancel-authority.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "aePid": 30288,
+      "childPid": 25424,
+      "state": "killed",
+      "timedOut": false,
+      "terminationReason": "agent_abort"
+    },
+    {
+      "id": "process-timeout-authority",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\tmp\\tf0777-timeout-g8SsD1\\probe.cjs"
+      ],
+      "cwd": "D:\\tmp\\tf0777-timeout-g8SsD1",
+      "exitCode": 1,
+      "waitedForExit": true,
+      "stdoutArtifact": "outputs/process-timeout-authority.stdout.bin",
+      "stderrArtifact": "outputs/process-timeout-authority.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "aePid": 42756,
+      "childPid": 32592,
+      "state": "killed",
+      "timedOut": true,
+      "terminationReason": "timeout"
+    },
+    {
+      "id": "process-restart-before-authority",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\tmp\\tf0777-cancel-r8HAKi\\probe.cjs"
+      ],
+      "cwd": "D:\\tmp\\tf0777-cancel-r8HAKi",
+      "exitCode": 1,
+      "waitedForExit": true,
+      "stdoutArtifact": "outputs/process-restart-before-authority.stdout.bin",
+      "stderrArtifact": "outputs/process-restart-before-authority.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "aePid": 15944,
+      "childPid": 29156,
+      "state": "killed",
+      "timedOut": false,
+      "terminationReason": "agent_abort"
+    },
+    {
+      "id": "process-restart-after-success",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\tmp\\tf0777-restart-I7UmZR\\after-restart.cjs"
+      ],
+      "cwd": "D:\\tmp\\tf0777-restart-I7UmZR",
+      "exitCode": 0,
+      "waitedForExit": true,
+      "stdoutArtifact": "outputs/process-restart-after-success.stdout.bin",
+      "stderrArtifact": "outputs/process-restart-after-success.stderr.bin",
+      "stdoutSha256": "4a0a23d1b66fa729d2c14f63f9232046efcd34a334638f756737f74886881787",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "aePid": 43204
+    },
+    {
+      "id": "cross-left",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\tmp\\tf0777-cross-left-PONEDc\\probe.cjs"
+      ],
+      "cwd": "D:\\tmp\\tf0777-cross-left-PONEDc",
+      "exitCode": 1,
+      "waitedForExit": true,
+      "stdoutArtifact": "outputs/cross-left.stdout.bin",
+      "stderrArtifact": "outputs/cross-left.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "aePid": 24964,
+      "childPid": 47204
+    },
+    {
+      "id": "cross-right",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\tmp\\tf0777-cross-right-u6Nbkp\\probe.cjs"
+      ],
+      "cwd": "D:\\tmp\\tf0777-cross-right-u6Nbkp",
+      "exitCode": 1,
+      "waitedForExit": true,
+      "stdoutArtifact": "outputs/cross-right.stdout.bin",
+      "stderrArtifact": "outputs/cross-right.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "aePid": 21168,
+      "childPid": 32004
+    },
+    {
+      "id": "unknown-pid-control",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\tmp\\tf0777-sentinel-nmnvBi\\probe.cjs"
+      ],
+      "cwd": "D:\\tmp\\tf0777-sentinel-nmnvBi",
+      "exitCode": 0,
+      "waitedForExit": true,
+      "stdoutArtifact": "outputs/unknown-pid-control.stdout.bin",
+      "stderrArtifact": "outputs/unknown-pid-control.stderr.bin",
+      "stdoutSha256": "5b4bc29f140e30c01417d810e700ecc54a84a0107566d84215b42e5742ef8d96",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "aePid": 16044,
+      "unknownPid": 19200
+    },
+    {
+      "id": "tf0777-sts-pass",
+      "argv": [
+        "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "cwd": "D:\\tmp\\tf0777-sts-Flcw01",
+      "exitCode": 0,
+      "waitedForExit": true,
+      "stdoutArtifact": "outputs/tf0777-sts-pass.stdout.bin",
+      "stderrArtifact": "outputs/tf0777-sts-pass.stderr.bin",
+      "stdoutSha256": "1522ee6acc841f68d4e2de11068e29ffb90f52c410ef5dd8697890b792af9d46",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "processPid": 39720,
+      "observationId": "host-process-proc_8fc26bd7b8cf462eb1ad3cf5704526a2",
+      "receiptStatus": "accepted",
+      "verdict": "observed"
+    },
+    {
+      "id": "tf0777-sts-fail",
+      "argv": [
+        "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\Scripts\\python.exe",
+        "-c",
+        "raise SystemExit(7)"
+      ],
+      "cwd": "D:\\tmp\\tf0777-sts-Flcw01",
+      "exitCode": 7,
+      "waitedForExit": true,
+      "stdoutArtifact": "outputs/tf0777-sts-fail.stdout.bin",
+      "stderrArtifact": "outputs/tf0777-sts-fail.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "processPid": 50556,
+      "observationId": "host-process-proc_22713f3041d949079c156c288c02ed4c",
+      "receiptStatus": "accepted",
+      "verdict": "observed"
+    }
+  ],
+  "receipt": {
+    "receiptId": "receipt-tf0777-sts-pass",
+    "digest": "c4e31de22777377d083edf8b821ab415ddf8a8c75fdadbf12a6afa608b109ca1",
+    "planDigest": "99a6f2811143746287f7f6ce29d5bdf255b77d105d07da8dad66f390356d5f3c",
+    "observationDigest": "4ebb354a2412fbd3d0689b0440a898e44833ef9d023dacf0da9d5e6fe4bdf063",
+    "cleanupDigest": "d766a32bf44ec80fb9b94d9a04daad805ab66ea9d36a03b43901b1a5f974d692",
+    "artifactDigests": [
+      "02f1f0a5c37f34dd9553bb7eb98f14dc1a78cdbe89a11856b45d7c55a2c2e6b7",
+      "1522ee6acc841f68d4e2de11068e29ffb90f52c410ef5dd8697890b792af9d46",
+      "4ebb354a2412fbd3d0689b0440a898e44833ef9d023dacf0da9d5e6fe4bdf063",
+      "93323e56d8aa6bc091b56f6525b44a4dfd76d258b814ded1248141e1469a018f",
+      "d766a32bf44ec80fb9b94d9a04daad805ab66ea9d36a03b43901b1a5f974d692",
+      "df6f20069582dd907b8f60d76d56d67e78cf38a8c2892cedf3bf0b6a94aeb6b4",
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    ],
+    "authorityManifest": {
+      "path": "manifest.json",
+      "digest": "072c65f1fc9af10b2ecc46bf2e326e426aaff49e11285444b1170e099dece38b",
+      "aggregateDigest": "657543405c1240f33e1970c1826242fa373c4163a636a00f0b287af915d06a52"
+    },
+    "receiptFile": "receipt/receipt.json",
+    "receiptFileSha256": "799ff3e0e08ec5bca872f3615aedb77ff7ab826e00d5436493a47e1adccde33d",
+    "receiptFileDigest": "c4e31de22777377d083edf8b821ab415ddf8a8c75fdadbf12a6afa608b109ca1"
+  },
+  "failedReceipt": {
+    "receiptId": "receipt-tf0777-sts-fail",
+    "exitCode": 7,
+    "digest": "b4296392256c9983ac280b98292f7b3d1b7566f2a15e51ba633a657d829fa200"
+  },
+  "cleanup": {
+    "schema": "clawx.versegit.verification-cleanup/v2",
+    "status": "clean",
+    "processesDeleted": true,
+    "processSurvivors": 0,
+    "survivorPids": [],
+    "managerProcessSurvivors": 0,
+    "managedAfterShutdown": [],
+    "worktreesDeleted": 0,
+    "worktreeSurvivors": 0,
+    "candidateWorktreeSurvivors": 0,
+    "verificationRootRemoved": true,
+    "baseRootPreserved": true,
+    "tempRootRemoved": true,
+    "hostWorktreesDeleted": 0,
+    "deletionErrors": [],
+    "processInventory": {
+      "baselinePids": [],
+      "duringPids": [
+        39720
+      ],
+      "afterPids": [],
+      "newProcessPids": [
+        39720
+      ],
+      "managedPids": [
+        39720
+      ],
+      "managedAfterShutdown": [],
+      "survivorPids": [],
+      "ownedPidChecks": [
+        {
+          "ok": true,
+          "pid": 39720,
+          "exists": false
+        }
+      ]
+    },
+    "cleanupBarrier": {
+      "schema": "clawx.versegit.cleanup-barrier-evidence/v1",
+      "runId": "tf0777-sts-pass",
+      "sealId": "bd007d576fd97bed36b869f0ebdc50979eadfbfa646d7ab9639f653017c41300",
+      "recordDigest": "d092943d9e2b2317e360c851141412b58c3b61dc825d059f3307483888ab71b5",
+      "ownerId": "tf0777",
+      "epoch": 1,
+      "authorizationId": "tf0777-auth",
+      "baseOid": "87aead5c4fd6bb5011bfc967983bb5800c2586ba",
+      "refsDigest": "sha256:4d4c6869bba92cdeaa77d125391bb907d6da54edc3461f804ddd4d7986b12b28"
+    }
+  },
+  "remaining": [],
+  "finishedAt": "2026-11-09T13:36:01.081Z"
+}

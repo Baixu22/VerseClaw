@@ -1,0 +1,53 @@
+{
+  "protocol_version": "2.0",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "req-v2-pair-1",
+  "mode": "candidate",
+  "repo": {
+    "path": "D:/verseci/example-repo"
+  },
+  "target": {
+    "candidate_dir": "D:/verseci/example-candidate",
+    "base_oid": "a111111111111111111111111111111111111111",
+    "ours_oid": "b222222222222222222222222222222222222222",
+    "theirs_oid": "c333333333333333333333333333333333333333",
+    "candidate_tree_oid": "d444444444444444444444444444444444444444"
+  },
+  "identities": {
+    "content_identity": {
+      "kind": "git-tree",
+      "value": "d444444444444444444444444444444444444444",
+      "label": "candidate@d444444"
+    },
+    "environment_identity": {
+      "python": "3.10.3",
+      "platform": "win32",
+      "dependencies_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    }
+  },
+  "content_manifest": {
+    "algorithm": "sha256",
+    "exclusion_policy_id": "noise-dirs/v2",
+    "line_endings": "normalized-lf",
+    "entries": [
+      {
+        "path": "calc.py",
+        "digest": "sha256:aaaa000000000000000000000000000000000000000000000000000000000001",
+        "role": "source"
+      },
+      {
+        "path": "tests/test_calc.py",
+        "digest": "sha256:aaaa000000000000000000000000000000000000000000000000000000000002",
+        "role": "test"
+      },
+      {
+        "path": "pytest.ini",
+        "digest": "sha256:aaaa000000000000000000000000000000000000000000000000000000000003",
+        "role": "config"
+      }
+    ],
+    "symlinks": "record-target",
+    "submodules": "reject",
+    "unreadable_files": "unconfirmed"
+  }
+}

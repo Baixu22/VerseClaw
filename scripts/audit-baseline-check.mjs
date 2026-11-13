@@ -11,6 +11,7 @@
  * Exit 0 on pass; non-zero on failure.
  */
 import fs from 'fs';
+import { acceptanceArtifactPath } from './lib/acceptance-artifacts.mjs';
 import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
@@ -253,7 +254,7 @@ const report = {
   info: INFO,
 };
 
-const outDir = path.join(root, 'artifacts/system-maturity/P0-001');
+const outDir = acceptanceArtifactPath(root, 'system-maturity/P0-001');
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, 'audit-baseline-check.json'), JSON.stringify(report, null, 2) + '\n');
 

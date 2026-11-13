@@ -1,0 +1,12 @@
+{
+  "command": "workspace.add",
+  "destination": "D:\\ClawX\\.tmp\\coding-jj-parity-final-clean-41fe099\\fixtures\\stale-workspace\\vg-peer",
+  "schema": "versegit.vg-json/v1",
+  "snapshot": {
+    "change_id": "7465aee0ea23d55c07500179b8175861",
+    "operation_id": "092647978444b271b73aaa187e319a9a26c8ca85ebc369476b60c9305b94fcfd288f8e65556226a0cd40207a88af369aa877bf0d58d972acdf5a38ce320d572c",
+    "schema": "versegit.vg-json/v1",
+    "wc_commit_id": "076623f8e342e5ba52b8d2e77701c9fa8fabe6ac",
+    "workspace_root": "D:\\ClawX\\.tmp\\coding-jj-parity-final-clean-41fe099\\fixtures\\stale-workspace\\vg-peer"
+  }
+}

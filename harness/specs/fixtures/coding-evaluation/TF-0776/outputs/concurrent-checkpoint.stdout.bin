@@ -1,0 +1,32 @@
+{
+  "operation": {
+    "description": "add workspace 'default'",
+    "hostname": "versegit.invalid",
+    "is_head": true,
+    "is_snapshot": false,
+    "operation_id": "bad8fea5693499228ed0f365ef30e41320317125f0831d263cc83f0efdbb95d7e7d44a3b6e64c5af331fbd9d38df612dc9a21546df867ef37fcdce4e53cc0a5c",
+    "parent_ids": [
+      "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    ],
+    "time_end_millis": 1794218046785,
+    "time_start_millis": 1794218046745,
+    "username": "versegit",
+    "view_id": "2b673f1dcef7bb128574c1920d4f0e783d8b03a60b07c094d29765ef98da84ea76537c55cf9d18e0145fe681f85fbb50a0547f59639da85dd22f9b0db74f2b69",
+    "workspace_name": null
+  },
+  "schema": "versegit.vg-json/v1",
+  "view": {
+    "commit_head_count": 1,
+    "commit_head_ids": [
+      "c9d1010101d0f012e8d4032cf789ede9913807f7"
+    ],
+    "commit_heads_truncated": false,
+    "git_ref_count": 0,
+    "local_bookmark_count": 0,
+    "local_tag_count": 0,
+    "operation_id": "bad8fea5693499228ed0f365ef30e41320317125f0831d263cc83f0efdbb95d7e7d44a3b6e64c5af331fbd9d38df612dc9a21546df867ef37fcdce4e53cc0a5c",
+    "view_id": "2b673f1dcef7bb128574c1920d4f0e783d8b03a60b07c094d29765ef98da84ea76537c55cf9d18e0145fe681f85fbb50a0547f59639da85dd22f9b0db74f2b69",
+    "workspace_count": 1,
+    "workspace_wc_commit_id": "c9d1010101d0f012e8d4032cf789ede9913807f7"
+  }
+}

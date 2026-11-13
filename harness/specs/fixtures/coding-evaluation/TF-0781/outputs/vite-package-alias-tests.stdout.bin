@@ -1,0 +1,9 @@
+
+ RUN  v4.1.1 D:/tmp/tf0778-isolated-e510-20261110
+
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  19:35:37
+   Duration  1.05s (transform 135ms, setup 307ms, import 12ms, tests 437ms, environment 0ms)
+

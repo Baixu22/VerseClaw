@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P8-001",
-  "generatedAt": "2026-07-18T09:11:48.083Z",
+  "generatedAt": "2026-11-11T02:54:17.736Z",
   "ok": true,
   "primaryFindingIds": [
     "F-SEC-001",
@@ -14,8 +14,8 @@
         "findingId": "F-SEC-001",
         "decision": "Act-now",
         "owner": "main-boundary",
-        "reviewBy": "2026-10-18",
-        "residualScope": "Channel credentials remain in openclaw.json plaintext because OpenClaw Gateway co-reads channel config; Provider/MCP sealed. Renderer redaction locked; vault work continues in P8-002.",
+        "reviewBy": "2027-02-09",
+        "residualScope": "Channel credentials vaulted in clawx-providers channelSecrets; openclaw.json plaintext co-read by OpenClaw Gateway remains residual until runtime secret-input migration.",
         "status": "active",
         "ok": true,
         "entry": {
@@ -23,14 +23,22 @@
           "status": "Partial",
           "decision": "Act-now",
           "owner": "main-boundary",
-          "reviewBy": "2026-10-18",
-          "residualScope": "Channel credentials remain in openclaw.json plaintext because OpenClaw Gateway co-reads channel config; Provider/MCP sealed. Renderer redaction locked; vault work continues in P8-002.",
-          "mitigation": "Renderer redaction locks + residual gate + channel secret vault (P8-002)",
+          "residualScope": "Channel credentials vaulted in clawx-providers channelSecrets; openclaw.json plaintext co-read by OpenClaw Gateway remains residual until runtime secret-input migration.",
+          "mitigation": "Renderer redaction locks + residual gate + channel secret vault (P8-002 sealed); OpenClaw co-read residual remains",
           "acceptedBy": "security-lead",
           "acceptedAt": "2026-07-18",
           "tasks": [
             "P8-001",
             "P8-002"
+          ],
+          "reviewBy": "2027-02-09",
+          "reviewedBy": "codex-tf0782",
+          "reviewedAt": "2026-11-11",
+          "driven_by": "agent",
+          "humanEvidence": false,
+          "reviewEvidence": [
+            "artifacts/system-maturity/P8-001/residual-revalidation-20261111.json",
+            "artifacts/system-maturity/P8-001/residual-revalidation-20261111.stdout.txt"
           ]
         }
       },
@@ -38,8 +46,8 @@
         "findingId": "F-REL-004",
         "decision": "Act-now",
         "owner": "qa-governance",
-        "reviewBy": "2026-10-18",
-        "residualScope": "Multiple security implementations remain; P7-002 suite maps primary surfaces. Capability inventory consolidation continues in P8-003.",
+        "reviewBy": "2027-02-09",
+        "residualScope": "Multi-impl surfaces inventoried; secret-handling remains mixed due to OpenClaw co-read residual tracked under F-SEC-001.",
         "status": "active",
         "ok": true,
         "entry": {
@@ -47,14 +55,22 @@
           "status": "Partial",
           "decision": "Act-now",
           "owner": "qa-governance",
-          "reviewBy": "2026-10-18",
-          "residualScope": "Multiple security implementations remain; P7-002 suite maps primary surfaces. Capability inventory consolidation continues in P8-003.",
-          "mitigation": "Security regression suite + residual register + capability inventory (P8-003)",
+          "residualScope": "Multi-impl surfaces inventoried; secret-handling remains mixed due to OpenClaw co-read residual tracked under F-SEC-001.",
+          "mitigation": "Security regression suite + capability inventory (P8-003) + residual register",
           "acceptedBy": "security-lead",
           "acceptedAt": "2026-07-18",
           "tasks": [
             "P8-001",
             "P8-003"
+          ],
+          "reviewBy": "2027-02-09",
+          "reviewedBy": "codex-tf0782",
+          "reviewedAt": "2026-11-11",
+          "driven_by": "agent",
+          "humanEvidence": false,
+          "reviewEvidence": [
+            "artifacts/system-maturity/P8-001/residual-revalidation-20261111.json",
+            "artifacts/system-maturity/P8-001/residual-revalidation-20261111.stdout.txt"
           ]
         }
       }
@@ -68,6 +84,5 @@
     "residualExpired": 0,
     "residualMissing": 0,
     "residualOk": true
-  },
-  "_resealMarker": "cd87e3735"
+  }
 }

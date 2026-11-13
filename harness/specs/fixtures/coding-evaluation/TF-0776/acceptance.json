@@ -1,0 +1,72 @@
+{
+  "schema": "ClawXCodingEvaluationAcceptance/v2",
+  "node": "TF-0776",
+  "driven_by": "agent",
+  "actor": "codex-01a1b68a",
+  "realHumanEvidence": false,
+  "clawxSourceCommit": "41fe099ed2efcf85cf1b7260fe0db18995c96593",
+  "clawxSourceTree": "bedbe1b8225e07aeaf6c55836c3d31b8809c1ef9",
+  "nativeSourceCommit": "d9c38a8659274c24ea776b56480a260831b4537f",
+  "nativeSourceTree": "0d2d50c1175dca6d245d77fe53416771737f5791",
+  "artifactSha256": "6fef0fab309702fafdcc716c0f8518257440efafd0a46809930fe33be865c2b4",
+  "bytes": 40831488,
+  "patchSha256": "c591f03b2fae94f6cb9df398ee01914a17e92f58cde6d1a2aebf8ee69883496e",
+  "oracleSha256": "53c6ee72346f477bc464e383d4df45f8d3862ad5a17fa5f4d8f4849bcf2d96cc",
+  "oracleVersion": "jj 0.46.0-7d382314f9420b4b8d932245b49c99492c812b9f",
+  "cases": 68,
+  "passed": 68,
+  "equal": 68,
+  "commands": 229,
+  "checks": {
+    "schemaContract": "CodingJjParity/v2",
+    "operationHistoryStoreParity": 9,
+    "independentExecutionSemantics": 7,
+    "negativeChecksRejected": 7,
+    "verification": {
+      "ok": true,
+      "acceptanceEligible": true
+    },
+    "harnessSpec": true,
+    "commsReplay": true,
+    "commsCompare": true,
+    "repositoryArtifacts": true,
+    "sidecarUnitTests": {
+      "files": 1,
+      "passed": 5
+    },
+    "parityContractUnitTests": {
+      "passed": 10
+    },
+    "typecheck": {
+      "node": 0,
+      "web": 0,
+      "test": 0
+    },
+    "nativeClippy": {
+      "command": "cargo clippy -p vg-jj -p vg-cli --tests --all-targets -- -D warnings",
+      "exitCode": 0
+    },
+    "linuxFreeze": {
+      "passed": 59,
+      "failed": 0,
+      "skippedExternal": [
+        "distill_drift",
+        "candidate_staleness_expectations"
+      ]
+    },
+    "windowsLifecycle": {
+      "passed": 10,
+      "failed": 0
+    },
+    "nativeUnitRegressions": {
+      "selectedPassed": 6,
+      "failed": 0
+    }
+  },
+  "limitations": [
+    "independentBuildRoots=1",
+    "externalDistillInputsUnavailable",
+    "fullElectronMatrixNotRunForTF0776"
+  ],
+  "finishedAt": "2026-11-09T09:54:30.077Z"
+}

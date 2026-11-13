@@ -1,0 +1,1 @@
+vg: workspace import 只接受普通 Git worktree；实际为 LinkedWorktree

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P8-001",
-  "generatedAt": "2026-07-19T03:48:03.311Z",
+  "generatedAt": "2026-11-11T02:54:26.765Z",
   "ok": true,
   "primaryFindingIds": [
     "F-SEC-001",
@@ -14,7 +14,7 @@
         "findingId": "F-SEC-001",
         "decision": "Act-now",
         "owner": "main-boundary",
-        "reviewBy": "2026-10-18",
+        "reviewBy": "2027-02-09",
         "residualScope": "Channel credentials vaulted in clawx-providers channelSecrets; openclaw.json plaintext co-read by OpenClaw Gateway remains residual until runtime secret-input migration.",
         "status": "active",
         "ok": true,
@@ -23,7 +23,6 @@
           "status": "Partial",
           "decision": "Act-now",
           "owner": "main-boundary",
-          "reviewBy": "2026-10-18",
           "residualScope": "Channel credentials vaulted in clawx-providers channelSecrets; openclaw.json plaintext co-read by OpenClaw Gateway remains residual until runtime secret-input migration.",
           "mitigation": "Renderer redaction locks + residual gate + channel secret vault (P8-002 sealed); OpenClaw co-read residual remains",
           "acceptedBy": "security-lead",
@@ -31,6 +30,15 @@
           "tasks": [
             "P8-001",
             "P8-002"
+          ],
+          "reviewBy": "2027-02-09",
+          "reviewedBy": "codex-tf0782",
+          "reviewedAt": "2026-11-11",
+          "driven_by": "agent",
+          "humanEvidence": false,
+          "reviewEvidence": [
+            "artifacts/system-maturity/P8-001/residual-revalidation-20261111.json",
+            "artifacts/system-maturity/P8-001/residual-revalidation-20261111.stdout.txt"
           ]
         }
       },
@@ -38,7 +46,7 @@
         "findingId": "F-REL-004",
         "decision": "Act-now",
         "owner": "qa-governance",
-        "reviewBy": "2026-10-18",
+        "reviewBy": "2027-02-09",
         "residualScope": "Multi-impl surfaces inventoried; secret-handling remains mixed due to OpenClaw co-read residual tracked under F-SEC-001.",
         "status": "active",
         "ok": true,
@@ -47,7 +55,6 @@
           "status": "Partial",
           "decision": "Act-now",
           "owner": "qa-governance",
-          "reviewBy": "2026-10-18",
           "residualScope": "Multi-impl surfaces inventoried; secret-handling remains mixed due to OpenClaw co-read residual tracked under F-SEC-001.",
           "mitigation": "Security regression suite + capability inventory (P8-003) + residual register",
           "acceptedBy": "security-lead",
@@ -55,6 +62,15 @@
           "tasks": [
             "P8-001",
             "P8-003"
+          ],
+          "reviewBy": "2027-02-09",
+          "reviewedBy": "codex-tf0782",
+          "reviewedAt": "2026-11-11",
+          "driven_by": "agent",
+          "humanEvidence": false,
+          "reviewEvidence": [
+            "artifacts/system-maturity/P8-001/residual-revalidation-20261111.json",
+            "artifacts/system-maturity/P8-001/residual-revalidation-20261111.stdout.txt"
           ]
         }
       }

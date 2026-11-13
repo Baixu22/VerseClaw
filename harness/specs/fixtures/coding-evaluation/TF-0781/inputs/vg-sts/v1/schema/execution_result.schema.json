@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://smart-test-sorter/contracts/vg-sts/v1/execution_result.schema.json",
+  "title": "VG-STS v1 Execution Result",
+  "description": "按固定计划执行 pytest 后的结果。绑定 request/plan/target；区分【测试范围 selection_scope】【执行完成度 completeness】【结果有效性 validity】三个维度，任何单一维度都不能顶替另一个。空选/零执行/收集失败不得报告为完整通过；超时/取消/运行中变更记为 incomplete 或 invalid，不复用为当前完整通过。保留原始 pytest 退出码与实跑 nodeid。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_version",
+    "product_version",
+    "request_id",
+    "plan_id",
+    "target_identity",
+    "selection_scope",
+    "completeness",
+    "validity",
+    "executed",
+    "not_executed",
+    "outcomes",
+    "raw_exit_code"
+  ],
+  "properties": {
+    "protocol_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+    "product_version": { "type": "string", "minLength": 1 },
+    "request_id": { "type": "string", "minLength": 1 },
+    "plan_id": {
+      "description": "绑定回被执行的计划。",
+      "type": "string",
+      "minLength": 1
+    },
+    "target_identity": {
+      "description": "执行时的目标身份，必须与计划一致；不一致时 validity 应为 invalid（目标漂移）。",
+      "type": "string",
+      "minLength": 1
+    },
+    "selection_scope": {
+      "description": "本次实际执行的测试范围维度。与计划一致（selected/full）。",
+      "type": "string",
+      "enum": ["selected", "full"]
+    },
+    "completeness": {
+      "description": "执行完成度维度：complete=计划内测试全部跑完；incomplete=被取消/超时/预算中止/进程被杀等未跑完。",
+      "type": "string",
+      "enum": ["complete", "incomplete"]
+    },
+    "validity": {
+      "description": "结果有效性维度：valid=对应当前目标版本可信；invalid=目标漂移/计划过期/测试消失/运行中代码或配置变化等使结果失效。",
+      "type": "string",
+      "enum": ["valid", "invalid"]
+    },
+    "invalid_reason": {
+      "description": "validity=invalid 时必填，说明失效原因。",
+      "type": "string",
+      "minLength": 1
+    },
+    "incomplete_reason": {
+      "description": "completeness=incomplete 时必填（timeout/cancelled/budget-exhausted/process-killed/collection-error…）。",
+      "type": "string",
+      "minLength": 1
+    },
+    "executed": {
+      "description": "实际跑到的准确 nodeid 集合。",
+      "type": "array",
+      "items": { "$ref": "#/$defs/nodeid" }
+    },
+    "not_executed": {
+      "description": "计划内但未执行的 nodeid 集合（incomplete 时通常非空）。",
+      "type": "array",
+      "items": { "$ref": "#/$defs/nodeid" }
+    },
+    "outcomes": {
+      "description": "逐测试事实：nodeid -> {outcome, phases?, duration_s?}。outcome 区分 passed/failed/error/skipped；收集/环境错误记 error，与断言 failed 分开。",
+      "type": "object"
+    },
+    "raw_exit_code": {
+      "description": "原始 pytest 退出码，原样保留，不被适配层吞掉。",
+      "type": "integer"
+    },
+    "duration_s": { "type": "number", "minimum": 0 },
+    "failure_categories": {
+      "description": "失败归类计数：assertion(断言失败)/collection(收集失败)/environment(环境失败)/cancelled(取消或超时)。",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "assertion": { "type": "integer", "minimum": 0 },
+        "collection": { "type": "integer", "minimum": 0 },
+        "environment": { "type": "integer", "minimum": 0 },
+        "cancelled": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "$defs": {
+    "nodeid": {
+      "type": "string",
+      "pattern": "^.+::.+$"
+    }
+  }
+}

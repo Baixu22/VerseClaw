@@ -1,0 +1,4594 @@
+{
+  "schema": "CodingJointEvaluation/v1",
+  "taskId": "TF-0779",
+  "driven_by": "agent",
+  "actor": "codex-coding-joint-evaluator",
+  "realHumanEvidence": false,
+  "acceptanceEligible": true,
+  "recordedAt": "2026-11-09T20:57:01.945998+00:00",
+  "candidate": {
+    "commit": "93a2becbf713af208e42e71e0c53d3ef51ba4c26",
+    "tree": "e52cd5880a4115ac9b60329ccaddf77df6fbd775",
+    "dirty": false,
+    "changedPaths": [],
+    "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "tools": {
+    "vg": {
+      "path": "D:\\tmp\\tf0778-isolated-e510-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0778\\inputs\\vg.exe",
+      "sha256": "7c8b05f9c7eb295f5e8006e98e123047f70e5f03dbbdfe05c5cb53748eb70d20"
+    },
+    "jj": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\oracle\\extracted\\jj.exe",
+      "sha256": "53c6ee72346f477bc464e383d4df45f8d3862ad5a17fa5f4d8f4849bcf2d96cc",
+      "version": "jj 0.46.0-7d382314f9420b4b8d932245b49c99492c812b9f"
+    },
+    "python": {
+      "path": "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+      "sha256": "272448c5844564aa5bebc8d8dd0065f859b9fba9f499996eec2a1cf17496f250",
+      "version": "3.10.3",
+      "module": "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\lib\\site-packages\\smart_sorter\\__init__.py",
+      "pytest": "8.0.0"
+    },
+    "environment": {
+      "python": "3.10.3",
+      "platform": "win32",
+      "dependencies_digest": "sha256:a9915c25a3af1d27d268e7a0d07ba2db80b3e898bca925bdf6c1ee6a74cd7949"
+    }
+  },
+  "workspaces": {
+    "workspace-a": {
+      "source": "D:\\tmp\\tf0778-isolated-e510-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0779\\workspaces\\workspace-a",
+      "baseManifest": {
+        "files": {
+          "calc.py": "ba1a531f581d2e6094e978ed6f7aca7a8d92eeb62c6e7ad73ee692f7f18bc772",
+          "notes/local.txt": "b072885a36ba742a882e9a6db2be87feca22e4ea463bc6cb5f3adf9f685d978c",
+          "tests/test_calc.py": "390fd35dd01f299e7d29b184a434d956bf83b7b209bc2b03026567b9edce532e"
+        },
+        "sha256": "f087d2d6df9f79be2e96a6a283757a50176f87a0c42b3efd5af6747efdd60622"
+      },
+      "candidateManifest": {
+        "files": {
+          "calc.py": "ba1a531f581d2e6094e978ed6f7aca7a8d92eeb62c6e7ad73ee692f7f18bc772",
+          "notes/local.txt": "b072885a36ba742a882e9a6db2be87feca22e4ea463bc6cb5f3adf9f685d978c",
+          "tests/test_calc.py": "390fd35dd01f299e7d29b184a434d956bf83b7b209bc2b03026567b9edce532e",
+          "tests/test_extra.py": "bb48aaa0869a4efc27f2b6453cf649fdd3c1dc81c850141ae64dc52e5c71a617"
+        },
+        "sha256": "6ae1b40ed863b10b945d7bf6282d602ab4a19f3a73b451988f392057de5be96a"
+      }
+    },
+    "workspace-b": {
+      "source": "D:\\tmp\\tf0778-isolated-e510-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0779\\workspaces\\workspace-b",
+      "baseManifest": {
+        "files": {
+          "notes/local.txt": "bc05759af4e86e40628da6a2922679a743623e5c520c870c86205359df017b32",
+          "pkg/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "pkg/text.py": "ba41e733aade08724d345ac841856c8a1154581d34bf2db17d88caa2a721a964",
+          "tests/test_text.py": "b896ff70e7ba064dce43f6825da77905ce3839ce284e9dc544868e18eb0c61f3"
+        },
+        "sha256": "338983a911757c43e1b4c2439dfee00dc6e00bf546f104ca54a1ae7f47fcb065"
+      },
+      "candidateManifest": {
+        "files": {
+          "notes/local.txt": "bc05759af4e86e40628da6a2922679a743623e5c520c870c86205359df017b32",
+          "pkg/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "pkg/text.py": "ba41e733aade08724d345ac841856c8a1154581d34bf2db17d88caa2a721a964",
+          "tests/test_text.py": "b896ff70e7ba064dce43f6825da77905ce3839ce284e9dc544868e18eb0c61f3",
+          "tests/test_extra.py": "bb48aaa0869a4efc27f2b6453cf649fdd3c1dc81c850141ae64dc52e5c71a617"
+        },
+        "sha256": "d3497f3904228c232ddff0ee1b748d1d081ca535f499552810de165b8a9bb44f"
+      }
+    }
+  },
+  "measurements": [
+    {
+      "workspace": "workspace-a",
+      "commandId": "workspace-a-native-measure",
+      "reportArtifact": "measurements/workspace-a.json",
+      "grouped": {
+        "jj_plus_same_full_check": 3,
+        "vg_full": 3,
+        "vg_selected_plus_required_full": 3
+      },
+      "lanes": [
+        {
+          "workspace": "workspace-a",
+          "run": 1,
+          "lane": "jj_plus_same_full_check",
+          "coldSeconds": 1.703296,
+          "warmSeconds": 1.825093,
+          "treeIds": []
+        },
+        {
+          "workspace": "workspace-a",
+          "run": 1,
+          "lane": "vg_full",
+          "coldSeconds": 11.214354,
+          "warmSeconds": 8.778894,
+          "collected": 2,
+          "selected": 1,
+          "executed": 2,
+          "mapped_verdict": "passed",
+          "planScope": "selected",
+          "executionScope": "full",
+          "treeIds": [
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45"
+          ],
+          "targetIdentities": [
+            "candidate@b7c6ede"
+          ]
+        },
+        {
+          "workspace": "workspace-a",
+          "run": 1,
+          "lane": "vg_selected_plus_required_full",
+          "coldSeconds": 33.102202,
+          "warmSeconds": 28.963891,
+          "collected": 2,
+          "selected": 1,
+          "executed": 1,
+          "mapped_verdict": "passed",
+          "planScope": "selected",
+          "executionScope": "selected",
+          "treeIds": [
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45",
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45"
+          ],
+          "targetIdentities": [
+            "candidate@b7c6ede",
+            "candidate@b7c6ede"
+          ]
+        },
+        {
+          "workspace": "workspace-a",
+          "run": 2,
+          "lane": "jj_plus_same_full_check",
+          "coldSeconds": 1.741434,
+          "warmSeconds": 1.442902,
+          "treeIds": []
+        },
+        {
+          "workspace": "workspace-a",
+          "run": 2,
+          "lane": "vg_full",
+          "coldSeconds": 11.008989,
+          "warmSeconds": 7.942657,
+          "collected": 2,
+          "selected": 1,
+          "executed": 2,
+          "mapped_verdict": "passed",
+          "planScope": "selected",
+          "executionScope": "full",
+          "treeIds": [
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45"
+          ],
+          "targetIdentities": [
+            "candidate@b7c6ede"
+          ]
+        },
+        {
+          "workspace": "workspace-a",
+          "run": 2,
+          "lane": "vg_selected_plus_required_full",
+          "coldSeconds": 18.567434,
+          "warmSeconds": 17.21264,
+          "collected": 2,
+          "selected": 1,
+          "executed": 1,
+          "mapped_verdict": "passed",
+          "planScope": "selected",
+          "executionScope": "selected",
+          "treeIds": [
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45",
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45"
+          ],
+          "targetIdentities": [
+            "candidate@b7c6ede",
+            "candidate@b7c6ede"
+          ]
+        },
+        {
+          "workspace": "workspace-a",
+          "run": 3,
+          "lane": "jj_plus_same_full_check",
+          "coldSeconds": 1.375931,
+          "warmSeconds": 1.334081,
+          "treeIds": []
+        },
+        {
+          "workspace": "workspace-a",
+          "run": 3,
+          "lane": "vg_full",
+          "coldSeconds": 9.002391,
+          "warmSeconds": 9.08691,
+          "collected": 2,
+          "selected": 1,
+          "executed": 2,
+          "mapped_verdict": "passed",
+          "planScope": "selected",
+          "executionScope": "full",
+          "treeIds": [
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45"
+          ],
+          "targetIdentities": [
+            "candidate@b7c6ede"
+          ]
+        },
+        {
+          "workspace": "workspace-a",
+          "run": 3,
+          "lane": "vg_selected_plus_required_full",
+          "coldSeconds": 18.017695,
+          "warmSeconds": 19.703735,
+          "collected": 2,
+          "selected": 1,
+          "executed": 1,
+          "mapped_verdict": "passed",
+          "planScope": "selected",
+          "executionScope": "selected",
+          "treeIds": [
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45",
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45"
+          ],
+          "targetIdentities": [
+            "candidate@b7c6ede",
+            "candidate@b7c6ede"
+          ]
+        }
+      ],
+      "claims": {
+        "workflow_cost_measured_on_fixture": true,
+        "net_benefit_claimed": false,
+        "real_project_live_rerun": false,
+        "real_project_snapshot_rerun": true,
+        "non_python_live_rerun": false,
+        "dual_session_live_rerun": false,
+        "platforms_measured": [
+          "win32"
+        ],
+        "reason": "The fixture measures the complete local command path and both selected/full arms, but it is not a live rerun of the historical third-party projects. Historical real-sample artifacts are inventoried with hashes and remain historical, not promoted to a new measurement."
+      },
+      "summary": {
+        "jj_plus_same_full_check": {
+          "cold": {
+            "n": 3,
+            "min_s": 1.375931,
+            "median_s": 1.703296,
+            "max_s": 1.741434,
+            "values_s": [
+              1.703296,
+              1.741434,
+              1.375931
+            ]
+          },
+          "warm": {
+            "n": 3,
+            "min_s": 1.334081,
+            "median_s": 1.442902,
+            "max_s": 1.825093,
+            "values_s": [
+              1.825093,
+              1.442902,
+              1.334081
+            ]
+          }
+        },
+        "vg_full": {
+          "cold": {
+            "n": 3,
+            "min_s": 9.002391,
+            "median_s": 11.008989,
+            "max_s": 11.214354,
+            "values_s": [
+              11.214354,
+              11.008989,
+              9.002391
+            ]
+          },
+          "warm": {
+            "n": 3,
+            "min_s": 7.942657,
+            "median_s": 8.778894,
+            "max_s": 9.08691,
+            "values_s": [
+              8.778894,
+              7.942657,
+              9.08691
+            ]
+          }
+        },
+        "vg_selected_plus_required_full": {
+          "cold": {
+            "n": 3,
+            "min_s": 18.017695,
+            "median_s": 18.567434,
+            "max_s": 33.102202,
+            "values_s": [
+              33.102202,
+              18.567434,
+              18.017695
+            ]
+          },
+          "warm": {
+            "n": 3,
+            "min_s": 17.21264,
+            "median_s": 19.703735,
+            "max_s": 28.963891,
+            "values_s": [
+              28.963891,
+              17.21264,
+              19.703735
+            ]
+          }
+        }
+      },
+      "ratios": {
+        "vg_full": {
+          "cold_ratio_vs_jj": 6.463345,
+          "warm_ratio_vs_jj": 5.154062
+        },
+        "vg_selected_plus_required_full": {
+          "cold_ratio_vs_jj": 10.900885,
+          "warm_ratio_vs_jj": 11.568004
+        }
+      }
+    },
+    {
+      "workspace": "workspace-b",
+      "commandId": "workspace-b-native-measure",
+      "reportArtifact": "measurements/workspace-b.json",
+      "grouped": {
+        "jj_plus_same_full_check": 3,
+        "vg_full": 3,
+        "vg_selected_plus_required_full": 3
+      },
+      "lanes": [
+        {
+          "workspace": "workspace-b",
+          "run": 1,
+          "lane": "jj_plus_same_full_check",
+          "coldSeconds": 1.373764,
+          "warmSeconds": 1.468206,
+          "treeIds": []
+        },
+        {
+          "workspace": "workspace-b",
+          "run": 1,
+          "lane": "vg_full",
+          "coldSeconds": 9.933556,
+          "warmSeconds": 9.070368,
+          "collected": 2,
+          "selected": 1,
+          "executed": 2,
+          "mapped_verdict": "passed",
+          "planScope": "selected",
+          "executionScope": "full",
+          "treeIds": [
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45"
+          ],
+          "targetIdentities": [
+            "candidate@05ea0c6"
+          ]
+        },
+        {
+          "workspace": "workspace-b",
+          "run": 1,
+          "lane": "vg_selected_plus_required_full",
+          "coldSeconds": 20.990969,
+          "warmSeconds": 20.220576,
+          "collected": 2,
+          "selected": 1,
+          "executed": 1,
+          "mapped_verdict": "passed",
+          "planScope": "selected",
+          "executionScope": "selected",
+          "treeIds": [
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45",
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45"
+          ],
+          "targetIdentities": [
+            "candidate@05ea0c6",
+            "candidate@05ea0c6"
+          ]
+        },
+        {
+          "workspace": "workspace-b",
+          "run": 2,
+          "lane": "jj_plus_same_full_check",
+          "coldSeconds": 1.790954,
+          "warmSeconds": 1.638475,
+          "treeIds": []
+        },
+        {
+          "workspace": "workspace-b",
+          "run": 2,
+          "lane": "vg_full",
+          "coldSeconds": 11.67855,
+          "warmSeconds": 9.404182,
+          "collected": 2,
+          "selected": 1,
+          "executed": 2,
+          "mapped_verdict": "passed",
+          "planScope": "selected",
+          "executionScope": "full",
+          "treeIds": [
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45"
+          ],
+          "targetIdentities": [
+            "candidate@05ea0c6"
+          ]
+        },
+        {
+          "workspace": "workspace-b",
+          "run": 2,
+          "lane": "vg_selected_plus_required_full",
+          "coldSeconds": 19.957839,
+          "warmSeconds": 17.597015,
+          "collected": 2,
+          "selected": 1,
+          "executed": 1,
+          "mapped_verdict": "passed",
+          "planScope": "selected",
+          "executionScope": "selected",
+          "treeIds": [
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45",
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45"
+          ],
+          "targetIdentities": [
+            "candidate@05ea0c6",
+            "candidate@05ea0c6"
+          ]
+        },
+        {
+          "workspace": "workspace-b",
+          "run": 3,
+          "lane": "jj_plus_same_full_check",
+          "coldSeconds": 1.551919,
+          "warmSeconds": 1.418356,
+          "treeIds": []
+        },
+        {
+          "workspace": "workspace-b",
+          "run": 3,
+          "lane": "vg_full",
+          "coldSeconds": 11.571965,
+          "warmSeconds": 10.081604,
+          "collected": 2,
+          "selected": 1,
+          "executed": 2,
+          "mapped_verdict": "passed",
+          "planScope": "selected",
+          "executionScope": "full",
+          "treeIds": [
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45"
+          ],
+          "targetIdentities": [
+            "candidate@05ea0c6"
+          ]
+        },
+        {
+          "workspace": "workspace-b",
+          "run": 3,
+          "lane": "vg_selected_plus_required_full",
+          "coldSeconds": 18.685732,
+          "warmSeconds": 23.088405,
+          "collected": 2,
+          "selected": 1,
+          "executed": 1,
+          "mapped_verdict": "passed",
+          "planScope": "selected",
+          "executionScope": "selected",
+          "treeIds": [
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45",
+            "d8448cfb00c4cf763084b4ea4dd48c5da5dbad45"
+          ],
+          "targetIdentities": [
+            "candidate@05ea0c6",
+            "candidate@05ea0c6"
+          ]
+        }
+      ],
+      "claims": {
+        "workflow_cost_measured_on_fixture": true,
+        "net_benefit_claimed": false,
+        "real_project_live_rerun": false,
+        "real_project_snapshot_rerun": true,
+        "non_python_live_rerun": false,
+        "dual_session_live_rerun": false,
+        "platforms_measured": [
+          "win32"
+        ],
+        "reason": "The fixture measures the complete local command path and both selected/full arms, but it is not a live rerun of the historical third-party projects. Historical real-sample artifacts are inventoried with hashes and remain historical, not promoted to a new measurement."
+      },
+      "summary": {
+        "jj_plus_same_full_check": {
+          "cold": {
+            "n": 3,
+            "min_s": 1.373764,
+            "median_s": 1.551919,
+            "max_s": 1.790954,
+            "values_s": [
+              1.373764,
+              1.790954,
+              1.551919
+            ]
+          },
+          "warm": {
+            "n": 3,
+            "min_s": 1.418356,
+            "median_s": 1.468206,
+            "max_s": 1.638475,
+            "values_s": [
+              1.468206,
+              1.638475,
+              1.418356
+            ]
+          }
+        },
+        "vg_full": {
+          "cold": {
+            "n": 3,
+            "min_s": 9.933556,
+            "median_s": 11.571965,
+            "max_s": 11.67855,
+            "values_s": [
+              9.933556,
+              11.67855,
+              11.571965
+            ]
+          },
+          "warm": {
+            "n": 3,
+            "min_s": 9.070368,
+            "median_s": 9.404182,
+            "max_s": 10.081604,
+            "values_s": [
+              9.070368,
+              9.404182,
+              10.081604
+            ]
+          }
+        },
+        "vg_selected_plus_required_full": {
+          "cold": {
+            "n": 3,
+            "min_s": 18.685732,
+            "median_s": 19.957839,
+            "max_s": 20.990969,
+            "values_s": [
+              20.990969,
+              19.957839,
+              18.685732
+            ]
+          },
+          "warm": {
+            "n": 3,
+            "min_s": 17.597015,
+            "median_s": 20.220576,
+            "max_s": 23.088405,
+            "values_s": [
+              20.220576,
+              17.597015,
+              23.088405
+            ]
+          }
+        }
+      },
+      "ratios": {
+        "vg_full": {
+          "cold_ratio_vs_jj": 7.456552,
+          "warm_ratio_vs_jj": 6.059712
+        },
+        "vg_selected_plus_required_full": {
+          "cold_ratio_vs_jj": 12.860104,
+          "warm_ratio_vs_jj": 13.029402
+        }
+      }
+    }
+  ],
+  "gitLanes": [
+    {
+      "id": "workspace-a-git-1",
+      "workspace": "workspace-a",
+      "run": 1,
+      "lane": "git_worktree_full",
+      "commandIds": [
+        "workspace-a-1-git-full"
+      ],
+      "treeOid": "c356033efc1c9808b214880d88b3a4e5fcb3e7a3",
+      "exitCode": 0,
+      "dirtyPreserved": true,
+      "untrackedPreserved": true,
+      "status": "M notes/local.txt\n?? notes/untracked.txt",
+      "cleanup": {
+        "repoPath": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\repo"
+      },
+      "passed": true
+    },
+    {
+      "id": "workspace-a-git-2",
+      "workspace": "workspace-a",
+      "run": 2,
+      "lane": "git_worktree_full",
+      "commandIds": [
+        "workspace-a-2-git-full"
+      ],
+      "treeOid": "c356033efc1c9808b214880d88b3a4e5fcb3e7a3",
+      "exitCode": 0,
+      "dirtyPreserved": true,
+      "untrackedPreserved": true,
+      "status": "M notes/local.txt\n?? notes/untracked.txt",
+      "cleanup": {
+        "repoPath": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\repo"
+      },
+      "passed": true
+    },
+    {
+      "id": "workspace-a-git-3",
+      "workspace": "workspace-a",
+      "run": 3,
+      "lane": "git_worktree_full",
+      "commandIds": [
+        "workspace-a-3-git-full"
+      ],
+      "treeOid": "c356033efc1c9808b214880d88b3a4e5fcb3e7a3",
+      "exitCode": 0,
+      "dirtyPreserved": true,
+      "untrackedPreserved": true,
+      "status": "M notes/local.txt\n?? notes/untracked.txt",
+      "cleanup": {
+        "repoPath": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\repo"
+      },
+      "passed": true
+    },
+    {
+      "id": "workspace-b-git-1",
+      "workspace": "workspace-b",
+      "run": 1,
+      "lane": "git_worktree_full",
+      "commandIds": [
+        "workspace-b-1-git-full"
+      ],
+      "treeOid": "a2ce150491bb6e3ef9a8fcc5db2239ea861c7ff3",
+      "exitCode": 0,
+      "dirtyPreserved": true,
+      "untrackedPreserved": true,
+      "status": "M notes/local.txt\n?? notes/untracked.txt",
+      "cleanup": {
+        "repoPath": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\repo"
+      },
+      "passed": true
+    },
+    {
+      "id": "workspace-b-git-2",
+      "workspace": "workspace-b",
+      "run": 2,
+      "lane": "git_worktree_full",
+      "commandIds": [
+        "workspace-b-2-git-full"
+      ],
+      "treeOid": "a2ce150491bb6e3ef9a8fcc5db2239ea861c7ff3",
+      "exitCode": 0,
+      "dirtyPreserved": true,
+      "untrackedPreserved": true,
+      "status": "M notes/local.txt\n?? notes/untracked.txt",
+      "cleanup": {
+        "repoPath": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\repo"
+      },
+      "passed": true
+    },
+    {
+      "id": "workspace-b-git-3",
+      "workspace": "workspace-b",
+      "run": 3,
+      "lane": "git_worktree_full",
+      "commandIds": [
+        "workspace-b-3-git-full"
+      ],
+      "treeOid": "a2ce150491bb6e3ef9a8fcc5db2239ea861c7ff3",
+      "exitCode": 0,
+      "dirtyPreserved": true,
+      "untrackedPreserved": true,
+      "status": "M notes/local.txt\n?? notes/untracked.txt",
+      "cleanup": {
+        "repoPath": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\repo"
+      },
+      "passed": true
+    }
+  ],
+  "targetedTests": [
+    {
+      "id": "clawx-joint-unit",
+      "exitCode": 0
+    },
+    {
+      "id": "vg-joint-jj_cross_workspace_conflict",
+      "exitCode": 0
+    },
+    {
+      "id": "vg-joint-jj_conflict_gate",
+      "exitCode": 0
+    },
+    {
+      "id": "vg-joint-jj_transaction_recovery",
+      "exitCode": 0
+    },
+    {
+      "id": "vg-joint-jj_sts_feedback",
+      "exitCode": 0
+    },
+    {
+      "id": "vg-joint-jj_workspace_lifecycle",
+      "exitCode": 0
+    },
+    {
+      "id": "vg-joint-jj_file_family",
+      "exitCode": 0
+    }
+  ],
+  "cases": {
+    "same-file-competition": {
+      "passed": true,
+      "commandIds": [
+        "vg-joint-jj_cross_workspace_conflict"
+      ],
+      "oracle": "jj_cross_workspace_conflict"
+    },
+    "cross-file-dependency": {
+      "passed": true,
+      "commandIds": [
+        "workspace-a-native-measure",
+        "workspace-b-native-measure"
+      ],
+      "oracle": "full test suites in A/B/C"
+    },
+    "rename-delete": {
+      "passed": true,
+      "commandIds": [
+        "vg-joint-jj_file_family",
+        "vg-joint-jj_workspace_lifecycle"
+      ],
+      "oracle": "jj_file_family and workspace lifecycle"
+    },
+    "stale-basis": {
+      "passed": true,
+      "commandIds": [
+        "vg-joint-jj_transaction_recovery"
+      ],
+      "oracle": "jj_transaction_recovery"
+    },
+    "dirty-preservation": {
+      "passed": true,
+      "commandIds": [
+        "workspace-a-1-git-full",
+        "workspace-a-2-git-full",
+        "workspace-a-3-git-full",
+        "workspace-b-1-git-full",
+        "workspace-b-2-git-full",
+        "workspace-b-3-git-full"
+      ],
+      "oracle": "bytes retained in git worktrees"
+    },
+    "combined-candidate": {
+      "passed": true,
+      "commandIds": [
+        "workspace-a-native-measure",
+        "workspace-b-native-measure"
+      ],
+      "oracle": "two workspace three-run measurements"
+    },
+    "cancellation-recovery": {
+      "passed": true,
+      "commandIds": [
+        "vg-joint-jj_transaction_recovery"
+      ],
+      "oracle": "jj_transaction_recovery"
+    },
+    "selected-final-full": {
+      "passed": true,
+      "commandIds": [
+        "workspace-a-native-measure",
+        "workspace-b-native-measure"
+      ],
+      "oracle": "selected followed by independent full"
+    },
+    "planted-wrong-combination": {
+      "id": "planted-wrong-combination",
+      "commandIds": [
+        "planted-wrong-full"
+      ],
+      "passed": true,
+      "expected": "full rejects planted failure"
+    }
+  },
+  "tokens": {
+    "status": "not-applicable",
+    "reason": "scripted evaluation never calls a model provider; no live model quality claim"
+  },
+  "costs": {
+    "commands": [
+      {
+        "id": "tool-versions",
+        "argv": [
+          "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+          "-I",
+          "-B",
+          "-c",
+          "import sys,smart_sorter,pytest; print(sys.version.split()[0]); print(smart_sorter.__file__); print(pytest.__version__)"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.6169304999930318,
+        "cpuSeconds": 0.4375,
+        "peakTreeRssBytes": 27344896,
+        "stdoutArtifact": "outputs/tool-versions.stdout.bin",
+        "stderrArtifact": "outputs/tool-versions.stderr.bin",
+        "stdoutSha256": "b572663cf21d9a7310e0d9f87f97b5eff8728c4301c2755a3c643c9543257b28",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "python-environment",
+        "argv": [
+          "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+          "-I",
+          "-B",
+          "-m",
+          "smart_sorter.environment"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.5223903000005521,
+        "cpuSeconds": 0.296875,
+        "peakTreeRssBytes": 22265856,
+        "stdoutArtifact": "outputs/python-environment.stdout.bin",
+        "stderrArtifact": "outputs/python-environment.stderr.bin",
+        "stdoutSha256": "b528f801d3044cb7a6a62944f190489f999e723f8eae62f8ac9abbb53e2913a6",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "jj-version",
+        "argv": [
+          "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\oracle\\extracted\\jj.exe",
+          "--version"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.25483759999042377,
+        "cpuSeconds": 0.03125,
+        "peakTreeRssBytes": 8290304,
+        "stdoutArtifact": "outputs/jj-version.stdout.bin",
+        "stderrArtifact": "outputs/jj-version.stderr.bin",
+        "stdoutSha256": "f598a6c2368c294642f9170a7cba85d053bf4edda5e51861db6b8e12441fc922",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-native-measure",
+        "argv": [
+          "D:\\tmp\\tf0778-real-20261109-230000\\eval-venv\\Scripts\\python.exe",
+          "-B",
+          "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\scripts\\measure_jj_vg_sts_workflow.py",
+          "--runs",
+          "3",
+          "--vg",
+          "D:\\tmp\\tf0778-isolated-e510-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0778\\inputs\\vg.exe",
+          "--jj",
+          "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\oracle\\extracted\\jj.exe",
+          "--python",
+          "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+          "--sample-dir",
+          "D:\\tmp\\tf0779-joint-20261110-044313\\measurements\\workspace-a-samples",
+          "--source-repo",
+          "D:\\tmp\\tf0778-isolated-e510-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0779\\workspaces\\workspace-a",
+          "--json-out",
+          "D:\\tmp\\tf0779-joint-20261110-044313\\measurements\\workspace-a.json"
+        ],
+        "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 211.75704659998883,
+        "cpuSeconds": 3.609375,
+        "peakTreeRssBytes": 221290496,
+        "stdoutArtifact": "outputs/workspace-a-native-measure.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-native-measure.stderr.bin",
+        "stdoutSha256": "8fc92c4f692356ca4b5d7c04f277faa567f7e5fcb67cbef6e86f916d1074ee3e",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-1-base-git-init",
+        "argv": [
+          "git",
+          "init",
+          "-q",
+          "-b",
+          "main"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.17917119999765418,
+        "cpuSeconds": 0.015625,
+        "peakTreeRssBytes": 11190272,
+        "stdoutArtifact": "outputs/workspace-a-1-base-git-init.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-1-base-git-init.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-1-base-git-name",
+        "argv": [
+          "git",
+          "config",
+          "user.name",
+          "joint-eval"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.16952860000310466,
+        "cpuSeconds": 0.015625,
+        "peakTreeRssBytes": 7708672,
+        "stdoutArtifact": "outputs/workspace-a-1-base-git-name.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-1-base-git-name.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-1-base-git-email",
+        "argv": [
+          "git",
+          "config",
+          "user.email",
+          "joint-eval@example.invalid"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.09131729998625815,
+        "cpuSeconds": 0.03125,
+        "peakTreeRssBytes": 12300288,
+        "stdoutArtifact": "outputs/workspace-a-1-base-git-email.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-1-base-git-email.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-1-base-git-add-base",
+        "argv": [
+          "git",
+          "add",
+          "-A"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.17045990002225153,
+        "cpuSeconds": 0.046875,
+        "peakTreeRssBytes": 16850944,
+        "stdoutArtifact": "outputs/workspace-a-1-base-git-add-base.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-1-base-git-add-base.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-1-base-git-commit-base",
+        "argv": [
+          "git",
+          "commit",
+          "-qm",
+          "base"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.23086710000643507,
+        "cpuSeconds": 0.09375,
+        "peakTreeRssBytes": 16982016,
+        "stdoutArtifact": "outputs/workspace-a-1-base-git-commit-base.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-1-base-git-commit-base.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-1-git-worktree-add",
+        "argv": [
+          "git",
+          "worktree",
+          "add",
+          "-q",
+          "-b",
+          "candidate-1",
+          "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\candidate",
+          "HEAD"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.3549485999974422,
+        "cpuSeconds": 0.078125,
+        "peakTreeRssBytes": 25219072,
+        "stdoutArtifact": "outputs/workspace-a-1-git-worktree-add.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-1-git-worktree-add.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-1-git-add",
+        "argv": [
+          "git",
+          "add",
+          "-A"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.19837219998589717,
+        "cpuSeconds": 0.0625,
+        "peakTreeRssBytes": 11075584,
+        "stdoutArtifact": "outputs/workspace-a-1-git-add.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-1-git-add.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-1-git-commit",
+        "argv": [
+          "git",
+          "commit",
+          "-qm",
+          "candidate"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.17031719998340122,
+        "cpuSeconds": 0.09375,
+        "peakTreeRssBytes": 18464768,
+        "stdoutArtifact": "outputs/workspace-a-1-git-commit.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-1-git-commit.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-1-git-full",
+        "argv": [
+          "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+          "-B",
+          "-m",
+          "pytest",
+          "-q",
+          "-p",
+          "no:cacheprovider"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 1.2247480999794789,
+        "cpuSeconds": 1.0,
+        "peakTreeRssBytes": 43376640,
+        "stdoutArtifact": "outputs/workspace-a-1-git-full.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-1-git-full.stderr.bin",
+        "stdoutSha256": "1736e3eb3d1e390c1a3a8081667d8e0738957ddd7ffb89367e4447887aa19cf4",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-2-base-git-init",
+        "argv": [
+          "git",
+          "init",
+          "-q",
+          "-b",
+          "main"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.09912339999573305,
+        "cpuSeconds": 0.015625,
+        "peakTreeRssBytes": 12574720,
+        "stdoutArtifact": "outputs/workspace-a-2-base-git-init.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-2-base-git-init.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-2-base-git-name",
+        "argv": [
+          "git",
+          "config",
+          "user.name",
+          "joint-eval"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.09155620000092313,
+        "cpuSeconds": 0.015625,
+        "peakTreeRssBytes": 12095488,
+        "stdoutArtifact": "outputs/workspace-a-2-base-git-name.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-2-base-git-name.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-2-base-git-email",
+        "argv": [
+          "git",
+          "config",
+          "user.email",
+          "joint-eval@example.invalid"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.17043299999204464,
+        "cpuSeconds": 0.03125,
+        "peakTreeRssBytes": 7708672,
+        "stdoutArtifact": "outputs/workspace-a-2-base-git-email.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-2-base-git-email.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-2-base-git-add-base",
+        "argv": [
+          "git",
+          "add",
+          "-A"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.09257520001847297,
+        "cpuSeconds": 0.0,
+        "peakTreeRssBytes": 12443648,
+        "stdoutArtifact": "outputs/workspace-a-2-base-git-add-base.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-2-base-git-add-base.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-2-base-git-commit-base",
+        "argv": [
+          "git",
+          "commit",
+          "-qm",
+          "base"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.17173030000412837,
+        "cpuSeconds": 0.015625,
+        "peakTreeRssBytes": 11968512,
+        "stdoutArtifact": "outputs/workspace-a-2-base-git-commit-base.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-2-base-git-commit-base.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-2-git-worktree-add",
+        "argv": [
+          "git",
+          "worktree",
+          "add",
+          "-q",
+          "-b",
+          "candidate-2",
+          "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\candidate",
+          "HEAD"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.35321770000155084,
+        "cpuSeconds": 0.171875,
+        "peakTreeRssBytes": 24305664,
+        "stdoutArtifact": "outputs/workspace-a-2-git-worktree-add.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-2-git-worktree-add.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-2-git-add",
+        "argv": [
+          "git",
+          "add",
+          "-A"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.172386300022481,
+        "cpuSeconds": 0.046875,
+        "peakTreeRssBytes": 8953856,
+        "stdoutArtifact": "outputs/workspace-a-2-git-add.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-2-git-add.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-2-git-commit",
+        "argv": [
+          "git",
+          "commit",
+          "-qm",
+          "candidate"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.17168309999397025,
+        "cpuSeconds": 0.015625,
+        "peakTreeRssBytes": 11915264,
+        "stdoutArtifact": "outputs/workspace-a-2-git-commit.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-2-git-commit.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-2-git-full",
+        "argv": [
+          "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+          "-B",
+          "-m",
+          "pytest",
+          "-q",
+          "-p",
+          "no:cacheprovider"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 1.1254353999975137,
+        "cpuSeconds": 0.875,
+        "peakTreeRssBytes": 43638784,
+        "stdoutArtifact": "outputs/workspace-a-2-git-full.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-2-git-full.stderr.bin",
+        "stdoutSha256": "1736e3eb3d1e390c1a3a8081667d8e0738957ddd7ffb89367e4447887aa19cf4",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-3-base-git-init",
+        "argv": [
+          "git",
+          "init",
+          "-q",
+          "-b",
+          "main"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.17412170002353378,
+        "cpuSeconds": 0.015625,
+        "peakTreeRssBytes": 11862016,
+        "stdoutArtifact": "outputs/workspace-a-3-base-git-init.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-3-base-git-init.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-3-base-git-name",
+        "argv": [
+          "git",
+          "config",
+          "user.name",
+          "joint-eval"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.09172560001024976,
+        "cpuSeconds": 0.015625,
+        "peakTreeRssBytes": 7720960,
+        "stdoutArtifact": "outputs/workspace-a-3-base-git-name.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-3-base-git-name.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-3-base-git-email",
+        "argv": [
+          "git",
+          "config",
+          "user.email",
+          "joint-eval@example.invalid"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.09432300002663396,
+        "cpuSeconds": 0.015625,
+        "peakTreeRssBytes": 12812288,
+        "stdoutArtifact": "outputs/workspace-a-3-base-git-email.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-3-base-git-email.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-3-base-git-add-base",
+        "argv": [
+          "git",
+          "add",
+          "-A"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.17087360000004992,
+        "cpuSeconds": 0.03125,
+        "peakTreeRssBytes": 12677120,
+        "stdoutArtifact": "outputs/workspace-a-3-base-git-add-base.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-3-base-git-add-base.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-3-base-git-commit-base",
+        "argv": [
+          "git",
+          "commit",
+          "-qm",
+          "base"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.17277820000890642,
+        "cpuSeconds": 0.0,
+        "peakTreeRssBytes": 10682368,
+        "stdoutArtifact": "outputs/workspace-a-3-base-git-commit-base.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-3-base-git-commit-base.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-3-git-worktree-add",
+        "argv": [
+          "git",
+          "worktree",
+          "add",
+          "-q",
+          "-b",
+          "candidate-3",
+          "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\candidate",
+          "HEAD"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.250196999986656,
+        "cpuSeconds": 0.0625,
+        "peakTreeRssBytes": 24301568,
+        "stdoutArtifact": "outputs/workspace-a-3-git-worktree-add.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-3-git-worktree-add.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-3-git-add",
+        "argv": [
+          "git",
+          "add",
+          "-A"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.16698680000263266,
+        "cpuSeconds": 0.03125,
+        "peakTreeRssBytes": 11902976,
+        "stdoutArtifact": "outputs/workspace-a-3-git-add.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-3-git-add.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-3-git-commit",
+        "argv": [
+          "git",
+          "commit",
+          "-qm",
+          "candidate"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.18599560001166537,
+        "cpuSeconds": 0.03125,
+        "peakTreeRssBytes": 14635008,
+        "stdoutArtifact": "outputs/workspace-a-3-git-commit.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-3-git-commit.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-a-3-git-full",
+        "argv": [
+          "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+          "-B",
+          "-m",
+          "pytest",
+          "-q",
+          "-p",
+          "no:cacheprovider"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.9020524999941699,
+        "cpuSeconds": 0.796875,
+        "peakTreeRssBytes": 43364352,
+        "stdoutArtifact": "outputs/workspace-a-3-git-full.stdout.bin",
+        "stderrArtifact": "outputs/workspace-a-3-git-full.stderr.bin",
+        "stdoutSha256": "1736e3eb3d1e390c1a3a8081667d8e0738957ddd7ffb89367e4447887aa19cf4",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-native-measure",
+        "argv": [
+          "D:\\tmp\\tf0778-real-20261109-230000\\eval-venv\\Scripts\\python.exe",
+          "-B",
+          "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\scripts\\measure_jj_vg_sts_workflow.py",
+          "--runs",
+          "3",
+          "--vg",
+          "D:\\tmp\\tf0778-isolated-e510-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0778\\inputs\\vg.exe",
+          "--jj",
+          "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\oracle\\extracted\\jj.exe",
+          "--python",
+          "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+          "--sample-dir",
+          "D:\\tmp\\tf0779-joint-20261110-044313\\measurements\\workspace-b-samples",
+          "--source-repo",
+          "D:\\tmp\\tf0778-isolated-e510-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0779\\workspaces\\workspace-b",
+          "--json-out",
+          "D:\\tmp\\tf0779-joint-20261110-044313\\measurements\\workspace-b.json"
+        ],
+        "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 200.51903120000497,
+        "cpuSeconds": 3.3125,
+        "peakTreeRssBytes": 220028928,
+        "stdoutArtifact": "outputs/workspace-b-native-measure.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-native-measure.stderr.bin",
+        "stdoutSha256": "e0b1a63dc65f1fdb965122b24024db387a94cdd5019343000c2c93de0f76644d",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-1-base-git-init",
+        "argv": [
+          "git",
+          "init",
+          "-q",
+          "-b",
+          "main"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.19197200000053272,
+        "cpuSeconds": 0.015625,
+        "peakTreeRssBytes": 10334208,
+        "stdoutArtifact": "outputs/workspace-b-1-base-git-init.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-1-base-git-init.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-1-base-git-name",
+        "argv": [
+          "git",
+          "config",
+          "user.name",
+          "joint-eval"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.10714510001707822,
+        "cpuSeconds": 0.015625,
+        "peakTreeRssBytes": 9732096,
+        "stdoutArtifact": "outputs/workspace-b-1-base-git-name.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-1-base-git-name.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-1-base-git-email",
+        "argv": [
+          "git",
+          "config",
+          "user.email",
+          "joint-eval@example.invalid"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.09184830001322553,
+        "cpuSeconds": 0.015625,
+        "peakTreeRssBytes": 10133504,
+        "stdoutArtifact": "outputs/workspace-b-1-base-git-email.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-1-base-git-email.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-1-base-git-add-base",
+        "argv": [
+          "git",
+          "add",
+          "-A"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.1680175999936182,
+        "cpuSeconds": 0.03125,
+        "peakTreeRssBytes": 10747904,
+        "stdoutArtifact": "outputs/workspace-b-1-base-git-add-base.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-1-base-git-add-base.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-1-base-git-commit-base",
+        "argv": [
+          "git",
+          "commit",
+          "-qm",
+          "base"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.21398069997667335,
+        "cpuSeconds": 0.03125,
+        "peakTreeRssBytes": 16490496,
+        "stdoutArtifact": "outputs/workspace-b-1-base-git-commit-base.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-1-base-git-commit-base.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-1-git-worktree-add",
+        "argv": [
+          "git",
+          "worktree",
+          "add",
+          "-q",
+          "-b",
+          "candidate-1",
+          "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\candidate",
+          "HEAD"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.6811075000150595,
+        "cpuSeconds": 0.140625,
+        "peakTreeRssBytes": 26165248,
+        "stdoutArtifact": "outputs/workspace-b-1-git-worktree-add.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-1-git-worktree-add.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-1-git-add",
+        "argv": [
+          "git",
+          "add",
+          "-A"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.10569130000658333,
+        "cpuSeconds": 0.015625,
+        "peakTreeRssBytes": 10166272,
+        "stdoutArtifact": "outputs/workspace-b-1-git-add.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-1-git-add.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-1-git-commit",
+        "argv": [
+          "git",
+          "commit",
+          "-qm",
+          "candidate"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.21684489998733625,
+        "cpuSeconds": 0.109375,
+        "peakTreeRssBytes": 18149376,
+        "stdoutArtifact": "outputs/workspace-b-1-git-commit.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-1-git-commit.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-1-git-full",
+        "argv": [
+          "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+          "-B",
+          "-m",
+          "pytest",
+          "-q",
+          "-p",
+          "no:cacheprovider"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 1.9425493000017013,
+        "cpuSeconds": 1.359375,
+        "peakTreeRssBytes": 43515904,
+        "stdoutArtifact": "outputs/workspace-b-1-git-full.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-1-git-full.stderr.bin",
+        "stdoutSha256": "213e7d69730d580643d7992407f884b06d136118668df0636d528458e79724e5",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-2-base-git-init",
+        "argv": [
+          "git",
+          "init",
+          "-q",
+          "-b",
+          "main"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.20358659999328665,
+        "cpuSeconds": 0.09375,
+        "peakTreeRssBytes": 16338944,
+        "stdoutArtifact": "outputs/workspace-b-2-base-git-init.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-2-base-git-init.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-2-base-git-name",
+        "argv": [
+          "git",
+          "config",
+          "user.name",
+          "joint-eval"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.10768359998473898,
+        "cpuSeconds": 0.015625,
+        "peakTreeRssBytes": 13496320,
+        "stdoutArtifact": "outputs/workspace-b-2-base-git-name.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-2-base-git-name.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-2-base-git-email",
+        "argv": [
+          "git",
+          "config",
+          "user.email",
+          "joint-eval@example.invalid"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.10616769999614917,
+        "cpuSeconds": 0.03125,
+        "peakTreeRssBytes": 15831040,
+        "stdoutArtifact": "outputs/workspace-b-2-base-git-email.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-2-base-git-email.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-2-base-git-add-base",
+        "argv": [
+          "git",
+          "add",
+          "-A"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.1822968999913428,
+        "cpuSeconds": 0.03125,
+        "peakTreeRssBytes": 15863808,
+        "stdoutArtifact": "outputs/workspace-b-2-base-git-add-base.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-2-base-git-add-base.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-2-base-git-commit-base",
+        "argv": [
+          "git",
+          "commit",
+          "-qm",
+          "base"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.23086109998985194,
+        "cpuSeconds": 0.0625,
+        "peakTreeRssBytes": 16879616,
+        "stdoutArtifact": "outputs/workspace-b-2-base-git-commit-base.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-2-base-git-commit-base.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-2-git-worktree-add",
+        "argv": [
+          "git",
+          "worktree",
+          "add",
+          "-q",
+          "-b",
+          "candidate-2",
+          "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\candidate",
+          "HEAD"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.41803930001333356,
+        "cpuSeconds": 0.109375,
+        "peakTreeRssBytes": 26382336,
+        "stdoutArtifact": "outputs/workspace-b-2-git-worktree-add.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-2-git-worktree-add.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-2-git-add",
+        "argv": [
+          "git",
+          "add",
+          "-A"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.21441399998730049,
+        "cpuSeconds": 0.03125,
+        "peakTreeRssBytes": 11259904,
+        "stdoutArtifact": "outputs/workspace-b-2-git-add.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-2-git-add.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-2-git-commit",
+        "argv": [
+          "git",
+          "commit",
+          "-qm",
+          "candidate"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.21635440000682138,
+        "cpuSeconds": 0.109375,
+        "peakTreeRssBytes": 17682432,
+        "stdoutArtifact": "outputs/workspace-b-2-git-commit.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-2-git-commit.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-2-git-full",
+        "argv": [
+          "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+          "-B",
+          "-m",
+          "pytest",
+          "-q",
+          "-p",
+          "no:cacheprovider"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 1.6297956999915186,
+        "cpuSeconds": 1.1875,
+        "peakTreeRssBytes": 43667456,
+        "stdoutArtifact": "outputs/workspace-b-2-git-full.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-2-git-full.stderr.bin",
+        "stdoutSha256": "1736e3eb3d1e390c1a3a8081667d8e0738957ddd7ffb89367e4447887aa19cf4",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-3-base-git-init",
+        "argv": [
+          "git",
+          "init",
+          "-q",
+          "-b",
+          "main"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.29170869998051785,
+        "cpuSeconds": 0.09375,
+        "peakTreeRssBytes": 16371712,
+        "stdoutArtifact": "outputs/workspace-b-3-base-git-init.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-3-base-git-init.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-3-base-git-name",
+        "argv": [
+          "git",
+          "config",
+          "user.name",
+          "joint-eval"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.10498059997917153,
+        "cpuSeconds": 0.015625,
+        "peakTreeRssBytes": 7725056,
+        "stdoutArtifact": "outputs/workspace-b-3-base-git-name.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-3-base-git-name.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-3-base-git-email",
+        "argv": [
+          "git",
+          "config",
+          "user.email",
+          "joint-eval@example.invalid"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.10505990000092424,
+        "cpuSeconds": 0.0,
+        "peakTreeRssBytes": 7725056,
+        "stdoutArtifact": "outputs/workspace-b-3-base-git-email.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-3-base-git-email.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-3-base-git-add-base",
+        "argv": [
+          "git",
+          "add",
+          "-A"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.20146899999235757,
+        "cpuSeconds": 0.046875,
+        "peakTreeRssBytes": 16965632,
+        "stdoutArtifact": "outputs/workspace-b-3-base-git-add-base.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-3-base-git-add-base.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-3-base-git-commit-base",
+        "argv": [
+          "git",
+          "commit",
+          "-qm",
+          "base"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.21470109999063425,
+        "cpuSeconds": 0.09375,
+        "peakTreeRssBytes": 17477632,
+        "stdoutArtifact": "outputs/workspace-b-3-base-git-commit-base.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-3-base-git-commit-base.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-3-git-worktree-add",
+        "argv": [
+          "git",
+          "worktree",
+          "add",
+          "-q",
+          "-b",
+          "candidate-3",
+          "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\candidate",
+          "HEAD"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.2797891000227537,
+        "cpuSeconds": 0.09375,
+        "peakTreeRssBytes": 26648576,
+        "stdoutArtifact": "outputs/workspace-b-3-git-worktree-add.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-3-git-worktree-add.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-3-git-add",
+        "argv": [
+          "git",
+          "add",
+          "-A"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.18305920000420883,
+        "cpuSeconds": 0.0,
+        "peakTreeRssBytes": 11444224,
+        "stdoutArtifact": "outputs/workspace-b-3-git-add.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-3-git-add.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-3-git-commit",
+        "argv": [
+          "git",
+          "commit",
+          "-qm",
+          "candidate"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.20238800000515766,
+        "cpuSeconds": 0.078125,
+        "peakTreeRssBytes": 18325504,
+        "stdoutArtifact": "outputs/workspace-b-3-git-commit.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-3-git-commit.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "workspace-b-3-git-full",
+        "argv": [
+          "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+          "-B",
+          "-m",
+          "pytest",
+          "-q",
+          "-p",
+          "no:cacheprovider"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\candidate",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 1.5089345999876969,
+        "cpuSeconds": 1.078125,
+        "peakTreeRssBytes": 43540480,
+        "stdoutArtifact": "outputs/workspace-b-3-git-full.stdout.bin",
+        "stderrArtifact": "outputs/workspace-b-3-git-full.stderr.bin",
+        "stdoutSha256": "1736e3eb3d1e390c1a3a8081667d8e0738957ddd7ffb89367e4447887aa19cf4",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "planted-git-init",
+        "argv": [
+          "git",
+          "init",
+          "-q",
+          "-b",
+          "main"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\planted\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.18945760000497103,
+        "cpuSeconds": 0.046875,
+        "peakTreeRssBytes": 12648448,
+        "stdoutArtifact": "outputs/planted-git-init.stdout.bin",
+        "stderrArtifact": "outputs/planted-git-init.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "planted-git-name",
+        "argv": [
+          "git",
+          "config",
+          "user.name",
+          "joint-eval"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\planted\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.09211860000505112,
+        "cpuSeconds": 0.046875,
+        "peakTreeRssBytes": 12476416,
+        "stdoutArtifact": "outputs/planted-git-name.stdout.bin",
+        "stderrArtifact": "outputs/planted-git-name.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "planted-git-email",
+        "argv": [
+          "git",
+          "config",
+          "user.email",
+          "joint-eval@example.invalid"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\planted\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.10636790000717156,
+        "cpuSeconds": 0.078125,
+        "peakTreeRssBytes": 13090816,
+        "stdoutArtifact": "outputs/planted-git-email.stdout.bin",
+        "stderrArtifact": "outputs/planted-git-email.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "planted-git-add-base",
+        "argv": [
+          "git",
+          "add",
+          "-A"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\planted\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.20176729999366216,
+        "cpuSeconds": 0.015625,
+        "peakTreeRssBytes": 7790592,
+        "stdoutArtifact": "outputs/planted-git-add-base.stdout.bin",
+        "stderrArtifact": "outputs/planted-git-add-base.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "planted-git-commit-base",
+        "argv": [
+          "git",
+          "commit",
+          "-qm",
+          "base"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\planted\\repo",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 0.18463870001141913,
+        "cpuSeconds": 0.109375,
+        "peakTreeRssBytes": 17592320,
+        "stdoutArtifact": "outputs/planted-git-commit-base.stdout.bin",
+        "stderrArtifact": "outputs/planted-git-commit-base.stderr.bin",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "planted-wrong-full",
+        "argv": [
+          "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+          "-B",
+          "-m",
+          "pytest",
+          "-q",
+          "-p",
+          "no:cacheprovider"
+        ],
+        "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\planted\\repo",
+        "exitCode": 1,
+        "expectedExitCode": 1,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 1.355490199988708,
+        "cpuSeconds": 1.171875,
+        "peakTreeRssBytes": 43986944,
+        "stdoutArtifact": "outputs/planted-wrong-full.stdout.bin",
+        "stderrArtifact": "outputs/planted-wrong-full.stderr.bin",
+        "stdoutSha256": "fb8bbe3ce35d79eb62a05116fb813a7f48dcbd3dc3ffa6f593af74f6f53d5de6",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "clawx-joint-unit",
+        "argv": [
+          "C:\\Program Files\\nodejs\\node.EXE",
+          "D:\\tmp\\tf0778-isolated-e510-20261110\\node_modules\\vitest\\vitest.mjs",
+          "run",
+          "tests/unit/orchestration-worktree-merge.test.ts",
+          "tests/unit/uas-04-coding-mutation-consistency.test.ts",
+          "--maxWorkers=1"
+        ],
+        "cwd": "D:\\tmp\\tf0778-isolated-e510-20261110",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 26.999411299999338,
+        "cpuSeconds": 8.125,
+        "peakTreeRssBytes": 381829120,
+        "stdoutArtifact": "outputs/clawx-joint-unit.stdout.bin",
+        "stderrArtifact": "outputs/clawx-joint-unit.stderr.bin",
+        "stdoutSha256": "60ac7dee8aee64c40bf300115cfe12944a687e129942f273d22f493a9d10d8b1",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "vg-joint-jj_cross_workspace_conflict",
+        "argv": [
+          "cargo",
+          "test",
+          "-p",
+          "vg-cli",
+          "--test",
+          "jj_cross_workspace_conflict"
+        ],
+        "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 269.35544850002043,
+        "cpuSeconds": 81.125,
+        "peakTreeRssBytes": 2666745856,
+        "stdoutArtifact": "outputs/vg-joint-jj_cross_workspace_conflict.stdout.bin",
+        "stderrArtifact": "outputs/vg-joint-jj_cross_workspace_conflict.stderr.bin",
+        "stdoutSha256": "5e6e5204cde7f216fb67cfb612777c565d5837d05f961651c50dd33ce618c7d5",
+        "stderrSha256": "87db1753ebd5a841cdde96618fabc45fb56756c9327a49a3e35acb43d72012e7"
+      },
+      {
+        "id": "vg-joint-jj_conflict_gate",
+        "argv": [
+          "cargo",
+          "test",
+          "-p",
+          "vg-cli",
+          "--test",
+          "jj_conflict_gate"
+        ],
+        "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 17.29664899999625,
+        "cpuSeconds": 2.765625,
+        "peakTreeRssBytes": 250355712,
+        "stdoutArtifact": "outputs/vg-joint-jj_conflict_gate.stdout.bin",
+        "stderrArtifact": "outputs/vg-joint-jj_conflict_gate.stderr.bin",
+        "stdoutSha256": "7a1c978109c25fc48f336038a9b3f0f9088a09d1c13b57fd39fbf5a076b0fa50",
+        "stderrSha256": "1ed73acba3f55aa1f73d8c75b158fa8a95c6248b491899b87765ec5e32f0dcd6"
+      },
+      {
+        "id": "vg-joint-jj_transaction_recovery",
+        "argv": [
+          "cargo",
+          "test",
+          "-p",
+          "vg-cli",
+          "--test",
+          "jj_transaction_recovery"
+        ],
+        "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 11.062657999980729,
+        "cpuSeconds": 6.28125,
+        "peakTreeRssBytes": 1055956992,
+        "stdoutArtifact": "outputs/vg-joint-jj_transaction_recovery.stdout.bin",
+        "stderrArtifact": "outputs/vg-joint-jj_transaction_recovery.stderr.bin",
+        "stdoutSha256": "7546cb4cc11cc50ee6785c94b71cf9b0b7c852fc245bb84a3f568cb7b4b3981b",
+        "stderrSha256": "419b9c6a529b82f3b3e97384ff93847aea72a69a91af5d5db3448914623dec1b"
+      },
+      {
+        "id": "vg-joint-jj_sts_feedback",
+        "argv": [
+          "cargo",
+          "test",
+          "-p",
+          "vg-cli",
+          "--test",
+          "jj_sts_feedback"
+        ],
+        "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 6.566695899993647,
+        "cpuSeconds": 5.421875,
+        "peakTreeRssBytes": 1055244288,
+        "stdoutArtifact": "outputs/vg-joint-jj_sts_feedback.stdout.bin",
+        "stderrArtifact": "outputs/vg-joint-jj_sts_feedback.stderr.bin",
+        "stdoutSha256": "ff686f998ee2517528746bdd0868ace41169f371080814d0a7bd67e066c2b26e",
+        "stderrSha256": "f66cdb50914dc3048b4b0ebff22179ab5f5dc7fb322dbc7bbf7b1b321fcfb62a"
+      },
+      {
+        "id": "vg-joint-jj_workspace_lifecycle",
+        "argv": [
+          "cargo",
+          "test",
+          "-p",
+          "vg-cli",
+          "--test",
+          "jj_workspace_lifecycle"
+        ],
+        "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 18.718578200001502,
+        "cpuSeconds": 5.84375,
+        "peakTreeRssBytes": 881672192,
+        "stdoutArtifact": "outputs/vg-joint-jj_workspace_lifecycle.stdout.bin",
+        "stderrArtifact": "outputs/vg-joint-jj_workspace_lifecycle.stderr.bin",
+        "stdoutSha256": "093b702b38b92b8ea0688d8eb42a52c8cf6a1bd6db4f9eeacb55ddad62399dbe",
+        "stderrSha256": "8092369a9205d427d273efbfae77a425cc82ba41ee76269d8d7d8ef64f43a9d2"
+      },
+      {
+        "id": "vg-joint-jj_file_family",
+        "argv": [
+          "cargo",
+          "test",
+          "-p",
+          "vg-cli",
+          "--test",
+          "jj_file_family"
+        ],
+        "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix",
+        "exitCode": 0,
+        "expectedExitCode": 0,
+        "timedOut": false,
+        "waitedForExit": true,
+        "wallSeconds": 14.136136200017063,
+        "cpuSeconds": 3.21875,
+        "peakTreeRssBytes": 289005568,
+        "stdoutArtifact": "outputs/vg-joint-jj_file_family.stdout.bin",
+        "stderrArtifact": "outputs/vg-joint-jj_file_family.stderr.bin",
+        "stdoutSha256": "e7f648c1cd422d6d36427aef57f8bd20c95679a17cb57a4c75d0ae55cf2e33c1",
+        "stderrSha256": "12040b1ef4ad7100c21fee0c06ebd7fbba80c7b1f93ee804dae4e5d1bdb884b1"
+      }
+    ],
+    "wallSecondsTotal": 797.5030245999806,
+    "cpuSecondsTotal": 130.46875,
+    "peakTreeRssBytesMax": 2666745856
+  },
+  "cleanup": {
+    "removedFiles": 6942,
+    "removedBytes": 2209471604,
+    "remaining": 0
+  },
+  "commands": [
+    {
+      "id": "tool-versions",
+      "argv": [
+        "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "-c",
+        "import sys,smart_sorter,pytest; print(sys.version.split()[0]); print(smart_sorter.__file__); print(pytest.__version__)"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.6169304999930318,
+      "cpuSeconds": 0.4375,
+      "peakTreeRssBytes": 27344896,
+      "stdoutArtifact": "outputs/tool-versions.stdout.bin",
+      "stderrArtifact": "outputs/tool-versions.stderr.bin",
+      "stdoutSha256": "b572663cf21d9a7310e0d9f87f97b5eff8728c4301c2755a3c643c9543257b28",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "python-environment",
+      "argv": [
+        "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "-m",
+        "smart_sorter.environment"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.5223903000005521,
+      "cpuSeconds": 0.296875,
+      "peakTreeRssBytes": 22265856,
+      "stdoutArtifact": "outputs/python-environment.stdout.bin",
+      "stderrArtifact": "outputs/python-environment.stderr.bin",
+      "stdoutSha256": "b528f801d3044cb7a6a62944f190489f999e723f8eae62f8ac9abbb53e2913a6",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "jj-version",
+      "argv": [
+        "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\oracle\\extracted\\jj.exe",
+        "--version"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.25483759999042377,
+      "cpuSeconds": 0.03125,
+      "peakTreeRssBytes": 8290304,
+      "stdoutArtifact": "outputs/jj-version.stdout.bin",
+      "stderrArtifact": "outputs/jj-version.stderr.bin",
+      "stdoutSha256": "f598a6c2368c294642f9170a7cba85d053bf4edda5e51861db6b8e12441fc922",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-native-measure",
+      "argv": [
+        "D:\\tmp\\tf0778-real-20261109-230000\\eval-venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\scripts\\measure_jj_vg_sts_workflow.py",
+        "--runs",
+        "3",
+        "--vg",
+        "D:\\tmp\\tf0778-isolated-e510-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0778\\inputs\\vg.exe",
+        "--jj",
+        "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\oracle\\extracted\\jj.exe",
+        "--python",
+        "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+        "--sample-dir",
+        "D:\\tmp\\tf0779-joint-20261110-044313\\measurements\\workspace-a-samples",
+        "--source-repo",
+        "D:\\tmp\\tf0778-isolated-e510-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0779\\workspaces\\workspace-a",
+        "--json-out",
+        "D:\\tmp\\tf0779-joint-20261110-044313\\measurements\\workspace-a.json"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 211.75704659998883,
+      "cpuSeconds": 3.609375,
+      "peakTreeRssBytes": 221290496,
+      "stdoutArtifact": "outputs/workspace-a-native-measure.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-native-measure.stderr.bin",
+      "stdoutSha256": "8fc92c4f692356ca4b5d7c04f277faa567f7e5fcb67cbef6e86f916d1074ee3e",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-1-base-git-init",
+      "argv": [
+        "git",
+        "init",
+        "-q",
+        "-b",
+        "main"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.17917119999765418,
+      "cpuSeconds": 0.015625,
+      "peakTreeRssBytes": 11190272,
+      "stdoutArtifact": "outputs/workspace-a-1-base-git-init.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-1-base-git-init.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-1-base-git-name",
+      "argv": [
+        "git",
+        "config",
+        "user.name",
+        "joint-eval"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.16952860000310466,
+      "cpuSeconds": 0.015625,
+      "peakTreeRssBytes": 7708672,
+      "stdoutArtifact": "outputs/workspace-a-1-base-git-name.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-1-base-git-name.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-1-base-git-email",
+      "argv": [
+        "git",
+        "config",
+        "user.email",
+        "joint-eval@example.invalid"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.09131729998625815,
+      "cpuSeconds": 0.03125,
+      "peakTreeRssBytes": 12300288,
+      "stdoutArtifact": "outputs/workspace-a-1-base-git-email.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-1-base-git-email.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-1-base-git-add-base",
+      "argv": [
+        "git",
+        "add",
+        "-A"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.17045990002225153,
+      "cpuSeconds": 0.046875,
+      "peakTreeRssBytes": 16850944,
+      "stdoutArtifact": "outputs/workspace-a-1-base-git-add-base.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-1-base-git-add-base.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-1-base-git-commit-base",
+      "argv": [
+        "git",
+        "commit",
+        "-qm",
+        "base"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.23086710000643507,
+      "cpuSeconds": 0.09375,
+      "peakTreeRssBytes": 16982016,
+      "stdoutArtifact": "outputs/workspace-a-1-base-git-commit-base.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-1-base-git-commit-base.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-1-git-worktree-add",
+      "argv": [
+        "git",
+        "worktree",
+        "add",
+        "-q",
+        "-b",
+        "candidate-1",
+        "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\candidate",
+        "HEAD"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.3549485999974422,
+      "cpuSeconds": 0.078125,
+      "peakTreeRssBytes": 25219072,
+      "stdoutArtifact": "outputs/workspace-a-1-git-worktree-add.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-1-git-worktree-add.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-1-git-add",
+      "argv": [
+        "git",
+        "add",
+        "-A"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.19837219998589717,
+      "cpuSeconds": 0.0625,
+      "peakTreeRssBytes": 11075584,
+      "stdoutArtifact": "outputs/workspace-a-1-git-add.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-1-git-add.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-1-git-commit",
+      "argv": [
+        "git",
+        "commit",
+        "-qm",
+        "candidate"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.17031719998340122,
+      "cpuSeconds": 0.09375,
+      "peakTreeRssBytes": 18464768,
+      "stdoutArtifact": "outputs/workspace-a-1-git-commit.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-1-git-commit.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-1-git-full",
+      "argv": [
+        "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-1\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 1.2247480999794789,
+      "cpuSeconds": 1.0,
+      "peakTreeRssBytes": 43376640,
+      "stdoutArtifact": "outputs/workspace-a-1-git-full.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-1-git-full.stderr.bin",
+      "stdoutSha256": "1736e3eb3d1e390c1a3a8081667d8e0738957ddd7ffb89367e4447887aa19cf4",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-2-base-git-init",
+      "argv": [
+        "git",
+        "init",
+        "-q",
+        "-b",
+        "main"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.09912339999573305,
+      "cpuSeconds": 0.015625,
+      "peakTreeRssBytes": 12574720,
+      "stdoutArtifact": "outputs/workspace-a-2-base-git-init.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-2-base-git-init.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-2-base-git-name",
+      "argv": [
+        "git",
+        "config",
+        "user.name",
+        "joint-eval"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.09155620000092313,
+      "cpuSeconds": 0.015625,
+      "peakTreeRssBytes": 12095488,
+      "stdoutArtifact": "outputs/workspace-a-2-base-git-name.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-2-base-git-name.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-2-base-git-email",
+      "argv": [
+        "git",
+        "config",
+        "user.email",
+        "joint-eval@example.invalid"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.17043299999204464,
+      "cpuSeconds": 0.03125,
+      "peakTreeRssBytes": 7708672,
+      "stdoutArtifact": "outputs/workspace-a-2-base-git-email.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-2-base-git-email.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-2-base-git-add-base",
+      "argv": [
+        "git",
+        "add",
+        "-A"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.09257520001847297,
+      "cpuSeconds": 0.0,
+      "peakTreeRssBytes": 12443648,
+      "stdoutArtifact": "outputs/workspace-a-2-base-git-add-base.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-2-base-git-add-base.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-2-base-git-commit-base",
+      "argv": [
+        "git",
+        "commit",
+        "-qm",
+        "base"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.17173030000412837,
+      "cpuSeconds": 0.015625,
+      "peakTreeRssBytes": 11968512,
+      "stdoutArtifact": "outputs/workspace-a-2-base-git-commit-base.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-2-base-git-commit-base.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-2-git-worktree-add",
+      "argv": [
+        "git",
+        "worktree",
+        "add",
+        "-q",
+        "-b",
+        "candidate-2",
+        "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\candidate",
+        "HEAD"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.35321770000155084,
+      "cpuSeconds": 0.171875,
+      "peakTreeRssBytes": 24305664,
+      "stdoutArtifact": "outputs/workspace-a-2-git-worktree-add.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-2-git-worktree-add.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-2-git-add",
+      "argv": [
+        "git",
+        "add",
+        "-A"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.172386300022481,
+      "cpuSeconds": 0.046875,
+      "peakTreeRssBytes": 8953856,
+      "stdoutArtifact": "outputs/workspace-a-2-git-add.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-2-git-add.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-2-git-commit",
+      "argv": [
+        "git",
+        "commit",
+        "-qm",
+        "candidate"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.17168309999397025,
+      "cpuSeconds": 0.015625,
+      "peakTreeRssBytes": 11915264,
+      "stdoutArtifact": "outputs/workspace-a-2-git-commit.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-2-git-commit.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-2-git-full",
+      "argv": [
+        "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-2\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 1.1254353999975137,
+      "cpuSeconds": 0.875,
+      "peakTreeRssBytes": 43638784,
+      "stdoutArtifact": "outputs/workspace-a-2-git-full.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-2-git-full.stderr.bin",
+      "stdoutSha256": "1736e3eb3d1e390c1a3a8081667d8e0738957ddd7ffb89367e4447887aa19cf4",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-3-base-git-init",
+      "argv": [
+        "git",
+        "init",
+        "-q",
+        "-b",
+        "main"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.17412170002353378,
+      "cpuSeconds": 0.015625,
+      "peakTreeRssBytes": 11862016,
+      "stdoutArtifact": "outputs/workspace-a-3-base-git-init.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-3-base-git-init.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-3-base-git-name",
+      "argv": [
+        "git",
+        "config",
+        "user.name",
+        "joint-eval"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.09172560001024976,
+      "cpuSeconds": 0.015625,
+      "peakTreeRssBytes": 7720960,
+      "stdoutArtifact": "outputs/workspace-a-3-base-git-name.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-3-base-git-name.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-3-base-git-email",
+      "argv": [
+        "git",
+        "config",
+        "user.email",
+        "joint-eval@example.invalid"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.09432300002663396,
+      "cpuSeconds": 0.015625,
+      "peakTreeRssBytes": 12812288,
+      "stdoutArtifact": "outputs/workspace-a-3-base-git-email.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-3-base-git-email.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-3-base-git-add-base",
+      "argv": [
+        "git",
+        "add",
+        "-A"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.17087360000004992,
+      "cpuSeconds": 0.03125,
+      "peakTreeRssBytes": 12677120,
+      "stdoutArtifact": "outputs/workspace-a-3-base-git-add-base.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-3-base-git-add-base.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-3-base-git-commit-base",
+      "argv": [
+        "git",
+        "commit",
+        "-qm",
+        "base"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.17277820000890642,
+      "cpuSeconds": 0.0,
+      "peakTreeRssBytes": 10682368,
+      "stdoutArtifact": "outputs/workspace-a-3-base-git-commit-base.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-3-base-git-commit-base.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-3-git-worktree-add",
+      "argv": [
+        "git",
+        "worktree",
+        "add",
+        "-q",
+        "-b",
+        "candidate-3",
+        "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\candidate",
+        "HEAD"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.250196999986656,
+      "cpuSeconds": 0.0625,
+      "peakTreeRssBytes": 24301568,
+      "stdoutArtifact": "outputs/workspace-a-3-git-worktree-add.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-3-git-worktree-add.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-3-git-add",
+      "argv": [
+        "git",
+        "add",
+        "-A"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.16698680000263266,
+      "cpuSeconds": 0.03125,
+      "peakTreeRssBytes": 11902976,
+      "stdoutArtifact": "outputs/workspace-a-3-git-add.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-3-git-add.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-3-git-commit",
+      "argv": [
+        "git",
+        "commit",
+        "-qm",
+        "candidate"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.18599560001166537,
+      "cpuSeconds": 0.03125,
+      "peakTreeRssBytes": 14635008,
+      "stdoutArtifact": "outputs/workspace-a-3-git-commit.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-3-git-commit.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-a-3-git-full",
+      "argv": [
+        "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-a-3\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.9020524999941699,
+      "cpuSeconds": 0.796875,
+      "peakTreeRssBytes": 43364352,
+      "stdoutArtifact": "outputs/workspace-a-3-git-full.stdout.bin",
+      "stderrArtifact": "outputs/workspace-a-3-git-full.stderr.bin",
+      "stdoutSha256": "1736e3eb3d1e390c1a3a8081667d8e0738957ddd7ffb89367e4447887aa19cf4",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-native-measure",
+      "argv": [
+        "D:\\tmp\\tf0778-real-20261109-230000\\eval-venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\scripts\\measure_jj_vg_sts_workflow.py",
+        "--runs",
+        "3",
+        "--vg",
+        "D:\\tmp\\tf0778-isolated-e510-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0778\\inputs\\vg.exe",
+        "--jj",
+        "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\oracle\\extracted\\jj.exe",
+        "--python",
+        "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+        "--sample-dir",
+        "D:\\tmp\\tf0779-joint-20261110-044313\\measurements\\workspace-b-samples",
+        "--source-repo",
+        "D:\\tmp\\tf0778-isolated-e510-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0779\\workspaces\\workspace-b",
+        "--json-out",
+        "D:\\tmp\\tf0779-joint-20261110-044313\\measurements\\workspace-b.json"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 200.51903120000497,
+      "cpuSeconds": 3.3125,
+      "peakTreeRssBytes": 220028928,
+      "stdoutArtifact": "outputs/workspace-b-native-measure.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-native-measure.stderr.bin",
+      "stdoutSha256": "e0b1a63dc65f1fdb965122b24024db387a94cdd5019343000c2c93de0f76644d",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-1-base-git-init",
+      "argv": [
+        "git",
+        "init",
+        "-q",
+        "-b",
+        "main"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.19197200000053272,
+      "cpuSeconds": 0.015625,
+      "peakTreeRssBytes": 10334208,
+      "stdoutArtifact": "outputs/workspace-b-1-base-git-init.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-1-base-git-init.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-1-base-git-name",
+      "argv": [
+        "git",
+        "config",
+        "user.name",
+        "joint-eval"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.10714510001707822,
+      "cpuSeconds": 0.015625,
+      "peakTreeRssBytes": 9732096,
+      "stdoutArtifact": "outputs/workspace-b-1-base-git-name.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-1-base-git-name.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-1-base-git-email",
+      "argv": [
+        "git",
+        "config",
+        "user.email",
+        "joint-eval@example.invalid"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.09184830001322553,
+      "cpuSeconds": 0.015625,
+      "peakTreeRssBytes": 10133504,
+      "stdoutArtifact": "outputs/workspace-b-1-base-git-email.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-1-base-git-email.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-1-base-git-add-base",
+      "argv": [
+        "git",
+        "add",
+        "-A"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.1680175999936182,
+      "cpuSeconds": 0.03125,
+      "peakTreeRssBytes": 10747904,
+      "stdoutArtifact": "outputs/workspace-b-1-base-git-add-base.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-1-base-git-add-base.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-1-base-git-commit-base",
+      "argv": [
+        "git",
+        "commit",
+        "-qm",
+        "base"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.21398069997667335,
+      "cpuSeconds": 0.03125,
+      "peakTreeRssBytes": 16490496,
+      "stdoutArtifact": "outputs/workspace-b-1-base-git-commit-base.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-1-base-git-commit-base.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-1-git-worktree-add",
+      "argv": [
+        "git",
+        "worktree",
+        "add",
+        "-q",
+        "-b",
+        "candidate-1",
+        "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\candidate",
+        "HEAD"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.6811075000150595,
+      "cpuSeconds": 0.140625,
+      "peakTreeRssBytes": 26165248,
+      "stdoutArtifact": "outputs/workspace-b-1-git-worktree-add.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-1-git-worktree-add.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-1-git-add",
+      "argv": [
+        "git",
+        "add",
+        "-A"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.10569130000658333,
+      "cpuSeconds": 0.015625,
+      "peakTreeRssBytes": 10166272,
+      "stdoutArtifact": "outputs/workspace-b-1-git-add.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-1-git-add.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-1-git-commit",
+      "argv": [
+        "git",
+        "commit",
+        "-qm",
+        "candidate"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.21684489998733625,
+      "cpuSeconds": 0.109375,
+      "peakTreeRssBytes": 18149376,
+      "stdoutArtifact": "outputs/workspace-b-1-git-commit.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-1-git-commit.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-1-git-full",
+      "argv": [
+        "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-1\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 1.9425493000017013,
+      "cpuSeconds": 1.359375,
+      "peakTreeRssBytes": 43515904,
+      "stdoutArtifact": "outputs/workspace-b-1-git-full.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-1-git-full.stderr.bin",
+      "stdoutSha256": "213e7d69730d580643d7992407f884b06d136118668df0636d528458e79724e5",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-2-base-git-init",
+      "argv": [
+        "git",
+        "init",
+        "-q",
+        "-b",
+        "main"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.20358659999328665,
+      "cpuSeconds": 0.09375,
+      "peakTreeRssBytes": 16338944,
+      "stdoutArtifact": "outputs/workspace-b-2-base-git-init.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-2-base-git-init.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-2-base-git-name",
+      "argv": [
+        "git",
+        "config",
+        "user.name",
+        "joint-eval"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.10768359998473898,
+      "cpuSeconds": 0.015625,
+      "peakTreeRssBytes": 13496320,
+      "stdoutArtifact": "outputs/workspace-b-2-base-git-name.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-2-base-git-name.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-2-base-git-email",
+      "argv": [
+        "git",
+        "config",
+        "user.email",
+        "joint-eval@example.invalid"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.10616769999614917,
+      "cpuSeconds": 0.03125,
+      "peakTreeRssBytes": 15831040,
+      "stdoutArtifact": "outputs/workspace-b-2-base-git-email.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-2-base-git-email.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-2-base-git-add-base",
+      "argv": [
+        "git",
+        "add",
+        "-A"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.1822968999913428,
+      "cpuSeconds": 0.03125,
+      "peakTreeRssBytes": 15863808,
+      "stdoutArtifact": "outputs/workspace-b-2-base-git-add-base.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-2-base-git-add-base.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-2-base-git-commit-base",
+      "argv": [
+        "git",
+        "commit",
+        "-qm",
+        "base"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.23086109998985194,
+      "cpuSeconds": 0.0625,
+      "peakTreeRssBytes": 16879616,
+      "stdoutArtifact": "outputs/workspace-b-2-base-git-commit-base.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-2-base-git-commit-base.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-2-git-worktree-add",
+      "argv": [
+        "git",
+        "worktree",
+        "add",
+        "-q",
+        "-b",
+        "candidate-2",
+        "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\candidate",
+        "HEAD"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.41803930001333356,
+      "cpuSeconds": 0.109375,
+      "peakTreeRssBytes": 26382336,
+      "stdoutArtifact": "outputs/workspace-b-2-git-worktree-add.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-2-git-worktree-add.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-2-git-add",
+      "argv": [
+        "git",
+        "add",
+        "-A"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.21441399998730049,
+      "cpuSeconds": 0.03125,
+      "peakTreeRssBytes": 11259904,
+      "stdoutArtifact": "outputs/workspace-b-2-git-add.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-2-git-add.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-2-git-commit",
+      "argv": [
+        "git",
+        "commit",
+        "-qm",
+        "candidate"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.21635440000682138,
+      "cpuSeconds": 0.109375,
+      "peakTreeRssBytes": 17682432,
+      "stdoutArtifact": "outputs/workspace-b-2-git-commit.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-2-git-commit.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-2-git-full",
+      "argv": [
+        "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-2\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 1.6297956999915186,
+      "cpuSeconds": 1.1875,
+      "peakTreeRssBytes": 43667456,
+      "stdoutArtifact": "outputs/workspace-b-2-git-full.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-2-git-full.stderr.bin",
+      "stdoutSha256": "1736e3eb3d1e390c1a3a8081667d8e0738957ddd7ffb89367e4447887aa19cf4",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-3-base-git-init",
+      "argv": [
+        "git",
+        "init",
+        "-q",
+        "-b",
+        "main"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.29170869998051785,
+      "cpuSeconds": 0.09375,
+      "peakTreeRssBytes": 16371712,
+      "stdoutArtifact": "outputs/workspace-b-3-base-git-init.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-3-base-git-init.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-3-base-git-name",
+      "argv": [
+        "git",
+        "config",
+        "user.name",
+        "joint-eval"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.10498059997917153,
+      "cpuSeconds": 0.015625,
+      "peakTreeRssBytes": 7725056,
+      "stdoutArtifact": "outputs/workspace-b-3-base-git-name.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-3-base-git-name.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-3-base-git-email",
+      "argv": [
+        "git",
+        "config",
+        "user.email",
+        "joint-eval@example.invalid"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.10505990000092424,
+      "cpuSeconds": 0.0,
+      "peakTreeRssBytes": 7725056,
+      "stdoutArtifact": "outputs/workspace-b-3-base-git-email.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-3-base-git-email.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-3-base-git-add-base",
+      "argv": [
+        "git",
+        "add",
+        "-A"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.20146899999235757,
+      "cpuSeconds": 0.046875,
+      "peakTreeRssBytes": 16965632,
+      "stdoutArtifact": "outputs/workspace-b-3-base-git-add-base.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-3-base-git-add-base.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-3-base-git-commit-base",
+      "argv": [
+        "git",
+        "commit",
+        "-qm",
+        "base"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.21470109999063425,
+      "cpuSeconds": 0.09375,
+      "peakTreeRssBytes": 17477632,
+      "stdoutArtifact": "outputs/workspace-b-3-base-git-commit-base.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-3-base-git-commit-base.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-3-git-worktree-add",
+      "argv": [
+        "git",
+        "worktree",
+        "add",
+        "-q",
+        "-b",
+        "candidate-3",
+        "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\candidate",
+        "HEAD"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.2797891000227537,
+      "cpuSeconds": 0.09375,
+      "peakTreeRssBytes": 26648576,
+      "stdoutArtifact": "outputs/workspace-b-3-git-worktree-add.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-3-git-worktree-add.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-3-git-add",
+      "argv": [
+        "git",
+        "add",
+        "-A"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.18305920000420883,
+      "cpuSeconds": 0.0,
+      "peakTreeRssBytes": 11444224,
+      "stdoutArtifact": "outputs/workspace-b-3-git-add.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-3-git-add.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-3-git-commit",
+      "argv": [
+        "git",
+        "commit",
+        "-qm",
+        "candidate"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.20238800000515766,
+      "cpuSeconds": 0.078125,
+      "peakTreeRssBytes": 18325504,
+      "stdoutArtifact": "outputs/workspace-b-3-git-commit.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-3-git-commit.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "workspace-b-3-git-full",
+      "argv": [
+        "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\git\\workspace-b-3\\candidate",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 1.5089345999876969,
+      "cpuSeconds": 1.078125,
+      "peakTreeRssBytes": 43540480,
+      "stdoutArtifact": "outputs/workspace-b-3-git-full.stdout.bin",
+      "stderrArtifact": "outputs/workspace-b-3-git-full.stderr.bin",
+      "stdoutSha256": "1736e3eb3d1e390c1a3a8081667d8e0738957ddd7ffb89367e4447887aa19cf4",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "planted-git-init",
+      "argv": [
+        "git",
+        "init",
+        "-q",
+        "-b",
+        "main"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\planted\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.18945760000497103,
+      "cpuSeconds": 0.046875,
+      "peakTreeRssBytes": 12648448,
+      "stdoutArtifact": "outputs/planted-git-init.stdout.bin",
+      "stderrArtifact": "outputs/planted-git-init.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "planted-git-name",
+      "argv": [
+        "git",
+        "config",
+        "user.name",
+        "joint-eval"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\planted\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.09211860000505112,
+      "cpuSeconds": 0.046875,
+      "peakTreeRssBytes": 12476416,
+      "stdoutArtifact": "outputs/planted-git-name.stdout.bin",
+      "stderrArtifact": "outputs/planted-git-name.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "planted-git-email",
+      "argv": [
+        "git",
+        "config",
+        "user.email",
+        "joint-eval@example.invalid"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\planted\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.10636790000717156,
+      "cpuSeconds": 0.078125,
+      "peakTreeRssBytes": 13090816,
+      "stdoutArtifact": "outputs/planted-git-email.stdout.bin",
+      "stderrArtifact": "outputs/planted-git-email.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "planted-git-add-base",
+      "argv": [
+        "git",
+        "add",
+        "-A"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\planted\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.20176729999366216,
+      "cpuSeconds": 0.015625,
+      "peakTreeRssBytes": 7790592,
+      "stdoutArtifact": "outputs/planted-git-add-base.stdout.bin",
+      "stderrArtifact": "outputs/planted-git-add-base.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "planted-git-commit-base",
+      "argv": [
+        "git",
+        "commit",
+        "-qm",
+        "base"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\planted\\repo",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 0.18463870001141913,
+      "cpuSeconds": 0.109375,
+      "peakTreeRssBytes": 17592320,
+      "stdoutArtifact": "outputs/planted-git-commit-base.stdout.bin",
+      "stderrArtifact": "outputs/planted-git-commit-base.stderr.bin",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "planted-wrong-full",
+      "argv": [
+        "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "D:\\tmp\\tf0779-joint-20261110-044313\\tmp\\planted\\repo",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 1.355490199988708,
+      "cpuSeconds": 1.171875,
+      "peakTreeRssBytes": 43986944,
+      "stdoutArtifact": "outputs/planted-wrong-full.stdout.bin",
+      "stderrArtifact": "outputs/planted-wrong-full.stderr.bin",
+      "stdoutSha256": "fb8bbe3ce35d79eb62a05116fb813a7f48dcbd3dc3ffa6f593af74f6f53d5de6",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "clawx-joint-unit",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "D:\\tmp\\tf0778-isolated-e510-20261110\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "tests/unit/orchestration-worktree-merge.test.ts",
+        "tests/unit/uas-04-coding-mutation-consistency.test.ts",
+        "--maxWorkers=1"
+      ],
+      "cwd": "D:\\tmp\\tf0778-isolated-e510-20261110",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 26.999411299999338,
+      "cpuSeconds": 8.125,
+      "peakTreeRssBytes": 381829120,
+      "stdoutArtifact": "outputs/clawx-joint-unit.stdout.bin",
+      "stderrArtifact": "outputs/clawx-joint-unit.stderr.bin",
+      "stdoutSha256": "60ac7dee8aee64c40bf300115cfe12944a687e129942f273d22f493a9d10d8b1",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "vg-joint-jj_cross_workspace_conflict",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "vg-cli",
+        "--test",
+        "jj_cross_workspace_conflict"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 269.35544850002043,
+      "cpuSeconds": 81.125,
+      "peakTreeRssBytes": 2666745856,
+      "stdoutArtifact": "outputs/vg-joint-jj_cross_workspace_conflict.stdout.bin",
+      "stderrArtifact": "outputs/vg-joint-jj_cross_workspace_conflict.stderr.bin",
+      "stdoutSha256": "5e6e5204cde7f216fb67cfb612777c565d5837d05f961651c50dd33ce618c7d5",
+      "stderrSha256": "87db1753ebd5a841cdde96618fabc45fb56756c9327a49a3e35acb43d72012e7"
+    },
+    {
+      "id": "vg-joint-jj_conflict_gate",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "vg-cli",
+        "--test",
+        "jj_conflict_gate"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 17.29664899999625,
+      "cpuSeconds": 2.765625,
+      "peakTreeRssBytes": 250355712,
+      "stdoutArtifact": "outputs/vg-joint-jj_conflict_gate.stdout.bin",
+      "stderrArtifact": "outputs/vg-joint-jj_conflict_gate.stderr.bin",
+      "stdoutSha256": "7a1c978109c25fc48f336038a9b3f0f9088a09d1c13b57fd39fbf5a076b0fa50",
+      "stderrSha256": "1ed73acba3f55aa1f73d8c75b158fa8a95c6248b491899b87765ec5e32f0dcd6"
+    },
+    {
+      "id": "vg-joint-jj_transaction_recovery",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "vg-cli",
+        "--test",
+        "jj_transaction_recovery"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 11.062657999980729,
+      "cpuSeconds": 6.28125,
+      "peakTreeRssBytes": 1055956992,
+      "stdoutArtifact": "outputs/vg-joint-jj_transaction_recovery.stdout.bin",
+      "stderrArtifact": "outputs/vg-joint-jj_transaction_recovery.stderr.bin",
+      "stdoutSha256": "7546cb4cc11cc50ee6785c94b71cf9b0b7c852fc245bb84a3f568cb7b4b3981b",
+      "stderrSha256": "419b9c6a529b82f3b3e97384ff93847aea72a69a91af5d5db3448914623dec1b"
+    },
+    {
+      "id": "vg-joint-jj_sts_feedback",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "vg-cli",
+        "--test",
+        "jj_sts_feedback"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 6.566695899993647,
+      "cpuSeconds": 5.421875,
+      "peakTreeRssBytes": 1055244288,
+      "stdoutArtifact": "outputs/vg-joint-jj_sts_feedback.stdout.bin",
+      "stderrArtifact": "outputs/vg-joint-jj_sts_feedback.stderr.bin",
+      "stdoutSha256": "ff686f998ee2517528746bdd0868ace41169f371080814d0a7bd67e066c2b26e",
+      "stderrSha256": "f66cdb50914dc3048b4b0ebff22179ab5f5dc7fb322dbc7bbf7b1b321fcfb62a"
+    },
+    {
+      "id": "vg-joint-jj_workspace_lifecycle",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "vg-cli",
+        "--test",
+        "jj_workspace_lifecycle"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 18.718578200001502,
+      "cpuSeconds": 5.84375,
+      "peakTreeRssBytes": 881672192,
+      "stdoutArtifact": "outputs/vg-joint-jj_workspace_lifecycle.stdout.bin",
+      "stderrArtifact": "outputs/vg-joint-jj_workspace_lifecycle.stderr.bin",
+      "stdoutSha256": "093b702b38b92b8ea0688d8eb42a52c8cf6a1bd6db4f9eeacb55ddad62399dbe",
+      "stderrSha256": "8092369a9205d427d273efbfae77a425cc82ba41ee76269d8d7d8ef64f43a9d2"
+    },
+    {
+      "id": "vg-joint-jj_file_family",
+      "argv": [
+        "cargo",
+        "test",
+        "-p",
+        "vg-cli",
+        "--test",
+        "jj_file_family"
+      ],
+      "cwd": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "timedOut": false,
+      "waitedForExit": true,
+      "wallSeconds": 14.136136200017063,
+      "cpuSeconds": 3.21875,
+      "peakTreeRssBytes": 289005568,
+      "stdoutArtifact": "outputs/vg-joint-jj_file_family.stdout.bin",
+      "stderrArtifact": "outputs/vg-joint-jj_file_family.stderr.bin",
+      "stdoutSha256": "e7f648c1cd422d6d36427aef57f8bd20c95679a17cb57a4c75d0ae55cf2e33c1",
+      "stderrSha256": "12040b1ef4ad7100c21fee0c06ebd7fbba80c7b1f93ee804dae4e5d1bdb884b1"
+    }
+  ],
+  "artifacts": {
+    "measurements/workspace-a.json": {
+      "sha256": "75c19a5dfb3cec90fcfb254a27feb8b15a12e21e0822939f07897ce9df4b2886",
+      "bytes": 436783
+    },
+    "measurements/workspace-b.json": {
+      "sha256": "05ba9a79589015335f26c725f3ca38c393103f7d6e98d9ead532b9ee896d9903",
+      "bytes": 437328
+    },
+    "outputs/clawx-joint-unit.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/clawx-joint-unit.stdout.bin": {
+      "sha256": "60ac7dee8aee64c40bf300115cfe12944a687e129942f273d22f493a9d10d8b1",
+      "bytes": 228
+    },
+    "outputs/jj-version.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/jj-version.stdout.bin": {
+      "sha256": "f598a6c2368c294642f9170a7cba85d053bf4edda5e51861db6b8e12441fc922",
+      "bytes": 51
+    },
+    "outputs/planted-git-add-base.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/planted-git-add-base.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/planted-git-commit-base.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/planted-git-commit-base.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/planted-git-email.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/planted-git-email.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/planted-git-init.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/planted-git-init.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/planted-git-name.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/planted-git-name.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/planted-wrong-full.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/planted-wrong-full.stdout.bin": {
+      "sha256": "fb8bbe3ce35d79eb62a05116fb813a7f48dcbd3dc3ffa6f593af74f6f53d5de6",
+      "bytes": 537
+    },
+    "outputs/python-environment.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/python-environment.stdout.bin": {
+      "sha256": "b528f801d3044cb7a6a62944f190489f999e723f8eae62f8ac9abbb53e2913a6",
+      "bytes": 141
+    },
+    "outputs/tool-versions.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/tool-versions.stdout.bin": {
+      "sha256": "b572663cf21d9a7310e0d9f87f97b5eff8728c4301c2755a3c643c9543257b28",
+      "bytes": 111
+    },
+    "outputs/vg-joint-jj_conflict_gate.stderr.bin": {
+      "sha256": "1ed73acba3f55aa1f73d8c75b158fa8a95c6248b491899b87765ec5e32f0dcd6",
+      "bytes": 604
+    },
+    "outputs/vg-joint-jj_conflict_gate.stdout.bin": {
+      "sha256": "7a1c978109c25fc48f336038a9b3f0f9088a09d1c13b57fd39fbf5a076b0fa50",
+      "bytes": 256
+    },
+    "outputs/vg-joint-jj_cross_workspace_conflict.stderr.bin": {
+      "sha256": "87db1753ebd5a841cdde96618fabc45fb56756c9327a49a3e35acb43d72012e7",
+      "bytes": 13783
+    },
+    "outputs/vg-joint-jj_cross_workspace_conflict.stdout.bin": {
+      "sha256": "5e6e5204cde7f216fb67cfb612777c565d5837d05f961651c50dd33ce618c7d5",
+      "bytes": 188
+    },
+    "outputs/vg-joint-jj_file_family.stderr.bin": {
+      "sha256": "12040b1ef4ad7100c21fee0c06ebd7fbba80c7b1f93ee804dae4e5d1bdb884b1",
+      "bytes": 600
+    },
+    "outputs/vg-joint-jj_file_family.stdout.bin": {
+      "sha256": "e7f648c1cd422d6d36427aef57f8bd20c95679a17cb57a4c75d0ae55cf2e33c1",
+      "bytes": 649
+    },
+    "outputs/vg-joint-jj_sts_feedback.stderr.bin": {
+      "sha256": "f66cdb50914dc3048b4b0ebff22179ab5f5dc7fb322dbc7bbf7b1b321fcfb62a",
+      "bytes": 973
+    },
+    "outputs/vg-joint-jj_sts_feedback.stdout.bin": {
+      "sha256": "ff686f998ee2517528746bdd0868ace41169f371080814d0a7bd67e066c2b26e",
+      "bytes": 428
+    },
+    "outputs/vg-joint-jj_transaction_recovery.stderr.bin": {
+      "sha256": "419b9c6a529b82f3b3e97384ff93847aea72a69a91af5d5db3448914623dec1b",
+      "bytes": 1013
+    },
+    "outputs/vg-joint-jj_transaction_recovery.stdout.bin": {
+      "sha256": "7546cb4cc11cc50ee6785c94b71cf9b0b7c852fc245bb84a3f568cb7b4b3981b",
+      "bytes": 437
+    },
+    "outputs/vg-joint-jj_workspace_lifecycle.stderr.bin": {
+      "sha256": "8092369a9205d427d273efbfae77a425cc82ba41ee76269d8d7d8ef64f43a9d2",
+      "bytes": 616
+    },
+    "outputs/vg-joint-jj_workspace_lifecycle.stdout.bin": {
+      "sha256": "093b702b38b92b8ea0688d8eb42a52c8cf6a1bd6db4f9eeacb55ddad62399dbe",
+      "bytes": 778
+    },
+    "outputs/workspace-a-1-base-git-add-base.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-1-base-git-add-base.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-1-base-git-commit-base.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-1-base-git-commit-base.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-1-base-git-email.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-1-base-git-email.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-1-base-git-init.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-1-base-git-init.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-1-base-git-name.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-1-base-git-name.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-1-git-add.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-1-git-add.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-1-git-commit.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-1-git-commit.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-1-git-full.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-1-git-full.stdout.bin": {
+      "sha256": "1736e3eb3d1e390c1a3a8081667d8e0738957ddd7ffb89367e4447887aa19cf4",
+      "bytes": 100
+    },
+    "outputs/workspace-a-1-git-worktree-add.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-1-git-worktree-add.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-base-git-add-base.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-base-git-add-base.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-base-git-commit-base.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-base-git-commit-base.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-base-git-email.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-base-git-email.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-base-git-init.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-base-git-init.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-base-git-name.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-base-git-name.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-git-add.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-git-add.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-git-commit.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-git-commit.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-git-full.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-git-full.stdout.bin": {
+      "sha256": "1736e3eb3d1e390c1a3a8081667d8e0738957ddd7ffb89367e4447887aa19cf4",
+      "bytes": 100
+    },
+    "outputs/workspace-a-2-git-worktree-add.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-2-git-worktree-add.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-base-git-add-base.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-base-git-add-base.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-base-git-commit-base.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-base-git-commit-base.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-base-git-email.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-base-git-email.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-base-git-init.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-base-git-init.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-base-git-name.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-base-git-name.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-git-add.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-git-add.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-git-commit.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-git-commit.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-git-full.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-git-full.stdout.bin": {
+      "sha256": "1736e3eb3d1e390c1a3a8081667d8e0738957ddd7ffb89367e4447887aa19cf4",
+      "bytes": 100
+    },
+    "outputs/workspace-a-3-git-worktree-add.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-3-git-worktree-add.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-native-measure.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-a-native-measure.stdout.bin": {
+      "sha256": "8fc92c4f692356ca4b5d7c04f277faa567f7e5fcb67cbef6e86f916d1074ee3e",
+      "bytes": 876
+    },
+    "outputs/workspace-b-1-base-git-add-base.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-1-base-git-add-base.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-1-base-git-commit-base.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-1-base-git-commit-base.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-1-base-git-email.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-1-base-git-email.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-1-base-git-init.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-1-base-git-init.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-1-base-git-name.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-1-base-git-name.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-1-git-add.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-1-git-add.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-1-git-commit.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-1-git-commit.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-1-git-full.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-1-git-full.stdout.bin": {
+      "sha256": "213e7d69730d580643d7992407f884b06d136118668df0636d528458e79724e5",
+      "bytes": 100
+    },
+    "outputs/workspace-b-1-git-worktree-add.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-1-git-worktree-add.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-base-git-add-base.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-base-git-add-base.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-base-git-commit-base.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-base-git-commit-base.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-base-git-email.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-base-git-email.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-base-git-init.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-base-git-init.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-base-git-name.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-base-git-name.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-git-add.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-git-add.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-git-commit.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-git-commit.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-git-full.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-git-full.stdout.bin": {
+      "sha256": "1736e3eb3d1e390c1a3a8081667d8e0738957ddd7ffb89367e4447887aa19cf4",
+      "bytes": 100
+    },
+    "outputs/workspace-b-2-git-worktree-add.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-2-git-worktree-add.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-base-git-add-base.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-base-git-add-base.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-base-git-commit-base.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-base-git-commit-base.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-base-git-email.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-base-git-email.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-base-git-init.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-base-git-init.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-base-git-name.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-base-git-name.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-git-add.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-git-add.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-git-commit.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-git-commit.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-git-full.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-git-full.stdout.bin": {
+      "sha256": "1736e3eb3d1e390c1a3a8081667d8e0738957ddd7ffb89367e4447887aa19cf4",
+      "bytes": 100
+    },
+    "outputs/workspace-b-3-git-worktree-add.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-3-git-worktree-add.stdout.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-native-measure.stderr.bin": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "outputs/workspace-b-native-measure.stdout.bin": {
+      "sha256": "e0b1a63dc65f1fdb965122b24024db387a94cdd5019343000c2c93de0f76644d",
+      "bytes": 876
+    }
+  },
+  "evidenceFinalization": {
+    "finalizerCommit": "934425908",
+    "reason": "Removed the single retained Cargo executable and excluded tmp/** from artifact inventory after all measured commands succeeded."
+  }
+}

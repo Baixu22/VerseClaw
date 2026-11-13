@@ -1,0 +1,95 @@
+{
+  "schema": "CodingRecoveryAcceptance/v1",
+  "taskId": "TF-0780",
+  "decision": "accepted",
+  "nonGa": true,
+  "driven_by": "agent",
+  "actor": "codex-coding-recovery-evaluator",
+  "realHumanEvidence": false,
+  "acceptanceEligible": true,
+  "productLockChanged": false,
+  "defaultsChanged": false,
+  "releaseAuthorized": false,
+  "candidate": {
+    "commit": "84ce9695ab957129d3ed7db1ec4dd2d3cf0ba9f7",
+    "tree": "5e793365708500b39fac29cfbbdf0fbbce12d34b",
+    "dirty": false,
+    "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "reportDigest": "c6c9cb9b02713d3f57c4a4b4ac6a36bd58e25896cba579128a9096c550738fa4",
+  "verifierOk": true,
+  "negativeChecks": {
+    "passed": 10,
+    "total": 10
+  },
+  "windows": {
+    "count": 5,
+    "repeatsPerWindow": 3,
+    "rows": 15,
+    "passed": 15,
+    "control": true
+  },
+  "baseline": {
+    "schema": "CodingJournalKillWindows/v1",
+    "rows": 3,
+    "passed": 3
+  },
+  "safety": {
+    "oldEpochAdoption": 0,
+    "duplicateUndo": 0,
+    "lostUserBytes": 0,
+    "falseCompletion": 0,
+    "taskLedgerOwnerFailures": 0,
+    "processReconciliationFailures": 0,
+    "jjOperationFailures": 0,
+    "processSurvivors": 0
+  },
+  "commands": {
+    "count": 7,
+    "allPassed": true,
+    "wallSeconds": 237.005375800014
+  },
+  "tools": {
+    "vg": {
+      "path": "D:\\tmp\\tf0778-isolated-e510-20261110\\harness\\specs\\fixtures\\coding-evaluation\\TF-0778\\inputs\\vg.exe",
+      "sha256": "7c8b05f9c7eb295f5e8006e98e123047f70e5f03dbbdfe05c5cb53748eb70d20"
+    },
+    "jj": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\oracle\\extracted\\jj.exe",
+      "sha256": "53c6ee72346f477bc464e383d4df45f8d3862ad5a17fa5f4d8f4849bcf2d96cc"
+    },
+    "python": {
+      "path": "D:\\tmp\\tf0778-real-20261109-230000\\httpx-venv-final\\Scripts\\python.exe",
+      "sha256": "272448c5844564aa5bebc8d8dd0065f859b9fba9f499996eec2a1cf17496f250",
+      "version": "Python 3.10.3"
+    },
+    "node": {
+      "path": "C:\\Users\\27933\\AppData\\Roaming\\nvm\\v24.22.1\\node.exe",
+      "sha256": "d702daa815eabbff763c7d3808e235cf031cf2ca70211b56847bc72f51e240e5",
+      "version": "v24.22.1"
+    },
+    "contracts": {
+      "path": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\extensions\\sts\\contracts\\vg-sts",
+      "sha256": "8ad3abb288e37048dd1d262e9985b0b5bf55321df052bab31bb5a349932f75b9"
+    }
+  },
+  "evidenceFiles": [
+    "report.json",
+    "report.sha256",
+    "recovery-windows.json",
+    "journal-kill-results.json",
+    "verification-final.json",
+    "README.md",
+    "SHA256SUMS"
+  ],
+  "rawCommandOutputs": 14,
+  "artifactSample": {
+    "sourcePath": "outputs/harness-validate.stdout.bin",
+    "fixturePath": "harness-validate.stdout.bin",
+    "sha256": "6028d49ae326eac5c6ef911ba1a1392d880a3fe30d912511a8f1c75d642fd67b",
+    "bytes": 79
+  },
+  "sourceCommit": "84ce9695ab957129d3ed7db1ec4dd2d3cf0ba9f7",
+  "sourceTree": "5e793365708500b39fac29cfbbdf0fbbce12d34b",
+  "interpretation": "Recovery reconciles observed file, journal, Git/JJ, VG, STS, process and Task Ledger effects; it does not authorize completion or change product defaults."
+}

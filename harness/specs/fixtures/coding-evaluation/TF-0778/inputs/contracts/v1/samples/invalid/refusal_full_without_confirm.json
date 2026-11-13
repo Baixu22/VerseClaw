@@ -1,0 +1,13 @@
+{
+  "protocol_version": "1.1",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "req-unconfirmable-005",
+  "refusal_code": "target-unconfirmable",
+  "reason": "候选目录内容与请求声明的 candidate_tree_oid 对不上，目标身份无法确认；此样例错误地声称仍可保守全量回退。",
+  "target_confirmable": false,
+  "attempted_collection": {
+    "succeeded": false,
+    "collected_count": 0
+  },
+  "conservative_full_available": true
+}

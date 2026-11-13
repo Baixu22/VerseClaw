@@ -1,0 +1,17 @@
+{
+  "entries": [
+    {
+      "change_id": "18cc3769107632ff07156d1835ca3d49",
+      "commit_id": "d01c9ff5c51a30dd63b7243ab0bbb9ccce25d124",
+      "description": "tip",
+      "parent_ids": [
+        "22fa96d9c615156a60a7cd4c75df58b931872428"
+      ]
+    }
+  ],
+  "formatted": null,
+  "graph_truncated": true,
+  "kind": "revision-log",
+  "revset": "@",
+  "schema": "versegit.vg-json/v1"
+}

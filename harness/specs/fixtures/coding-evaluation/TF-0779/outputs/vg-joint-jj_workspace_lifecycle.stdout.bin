@@ -1,0 +1,15 @@
+
+running 10 tests
+test update_stale_refuses_when_not_stale ... ok
+test workspace_list_and_root_are_read_only ... ok
+test workspace_add_creates_a_second_workspace ... ok
+test managed_lifecycle_does_not_touch_source_refs_or_index ... ok
+test workspace_import_refuses_selected_paths_below_nested_repository_markers ... ok
+test workspace_add_places_new_workspace_on_current_wc_parent ... ok
+test workspace_remove_deletes_disk_but_guards_current_and_outside_paths ... ok
+test workspace_rename_and_forget_are_real_and_bounded ... ok
+test workspace_import_colocates_an_existing_git_worktree ... ok
+test workspace_import_honors_global_ignores_and_retries_after_incomplete_snapshot ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.85s
+

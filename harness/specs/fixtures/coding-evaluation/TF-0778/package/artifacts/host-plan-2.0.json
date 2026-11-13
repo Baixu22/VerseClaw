@@ -1,0 +1,54 @@
+{
+  "protocol_version": "2.0",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+  "plan_id": "plan-391785bcd3f57389",
+  "target_identity": "candidate@ff63114",
+  "content_identity": {
+    "kind": "git-tree",
+    "value": "ff63114aeee87a189252c051bcd2667428aee8f4",
+    "manifest_digest": "sha256:ff53c5ff09b31b3bfc25570577e43efa66cb21b48e9102cb07ccc9c278ea6f5d",
+    "exclusion_policy_id": "vg-noise/v1",
+    "observed_at": {
+      "before_build": "confirmed",
+      "after_build": "confirmed"
+    }
+  },
+  "environment_identity": {
+    "python": "3.10.3",
+    "platform": "win32",
+    "dependencies_digest": "sha256:136aea99870f5687cba890d47036e93c9208b1465a065f62adb51de5bca7c444"
+  },
+  "expected_environment_identity": {
+    "python": "3.10.3",
+    "platform": "win32",
+    "dependencies_digest": "sha256:136aea99870f5687cba890d47036e93c9208b1465a065f62adb51de5bca7c444"
+  },
+  "expected_execution_identity": {
+    "interpreter": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe"
+  },
+  "policy_identity": {
+    "rules_id": "smart-select/v2",
+    "policy_version": "enablement/v2"
+  },
+  "supported_run_modes": [
+    "pytest-nodeids"
+  ],
+  "selection_scope": "full",
+  "collected": [
+    "tests/test_calc.py::test_add"
+  ],
+  "selected": [
+    "tests/test_calc.py::test_add"
+  ],
+  "excluded": [],
+  "order": [
+    "tests/test_calc.py::test_add"
+  ],
+  "reasons": {
+    "tests/test_calc.py::test_add": "full: 全量回退（见 fallback）"
+  },
+  "fallback": [
+    "非 Python 文件改动：notes.txt"
+  ]
+}

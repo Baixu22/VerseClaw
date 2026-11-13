@@ -1,0 +1,17 @@
+{
+  "backing": "internal-private",
+  "command": "workspace.init",
+  "git_repo": null,
+  "head_commit": null,
+  "imported": null,
+  "schema": "versegit.vg-json/v1",
+  "snapshot": {
+    "change_id": "7c48182f5daf1bb5dcf9e244ebd3a10a",
+    "operation_id": "f505caa8168592f1d0374ad0ad3e78a9506217ef54c5901a1fa972833e6aa887f93a2aed3bfc43baa097f7413348b318ca864125b84a0eea72b0592dd64684cd",
+    "schema": "versegit.vg-json/v1",
+    "wc_commit_id": "731aca4ca02177f7c11023f2e94ec4271be4a8e7",
+    "workspace_root": "D:\\ClawX\\.tmp\\coding-jj-parity-final-clean-41fe099\\fixtures\\git-ref-sync\\vg"
+  },
+  "source": null,
+  "source_kind": null
+}

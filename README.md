@@ -112,6 +112,7 @@ Important current defaults:
 - VToken is retired; its old environment/config names cannot re-enable production assembly or the sidecar.
 - VerseGit and VerseShell remain default-off; their host integrations retain the boundaries described below.
 - Dreams is retired. Image Generation is developer/test-gated rather than normal product navigation.
+- The VerseGit bounded coding loop remains default-off and not approved for general availability. Current evidence covers the write journal and Git apply review paths only on Windows win32-x64 M1. TF-0782 additionally covers A1-A10 repair lineage, source and packaged coding controls, VG/JJ/STS/VerseShell evaluation, crash recovery, and three fresh Windows win32-x64 M1 win-unpacked profiles. STS selection shows no measured speed benefit and remains opt-in. Python and standalone JJ are not bundled, so managed paths require explicit availability. The installer is not tested; M4, landing/admission authority remain unavailable, and promotion to broader availability or release is not approved. liveReady=false and productApproved=false.
 - `liveReady=false`, `productApproved=false` and `defaultOn=false` remain product locks.
 
 <!-- VERSE-TOOLS-BOUNDARY-START -->

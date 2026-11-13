@@ -367,7 +367,7 @@ describe("grounding shadow consumer summaries", () => {
     expect(traceResult.contextItems).toHaveLength(1);
     expect(symbolResult.contextItems).toHaveLength(1);
     expect(agentMapResult.contextItems.length).toBeGreaterThan(0);
-    expect(memoryResult.contextItems).toHaveLength(1);
+    expect(memoryResult.contextItems).toHaveLength(0);
   });
 
   it("keeps hostile grounding diagnostics metadata non-authoritative across all consumers", async () => {

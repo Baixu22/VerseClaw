@@ -1,0 +1,9 @@
+{
+  "protocol_version": "0.9",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "req-bad-proto",
+  "mode": "workspace",
+  "repo": { "path": "D:/verseci/experiment-httpx" },
+  "target": { "head_oid": "99cba6a" },
+  "identities": { "code_oid": "99cba6a" }
+}

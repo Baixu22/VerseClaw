@@ -1,0 +1,26 @@
+{
+  "runs": 9,
+  "errors": 0,
+  "ratios": {
+    "vg_full": {
+      "cold_ratio_vs_jj": 7.456552,
+      "warm_ratio_vs_jj": 6.059712
+    },
+    "vg_selected_plus_required_full": {
+      "cold_ratio_vs_jj": 12.860104,
+      "warm_ratio_vs_jj": 13.029402
+    }
+  },
+  "claims": {
+    "workflow_cost_measured_on_fixture": true,
+    "net_benefit_claimed": false,
+    "real_project_live_rerun": false,
+    "real_project_snapshot_rerun": true,
+    "non_python_live_rerun": false,
+    "dual_session_live_rerun": false,
+    "platforms_measured": [
+      "win32"
+    ],
+    "reason": "The fixture measures the complete local command path and both selected/full arms, but it is not a live rerun of the historical third-party projects. Historical real-sample artifacts are inventoried with hashes and remain historical, not promoted to a new measurement."
+  }
+}

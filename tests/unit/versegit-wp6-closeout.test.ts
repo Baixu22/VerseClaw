@@ -1,4 +1,5 @@
-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -8,13 +9,20 @@ import {
   buildWp6Closeout,
   validateMc6Decision,
   validateWp6Report,
+  verifyShaManifest,
 } from '../../scripts/versegit-wp6-closeout.mjs';
 
 describe('WP6 merged closeout', () => {
   const generatedAt = '2026-10-21T18:00:00.000Z';
 
-  it('preserves exact historical stale inputs while retaining the non-GA and MC6 sidecar-only boundary', () => {
-    const built = buildWp6Closeout({ generatedAt });
+  it('preserves a captured failed closeout and its non-GA and MC6 sidecar-only boundary', () => {
+    const snapshotBytes = readFileSync(resolve(process.cwd(), 'tests/unit/fixtures/versegit-wp6/9a50-closeout.json'));
+    expect(createHash('sha256').update(snapshotBytes).digest('hex')).toBe('93bb3c75b3c743ac5fb3eab9ab4393230cca41bbf50ed3301fb9448eaa4c911e');
+    const built = JSON.parse(snapshotBytes.toString('utf8'));
+    expect(built.provenance.source).toEqual({
+      commit: '9a50ebdf6b08e7db3360ce399169fde2264ede78', tree: 'a345b9657f1ee93d115bc5402ef78b2735ccef7d',
+    });
+    expect(built.provenance.reconstruction.nativeProviderExecuted).toBe(false);
     expect(built.report.gateSummary).toMatchObject({ required: 12, verified: 12, failed: 0, deprecated: 1, optionalDecision: 1 });
     expect(built.report.requiredGates.map((gate: { role: string }) => gate.role)).toEqual(expect.arrayContaining(['MC0', 'MC1', 'MC2', 'MC3', 'MC4', 'MC5', 'WP0', 'WP1', 'WP2', 'WP3', 'WP4', 'WP5']));
     expect(built.report.evidenceManifests).toMatchObject({ count: 12, reproducible: false });
@@ -49,6 +57,8 @@ describe('WP6 merged closeout', () => {
           mismatches: [
             'electron/services/versegit-module.ts: expected 15f36a1202e2 actual d7e32f30ee7f',
             'harness/src/profiles.mjs: expected b8b2992c5836 actual 6f52c8ea3176',
+            'scripts/versegit-wp2-profile.mjs: expected e058d37262c0 actual 99a551f8e23d',
+            'tests/unit/versegit-wp2-profile.test.ts: expected 6d5a0b711969 actual c41c57e81cf0',
           ],
         },
         {
@@ -72,12 +82,32 @@ describe('WP6 merged closeout', () => {
       'harness/specs/fixtures/versegit-planning-correction/wp0-evidence/SHA256SUMS: 1 digest mismatch(es)',
       'tracked pre-closeout evidence manifests are not reproducible',
     ]));
-    expect(validateWp6Report(built.report).issues).toEqual(expect.arrayContaining([
+    expect(validateWp6Report(built.report).issues).toEqual([
       'tracked pre-closeout evidence manifests are not reproducible',
       'an evidence manifest contains missing or stale files',
       'closeout did not pass or retained issues',
-    ]));
+    ]);
     expect(validateMc6Decision(built.mc6Decision).issues).toEqual([]);
+  });
+
+  it('checks real manifest inputs and rejects missing or changed bytes', () => {
+    const root = mkdtempSync(join(tmpdir(), 'wp6-manifest-'));
+    try {
+      const proof = join(root, 'proof.txt');
+      const content = 'retained proof\n';
+      const digest = createHash('sha256').update(content).digest('hex');
+      writeFileSync(proof, content);
+      writeFileSync(join(root, 'SHA256SUMS'), `${digest}  proof.txt\n`);
+      const verify = () => verifyShaManifest({ root, path: 'SHA256SUMS', expectedPaths: ['proof.txt'] });
+      expect(verify().issues).toEqual([]);
+      rmSync(proof);
+      expect(verify()).toMatchObject({ missing: ['proof.txt'], issues: ['SHA256SUMS: missing 1 file(s)'] });
+      writeFileSync(proof, 'changed proof\n');
+      expect(verify().mismatches).toHaveLength(1);
+      expect(verify().issues[0]).toContain('proof.txt: expected');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 
   it('rejects authority, release, coverage and M4 promotion', () => {

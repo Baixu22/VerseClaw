@@ -82,7 +82,7 @@ function summarizeProbe(result) {
   return { status: result.status, reason: result.reason ?? null, issues: result.issues ?? [], host_verdict: result.host_verdict };
 }
 
-export async function buildCase({ root = repositoryRoot, spec, fixture }) {
+export async function buildCase({ root = repositoryRoot, spec, fixture, spawn = spawnSync, moduleLoader = loadAdapter }) {
   const trace = { id: spec.id, worktreeCount: spec.worktreeCount, activeSessionCount: spec.activeSessionCount };
   const eligible = spec.worktreeCount > 1 || spec.activeSessionCount > 1;
   const base = {
@@ -114,12 +114,12 @@ export async function buildCase({ root = repositoryRoot, spec, fixture }) {
   if (sha256(readFileSync(binary)) !== mc0.binary?.sha256) {
     return { ...base, status: 'rejected_by_policy', reason: 'binary_digest_mismatch', issues: ['sidecar binary does not match MC0'], usage: { processesStarted: 0, stateReads: 0 } };
   }
-  const module = await loadAdapter(root);
+  const module = await moduleLoader(root);
   const adapter = new module.VerseGitModule({
     binaryPath: binary, cwd: repo, contractDigest, expectedCapabilitiesDigest, timeoutMs: 30_000,
     run: (argv, timeout) => {
       processCount += 1;
-      const result = spawnSync(binary, argv, { cwd: repo, encoding: 'utf8', timeout, windowsHide: true, maxBuffer: 16 * 1024 * 1024 });
+      const result = spawn(binary, argv, { cwd: repo, encoding: 'utf8', timeout, windowsHide: true, maxBuffer: 16 * 1024 * 1024 });
       return { stdout: String(result.stdout ?? '').trim(), stderr: String(result.stderr ?? result.error?.message ?? '').trim(), code: typeof result.status === 'number' ? result.status : null };
     },
   });
@@ -170,13 +170,13 @@ export async function buildCase({ root = repositoryRoot, spec, fixture }) {
   };
 }
 
-export async function buildWp2Report({ root = repositoryRoot, fixturePath, fixture } = {}) {
+export async function buildWp2Report({ root = repositoryRoot, fixturePath, fixture, spawn, moduleLoader } = {}) {
   const path = fixturePath ?? resolve(root, WP2_FIXTURE_PATH);
   const input = fixture ?? readJson(path);
   const cases = [];
   const issues = [];
   for (const spec of input.cases ?? []) {
-    const result = await buildCase({ root, spec, fixture: input });
+    const result = await buildCase({ root, spec, fixture: input, spawn, moduleLoader });
     cases.push(result);
     if (spec.expectedStatus && result.status !== spec.expectedStatus) issues.push(`${spec.id}: expected ${spec.expectedStatus}, got ${result.status}`);
     if (spec.expectedProcesses !== undefined && result.usage.processesStarted !== spec.expectedProcesses) issues.push(`${spec.id}: expected ${spec.expectedProcesses} processes, got ${result.usage.processesStarted}`);
@@ -187,6 +187,7 @@ export async function buildWp2Report({ root = repositoryRoot, fixturePath, fixtu
     generated_at: new Date().toISOString(),
     driven_by: 'agent',
     actor: 'codex',
+    ...((spawn || moduleLoader) ? { evidenceMode: 'fixture-replay' } : {}),
     task: 'TF-0468',
     fixture: 'harness/specs/fixtures/versegit-planning-correction/wp2-diagnostic-profile-fixture.json',
     profile: WP2_PROFILE,
@@ -218,6 +219,7 @@ export async function buildWp2Report({ root = repositoryRoot, fixturePath, fixtu
 
 export function validateWp2Report(report) {
   const issues = [];
+  if (report?.evidenceMode === 'fixture-replay') issues.push('fixture replay is not native WP2 evidence');
   if (report?.schema !== WP2_SCHEMA) issues.push('WP2 report schema mismatch');
   if (report?.driven_by !== 'agent' || report?.actor !== 'codex') issues.push('WP2 evidence must be agent-driven');
   if (report?.task !== 'TF-0468') issues.push('WP2 task mismatch');

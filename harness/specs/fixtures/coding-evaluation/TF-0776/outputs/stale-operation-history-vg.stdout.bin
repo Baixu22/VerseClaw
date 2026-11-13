@@ -1,0 +1,126 @@
+{
+  "entries": [
+    {
+      "description": "vg: squash",
+      "hostname": "versegit.invalid",
+      "is_head": true,
+      "is_snapshot": false,
+      "operation_id": "422bb667d4d8e92f89a578211e09262803c34f833f08203ba6a6d4ec00b3dcf908cce71bf8358378d49fbdf2e50f3b9154096022731302f94508e47e65f11011",
+      "parent_ids": [
+        "c5d3aa9ac3b5919e798238e276eec3873461cc961afbcb751625b0b4376196d347456c1efccb965c0f7f616ee83e5b93319cf5b9f75f2be161b996be6a73343a"
+      ],
+      "time_end_millis": 1794218045603,
+      "time_start_millis": 1794218045562,
+      "username": "versegit",
+      "view_id": "b21f427a774b3e55f37779cad5bdb3ffe32f03b01f860b82a08f5c76594fd2d8109b9f0f42887abfb2d3b97123da76c04c8c6e63035a03ecca76cb835c59e06f",
+      "workspace_name": null
+    },
+    {
+      "description": "vg: snapshot",
+      "hostname": "versegit.invalid",
+      "is_head": false,
+      "is_snapshot": false,
+      "operation_id": "c5d3aa9ac3b5919e798238e276eec3873461cc961afbcb751625b0b4376196d347456c1efccb965c0f7f616ee83e5b93319cf5b9f75f2be161b996be6a73343a",
+      "parent_ids": [
+        "092647978444b271b73aaa187e319a9a26c8ca85ebc369476b60c9305b94fcfd288f8e65556226a0cd40207a88af369aa877bf0d58d972acdf5a38ce320d572c"
+      ],
+      "time_end_millis": 1794218045236,
+      "time_start_millis": 1794218045213,
+      "username": "versegit",
+      "view_id": "f0609426e5624806936898d54265daaf05f8e411bda86fcffe3c78f0ea47090ed70e7e5245a6c1008695f797155bd4d33dd7a9673ec17956e9c5c56e5b5dbb49",
+      "workspace_name": null
+    },
+    {
+      "description": "vg: workspace add",
+      "hostname": "versegit.invalid",
+      "is_head": false,
+      "is_snapshot": false,
+      "operation_id": "092647978444b271b73aaa187e319a9a26c8ca85ebc369476b60c9305b94fcfd288f8e65556226a0cd40207a88af369aa877bf0d58d972acdf5a38ce320d572c",
+      "parent_ids": [
+        "9350973fe9c9de933fc3ac38ae6999a8d5c56aa1faecc866c103684301277c4c943fb15acfc8585e0978dd0e67740f010823389ec5c72ab82a5720e0869747bd"
+      ],
+      "time_end_millis": 1794218044755,
+      "time_start_millis": 1794218044729,
+      "username": "versegit",
+      "view_id": "cd68fce3b2478bbd0b96df3e34fc15e1e2d1ed75fddafbbc9bade1a5d3e0af7775a7cc29b0b63c7db3d6f236ca1f1dd29b5d0302fee892b69c902ea7fa299bc0",
+      "workspace_name": null
+    },
+    {
+      "description": "add workspace 'peer'",
+      "hostname": "versegit.invalid",
+      "is_head": false,
+      "is_snapshot": false,
+      "operation_id": "9350973fe9c9de933fc3ac38ae6999a8d5c56aa1faecc866c103684301277c4c943fb15acfc8585e0978dd0e67740f010823389ec5c72ab82a5720e0869747bd",
+      "parent_ids": [
+        "c270d154d2b8c0d57f768b6f68824b022c31d6a097d280866fba13b59158e0759bebfabeee371ca76a043a0f1df41ba13ad7d623224b6429c4dee00497fd8223"
+      ],
+      "time_end_millis": 1794218044689,
+      "time_start_millis": 1794218044667,
+      "username": "versegit",
+      "view_id": "de45db6e23d915c7df4784b2a28514a2f90676668cda80ae8d56f08e1bb01890caaafe3378a9fa3c2336d916fbc90e6d6664752bfbffabc36f70223b08b004a7",
+      "workspace_name": null
+    },
+    {
+      "description": "vg: new change",
+      "hostname": "versegit.invalid",
+      "is_head": false,
+      "is_snapshot": false,
+      "operation_id": "c270d154d2b8c0d57f768b6f68824b022c31d6a097d280866fba13b59158e0759bebfabeee371ca76a043a0f1df41ba13ad7d623224b6429c4dee00497fd8223",
+      "parent_ids": [
+        "9edc5e941518723e62c9a23b5f1ebbb8dfb7bddd04d4d5a5a25e882b166765d858c430008af76c645005fa924d6d64ecceafb28f52bdb79fccc69e2d7fba40af"
+      ],
+      "time_end_millis": 1794218044458,
+      "time_start_millis": 1794218044439,
+      "username": "versegit",
+      "view_id": "ec06b2818d69496cbe942ab1b3a129941d3a8adc020ab9c86395d06266fb3c129a19cec022d5fa99613645bdf76adc5f07fd13666b6dfdd564a0e4fb78634a2a",
+      "workspace_name": null
+    },
+    {
+      "description": "vg: snapshot",
+      "hostname": "versegit.invalid",
+      "is_head": false,
+      "is_snapshot": false,
+      "operation_id": "9edc5e941518723e62c9a23b5f1ebbb8dfb7bddd04d4d5a5a25e882b166765d858c430008af76c645005fa924d6d64ecceafb28f52bdb79fccc69e2d7fba40af",
+      "parent_ids": [
+        "21d295d35df80d1eced8141bafbb71060acc35533dbb3d9aef7f6fb732f7e6a2547c7beab165f86a7691edf014c2ec4d9cdc23dc51b65660d02fd9d8ef344bb1"
+      ],
+      "time_end_millis": 1794218044151,
+      "time_start_millis": 1794218044130,
+      "username": "versegit",
+      "view_id": "40d9a7b867ccd299798bb2966e72fcc19e651b5251b966e31d22f5667ceae35d545f72104154ec3456d33ea80280b35fc718efb07e153ca981f4447e27c423be",
+      "workspace_name": null
+    },
+    {
+      "description": "add workspace 'default'",
+      "hostname": "versegit.invalid",
+      "is_head": false,
+      "is_snapshot": false,
+      "operation_id": "21d295d35df80d1eced8141bafbb71060acc35533dbb3d9aef7f6fb732f7e6a2547c7beab165f86a7691edf014c2ec4d9cdc23dc51b65660d02fd9d8ef344bb1",
+      "parent_ids": [
+        "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "time_end_millis": 1794218043658,
+      "time_start_millis": 1794218043618,
+      "username": "versegit",
+      "view_id": "0d52803ffbe027980af811b7f0eb9cf8dc7f39643ad5611929fae4f118cbbb40d7b95d010f640b329bea2d17f28048fd2db564356e498fbb16c93faa3cd33178",
+      "workspace_name": null
+    },
+    {
+      "description": "",
+      "hostname": "",
+      "is_head": false,
+      "is_snapshot": false,
+      "operation_id": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "parent_ids": [],
+      "time_end_millis": 0,
+      "time_start_millis": 0,
+      "username": "",
+      "view_id": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "workspace_name": null
+    }
+  ],
+  "kind": "operation-log",
+  "limit": 100,
+  "next_after": null,
+  "schema": "versegit.vg-json/v1"
+}

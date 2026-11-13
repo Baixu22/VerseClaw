@@ -1,0 +1,11 @@
+{
+  "schema": "CodingMaturityAcceptance/v1",
+  "taskId": "TF-0782",
+  "decision": "pending-final-evidence",
+  "nonGa": true,
+  "driven_by": "agent",
+  "actor": "codex-coding-final-aggregator",
+  "realHumanEvidence": false,
+  "candidate": null,
+  "reportDigest": null
+}

@@ -1,0 +1,62 @@
+{
+  "ok": true,
+  "issues": [],
+  "acceptanceEligible": true,
+  "reportDigest": "d7c1955bb901b5d0480737846a5d6420224660e8ffbca07295133540e5f2df9b",
+  "negativeChecks": [
+    {
+      "case": "delete-case",
+      "rejected": true,
+      "issues": [
+        "case set mismatch",
+        "case failed: stale-basis",
+        "case command binding missing: stale-basis"
+      ]
+    },
+    {
+      "case": "wrong-candidate",
+      "rejected": true,
+      "issues": [
+        "candidate commit mismatch"
+      ]
+    },
+    {
+      "case": "artifact-digest-tamper",
+      "rejected": true,
+      "issues": [
+        "artifact digest mismatch: measurements/workspace-a.json",
+        "artifact digest mismatch: measurements/workspace-a.json"
+      ]
+    },
+    {
+      "case": "selected-upgraded",
+      "rejected": true,
+      "issues": [
+        "case failed: selected-final-full"
+      ]
+    },
+    {
+      "case": "tree-mismatch",
+      "rejected": true,
+      "issues": [
+        "workspace-a run 1 B/C tree mismatch"
+      ]
+    },
+    {
+      "case": "missing-git-lane",
+      "rejected": true,
+      "issues": [
+        "Git lane count mismatch",
+        "workspace-b Git run count mismatch"
+      ]
+    },
+    {
+      "case": "self-consistent-forgery",
+      "rejected": true,
+      "issues": [
+        "canonical report digest mismatch",
+        "case failed: combined-candidate"
+      ]
+    }
+  ]
+}

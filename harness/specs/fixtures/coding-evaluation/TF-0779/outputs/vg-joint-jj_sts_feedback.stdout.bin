@@ -1,0 +1,10 @@
+
+running 5 tests
+test self_reported_shadow_fields_never_recommend_enablement ... ok
+test sts_policy_is_consumed_without_reinterpreting_thresholds ... ok
+test vg_adds_no_sample_count_threshold_of_its_own ... ok
+test feedback_cli_consumes_policy_not_raw_report ... ok
+test w01_fabricated_feedback_counterexample_stays_disabled ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+

@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
   "task": "P0-004",
-  "checkedAt": "2026-10-15T21:00:30.813Z",
-  "ok": false,
-  "recomputedCount": 286,
+  "checkedAt": "2026-11-11T02:59:21.277Z",
+  "ok": true,
+  "recomputedCount": 288,
   "recomputed": [
     {
       "task": "P0-001",
       "path": "plans/system-maturity/BASELINE.json",
-      "sha256": "e8fa256feba4f29aa1f78e761599d5f238c5acc4f24884a912c4301d9e1f0379"
+      "sha256": "aa0b3c1c35c5d490cfeb98b867be2a96c6c5693aca0c8495a36c5a41d30a28f0"
     },
     {
       "task": "P0-001",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "8eecfa7355987d9f7775c24040f453abcab8398f7da3e3c4c7df0d039398d29e"
+      "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46"
     },
     {
       "task": "P0-001",
@@ -23,7 +23,7 @@
     {
       "task": "P0-001",
       "path": "plans/system-maturity/EXECUTION-ORDER.md",
-      "sha256": "fb497ea8cba7d66e673f47a7e9de2631bb1a65966652fea172713e0a8f94f495"
+      "sha256": "1e2d0285ae25fadd1c49ece9386086d59da3ba358ceb93733828b9a04eea8fe1"
     },
     {
       "task": "P0-001",
@@ -43,12 +43,12 @@
     {
       "task": "P0-002",
       "path": "scripts/validate-system-maturity-plan.mjs",
-      "sha256": "44a7e14a592efe461baaab5c13737d4abc95ac3bdb92ddb85bd5cafa93f50c14"
+      "sha256": "d8359b937c361d9f24ddf7bf31e57295adaef627febbb72935793b0d349b0b3a"
     },
     {
       "task": "P0-002",
       "path": "plans/system-maturity/README.md",
-      "sha256": "2c8c315d7daec6f33fda86d0ef1b9bd3b71c41a88100b6968a1355bd6bf40f87"
+      "sha256": "710dc994c98402e90b8d383a81a4eaebc2b6be249f35f30beb4e1cf25de2c974"
     },
     {
       "task": "P0-002",
@@ -63,7 +63,7 @@
     {
       "task": "P0-003",
       "path": "plans/system-maturity/gates.json",
-      "sha256": "8f9231e617d12679ccdd92d7b03a84bfa66267fe68b4f9111a59be5843976b9a"
+      "sha256": "937803ebb0e3e7b3dda3102ffe913d766b997124c20a4de0ba023a266bf619a4"
     },
     {
       "task": "P0-003",
@@ -82,13 +82,8 @@
     },
     {
       "task": "P0-003",
-      "path": "vitest.runtime-effectiveness.config.ts",
-      "sha256": "6fa0a6ae54be9e6ce165d79cdc17956b40ed9eda73d607e5c7bf5a8e21535c6a"
-    },
-    {
-      "task": "P0-003",
       "path": "src/lib/host-api.ts",
-      "sha256": "186d7474d1d4997492745caf4fbb2bce55951b63cd3bb8ce4ad48f23460fdc4f"
+      "sha256": "9917b8934ec48fc904275c592ee5573351e22482f54b6c79058c7a3ee1aafa04"
     },
     {
       "task": "P0-003",
@@ -98,7 +93,7 @@
     {
       "task": "P0-003",
       "path": "package.json",
-      "sha256": "a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50"
+      "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93"
     },
     {
       "task": "P0-003",
@@ -138,12 +133,12 @@
     {
       "task": "P0-004",
       "path": "package.json",
-      "sha256": "a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50"
+      "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93"
     },
     {
       "task": "P0-004",
       "path": "plans/system-maturity/BASELINE.json",
-      "sha256": "e8fa256feba4f29aa1f78e761599d5f238c5acc4f24884a912c4301d9e1f0379"
+      "sha256": "aa0b3c1c35c5d490cfeb98b867be2a96c6c5693aca0c8495a36c5a41d30a28f0"
     },
     {
       "task": "P0-004",
@@ -171,6 +166,11 @@
       "sha256": "3bd743790cabfa618a256ba8ead3a362182c2a286389365462d836b08ed32319"
     },
     {
+      "task": "P0-004",
+      "path": "harness/specs/rules/repository-artifact-retention.md",
+      "sha256": "94608e81ffeb6e4da9283d4ba23b741db747ec02c1f230af515fcab89f76bc6f"
+    },
+    {
       "task": "P1-001",
       "path": "artifacts/system-maturity/P1-001/canary-scan.json",
       "sha256": "3035819147cbb888f341a38c3808c48cca01e50a2e80408ce549fa49f0382b1d"
@@ -193,12 +193,12 @@
     {
       "task": "P1-001",
       "path": "shared/host-api/contract.ts",
-      "sha256": "50c2cf73d8fc84aeca7b7eb88dcbee6c7fdbf3689bf4d7506f1c4ab48a72cb86"
+      "sha256": "41c49266c5ff14b4b3321969ae0fe3e28fa48256f697b294ac6a267f5eaf1d12"
     },
     {
       "task": "P1-001",
       "path": "src/lib/host-api.ts",
-      "sha256": "186d7474d1d4997492745caf4fbb2bce55951b63cd3bb8ce4ad48f23460fdc4f"
+      "sha256": "9917b8934ec48fc904275c592ee5573351e22482f54b6c79058c7a3ee1aafa04"
     },
     {
       "task": "P1-001",
@@ -223,7 +223,7 @@
     {
       "task": "P1-002",
       "path": "electron/main/ipc/host-invoke.ts",
-      "sha256": "d915a31293b07ccbb83c5df97a7e2a5cf39fb896ad480ed142d60d0f3e887e80"
+      "sha256": "69cd38549db89ed6a55ed99f4fd6da163652d9354ef3839765d26f7a921e438a"
     },
     {
       "task": "P1-002",
@@ -233,7 +233,7 @@
     {
       "task": "P1-002",
       "path": "electron/main/ipc-handlers.ts",
-      "sha256": "810f318dab4978823dca9287c6fec427a756179c2856639a0d9de71a58bfc665"
+      "sha256": "0d6966ed92d79d459e3fd46c6a6876e06ad844eb39244b79e3b5aa54f3a0cc56"
     },
     {
       "task": "P1-002",
@@ -263,7 +263,7 @@
     {
       "task": "P1-003",
       "path": "electron/services/workspace-permissions.ts",
-      "sha256": "de1cc44ee1379f53fd31a751026409f1cd387b3030905994c0a9b4a98f5a67e0"
+      "sha256": "909cdf6a2ae875a7c75ef4e53a17f510ab7708d6593942f9eb690f1a2c7f1685"
     },
     {
       "task": "P1-003",
@@ -313,17 +313,17 @@
     {
       "task": "P2-001",
       "path": "shared/types/workspace.ts",
-      "sha256": "67c8b8b399d0e560def06a55b8a18f4c20fd0f171982ce9863964dece548b41f"
+      "sha256": "f024191a56bc91f84a6434f0d99cd4dfcb0a3496a0d66ec44416bc05e26058f2"
     },
     {
       "task": "P2-001",
       "path": "electron/services/workspaces-api.ts",
-      "sha256": "201455e89750a51b2462058edcaae6b80a58df725d415e24151f66ba3f5d25c3"
+      "sha256": "5d92c41a77d7c42ad8020e7f861e91bb952495f6d456e3172a0570337d7931f8"
     },
     {
       "task": "P2-001",
       "path": "electron/services/workspace-permissions.ts",
-      "sha256": "de1cc44ee1379f53fd31a751026409f1cd387b3030905994c0a9b4a98f5a67e0"
+      "sha256": "909cdf6a2ae875a7c75ef4e53a17f510ab7708d6593942f9eb690f1a2c7f1685"
     },
     {
       "task": "P2-001",
@@ -383,12 +383,12 @@
     {
       "task": "P2-003",
       "path": "openclaw_runtime/src/agents/role-permissions-policy.ts",
-      "sha256": "1ef47b843d6d2172752f5d4d330e89f7ab6c33037dda2d3e602ac577437d9983"
+      "sha256": "946d6e1594dd88d6d45084feb04cbef7fb398c58561631bf7c89dbbae39116e7"
     },
     {
       "task": "P2-003",
       "path": "openclaw_runtime/src/agents/role-spawn.ts",
-      "sha256": "15971602b84b118fd1b4de50669d72b225386b2bec3b85df401a986fa5be789b"
+      "sha256": "e27652fa85d82e7bc08ca0ad7f58a1f0500956a9c3ee6f279d0466d1dc292eac"
     },
     {
       "task": "P2-003",
@@ -783,7 +783,7 @@
     {
       "task": "P7-001",
       "path": "artifacts/system-maturity/P7-001/traceability-report.json",
-      "sha256": "e6784ca5bcc1b6f0ff48ab2ee3c2a2ff424358738c1cab449427636a604b7ba8"
+      "sha256": "b1b19cee50a8c392fb7d0bebaf392b461273f2695303f5fab24c39dd80e6afdc"
     },
     {
       "task": "P7-001",
@@ -998,37 +998,37 @@
     {
       "task": "P7-003",
       "path": "shared/host-api/contract.ts",
-      "sha256": "50c2cf73d8fc84aeca7b7eb88dcbee6c7fdbf3689bf4d7506f1c4ab48a72cb86"
+      "sha256": "41c49266c5ff14b4b3321969ae0fe3e28fa48256f697b294ac6a267f5eaf1d12"
     },
     {
       "task": "P7-003",
       "path": "electron/services/agent-browser-api.ts",
-      "sha256": "d848f05e248f0e9fc88078440f76a412a8f873f9b108e91fbdbb88975bc3e603"
+      "sha256": "04b080fc06ebe7f1bd09bde9254b0fdf05c79280c28e6a6f4e7353da1a7b2fb1"
     },
     {
       "task": "P7-003",
       "path": "electron/services/remote-control-api.ts",
-      "sha256": "a5ca5203b80c1f4d2c314485990bb67f1b3798540d088407ae93ec19528d3915"
+      "sha256": "d59b260cc1d35c4e27a7e00082cb4747c941d627cec40aeb5c9fdefa0d354fa6"
     },
     {
       "task": "P7-003",
       "path": "electron/services/gateway-api.ts",
-      "sha256": "fa8c8f6555b199838bb6dd49ae6e6477d6068cdbc9e994d0fa58f36e7cda2a27"
+      "sha256": "0298b9d6fc3ba4fe9ed50f9744d48fe44443e4b1e3b2216c8ca22ab70665a70a"
     },
     {
       "task": "P7-003",
       "path": "electron/utils/store.ts",
-      "sha256": "ccd304d83dcf1920ee2dafcab31751aae90d6e54ba782421592ac63f3ce7a44c"
+      "sha256": "c683385a9b76cb75cb61ecf08068c74fb1c82ec1afafb2b904f5019be0acc88a"
     },
     {
       "task": "P7-003",
       "path": "package.json",
-      "sha256": "a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50"
+      "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93"
     },
     {
       "task": "P7-003",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "8eecfa7355987d9f7775c24040f453abcab8398f7da3e3c4c7df0d039398d29e"
+      "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46"
     },
     {
       "task": "P7-003",
@@ -1148,12 +1148,12 @@
     {
       "task": "P7-004",
       "path": "scripts/sync-system-maturity-index.mjs",
-      "sha256": "73de77627da9d2117d63a34dc6faf15f15dbbfd57d47c72817ea79c3edd0ab2e"
+      "sha256": "14d8075d485649635c401855797a9decc75730e825ad5f59d18b2cbfed7abddb"
     },
     {
       "task": "P7-004",
       "path": "scripts/validate-system-maturity-plan.mjs",
-      "sha256": "44a7e14a592efe461baaab5c13737d4abc95ac3bdb92ddb85bd5cafa93f50c14"
+      "sha256": "d8359b937c361d9f24ddf7bf31e57295adaef627febbb72935793b0d349b0b3a"
     },
     {
       "task": "P7-004",
@@ -1168,12 +1168,12 @@
     {
       "task": "P7-004",
       "path": "package.json",
-      "sha256": "a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50"
+      "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93"
     },
     {
       "task": "P7-004",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "8eecfa7355987d9f7775c24040f453abcab8398f7da3e3c4c7df0d039398d29e"
+      "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46"
     },
     {
       "task": "P7-004",
@@ -1183,7 +1183,7 @@
     {
       "task": "P7-004",
       "path": "plans/system-maturity/README.md",
-      "sha256": "2c8c315d7daec6f33fda86d0ef1b9bd3b71c41a88100b6968a1355bd6bf40f87"
+      "sha256": "710dc994c98402e90b8d383a81a4eaebc2b6be249f35f30beb4e1cf25de2c974"
     },
     {
       "task": "P7-004",
@@ -1208,12 +1208,12 @@
     {
       "task": "P8-001",
       "path": "artifacts/system-maturity/P8-001/residual-audit-report.json",
-      "sha256": "793963668d829ef6dccc2b3858159853462859ed4fcd0e6383fcf09b9d719b84"
+      "sha256": "fcc6d2ad786c1569e754d741d25c819543f2ecd13a5841794d9e1ad10d9cebd9"
     },
     {
       "task": "P8-001",
       "path": "artifacts/system-maturity/P8-001/residual-audit-dry-run.json",
-      "sha256": "3e2299001131961bdb8fc94cd2c6da5ea76bd5aebdd2b124e0f795702592ca0e"
+      "sha256": "6aee181b8725245d842908ba33d3d081f2b6e4b67bc8fd95f45d1c944000f732"
     },
     {
       "task": "P8-001",
@@ -1228,7 +1228,7 @@
     {
       "task": "P8-001",
       "path": "plans/system-maturity/residual-register.json",
-      "sha256": "e3e6ca705fbea46180487859b22902b5d3fbf703ad1659c82dc34e0a4d739199"
+      "sha256": "e1c0410dace5a50b46d040c983c315491298fe4dd638f0a68cf0941661931b2b"
     },
     {
       "task": "P8-001",
@@ -1263,17 +1263,17 @@
     {
       "task": "P8-001",
       "path": "electron/utils/channel-config.ts",
-      "sha256": "ef1593ee9a87554d9fab777438bd3684265d8295e8a403fed9eb4ac29e9d4377"
+      "sha256": "065ff29157e0f8c49872365c2a08930a43da57b38d77c1167939960237f49f14"
     },
     {
       "task": "P8-001",
       "path": "package.json",
-      "sha256": "a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50"
+      "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93"
     },
     {
       "task": "P8-001",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "8eecfa7355987d9f7775c24040f453abcab8398f7da3e3c4c7df0d039398d29e"
+      "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46"
     },
     {
       "task": "P8-001",
@@ -1291,6 +1291,16 @@
       "sha256": "1bf49b5e0f6c53ce82c3d5a5a92ad70349d24e065b6e595d04682840f8920194"
     },
     {
+      "task": "P8-001",
+      "path": "artifacts/system-maturity/P8-001/residual-revalidation-20261111.json",
+      "sha256": "8fea93ed0f3e3c58d28d49f2813602c35f3b9e7595d27787bda31629c34f3097"
+    },
+    {
+      "task": "P8-001",
+      "path": "artifacts/system-maturity/P8-001/residual-revalidation-20261111.stdout.txt",
+      "sha256": "798c8dde98fe8535903cc57211eec17b67cc1ee89dc6feef233a8659ba5b4295"
+    },
+    {
       "task": "P8-002",
       "path": "artifacts/system-maturity/P8-002/vitest.stdout.txt",
       "sha256": "06f53fd6725962709f5d5086423256288261d4474e74b2bf85f8f1cf9a6443b0"
@@ -1303,12 +1313,12 @@
     {
       "task": "P8-002",
       "path": "electron/services/providers/store-instance.ts",
-      "sha256": "4f07effe490536bc9426e706d6c12747f77b32a989da120500b1b46a902e1aa1"
+      "sha256": "855afc3354854fcb9de84ccdc8258b75ee288a8144970ab7d2a5517db1d56ccb"
     },
     {
       "task": "P8-002",
       "path": "electron/utils/channel-config.ts",
-      "sha256": "ef1593ee9a87554d9fab777438bd3684265d8295e8a403fed9eb4ac29e9d4377"
+      "sha256": "065ff29157e0f8c49872365c2a08930a43da57b38d77c1167939960237f49f14"
     },
     {
       "task": "P8-002",
@@ -1318,12 +1328,12 @@
     {
       "task": "P8-002",
       "path": "plans/system-maturity/residual-register.json",
-      "sha256": "e3e6ca705fbea46180487859b22902b5d3fbf703ad1659c82dc34e0a4d739199"
+      "sha256": "e1c0410dace5a50b46d040c983c315491298fe4dd638f0a68cf0941661931b2b"
     },
     {
       "task": "P8-002",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "8eecfa7355987d9f7775c24040f453abcab8398f7da3e3c4c7df0d039398d29e"
+      "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46"
     },
     {
       "task": "P8-002",
@@ -1373,17 +1383,17 @@
     {
       "task": "P8-003",
       "path": "plans/system-maturity/residual-register.json",
-      "sha256": "e3e6ca705fbea46180487859b22902b5d3fbf703ad1659c82dc34e0a4d739199"
+      "sha256": "e1c0410dace5a50b46d040c983c315491298fe4dd638f0a68cf0941661931b2b"
     },
     {
       "task": "P8-003",
       "path": "plans/system-maturity/findings-registry.json",
-      "sha256": "8eecfa7355987d9f7775c24040f453abcab8398f7da3e3c4c7df0d039398d29e"
+      "sha256": "49afce76113c60d8bb682970a08ef60ce5d63db718b855b2f49d5c3281fb1d46"
     },
     {
       "task": "P8-003",
       "path": "package.json",
-      "sha256": "a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50"
+      "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93"
     },
     {
       "task": "P8-004",
@@ -1423,7 +1433,7 @@
     {
       "task": "P8-004",
       "path": "plans/system-maturity/residual-register.json",
-      "sha256": "e3e6ca705fbea46180487859b22902b5d3fbf703ad1659c82dc34e0a4d739199"
+      "sha256": "e1c0410dace5a50b46d040c983c315491298fe4dd638f0a68cf0941661931b2b"
     },
     {
       "task": "P8-004",
@@ -1433,56 +1443,10 @@
     {
       "task": "P8-004",
       "path": "package.json",
-      "sha256": "a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50"
+      "sha256": "9f7cd642d9258defd192c3148a2943676307bc7a4fa7d0d5f8c4b6209648ad93"
     }
   ],
-  "fail": [
-    "A2 P0-003 evidence hash mismatch for vitest.config.ts: expected 5769c39dca93afd4e0fad651978bb730feab2a4ce3712c56467f31290dd829f3 got 9fc0c29daa2b0751cb64a7099792db229333855765fded8e2836c5b314021e0a",
-    "A2 P0-003 evidence hash mismatch for src/lib/host-api.ts: expected e45f55707ecd8a7c097798f5debf8cbbf446b7f0ad50a9a6a6a20beba30a5722 got 186d7474d1d4997492745caf4fbb2bce55951b63cd3bb8ce4ad48f23460fdc4f",
-    "A2 P0-003 evidence hash mismatch for tests/unit/host-api-facade.test.ts: expected 05cbe23d8592c59f7f9b1577397074d8a05cb4e29fdbc2c69a924aa1de933b2b got 6df457d1ce4cfb44fec4de66810130d50c10d99dca7596a6b197c0e8f76224fc",
-    "A2 P0-003 evidence hash mismatch for package.json: expected f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846 got a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50",
-    "A2 P0-004 evidence hash mismatch for package.json: expected f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846 got a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50",
-    "A1 P0-004 evidence path missing: docs/dev/context-moat/reviews/revalidation-sec002-gov003-20260910.json",
-    "A2 P1-001 evidence hash mismatch for shared/host-api/contract.ts: expected 5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d got 50c2cf73d8fc84aeca7b7eb88dcbee6c7fdbf3689bf4d7506f1c4ab48a72cb86",
-    "A2 P1-001 evidence hash mismatch for src/lib/host-api.ts: expected e45f55707ecd8a7c097798f5debf8cbbf446b7f0ad50a9a6a6a20beba30a5722 got 186d7474d1d4997492745caf4fbb2bce55951b63cd3bb8ce4ad48f23460fdc4f",
-    "A1 P1-001 evidence path missing: docs/dev/context-moat/reviews/revalidation-sec002-gov003-20260910.json",
-    "A2 P1-002 evidence hash mismatch for electron/main/ipc/host-invoke.ts: expected 1b431bf5f2bb8888370c92630d38f08c3a812064a8f6b5644ba7ced606d442c0 got d915a31293b07ccbb83c5df97a7e2a5cf39fb896ad480ed142d60d0f3e887e80",
-    "A2 P1-002 evidence hash mismatch for electron/main/ipc-handlers.ts: expected c76f0db63d653a5755b8f0b4c6bda53914f81e35f3917bceedaeaf3eb4eb7f27 got 810f318dab4978823dca9287c6fec427a756179c2856639a0d9de71a58bfc665",
-    "A2 P1-003 evidence hash mismatch for electron/services/files-api.ts: expected 6cbb73f53dd7efabdcf868a7791390ccc2c5a09e9b8a36494d3dfb7552c51b6f got 99f5dcdd3d2fa9d240b656bf6b97b6f3937923ba0c17e869f53b916637835d08",
-    "A2 P1-003 evidence hash mismatch for electron/services/workspace-permissions.ts: expected fe62bd3150c4476f6e6f0edee680e87862c800af3f748f802f4545ff4084de43 got de1cc44ee1379f53fd31a751026409f1cd387b3030905994c0a9b4a98f5a67e0",
-    "A2 P1-004 evidence hash mismatch for shared/security/url-policy.ts: expected b39c676620af5841b2f7991b0a06d19f7fcfb080fef1e351d59a6c6889681495 got b11c8d42f6189f2b07b5495a4e443b96473d0aedbd1e67e443d252714f47a49c",
-    "A2 P2-001 evidence hash mismatch for shared/types/workspace.ts: expected 32536334d593bc0b50ce8ab461247a24b4f6e2dc95d3cce8651e6d01e8b2154c got 67c8b8b399d0e560def06a55b8a18f4c20fd0f171982ce9863964dece548b41f",
-    "A2 P2-001 evidence hash mismatch for electron/services/workspaces-api.ts: expected 46c44a861293b3f97500639a71837c805e24feef40996a3294c6013d046eba2a got 201455e89750a51b2462058edcaae6b80a58df725d415e24151f66ba3f5d25c3",
-    "A2 P2-001 evidence hash mismatch for electron/services/workspace-permissions.ts: expected fe62bd3150c4476f6e6f0edee680e87862c800af3f748f802f4545ff4084de43 got de1cc44ee1379f53fd31a751026409f1cd387b3030905994c0a9b4a98f5a67e0",
-    "A2 P2-003 evidence hash mismatch for openclaw_runtime/src/agents/role-contract.ts: expected 691aeb78d20282a1815e9f8d3957ac152000b41f8176a15522b080a353369ad6 got 2c795e993a9693afd7d418fa7406b3485d54d8d9bde325d9cbaa5a4a007a7d29",
-    "A2 P2-003 evidence hash mismatch for openclaw_runtime/src/agents/role-permissions-policy.ts: expected 3caae086de53b130b0f9dee357e1969867c26b140c40db861d47fa2e4d9413c8 got 1ef47b843d6d2172752f5d4d330e89f7ab6c33037dda2d3e602ac577437d9983",
-    "A2 P2-003 evidence hash mismatch for openclaw_runtime/src/agents/role-spawn.ts: expected 736bc67630a38432d3d2c95b97f698354d275e54f43d57cd8ab64b86813a86d2 got 15971602b84b118fd1b4de50669d72b225386b2bec3b85df401a986fa5be789b",
-    "A2 P7-001 evidence hash mismatch for artifacts/system-maturity/P7-001/traceability-report.json: expected 01e36522014d961fe1fa0f0e4bdcd2cf55a9ce284e7eb086f195eb279858b29d got e6784ca5bcc1b6f0ff48ab2ee3c2a2ff424358738c1cab449427636a604b7ba8",
-    "A2 P7-001 evidence hash mismatch for tests/unit/system-maturity-traceability-p7-001.test.ts: expected d7c5c951749aeef2538c201982e6dcc7fd1dd26d1c2a6b2dc9ea64f93d9a31c5 got f81eb9592427d6bf8724c2c50289f2bb682109b23692996edf9528a8981db833",
-    "A2 P7-001 evidence hash mismatch for harness/specs/tasks/system-maturity-traceability.md: expected 675bac97e59dc189955734614eaad6d4266f5dd30e79b88c11c1781ab7e01aa0 got 15e14bd31c31f1dbe121f8d33a4d2a5b05feda6a72d5eb81f50aca763e8fd63b",
-    "A2 P7-002 evidence hash mismatch for plans/system-maturity/security-regression-suite.json: expected 9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af got 9cbbc093b7f709cd0336ccee6d5618a73fe533917915819cdfedeb77a195ac9c",
-    "A2 P7-002 evidence hash mismatch for harness/specs/tasks/system-maturity-security-regression.md: expected 0d6cca269a246f1b4c54221d094341b8891a674e727afea821bf8235e3e8f0b9 got ead99d2bb256dbe86bf501c808ce88467735885fd647c9543c3ddcd80a2efdd9",
-    "A2 P7-002 evidence hash mismatch for .github/workflows/system-maturity-security.yml: expected 07ac3c743f642773936e9724cb6111b9d7297d4c539e6a3b0607441c9dfb85bb got 7f20569ee913273b85e7bc30f01c532b1710925327610b8f0adbb82425ee1f62",
-    "A2 P7-003 evidence hash mismatch for plans/system-maturity/privacy-data-flow-inventory.json: expected 75c97f10101fe60d5df4a95f1005bf24053936441a6600f86ea6f9d78dfd573b got ca55a14ce9f0e80b639f720f8463286d4d3136e97ca77d7f365b35a8d3fa69fd",
-    "A2 P7-003 evidence hash mismatch for scripts/collect-p7-003-evidence.mjs: expected 710a293fa078d0210869d6be2c9a73289c95a12135a81d95d16461c17275acb9 got 08aa12d0341e162d90f125944b7bae6fc8229c4ae4283d7da0ad4dff9ade0f35",
-    "A2 P7-003 evidence hash mismatch for harness/specs/tasks/system-maturity-privacy-controls.md: expected 51b9e4b274dfbd121c6756b6d03d0341965432a620d25e0f0fd2c21e075e48c5 got 7121335fbf0b2b1f57000f383305446c2ea766c9cfd6d6940dbffee1745142fb",
-    "A2 P7-003 evidence hash mismatch for shared/host-api/contract.ts: expected 5dd2c95f287c44b8256cdbbc49cd955780b4d9daf5559f3b370d823a929de37d got 50c2cf73d8fc84aeca7b7eb88dcbee6c7fdbf3689bf4d7506f1c4ab48a72cb86",
-    "A2 P7-003 evidence hash mismatch for electron/services/agent-browser-api.ts: expected 94dfcf70eb5dd6a7110d634f7c6afc573f228bc8b008e330e06ca6f13fbc439b got d848f05e248f0e9fc88078440f76a412a8f873f9b108e91fbdbb88975bc3e603",
-    "A2 P7-003 evidence hash mismatch for electron/services/gateway-api.ts: expected 8415d663c01b7fa22092b792420390b314673f1c0d2d8d396d542d4c89e9227c got fa8c8f6555b199838bb6dd49ae6e6477d6068cdbc9e994d0fa58f36e7cda2a27",
-    "A2 P7-003 evidence hash mismatch for electron/utils/store.ts: expected 1c3e05efcc0e722394c38960ec60f8f2bdecd925980d30487e92d7521047c4af got ccd304d83dcf1920ee2dafcab31751aae90d6e54ba782421592ac63f3ce7a44c",
-    "A2 P7-003 evidence hash mismatch for package.json: expected f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846 got a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50",
-    "A2 P7-004 evidence hash mismatch for tests/unit/system-maturity-quarterly-audit-p7-004.test.ts: expected 32fb987793694b77e9c8f1ff850b0870b4cc98da42d3c1c818d945cab2346c27 got 3ca93f513122530299b43049a59227425b932b18e041cb05a64bba8a2269ca36",
-    "A2 P7-004 evidence hash mismatch for harness/specs/tasks/system-maturity-quarterly-audit.md: expected 7010ea25f4397a674147399ebabe5739b7e60d396ab2c2e8ae74e320f4e19302 got bec66f3cbf0f3dcfef5bd11d2dde4364b28a5bb7241cb1ddaf4d5e900740f050",
-    "A2 P7-004 evidence hash mismatch for package.json: expected f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846 got a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50",
-    "A2 P8-001 evidence hash mismatch for tests/unit/system-maturity-residual-p8-001.test.ts: expected 308c3f5500fedabc1e00927c7a05e5186e25490d8eab597e2fad60b9285f76b8 got 29258d48f0c765b29713ff1cf66b17ff77729235935ab8313b9e3c438c98fd84",
-    "A2 P8-001 evidence hash mismatch for tests/unit/system-maturity-quarterly-audit-p7-004.test.ts: expected 32fb987793694b77e9c8f1ff850b0870b4cc98da42d3c1c818d945cab2346c27 got 3ca93f513122530299b43049a59227425b932b18e041cb05a64bba8a2269ca36",
-    "A2 P8-001 evidence hash mismatch for electron/utils/channel-config.ts: expected 45cb19479deeafc1cf33cf54bc13f0f9e975066a25af8872957cb2426cf18a3d got ef1593ee9a87554d9fab777438bd3684265d8295e8a403fed9eb4ac29e9d4377",
-    "A2 P8-001 evidence hash mismatch for package.json: expected f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846 got a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50",
-    "A2 P8-002 evidence hash mismatch for electron/utils/channel-config.ts: expected 45cb19479deeafc1cf33cf54bc13f0f9e975066a25af8872957cb2426cf18a3d got ef1593ee9a87554d9fab777438bd3684265d8295e8a403fed9eb4ac29e9d4377",
-    "A2 P8-003 evidence hash mismatch for plans/system-maturity/security-regression-suite.json: expected 9674c895ec27cd80b63a473a80a98e27786343df4929f53ce98b1c3e9da9f5af got 9cbbc093b7f709cd0336ccee6d5618a73fe533917915819cdfedeb77a195ac9c",
-    "A2 P8-003 evidence hash mismatch for package.json: expected f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846 got a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50",
-    "A2 P8-004 evidence hash mismatch for package.json: expected f4877e473c30b21cdaf5e79fe01612ff70c58be1abe55c63a6f377567aae1846 got a3aef438ffeacaa3ee42b802ca0d5fa9367d47555200671a4dc694de49b1dc50"
-  ],
+  "fail": [],
   "warn": [],
   "info": [
     "A2 P0-001 hash OK plans/system-maturity/BASELINE.json",
@@ -1498,8 +1462,11 @@
     "A2 P0-002 hash OK artifacts/system-maturity/P0-002/validate.stdout.txt",
     "A2 P0-003 hash OK plans/system-maturity/gates.json",
     "A2 P0-003 hash OK scripts/validate-test-gates.mjs",
+    "A2 P0-003 hash OK vitest.config.ts",
     "A2 P0-003 hash OK vitest.agent-dev.node.config.ts",
-    "A2 P0-003 hash OK vitest.runtime-effectiveness.config.ts",
+    "A2 P0-003 hash OK src/lib/host-api.ts",
+    "A2 P0-003 hash OK tests/unit/host-api-facade.test.ts",
+    "A2 P0-003 hash OK package.json",
     "A2 P0-003 hash OK artifacts/system-maturity/P0-003/validate-test-gates.frozen.json",
     "A2 P0-003 hash OK artifacts/system-maturity/P0-003/release-gates.commands.json",
     "A2 P0-003 hash OK artifacts/system-maturity/P0-003/empty-shard.stdout.txt",
@@ -1507,33 +1474,45 @@
     "A2 P0-003 hash OK artifacts/system-maturity/P0-003/harness-ci.stdout.txt",
     "A2 P0-003 hash OK artifacts/system-maturity/P0-003/typecheck.stdout.txt",
     "A2 P0-004 hash OK scripts/validate-system-maturity-evidence.mjs",
+    "A2 P0-004 hash OK package.json",
     "A2 P0-004 hash OK plans/system-maturity/BASELINE.json",
     "A2 P0-004 hash OK plans/system-maturity/phase0-foundation/STATUS.json",
     "A2 P0-004 hash OK artifacts/system-maturity/P0-004/a1-missing-evidence-probe.txt",
     "A2 P0-004 hash OK artifacts/system-maturity/P0-004/baseline.stdout.txt",
     "A2 P0-004 hash OK artifacts/system-maturity/P0-004/plan.stdout.txt",
     "A2 P0-004 hash OK artifacts/system-maturity/P0-004/harness.stdout.txt",
+    "A2 P0-004 hash OK harness/specs/rules/repository-artifact-retention.md",
     "A2 P1-001 hash OK artifacts/system-maturity/P1-001/canary-scan.json",
     "A2 P1-001 hash OK artifacts/system-maturity/P1-001/vitest.stdout.txt",
     "A2 P1-001 hash OK artifacts/system-maturity/P1-001/evidence-index.json",
     "A2 P1-001 hash OK electron/services/secrets/secret-store.ts",
+    "A2 P1-001 hash OK shared/host-api/contract.ts",
+    "A2 P1-001 hash OK src/lib/host-api.ts",
     "A2 P1-001 hash OK plans/system-maturity/phase1-direct-boundaries/STATUS.json",
     "A2 P1-001 hash OK scripts/configure-deepseek-runtime.mjs",
     "A2 P1-002 hash OK artifacts/system-maturity/P1-002/vitest.stdout.txt",
     "A2 P1-002 hash OK artifacts/system-maturity/P1-002/sender-payload-matrix.json",
+    "A2 P1-002 hash OK electron/main/ipc/host-invoke.ts",
     "A2 P1-002 hash OK electron/main/ipc/host-invoke-security.ts",
+    "A2 P1-002 hash OK electron/main/ipc-handlers.ts",
     "A2 P1-002 hash OK plans/system-maturity/phase1-direct-boundaries/STATUS.json",
     "A2 P1-003 hash OK artifacts/system-maturity/P1-003/vitest.stdout.txt",
     "A2 P1-003 hash OK artifacts/system-maturity/P1-003/path-matrix.json",
     "A2 P1-003 hash OK electron/services/path-broker.ts",
+    "A2 P1-003 hash OK electron/services/files-api.ts",
+    "A2 P1-003 hash OK electron/services/workspace-permissions.ts",
     "A2 P1-003 hash OK plans/system-maturity/phase1-direct-boundaries/STATUS.json",
     "A2 P1-004 hash OK artifacts/system-maturity/P1-004/vitest.stdout.txt",
     "A2 P1-004 hash OK artifacts/system-maturity/P1-004/url-policy-matrix.json",
+    "A2 P1-004 hash OK shared/security/url-policy.ts",
     "A2 P1-004 hash OK electron/utils/safe-open-external.ts",
     "A2 P1-004 hash OK plans/system-maturity/phase1-direct-boundaries/STATUS.json",
     "A2 P2-001 hash OK artifacts/system-maturity/P2-001/vitest.stdout.txt",
     "A2 P2-001 hash OK artifacts/system-maturity/P2-001/evidence-index.json",
     "A2 P2-001 hash OK artifacts/system-maturity/P2-001/acceptance-matrix.json",
+    "A2 P2-001 hash OK shared/types/workspace.ts",
+    "A2 P2-001 hash OK electron/services/workspaces-api.ts",
+    "A2 P2-001 hash OK electron/services/workspace-permissions.ts",
     "A2 P2-001 hash OK plans/system-maturity/phase2-authorization-isolation/STATUS.json",
     "A2 P2-002 hash OK artifacts/system-maturity/P2-002/vitest.stdout.txt",
     "A2 P2-002 hash OK artifacts/system-maturity/P2-002/evidence-index.json",
@@ -1544,6 +1523,9 @@
     "A2 P2-003 hash OK artifacts/system-maturity/P2-003/vitest.stdout.txt",
     "A2 P2-003 hash OK artifacts/system-maturity/P2-003/evidence-index.json",
     "A2 P2-003 hash OK artifacts/system-maturity/P2-003/acceptance-matrix.json",
+    "A2 P2-003 hash OK openclaw_runtime/src/agents/role-contract.ts",
+    "A2 P2-003 hash OK openclaw_runtime/src/agents/role-permissions-policy.ts",
+    "A2 P2-003 hash OK openclaw_runtime/src/agents/role-spawn.ts",
     "A2 P2-003 hash OK electron/services/roles-api.ts",
     "A2 P2-003 hash OK plans/system-maturity/phase2-authorization-isolation/STATUS.json",
     "A2 P2-004 hash OK artifacts/system-maturity/P2-004/vitest.stdout.txt",
@@ -1622,6 +1604,7 @@
     "A2 P6-004 hash OK artifacts/system-maturity/P6-004/packaged-trust-report.stdout.txt",
     "A2 P6-004 hash OK artifacts/system-maturity/P6-004/harness-validate.stdout.txt",
     "A2 P7-001 hash OK artifacts/system-maturity/P7-001/full-validation.json",
+    "A2 P7-001 hash OK artifacts/system-maturity/P7-001/traceability-report.json",
     "A2 P7-001 hash OK artifacts/system-maturity/P7-001/acceptance-matrix.json",
     "A2 P7-001 hash OK artifacts/system-maturity/P7-001/gates/focused-unit.stdout.txt",
     "A2 P7-001 hash OK artifacts/system-maturity/P7-001/gates/harness-ci.stdout.txt",
@@ -1629,6 +1612,8 @@
     "A2 P7-001 hash OK artifacts/system-maturity/P7-001/gates/typecheck.stdout.txt",
     "A2 P7-001 hash OK artifacts/system-maturity/P7-001/gates/unit-full.stdout.txt",
     "A2 P7-001 hash OK scripts/validate-system-maturity-traceability.mjs",
+    "A2 P7-001 hash OK tests/unit/system-maturity-traceability-p7-001.test.ts",
+    "A2 P7-001 hash OK harness/specs/tasks/system-maturity-traceability.md",
     "A2 P7-002 hash OK artifacts/system-maturity/P7-002/full-validation.json",
     "A2 P7-002 hash OK artifacts/system-maturity/P7-002/security-regression-report.json",
     "A2 P7-002 hash OK artifacts/system-maturity/P7-002/evidence-manifest.json",
@@ -1638,9 +1623,12 @@
     "A2 P7-002 hash OK artifacts/system-maturity/P7-002/validation-gates/maturity-validate.stdout.txt",
     "A2 P7-002 hash OK artifacts/system-maturity/P7-002/validation-gates/unit-full.stdout.txt",
     "A2 P7-002 hash OK artifacts/system-maturity/P7-002/validation-gates/harness-task.stdout.txt",
+    "A2 P7-002 hash OK plans/system-maturity/security-regression-suite.json",
     "A2 P7-002 hash OK scripts/lib/system-maturity-security-suite.mjs",
     "A2 P7-002 hash OK scripts/run-system-maturity-security-suite.mjs",
     "A2 P7-002 hash OK tests/unit/system-maturity-security-suite-p7-002.test.ts",
+    "A2 P7-002 hash OK harness/specs/tasks/system-maturity-security-regression.md",
+    "A2 P7-002 hash OK .github/workflows/system-maturity-security.yml",
     "A2 P7-003 hash OK artifacts/system-maturity/P7-003/full-validation.json",
     "A2 P7-003 hash OK artifacts/system-maturity/P7-003/validation-gates/focused-unit.stdout.txt",
     "A2 P7-003 hash OK artifacts/system-maturity/P7-003/validation-gates/privacy-validate.stdout.txt",
@@ -1649,14 +1637,22 @@
     "A2 P7-003 hash OK artifacts/system-maturity/P7-003/validation-gates/typecheck.stdout.txt",
     "A2 P7-003 hash OK artifacts/system-maturity/P7-003/validation-gates/unit-full.stdout.txt",
     "A2 P7-003 hash OK artifacts/system-maturity/P7-003/validation-gates/maturity-validate.stdout.txt",
+    "A2 P7-003 hash OK plans/system-maturity/privacy-data-flow-inventory.json",
     "A2 P7-003 hash OK shared/privacy/sensitive-capture-policy.ts",
     "A2 P7-003 hash OK shared/privacy/ui-error-sanitize.ts",
     "A2 P7-003 hash OK electron/services/sensitive-capture-gate.ts",
     "A2 P7-003 hash OK scripts/validate-system-maturity-privacy.mjs",
     "A2 P7-003 hash OK scripts/lib/system-maturity-privacy.mjs",
+    "A2 P7-003 hash OK scripts/collect-p7-003-evidence.mjs",
     "A2 P7-003 hash OK tests/unit/system-maturity-privacy-p7-003.test.ts",
+    "A2 P7-003 hash OK harness/specs/tasks/system-maturity-privacy-controls.md",
     "A2 P7-003 hash OK src/components/common/ErrorBoundary.tsx",
+    "A2 P7-003 hash OK shared/host-api/contract.ts",
+    "A2 P7-003 hash OK electron/services/agent-browser-api.ts",
     "A2 P7-003 hash OK electron/services/remote-control-api.ts",
+    "A2 P7-003 hash OK electron/services/gateway-api.ts",
+    "A2 P7-003 hash OK electron/utils/store.ts",
+    "A2 P7-003 hash OK package.json",
     "A2 P7-003 hash OK plans/system-maturity/findings-registry.json",
     "A2 P7-003 hash OK artifacts/system-maturity/P7-003/evidence-manifest.json",
     "A2 P7-003 hash OK artifacts/system-maturity/P7-003/acceptance-matrix.json",
@@ -1683,6 +1679,9 @@
     "A2 P7-004 hash OK scripts/seal-system-maturity.mjs",
     "A2 P7-004 hash OK scripts/sync-system-maturity-index.mjs",
     "A2 P7-004 hash OK scripts/validate-system-maturity-plan.mjs",
+    "A2 P7-004 hash OK tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+    "A2 P7-004 hash OK harness/specs/tasks/system-maturity-quarterly-audit.md",
+    "A2 P7-004 hash OK package.json",
     "A2 P7-004 hash OK plans/system-maturity/findings-registry.json",
     "A2 P7-004 hash OK plans/system-maturity/risk-acceptance.json",
     "A2 P7-004 hash OK plans/system-maturity/README.md",
@@ -1698,14 +1697,21 @@
     "A2 P8-001 hash OK scripts/lib/system-maturity-residual.mjs",
     "A2 P8-001 hash OK scripts/run-system-maturity-residual-audit.mjs",
     "A2 P8-001 hash OK scripts/lib/system-maturity-quarterly-audit.mjs",
+    "A2 P8-001 hash OK tests/unit/system-maturity-residual-p8-001.test.ts",
     "A2 P8-001 hash OK tests/unit/channel-secret-residual-p8-001.test.ts",
+    "A2 P8-001 hash OK tests/unit/system-maturity-quarterly-audit-p7-004.test.ts",
+    "A2 P8-001 hash OK electron/utils/channel-config.ts",
+    "A2 P8-001 hash OK package.json",
     "A2 P8-001 hash OK plans/system-maturity/findings-registry.json",
     "A2 P8-001 hash OK plans/system-maturity/phase8-residual-closure/STATUS.json",
     "A2 P8-001 hash OK plans/system-maturity/phase8-residual-closure/tasks/P8-001.md",
     "A2 P8-001 hash OK plans/system-maturity/INDEX.md",
+    "A2 P8-001 hash OK artifacts/system-maturity/P8-001/residual-revalidation-20261111.json",
+    "A2 P8-001 hash OK artifacts/system-maturity/P8-001/residual-revalidation-20261111.stdout.txt",
     "A2 P8-002 hash OK artifacts/system-maturity/P8-002/vitest.stdout.txt",
     "A2 P8-002 hash OK electron/services/secrets/channel-secret-broker.ts",
     "A2 P8-002 hash OK electron/services/providers/store-instance.ts",
+    "A2 P8-002 hash OK electron/utils/channel-config.ts",
     "A2 P8-002 hash OK tests/unit/channel-secret-broker-p8-002.test.ts",
     "A2 P8-002 hash OK plans/system-maturity/residual-register.json",
     "A2 P8-002 hash OK plans/system-maturity/findings-registry.json",
@@ -1717,8 +1723,10 @@
     "A2 P8-003 hash OK scripts/lib/system-maturity-capability-inventory.mjs",
     "A2 P8-003 hash OK scripts/run-system-maturity-capability-inventory.mjs",
     "A2 P8-003 hash OK tests/unit/system-maturity-capability-inventory-p8-003.test.ts",
+    "A2 P8-003 hash OK plans/system-maturity/security-regression-suite.json",
     "A2 P8-003 hash OK plans/system-maturity/residual-register.json",
     "A2 P8-003 hash OK plans/system-maturity/findings-registry.json",
+    "A2 P8-003 hash OK package.json",
     "A2 P8-004 hash OK artifacts/system-maturity/P8-004/validation-gates/unit.stdout.txt",
     "A2 P8-004 hash OK artifacts/system-maturity/P8-004/validation-gates/residual.stdout.txt",
     "A2 P8-004 hash OK artifacts/system-maturity/P8-004/validation-gates/capability.stdout.txt",
@@ -1728,6 +1736,7 @@
     "A2 P8-004 hash OK plans/system-maturity/INDEX.md",
     "A2 P8-004 hash OK plans/system-maturity/residual-register.json",
     "A2 P8-004 hash OK plans/system-maturity/capability-inventory.json",
+    "A2 P8-004 hash OK package.json",
     "A1 regression probe: missing evidence path correctly detectable"
   ]
 }

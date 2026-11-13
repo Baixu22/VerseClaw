@@ -1,0 +1,144 @@
+{
+  "schema": "smart-test-sorter/shadow-report/v1",
+  "product_version": "smart-test-sorter/0.1.0",
+  "mode": "shadow",
+  "arms_are_isolated_processes": true,
+  "arm_isolation": {
+    "selected": true,
+    "full": true,
+    "note": "两条臂**各自**是否在独立解释器进程里执行；null 表示该臂本次没跑。"
+  },
+  "target_identity": "worktree@7b898d9f0b+dirty:1",
+  "plan_id": "plan-6a50b94ed5fe848b",
+  "request_id": "shadow-shadow",
+  "rules_id": "smart-select/v2",
+  "selection_scope": "selected",
+  "plan_fallback": [],
+  "collected": [
+    "tests/test_tf0778_candidate.py::test_tf0778_candidate_probe"
+  ],
+  "selected": [
+    "tests/test_tf0778_candidate.py::test_tf0778_candidate_probe"
+  ],
+  "excluded": [],
+  "order": [
+    "tests/test_tf0778_candidate.py::test_tf0778_candidate_probe"
+  ],
+  "risk_decisions": [],
+  "runs": {
+    "selected": {
+      "protocol_version": "1.1",
+      "product_version": "smart-test-sorter/0.1.0",
+      "request_id": "shadow-shadow",
+      "plan_id": "plan-6a50b94ed5fe848b",
+      "target_identity": "worktree@7b898d9f0b+dirty:1",
+      "selection_scope": "selected",
+      "completeness": "complete",
+      "validity": "valid",
+      "executed": [
+        "tests/test_tf0778_candidate.py::test_tf0778_candidate_probe"
+      ],
+      "not_executed": [],
+      "outcomes": {
+        "tests/test_tf0778_candidate.py::test_tf0778_candidate_probe": {
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.009124
+        }
+      },
+      "raw_exit_code": 0,
+      "duration_s": 2.047,
+      "failure_categories": {
+        "assertion": 0,
+        "collection": 0,
+        "environment": 0,
+        "cancelled": 0
+      }
+    },
+    "full": {
+      "protocol_version": "1.1",
+      "product_version": "smart-test-sorter/0.1.0",
+      "request_id": "shadow-shadow",
+      "plan_id": "plan-6a50b94ed5fe848b",
+      "target_identity": "worktree@7b898d9f0b+dirty:1",
+      "selection_scope": "full",
+      "completeness": "complete",
+      "validity": "valid",
+      "executed": [
+        "tests/test_tf0778_candidate.py::test_tf0778_candidate_probe"
+      ],
+      "not_executed": [],
+      "outcomes": {
+        "tests/test_tf0778_candidate.py::test_tf0778_candidate_probe": {
+          "outcome": "passed",
+          "phases": [
+            "setup",
+            "call",
+            "teardown"
+          ],
+          "duration_s": 0.001882
+        }
+      },
+      "raw_exit_code": 0,
+      "duration_s": 1.782,
+      "failure_categories": {
+        "assertion": 0,
+        "collection": 0,
+        "environment": 0,
+        "cancelled": 0
+      }
+    }
+  },
+  "scope_summary": {
+    "executed_selected": [
+      "tests/test_tf0778_candidate.py::test_tf0778_candidate_probe"
+    ],
+    "not_executed_selected": [],
+    "executed_full": [
+      "tests/test_tf0778_candidate.py::test_tf0778_candidate_probe"
+    ],
+    "not_executed_full": []
+  },
+  "timing": {
+    "selected_duration_s": 2.047,
+    "full_duration_s": 1.782
+  },
+  "analysis_content_digest": "1100a1f5f597dfc786048d722181fe30e790a19d9c1441e496e3cdb88f899887",
+  "flakiness": {
+    "evidence_sources": [],
+    "not_definite": {},
+    "rejected_sources": {},
+    "unbound_history": {},
+    "note": "没在证据里的失败照旧算确定的漏选（不替失败找借口）；稳定性证据还必须与本次target_identity 一致才生效，跨版本的一律拒绝并记在 rejected_sources 里。被降级的失败结论是「判不了」（verdict=missed-failures-indeterminate、退出码 3），不是「没漏选」；本报告不据此剔除、跳过或重试任何测试。"
+  },
+  "comparison": {
+    "comparable": true,
+    "incomparable_reasons": [],
+    "plan_target_identity": "worktree@7b898d9f0b+dirty:1",
+    "runs_match_plan_target": true,
+    "collected_count": 1,
+    "selected_count": 1,
+    "deselected": [],
+    "full_failed_or_error": [],
+    "full_executed_count": 1,
+    "selected_executed_count": 1,
+    "selected_failed_or_error": [],
+    "missed_failures": [],
+    "missed_failures_indeterminate": [],
+    "caught_failures": [],
+    "caught_failures_indeterminate": [],
+    "not_definite_evidence": {},
+    "selected_failed_full_passed": [],
+    "full_failed_selected_passed": [],
+    "contradictory_runs": [],
+    "selection_saved_tests": 0,
+    "verdict": "no-missed-failures"
+  },
+  "request_source": "<由 --repo/--target 合成>",
+  "target_mode": "workspace",
+  "analysis_root": "D:\\tmp\\tf0778-real-20261109-230000\\packaging"
+}

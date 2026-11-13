@@ -1,0 +1,2 @@
+{"budget":{"budget_exhausted":true,"budget_ms":0,"effective_timeout_ms":0,"elapsed_ms":195,"remaining_ms":0,"timeout_ms":120000},"environment_probe":null,"fallback":{"available":true,"reason":"可另行运行受信任配置的全量检查；本次未取得计划"},"ok":false,"refusals":["准备请求已用完宿主总预算，未启动规划"],"schema":"versegit.sts-host-plan/v1","sent":false,"status":"timeout"}
+

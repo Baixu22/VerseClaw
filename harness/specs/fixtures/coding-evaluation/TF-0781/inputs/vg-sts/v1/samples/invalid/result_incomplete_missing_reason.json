@@ -1,0 +1,20 @@
+{
+  "protocol_version": "1.0",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "req-001",
+  "plan_id": "plan-001",
+  "target_identity": "candidate@ddd",
+  "selection_scope": "selected",
+  "completeness": "incomplete",
+  "validity": "valid",
+  "executed": [
+    "tests/test_a.py::test_x"
+  ],
+  "not_executed": [
+    "tests/test_b.py::test_y"
+  ],
+  "outcomes": {
+    "tests/test_a.py::test_x": { "outcome": "passed" }
+  },
+  "raw_exit_code": 0
+}

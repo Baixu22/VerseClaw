@@ -1,0 +1,21 @@
+
+ RUN  v4.1.1 C:/tf0782-final-work-20261111
+
+ ✓ tests/unit/system-maturity-capability-inventory-p8-003.test.ts > capability inventory (P8-003 / F-REL-004) > fails when scenario mapping is missing 2ms
+ ✓ tests/unit/system-maturity-capability-inventory-p8-003.test.ts > capability inventory (P8-003 / F-REL-004) > repo inventory maps all F-REL-004 suite scenarios 2ms
+ ✓ tests/unit/system-maturity-residual-p8-001.test.ts > system maturity residual gate (P8-001) > fails when Partial+Act-now has no residual-register entry 2ms
+ ✓ tests/unit/system-maturity-residual-p8-001.test.ts > system maturity residual gate (P8-001) > passes with valid residual-register entries 1ms
+ ✓ tests/unit/system-maturity-residual-p8-001.test.ts > system maturity residual gate (P8-001) > fails on expired residual reviewBy 0ms
+ ✓ tests/unit/system-maturity-residual-p8-001.test.ts > system maturity residual gate (P8-001) > repo residual audit is green for committed residual-register 2ms
+ ✓ tests/unit/channel-secret-broker-p8-002.test.ts > channel secret broker vault (P8-002) > A1: seals canary into encrypted vault without plaintext in store snapshot 75ms
+ ✓ tests/unit/channel-secret-broker-p8-002.test.ts > channel secret broker vault (P8-002) > A2: Main resolve returns plaintext while field is recognized as secret 2ms
+ ✓ tests/unit/channel-secret-broker-p8-002.test.ts > channel secret broker vault (P8-002) > A3: redacted Renderer echoes are not re-sealed as secrets 2ms
+ ✓ tests/unit/channel-secret-residual-p8-001.test.ts > channel secret residual locks (P8-001 / F-SEC-001) > redacts secret-shaped channel form fields for Renderer 2ms
+ ✓ tests/unit/channel-secret-residual-p8-001.test.ts > channel secret residual locks (P8-001 / F-SEC-001) > never returns short plaintext secrets unmasked 0ms
+ ✓ tests/unit/channel-secret-residual-p8-001.test.ts > channel secret residual locks (P8-001 / F-SEC-001) > JSON serialization of redacted form does not embed canary plaintext 0ms
+
+ Test Files  4 passed (4)
+      Tests  12 passed (12)
+   Start at  10:52:36
+   Duration  2.39s (transform 890ms, setup 1.08s, import 768ms, tests 97ms, environment 5.20s)
+

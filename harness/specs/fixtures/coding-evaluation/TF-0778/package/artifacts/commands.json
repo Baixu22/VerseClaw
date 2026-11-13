@@ -1,0 +1,504 @@
+[
+  {
+    "argv": [
+      "git",
+      "-c",
+      "user.name=vg-sts-test",
+      "-c",
+      "user.email=test@example.invalid",
+      "init",
+      "-q",
+      "-b",
+      "main"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "user.name=vg-sts-test",
+      "-c",
+      "user.email=test@example.invalid",
+      "add",
+      "."
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "user.name=vg-sts-test",
+      "-c",
+      "user.email=test@example.invalid",
+      "commit",
+      "-qm",
+      "base"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "user.name=vg-sts-test",
+      "-c",
+      "user.email=test@example.invalid",
+      "checkout",
+      "-qb",
+      "ours"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "user.name=vg-sts-test",
+      "-c",
+      "user.email=test@example.invalid",
+      "commit",
+      "-qam",
+      "ours"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "user.name=vg-sts-test",
+      "-c",
+      "user.email=test@example.invalid",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "user.name=vg-sts-test",
+      "-c",
+      "user.email=test@example.invalid",
+      "checkout",
+      "-qb",
+      "theirs",
+      "main"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "user.name=vg-sts-test",
+      "-c",
+      "user.email=test@example.invalid",
+      "add",
+      "."
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "user.name=vg-sts-test",
+      "-c",
+      "user.email=test@example.invalid",
+      "commit",
+      "-qm",
+      "theirs"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "user.name=vg-sts-test",
+      "-c",
+      "user.email=test@example.invalid",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "user.name=vg-sts-test",
+      "-c",
+      "user.email=test@example.invalid",
+      "checkout",
+      "-q",
+      "main"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\tf0778-vg-target-20261109-223809\\release\\vg.exe",
+      "init"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\tf0778-vg-target-20261109-223809\\release\\vg.exe",
+      "verify",
+      "set",
+      "smoke",
+      "--timeout",
+      "60",
+      "--",
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "-c",
+      "print(1)"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\tf0778-vg-target-20261109-223809\\release\\vg.exe",
+      "verify",
+      "candidate",
+      "--repo",
+      "D:\\tmp\\vg sts installed 0t231om7\\target",
+      "--ours",
+      "35b73a886b3329e2f1819c010264cfa4592256a1",
+      "--theirs",
+      "34020923fd52433ba4a0b6a2d7c88ad3b03bad8d",
+      "--out-dir",
+      "D:\\tmp\\vg sts installed 0t231om7\\candidate",
+      "--keep",
+      "--json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\tf0778-vg-target-20261109-223809\\release\\vg.exe",
+      "sts",
+      "request",
+      "D:\\tmp\\vg sts installed 0t231om7\\candidate.json",
+      "--interpreter",
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "--protocol",
+      "1.1",
+      "--json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "-B",
+      "-m",
+      "smart_sorter.plan_request",
+      "--request",
+      "D:\\tmp\\vg sts installed 0t231om7\\request-1.1.json",
+      "--out",
+      "D:\\tmp\\vg sts installed 0t231om7\\plan-1.1.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "-B",
+      "-m",
+      "smart_sorter.run_plan",
+      "--plan",
+      "D:\\tmp\\vg sts installed 0t231om7\\plan-1.1.json",
+      "--request",
+      "D:\\tmp\\vg sts installed 0t231om7\\request-1.1.json",
+      "--cwd",
+      "D:\\tmp\\vg sts installed 0t231om7\\candidate",
+      "--out",
+      "D:\\tmp\\vg sts installed 0t231om7\\result-1.1.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\tf0778-vg-target-20261109-223809\\release\\vg.exe",
+      "sts",
+      "consume",
+      "--request",
+      "D:\\tmp\\vg sts installed 0t231om7\\request-1.1.json",
+      "--plan",
+      "D:\\tmp\\vg sts installed 0t231om7\\plan-1.1.json",
+      "--result",
+      "D:\\tmp\\vg sts installed 0t231om7\\result-1.1.json",
+      "--protocol",
+      "1.1",
+      "--json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "-B",
+      "-m",
+      "smart_sorter.stability",
+      "--plan",
+      "D:\\tmp\\vg sts installed 0t231om7\\plan-1.1.json",
+      "--cwd",
+      "D:\\tmp\\vg sts installed 0t231om7\\candidate",
+      "--repeat",
+      "2",
+      "--full",
+      "--out",
+      "D:\\tmp\\vg sts installed 0t231om7\\stability-1.1.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\tf0778-vg-target-20261109-223809\\release\\vg.exe",
+      "sts",
+      "plan",
+      "D:\\tmp\\vg sts installed 0t231om7\\candidate.json",
+      "--out",
+      "D:\\tmp\\vg sts installed 0t231om7\\host-plan-1.1.json",
+      "--interpreter",
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "--protocol",
+      "1.1",
+      "--json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\tf0778-vg-target-20261109-223809\\release\\vg.exe",
+      "verify",
+      "candidate",
+      "--repo",
+      "D:\\tmp\\vg sts installed 0t231om7\\target",
+      "--ours",
+      "35b73a886b3329e2f1819c010264cfa4592256a1",
+      "--theirs",
+      "34020923fd52433ba4a0b6a2d7c88ad3b03bad8d",
+      "--out-dir",
+      "D:\\tmp\\vg sts installed 0t231om7\\host-candidate-1.1",
+      "--selection",
+      "--sts-interpreter",
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "--sts-protocol",
+      "1.1",
+      "--json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\tf0778-vg-target-20261109-223809\\release\\vg.exe",
+      "sts",
+      "request",
+      "D:\\tmp\\vg sts installed 0t231om7\\candidate.json",
+      "--interpreter",
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "--protocol",
+      "2.0",
+      "--json",
+      "--env-python",
+      "3.10.3",
+      "--env-platform",
+      "win32",
+      "--env-deps-digest",
+      "sha256:136aea99870f5687cba890d47036e93c9208b1465a065f62adb51de5bca7c444"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "-B",
+      "-m",
+      "smart_sorter.plan_request",
+      "--request",
+      "D:\\tmp\\vg sts installed 0t231om7\\request-2.0.json",
+      "--out",
+      "D:\\tmp\\vg sts installed 0t231om7\\plan-2.0.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "-B",
+      "-m",
+      "smart_sorter.run_plan",
+      "--plan",
+      "D:\\tmp\\vg sts installed 0t231om7\\plan-2.0.json",
+      "--request",
+      "D:\\tmp\\vg sts installed 0t231om7\\request-2.0.json",
+      "--cwd",
+      "D:\\tmp\\vg sts installed 0t231om7\\candidate",
+      "--out",
+      "D:\\tmp\\vg sts installed 0t231om7\\result-2.0.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\tf0778-vg-target-20261109-223809\\release\\vg.exe",
+      "sts",
+      "consume",
+      "--request",
+      "D:\\tmp\\vg sts installed 0t231om7\\request-2.0.json",
+      "--plan",
+      "D:\\tmp\\vg sts installed 0t231om7\\plan-2.0.json",
+      "--result",
+      "D:\\tmp\\vg sts installed 0t231om7\\result-2.0.json",
+      "--protocol",
+      "2.0",
+      "--json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "-B",
+      "-m",
+      "smart_sorter.stability",
+      "--plan",
+      "D:\\tmp\\vg sts installed 0t231om7\\plan-2.0.json",
+      "--cwd",
+      "D:\\tmp\\vg sts installed 0t231om7\\candidate",
+      "--repeat",
+      "2",
+      "--full",
+      "--out",
+      "D:\\tmp\\vg sts installed 0t231om7\\stability-2.0.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\tf0778-vg-target-20261109-223809\\release\\vg.exe",
+      "sts",
+      "plan",
+      "D:\\tmp\\vg sts installed 0t231om7\\candidate.json",
+      "--out",
+      "D:\\tmp\\vg sts installed 0t231om7\\host-plan-2.0.json",
+      "--interpreter",
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "--protocol",
+      "2.0",
+      "--json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\tf0778-vg-target-20261109-223809\\release\\vg.exe",
+      "verify",
+      "candidate",
+      "--repo",
+      "D:\\tmp\\vg sts installed 0t231om7\\target",
+      "--ours",
+      "35b73a886b3329e2f1819c010264cfa4592256a1",
+      "--theirs",
+      "34020923fd52433ba4a0b6a2d7c88ad3b03bad8d",
+      "--out-dir",
+      "D:\\tmp\\vg sts installed 0t231om7\\host-candidate-2.0",
+      "--selection",
+      "--sts-interpreter",
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "--sts-protocol",
+      "2.0",
+      "--json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\tf0778-vg-target-20261109-223809\\release\\vg.exe",
+      "sts",
+      "plan",
+      "D:\\tmp\\vg sts installed 0t231om7\\candidate.json",
+      "--out",
+      "D:\\tmp\\vg sts installed 0t231om7\\zero-budget.json",
+      "--interpreter",
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "--protocol",
+      "2.0",
+      "--budget-ms",
+      "0",
+      "--json"
+    ],
+    "exit_code": 3
+  },
+  {
+    "argv": [
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "-B",
+      "-m",
+      "smart_sorter.plan_request",
+      "--request",
+      "D:\\tmp\\vg sts installed 0t231om7\\wrong-environment.request.json"
+    ],
+    "exit_code": 3
+  },
+  {
+    "argv": [
+      "D:\\tmp\\tf0778-vg-target-20261109-223809\\release\\vg.exe",
+      "verify",
+      "candidate",
+      "--repo",
+      "D:\\tmp\\vg sts installed 0t231om7\\target",
+      "--ours",
+      "35b73a886b3329e2f1819c010264cfa4592256a1",
+      "--theirs",
+      "34020923fd52433ba4a0b6a2d7c88ad3b03bad8d",
+      "--out-dir",
+      "D:\\tmp\\vg sts installed 0t231om7\\stale-candidate",
+      "--selection",
+      "--sts-interpreter",
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "--sts-protocol",
+      "2.0",
+      "--sts-plan-module",
+      "shifted_plan",
+      "--sts-cwd",
+      "D:\\tmp\\vg sts installed 0t231om7",
+      "--json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "D:\\tmp\\tf0778-vg-target-20261109-223809\\release\\vg.exe",
+      "verify",
+      "candidate",
+      "--repo",
+      "D:\\tmp\\vg sts installed 0t231om7\\target",
+      "--ours",
+      "35b73a886b3329e2f1819c010264cfa4592256a1",
+      "--theirs",
+      "34020923fd52433ba4a0b6a2d7c88ad3b03bad8d",
+      "--out-dir",
+      "D:\\tmp\\vg sts installed 0t231om7\\extra-input-candidate",
+      "--selection",
+      "--sts-interpreter",
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "--sts-protocol",
+      "2.0",
+      "--sts-plan-module",
+      "shifted_plan",
+      "--sts-cwd",
+      "D:\\tmp\\vg sts installed 0t231om7",
+      "--json"
+    ],
+    "exit_code": 0
+  }
+]

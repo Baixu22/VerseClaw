@@ -65,6 +65,7 @@ artifacts/stepfun-basic-live-evidence-20261008/* -text
 
 # SHA-256 evidence manifests use the standard two-space separator. Keep their hash-locked bytes and recognize CRLF line endings on every checkout.
 harness/specs/fixtures/**/SHA256SUMS -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+harness/specs/fixtures/coding-evaluation/TF-0782/package/outputs/*.bin -text whitespace=-trailing-space,-blank-at-eof
 # Test fixture transcripts preserve exact captured stdout/stderr bytes; whitespace diagnostics would rewrite hashed evidence.
 harness/specs/fixtures/chat-composer-popovers/20261106/build.txt whitespace=-trailing-space
 harness/specs/fixtures/session-worktree-storage/20261107/*.txt whitespace=-trailing-space,-blank-at-eof
@@ -80,3 +81,5 @@ harness/specs/fixtures/architecture-runtime-cycles/** -text
 harness/specs/fixtures/architecture-authority-convergence/** -text
 harness/specs/fixtures/architecture-convergence-final/** -text
 harness/specs/fixtures/architecture-review-integration/** -text
+# WP6 replays a byte-addressed historical closeout snapshot.
+tests/unit/fixtures/versegit-wp6/9a50-closeout.json -text

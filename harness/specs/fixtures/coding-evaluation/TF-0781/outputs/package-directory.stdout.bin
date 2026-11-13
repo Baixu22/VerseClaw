@@ -1,0 +1,41 @@
+  • electron-builder  version=26.8.1 os=10.0.26200
+  • loaded configuration  file=D:\tmp\tf0778-isolated-e510-20261110\electron-builder.yml
+  • skipped dependencies rebuild  reason=npmRebuild is set to false
+  • packaging       platform=win32 arch=x64 electron=40.8.4 appOutDir=release\win-unpacked
+  • using custom unpacked Electron distribution  electronDist=D:/tmp/tf0778-isolated-e510-20261110/node_modules/.pnpm/electron@40.8.4/node_modules/electron/dist
+  • copying unpacked Electron  source=D:\tmp\tf0778-isolated-e510-20261110\node_modules\.pnpm\electron@40.8.4\node_modules\electron\dist destination=D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked
+  • searching for node modules  pm=pnpm searchDir=D:\tmp\tf0778-isolated-e510-20261110
+  • updating asar integrity executable resource  executablePath=release\win-unpacked\Verse Claw.exe
+[after-pack] Target: win32/x64
+[after-pack] Node 24.16.0 satisfies runtime >=22.19.0; binary digest verified.
+[after-pack] Copying 396 openclaw dependencies to D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw\node_modules ...
+[after-pack] ✅ openclaw node_modules copied.
+[after-pack] 🩹 Patched 1 broken module(s) in D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw\node_modules
+[after-pack] Bundling plugin @soimy/dingtalk -> D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw-plugins\dingtalk
+[after-pack] ✅ Plugin @soimy/dingtalk: copied 59 deps to D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw-plugins\dingtalk
+[after-pack] Bundling plugin @wecom/wecom-openclaw-plugin -> D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw-plugins\wecom
+[after-pack] ✅ Plugin @wecom/wecom-openclaw-plugin: copied 44 deps to D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw-plugins\wecom
+[after-pack] 🩹 Patching plugin ID in dist/index.js: "wecom-openclaw-plugin" → "wecom"
+[after-pack] Bundling plugin @larksuite/openclaw-lark -> D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw-plugins\feishu-openclaw-plugin
+[after-pack] ✅ Plugin @larksuite/openclaw-lark: copied 53 deps to D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw-plugins\feishu-openclaw-plugin
+[after-pack] Bundling plugin @openclaw/discord -> D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw-plugins\discord
+[after-pack] ✅ Plugin @openclaw/discord: copied 15 deps to D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw-plugins\discord
+[after-pack] Bundling plugin @openclaw/qqbot -> D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw-plugins\qqbot
+[after-pack] ✅ Plugin @openclaw/qqbot: copied 9 deps to D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw-plugins\qqbot
+[after-pack] Bundling plugin @openclaw/whatsapp -> D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw-plugins\whatsapp
+[after-pack] ✅ Plugin @openclaw/whatsapp: copied 140 deps to D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw-plugins\whatsapp
+[after-pack] ✅ whatsapp: removed 4 known runtime junk files/directories.
+[after-pack] Bundling plugin @tencent-weixin/openclaw-weixin -> D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw-plugins\openclaw-weixin
+[after-pack] ✅ Plugin @tencent-weixin/openclaw-weixin: copied 2 deps to D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw-plugins\openclaw-weixin
+[after-pack] ✅ Prepared node_modules for 33 built-in extension(s), merged 0 packages into top-level.
+[after-pack] Copying 252 openclaw-runtime dependencies to D:\tmp\tf0778-isolated-e510-20261110\release\win-unpacked\resources\openclaw-runtime\node_modules ...
+[after-pack] ✅ openclaw-runtime node_modules copied.
+[after-pack] ✅ Removed 9069 unnecessary openclaw-runtime files.
+[after-pack] VerseShell MCP: materialized 1 locked dependencies.
+[after-pack] 🧹 Cleaning up unnecessary files ...
+[after-pack] ✅ Removed 5997 unnecessary files/directories.
+[after-pack] ✅ koffi: removed 17 non-target platform binaries (kept win32_x64).
+[after-pack] ✅ Removed 6 non-target native platform packages.
+[after-pack] ✅ VerseShell ae.exe checksum, target, protocol, provenance, and AGPL payload verified.
+[after-pack] ⚡ NSIS install templates ready (overwrite upgrade).
+  • executing @electron/fuses  electronPath=release\win-unpacked\Verse Claw.exe

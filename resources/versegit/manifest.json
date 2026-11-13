@@ -1,47 +1,53 @@
 {
   "schema": "clawx.versegit.sidecar-package/v1",
-  "packageId": "vg-0.1.0-win32-x64-release-6b8330354da59118",
+  "packageId": "vg-0.1.0-win32-x64-release-6fef0fab309702fa",
   "driven_by": "agent",
   "actor": "codex",
   "source": {
     "repository": "https://github.com/Baixu22/VerseGit",
-    "commit": "89af0c36216e64bb0f7430fc3fe21c39c485be7c",
-    "tree": "7eb600c43556f9423cc9c5667c83652ba92a31a6",
-    "archiveSha256": "33733bff0c50124e957edba151c4a1d5945b015a58e17e6cc573879761097f76",
-    "archiveBytes": 91997207,
-    "sourceInputsDigest": "52a807b0a75304af82347d2e7b3b0e7314c9063f809ba125d88c16cb12251563",
-    "effectivePatchSet": []
+    "commit": "d9c38a8659274c24ea776b56480a260831b4537f",
+    "tree": "0d2d50c1175dca6d245d77fe53416771737f5791",
+    "archiveSha256": "ad4e5d619c43f9925981e00ca19254f2f911f62800c412daa64fd2a91f0b2e16",
+    "archiveBytes": 92006536,
+    "sourceInputsDigest": "5e4844d25468288262ce91877e89c5883b4d8cff23eb7bf6b1b9df1e0f12bbbc",
+    "effectivePatchSet": [
+      "resources/versegit/patches/TF-0776-colocated-import.patch"
+    ]
   },
   "build": {
     "profile": "release",
     "command": [
-      "cargo",
+      "/mnt/d/tmp/coding-relay-01a1b68a-20261107/TF-0776/cross-tools/cargo-xwin/cargo-xwin",
       "build",
       "--locked",
       "--release",
+      "--target",
+      "x86_64-pc-windows-msvc",
       "--bin",
-      "vg"
+      "vg",
+      "--jobs",
+      "2"
     ],
-    "recipeDigest": "ec075f439e019a4779dc6f35f07b4cddff9a433a4304d34e3bb48547a3a990fb",
-    "sourceDateEpoch": 1792545051,
-    "lockfileSha256": "11eb2982c91b6cbfcf4f32c2c57ce81264c520b2602a74eca23270ed3ca47491",
+    "recipeDigest": "807c71e13cb0d9f53bb7e3020f944b136367e57b908a85596649101ed39366a0",
+    "sourceDateEpoch": 1794207538,
+    "lockfileSha256": "cc01521aac87a5451274efc99da874748876fe648ff5b79b536019a95b66337a",
     "toolchain": {
-      "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
-      "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: x86_64-pc-windows-msvc\nrelease: 1.98.1\nLLVM version: 22.1.8"
+      "cargo": "cargo 1.98.1 (Linux host)",
+      "rustc": "rustc 1.98.1, host x86_64-unknown-linux-gnu, target x86_64-pc-windows-msvc"
     },
-    "independentBuildRoots": 2,
+    "independentBuildRoots": 1,
     "byteIdentical": false,
     "buildHashes": {
-      "a": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
-      "b": "07557a9dd3f1ce0c055522f9e34eab23c40806ad9296ada97edb90db98588df1"
+      "a": "6fef0fab309702fafdcc716c0f8518257440efafd0a46809930fe33be865c2b4",
+      "b": ""
     },
-    "semanticIdentityEqual": true
+    "semanticIdentityEqual": false
   },
   "artifact": {
     "devPath": "resources/bin/win32-x64/vg.exe",
     "packagedPath": "bin/vg.exe",
-    "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
-    "bytes": 41011712,
+    "sha256": "6fef0fab309702fafdcc716c0f8518257440efafd0a46809930fe33be865c2b4",
+    "bytes": 40831488,
     "format": "pe32+",
     "platform": "win32",
     "arch": "x64",
@@ -69,12 +75,13 @@
     "sha256": "f81c8de6cfc5091c69fd68229215a93e1b31ee73940e355876257bf0db7ca33e"
   },
   "retention": {
-    "codeCopied": false,
+    "codeCopied": true,
     "gitDirectoryCopied": false,
     "taskForestCopied": false,
     "privateEvidenceCopied": false,
     "supportedTargets": [
       "win32-x64"
-    ]
+    ],
+    "sourcePatchIncluded": true
   }
 }

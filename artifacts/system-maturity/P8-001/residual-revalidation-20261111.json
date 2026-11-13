@@ -1,0 +1,20 @@
+{
+  "schema": "clawx.system-maturity.residual-revalidation/v1",
+  "generatedAt": "2026-11-11T02:53:22.475Z",
+  "driven_by": "agent",
+  "actor": "codex-tf0782",
+  "realHumanEvidence": false,
+  "findings": [
+    "F-SEC-001",
+    "F-REL-004"
+  ],
+  "command": "pnpm exec vitest run tests/unit/channel-secret-residual-p8-001.test.ts tests/unit/channel-secret-broker-p8-002.test.ts tests/unit/system-maturity-capability-inventory-p8-003.test.ts tests/unit/system-maturity-residual-p8-001.test.ts --reporter=verbose",
+  "exitCode": 0,
+  "testFiles": 4,
+  "testsPassed": 12,
+  "testsFailed": 0,
+  "stdoutArtifact": "artifacts/system-maturity/P8-001/residual-revalidation-20261111.stdout.txt",
+  "stdoutSha256": "d9a0db3b5d3cc204312e48edb36a1a7451ed57556c06711d915b7e23af6e5e7a",
+  "reviewBy": "2027-02-09",
+  "scope": "Revalidates current residual locks, channel-secret vault, capability inventory, and residual gate before extending review dates; does not claim the OpenClaw co-read residual is eliminated."
+}

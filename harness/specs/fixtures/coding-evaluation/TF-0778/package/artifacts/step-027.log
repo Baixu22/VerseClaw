@@ -1,0 +1,248 @@
+{
+  "budget": {
+    "budget_exhausted": false,
+    "budget_ms": null,
+    "effective_timeout_ms": 120000,
+    "elapsed_ms": 4851,
+    "remaining_ms": null,
+    "timeout_ms": 120000
+  },
+  "elapsed_ms": 4518,
+  "environment_probe": {
+    "argv": [
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "-I",
+      "-B",
+      "-m",
+      "smart_sorter.environment"
+    ],
+    "cancelled": false,
+    "cleanup_error": null,
+    "duration_ms": 306,
+    "exit_code": 0,
+    "isolation": {
+      "declaration": {
+        "isolation": "none",
+        "reason": "trusted-local：在本机直接执行，没有沙箱"
+      },
+      "kind": "trusted_local"
+    },
+    "launch_error": null,
+    "log": "",
+    "machine_json_raw": "{\"python\": \"3.10.3\", \"platform\": \"win32\", \"dependencies_digest\": \"sha256:136aea99870f5687cba890d47036e93c9208b1465a065f62adb51de5bca7c444\"}\r\n",
+    "reaped": false,
+    "resource_limit": null,
+    "stderr_truncated": false,
+    "stdout_truncated": false,
+    "termination_confirmed": true,
+    "timed_out": false
+  },
+  "host": {
+    "argv": [
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "-m",
+      "smart_sorter.plan_request",
+      "--request",
+      "D:\\tmp\\vg sts installed 0t231om7\\host-plan-2.0.request.json",
+      "--out",
+      "D:\\tmp\\vg sts installed 0t231om7\\host-plan-2.0.json",
+      "--output-only"
+    ],
+    "cancelled": false,
+    "cleanup_error": null,
+    "duration_ms": 4513,
+    "exit_code": 0,
+    "isolation": {
+      "declaration": {
+        "isolation": "none",
+        "reason": "trusted-local：在本机直接执行，没有沙箱"
+      },
+      "kind": "trusted_local"
+    },
+    "launch_error": null,
+    "log": "[plan_request] 目标确认：候选目录 HEAD tree 与 candidate_tree_oid 一致（ff63114aeee8）\r\n[plan_request] 目标确认：base=8640f63182 ours=35b73a886b theirs=34020923fd tree=ff63114 union_files=2 candidate_extra_files=0 changed=2\r\n[plan_request] 已写出 D:\\tmp\\vg sts installed 0t231om7\\host-plan-2.0.json\r\n[plan_request] request=vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18 target=candidate@ff63114 plan=plan-391785bcd3f57389 collected=1 selected=1 scope=full\r\n",
+    "machine_json_raw": "",
+    "reaped": false,
+    "resource_limit": null,
+    "stderr_truncated": false,
+    "stdout_truncated": false,
+    "termination_confirmed": true,
+    "timed_out": false
+  },
+  "notes": [
+    "内容清单（vg-noise/v1）：3 条 entry；排除 0 个目录 / 1 个文件（VCS 元数据、字节码缓存、虚拟环境、构建产物——排除规则由 id 显式声明，见 docs）",
+    "边界：这份清单描述的是**盘上那棵树**（本模块不跑 git、不看 .gitignore）⇒ 被忽略但存在于盘上的文件（SQLite -wal/-shm、日志、运行产物）**也在清单里**。这不是漏：契约自己的理由就是「git ignore ≠ 不影响测试」，被忽略但会被读到的覆盖文件必须能被表达。代价照实说：候选目录若已被跑脏，清单反映的是**跑后**的树",
+    "role 归类：source 1 / test 1 / other 1",
+    "R3「真没有」支：这份候选树按 VG 的归类规则**确实**给不出 config/data ⇒ 清单里显式写 `config_data_absent: true`（这是唯一合法的「没有」；若有 config/data 却写它会被判自相矛盾）。若你认为这是**归类规则的边界**（`app/config.py`、`docs/configuration*.md` 不算 config，见 docs §2.4）而不是事实，请按 R3 交回归类口径，不要改这个声明",
+    "候选报告 risk=null（未点名会话 ⇒ 这次没取风险）：请求里不带 risk",
+    "⚠ 口径未与对端对齐：2.0 的 request 没有承载『注册检查表指纹』的字段（1.1 是 identities.config_digest），VG 暂把它放进 environment_identity.config_digest。这不是把两件事混为一谈——它是这份请求所在环境的配置身份；对端若给出专门字段，只改这一处",
+    "2.0 口径（严格侧，未与对端对齐）：environment_identity 显式给出（python/platform/dependencies_digest）、target.includes_candidate_extra_changes 显式给布尔。content_manifest 3 条 entry，排除规则 vg-noise/v1"
+  ],
+  "ok": true,
+  "plan": {
+    "collected": [
+      "tests/test_calc.py::test_add"
+    ],
+    "content_identity": {
+      "exclusion_policy_id": "vg-noise/v1",
+      "kind": "git-tree",
+      "manifest_digest": "sha256:ff53c5ff09b31b3bfc25570577e43efa66cb21b48e9102cb07ccc9c278ea6f5d",
+      "observed_at": {
+        "after_build": "confirmed",
+        "before_build": "confirmed"
+      },
+      "value": "ff63114aeee87a189252c051bcd2667428aee8f4"
+    },
+    "environment_identity": {
+      "dependencies_digest": "sha256:136aea99870f5687cba890d47036e93c9208b1465a065f62adb51de5bca7c444",
+      "platform": "win32",
+      "python": "3.10.3"
+    },
+    "excluded": [],
+    "expected_environment_identity": {
+      "dependencies_digest": "sha256:136aea99870f5687cba890d47036e93c9208b1465a065f62adb51de5bca7c444",
+      "platform": "win32",
+      "python": "3.10.3"
+    },
+    "expected_execution_identity": {
+      "interpreter": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe"
+    },
+    "fallback": [
+      "非 Python 文件改动：notes.txt"
+    ],
+    "order": [
+      "tests/test_calc.py::test_add"
+    ],
+    "plan_id": "plan-391785bcd3f57389",
+    "policy_identity": {
+      "policy_version": "enablement/v2",
+      "rules_id": "smart-select/v2"
+    },
+    "product_version": "smart-test-sorter/0.1.0",
+    "protocol_version": "2.0",
+    "reasons": {
+      "tests/test_calc.py::test_add": "full: 全量回退（见 fallback）"
+    },
+    "request_id": "vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+    "selected": [
+      "tests/test_calc.py::test_add"
+    ],
+    "selection_scope": "full",
+    "supported_run_modes": [
+      "pytest-nodeids"
+    ],
+    "target_identity": "candidate@ff63114"
+  },
+  "plan_summary": {
+    "collected": 1,
+    "fallback": [
+      "非 Python 文件改动：notes.txt"
+    ],
+    "parametrized_collected": 0,
+    "parametrized_order": 0,
+    "plan_id": "plan-391785bcd3f57389",
+    "rules_id": "smart-select/v2",
+    "selected": 1,
+    "selection_scope": "full",
+    "target_identity": "candidate@ff63114"
+  },
+  "refusals": [],
+  "request": {
+    "capabilities": [
+      "selection"
+    ],
+    "content_manifest": {
+      "algorithm": "sha256",
+      "config_data_absent": true,
+      "entries": [
+        {
+          "digest": "sha256:726b43dcab3c54f3ec7922fe31b21f76def9fa5ca4313ff551f14cca2a5c9621",
+          "path": "calc.py",
+          "role": "source"
+        },
+        {
+          "digest": "sha256:eac47becb0b6f3c07658e4d9afc7b39c21f819d45307db550bc46ba572782a22",
+          "path": "notes.txt",
+          "role": "other"
+        },
+        {
+          "digest": "sha256:cc1aa48da0f1401f3068755ddaea50fc657131c3a1865b37f158fdff12a0f7d0",
+          "path": "tests/test_calc.py",
+          "role": "test"
+        }
+      ],
+      "exclusion_policy_id": "vg-noise/v1",
+      "line_endings": "normalized-lf",
+      "submodules": "reject",
+      "symlinks": "record-target",
+      "unreadable_files": "unconfirmed"
+    },
+    "identities": {
+      "content_identity": {
+        "kind": "git-tree",
+        "label": "candidate@ff63114",
+        "value": "ff63114aeee87a189252c051bcd2667428aee8f4"
+      },
+      "environment_identity": {
+        "config_digest": "sha256:0c634dd2d3b34b3955fb900d022d608d3f4b363d6383dcc224c1953bc0be3cb4",
+        "dependencies_digest": "sha256:136aea99870f5687cba890d47036e93c9208b1465a065f62adb51de5bca7c444",
+        "platform": "win32",
+        "python": "3.10.3"
+      }
+    },
+    "mode": "candidate",
+    "product_version": "versegit/0.1.0",
+    "protocol_version": "2.0",
+    "repo": {
+      "path": "D:/tmp/vg sts installed 0t231om7/target"
+    },
+    "request_id": "vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+    "target": {
+      "base_oid": "8640f63182f2ebe63a63a78982446d1008b8ff7d",
+      "candidate_commit_oid": "69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+      "candidate_dir": "D:/tmp/vg sts installed 0t231om7/candidate",
+      "candidate_tree_oid": "ff63114aeee87a189252c051bcd2667428aee8f4",
+      "includes_candidate_extra_changes": false,
+      "ours_oid": "35b73a886b3329e2f1819c010264cfa4592256a1",
+      "theirs_oid": "34020923fd52433ba4a0b6a2d7c88ad3b03bad8d"
+    }
+  },
+  "request_id": "vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+  "run": {
+    "argv": [
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "tests/test_calc.py::test_add"
+    ],
+    "binding_confirmed": true,
+    "covered_full_suite": true,
+    "fallback": [
+      "非 Python 文件改动：notes.txt"
+    ],
+    "nodeids": [
+      "tests/test_calc.py::test_add"
+    ],
+    "selection_scope": "full",
+    "supported_run_modes": [
+      "pytest-nodeids"
+    ]
+  },
+  "schema": "versegit.sts-host-plan/v1",
+  "self_check": {
+    "ok": true,
+    "supported_protocol_versions": [
+      "2.0"
+    ]
+  },
+  "sent": true,
+  "spawned": true,
+  "status": "planned",
+  "target_identity_expected": "candidate@ff63114"
+}
+
+--- STS stderr（人类日志，原样）---
+[plan_request] 目标确认：候选目录 HEAD tree 与 candidate_tree_oid 一致（ff63114aeee8）
+[plan_request] 目标确认：base=8640f63182 ours=35b73a886b theirs=34020923fd tree=ff63114 union_files=2 candidate_extra_files=0 changed=2
+[plan_request] 已写出 D:\tmp\vg sts installed 0t231om7\host-plan-2.0.json
+[plan_request] request=vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18 target=candidate@ff63114 plan=plan-391785bcd3f57389 collected=1 selected=1 scope=full

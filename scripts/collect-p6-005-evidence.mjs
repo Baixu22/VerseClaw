@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { createHash } from 'node:crypto';
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -15,14 +15,21 @@ import {
 } from './validate-release-baseline.mjs';
 import { normalizeCapturedOutput } from './lib/captured-output-redaction.mjs';
 import { runReleaseGateCommand } from './lib/run-release-gate-command.mjs';
+import { prepareAcceptanceArtifacts } from './lib/acceptance-artifacts.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const outDir = resolve(readArg('--out') || join(root, 'artifacts/system-maturity/P6-005'));
+const outDir = resolve(readArg('--out') || process.env.CLAWX_RELEASE_BASELINE_OUT || join(root, 'artifacts/system-maturity/P6-005'));
 const gatesPath = join(root, 'plans/system-maturity/gates.json');
 const version = readArg('--version') || JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version;
 const ref = readArg('--ref') || process.env.GITHUB_REF;
 const commit = readArg('--commit') || process.env.GITHUB_SHA;
-const childEnv = { ...process.env, GITHUB_REF: ref || '', GITHUB_SHA: commit || '' };
+const artifactRoot = join(outDir, 'artifacts');
+const childEnv = {
+  ...process.env, GITHUB_REF: ref || '', GITHUB_SHA: commit || '',
+  CLAWX_ACCEPTANCE_ARTIFACT_ROOT: artifactRoot,
+  SYSTEM_MATURITY_SECURITY_OUT: join(artifactRoot, 'system-maturity/P7-002'),
+  CLAWX_E2E_EVIDENCE_ROOT: join(outDir, 'e2e'),
+};
 delete childEnv.NODE_TLS_REJECT_UNAUTHORIZED;
 
 function sha256(value) {
@@ -49,14 +56,20 @@ if (firstManifest !== secondManifest) throw new Error('source manifest regenerat
 
 rmSync(outDir, { recursive: true, force: true });
 mkdirSync(join(outDir, 'gates'), { recursive: true });
+prepareAcceptanceArtifacts(root, artifactRoot);
 const manifestPath = join(outDir, 'release-source-manifest.json');
 writeFileSync(manifestPath, firstManifest);
 
 function captureCommand(id, command) {
   console.log(`[P6-005 evidence] RUN ${id}: ${command}`);
+  const env = { ...childEnv };
+  if (id === 'test') {
+    delete env.CLAWX_ACCEPTANCE_ARTIFACT_ROOT;
+    delete env.CLAWX_RELEASE_BASELINE_OUT;
+  }
   const result = runReleaseGateCommand(command, {
     cwd: root,
-    env: childEnv,
+    env,
     timeout: 60 * 60 * 1000,
     maxBuffer: 256 * 1024 * 1024,
   });
@@ -150,14 +163,13 @@ writeFileSync(
 );
 
 const files = {};
-for (const path of [
-  'release-source-manifest.json',
-  'release-gate-evidence.json',
-  'acceptance-matrix.json',
-  preflight.stdoutPath,
-  preflight.stderrPath,
-  ...gateRuns.flatMap((gate) => [gate.stdoutPath, gate.stderrPath]),
-]) {
+function retainedFiles(directory, prefix = '') {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const path = prefix ? `${prefix}/${entry.name}` : entry.name;
+    return entry.isDirectory() ? retainedFiles(join(directory, entry.name), path) : [path];
+  });
+}
+for (const path of retainedFiles(outDir)) {
   const bytes = readFileSync(join(outDir, path));
   files[path] = { bytes: bytes.length, sha256: sha256(bytes) };
 }
@@ -166,7 +178,10 @@ writeFileSync(
   `${JSON.stringify(
     {
       schemaVersion: 1,
+      schema: 'clawx.release-baseline-evidence/v1',
       taskId: 'P6-005',
+      candidate: identity,
+      ok: !validation.error && acceptance.every((item) => item.status === 'passed'),
       root: relative(root, outDir).replaceAll('\\', '/'),
       files,
     },

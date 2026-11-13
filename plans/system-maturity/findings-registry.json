@@ -70,9 +70,9 @@
         "P8-001",
         "P8-002"
       ],
-      "notes": "P1-001 provider sealed; P4-003 MCP env sealed; P4-004 channel form credentials redacted to Renderer. Residual: full channel secret broker/at-rest encryption may remain. P8-001: residual-register entry + Renderer redaction residual locks; vault continues P8-002. P8-002: channelSecrets vault sealed on saveChannelConfig.",
-      "updatedBy": "P8-002",
-      "updatedAt": "2026-07-18"
+      "notes": "P1-001 provider sealed; P4-003 MCP env sealed; P4-004 channel form credentials redacted to Renderer. Residual: full channel secret broker/at-rest encryption may remain. P8-001: residual-register entry + Renderer redaction residual locks; vault continues P8-002. P8-002: channelSecrets vault sealed on saveChannelConfig. 2026-11-11 agent revalidation: P8-001/P8-002/P8-003 focused suite passed 12/12; residual scope remains and reviewBy extended to 2027-02-09.",
+      "updatedBy": "TF-0782",
+      "updatedAt": "2026-11-11"
     },
     {
       "id": "F-SEC-002",
@@ -116,7 +116,7 @@
         "P7-002"
       ],
       "updatedBy": "P1-004",
-      "updatedAt": "2026-07-17T04:48:22.590Z",
+      "updatedAt": "2026-07-17T04:48:22.59Z",
       "notes": "P1-004: openExternalSafe + shared http/https allowlist wired through host shell API, legacy IPC, window.open handler, menu, oauth, git."
     },
     {
@@ -183,7 +183,7 @@
         "P1-004"
       ],
       "updatedBy": "P1-004",
-      "updatedAt": "2026-07-17T04:48:22.590Z",
+      "updatedAt": "2026-07-17T04:48:22.59Z",
       "notes": "P1-004: renderer CSP meta in index.html; HtmlPreview injects CSP and sandbox without popup-escape/downloads."
     },
     {
@@ -459,7 +459,7 @@
         "P7-002"
       ],
       "updatedBy": "P5-002",
-      "updatedAt": "2026-07-17T08:45:54.000Z",
+      "updatedAt": "2026-07-17T08:45:54Z",
       "notes": "P5-002: list/status never rewrite authority store; SQLite CAS lease for job claim; authorized repair with audit reason."
     },
     {
@@ -478,7 +478,7 @@
         "P5-001"
       ],
       "updatedBy": "P5-001",
-      "updatedAt": "2026-07-17T08:31:19.000Z",
+      "updatedAt": "2026-07-17T08:31:19Z",
       "notes": "P5-001: atomic temp+fsync+rename for openclaw/channel/auth JSON; version sidecar CAS; cross-process lock; bak recovery."
     },
     {
@@ -523,9 +523,9 @@
         "P8-001",
         "P8-003"
       ],
-      "notes": "P8-003: capability-inventory maps multi-impl surfaces to security regression scenarios; residual secret-handling strength mixed with F-SEC-001.",
-      "updatedBy": "P8-003",
-      "updatedAt": "2026-07-18"
+      "notes": "P8-003: capability-inventory maps multi-impl surfaces to security regression scenarios; residual secret-handling strength mixed with F-SEC-001. 2026-11-11 agent revalidation: P8-001/P8-002/P8-003 focused suite passed 12/12; residual scope remains and reviewBy extended to 2027-02-09.",
+      "updatedBy": "TF-0782",
+      "updatedAt": "2026-11-11"
     },
     {
       "id": "F-SUPPLY-001",
@@ -700,7 +700,7 @@
         "P4-002"
       ],
       "updatedBy": "P1-004",
-      "updatedAt": "2026-07-17T04:48:22.590Z",
+      "updatedAt": "2026-07-17T04:48:22.59Z",
       "notes": "P1-004: isBrowserControlRestrictedUrl now requires http/https allowlist; javascript/data blocked for newPage/navigate."
     },
     {
@@ -739,7 +739,7 @@
         "P4-004"
       ],
       "updatedBy": "P4-004",
-      "updatedAt": "2026-07-17T09:24:01.000Z",
+      "updatedAt": "2026-07-17T09:24:01Z",
       "notes": "P4-004: Feishu/WeCom default dmPolicy=pairing; no auto allowFrom=*; unauthorized sender matrix + webhook signature/replay fail-closed."
     },
     {
@@ -758,7 +758,7 @@
         "P4-003"
       ],
       "updatedBy": "P4-003",
-      "updatedAt": "2026-07-17T09:16:20.000Z",
+      "updatedAt": "2026-07-17T09:16:20Z",
       "notes": "P4-003: permission/sandbox/network/sslVerify project to runtime; networkPolicy enforced; tool schema fail-closed; MCP env SecretRef broker."
     },
     {

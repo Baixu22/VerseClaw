@@ -1,0 +1,76 @@
+{
+  "ok": true,
+  "plan": {
+    "argv": [
+      "python",
+      "-m",
+      "pytest",
+      "tests/test_calc.py::test_add"
+    ],
+    "binding_confirmed": true,
+    "binding_reasons": [],
+    "collected_count": 1,
+    "content_identity": {
+      "exclusion_policy_id": "vg-noise/v1",
+      "manifest_digest": "sha256:ff53c5ff09b31b3bfc25570577e43efa66cb21b48e9102cb07ccc9c278ea6f5d",
+      "observed_after": "confirmed",
+      "observed_before": "confirmed",
+      "value": "ff63114aeee87a189252c051bcd2667428aee8f4"
+    },
+    "covered_full_suite": true,
+    "expected_environment_identity": {
+      "dependencies_digest": "sha256:136aea99870f5687cba890d47036e93c9208b1465a065f62adb51de5bca7c444",
+      "platform": "win32",
+      "python": "3.10.3"
+    },
+    "expected_execution_identity": {
+      "interpreter": "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe"
+    },
+    "fallback": [
+      "非 Python 文件改动：notes.txt"
+    ],
+    "nodeids": [
+      "tests/test_calc.py::test_add"
+    ],
+    "plan_id": "plan-391785bcd3f57389",
+    "policy_identity": {
+      "policy_version": "enablement/v2",
+      "rules_id": "smart-select/v2"
+    },
+    "protocol_version": "2.0",
+    "request_id": "vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+    "selected_count": 1,
+    "selection_scope": "full",
+    "supported_run_modes": [
+      "pytest-nodeids"
+    ],
+    "target_identity": "candidate@ff63114"
+  },
+  "protocol": "2.0",
+  "result": {
+    "binding": {
+      "checked": [
+        "R11: plan↔result 的 plan_id / target_identity / content_identity 三项逐项比过",
+        "R9: plan 记了 expected_execution_identity ⇒ 逐项比过执行身份",
+        "R12: plan 记了 expected_environment_identity ⇒ 逐项比过环境身份",
+        "R11: request↔plan↔result 全套（request_id / protocol_version / 展示标签）"
+      ],
+      "not_checked": []
+    },
+    "covered_full_suite": true,
+    "executed": [
+      "tests/test_calc.py::test_add"
+    ],
+    "failed": [],
+    "not_executed": [],
+    "protocol_version": "2.0",
+    "raw_exit_code": 0,
+    "reasons": [],
+    "selection_scope": "full",
+    "usable": true,
+    "verdict": "passed"
+  },
+  "schema": "versegit.sts-bridge/v1",
+  "spawned": false
+}
+

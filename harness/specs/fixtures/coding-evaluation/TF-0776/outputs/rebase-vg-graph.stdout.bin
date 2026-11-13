@@ -1,0 +1,31 @@
+{
+  "entries": [
+    {
+      "change_id": "18cc3769107632ff07156d1835ca3d49",
+      "commit_id": "d01c9ff5c51a30dd63b7243ab0bbb9ccce25d124",
+      "description": "tip",
+      "parent_ids": [
+        "22fa96d9c615156a60a7cd4c75df58b931872428"
+      ]
+    },
+    {
+      "change_id": "3b781f6e0c2a6effa34cf48fdd48df1c",
+      "commit_id": "22fa96d9c615156a60a7cd4c75df58b931872428",
+      "description": "base",
+      "parent_ids": [
+        "0000000000000000000000000000000000000000"
+      ]
+    },
+    {
+      "change_id": "00000000000000000000000000000000",
+      "commit_id": "0000000000000000000000000000000000000000",
+      "description": "",
+      "parent_ids": []
+    }
+  ],
+  "formatted": null,
+  "graph_truncated": false,
+  "kind": "revision-log",
+  "revset": "ancestors(@)",
+  "schema": "versegit.vg-json/v1"
+}

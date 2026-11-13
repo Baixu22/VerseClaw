@@ -33,6 +33,8 @@ describe('vite Electron OpenClaw runtime aliases', () => {
       .toMatch(/openclaw_runtime\/packages\/normalization-core\/src$/);
     expect(viteConfig.localOpenClawRuntimeAliases!['@openclaw/acp-core'].replace(/\\/g, '/'))
       .toMatch(/openclaw_runtime\/packages\/acp-core\/src$/);
+    expect(viteConfig.localOpenClawRuntimeAliases!['@openclaw/media-core'].replace(/\\/g, '/'))
+      .toMatch(/openclaw_runtime\/packages\/media-core\/src$/);
     expect(existsSync(viteConfig.localOpenClawRuntimeAliases!['@openclaw/normalization-core'])).toBe(true);
     expect(existsSync(viteConfig.localOpenClawRuntimeAliases!['@openclaw/acp-core'])).toBe(true);
     const mediaCore = viteConfig.localOpenClawRuntimeAliases!['@openclaw/media-core'];

@@ -22,7 +22,11 @@ it('fails on test type errors and invalidates cached checks when tests or runtim
       cwd: root, encoding: 'utf8', windowsHide: true, timeout: 20_000,
     });
     expect(result.error).toBeUndefined();
-    return { exitCode: result.status, report: JSON.parse(result.stdout) };
+    const stdout = result.stdout.trim();
+    const json = stdout.lastIndexOf('\n{') >= 0
+      ? stdout.slice(stdout.lastIndexOf('\n{') + 1)
+      : stdout;
+    return { exitCode: result.status, report: JSON.parse(json) };
   };
   try {
     write('scripts/generate-ext-bridge.mjs', '');

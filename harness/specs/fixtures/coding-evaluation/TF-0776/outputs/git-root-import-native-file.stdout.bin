@@ -1,0 +1,9 @@
+{
+  "byte_len": 7,
+  "commit_id": "ba66d417ddca920260dc7b614fd6bac8d7dfef7e",
+  "content": "dirty\r\n",
+  "kind": "file-show",
+  "path": "keep.txt",
+  "schema": "versegit.vg-json/v1",
+  "sha256": "9a061ab35d6c927128122d41683f564a3295b7feea8e5f41fb80d920247fd303"
+}

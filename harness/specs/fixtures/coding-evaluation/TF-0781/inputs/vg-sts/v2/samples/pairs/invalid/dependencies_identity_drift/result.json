@@ -1,0 +1,44 @@
+{
+  "protocol_version": "2.0",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "req-v2-pair-1",
+  "plan_id": "plan-v2-pair-1",
+  "target_identity": "candidate@d444444",
+  "content_identity": {
+    "kind": "git-tree",
+    "value": "d444444444444444444444444444444444444444",
+    "manifest_digest": "sha256:bbbb00000000000000000000000000000000000000000000000000000000000b"
+  },
+  "execution_identity": {
+    "execution_id": "exec-v2-pair-1",
+    "interpreter": "D:/venvs/example/python.exe",
+    "started_at": "2026-10-01T12:00:00Z"
+  },
+  "observations": {
+    "before_execution": "confirmed",
+    "after_execution": "confirmed"
+  },
+  "selection_scope": "selected",
+  "completeness": "complete",
+  "validity": "valid",
+  "executed": [
+    "tests/test_calc.py::test_add"
+  ],
+  "not_executed": [],
+  "outcomes": {
+    "tests/test_calc.py::test_add": {
+      "outcome": "passed",
+      "phases": [
+        "call"
+      ],
+      "duration_s": 0.01
+    }
+  },
+  "raw_exit_code": 0,
+  "duration_s": 0.4,
+  "environment_identity": {
+    "python": "3.10.3",
+    "platform": "win32",
+    "dependencies_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+  }
+}

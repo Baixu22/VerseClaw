@@ -1,0 +1,74 @@
+{
+  "root": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package",
+  "executable": {
+    "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\Verse Claw.exe",
+    "sha256": "6fc66786b69529a72887a51150ddf39be188a726a3a8a05e0e225b713c2b4b3f",
+    "bytes": 213919744,
+    "version": "0.4.9-alpha.0"
+  },
+  "vg": {
+    "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\resources\\bin\\vg.exe",
+    "sha256": "6fef0fab309702fafdcc716c0f8518257440efafd0a46809930fe33be865c2b4",
+    "bytes": 40831488
+  },
+  "ae": {
+    "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\resources\\bin\\ae.exe",
+    "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+    "bytes": 15144448
+  },
+  "node": {
+    "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\resources\\bin\\node.exe",
+    "sha256": "b3094d0b49f9ad602262a9921551737bb97637c05dd357a06ae98188d7290aa3",
+    "bytes": 92279112
+  },
+  "uv": {
+    "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\resources\\bin\\uv.exe",
+    "sha256": "5e559e322ad2f2e25e7d9c3cb51e3891ab0676a7e7b59ea250a021e4cb2f6e31",
+    "bytes": 63647232
+  },
+  "agentBrowser": {
+    "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\resources\\bin\\agent-browser.exe",
+    "sha256": "da3f7385b6c568ca6d816b6cada22e18e80ff6a9f16701b96bb35f46efbc70b6",
+    "bytes": 11897344
+  },
+  "manifests": {
+    "versegit": {
+      "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\resources\\resources\\versegit\\manifest.json",
+      "sha256": "476dfcfb72df4c43a294af2add1844e1d7e00b79235297cbe0ea27ba1f2c0676",
+      "bytes": 2916,
+      "artifact": "inputs/versegit-manifest.json"
+    },
+    "verseshell": {
+      "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\resources\\resources\\verseshell\\manifest.json",
+      "sha256": "b26c9edbbc620943af2c9080cee72de68f93e3fa8649aa33859a435a1650d1a7",
+      "bytes": 7559,
+      "artifact": "inputs/verseshell-manifest.json"
+    }
+  },
+  "asar": {
+    "app": {
+      "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\resources\\app.asar",
+      "sha256": "03e927263b1936c1b424109b2b7cb509887183350fcfa103e03ebb1a23c1fe22",
+      "bytes": 306602767
+    },
+    "mainRuntime": {
+      "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\resources\\main-runtime.asar",
+      "sha256": "7c8aa662f97575b5b87fe746e137e3c76a1abc0cb5a6ed45a9ed70d1a8de08bf",
+      "bytes": 730541346
+    }
+  },
+  "nodeRuntime": {
+    "artifact": "inputs/node-runtime.json",
+    "sha256": "a7cc13971a8a95d55428a6fa8ee085b9dba2e1979086ea5a3e023985378bbcc3",
+    "bytes": 132
+  },
+  "source": {
+    "versegitCommit": "d9c38a8659274c24ea776b56480a260831b4537f",
+    "verseshellCommit": "c06f406e83566bb968448222d9c8caf429e580a0",
+    "nodeVersion": "24.16.0"
+  },
+  "installer": {
+    "status": "not-run",
+    "reason": "TF-0781 evaluates win-unpacked only"
+  }
+}

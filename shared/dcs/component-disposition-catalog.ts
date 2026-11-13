@@ -266,7 +266,9 @@ export const COMPONENT_DISPOSITION_ENTRIES: readonly ComponentDispositionEntry[]
   entry({
     id: 'component.verseshell-execution-adapter', label: 'VerseShell execution adapter', disposition: 'internal', owner: 'verseshell-execution-adapter', implementationNodeId: 'TF-0504', currentMode: 'opt-in', targetDefaultMode: 'internal',
     ...internal('Internal execution/evidence substrate; it must not expose a second user-visible executor.'),
-    currentConsumers: ['preview_patch', 'VersedShell governed execution', 'write journal'], evidenceRefs: EXECUTION_EVIDENCE,
+    currentConsumers: ['preview_patch', 'VersedShell governed execution', 'write journal'], evidenceRefs: [...EXECUTION_EVIDENCE, 'harness/specs/fixtures/coding-evaluation/TF-0782/acceptance.json'],
+    verificationArtifact: ['harness/specs/fixtures/coding-evaluation/TF-0782/acceptance.json'],
+    remainingGap: ['VerseShell is evaluated in the Windows win-unpacked path; the installer and public release path remain not-run.'],
     coverage: { authorityComponentIds: ['verseshell-execution-adapter'], runtimeLeafPatterns: ['verseShellFoundation.*'], dcsFlagIds: ['verseshell-patch-preview'] },
   }),
   entry({

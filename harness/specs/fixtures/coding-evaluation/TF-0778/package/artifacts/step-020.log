@@ -1,0 +1,151 @@
+{
+  "budget": {
+    "budget_exhausted": false,
+    "budget_ms": null,
+    "effective_timeout_ms": 120000,
+    "elapsed_ms": 3441,
+    "remaining_ms": null,
+    "timeout_ms": 120000
+  },
+  "elapsed_ms": 3427,
+  "host": {
+    "argv": [
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "-m",
+      "smart_sorter.plan_request",
+      "--request",
+      "D:\\tmp\\vg sts installed 0t231om7\\host-plan-1.1.request.json",
+      "--out",
+      "D:\\tmp\\vg sts installed 0t231om7\\host-plan-1.1.json"
+    ],
+    "cancelled": false,
+    "cleanup_error": null,
+    "duration_ms": 3426,
+    "exit_code": 0,
+    "isolation": {
+      "declaration": {
+        "isolation": "none",
+        "reason": "trusted-local：在本机直接执行，没有沙箱"
+      },
+      "kind": "trusted_local"
+    },
+    "launch_error": null,
+    "log": "[plan_request] 目标确认：候选目录 HEAD tree 与 candidate_tree_oid 一致（ff63114aeee8）\r\n[plan_request] 目标确认：base=8640f63182 ours=35b73a886b theirs=34020923fd tree=ff63114 union_files=2 candidate_extra_files=0 changed=2\r\n[plan_request] 已写出 D:\\tmp\\vg sts installed 0t231om7\\host-plan-1.1.json\r\n[plan_request] request=vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18 target=candidate@ff63114 plan=plan-34e7af84afc83ccd collected=1 selected=1 scope=full\r\n",
+    "machine_json_raw": "{\r\n  \"protocol_version\": \"1.1\",\r\n  \"product_version\": \"smart-test-sorter/0.1.0\",\r\n  \"request_id\": \"vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18\",\r\n  \"plan_id\": \"plan-34e7af84afc83ccd\",\r\n  \"target_identity\": \"candidate@ff63114\",\r\n  \"rules_id\": \"smart-select/v2\",\r\n  \"selection_scope\": \"full\",\r\n  \"collected\": [\r\n    \"tests/test_calc.py::test_add\"\r\n  ],\r\n  \"selected\": [\r\n    \"tests/test_calc.py::test_add\"\r\n  ],\r\n  \"excluded\": [],\r\n  \"order\": [\r\n    \"tests/test_calc.py::test_add\"\r\n  ],\r\n  \"reasons\": {\r\n    \"tests/test_calc.py::test_add\": \"full: 全量回退（见 fallback）\"\r\n  },\r\n  \"supported_run_modes\": [\r\n    \"pytest-nodeids\"\r\n  ],\r\n  \"fallback\": [\r\n    \"非 Python 文件改动：notes.txt\"\r\n  ]\r\n}\r\n",
+    "reaped": false,
+    "resource_limit": null,
+    "stderr_truncated": false,
+    "stdout_truncated": false,
+    "termination_confirmed": true,
+    "timed_out": false
+  },
+  "notes": [
+    "候选报告 risk=null（未点名会话 ⇒ 这次没取风险）：请求里不带 risk"
+  ],
+  "ok": true,
+  "plan": {
+    "collected": [
+      "tests/test_calc.py::test_add"
+    ],
+    "excluded": [],
+    "fallback": [
+      "非 Python 文件改动：notes.txt"
+    ],
+    "order": [
+      "tests/test_calc.py::test_add"
+    ],
+    "plan_id": "plan-34e7af84afc83ccd",
+    "product_version": "smart-test-sorter/0.1.0",
+    "protocol_version": "1.1",
+    "reasons": {
+      "tests/test_calc.py::test_add": "full: 全量回退（见 fallback）"
+    },
+    "request_id": "vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+    "rules_id": "smart-select/v2",
+    "selected": [
+      "tests/test_calc.py::test_add"
+    ],
+    "selection_scope": "full",
+    "supported_run_modes": [
+      "pytest-nodeids"
+    ],
+    "target_identity": "candidate@ff63114"
+  },
+  "plan_summary": {
+    "collected": 1,
+    "fallback": [
+      "非 Python 文件改动：notes.txt"
+    ],
+    "parametrized_collected": 0,
+    "parametrized_order": 0,
+    "plan_id": "plan-34e7af84afc83ccd",
+    "rules_id": "smart-select/v2",
+    "selected": 1,
+    "selection_scope": "full",
+    "target_identity": "candidate@ff63114"
+  },
+  "refusals": [],
+  "request": {
+    "capabilities": [
+      "selection"
+    ],
+    "identities": {
+      "code_oid": "ff63114aeee87a189252c051bcd2667428aee8f4",
+      "config_digest": "0c634dd2d3b34b3955fb900d022d608d3f4b363d6383dcc224c1953bc0be3cb4"
+    },
+    "mode": "candidate",
+    "product_version": "versegit/0.1.0",
+    "protocol_version": "1.1",
+    "repo": {
+      "path": "D:/tmp/vg sts installed 0t231om7/target"
+    },
+    "request_id": "vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+    "target": {
+      "base_oid": "8640f63182f2ebe63a63a78982446d1008b8ff7d",
+      "candidate_commit_oid": "69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+      "candidate_dir": "D:/tmp/vg sts installed 0t231om7/candidate",
+      "candidate_tree_oid": "ff63114aeee87a189252c051bcd2667428aee8f4",
+      "includes_candidate_extra_changes": false,
+      "ours_oid": "35b73a886b3329e2f1819c010264cfa4592256a1",
+      "theirs_oid": "34020923fd52433ba4a0b6a2d7c88ad3b03bad8d"
+    }
+  },
+  "request_id": "vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18",
+  "run": {
+    "argv": [
+      "D:\\tmp\\coding-relay-01a1b68a-20261107\\TF-0776\\vg-import-fix\\.venv-sts\\package-checks\\sts-package-c8k3t8gu\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "tests/test_calc.py::test_add"
+    ],
+    "covered_full_suite": true,
+    "fallback": [
+      "非 Python 文件改动：notes.txt"
+    ],
+    "nodeids": [
+      "tests/test_calc.py::test_add"
+    ],
+    "selection_scope": "full",
+    "supported_run_modes": [
+      "pytest-nodeids"
+    ]
+  },
+  "schema": "versegit.sts-host-plan/v1",
+  "self_check": {
+    "ok": true,
+    "supported_protocol_versions": [
+      "1.0",
+      "1.1"
+    ]
+  },
+  "sent": true,
+  "spawned": true,
+  "status": "planned",
+  "target_identity_expected": "candidate@ff63114"
+}
+
+--- STS stderr（人类日志，原样）---
+[plan_request] 目标确认：候选目录 HEAD tree 与 candidate_tree_oid 一致（ff63114aeee8）
+[plan_request] 目标确认：base=8640f63182 ours=35b73a886b theirs=34020923fd tree=ff63114 union_files=2 candidate_extra_files=0 changed=2
+[plan_request] 已写出 D:\tmp\vg sts installed 0t231om7\host-plan-1.1.json
+[plan_request] request=vg-69bf1c1028f0c891eeb4f0c3e4963c5754098d18 target=candidate@ff63114 plan=plan-34e7af84afc83ccd collected=1 selected=1 scope=full

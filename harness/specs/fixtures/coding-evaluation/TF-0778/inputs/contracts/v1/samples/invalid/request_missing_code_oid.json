@@ -1,0 +1,9 @@
+{
+  "protocol_version": "1.0",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "req-no-code-oid",
+  "mode": "workspace",
+  "repo": { "path": "D:/verseci/experiment-httpx" },
+  "target": { "head_oid": "99cba6a" },
+  "identities": { "env_id": "py3.12-win" }
+}

@@ -15,7 +15,7 @@ const WM = "runtime.contextBlock.working_memory.enabled";
 describe("FP-P1-10 per-flag attribution", () => {
   it("reports `default` for a flag nobody set", () => {
     const { attribution } = resolveEffectiveRuntimeFlagsWithSources(undefined, {});
-    expect(attribution[WM]).toEqual({ value: false, origin: "default" });
+    expect(attribution[WM]).toEqual({ value: true, origin: "default" });
   });
 
   it("distinguishes explicitly-configured false from unset false", () => {

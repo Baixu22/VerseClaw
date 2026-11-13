@@ -1,0 +1,12 @@
+{
+  "protocol_version": "2.0",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "req-v2-draft-1",
+  "refusal_kind": "content-unbound",
+  "refusal_code": "candidate-mismatch",
+  "reason": "候选目录与声明的 content_identity 不一致，但同时声称可保守全量——这是不允许的组合。",
+  "target_confirmable": true,
+  "content_confirmed": false,
+  "conservative_full_available": true,
+  "attempted_collection": { "succeeded": false, "collected_count": 0 }
+}

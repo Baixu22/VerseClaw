@@ -87,9 +87,14 @@ export function runSecuritySuite({ root, manifest, mode, outDir, runCommand = ru
     for (const command of plan.commands) {
       const startedAt = new Date().toISOString();
       const started = Date.now();
+      const env = { ...process.env };
+      if (command.kind === 'unit') {
+        delete env.CLAWX_ACCEPTANCE_ARTIFACT_ROOT;
+        delete env.CLAWX_RELEASE_BASELINE_OUT;
+      }
       const result = runCommand(command.run, {
         cwd: root,
-        env: process.env,
+        env,
         timeout: 60 * 60 * 1000,
         maxBuffer: 256 * 1024 * 1024,
       });

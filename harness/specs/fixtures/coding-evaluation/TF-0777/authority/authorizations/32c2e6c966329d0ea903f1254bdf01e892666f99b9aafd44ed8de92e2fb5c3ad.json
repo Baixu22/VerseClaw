@@ -1,0 +1,1 @@
+{"authorizationId":"tf0777-auth","candidateId":"ba929853bbd8294c4b2e7727967181749bf9e3018d0f7fd577c7e215e6778153","checkId":"intentional-fail","epoch":1,"expiresAt":"2026-11-09T14:35:58.778Z","issuedAt":"2026-11-09T13:35:57.778Z","ownerId":"tf0777","requiredScope":"full","runId":"tf0777-sts-fail","schema":"clawx.versegit.verification-authorization/v1","status":"active"}

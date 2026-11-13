@@ -6,6 +6,7 @@
  * - Emits machine-executable release gate list
  */
 import fs from 'fs';
+import { acceptanceArtifactPath } from './lib/acceptance-artifacts.mjs';
 import path from 'path';
 import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
@@ -111,7 +112,7 @@ const report = {
   info: INFO,
 };
 
-const outDir = path.join(root, 'artifacts/system-maturity/P0-003');
+const outDir = acceptanceArtifactPath(root, 'system-maturity/P0-003');
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, 'validate-test-gates.json'), JSON.stringify(report, null, 2) + '\n');
 fs.writeFileSync(

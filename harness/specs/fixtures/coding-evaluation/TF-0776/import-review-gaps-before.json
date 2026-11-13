@@ -1,0 +1,315 @@
+{
+  "globalIgnoredObjectStored": true,
+  "largeFileSilentOmission": true,
+  "retryReportedSuccessWithoutDirtyCapture": true,
+  "commands": [
+    {
+      "id": "global-init",
+      "argv": [
+        "git",
+        "init",
+        "--quiet"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "global-config",
+      "argv": [
+        "git",
+        "config",
+        "user.name",
+        "Agent fixture"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "global-config",
+      "argv": [
+        "git",
+        "config",
+        "user.email",
+        "fixture@example.invalid"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "global-add",
+      "argv": [
+        "git",
+        "add",
+        "tracked.txt"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "global-commit",
+      "argv": [
+        "git",
+        "commit",
+        "--quiet",
+        "-m",
+        "base"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "global-config",
+      "argv": [
+        "git",
+        "config",
+        "core.excludesFile",
+        "D:\\ClawX\\.tmp\\coding-jj-review-gaps-2qqpw0op\\global-ignore"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "global-hash",
+      "argv": [
+        "git",
+        "hash-object",
+        "global.secret"
+      ],
+      "exitCode": 0,
+      "stdout": "1761d22f71b641f4bfb01b703d62feb5bd8b7789\n",
+      "stderr": ""
+    },
+    {
+      "id": "global-import",
+      "argv": [
+        "D:\\ClawX\\.tmp\\coding-jj-cross-target-a\\x86_64-pc-windows-msvc\\release\\vg.exe",
+        "workspace",
+        "import",
+        "--root",
+        "D:\\ClawX\\.tmp\\coding-jj-review-gaps-2qqpw0op\\global",
+        "--json"
+      ],
+      "exitCode": 0,
+      "stdout": "{\n  \"colocated\": true,\n  \"command\": \"workspace.import\",\n  \"head_commit\": \"97a1a428d9c2924435892f086d56f809639adbab\",\n  \"root\": \"D:\\\\ClawX\\\\.tmp\\\\coding-jj-review-gaps-2qqpw0op\\\\global\",\n  \"schema\": \"versegit.vg-json/v1\",\n  \"snapshot\": {\n    \"change_id\": \"8bbafd94069e9685efe3e69e9ba9b24b\",\n    \"operation_id\": \"00e5c3da079b10abcbc19e2d1f4c0d5b41d075391bdc831117b4f95c51bccb0a96b131977806b4f1b5117fb563292a8b4dbb2adb4086aaa0d6f8015941913838\",\n    \"schema\": \"versegit.vg-json/v1\",\n    \"wc_commit_id\": \"a3ca02c5f192f4dabbd3e8b81b315a3dec987aa5\",\n    \"workspace_root\": \"D:\\\\ClawX\\\\.tmp\\\\coding-jj-review-gaps-2qqpw0op\\\\global\"\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "id": "global-object",
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "1761d22f71b641f4bfb01b703d62feb5bd8b7789"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "size-init",
+      "argv": [
+        "git",
+        "init",
+        "--quiet"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "size-config",
+      "argv": [
+        "git",
+        "config",
+        "user.name",
+        "Agent fixture"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "size-config",
+      "argv": [
+        "git",
+        "config",
+        "user.email",
+        "fixture@example.invalid"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "size-add",
+      "argv": [
+        "git",
+        "add",
+        "tracked.txt"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "size-commit",
+      "argv": [
+        "git",
+        "commit",
+        "--quiet",
+        "-m",
+        "base"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "size-import",
+      "argv": [
+        "D:\\ClawX\\.tmp\\coding-jj-cross-target-a\\x86_64-pc-windows-msvc\\release\\vg.exe",
+        "workspace",
+        "import",
+        "--root",
+        "D:\\ClawX\\.tmp\\coding-jj-review-gaps-2qqpw0op\\size",
+        "--json"
+      ],
+      "exitCode": 0,
+      "stdout": "{\n  \"colocated\": true,\n  \"command\": \"workspace.import\",\n  \"head_commit\": \"45d3453db832e21fe41ad5014fc04361b3f595d2\",\n  \"root\": \"D:\\\\ClawX\\\\.tmp\\\\coding-jj-review-gaps-2qqpw0op\\\\size\",\n  \"schema\": \"versegit.vg-json/v1\",\n  \"snapshot\": {\n    \"change_id\": \"4cfff190f41b61cbbb467eb40b33aff4\",\n    \"operation_id\": \"65062014bedc1fb9171b99449548e1c65e1df440a3d23f20f430b39f6a9da08071bcb36a85ebb0923f567ab993698a0eeed524b02ac2a7e83957242fcdf2c08a\",\n    \"schema\": \"versegit.vg-json/v1\",\n    \"wc_commit_id\": \"6aca6eda8fad990c2c5ff7e7fa3a7db4a2c25022\",\n    \"workspace_root\": \"D:\\\\ClawX\\\\.tmp\\\\coding-jj-review-gaps-2qqpw0op\\\\size\"\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "id": "size-read",
+      "argv": [
+        "D:\\ClawX\\.tmp\\coding-jj-cross-target-a\\x86_64-pc-windows-msvc\\release\\vg.exe",
+        "change",
+        "file-show",
+        "--root",
+        "D:\\ClawX\\.tmp\\coding-jj-review-gaps-2qqpw0op\\size",
+        "--path",
+        "large.bin",
+        "--revision",
+        "@",
+        "--json"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "vg: managed write refused: large.bin \u5728 @ \u91cc\u4e0d\u662f\u6587\u4ef6\uff08[]\uff09\n"
+    },
+    {
+      "id": "retry-init",
+      "argv": [
+        "git",
+        "init",
+        "--quiet"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "retry-config",
+      "argv": [
+        "git",
+        "config",
+        "user.name",
+        "Agent fixture"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "retry-config",
+      "argv": [
+        "git",
+        "config",
+        "user.email",
+        "fixture@example.invalid"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "retry-add",
+      "argv": [
+        "git",
+        "add",
+        "tracked.txt"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "retry-commit",
+      "argv": [
+        "git",
+        "commit",
+        "--quiet",
+        "-m",
+        "base"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "id": "retry-first",
+      "argv": [
+        "D:\\ClawX\\.tmp\\coding-jj-cross-target-a\\x86_64-pc-windows-msvc\\release\\vg.exe",
+        "workspace",
+        "import",
+        "--root",
+        "D:\\ClawX\\.tmp\\coding-jj-review-gaps-2qqpw0op\\retry",
+        "--json"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "vg: jj write failed: read import ignore rules: ignore rules are not a regular file: D:\\ClawX\\.tmp\\coding-jj-review-gaps-2qqpw0op\\retry\\.git\\info\\exclude\n"
+    },
+    {
+      "id": "retry-second",
+      "argv": [
+        "D:\\ClawX\\.tmp\\coding-jj-cross-target-a\\x86_64-pc-windows-msvc\\release\\vg.exe",
+        "workspace",
+        "import",
+        "--root",
+        "D:\\ClawX\\.tmp\\coding-jj-review-gaps-2qqpw0op\\retry",
+        "--json"
+      ],
+      "exitCode": 0,
+      "stdout": "{\n  \"colocated\": true,\n  \"command\": \"workspace.import\",\n  \"existing\": true,\n  \"root\": \"D:\\\\ClawX\\\\.tmp\\\\coding-jj-review-gaps-2qqpw0op\\\\retry\",\n  \"schema\": \"versegit.vg-json/v1\",\n  \"snapshot\": {\n    \"change_id\": \"4646b338707aa64688fe97245a42da0c\",\n    \"operation_id\": \"4d41566e17cc9d81ba9fbcc1daf73fe59b3c321499b8a89cbb0b9bbeba55565e36cd900670aa1bec6f6aa2c132f436f1c748ba958296c7b2515282a407c721e2\",\n    \"schema\": \"versegit.vg-json/v1\",\n    \"wc_commit_id\": \"dafe529d0e79b6c2647bba874fe4cd5d5db7bb6b\",\n    \"workspace_root\": \"D:\\\\ClawX\\\\.tmp\\\\coding-jj-review-gaps-2qqpw0op\\\\retry\"\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "id": "retry-read",
+      "argv": [
+        "D:\\ClawX\\.tmp\\coding-jj-cross-target-a\\x86_64-pc-windows-msvc\\release\\vg.exe",
+        "change",
+        "file-show",
+        "--root",
+        "D:\\ClawX\\.tmp\\coding-jj-review-gaps-2qqpw0op\\retry",
+        "--path",
+        "tracked.txt",
+        "--revision",
+        "@",
+        "--json"
+      ],
+      "exitCode": 0,
+      "stdout": "{\n  \"byte_len\": 6,\n  \"commit_id\": \"dafe529d0e79b6c2647bba874fe4cd5d5db7bb6b\",\n  \"content\": \"base\\r\\n\",\n  \"kind\": \"file-show\",\n  \"path\": \"tracked.txt\",\n  \"schema\": \"versegit.vg-json/v1\",\n  \"sha256\": \"f8ba93752c42985276cab7de1169609631ed696b04999d05d49d93169ec05c1a\"\n}\n",
+      "stderr": ""
+    }
+  ],
+  "fixtureRoot": "D:\\ClawX\\.tmp\\coding-jj-review-gaps-2qqpw0op",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "finishedAt": "2026-11-08T17:57:27.003843+00:00"
+}

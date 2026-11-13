@@ -1,0 +1,13 @@
+
+running 8 tests
+test conflicted_files_are_never_shown_or_searched_as_if_unambiguous ... ok
+test file_untrack_only_accepts_ignored_paths ... ok
+test file_annotate_attributes_each_line_to_its_originating_commit ... ok
+test file_family_refuses_bad_input_and_never_picks_a_conflict_side ... ok
+test file_family_reads_the_revision_tree_without_touching_state ... ok
+test restore_accepts_filesets_and_only_touches_matching_paths ... ok
+test file_list_carries_upstream_fileset_semantics ... ok
+test file_chmod_and_delete_are_precise_and_all_or_nothing ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.66s
+

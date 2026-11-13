@@ -7,9 +7,9 @@ import {
 } from "./coding-tool-navigation.js";
 
 describe("coding tool navigation (C1-1/C1-3)", () => {
-  it("lists seven default coding fact/context tools", () => {
-    expect(CODING_FACT_TOOL_NAMES).toHaveLength(7);
-    expect(codingFactToolCount([...CODING_FACT_TOOL_NAMES])).toBe(7);
+  it("lists eight default coding fact/context tools", () => {
+    expect(CODING_FACT_TOOL_NAMES).toHaveLength(8);
+    expect(codingFactToolCount([...CODING_FACT_TOOL_NAMES])).toBe(8);
   });
 
   it("includes navigation and routing hints under budget", () => {

@@ -30,6 +30,12 @@ Sandbox capability gates and budgets remain report configuration; effect rows do
 19. `pnpm agent-dev:deep-test` runs the real Agent Dev gate chain, separates build time from Playwright runtime, writes quantified results under `artifacts/agent-dev-deep-test/`, and refreshes quality evidence under `artifacts/agent-dev-quality/`. Daily diagnostics use `pnpm agent-dev:deep-test:reuse` for build reuse, cached typecheck, and Workbench smoke E2E; `pnpm agent-dev:deep-test:reuse:full` keeps full Agent Dev E2E while still reusing the build. Reports label these modes separately from full gates.
 20. `pnpm contract:check`, `pnpm i18n:lint`, and `pnpm agent-dev:validate` provide the P0 local guardrails for host-api drift, locale coverage, and the combined Agent Dev validation gate.
 
+## Acceptance Artifact Routing
+
+Release and maturity collectors can run against a clean checkout. When `CLAWX_ACCEPTANCE_ARTIFACT_ROOT` is an absolute path, Agent Dev and system-maturity validators write generated reports below that root instead of mutating tracked `artifacts/`. `scripts/collect-p6-005-evidence.mjs` also reads `CLAWX_RELEASE_BASELINE_OUT` to keep the source manifest, gate logs, and validation evidence in one captured directory.
+
+Before gates run, `prepareAcceptanceArtifacts()` copies the committed Agent Dev report inputs into the capture root and preserves their timestamps. Missing inputs remain missing so freshness checks fail closed.
+
 ## Workbench Product Route
 
 The Agent Dev Workbench has two aligned entries: a generated static artifact for offline audit (`pnpm agent-dev:workbench`) and a compact in-app Settings > Developer panel for daily diagnosis. Both must read real sources only: `shared/agent-dev/scenarios.ts`, `shared/host-api/contract.ts`, `src/lib/host-api.ts`, `electron/services/agent-dev-api.ts`, package scripts, trace/cost/sandbox contracts, host-api reports, and generated report directories.

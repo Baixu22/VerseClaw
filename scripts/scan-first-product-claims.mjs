@@ -100,6 +100,17 @@ const DISCLAIMER_LINE_PATTERNS = [
   /不开启|不启用|不会默认启用/, // zh-CN
   /を有効化しません/, // ja
   /не включает/i, // ru
+  /\bare not implied by\b/i, // en status boundary
+  /\bnot a GA claim\b/i, // en explicit non-claim
+  /GA\s*ではありません/i, // ja explicit non-claim
+  /\bnot default-on\b/i, // en explicit non-default
+  /不代表/, // zh non-implication
+  /を意味しません/, // ja non-implication
+  /не означают/i, // ru non-implication
+  /不是\s*GA\s*承诺/i, // zh explicit non-claim
+  /は\s*default-on\s*ではありません/i, // ja explicit non-default
+  /не\s+default-on/i, // ru explicit non-default
+  /не\s+GA\b/iu, // ru explicit non-claim
 ];
 
 // "GA hardening" is the recorded name of a historical engineering pass

@@ -1,24 +1,24 @@
 {
   "schemaVersion": "HarnessActiveVerificationAcceptance/v1",
-  "generatedAt": "2026-10-26T12:31:45.149Z",
+  "generatedAt": "2026-11-11T04:22:47.640Z",
   "driven_by": "agent",
   "actor": "codex-harness-active-verification-20261026",
   "node": "TF-0570",
   "source": {
-    "commit": "779045595967db27ef3c702d7553af7373d67e46",
-    "tree": "0bf2a8c5b45a1e3aaa7fbeb3374d92d514dce813",
+    "commit": "67c215fd82f9dd7e14c33f71e86b59f66842d29b",
+    "tree": "387308845fa7cf586b4d297a99f23b303bc64667",
     "dirty": false,
     "matrix": "harness/specs/fixtures/harness-codex-active-verification/matrix.json",
     "matrixSha256": "2d319d3ee8c2c15bc994e3cfce8b473de293de2acd2765e5a1ec1caf1f0a6528",
-    "inputsDigest": "8264d3cfd811031007eb51f30cd89e024849bda2bbf19f0d5ee6e01d2ab57e66"
+    "inputsDigest": "9c20f5c96593f8dc2d83cf5cce87d1352380965c1123e7d725371984860c3ea8"
   },
   "sourceInputs": [
     {
       "path": "harness/src",
       "exists": true,
       "kind": "directory",
-      "sha256": "6d8a7edaa3ea1fd1c4e9cd0081745f2757fe81b0b8961d610177539764b01e51",
-      "bytes": 43234,
+      "sha256": "988623b60cd1855ed319a3fdb170c63abda76cd8ed18bd0980624c7762130241",
+      "bytes": 43926,
       "files": 14
     },
     {
@@ -41,8 +41,8 @@
       "path": "shared/types/coding-run.ts",
       "exists": true,
       "kind": "file",
-      "sha256": "1c5b30f8163c820a06351ec740fd444b3b1dab4923a40b228c7424bd9314d686",
-      "bytes": 17799,
+      "sha256": "ea0ea576e119cdbb0788d4df5700f8689b7625a41344948f7619705e80bc8d2f",
+      "bytes": 23680,
       "files": 1
     },
     {
@@ -73,8 +73,8 @@
       "path": "tests/unit/coding-run.test.ts",
       "exists": true,
       "kind": "file",
-      "sha256": "29fbc33511640d99285c248591b637a47948febb4be3fac00b0293dd46dfaf1a",
-      "bytes": 8160,
+      "sha256": "95cb52dfc858bb52ddb0f391e90a70b8fd1c47e6b6492fb9e09aee250b4ff3f1",
+      "bytes": 12388,
       "files": 1
     },
     {
@@ -177,8 +177,8 @@
       "path": "resources/versegit/manifest.json",
       "exists": true,
       "kind": "file",
-      "sha256": "8c06fb3d0cbc52acb5079f8d8e8fdedf2e85e1480fd971c520887bc19b4ed2d2",
-      "bytes": 2769,
+      "sha256": "476dfcfb72df4c43a294af2add1844e1d7e00b79235297cbe0ea27ba1f2c0676",
+      "bytes": 2916,
       "files": 1
     },
     {
@@ -193,16 +193,16 @@
       "path": "resources/bin/win32-x64/vg.exe",
       "exists": true,
       "kind": "file",
-      "sha256": "6b8330354da59118274bdbbf2bfa210b66612e42924dcb2fd02f29882b0d85ea",
-      "bytes": 41011712,
+      "sha256": "6fef0fab309702fafdcc716c0f8518257440efafd0a46809930fe33be865c2b4",
+      "bytes": 40831488,
       "files": 1
     },
     {
       "path": "release/win-unpacked/Verse Claw.exe",
       "exists": true,
       "kind": "file",
-      "sha256": "465e7bf060e573f9fac8c6f4d5c2b8ad6c70be9754bbee3e21615d5d6955c164",
-      "bytes": 214315008,
+      "sha256": "a428e316e383f599973c331d1b28ce829415625db9a5ca2ca5c72a96a7ced3a1",
+      "bytes": 213919744,
       "files": 1
     },
     {
@@ -268,7 +268,7 @@
       "harness/specs/fixtures/harness-codex-verse-collaboration/verse-shell-real-process.txt",
       "harness/specs/fixtures/harness-codex-verse-collaboration/verse-git-candidate-apply-report.json"
     ],
-    "checkedAt": "2026-10-26T12:31:45.149Z"
+    "checkedAt": "2026-11-11T04:22:47.640Z"
   },
   "environment": {
     "platform": "win32",
@@ -546,23 +546,23 @@
       "expected": "unknown fields and invalid sequence are rejected; no Codex CLI compatibility is implied",
       "negative": "coding-run projection is not a Codex CLI compatibility layer",
       "readback": "tests/unit/coding-run.test.ts",
-      "readbackSha256": "29fbc33511640d99285c248591b637a47948febb4be3fac00b0293dd46dfaf1a",
+      "readbackSha256": "95cb52dfc858bb52ddb0f391e90a70b8fd1c47e6b6492fb9e09aee250b4ff3f1",
       "notRunReason": null,
       "evidence": [
         {
           "path": "tests/unit/coding-run.test.ts",
           "exists": true,
           "kind": "file",
-          "sha256": "29fbc33511640d99285c248591b637a47948febb4be3fac00b0293dd46dfaf1a",
-          "bytes": 8160,
+          "sha256": "95cb52dfc858bb52ddb0f391e90a70b8fd1c47e6b6492fb9e09aee250b4ff3f1",
+          "bytes": 12388,
           "files": 1
         },
         {
           "path": "shared/types/coding-run.ts",
           "exists": true,
           "kind": "file",
-          "sha256": "1c5b30f8163c820a06351ec740fd444b3b1dab4923a40b228c7424bd9314d686",
-          "bytes": 17799,
+          "sha256": "ea0ea576e119cdbb0788d4df5700f8689b7625a41344948f7619705e80bc8d2f",
+          "bytes": 23680,
           "files": 1
         }
       ]

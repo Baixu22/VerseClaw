@@ -1,0 +1,158 @@
+{
+  "schema": "CodingWindowsPackageNegativeChecks/v1",
+  "taskId": "TF-0781",
+  "driven_by": "agent",
+  "actor": "codex-coding-package-evaluator",
+  "realHumanEvidence": false,
+  "candidate": "f38218d5db6300e63a21f1209946c73e97f4f21b",
+  "reportDigest": "fdf5b0f139015f178de2b5c54e54a4add6bd029c14416b47a3ef313ccb0ae01b",
+  "cases": [
+    {
+      "id": "missing-binary",
+      "command": [
+        "node",
+        "scripts/versegit-sidecar-package.mjs",
+        "--verify",
+        "--manifest",
+        "<current-manifest>",
+        "--binary",
+        "D:/tmp/tf0781-negative-interpreter-20261110/negative-package/absent-vg.exe"
+      ],
+      "expectedFailure": true,
+      "exitCode": 1,
+      "waitedForExit": true,
+      "rejected": true,
+      "code": "artifact_missing",
+      "issues": [
+        "artifact_missing"
+      ],
+      "stdout": {
+        "path": "supplemental/commands/missing-binary.stdout.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "supplemental/commands/missing-binary.stderr.bin",
+        "sha256": "27a9b86b66757d4455bb232ad0698d6738b4d2bdda9efa133e016079a37ac021",
+        "bytes": 3200
+      }
+    },
+    {
+      "id": "wrong-hash",
+      "command": [
+        "node",
+        "scripts/versegit-sidecar-package.mjs",
+        "--verify",
+        "--manifest",
+        "supplemental/inputs/versegit-wrong-hash.json",
+        "--binary",
+        "release/win-unpacked/resources/bin/vg.exe"
+      ],
+      "expectedFailure": true,
+      "exitCode": 1,
+      "waitedForExit": true,
+      "rejected": true,
+      "code": "artifact_mismatch",
+      "issues": [
+        "artifact_sha256_mismatch"
+      ],
+      "actualBinarySha256": "6fef0fab309702fafdcc716c0f8518257440efafd0a46809930fe33be865c2b4",
+      "declaredSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "stdout": {
+        "path": "supplemental/commands/wrong-hash.stdout.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "supplemental/commands/wrong-hash.stderr.bin",
+        "sha256": "216c77b7da5d05bcc32afa7cd24716f5b0bb77110cd559b71020f2809d13f7c6",
+        "bytes": 3209
+      },
+      "input": {
+        "path": "supplemental/inputs/versegit-wrong-hash.json",
+        "sha256": "f5f1c73d1028b41f0de07271932a035317c062ac1fbf142b0626e86e89728024",
+        "bytes": 2916
+      }
+    },
+    {
+      "id": "missing-interpreter",
+      "command": [
+        "vg.exe",
+        "--json",
+        "sts",
+        "plan",
+        "--out",
+        "<plan.json>",
+        "--interpreter",
+        "Z:/missing/python.exe",
+        "--contract-dir",
+        "<v1-contracts>",
+        "<candidate-report>"
+      ],
+      "expectedFailure": true,
+      "exitCode": 3,
+      "waitedForExit": true,
+      "rejected": true,
+      "status": "dependency_unavailable",
+      "spawned": false,
+      "launchError": "启动子进程失败: 系统找不到指定的路径。 (os error 3)",
+      "stdout": {
+        "path": "supplemental/commands/missing-interpreter.stdout.json",
+        "sha256": "5856ef12459d2c3b1abd07091c288bcc3d216ee785b152da58d680778936dae0",
+        "bytes": 2846
+      },
+      "stderr": {
+        "path": "supplemental/commands/missing-interpreter.stderr.bin",
+        "sha256": "d89edf91405d58637a9d43b1e0f29e3e537981832b66a0d559ccd89d4a23e8c7",
+        "bytes": 132
+      },
+      "inputCandidateReport": {
+        "path": "supplemental/commands/candidate-report.json",
+        "sha256": "24c98abd1e1d7cb2c4f5c12aa7cff1c3cd2f98141dfa467d589495f5b502fe79",
+        "bytes": 2677
+      },
+      "inputCandidateReportStderr": {
+        "path": "supplemental/commands/candidate-report.stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    }
+  ],
+  "capabilityBoundaries": {
+    "defaultEnableAllProfiles": [
+      false,
+      false,
+      false
+    ],
+    "managedOptInAllProfiles": [
+      true,
+      true,
+      true
+    ],
+    "bundledPythonPresentAllProfiles": [
+      false,
+      false,
+      false
+    ],
+    "standaloneJjPresentAllProfiles": [
+      false,
+      false,
+      false
+    ],
+    "managedModeMustBeExplicit": true
+  },
+  "packageCli": {
+    "report": {
+      "path": "supplemental/package-cli-report.json",
+      "sha256": "4e01a789c3f230c9f4541edc400d9a65c6fab228bcb99246691b118672a21752",
+      "bytes": 6356
+    },
+    "status": "pass",
+    "probeCount": 12,
+    "stateUnchanged": true,
+    "timedOutProbes": 0,
+    "failedExpectationProbes": 0
+  },
+  "processSurvivorsAfterChecks": 0,
+  "status": "pass"
+}

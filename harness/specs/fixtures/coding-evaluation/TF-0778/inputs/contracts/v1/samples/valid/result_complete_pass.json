@@ -1,0 +1,22 @@
+{
+  "protocol_version": "1.0",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "req-workspace-norisk-001",
+  "plan_id": "plan-001",
+  "target_identity": "worktree@99cba6a1f2+dirty:2",
+  "selection_scope": "selected",
+  "completeness": "complete",
+  "validity": "valid",
+  "executed": [
+    "tests/test_content.py::test_iter_text[utf-8]",
+    "tests/test_content.py::test_iter_text"
+  ],
+  "not_executed": [],
+  "outcomes": {
+    "tests/test_content.py::test_iter_text[utf-8]": { "outcome": "passed", "duration_s": 0.01 },
+    "tests/test_content.py::test_iter_text": { "outcome": "passed", "duration_s": 0.01 }
+  },
+  "raw_exit_code": 0,
+  "duration_s": 0.03,
+  "failure_categories": { "assertion": 0, "collection": 0, "environment": 0, "cancelled": 0 }
+}

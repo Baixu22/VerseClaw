@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://smart-test-sorter/contracts/vg-sts/v1/plan_refusal.schema.json",
+  "title": "VG-STS v1 Plan Refusal",
+  "description": "STS 在【无法生成合法计划】时的带内回执（v1.1 新增）。用于依赖缺失/陈旧、候选身份或目录不一致、收集失败、不支持输入、未知协议等情形——此时既不能产出 test_plan，也不能靠'进程非零退出+无计划文件'让宿主去猜。核心安全语义：只有在【目标可确认】且【成功收集到测试全集】时才允许保守全量回退；否则必须如实报告无法规划，不得在未知目标上声称可保守全量。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_version",
+    "product_version",
+    "request_id",
+    "refusal_code",
+    "reason",
+    "target_confirmable",
+    "conservative_full_available"
+  ],
+  "properties": {
+    "protocol_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+    "product_version": { "type": "string", "minLength": 1 },
+    "request_id": {
+      "description": "绑定回被拒绝规划的请求。",
+      "type": "string",
+      "minLength": 1
+    },
+    "refusal_code": {
+      "description": "无法规划的机器可读原因分类。",
+      "type": "string",
+      "enum": [
+        "collection-error",
+        "target-unconfirmable",
+        "candidate-mismatch",
+        "dependency-unavailable",
+        "unsupported-input",
+        "unknown-protocol"
+      ]
+    },
+    "reason": {
+      "description": "人类可读原因，说明为何无法产出合法计划。",
+      "type": "string",
+      "minLength": 1
+    },
+    "target_confirmable": {
+      "description": "STS 是否能确认请求所指目标身份（候选目录/OID 与请求一致、可复核）。false 时不得声称可保守全量。",
+      "type": "boolean"
+    },
+    "target_identity": {
+      "description": "target_confirmable=true 时必填：已确认的目标身份指纹，与 plan/result 的 target_identity 同口径。",
+      "type": "string",
+      "minLength": 1
+    },
+    "attempted_collection": {
+      "description": "已尝试的收集范围与结果。保守全量回退要求 succeeded=true（确实拿到测试全集）。",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "succeeded": {
+          "description": "是否成功收集到目标上的测试全集。",
+          "type": "boolean"
+        },
+        "collected_count": { "type": "integer", "minimum": 0 },
+        "note": { "type": "string" }
+      }
+    },
+    "conservative_full_available": {
+      "description": "宿主是否可安全地保守全量回退。仅当目标可确认且成功收集到全集时才可为 true；否则必须 false（无法规划）。",
+      "type": "boolean"
+    }
+  }
+}

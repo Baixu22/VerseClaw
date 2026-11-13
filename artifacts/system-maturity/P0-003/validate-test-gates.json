@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "P0-003",
-  "checkedAt": "2026-08-25T01:02:28.749Z",
+  "checkedAt": "2026-11-11T02:54:26.474Z",
   "ok": true,
   "selectedLoop": "release",
   "releaseCommands": [
@@ -41,7 +41,6 @@
     "A2 forbidden release evidence ids not present in release.commands",
     "vitest.config.ts passWithNoTests:false",
     "vitest.agent-dev.node.config.ts passWithNoTests:false",
-    "vitest.runtime-effectiveness.config.ts passWithNoTests:false",
     "A1 empty test shard failed as required (exit=1)"
   ]
 }

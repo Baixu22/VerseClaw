@@ -1,0 +1,43 @@
+{
+  "protocol_version": "2.0",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "req-v2-draft-bad-2",
+  "mode": "candidate",
+  "repo": {
+    "path": "D:/verseci/example-repo"
+  },
+  "target": {
+    "candidate_dir": "D:/verseci/example-candidate",
+    "base_oid": "a111111111111111111111111111111111111111",
+    "ours_oid": "b222222222222222222222222222222222222222",
+    "theirs_oid": "c333333333333333333333333333333333333333",
+    "candidate_tree_oid": "d444444444444444444444444444444444444444"
+  },
+  "identities": {
+    "content_identity": {
+      "kind": "git-tree",
+      "value": "d444444444444444444444444444444444444444"
+    }
+  },
+  "content_manifest": {
+    "algorithm": "sha256",
+    "exclusion_policy_id": "noise-dirs/v2",
+    "line_endings": "normalized-lf",
+    "entries": [
+      {
+        "path": "calc.py",
+        "digest": "sha256:aaaa000000000000000000000000000000000000000000000000000000000001",
+        "role": "source"
+      },
+      {
+        "path": "pytest.ini",
+        "digest": "sha256:aaaa000000000000000000000000000000000000000000000000000000000003",
+        "role": "config"
+      }
+    ],
+    "symlinks": "record-target",
+    "submodules": "reject",
+    "unreadable_files": "unconfirmed"
+  },
+  "generator_note": "2.0 的 request 是 additionalProperties=false：未知字段必须被拒绝，不能靠塞字段扩语义"
+}

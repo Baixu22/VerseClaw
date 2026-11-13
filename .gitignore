@@ -160,6 +160,7 @@ tmp/
 
 
 # Verse Token local runtime artifacts
+
 packages/vtoken/**/__pycache__/
 packages/vtoken/**/*.pyc
 packages/vtoken/.pytest_cache/
@@ -2823,3 +2824,14 @@ openclaw_runtime/_tmp_*
 !/harness/specs/fixtures/recovery-contract-eval/final-20261105/legacy-report.log
 # Exact retained execution registry acceptance logs.
 # Exact retained terminal ownership acceptance logs.
+# Curated coding-evaluation evidence referenced by the TF-0782 acceptance chain.
+# These exact files are hash-bound inputs, so retain them despite global log/binary ignores.
+!harness/specs/fixtures/coding-evaluation/TF-0777/typecheck-test.log
+!harness/specs/fixtures/coding-evaluation/TF-0778/environment/httpx-setup.log
+!harness/specs/fixtures/coding-evaluation/TF-0778/environment/packaging-setup.log
+!harness/specs/fixtures/coding-evaluation/TF-0778/inputs/vg.exe
+!harness/specs/fixtures/coding-evaluation/TF-0778/package/artifacts/*.log
+
+# TF-0782 residual revalidation evidence consumed by maturity delivery.
+!/artifacts/system-maturity/P8-001/residual-revalidation-20261111.json
+!/artifacts/system-maturity/P8-001/residual-revalidation-20261111.stdout.txt

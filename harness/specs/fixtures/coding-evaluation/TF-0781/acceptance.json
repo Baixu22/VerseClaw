@@ -1,0 +1,362 @@
+{
+  "schema": "CodingWindowsPackageAcceptance/v1",
+  "taskId": "TF-0781",
+  "decision": "accepted",
+  "nonGa": true,
+  "driven_by": "agent",
+  "actor": "codex-coding-package-evaluator",
+  "realHumanEvidence": false,
+  "acceptanceEligible": true,
+  "productLockChanged": false,
+  "defaultsChanged": false,
+  "releaseAuthorized": false,
+  "candidate": {
+    "commit": "f38218d5db6300e63a21f1209946c73e97f4f21b",
+    "tree": "5f2fb1787d605a8c673f9efba704659601c5ffec",
+    "dirty": false,
+    "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "reportDigest": "fdf5b0f139015f178de2b5c54e54a4add6bd029c14416b47a3ef313ccb0ae01b",
+  "reportSha256File": "report.sha256",
+  "verifier": {
+    "ok": true,
+    "issues": [],
+    "negativeChecksPassed": 10,
+    "negativeChecksTotal": 10
+  },
+  "commands": {
+    "count": 12,
+    "allPassed": true,
+    "wallSecondsTotal": 3943.240767799987,
+    "ids": [
+      "package-build",
+      "package-directory",
+      "package-evidence-tests",
+      "vite-package-alias-tests",
+      "verseshell-package-verify",
+      "versegit-package-verify",
+      "package-cli-probe",
+      "playwright-package-profiles",
+      "harness-validate",
+      "comms-replay",
+      "comms-compare",
+      "repository-artifacts"
+    ]
+  },
+  "package": {
+    "root": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package",
+    "executable": {
+      "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\Verse Claw.exe",
+      "sha256": "6fc66786b69529a72887a51150ddf39be188a726a3a8a05e0e225b713c2b4b3f",
+      "bytes": 213919744,
+      "version": "0.4.9-alpha.0"
+    },
+    "vg": {
+      "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\resources\\bin\\vg.exe",
+      "sha256": "6fef0fab309702fafdcc716c0f8518257440efafd0a46809930fe33be865c2b4",
+      "bytes": 40831488
+    },
+    "ae": {
+      "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\resources\\bin\\ae.exe",
+      "sha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+      "bytes": 15144448
+    },
+    "node": {
+      "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\resources\\bin\\node.exe",
+      "sha256": "b3094d0b49f9ad602262a9921551737bb97637c05dd357a06ae98188d7290aa3",
+      "bytes": 92279112
+    },
+    "manifests": {
+      "versegit": {
+        "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\resources\\resources\\versegit\\manifest.json",
+        "sha256": "476dfcfb72df4c43a294af2add1844e1d7e00b79235297cbe0ea27ba1f2c0676",
+        "bytes": 2916,
+        "artifact": "inputs/versegit-manifest.json"
+      },
+      "verseshell": {
+        "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\resources\\resources\\verseshell\\manifest.json",
+        "sha256": "b26c9edbbc620943af2c9080cee72de68f93e3fa8649aa33859a435a1650d1a7",
+        "bytes": 7559,
+        "artifact": "inputs/verseshell-manifest.json"
+      }
+    },
+    "nodeRuntime": {
+      "artifact": "inputs/node-runtime.json",
+      "sha256": "a7cc13971a8a95d55428a6fa8ee085b9dba2e1979086ea5a3e023985378bbcc3",
+      "bytes": 132
+    },
+    "asar": {
+      "app": {
+        "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\resources\\app.asar",
+        "sha256": "03e927263b1936c1b424109b2b7cb509887183350fcfa103e03ebb1a23c1fe22",
+        "bytes": 306602767
+      },
+      "mainRuntime": {
+        "path": "D:\\tmp\\tf0781-formal-f38218d-20261110\\raw\\detached-package\\resources\\main-runtime.asar",
+        "sha256": "7c8aa662f97575b5b87fe746e137e3c76a1abc0cb5a6ed45a9ed70d1a8de08bf",
+        "bytes": 730541346
+      }
+    },
+    "source": {
+      "versegitCommit": "d9c38a8659274c24ea776b56480a260831b4537f",
+      "verseshellCommit": "c06f406e83566bb968448222d9c8caf429e580a0",
+      "nodeVersion": "24.16.0"
+    },
+    "installer": {
+      "status": "not-run",
+      "reason": "TF-0781 evaluates win-unpacked only"
+    }
+  },
+  "profiles": [
+    {
+      "profileId": "profile-a",
+      "status": "pass",
+      "sourceDetached": true,
+      "appIsPackaged": true,
+      "packageExecutableSha256": "6fc66786b69529a72887a51150ddf39be188a726a3a8a05e0e225b713c2b4b3f",
+      "coding": {
+        "worktreeBackend": "git-worktree",
+        "verifiedCheckout": true,
+        "terminalStatus": "ok",
+        "verificationObserved": true,
+        "scratchRemoved": true,
+        "mathSha256": "754052599694724afaf234c67ab548b34584aa20a91a46e3f61ecfdca6f5383e",
+        "providerAnomalies": []
+      },
+      "vg": {
+        "capabilitySchema": "versegit.capabilities/v1",
+        "defaultEnable": false,
+        "managedOptIn": true,
+        "workspaceImportColocated": true,
+        "changeId": "ba4787acbb08e29d4583f9f6a0aad9a6",
+        "changeOperationId": "92fab5cf16c45f1d226df4ca6fbdabc82780922d26906e58f531e046a4d0b0a646339ca91f9d77426824375c6b592fc172f178131ae7ff44290425473ebe6f88",
+        "snapshotOperationId": "6f52ffe3dcf877478c1342b302ec7b12ac052825c277c32f2991ede511125410e802f9b1979d8847471a859adac23e98e3eea22d604c125b10eb12660c459484",
+        "sts11": {
+          "ok": true,
+          "protocol": "1.1",
+          "invalidRejected": 10,
+          "invalidTotal": 10,
+          "validPassed": 9,
+          "validTotal": 9
+        },
+        "sts20": {
+          "ok": true,
+          "protocol": "2.0",
+          "invalidRejected": 8,
+          "invalidTotal": 8,
+          "validPassed": 5,
+          "validTotal": 5
+        },
+        "bundledPythonPresent": false,
+        "standaloneJjPresent": false
+      }
+    },
+    {
+      "profileId": "profile-b",
+      "status": "pass",
+      "sourceDetached": true,
+      "appIsPackaged": true,
+      "packageExecutableSha256": "6fc66786b69529a72887a51150ddf39be188a726a3a8a05e0e225b713c2b4b3f",
+      "coding": {
+        "worktreeBackend": "git-worktree",
+        "verifiedCheckout": true,
+        "terminalStatus": "ok",
+        "verificationObserved": true,
+        "scratchRemoved": true,
+        "mathSha256": "754052599694724afaf234c67ab548b34584aa20a91a46e3f61ecfdca6f5383e",
+        "providerAnomalies": []
+      },
+      "vg": {
+        "capabilitySchema": "versegit.capabilities/v1",
+        "defaultEnable": false,
+        "managedOptIn": true,
+        "workspaceImportColocated": true,
+        "changeId": "64fc8241640049341426142e2835f7ba",
+        "changeOperationId": "d2882ae03346bf94b9cbb60302974c1565763ef84ce3fbcb1d3f8f018722021b1f772e88665ce7ddf3a637b4b05efb83acb1ae0f5a7deb69beb1e88c92f609b9",
+        "snapshotOperationId": "23224bc563a29dd4c3fd50f28ddaa8e558f0890da7677de6d6f86777071c9c9f80fb4bda4e0b49b95048539dbd7da96f820868c07044261bd8c4a95b9d964c4a",
+        "sts11": {
+          "ok": true,
+          "protocol": "1.1",
+          "invalidRejected": 10,
+          "invalidTotal": 10,
+          "validPassed": 9,
+          "validTotal": 9
+        },
+        "sts20": {
+          "ok": true,
+          "protocol": "2.0",
+          "invalidRejected": 8,
+          "invalidTotal": 8,
+          "validPassed": 5,
+          "validTotal": 5
+        },
+        "bundledPythonPresent": false,
+        "standaloneJjPresent": false
+      }
+    },
+    {
+      "profileId": "profile-c",
+      "status": "pass",
+      "sourceDetached": true,
+      "appIsPackaged": true,
+      "packageExecutableSha256": "6fc66786b69529a72887a51150ddf39be188a726a3a8a05e0e225b713c2b4b3f",
+      "coding": {
+        "worktreeBackend": "git-worktree",
+        "verifiedCheckout": true,
+        "terminalStatus": "ok",
+        "verificationObserved": true,
+        "scratchRemoved": true,
+        "mathSha256": "754052599694724afaf234c67ab548b34584aa20a91a46e3f61ecfdca6f5383e",
+        "providerAnomalies": []
+      },
+      "vg": {
+        "capabilitySchema": "versegit.capabilities/v1",
+        "defaultEnable": false,
+        "managedOptIn": true,
+        "workspaceImportColocated": true,
+        "changeId": "35960a0ecf881fda3fb2ef101c423381",
+        "changeOperationId": "15656d37b74f5c27669197e0656124e3dff5b1be1d5ccbd1b262d10de0f784ade5396616fdb8ae5f29625204d2caba084199204140d8b17b1579b5a95b753ce2",
+        "snapshotOperationId": "f9a6c9d1562ae8d94e9fc6e7f864d15ecddae400b7f5a5fdd09e8f4f37201a09b660d4f2b3b052bdbf830bed43333e5fd7622d6db91f8e6077ddaa5971c5d46c",
+        "sts11": {
+          "ok": true,
+          "protocol": "1.1",
+          "invalidRejected": 10,
+          "invalidTotal": 10,
+          "validPassed": 9,
+          "validTotal": 9
+        },
+        "sts20": {
+          "ok": true,
+          "protocol": "2.0",
+          "invalidRejected": 8,
+          "invalidTotal": 8,
+          "validPassed": 5,
+          "validTotal": 5
+        },
+        "bundledPythonPresent": false,
+        "standaloneJjPresent": false
+      }
+    }
+  ],
+  "profileSummary": {
+    "count": 3,
+    "allPassed": true,
+    "allSourceDetached": true,
+    "allCodingWorktreesVerified": true,
+    "allVerificationObserved": true,
+    "allUndoRestored": true,
+    "allVgDefaultOff": true
+  },
+  "sts": {
+    "1.1": {
+      "okAllProfiles": true,
+      "invalidRejected": 30,
+      "invalidTotal": 30,
+      "validPassed": 27,
+      "validTotal": 27
+    },
+    "2.0": {
+      "okAllProfiles": true,
+      "invalidRejected": 24,
+      "invalidTotal": 24,
+      "validPassed": 15,
+      "validTotal": 15
+    }
+  },
+  "capabilityBoundary": {
+    "vgJjWorkspaceLifecycleObserved": true,
+    "bundledPythonPresentAllProfiles": false,
+    "standaloneJjPresentAllProfiles": false,
+    "managedModeMustBeExplicit": true
+  },
+  "safety": {
+    "processSurvivors": 0,
+    "cleanupOwnedProcesses": 0,
+    "installerNotRun": true,
+    "cleanCandidate": true,
+    "realHumanEvidence": false,
+    "ga": false,
+    "releaseAuthorized": false
+  },
+  "evidenceFiles": [
+    "README.md",
+    "SHA256SUMS",
+    "evidence/package.json",
+    "evidence/source.json",
+    "inputs/node-runtime.json",
+    "inputs/package-runtime.json",
+    "inputs/versegit-manifest.json",
+    "inputs/verseshell-manifest.json",
+    "raw-profiles/profile-a.json",
+    "raw-profiles/profile-b.json",
+    "raw-profiles/profile-c.json",
+    "report.json",
+    "report.sha256",
+    "supplemental/commands/candidate-report.json",
+    "supplemental/commands/candidate-report.stderr.bin",
+    "supplemental/commands/missing-binary.stderr.bin",
+    "supplemental/commands/missing-binary.stdout.bin",
+    "supplemental/commands/missing-interpreter.stderr.bin",
+    "supplemental/commands/missing-interpreter.stdout.json",
+    "supplemental/commands/wrong-hash.stderr.bin",
+    "supplemental/commands/wrong-hash.stdout.bin",
+    "supplemental/inputs/versegit-wrong-hash.json",
+    "supplemental/negative-checks.json",
+    "supplemental/package-cli-report.json",
+    "supplemental/source-package-parity.json",
+    "verification-final.json"
+  ],
+  "rawCommandOutputs": 32,
+  "interpretation": "The frozen Windows win-unpacked supports three detached profiles for coding worktrees, undo, VG/JJ workspace operations and STS 1.1/2.0 validation; it does not bundle Python or standalone JJ, does not run the installer, and does not authorize GA or release.",
+  "supplemental": {
+    "schema": "CodingWindowsPackageSupplemental/v1",
+    "negativeChecks": {
+      "status": "pass",
+      "cases": [
+        {
+          "id": "missing-binary",
+          "exitCode": 1,
+          "rejected": true,
+          "code": "artifact_missing",
+          "status": null,
+          "spawned": null
+        },
+        {
+          "id": "wrong-hash",
+          "exitCode": 1,
+          "rejected": true,
+          "code": "artifact_mismatch",
+          "status": null,
+          "spawned": null
+        },
+        {
+          "id": "missing-interpreter",
+          "exitCode": 3,
+          "rejected": true,
+          "code": null,
+          "status": "dependency_unavailable",
+          "spawned": false
+        }
+      ]
+    },
+    "sourcePackageParity": {
+      "allMatch": true,
+      "rows": 6,
+      "candidate": "f38218d5db6300e63a21f1209946c73e97f4f21b",
+      "reportDigest": "fdf5b0f139015f178de2b5c54e54a4add6bd029c14416b47a3ef313ccb0ae01b"
+    },
+    "packageCli": {
+      "report": {
+        "path": "supplemental/package-cli-report.json",
+        "sha256": "4e01a789c3f230c9f4541edc400d9a65c6fab228bcb99246691b118672a21752",
+        "bytes": 6356
+      },
+      "status": "pass",
+      "probeCount": 12,
+      "stateUnchanged": true,
+      "timedOutProbes": 0,
+      "failedExpectationProbes": 0
+    },
+    "processSurvivorsAfterChecks": 0
+  }
+}

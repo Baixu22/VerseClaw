@@ -28,7 +28,7 @@ import { createSessionsApi } from '../../electron/services/sessions-api';
 import { scheduleResourceAwareWaves } from '../../openclaw_runtime/src/agents/orchestration-resource-scheduler';
 import { buildDelegationReceipt } from '../../openclaw_runtime/src/agents/long-session-delegation-receipt';
 import { spawnRoleSubagent, type RoleSpawnContext, type RoleSpawnParams } from '../../openclaw_runtime/src/agents/role-spawn';
-import { createWorktreeService } from '../../openclaw_runtime/src/agents/worktree-service';
+import { createWorktreeService, isVerifiedGitWorktree } from '../../openclaw_runtime/src/agents/worktree-service';
 import type { RoleContract } from '../../openclaw_runtime/src/agents/role-contract';
 
 const WORKSPACE_ID = 'workspace-main';
@@ -691,6 +691,7 @@ describe('long-session delegation admission', () => {
     expect(record.root).toBeTruthy();
     expect(record.gitBranch).toBeUndefined(); // The owner creates a detached checkout.
     expect(service.inspectIsolation(record.id, record.generation).status).toBe('verified');
+    expect(isVerifiedGitWorktree(record)).toBe(true);
     service.cleanup(record.id);
   });
 });

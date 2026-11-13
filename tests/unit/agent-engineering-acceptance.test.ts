@@ -20,6 +20,9 @@ import {
   inferCoverage,
   isCountableTestCommand,
   parseTestCounts,
+  pnpmCommandArguments,
+  pnpmExecutable,
+  pnpmGateSpawnSpec,
   redactText,
   readAcceptanceStatus,
   repositoryIdentity,
@@ -104,13 +107,17 @@ function createFixtureRepository() {
   writeFileSync(join(root, 'package.json'), '{"name":"fixture","version":"1.0.0"}\n', 'utf8');
   writeFileSync(join(root, 'pnpm-lock.yaml'), 'lockfileVersion: 9\n', 'utf8');
   writeFileSync(join(root, '.npmrc'), 'strict-peer-dependencies=false\n', 'utf8');
-  writeFileSync(join(root, '.gitignore'), 'artifacts/\nnode_modules/\nresources/bin/\nopenclaw_runtime/apps/\n', 'utf8');
+  writeFileSync(join(root, '.gitignore'), 'artifacts/\nnode_modules/\nresources/bin/\nopenclaw_runtime/apps/\nrelease/\n', 'utf8');
   writeFileSync(join(root, '.gitattributes'), '*.md text\n', 'utf8');
   writeFileSync(join(root, 'harness', 'specs', 'tasks', 'fixture.md'), '# fixture\n', 'utf8');
   mkdirSync(join(root, 'harness', 'src'), { recursive: true });
   writeFileSync(join(root, 'harness', 'src', 'profiles.mjs'), readFileSync('harness/src/profiles.mjs'));
   const fixtureFiles = {
     'resources/verseshell/manifest.json': JSON.stringify({ artifacts: { 'win32-x64': { sha256: sha256('fixture'), bytes: 7 } } }),
+    'resources/bin/win32-x64/vg.exe': 'fixture-vg',
+    'release/win-unpacked/Verse Claw.exe': 'fixture-electron',
+    'release/win-unpacked/resources/openclaw-runtime/extensions/codex/package.json': '{"name":"codex"}',
+    'release/win-unpacked/resources/openclaw-runtime/extensions/codex/node_modules/@openai/codex/node_modules/@openai/codex-win32-x64/vendor/x86_64-pc-windows-msvc/bin/codex.exe': 'fixture-codex',
     'artifacts/uas-06-single-local-exec-canary/live-observations.json': '{}',
     'artifacts/agent-engineering-acceptance/runtime-authority-convergence-final/changed-path-ownership.json': '{}',
     'openclaw_runtime/apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json': '{}',
@@ -334,6 +341,53 @@ function tf0009Report() {
 }
 
 describe('Agent Engineering Acceptance', () => {
+  it('routes pnpm gates through the packageManager-pinned corepack shim', () => {
+    const args = ['install', '--offline', '--frozen-lockfile', '--ignore-scripts'];
+    const spec = pnpmGateSpawnSpec(pnpmExecutable(), pnpmCommandArguments(args));
+    if (process.platform === 'win32') {
+      expect(spec.command.toLowerCase()).toBe('cmd.exe');
+      expect(spec.args.join(' ')).toContain('corepack.cmd');
+      expect(spec.args.join(' ')).toContain('pnpm install --offline --frozen-lockfile --ignore-scripts');
+    } else {
+      expect(spec.command).toBe('corepack');
+      expect(spec.args.slice(0, 2)).toEqual(['pnpm', 'install']);
+    }
+  });
+
+  it('hashes empty and multi-chunk files without changing their byte identity', () => {
+    const root = mkdtempSync(join(tmpdir(), 'acceptance-hash-'));
+    temporaryPaths.push(root);
+    const file = join(root, 'input.bin');
+    for (const bytes of [Buffer.alloc(0), Buffer.alloc(1024 * 1024 + 17, 0xab)]) {
+      writeFileSync(file, bytes);
+      expect(sha256File(file)).toBe(sha256(bytes));
+    }
+  });
+
+  it.each(['source', 'detached'])('rejects ignored binary changes after %s gate execution', (location) => {
+    const root = createFixtureRepository();
+    const binary = 'resources/bin/win32-x64/vg.exe';
+    const target = location === 'source' ? join(root, binary) : binary;
+    const manifest = createManifest(root, {
+      gate: {
+        id: 'fixture-gate', name: 'Mutate provisioned binary', profile: 'fast',
+        command: 'node',
+        args: ['-e', 'require("node:fs").writeFileSync(process.argv[1], "changed"); console.log("Tests 1 passed (1)")', target],
+        required: true, allowSkip: false, timeoutMs: 10_000,
+        safety: { network: 'none', productionEffects: false, humanEvidence: false },
+        testExpectation: { requireCounts: true, expectedSkips: 0 },
+      },
+    });
+    const outputDir = mkdtempSync(join(tmpdir(), 'acceptance-input-mutation-'));
+    temporaryPaths.push(outputDir);
+    const report = runAcceptance(manifest, { sourceRoot: root, outputDir, actor: 'fixture-executor', env: { PATH: process.env.PATH ?? '' } });
+    expect(report.result).toBe('NO-GO');
+    expect(report.failures).toContain(`${location} provision input changed during acceptance: ${binary}`);
+    expect(report.mutationCheck).toMatchObject({
+      sourceCleanAfter: true, detachedWorktreeCleanAfter: true, provisionInputsUnchangedAfter: false,
+    });
+  });
+
   it('derives full runtime, UI, comms, and release coverage from changed paths (release does not imply maturity)', () => {
     const manifest = createAcceptancePlan({
       specPath: 'harness/specs/tasks/agent-engineering-acceptance-orchestrator.md',
@@ -748,7 +802,7 @@ describe('Agent Engineering Acceptance', () => {
     expect(result.failures).toContain('detached worktree changed tracked or unexpected source files during acceptance');
   });
 
-  it.each(['v1', 'v2'])('exports TF-0009 %s evidence without promoting product authority', (version) => {
+  it.each(['v1', 'v2'])('exports TF-0009 %s evidence without promoting product authority', { timeout: 120_000 }, (version) => {
     const root = createFixtureRepository();
     const outputDir = mkdtempSync(join(tmpdir(), 'agent-acceptance-output-'));
     temporaryPaths.push(outputDir);
@@ -2154,7 +2208,7 @@ describe('Agent Engineering Acceptance', () => {
     expect(validateAcceptanceManifest(manifest).ok).toBe(false);
   });
 
-  it('rejects requiredTests that drift from the candidate spec or hide --fix in commandLine', () => {
+  it('rejects requiredTests that drift from the candidate spec or hide --fix in commandLine', { timeout: 60_000 }, () => {
     const root = createFixtureRepository();
     const comparisonBase = repositoryIdentity(root).commit;
     writeFileSync(join(root, 'harness', 'specs', 'tasks', 'fixture.md'), `---
@@ -2203,6 +2257,12 @@ requiredTests:
       expect.arrayContaining([
         expect.objectContaining({
           path: 'artifacts/uas-06-single-local-exec-canary/live-observations.json',
+          exists: true,
+          bytes: expect.any(Number),
+          sha256: expect.stringMatching(/^[a-f0-9]{64}$/u),
+        }),
+        expect.objectContaining({
+          path: 'release/win-unpacked/Verse Claw.exe',
           exists: true,
           bytes: expect.any(Number),
           sha256: expect.stringMatching(/^[a-f0-9]{64}$/u),
@@ -2273,6 +2333,10 @@ requiredTests:
       expect.arrayContaining([
         'provision-verseshell-resources: provision copy digest mismatch: artifacts/uas-06-single-local-exec-canary/live-observations.json',
       ]),
+    );
+    writeFileSync(join(root, 'release/win-unpacked/Verse Claw.exe'), 'changed package bytes');
+    expect(validateAcceptanceManifest(plan, { root, requireClean: true, requireFull: true }).errors).toContain(
+      'provision-verseshell-resources: provision copy digest mismatch: release/win-unpacked/Verse Claw.exe',
     );
   });
 

@@ -37,10 +37,39 @@ import {
   runTaskLoop,
 } from '../../openclaw_runtime/src/agents/task-loop-controller';
 import { clearRuntimeTraceBuffer } from '../../openclaw_runtime/src/observability/trace-buffer';
+import { clearSessionStoreCacheForTest } from '../../openclaw_runtime/src/config/sessions/store';
+import { closeSqliteSessionStoreDatabase, replaceSqliteSessionStore } from '../../openclaw_runtime/src/config/sessions/store-sqlite';
+
+const sessionStoreRoots: string[] = [];
+const sessionStorePaths: string[] = [];
+
+function withSessionStore(
+  cfg: ReturnType<typeof emptyConfig>,
+  sessionKey: string,
+  workspaceDir: string,
+  additionalSessionKeys: readonly string[] = [],
+): ReturnType<typeof emptyConfig> {
+  const root = mkdtempSync(join(tmpdir(), 'p1-orchestration-sessions-'));
+  const store = join(root, 'sessions.json');
+  replaceSqliteSessionStore(
+    store,
+    Object.fromEntries([sessionKey, ...additionalSessionKeys].map((key) => [
+      key,
+      { sessionId: key === sessionKey ? 'physical-gateway' : `physical-${key}`, updatedAt: Date.now(), workspaceDir },
+    ])),
+  );
+  clearSessionStoreCacheForTest();
+  sessionStoreRoots.push(root);
+  sessionStorePaths.push(store);
+  return { ...cfg, session: { ...cfg.session, store } };
+}
 
 afterEach(() => {
   clearTaskLoopRunsForTests();
   clearRuntimeTraceBuffer();
+  clearSessionStoreCacheForTest();
+  for (const store of sessionStorePaths.splice(0)) closeSqliteSessionStoreDatabase(store);
+  for (const root of sessionStoreRoots.splice(0)) rmSync(root, { recursive: true, force: true });
 });
 
 function verifiedTaskLoopOrchestrationResult() {
@@ -101,6 +130,9 @@ describe('P1 ordinary orchestration boundary', () => {
     const captured: CapturedRespond[] = [];
     const gatewayCalls: string[] = [];
     const handler = roleOrchestrationHandlers['orchestrator.run'];
+    const sessionRoot = mkdtempSync(join(tmpdir(), 'p1-orchestration-workspace-'));
+    const cfg = withSessionStore(emptyConfig(), 'agent:main:main', sessionRoot);
+    try {
 
     await handler({
       ...looseBuildHandlerArgs({
@@ -108,9 +140,9 @@ describe('P1 ordinary orchestration boundary', () => {
         sessionKey: 'agent:main:main',
         includeVerifier: false,
         workers: [{ roleName: 'reviewer', task: 'Review the change' }],
-      }, emptyConfig(), captured),
+      }, cfg, captured),
       context: {
-        ...looseBuildHandlerArgs({}, emptyConfig(), []).context,
+        ...looseBuildHandlerArgs({}, cfg, []).context,
         broadcast: vi.fn(),
       } as never,
       respond: (ok: boolean, payload: unknown, error: unknown) => {
@@ -119,7 +151,7 @@ describe('P1 ordinary orchestration boundary', () => {
     } as never);
 
     const payload = captured[0]?.payload as Record<string, unknown>;
-    expect(captured[0]?.ok).toBe(true);
+    expect(captured[0]?.ok, JSON.stringify(captured[0]?.error)).toBe(true);
     expect(payload.status).toBe('error');
     expect(payload.qualityState).toBe('shadow');
     expect(payload.qualityState).not.toBe('active');
@@ -139,6 +171,9 @@ describe('P1 ordinary orchestration boundary', () => {
     expect(payload).not.toHaveProperty('blocked');
     expect(payload).not.toHaveProperty('checkpoint');
     expect(gatewayCalls).not.toContain('task_loop.run');
+    } finally {
+      rmSync(sessionRoot, { recursive: true, force: true });
+    }
   });
 
   it('keeps shadow Routing Memo from changing routing while exposing dashboard data', async () => {
@@ -163,12 +198,17 @@ describe('P1 ordinary orchestration boundary', () => {
         },
       };
       recordRoutingMemo(memo, workspace);
-      const cfg = { runtime: { orchestration: { routingMemoPilot: 'shadow' } } } as ReturnType<typeof emptyConfig>;
+      const cfg = withSessionStore(
+        { runtime: { orchestration: { routingMemoPilot: 'shadow' } } } as ReturnType<typeof emptyConfig>,
+        'agent:main:main',
+        workspace,
+      );
 
       const planResponses: CapturedRespond[] = [];
       await roleOrchestrationHandlers['orchestrator.plan'](
         looseBuildHandlerArgs({
           task: 'implement login flow',
+          sessionKey: 'agent:main:main',
           workspaceDir: workspace,
         }, cfg, planResponses) as never,
       );
@@ -211,18 +251,33 @@ describe('P1 ordinary orchestration boundary', () => {
         workerRoles: ['implementer'],
         outcome: { graphStatus: 'completed', qualityOverall: 'good', repairCount: 0 },
       }, workspace);
-      const cfg = { runtime: { orchestration: { routingMemoPilot: 'active' } } } as ReturnType<typeof emptyConfig>;
+      const cfg = withSessionStore(
+        { runtime: { orchestration: { routingMemoPilot: 'active' } } } as ReturnType<typeof emptyConfig>,
+        'agent:main:main',
+        workspace,
+        ['agent:main:other-session', 'agent:main:quality-authority'],
+      );
 
       const plan = async (qualityParams: Record<string, unknown> = {}) => {
         const responses: CapturedRespond[] = [];
+        const sessionKey = typeof qualityParams.sessionKey === 'string'
+          ? qualityParams.sessionKey
+          : 'agent:main:main';
+        const store = cfg.session?.store;
+        if (!store) throw new Error('missing integration session store');
+        replaceSqliteSessionStore(store, {
+          [sessionKey]: { sessionId: 'physical-gateway', updatedAt: Date.now(), workspaceDir: workspace },
+        });
+        clearSessionStoreCacheForTest();
         await roleOrchestrationHandlers['orchestrator.plan'](
           looseBuildHandlerArgs({
             task: 'review login flow',
+            sessionKey: 'agent:main:main',
             workspaceDir: workspace,
             ...qualityParams,
           }, cfg, responses) as never,
         );
-        expect(responses[0]?.ok).toBe(true);
+        expect(responses[0]?.ok, JSON.stringify(responses[0]?.error)).toBe(true);
         return responses[0]?.payload as {
           plan?: { leadRole?: string };
           routeDiagnostics?: { reasons?: string[] };
@@ -292,9 +347,22 @@ describe('P1 ordinary orchestration boundary', () => {
         },
       );
 
+      const store = cfg.session?.store;
+      if (!store) throw new Error('missing integration session store');
+      replaceSqliteSessionStore(store, Object.fromEntries([
+        'agent:main:main',
+        'agent:main:other-session',
+        'agent:main:quality-authority',
+      ].map((key) => [key, {
+        sessionId: key === 'agent:main:main' ? 'physical-gateway' : `physical-${key}`,
+        updatedAt: Date.now(),
+        workspaceDir: workspace,
+      }])));
+      clearSessionStoreCacheForTest();
+
       const crossSession = await plan({
         qualityAuthorityRunId: taskLoop.loopRunId,
-        sessionKey: 'agent:other:session',
+        sessionKey: 'agent:main:other-session',
       });
       expect(crossSession.plan?.leadRole).toBe('reviewer');
       expect(crossSession.qualityRouting).toMatchObject({

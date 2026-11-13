@@ -1,0 +1,14 @@
+{
+  "colocated": true,
+  "command": "workspace.import",
+  "head_commit": "3e9e67cf7a44497066ad2e9caf14fd8fede53b05",
+  "root": "D:\\ClawX\\.tmp\\coding-jj-parity-final-clean-41fe099\\fixtures\\git-root\\source",
+  "schema": "versegit.vg-json/v1",
+  "snapshot": {
+    "change_id": "80264e8ef62aae9ec64bc2e10574510b",
+    "operation_id": "05522e2eddff45342b5cd2d13472f7bb7b4ab896abd8785cf338488394c6fab72fc7b035dcde9fee3041f761b302dfacce179fdc0699fed53bdab10445d0ac46",
+    "schema": "versegit.vg-json/v1",
+    "wc_commit_id": "ba66d417ddca920260dc7b614fd6bac8d7dfef7e",
+    "workspace_root": "D:\\ClawX\\.tmp\\coding-jj-parity-final-clean-41fe099\\fixtures\\git-root\\source"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "operation": {
+    "description": "vg: restore operation (draft only)",
+    "hostname": "versegit.invalid",
+    "is_head": true,
+    "is_snapshot": false,
+    "operation_id": "52252e5255c637cf26356bb5b7ac2e8d6c2066eba4678e5c3b3870dc4d282a130c9d8675c426ae2b4b887f92902f49aea9352f56dec69bcae230523270902a82",
+    "parent_ids": [
+      "8db53edd686a542318fd81fe497feed184dccbd006dc57cc14005eff493c6859cce18cb50bc3fb6e7f006c923e57232a8d0ca8caa738ee044424c1efdaa1b688"
+    ],
+    "time_end_millis": 1794218034070,
+    "time_start_millis": 1794218034058,
+    "username": "versegit",
+    "view_id": "59d7d6f0a0b37ec322e633ba9cb2483c22b5e05c819382110db42ccf524da222ff5ad4e48811a9f54a718d85d78645edcde48b48531e7ff7cd5a606bca7a0694",
+    "workspace_name": null
+  },
+  "schema": "versegit.vg-json/v1",
+  "view": {
+    "commit_head_count": 1,
+    "commit_head_ids": [
+      "121ed4c69bd3299d6794e9daa0df5b47909c96e9"
+    ],
+    "commit_heads_truncated": false,
+    "git_ref_count": 0,
+    "local_bookmark_count": 0,
+    "local_tag_count": 0,
+    "operation_id": "52252e5255c637cf26356bb5b7ac2e8d6c2066eba4678e5c3b3870dc4d282a130c9d8675c426ae2b4b887f92902f49aea9352f56dec69bcae230523270902a82",
+    "view_id": "59d7d6f0a0b37ec322e633ba9cb2483c22b5e05c819382110db42ccf524da222ff5ad4e48811a9f54a718d85d78645edcde48b48531e7ff7cd5a606bca7a0694",
+    "workspace_count": 1,
+    "workspace_wc_commit_id": "121ed4c69bd3299d6794e9daa0df5b47909c96e9"
+  }
+}

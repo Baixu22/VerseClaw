@@ -82,6 +82,18 @@ VG 不再只是“可选的 symbol verification plugin”，而是：
 确认，会话读集通过 `sessionShow` 读回；该命令的 `fileRead` 为 false，`domainStateWrite`
 为 true。实际文件内容读取仍由原工具或 basis 入口完成。
 
+原生显式 `vg workspace import` 支持普通 Git checkout：导入 refs 与 HEAD，并将现存
+dirty 字节记录到 HEAD 之上的 JJ 工作副本；Git HEAD、用户分支与标签、index 和
+未跟踪文件保留。再次打开已有 `.jj` 为只读操作。该导入入口拒绝 linked Git
+worktree、bare 和非 Git 目录；Git 选中路径若位于嵌套 `.git`/`.jj` 标记下也会拒绝。`--root` 对应的 native backend 与文件查询会清除非属主 Git selector，宿主按已有工作区策略调用各自的受控入口。
+导入由隔离环境下的 Git tracked/non-ignored 文件集驱动，沿用全局排除、
+`core.excludesFile` 路径插值、`.git/info/exclude`、逐目录 `.gitignore` 与
+`core.ignoreCase` 语义。HEAD 继承树在快照前收窄到同一集合，大小写索引项绑定实际
+磁盘拼写，`.jj`/`.vg` 及大小写别名不进入内容树；Git 选中的 force-added 文件不会被逐文件 ignore 丢弃，新文件上限仍在快照时独立执行。被忽略的文件保留在磁盘，不写入
+JJ 工作副本或 Git 对象库。不可表示路径或超过自动导入上限的新文件会明确失败，
+不发布不完整的 `@`；首次导入失败会清理本次新建的 `.jj`，修正输入后可从 Git
+工作树重试。
+
 **允许的 M1：**
 
 - 二进制、schema 可验证；
@@ -383,7 +395,17 @@ VToken 曾经是可选 token packing/context sidecar，但 TF-0496 用真实 pro
 - Agent-driven evidence 不标 real-human。
 - 产品锁仍由 `docs/dev/first-product-controlled-preview/STATUS.md` 与默认矩阵锁定。
 
-## 7. 当前缺口汇总
+## 7. 编码链成熟度结论
+
+TF-0782 当前将 VG、JJ、VerseShell 和 STS 的结果分开记录：VG/F 的编码观测与候选反馈、JJ
+工作副本和 operation 语义、VerseShell 执行/回执/清理、STS 1.1/2.0 契约均有同候选证据；
+组合与恢复评测也没有新增 P0/P1。STS selection 的 40 个真实项目 pair 没有产生稳定速度收益，
+因此保持 opt-in，`claim=improvement-unproven`。Windows 包只验证 `win-unpacked`，Python 与
+独立 JJ 不随包提供，managed 路径必须显式选择；installer、M4、land/admission authority、
+GA、default-on 和发布批准仍未授权。完整报告见
+`harness/specs/fixtures/coding-evaluation/TF-0782/report.json`。
+
+## 8. 当前缺口汇总
 
 | 组件 | 主要缺口 |
 |---|---|
@@ -392,7 +414,7 @@ VToken 曾经是可选 token packing/context sidecar，但 TF-0496 用真实 pro
 | VerseBrowser | 81/67/28/14 差距；13 source-only 未实现于 desktop；private network 默认 deny；没有无人监督 GA |
 | VToken | retired；低于 materiality bar，不能宣称 token-saving 产品 |
 
-## 8. 源码与证据索引
+## 9. 源码与证据索引
 
 - `docs/dev/versegit-validation-layer/README.md`
 - `docs/dev/versegit-product-integration/TF-0517/`

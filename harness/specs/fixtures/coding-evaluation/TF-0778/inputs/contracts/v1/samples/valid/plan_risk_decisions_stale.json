@@ -1,0 +1,49 @@
+{
+  "protocol_version": "1.1",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "req-candidate-risk-002",
+  "plan_id": "plan-risk-003",
+  "target_identity": "candidate@ddddddd",
+  "rules_id": "smart-select/v1+risk",
+  "selection_scope": "selected",
+  "collected": [
+    "tests/test_client.py::test_request",
+    "tests/test_content.py::test_encode",
+    "tests/test_urls.py::test_join"
+  ],
+  "selected": [
+    "tests/test_client.py::test_request",
+    "tests/test_content.py::test_encode"
+  ],
+  "excluded": [
+    "tests/test_urls.py::test_join"
+  ],
+  "order": [
+    "tests/test_client.py::test_request",
+    "tests/test_content.py::test_encode"
+  ],
+  "reasons": {
+    "tests/test_client.py::test_request": "risk-adopted: 风险提示 Client.request 有效，优先执行",
+    "tests/test_content.py::test_encode": "name-level: 引用被改函数 encode（风险提示已过期，退回普通选择仍命中）"
+  },
+  "risk_decisions": [
+    {
+      "symbol": "Client.request",
+      "path": "httpx/_client.py",
+      "decision": "adopted",
+      "reason": "有效风险：来源版本 vg-risk/1.0 与候选一致，符号可解析到本次收集的测试"
+    },
+    {
+      "symbol": "encode_response",
+      "path": "httpx/_content.py",
+      "decision": "ignored",
+      "reason": "过期风险：该提示 oid 指向候选之前的旧树，已失配；不采用其排序，普通选择独立决定"
+    },
+    {
+      "path": "httpx/_content.py",
+      "decision": "ignored",
+      "reason": "无符号风险：仅路径命中，未能定位到具体测试，降级为文件级参考，不单独提权"
+    }
+  ],
+  "supported_run_modes": ["pytest-nodeids"]
+}

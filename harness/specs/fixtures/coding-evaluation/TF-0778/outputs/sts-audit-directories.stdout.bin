@@ -1,0 +1,11 @@
+A. 候选目录体检
+   受检 0 个（跳过 1 个；其中硬门禁 0 个）
+   SKIP: historical target directories; published evidence is checked below
+B. 已发布产物里有没有我方工具泄漏
+   · 已确认（TFD-real-sample-probe-in-candidate-dir）：experiments/tf0028_eval/evidence-dir-audit.json：新增源码文件：probe_collect.py
+   · 已确认（TFD-real-sample-probe-in-candidate-dir）：experiments/tf0028_eval/real-sample/plan_nossi.json：新增源码文件：probe_collect.py
+   · 已确认（TFD-real-sample-probe-in-candidate-dir）：experiments/tf0028_eval/real-sample/plan_risk_nossi.json：新增源码文件：probe_collect.py
+   · 已确认（TFD-real-sample-probe-in-candidate-dir）：experiments/tf0028_eval/real-sample/plan_risk_ssi.json：新增源码文件：probe_collect.py
+   · 已确认（TFD-real-sample-probe-in-candidate-dir）：experiments/tf0028_eval/real-sample/plan_ssi.json：新增源码文件：probe_collect.py
+   · 已确认（TFD-real-sample-probe-in-candidate-dir）：experiments/tf0028_eval/real-sample/shadow-report.json：新增源码文件：probe_collect.py
+=> 干净，退出码 0

@@ -1,0 +1,11 @@
+{
+  "action": "created",
+  "kind": "bookmark",
+  "name": "fixture",
+  "operation_id": "842d529f09ddb05776d6f55326075335386a3cf9899966d15488064bdb79bffbfb69f92b2fa52c8ca611d6c8b72cf86197c84c84fb211060cb7d523aa63a821a",
+  "schema": "versegit.vg-json/v1",
+  "targets": [
+    "47a72ea4717af7a50ee35fe44c944c222ba857e3"
+  ],
+  "working_copy_moved_to": null
+}

@@ -1,0 +1,9 @@
+
+ RUN  v4.1.1 D:/tmp/tf0782-final-c00e-20261110
+
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  05:02:33
+   Duration  1.05s (transform 125ms, setup 357ms, import 26ms, tests 399ms, environment 0ms)
+

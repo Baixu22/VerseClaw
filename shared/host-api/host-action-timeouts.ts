@@ -21,6 +21,7 @@ export const HOST_ACTION_LONG_TIMEOUT_MS = 15 * 60_000;
  * - dcsProdFlags.setFlag/setPreview/setWorkspaceContext: bounded restart followed by runtime ack
  * - chat.sendWithMedia: a real agent turn may run several read/edit/exec steps
  * - sessions.compact/compactRange: the runtime may need a live-model summary
+ * - versegit.status: version and capabilities are two sequential 30s-bounded facts
  * (No host-api git.clone or E2E-run action exists in the current contract.)
  */
 const HOST_ACTION_LONG_SET = new Set<string>([
@@ -42,6 +43,7 @@ const HOST_ACTION_LONG_SET = new Set<string>([
   'chat.sendWithMedia',
   'sessions.compact',
   'sessions.compactRange',
+  'versegit.status',
 ]);
 
 export function hostActionTimeoutMs(module: string, action: string): number {

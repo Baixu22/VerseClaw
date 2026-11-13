@@ -1,0 +1,35 @@
+{
+  "protocol_version": "1.1",
+  "product_version": "smart-test-sorter/0.1.0",
+  "request_id": "req-candidate-risk-002",
+  "mode": "candidate",
+  "capabilities": ["selection", "prioritization", "risk-hints"],
+  "repo": { "path": "C:/候选 目录/vg-merge-42", "name": "httpx" },
+  "target": {
+    "candidate_dir": "C:/候选 目录/vg-merge-42/worktree",
+    "base_oid": "aaaaaaa000111222333444555666777888999abc",
+    "ours_oid": "bbbbbbb000111222333444555666777888999abc",
+    "theirs_oid": "ccccccc000111222333444555666777888999abc",
+    "candidate_tree_oid": "ddddddd000111222333444555666777888999abc",
+    "includes_candidate_extra_changes": true
+  },
+  "identities": {
+    "code_oid": "ddddddd000111222333444555666777888999abc",
+    "test_oid": "ddddddd000111222333444555666777888999abc",
+    "config_digest": "sha256:cfg1234",
+    "env_id": "py3.12-win"
+  },
+  "dependency_snapshot": {
+    "snapshot_id": "dep-2026-09-27",
+    "created_at": "2026-09-27T10:00:00Z",
+    "stale": false
+  },
+  "risk": {
+    "source_version": "vg-risk/1.0",
+    "hints": [
+      { "symbol": "Client.request", "path": "httpx/_client.py", "score": 0.8, "oid": "ddddddd000111222333444555666777888999abc" },
+      { "symbol": "encode_response", "path": "httpx/_content.py", "score": 0.6 },
+      { "path": "httpx/_content.py", "score": 0.4 }
+    ]
+  }
+}

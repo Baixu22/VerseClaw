@@ -1,0 +1,10 @@
+{
+  "kind": "restore",
+  "new_commit_id": "bf49952c3e1ba7fc7f0c139c4413d6be370be07c",
+  "old_commit_id": "4d15fd632ad05b932f7f36ae3245fded6f5d485b",
+  "operation_id": "8db53edd686a542318fd81fe497feed184dccbd006dc57cc14005eff493c6859cce18cb50bc3fb6e7f006c923e57232a8d0ca8caa738ee044424c1efdaa1b688",
+  "paths": [
+    "a.txt"
+  ],
+  "schema": "versegit.vg-json/v1"
+}

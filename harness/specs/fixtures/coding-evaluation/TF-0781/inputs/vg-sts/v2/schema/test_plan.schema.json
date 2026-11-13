@@ -1,0 +1,166 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://smart-test-sorter/contracts/vg-sts/v2/schema/test_plan.schema.json",
+  "title": "VG-STS v2 Test Plan",
+  "description": "STS 生成的可解释测试计划（**2.0 权威**，见 `contracts/vg-sts/v2/manifest.json` 的 `status: authoritative`）。相对 1.1 的关键变化：计划带上**完整内容身份**（不只是 7 位 target_identity），并显式声明它依据的输入清单与环境身份，使接收方无需原始 request 也能独立核对『计划绑的是哪个版本』。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_version",
+    "product_version",
+    "request_id",
+    "plan_id",
+    "target_identity",
+    "content_identity",
+    "environment_identity",
+    "expected_environment_identity",
+    "policy_identity",
+    "supported_run_modes",
+    "selection_scope",
+    "collected",
+    "selected",
+    "excluded",
+    "order",
+    "reasons"
+  ],
+  "properties": {
+    "protocol_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+    "product_version": { "type": "string", "minLength": 1 },
+    "request_id": { "type": "string", "minLength": 1 },
+    "plan_id": {
+      "description": "【2.0 收紧】计划身份必须覆盖实际政策版本、目标快照、选集与执行顺序——不能只因收集列表没变就误判为同一计划。",
+      "type": "string",
+      "minLength": 1
+    },
+    "target_identity": {
+      "description": "展示用短标签（如 candidate@770e8e0）。**只作展示**：跨方比较一律用 content_identity。",
+      "type": "string",
+      "minLength": 1
+    },
+    "content_identity": {
+      "description": "【2.0 新增，必填】本计划所绑定的**完整内容身份**：接收方仅凭计划即可核对，无需回看 request。**`observed_at` 亦必填**（2026-10-03 按 VG 0039 needs-1 更正：此前它在本 schema 里是**可选**、而 README 的 R8 写成必填——**那是我们文档的内部矛盾**，两套判据都按必填实现。现统一为必填，让 R8 在机器层真正成立）。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value", "manifest_digest", "observed_at"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["git-tree", "git-commit", "worktree-content"] },
+        "value": { "type": "string", "minLength": 7 },
+        "manifest_digest": {
+          "description": "对输入清单整体再算一次摘要：清单顺序/换行归一化口径变了吗，一眼可比。",
+          "type": "string",
+          "pattern": "^(sha256|sha1|blake2b):[0-9a-f]{8,128}$"
+        },
+        "exclusion_policy_id": { "type": "string", "minLength": 1 },
+        "observed_at": {
+          "description": "规划期**实际观察**到该身份的时刻与结果。**必填**（2026-10-03 更正）。两项都须为 `confirmed` 才算『绑定已确认』。",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["before_build", "after_build"],
+          "properties": {
+            "before_build": { "type": "string", "enum": ["confirmed", "unconfirmed", "mismatch"] },
+            "after_build": { "type": "string", "enum": ["confirmed", "unconfirmed", "mismatch"] }
+          }
+        }
+      }
+    },
+    "environment_identity": {
+      "description": "计划依据的环境身份。与内容身份分开记：环境不同也要能被看见。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["python", "platform"],
+      "properties": {
+        "python": { "type": "string", "minLength": 1 },
+        "platform": { "type": "string", "minLength": 1 },
+        "dependencies_digest": { "type": "string", "minLength": 1 }
+      }
+    },
+    "policy_identity": {
+      "description": "【2.0 新增】政策/规则身份，必须含版本。计划身份覆盖它，避免『政策换了但 plan_id 没变』。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rules_id", "policy_version"],
+      "properties": {
+        "rules_id": { "type": "string", "minLength": 1 },
+        "policy_version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "rules_id": {
+      "description": "1.1 兼容字段（2.0 里请用 policy_identity.rules_id）。",
+      "type": "string"
+    },
+    "selection_scope": { "type": "string", "enum": ["selected", "full"] },
+    "collected": { "type": "array", "items": { "$ref": "#/$defs/nodeid" } },
+    "selected": { "type": "array", "items": { "$ref": "#/$defs/nodeid" } },
+    "excluded": { "type": "array", "items": { "$ref": "#/$defs/nodeid" } },
+    "order": { "type": "array", "items": { "$ref": "#/$defs/nodeid" } },
+    "reasons": { "type": "object" },
+    "fallback": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "risk_decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["decision", "reason"],
+        "properties": {
+          "symbol": { "type": "string", "minLength": 1 },
+          "path": { "type": "string", "minLength": 1 },
+          "decision": { "type": "string", "enum": ["adopted", "ignored"] },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "supported_run_modes": {
+      "description": "【2.0 新增，**必填**】本计划支持的运行方式（如 `pytest-nodeids`）。2026-10-03 按 VG 0038/0039 needs-2 改为必填：此前它在 1.1 与 2.0 里都是**可选**，于是存在**『schema 合法但不可执行』**的文档（6/52 个样例不带它）——消费方只能拒执行并解释，判据层说不清。**注意 1.1 保持原样**（29 条摘要已 pin、VG 已逐字节 vendor，**不动**）——所以这是 2.0 相对 1.1 的一处**有意收紧**，1.1 的『缺它 = 不可执行』仍是既有行为。",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "expected_execution_identity": {
+      "description": "【2.0 新增，可选】期望的执行身份。**填了它**，R9 的『执行身份与计划不一致』那半句才可判：result.execution_identity 的 execution_id/interpreter 必须与之一致。**不填则该半句不参与判定**——那不等于『已核对通过』。",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "execution_id": { "type": "string", "minLength": 1 },
+        "interpreter": { "type": "string", "minLength": 1 }
+      }
+    },
+    "expected_environment_identity": {
+      "description": "【2.0 必填】计划**声明自己期望的执行环境**。R12 据此核对 result 的 `environment_identity`——**必填**是 VG 0034 §三 的立场并已采纳：计划本来就是『针对某个环境』做的，产出时就知道；且本文件已有一个近乎同形的 `environment_identity`，**两个都可选会让接收方分不出『没核对』与『核对通过』**。（对比：`expected_execution_identity` 保持**可选**是对的——计划时不知道执行 id；但它出现时 `interpreter` 应当必填。）",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["python", "platform"],
+      "properties": {
+        "python": { "type": "string", "minLength": 1 },
+        "platform": { "type": "string", "minLength": 1 },
+        "dependencies_digest": { "type": "string", "minLength": 1 }
+      }
+    },
+    "full_comparison": {
+      "description": "【2.0 新增】独立全量对照的绑定方式。全量对照**不是**原 selected 计划的全覆盖，必须有自己的一节说清它跑在哪个身份上。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "content_identity"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["independent-full"] },
+        "content_identity": { "$ref": "#/$defs/content_identity_ref" }
+      }
+    }
+  },
+  "$defs": {
+    "nodeid": {
+      "description": "pytest 实际收集的完整 nodeid，保留参数化后缀 `[..]`、大小写与相对路径。不能拿去参数化的排序分组键充当执行身份。",
+      "type": "string",
+      "pattern": "^.+::.+$"
+    },
+    "content_identity_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value", "manifest_digest"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["git-tree", "git-commit", "worktree-content"] },
+        "value": { "type": "string", "minLength": 7 },
+        "manifest_digest": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

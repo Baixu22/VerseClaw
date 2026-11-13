@@ -1,0 +1,107 @@
+{
+  "contract": "vg-sts",
+  "protocol_version": "2.0",
+  "product": "smart-test-sorter",
+  "product_version": "0.1.0",
+  "produced_by": "STS:TF-0040",
+  "consumer": "VG",
+  "source_commit": null,
+  "version_policy": "digests-authoritative",
+  "status": "authoritative",
+  "status_note": "**这是权威契约 2.0**（`contracts/vg-sts/v2/`）。1.1 仍是权威且**受支持**，见 `contracts/vg-sts/v1/` + 其 manifest 的 digests。schema、samples、README 和树内生成/检查脚本均由 digests 覆盖；仅 manifest.json 自身不参与摘要。",
+  "non_contract_files": {
+    "manifest.json": "无法自摘要（与 1.1 同一例外）"
+  },
+  "tools_in_tree": "check_draft.py 与 make_manifest.py **在树内且纳入 digests**（方案 (b)，按 VG 0034 §二）：这样接收方能在**消费者侧**机械复核『manifest 声明的 semantic_rules == 检查器实现的规则』——若它们在树外，那道对照接收方做不了，只剩生产方的自述。",
+  "source_note": "覆盖范围：以下方 digests 为唯一权威内容口径（40 条 = README 1 + schema 4 + valid 5 + invalid 8 + pairs 20 + **树内工具 2**）。manifest 自身不在覆盖内（无法自摘要，与 1.1 同一例外）。**树内工具也纳入摘要**（方案 (b)）：接收方要能在消费者侧机械复核『semantic_rules == 检查器实现的规则』，检查器就必须在被 pin 的字节里。摘要由 make_manifest.py 现算，不手写。",
+  "objects": [
+    "candidate_request",
+    "test_plan",
+    "execution_result",
+    "plan_refusal"
+  ],
+  "protocol_versions_supported": [
+    "2.0"
+  ],
+  "supersedes": "1.1",
+  "compatibility": {
+    "supported_protocol_versions": [
+      "2.0"
+    ],
+    "v1_1_support": "1.1 **仍然受支持**（本产品支持集合 {1.0, 1.1, 2.0}）：它不因 2.0 成为权威而失效——本目录**没有**动 `contracts/vg-sts/v1/` 的任何文件，v1 的 29 条 digests 继续有效。消费方按文档里的 `protocol_version` 选对应那棵树的 schema；**旧文档缺的新字段不得默认补成『有效』**——不支持就显式拒绝。",
+    "why_breaking": [
+      "request 新增必填 content_manifest 与 identities.content_identity/environment_identity 的结构变化",
+      "plan 新增必填 content_identity / policy_identity",
+      "result 新增必填 content_identity / execution_identity",
+      "refusal 的 refusal_code 封闭枚举 → refusal_kind 六类 + 新增必填 content_confirmed"
+    ]
+  },
+  "semantic_rules": {
+    "count": 12,
+    "implemented_by": "check_draft.py（本目录，非权威实现；VG 应自行复核同一批样例）",
+    "registered_from": "check_draft.SEMANTIC_RULES —— 本清单由 make_manifest.py 从检查器**实际实现**生成，不手写",
+    "list": [
+      "R1-protocol-is-2.0",
+      "R2-label-is-not-identity",
+      "R3-manifest-covers-config-and-data",
+      "R4-digest-carries-algorithm",
+      "R5-exclusion-policy-is-versioned",
+      "R6-full-only-when-content-confirmed",
+      "R7-unconfirmed-must-be-listed",
+      "R8-plan-carries-its-own-identity",
+      "R9-invalid-or-unconfirmed-cannot-be-valid",
+      "R10-order-is-permutation-of-selected",
+      "R11-cross-document-binding",
+      "R12-environment-identity-must-match-plan"
+    ]
+  },
+  "digests": {
+    "algorithm": "sha256",
+    "README.md": "sha256:b8cdfa7cf67c8826d4756f35a8e3eb14de851456144090ceed0f8f31db371f6c",
+    "schema/candidate_request.schema.json": "sha256:b3059abc6c263a16896a11247404e52a4779648ee3c3585e8dc2e0436519c05a",
+    "schema/execution_result.schema.json": "sha256:864a5d008fbc5f34d8386ef8364b9ac176c69f28379c017db6c84463651fc65e",
+    "schema/plan_refusal.schema.json": "sha256:a7ded329a35381632aa773f8aea65d63761b1f1b2ea0a9ced9853b72088777e0",
+    "schema/test_plan.schema.json": "sha256:ec30080bce693ac274e28ec322c288c175d76f152ed26db0fe3f6523b1cbd13b",
+    "samples/invalid/plan_order_not_permutation_of_selected.json": "sha256:f5e7b53fae9be16c4e211c9c9920c4ca64fd72d173b44101afeebeadbb53a589",
+    "samples/invalid/refusal_full_available_without_content.json": "sha256:25df6649d9913db08ac524b255441c045be0e72cbf8e6c42a8189f8391b35ddf",
+    "samples/invalid/request_bare_short_content_value.json": "sha256:ad736be83a9e4c49ac40894cecf816a5320e0591e72a3fe49389f6d6b35b5d07",
+    "samples/invalid/request_digest_without_algorithm.json": "sha256:efaa38543ed1beed84943ecfcd5183535e3b66ed2d479fa8f7c4b71155f728e8",
+    "samples/invalid/request_manifest_declares_absent_but_has_config.json": "sha256:d0dc2903b770d9becedf387530f4a428c3065d39eb6c4bc7398a7e0235329a4b",
+    "samples/invalid/request_manifest_only_source_entry.json": "sha256:79e48b8d81477b701ba508285dc8927ab8c9c6b607657ac54c9a8873493e22a8",
+    "samples/invalid/request_unknown_field.json": "sha256:84a97306f92b1038fc15e5891c21e6540a3d1433bccddbabbb77d45446e77546",
+    "samples/invalid/result_execution_end_unconfirmed_but_valid.json": "sha256:822adec7d8a667e65bd0ec0fa836a9625b5c5a819eb9ef327d9266254fee1b03",
+    "samples/pairs/invalid/dependencies_identity_drift/plan.json": "sha256:cd44f4509d41566123eee8b792fe3f7ca061ac81339dde44fd82b98a3e752438",
+    "samples/pairs/invalid/dependencies_identity_drift/request.json": "sha256:583af1efa7f373ac983891e637120bddb5ad87ba84807eb5e28d5c9cecd38191",
+    "samples/pairs/invalid/dependencies_identity_drift/result.json": "sha256:cf0255291319b46072458deb36b1c61d70f859ca026890db3249ca84f4973744",
+    "samples/pairs/invalid/environment_identity_drift/plan.json": "sha256:e58265f974ab8a335846880b3d05b8d81bfc102db09e827ee1018e557e878b9c",
+    "samples/pairs/invalid/environment_identity_drift/request.json": "sha256:a7e94acbfb822400539040cbda5d44168a50f55a4a811c80483274b15eda819e",
+    "samples/pairs/invalid/environment_identity_drift/result.json": "sha256:029ceed30ce8d223fd556440537564ab800cac4d8f123c07a58d703ce9c14d3d",
+    "samples/pairs/invalid/environment_not_reported/plan.json": "sha256:457e196c8d027f72e4d9818f51b79c5c9124fb7f53b68565d6231e5b667d2581",
+    "samples/pairs/invalid/environment_not_reported/request.json": "sha256:583af1efa7f373ac983891e637120bddb5ad87ba84807eb5e28d5c9cecd38191",
+    "samples/pairs/invalid/environment_not_reported/result.json": "sha256:7bb3cd5c1e61ee554c3100e55646ac7166b35c2e5923f54718192444c66558d1",
+    "samples/pairs/invalid/execution_identity_drift/plan.json": "sha256:02516da1435b4e4903a922fd4c40f62e70610afe11323e7f760683465e01ac60",
+    "samples/pairs/invalid/execution_identity_drift/request.json": "sha256:a7e94acbfb822400539040cbda5d44168a50f55a4a811c80483274b15eda819e",
+    "samples/pairs/invalid/execution_identity_drift/result.json": "sha256:df479fc079a83c651da196d2affc04bf1c1b5ac3008f3b909b4ee72158bab3d5",
+    "samples/pairs/invalid/same_label_different_content/plan.json": "sha256:457e196c8d027f72e4d9818f51b79c5c9124fb7f53b68565d6231e5b667d2581",
+    "samples/pairs/invalid/same_label_different_content/request.json": "sha256:3bc1adc2a25f97b3d3974a3c8d3996b88b5c40688931a9c8ece6934197a5075c",
+    "samples/pairs/invalid/same_label_different_content/result.json": "sha256:4954ef6ccae337de628b6aba0fc420d7c2d0dc2b9c20e8f120d8821ca8b03fd8",
+    "samples/pairs/invalid/same_value_different_kind/plan.json": "sha256:311a0d3d5dd8005569e3d548ecf6cbbc0069873ff964775cac44a72ec76f17b1",
+    "samples/pairs/invalid/same_value_different_kind/request.json": "sha256:a7e94acbfb822400539040cbda5d44168a50f55a4a811c80483274b15eda819e",
+    "samples/pairs/valid/matched/plan.json": "sha256:457e196c8d027f72e4d9818f51b79c5c9124fb7f53b68565d6231e5b667d2581",
+    "samples/pairs/valid/matched/request.json": "sha256:583af1efa7f373ac983891e637120bddb5ad87ba84807eb5e28d5c9cecd38191",
+    "samples/pairs/valid/matched/result.json": "sha256:99cc0f61dab36966667c847da70fe1e8a2cab829646abe0f4e68ad0e3685b27a",
+    "samples/valid/plan_with_full_content_identity.json": "sha256:4cfd312a319bb7aba732894ce6624d1309ea467175a1caf4f73f3dd906c6481f",
+    "samples/valid/refusal_content_unbound.json": "sha256:1f210e16a043aa56310dcaa3ae895e8560d8eb3bfa2655fd1bc0231e041983bc",
+    "samples/valid/request_candidate_full_content_identity.json": "sha256:f5d54119a2aa2ef2903019eb9dffb0c7d7d0cb1e420e7eb2c5f66ca94d7c944b",
+    "samples/valid/request_pure_source_no_config_data.json": "sha256:154cca784ccd109f451c5ef76ff39c414ed1da845b9bc10aefe664f519a65cb6",
+    "samples/valid/result_with_execution_identity.json": "sha256:1f58dbff2a90dc8433ff2a6968be29f5c693e936883fdafb52a5fbf5d8d0b11f",
+    "check_draft.py": "sha256:d08e08a2dc02ded6a30c64e141df08981bda9e3d9bf9e2ff0849530e587077f3",
+    "make_manifest.py": "sha256:ad642468ad672441b3c1401c22330bc9dc0e43391d0c49425e11ac296ba430fd"
+  },
+  "replay": {
+    "validate_all_samples": "python -B contracts/vg-sts/v2/check_draft.py",
+    "unit_tests": "python -m pytest tests/test_contract_v2.py -q",
+    "regenerate_digests": "python -B contracts/vg-sts/v2/make_manifest.py",
+    "check_digests": "python -B contracts/vg-sts/v2/make_manifest.py --check"
+  }
+}

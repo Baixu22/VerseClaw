@@ -10,7 +10,6 @@ import {
   runKeRetrievalShadow,
   type KeRetrievalCandidate,
 } from "../../openclaw_runtime/src/runtime-core/ke-retrieval-shadow";
-import { promoteRuntimeMemoryFactCandidate } from "../../openclaw_runtime/src/runtime-core/memory-proposal-shadow";
 import { buildRuntimeMemoryTemporalFactFixture } from "../../openclaw_runtime/src/runtime-core/memory-context";
 import { createRuntimeMemoryRuntimeIntegration } from "../../openclaw_runtime/src/runtime-core/memory-runtime-integration";
 import { closeOpenClawStateDatabaseForTest } from "../../openclaw_runtime/src/state/openclaw-state-db";
@@ -45,60 +44,25 @@ function factEvidence() {
 }
 
 describe("KE integration: full chain", () => {
-  it("① candidate -> confirm -> persist (SQLite) -> shadow retrieval hit -> receipt", () => {
-    // 1. task terminal -> candidate generation
+  it("① retired KE gates keep candidate -> propose -> persist closed", () => {
     const gen = runKeCandidateGeneration(GEN_ON, factEvidence());
     expect(gen.enabled).toBe(true);
-    expect(gen.proposalShadow.candidates.length).toBeGreaterThan(0);
-    const candidate = gen.proposalShadow.candidates[0]!;
-    expect(candidate.verificationStatus).toBe("candidate");
+    expect(gen.factCandidates.length).toBeGreaterThan(0);
+    expect(gen.proposalShadow.enabled).toBe(false);
+    expect(gen.proposalShadow.disabledReason).toBe("runtime_memory_flags_disabled");
+    expect(gen.proposalShadow.candidates).toHaveLength(0);
 
-    // 2. human confirm -> promotion (candidate -> human_approved fact)
-    const fact = promoteRuntimeMemoryFactCandidate(candidate, {
-      acceptedAt: 1000,
-      approvedBy: "operator",
-      evidenceRefs: candidate.evidenceRefs,
-    });
-    expect(fact.verificationStatus).toBe("human_approved");
-    expect(fact.promotion.promotedBy).toBe("human");
-
-    // 3. persist -> real SQLite (runtime_memory facts)
     const integration = createRuntimeMemoryRuntimeIntegration({
       config: { runtime: { memory: { persist: true } } },
       database: { path: createTempDbPath() },
       now: () => 1000,
     });
-    expect(integration.migrate()).toMatchObject({ status: "migrated" });
-    expect(integration.appendFact(fact)).toMatchObject({ status: "persisted", stored: true });
-
-    // 4. re-read the persisted fact (external re-read, not self-report)
-    const loaded = integration.loadStore();
-    expect(loaded.status).toBe("loaded");
-    const persisted = loaded.store.getFactById(fact.factId);
-    expect(persisted).toBeDefined();
-    expect(persisted!.verificationStatus).toBe("human_approved");
-
-    // 5. next task -> shadow retrieval would_retrieve hits the persisted fact -> receipt
-    const retrievalCandidate: KeRetrievalCandidate = {
-      envelopeId: fact.factId,
-      contentVersion: `sha256:${fact.factId}`,
-      text: `${fact.subject} ${fact.predicate} ${fact.objectSummary}`,
-      tags: [],
-      capturedAt: fact.acceptedAt,
-      quality: { criticality: "high", pinned: false },
-    };
-    const retr = runKeRetrievalShadow(
-      RETR_ON,
-      "dark mode",
-      [retrievalCandidate],
-      { taskId: "task_2", taskType: "codegen", configDigest: "sha256:cfg", contextTags: [] },
-      3,
-    );
-    expect(retr.enabled).toBe(true);
-    expect(retr.wouldRetrieve.length).toBeGreaterThan(0);
-    expect(retr.wouldRetrieve[0]!.envelopeId).toBe(fact.factId);
-    expect(retr.receipt).not.toBeNull();
-    expect(retr.receipt!.kind).toBe("shadow_context");
+    expect(integration.migrate()).toMatchObject({ status: "skipped" });
+    expect(integration.appendFact(buildRuntimeMemoryTemporalFactFixture())).toMatchObject({
+      status: "skipped",
+      reason: "flag_disabled",
+    });
+    expect(integration.loadStore().status).toBe("skipped");
   });
 
   it("② flag off: zero candidates, zero writes, zero retrieval, census ok, prompt untouched", () => {

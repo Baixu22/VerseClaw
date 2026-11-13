@@ -1,0 +1,42 @@
+{
+  "schema": "ClawXCodingEvaluationAcceptance/v2",
+  "node": "TF-0777",
+  "driven_by": "agent",
+  "actor": "codex-01a1b68a",
+  "realHumanEvidence": false,
+  "clawxSourceCommit": "abaa5f79d3daaf107324c90f42028945db8c94d3",
+  "clawxSourceTree": "3cc794aad485bd21be09244edaafe410fb51481b",
+  "verseshellCommit": "c06f406e83566bb968448222d9c8caf429e580a0",
+  "verseshellSha256": "3ed2174fee9b9d38ac34334211d9fd3187bc3b9a1e146a7db05eee64e9fd93f2",
+  "vgSha256": "6fef0fab309702fafdcc716c0f8518257440efafd0a46809930fe33be865c2b4",
+  "stsCommit": "d9c38a8659274c24ea776b56480a260831b4537f",
+  "stsTree": "0d2d50c1175dca6d245d77fe53416771737f5791",
+  "interpreterSha256": "272448c5844564aa5bebc8d8dd0065f859b9fba9f499996eec2a1cf17496f250",
+  "reportDigest": "948fd05f3966c74ed0120046cdd9b42ea393ac630d94a8239465e678bc04ee45",
+  "reportFileSha256": "948fd05f3966c74ed0120046cdd9b42ea393ac630d94a8239465e678bc04ee45",
+  "cases": 17,
+  "passed": 17,
+  "processCases": 3,
+  "commands": 10,
+  "checks": {
+    "verificationOk": true,
+    "acceptanceEligible": true,
+    "negativeChecksRejected": 7,
+    "cleanupStatus": "clean",
+    "processSurvivors": 0,
+    "managerProcessSurvivors": 0,
+    "harnessSpec": true,
+    "commsReplay": true,
+    "commsCompare": true,
+    "typecheck": {
+      "node": 0,
+      "web": 0,
+      "test": 0
+    }
+  },
+  "limitations": [
+    "pinned native Ae and STS source are external to the ClawX commit; their digests are retained",
+    "actual product default remains unchanged"
+  ],
+  "finishedAt": "2026-11-09T13:36:01.081Z"
+}

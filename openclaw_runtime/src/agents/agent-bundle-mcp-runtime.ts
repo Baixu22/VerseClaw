@@ -868,7 +868,7 @@ export function createSessionMcpRuntime(params: {
               });
             }
           } catch (error) {
-            await retireRejectedHttpSession(serverName, session, error);
+            retireRejectedHttpSession(serverName, session, error);
             const message = redactErrorUrls(error);
             if (!disposed) {
               const action = reusedSession ? "refresh" : "start";

@@ -21,6 +21,7 @@ import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } fr
 import { join, relative } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { performance } from 'node:perf_hooks';
+import { isMainEntrypoint } from './lib/entrypoint.mjs';
 
 const REPO = process.cwd();
 const EVIDENCE = join(REPO, 'harness/specs/fixtures/context-folding-rlm/eval');
@@ -331,7 +332,7 @@ async function main() {
   }
 }
 
-if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
+if (isMainEntrypoint(import.meta.url)) {
   main().catch((error) => {
     console.error(error instanceof Error ? error.stack : String(error));
     process.exitCode = 1;

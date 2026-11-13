@@ -173,10 +173,12 @@ function readArg(name) {
 
 if (isMainEntrypoint(import.meta.url)) {
   try {
+    const explicitRoot = readArg('--root');
+    const capturedRoot = explicitRoot ? null : process.env.CLAWX_RELEASE_BASELINE_OUT;
     const result = validateReleaseBaseline({
-      root: readArg('--root') || repositoryRoot,
-      manifestPath: readArg('--manifest'),
-      evidencePath: readArg('--evidence'),
+      root: explicitRoot || repositoryRoot,
+      manifestPath: readArg('--manifest') || (capturedRoot ? join(capturedRoot, 'release-source-manifest.json') : undefined),
+      evidencePath: readArg('--evidence') || (capturedRoot ? join(capturedRoot, 'release-gate-evidence.json') : undefined),
       gatesPath: readArg('--gates'),
       workflowPath: readArg('--workflow'),
       version: readArg('--version'),
