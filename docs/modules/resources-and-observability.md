@@ -430,3 +430,6 @@ pnpm runtime:memory:inspect
 实际脚本名以根 `package.json` 为准；不存在或需要 provider/凭据的命令必须明确报告，而不是临时拼一个替代步骤。
 
 延伸阅读：[运行时控制平面](../dev/runtime-control-planes.md)、[Windows 运行时效率观测](../dev/windows-runtime-efficiency-observability.md)、[资源调度规划](../dev/resource-scheduling-plan-20261018.md)。
+
+
+ACP 恢复沿现有 `acp_sessions` 记录持久预算、运行时身份和输出边界。原请求的 fresh handle 与 backend fallback 共用准入，控制器重建保留消耗；进入 turn 后的未知结果保持对账。身份 ACK 校验 Session 和准确预算快照，提交后丢失 ACK 的尝试仍保留预算并释放自己的 claim。验证入口为 `node scripts/recovery-acp-process-proof.mjs --out <fresh-dir>`，使用真实 PID 与原 SQLite 所有者。

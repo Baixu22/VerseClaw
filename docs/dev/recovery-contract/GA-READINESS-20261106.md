@@ -24,6 +24,10 @@
 
 进程验证命令：
 
+ACP 在统一模式下将原请求、运行时身份、输出边界和预算存入现有 `acp_sessions` 行。每个 backend 原有的两次尝试形成该请求的持久上限；控制器重建或 fallback 配置变化不重置预算。实际 turn 调用前记录 unknown，公开文本和工具事件发送前完成边界写入。fresh handle 与 backend fallback 经过同一准入，只有 Core 确知尚未进入 turn 时继续；未知效果保留对账，确认终态拒绝重发。身份回写校验原 Session 与准入，预算写入 ACK 丢失也保留已消耗尝试。
+
+`node scripts/recovery-acp-process-proof.mjs --out <fresh-output-directory>` 使用原 ACP/Session SQLite 与实际 PID 中断，检查派发前恢复、并发请求、应用后重复请求及未知效果保留。
+
 最终投递沿用 `delivery_queue_entries` 的原 intent。队列原子提交恢复决定、已消耗尝试与 owner 身份，并保存 Session 待答复的准确引用；发送前绑定 intent，确认应用后先结算或确认替换该引用，再删除队列行。Session 仍引用同一 intent 但身份不匹配时，保留 applied 队列记录。后来产生的答复由 Session 代次、生产运行、文本、创建时间、路由与 intent 校验保护。
 
 未知或部分发送保留文本与 intent；渠道 owner 确认未发送后，仍按原五次上限与退避执行。已经应用的发送只结算，效果未知时预算耗尽也保留对账状态。切回 legacy 后保留这些已存入队列的统一恢复记录；新 legacy 发送继续沿原路径处理。

@@ -13,6 +13,17 @@ the consumed attempt before dispatch. A failed attempt counts too. An unacknowle
 admission is uncertain; it cannot be reclassified as an unstarted effect merely
 because the client saw an error or no visible output.
 
+ACP records its current request, runtime identity, output boundary and consumed
+attempts in the existing acp_sessions row. The original two-attempt-per-backend
+plan supplies one persisted ceiling for that request; recreating a controller or
+changing a fallback plan cannot reset it. Runtime entry records unknown before
+calling either turn API. Output is journaled before publication. Only Core-proven
+pre-turn failures retain not_applied truth and can admit a fresh handle or backend.
+Fresh-handle and failover paths share the same admission. Identity acknowledgements
+check the Session generation and exact journal again; applied requests settle and
+unknown outcomes remain pending after mode rollback. A committed owner write with
+a lost acknowledgement retains its consumed attempt and releases only that claim.
+
 All gated entry points call the same RecoveryAuthority. Existing journals and
 durable queues supply effect truth. Unknown outcomes reconcile; already applied
 or reconciled effects settle without replay or another delivery. Receipts,

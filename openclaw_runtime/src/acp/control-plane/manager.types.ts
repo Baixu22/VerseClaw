@@ -16,6 +16,7 @@ import type {
 } from "../../config/sessions/types.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import type { AcpRuntimeError } from "../../runtime/errors.ts";
+import type { ManagerTurnRecoveryState } from "./manager.recovery-admission.js";
 import { getAcpRuntimeBackend, requireAcpRuntimeBackend } from "../../runtime/registry.ts";
 import {
   listAcpSessionEntries,
@@ -162,6 +163,7 @@ export type WriteManagerSessionMeta = (params: {
     entry: SessionEntry | undefined,
   ) => SessionAcpMeta | null | undefined;
   failOnError?: boolean;
+  expectedSessionId?: string;
   skipMaintenance?: boolean;
   takeCacheOwnership?: boolean;
 }) => Promise<SessionEntry | null>;
@@ -175,6 +177,7 @@ export type EnsureManagerRuntimeHandle = (params: {
   cfg: OpenClawConfig;
   sessionKey: string;
   meta: SessionAcpMeta;
+  expectedRecovery?: ManagerTurnRecoveryState;
 }) => Promise<{ runtime: AcpRuntime; handle: AcpRuntimeHandle; meta: SessionAcpMeta }>;
 
 export type ReconcileManagerRuntimeSessionIdentifiers = (params: {
@@ -185,6 +188,7 @@ export type ReconcileManagerRuntimeSessionIdentifiers = (params: {
   meta: SessionAcpMeta;
   runtimeStatus?: AcpRuntimeStatus;
   failOnStatusError: boolean;
+  expectedRecovery?: ManagerTurnRecoveryState;
 }) => Promise<{
   handle: AcpRuntimeHandle;
   meta: SessionAcpMeta;

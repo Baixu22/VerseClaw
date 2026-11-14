@@ -55,6 +55,11 @@ touchedAreas:
   - openclaw_runtime/src/agents/agent-command.ts
   - openclaw_runtime/src/channels/message/send.ts
   - openclaw_runtime/src/acp/control-plane/manager.runtime-resume-state.ts
+  - openclaw_runtime/src/acp/control-plane/manager.recovery-admission.ts
+  - openclaw_runtime/src/acp/control-plane/manager.core.ts
+  - openclaw_runtime/src/acp/control-plane/manager.runtime-handle-ensure.ts
+  - openclaw_runtime/src/acp/control-plane/manager.identity-reconcile.ts
+  - openclaw_runtime/src/acp/runtime/session-meta.ts
   - openclaw_runtime/src/acp/control-plane/manager.turn-runner.ts
   - openclaw_runtime/src/acp/control-plane/manager.types.ts
   - openclaw_runtime/src/acp/control-plane/manager*.test.ts
@@ -71,6 +76,9 @@ touchedAreas:
   - openclaw_runtime/src/infra/outbound/**
   - openclaw_runtime/src/infra/delivery-queue-sqlite.ts
   - openclaw_runtime/src/state/openclaw-state-db.ts
+  - openclaw_runtime/src/state/openclaw-state-db.generated.d.ts
+  - openclaw_runtime/src/state/openclaw-state-schema.sql
+  - openclaw_runtime/src/state/openclaw-state-schema.generated.ts
   - openclaw_runtime/src/state/openclaw-state-db.delivery-backfill.test.ts
   - tests/unit/recovery-authority*.test.ts
   - tests/unit/session-lifecycle-generation-barrier.test.ts
@@ -78,6 +86,7 @@ touchedAreas:
   - scripts/recovery*.mjs
   - scripts/recovery-owner-process-proof-child.mts
   - scripts/recovery-delivery-process-proof-child.mts
+  - scripts/recovery-acp-process-proof-child.mts
   - docs/modules/resources-and-observability.md
   - docs/dev/recovery-contract/**
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/**
@@ -105,6 +114,8 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - openclaw_runtime/src/acp/control-plane/manager.recovery.flow.test.ts
+  - node scripts/recovery-acp-process-proof.mjs
   - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.recovery-admission.test.ts
   - openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts
   - node scripts/recovery-owner-process-proof.mjs

@@ -17,6 +17,11 @@ import { logVerbose } from "../../globals.js";
 import { withAcpRuntimeErrorBoundary } from "../../runtime/errors.ts";
 import type { SessionAcpMeta, SessionEntry } from "./manager.types.js";
 import { hasLegacyAcpIdentityProjection } from "./manager.utils.js";
+import {
+  matchesManagerTurnRecovery,
+  rebindManagerTurnRecoveryIdentity,
+  type ManagerTurnRecoveryState,
+} from "./manager.recovery-admission.js";
 
 /** Reconciles runtime-reported session identifiers into persisted ACP session metadata. */
 export async function reconcileManagerRuntimeSessionIdentifiers(params: {
@@ -27,6 +32,7 @@ export async function reconcileManagerRuntimeSessionIdentifiers(params: {
   meta: SessionAcpMeta;
   runtimeStatus?: AcpRuntimeStatus;
   failOnStatusError: boolean;
+  expectedRecovery?: ManagerTurnRecoveryState;
   setCachedHandle: (sessionKey: string, handle: AcpRuntimeHandle) => void;
   writeSessionMeta: (params: {
     cfg: OpenClawConfig;
@@ -36,6 +42,7 @@ export async function reconcileManagerRuntimeSessionIdentifiers(params: {
       entry: SessionEntry | undefined,
     ) => SessionAcpMeta | null | undefined;
     failOnError?: boolean;
+    expectedSessionId?: string;
   }) => Promise<SessionEntry | null>;
 }): Promise<{
   handle: AcpRuntimeHandle;
@@ -104,9 +111,6 @@ export async function reconcileManagerRuntimeSessionIdentifiers(params: {
           : {}),
       }
     : params.handle;
-  if (handleChanged) {
-    params.setCachedHandle(params.sessionKey, nextHandle);
-  }
 
   const metaChanged =
     !identityEquals(currentIdentity, nextIdentity) || hasLegacyAcpIdentityProjection(params.meta);
@@ -143,10 +147,24 @@ export async function reconcileManagerRuntimeSessionIdentifiers(params: {
         `acpxRecordId ${currentAcpxRecordId} -> ${nextAcpxRecordId})`,
     );
   }
-  await params.writeSessionMeta({
+  let accepted = false;
+  let rebound: ManagerTurnRecoveryState | undefined;
+  const persisted = await params.writeSessionMeta({
     cfg: params.cfg,
     sessionKey: params.sessionKey,
+    expectedSessionId: params.expectedRecovery?.sessionId,
+    failOnError: Boolean(params.expectedRecovery),
     mutate: (current, entry) => {
+      if (
+        params.expectedRecovery &&
+        !matchesManagerTurnRecovery({
+          sessionKey: params.sessionKey,
+          sessionId: entry?.sessionId,
+          meta: current,
+          expected: params.expectedRecovery,
+        })
+      )
+        return undefined;
       if (!entry) {
         return null;
       }
@@ -154,6 +172,13 @@ export async function reconcileManagerRuntimeSessionIdentifiers(params: {
       if (!base) {
         return null;
       }
+      accepted = true;
+      if (params.expectedRecovery)
+        rebound = rebindManagerTurnRecoveryIdentity(
+          params.sessionKey,
+          params.expectedRecovery,
+          nextMeta,
+        );
       return {
         backend: base.backend,
         agent: base.agent,
@@ -168,6 +193,10 @@ export async function reconcileManagerRuntimeSessionIdentifiers(params: {
       };
     },
   });
+  if (params.expectedRecovery && (!accepted || !persisted))
+    return { handle: params.handle, meta: params.meta, runtimeStatus };
+  if (params.expectedRecovery && rebound) Object.assign(params.expectedRecovery, rebound);
+  if (handleChanged) params.setCachedHandle(params.sessionKey, nextHandle);
   return {
     handle: nextHandle,
     meta: nextMeta,

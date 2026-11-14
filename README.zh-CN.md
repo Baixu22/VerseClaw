@@ -259,3 +259,5 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw) 与 ValueCell
 已完成恢复拒绝再次使用原准入身份启动。未结束命令的模型 fallback 保留同一准入，由整条命令在尝试与持久化收尾完成后提交终态。
 
 最终投递在统一恢复模式下将 Session 待答复绑定到原有 durable send intent。队列先提交决定和已消耗尝试，再执行发送；未知结果保留对账，已确认发送只结算。清理答复时核对生产运行、Session 代次、文本与 intent，保留原有五次上限和退避规则。队列写入失败时停止发送；对账领取并释放原 owner，不消耗发送尝试。
+
+ACP 在统一恢复模式下将原请求、运行时身份、输出边界和已消耗尝试存入现有 ACP 行。fresh handle 与 backend fallback 使用同一准入，控制器重建后仍沿用原有每 backend 两次尝试的上限。Core 确知尚未进入 turn 时才允许继续；未知结果保留对账，已完成请求直接结算。

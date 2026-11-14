@@ -1,6 +1,6 @@
 /** Recovery helpers for stale ACP persistent session ids and early runtime exits. */
 import { resolveSessionIdentityFromMeta } from "@openclaw/acp-core/runtime/session-identity";
-import type { AcpRuntime } from "@openclaw/acp-core/runtime/types";
+import type { AcpRuntime, AcpRuntimeHandle } from "@openclaw/acp-core/runtime/types";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { logVerbose } from "../../globals.js";
 import { formatErrorMessage } from "../../infra/errors.js";
@@ -11,6 +11,14 @@ import type {
   SessionAcpMeta,
   WriteManagerSessionMeta,
 } from "./manager.types.js";
+import {
+  admitManagerTurnRecovery,
+  isCurrentManagerTurnRecovery,
+  managerRuntimeIdentity,
+  markManagerTurnRecovery,
+  matchesManagerTurnRecovery,
+  type ManagerTurnRecovery,
+} from "./manager.recovery-admission.js";
 
 /** Detects acpx exits that are safe to retry with a fresh runtime handle. */
 export function isRecoverableManagerAcpxExitError(message: string): boolean {
@@ -34,14 +42,36 @@ export async function prepareFreshManagerRuntimeHandleRetry(params: {
   sawTurnOutput: boolean;
   runtime?: AcpRuntime;
   meta?: SessionAcpMeta;
+  handle?: AcpRuntimeHandle;
+  recovery?: ManagerTurnRecovery;
   runtimeHandles: ManagerRuntimeHandleCache;
   writeSessionMeta: WriteManagerSessionMeta;
 }): Promise<boolean> {
-  if (params.attempt > 0 || params.sawTurnOutput) {
+  if (params.attempt > 0 || (!params.recovery && params.sawTurnOutput)) {
     return false;
   }
+  const eligible =
+    isRecoverableManagerAcpxExitError(params.error.message) ||
+    Boolean(
+      params.runtime &&
+      params.meta?.mode === "persistent" &&
+      isRecoverableMissingManagerPersistentSessionError(params.error.message),
+    );
+  if (!eligible || (params.recovery && !(await admitManagerTurnRecovery(params.recovery))))
+    return false;
+  const ownedHandle = params.handle ?? params.runtimeHandles.get(params.sessionKey)?.handle;
+  const clearHandle = () => {
+    if (params.recovery) {
+      if (ownedHandle)
+        params.runtimeHandles.clearIfHandleMatches({
+          sessionKey: params.sessionKey,
+          handle: ownedHandle,
+        });
+    } else params.runtimeHandles.clear(params.sessionKey);
+  };
   if (isRecoverableManagerAcpxExitError(params.error.message)) {
-    params.runtimeHandles.clear(params.sessionKey);
+    if (params.recovery && !isCurrentManagerTurnRecovery(params.recovery)) return false;
+    clearHandle();
     logVerbose(
       `acp-manager: retrying ${params.sessionKey} with a fresh runtime handle after early turn failure: ${params.error.message}`,
     );
@@ -59,10 +89,13 @@ export async function prepareFreshManagerRuntimeHandleRetry(params: {
     cfg: params.cfg,
     sessionKey: params.sessionKey,
     writeSessionMeta: params.writeSessionMeta,
+    expectedMeta: params.meta,
+    recovery: params.recovery,
   });
   if (!cleared) {
     return false;
   }
+  if (params.recovery) await markManagerTurnRecovery(params.recovery, {}, cleared);
   if (params.runtime.prepareFreshSession) {
     try {
       await params.runtime.prepareFreshSession({
@@ -75,7 +108,8 @@ export async function prepareFreshManagerRuntimeHandleRetry(params: {
       return false;
     }
   }
-  params.runtimeHandles.clear(params.sessionKey);
+  if (params.recovery && !isCurrentManagerTurnRecovery(params.recovery)) return false;
+  clearHandle();
   logVerbose(
     `acp-manager: retrying ${params.sessionKey} with a fresh persistent session after missing backend resume target: ${params.error.message}`,
   );
@@ -86,12 +120,33 @@ async function clearPersistedRuntimeResumeState(params: {
   cfg: OpenClawConfig;
   sessionKey: string;
   writeSessionMeta: WriteManagerSessionMeta;
-}): Promise<boolean> {
+  expectedMeta?: SessionAcpMeta;
+  recovery?: ManagerTurnRecovery;
+}): Promise<SessionAcpMeta | undefined> {
   const now = Date.now();
+  let cleared = false;
   const updated = await params.writeSessionMeta({
     cfg: params.cfg,
     sessionKey: params.sessionKey,
+    failOnError: Boolean(params.recovery),
+    expectedSessionId: params.recovery?.state.sessionId,
     mutate: (current, entry) => {
+      if (
+        params.recovery &&
+        !matchesManagerTurnRecovery({
+          sessionKey: params.sessionKey,
+          sessionId: entry?.sessionId,
+          meta: current,
+          expected: params.recovery.state,
+        })
+      )
+        return undefined;
+      if (
+        params.expectedMeta &&
+        current &&
+        managerRuntimeIdentity(current) !== managerRuntimeIdentity(params.expectedMeta)
+      )
+        return undefined;
       if (!entry) {
         return null;
       }
@@ -99,6 +154,7 @@ async function clearPersistedRuntimeResumeState(params: {
       if (!base) {
         return null;
       }
+      cleared = true;
       const currentIdentity = resolveSessionIdentityFromMeta(base);
       if (!currentIdentity?.acpxSessionId && !currentIdentity?.agentSessionId) {
         return base;
@@ -123,13 +179,13 @@ async function clearPersistedRuntimeResumeState(params: {
       };
     },
   });
-  if (!updated) {
+  if (!updated || !cleared) {
     logVerbose(
       `acp-manager: unable to clear persisted runtime resume state for ${params.sessionKey}`,
     );
-    return false;
+    return undefined;
   }
-  return true;
+  return updated.acp;
 }
 
 /** Clears persisted runtime resume identifiers while preserving the manager session shell. */

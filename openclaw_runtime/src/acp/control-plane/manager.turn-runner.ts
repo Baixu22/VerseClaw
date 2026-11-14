@@ -19,6 +19,14 @@ import {
   resolveBackgroundTaskTerminalResult,
 } from "./manager.background-task.js";
 import type { ManagerRuntimeHandleCache } from "./manager.runtime-handle-cache.js";
+import {
+  admitManagerTurnRecovery,
+  beginManagerTurnRecovery,
+  isCurrentManagerTurnRecovery,
+  markManagerTurnRecovery,
+  releaseManagerTurnRecovery,
+  type ManagerTurnRecovery,
+} from "./manager.recovery-admission.js";
 import { prepareFreshManagerRuntimeHandleRetry } from "./manager.runtime-resume-state.js";
 import { consumeAcpTurnStream } from "./manager.turn-stream.js";
 import {
@@ -79,9 +87,7 @@ export async function runManagerTurn(params: {
           text: input.text,
         })
       : null;
-  if (taskContext) {
-    createBackgroundTaskRecord(taskContext, turnStartedAt);
-  }
+  let recovery: ManagerTurnRecovery | undefined;
   let taskProgressSummary = "";
   const initialResolution = params.resolveSession({
     cfg: input.cfg,
@@ -94,6 +100,24 @@ export async function runManagerTurn(params: {
     fallbackBackends: input.cfg.acp?.fallbacks,
   });
   const backendAttempts: BackendAttempt[] = [];
+  const started = await beginManagerTurnRecovery({
+    cfg: input.cfg,
+    sessionKey,
+    requestId: input.requestId,
+    text: input.text,
+    attachments: input.attachments,
+    mode: input.mode,
+    meta: initialMeta,
+    maxAttempts: candidateBackends.length * 2,
+    deps: params.deps,
+    writeSessionMeta: params.writeSessionMeta,
+  });
+  recovery = started.context;
+  if (started.settled) {
+    await input.onEvent?.({ type: "done", stopReason: "already-completed" });
+    return;
+  }
+  if (taskContext) createBackgroundTaskRecord(taskContext, turnStartedAt);
   const recordBackendFailure = async (error: AcpRuntimeError) => {
     const failedBackends = backendAttempts
       .map((attempt) => `${attempt.backend}: ${attempt.error}`)
@@ -120,12 +144,18 @@ export async function runManagerTurn(params: {
         terminalSummary: null,
       });
     }
-    await params.setSessionState({
-      cfg: input.cfg,
-      sessionKey,
-      state: "error",
-      lastError: formatAcpErrorChain(errorToRecord),
-    });
+    if (recovery)
+      await markManagerTurnRecovery(recovery, {
+        state: "error",
+        lastError: formatAcpErrorChain(errorToRecord),
+      });
+    else
+      await params.setSessionState({
+        cfg: input.cfg,
+        sessionKey,
+        state: "error",
+        lastError: formatAcpErrorChain(errorToRecord),
+      });
     throw errorToRecord;
   };
 
@@ -141,6 +171,11 @@ export async function runManagerTurn(params: {
   try {
     for (let backendIdx = 0; backendIdx < candidateBackends.length; backendIdx += 1) {
       const currentBackend = candidateBackends[backendIdx];
+      if (recovery && !isCurrentManagerTurnRecovery(recovery))
+        throw new AcpRuntimeError(
+          "ACP_TURN_FAILED",
+          "ACP recovery runtime identity changed before dispatch.",
+        );
       if (backendIdx > 0) {
         await params.runtimeHandles.close({
           sessionKey,
@@ -172,18 +207,27 @@ export async function runManagerTurn(params: {
         let internalAbortController: AbortController | undefined;
         let onCallerAbort: (() => void) | undefined;
         let activeTurnStarted = false;
+        let backendTurnStarted = false;
+        const preTurnEffect = recovery?.state.effect;
         let sawTurnOutput = false;
         let retryFreshHandle = false;
         let skipPostTurnCleanup = false;
         try {
+          if (recovery && !isCurrentManagerTurnRecovery(recovery))
+            throw new AcpRuntimeError(
+              "ACP_TURN_FAILED",
+              "ACP recovery no longer owns this attempt.",
+            );
           const ensured = await params.ensureRuntimeHandle({
             cfg: input.cfg,
             sessionKey,
             meta: metaWithBackend,
+            expectedRecovery: recovery?.state,
           });
           runtime = ensured.runtime;
           handle = ensured.handle;
           meta = ensured.meta;
+          if (recovery) await markManagerTurnRecovery(recovery, { state: "running" }, meta);
           await params.applyRuntimeControls({
             sessionKey,
             runtime,
@@ -191,12 +235,13 @@ export async function runManagerTurn(params: {
             meta,
           });
 
-          await params.setSessionState({
-            cfg: input.cfg,
-            sessionKey,
-            state: "running",
-            clearLastError: true,
-          });
+          if (!recovery)
+            await params.setSessionState({
+              cfg: input.cfg,
+              sessionKey,
+              state: "running",
+              clearLastError: true,
+            });
 
           internalAbortController = new AbortController();
           onCallerAbort = () => {
@@ -225,6 +270,8 @@ export async function runManagerTurn(params: {
             type: "prompt_submitted",
             at: Date.now(),
           });
+          if (recovery) await markManagerTurnRecovery(recovery, { effect: "unknown" }, meta);
+          backendTurnStarted = true;
           const turnPromise = consumeAcpTurnStream({
             runtime,
             turn: {
@@ -236,8 +283,14 @@ export async function runManagerTurn(params: {
               signal: combinedSignal,
             },
             eventGate,
-            onOutputEvent: (event) => {
+            onOutputEvent: async (event) => {
               sawTurnOutput = true;
+              if (recovery)
+                await markManagerTurnRecovery(
+                  recovery,
+                  { effect: "unknown", visibleOutputObserved: true },
+                  meta,
+                );
               if (event.type === "text_delta" && event.stream !== "thought" && event.text) {
                 taskProgressSummary = appendBackgroundTaskProgressSummary(
                   taskProgressSummary,
@@ -252,7 +305,11 @@ export async function runManagerTurn(params: {
                 });
               }
             },
-            onEvent: input.onEvent,
+            onEvent: async (event) => {
+              if (recovery && event.type === "done")
+                await markManagerTurnRecovery(recovery, { effect: "applied", state: "idle" }, meta);
+              await input.onEvent?.(event);
+            },
           });
           const turnTimeoutMs = resolveTurnTimeoutMs({
             cfg: input.cfg,
@@ -305,12 +362,13 @@ export async function runManagerTurn(params: {
               terminalOutcome: terminalResult.terminalOutcome,
             });
           }
-          await params.setSessionState({
-            cfg: input.cfg,
-            sessionKey,
-            state: "idle",
-            clearLastError: true,
-          });
+          if (!recovery)
+            await params.setSessionState({
+              cfg: input.cfg,
+              sessionKey,
+              state: "idle",
+              clearLastError: true,
+            });
           return;
         } catch (error) {
           const acpError = toAcpRuntimeError({
@@ -320,6 +378,19 @@ export async function runManagerTurn(params: {
               ? "ACP turn failed before completion."
               : "Could not initialize ACP session runtime.",
           });
+          if (recovery) {
+            await markManagerTurnRecovery(
+              recovery,
+              {
+                state: "error",
+                lastError: acpError.message,
+                ...(!backendTurnStarted && preTurnEffect === "not_applied"
+                  ? { effect: "not_applied" as const }
+                  : {}),
+              },
+              meta ?? metaWithBackend,
+            );
+          }
           retryFreshHandle = await prepareFreshManagerRuntimeHandleRetry({
             attempt,
             cfg: input.cfg,
@@ -328,6 +399,8 @@ export async function runManagerTurn(params: {
             sawTurnOutput,
             runtime,
             meta,
+            handle,
+            recovery,
             runtimeHandles: params.runtimeHandles,
             writeSessionMeta: params.writeSessionMeta,
           });
@@ -351,14 +424,18 @@ export async function runManagerTurn(params: {
           ) {
             await recordBackendFailure(acpError);
           }
+          if (recovery && !(await admitManagerTurnRecovery(recovery)))
+            await recordBackendFailure(acpError);
           break;
         } finally {
+          if (recovery && !retryFreshHandle) releaseManagerTurnRecovery(recovery);
           if (input.signal && onCallerAbort) {
             input.signal.removeEventListener("abort", onCallerAbort);
           }
           if (activeTurn && params.activeTurnBySession.get(actorKey) === activeTurn) {
             params.activeTurnBySession.delete(actorKey);
           }
+          if (recovery && !isCurrentManagerTurnRecovery(recovery)) skipPostTurnCleanup = true;
           if (!retryFreshHandle && !skipPostTurnCleanup && runtime && handle && meta) {
             ({ handle, meta } = await params.reconcileRuntimeSessionIdentifiers({
               cfg: input.cfg,
@@ -367,7 +444,9 @@ export async function runManagerTurn(params: {
               handle,
               meta,
               failOnStatusError: false,
+              expectedRecovery: recovery?.state,
             }));
+            if (recovery && !isCurrentManagerTurnRecovery(recovery)) skipPostTurnCleanup = true;
           }
           if (
             !retryFreshHandle &&
@@ -387,7 +466,8 @@ export async function runManagerTurn(params: {
                 `acp-manager: ACP oneshot close failed for ${sessionKey}: ${String(error)}`,
               );
             } finally {
-              params.runtimeHandles.clear(sessionKey);
+              if (recovery) params.runtimeHandles.clearIfHandleMatches({ sessionKey, handle });
+              else params.runtimeHandles.clear(sessionKey);
             }
           }
         }

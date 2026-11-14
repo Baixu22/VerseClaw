@@ -12,7 +12,16 @@ import type { AcpRuntime, AcpRuntimeHandle } from "@openclaw/acp-core/runtime/ty
 import { resolveRuntimeConfigCacheKey } from "../../config/runtime-snapshot.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { logVerbose } from "../../globals.js";
-import { toAcpRuntimeError, withAcpRuntimeErrorBoundary } from "../../runtime/errors.ts";
+import {
+  AcpRuntimeError,
+  toAcpRuntimeError,
+  withAcpRuntimeErrorBoundary,
+} from "../../runtime/errors.ts";
+import {
+  matchesManagerTurnRecovery,
+  rebindManagerTurnRecoveryIdentity,
+  type ManagerTurnRecoveryState,
+} from "./manager.recovery-admission.js";
 import type { ManagerRuntimeHandleCache } from "./manager.runtime-handle-cache.js";
 import type {
   AcpSessionManagerDeps,
@@ -32,11 +41,24 @@ export async function ensureManagerRuntimeHandle(params: {
   cfg: OpenClawConfig;
   sessionKey: string;
   meta: SessionAcpMeta;
-  deps: Pick<AcpSessionManagerDeps, "requireRuntimeBackend">;
+  expectedRecovery?: ManagerTurnRecoveryState;
+  deps: Pick<AcpSessionManagerDeps, "requireRuntimeBackend" | "readSessionEntry">;
   runtimeHandles: ManagerRuntimeHandleCache;
   enforceConcurrentSessionLimit: (params: { cfg: OpenClawConfig; sessionKey: string }) => void;
   writeSessionMeta: WriteManagerSessionMeta;
 }): Promise<{ runtime: AcpRuntime; handle: AcpRuntimeHandle; meta: SessionAcpMeta }> {
+  if (params.expectedRecovery) {
+    const entry = params.deps.readSessionEntry({ cfg: params.cfg, sessionKey: params.sessionKey });
+    if (
+      !matchesManagerTurnRecovery({
+        sessionKey: params.sessionKey,
+        sessionId: entry?.entry?.sessionId,
+        meta: entry?.acp,
+        expected: params.expectedRecovery,
+      })
+    )
+      throw new AcpRuntimeError("ACP_SESSION_INIT_FAILED", "ACP runtime recovery owner changed.");
+  }
   const agent =
     normalizeText(params.meta.agent) || resolveAcpAgentFromSessionKey(params.sessionKey, "main");
   const mode = params.meta.mode;
@@ -199,16 +221,40 @@ export async function ensureManagerRuntimeHandle(params: {
     !runtimeOptionsEqual(previousMeta.runtimeOptions, nextMeta.runtimeOptions) ||
     hasLegacyAcpIdentityProjection(previousMeta);
   if (shouldPersistMeta) {
-    await params.writeSessionMeta({
+    let accepted = false;
+    let rebound: ManagerTurnRecoveryState | undefined;
+    const persisted = await params.writeSessionMeta({
       cfg: params.cfg,
       sessionKey: params.sessionKey,
-      mutate: (_current, entry) => {
+      failOnError: Boolean(params.expectedRecovery),
+      expectedSessionId: params.expectedRecovery?.sessionId,
+      mutate: (current, entry) => {
+        if (
+          params.expectedRecovery &&
+          !matchesManagerTurnRecovery({
+            sessionKey: params.sessionKey,
+            sessionId: entry?.sessionId,
+            meta: current,
+            expected: params.expectedRecovery,
+          })
+        )
+          return undefined;
         if (!entry) {
           return null;
         }
+        accepted = true;
+        if (params.expectedRecovery)
+          rebound = rebindManagerTurnRecoveryIdentity(
+            params.sessionKey,
+            params.expectedRecovery,
+            nextMeta,
+          );
         return nextMeta;
       },
     });
+    if (params.expectedRecovery && (!accepted || !persisted))
+      throw new AcpRuntimeError("ACP_SESSION_INIT_FAILED", "ACP handle acknowledgement is stale.");
+    if (params.expectedRecovery && rebound) Object.assign(params.expectedRecovery, rebound);
   }
   params.runtimeHandles.set(params.sessionKey, {
     runtime,

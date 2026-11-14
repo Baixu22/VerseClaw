@@ -537,6 +537,7 @@ CREATE TABLE IF NOT EXISTS acp_sessions (
   state TEXT NOT NULL,
   last_activity_at INTEGER NOT NULL,
   last_error TEXT,
+  recovery_json TEXT,
   updated_at INTEGER NOT NULL
 );
 
