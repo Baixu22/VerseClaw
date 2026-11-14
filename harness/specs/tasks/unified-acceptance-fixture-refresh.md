@@ -71,6 +71,7 @@ ownedPaths: &paths
   - tests/e2e/autonomy-host-readiness.spec.ts
   - tests/e2e/visual-tune.spec.ts
   - tests/e2e/fixtures/electron-executable.mjs
+  - tests/e2e/fixtures/electron-executable.ts
   - tests/e2e/fixtures/electron-process-cleanup.ts
   - tests/unit/electron-executable.test.ts
   - tests/unit/electron-process-identity.test.ts

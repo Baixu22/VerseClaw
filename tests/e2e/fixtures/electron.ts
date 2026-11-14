@@ -1,5 +1,5 @@
 import electronBinaryPath from 'electron';
-import { resolveE2EElectronExecutable } from './electron-executable.mjs';
+import { resolveE2EElectronExecutable } from './electron-executable';
 import { _electron as electron, expect, test as base, type ElectronApplication, type Locator, type Page } from '@playwright/test';
 import { access, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { appendFileSync } from 'node:fs';
@@ -407,10 +407,7 @@ async function launchVerseClawElectron(
     : {};
   const pendingLaunch = await recordElectronLaunch(userDataDir);
   const app = await electron.launch({
-    executablePath: resolveE2EElectronExecutable(options.executablePath, {
-      CLAWX_E2E_EXECUTABLE_PATH: process.env.CLAWX_E2E_EXECUTABLE_PATH,
-      CLAWX_E2E_DEFAULT_EXECUTABLE: String(electronBinaryPath),
-    }),
+    executablePath: resolveE2EElectronExecutable(String(electronBinaryPath), options.executablePath),
     args: [
       // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context.
       ...(process.platform === 'win32' ? ['--no-sandbox'] : []),

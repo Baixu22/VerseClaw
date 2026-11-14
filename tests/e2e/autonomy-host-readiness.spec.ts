@@ -1,5 +1,5 @@
 import electronBinaryPath from 'electron';
-import { resolveE2EElectronExecutable } from './fixtures/electron-executable.mjs';
+import { resolveE2EElectronExecutable } from './fixtures/electron-executable';
 import { _electron as electron, type ElectronApplication } from '@playwright/test';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
@@ -38,10 +38,7 @@ test('TF-0674 actual host probes, production close-to-tray continuation and rest
       VERSE_CLAW_PORT_CLAWX_HOST_API: String(port),
       VITE_DEV_SERVER_URL: undefined,
     }).filter((entry): entry is [string, string] => entry[1] !== undefined));
-    const app = await electron.launch({ executablePath: resolveE2EElectronExecutable(undefined, {
-      CLAWX_E2E_EXECUTABLE_PATH: process.env.CLAWX_E2E_EXECUTABLE_PATH,
-      CLAWX_E2E_DEFAULT_EXECUTABLE: String(electronBinaryPath),
-    }), args: ['--no-sandbox', `--user-data-dir=${userDataDir}`, '--disable-gpu', '--in-process-gpu', resolve('dist-electron/main/index.js')], env, timeout: 90_000 });
+    const app = await electron.launch({ executablePath: resolveE2EElectronExecutable(String(electronBinaryPath)), args: ['--no-sandbox', `--user-data-dir=${userDataDir}`, '--disable-gpu', '--in-process-gpu', resolve('dist-electron/main/index.js')], env, timeout: 90_000 });
     await recordElectronProcesses(userDataDir, await app.evaluate(({ app: electronApp }) =>
       electronApp.getAppMetrics().map(({ pid, creationTime }) => ({ pid, creationTime }))));
     await getStableWindow(app);

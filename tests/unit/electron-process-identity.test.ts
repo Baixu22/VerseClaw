@@ -10,7 +10,7 @@ import { expect, test, vi } from 'vitest';
 import * as processOwners from '../e2e/fixtures/windows-process';
 import { checkWindowsProcesses, discoverWindowsElectronProcesses } from '../e2e/fixtures/windows-process';
 import { cleanupElectronProcesses, ELECTRON_PID_LEDGER } from '../e2e/fixtures/electron-process-cleanup';
-import { resolveE2EElectronExecutable } from '../e2e/fixtures/electron-executable.mjs';
+import { resolveE2EElectronExecutable } from '../e2e/fixtures/electron-executable';
 
 test.skipIf(process.platform !== 'win32').each([false, true])(
   'cleanup reports the remaining launch markers after an aborted launch (discovery unavailable=%s)', async (unavailable) => {
@@ -132,10 +132,7 @@ test.skipIf(process.platform !== 'win32')('Electron creation time matches the na
     app.whenReady().then(() => require('node:fs').writeFileSync(${JSON.stringify(output)},
       JSON.stringify(app.getAppMetrics().find(({ pid }) => pid === process.pid))));
     setInterval(() => {}, 1000);`);
-  const electronBinaryPath = resolveE2EElectronExecutable(undefined, {
-    CLAWX_E2E_EXECUTABLE_PATH: process.env.CLAWX_E2E_EXECUTABLE_PATH,
-    CLAWX_E2E_DEFAULT_EXECUTABLE: createRequire(import.meta.url)('electron') as string,
-  });
+  const electronBinaryPath = resolveE2EElectronExecutable(String(createRequire(import.meta.url)('electron')));
   const env = { ...process.env };
   delete env.ELECTRON_RUN_AS_NODE;
   const child = spawn(electronBinaryPath, ['--no-sandbox',
