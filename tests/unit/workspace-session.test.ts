@@ -239,7 +239,7 @@ describe('workspace session helpers', () => {
     expect(hostApiMock.workspaces.update).toHaveBeenCalledWith(target.id, expect.objectContaining({ agentId: 'main', activeSessionKey: key }));
     expect(hostApiMock.workspaces.saveState.mock.invocationCallOrder[0]).toBeLessThan(hostApiMock.workspaces.update.mock.invocationCallOrder[0]);
     expect(hostApiMock.workspaces.update.mock.invocationCallOrder[0]).toBeLessThan(workspaceState.switchWorkspace.mock.invocationCallOrder[0]);
-    expect(source.sessionStates?.['agent:reviewer:old']).toEqual({ draftInput: 'unsaved source text' });
+    expect(source.sessionStates).toEqual({ 'agent:reviewer:old': { draftInput: 'unsaved source text' } });
     expect(chatState.resetSessionView).toHaveBeenCalledWith(key, { deferSessionEntry: true });
     unregister();
   });
