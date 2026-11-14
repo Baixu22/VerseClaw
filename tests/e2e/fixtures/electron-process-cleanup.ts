@@ -47,7 +47,8 @@ export async function cleanupElectronProcesses(runRoot: string, outputDir: strin
   let failure: unknown;
   let ledger: LedgerEntry[] = [];
   let owned: Awaited<ReturnType<typeof discoverWindowsElectronProcesses>> = [];
-  let pending: string[] = [];
+  let detectedPendingLaunches = 0;
+  let remainingPendingLaunches: number | null = null;
   try {
     let raw = '';
     try { raw = await readFile(join(runRoot, ELECTRON_PID_LEDGER), 'utf8'); }
@@ -59,7 +60,8 @@ export async function cleanupElectronProcesses(runRoot: string, outputDir: strin
         throw new Error('Electron process ledger entry is outside this test run');
       }
     }
-    pending = (await readdir(runRoot)).filter((name) => /^electron-launch-[\da-f-]+\.json$/.test(name));
+    const pending = (await readdir(runRoot)).filter((name) => /^electron-launch-[\da-f-]+\.json$/.test(name));
+    detectedPendingLaunches = pending.length;
     // The runner owns cleanup even when its worker aborts inside Electron spawn,
     // before Playwright returns an app and before any native identity is recorded.
     if (pending.length || !ledger.length) {
@@ -77,12 +79,16 @@ export async function cleanupElectronProcesses(runRoot: string, outputDir: strin
     if (checks.some(({ status }) => status === 'alive' || status === 'unavailable')) {
       throw new Error('Owned Electron processes survived cleanup or could not be checked');
     }
-    if (!failure) await Promise.all(pending.map((name) => unlink(join(runRoot, name))));
+    if (!failure) for (const name of pending) await unlink(join(runRoot, name));
   } catch (error) { failure = error; }
+  try {
+    remainingPendingLaunches = (await readdir(runRoot)).filter((name) => /^electron-launch-[\da-f-]+\.json$/.test(name)).length;
+    if (remainingPendingLaunches && !failure) failure = new Error('Electron launch markers remain after cleanup');
+  } catch (error) { failure ??= error; }
   await writeFile(join(outputDir, 'electron-process-cleanup.json'), JSON.stringify({
     driven_by: 'agent', actor: 'playwright-runner', runRoot, ledgerEntries: ledger.length,
     checks, processObservations, owned, remaining: checks.filter(({ status }) => status === 'alive'),
-    survivors: checks.filter(({ status }) => status === 'alive'), pendingLaunches: pending.length,
+    survivors: checks.filter(({ status }) => status === 'alive'), detectedPendingLaunches, pendingLaunches: remainingPendingLaunches,
     status: failure ? 'failed' : 'passed', ...(failure ? { error: String(failure) } : {}),
   }, null, 2));
   if (failure) throw failure;

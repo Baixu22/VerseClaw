@@ -10,6 +10,50 @@ import { expect, test, vi } from 'vitest';
 import * as processOwners from '../e2e/fixtures/windows-process';
 import { checkWindowsProcesses, discoverWindowsElectronProcesses } from '../e2e/fixtures/windows-process';
 import { cleanupElectronProcesses, ELECTRON_PID_LEDGER } from '../e2e/fixtures/electron-process-cleanup';
+import { resolveE2EElectronExecutable } from '../e2e/fixtures/electron-executable.mjs';
+
+test.skipIf(process.platform !== 'win32').each([false, true])(
+  'cleanup reports the remaining launch markers after an aborted launch (discovery unavailable=%s)', async (unavailable) => {
+    const root = await mkdtemp(join(tmpdir(), 'verse-claw-e2e-run-'));
+    const marker = join(root, 'electron-launch-1234-abcd.json');
+    const discovery = vi.spyOn(processOwners, 'discoverWindowsElectronProcesses').mockResolvedValue([]);
+    const checks = vi.spyOn(processOwners, 'checkWindowsProcesses').mockResolvedValue([]);
+    if (unavailable) discovery.mockRejectedValue(new Error('Native process census unavailable'));
+    try {
+      await writeFile(marker, JSON.stringify({ userDataDir: join(root, 'profile') }));
+      const cleanup = cleanupElectronProcesses(root, root);
+      if (unavailable) await expect(cleanup).rejects.toThrow('census unavailable');
+      else await cleanup;
+      const report = JSON.parse(await readFile(join(root, 'electron-process-cleanup.json'), 'utf8'));
+      expect(report).toMatchObject({
+        status: unavailable ? 'failed' : 'passed', detectedPendingLaunches: 1,
+        pendingLaunches: unavailable ? 1 : 0, survivors: [],
+      });
+      if (unavailable) expect(JSON.parse(await readFile(marker, 'utf8'))).toHaveProperty('userDataDir');
+      else await expect(readFile(marker)).rejects.toMatchObject({ code: 'ENOENT' });
+    } finally {
+      discovery.mockRestore(); checks.mockRestore();
+      await rm(root, { recursive: true, force: true });
+    }
+  },
+);
+
+test.skipIf(process.platform !== 'win32')('cleanup reads back markers after a partial removal failure', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'verse-claw-e2e-run-'));
+  const discovery = vi.spyOn(processOwners, 'discoverWindowsElectronProcesses').mockResolvedValue([]);
+  const checks = vi.spyOn(processOwners, 'checkWindowsProcesses').mockResolvedValue([]);
+  try {
+    await writeFile(join(root, 'electron-launch-1111.json'), JSON.stringify({ userDataDir: join(root, 'profile') }));
+    await mkdir(join(root, 'electron-launch-2222.json'));
+    await expect(cleanupElectronProcesses(root, root)).rejects.toThrow();
+    const report = JSON.parse(await readFile(join(root, 'electron-process-cleanup.json'), 'utf8'));
+    expect(report).toMatchObject({ status: 'failed', detectedPendingLaunches: 2, pendingLaunches: 1 });
+    await expect(readFile(join(root, 'electron-launch-1111.json'))).rejects.toMatchObject({ code: 'ENOENT' });
+  } finally {
+    discovery.mockRestore(); checks.mockRestore();
+    await rm(root, { recursive: true, force: true });
+  }
+});
 
 test.skipIf(process.platform !== 'win32').each(['exited', 'unavailable'] as const)(
   'cleanup rechecks an unavailable identity without repeating termination (%s)', async (nextStatus) => {
@@ -88,7 +132,10 @@ test.skipIf(process.platform !== 'win32')('Electron creation time matches the na
     app.whenReady().then(() => require('node:fs').writeFileSync(${JSON.stringify(output)},
       JSON.stringify(app.getAppMetrics().find(({ pid }) => pid === process.pid))));
     setInterval(() => {}, 1000);`);
-  const electronBinaryPath = createRequire(import.meta.url)('electron') as string;
+  const electronBinaryPath = resolveE2EElectronExecutable(undefined, {
+    CLAWX_E2E_EXECUTABLE_PATH: process.env.CLAWX_E2E_EXECUTABLE_PATH,
+    CLAWX_E2E_DEFAULT_EXECUTABLE: createRequire(import.meta.url)('electron') as string,
+  });
   const env = { ...process.env };
   delete env.ELECTRON_RUN_AS_NODE;
   const child = spawn(electronBinaryPath, ['--no-sandbox',
