@@ -1,0 +1,152 @@
+{
+  "schema": "ProjectRagChatInteractionAcceptance/v2",
+  "node": "TF-0888",
+  "programKey": "RAG-11",
+  "status": "pass",
+  "candidate": "1451682601913c1e8ed6787c707ba0ef10812906",
+  "sourceCodeCommit": "1451682601913c1e8ed6787c707ba0ef10812906",
+  "actor": "codex/project-rag-relay-01a1d9e2",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "tests": {
+    "root": {
+      "numTotalTests": 438,
+      "numPassedTests": 438,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    },
+    "runtime": {
+      "numTotalTests": 68,
+      "numPassedTests": 68,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    },
+    "electron": {
+      "expected": 5,
+      "unexpected": 0,
+      "skipped": 0,
+      "flaky": 0
+    }
+  },
+  "formalGates": {
+    "total": 19,
+    "passed": 19,
+    "failed": 0,
+    "notRun": 0
+  },
+  "review": {
+    "model": "ccs-workbuddy/deepseek-v4.1-flash",
+    "helperExitCode": 1,
+    "findings": 1,
+    "accepted": 0,
+    "rejected": 1,
+    "remainingAccepted": 0,
+    "artifact": "pinned-review.json",
+    "adjudication": "pinned-review-adjudication.json"
+  },
+  "acceptance": [
+    {
+      "criterion": 1,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "runtime-unit.json",
+        "gates.json",
+        "required-test-coverage.json",
+        "direct-electron/electron/project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads/chat-modes-receipt.json"
+      ],
+      "result": "四种知识模式与三种检索方案独立；手动查询透传所选方案。"
+    },
+    {
+      "criterion": 2,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "runtime-unit.json",
+        "gates.json",
+        "required-test-coverage.json",
+        "direct-electron/electron/project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads/chat-modes-receipt.json"
+      ],
+      "result": "Preflight 检查当前 owner pin、版本和原文范围；读取保留索引与来源字节，Used Knowledge 对照最终 DCS 收据。"
+    },
+    {
+      "criterion": 3,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "runtime-unit.json",
+        "gates.json",
+        "required-test-coverage.json",
+        "direct-electron/electron/project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads/chat-modes-receipt.json"
+      ],
+      "result": "Runtime 重验自动引用的当前 owner、确认、新鲜度、唯一精确命中、内容和冲突，最多三个片段。"
+    },
+    {
+      "criterion": 4,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "runtime-unit.json",
+        "gates.json",
+        "required-test-coverage.json",
+        "direct-electron/electron/project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads/chat-modes-receipt.json"
+      ],
+      "result": "五项 Electron 旅程完成；17 项聊天交互覆盖身份切换、取消、晚到、超时、媒体、普通排队和缺索引。"
+    },
+    {
+      "criterion": 5,
+      "status": "pass",
+      "evidence": [
+        "root-unit.json",
+        "runtime-unit.json",
+        "gates.json",
+        "required-test-coverage.json",
+        "direct-electron/electron/project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads/chat-modes-receipt.json"
+      ],
+      "result": "RAG-07 至 RAG-11 的 plannedTests、plannedE2E 和全部 requiredTests 已逐文件对照当前候选的实际结果。"
+    }
+  ],
+  "integration": {
+    "programKeys": [
+      "RAG-07",
+      "RAG-08",
+      "RAG-09",
+      "RAG-10",
+      "RAG-11"
+    ],
+    "electronFiles": [
+      "tests/e2e/project-rag-chat-modes.spec.ts",
+      "tests/e2e/project-rag-dcs-citation.spec.ts",
+      "tests/e2e/project-rag-plan-fusion.spec.ts",
+      "tests/e2e/project-rag-provider-settings.spec.ts",
+      "tests/e2e/project-rag-rerank.spec.ts"
+    ]
+  },
+  "providerEvidence": {
+    "electron": "agent-driven scripted model and local endpoint fixtures with real owner/Runtime/DCS/UI routes",
+    "realRerankAblation": {
+      "artifact": "ablation.json",
+      "model": "Qwen/Qwen3-Reranker-0.6B",
+      "caseCount": 4,
+      "costs": {
+        "elapsedMs": 524.2295000000004,
+        "inputTokens": null,
+        "providerReportsTokenUsage": false,
+        "providerMonetaryCost": null
+      }
+    }
+  },
+  "optionalReadTimeoutMs": 5961,
+  "fullTypecheck": {
+    "cache": "disabled",
+    "execution": "task-local serial node/web/test children",
+    "artifact": "typecheck-report.json"
+  },
+  "historicalFailureIndex": "failed-attempts/index.json",
+  "additionalVerification": {
+    "plainElectron": "direct-electron/receipt.json",
+    "diagnosticElectron": "diagnostic-electron/receipt.json",
+    "exitReadback": "electron-exit-readback.json",
+    "observedScreenshots": "accepted-visual-verification.json"
+  }
+}

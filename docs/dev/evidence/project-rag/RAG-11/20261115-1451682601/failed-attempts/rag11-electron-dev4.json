@@ -1,0 +1,157 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-relay-01a1d438/rag11-electron-dev4",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-chat-modes.spec.ts",
+      "file": "project-rag-chat-modes.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG chat modes retain real owner evidence and bound optional reads",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 480000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 87424,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-used-knowledge').last()\nExpected substring: \u001b[32m\"Us\u001b[7med Knowledge:\u001b[27m\"\u001b[39m\nReceived string:    \u001b[31m\"Us\u001b[7mage receipt unavailable\u001b[27m\"\u001b[39m\nTimeout: 30000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-used-knowledge').last()\u001b[22m\n\u001b[2m    - locator resolved to <div data-testid=\"chat-used-knowledge\" class=\"text-right text-tiny text-muted-foreground\">Awaiting final knowledge receipt</div>\u001b[22m\n\u001b[2m    - unexpected value \"Awaiting final knowledge receipt\"\u001b[22m\n\u001b[2m    32 × locator resolved to <div data-testid=\"chat-used-knowledge\" class=\"text-right text-tiny text-muted-foreground\">Usage receipt unavailable</div>\u001b[22m\n\u001b[2m       - unexpected value \"Usage receipt unavailable\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-used-knowledge').last()\nExpected substring: \u001b[32m\"Us\u001b[7med Knowledge:\u001b[27m\"\u001b[39m\nReceived string:    \u001b[31m\"Us\u001b[7mage receipt unavailable\u001b[27m\"\u001b[39m\nTimeout: 30000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-used-knowledge').last()\u001b[22m\n\u001b[2m    - locator resolved to <div data-testid=\"chat-used-knowledge\" class=\"text-right text-tiny text-muted-foreground\">Awaiting final knowledge receipt</div>\u001b[22m\n\u001b[2m    - unexpected value \"Awaiting final knowledge receipt\"\u001b[22m\n\u001b[2m    32 × locator resolved to <div data-testid=\"chat-used-knowledge\" class=\"text-right text-tiny text-muted-foreground\">Usage receipt unavailable</div>\u001b[22m\n\u001b[2m       - unexpected value \"Usage receipt unavailable\"\u001b[22m\n\n    at finishSend (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts:130:79)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts:143:5",
+                    "location": {
+                      "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts",
+                      "column": 79,
+                      "line": 130
+                    },
+                    "snippet": "  128 |     const finishSend = async (used = true) => {\n  129 |       await expect(page!.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'idle', { timeout: 90000 });\n> 130 |       if (used) await expect(page!.getByTestId('chat-used-knowledge').last()).toContainText('Used Knowledge:', { timeout: 30000 });\n      |                                                                               ^\n  131 |     };\n  132 |     await mode.selectOption('manual'); await attach(path); await attach('concepts/budget-guide.md');\n  133 |     await composer.fill('RAG11 manual evidence with budget drop'); await composer.press('Enter');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts",
+                        "column": 79,
+                        "line": 130
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-used-knowledge').last()\nExpected substring: \u001b[32m\"Us\u001b[7med Knowledge:\u001b[27m\"\u001b[39m\nReceived string:    \u001b[31m\"Us\u001b[7mage receipt unavailable\u001b[27m\"\u001b[39m\nTimeout: 30000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-used-knowledge').last()\u001b[22m\n\u001b[2m    - locator resolved to <div data-testid=\"chat-used-knowledge\" class=\"text-right text-tiny text-muted-foreground\">Awaiting final knowledge receipt</div>\u001b[22m\n\u001b[2m    - unexpected value \"Awaiting final knowledge receipt\"\u001b[22m\n\u001b[2m    32 × locator resolved to <div data-testid=\"chat-used-knowledge\" class=\"text-right text-tiny text-muted-foreground\">Usage receipt unavailable</div>\u001b[22m\n\u001b[2m       - unexpected value \"Usage receipt unavailable\"\u001b[22m\n\n\n  128 |     const finishSend = async (used = true) => {\n  129 |       await expect(page!.getByTestId('chat-composer-send')).toHaveAttribute('data-send-state', 'idle', { timeout: 90000 });\n> 130 |       if (used) await expect(page!.getByTestId('chat-used-knowledge').last()).toContainText('Used Knowledge:', { timeout: 30000 });\n      |                                                                               ^\n  131 |     };\n  132 |     await mode.selectOption('manual'); await attach(path); await attach('concepts/budget-guide.md');\n  133 |     await composer.fill('RAG11 manual evidence with budget drop'); await composer.press('Enter');\n    at finishSend (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts:130:79)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts:143:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-14T06:03:07.735Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d438\\rag11-electron-dev4\\project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d438\\rag11-electron-dev4\\project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d438\\rag11-electron-dev4\\project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts",
+                    "column": 79,
+                    "line": 130
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "aad9a96d802fe2d96306-a04601f1cd9d84f8b8ed",
+          "file": "project-rag-chat-modes.spec.ts",
+          "line": 17,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-14T06:03:06.406Z",
+    "duration": 90065.07500000001,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

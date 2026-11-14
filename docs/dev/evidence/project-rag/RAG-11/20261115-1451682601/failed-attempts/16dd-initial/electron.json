@@ -1,0 +1,390 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-relay-01a1d9e2/rag11-formal-16dd09e7ef/electron",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-chat-modes.spec.ts",
+      "file": "project-rag-chat-modes.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG chat modes retain real owner evidence and bound optional reads",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 480000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 43377,
+                  "error": {
+                    "message": "Error: ENOSPC: no space left on device, write",
+                    "stack": "Error: ENOSPC: no space left on device, write\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts:293:5",
+                    "location": {
+                      "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts",
+                      "column": 5,
+                      "line": 293
+                    },
+                    "snippet": "  291 |       receipt.gateway = await host(page, 'gateway', 'status').catch(error => ({ error: String(error) }));\n  292 |     }\n> 293 |     await writeFile(testInfo.outputPath('chat-modes-receipt.json'), JSON.stringify(receipt, null, 2));\n      |     ^\n  294 |     await closeElectronApp(app); await new Promise<void>(resolve => llm.server.close(() => resolve()));\n  295 |   }\n  296 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts",
+                        "column": 5,
+                        "line": 293
+                      },
+                      "message": "Error: ENOSPC: no space left on device, write\n\n  291 |       receipt.gateway = await host(page, 'gateway', 'status').catch(error => ({ error: String(error) }));\n  292 |     }\n> 293 |     await writeFile(testInfo.outputPath('chat-modes-receipt.json'), JSON.stringify(receipt, null, 2));\n      |     ^\n  294 |     await closeElectronApp(app); await new Promise<void>(resolve => llm.server.close(() => resolve()));\n  295 |   }\n  296 | });\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts:293:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-14T12:10:07.822Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron\\project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron\\project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts",
+                    "column": 5,
+                    "line": 293
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "aad9a96d802fe2d96306-a04601f1cd9d84f8b8ed",
+          "file": "project-rag-chat-modes.spec.ts",
+          "line": 17,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "project-rag-dcs-citation.spec.ts",
+      "file": "project-rag-dcs-citation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG packs real owner evidence for ordinary, media, queued, retry and model-only calls",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 420000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7110,
+                  "error": {
+                    "message": "Error: ENOSPC: no space left on device, mkdir 'D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron\\project-rag-dcs-citation-P-3f869--retry-and-model-only-calls'",
+                    "stack": "Error: ENOSPC: no space left on device, mkdir 'D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron\\project-rag-dcs-citation-P-3f869--retry-and-model-only-calls'\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts:252:30",
+                    "location": {
+                      "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts",
+                      "column": 30,
+                      "line": 252
+                    },
+                    "snippet": "  250 |   } finally {\n  251 |     releaseHeld();\n> 252 |     await writeFile(testInfo.outputPath('dcs-lifecycle-receipt.json'), JSON.stringify(receipt, null, 2));\n      |                              ^\n  253 |     await writeFile(testInfo.outputPath('provider-contexts.json'), JSON.stringify({ actor: receipt.actor,\n  254 |       driven_by: 'agent', realHumanEvidence: false, providerKind: 'scripted-local-fixture', requests: wire }, null, 2));\n  255 |     await closeElectronApp(app);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts",
+                        "column": 30,
+                        "line": 252
+                      },
+                      "message": "Error: ENOSPC: no space left on device, mkdir 'D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron\\project-rag-dcs-citation-P-3f869--retry-and-model-only-calls'\n\n  250 |   } finally {\n  251 |     releaseHeld();\n> 252 |     await writeFile(testInfo.outputPath('dcs-lifecycle-receipt.json'), JSON.stringify(receipt, null, 2));\n      |                              ^\n  253 |     await writeFile(testInfo.outputPath('provider-contexts.json'), JSON.stringify({ actor: receipt.actor,\n  254 |       driven_by: 'agent', realHumanEvidence: false, providerKind: 'scripted-local-fixture', requests: wire }, null, 2));\n  255 |     await closeElectronApp(app);\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts:252:30"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T12:10:51.894Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron\\project-rag-dcs-citation-P-3f869--retry-and-model-only-calls\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron\\project-rag-dcs-citation-P-3f869--retry-and-model-only-calls\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts",
+                    "column": 30,
+                    "line": 252
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "970e6a30af95985da5a2-6b8467773cfb093312e5",
+          "file": "project-rag-dcs-citation.spec.ts",
+          "line": 20,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "project-rag-plan-fusion.spec.ts",
+      "file": "project-rag-plan-fusion.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG fuses real local lanes, retains owner rejection and shows evidence without synthetic confidence",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6887,
+                  "error": {
+                    "message": "Error: ENOSPC: no space left on device, copyfile 'D:\\tmp\\project-rag-rag05-e2e-assets\\6fa0c02a9c302be6-embeddinggemma-300m-qat-Q8_0.gguf' -> 'D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron-runtime\\verse-claw-e2e-run-b2gzLa\\verse-claw-e2e-home-pjXT4K\\.openclaw\\models\\project-rag\\6fa0c02a9c302be6-embeddinggemma-300m-qat-Q8_0.gguf'",
+                    "stack": "Error: ENOSPC: no space left on device, copyfile 'D:\\tmp\\project-rag-rag05-e2e-assets\\6fa0c02a9c302be6-embeddinggemma-300m-qat-Q8_0.gguf' -> 'D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron-runtime\\verse-claw-e2e-run-b2gzLa\\verse-claw-e2e-home-pjXT4K\\.openclaw\\models\\project-rag\\6fa0c02a9c302be6-embeddinggemma-300m-qat-Q8_0.gguf'\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-plan-fusion.spec.ts:47:7",
+                    "location": {
+                      "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-plan-fusion.spec.ts",
+                      "column": 7,
+                      "line": 47
+                    },
+                    "snippet": "  45 |       await mkdir(join(state, 'models/project-rag'), { recursive: true });\n  46 |       await writeFile(join(state, 'openclaw.json'), JSON.stringify(config, null, 2));\n> 47 |       await copyFile(join(assets!, modelName), join(state, 'models/project-rag', modelName));\n     |       ^\n  48 |     }\n  49 |     const file = join(vault, 'concepts/source.md');\n  50 |     const raw = (revision: number, port: number, denied = false) => `---\\ntitle: Gateway deployment\\nrevision: ${revision}\\nstatus: active\\ntrust: confirmed\\nupdatedAt: \"2026-11-12T00:00:00Z\"\\nscope:\\n  workspaceId: ${owner.id}\\n${denied ? 'acl:\\n  read: [other]\\n' : ''}---\\nThe gateway deployment port is ${port}.\\n`;"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-plan-fusion.spec.ts",
+                        "column": 7,
+                        "line": 47
+                      },
+                      "message": "Error: ENOSPC: no space left on device, copyfile 'D:\\tmp\\project-rag-rag05-e2e-assets\\6fa0c02a9c302be6-embeddinggemma-300m-qat-Q8_0.gguf' -> 'D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron-runtime\\verse-claw-e2e-run-b2gzLa\\verse-claw-e2e-home-pjXT4K\\.openclaw\\models\\project-rag\\6fa0c02a9c302be6-embeddinggemma-300m-qat-Q8_0.gguf'\n\n  45 |       await mkdir(join(state, 'models/project-rag'), { recursive: true });\n  46 |       await writeFile(join(state, 'openclaw.json'), JSON.stringify(config, null, 2));\n> 47 |       await copyFile(join(assets!, modelName), join(state, 'models/project-rag', modelName));\n     |       ^\n  48 |     }\n  49 |     const file = join(vault, 'concepts/source.md');\n  50 |     const raw = (revision: number, port: number, denied = false) => `---\\ntitle: Gateway deployment\\nrevision: ${revision}\\nstatus: active\\ntrust: confirmed\\nupdatedAt: \"2026-11-12T00:00:00Z\"\\nscope:\\n  workspaceId: ${owner.id}\\n${denied ? 'acl:\\n  read: [other]\\n' : ''}---\\nThe gateway deployment port is ${port}.\\n`;\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-plan-fusion.spec.ts:47:7"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T12:10:59.659Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron\\project-rag-plan-fusion-Pr-00a0c-ithout-synthetic-confidence\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron\\project-rag-plan-fusion-Pr-00a0c-ithout-synthetic-confidence\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron\\project-rag-plan-fusion-Pr-00a0c-ithout-synthetic-confidence\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-plan-fusion.spec.ts",
+                    "column": 7,
+                    "line": 47
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e0d1aa856aa5e32c6d8b-49d8da0f4c70582271e3",
+          "file": "project-rag-plan-fusion.spec.ts",
+          "line": 19,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "project-rag-rerank.spec.ts",
+      "file": "project-rag-rerank.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG rerank settings call an admitted local endpoint and preserve RRF fallback",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 19625,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[1mMatcher error\u001b[22m: \u001b[31mreceived\u001b[39m value must be a non-null object\n\nReceived has value: \u001b[31mundefined\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[1mMatcher error\u001b[22m: \u001b[31mreceived\u001b[39m value must be a non-null object\n\nReceived has value: \u001b[31mundefined\u001b[39m\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-rerank.spec.ts:61:39",
+                    "location": {
+                      "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-rerank.spec.ts",
+                      "column": 39,
+                      "line": 61
+                    },
+                    "snippet": "  59 |     const quality: RetrieveResult = await retrieve('quality');\n  60 |     receipt.quality = quality;\n> 61 |     expect(quality.retrieval?.rerank).toMatchObject({ status: 'complete', candidateCount: 1, calibrated: false });\n     |                                       ^\n  62 |     expect(requests.some(request => request.model === 'Qwen/Qwen3-Reranker-0.6B' && request.documents.includes('The gateway deployment port is 18789.\\n'))).toBe(true);\n  63 |     const research: RetrieveResult = await retrieve('research');\n  64 |     receipt.research = research;"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-rerank.spec.ts",
+                        "column": 39,
+                        "line": 61
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[1mMatcher error\u001b[22m: \u001b[31mreceived\u001b[39m value must be a non-null object\n\nReceived has value: \u001b[31mundefined\u001b[39m\n\n  59 |     const quality: RetrieveResult = await retrieve('quality');\n  60 |     receipt.quality = quality;\n> 61 |     expect(quality.retrieval?.rerank).toMatchObject({ status: 'complete', candidateCount: 1, calibrated: false });\n     |                                       ^\n  62 |     expect(requests.some(request => request.model === 'Qwen/Qwen3-Reranker-0.6B' && request.documents.includes('The gateway deployment port is 18789.\\n'))).toBe(true);\n  63 |     const research: RetrieveResult = await retrieve('research');\n  64 |     receipt.research = research;\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-rerank.spec.ts:61:39"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T12:11:07.175Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron\\project-rag-rerank-Project-a8e00-t-and-preserve-RRF-fallback\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron\\project-rag-rerank-Project-a8e00-t-and-preserve-RRF-fallback\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron\\project-rag-rerank-Project-a8e00-t-and-preserve-RRF-fallback\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-rerank.spec.ts",
+                    "column": 39,
+                    "line": 61
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "b4d8c2d423db1e5de833-7b80a08a8d972ac5b44f",
+          "file": "project-rag-rerank.spec.ts",
+          "line": 16,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-14T12:10:06.770Z",
+    "duration": 80839.663,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  }
+}

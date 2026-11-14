@@ -1,0 +1,46 @@
+{
+  "schema": "ReviewAdjudication/v1",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "helperExitCode": 1,
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "accepted": 1,
+  "rejected": 2,
+  "remainingAccepted": 0,
+  "results": [
+    {
+      "finding": 1,
+      "title": "运行时 auto 引用绕过 AutoReadAdmission 准入条件",
+      "status": "fixed",
+      "reason": "Runtime now requires a current source pin, a unique exact message match, no owned conflict group, known owner time and at most three automatic fragments.",
+      "evidence": [
+        "openclaw_runtime/src/context-engine/chat-knowledge-intent.ts",
+        "openclaw_runtime/src/gateway/server-methods/chat.ts",
+        "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"
+      ]
+    },
+    {
+      "finding": 2,
+      "title": "运行中 Enter 排队的 auto-read 跳过发送前准入",
+      "status": "rejected",
+      "reason": "Normal Enter calls handleInterventionSend(queue), which awaits routeKnowledgeForMessage before completeSend. Electron dev5 recorded routeContext(auto-read) for the queued question and an auto_attach response; its dispatch failure came from using interface availability as long-task ownership, which is separately fixed.",
+      "evidence": [
+        "src/pages/Chat/ChatInput.tsx",
+        "tests/unit/chat-input.test.tsx",
+        "rag11-electron-dev5.json"
+      ]
+    },
+    {
+      "finding": 3,
+      "title": "suggest 请求在输入变化后未失效，旧建议可回写",
+      "status": "rejected",
+      "reason": "knowledgeIdentity includes the full normalized query; the identity effect aborts and increments the epoch. routeKnowledgeForMessage compares both epoch and identity before state writes.",
+      "evidence": [
+        "src/pages/Chat/ChatInput.tsx",
+        "tests/unit/chat-input.test.tsx",
+        "rag11-electron-dev5.json"
+      ]
+    }
+  ]
+}

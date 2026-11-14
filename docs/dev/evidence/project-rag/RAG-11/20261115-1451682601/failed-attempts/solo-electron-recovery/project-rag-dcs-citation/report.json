@@ -1,0 +1,145 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-relay-01a1d9e2/solo-electron-recovery/project-rag-dcs-citation/electron",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-dcs-citation.spec.ts",
+      "file": "project-rag-dcs-citation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG packs real owner evidence for ordinary, media, queued, retry and model-only calls",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 420000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 8254,
+                  "error": {
+                    "message": "Error: electron.launch: Process failed to launch!\nCall log:\n\u001b[2m  - <launching> \"D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\tmp\\project-rag-relay-01a1d9e2\\solo-electron-recovery\\project-rag-dcs-citation\\runtime\\verse-claw-e2e-run-OLj9cg\\verse-claw-e2e-user-data-ga93DK\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=20832\u001b[22m\n\u001b[2m  - [pid=20832][out]\u001b[22m\n\u001b[2m  - [pid=20832][err] Debugger listening on ws://127.0.0.1:55233/bfc19bcc-dede-472b-8985-551791de4431\u001b[22m\n\u001b[2m  - [pid=20832][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:55233/bfc19bcc-dede-472b-8985-551791de4431\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:55233/bfc19bcc-dede-472b-8985-551791de4431\u001b[22m\n\u001b[2m  - [pid=20832][err] Debugger attached.\u001b[22m\n\u001b[2m  - [pid=20832] <kill>\u001b[22m\n\u001b[2m  - [pid=20832] <will force kill>\u001b[22m\n\u001b[2m  - [pid=20832] <process did exit: exitCode=0, signal=null>\u001b[22m\n\u001b[2m  - [pid=20832] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - <ws disconnected> ws://127.0.0.1:55233/bfc19bcc-dede-472b-8985-551791de4431 code=1006 reason=\u001b[22m\n\u001b[2m  - [pid=20832] finished temporary directories cleanup\u001b[22m\n",
+                    "stack": "Error: electron.launch: Process failed to launch!\nCall log:\n\u001b[2m  - <launching> \"D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\tmp\\project-rag-relay-01a1d9e2\\solo-electron-recovery\\project-rag-dcs-citation\\runtime\\verse-claw-e2e-run-OLj9cg\\verse-claw-e2e-user-data-ga93DK\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=20832\u001b[22m\n\u001b[2m  - [pid=20832][out]\u001b[22m\n\u001b[2m  - [pid=20832][err] Debugger listening on ws://127.0.0.1:55233/bfc19bcc-dede-472b-8985-551791de4431\u001b[22m\n\u001b[2m  - [pid=20832][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:55233/bfc19bcc-dede-472b-8985-551791de4431\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:55233/bfc19bcc-dede-472b-8985-551791de4431\u001b[22m\n\u001b[2m  - [pid=20832][err] Debugger attached.\u001b[22m\n\u001b[2m  - [pid=20832] <kill>\u001b[22m\n\u001b[2m  - [pid=20832] <will force kill>\u001b[22m\n\u001b[2m  - [pid=20832] <process did exit: exitCode=0, signal=null>\u001b[22m\n\u001b[2m  - [pid=20832] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - <ws disconnected> ws://127.0.0.1:55233/bfc19bcc-dede-472b-8985-551791de4431 code=1006 reason=\u001b[22m\n\u001b[2m  - [pid=20832] finished temporary directories cleanup\u001b[22m\n\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts:405:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts:545:21\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts:51:15",
+                    "location": {
+                      "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts",
+                      "column": 15,
+                      "line": 405
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mfixtures\\electron.ts:405\n\n\u001b[0m \u001b[90m 403 |\u001b[39m     \u001b[33m:\u001b[39m {}\u001b[33m;\u001b[39m\n \u001b[90m 404 |\u001b[39m   \u001b[36mconst\u001b[39m pendingLaunch \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m recordElectronLaunch(userDataDir)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 405 |\u001b[39m   \u001b[36mconst\u001b[39m app \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m electron\u001b[33m.\u001b[39mlaunch({\n \u001b[90m     |\u001b[39m               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 406 |\u001b[39m     executablePath\u001b[33m:\u001b[39m options\u001b[33m.\u001b[39mexecutablePath \u001b[33m?\u001b[39m\u001b[33m?\u001b[39m \u001b[33mString\u001b[39m(electronBinaryPath)\u001b[33m,\u001b[39m\n \u001b[90m 407 |\u001b[39m     args\u001b[33m:\u001b[39m [\n \u001b[90m 408 |\u001b[39m       \u001b[90m// Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context.\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts",
+                        "column": 15,
+                        "line": 405
+                      },
+                      "message": "Error: electron.launch: Process failed to launch!\nCall log:\n\u001b[2m  - <launching> \"D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\tmp\\project-rag-relay-01a1d9e2\\solo-electron-recovery\\project-rag-dcs-citation\\runtime\\verse-claw-e2e-run-OLj9cg\\verse-claw-e2e-user-data-ga93DK\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=20832\u001b[22m\n\u001b[2m  - [pid=20832][out]\u001b[22m\n\u001b[2m  - [pid=20832][err] Debugger listening on ws://127.0.0.1:55233/bfc19bcc-dede-472b-8985-551791de4431\u001b[22m\n\u001b[2m  - [pid=20832][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:55233/bfc19bcc-dede-472b-8985-551791de4431\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:55233/bfc19bcc-dede-472b-8985-551791de4431\u001b[22m\n\u001b[2m  - [pid=20832][err] Debugger attached.\u001b[22m\n\u001b[2m  - [pid=20832] <kill>\u001b[22m\n\u001b[2m  - [pid=20832] <will force kill>\u001b[22m\n\u001b[2m  - [pid=20832] <process did exit: exitCode=0, signal=null>\u001b[22m\n\u001b[2m  - [pid=20832] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - <ws disconnected> ws://127.0.0.1:55233/bfc19bcc-dede-472b-8985-551791de4431 code=1006 reason=\u001b[22m\n\u001b[2m  - [pid=20832] finished temporary directories cleanup\u001b[22m\n\n\n   at fixtures\\electron.ts:405\n\n  403 |     : {};\n  404 |   const pendingLaunch = await recordElectronLaunch(userDataDir);\n> 405 |   const app = await electron.launch({\n      |               ^\n  406 |     executablePath: options.executablePath ?? String(electronBinaryPath),\n  407 |     args: [\n  408 |       // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context.\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts:405:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts:545:21\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts:51:15"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T15:36:43.961Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\solo-electron-recovery\\project-rag-dcs-citation\\electron\\project-rag-dcs-citation-P-3f869--retry-and-model-only-calls\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\solo-electron-recovery\\project-rag-dcs-citation\\electron\\project-rag-dcs-citation-P-3f869--retry-and-model-only-calls\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts",
+                    "column": 15,
+                    "line": 405
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "970e6a30af95985da5a2-6b8467773cfb093312e5",
+          "file": "project-rag-dcs-citation.spec.ts",
+          "line": 20,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-14T15:36:41.744Z",
+    "duration": 12913.257,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schema": "ReviewAdjudication/v1",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "helperExitCode": 1,
+  "accepted": 4,
+  "rejected": 0,
+  "remainingAccepted": 0,
+  "results": [
+    {
+      "finding": 1,
+      "title": "手动知识搜索未传入所选检索方案",
+      "status": "fixed",
+      "evidence": [
+        "shared/host-api/contract.ts",
+        "electron/services/knowledge-api.ts",
+        "src/pages/Chat/ChatInput.tsx",
+        "tests/unit/knowledge-api.test.ts"
+      ]
+    },
+    {
+      "finding": 2,
+      "title": "Auto-read 新鲜度只认 updatedAt，verifiedAt-only 来源被误拒绝",
+      "status": "fixed",
+      "evidence": [
+        "openclaw_runtime/extensions/memory-wiki/src/retrieval/plan-service.ts",
+        "tests/unit/project-rag-plan-owner.test.ts"
+      ]
+    },
+    {
+      "finding": 3,
+      "title": "无效 verifiedAt 会遮蔽有效 updatedAt",
+      "status": "fixed",
+      "evidence": [
+        "openclaw_runtime/src/context-engine/chat-knowledge-intent.ts",
+        "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"
+      ]
+    },
+    {
+      "finding": 4,
+      "title": "缺少 intentId/refId 的保留回执会把同父多个片段都计为保留",
+      "status": "fixed",
+      "evidence": [
+        "src/pages/Chat/UsedKnowledge.tsx",
+        "tests/unit/project-rag-chat-policy.test.tsx"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "schema": "ProjectRagSupplementGateReceipts/v1",
+  "actor": "codex/project-rag-relay-01a1d9e2",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "16dd09e7efbb18052ad36eefcdef7d318d6f7d6e",
+    "tree": "3b3157316dc9b6bbc0c16386ea979446d2217f3d",
+    "branch": "codex/project-rag-longterm-20261109",
+    "status": "",
+    "dirty": false
+  },
+  "startedAt": "2026-11-14T12:21:50.924711+00:00",
+  "gates": [
+    {
+      "name": "typecheck",
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 78760,
+      "log": "typecheck-serial.log",
+      "stderr": "typecheck.stderr.log",
+      "executionMode": "task-local serial node/web/test children"
+    },
+    {
+      "name": "root-required-coverage",
+      "args": [
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/project-rag-vector-service.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\supplement\\root-required-coverage.json"
+      ],
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/project-rag-vector-service.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\supplement\\root-required-coverage.json"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 0,
+      "durationMs": 14150,
+      "log": "root-required-coverage.log",
+      "stderr": "root-required-coverage.stderr.log",
+      "executionMode": "single worker"
+    },
+    {
+      "name": "electron",
+      "args": [
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/project-rag-plan-fusion.spec.ts",
+        "tests/e2e/project-rag-rerank.spec.ts",
+        "tests/e2e/project-rag-dcs-citation.spec.ts",
+        "tests/e2e/project-rag-chat-modes.spec.ts",
+        "tests/e2e/project-rag-provider-settings.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output",
+        "D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\supplement\\electron"
+      ],
+      "command": [
+        "node",
+        "C:/Users/27933/AppData/Local/pnpm/.tools/pnpm/11.2.2/node_modules/pnpm/bin/pnpm.mjs",
+        "exec",
+        "playwright",
+        "test",
+        "tests/e2e/project-rag-plan-fusion.spec.ts",
+        "tests/e2e/project-rag-rerank.spec.ts",
+        "tests/e2e/project-rag-dcs-citation.spec.ts",
+        "tests/e2e/project-rag-chat-modes.spec.ts",
+        "tests/e2e/project-rag-provider-settings.spec.ts",
+        "--workers=1",
+        "--reporter=json",
+        "--output",
+        "D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\supplement\\electron"
+      ],
+      "cwd": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX",
+      "exitCode": 1,
+      "durationMs": 703063,
+      "log": "electron.json",
+      "stderr": "electron.stderr.log",
+      "executionMode": "single worker"
+    }
+  ],
+  "after": {
+    "commit": "16dd09e7efbb18052ad36eefcdef7d318d6f7d6e",
+    "tree": "3b3157316dc9b6bbc0c16386ea979446d2217f3d",
+    "branch": "codex/project-rag-longterm-20261109",
+    "status": ""
+  },
+  "sourceUnchanged": true,
+  "completedAt": "2026-11-14T12:35:07.892079+00:00",
+  "status": "fail"
+}

@@ -1,0 +1,38 @@
+
+C:\Users\27933\.codex\worktrees\project-rag-longterm-20261109\ClawX\electron\services\knowledge-api.ts
+  6015:35   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6018:32   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6029:50   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6029:79   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6035:39   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6035:77   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6036:45   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6036:89   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6053:41   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6054:47   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6054:100  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6055:52   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6056:54   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6071:38   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6072:44   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6073:49   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6074:51   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6089:36   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6090:42   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6091:47   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6092:49   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6106:38   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6107:44   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6107:91   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6107:115  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6108:53   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6108:77   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6109:55   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6109:79   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\27933\.codex\worktrees\project-rag-longterm-20261109\ClawX\src\pages\Chat\ChatInput.tsx
+  2468:6  warning  React Hook useCallback has an unnecessary dependency: 'longTaskControlStatus.available'. Either exclude it or remove the dependency array                                                                                     react-hooks/exhaustive-deps
+  3007:6  warning  React Hook useCallback has unnecessary dependencies: 'activeTaskNodeId', 'captureHeroComposerPosition', 'onSend', 'pendingTurnModelRef', and 'recordKnowledgeReferences'. Either exclude them or remove the dependency array  react-hooks/exhaustive-deps
+
+✖ 31 problems (0 errors, 31 warnings)
+

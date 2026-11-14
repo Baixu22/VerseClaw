@@ -1,0 +1,17 @@
+{
+  "actor": "codex/project-rag-relay-01a1d9e2",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "exitCode": 1,
+  "durationMs": 102025,
+  "command": [
+    "C:/Program Files/nodejs/node.exe",
+    "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\node_modules\\@playwright\\test\\cli.js",
+    "test",
+    "tests/e2e/project-rag-chat-modes.spec.ts",
+    "--workers=1",
+    "--reporter=json",
+    "--output",
+    "D:\\tmp\\project-rag-relay-01a1d9e2\\main2-diagnostic"
+  ]
+}

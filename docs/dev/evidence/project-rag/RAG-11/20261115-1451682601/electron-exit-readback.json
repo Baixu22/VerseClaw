@@ -1,0 +1,30 @@
+{
+  "actor": "codex/project-rag-relay-01a1d9e2",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "1451682601913c1e8ed6787c707ba0ef10812906",
+  "status": "pass",
+  "plainVerification": "direct-electron/receipt.json",
+  "diagnosticVerification": "diagnostic-electron/receipt.json",
+  "mainExits": [
+    {
+      "event": "process-exit-event",
+      "pid": 19436,
+      "time": "2026-11-14T20:06:37.656Z",
+      "code": 0
+    },
+    {
+      "event": "process-exit-event",
+      "pid": 22404,
+      "time": "2026-11-14T20:08:08.656Z",
+      "code": 0
+    },
+    {
+      "event": "process-exit-event",
+      "pid": 28960,
+      "time": "2026-11-14T20:09:10.734Z",
+      "code": 0
+    }
+  ],
+  "observedBehavior": "All three diagnostic applications exited after Playwright requested app.quit; plain execution also passed all three journeys."
+}

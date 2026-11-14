@@ -1,0 +1,8 @@
+{
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "providerKind": "scripted-local-fixture",
+  "status": "fail",
+  "steps": {}
+}

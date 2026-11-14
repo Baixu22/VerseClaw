@@ -1,0 +1,55 @@
+{
+  "schema": "ProjectRagDirectElectronRecovery/v1",
+  "actor": "codex/project-rag-relay-01a1d9e2",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "1451682601913c1e8ed6787c707ba0ef10812906",
+    "tree": "1c59cfc2c746fa5d0bf2bd12a6da98c13e342ac1",
+    "status": ""
+  },
+  "after": {
+    "commit": "1451682601913c1e8ed6787c707ba0ef10812906",
+    "tree": "1c59cfc2c746fa5d0bf2bd12a6da98c13e342ac1",
+    "status": ""
+  },
+  "sourceUnchanged": true,
+  "command": [
+    "C:/Program Files/nodejs/node.exe",
+    "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\node_modules\\@playwright\\test\\cli.js",
+    "test",
+    "tests/e2e/project-rag-dcs-citation.spec.ts",
+    "tests/e2e/project-rag-chat-modes.spec.ts",
+    "tests/e2e/project-rag-provider-settings.spec.ts",
+    "--workers=1",
+    "--reporter=json",
+    "--output",
+    "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\clean-electron-recovery\\electron"
+  ],
+  "exitCode": 1,
+  "durationMs": 166213,
+  "stats": {
+    "startTime": "2026-11-14T15:13:38.127Z",
+    "duration": 164613.02699999997,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  },
+  "files": [
+    "tests/e2e/project-rag-dcs-citation.spec.ts",
+    "tests/e2e/project-rag-chat-modes.spec.ts",
+    "tests/e2e/project-rag-provider-settings.spec.ts"
+  ],
+  "cli": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\node_modules\\@playwright\\test\\cli.js",
+  "cliSha256": "79e23e6a249176295b8490567daa7717448a75866d6ea6f6b296ff3d23305c69",
+  "resources": [
+    {
+      "time": "2026-11-14T15:13:37.167099+00:00",
+      "freeMemoryMiB": 4320,
+      "freeCommitMiB": 13799,
+      "freeDMiB": 24841
+    }
+  ],
+  "status": "fail"
+}

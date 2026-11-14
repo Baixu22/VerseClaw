@@ -1,0 +1,18 @@
+{
+  "schema": "ProjectRagEvidenceRefresh/v1",
+  "actor": "codex/project-rag-relay-01a1d9e2",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "sourceCodeCommit": "92348940e7a41cd9a65e613f37eda935e355c306",
+  "results": [
+    {
+      "name": "warm-typecheck",
+      "args": [
+        "run",
+        "typecheck:cached"
+      ],
+      "exitCode": 1,
+      "durationMs": 46446
+    }
+  ]
+}

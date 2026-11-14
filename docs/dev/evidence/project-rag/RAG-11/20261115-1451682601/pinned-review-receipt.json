@@ -1,0 +1,33 @@
+{
+  "schema": "AutoReviewAttemptStatus/v1",
+  "actor": "codex/project-rag-relay-01a1d9e2",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "command": [
+    "python",
+    "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\.agents\\skills\\autoreview\\scripts\\autoreview",
+    "--mode",
+    "local",
+    "--engine",
+    "codex",
+    "--model",
+    "ccs-workbuddy/deepseek-v4.1-flash",
+    "--thinking",
+    "high",
+    "--no-web-search",
+    "--prompt-file",
+    "D:\\tmp\\project-rag-relay-01a1d9e2\\pinned-review-notes.md",
+    "--dataset",
+    "D:\\tmp\\project-rag-relay-01a1d9e2\\pinned-review-dataset.json",
+    "--stream-engine-output",
+    "--json-output",
+    "D:\\tmp\\project-rag-relay-01a1d9e2\\pinned-review.json",
+    "--output",
+    "D:\\tmp\\project-rag-relay-01a1d9e2\\pinned-review.txt"
+  ],
+  "exitCode": 1,
+  "durationMs": 582969,
+  "completedAt": "2026-11-14T13:54:47.773017+00:00",
+  "structuredResultProduced": true
+}

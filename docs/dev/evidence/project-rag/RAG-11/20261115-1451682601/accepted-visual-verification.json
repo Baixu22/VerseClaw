@@ -1,0 +1,95 @@
+{
+  "schema": "ProjectRagVisualVerification/v1",
+  "actor": "codex/project-rag-relay-01a1d9e2",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "1451682601913c1e8ed6787c707ba0ef10812906",
+  "status": "pass",
+  "method": "Agent inspected each saved screenshot through the image viewer.",
+  "screenshots": [
+    {
+      "artifact": "diagnostic-electron/electron/project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads/rag11-inspect.png",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\electron\\project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads\\rag11-inspect.png",
+      "sha256": "9806c99134d333b3826d8e9993b1e4af844c13f4a2da17b915653a818222c01a",
+      "status": "pass",
+      "observation": "The source modal shows Version 1 and the original deployment-port text with an Attach control."
+    },
+    {
+      "artifact": "diagnostic-electron/electron/project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads/rag11-preflight.png",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\electron\\project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads\\rag11-preflight.png",
+      "sha256": "f9bd7019954c855064136e7d00cd44e000c4cf324967690d1a7388ef266e25c5",
+      "status": "pass",
+      "observation": "Preflight shows current source versions, inspect/attach/dismiss controls and independent knowledge-mode/retrieval-profile selectors."
+    },
+    {
+      "artifact": "diagnostic-electron/electron/project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads/rag11-queue.png",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\electron\\project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads\\rag11-queue.png",
+      "sha256": "56008cb6942c76a7c0de75abb1dfd9367463ef62aa1189085690ab3a606728d8",
+      "status": "pass",
+      "observation": "The held turn and queued turn retain separate source chips while Auto-read remains visible."
+    },
+    {
+      "artifact": "diagnostic-electron/electron/project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads/rag11-used.png",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\electron\\project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads\\rag11-used.png",
+      "sha256": "7ef73af4d9176fe8133cc3ad43e5e1b4f6d2b20a4c7bc922af3eee54201cb9f4",
+      "status": "pass",
+      "observation": "Used Knowledge shows one retained fragment, 855 characters and one selected source dropped from the final budget."
+    },
+    {
+      "artifact": "diagnostic-electron/electron/project-rag-dcs-citation-P-3f869--retry-and-model-only-calls/dcs-chat.png",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\electron\\project-rag-dcs-citation-P-3f869--retry-and-model-only-calls\\dcs-chat.png",
+      "sha256": "0249c8180474aee3a0bf039418a4891790a35ee46ea82a30e50fe3070776a8c1",
+      "status": "pass",
+      "observation": "The revoked and killed evidence turns finish in the ordinary chat view."
+    },
+    {
+      "artifact": "diagnostic-electron/electron/project-rag-dcs-citation-P-3f869--retry-and-model-only-calls/rag10-answer.png",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\electron\\project-rag-dcs-citation-P-3f869--retry-and-model-only-calls\\rag10-answer.png",
+      "sha256": "4f1e45a3650635913a74e290e852868e8a9156e77378cc7f13a8d568f70d7204",
+      "status": "pass",
+      "observation": "Source-only answer shows the deployment-port claim, source citation and verification details."
+    },
+    {
+      "artifact": "diagnostic-electron/electron/project-rag-dcs-citation-P-3f869--retry-and-model-only-calls/rag10-raw-range.png",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\electron\\project-rag-dcs-citation-P-3f869--retry-and-model-only-calls\\rag10-raw-range.png",
+      "sha256": "95603e4e67a83da2e20a30e45996f0e896b2c2d203fbcddf4f681727e170e071",
+      "status": "pass",
+      "observation": "Citation opens raw source line 10 with the deployment-port quote."
+    },
+    {
+      "artifact": "diagnostic-electron/electron/project-rag-dcs-citation-P-3f869--retry-and-model-only-calls/rag10-revoked-citation.png",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\electron\\project-rag-dcs-citation-P-3f869--retry-and-model-only-calls\\rag10-revoked-citation.png",
+      "sha256": "77586ac0effa288b3e4e011dbbf14078862b8558c13e0acdcf497186100cae86",
+      "status": "pass",
+      "observation": "Revoked citation clears the source body and shows the permission-denied result."
+    },
+    {
+      "artifact": "diagnostic-electron/electron/project-rag-provider-setti-69fa0-esh-real-embedding-services/embedding-local-ready.png",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\electron\\project-rag-provider-setti-69fa0-esh-real-embedding-services\\embedding-local-ready.png",
+      "sha256": "dd0741f5198468bc148c6220ce18097df173a92283afc9bb27aae8c22f5c6939",
+      "status": "pass",
+      "observation": "Local embedding is ready with embeddinggemma-300m and 768 dimensions."
+    },
+    {
+      "artifact": "diagnostic-electron/electron/project-rag-provider-setti-69fa0-esh-real-embedding-services/embedding-remote-ready.png",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\electron\\project-rag-provider-setti-69fa0-esh-real-embedding-services\\embedding-remote-ready.png",
+      "sha256": "46b6602af9fd223b3fcbdd8a1350dea3970ae34df8ab79737002bc6b9f5ef699",
+      "status": "pass",
+      "observation": "The remote-service fixture is ready with Qwen3-VL-Embedding-8B and 4096 dimensions."
+    },
+    {
+      "artifact": "electron/project-rag-plan-fusion.spec/project-rag-plan-fusion-Pr-00a0c-ithout-synthetic-confidence/plan-preflight.png",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\electron\\project-rag-plan-fusion.spec\\project-rag-plan-fusion-Pr-00a0c-ithout-synthetic-confidence\\plan-preflight.png",
+      "sha256": "6c3986231018b7265666625b112964cbcf1d395533303969f5573929a7f3d70b",
+      "status": "pass",
+      "observation": "The retrieval preflight presents the Version 3 source and its candidate body before attachment."
+    },
+    {
+      "artifact": "electron/project-rag-rerank.spec/project-rag-rerank-Project-a8e00-t-and-preserve-RRF-fallback/rerank-settings.png",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\electron\\project-rag-rerank.spec\\project-rag-rerank-Project-a8e00-t-and-preserve-RRF-fallback\\rerank-settings.png",
+      "sha256": "7f51b1f2165a31ece0766a2ec4e6b2f4a793b62719bc4921a9f99c32a21d010b",
+      "status": "pass",
+      "observation": "The rerank settings show Qwen3-Reranker-0.6B and a ready local endpoint."
+    }
+  ]
+}

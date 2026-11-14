@@ -1,0 +1,145 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-relay-01a1d9e2/final-1451682601/electron/project-rag-chat-modes.spec",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-chat-modes.spec.ts",
+      "file": "project-rag-chat-modes.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG chat modes retain real owner evidence and bound optional reads",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 480000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 27075,
+                  "error": {
+                    "message": "Error: page.evaluate: Target page, context or browser has been closed",
+                    "stack": "Error: page.evaluate: Target page, context or browser has been closed\n    at host (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts:9:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts:63:11",
+                    "location": {
+                      "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts",
+                      "column": 15,
+                      "line": 9
+                    },
+                    "snippet": "   7 | type Json = Record<string, unknown>;\n   8 | async function host<T = Json>(page: Page, module: string, action: string, payload?: Json): Promise<T> {\n>  9 |   return page.evaluate(async input => {\n     |               ^\n  10 |     const response = await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), module: input.module,\n  11 |       action: input.action, ...(input.payload ? { payload: input.payload } : {}) });\n  12 |     if (!response.ok) throw Error(response.error?.message ?? 'Host request failed');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts",
+                        "column": 15,
+                        "line": 9
+                      },
+                      "message": "Error: page.evaluate: Target page, context or browser has been closed\n\n   7 | type Json = Record<string, unknown>;\n   8 | async function host<T = Json>(page: Page, module: string, action: string, payload?: Json): Promise<T> {\n>  9 |   return page.evaluate(async input => {\n     |               ^\n  10 |     const response = await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), module: input.module,\n  11 |       action: input.action, ...(input.payload ? { payload: input.payload } : {}) });\n  12 |     if (!response.ok) throw Error(response.error?.message ?? 'Host request failed');\n    at host (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts:9:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts:63:11"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T14:01:33.021Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\electron\\project-rag-chat-modes.spec\\project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\electron\\project-rag-chat-modes.spec\\project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts",
+                    "column": 15,
+                    "line": 9
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "aad9a96d802fe2d96306-a04601f1cd9d84f8b8ed",
+          "file": "project-rag-chat-modes.spec.ts",
+          "line": 17,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-14T14:01:30.768Z",
+    "duration": 31138.618000000002,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

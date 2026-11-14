@@ -1,0 +1,23 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\runtime-project-rag-provider-settings.spec\\verse-claw-e2e-run-GeFock",
+  "ledgerEntries": 2,
+  "checks": [
+    {
+      "pid": 32700,
+      "creationTime": 1794664894392,
+      "status": "exited"
+    },
+    {
+      "pid": 36504,
+      "creationTime": 1794664901244,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

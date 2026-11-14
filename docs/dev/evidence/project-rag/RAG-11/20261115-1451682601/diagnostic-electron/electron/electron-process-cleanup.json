@@ -1,0 +1,68 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV",
+  "ledgerEntries": 17,
+  "checks": [
+    {
+      "pid": 19436,
+      "creationTime": 1794686694961,
+      "status": "exited"
+    },
+    {
+      "pid": 7052,
+      "creationTime": 1794686698854,
+      "status": "exited"
+    },
+    {
+      "pid": 19180,
+      "creationTime": 1794686699349,
+      "status": "exited"
+    },
+    {
+      "pid": 2604,
+      "creationTime": 1794686713505,
+      "status": "exited"
+    },
+    {
+      "pid": 22404,
+      "creationTime": 1794686798476,
+      "status": "exited"
+    },
+    {
+      "pid": 1100,
+      "creationTime": 1794686802697,
+      "status": "exited"
+    },
+    {
+      "pid": 25956,
+      "creationTime": 1794686802980,
+      "status": "exited"
+    },
+    {
+      "pid": 13452,
+      "creationTime": 1794686872008,
+      "status": "exited"
+    },
+    {
+      "pid": 28960,
+      "creationTime": 1794686889575,
+      "status": "exited"
+    },
+    {
+      "pid": 32548,
+      "creationTime": 1794686893538,
+      "status": "exited"
+    },
+    {
+      "pid": 27504,
+      "creationTime": 1794686893707,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

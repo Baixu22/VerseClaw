@@ -1,0 +1,7 @@
+autoreview findings: 1
+[P2] 源文件保持回归只比较内容，无法发现同字节写回
+tests/e2e/project-rag-rerank.spec.ts:63
+该断言只能证明 Markdown 内容未变化。原故障是刷新写回触发目录 watcher，进而撤销已发布的 FTS generation；如果刷新把相同字节写回，mtime 和目录事件仍会变化，但此测试会通过。应在调用前后比较 mtime/文件标识，或断言检索前后的 projection active generation 保持不变，直接覆盖原故障路径。
+
+overall: patch is correct (0.8)
+gateway 已移除 wiki.retrieve 的导入刷新，并对有效的 SourceRef pin 跳过 wiki.get 同步；owner 读取仍校验 pin、权限和字节范围，未固定 wiki.get 保留原有刷新路径。实现符合本次修正目标，但新增回归未验证同字节写回及 FTS generation 是否保持，仍有测试覆盖缺口。

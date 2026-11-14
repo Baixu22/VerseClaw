@@ -1,0 +1,113 @@
+{
+  "schema": "HarnessCiReport/v1",
+  "actor": "harness-ci",
+  "driven_by": "agent",
+  "success": true,
+  "totalStages": 12,
+  "results": [
+    {
+      "args": [
+        "harness",
+        "list"
+      ],
+      "exitCode": 0,
+      "durationMs": 1215
+    },
+    {
+      "args": [
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/scenarios/gateway-backend-communication.md"
+      ],
+      "exitCode": 0,
+      "durationMs": 2072
+    },
+    {
+      "args": [
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/fix-chat-history-gateway-timeout.example.md",
+        "--no-diff"
+      ],
+      "exitCode": 0,
+      "durationMs": 1229
+    },
+    {
+      "args": [
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/scenarios/gateway-backend-communication.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "durationMs": 1950
+    },
+    {
+      "args": [
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/harness-specs.test.ts",
+        "tests/unit/harness-git.test.ts",
+        "tests/unit/harness-spec-lifecycle.test.ts",
+        "tests/unit/docs-index.test.ts",
+        "tests/unit/runtime-source-policy.test.ts",
+        "tests/unit/harness-ci-runner.test.ts"
+      ],
+      "exitCode": 0,
+      "durationMs": 8299
+    },
+    {
+      "args": [
+        "harness:specs:lifecycle"
+      ],
+      "exitCode": 0,
+      "durationMs": 587
+    },
+    {
+      "args": [
+        "repo:duplicates:check"
+      ],
+      "exitCode": 0,
+      "durationMs": 4681
+    },
+    {
+      "args": [
+        "docs:policy:validate"
+      ],
+      "exitCode": 0,
+      "durationMs": 467
+    },
+    {
+      "args": [
+        "catalogs:check"
+      ],
+      "exitCode": 0,
+      "durationMs": 1513
+    },
+    {
+      "args": [
+        "agent-dev:audit"
+      ],
+      "exitCode": 0,
+      "durationMs": 1916
+    },
+    {
+      "args": [
+        "repo:evidence:check"
+      ],
+      "exitCode": 0,
+      "durationMs": 460
+    },
+    {
+      "args": [
+        "repo:test-coverage:check"
+      ],
+      "exitCode": 0,
+      "durationMs": 951
+    }
+  ]
+}

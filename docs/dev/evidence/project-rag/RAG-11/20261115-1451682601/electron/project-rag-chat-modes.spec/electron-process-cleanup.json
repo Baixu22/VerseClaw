@@ -1,0 +1,23 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\runtime-project-rag-chat-modes.spec\\verse-claw-e2e-run-mJA3ph",
+  "ledgerEntries": 2,
+  "checks": [
+    {
+      "pid": 30936,
+      "creationTime": 1794664893584,
+      "status": "exited"
+    },
+    {
+      "pid": 26540,
+      "creationTime": 1794664900321,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

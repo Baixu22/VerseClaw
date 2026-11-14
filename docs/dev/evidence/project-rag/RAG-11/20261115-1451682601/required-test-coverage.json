@@ -1,0 +1,132 @@
+{
+  "actor": "codex/project-rag-relay-01a1d9e2",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "status": "pass",
+  "candidate": "1451682601913c1e8ed6787c707ba0ef10812906",
+  "specs": [
+    {
+      "spec": "project-rag-retrieval-plan-fusion",
+      "status": "pass",
+      "requiredTests": [
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/knowledge-source-set-answer.test.ts",
+        "tests/unit/project-rag-plan-fusion.test.ts",
+        "tests/unit/project-rag-plan-owner.test.ts",
+        "tests/unit/project-rag-vector-service.test.ts",
+        "tests/e2e/project-rag-plan-fusion.spec.ts"
+      ],
+      "plannedTests": [
+        "tests/unit/project-rag-plan-fusion.test.ts",
+        "tests/unit/project-rag-plan-owner.test.ts"
+      ],
+      "plannedE2E": [
+        "tests/e2e/project-rag-plan-fusion.spec.ts"
+      ]
+    },
+    {
+      "spec": "project-rag-cross-encoder-rerank",
+      "status": "pass",
+      "requiredTests": [
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/project-rag-rerank-provider.test.ts",
+        "tests/e2e/project-rag-provider-settings.spec.ts",
+        "tests/e2e/project-rag-rerank.spec.ts"
+      ],
+      "plannedTests": [
+        "tests/unit/project-rag-rerank-provider.test.ts"
+      ],
+      "plannedE2E": [
+        "tests/e2e/project-rag-provider-settings.spec.ts",
+        "tests/e2e/project-rag-rerank.spec.ts"
+      ]
+    },
+    {
+      "spec": "project-rag-dcs-evidence-packing",
+      "status": "pass",
+      "requiredTests": [
+        "tests/unit/chat-knowledge-scope.test.ts",
+        "tests/unit/knowledge-evidence-qa.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/chat-store-history-retry.test.ts",
+        "openclaw_runtime/src/context-engine/project-rag-packing.test.ts",
+        "tests/e2e/project-rag-dcs-citation.spec.ts"
+      ],
+      "plannedTests": [
+        "openclaw_runtime/src/context-engine/project-rag-packing.test.ts"
+      ],
+      "plannedE2E": [
+        "tests/e2e/project-rag-dcs-citation.spec.ts"
+      ]
+    },
+    {
+      "spec": "project-rag-grounded-answer-citation",
+      "status": "pass",
+      "requiredTests": [
+        "tests/unit/project-rag-answer-contract.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/knowledge-librarian.test.ts",
+        "tests/e2e/project-rag-dcs-citation.spec.ts",
+        "tests/unit/knowledge-evidence-qa.test.ts",
+        "tests/unit/knowledge-chat.test.tsx"
+      ],
+      "plannedTests": [
+        "tests/unit/project-rag-answer-contract.test.ts"
+      ],
+      "plannedE2E": [
+        "tests/e2e/project-rag-dcs-citation.spec.ts"
+      ]
+    },
+    {
+      "spec": "project-rag-chat-interactions",
+      "status": "pass",
+      "requiredTests": [
+        "tests/unit/chat-store-history-retry.test.ts",
+        "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts",
+        "tests/unit/project-rag-plan-owner.test.ts",
+        "tests/unit/project-rag-chat-policy.test.tsx",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/e2e/project-rag-chat-modes.spec.ts",
+        "tests/e2e/project-rag-rerank.spec.ts",
+        "tests/unit/chat-input.test.tsx",
+        "tests/unit/chat-knowledge-scope.test.ts"
+      ],
+      "plannedTests": [
+        "tests/unit/project-rag-chat-policy.test.tsx"
+      ],
+      "plannedE2E": [
+        "tests/e2e/project-rag-chat-modes.spec.ts"
+      ]
+    }
+  ],
+  "executedUnitFiles": [
+    "openclaw_runtime/src/context-engine/chat-knowledge-intent.test.ts",
+    "openclaw_runtime/src/context-engine/context-candidate.test.ts",
+    "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts",
+    "openclaw_runtime/src/context-engine/project-rag-packing.test.ts",
+    "openclaw_runtime/src/context-engine/turn-injection-budget.test.ts",
+    "tests/unit/chat-input.test.tsx",
+    "tests/unit/chat-knowledge-scope.test.ts",
+    "tests/unit/chat-store-history-retry.test.ts",
+    "tests/unit/contract-check.test.ts",
+    "tests/unit/knowledge-api.test.ts",
+    "tests/unit/knowledge-chat.test.tsx",
+    "tests/unit/knowledge-evidence-qa.test.ts",
+    "tests/unit/knowledge-librarian.test.ts",
+    "tests/unit/knowledge-source-set-answer.test.ts",
+    "tests/unit/project-rag-answer-contract.test.ts",
+    "tests/unit/project-rag-chat-policy.test.tsx",
+    "tests/unit/project-rag-owner-read.test.ts",
+    "tests/unit/project-rag-plan-fusion.test.ts",
+    "tests/unit/project-rag-plan-owner.test.ts",
+    "tests/unit/project-rag-rerank-provider.test.ts",
+    "tests/unit/project-rag-vector-service.test.ts"
+  ],
+  "executedElectronFiles": [
+    "tests/e2e/project-rag-chat-modes.spec.ts",
+    "tests/e2e/project-rag-dcs-citation.spec.ts",
+    "tests/e2e/project-rag-plan-fusion.spec.ts",
+    "tests/e2e/project-rag-provider-settings.spec.ts",
+    "tests/e2e/project-rag-rerank.spec.ts"
+  ]
+}

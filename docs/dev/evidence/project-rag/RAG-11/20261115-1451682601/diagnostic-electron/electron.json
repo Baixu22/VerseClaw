@@ -1,0 +1,1820 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-relay-01a1d9e2/main3-electron-recovery/electron",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-chat-modes.spec.ts",
+      "file": "project-rag-chat-modes.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG chat modes retain real owner evidence and bound optional reads",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 480000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 103720,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:err] [2026-11-14T20:04:59.343Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:04:59.343Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-14T20:04:59.343Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-14T20:04:59.343Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:04:59.375Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:04:59.375Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [19436:1115/040459.466:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[19436:1115/040459.466:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:04:59.617Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:04:59.621Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:04:59.622Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:04:59.622Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-14T20:04:59.622Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-14T20:04:59.622Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:00.256Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-home-IlsIdb\\chat-workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"openai\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:00.670Z] [INFO] Scheduling Gateway reload after saving provider \"openai\" config\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:00.670Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"openai/mock-coder\" for provider \"openai\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"openai\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"openai\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:00.828Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:00.829Z] [INFO] Gateway start requested (port=59035)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:00.832Z] [DEBUG] Device identity loaded (deviceId=399addeaa6641f948c5b3b3539553ebbd4bd1bf84ad141d2afcacdd86166711c)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:00.832Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:01.027Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:19436) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:01.275Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:01.323Z] [WARN] [provider-runtime] Pinned embedded agent runtime for models.providers entries before switch: openai\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"openai/mock-coder\" for provider \"openai\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"openai\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"openai\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:01.431Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:01.467Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:01.471Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":131,\"providerEnvMs\":6,\"channelStartupPolicyMs\":4,\"uvEnvMs\":8,\"mcpEnvMs\":20,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":1,\"totalMs\":190,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:01.472Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=59035, entry=\"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 59035 --allow-unconfigured\", execArgv=\"\", cwd=\"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\", bundledBin=no, providerKeys=1, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:01.580Z] [INFO] Gateway process started (pid=6740)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:01.580Z] [DEBUG] Gateway manager now owns process pid=6740\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:01.699Z] [WARN] [Gateway stderr] (node:6740) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:01.699Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:01.875Z] [INFO] Deferring Gateway restart (reload) until startup/reconnect settles (state=starting, startLock=true)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:03.653Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:05.719Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:07.250Z] [DEBUG] [Gateway stderr] (node:6740) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:07.250Z] [DEBUG] [Gateway stderr] (node:6740) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:07.250Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:07.929Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:10.188Z] [DEBUG] Gateway ready after 31 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:10.189Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:59035/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:10.223Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=73623b8f-2060-495e-9b98-e18c01105ce4 peer=127.0.0.1:59115->127.0.0.1:59035 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:59035 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:10.228Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:10.229Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-14T20:05:10.229Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:10.231Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=b822d73f-5f9a-47ed-a8de-0db9eeeef110 peer=127.0.0.1:59120->127.0.0.1:59035 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:59035 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:10.288Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:59035/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:10.289Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:11.987Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:11.987Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-14T20:05:11.987Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:12.482Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:12.482Z] [DEBUG] Gateway state changed: starting -> running\n[2026-11-14T20:05:12.482Z] [DEBUG] Deferred Gateway restart still waiting (status:starting->running, state=running, startLock=true)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:12.483Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:12.484Z] [INFO] [metric] gateway.startup {\"configSyncMs\":554,\"spawnToReadyMs\":8608,\"readyToConnectMs\":2296,\"totalMs\":11458}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:12.484Z] [INFO] Executing deferred Gateway restart now (start:finally)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:12.484Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=6740\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:12.485Z] [INFO] Gateway stop requested\n[2026-11-14T20:05:12.485Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:12.485Z] [INFO] Sending kill to Gateway process (pid=6740)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:12.502Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:12.502Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:12.502Z] [WARN] Gateway session change subscription failed {\"error\":\"Error: Gateway connection closed\"}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:12.874Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:12.875Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:12.875Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:12.875Z] [INFO] Gateway start requested (port=59035)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:12.876Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:13.088Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:13.316Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"openai/mock-coder\" for provider \"openai\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"openai\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"openai\"\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:13.466Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:13.468Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":1,\"defaultProviderRuntimeSyncMs\":120,\"providerEnvMs\":7,\"channelStartupPolicyMs\":2,\"uvEnvMs\":1,\"mcpEnvMs\":3,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":0,\"totalMs\":147,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:13.468Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=59035, entry=\"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 59035 --allow-unconfigured\", execArgv=\"\", cwd=\"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\", bundledBin=no, providerKeys=1, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:13.538Z] [INFO] Gateway process started (pid=2604)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:13.538Z] [DEBUG] Gateway manager now owns process pid=2604\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:13.654Z] [WARN] [Gateway stderr] (node:2604) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:13.654Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:15.612Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:17.681Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:17.780Z] [DEBUG] [Gateway stderr] (node:2604) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:17.780Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:20.184Z] [DEBUG] Gateway ready after 24 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:20.184Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:59035/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:20.189Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=afd579e5-151f-41cc-9a61-2ae63a7a81f7 peer=127.0.0.1:59200->127.0.0.1:59035 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:59035 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:20.191Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=bb72a987-141b-498c-9175-de53f29fc3c6 peer=127.0.0.1:59196->127.0.0.1:59035 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:59035 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:20.192Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:20.192Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:20.192Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:20.198Z] [ERROR] Gateway connect handshake failed: GatewayRpcError: gateway starting; retry shortly\nGatewayRpcError: gateway starting; retry shortly\n    at Cs.handleMessage (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\dist-electron\\main\\index-BUIH1IX3.js:2337:36015)\n    at Object.onMessage (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\dist-electron\\main\\index-BUIH1IX3.js:2337:34845)\n    at WebSocket.<anonymous> (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\dist-electron\\main\\index-BUIH1IX3.js:78:9299)\n    at WebSocket.emit (node:events:508:28)\n    at Receiver.receiverOnMessage (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\websocket.js:1225:20)\n    at Receiver.emit (node:events:508:28)\n    at Receiver.dataMessage (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:596:14)\n    at Receiver.getData (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:496:10)\n    at Receiver.startLoop (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:167:16)\n    at Receiver._write (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:94:10)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:20.199Z] [WARN] Gateway connect rejected while still starting (GatewayRpcError: gateway starting; retry shortly); retrying in 500ms (1/6)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:20.200Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:20.351Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=38f6d99b-87ea-4ca0-a595-ff4c14905024 peer=127.0.0.1:59201->127.0.0.1:59035 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:59035 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:20.702Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:59035/ws)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:22.116Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:22.117Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-14T20:05:22.117Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:22.583Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:59035/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:22.584Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:22.846Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:22.846Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:22.847Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:22.863Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:22.863Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:22.864Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:22.865Z] [INFO] Gateway connect succeeded after 2 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:22.865Z] [INFO] [metric] gateway.startup {\"configSyncMs\":451,\"spawnToReadyMs\":6645,\"readyToConnectMs\":2681,\"totalMs\":9777}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:22.866Z] [INFO] [metric] gateway.restart.executed {\"gateway_restart_executed_total\":1,\"gateway_restart_suppressed_total\":0,\"gateway_restart_circuit_open_until\":0}\n[2026-11-14T20:05:22.866Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=6740 pidAfter=2604 suppressed=0 executed=1 circuitOpenUntil=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:23.917Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:23.917Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-14T20:05:23.917Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:23.917Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:23.980Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-14T20:05:23.980Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-14T20:05:23.980Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-14T20:05:23.980Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:24.416Z] [INFO] [chat:sendWithMedia] Sending: message=\"RAG11 Off plain send\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:24.416Z] [INFO] [gateway-rpc] chat.send serialized id=8c9f905c-9e29-41a1-a20f-2a3552b594a7 timeoutMs=900000 bytes=564\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:24.417Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=8c9f905c-9e29-41a1-a20f-2a3552b594a7\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:24.417Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=8c9f905c-9e29-41a1-a20f-2a3552b594a7\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:24.418Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=8c9f905c-9e29-41a1-a20f-2a3552b594a7\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:24.420Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:24.432Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=df4e198a-eb50-4345-84d8-7b603ef6dfa0 sessionKey=agent:main:main loadSessionMs=0.683\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:24.438Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=df4e198a-eb50-4345-84d8-7b603ef6dfa0 sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:24.441Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=df4e198a-eb50-4345-84d8-7b603ef6dfa0 sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:24.441Z] [INFO] [gateway-rpc] chat.send response id received durationMs=25\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:24.441Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"df4e198a-eb50-4345-84d8-7b603ef6dfa0\",\"status\":\"started\"}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:24.452Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=8c9f905c-9e29-41a1-a20f-2a3552b594a7\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:25.137Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-X7FXdu\\openclaw-source-state\\plugin-skills\\browser-automation\" → \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation\": Error: EPERM: operation not permitted, symlink 'C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation' -> 'D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-X7FXdu\\openclaw-source-state\\plugin-skills\\browser-automation'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:25.201Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-X7FXdu\\openclaw-source-state\\plugin-skills\\obsidian-vault-maintainer\" → \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\obsidian-vault-maintainer\": Error: EPERM: operation not permitted, symlink 'C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\obsidian-vault-maintainer' -> 'D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-X7FXdu\\openclaw-source-state\\plugin-skills\\obsidian-vault-maintainer'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:25.266Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-X7FXdu\\openclaw-source-state\\plugin-skills\\wiki-maintainer\" → \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\wiki-maintainer\": Error: EPERM: operation not permitted, symlink 'C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\wiki-maintainer' -> 'D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-X7FXdu\\openclaw-source-state\\plugin-skills\\wiki-maintainer'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:25.270Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-X7FXdu\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff\" → \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff\": Error: EPERM: operation not permitted, symlink 'C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff' -> 'D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-X7FXdu\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:33.554Z] [INFO] [chat:sendWithMedia] Sending: message=\"RAG11 manual evidence with budget drop\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:33.560Z] [INFO] [gateway-rpc] chat.send serialized id=4363358f-dc64-4bcd-9e54-3c3292500938 timeoutMs=900000 bytes=2163\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:33.561Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=4363358f-dc64-4bcd-9e54-3c3292500938\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:33.561Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=4363358f-dc64-4bcd-9e54-3c3292500938\n[2026-11-14T20:05:33.562Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=4363358f-dc64-4bcd-9e54-3c3292500938\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:33.566Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=31d67aba-efd0-413e-841f-6c1c8ac0153e sessionKey=agent:main:main loadSessionMs=0.604\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:33.609Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=31d67aba-efd0-413e-841f-6c1c8ac0153e sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:33.612Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=31d67aba-efd0-413e-841f-6c1c8ac0153e sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:33.613Z] [INFO] [gateway-rpc] chat.send response id received durationMs=53\n[2026-11-14T20:05:33.613Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"31d67aba-efd0-413e-841f-6c1c8ac0153e\",\"status\":\"started\",\"knowledgeReferences\":[{\"id\":\"70833d62ec1bcda22fb06da54c97563a2d72abe2351f3cc671461e63efac3162\",\"title\":\"Deployment guide\",\"lookup\":\"concepts/deployment-guide.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:05e7033df814ce011b887d2bbe1e478d4eb607f739164d50daf23631005da6ca\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:6d3e9f3044edfa513bf36673bef624de3874dbc6cb21c2f86dcde2ee37e29641\",\"subjectId\":\"concepts/deployment-guide.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:4467ccf95062a2e2bbeb01673b1d93a6535d5ed069d54ebe166806f9dc17f749\",\"policyEpoch\":\"sha256:ebb98deacd58f7dfa01519a31499fa75c723e85611a66b60f48b7ea4d4e34062\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":162,\"endByteExclusive\":192,\"startLine\":10,\"endLine\":10}}},{\"id\":\"13c93a61f692c920dced6680314e8752f041d71e51b089948dceb5ac18ff5d8e\",\"title\":\"Large budget guide\",\"lookup\":\"concepts/budget-guide.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:db30d78b088a72465b6a3a3c5d02ffb4fa82d8cac118d4011efec4e0baf9de29\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:6d3e9f3044edfa513bf36673bef624de3874dbc6cb21c2f86dcde2ee37e29641\",\"subjectId\":\"concepts/budget-guide.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:75b7941a3f05325399ed41764731138cee236e0734fba2197bc3b26865900e0a\",\"policyEpoch\":\"sha256:ebb98deacd58f7dfa01519a31499fa75c723e85611a66b60f48b7ea4d4e34062\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":164,\"endByteExclusive\":11665,\"startLine\":10,\"endLine\":10}}}]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:33.616Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=4363358f-dc64-4bcd-9e54-3c3292500938\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:35.881Z] [INFO] [chat:sendWithMedia] Sending: message=\"concepts/deployment-guide.md\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:35.886Z] [INFO] [gateway-rpc] chat.send serialized id=1e370426-0fb5-42d2-8338-37f72a9635fb timeoutMs=900000 bytes=1487\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:35.887Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=1e370426-0fb5-42d2-8338-37f72a9635fb\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:35.888Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=1e370426-0fb5-42d2-8338-37f72a9635fb\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:35.888Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=1e370426-0fb5-42d2-8338-37f72a9635fb\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:35.894Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=354bb79a-4e11-4ad8-aed7-7ea221e44ffd sessionKey=agent:main:main loadSessionMs=0.793\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:35.915Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=354bb79a-4e11-4ad8-aed7-7ea221e44ffd sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:35.917Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=354bb79a-4e11-4ad8-aed7-7ea221e44ffd sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:35.918Z] [INFO] [gateway-rpc] chat.send response id received durationMs=32\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:35.918Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"354bb79a-4e11-4ad8-aed7-7ea221e44ffd\",\"status\":\"started\",\"knowledgeReferences\":[{\"id\":\"70833d62ec1bcda22fb06da54c97563a2d72abe2351f3cc671461e63efac3162\",\"title\":\"Deployment guide\",\"lookup\":\"concepts/deployment-guide.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:05e7033df814ce011b887d2bbe1e478d4eb607f739164d50daf23631005da6ca\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:6d3e9f3044edfa513bf36673bef624de3874dbc6cb21c2f86dcde2ee37e29641\",\"subjectId\":\"concepts/deployment-guide.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:4467ccf95062a2e2bbeb01673b1d93a6535d5ed069d54ebe166806f9dc17f749\",\"policyEpoch\":\"sha256:ebb98deacd58f7dfa01519a31499fa75c723e85611a66b60f48b7ea4d4e34062\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":162,\"endByteExclusive\":192,\"startLine\":10,\"endLine\":10}}}]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:35.920Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=1e370426-0fb5-42d2-8338-37f72a9635fb\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:38.543Z] [INFO] [chat:sendWithMedia] Sending: message=\"RAG11 hold run\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:38.552Z] [INFO] [gateway-rpc] chat.send serialized id=1bfde229-0ed1-4a24-a1ec-4ee30eae324b timeoutMs=900000 bytes=1449\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:38.553Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=1bfde229-0ed1-4a24-a1ec-4ee30eae324b\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:38.553Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=1bfde229-0ed1-4a24-a1ec-4ee30eae324b\n[2026-11-14T20:05:38.553Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=1bfde229-0ed1-4a24-a1ec-4ee30eae324b\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:38.559Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=dd46f384-2c83-443f-9e5c-efcfa201e222 sessionKey=agent:main:main loadSessionMs=1.05\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:38.597Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=dd46f384-2c83-443f-9e5c-efcfa201e222 sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:38.603Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=dd46f384-2c83-443f-9e5c-efcfa201e222 sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:38.604Z] [INFO] [gateway-rpc] chat.send response id received durationMs=52\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:38.604Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"dd46f384-2c83-443f-9e5c-efcfa201e222\",\"status\":\"started\",\"knowledgeReferences\":[{\"id\":\"70833d62ec1bcda22fb06da54c97563a2d72abe2351f3cc671461e63efac3162\",\"title\":\"Deployment guide\",\"lookup\":\"concepts/deployment-guide.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:05e7033df814ce011b887d2bbe1e478d4eb607f739164d50daf23631005da6ca\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:6d3e9f3044edfa513bf36673bef624de3874dbc6cb21c2f86dcde2ee37e29641\",\"subjectId\":\"concepts/deployment-guide.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:4467ccf95062a2e2bbeb01673b1d93a6535d5ed069d54ebe166806f9dc17f749\",\"policyEpoch\":\"sha256:ebb98deacd58f7dfa01519a31499fa75c723e85611a66b60f48b7ea4d4e34062\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":162,\"endByteExclusive\":192,\"startLine\":10,\"endLine\":10}}}]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:38.611Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=1bfde229-0ed1-4a24-a1ec-4ee30eae324b\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:40.691Z] [INFO] [chat:sendWithMedia] Sending: message=\"concepts/queue-guide.md\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:40.698Z] [INFO] [gateway-rpc] chat.send serialized id=5a40f8a9-6091-465e-8e50-dc05c5c9bcca timeoutMs=900000 bytes=1462\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:40.698Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=5a40f8a9-6091-465e-8e50-dc05c5c9bcca\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:40.699Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=5a40f8a9-6091-465e-8e50-dc05c5c9bcca\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:40.699Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=5a40f8a9-6091-465e-8e50-dc05c5c9bcca\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:40.702Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=66a25ec8-f9dc-450f-8d84-d4c8d19bec9c sessionKey=agent:main:main loadSessionMs=0.539\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:40.730Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=66a25ec8-f9dc-450f-8d84-d4c8d19bec9c sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:40.734Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=66a25ec8-f9dc-450f-8d84-d4c8d19bec9c sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:40.735Z] [INFO] [gateway-rpc] chat.send response id received durationMs=37\n[2026-11-14T20:05:40.735Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"66a25ec8-f9dc-450f-8d84-d4c8d19bec9c\",\"status\":\"started\",\"knowledgeReferences\":[{\"id\":\"f0535eadc07d6e976c4a97cf4e7a0388d305d57daadd4d532c1aa01fb9563707\",\"title\":\"Queue guide\",\"lookup\":\"concepts/queue-guide.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:eb2d72f88d7ffa87cb7806ca82642b2dfe6e939d322a37b8dc268f6268271cb8\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:6d3e9f3044edfa513bf36673bef624de3874dbc6cb21c2f86dcde2ee37e29641\",\"subjectId\":\"concepts/queue-guide.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:402ba763ebceed8dd031020cd70484061e21c240976b68c28872b89471f1b96e\",\"policyEpoch\":\"sha256:ebb98deacd58f7dfa01519a31499fa75c723e85611a66b60f48b7ea4d4e34062\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":157,\"endByteExclusive\":215,\"startLine\":10,\"endLine\":10}}}]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:40.737Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=5a40f8a9-6091-465e-8e50-dc05c5c9bcca\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:44.017Z] [INFO] [chat:sendWithMedia] Processing file: pixel.png (image/png), path: D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-home-IlsIdb\\.openclaw\\media\\outbound\\1e96a0a3-d64e-47c1-a19b-7c2bf9287005.png, exists: true, isVision: true\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:44.018Z] [INFO] [chat:sendWithMedia] Read 68 bytes, base64 length: 92\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:44.139Z] [INFO] [chat:sendWithMedia] Sending: message=\"RAG11 media evidence\n\n[media attached: D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\run\", attachments=1, fileRefs=1\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:44.146Z] [INFO] [gateway-rpc] chat.send serialized id=6870352d-f99d-4592-a297-2d6b8a8424b7 timeoutMs=900000 bytes=2049\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:05:44.147Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=6870352d-f99d-4592-a297-2d6b8a8424b7\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:44.147Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=6870352d-f99d-4592-a297-2d6b8a8424b7\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:44.147Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=6870352d-f99d-4592-a297-2d6b8a8424b7\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:44.151Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=27be0114-408d-4155-b67f-f869f91b7bb4 sessionKey=agent:main:main loadSessionMs=0.543\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:05:44.178Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=27be0114-408d-4155-b67f-f869f91b7bb4 sessionKey=agent:main:main attachments=1\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:02.484Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=27be0114-408d-4155-b67f-f869f91b7bb4 sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:02.484Z] [INFO] [gateway-rpc] chat.send response id received durationMs=18338\n[2026-11-14T20:06:02.484Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"27be0114-408d-4155-b67f-f869f91b7bb4\",\"status\":\"started\",\"knowledgeReferences\":[{\"id\":\"70833d62ec1bcda22fb06da54c97563a2d72abe2351f3cc671461e63efac3162\",\"title\":\"Deployment guide\",\"lookup\":\"concepts/deployment-guide.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:05e7033df814ce011b887d2bbe1e478d4eb607f739164d50daf23631005da6ca\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:6d3e9f3044edfa513bf36673bef624de3874dbc6cb21c2f86dcde2ee37e29641\",\"subjectId\":\"concepts/deployment-guide.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:4467ccf95062a2e2bbeb01673b1d93a6535d5ed069d54ebe166806f9dc17f749\",\"policyEpoch\":\"sha256:ebb98deacd58f7dfa01519a31499fa75c723e85611a66b60f48b7ea4d4e34062\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":162,\"endByteExclusive\":192,\"startLine\":10,\"endLine\":10}}}]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:02.488Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=6870352d-f99d-4592-a297-2d6b8a8424b7\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #3\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:18.651Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:18.652Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-14T20:06:18.652Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-14T20:06:18.652Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:26.014Z] [INFO] [chat:sendWithMedia] Sending: message=\"RAG11 provider timeout ordinary send\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:26.014Z] [INFO] [gateway-rpc] chat.send serialized id=6a22b867-680f-4e4d-9d90-7120bb19d4e5 timeoutMs=900000 bytes=589\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:26.015Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=6a22b867-680f-4e4d-9d90-7120bb19d4e5\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:26.015Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=6a22b867-680f-4e4d-9d90-7120bb19d4e5\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:26.016Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=6a22b867-680f-4e4d-9d90-7120bb19d4e5\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:26.021Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=7c128163-7027-42f4-ad2c-7eb16109a0dc sessionKey=agent:main:session-1794686778651-fwz9bc loadSessionMs=0.798\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:26.025Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=7c128163-7027-42f4-ad2c-7eb16109a0dc sessionKey=agent:main:session-1794686778651-fwz9bc attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:26.028Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=7c128163-7027-42f4-ad2c-7eb16109a0dc sessionKey=agent:main:session-1794686778651-fwz9bc\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:26.028Z] [INFO] [gateway-rpc] chat.send response id received durationMs=14\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:26.029Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"7c128163-7027-42f4-ad2c-7eb16109a0dc\",\"status\":\"started\"}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:26.031Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=6a22b867-680f-4e4d-9d90-7120bb19d4e5\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #4\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:28.091Z] [INFO] [chat:sendWithMedia] Sending: message=\"RAG11 missing indexed content\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:28.092Z] [INFO] [gateway-rpc] chat.send serialized id=e4e8b967-cea6-41e4-88f4-374382e226b9 timeoutMs=900000 bytes=649\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:28.092Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=e4e8b967-cea6-41e4-88f4-374382e226b9\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:28.093Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=e4e8b967-cea6-41e4-88f4-374382e226b9\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:28.093Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=e4e8b967-cea6-41e4-88f4-374382e226b9\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:28.097Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=85f5a1b3-9de3-455a-aca0-9fb32aac9172 sessionKey=agent:main:session-1794686778651-fwz9bc loadSessionMs=0.804\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:28.100Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=85f5a1b3-9de3-455a-aca0-9fb32aac9172 sessionKey=agent:main:session-1794686778651-fwz9bc attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:28.102Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=85f5a1b3-9de3-455a-aca0-9fb32aac9172 sessionKey=agent:main:session-1794686778651-fwz9bc\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:28.102Z] [INFO] [gateway-rpc] chat.send response id received durationMs=10\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:28.102Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"85f5a1b3-9de3-455a-aca0-9fb32aac9172\",\"status\":\"started\"}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:28.104Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=7e9d169c-c84e-4b4b-8505-a84ecd973451 id=e4e8b967-cea6-41e4-88f4-374382e226b9\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:34.554Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-home-IlsIdb\\other-workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:37.066Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:37.066Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:37.067Z] [INFO] Sending kill to Gateway process (pid=2604)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:59022/c2fd51be-9e0d-4766-81ef-1c53fbf3edf0\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:37.088Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:37.088Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:37.599Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:37.600Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:37.652Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":4}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:37.654Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:37.654Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-14T20:06:37.654Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:37.654Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-14T20:04:54.670Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "aad9a96d802fe2d96306-a04601f1cd9d84f8b8ed",
+          "file": "project-rag-chat-modes.spec.ts",
+          "line": 17,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "project-rag-dcs-citation.spec.ts",
+      "file": "project-rag-dcs-citation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG packs real owner evidence for ordinary, media, queued, retry and model-only calls",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 420000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 91080,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:42.892Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:42.892Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-14T20:06:42.892Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=22404, ppid=27416\n[2026-11-14T20:06:42.892Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:42.921Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:42.922Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-14T20:06:42.922Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-14T20:06:42.922Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:43.007Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:43.008Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [22404:1115/040643.045:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[22404:1115/040643.045:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:43.202Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:43.206Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:43.207Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-14T20:06:43.207Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-14T20:06:43.208Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-14T20:06:43.208Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:43.952Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-home-21zkmo\\dcs-workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:44.401Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:44.402Z] [INFO] Gateway start requested (port=59576)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:44.407Z] [DEBUG] Device identity loaded (deviceId=d597060603c83a616be462b68882d68d9c40f8dc3ae0bcb5e168eac32d6660a9)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:44.407Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:44.684Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:22404) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:45.002Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:45.028Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:45.072Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:45.076Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":1,\"defaultProviderRuntimeSyncMs\":0,\"providerEnvMs\":8,\"channelStartupPolicyMs\":3,\"uvEnvMs\":6,\"mcpEnvMs\":23,\"runtimeConfigReadMs\":1,\"verseShellBundleMs\":0,\"totalMs\":63,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:45.076Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=59576, entry=\"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 59576 --allow-unconfigured\", execArgv=\"\", cwd=\"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\", bundledBin=no, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:45.164Z] [INFO] Gateway process started (pid=21612)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:45.165Z] [DEBUG] Gateway manager now owns process pid=21612\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:45.324Z] [WARN] [Gateway stderr] (node:21612) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:45.326Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:47.255Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:49.334Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:50.154Z] [DEBUG] [Gateway stderr] (node:21612) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:50.155Z] [DEBUG] [Gateway stderr] (node:21612) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:50.155Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:51.763Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:52.866Z] [DEBUG] Gateway ready after 28 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:52.866Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:59576/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:52.898Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=7a2c300f-2468-46ac-98e2-c6627bb43aa3 peer=127.0.0.1:59626->127.0.0.1:59576 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:59576 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:52.910Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:52.911Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-14T20:06:52.911Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:52.914Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=fc23e8d6-0cc2-4b7e-8333-5000986a29da peer=127.0.0.1:59630->127.0.0.1:59576 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:59576 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:52.963Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:59576/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:52.965Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:54.616Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:54.617Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-14T20:06:54.617Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:55.167Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:55.167Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:55.168Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:06:55.169Z] [INFO] [metric] gateway.startup {\"configSyncMs\":482,\"spawnToReadyMs\":7701,\"readyToConnectMs\":2303,\"totalMs\":10486}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:57.230Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-ECTKPR\\openclaw-source-state\\plugin-skills\\browser-automation\" → \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation\": Error: EPERM: operation not permitted, symlink 'C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation' -> 'D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-ECTKPR\\openclaw-source-state\\plugin-skills\\browser-automation'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:57.288Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-ECTKPR\\openclaw-source-state\\plugin-skills\\obsidian-vault-maintainer\" → \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\obsidian-vault-maintainer\": Error: EPERM: operation not permitted, symlink 'C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\obsidian-vault-maintainer' -> 'D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-ECTKPR\\openclaw-source-state\\plugin-skills\\obsidian-vault-maintainer'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:57.347Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-ECTKPR\\openclaw-source-state\\plugin-skills\\wiki-maintainer\" → \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\wiki-maintainer\": Error: EPERM: operation not permitted, symlink 'C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\wiki-maintainer' -> 'D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-ECTKPR\\openclaw-source-state\\plugin-skills\\wiki-maintainer'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:06:57.351Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-ECTKPR\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff\" → \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff\": Error: EPERM: operation not permitted, symlink 'C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff' -> 'D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-ECTKPR\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:12.140Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:12.141Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-14T20:07:12.141Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-14T20:07:12.141Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:21.609Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:21.610Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-14T20:07:21.610Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-14T20:07:21.610Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:21.840Z] [INFO] [provider-sync] Seeded provider account \"openai\" from openclaw.json\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:21.843Z] [INFO] [chat:sendWithMedia] Sending: message=\"DCS ordinary\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:21.852Z] [INFO] [gateway-rpc] chat.send serialized id=7e6614b4-a10a-47bf-a3f7-d4bcf5b9ce43 timeoutMs=900000 bytes=819\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:21.852Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=7e6614b4-a10a-47bf-a3f7-d4bcf5b9ce43\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:21.852Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=7e6614b4-a10a-47bf-a3f7-d4bcf5b9ce43\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:21.853Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=7e6614b4-a10a-47bf-a3f7-d4bcf5b9ce43\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:21.855Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:21.866Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=rag09-ordinary sessionKey=agent:main:main loadSessionMs=0.671\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:21.978Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=rag09-ordinary sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:21.981Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=rag09-ordinary sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:21.981Z] [INFO] [gateway-rpc] chat.send response id received durationMs=129\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:21.981Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"rag09-ordinary\",\"status\":\"started\",\"knowledgeReferences\":[{\"id\":\"z-first\",\"title\":\"Z first\",\"lookup\":\"concepts/z-first.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:05e7033df814ce011b887d2bbe1e478d4eb607f739164d50daf23631005da6ca\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/z-first.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:2b0f50a1376495d5869b964583416d4df83aa2c07ff7c230b275d34a99b33d0c\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":144,\"endByteExclusive\":174,\"startLine\":10,\"endLine\":10}}},{\"id\":\"a-second\",\"title\":\"A second\",\"lookup\":\"concepts/a-second.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:0c812da16511717cd328c73f2ed4719bda5583b9ed77dcb7ebcc2f3e3e029753\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/a-second.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":145,\"endByteExclusive\":288,\"startLine\":10,\"endLine\":15}}},{\"id\":\"large\",\"title\":\"Too large\",\"lookup\":\"concepts/large.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:61c1d2a2c9d5d1c34c4e7adc51e6c7960cadf174a6decb0a522b5dac51a352e2\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/large.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:d678d60629335eada1594f8764a1df00a0449a522dd3a7e4dad9fa09bcfc38c9\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":146,\"endByteExclusive\":5454,\"startLine\":10,\"endLine\":15}}}]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:21.999Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=7e6614b4-a10a-47bf-a3f7-d4bcf5b9ce43\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:24.902Z] [INFO] [chat:sendWithMedia] Sending: message=\"DCS ordinary\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:24.909Z] [INFO] [gateway-rpc] chat.send serialized id=851a3042-aadf-49db-b52e-872df8d1f7a9 timeoutMs=900000 bytes=819\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:24.909Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=851a3042-aadf-49db-b52e-872df8d1f7a9\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:24.909Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=851a3042-aadf-49db-b52e-872df8d1f7a9\n[2026-11-14T20:07:24.910Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=851a3042-aadf-49db-b52e-872df8d1f7a9\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:24.915Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=rag09-ordinary sessionKey=agent:main:main loadSessionMs=0.929\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:24.916Z] [INFO] [gateway-rpc] chat.send response id received durationMs=7\n[2026-11-14T20:07:24.916Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"rag09-ordinary\",\"status\":\"ok\"}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:24.916Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=851a3042-aadf-49db-b52e-872df8d1f7a9\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:24.952Z] [INFO] [chat:sendWithMedia] Processing file: pixel.png (image/png), path: D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-home-21zkmo\\dcs-workspace\\pixel.png, exists: true, isVision: true\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:24.953Z] [INFO] [chat:sendWithMedia] Read 68 bytes, base64 length: 92\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:25.207Z] [INFO] [chat:sendWithMedia] Sending: message=\"DCS media\n\n[media attached: D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-\", attachments=1, fileRefs=1\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:25.213Z] [INFO] [gateway-rpc] chat.send serialized id=371f181d-6079-49f0-9d80-56bc6d5e23ea timeoutMs=900000 bytes=1319\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:25.213Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=371f181d-6079-49f0-9d80-56bc6d5e23ea\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:25.214Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=371f181d-6079-49f0-9d80-56bc6d5e23ea\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:25.214Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=371f181d-6079-49f0-9d80-56bc6d5e23ea\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:25.217Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=rag09-media sessionKey=agent:main:main loadSessionMs=0.556\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:25.280Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=rag09-media sessionKey=agent:main:main attachments=1\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:42.983Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=rag09-media sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:42.984Z] [INFO] [gateway-rpc] chat.send response id received durationMs=17771\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:42.985Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"rag09-media\",\"status\":\"started\",\"knowledgeReferences\":[{\"id\":\"z-first\",\"title\":\"Z first\",\"lookup\":\"concepts/z-first.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:05e7033df814ce011b887d2bbe1e478d4eb607f739164d50daf23631005da6ca\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/z-first.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:2b0f50a1376495d5869b964583416d4df83aa2c07ff7c230b275d34a99b33d0c\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":144,\"endByteExclusive\":174,\"startLine\":10,\"endLine\":10}}},{\"id\":\"a-second\",\"title\":\"A second\",\"lookup\":\"concepts/a-second.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:0c812da16511717cd328c73f2ed4719bda5583b9ed77dcb7ebcc2f3e3e029753\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/a-second.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":145,\"endByteExclusive\":288,\"startLine\":10,\"endLine\":15}}},{\"id\":\"large\",\"title\":\"Too large\",\"lookup\":\"concepts/large.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:61c1d2a2c9d5d1c34c4e7adc51e6c7960cadf174a6decb0a522b5dac51a352e2\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/large.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:d678d60629335eada1594f8764a1df00a0449a522dd3a7e4dad9fa09bcfc38c9\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":146,\"endByteExclusive\":5454,\"startLine\":10,\"endLine\":15}}}]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:42.987Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=371f181d-6079-49f0-9d80-56bc6d5e23ea\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #3\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:44.462Z] [INFO] [chat:sendWithMedia] Sending: message=\"DCS queue-before\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:44.468Z] [INFO] [gateway-rpc] chat.send serialized id=e78fe528-ea83-4610-9d78-d94fe7ea10be timeoutMs=900000 bytes=827\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:44.468Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=e78fe528-ea83-4610-9d78-d94fe7ea10be\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:44.468Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=e78fe528-ea83-4610-9d78-d94fe7ea10be\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:44.469Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=e78fe528-ea83-4610-9d78-d94fe7ea10be\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:44.474Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=rag09-queue-before sessionKey=agent:main:main loadSessionMs=1.039\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:44.553Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=rag09-queue-before sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:44.556Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=rag09-queue-before sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:44.556Z] [INFO] [gateway-rpc] chat.send response id received durationMs=89\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:44.556Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"rag09-queue-before\",\"status\":\"started\",\"knowledgeReferences\":[{\"id\":\"z-first\",\"title\":\"Z first\",\"lookup\":\"concepts/z-first.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:05e7033df814ce011b887d2bbe1e478d4eb607f739164d50daf23631005da6ca\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/z-first.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:2b0f50a1376495d5869b964583416d4df83aa2c07ff7c230b275d34a99b33d0c\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":144,\"endByteExclusive\":174,\"startLine\":10,\"endLine\":10}}},{\"id\":\"a-second\",\"title\":\"A second\",\"lookup\":\"concepts/a-second.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:0c812da16511717cd328c73f2ed4719bda5583b9ed77dcb7ebcc2f3e3e029753\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/a-second.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":145,\"endByteExclusive\":288,\"startLine\":10,\"endLine\":15}}},{\"id\":\"large\",\"title\":\"Too large\",\"lookup\":\"concepts/large.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:61c1d2a2c9d5d1c34c4e7adc51e6c7960cadf174a6decb0a522b5dac51a352e2\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/large.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:d678d60629335eada1594f8764a1df00a0449a522dd3a7e4dad9fa09bcfc38c9\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":146,\"endByteExclusive\":5454,\"startLine\":10,\"endLine\":15}}}]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:44.558Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=e78fe528-ea83-4610-9d78-d94fe7ea10be\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:46.605Z] [INFO] [chat:sendWithMedia] Sending: message=\"DCS queued\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:46.612Z] [INFO] [gateway-rpc] chat.send serialized id=602e798c-d4a6-498c-a6bd-97ee39cc5740 timeoutMs=900000 bytes=815\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:46.612Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=602e798c-d4a6-498c-a6bd-97ee39cc5740\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:46.612Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=602e798c-d4a6-498c-a6bd-97ee39cc5740\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:46.612Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=602e798c-d4a6-498c-a6bd-97ee39cc5740\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:46.616Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=rag09-queued sessionKey=agent:main:main loadSessionMs=0.741\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:46.692Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=rag09-queued sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:46.695Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=rag09-queued sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:46.696Z] [INFO] [gateway-rpc] chat.send response id received durationMs=85\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:46.696Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"rag09-queued\",\"status\":\"started\",\"knowledgeReferences\":[{\"id\":\"z-first\",\"title\":\"Z first\",\"lookup\":\"concepts/z-first.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:05e7033df814ce011b887d2bbe1e478d4eb607f739164d50daf23631005da6ca\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/z-first.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:2b0f50a1376495d5869b964583416d4df83aa2c07ff7c230b275d34a99b33d0c\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":144,\"endByteExclusive\":174,\"startLine\":10,\"endLine\":10}}},{\"id\":\"a-second\",\"title\":\"A second\",\"lookup\":\"concepts/a-second.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:0c812da16511717cd328c73f2ed4719bda5583b9ed77dcb7ebcc2f3e3e029753\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/a-second.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":145,\"endByteExclusive\":288,\"startLine\":10,\"endLine\":15}}},{\"id\":\"large\",\"title\":\"Too large\",\"lookup\":\"concepts/large.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:61c1d2a2c9d5d1c34c4e7adc51e6c7960cadf174a6decb0a522b5dac51a352e2\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/large.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:d678d60629335eada1594f8764a1df00a0449a522dd3a7e4dad9fa09bcfc38c9\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":146,\"endByteExclusive\":5454,\"startLine\":10,\"endLine\":15}}}]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:46.701Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=602e798c-d4a6-498c-a6bd-97ee39cc5740\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:48.322Z] [INFO] [chat:sendWithMedia] Sending: message=\"DCS conflict group\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:48.329Z] [INFO] [gateway-rpc] chat.send serialized id=65d61830-e391-499b-b513-35fdd837da9e timeoutMs=900000 bytes=813\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:48.330Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=65d61830-e391-499b-b513-35fdd837da9e\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:48.331Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=65d61830-e391-499b-b513-35fdd837da9e\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:48.332Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=65d61830-e391-499b-b513-35fdd837da9e\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:48.336Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=rag09-conflict-group sessionKey=agent:main:main loadSessionMs=0.983\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:48.388Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=rag09-conflict-group sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:48.417Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=rag09-conflict-group sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:48.417Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=65d61830-e391-499b-b513-35fdd837da9e\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:48.418Z] [INFO] [gateway-rpc] chat.send response id received durationMs=89\n[2026-11-14T20:07:48.418Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"rag09-conflict-group\",\"status\":\"started\",\"knowledgeReferences\":[{\"id\":\"z-first\",\"title\":\"Z first\",\"lookup\":\"concepts/z-first.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:05e7033df814ce011b887d2bbe1e478d4eb607f739164d50daf23631005da6ca\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/z-first.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:2b0f50a1376495d5869b964583416d4df83aa2c07ff7c230b275d34a99b33d0c\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":144,\"endByteExclusive\":174,\"startLine\":10,\"endLine\":10}},\"conflictGroupId\":\"deployment\"},{\"id\":\"a-second\",\"title\":\"A second\",\"lookup\":\"concepts/a-second.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:0c812da16511717cd328c73f2ed4719bda5583b9ed77dcb7ebcc2f3e3e029753\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/a-second.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":145,\"endByteExclusive\":288,\"startLine\":10,\"endLine\":15}},\"conflictGroupId\":\"deployment\"}]}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:49.801Z] [INFO] [chat:sendWithMedia] Sending: message=\"DCS revoked\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:49.809Z] [INFO] [gateway-rpc] chat.send serialized id=b58a1e49-cb42-42ae-8916-0cd396db0af8 timeoutMs=900000 bytes=817\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:49.810Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=b58a1e49-cb42-42ae-8916-0cd396db0af8\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:49.810Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=b58a1e49-cb42-42ae-8916-0cd396db0af8\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:49.810Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=b58a1e49-cb42-42ae-8916-0cd396db0af8\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:49.814Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=rag09-revoked sessionKey=agent:main:main loadSessionMs=0.858\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:49.907Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=rag09-revoked sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:49.907Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=rag09-revoked sessionKey=agent:main:main\n[2026-11-14T20:07:49.907Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=e9236d68-a05e-4d2d-9c5c-12ce99bf0603 id=b58a1e49-cb42-42ae-8916-0cd396db0af8\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:49.907Z] [INFO] [gateway-rpc] chat.send response id received durationMs=98\n[2026-11-14T20:07:49.907Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"rag09-revoked\",\"status\":\"started\",\"knowledgeDenials\":[{\"id\":\"z-first\",\"title\":\"Z first\",\"lookup\":\"concepts/z-first.md\",\"reason\":\"revoked\",\"visibleReason\":\"Knowledge source cannot be read (revoked).\"}],\"knowledgeReferences\":[{\"id\":\"a-second\",\"title\":\"A second\",\"lookup\":\"concepts/a-second.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:0c812da16511717cd328c73f2ed4719bda5583b9ed77dcb7ebcc2f3e3e029753\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/a-second.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":145,\"endByteExclusive\":288,\"startLine\":10,\"endLine\":15}}},{\"id\":\"large\",\"title\":\"Too large\",\"lookup\":\"concepts/large.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:61c1d2a2c9d5d1c34c4e7adc51e6c7960cadf174a6decb0a522b5dac51a352e2\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/large.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:d678d60629335eada1594f8764a1df00a0449a522dd3a7e4dad9fa09bcfc38c9\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":146,\"endByteExclusive\":5454,\"startLine\":10,\"endLine\":15}}}]}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:51.070Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:51.070Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:51.070Z] [INFO] Sending kill to Gateway process (pid=21612)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:51.088Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:51.088Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:51.466Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:51.466Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:51.543Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:51.544Z] [INFO] Gateway start requested (port=59576)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:51.545Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:51.716Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:51.935Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:51.968Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:51.970Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":0,\"providerEnvMs\":6,\"channelStartupPolicyMs\":5,\"uvEnvMs\":1,\"mcpEnvMs\":4,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":0,\"totalMs\":31,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:51.970Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=59576, entry=\"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 59576 --allow-unconfigured\", execArgv=\"\", cwd=\"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\", bundledBin=no, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:52.043Z] [INFO] Gateway process started (pid=13452)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:52.043Z] [DEBUG] Gateway manager now owns process pid=13452\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:52.186Z] [WARN] [Gateway stderr] (node:13452) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:52.186Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:54.108Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:56.185Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:56.278Z] [DEBUG] [Gateway stderr] (node:13452) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:56.278Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:58.100Z] [INFO] [ResourceTracker] Registered: Session server :59576 (pid=13452, port=59576, session=agent:main:main)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:58.864Z] [DEBUG] Gateway ready after 24 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:58.865Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:59576/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:58.867Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=74718449-4b84-4665-99da-007096f067bd peer=127.0.0.1:59932->127.0.0.1:59576 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:59576 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:58.870Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:58.870Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:58.870Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:58.874Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=2bf6d885-331c-4c31-bbee-974a458401d0 peer=127.0.0.1:59933->127.0.0.1:59576 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:59576 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:58.881Z] [ERROR] Gateway connect handshake failed: GatewayRpcError: gateway starting; retry shortly\nGatewayRpcError: gateway starting; retry shortly\n    at Cs.handleMessage (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\dist-electron\\main\\index-BUIH1IX3.js:2337:36015)\n    at Object.onMessage (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\dist-electron\\main\\index-BUIH1IX3.js:2337:34845)\n    at WebSocket.<anonymous> (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\dist-electron\\main\\index-BUIH1IX3.js:78:9299)\n    at WebSocket.emit (node:events:508:28)\n    at Receiver.receiverOnMessage (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\websocket.js:1225:20)\n    at Receiver.emit (node:events:508:28)\n    at Receiver.dataMessage (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:596:14)\n    at Receiver.getData (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:496:10)\n    at Receiver.startLoop (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:167:16)\n    at Receiver._write (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:94:10)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:58.882Z] [WARN] Gateway connect rejected while still starting (GatewayRpcError: gateway starting; retry shortly); retrying in 500ms (1/6)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:58.882Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:07:58.884Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=605f5213-80c6-43c0-9232-7ee3a67f7b4b peer=127.0.0.1:59943->127.0.0.1:59576 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:59576 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:07:59.382Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:59576/ws)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:01.099Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:01.100Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-14T20:08:01.100Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:01.612Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:59576/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:01.614Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:01.931Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:01.932Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-14T20:08:01.932Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:01.954Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:01.954Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:01.954Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:01.955Z] [INFO] Gateway connect succeeded after 2 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:01.955Z] [INFO] [metric] gateway.startup {\"configSyncMs\":328,\"spawnToReadyMs\":6820,\"readyToConnectMs\":3091,\"totalMs\":10239}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:02.270Z] [INFO] [chat:sendWithMedia] Sending: message=\"DCS killed\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:02.479Z] [INFO] [gateway-rpc] chat.send serialized id=cc498701-0a42-4435-a83d-90a964ec814e timeoutMs=900000 bytes=815\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:02.480Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=cc498701-0a42-4435-a83d-90a964ec814e\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:02.483Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=fe11166c-85d3-4b61-b287-0df891f05e3f id=cc498701-0a42-4435-a83d-90a964ec814e\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:02.484Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=fe11166c-85d3-4b61-b287-0df891f05e3f id=cc498701-0a42-4435-a83d-90a964ec814e\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:02.489Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:02.498Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=rag09-killed sessionKey=agent:main:main loadSessionMs=0.674\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:02.645Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=rag09-killed sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:02.645Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=rag09-killed sessionKey=agent:main:main\n[2026-11-14T20:08:02.645Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=fe11166c-85d3-4b61-b287-0df891f05e3f id=cc498701-0a42-4435-a83d-90a964ec814e\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:02.645Z] [INFO] [gateway-rpc] chat.send response id received durationMs=166\n[2026-11-14T20:08:02.645Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"rag09-killed\",\"status\":\"started\",\"knowledgeDenials\":[{\"id\":\"z-first\",\"title\":\"Z first\",\"lookup\":\"concepts/z-first.md\",\"reason\":\"revoked\",\"visibleReason\":\"Knowledge source cannot be read (revoked).\"}],\"knowledgeReferences\":[{\"id\":\"a-second\",\"title\":\"A second\",\"lookup\":\"concepts/a-second.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:0c812da16511717cd328c73f2ed4719bda5583b9ed77dcb7ebcc2f3e3e029753\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/a-second.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:7d88586adbf24828cdc196eb17924995a5a426a0c923b8c8fe8a7d993eaa1d54\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":145,\"endByteExclusive\":288,\"startLine\":10,\"endLine\":15}}},{\"id\":\"large\",\"title\":\"Too large\",\"lookup\":\"concepts/large.md\",\"corpus\":\"wiki\",\"revision\":\"1\",\"contentDigest\":\"sha256:61c1d2a2c9d5d1c34c4e7adc51e6c7960cadf174a6decb0a522b5dac51a352e2\",\"sourceRef\":{\"domain\":\"wiki\",\"authorityId\":\"memory-wiki\",\"namespaceId\":\"memory-wiki:0b2ddb60e773aaefd85822020727f1882459210bf056ab8eb58eb1876157ca62\",\"subjectId\":\"concepts/large.md\",\"revision\":\"1\",\"schema\":\"SourceRef/v2\",\"sourceDigest\":\"sha256:d678d60629335eada1594f8764a1df00a0449a522dd3a7e4dad9fa09bcfc38c9\",\"policyEpoch\":\"sha256:1007684fdc2f33e0a1d0c09cd3d1d65f6c0b4a189a5ee6058f6a0c5af7111dbe\",\"locator\":{\"coordinateSpace\":\"raw-source-utf8-v1\",\"startByte\":146,\"endByteExclusive\":5454,\"startLine\":10,\"endLine\":15}}}]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:03.348Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-ECTKPR\\openclaw-source-state\\plugin-skills\\browser-automation\" → \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation\": Error: EPERM: operation not permitted, symlink 'C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation' -> 'D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-ECTKPR\\openclaw-source-state\\plugin-skills\\browser-automation'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:03.410Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-ECTKPR\\openclaw-source-state\\plugin-skills\\obsidian-vault-maintainer\" → \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\obsidian-vault-maintainer\": Error: EPERM: operation not permitted, symlink 'C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\obsidian-vault-maintainer' -> 'D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-ECTKPR\\openclaw-source-state\\plugin-skills\\obsidian-vault-maintainer'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:03.480Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-ECTKPR\\openclaw-source-state\\plugin-skills\\wiki-maintainer\" → \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\wiki-maintainer\": Error: EPERM: operation not permitted, symlink 'C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\wiki-maintainer' -> 'D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-ECTKPR\\openclaw-source-state\\plugin-skills\\wiki-maintainer'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:03.480Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-ECTKPR\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff\" → \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff\": Error: EPERM: operation not permitted, symlink 'C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff' -> 'D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-user-data-ECTKPR\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #4\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:08.166Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:08.167Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:08.167Z] [INFO] Sending kill to Gateway process (pid=13452)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:59537/66719501-21ec-4bfd-b1b5-4d149e407eba\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:08.185Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:08.185Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:08.583Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:08.583Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:08.652Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":4}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:08.653Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:08.653Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:08.654Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:08.655Z] [INFO] [ResourceTracker] Shutdown complete\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-14T20:06:38.416Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "970e6a30af95985da5a2-6b8467773cfb093312e5",
+          "file": "project-rag-dcs-citation.spec.ts",
+          "line": 20,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "project-rag-provider-settings.spec.ts",
+      "file": "project-rag-provider-settings.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG model settings configure, cancel, retry and refresh real embedding services",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 420000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 61915,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:13.679Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:13.680Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-14T20:08:13.680Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=28960, ppid=31496\n[2026-11-14T20:08:13.680Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:13.701Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:13.701Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-14T20:08:13.701Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:13.701Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:13.732Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:13.733Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [28960:1115/040813.816:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[28960:1115/040813.816:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:13.955Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:13.958Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:13.959Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-14T20:08:13.960Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:13.960Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-14T20:08:13.960Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:14.622Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\runtime\\verse-claw-e2e-run-DqUGMV\\verse-claw-e2e-home-WQ0OVA\\embedding-workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:15.509Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:15.509Z] [INFO] Gateway start requested (port=60006)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:15.540Z] [DEBUG] Device identity loaded (deviceId=d610378053f6a52f8c7ebee9b3dd4f4a3caf84185f3cce7df721c0bdf3bd2ecf)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:15.541Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:15.754Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:28960) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:15.991Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:16.009Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:16.042Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:16.046Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":1,\"defaultProviderRuntimeSyncMs\":0,\"providerEnvMs\":6,\"channelStartupPolicyMs\":2,\"uvEnvMs\":5,\"mcpEnvMs\":19,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":0,\"totalMs\":49,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:16.047Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=60006, entry=\"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 60006 --allow-unconfigured\", execArgv=\"\", cwd=\"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\", bundledBin=no, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:16.118Z] [INFO] Gateway process started (pid=18920)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:16.119Z] [DEBUG] Gateway manager now owns process pid=18920\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:16.247Z] [WARN] [Gateway stderr] (node:18920) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:16.248Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:18.176Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:20.252Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:20.402Z] [DEBUG] [Gateway stderr] (node:18920) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:20.403Z] [DEBUG] [Gateway stderr] (node:18920) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:20.403Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:22.622Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:22.855Z] [DEBUG] Gateway ready after 24 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:22.855Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:60006/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:22.880Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=d18be133-860b-4548-bf5b-63797aaa5cf4 peer=127.0.0.1:60051->127.0.0.1:60006 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:60006 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:22.886Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:22.887Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-14T20:08:22.887Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:22.889Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=abd2a188-9bf0-442c-82b6-c57a5f3c6263 peer=127.0.0.1:60092->127.0.0.1:60006 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:60006 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:22.942Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:60006/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:22.944Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:24.441Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:24.442Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-14T20:08:24.442Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:24.950Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:24.951Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:24.951Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:24.952Z] [INFO] [metric] gateway.startup {\"configSyncMs\":365,\"spawnToReadyMs\":6736,\"readyToConnectMs\":2097,\"totalMs\":9198}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:25.017Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:25.017Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-14T20:08:25.018Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-14T20:08:25.018Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:25.074Z] [INFO] [provider-sync] Seeded provider account \"openai\" from openclaw.json\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:41.992Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:41.993Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-14T20:08:41.993Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-14T20:08:41.993Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:42.010Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:42.011Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-14T20:08:42.011Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-14T20:08:42.011Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:42.155Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:42.155Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:42.156Z] [INFO] Sending kill to Gateway process (pid=18920)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:42.174Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:42.175Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:42.516Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:42.517Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:42.526Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:42.526Z] [INFO] Gateway start requested (port=60006)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:42.527Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:42.679Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:42.828Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:42.850Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:42.852Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":0,\"providerEnvMs\":5,\"channelStartupPolicyMs\":2,\"uvEnvMs\":0,\"mcpEnvMs\":3,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":0,\"totalMs\":21,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:42.852Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=60006, entry=\"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 60006 --allow-unconfigured\", execArgv=\"\", cwd=\"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\openclaw_runtime\", bundledBin=no, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:42.906Z] [INFO] Gateway process started (pid=13448)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:42.906Z] [DEBUG] Gateway manager now owns process pid=13448\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:42.998Z] [WARN] [Gateway stderr] (node:13448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:42.998Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:44.957Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:46.380Z] [DEBUG] [Gateway stderr] (node:13448) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:46.380Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:48.242Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=1557b2b4-da04-4cf8-91ee-1d70753200fd peer=127.0.0.1:61760->127.0.0.1:60006 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:60006 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:48.371Z] [DEBUG] Gateway ready after 20 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:48.372Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:60006/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:48.374Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=095cbdd1-f785-4020-9478-b457a9b3234a peer=127.0.0.1:61763->127.0.0.1:60006 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:60006 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:48.375Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:48.376Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:48.376Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:48.409Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:60006/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:08:48.409Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:49.638Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:49.638Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-14T20:08:49.638Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:50.015Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:50.015Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:50.015Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:08:50.016Z] [INFO] [metric] gateway.startup {\"configSyncMs\":227,\"spawnToReadyMs\":5466,\"readyToConnectMs\":1644,\"totalMs\":7337}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:09:10.289Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:09:10.289Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:09:10.290Z] [INFO] Sending kill to Gateway process (pid=13448)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-14T20:09:10.303Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:09:10.304Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:09:10.581Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:09:10.581Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:09:10.717Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:09:10.718Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (stop)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:59988/8a4cbc64-40ab-463f-ba76-68627d2798e4\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:09:10.731Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":4}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:09:10.732Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:09:10.732Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-14T20:09:10.733Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-14T20:09:10.733Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-14T20:08:09.516Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "embedding-lifecycle-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJhY3RvciI6ICJjb2RleC9wcm9qZWN0LXJhZy1lbWJlZGRpbmctZWxlY3Ryb24iLAogICJkcml2ZW5fYnkiOiAiYWdlbnQiLAogICJzdGF0dXMiOiAicGFzcyIsCiAgInN0ZXBzIjogewogICAgImxvY2FsQ2FuY2VsbGVkIjogdHJ1ZSwKICAgICJsb2NhbFJldHJ5UmVhZHkiOiB0cnVlLAogICAgInNlbGVjdGlvbkZvcm1SZXN0b3JlZCI6IHRydWUsCiAgICAibG9jYWxSZXN0YXJ0UmVzdG9yZWQiOiB0cnVlLAogICAgIm93bmVyUmVhZFNlbWFudGljUGF0aCI6IHRydWUsCiAgICAiZGlzYWJsZWQiOiB0cnVlLAogICAgInVuYXZhaWxhYmxlUHJvdmlkZXIiOiB0cnVlLAogICAgInJlYWxSZW1vdGVSZWFkeSI6IHRydWUsCiAgICAiY3JlZGVudGlhbEdlbmVyYXRpb25SZWZyZXNoZWQiOiB0cnVlCiAgfSwKICAibG9jYWxBbnN3ZXIiOiB7CiAgICAic3VjY2VzcyI6IHRydWUsCiAgICAicXVlc3Rpb24iOiAiV2hvIGNoZWNrcyBhY2Nlc3MgYmVmb3JlIGVtYmVkZGluZz8iLAogICAgImFuc3dlciI6ICJTZWxlY3RlZCBzb3VyY2UgZXhjZXJwdHMgKHBhcnRpYWwgcmVzcG9uc2UpLiBBcnRpZmFjdCBmb2N1czogc3VtbWFyeS5cblF1ZXN0aW9uOiBXaG8gY2hlY2tzIGFjY2VzcyBiZWZvcmUgZW1iZWRkaW5nP1xuXG4xLiBFbWJlZGRpbmcgc291cmNlOiBQcm9qZWN0IFJBRyBzb3VyY2Ugb3duZXJzIGVuZm9yY2UgYWNjZXNzIGJlZm9yZSBlbWJlZGRpbmcuICMjIFJlbGF0ZWQgPCEtLSBvcGVuY2xhdzp3aWtpOnJlbGF0ZWQ6c3RhcnQgLS0+IC0gTm8gcmVsYXRlZCBwYWdlcyB5ZXQuIDwhLS0gb3BlbmNsYXc6d2lraTpyZWxhdGVkOmVuZCAtLT4iLAogICAgInNvdXJjZXMiOiBbCiAgICAgIHsKICAgICAgICAiaWQiOiAiY29uY2VwdHMvZW1iZWRkaW5nLm1kIiwKICAgICAgICAibG9va3VwIjogImNvbmNlcHRzL2VtYmVkZGluZy5tZCIsCiAgICAgICAgInBhdGgiOiAiY29uY2VwdHMvZW1iZWRkaW5nLm1kIiwKICAgICAgICAidGl0bGUiOiAiRW1iZWRkaW5nIHNvdXJjZSIsCiAgICAgICAgImV4Y2VycHQiOiAiUHJvamVjdCBSQUcgc291cmNlIG93bmVycyBlbmZvcmNlIGFjY2VzcyBiZWZvcmUgZW1iZWRkaW5nLiAjIyBSZWxhdGVkIDwhLS0gb3BlbmNsYXc6d2lraTpyZWxhdGVkOnN0YXJ0IC0tPiAtIE5vIHJlbGF0ZWQgcGFnZXMgeWV0LiA8IS0tIG9wZW5jbGF3Ondpa2k6cmVsYXRlZDplbmQgLS0+IiwKICAgICAgICAicmVhZFJhbmdlIjogewogICAgICAgICAgImZyb21MaW5lIjogOSwKICAgICAgICAgICJ0b0xpbmUiOiAxNCwKICAgICAgICAgICJ0b3RhbExpbmVzIjogMTUsCiAgICAgICAgICAidHJ1bmNhdGVkIjogZmFsc2UKICAgICAgICB9LAogICAgICAgICJjaXRhdGlvbiI6IHsKICAgICAgICAgICJyZWZJZCI6ICJtZW1vcnktd2lraTptZW1vcnktd2lraToxMGRiMTk2MjA0OWI3MDRhZmNjMjhhMTdmZDI4ZWI3M2Y0Zjc3OGI4YjQ5NzhiMDAyOWU5ZmE1YmFiZDZjMmMyOmNvbmNlcHRzL2VtYmVkZGluZy5tZDoxMjgtMjk1IiwKICAgICAgICAgICJvd25lciI6ICJtZW1vcnktd2lraSIsCiAgICAgICAgICAic3ViamVjdElkIjogImNvbmNlcHRzL2VtYmVkZGluZy5tZCIsCiAgICAgICAgICAicmV2aXNpb24iOiAiMSIsCiAgICAgICAgICAiY29udGVudERpZ2VzdCI6ICJzaGEyNTY6MzUwNjY1ODcyZTVmNGYxNTZhMWFlZTk5MmJlNzNkZGU1YzZmN2I0ZmJhNWFjZmM1MzNmZWRlNjVjNDI3NjVhNCIsCiAgICAgICAgICAic291cmNlUmVmcyI6IFsKICAgICAgICAgICAgImNvbmNlcHRzL2VtYmVkZGluZy5tZCIKICAgICAgICAgIF0sCiAgICAgICAgICAic291cmNlUmVmIjogewogICAgICAgICAgICAiZG9tYWluIjogIndpa2kiLAogICAgICAgICAgICAiYXV0aG9yaXR5SWQiOiAibWVtb3J5LXdpa2kiLAogICAgICAgICAgICAibmFtZXNwYWNlSWQiOiAibWVtb3J5LXdpa2k6MTBkYjE5NjIwNDliNzA0YWZjYzI4YTE3ZmQyOGViNzNmNGY3NzhiOGI0OTc4YjAwMjllOWZhNWJhYmQ2YzJjMiIsCiAgICAgICAgICAgICJzdWJqZWN0SWQiOiAiY29uY2VwdHMvZW1iZWRkaW5nLm1kIiwKICAgICAgICAgICAgInJldmlzaW9uIjogIjEiLAogICAgICAgICAgICAic2NoZW1hIjogIlNvdXJjZVJlZi92MiIsCiAgICAgICAgICAgICJzb3VyY2VEaWdlc3QiOiAic2hhMjU2OmM1ZDIyZTQ0MjA2NTI5YjlhMTcyZGVmZmU2NDJhNjkzMmI0Mjg1MzIyMmQ5NTNhYzVlOGU4NGY2N2I3ZjAxN2MiLAogICAgICAgICAgICAicG9saWN5RXBvY2giOiAic2hhMjU2OjQ2MTkxMTgwYmUzNTJhYzQ2ZTVjODZmZmRjYjA0ZjcyZWU5YzhhMzgwYWE2NDQ3MTc1M2QzMDMyNzhjNTE2NzUiLAogICAgICAgICAgICAibG9jYXRvciI6IHsKICAgICAgICAgICAgICAiY29vcmRpbmF0ZVNwYWNlIjogInJhdy1zb3VyY2UtdXRmOC12MSIsCiAgICAgICAgICAgICAgInN0YXJ0Qnl0ZSI6IDEyOCwKICAgICAgICAgICAgICAiZW5kQnl0ZUV4Y2x1c2l2ZSI6IDI5NSwKICAgICAgICAgICAgICAic3RhcnRMaW5lIjogOSwKICAgICAgICAgICAgICAiZW5kTGluZSI6IDE0CiAgICAgICAgICAgIH0KICAgICAgICAgIH0KICAgICAgICB9CiAgICAgIH0KICAgIF0sCiAgICAidW5rbm93bnMiOiBbCiAgICAgICJHcm91bmRpbmcgaXMgcGFnZS9zbmlwcGV0IGxldmVsLiIsCiAgICAgICJUaGlzIHJlc3BvbnNlIGNvbnRhaW5zIHNvdXJjZSBleGNlcnB0czsgc3ludGhlc2l6ZWQgYW5zd2VyIGNvcnJlY3RuZXNzIGFuZCB1bnN0cnVjdHVyZWQgY29udHJhZGljdGlvbnMgaGF2ZSBub3QgYmVlbiBldmFsdWF0ZWQuIiwKICAgICAgIlNvdXJjZSBcImNvbmNlcHRzL2VtYmVkZGluZy5tZFwiIGhhcyBubyBrbm93biBmcmVzaG5lc3MgdGltZXN0YW1wLiIKICAgIF0sCiAgICAiZ3JvdW5kaW5nU3RhdHVzIjogInBhcnRpYWwiLAogICAgImFuc3dlck1vZGUiOiAic3RyaWN0IiwKICAgICJzeW50aGVzaXNNb2RlIjogInNvdXJjZS1leGNlcnB0cyIsCiAgICAic3VnZ2VzdGVkTmV4dEFjdGlvbnMiOiBbXSwKICAgICJyZWplY3Rpb25zIjogW10sCiAgICAiY29uZmxpY3RTZXQiOiBbXSwKICAgICJyZXRyaWV2YWxEaWFnbm9zdGljcyI6IHsKICAgICAgInF1ZXJ5IjogIldobyBjaGVja3MgYWNjZXNzIGJlZm9yZSBlbWJlZGRpbmc/IiwKICAgICAgImNvcnB1cyI6ICJ3aWtpIiwKICAgICAgIm1vZGUiOiAic291cmNlLXNldCIsCiAgICAgICJiYWNrZW5kIjogInNlbWFudGljIiwKICAgICAgInJlc3VsdENvdW50IjogMSwKICAgICAgInNlbGVjdGVkQ291bnQiOiAxLAogICAgICAicmVhc29uIjogImV4cGxpY2l0IFNvdXJjZSBTZXQgc2VsZWN0aW9uIGFmdGVyIG93bmVyIGFkbWlzc2lvbiIsCiAgICAgICJpdGVtcyI6IFsKICAgICAgICB7CiAgICAgICAgICAiaWQiOiAiY29uY2VwdHMvZW1iZWRkaW5nLm1kIiwKICAgICAgICAgICJ0aXRsZSI6ICJFbWJlZGRpbmcgc291cmNlIiwKICAgICAgICAgICJsb29rdXAiOiAiY29uY2VwdHMvZW1iZWRkaW5nLm1kIiwKICAgICAgICAgICJzb3VyY2VLaW5kIjogIndpa2ktcGFnZSIsCiAgICAgICAgICAicmVhc29uIjogImV4cGxpY2l0IFNvdXJjZSBTZXQgc2VsZWN0aW9uIGFmdGVyIG93bmVyIGFkbWlzc2lvbiIsCiAgICAgICAgICAicGF0aCI6ICJjb25jZXB0cy9lbWJlZGRpbmcubWQiCiAgICAgICAgfQogICAgICBdCiAgICB9LAogICAgInNlbWFudGljUmVxdWVzdGVkIjogdHJ1ZSwKICAgICJzZW1hbnRpY0xhbmUiOiB7CiAgICAgICJzdGF0dXMiOiAiYXZhaWxhYmxlIiwKICAgICAgInByb3ZpZGVySWQiOiAibG9jYWw6ZW1iZWRkaW5nZ2VtbWEtMzAwbSIsCiAgICAgICJkaW1lbnNpb24iOiA3NjgsCiAgICAgICJzaW1pbGFyaXRpZXMiOiBbCiAgICAgICAgewogICAgICAgICAgInJlZklkIjogIm1lbW9yeS13aWtpOm1lbW9yeS13aWtpOjEwZGIxOTYyMDQ5YjcwNGFmY2MyOGExN2ZkMjhlYjczZjRmNzc4YjhiNDk3OGIwMDI5ZTlmYTViYWJkNmMyYzI6Y29uY2VwdHMvZW1iZWRkaW5nLm1kOjEyOC0yOTUiLAogICAgICAgICAgInNpbWlsYXJpdHkiOiAwLjYxMjk2NjQ3MzEwNDkyMjUKICAgICAgICB9CiAgICAgIF0KICAgIH0KICB9LAogICJsb2NhbCI6IHsKICAgICJzdWNjZXNzIjogdHJ1ZSwKICAgICJlbWJlZGRpbmciOiB7CiAgICAgICJtb2RlIjogImxvY2FsIiwKICAgICAgInN0YXR1cyI6ICJyZWFkeSIsCiAgICAgICJjcmVkZW50aWFsRXBvY2giOiAyLAogICAgICAicHJvdmlkZXJSZWYiOiAibG9jYWw6ZW1iZWRkaW5nZ2VtbWEtMzAwbSIsCiAgICAgICJtb2RlbCI6ICJnb29nbGUvZW1iZWRkaW5nZ2VtbWEtMzAwbSIsCiAgICAgICJkaW1lbnNpb25zIjogNzY4LAogICAgICAic3BhY2VJZCI6ICJzaGEyNTY6NWUyNWM3ODY1ZDQ1YmNkZTdjZDYwZjBhYjgwM2E2MzY0N2Q5OTc3MGQ1NjkxMDgwNzJkMGQ1NjMyNDczNDFlMiIsCiAgICAgICJjYXBhYmlsaXR5IjogewogICAgICAgICJzY2hlbWEiOiAiUHJvdmlkZXJDYXBhYmlsaXR5U25hcHNob3QvdjEiLAogICAgICAgICJwcm92aWRlclJlZiI6ICJsb2NhbDplbWJlZGRpbmdnZW1tYS0zMDBtIiwKICAgICAgICAidHJhbnNwb3J0IjogImxvY2FsIiwKICAgICAgICAiY3JlZGVudGlhbEVwb2NoIjogMiwKICAgICAgICAib2JzZXJ2ZWRBdCI6ICIyMDI2LTExLTE0VDIwOjA4OjM5LjM0MVoiLAogICAgICAgICJzdGF0dXMiOiAicmVhZHkiLAogICAgICAgICJzcGFjZSI6IHsKICAgICAgICAgICJzY2hlbWEiOiAiRW1iZWRkaW5nU3BhY2UvdjEiLAogICAgICAgICAgInNwYWNlSWQiOiAic2hhMjU2OjVlMjVjNzg2NWQ0NWJjZGU3Y2Q2MGYwYWI4MDNhNjM2NDdkOTk3NzBkNTY5MTA4MDcyZDBkNTYzMjQ3MzQxZTIiLAogICAgICAgICAgInByb3ZpZGVyUmVmIjogImxvY2FsOmVtYmVkZGluZ2dlbW1hLTMwMG0iLAogICAgICAgICAgIm1vZGVsIjogImdvb2dsZS9lbWJlZGRpbmdnZW1tYS0zMDBtIiwKICAgICAgICAgICJtb2RlbFJldmlzaW9uIjogIjY2Zjk3NGY4Y2Q0OGNjM2I5YzQxYzUxNmI5NTUwOGU3NWI0YmVlNjQvc2hhMjU2OjZmYTBjMDJhOWMzMDJiZTZmOTc3NTIxZDM5OWI0ZGUzYTQ2MzEwYTRmMjYyMWVlMDA2Mzc0Nzg4MWI2NzNmNjciLAogICAgICAgICAgImRpbWVuc2lvbnMiOiA3NjgsCiAgICAgICAgICAibWF4SW5wdXRUb2tlbnMiOiAyMDQ3LAogICAgICAgICAgInRva2VuaXplcklkIjogIm5vZGUtbGxhbWEtY3BwL2NhbGN1bGF0ZUlucHV0TGVuZ3RoL3YxIiwKICAgICAgICAgICJ0b2tlbml6ZXJEaWdlc3QiOiAic2hhMjU2OjU4MmNmNWQ0YmNmM2VlZDg4YjU0Njg2MjFiYjA3ZjYzNGQzMmViNDBkM2E5MzI1ODhkYTQ4NzNiMDU5MDg5NWUiLAogICAgICAgICAgImlucHV0Rm9ybWF0IjogewogICAgICAgICAgICAiaWQiOiAiZW1iZWRkaW5nZ2VtbWEvc2VhcmNoLXYxIiwKICAgICAgICAgICAgInF1ZXJ5IjogInRhc2s6IHNlYXJjaCByZXN1bHQgfCBxdWVyeToge3RleHR9IiwKICAgICAgICAgICAgImRvY3VtZW50IjogInRpdGxlOiB7dGl0bGV9IHwgdGV4dDoge3RleHR9IgogICAgICAgICAgfSwKICAgICAgICAgICJub3JtYWxpemF0aW9uIjogImwyIgogICAgICAgIH0KICAgICAgfQogICAgfQogIH0sCiAgInJlbW90ZSI6IHsKICAgICJzdWNjZXNzIjogdHJ1ZSwKICAgICJlbWJlZGRpbmciOiB7CiAgICAgICJtb2RlIjogInJlbW90ZSIsCiAgICAgICJzdGF0dXMiOiAicmVhZHkiLAogICAgICAiY3JlZGVudGlhbEVwb2NoIjogMiwKICAgICAgInByb3ZpZGVyUmVmIjogInNpbGljb25mbG93IiwKICAgICAgIm1vZGVsIjogIlF3ZW4vUXdlbjMtVkwtRW1iZWRkaW5nLThCIiwKICAgICAgImRpbWVuc2lvbnMiOiA0MDk2LAogICAgICAic3BhY2VJZCI6ICJzaGEyNTY6MTFiZDhmMjU5YmY4NWRhY2Y1MWI3NjZhNjFmNmY3ZDNmNDJiNjM0NmZkMTY1YmMwZjllYjRkYjVhNjBlOThlYyIsCiAgICAgICJjYXBhYmlsaXR5IjogewogICAgICAgICJzY2hlbWEiOiAiUHJvdmlkZXJDYXBhYmlsaXR5U25hcHNob3QvdjEiLAogICAgICAgICJwcm92aWRlclJlZiI6ICJzaWxpY29uZmxvdyIsCiAgICAgICAgInRyYW5zcG9ydCI6ICJyZW1vdGUiLAogICAgICAgICJjcmVkZW50aWFsRXBvY2giOiAyLAogICAgICAgICJvYnNlcnZlZEF0IjogIjIwMjYtMTEtMTRUMjA6MDk6MDcuNTg4WiIsCiAgICAgICAgInN0YXR1cyI6ICJyZWFkeSIsCiAgICAgICAgInNwYWNlIjogewogICAgICAgICAgInNjaGVtYSI6ICJFbWJlZGRpbmdTcGFjZS92MSIsCiAgICAgICAgICAic3BhY2VJZCI6ICJzaGEyNTY6MTFiZDhmMjU5YmY4NWRhY2Y1MWI3NjZhNjFmNmY3ZDNmNDJiNjM0NmZkMTY1YmMwZjllYjRkYjVhNjBlOThlYyIsCiAgICAgICAgICAicHJvdmlkZXJSZWYiOiAic2lsaWNvbmZsb3ciLAogICAgICAgICAgIm1vZGVsIjogIlF3ZW4vUXdlbjMtVkwtRW1iZWRkaW5nLThCIiwKICAgICAgICAgICJtb2RlbFJldmlzaW9uIjogInByb3ZpZGVyLXVudmVyc2lvbmVkL2ZpbmdlcnByaW50LXYxOnNoYTI1NjoxYTZhMGM1MzMyZmY4ZTMwOTFiZWY5YTk3MmY0MGZjMzEwMGM5MjRhYjEzNzdiNzJiNDc2ZjYyNDAwM2I3NmEyIiwKICAgICAgICAgICJkaW1lbnNpb25zIjogNDA5NiwKICAgICAgICAgICJtYXhJbnB1dFRva2VucyI6IDMyNzY4LAogICAgICAgICAgInRva2VuaXplcklkIjogIlF3ZW4zLVZMLUVtYmVkZGluZy04Qi90ZXh0LWNoYXQtd3JhcHBlci12MSIsCiAgICAgICAgICAidG9rZW5pemVyRGlnZXN0IjogInNoYTI1Njo2NWY5ODRmNWUxOWQzMTY1NzBiYmIyN2NhZTQ0ZmMyYTlmYTI5YjM4Mzg2YmVhNmQ3YjIzZTExNTlmYjcxODdmIiwKICAgICAgICAgICJpbnB1dEZvcm1hdCI6IHsKICAgICAgICAgICAgImlkIjogInF3ZW4zLXZsL3RleHQtc2VhcmNoLXYxIiwKICAgICAgICAgICAgInF1ZXJ5IjogIlJldHJpZXZlIHJlbGV2YW50IGRvY3VtZW50cyBmb3IgdGhlIHF1ZXJ5Llxue3RleHR9IiwKICAgICAgICAgICAgImRvY3VtZW50IjogInt0ZXh0fSIKICAgICAgICAgIH0sCiAgICAgICAgICAibm9ybWFsaXphdGlvbiI6ICJsMiIKICAgICAgICB9CiAgICAgIH0KICAgIH0KICB9LAogICJyZWZyZXNoZWQiOiB7CiAgICAic3VjY2VzcyI6IHRydWUsCiAgICAiZW1iZWRkaW5nIjogewogICAgICAibW9kZSI6ICJyZW1vdGUiLAogICAgICAic3RhdHVzIjogInJlYWR5IiwKICAgICAgImNyZWRlbnRpYWxFcG9jaCI6IDMsCiAgICAgICJwcm92aWRlclJlZiI6ICJzaWxpY29uZmxvdyIsCiAgICAgICJtb2RlbCI6ICJRd2VuL1F3ZW4zLVZMLUVtYmVkZGluZy04QiIsCiAgICAgICJkaW1lbnNpb25zIjogNDA5NiwKICAgICAgInNwYWNlSWQiOiAic2hhMjU2OmU4OGE5OTYzMTZlNDAxNzc2Y2U1YTRmNzQzMDgyYzk0YjM3YTcxNjViNzI0YjkyMzM2Y2M1NDFiYmQ2YmRlYjUiLAogICAgICAiY2FwYWJpbGl0eSI6IHsKICAgICAgICAic2NoZW1hIjogIlByb3ZpZGVyQ2FwYWJpbGl0eVNuYXBzaG90L3YxIiwKICAgICAgICAicHJvdmlkZXJSZWYiOiAic2lsaWNvbmZsb3ciLAogICAgICAgICJ0cmFuc3BvcnQiOiAicmVtb3RlIiwKICAgICAgICAiY3JlZGVudGlhbEVwb2NoIjogMywKICAgICAgICAib2JzZXJ2ZWRBdCI6ICIyMDI2LTExLTE0VDIwOjA5OjA5LjEyM1oiLAogICAgICAgICJzdGF0dXMiOiAicmVhZHkiLAogICAgICAgICJzcGFjZSI6IHsKICAgICAgICAgICJzY2hlbWEiOiAiRW1iZWRkaW5nU3BhY2UvdjEiLAogICAgICAgICAgInNwYWNlSWQiOiAic2hhMjU2OmU4OGE5OTYzMTZlNDAxNzc2Y2U1YTRmNzQzMDgyYzk0YjM3YTcxNjViNzI0YjkyMzM2Y2M1NDFiYmQ2YmRlYjUiLAogICAgICAgICAgInByb3ZpZGVyUmVmIjogInNpbGljb25mbG93IiwKICAgICAgICAgICJtb2RlbCI6ICJRd2VuL1F3ZW4zLVZMLUVtYmVkZGluZy04QiIsCiAgICAgICAgICAibW9kZWxSZXZpc2lvbiI6ICJwcm92aWRlci11bnZlcnNpb25lZC9maW5nZXJwcmludC12MTpzaGEyNTY6OGVlOGIxYWQzN2JjMmU1MzU5ZWQ1ZGQwNWQ2ODczYzE0NWIyYzczZjk3MzFlMDA3ZWJmNGY3NDM3ZmNkNjAyOSIsCiAgICAgICAgICAiZGltZW5zaW9ucyI6IDQwOTYsCiAgICAgICAgICAibWF4SW5wdXRUb2tlbnMiOiAzMjc2OCwKICAgICAgICAgICJ0b2tlbml6ZXJJZCI6ICJRd2VuMy1WTC1FbWJlZGRpbmctOEIvdGV4dC1jaGF0LXdyYXBwZXItdjEiLAogICAgICAgICAgInRva2VuaXplckRpZ2VzdCI6ICJzaGEyNTY6NjVmOTg0ZjVlMTlkMzE2NTcwYmJiMjdjYWU0NGZjMmE5ZmEyOWIzODM4NmJlYTZkN2IyM2UxMTU5ZmI3MTg3ZiIsCiAgICAgICAgICAiaW5wdXRGb3JtYXQiOiB7CiAgICAgICAgICAgICJpZCI6ICJxd2VuMy12bC90ZXh0LXNlYXJjaC12MSIsCiAgICAgICAgICAgICJxdWVyeSI6ICJSZXRyaWV2ZSByZWxldmFudCBkb2N1bWVudHMgZm9yIHRoZSBxdWVyeS5cbnt0ZXh0fSIsCiAgICAgICAgICAgICJkb2N1bWVudCI6ICJ7dGV4dH0iCiAgICAgICAgICB9LAogICAgICAgICAgIm5vcm1hbGl6YXRpb24iOiAibDIiCiAgICAgICAgfQogICAgICB9CiAgICB9CiAgfSwKICAibGFzdE9ic2VydmVkU3RhdHVzIjogewogICAgInN1Y2Nlc3MiOiB0cnVlLAogICAgImVtYmVkZGluZyI6IHsKICAgICAgIm1vZGUiOiAicmVtb3RlIiwKICAgICAgInN0YXR1cyI6ICJyZWFkeSIsCiAgICAgICJjcmVkZW50aWFsRXBvY2giOiAzLAogICAgICAicHJvdmlkZXJSZWYiOiAic2lsaWNvbmZsb3ciLAogICAgICAibW9kZWwiOiAiUXdlbi9Rd2VuMy1WTC1FbWJlZGRpbmctOEIiLAogICAgICAiZGltZW5zaW9ucyI6IDQwOTYsCiAgICAgICJzcGFjZUlkIjogInNoYTI1NjplODhhOTk2MzE2ZTQwMTc3NmNlNWE0Zjc0MzA4MmM5NGIzN2E3MTY1YjcyNGI5MjMzNmNjNTQxYmJkNmJkZWI1IiwKICAgICAgImNhcGFiaWxpdHkiOiB7CiAgICAgICAgInNjaGVtYSI6ICJQcm92aWRlckNhcGFiaWxpdHlTbmFwc2hvdC92MSIsCiAgICAgICAgInByb3ZpZGVyUmVmIjogInNpbGljb25mbG93IiwKICAgICAgICAidHJhbnNwb3J0IjogInJlbW90ZSIsCiAgICAgICAgImNyZWRlbnRpYWxFcG9jaCI6IDMsCiAgICAgICAgIm9ic2VydmVkQXQiOiAiMjAyNi0xMS0xNFQyMDowOTowOS4xMjNaIiwKICAgICAgICAic3RhdHVzIjogInJlYWR5IiwKICAgICAgICAic3BhY2UiOiB7CiAgICAgICAgICAic2NoZW1hIjogIkVtYmVkZGluZ1NwYWNlL3YxIiwKICAgICAgICAgICJzcGFjZUlkIjogInNoYTI1NjplODhhOTk2MzE2ZTQwMTc3NmNlNWE0Zjc0MzA4MmM5NGIzN2E3MTY1YjcyNGI5MjMzNmNjNTQxYmJkNmJkZWI1IiwKICAgICAgICAgICJwcm92aWRlclJlZiI6ICJzaWxpY29uZmxvdyIsCiAgICAgICAgICAibW9kZWwiOiAiUXdlbi9Rd2VuMy1WTC1FbWJlZGRpbmctOEIiLAogICAgICAgICAgIm1vZGVsUmV2aXNpb24iOiAicHJvdmlkZXItdW52ZXJzaW9uZWQvZmluZ2VycHJpbnQtdjE6c2hhMjU2OjhlZThiMWFkMzdiYzJlNTM1OWVkNWRkMDVkNjg3M2MxNDViMmM3M2Y5NzMxZTAwN2ViZjRmNzQzN2ZjZDYwMjkiLAogICAgICAgICAgImRpbWVuc2lvbnMiOiA0MDk2LAogICAgICAgICAgIm1heElucHV0VG9rZW5zIjogMzI3NjgsCiAgICAgICAgICAidG9rZW5pemVySWQiOiAiUXdlbjMtVkwtRW1iZWRkaW5nLThCL3RleHQtY2hhdC13cmFwcGVyLXYxIiwKICAgICAgICAgICJ0b2tlbml6ZXJEaWdlc3QiOiAic2hhMjU2OjY1Zjk4NGY1ZTE5ZDMxNjU3MGJiYjI3Y2FlNDRmYzJhOWZhMjliMzgzODZiZWE2ZDdiMjNlMTE1OWZiNzE4N2YiLAogICAgICAgICAgImlucHV0Rm9ybWF0IjogewogICAgICAgICAgICAiaWQiOiAicXdlbjMtdmwvdGV4dC1zZWFyY2gtdjEiLAogICAgICAgICAgICAicXVlcnkiOiAiUmV0cmlldmUgcmVsZXZhbnQgZG9jdW1lbnRzIGZvciB0aGUgcXVlcnkuXG57dGV4dH0iLAogICAgICAgICAgICAiZG9jdW1lbnQiOiAie3RleHR9IgogICAgICAgICAgfSwKICAgICAgICAgICJub3JtYWxpemF0aW9uIjogImwyIgogICAgICAgIH0KICAgICAgfQogICAgfQogIH0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e42daccfedc4063de65e-781cc14c3089fbea2524",
+          "file": "project-rag-provider-settings.spec.ts",
+          "line": 18,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-14T20:04:53.627Z",
+    "duration": 258602.53499999997,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

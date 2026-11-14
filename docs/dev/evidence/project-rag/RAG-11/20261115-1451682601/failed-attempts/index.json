@@ -1,0 +1,189 @@
+{
+  "actor": "codex/project-rag-relay-01a1d9e2",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "attempts": [
+    {
+      "artifact": "project-rag-dcs-citation.spec.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\project-rag-dcs-citation.spec.json",
+      "rawSha256": "09324167932c8414074ac7cc0a79daef3474e44421e26ee14c917948f05a9907",
+      "status": "fail",
+      "stats": {
+        "startTime": "2026-11-14T14:00:01.208Z",
+        "duration": 90699.062,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "classification": "Initial report failed despite the wrapper exit code of zero."
+    },
+    {
+      "artifact": "project-rag-chat-modes.spec.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\project-rag-chat-modes.spec.json",
+      "rawSha256": "65f82f6f8fbc3c5dce6d04160d8a8da773ad087f6630cfaa3edb00f985c5add1",
+      "status": "fail",
+      "stats": {
+        "startTime": "2026-11-14T14:01:30.768Z",
+        "duration": 31138.618000000002,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "classification": "Initial report failed despite the wrapper exit code of zero."
+    },
+    {
+      "artifact": "project-rag-provider-settings.spec.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\project-rag-provider-settings.spec.json",
+      "rawSha256": "0732e5e5840b9f2689027afe5f04921a6be39df17ca6632b5feaa3a650584011",
+      "status": "fail",
+      "stats": {
+        "startTime": "2026-11-14T14:01:32.082Z",
+        "duration": 90830.08,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "classification": "Initial report failed despite the wrapper exit code of zero."
+    },
+    {
+      "artifact": "failed-attempts/16dd-initial/gates.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\gates.json",
+      "rawSha256": "5c4c310d5ff9c482a450a04ff826995f5d7a8639713bc746001b101f9ed435cf"
+    },
+    {
+      "artifact": "failed-attempts/16dd-initial/electron.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\electron.json",
+      "rawSha256": "7fe7cae322612ce0df43e4e18d31a014dada88274f0b716601c14e05f3b20963"
+    },
+    {
+      "artifact": "failed-attempts/16dd-recovery/gates.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\supplement\\gates.json",
+      "rawSha256": "ce4c9402e97ffc8186ebc3f3bc876271717d9c5934c3a8b10524bdb584e89e1a"
+    },
+    {
+      "artifact": "failed-attempts/16dd-recovery/electron.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\rag11-formal-16dd09e7ef\\supplement\\electron.json",
+      "rawSha256": "dd72d4a30f4a80b8baae3d58a3c6b8101f7d2dd58e37a27ddbdf2ad47c618086"
+    },
+    {
+      "artifact": "failed-attempts/first-typecheck-resource-receipt.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\agentdev-refresh.json",
+      "rawSha256": "fc84310e5f24ca8558b1d6f89eb9dea6db287e78d78762846a4129c790fb9268"
+    },
+    {
+      "artifact": "failed-attempts/agent-dev-first-audit.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d438\\rag11-refresh-first-audit.json",
+      "rawSha256": "a391edbac812e2cc382b3e8b8fcc43d3ae332375a2d38bf38d99d8a11f784e49"
+    },
+    {
+      "artifact": "failed-attempts/agent-dev-first-deep-test.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d438\\rag11-refresh-first-deep-test.json",
+      "rawSha256": "15d4e8c664cecb78395c95f3dda6fed8be6e9bcf3511b4d740bb8674eaa0cff4"
+    },
+    {
+      "artifact": "failed-attempts/agent-dev-retry-audit.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\before-refresh\\artifacts\\agent-dev-audit\\report.json",
+      "rawSha256": "11cab75a62726671b3b54f6f87180e8b6566fe21ed74ccf0c5b1b224843deb4d"
+    },
+    {
+      "artifact": "failed-attempts/rag11-electron-dev.json"
+    },
+    {
+      "artifact": "failed-attempts/rag11-electron-dev2.json"
+    },
+    {
+      "artifact": "failed-attempts/rag11-electron-dev3.json"
+    },
+    {
+      "artifact": "failed-attempts/rag11-electron-dev4.json"
+    },
+    {
+      "artifact": "failed-attempts/rag11-electron-dev5.json"
+    },
+    {
+      "artifact": "failed-attempts/rag11-electron-dev6.json"
+    },
+    {
+      "artifact": "failed-attempts/rag11-electron-dev7.json"
+    },
+    {
+      "artifact": "failed-attempts/rag11-electron-dev8.json"
+    },
+    {
+      "artifact": "failed-attempts/rag11-electron-dev9.json"
+    },
+    {
+      "artifact": "failed-attempts/rag11-electron-dev10.json"
+    },
+    {
+      "artifact": "failed-attempts/direct-electron-recovery/electron.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\direct-electron-recovery\\electron.json",
+      "rawSha256": "d1412a07df75e9d8c593c191fc97f4803bcb74c3e6d81339cad539afa1a42941"
+    },
+    {
+      "artifact": "failed-attempts/direct-electron-recovery/receipt.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\direct-electron-recovery\\receipt.json",
+      "rawSha256": "0a00802b38a9296d95eefc963fdbedd53acffe11ee2dc786c6c96274ebc3d7cc"
+    },
+    {
+      "artifact": "failed-attempts/clean-electron-recovery/electron.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\clean-electron-recovery\\electron.json",
+      "rawSha256": "2ea2622f4d7a2e24d5ca229320b2a7eddc76d73c967032aa2a79fab5c25ecedb"
+    },
+    {
+      "artifact": "failed-attempts/clean-electron-recovery/receipt.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\clean-electron-recovery\\receipt.json",
+      "rawSha256": "6ff37e77720bf04915ac52e2f55d8923b1f6f662ccf849a806a9781e1ccc92cf"
+    },
+    {
+      "artifact": "failed-attempts/logged-electron-recovery/electron.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\logged-electron-recovery\\electron.json",
+      "rawSha256": "59b641f7d4386c3793cad001f1b8666b8fac334f119ad8f70c5fe7dc33e649d8"
+    },
+    {
+      "artifact": "failed-attempts/logged-electron-recovery/receipt.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\logged-electron-recovery\\receipt.json",
+      "rawSha256": "f94430f1e54e32b967c31700b5ac265bca323b6893c17120f0cd21a8f646b8b6"
+    },
+    {
+      "artifact": "failed-attempts/main-trace-electron-recovery/electron.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\main-trace-electron-recovery\\electron.json",
+      "rawSha256": "b2d418c0512229c777ed73cd37eaefcb3afe4555601e63d3f87c6898737f41f8"
+    },
+    {
+      "artifact": "failed-attempts/main-trace-electron-recovery/receipt.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\main-trace-electron-recovery\\receipt.json",
+      "rawSha256": "dfbcdb9afa7c13e561ead2d4770608d39aeeda31ea07e2e70261cdfe24315bd3"
+    },
+    {
+      "artifact": "failed-attempts/solo-electron-recovery/receipts.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\solo-electron-recovery\\receipts.json",
+      "rawSha256": "111c63ed9ae4e45a25571318eeda36c51f29b519926d22abf06a3bb35b1aa92a"
+    },
+    {
+      "artifact": "failed-attempts/solo-electron-recovery/project-rag-dcs-citation/report.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\solo-electron-recovery\\project-rag-dcs-citation\\report.json",
+      "rawSha256": "7048762279752a08d7f311b8edf637601ba7872cd1e523664392eaf13c486ec8"
+    },
+    {
+      "artifact": "failed-attempts/solo-electron-recovery/project-rag-provider-settings/report.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\solo-electron-recovery\\project-rag-provider-settings\\report.json",
+      "rawSha256": "7d5bc6c61de74f83bae46bb28e560b24b09a17a76bb82f9cda34ea10f914c3ce"
+    },
+    {
+      "artifact": "failed-attempts/main2-diagnostic.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\main2-diagnostic.json",
+      "rawSha256": "407e9e0b8b243e9e47d623a704dbeadbce5b688db6d067e70629bddaa88a3bd4",
+      "classification": "Diagnostic setup failed because require is unavailable inside Electron Main evaluation."
+    },
+    {
+      "artifact": "failed-attempts/main2-diagnostic-exec.json",
+      "rawPath": "D:\\tmp\\project-rag-relay-01a1d9e2\\main2-diagnostic-exec.json",
+      "rawSha256": "93616b8e314dc391ff0fee1eabd695e97a1a88f5694dd0e185f29fd1fe4884ce",
+      "classification": "Diagnostic setup failed because require is unavailable inside Electron Main evaluation."
+    }
+  ]
+}

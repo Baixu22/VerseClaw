@@ -1,0 +1,13 @@
+{
+  "schema": "ReviewInterrupted/v1",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "rootPid": 36324,
+  "rootObserved": "absent",
+  "runnerSession": "not found after tool reload",
+  "structuredResultProduced": false,
+  "sourceInputsStale": true,
+  "actions": []
+}

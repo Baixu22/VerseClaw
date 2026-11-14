@@ -1,0 +1,158 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-relay-01a1d9e2/final-1451682601/electron/project-rag-dcs-citation.spec",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-dcs-citation.spec.ts",
+      "file": "project-rag-dcs-citation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG packs real owner evidence for ordinary, media, queued, retry and model-only calls",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 420000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 87852,
+                  "error": {
+                    "message": "Error: page.evaluate: Target page, context or browser has been closed",
+                    "stack": "Error: page.evaluate: Target page, context or browser has been closed\n    at host (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts:11:15)\n    at send (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts:91:28)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts:206:36",
+                    "location": {
+                      "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts",
+                      "column": 15,
+                      "line": 11
+                    },
+                    "snippet": "   9 | type Json = Record<string, unknown>;\n  10 | async function host<T = Json>(page: Page, module: string, action: string, payload?: Json): Promise<T> {\n> 11 |   return page.evaluate(async input => {\n     |               ^\n  12 |     const result = await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), module: input.module,\n  13 |       action: input.action, ...(input.payload ? { payload: input.payload } : {}) });\n  14 |     if (!result.ok) throw Error(result.error?.message ?? 'Host request failed');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts",
+                        "column": 15,
+                        "line": 11
+                      },
+                      "message": "Error: page.evaluate: Target page, context or browser has been closed\n\n   9 | type Json = Record<string, unknown>;\n  10 | async function host<T = Json>(page: Page, module: string, action: string, payload?: Json): Promise<T> {\n> 11 |   return page.evaluate(async input => {\n     |               ^\n  12 |     const result = await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), module: input.module,\n  13 |       action: input.action, ...(input.payload ? { payload: input.payload } : {}) });\n  14 |     if (!result.ok) throw Error(result.error?.message ?? 'Host request failed');\n    at host (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts:11:15)\n    at send (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts:91:28)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts:206:36"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #2\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #3\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #4\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-14T14:00:02.078Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\electron\\project-rag-dcs-citation.spec\\project-rag-dcs-citation-P-3f869--retry-and-model-only-calls\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\electron\\project-rag-dcs-citation.spec\\project-rag-dcs-citation-P-3f869--retry-and-model-only-calls\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts",
+                    "column": 15,
+                    "line": 11
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "970e6a30af95985da5a2-6b8467773cfb093312e5",
+          "file": "project-rag-dcs-citation.spec.ts",
+          "line": 20,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-14T14:00:01.208Z",
+    "duration": 90699.062,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

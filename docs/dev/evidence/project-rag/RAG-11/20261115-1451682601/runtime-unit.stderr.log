@@ -1,0 +1,5 @@
+(node:31316) [PROMPT_CONTRIBUTION_AUTHORITY_DENIED] Warning: Prompt contribution authority violation: source=compass scope=system_prompt requires=append_instruction reason=undeclared
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31316) [PROMPT_CONTRIBUTION_AUTHORITY_DENIED] Warning: Prompt contribution authority violation: source=compass scope=system_prompt requires=append_instruction reason=undeclared
+(node:31316) [PROMPT_CONTRIBUTION_AUTHORITY_DENIED] Warning: Prompt contribution authority violation: source=shared-source scope=system_prompt requires=append_instruction reason=undeclared
+(node:31316) [PROMPT_CONTRIBUTION_AUTHORITY_DENIED] Warning: Prompt contribution authority violation: source=vtoken-assembly scope=message requires=append_data reason=scope-mismatch

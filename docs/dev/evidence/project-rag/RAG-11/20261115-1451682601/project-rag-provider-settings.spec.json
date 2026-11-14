@@ -1,0 +1,150 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-relay-01a1d9e2/final-1451682601/electron/project-rag-provider-settings.spec",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-provider-settings.spec.ts",
+      "file": "project-rag-provider-settings.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG model settings configure, cancel, retry and refresh real embedding services",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 420000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 87006,
+                  "error": {
+                    "message": "Error: page.evaluate: Target page, context or browser has been closed",
+                    "stack": "Error: page.evaluate: Target page, context or browser has been closed\n    at host (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-provider-settings.spec.ts:10:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-provider-settings.spec.ts:48:17",
+                    "location": {
+                      "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-provider-settings.spec.ts",
+                      "column": 15,
+                      "line": 10
+                    },
+                    "snippet": "   8 | type Json = Record<string, unknown>;\n   9 | async function host<T = Json>(page: Page, module: string, action: string, payload?: Json): Promise<T> {\n> 10 |   return page.evaluate(async request => {\n     |               ^\n  11 |     const result = await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), module: request.module,\n  12 |       action: request.action, ...(request.payload ? { payload: request.payload } : {}) });\n  13 |     if (!result.ok) throw Error(result.error?.message ?? 'Host request failed');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-provider-settings.spec.ts",
+                        "column": 15,
+                        "line": 10
+                      },
+                      "message": "Error: page.evaluate: Target page, context or browser has been closed\n\n   8 | type Json = Record<string, unknown>;\n   9 | async function host<T = Json>(page: Page, module: string, action: string, payload?: Json): Promise<T> {\n> 10 |   return page.evaluate(async request => {\n     |               ^\n  11 |     const result = await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), module: request.module,\n  12 |       action: request.action, ...(request.payload ? { payload: request.payload } : {}) });\n  13 |     if (!result.ok) throw Error(result.error?.message ?? 'Host request failed');\n    at host (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-provider-settings.spec.ts:10:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-provider-settings.spec.ts:48:17"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T14:01:33.700Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "embedding-lifecycle-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJhY3RvciI6ICJjb2RleC9wcm9qZWN0LXJhZy1lbWJlZGRpbmctZWxlY3Ryb24iLAogICJkcml2ZW5fYnkiOiAiYWdlbnQiLAogICJzdGF0dXMiOiAiZmFpbCIsCiAgInN0ZXBzIjoge30KfQ=="
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\electron\\project-rag-provider-settings.spec\\project-rag-provider-setti-69fa0-esh-real-embedding-services\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\electron\\project-rag-provider-settings.spec\\project-rag-provider-setti-69fa0-esh-real-embedding-services\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-provider-settings.spec.ts",
+                    "column": 15,
+                    "line": 10
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e42daccfedc4063de65e-781cc14c3089fbea2524",
+          "file": "project-rag-provider-settings.spec.ts",
+          "line": 18,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-14T14:01:32.082Z",
+    "duration": 90830.08,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

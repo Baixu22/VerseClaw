@@ -1,0 +1,25 @@
+{
+  "schema": "ReviewAdjudication/v1",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "helperExitCode": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "remainingAccepted": 0,
+  "results": [
+    {
+      "finding": 1,
+      "status": "rejected",
+      "reason": "The owner policy evaluator rejects every non-active status and expired/invalid retention.expiresAt before the automatic timestamp check. The retriever and runtime re-read current version/digest and owner policy. ADR section7 requires known freshness and current validity, without a universal document-age TTL; an old verification date on a currently active unexpired immutable source is not an expired source.",
+      "evidence": [
+        "openclaw_runtime/src/runtime-core/knowledge-owner-read.ts:268",
+        "openclaw_runtime/src/runtime-core/knowledge-owner-read.ts:280",
+        "tests/unit/project-rag-owner-read.test.ts:66",
+        "tests/unit/project-rag-owner-read.test.ts:72",
+        "docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md:332"
+      ]
+    }
+  ]
+}

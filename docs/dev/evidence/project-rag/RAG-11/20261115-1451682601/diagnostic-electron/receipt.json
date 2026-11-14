@@ -1,0 +1,49 @@
+{
+  "schema": "ProjectRagDirectElectronRecovery/v2",
+  "actor": "codex/project-rag-relay-01a1d9e2",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "1451682601913c1e8ed6787c707ba0ef10812906",
+    "tree": "1c59cfc2c746fa5d0bf2bd12a6da98c13e342ac1",
+    "status": ""
+  },
+  "after": {
+    "commit": "1451682601913c1e8ed6787c707ba0ef10812906",
+    "tree": "1c59cfc2c746fa5d0bf2bd12a6da98c13e342ac1",
+    "status": ""
+  },
+  "sourceUnchanged": true,
+  "command": [
+    "C:/Program Files/nodejs/node.exe",
+    "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\node_modules\\@playwright\\test\\cli.js",
+    "test",
+    "tests/e2e/project-rag-dcs-citation.spec.ts",
+    "tests/e2e/project-rag-chat-modes.spec.ts",
+    "tests/e2e/project-rag-provider-settings.spec.ts",
+    "--workers=1",
+    "--retries=0",
+    "--reporter=json",
+    "--output",
+    "D:\\tmp\\project-rag-relay-01a1d9e2\\main3-electron-recovery\\electron"
+  ],
+  "exitCode": 0,
+  "durationMs": 259680,
+  "stats": {
+    "startTime": "2026-11-14T20:04:53.627Z",
+    "duration": 258602.53499999997,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "files": [
+    "tests/e2e/project-rag-dcs-citation.spec.ts",
+    "tests/e2e/project-rag-chat-modes.spec.ts",
+    "tests/e2e/project-rag-provider-settings.spec.ts"
+  ],
+  "cliSha256": "79e23e6a249176295b8490567daa7717448a75866d6ea6f6b296ff3d23305c69",
+  "traceSha256": "6259d51a84f457ed8f6aa2f3de924a392c6d35a90ed589d415983d0bf1b9678f",
+  "traceBehavior": "Forward original app quit/exit and process exit calls; record window and shutdown events.",
+  "status": "pass"
+}

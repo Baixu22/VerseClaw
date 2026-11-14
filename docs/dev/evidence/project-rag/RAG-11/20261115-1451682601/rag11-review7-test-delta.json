@@ -1,0 +1,13 @@
+{
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "file": "tests/e2e/project-rag-chat-modes.spec.ts",
+  "reviewedSha256": "d53e6e2401048fef61af3ca9f6689b8dc032ca1d580e16564da06d94e68e2a51",
+  "currentSha256": "4da44cc5bf36bcd4c398acd96b33fdcea6b17201a00b2f23d88b03770ea03b7e",
+  "changes": [
+    "Close the existing Dialog with Escape and assert closure.",
+    "Capture manual search results and use at most three explicit UI retries while owner/index state settles."
+  ],
+  "status": "reviewed"
+}

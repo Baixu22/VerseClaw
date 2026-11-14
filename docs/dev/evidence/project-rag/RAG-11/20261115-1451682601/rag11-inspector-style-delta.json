@@ -1,0 +1,12 @@
+{
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "file": "src/pages/Chat/ChatInput.tsx",
+  "reviewedSha256": "b40ecfb42dad5d3e078c749b0d331e79d67f80477bd6f9905188bfddcd180b8f",
+  "currentSha256": "c5bba5eee213ccb7e862d44d960541636adfae8c799317843c4d8d5043890e1a",
+  "change": "Reuse the existing modal surface, border, padding, rounded corners and shadow tokens for the source inspector; add description/body spacing.",
+  "functionalChanges": false,
+  "status": "reviewed",
+  "visualVerification": "pending final clean-candidate Electron build"
+}

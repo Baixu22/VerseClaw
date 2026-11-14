@@ -1,0 +1,161 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-relay-01a1d438/rag11-electron-dev",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-chat-modes.spec.ts",
+      "file": "project-rag-chat-modes.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG chat modes retain real owner evidence and bound optional reads",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 480000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 127952,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-knowledge-inspected-body')\nExpected substring: \u001b[32m\"18789\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-knowledge-inspected-body')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-knowledge-inspected-body')\nExpected substring: \u001b[32m\"18789\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-knowledge-inspected-body')\u001b[22m\n\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts:80:69",
+                    "location": {
+                      "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts",
+                      "column": 69,
+                      "line": 80
+                    },
+                    "snippet": "  78 |     await page.screenshot({ path: testInfo.outputPath('rag11-preflight.png'), fullPage: true });\n  79 |     await page.getByTestId('chat-knowledge-inspect-source').first().click();\n> 80 |     await expect(page.getByTestId('chat-knowledge-inspected-body')).toContainText('18789');\n     |                                                                     ^\n  81 |     await page.screenshot({ path: testInfo.outputPath('rag11-inspect.png'), fullPage: true });\n  82 |     await page.getByTestId('chat-knowledge-inspected-attach').click();\n  83 |     await expect(page.getByTestId('chat-knowledge-selected-item')).toHaveCount(1);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts",
+                        "column": 69,
+                        "line": 80
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('chat-knowledge-inspected-body')\nExpected substring: \u001b[32m\"18789\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('chat-knowledge-inspected-body')\u001b[22m\n\n\n  78 |     await page.screenshot({ path: testInfo.outputPath('rag11-preflight.png'), fullPage: true });\n  79 |     await page.getByTestId('chat-knowledge-inspect-source').first().click();\n> 80 |     await expect(page.getByTestId('chat-knowledge-inspected-body')).toContainText('18789');\n     |                                                                     ^\n  81 |     await page.screenshot({ path: testInfo.outputPath('rag11-inspect.png'), fullPage: true });\n  82 |     await page.getByTestId('chat-knowledge-inspected-attach').click();\n  83 |     await expect(page.getByTestId('chat-knowledge-selected-item')).toHaveCount(1);\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts:80:69"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T04:08:15.298Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d438\\rag11-electron-dev\\project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d438\\rag11-electron-dev\\project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d438\\rag11-electron-dev\\project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts",
+                    "column": 69,
+                    "line": 80
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "aad9a96d802fe2d96306-a04601f1cd9d84f8b8ed",
+          "file": "project-rag-chat-modes.spec.ts",
+          "line": 17,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "AggregateError: Electron E2E cleanup and source guard failed",
+      "stack": "AggregateError: Electron E2E cleanup and source guard failed\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts:127:49",
+      "location": {
+        "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+        "column": 49,
+        "line": 127
+      },
+      "snippet": "\u001b[90m   at \u001b[39mfixtures\\electron-process-cleanup.ts:127\n\n  125 |     }, null, 2));\n  126 |\n> 127 |     if (cleanupError && sourceGuardError) throw new AggregateError([cleanupError, sourceGuardError], 'Electron E2E cleanup and source guard failed');\n      |                                                 ^\n  128 |     if (cleanupError) throw cleanupError;\n  129 |     if (sourceGuardError) throw sourceGuardError;\n  130 |   };"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-11-14T04:08:13.774Z",
+    "duration": 303113.94,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

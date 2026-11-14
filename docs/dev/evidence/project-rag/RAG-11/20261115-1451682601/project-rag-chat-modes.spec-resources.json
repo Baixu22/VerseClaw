@@ -1,0 +1,14 @@
+{
+  "actor": "codex/project-rag-relay-01a1d9e2",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "minimumMemoryMiB": 3000,
+  "samples": [
+    {
+      "timestamp": "2026-11-14T14:01:28.363756+00:00",
+      "freeMemoryMiB": 4732,
+      "freeCommitMiB": 8641,
+      "freeDMiB": 30377
+    }
+  ]
+}

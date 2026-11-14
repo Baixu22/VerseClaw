@@ -1,0 +1,34 @@
+{
+  "actor": "codex/project-rag-relay-01a1d9e2",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "1451682601913c1e8ed6787c707ba0ef10812906",
+  "prerequisites": [
+    {
+      "programKey": "RAG-07",
+      "artifact": "docs/dev/evidence/project-rag/RAG-07/20261112-65b1cc688/report.json",
+      "status": "pass",
+      "retainedHashesVerified": 36
+    },
+    {
+      "programKey": "RAG-08",
+      "artifact": "docs/dev/evidence/project-rag/RAG-08/20261113-2355b6c19/report.json",
+      "status": "pass",
+      "retainedHashesVerified": 46
+    },
+    {
+      "programKey": "RAG-09",
+      "artifact": "docs/dev/evidence/project-rag/RAG-09/20261114-2b044e7925/report.json",
+      "status": "pass",
+      "retainedHashesVerified": 85
+    },
+    {
+      "programKey": "RAG-10",
+      "artifact": "docs/dev/evidence/project-rag/RAG-10/20261114-99fb6a21d8/report.json",
+      "status": "pass",
+      "retainedHashesVerified": 47
+    }
+  ],
+  "totalRetainedHashes": 214,
+  "status": "pass"
+}

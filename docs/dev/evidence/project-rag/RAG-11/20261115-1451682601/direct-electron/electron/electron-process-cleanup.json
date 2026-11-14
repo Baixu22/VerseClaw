@@ -1,0 +1,68 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\project-rag-relay-01a1d9e2\\plain-electron-verification\\runtime\\verse-claw-e2e-run-AzwcUK",
+  "ledgerEntries": 17,
+  "checks": [
+    {
+      "pid": 25232,
+      "creationTime": 1794687046658,
+      "status": "exited"
+    },
+    {
+      "pid": 31892,
+      "creationTime": 1794687050501,
+      "status": "exited"
+    },
+    {
+      "pid": 26100,
+      "creationTime": 1794687050685,
+      "status": "exited"
+    },
+    {
+      "pid": 1104,
+      "creationTime": 1794687062852,
+      "status": "exited"
+    },
+    {
+      "pid": 6268,
+      "creationTime": 1794687144497,
+      "status": "exited"
+    },
+    {
+      "pid": 28964,
+      "creationTime": 1794687148392,
+      "status": "exited"
+    },
+    {
+      "pid": 32152,
+      "creationTime": 1794687148586,
+      "status": "exited"
+    },
+    {
+      "pid": 31572,
+      "creationTime": 1794687210099,
+      "status": "exited"
+    },
+    {
+      "pid": 27248,
+      "creationTime": 1794687225371,
+      "status": "exited"
+    },
+    {
+      "pid": 32316,
+      "creationTime": 1794687229256,
+      "status": "exited"
+    },
+    {
+      "pid": 30616,
+      "creationTime": 1794687229444,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

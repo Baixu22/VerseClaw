@@ -1,0 +1,299 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\playwright.config.ts",
+    "rootDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-relay-01a1d9e2/final-1451682601/direct-electron-recovery/electron",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-chat-modes.spec.ts",
+      "file": "project-rag-chat-modes.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG chat modes retain real owner evidence and bound optional reads",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 480000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 36195,
+                  "error": {
+                    "message": "Error: page.evaluate: Target page, context or browser has been closed",
+                    "stack": "Error: page.evaluate: Target page, context or browser has been closed\n    at host (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts:9:15)\n    at Object._electron2.expect.poll.timeout (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts:64:42)",
+                    "location": {
+                      "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts",
+                      "column": 15,
+                      "line": 9
+                    },
+                    "snippet": "   7 | type Json = Record<string, unknown>;\n   8 | async function host<T = Json>(page: Page, module: string, action: string, payload?: Json): Promise<T> {\n>  9 |   return page.evaluate(async input => {\n     |               ^\n  10 |     const response = await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), module: input.module,\n  11 |       action: input.action, ...(input.payload ? { payload: input.payload } : {}) });\n  12 |     if (!response.ok) throw Error(response.error?.message ?? 'Host request failed');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts",
+                        "column": 15,
+                        "line": 9
+                      },
+                      "message": "Error: page.evaluate: Target page, context or browser has been closed\n\n   7 | type Json = Record<string, unknown>;\n   8 | async function host<T = Json>(page: Page, module: string, action: string, payload?: Json): Promise<T> {\n>  9 |   return page.evaluate(async input => {\n     |               ^\n  10 |     const response = await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), module: input.module,\n  11 |       action: input.action, ...(input.payload ? { payload: input.payload } : {}) });\n  12 |     if (!response.ok) throw Error(response.error?.message ?? 'Host request failed');\n    at host (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts:9:15)\n    at Object._electron2.expect.poll.timeout (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts:64:42)"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T14:15:58.489Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\direct-electron-recovery\\electron\\project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\direct-electron-recovery\\electron\\project-rag-chat-modes-Pro-28c8b-ce-and-bound-optional-reads\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-chat-modes.spec.ts",
+                    "column": 15,
+                    "line": 9
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "aad9a96d802fe2d96306-a04601f1cd9d84f8b8ed",
+          "file": "project-rag-chat-modes.spec.ts",
+          "line": 17,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "project-rag-dcs-citation.spec.ts",
+      "file": "project-rag-dcs-citation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG packs real owner evidence for ordinary, media, queued, retry and model-only calls",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 420000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 30824,
+                  "error": {
+                    "message": "Error: page.evaluate: Target page, context or browser has been closed",
+                    "stack": "Error: page.evaluate: Target page, context or browser has been closed\n    at host (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts:11:15)\n    at start (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts:80:13)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts:83:11",
+                    "location": {
+                      "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts",
+                      "column": 15,
+                      "line": 11
+                    },
+                    "snippet": "   9 | type Json = Record<string, unknown>;\n  10 | async function host<T = Json>(page: Page, module: string, action: string, payload?: Json): Promise<T> {\n> 11 |   return page.evaluate(async input => {\n     |               ^\n  12 |     const result = await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), module: input.module,\n  13 |       action: input.action, ...(input.payload ? { payload: input.payload } : {}) });\n  14 |     if (!result.ok) throw Error(result.error?.message ?? 'Host request failed');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts",
+                        "column": 15,
+                        "line": 11
+                      },
+                      "message": "Error: page.evaluate: Target page, context or browser has been closed\n\n   9 | type Json = Record<string, unknown>;\n  10 | async function host<T = Json>(page: Page, module: string, action: string, payload?: Json): Promise<T> {\n> 11 |   return page.evaluate(async input => {\n     |               ^\n  12 |     const result = await window.verseClaw!.hostInvoke({ id: crypto.randomUUID(), module: input.module,\n  13 |       action: input.action, ...(input.payload ? { payload: input.payload } : {}) });\n  14 |     if (!result.ok) throw Error(result.error?.message ?? 'Host request failed');\n    at host (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts:11:15)\n    at start (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts:80:13)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts:83:11"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T14:16:35.761Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\direct-electron-recovery\\electron\\project-rag-dcs-citation-P-3f869--retry-and-model-only-calls\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\direct-electron-recovery\\electron\\project-rag-dcs-citation-P-3f869--retry-and-model-only-calls\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-dcs-citation.spec.ts",
+                    "column": 15,
+                    "line": 11
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "970e6a30af95985da5a2-6b8467773cfb093312e5",
+          "file": "project-rag-dcs-citation.spec.ts",
+          "line": 20,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "project-rag-provider-settings.spec.ts",
+      "file": "project-rag-provider-settings.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG model settings configure, cancel, retry and refresh real embedding services",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 420000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 8207,
+                  "error": {
+                    "message": "Error: electron.launch: WebSocket error: read ECONNRESET\nCall log:\n\u001b[2m  - <launching> \"D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\direct-electron-recovery\\electron-runtime\\verse-claw-e2e-run-2UrPfQ\\verse-claw-e2e-user-data-HOGJnE\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=34400\u001b[22m\n\u001b[2m  - [pid=34400][out]\u001b[22m\n\u001b[2m  - [pid=34400][err] Debugger listening on ws://127.0.0.1:61768/740b5365-9389-4960-b845-f9922114a068\u001b[22m\n\u001b[2m  - [pid=34400][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:61768/740b5365-9389-4960-b845-f9922114a068\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:61768/740b5365-9389-4960-b845-f9922114a068\u001b[22m\n\u001b[2m  - [pid=34400][err] Debugger attached.\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.255Z] [DEBUG] [extensions] No clawx-extensions.json found, loading all builtin extensions\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.260Z] [DEBUG] [extensions] Registered extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.260Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.260Z] [DEBUG] [extensions] Registered extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.260Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=34400][err] (node:35272) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\u001b[22m\n\u001b[2m  - [pid=34400][err] (Use `electron --trace-warnings ...` to show where the warning was created)\u001b[22m\n\u001b[2m  - [pid=34400][err] (node:35272) ExperimentalWarning: SQLite is an experimental feature and might change at any time\u001b[22m\n\u001b[2m  - [pid=34400][err] (node:35272) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\u001b[22m\n\u001b[2m  - [pid=34400][err]\u001b[22m\n\u001b[2m  - [pid=34400][err] DevTools listening on ws://127.0.0.1:61767/devtools/browser/a85b0029-3255-435d-860b-d94415b0b2ca\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:61767/devtools/browser/a85b0029-3255-435d-860b-d94415b0b2ca\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.413Z] [INFO] === Verse Claw Application Starting ===\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.643Z] [INFO] [efficiency-sampler] started {\"intervalMs\":5000,\"maxSamples\":720}\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.644Z] [INFO] [efficiency] runtime efficiency sampling started {\"intervalMs\":5000,\"platform\":\"win32\"}\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.645Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":1}\u001b[22m\n\u001b[2m  - [pid=34400] <process did exit: exitCode=0, signal=null>\u001b[22m\n\u001b[2m  - [pid=34400] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - <ws disconnected> ws://127.0.0.1:61768/740b5365-9389-4960-b845-f9922114a068 code=1006 reason=\u001b[22m\n\u001b[2m  - <ws error> ws://127.0.0.1:61767/devtools/browser/a85b0029-3255-435d-860b-d94415b0b2ca error read ECONNRESET\u001b[22m\n\u001b[2m  - <ws connect error> ws://127.0.0.1:61767/devtools/browser/a85b0029-3255-435d-860b-d94415b0b2ca read ECONNRESET\u001b[22m\n\u001b[2m  - <ws disconnected> ws://127.0.0.1:61767/devtools/browser/a85b0029-3255-435d-860b-d94415b0b2ca code=1006 reason=\u001b[22m\n\u001b[2m  - [pid=34400] <kill>\u001b[22m\n\u001b[2m  - [pid=34400] <skipped force kill spawnedProcess.killed=false processClosed=true>\u001b[22m\n\u001b[2m  - [pid=34400] finished temporary directories cleanup\u001b[22m\n",
+                    "stack": "Error: electron.launch: WebSocket error: read ECONNRESET\nCall log:\n\u001b[2m  - <launching> \"D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\direct-electron-recovery\\electron-runtime\\verse-claw-e2e-run-2UrPfQ\\verse-claw-e2e-user-data-HOGJnE\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=34400\u001b[22m\n\u001b[2m  - [pid=34400][out]\u001b[22m\n\u001b[2m  - [pid=34400][err] Debugger listening on ws://127.0.0.1:61768/740b5365-9389-4960-b845-f9922114a068\u001b[22m\n\u001b[2m  - [pid=34400][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:61768/740b5365-9389-4960-b845-f9922114a068\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:61768/740b5365-9389-4960-b845-f9922114a068\u001b[22m\n\u001b[2m  - [pid=34400][err] Debugger attached.\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.255Z] [DEBUG] [extensions] No clawx-extensions.json found, loading all builtin extensions\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.260Z] [DEBUG] [extensions] Registered extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.260Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.260Z] [DEBUG] [extensions] Registered extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.260Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=34400][err] (node:35272) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\u001b[22m\n\u001b[2m  - [pid=34400][err] (Use `electron --trace-warnings ...` to show where the warning was created)\u001b[22m\n\u001b[2m  - [pid=34400][err] (node:35272) ExperimentalWarning: SQLite is an experimental feature and might change at any time\u001b[22m\n\u001b[2m  - [pid=34400][err] (node:35272) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\u001b[22m\n\u001b[2m  - [pid=34400][err]\u001b[22m\n\u001b[2m  - [pid=34400][err] DevTools listening on ws://127.0.0.1:61767/devtools/browser/a85b0029-3255-435d-860b-d94415b0b2ca\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:61767/devtools/browser/a85b0029-3255-435d-860b-d94415b0b2ca\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.413Z] [INFO] === Verse Claw Application Starting ===\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.643Z] [INFO] [efficiency-sampler] started {\"intervalMs\":5000,\"maxSamples\":720}\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.644Z] [INFO] [efficiency] runtime efficiency sampling started {\"intervalMs\":5000,\"platform\":\"win32\"}\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.645Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":1}\u001b[22m\n\u001b[2m  - [pid=34400] <process did exit: exitCode=0, signal=null>\u001b[22m\n\u001b[2m  - [pid=34400] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - <ws disconnected> ws://127.0.0.1:61768/740b5365-9389-4960-b845-f9922114a068 code=1006 reason=\u001b[22m\n\u001b[2m  - <ws error> ws://127.0.0.1:61767/devtools/browser/a85b0029-3255-435d-860b-d94415b0b2ca error read ECONNRESET\u001b[22m\n\u001b[2m  - <ws connect error> ws://127.0.0.1:61767/devtools/browser/a85b0029-3255-435d-860b-d94415b0b2ca read ECONNRESET\u001b[22m\n\u001b[2m  - <ws disconnected> ws://127.0.0.1:61767/devtools/browser/a85b0029-3255-435d-860b-d94415b0b2ca code=1006 reason=\u001b[22m\n\u001b[2m  - [pid=34400] <kill>\u001b[22m\n\u001b[2m  - [pid=34400] <skipped force kill spawnedProcess.killed=false processClosed=true>\u001b[22m\n\u001b[2m  - [pid=34400] finished temporary directories cleanup\u001b[22m\n\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts:405:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts:545:21\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-provider-settings.spec.ts:25:15",
+                    "location": {
+                      "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts",
+                      "column": 15,
+                      "line": 405
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39mfixtures\\electron.ts:405\n\n  403 |     : {};\n  404 |   const pendingLaunch = await recordElectronLaunch(userDataDir);\n> 405 |   const app = await electron.launch({\n      |               ^\n  406 |     executablePath: options.executablePath ?? String(electronBinaryPath),\n  407 |     args: [\n  408 |       // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context."
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts",
+                        "column": 15,
+                        "line": 405
+                      },
+                      "message": "Error: electron.launch: WebSocket error: read ECONNRESET\nCall log:\n\u001b[2m  - <launching> \"D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\electron@40.8.4\\node_modules\\electron\\dist\\electron.exe\" \"--inspect=0\" \"--remote-debugging-port=0\" \"--no-sandbox\" \"--user-data-dir=D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\direct-electron-recovery\\electron-runtime\\verse-claw-e2e-run-2UrPfQ\\verse-claw-e2e-user-data-HOGJnE\" \"--lang=en-US\" \"--disable-gpu\" \"--disable-gpu-compositing\" \"--disable-software-rasterizer\" \"--in-process-gpu\" \"--disable-features=Vulkan,UseSkiaRenderer,CanvasOopRasterization\" \"C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\dist-electron\\main\\index.js\"\u001b[22m\n\u001b[2m  - <launched> pid=34400\u001b[22m\n\u001b[2m  - [pid=34400][out]\u001b[22m\n\u001b[2m  - [pid=34400][err] Debugger listening on ws://127.0.0.1:61768/740b5365-9389-4960-b845-f9922114a068\u001b[22m\n\u001b[2m  - [pid=34400][err] For help, see: https://nodejs.org/en/docs/inspector\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:61768/740b5365-9389-4960-b845-f9922114a068\u001b[22m\n\u001b[2m  - <ws connected> ws://127.0.0.1:61768/740b5365-9389-4960-b845-f9922114a068\u001b[22m\n\u001b[2m  - [pid=34400][err] Debugger attached.\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.255Z] [DEBUG] [extensions] No clawx-extensions.json found, loading all builtin extensions\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.260Z] [DEBUG] [extensions] Registered extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.260Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/clawhub-marketplace\"\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.260Z] [DEBUG] [extensions] Registered extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.260Z] [DEBUG] [extensions] Auto-registered builtin extension \"builtin/diagnostics\"\u001b[22m\n\u001b[2m  - [pid=34400][err] (node:35272) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\u001b[22m\n\u001b[2m  - [pid=34400][err] (Use `electron --trace-warnings ...` to show where the warning was created)\u001b[22m\n\u001b[2m  - [pid=34400][err] (node:35272) ExperimentalWarning: SQLite is an experimental feature and might change at any time\u001b[22m\n\u001b[2m  - [pid=34400][err] (node:35272) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\u001b[22m\n\u001b[2m  - [pid=34400][err]\u001b[22m\n\u001b[2m  - [pid=34400][err] DevTools listening on ws://127.0.0.1:61767/devtools/browser/a85b0029-3255-435d-860b-d94415b0b2ca\u001b[22m\n\u001b[2m  - <ws connecting> ws://127.0.0.1:61767/devtools/browser/a85b0029-3255-435d-860b-d94415b0b2ca\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.413Z] [INFO] === Verse Claw Application Starting ===\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.643Z] [INFO] [efficiency-sampler] started {\"intervalMs\":5000,\"maxSamples\":720}\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.644Z] [INFO] [efficiency] runtime efficiency sampling started {\"intervalMs\":5000,\"platform\":\"win32\"}\u001b[22m\n\u001b[2m  - [pid=34400][out] [2026-11-14T14:17:15.645Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\"],\"transitionCount\":1}\u001b[22m\n\u001b[2m  - [pid=34400] <process did exit: exitCode=0, signal=null>\u001b[22m\n\u001b[2m  - [pid=34400] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - <ws disconnected> ws://127.0.0.1:61768/740b5365-9389-4960-b845-f9922114a068 code=1006 reason=\u001b[22m\n\u001b[2m  - <ws error> ws://127.0.0.1:61767/devtools/browser/a85b0029-3255-435d-860b-d94415b0b2ca error read ECONNRESET\u001b[22m\n\u001b[2m  - <ws connect error> ws://127.0.0.1:61767/devtools/browser/a85b0029-3255-435d-860b-d94415b0b2ca read ECONNRESET\u001b[22m\n\u001b[2m  - <ws disconnected> ws://127.0.0.1:61767/devtools/browser/a85b0029-3255-435d-860b-d94415b0b2ca code=1006 reason=\u001b[22m\n\u001b[2m  - [pid=34400] <kill>\u001b[22m\n\u001b[2m  - [pid=34400] <skipped force kill spawnedProcess.killed=false processClosed=true>\u001b[22m\n\u001b[2m  - [pid=34400] finished temporary directories cleanup\u001b[22m\n\n\n   at fixtures\\electron.ts:405\n\n  403 |     : {};\n  404 |   const pendingLaunch = await recordElectronLaunch(userDataDir);\n> 405 |   const app = await electron.launch({\n      |               ^\n  406 |     executablePath: options.executablePath ?? String(electronBinaryPath),\n  407 |     args: [\n  408 |       // Windows runners cannot use the Chromium sandbox in this isolated E2E user-data context.\n    at launchVerseClawElectron (C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts:405:15)\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts:545:21\n    at C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\project-rag-provider-settings.spec.ts:25:15"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T14:17:07.639Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\direct-electron-recovery\\electron\\project-rag-provider-setti-69fa0-esh-real-embedding-services\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-relay-01a1d9e2\\final-1451682601\\direct-electron-recovery\\electron\\project-rag-provider-setti-69fa0-esh-real-embedding-services\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\tests\\e2e\\fixtures\\electron.ts",
+                    "column": 15,
+                    "line": 405
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e42daccfedc4063de65e-781cc14c3089fbea2524",
+          "file": "project-rag-provider-settings.spec.ts",
+          "line": 18,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-14T14:15:56.968Z",
+    "duration": 84493.913,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "schema": "ReviewAdjudication/v1",
+  "actor": "codex/project-rag-relay-01a1d9e2",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "helperExitCode": 1,
+  "accepted": 0,
+  "rejected": 1,
+  "remainingAccepted": 0,
+  "results": [
+    {
+      "finding": 1,
+      "category": "test_gap",
+      "status": "rejected",
+      "reason": "The suggested same-byte rewrite is not performed by the source refresh path: refreshPageRelatedBlocks skips root.write when updated equals original, and digest artifacts use the same equality guard. The new real-file regression fails on the observed Markdown rewrite before the fix and passes afterwards. The native rerank journey requires the first quality query to return a completed rerank over an admitted candidate, and the fusion journey requires published lexical/dense generations and actual hybrid results. The changed gateway paths no longer invoke source refresh for retrieval or valid pinned inspection, so the proposed hypothetical write does not identify an uncovered current failure.",
+      "evidence": [
+        "openclaw_runtime/extensions/memory-wiki/src/compile.ts:824-858",
+        "openclaw_runtime/extensions/memory-wiki/src/compile.ts:1338-1347",
+        "openclaw_runtime/extensions/memory-wiki/src/gateway.ts:158-167",
+        "openclaw_runtime/extensions/memory-wiki/src/gateway.ts:639-667",
+        "pinned-read-before.json",
+        "pinned-read-after.json",
+        "dev-pinned-read/rerank.json",
+        "dev-pinned-read/fusion.json"
+      ]
+    }
+  ]
+}

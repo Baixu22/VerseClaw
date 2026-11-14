@@ -1,0 +1,9 @@
+{
+  "docs/dev/project-rag/CHAT-INTERACTION-CONTRACT.md": "c0df4b38b1cdc8f7d1768be769f98cb5d4de4d0d561583cc2392264ba62743e8",
+  "harness/specs/rules/project-rag-long-term-boundary.md": "7cbf8e83f7d74e013f9ae93918057f8a5217521f2dbc900d6eea929d8bca5929",
+  "harness/specs/scenarios/gateway-backend-communication.md": "b7b110be2800c0790c7d85caf7d2784cd92f8b5ccdfbad116e655b16ff5ab122",
+  "harness/specs/tasks/project-rag-chat-interactions.md": "305bf50eed18a2176cbee6bc04215e9126f370a3b1e1496b5c796fb12de59a13",
+  "openclaw_runtime/extensions/memory-wiki/src/gateway.ts": "29401e773c471d4a591a96b726e27458c223a9a35d097602c86084458ffd1111",
+  "tests/e2e/project-rag-rerank.spec.ts": "d397bdde9c87e5ef4dbac042294b6e3c10332b87c7b22b7ed7bd17ac4b8ba9a1",
+  "tests/unit/project-rag-plan-owner.test.ts": "5f372f941ba2d43785160e50c1ea56cd9ed9472465ed3f41df2148a083125bb6"
+}

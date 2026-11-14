@@ -1,0 +1,31 @@
+{
+  "schema": "ReviewAdjudication/v1",
+  "actor": "codex/project-rag-relay-01a1d438",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "model": "ccs-workbuddy/deepseek-v4.1-flash",
+  "helperExitCode": 1,
+  "accepted": 1,
+  "rejected": 2,
+  "remainingAccepted": 0,
+  "results": [
+    {
+      "finding": 1,
+      "title": "运行中 Enter 排队跳过 Auto-read 准入与发送前准备",
+      "status": "rejected",
+      "reason": "Enter invokes handleInterventionSend(queue), which executes bounded Auto-read before completeSend; Electron dev6/dev8 recorded and passed that actual path."
+    },
+    {
+      "finding": 2,
+      "title": "Auto-read 用用户原文与 subjectId 做全等比较，正常自然语言请求会被拒绝",
+      "status": "rejected",
+      "reason": "Current retriever exact lane resolves only a literal canonical .md path or explicit pins, and Main routes the original normalized message without pins. Nonexact natural-language rows have no calibration and are never auto_attach. Runtime independently enforces the same exact-only contract."
+    },
+    {
+      "finding": 3,
+      "title": "Used Knowledge 把无收据的 terminal 响应当成最终结果，不再重试",
+      "status": "fixed",
+      "reason": "Used Knowledge now retries acknowledged terminal responses without a manifest; agent.wait reads the final snapshot after terminal dedupe waiting. A regression simulates delayed manifest publication."
+    }
+  ]
+}

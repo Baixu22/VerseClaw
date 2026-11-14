@@ -1,0 +1,6 @@
+{
+  "actor": "codex/project-rag-embedding-electron",
+  "driven_by": "agent",
+  "status": "fail",
+  "steps": {}
+}

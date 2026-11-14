@@ -1,0 +1,22 @@
+{
+  "pid": 31436,
+  "candidate": {
+    "commit": "1451682601913c1e8ed6787c707ba0ef10812906",
+    "tree": "1c59cfc2c746fa5d0bf2bd12a6da98c13e342ac1",
+    "status": ""
+  },
+  "command": [
+    "C:/Program Files/nodejs/node.exe",
+    "C:\\Users\\27933\\.codex\\worktrees\\project-rag-longterm-20261109\\ClawX\\node_modules\\@playwright\\test\\cli.js",
+    "test",
+    "tests/e2e/project-rag-dcs-citation.spec.ts",
+    "tests/e2e/project-rag-chat-modes.spec.ts",
+    "tests/e2e/project-rag-provider-settings.spec.ts",
+    "--workers=1",
+    "--retries=0",
+    "--reporter=json",
+    "--output",
+    "D:\\tmp\\project-rag-relay-01a1d9e2\\plain-electron-verification\\electron"
+  ],
+  "startedAt": "2026-11-14T20:10:44.715980+00:00"
+}
