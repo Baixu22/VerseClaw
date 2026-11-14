@@ -11,6 +11,7 @@ import type { GatewayNotification, GatewayHealth, GatewayStatus } from '../types
 import type { ChatRuntimeEvent } from '../../shared/chat-runtime-events';
 
 let gatewayInitPromise: Promise<void> | null = null;
+let gatewayStatusReadSequence = 0;
 let gatewayEventUnsubscribers: Array<() => void> | null = null;
 let gatewayReconcileTimer: ReturnType<typeof setInterval> | null = null;
 const gatewayEventDedupe = new Map<string, number>();
@@ -435,15 +436,17 @@ export const useGatewayStore = create<GatewayState>((set, get) => ({
             clearInterval(gatewayReconcileTimer);
           }
           gatewayReconcileTimer = setInterval(() => {
+            const sequence = ++gatewayStatusReadSequence;
+            const observed = get().status;
             hostApi.gateway.status()
               .then((latest) => {
-                const current = get().status;
-                if (latest.state !== current.state) {
+                if (sequence !== gatewayStatusReadSequence || get().status !== observed) return;
+                if (latest.state !== observed.state) {
                   console.info(
-                    `[gateway-store] reconciled stale state: ${current.state} → ${latest.state}`,
+                    `[gateway-store] reconciled stale state: ${observed.state} → ${latest.state}`,
                   );
-                  set({ status: latest });
                 }
+                set({ status: latest });
               })
               .catch(() => { /* ignore */ });
           }, 30_000);
@@ -454,9 +457,10 @@ export const useGatewayStore = create<GatewayState>((set, get) => ({
         // the initial fetch and the IPC listener setup, that event was lost.
         // A second fetch guarantees we pick up the latest state.
         try {
+          const sequence = ++gatewayStatusReadSequence;
+          const observed = get().status;
           const refreshed = await hostApi.gateway.status();
-          const current = get().status;
-          if (refreshed.state !== current.state) {
+          if (sequence === gatewayStatusReadSequence && get().status === observed) {
             set({ status: refreshed });
           }
         } catch {

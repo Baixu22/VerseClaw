@@ -17,6 +17,7 @@ test('family counters keep a separate visible area from the title at 2, 20 and 1
     let current = 0;
     for (const count of [2, 20, 100]) {
       await addSessionChainChildren(app, project, current, count); current = count;
+      await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', project.generation);
       for (const theme of ['light', 'dark'] as const) {
         await hostInvoke(app, 'settings', 'set', { key: 'theme', value: theme }); await page.reload();
         await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', project.generation);

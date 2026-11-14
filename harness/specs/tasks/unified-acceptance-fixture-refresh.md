@@ -30,6 +30,12 @@ ownedPaths: &paths
   - src/components/task-ledger/TaskLedgerSummaryPanel.tsx
   - src/lib/workspace-session.ts
   - src/stores/workspaces.ts
+  - src/stores/gateway.ts
+  - tests/unit/gateway-store-status-snapshot.test.ts
+  - tests/unit/gateway-events.test.ts
+  - tests/unit/gateway-ready-fallback.test.ts
+  - harness/specs/tasks/unified-gateway-snapshot-readback.md
+  - harness/specs/rules/gateway-readiness-policy.md
   - shared/host-api/contract.ts
   - tests/unit/workspace-session.test.ts
   - tests/unit/session-family-navigation.test.tsx
