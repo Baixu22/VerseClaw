@@ -1,6 +1,6 @@
 {
   "schema": "clawx.agent-dev.quality-report.v1",
-  "generatedAt": "2026-11-13T22:41:11.999Z",
+  "generatedAt": "2026-11-14T11:56:38.240Z",
   "success": true,
   "buildReuse": {
     "mode": "reuse",
@@ -11,15 +11,15 @@
     "artifacts": [
       {
         "path": "dist/index.html",
-        "mtimeMs": 1794607905299.8293
+        "mtimeMs": 1794652873546.3022
       },
       {
         "path": "dist-electron/main/index.js",
-        "mtimeMs": 1794607910672.0083
+        "mtimeMs": 1794652882383.097
       },
       {
         "path": "dist-electron/preload/index.js",
-        "mtimeMs": 1794607910696.3271
+        "mtimeMs": 1794652882415.416
       }
     ],
     "requiredArtifacts": [
@@ -46,23 +46,21 @@
     "budgetStatus": "watch",
     "fastPathModes": [
       "reuse-build",
-      "cached-typecheck",
-      "smoke-e2e"
+      "cached-typecheck"
     ],
     "requiredFullGates": [
       "pnpm run build:vite",
-      "pnpm run typecheck",
-      "pnpm test:e2e:agent-dev-quality"
+      "pnpm run typecheck"
     ],
     "watchSteps": [
-      "typecheck",
+      "harness-agent-dev",
       "contract"
     ],
     "limitSteps": []
   },
   "unitMode": "full",
   "typecheckMode": "cached",
-  "e2eMode": "smoke",
+  "e2eMode": "full",
   "build": {
     "ok": true,
     "durationMs": 1,
@@ -73,23 +71,38 @@
   },
   "playwright": {
     "ok": true,
-    "durationMs": 12237,
-    "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
+    "durationMs": 21213,
+    "commandLine": "pnpm run test:e2e:agent-dev-quality:run",
     "spec": "tests/e2e/agent-dev-quality.spec.ts",
-    "mode": "smoke",
-    "expectedTests": 1,
+    "mode": "full",
+    "expectedTests": 4,
     "diagnostics": {
       "kind": "playwright",
-      "passed": 1,
-      "reportedDurationMs": 11100,
+      "passed": 4,
+      "reportedDurationMs": 19700,
       "tests": [
         {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:8:7 › agent dev quality gates › produces an accessibility report for a seeded scenario",
+          "durationMs": 10800
+        },
+        {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:24:7 › agent dev quality gates › renders assistant-ui welcome suggestions with aligned card styling",
+          "durationMs": 10700
+        },
+        {
           "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
-          "durationMs": 9500
+          "durationMs": 7300
+        },
+        {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:60:7 › agent dev quality gates › captures a stable visual artifact for a seeded scenario",
+          "durationMs": 7100
         }
       ]
     },
     "evidence": [
+      "seeded scenario accessibility report",
+      "assistant-ui welcome suggestions visual artifact",
+      "seeded scenario visual artifact",
       "Settings > Developer Agent Dev Workbench host-api record path"
     ]
   }
