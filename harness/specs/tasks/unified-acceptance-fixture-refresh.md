@@ -60,6 +60,8 @@ ownedPaths: &paths
   - tests/e2e/session-delegation-capacity.spec.ts
   - tests/e2e/u6-interaction-metrics.final.spec.ts
   - tests/e2e/fixtures/session-task-chain.ts
+  - tests/e2e/fixtures/electron.ts
+  - tests/e2e/fixtures/windows-process.ts
   - harness/specs/guides/long-session-delegation-admission.md
   - harness/specs/tasks/unified-acceptance-fixture-refresh.md
   - harness/specs/tasks/autonomy-task-actions.md
@@ -108,6 +110,8 @@ acceptance:
   - New-session actions on another project persist the source draft, create within the requested project's owner, and activate only after successful creation; a superseded or disposed view cannot submit its old draft.
   - Expanded-family layout checks retain the visible count and verify its title separation at two, twenty and one hundred children in light, dark and narrow windows.
   - Paired journeys select the same real action in the baseline direct toolbar and the candidate More menu; performed UI events remain the source of unchanged operation metrics.
+  - Each new isolated Electron test profile receives an available Gateway port, and a relaunch retains the profile's saved port without changing product defaults.
+  - Cleanup compares registered PID creation times against the native process census before opening a process handle, so a protected process that reuses an old PID is identified without selecting it for termination.
 requiredTests:
   - pnpm exec vitest run tests/unit/checkpoints-dialog.test.tsx --maxWorkers=1
   - pnpm exec vitest run tests/unit/vite-config-openclaw-runtime.test.ts --maxWorkers=1

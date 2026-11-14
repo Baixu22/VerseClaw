@@ -101,13 +101,25 @@ ConvertTo-Json -InputObject $rows -Depth 3 -Compress
 const script = String.raw`
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
+Add-Type -TypeDefinition @'
+using System;using System.Runtime.InteropServices;
+public static class WindowsProcessCensus {
+[DllImport("ntdll.dll")]static extern int NtQuerySystemInformation(int type,IntPtr data,int size,out int needed);
+public static long CreationTime(int pid){if(IntPtr.Size!=8)throw new InvalidOperationException("x64 census required");int size=1024*1024;for(int attempt=0;attempt<4;attempt++){IntPtr data=Marshal.AllocHGlobal(size);try{int needed;int status=NtQuerySystemInformation(5,data,size,out needed);if(status==unchecked((int)0xc0000004)){size=Math.Max(size*2,needed+65536);continue;}if(status<0)throw new InvalidOperationException("Process census status "+status);int offset=0;while(offset>=0&&offset+96<=size){IntPtr row=IntPtr.Add(data,offset);long identity=Marshal.ReadIntPtr(row,80).ToInt64();if(identity==pid){long created=Marshal.ReadInt64(row,32);return new DateTimeOffset(DateTime.FromFileTimeUtc(created)).ToUnixTimeMilliseconds();}int next=Marshal.ReadInt32(row,0);if(next==0)return 0;if(next<96||offset+next<=offset||offset+next>=size)throw new InvalidOperationException("Invalid process census offsets");offset+=next;}throw new InvalidOperationException("Invalid process census length");}finally{Marshal.FreeHGlobal(data);}}throw new InvalidOperationException("Process census buffer unresolved");}
+}
+'@
 $entries = $env:CLAWX_PROCESS_IDENTITIES | ConvertFrom-Json
 $results = @(foreach ($entry in $entries) {
   $result = [ordered]@{ pid = $entry.pid; creationTime = $entry.creationTime; status = 'unavailable' }
   $owned = $null
   try {
-    try { $owned = [Diagnostics.Process]::GetProcessById([int]$entry.pid) }
-    catch [ArgumentException] { $result.status = 'exited' }
+    $observedBirth = [WindowsProcessCensus]::CreationTime([int]$entry.pid)
+    if ($observedBirth -eq 0) { $result.status = 'exited' }
+    elseif ($observedBirth -ne [long]$entry.creationTime) { $result.status = 'replaced' }
+    else {
+      try { $owned = [Diagnostics.Process]::GetProcessById([int]$entry.pid) }
+      catch [ArgumentException] { $result.status = 'exited' }
+    }
     if ($null -ne $owned) {
       $null = $owned.Handle
       if ($owned.HasExited) { $result.status = 'exited' }

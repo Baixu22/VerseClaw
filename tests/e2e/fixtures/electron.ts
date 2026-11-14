@@ -369,7 +369,8 @@ async function seedE2eSettings(userDataDir: string, theme?: LaunchElectronOption
     // keep their persisted setting across relaunches in the same profile.
   }
 
-  await writeFile(settingsPath, JSON.stringify({ language: 'en', ...existing, ...(theme ? { theme } : {}) }, null, 2), 'utf-8');
+  const gatewayPort = typeof existing.gatewayPort === 'number' ? existing.gatewayPort : await allocatePort();
+  await writeFile(settingsPath, JSON.stringify({ language: 'en', ...existing, gatewayPort, ...(theme ? { theme } : {}) }, null, 2), 'utf-8');
 }
 
 async function cleanupTempDir(path: string): Promise<void> {
