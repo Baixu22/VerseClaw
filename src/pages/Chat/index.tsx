@@ -109,6 +109,7 @@ import {
   createWorkspaceScopedForkSession,
   createWorkspaceScopedHandoffSession,
   createWorkspaceScopedNewSession,
+  registerWorkspaceSessionViewSave,
   clearWorkspaceActiveTopicMarker,
   getAgentIdFromSessionKey,
   getWorkspaceAgentSessionKey,
@@ -771,6 +772,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
     lastUserMessageAt: s.lastUserMessageAt,
   })));
   const resetSessionView = useChatStore((s) => s.resetSessionView);
+  const viewRevision = useChatStore((s) => s.viewRevision);
   const renameSession = useChatStore((s) => s.renameSession);
   const loadMoreHistory = useChatStore((s) => s.loadMoreHistory);
   const sendMessage = useChatStore((s) => s.sendMessage);
@@ -1041,6 +1043,8 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       turnSummaryStepDetailsExpanded: runActivityStepDetailsExpanded,
     };
   }, [activeWorkspace, artifactActiveTabId, artifactTabs, composerDraft, composerPaused, currentSessionKey, knowledgeMode, knowledgeScope, panelExpanded, panelOpen, runActivityExpandedOverrides, runActivityStepDetailsExpanded]);
+  const currentWorkspaceSessionStateRef = useRef(captureCurrentWorkspaceSessionState);
+  currentWorkspaceSessionStateRef.current = captureCurrentWorkspaceSessionState;
 
   const persistCurrentWorkspaceSessionState = useCallback(async (options?: {
     activeSessionKey?: string;
@@ -1055,6 +1059,18 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
       state: captureCurrentWorkspaceSessionState(options?.draft),
     });
   }, [activeWorkspace?.id, captureCurrentWorkspaceSessionState, currentSessionKey, saveWorkspaceState]);
+
+  useEffect(() => {
+    const workspaceId = activeWorkspace?.id;
+    if (!workspaceId) return;
+    return registerWorkspaceSessionViewSave({
+      workspaceId, sessionKey: currentSessionKey, viewRevision,
+      save: () => useWorkspacesStore.getState().saveWorkspaceState({
+        id: workspaceId, activeSessionKey: currentSessionKey, sessionKey: currentSessionKey,
+        state: currentWorkspaceSessionStateRef.current(),
+      }),
+    });
+  }, [activeWorkspace?.id, currentSessionKey, viewRevision]);
 
   const openFamilySession = useCallback(async (sessionKey: string) => {
     const target = sessions.find((session) => session.key === sessionKey);
@@ -3958,6 +3974,7 @@ export function Chat({ projectWorkspaceId }: { projectWorkspaceId?: string } = {
         onKnowledgeModeChange={handleKnowledgeModeChange}
         compactionStatus={compactionStatus}
         compactionBusy={compactionBusy}
+        compactionUnavailableReason={!controlGeneration ? t('operationGenerationUnavailable') : undefined}
         onManualCompact={handleManualCompact}
         longTaskControlStatus={longTaskControlStatus}
         queueDrainBusy={queueDrainBusy}

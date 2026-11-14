@@ -79,7 +79,7 @@ import { CalendarDays, FileText, Inbox as CodexInbox, Laptop, ListChecks, PenLin
 import { toast } from 'sonner';
 import i18n from 'i18next';
 import { useSessionIntentStore } from '@/stores/session-intent';
-import { activateWorkspaceScopedSession, activateWorkspaceSession, createFreshWorkspaceSessionKey, createWorkspaceScopedForkSession } from '@/lib/workspace-session';
+import { activateWorkspaceScopedSession, activateWorkspaceSession, createFreshWorkspaceSessionKey, createWorkspaceScopedForkSession, createWorkspaceScopedNewSession } from '@/lib/workspace-session';
 
 interface NavItemProps {
   to: string;
@@ -801,12 +801,11 @@ export function Sidebar() {
 
   const handleNewSessionInWorkspace = useCallback(async (workspaceId: string) => {
     try {
-      await switchWorkspace(workspaceId);
-      handleNewChat();
+      if (await createWorkspaceScopedNewSession(workspaceId)) navigate('/');
     } catch (error) {
       toast.error(String(error instanceof Error ? error.message : error));
     }
-  }, [handleNewChat, switchWorkspace]);
+  }, [navigate]);
 
   const toggleFolder = useCallback((folderId: string) => {
     setCollapsedFolderIds((current) => ({

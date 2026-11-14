@@ -50,7 +50,8 @@ test('family counters keep a separate visible area from the title at 2, 20 and 1
           await expect(counter).toHaveCSS('opacity', '1');
           await toggle.focus(); await expect(toggle).toBeFocused(); await toggle.press('Enter');
           await expect(toggle).toHaveAttribute('aria-expanded', 'true');
-          await expect(counter).toHaveCount(0);
+          await expect(counter).toHaveText(String(count));
+          await expect(counter).toBeVisible();
           await toggle.press('Enter');
           await expect(toggle).toHaveAttribute('aria-expanded', 'false');
           await page.screenshot({ path: info.outputPath(`counter-${count}-${theme}-${width}.png`) });

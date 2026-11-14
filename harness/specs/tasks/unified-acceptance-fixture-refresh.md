@@ -25,6 +25,8 @@ ownedPaths: &paths
   - src/components/chat/SessionFamilyNavigation.tsx
   - src/components/chat/ResourceChip.tsx
   - src/components/layout/SessionFolderTree.tsx
+  - src/components/layout/Sidebar.tsx
+  - src/components/layout/use-new-chat-action.ts
   - src/components/task-ledger/TaskLedgerSummaryPanel.tsx
   - src/lib/workspace-session.ts
   - src/stores/workspaces.ts
@@ -53,6 +55,7 @@ ownedPaths: &paths
   - tests/e2e/session-context-recovery.spec.ts
   - tests/e2e/chat-workspace-header.spec.ts
   - tests/e2e/session-lifecycle-recovery.spec.ts
+  - tests/e2e/session-family-counter-layout.spec.ts
   - tests/e2e/session-task-reading-navigation.spec.ts
   - tests/e2e/session-delegation-capacity.spec.ts
   - tests/e2e/fixtures/session-task-chain.ts
@@ -93,10 +96,14 @@ acceptance:
   - Directory changes reject visible and hidden current-generation runs and in-flight admissions; the existing admission fence remains held until the session metadata transaction commits.
   - Both directory identities are resolved before comparison; same-directory aliases can bind without disturbing an active run.
   - Replaced navigation and workspace selection are rejected before saving or activating the former source session.
+  - Manual compression remains disabled until the current physical session generation is available; recovery journeys wait for that owner identity before dispatching their unchanged failure controls.
   - Coordinator binding persists its paused workspace intent before Runtime or task selection effects; lost replies and failed activation writes recover the same revision and generation through the existing binding owner.
   - Empty task scope remains reachable, source navigation retains its timestamp, and family counts remain visible while expanded; all display text uses the existing four locales.
   - Coordinator worker navigation uses the existing workspace session queue; the selected child is persisted without replacing the project coordinator anchor, and remains visible as the selected Sidebar row.
   - Worker receipts without a child session key remain visible and cannot activate navigation; actual navigation errors use the existing coordinator alert.
+  - Sidebar and slash-command new-session actions flush the current view's pending draft through the existing workspace save queue before the owner receives a create request; refusal retains that saved source view.
+  - New-session actions on another project persist the source draft, create within the requested project's owner, and activate only after successful creation; a superseded or disposed view cannot submit its old draft.
+  - Expanded-family layout checks retain the visible count and verify its title separation at two, twenty and one hundred children in light, dark and narrow windows.
 requiredTests:
   - pnpm exec vitest run tests/unit/checkpoints-dialog.test.tsx --maxWorkers=1
   - pnpm exec vitest run tests/unit/vite-config-openclaw-runtime.test.ts --maxWorkers=1

@@ -10,6 +10,13 @@ import { useWorkspacesStore } from '@/stores/workspaces';
 
 let navigationTail: Promise<unknown> = Promise.resolve();
 let navigationIntent = 0;
+let currentViewSave: { workspaceId: string | null; sessionKey: string; viewRevision: number | undefined; save: () => Promise<void> } | null = null;
+
+/** The mounted Chat view supplies its current draft to the existing workspace save queue. */
+export function registerWorkspaceSessionViewSave(view: NonNullable<typeof currentViewSave>): () => void {
+  currentViewSave = view;
+  return () => { if (currentViewSave === view) currentViewSave = null; };
+}
 
 export function workspaceOwnsSession(workspace: WorkspaceProfile | null | undefined, sessionKey: string): boolean {
   return Boolean(workspace && (workspace.activeSessionKey === sessionKey
@@ -169,13 +176,14 @@ export async function clearWorkspaceActiveTopicMarker(rootPath: string | undefin
   } catch { /* Legacy topic reset is best-effort, as before. */ }
 }
 
-export function createWorkspaceScopedNewSession(): Promise<string | null> {
+export function createWorkspaceScopedNewSession(targetWorkspaceId?: string): Promise<string | null> {
   const intent = ++navigationIntent;
   const chatState = useChatStore.getState();
   const currentAgentId = chatState.currentAgentId || getAgentIdFromSessionKey(chatState.currentSessionKey);
   const sourceSessionKey = chatState.currentSessionKey;
   const sourceRevision = chatState.viewRevision;
   const sourceWorkspaceId = useWorkspacesStore.getState().activeWorkspaceId;
+  const sourceViewSave = currentViewSave;
   const isSourceCurrent = () => intent === navigationIntent && useChatStore.getState().currentSessionKey === sourceSessionKey
     && useChatStore.getState().viewRevision === sourceRevision
     && (!sourceWorkspaceId || useWorkspacesStore.getState().activeWorkspaceId === sourceWorkspaceId);
@@ -183,20 +191,43 @@ export function createWorkspaceScopedNewSession(): Promise<string | null> {
     if (!isSourceCurrent()) return null;
     const workspace = await ensureActiveWorkspaceForSession();
     if (!isSourceCurrent()) return null;
+    if (sourceViewSave && sourceViewSave !== currentViewSave) return null;
+    if (sourceViewSave?.sessionKey === sourceSessionKey && sourceViewSave.workspaceId === workspace?.id
+      && sourceViewSave.viewRevision === sourceRevision) {
+      await sourceViewSave.save();
+      if (!isSourceCurrent()) return null;
+    }
     if (workspace?.id) await useWorkspacesStore.getState().saveWorkspaceState({
       id: workspace.id, sessionKey: sourceSessionKey, activeSessionKey: sourceSessionKey,
     });
     if (!isSourceCurrent()) return null;
     if (!workspace?.id) {
+      if (targetWorkspaceId) throw new Error('SESSION_WORKSPACE_ASSOCIATION_MISSING');
       chatState.newSession({ deferSessionEntry: true });
       return useChatStore.getState().currentSessionKey;
     }
-    const sessionKey = createFreshWorkspaceSessionKey(currentAgentId);
-    await hostApi.workspaces.update(workspace.id, {
-      agentId: currentAgentId, activeSessionKey: sessionKey, sessionKey, state: { activeTopicId: null },
+    const target = targetWorkspaceId && targetWorkspaceId !== workspace.id
+      ? useWorkspacesStore.getState().profiles.find(profile => profile.id === targetWorkspaceId)
+      : workspace;
+    if (!target) throw new Error('SESSION_WORKSPACE_ASSOCIATION_MISSING');
+    const targetAgentId = target.id === workspace.id ? currentAgentId : target.selectedAgentId || target.agentId;
+    const sessionKey = createFreshWorkspaceSessionKey(targetAgentId);
+    await hostApi.workspaces.update(target.id, {
+      agentId: targetAgentId, activeSessionKey: sessionKey, sessionKey, state: { activeTopicId: null },
     });
-    await inheritSessionWorkgroup(workspace, sourceSessionKey, sessionKey);
+    if (target.id === workspace.id) await inheritSessionWorkgroup(workspace, sourceSessionKey, sessionKey);
     if (!isSourceCurrent() || useWorkspacesStore.getState().activeWorkspaceId !== workspace.id) return null;
+    if (target.id !== workspace.id) {
+      const active = await useWorkspacesStore.getState().switchWorkspace(target.id);
+      if (intent !== navigationIntent || !active || active.id !== target.id) return null;
+      const current = useChatStore.getState();
+      if (useWorkspacesStore.getState().activeWorkspaceId !== target.id
+        || (current.currentSessionKey !== sessionKey
+          && (current.currentSessionKey !== sourceSessionKey || current.viewRevision !== sourceRevision))) return null;
+      useChatStore.getState().resetSessionView(sessionKey, { deferSessionEntry: true });
+      await clearWorkspaceActiveTopicMarker(target.rootPath);
+      return sessionKey;
+    }
     await useWorkspacesStore.getState().fetchWorkspaces();
     await clearWorkspaceActiveTopicMarker(workspace.rootPath);
     if (!isSourceCurrent() || useWorkspacesStore.getState().activeWorkspaceId !== workspace.id) return null;

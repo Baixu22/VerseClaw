@@ -1,4 +1,4 @@
-import { closeElectronApp, expect, getStableWindow, installIpcMocks, revealSectionHeadingActionsFor, test } from './fixtures/electron';
+import { closeElectronApp, expect, getStableWindow, hoverUntilVisible, installIpcMocks, revealSectionHeadingActionsFor, test } from './fixtures/electron';
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -73,6 +73,42 @@ const MAIN_HISTORY = [
 ];
 
 test.describe('Verse Claw chat workspace header', () => {
+  test('creates a new session in another project after saving the current project draft', async ({ launchElectronApp }, info) => {
+    test.setTimeout(240_000);
+    const app = await launchElectronApp({ skipSetup: true });
+    try {
+      const source = await createSessionChainProject(app, info.outputPath('source-project'), 'G5 Source');
+      const target = await createSessionChainProject(app, info.outputPath('target-project'), 'G5 Target');
+      await hostInvoke(app, 'workspaces', 'switch', { id: source.workspaceId });
+      const page = await getStableWindow(app);
+      await page.reload();
+      await expect(page.getByTestId('chat-page')).toHaveAttribute('data-session-generation', source.generation, { timeout: 60_000 });
+      const draft = 'G5 source draft stays in its original project';
+      await instrumentSessionChainHost(app);
+      await page.getByTestId('chat-composer-input').fill(draft);
+      await hoverUntilVisible(
+        page.getByTestId(`sidebar-project-open-${target.workspaceId}`).locator('xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " sidebar-row ")][1]'),
+        page.getByTestId(`sidebar-project-new-session-${target.workspaceId}`),
+      );
+      await page.getByTestId(`sidebar-project-new-session-${target.workspaceId}`).click();
+      await expect.poll(async () => (await hostInvoke<{ activeWorkspace: WorkspaceProfile }>(app, 'workspaces', 'getActive')).activeWorkspace.id)
+        .toBe(target.workspaceId);
+      await expect(page.getByTestId('chat-project-session-header')).toContainText('G5 Target');
+      await expect(page.getByTestId('chat-composer-input')).toHaveValue('');
+      const owner = await hostInvoke<{ profiles: WorkspaceProfile[]; activeWorkspace: WorkspaceProfile }>(app, 'workspaces', 'list');
+      expect(owner.activeWorkspace.activeSessionKey).toMatch(/^agent:main:session-\d+-[a-z0-9]+$/);
+      expect(owner.activeWorkspace.activeSessionKey).not.toBe(target.sessionKey);
+      expect(owner.profiles.find(profile => profile.id === source.workspaceId)?.sessionStates?.[source.sessionKey]?.draftInput).toBe(draft);
+      expect(owner.profiles.find(profile => profile.id === source.workspaceId)?.activeSessionKey).toBe(source.sessionKey);
+      const calls = await readSessionChainHostCalls(app);
+      const save = calls.findIndex(call => call.module === 'workspaces' && call.action === 'saveState');
+      const create = calls.findIndex(call => call.module === 'workspaces' && call.action === 'update');
+      const activate = calls.findIndex(call => call.module === 'workspaces' && call.action === 'switch');
+      expect(save).toBeGreaterThanOrEqual(0); expect(create).toBeGreaterThan(save); expect(activate).toBeGreaterThan(create);
+      await info.attach('project-new-session-owner-readback', { body: JSON.stringify({ driven_by: 'agent', actor: 'g5-unified-autonomy-20261113-01a1d34a', realHumanEvidence: false, source, target, owner, calls }), contentType: 'application/json' });
+    } finally { await closeElectronApp(app); }
+  });
+
   test('opens an idle worktree from the header after saving its source session', async ({ launchElectronApp }, info) => {
     test.setTimeout(240_000);
     const app = await launchElectronApp({ skipSetup: true });
@@ -93,7 +129,8 @@ test.describe('Verse Claw chat workspace header', () => {
       await instrumentSessionChainHost(app);
       await page.getByTestId('chat-composer-input').fill(draft);
       await page.getByTestId('chat-header-environment-project').getByRole('button').click();
-      const worktree = page.getByTestId('chat-header-workspace-menu').getByRole('button', { name: /header-worktree/ });
+      await page.getByTestId('chat-header-workspace-menu').getByTestId('session-worktree-trigger').click();
+      const worktree = page.getByTestId('session-worktree-menu').getByRole('button', { name: /header-worktree/ });
       await expect(worktree).toBeEnabled(); await worktree.click();
       await expect.poll(async () => (await hostInvoke<{ activeWorkspace: WorkspaceProfile }>(app, 'workspaces', 'getActive')).activeWorkspace.rootPath.replace(/\\/g, '/').toLowerCase())
         .toBe(target.replace(/\\/g, '/').toLowerCase());
@@ -144,9 +181,9 @@ test.describe('Verse Claw chat workspace header', () => {
           },
         },
         hostApi: {
-          [stableStringify(['git', 'status'])]: { success: true, status: { isRepository: true, workspaceRoot: WORKSPACE.rootPath,
+          [stableStringify(['git', 'status', null])]: { success: true, status: { isRepository: true, workspaceRoot: WORKSPACE.rootPath,
             repoRoot: WORKSPACE.rootPath, branch: 'main', detached: false, clean: true, changes: [] } },
-          [stableStringify(['git', 'worktrees'])]: { success: true, worktrees: [{ path: WORKSPACE.rootPath, branch: 'main' },
+          [stableStringify(['git', 'worktrees', null])]: { success: true, worktrees: [{ path: WORKSPACE.rootPath, branch: 'main' },
             { path: '/tmp/demo-feature', branch: 'feature' }] },
           [stableStringify(['/api/settings', 'GET'])]: {
             ok: true,
@@ -198,6 +235,11 @@ test.describe('Verse Claw chat workspace header', () => {
       await expect(page.getByTestId('sidebar-session-project-toggle-workspace-1')).toHaveAttribute('aria-expanded', 'true');
       await expect(page.getByTestId(`sidebar-session-${SESSION_KEY}`)).toBeVisible();
 
+      await page.getByTestId('chat-header-environment-project').getByRole('button').click();
+      await page.getByTestId('chat-header-workspace-menu').getByTestId('session-worktree-trigger').click();
+      await expect(page.getByTestId('session-worktree-create')).toBeEnabled();
+      await expect(page.getByTestId('session-worktree-menu').getByRole('button', { name: /feature/ })).toBeEnabled();
+
       await app.evaluate(({ BrowserWindow }, sessionKey) => {
         for (const win of BrowserWindow.getAllWindows()) {
           win.webContents.send('chat:runtime-event', {
@@ -209,10 +251,11 @@ test.describe('Verse Claw chat workspace header', () => {
         }
       }, SESSION_KEY);
       await expect(page.getByTestId(`sidebar-session-status-${SESSION_KEY}`)).toHaveAttribute('data-state', 'running');
-      await expect(page.getByTestId('chat-current-session-status')).toHaveAttribute('data-state', 'streaming');
-      await page.getByTestId('chat-header-environment-project').getByRole('button').click();
       await expect(page.getByTestId('session-worktree-create')).toBeDisabled();
-      await expect(page.getByTestId('chat-header-workspace-menu').getByRole('button', { name: /feature/ })).toBeDisabled();
+      await expect(page.getByTestId('session-worktree-menu').getByRole('button', { name: /feature/ })).toBeDisabled();
+      await page.keyboard.press('Escape');
+      await page.getByTestId('chat-header-session-name').click();
+      await expect(page.getByTestId(`chat-session-item-${SESSION_KEY}`).locator('[data-state="streaming"]')).toBeVisible();
       await page.keyboard.press('Escape');
       await expect(page.getByTestId('chat-turn-summary-orb')).toBeVisible();
       await expect(page.getByTestId('assistant-stream-status')).toHaveCount(0);
