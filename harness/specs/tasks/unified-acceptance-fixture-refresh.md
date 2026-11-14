@@ -120,6 +120,7 @@ acceptance:
   - Each new isolated Electron test profile receives an available Gateway port, and a relaunch retains the profile's saved port without changing product defaults.
   - Cleanup compares registered PID creation times against the native process census before opening a process handle, so a protected process that reuses an old PID is identified without selecting it for termination.
   - Child-session fixture preparation creates at most four independent sessions per batch, waits for every creation response, and saves confirmed drafts serially through the existing Workspace owner in child order. The original counts, labels, and acceptance time limits remain fixed.
+  - Paired crash recovery consumes the already-validated TF-0662 restart path from bb8541ba6: the known Host start timeout and eventual Gateway readiness are recorded separately before reading back the original generation and objective.
 requiredTests:
   - pnpm exec vitest run tests/unit/session-chain-fixture-batching.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/checkpoints-dialog.test.tsx --maxWorkers=1

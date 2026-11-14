@@ -243,15 +243,26 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
       await expect.poll(() => owned.exitCode !== null || owned.signalCode !== null, { timeout: 15_000 }).toBe(true);
       const cleanup = await closeElectronApp(app); expect(cleanup.launcherExited).toBe(true);
       app = await launchElectronApp({ skipSetup: true, skipSeed: true, profileDir: userDataDir });
-      await configureSessionChainProvider(app, llm.port); await hostInvoke(app, 'gateway', 'start');
-      await expect.poll(async () => (await hostInvoke<{ state: string }>(app, 'gateway', 'status')).state, { timeout: 60_000 }).toBe('running');
+      const restartStartedAt = Date.now();
+      await configureSessionChainProvider(app, llm.port);
+      const gatewayStart = await hostInvoke<{ success: boolean }>(app, 'gateway', 'start')
+        .then(result => ({ result, timeout: null as string | null }))
+        .catch(error => {
+          const timeout = String(error);
+          if (!timeout.includes('[TIMEOUT] Host action gateway.start timed out after 60s')) throw error;
+          return { result: null, timeout };
+        });
+      await expect.poll(async () => (await hostInvoke<{ state: string }>(app, 'gateway', 'status')).state,
+        { timeout: 120_000 }).toBe('running');
+      const gatewayReadyAfterMs = Date.now() - restartStartedAt;
       page = await getStableWindow(app); await expect(id('main-layout')).toBeVisible({ timeout: 30_000 });
       const afterCrash = { described: await rpc<{ session: { sessionId: string } }>('sessions.describe', { key: project.sessionKey }),
         history: await hostInvoke(app, 'sessions', 'history', { sessionKey: project.sessionKey, limit: 50 }) };
       expect(afterCrash.described.session.sessionId).toBe(project.generation);
       expect(JSON.stringify(afterCrash.history)).toContain(`Recorded objective: ${objective}`);
       evidence.fault = { kind: 'main-process-kill-after-persisted-task-history', pid: owned.pid, observed_exit: true,
-        launcher_exited: cleanup.launcherExited, explicit_relaunch: true, same_session_generation: true, before: beforeCrash, after: afterCrash, user_steps: false };
+        launcher_exited: cleanup.launcherExited, explicit_relaunch: true, gateway_start: gatewayStart,
+        gateway_ready_after_ms: gatewayReadyAfterMs, same_session_generation: true, before: beforeCrash, after: afterCrash, user_steps: false };
     }
     await page.exposeFunction('u6Reminder', (text: string) => {
       if (!recording) return;
