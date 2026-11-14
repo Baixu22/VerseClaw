@@ -87,6 +87,7 @@ touchedAreas:
   - scripts/recovery-owner-process-proof-child.mts
   - scripts/recovery-delivery-process-proof-child.mts
   - scripts/recovery-acp-process-proof-child.mts
+  - scripts/recovery-goal-process-proof-child.mts
   - docs/modules/resources-and-observability.md
   - docs/dev/recovery-contract/**
   - harness/specs/fixtures/recovery-contract-eval/ga-20261106/**
@@ -133,6 +134,7 @@ requiredTests:
   - node scripts/recovery-delivery-process-proof.mjs
   - openclaw_runtime/src/state/openclaw-state-db.delivery-backfill.test.ts
   - openclaw_runtime/src/agents/goal-wake-recovery.test.ts
+  - node scripts/recovery-goal-process-proof.mjs
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:

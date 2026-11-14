@@ -2,9 +2,16 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { createHash } from "node:crypto";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { closeOpenClawStateDatabase } from "../state/openclaw-state-db.js";
+import {
+  closeOpenClawStateDatabase,
+  openOpenClawStateDatabase,
+} from "../state/openclaw-state-db.js";
+import { updateSessionStoreAtomic } from "../config/sessions/store.js";
+import { closeOpenClawAgentDatabasesForTest } from "../state/openclaw-agent-db.js";
+import { closeTrackedSqliteHandlesUnder } from "../infra/node-sqlite.js";
 import { armGoalWaitProcess } from "./goal-wake-arm.js";
 import {
   appendDurableHelperOutput,
@@ -12,6 +19,7 @@ import {
   durableOutcomeDigest,
   writeDurableHelperExit,
   writeDurableHelperStarted,
+  removeDurableHelperRunDir,
 } from "./goal-wake-helper-protocol.js";
 import {
   reconcileDurableRun,
@@ -73,6 +81,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  closeOpenClawAgentDatabasesForTest();
   closeOpenClawStateDatabase();
   delete process.env.OPENCLAW_HOME;
   delete process.env.OPENCLAW_STATE_DIR;
@@ -84,18 +93,20 @@ afterEach(() => {
   delete process.env.RUNTIME_LIFECYCLE_DURABLE_HELPER_TTL_MS;
   delete process.env.RUNTIME_LIFECYCLE_DURABLE_HELPER_MAX_OUTPUT_BYTES;
   delete process.env.RUNTIME_LIFECYCLE_DURABLE_HELPER_SWEEP_MS;
+  delete process.env.OPENCLAW_RECOVERY_AUTHORITY_MODE;
   for (const root of tempRoots.splice(0)) {
+    closeTrackedSqliteHandlesUnder(root);
     fs.rmSync(root, { recursive: true, force: true, maxRetries: 3, retryDelay: 25 });
   }
 });
 
-async function armDurable(runId: string) {
+async function armDurable(runId: string, ownerEpoch = "epoch-recovery") {
   const intent = await createDurableHelperIntent(
     {
       runId,
       commandDigest: "a".repeat(64),
       policyRevision: "runtime-lifecycle-phase4-recovery-v1",
-      ownerEpoch: "epoch-recovery",
+      ownerEpoch,
     },
     { rootDir },
   );
@@ -116,6 +127,198 @@ async function armDurable(runId: string) {
   if (!arm.ok) throw new Error(`arm failed: ${arm.reason}`);
   return { intent, arm };
 }
+
+async function armGatedDurable(runId: string, terminal = true) {
+  enable();
+  process.env.OPENCLAW_RECOVERY_AUTHORITY_MODE = "authority";
+  const store = path.join(stateDir, "agents", "recovery", "sessions", "sessions.json");
+  await updateSessionStoreAtomic(store, (sessions) => {
+    sessions["agent:recovery:main"] = { sessionId: "recovery-generation", updatedAt: 1 };
+  });
+  const ownerEpoch = createHash("sha256")
+    .update("recovery-generation\u0000mission-recovery")
+    .digest("hex");
+  const seeded = await armDurable(runId, ownerEpoch);
+  if (terminal)
+    await writeDurableHelperExit(
+      {
+        runId,
+        nonce: seeded.intent.nonce,
+        exitCode: 0,
+        signal: null,
+        timedOut: false,
+        endedAtMs: Date.now(),
+        outcomeDigest: durableOutcomeDigest({ exitCode: 0, signal: null, timedOut: false }),
+      },
+      { rootDir },
+    );
+  await ackGoalWaitYield({ flowId: seeded.arm.flowId, sessionKey: "agent:recovery:main" });
+  return { ...seeded, cfg: { session: { store } } };
+}
+
+describe("durable helper authority admission", () => {
+  it("keeps a live helper in reconciliation across repeated sweeps and legacy rollback", async () => {
+    const { arm, cfg, intent } = await armGatedDurable("run_live_owner", false);
+    await writeDurableHelperStarted(
+      {
+        runId: "run_live_owner",
+        runNonce: intent.nonce,
+        helperPid: process.pid,
+        childPid: process.pid,
+        startedAtMs: Date.now(),
+        commandDigest: intent.commandDigest,
+      },
+      { rootDir },
+    );
+    await runDurableHelperSweepOnce({ options: { rootDir }, cfg });
+    process.env.OPENCLAW_RECOVERY_AUTHORITY_MODE = "legacy";
+    await runDurableHelperSweepOnce({ options: { rootDir }, cfg });
+    const task = getGoalWaitTask(arm.taskId)!;
+    const state = JSON.parse(task.progress_summary!);
+    expect(task.status).toBe("running");
+    expect(state.recoveryAuthority).toMatchObject({
+      attempts: 0,
+      decision: { authorityId: "recovery-authority/v1", kind: "reconcile" },
+    });
+    expect(fs.readdirSync(rootDir)).toEqual(["run_live_owner"]);
+  });
+
+  it("recovers the terminal wait even after its settled helper files have been pruned", async () => {
+    const { cfg, arm } = await armGatedDurable("run_pruned_terminal");
+    await expect(
+      reconcileDurableRun({
+        runId: "run_pruned_terminal",
+        options: { rootDir },
+        cfg,
+        dispatch: async () => {
+          throw new Error("wake ack lost");
+        },
+      }),
+    ).rejects.toThrow("wake ack lost");
+    await removeDurableHelperRunDir("run_pruned_terminal", { rootDir });
+    let wakes = 0;
+    const dispatch = async () => {
+      wakes += 1;
+      return { ok: true as const, duplicate: false };
+    };
+    await runDurableHelperSweepOnce({ options: { rootDir }, cfg, dispatch });
+    await runDurableHelperSweepOnce({ options: { rootDir }, cfg, dispatch });
+    expect(getGoalWaitTask(arm.taskId)?.status).toBe("succeeded");
+    expect(wakes).toBe(1);
+  });
+
+  it("rejects an old callback when its admitted Session rotates during helper observation", async () => {
+    const { cfg, arm, intent } = await armGatedDurable("run_observation_race", false);
+    await writeDurableHelperStarted(
+      {
+        runId: "run_observation_race",
+        runNonce: intent.nonce,
+        helperPid: process.pid,
+        childPid: process.pid,
+        startedAtMs: Date.now(),
+        commandDigest: intent.commandDigest,
+      },
+      { rootDir },
+    );
+    const outcome = await reconcileDurableRun({
+      runId: "run_observation_race",
+      options: { rootDir },
+      cfg,
+      isHelperAlive: async () => {
+        await updateSessionStoreAtomic(cfg.session.store, (sessions) => {
+          sessions["agent:recovery:main"] = {
+            sessionId: "new-observation-generation",
+            updatedAt: 2,
+          };
+        });
+        return false;
+      },
+    });
+    expect(outcome.reason).toBe("owner-epoch-mismatch");
+    expect(getGoalWaitTask(arm.taskId)?.status).toBe("queued");
+  });
+  it("retries the level-check after task terminal persistence outlives its wake acknowledgement", async () => {
+    const { arm, cfg } = await armGatedDurable("run_terminal_lost_ack");
+    await expect(
+      reconcileDurableRun({
+        runId: "run_terminal_lost_ack",
+        options: { rootDir },
+        cfg,
+        dispatch: async () => {
+          throw new Error("wake acknowledgement lost");
+        },
+      }),
+    ).rejects.toThrow("wake acknowledgement lost");
+    expect(getGoalWaitTask(arm.taskId)?.status).toBe("succeeded");
+    let wakes = 0;
+    const dispatch = async () => {
+      wakes += 1;
+      return { ok: true as const, duplicate: false };
+    };
+    await runDurableHelperSweepOnce({ options: { rootDir }, cfg, dispatch });
+    await runDurableHelperSweepOnce({ options: { rootDir }, cfg, dispatch });
+    expect(wakes).toBe(1);
+  });
+
+  it("refuses an exit whose helper nonce does not match its original task", async () => {
+    const { arm, cfg } = await armGatedDurable("run_task_nonce_mismatch");
+    const db = openOpenClawStateDatabase().db;
+    const row = db
+      .prepare("SELECT progress_summary FROM task_runs WHERE task_id = ?")
+      .get(arm.taskId)!;
+    db.prepare("UPDATE task_runs SET progress_summary = ? WHERE task_id = ?").run(
+      JSON.stringify({ ...JSON.parse(String(row.progress_summary)), runNonce: "different-nonce" }),
+      arm.taskId,
+    );
+    await runDurableHelperSweepOnce({
+      options: { rootDir },
+      cfg,
+      dispatch: async () => ({ ok: true, duplicate: false }),
+    });
+    expect(getGoalWaitTask(arm.taskId)?.status).toBe("queued");
+  });
+
+  it("refuses a helper after its owning Session generation has changed", async () => {
+    const { arm, cfg } = await armGatedDurable("run_session_epoch_mismatch");
+    await updateSessionStoreAtomic(cfg.session.store, (sessions) => {
+      sessions["agent:recovery:main"] = { sessionId: "replacement-generation", updatedAt: 2 };
+    });
+    await runDurableHelperSweepOnce({
+      options: { rootDir },
+      cfg,
+      dispatch: async () => ({ ok: true, duplicate: false }),
+    });
+    expect(getGoalWaitTask(arm.taskId)?.status).toBe("queued");
+  });
+
+  it("stops before terminal mutation when the authority owner write fails", async () => {
+    const { arm, cfg } = await armGatedDurable("run_authority_write_failure");
+    openOpenClawStateDatabase().db.exec(
+      "CREATE TRIGGER block_goal_admission BEFORE UPDATE OF progress_summary ON task_runs BEGIN SELECT RAISE(ABORT, 'goal admission write failed'); END",
+    );
+    await expect(
+      runDurableHelperSweepOnce({
+        options: { rootDir },
+        cfg,
+        dispatch: async () => ({ ok: true, duplicate: false }),
+      }),
+    ).rejects.toThrow("goal admission write failed");
+    expect(getGoalWaitTask(arm.taskId)?.status).toBe("queued");
+  });
+
+  it("commits an expired helper exit before pruning its protocol directory", async () => {
+    const { arm, cfg, intent } = await armGatedDurable("run_expired_terminal");
+    process.env.RUNTIME_LIFECYCLE_DURABLE_HELPER_TTL_MS = "1";
+    await runDurableHelperSweepOnce({
+      options: { rootDir },
+      cfg,
+      now: Date.parse(intent.createdAt) + 100,
+      dispatch: async () => ({ ok: true, duplicate: false }),
+    });
+    expect(getGoalWaitTask(arm.taskId)?.status).toBe("succeeded");
+    expect(fs.existsSync(path.join(rootDir, "run_expired_terminal"))).toBe(false);
+  });
+});
 
 describe("durable helper sweep recovery", () => {
   it("sweep reads exit.json, finalizes task first, then flow level-check dispatches once", async () => {
@@ -154,7 +357,9 @@ describe("durable helper sweep recovery", () => {
         return { ok: true, duplicate: false };
       },
     });
-    expect(outcomes.some((item) => item.runId === "run_sweep_exit" && item.state === "terminal")).toBe(true);
+    expect(
+      outcomes.some((item) => item.runId === "run_sweep_exit" && item.state === "terminal"),
+    ).toBe(true);
     expect(getGoalWaitTask(arm.taskId)?.status).toBe("succeeded");
     expect(deliveries).toBe(1);
   });
@@ -167,7 +372,9 @@ describe("durable helper sweep recovery", () => {
       options: { rootDir },
       now: Date.parse(intent.createdAt) + 100,
     });
-    expect(outcomes.some((item) => item.runId === "run_sweep_ttl" && item.state === "lost")).toBe(true);
+    expect(outcomes.some((item) => item.runId === "run_sweep_ttl" && item.state === "lost")).toBe(
+      true,
+    );
     expect(getGoalWaitTask(arm.taskId)?.status).toBe("lost");
     expect(fs.existsSync(path.join(rootDir, "run_sweep_ttl"))).toBe(false);
   });

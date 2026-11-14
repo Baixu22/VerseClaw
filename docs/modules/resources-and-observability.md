@@ -179,6 +179,8 @@ Shed 原因：
 
 已确认应用的发送只结算。未知结果保留原文本与 intent，等待渠道 owner 对账；确认未发送后，继续遵守原五次上限与退避时间。Session 清理核对生产运行、代次、文本、创建时间和 intent，保留后来产生的答复；仍引用旧 intent 的不匹配答复保留 applied 队列记录。对账使用原队列的 PID/epoch claim，观察完成后释放，入队和发送边界写入失败时停止发送。切回 legacy 后，已保存的统一恢复 intent 继续按原效果真相处理。
 
+ACP 和 goal-wake 也使用同一恢复开关。ACP 保存请求预算与输出边界，提交后的身份 ACK 通过原行和当前世代确认。Goal-wake 校验原 helper nonce 与 Session epoch，先保存 task 终态，再以现有 Mission CAS 推进 wait；过期或已清理的 helper 文件不会遗漏已提交的待处理终态。
+
 ## 8. 会话/渲染资源上限
 
 `shared/agent-resource-limits.ts`：

@@ -1,6 +1,6 @@
 /** Post-boundary live-model readback of the frozen 30 recovery pairs. */
 import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { freemem, tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import type { ElectronApplication } from "@playwright/test";
 import { getStableWindow, test, expect } from "./fixtures/electron";
@@ -97,12 +97,20 @@ test.describe("long-session recovery evaluation", () => {
     );
     let app: ElectronApplication | undefined;
     const launch = async () => {
+      let setupWaitMs = 0;
+      while (freemem() < 2500 * 1024 * 1024 && setupWaitMs < 300_000) {
+        await new Promise((resolveWait) => setTimeout(resolveWait, 15_000));
+        setupWaitMs += 15_000;
+      }
+      if (freemem() < 2500 * 1024 * 1024)
+        throw new Error("Frozen native admission requires 2500 MiB of available memory.");
       app = await launchElectronApp({
         skipSetup: true,
         env: {
           OPENCLAW_GATEWAY_PORT: String(port),
           OPENCLAW_EXECUTION_PHASE_WRITER: ARM === "candidate" ? "taskflow" : "legacy",
           OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER: ARM === "candidate" ? "taskflow" : "legacy",
+          OPENCLAW_RECOVERY_AUTHORITY_MODE: ARM === "candidate" ? "authority" : "legacy",
         },
       });
       await getStableWindow(app);

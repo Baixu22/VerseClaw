@@ -25,6 +25,7 @@ import {
 import type { DB } from "../../state/openclaw-state-db.generated.js";
 import { isPidDefinitelyDead } from "../../shared/pid-alive.js";
 import { AcpRuntimeError } from "../../runtime/errors.ts";
+import { readAcpSessionEntry } from "../runtime/session-meta.js";
 import type {
   AcpSessionManagerDeps,
   SessionAcpMeta,
@@ -163,6 +164,30 @@ export function rebindManagerTurnRecoveryIdentity(
   const next = { ...state, identity: managerRuntimeIdentity(meta) };
   saveRecoveryState(sessionKey, next);
   return next;
+}
+
+/** Confirm an identity ACK from its exact committed row and current Session generation. */
+export function acknowledgeCommittedManagerRecoveryIdentity(params: {
+  cfg: OpenClawConfig;
+  sessionKey: string;
+  expected: ManagerTurnRecoveryState;
+  committed?: ManagerTurnRecoveryState;
+}): boolean {
+  if (!params.committed) return false;
+  const stored = readAcpSessionEntry({ cfg: params.cfg, sessionKey: params.sessionKey });
+  if (!stored) return false;
+  const entry = loadSessionStore(stored.storePath, { skipCache: true })[stored.storeSessionKey];
+  if (
+    !matchesManagerTurnRecovery({
+      sessionKey: stored.storeSessionKey,
+      sessionId: entry?.sessionId,
+      meta: stored.acp,
+      expected: params.committed,
+    })
+  )
+    return false;
+  Object.assign(params.expected, params.committed);
+  return true;
 }
 
 /** Called in the existing ACP metadata transaction. */

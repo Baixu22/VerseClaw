@@ -261,3 +261,5 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw) 与 ValueCell
 最终投递在统一恢复模式下将 Session 待答复绑定到原有 durable send intent。队列先提交决定和已消耗尝试，再执行发送；未知结果保留对账，已确认发送只结算。清理答复时核对生产运行、Session 代次、文本与 intent，保留原有五次上限和退避规则。队列写入失败时停止发送；对账领取并释放原 owner，不消耗发送尝试。
 
 ACP 在统一恢复模式下将原请求、运行时身份、输出边界和已消耗尝试存入现有 ACP 行。fresh handle 与 backend fallback 使用同一准入，控制器重建后仍沿用原有每 backend 两次尝试的上限。Core 确知尚未进入 turn 时才允许继续；未知结果保留对账，已完成请求直接结算。
+
+ensure/status 身份写入的 ACK 丢失后，按原 ACP 行与当前 Session 世代确认已提交结果。Goal-wake 通过同一 authority 对账原 durable helper 与 task，校验 nonce 和 Session epoch，先保存 task 终态再清理文件；重启后沿既有 Mission CAS 推进待处理 wait，保持原 helper 身份。

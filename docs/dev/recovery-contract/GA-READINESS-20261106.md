@@ -28,6 +28,12 @@ ACP 在统一模式下将原请求、运行时身份、输出边界和预算存�
 
 `node scripts/recovery-acp-process-proof.mjs --out <fresh-output-directory>` 使用原 ACP/Session SQLite 与实际 PID 中断，检查派发前恢复、并发请求、应用后重复请求及未知效果保留。
 
+ensure/status 的身份写入 ACK 丢失后，按原 ACP 行的精确快照和当前 Session 世代确认提交，并保持同一请求预算。
+
+Goal-wake 在原 `task_runs.progress_summary` 中保存统一对账决定。原 task、Mission、runId、nonce 与 Session epoch 共同校验归属；活 helper 继续被观察，所有恢复都保持零次新 helper 派发。终态与决定在原 SQLite 事务内提交，再沿现有 wait/Mission CAS 推进。过期 exit 先入库后清理，终态 task 对应的待处理 wait 即使已清理 helper 文件也继续 level-check。
+
+`node scripts/recovery-goal-process-proof.mjs --out <fresh-output-directory>` 启动原生 durable helper，在 Gateway 中断、终态已落盘而 wake 尚未确认、两个恢复进程并发以及文件清理后验证原 helper 效果与 Mission tick 各一次。
+
 最终投递沿用 `delivery_queue_entries` 的原 intent。队列原子提交恢复决定、已消耗尝试与 owner 身份，并保存 Session 待答复的准确引用；发送前绑定 intent，确认应用后先结算或确认替换该引用，再删除队列行。Session 仍引用同一 intent 但身份不匹配时，保留 applied 队列记录。后来产生的答复由 Session 代次、生产运行、文本、创建时间、路由与 intent 校验保护。
 
 未知或部分发送保留文本与 intent；渠道 owner 确认未发送后，仍按原五次上限与退避执行。已经应用的发送只结算，效果未知时预算耗尽也保留对账状态。切回 legacy 后保留这些已存入队列的统一恢复记录；新 legacy 发送继续沿原路径处理。
@@ -48,6 +54,6 @@ ACP 在统一模式下将原请求、运行时身份、输出边界和预算存�
 
 最终投递节点 TF-0814 的源码候选为 `aacbe24397c6fd8d7b9d67f0147932de25ab8a72`，封存证据位于 `harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-delivery-20261113/`。主候选 241 项、独立检出 139 项回归通过；两份实际 PID/SQLite 证明均记录效果 1、尝试 2、重复准入 0。原生类型、严格 lint、构建、comms、目标 Harness 和指定模型 fresh autoreview 通过。首轮进程证明的空准入与后续原生探针、无探针复跑原样保留，封存内容可按 SHA256SUMS 回算。
 
-GA 当前为 NO-GO，接下来需完成 ACP、goal-wake 接线和五入口验收。冻结验收要求 5 个故障窗口、每窗口至少 3 次、至少 30 对真实模型长会话、9 个指标，以及 P50 ≤ 5000ms、P95 ≤ 15000ms 和重复基线结构一致性。发布候选还需完成完整源码与打包门禁。当前默认 writer 为 legacy；默认值切换由发布者决定。
+GA 当前为 NO-GO；五入口统验、两轮 legacy 基线和冻结指标仍在验收。冻结验收要求 5 个故障窗口、每窗口至少 3 次、至少 30 对真实模型长会话、9 个指标，以及 P50 ≤ 5000ms、P95 ≤ 15000ms 和重复基线结构一致性。所有原生样本启动前须满足 2500 MiB 可用内存，candidate 同时启用 authority 与两种 taskflow writer。发布候选还需完成完整源码与打包门禁。当前默认 writer 为 legacy；默认值切换由发布者决定。
 
 此前实测见 [恢复评测](FINAL-20261105.zh-CN.md) 与 [后续验证](FOLLOWUP-20261106.zh-CN.md)。最新节点证据完成后收录在 `harness/specs/fixtures/recovery-contract-eval/ga-20261106/`。

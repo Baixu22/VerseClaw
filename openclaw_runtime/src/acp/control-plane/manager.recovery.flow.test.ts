@@ -32,7 +32,7 @@ let handle: AcpRuntimeHandle;
 let runTurnMock: Mock<AcpRuntime["runTurn"]>;
 let prepareFreshSessionMock: Mock<NonNullable<AcpRuntime["prepareFreshSession"]>>;
 let controls: Mock<Parameters<typeof runManagerTurn>[0]["applyRuntimeControls"]>;
-let lostAcknowledgement: "begin" | "boundary" | "admission" | undefined;
+let lostAcknowledgement: "begin" | "boundary" | "admission" | "ensure" | "status" | undefined;
 
 function row() {
   return openOpenClawStateDatabase()
@@ -46,6 +46,7 @@ function journal() {
     maxAttempts: number;
     effect: string;
     visibleOutputObserved: boolean;
+    identity: string;
     authority?: { attempts: number; decision: { authorityId: string; kind: string } };
   };
 }
@@ -59,7 +60,9 @@ const writeMeta: WriteManagerSessionMeta = async (params) => {
       (lostAcknowledgement === "boundary" && state.effect === "unknown") ||
       (lostAcknowledgement === "admission" &&
         state.attempts === 2 &&
-        state.authority?.decision.kind === "resume");
+        state.authority?.decision.kind === "resume") ||
+      (lostAcknowledgement === "ensure" && state.identity.includes("backend-ensure")) ||
+      (lostAcknowledgement === "status" && state.identity.includes("backend-status"));
     if (lose) {
       lostAcknowledgement = undefined;
       throw new Error("owner acknowledgement lost");
@@ -168,6 +171,49 @@ afterEach(() => {
 });
 
 describe("ACP production turn recovery with the existing durable owner", () => {
+  it.each(["ensure", "status"] as const)(
+    "confirms a committed %s identity after its write acknowledgement is lost",
+    async (stage) => {
+      lostAcknowledgement = stage;
+      if (stage === "ensure") {
+        await upsertAcpSessionMeta({
+          cfg,
+          sessionKey: key,
+          mutate: (current) =>
+            current
+              ? { ...current, identity: { ...current.identity!, state: "pending" } }
+              : undefined,
+        });
+        runtime.ensureSession = vi.fn(async () => ({
+          ...handle,
+          backendSessionId: "backend-ensure",
+          agentSessionId: "agent-ensure",
+        }));
+      } else {
+        runtime.getStatus = vi.fn(async () => ({ backendSessionId: "backend-status" }));
+      }
+      const backend = { id: "fixture", runtime };
+      const manager = new AcpSessionManager({
+        ...DEFAULT_DEPS,
+        requireRuntimeBackend: () => backend,
+        getRuntimeBackend: () => backend,
+        upsertSessionMeta: async (params) => writeMeta({ ...params, cfg: params.cfg ?? cfg }),
+      });
+      const input = {
+        cfg,
+        sessionKey: key,
+        requestId: "identity-ack",
+        text: "original task",
+        mode: "prompt" as const,
+      };
+      await manager.runTurn(input);
+      expect(lostAcknowledgement).toBeUndefined();
+      expect(journal()).toMatchObject({ effect: "applied", attempts: 1 });
+      expect(JSON.parse(String(row().recovery_json)).processId).toBeUndefined();
+      await manager.runTurn(input);
+      expect(runTurnMock).toHaveBeenCalledOnce();
+    },
+  );
   it("keeps a live owner's exact journal intact when a peer admission is refused", async () => {
     runTurnMock.mockImplementation(async function* () {
       const before = row().recovery_json;

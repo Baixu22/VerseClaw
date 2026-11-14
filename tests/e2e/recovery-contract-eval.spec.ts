@@ -87,11 +87,12 @@ test.describe("recovery contract eval windows", () => {
       )
         throw new Error("invalid frozen trial identity");
       let setupWaitMs = 0;
-      if (BATCH_FILE)
-        while (freemem() < 1500 * 1024 * 1024 && setupWaitMs < 300_000) {
+      while (freemem() < 2500 * 1024 * 1024 && setupWaitMs < 300_000) {
           await new Promise((resolveWait) => setTimeout(resolveWait, 15_000));
           setupWaitMs += 15_000;
-        }
+      }
+      if (freemem() < 2500 * 1024 * 1024)
+        throw new Error("Frozen native admission requires 2500 MiB of available memory.");
       const trialDir = join(resolve(OUT), `evidence-${WINDOW}-${INDEX}`);
       await mkdir(trialDir, { recursive: true });
       const probeDir = await mkdtemp(join(tmpdir(), "recovery-probe-"));
@@ -154,6 +155,7 @@ test.describe("recovery contract eval windows", () => {
             OPENCLAW_RECOVERY_EVAL_CONFIG: configPath,
             OPENCLAW_EXECUTION_PHASE_WRITER: ARM === "candidate" ? "taskflow" : "legacy",
             OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER: ARM === "candidate" ? "taskflow" : "legacy",
+            OPENCLAW_RECOVERY_AUTHORITY_MODE: ARM === "candidate" ? "authority" : "legacy",
             OPENCLAW_RECOVERY_AUTHORITY_SHADOW: process.env.RECOVERY_SHADOW === "1" ? "1" : "0",
           },
         });

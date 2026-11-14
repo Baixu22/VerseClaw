@@ -84,6 +84,14 @@ an error or absent output alone never clears an unknown outcome.
 Commit hooks are process-local best-effort notifications; applied restart recovery
 settles its intent without replaying them.
 
+Goal-wake stores the shared observation decision in the original task progress.
+The task/run/nonce binding and current Session epoch precede terminal or wait
+updates; acknowledgement and callback checks use the same snapshot. Recovery
+only observes the original helper and consumes zero new helper dispatches. Task
+terminal truth commits before protocol cleanup. A pending wait remains selected
+from the original flow even after helper files are pruned; Mission CAS owns wake
+deduplication across restart and concurrent observers.
+
 The default stays legacy. Read-only shadow never mutates an owner. One authority
 mode gate controls all five entry points and supports rollback. Frozen product
 locks and evaluation thresholds remain unchanged; a clean focused check is not GA.

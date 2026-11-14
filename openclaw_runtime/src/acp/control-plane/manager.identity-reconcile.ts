@@ -18,6 +18,7 @@ import { withAcpRuntimeErrorBoundary } from "../../runtime/errors.ts";
 import type { SessionAcpMeta, SessionEntry } from "./manager.types.js";
 import { hasLegacyAcpIdentityProjection } from "./manager.utils.js";
 import {
+  acknowledgeCommittedManagerRecoveryIdentity,
   matchesManagerTurnRecovery,
   rebindManagerTurnRecoveryIdentity,
   type ManagerTurnRecoveryState,
@@ -149,50 +150,64 @@ export async function reconcileManagerRuntimeSessionIdentifiers(params: {
   }
   let accepted = false;
   let rebound: ManagerTurnRecoveryState | undefined;
-  const persisted = await params.writeSessionMeta({
-    cfg: params.cfg,
-    sessionKey: params.sessionKey,
-    expectedSessionId: params.expectedRecovery?.sessionId,
-    failOnError: Boolean(params.expectedRecovery),
-    mutate: (current, entry) => {
+  const persisted = await params
+    .writeSessionMeta({
+      cfg: params.cfg,
+      sessionKey: params.sessionKey,
+      expectedSessionId: params.expectedRecovery?.sessionId,
+      failOnError: Boolean(params.expectedRecovery),
+      mutate: (current, entry) => {
+        if (
+          params.expectedRecovery &&
+          !matchesManagerTurnRecovery({
+            sessionKey: params.sessionKey,
+            sessionId: entry?.sessionId,
+            meta: current,
+            expected: params.expectedRecovery,
+          })
+        )
+          return undefined;
+        if (!entry) {
+          return null;
+        }
+        const base = current;
+        if (!base) {
+          return null;
+        }
+        accepted = true;
+        if (params.expectedRecovery)
+          rebound = rebindManagerTurnRecoveryIdentity(
+            params.sessionKey,
+            params.expectedRecovery,
+            nextMeta,
+          );
+        return {
+          backend: base.backend,
+          agent: base.agent,
+          runtimeSessionName: base.runtimeSessionName,
+          ...(nextIdentity ? { identity: nextIdentity } : {}),
+          mode: base.mode,
+          ...(base.runtimeOptions ? { runtimeOptions: base.runtimeOptions } : {}),
+          ...(base.cwd ? { cwd: base.cwd } : {}),
+          state: base.state,
+          lastActivityAt: now,
+          ...(base.lastError ? { lastError: base.lastError } : {}),
+        };
+      },
+    })
+    .catch((error) => {
       if (
         params.expectedRecovery &&
-        !matchesManagerTurnRecovery({
+        acknowledgeCommittedManagerRecoveryIdentity({
+          cfg: params.cfg,
           sessionKey: params.sessionKey,
-          sessionId: entry?.sessionId,
-          meta: current,
           expected: params.expectedRecovery,
+          committed: rebound,
         })
       )
-        return undefined;
-      if (!entry) {
-        return null;
-      }
-      const base = current;
-      if (!base) {
-        return null;
-      }
-      accepted = true;
-      if (params.expectedRecovery)
-        rebound = rebindManagerTurnRecoveryIdentity(
-          params.sessionKey,
-          params.expectedRecovery,
-          nextMeta,
-        );
-      return {
-        backend: base.backend,
-        agent: base.agent,
-        runtimeSessionName: base.runtimeSessionName,
-        ...(nextIdentity ? { identity: nextIdentity } : {}),
-        mode: base.mode,
-        ...(base.runtimeOptions ? { runtimeOptions: base.runtimeOptions } : {}),
-        ...(base.cwd ? { cwd: base.cwd } : {}),
-        state: base.state,
-        lastActivityAt: now,
-        ...(base.lastError ? { lastError: base.lastError } : {}),
-      };
-    },
-  });
+        return true;
+      throw error;
+    });
   if (params.expectedRecovery && (!accepted || !persisted))
     return { handle: params.handle, meta: params.meta, runtimeStatus };
   if (params.expectedRecovery && rebound) Object.assign(params.expectedRecovery, rebound);

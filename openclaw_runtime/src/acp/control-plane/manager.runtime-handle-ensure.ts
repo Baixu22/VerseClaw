@@ -18,6 +18,7 @@ import {
   withAcpRuntimeErrorBoundary,
 } from "../../runtime/errors.ts";
 import {
+  acknowledgeCommittedManagerRecoveryIdentity,
   matchesManagerTurnRecovery,
   rebindManagerTurnRecoveryIdentity,
   type ManagerTurnRecoveryState,
@@ -223,35 +224,49 @@ export async function ensureManagerRuntimeHandle(params: {
   if (shouldPersistMeta) {
     let accepted = false;
     let rebound: ManagerTurnRecoveryState | undefined;
-    const persisted = await params.writeSessionMeta({
-      cfg: params.cfg,
-      sessionKey: params.sessionKey,
-      failOnError: Boolean(params.expectedRecovery),
-      expectedSessionId: params.expectedRecovery?.sessionId,
-      mutate: (current, entry) => {
+    const persisted = await params
+      .writeSessionMeta({
+        cfg: params.cfg,
+        sessionKey: params.sessionKey,
+        failOnError: Boolean(params.expectedRecovery),
+        expectedSessionId: params.expectedRecovery?.sessionId,
+        mutate: (current, entry) => {
+          if (
+            params.expectedRecovery &&
+            !matchesManagerTurnRecovery({
+              sessionKey: params.sessionKey,
+              sessionId: entry?.sessionId,
+              meta: current,
+              expected: params.expectedRecovery,
+            })
+          )
+            return undefined;
+          if (!entry) {
+            return null;
+          }
+          accepted = true;
+          if (params.expectedRecovery)
+            rebound = rebindManagerTurnRecoveryIdentity(
+              params.sessionKey,
+              params.expectedRecovery,
+              nextMeta,
+            );
+          return nextMeta;
+        },
+      })
+      .catch((error) => {
         if (
           params.expectedRecovery &&
-          !matchesManagerTurnRecovery({
+          acknowledgeCommittedManagerRecoveryIdentity({
+            cfg: params.cfg,
             sessionKey: params.sessionKey,
-            sessionId: entry?.sessionId,
-            meta: current,
             expected: params.expectedRecovery,
+            committed: rebound,
           })
         )
-          return undefined;
-        if (!entry) {
-          return null;
-        }
-        accepted = true;
-        if (params.expectedRecovery)
-          rebound = rebindManagerTurnRecoveryIdentity(
-            params.sessionKey,
-            params.expectedRecovery,
-            nextMeta,
-          );
-        return nextMeta;
-      },
-    });
+          return true;
+        throw error;
+      });
     if (params.expectedRecovery && (!accepted || !persisted))
       throw new AcpRuntimeError("ACP_SESSION_INIT_FAILED", "ACP handle acknowledgement is stale.");
     if (params.expectedRecovery && rebound) Object.assign(params.expectedRecovery, rebound);

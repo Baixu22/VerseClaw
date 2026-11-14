@@ -259,3 +259,5 @@ Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell te
 統一復旧モードでは、Session の保留応答を既存の durable send intent に結び付けます。キューは判断と消費した試行回数を送信前に保存し、不明な結果を照合用に保持します。確認済みの送信は再送せず確定し、応答の削除時に生成 run、Session 世代、本文、intent を照合します。既存の5回上限とバックオフを維持します。キューへの書き込みに失敗した場合は送信を停止します。照合は元の owner を取得・解放し、送信試行の予算を消費しません。
 
 統一復旧モードの ACP は、元の要求、実行時 ID、出力境界、消費した試行回数を既存の ACP 行に保存します。新しい handle と backend fallback は同じ準入を使用し、コントローラー再起動後も backend ごとの既存の2回上限を保持します。Core が turn 未開始を確認した場合に再開し、不明な結果は照合用に保持、完了済み要求は再実行せず確定します。
+
+ensure/status の ACK が失われた場合、既存の ACP 行と現在の Session 世代からコミットを確認します。Goal-wake も同じ authority を使って元の durable helper と task を照合します。nonce と Session epoch を検証し、ファイル削除前に task の終端を保存します。再起動後は既存の Mission CAS で未処理の wait を進め、元の helper を保持します。
