@@ -16,6 +16,10 @@ jobs:
     steps:
       - name: Checkout fixed source inputs
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        env:
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.longpaths
+          GIT_CONFIG_VALUE_0: 'true'
         with:
           fetch-depth: 0
 
@@ -24,7 +28,7 @@ jobs:
         run: |
           $g4Root = 'D:/tmp/g4-relay-20261113-01a1d438/windows-builder-discovery-20261114/runner-job'
           New-Item -ItemType Directory -Force "$g4Root/tmp", "$g4Root/cargo-home", "$g4Root/evidence" | Out-Null
-          "TEMP=$g4Root/tmp", "TMP=$g4Root/tmp", "CARGO_HOME=$g4Root/cargo-home", "G4_NATIVE_EVIDENCE=$g4Root/evidence", 'PYTHONDONTWRITEBYTECODE=1', 'PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN=false', 'RUSTUP_TOOLCHAIN=1.94.0-x86_64-pc-windows-msvc' | Add-Content -Encoding utf8 $env:GITHUB_ENV
+          'TEMP=D:/tmp', 'TMP=D:/tmp', "CARGO_HOME=$g4Root/cargo-home", "G4_NATIVE_EVIDENCE=$g4Root/evidence", 'PYTHONDONTWRITEBYTECODE=1', 'PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN=false', 'RUSTUP_TOOLCHAIN=1.94.0-x86_64-pc-windows-msvc' | Add-Content -Encoding utf8 $env:GITHUB_ENV
           $env:RUSTUP_TOOLCHAIN = '1.94.0-x86_64-pc-windows-msvc'
           $env:PYTHONDONTWRITEBYTECODE = '1'
           rustc -Vv
