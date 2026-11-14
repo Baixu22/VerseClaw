@@ -77,11 +77,14 @@ text, a bare `accepted` flag, or exit code 0.
 
 ## Owner-readback boundary
 
-The current codebase has no durable verifier-receipt lookup keyed by a stable receipt id, and its
-effect receipts do not carry the TaskLoop candidate/generation tuple. Until both owners expose a
-readback contract with that correlation, `submitCompletion` must reject every claim rather than
-accept a caller-authored verdict or synthesize a second fact store. A future positive path requires
-a separate owner contract and evidence; absence of a positive path is not made green by mocks.
+Main supplies its Gateway manager to the Task Ledger API. `submitCompletion` reads the
+managed task and current writer, then requests `tasks.contract.receipt` from the existing
+Runtime owner. The Runtime checks the persisted task, generation, candidate and saved
+verifier/effect references. A validated credential is submitted through the existing
+TaskSystem acceptance operation, and Task Ledger reads its resulting projection.
+
+A missing Gateway, execution contract, current owner or matching receipt produces a
+rejection. Caller-authored verdicts and effects remain outside this readback contract.
 
 ## Evidence
 

@@ -310,7 +310,8 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
       const created = await hostInvoke<{ tasks: Array<{ contract: { taskNodeId: string; objective: string } }> }>(app, 'taskLedger', 'queryTasks', { workspaceId: project.workspaceId });
       expect(created.tasks).toHaveLength(1); expect(created.tasks[0].contract.objective).toBe(objective); evidence.owner = created;
     } else if (journey === 'cross-tree-migration') {
-      await click('chat-toolbar-more'); await need('execution-migration-open'); await click('execution-migration-open');
+      if (!(await id('execution-migration-open').isVisible())) await click('chat-toolbar-more');
+      await need('execution-migration-open'); await click('execution-migration-open');
       await expect(id('execution-migration-dialog')).toBeVisible();
       if (await id('execution-migration-target').inputValue() !== targetWorkspaceId) await ui('selectOption', 'checkout:target',
         () => id('execution-migration-target').selectOption(targetWorkspaceId!), { identity: true, value: targetWorkspaceId! });
@@ -379,7 +380,9 @@ for (const journey of journeys) test(`U6 interaction metrics: ${journey}`, async
           return response;
         });
       });
-      await ui('click', 'chat-header:options', () => id('chat-toolbar-more').click());
+      if (!(await id('chat-session-handoff').isVisible())) {
+        await ui('click', 'chat-header:options', () => id('chat-toolbar-more').click());
+      }
       await need('chat-session-handoff');
       await expect(id('chat-session-handoff')).toBeEnabled();
       await ui('press', 'testid:chat-session-handoff:Enter', async () => {

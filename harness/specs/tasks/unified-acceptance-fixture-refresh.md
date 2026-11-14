@@ -58,9 +58,12 @@ ownedPaths: &paths
   - tests/e2e/session-family-counter-layout.spec.ts
   - tests/e2e/session-task-reading-navigation.spec.ts
   - tests/e2e/session-delegation-capacity.spec.ts
+  - tests/e2e/u6-interaction-metrics.final.spec.ts
   - tests/e2e/fixtures/session-task-chain.ts
   - harness/specs/guides/long-session-delegation-admission.md
   - harness/specs/tasks/unified-acceptance-fixture-refresh.md
+  - harness/specs/tasks/autonomy-task-actions.md
+  - harness/specs/tasks/autonomy-task-completion.md
 touchedAreas: *paths
 requiredRules:
   - backend-communication-boundary
@@ -104,6 +107,7 @@ acceptance:
   - Sidebar and slash-command new-session actions flush the current view's pending draft through the existing workspace save queue before the owner receives a create request; refusal retains that saved source view.
   - New-session actions on another project persist the source draft, create within the requested project's owner, and activate only after successful creation; a superseded or disposed view cannot submit its old draft.
   - Expanded-family layout checks retain the visible count and verify its title separation at two, twenty and one hundred children in light, dark and narrow windows.
+  - Paired journeys select the same real action in the baseline direct toolbar and the candidate More menu; performed UI events remain the source of unchanged operation metrics.
 requiredTests:
   - pnpm exec vitest run tests/unit/checkpoints-dialog.test.tsx --maxWorkers=1
   - pnpm exec vitest run tests/unit/vite-config-openclaw-runtime.test.ts --maxWorkers=1
