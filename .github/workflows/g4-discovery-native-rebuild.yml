@@ -1,0 +1,64 @@
+name: G4 private ephemeral Windows rebuild
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-rebuild:
+    runs-on: [self-hosted, Windows, X64, g4-windows-builder-discovery-20261114]
+    timeout-minutes: 60
+    steps:
+      - name: Checkout fixed source inputs
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          fetch-depth: 0
+
+      - name: Configure isolated outputs and verify native tools
+        shell: pwsh
+        run: |
+          $g4Root = 'D:/tmp/g4-relay-20261113-01a1d438/windows-builder-discovery-20261114/runner-job'
+          New-Item -ItemType Directory -Force "$g4Root/tmp", "$g4Root/cargo-home", "$g4Root/evidence" | Out-Null
+          "TEMP=$g4Root/tmp", "TMP=$g4Root/tmp", "CARGO_HOME=$g4Root/cargo-home", "G4_NATIVE_EVIDENCE=$g4Root/evidence", 'PYTHONDONTWRITEBYTECODE=1', 'PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN=false', 'RUSTUP_TOOLCHAIN=1.94.0-x86_64-pc-windows-msvc' | Add-Content -Encoding utf8 $env:GITHUB_ENV
+          $env:RUSTUP_TOOLCHAIN = '1.94.0-x86_64-pc-windows-msvc'
+          $env:PYTHONDONTWRITEBYTECODE = '1'
+          rustc -Vv
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cargo --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -m pytest --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git cat-file -e 'c06f406e83566bb968448222d9c8caf429e580a0^{commit}'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Rebuild and qualify the fixed VerseShell source
+        shell: pwsh
+        run: |
+          $g4Before = @{ commit = (git rev-parse HEAD).Trim(); tree = (git rev-parse 'HEAD^{tree}').Trim(); clean = -not [bool](git status --porcelain); entrySha256 = (Get-FileHash -Algorithm SHA256 scripts/verseshell-bundle.mjs).Hash.ToLowerInvariant(); sourceInputsSha256 = (Get-FileHash -Algorithm SHA256 resources/verseshell/source-inputs.json).Hash.ToLowerInvariant() }
+          $g4Started = (Get-Date).ToUniversalTime().ToString('o')
+          $g4Python = (python -c 'import sys; print(sys.executable)').Trim()
+          $g4Argv = @('scripts/verseshell-bundle.mjs', 'rebuild', '--platform', 'win32', '--arch', 'x64', '--mode', 'package', '--source-mirror', $env:GITHUB_WORKSPACE, '--python', $g4Python, '--keep-workdirs')
+          node @g4Argv *> "$env:G4_NATIVE_EVIDENCE/native-rebuild.log"
+          $g4Exit = $LASTEXITCODE
+          $g4Files = @('resources/verseshell/source-inputs.json', 'resources/verseshell/manifest.json', 'resources/bin/win32-x64/ae.exe') | ForEach-Object {
+            if (Test-Path -LiteralPath $_) { @{ path = $_; sha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $_).Hash.ToLowerInvariant(); bytes = (Get-Item -LiteralPath $_).Length; rebuildSucceeded = ($g4Exit -eq 0) } }
+            else { @{ path = $_; exists = $false; rebuildSucceeded = $false } }
+          }
+          @{ schema = 'G4NativeBuildReceipt/v1'; driven_by = 'agent'; actor = 'g4-windows-builder-discovery-20261114'; realHumanEvidence = $false; candidate = $g4Before; command = @('node') + $g4Argv; sourceCommit = 'c06f406e83566bb968448222d9c8caf429e580a0'; toolchain = '1.94.0-x86_64-pc-windows-msvc'; mode = 'package'; startedAt = $g4Started; completedAt = (Get-Date).ToUniversalTime().ToString('o'); exitCode = $g4Exit; runnerName = $env:RUNNER_NAME; runnerOs = $env:RUNNER_OS; runId = $env:GITHUB_RUN_ID; runAttempt = $env:GITHUB_RUN_ATTEMPT; files = $g4Files } | ConvertTo-Json -Depth 8 | Set-Content -Encoding utf8 "$env:G4_NATIVE_EVIDENCE/command.json"
+          Get-Content "$env:G4_NATIVE_EVIDENCE/native-rebuild.log" -Tail 20
+          exit $g4Exit
+
+      - name: Retain private build evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: g4-builder-discovery-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 7
+          if-no-files-found: warn
+          path: |
+            D:/tmp/g4-relay-20261113-01a1d438/windows-builder-discovery-20261114/runner-job/evidence/
+            resources/verseshell/manifest.json
+            resources/verseshell/source-inputs.json
+            resources/bin/win32-x64/ae.exe
