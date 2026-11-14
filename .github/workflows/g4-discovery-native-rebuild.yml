@@ -1,6 +1,9 @@
 name: G4 private ephemeral Windows rebuild
 
 on:
+  push:
+    branches:
+      - codex/g4-windows-builder-discovery-20261114-01a1d833
   workflow_dispatch:
 
 permissions:
