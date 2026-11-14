@@ -89,14 +89,23 @@ export async function createSessionChainProject(app: ElectronApplication, rootPa
 
 export async function addSessionChainChildren(app: ElectronApplication, project: { workspaceId: string; sessionKey: string }, start: number, end: number) {
   const children: string[] = [];
-  for (let index = start; index < end; index++) {
-    const child = await hostInvoke<{ key: string }>(app, 'gateway', 'rpc', {
-      method: 'sessions.create', params: { agentId: 'main', parentSessionKey: project.sessionKey,
-        label: `Child ${index + 1} · ${'A long session title '.repeat(index === 0 ? 7 : 1)} · ${project.sessionKey.slice(-10)}` }, timeoutMs: 30_000,
-    });
-    await hostInvoke(app, 'workspaces', 'saveState', { id: project.workspaceId, sessionKey: child.key,
-      state: { draftInput: `Child ${index + 1} draft` } });
-    children.push(child.key);
+  for (let index = start; index < end; index += 4) {
+    const created = await Promise.allSettled(Array.from({ length: Math.min(4, end - index) }, (_, offset) => {
+      const ordinal = index + offset;
+      return hostInvoke<{ key: string }>(app, 'gateway', 'rpc', {
+        method: 'sessions.create', params: { agentId: 'main', parentSessionKey: project.sessionKey,
+          label: `Child ${ordinal + 1} · ${'A long session title '.repeat(ordinal === 0 ? 7 : 1)} · ${project.sessionKey.slice(-10)}` }, timeoutMs: 30_000,
+      });
+    }));
+    // The Workspace owner still receives ordered, serial draft mutations.
+    for (const [offset, result] of created.entries()) {
+      if (result.status !== 'fulfilled') continue;
+      await hostInvoke(app, 'workspaces', 'saveState', { id: project.workspaceId, sessionKey: result.value.key,
+        state: { draftInput: `Child ${index + offset + 1} draft` } });
+      children.push(result.value.key);
+    }
+    const failure = created.find((result) => result.status === 'rejected');
+    if (failure?.status === 'rejected') throw failure.reason;
   }
   return children;
 }

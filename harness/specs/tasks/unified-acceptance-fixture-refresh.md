@@ -66,6 +66,7 @@ ownedPaths: &paths
   - tests/e2e/session-delegation-capacity.spec.ts
   - tests/e2e/u6-interaction-metrics.final.spec.ts
   - tests/e2e/fixtures/session-task-chain.ts
+  - tests/unit/session-chain-fixture-batching.test.ts
   - tests/e2e/fixtures/electron.ts
   - tests/e2e/fixtures/windows-process.ts
   - harness/specs/guides/long-session-delegation-admission.md
@@ -118,7 +119,9 @@ acceptance:
   - Paired journeys select the same real action in the baseline direct toolbar and the candidate More menu; performed UI events remain the source of unchanged operation metrics.
   - Each new isolated Electron test profile receives an available Gateway port, and a relaunch retains the profile's saved port without changing product defaults.
   - Cleanup compares registered PID creation times against the native process census before opening a process handle, so a protected process that reuses an old PID is identified without selecting it for termination.
+  - Child-session fixture preparation creates at most four independent sessions per batch, waits for every creation response, and saves confirmed drafts serially through the existing Workspace owner in child order. The original counts, labels, and acceptance time limits remain fixed.
 requiredTests:
+  - pnpm exec vitest run tests/unit/session-chain-fixture-batching.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/checkpoints-dialog.test.tsx --maxWorkers=1
   - pnpm exec vitest run tests/unit/vite-config-openclaw-runtime.test.ts --maxWorkers=1
   - pnpm exec vitest run tests/unit/session-handoff-recovery.test.ts tests/unit/long-session-coordinator-binding.test.ts tests/unit/host-services.test.ts tests/unit/workspace-session.test.ts --maxWorkers=1 --no-file-parallelism
