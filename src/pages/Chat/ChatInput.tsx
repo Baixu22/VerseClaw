@@ -60,6 +60,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { hostApi, type ChatKnowledgeReference, type KnowledgeRouteCandidate, type KnowledgeRouteCandidateGroupKey, type KnowledgeSearchResult } from '@/lib/host-api';
 import { errorMessageFrom, toastUserError } from '@/lib/user-error';
+import { boundedKnowledgeRead, knowledgeRequestKey } from '@/lib/knowledge-interaction';
+import type { RetrievalProfile } from '@shared/knowledge/retrieval';
 import type { SendOptions } from '@shared/chat/types';
 import { cn } from '@/lib/utils';
 import { useGatewayStore } from '@/stores/gateway';
@@ -1016,11 +1018,17 @@ export function ChatInput({
   const [knowledgeSearchResult, setKnowledgeSearchResult] = useState<KnowledgeSearchResult | null>(null);
   const [knowledgeSearching, setKnowledgeSearching] = useState(false);
   const [knowledgeSearchError, setKnowledgeSearchError] = useState<string | null>(null);
+  const [inspectedKnowledge, setInspectedKnowledge] = useState<{ candidate: KnowledgeRouteCandidate; content: string } | null>(null);
   const knowledgeReadSerialRef = useRef(0);
-  const knowledgeWorkspaceId = useWorkspacesStore(state => state.activeWorkspace?.id);
+  const knowledgeWorkspaceId = useWorkspacesStore(state => workspace?.id ?? state.activeWorkspace?.id);
   const [selectedKnowledgeRefs, setSelectedKnowledgeRefs] = useState<ChatKnowledgeReference[]>([]);
   const [suggestedKnowledgeRefs, setSuggestedKnowledgeRefs] = useState<KnowledgeRouteCandidate[]>([]);
   const [knowledgePreflightExpanded, setKnowledgePreflightExpanded] = useState(false);
+  const [knowledgeProfile, setKnowledgeProfile] = useState<RetrievalProfile>('local');
+  const [knowledgeReadReason, setKnowledgeReadReason] = useState('');
+  const knowledgeReadEpoch = useRef(0);
+  const knowledgeReadController = useRef<AbortController | null>(null);
+  const sendPreparingRef = useRef(false);
   const [knowledgeRoutingBusy, setKnowledgeRoutingBusy] = useState(false);
   const [runtimeLessonsSourceEnabled, setRuntimeLessonsSourceEnabled] = useState(false);
   const dismissedRouteKeysRef = useRef<Map<string, number>>(new Map());
@@ -1098,6 +1106,33 @@ export function ChatInput({
   const refreshProviderSnapshot = useProviderStore((s) => s.refreshProviderSnapshot);
   const currentAgentId = useChatStore((s) => s.currentAgentId);
   const currentSessionKey = useChatStore((s) => s.currentSessionKey);
+  const knowledgeIdentity = knowledgeRequestKey(currentSessionKey, knowledgeWorkspaceId, knowledgeScope, knowledgeMode, knowledgeProfile, input);
+  const knowledgeIdentityRef = useRef(knowledgeIdentity);
+  knowledgeIdentityRef.current = knowledgeIdentity;
+  const sendIdentityRef = useRef('');
+  sendIdentityRef.current = JSON.stringify([knowledgeIdentity, targetAgentId, pendingTurnModelRef,
+    attachments.map(item => [item.id, item.status]), selectedKnowledgeRefs.map(item => item.id)]);
+  const cancelKnowledgeRead = useCallback(() => {
+    knowledgeReadEpoch.current++;
+    knowledgeReadSerialRef.current++;
+    knowledgeReadController.current?.abort();
+    knowledgeReadController.current = null;
+    setKnowledgeRoutingBusy(false);
+    setKnowledgeSearching(false);
+    setSuggestedKnowledgeRefs([]);
+    setKnowledgePreflightExpanded(false);
+    setKnowledgeSearchResult(null);
+    setKnowledgeSearchError(null);
+    setInspectedKnowledge(null);
+  }, []);
+  useEffect(() => {
+    cancelKnowledgeRead();
+    setKnowledgeReadReason('');
+    return cancelKnowledgeRead;
+  }, [knowledgeIdentity, cancelKnowledgeRead]);
+  useEffect(() => {
+    if (knowledgeScope === 'none') setSelectedKnowledgeRefs([]);
+  }, [knowledgeScope]);
   useEffect(() => {
     knowledgeReadSerialRef.current += 1;
     setKnowledgeSearchResult(null);
@@ -1591,18 +1626,27 @@ export function ChatInput({
     const query = rawQuery.trim();
     if (!query) return;
     const serial = ++knowledgeReadSerialRef.current;
+    knowledgeReadController.current?.abort();
+    const controller = new AbortController();
+    knowledgeReadController.current = controller;
+    const identity = knowledgeIdentityRef.current;
     setKnowledgeSearching(true);
     setKnowledgeSearchError(null);
     try {
-      const result = await hostApi.knowledge.search({
+      const read = await boundedKnowledgeRead(hostApi.knowledge.search({
         query,
+        profile: knowledgeProfile,
         maxResults: 8,
         corpus,
         sessionKey: currentSessionKey,
         workspaceId: knowledgeWorkspaceId,
-      });
-      if (serial !== knowledgeReadSerialRef.current) return;
+      }), controller.signal, 12000);
+      if (serial !== knowledgeReadSerialRef.current || identity !== knowledgeIdentityRef.current) return;
+      setKnowledgeReadReason(read.reason === 'complete' ? '' : read.reason);
+      const result = read.result;
+      if (!result) return;
       if (!result.success) throw new Error(result.error || t('composer.knowledgeAttach.searchFailed'));
+      if (result.profileFallback) setKnowledgeReadReason('partial');
       setKnowledgeSearchResult(result);
     } catch (error) {
       if (serial !== knowledgeReadSerialRef.current) return;
@@ -1612,7 +1656,7 @@ export function ChatInput({
     } finally {
       if (serial === knowledgeReadSerialRef.current) setKnowledgeSearching(false);
     }
-  }, [knowledgeCorpus, currentSessionKey, knowledgeWorkspaceId, t]);
+  }, [knowledgeCorpus, knowledgeProfile, currentSessionKey, knowledgeWorkspaceId, t]);
 
   const searchKnowledge = useCallback(async () => {
     await runKnowledgeSearch(knowledgeQuery);
@@ -1638,6 +1682,32 @@ export function ChatInput({
   const removeKnowledgeReference = useCallback((id: string) => {
     setSelectedKnowledgeRefs((current) => current.filter((reference) => reference.id !== id));
   }, []);
+
+  const inspectSuggestedKnowledge = useCallback(async (candidate: KnowledgeRouteCandidate) => {
+    const epoch = ++knowledgeReadEpoch.current;
+    knowledgeReadController.current?.abort();
+    const controller = new AbortController();
+    knowledgeReadController.current = controller;
+    const identity = knowledgeIdentityRef.current;
+    setKnowledgeRoutingBusy(true);
+    setKnowledgeSearchResult(null);
+    setKnowledgeSearchError(null);
+    const read = await boundedKnowledgeRead(hostApi.knowledge.get({ lookup: candidate.lookup,
+      corpus: candidate.corpus === 'memory' ? 'memory' : 'wiki', sourceRef: candidate.sourceRef,
+      sessionKey: currentSessionKey, workspaceId: knowledgeWorkspaceId }), controller.signal, 12000);
+    if (epoch !== knowledgeReadEpoch.current || identity !== knowledgeIdentityRef.current) return;
+    setKnowledgeRoutingBusy(false);
+    setKnowledgeReadReason(read.reason === 'complete' ? '' : read.reason);
+    if (!read.result) return;
+    if (read.result.success) {
+      setInspectedKnowledge({ candidate, content: typeof read.result.content === 'string' ? read.result.content : '' });
+    } else {
+      setKnowledgeReadReason('error');
+      if (read.result.readDenial) {
+        setSuggestedKnowledgeRefs(current => current.filter(item => item.lookup !== candidate.lookup || item.corpus !== candidate.corpus));
+      }
+    }
+  }, [currentSessionKey, knowledgeWorkspaceId]);
 
   const recordKnowledgeReferences = useCallback((references: ChatKnowledgeReference[]) => {
     if (references.length === 0) return;
@@ -1675,7 +1745,7 @@ export function ChatInput({
       setSuggestedKnowledgeRefs([]);
       return [];
     }
-    const routeKey = `${currentSessionKey}:${knowledgeScope}:${message.trim().slice(0, 120).toLowerCase()}`;
+    const routeKey = knowledgeRequestKey(currentSessionKey, knowledgeWorkspaceId, knowledgeScope, mode, knowledgeProfile, message);
     const dismissedAt = dismissedRouteKeysRef.current.get(routeKey);
     if (dismissedAt && Date.now() - dismissedAt < 10 * 60 * 1000) {
       setSuggestedKnowledgeRefs([]);
@@ -1684,19 +1754,31 @@ export function ChatInput({
     }
 
     setKnowledgeRoutingBusy(true);
+    const epoch = ++knowledgeReadEpoch.current;
+    knowledgeReadController.current?.abort();
+    const controller = new AbortController(); knowledgeReadController.current = controller;
+    const identity = knowledgeIdentityRef.current;
     try {
-      const result = await hostApi.knowledge.routeContext({
+      const read = await boundedKnowledgeRead(hostApi.knowledge.routeContext({
         message,
         scope: knowledgeScope,
         mode,
         selectedReferences: selectedKnowledgeRefs,
         sessionKey: currentSessionKey,
-        workspaceId: workspace?.id ?? null,
+        workspaceId: knowledgeWorkspaceId ?? null,
+        profile: knowledgeProfile,
         sourcePolicy: {
           runtimeLessons: runtimeLessonsSourceEnabled,
         },
-      });
-      if (!result.success) return [];
+      }), controller.signal, mode === 'auto-read' ? 5000 : 12000);
+      if (epoch !== knowledgeReadEpoch.current || identity !== knowledgeIdentityRef.current) return [];
+      setKnowledgeReadReason(read.reason === 'complete' ? '' : read.reason);
+      const result = read.result;
+      if (!result) return [];
+      if (!result.success) { setKnowledgeReadReason('error'); return []; }
+      if (result.retrieval?.status === 'unavailable') setKnowledgeReadReason('error');
+      else if (result.retrieval?.fallbackReasons.some(reason => reason.includes('page-lexical-fallback'))) setKnowledgeReadReason('fallback');
+      else if (result.retrieval?.status === 'partial') setKnowledgeReadReason('partial');
       const routedCandidates = result.candidates.length > 0
         ? result.candidates
         : (result.candidateGroups ?? []).flatMap((group) => group.candidates);
@@ -1708,7 +1790,7 @@ export function ChatInput({
       if (result.decision === 'auto_attach') {
         setSuggestedKnowledgeRefs([]);
         setKnowledgePreflightExpanded(false);
-        return routedCandidates;
+        return routedCandidates.slice(0, 3);
       }
       setSuggestedKnowledgeRefs([]);
       setKnowledgePreflightExpanded(false);
@@ -1717,9 +1799,9 @@ export function ChatInput({
       console.warn('[knowledge] routeContext failed:', error);
       return [];
     } finally {
-      setKnowledgeRoutingBusy(false);
+      if (epoch === knowledgeReadEpoch.current) setKnowledgeRoutingBusy(false);
     }
-  }, [currentSessionKey, knowledgeMode, knowledgeScope, runtimeLessonsSourceEnabled, selectedKnowledgeRefs, workspace?.id]);
+  }, [currentSessionKey, knowledgeMode, knowledgeScope, knowledgeProfile, runtimeLessonsSourceEnabled, selectedKnowledgeRefs, knowledgeWorkspaceId]);
 
   const attachSuggestedKnowledge = useCallback(() => {
     if (suggestedKnowledgeRefs.length === 0) return;
@@ -1737,11 +1819,11 @@ export function ChatInput({
   }, [knowledgeScope, onKnowledgeScopeChange, suggestedKnowledgeRefs]);
 
   const dismissSuggestedKnowledge = useCallback(() => {
-    const routeKey = `${currentSessionKey}:${knowledgeScope}:${input.trim().slice(0, 120).toLowerCase()}`;
+    const routeKey = knowledgeRequestKey(currentSessionKey, knowledgeWorkspaceId, knowledgeScope, knowledgeMode, knowledgeProfile, input);
     dismissedRouteKeysRef.current.set(routeKey, Date.now());
     setSuggestedKnowledgeRefs([]);
     setKnowledgePreflightExpanded(false);
-  }, [currentSessionKey, input, knowledgeScope]);
+  }, [currentSessionKey, input, knowledgeScope, knowledgeMode, knowledgeProfile, knowledgeWorkspaceId]);
 
   const handleConfirmCompaction = useCallback(async () => {
     if (!onManualCompact || compactDisabled) return;
@@ -2256,7 +2338,7 @@ export function ChatInput({
   const canIntervene = sending && hasComposerDraft && allReady && !inputDisabled && !hasFailedAttachments && !capabilityExecuting && longTaskAvailable;
   // 排队默认动作与干预按钮同门禁：有草稿但附件未就绪/存在失败附件时，运行中的
   // 主按钮保持纯暂停语义，避免误触一次排队行为。
-  const canQueueDraft = sending && hasComposerDraft && !inputDisabled && !capabilityExecuting && longTaskAvailable && allReady && !hasFailedAttachments;
+  const canQueueDraft = sending && hasComposerDraft && !inputDisabled && !capabilityExecuting && allReady && !hasFailedAttachments;
   const composerSendState = paused
     ? 'paused'
     : runStarting
@@ -2288,6 +2370,7 @@ export function ChatInput({
     sendKnowledgeReferences: ChatKnowledgeReference[] = [],
     inputMode?: LongTaskInputMode,
   ): Promise<boolean> => {
+    const sendIdentity = sendIdentityRef.current;
     const safeAttachments = attachmentsToSend && attachmentsToSend.length > 0 ? attachmentsToSend : undefined;
 
     if (rendererExtensionRegistry.hasChatBeforeSendHooks()) {
@@ -2303,6 +2386,8 @@ export function ChatInput({
         return false;
       }
     }
+
+    if (sendIdentity !== sendIdentityRef.current) return false;
 
     console.log(`[handleSend] text="${textToSend.substring(0, 50)}", attachments=${safeAttachments?.length ?? 0}, sending=${!!safeAttachments}`);
     if (safeAttachments) {
@@ -2358,9 +2443,17 @@ export function ChatInput({
   const handleInterventionSend = useCallback(async (inputMode: LongTaskInputMode) => {
     if (!sending) return;
     const readyAttachments = attachments.filter(a => a.status === 'ready');
-    const knowledgeReferencesToSend: ChatKnowledgeReference[] = selectedKnowledgeRefs;
+    let knowledgeReferencesToSend: ChatKnowledgeReference[] = selectedKnowledgeRefs;
     const textToSend = input.trim() || (knowledgeReferencesToSend.length > 0 ? t('composer.knowledgeAttach.defaultPrompt') : '');
     if (!textToSend || !allReady || hasFailedAttachments || capabilityExecuting) return;
+    const sendIdentity = sendIdentityRef.current;
+    if (inputMode === 'queue' && knowledgeMode === 'auto-read' && !knowledgeReferencesToSend.length) {
+      if (sendPreparingRef.current) return;
+      sendPreparingRef.current = true;
+      try { knowledgeReferencesToSend = await routeKnowledgeForMessage(textToSend, 'auto-read'); }
+      finally { sendPreparingRef.current = false; }
+      if (sendIdentity !== sendIdentityRef.current) return;
+    }
 
     const sendKnowledgeScope: WorkspaceKnowledgeScope = knowledgeScope === 'none' && knowledgeReferencesToSend.length > 0 ? 'wiki' : knowledgeScope;
     await completeSend(
@@ -2370,7 +2463,7 @@ export function ChatInput({
       sendKnowledgeScope,
       knowledgeMode,
       knowledgeReferencesToSend,
-      inputMode,
+      inputMode === 'queue' && !longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId ? undefined : inputMode,
     );
   }, [
     allReady,
@@ -2380,6 +2473,9 @@ export function ChatInput({
     hasFailedAttachments,
     input,
     knowledgeMode,
+    longTaskControlStatus?.available,
+    longTaskControlStatus?.latestCheckpoint?.taskLedgerRootId,
+    routeKnowledgeForMessage,
     knowledgeScope,
     selectedKnowledgeRefs,
     sending,
@@ -2823,7 +2919,7 @@ export function ChatInput({
       // P0-2: while a run is active, plain Enter used to silently drop the
       // draft (canSend includes !sending). Instead queue it and surface that it
       // will be sent when the run finishes.
-      if (sending && !inputDisabled && !capabilityExecuting && !allReady) {
+      if (sending && !inputDisabled && !capabilityExecuting && allReady && !hasFailedAttachments) {
         if (input.trim() || attachments.some((a) => a.status === 'ready') || selectedKnowledgeRefs.length > 0) {
           const readyAttachments = attachments.filter((a) => a.status === 'ready');
           useChatStore.getState().queuePendingMessage(
@@ -2852,97 +2948,63 @@ export function ChatInput({
       void refreshProviderSnapshot();
       return;
     }
-    const readyAttachments = attachments.filter(a => a.status === 'ready');
-    let knowledgeReferencesToSend: ChatKnowledgeReference[] = selectedKnowledgeRefs;
-    const baseTextToSend = input.trim() || (knowledgeReferencesToSend.length > 0 ? t('composer.knowledgeAttach.defaultPrompt') : '');
-    if (knowledgeMode === 'auto-read' && knowledgeReferencesToSend.length === 0 && baseTextToSend) {
-      const routedReferences = await routeKnowledgeForMessage(baseTextToSend, 'auto-read');
-      if (routedReferences.length > 0) {
-        knowledgeReferencesToSend = routedReferences;
-      }
-    }
-    const sendKnowledgeScope: WorkspaceKnowledgeScope = knowledgeScope === 'none' && knowledgeReferencesToSend.length > 0 ? 'wiki' : knowledgeScope;
-    const textToSend = baseTextToSend;
-    const attachmentsToSend = readyAttachments.length > 0 ? readyAttachments : undefined;
-
-    if (shouldRunChatCapabilityPreflight(textToSend)) {
-      let resolution: ChatCapabilityPlanResolution = { actions: [] };
-      try {
-        resolution = await resolveChatCapabilityActions(textToSend);
-      } catch (error) {
-        console.warn('[handleSend] Capability preflight failed:', error);
-      }
-
-      if (resolution.actions.length > 0) {
-        setPendingCapabilitySend({
-          text: textToSend,
-          attachments: attachmentsToSend,
-          targetAgentId,
-          knowledgeScope: sendKnowledgeScope,
-          knowledgeMode,
-          inputMode: undefined,
-          knowledgeReferences: knowledgeReferencesToSend,
-          plan: resolution.actions,
-          results: [],
-        });
-        setPickerOpen(false);
-        setModelPickerOpen(false);
-        setWorkspaceMenuOpen(false);
-        setKnowledgePickerOpen(false);
-        return;
-      }
-
-      if (handleUnsupportedCapabilityRequest(resolution)) return;
-    }
-
-    if (rendererExtensionRegistry.hasChatBeforeSendHooks()) {
-      const guard = await rendererExtensionRegistry.runChatBeforeSend({
-        text: textToSend,
-        attachments: attachmentsToSend,
-        targetAgentId,
-      });
-      if (!guard.ok) {
-        if (guard.message) {
-          toast.error(guard.message);
+    if (sendPreparingRef.current) return;
+    sendPreparingRef.current = true;
+    try {
+      const readyAttachments = attachments.filter(a => a.status === 'ready');
+      const sendIdentity = sendIdentityRef.current;
+      let knowledgeReferencesToSend: ChatKnowledgeReference[] = selectedKnowledgeRefs;
+      const baseTextToSend = input.trim() || (knowledgeReferencesToSend.length > 0 ? t('composer.knowledgeAttach.defaultPrompt') : '');
+      if (knowledgeMode === 'auto-read' && knowledgeReferencesToSend.length === 0 && baseTextToSend) {
+        const routedReferences = await routeKnowledgeForMessage(baseTextToSend, 'auto-read');
+        if (sendIdentity !== sendIdentityRef.current) return;
+        if (routedReferences.length > 0) {
+          knowledgeReferencesToSend = routedReferences;
         }
-        return;
       }
-    }
+      const sendKnowledgeScope: WorkspaceKnowledgeScope = knowledgeScope === 'none' && knowledgeReferencesToSend.length > 0 ? 'wiki' : knowledgeScope;
+      const textToSend = baseTextToSend;
+      const attachmentsToSend = readyAttachments.length > 0 ? readyAttachments : undefined;
 
-    // Capture values before clearing — clear input immediately for snappy UX,
-    // but keep attachments available for the async send
-    console.log(`[handleSend] text="${textToSend.substring(0, 50)}", attachments=${attachments.length}, ready=${readyAttachments.length}, sending=${!!attachmentsToSend}`);
-    if (attachmentsToSend) {
-      console.log('[handleSend] Attachment details:', attachmentsToSend.map(a => ({
-        id: a.id, fileName: a.fileName, mimeType: a.mimeType, fileSize: a.fileSize,
-        stagedPath: a.stagedPath, status: a.status, hasPreview: !!a.preview,
-      })));
+      if (shouldRunChatCapabilityPreflight(textToSend)) {
+        let resolution: ChatCapabilityPlanResolution = { actions: [] };
+        try {
+          resolution = await resolveChatCapabilityActions(textToSend);
+        } catch (error) {
+          console.warn('[handleSend] Capability preflight failed:', error);
+        }
+
+        if (sendIdentity !== sendIdentityRef.current) return;
+
+        if (resolution.actions.length > 0) {
+          setPendingCapabilitySend({
+            text: textToSend,
+            attachments: attachmentsToSend,
+            targetAgentId,
+            knowledgeScope: sendKnowledgeScope,
+            knowledgeMode,
+            inputMode: undefined,
+            knowledgeReferences: knowledgeReferencesToSend,
+            plan: resolution.actions,
+            results: [],
+          });
+          setPickerOpen(false);
+          setModelPickerOpen(false);
+          setWorkspaceMenuOpen(false);
+          setKnowledgePickerOpen(false);
+          return;
+        }
+
+        if (handleUnsupportedCapabilityRequest(resolution)) return;
+      }
+
+      if (sendIdentity !== sendIdentityRef.current) return;
+
+      await completeSend(textToSend, attachmentsToSend, targetAgentId, sendKnowledgeScope, knowledgeMode, knowledgeReferencesToSend);
+    } finally {
+      sendPreparingRef.current = false;
     }
-    captureHeroComposerPosition();
-    updateInput('');
-    setAttachments([]);
-    setSelectedKnowledgeRefs([]);
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-    }
-    recordKnowledgeReferences(knowledgeReferencesToSend);
-    onSend(
-      textToSend,
-      {
-        attachments: attachmentsToSend,
-        targetAgentId,
-        knowledgeScope: sendKnowledgeScope,
-        knowledgeMode,
-        knowledgeReferences: knowledgeReferencesToSend.length > 0 ? knowledgeReferencesToSend : undefined,
-        activeTaskNodeId,
-        ...(pendingTurnModelRef ? { modelRefOverride: pendingTurnModelRef } : {}),
-      },
-    );
-    setPendingTurnModelRef(null);
-    setTargetAgentId(null);
-    setPickerOpen(false);
-    setKnowledgePickerOpen(false);
-  }, [input, attachments, canSend, allReady, capabilityExecuting, inputDisabled, sending, captureHeroComposerPosition, onSend, pendingTurnModelRef, targetAgentId, updateInput, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, slashInput.active, activeTaskNodeId, routeKnowledgeForMessage, selectSlashItem, findExactSlashItem, selectedSlashItem, providerRuntimeReady, refreshProviderSnapshot]);
+  }, [input, attachments, canSend, allReady, hasFailedAttachments, capabilityExecuting, inputDisabled, sending, captureHeroComposerPosition, onSend, pendingTurnModelRef, targetAgentId, updateInput, knowledgeMode, knowledgeScope, selectedKnowledgeRefs, t, recordKnowledgeReferences, handleUnsupportedCapabilityRequest, slashInput.active, activeTaskNodeId, completeSend, routeKnowledgeForMessage, selectSlashItem, findExactSlashItem, selectedSlashItem, providerRuntimeReady, refreshProviderSnapshot]);
 
   const handleCancelCapabilityActions = useCallback(() => {
     if (capabilityExecuting) return;
@@ -3157,13 +3219,14 @@ export function ChatInput({
         }
         e.preventDefault();
         if (sending) {
-          if (canIntervene) void handleInterventionSend('queue');
+          if (canQueueDraft) void handleInterventionSend('queue');
           return;
         }
         handleSend();
       }
     },
     [
+      canQueueDraft,
       canIntervene,
       findExactSlashItem,
       handleInterventionSend,
@@ -3438,6 +3501,10 @@ export function ChatInput({
                                 </span>}
                               </div>
                               <div className="mt-1 grid gap-0.5 text-[11px] leading-4 text-muted-foreground">
+                                {candidate.sourceRef && <span data-testid="chat-knowledge-preflight-version">{t('composer.knowledgeRead.version', { version: candidate.sourceRef.revision })}</span>}
+                                {candidate.sourceRef?.locator && <span data-testid="chat-knowledge-preflight-budget">{t('composer.knowledgeRead.bytes', { bytes: candidate.sourceRef.locator.endByteExclusive - candidate.sourceRef.locator.startByte })}</span>}
+                                <button type="button" data-testid="chat-knowledge-inspect-source" className="justify-self-start text-left underline underline-offset-2"
+                                  onClick={() => void inspectSuggestedKnowledge(candidate)}>{t('composer.knowledgeRead.inspect')}</button>
                                 <span className="truncate">
                                   {t('composer.knowledgePreflight.whyMatched', { reason: candidate.routingReason })}
                                 </span>
@@ -3974,6 +4041,23 @@ export function ChatInput({
             )}
 
             <div ref={knowledgePickerRef} className="relative shrink-0">
+              <select data-testid="chat-knowledge-interaction" aria-label={t('composer.knowledgeInteraction.label')}
+                value={knowledgeScope === 'none' ? 'off' : knowledgeMode} disabled={inputDisabled}
+                onChange={async event => {
+                  cancelKnowledgeRead();
+                  const mode = event.target.value;
+                  if (mode === 'off') { await onKnowledgeScopeChange?.('none'); setSelectedKnowledgeRefs([]); }
+                  else { if (knowledgeScope === 'none') await onKnowledgeScopeChange?.('wiki'); await onKnowledgeModeChange?.(mode as KnowledgeInvocationMode); }
+                }} className="rounded-md border border-border bg-surface-input px-1 py-1 text-tiny text-foreground">
+                {(['off','manual','suggest','auto-read'] as const).map(mode => <option key={mode} value={mode}>{t(`composer.knowledgeInteraction.${mode}`)}</option>)}
+              </select>
+              <select data-testid="chat-knowledge-profile" aria-label={t('composer.knowledgeProfile.label')} value={knowledgeProfile}
+                onChange={event => setKnowledgeProfile(event.target.value as RetrievalProfile)} disabled={inputDisabled}
+                className="ml-1 rounded-md border border-border bg-surface-input px-1 py-1 text-tiny text-foreground">
+                {(['local','quality','research'] as const).map(profile => <option key={profile} value={profile}>{t(`composer.knowledgeProfile.${profile}`)}</option>)}
+              </select>
+              {(knowledgeRoutingBusy || knowledgeSearching) && <button type="button" data-testid="chat-knowledge-cancel" onClick={() => { cancelKnowledgeRead(); setKnowledgeReadReason('cancelled'); }} className="ml-1 text-tiny text-muted-foreground">{t('composer.knowledgeRead.cancel')}</button>}
+              {knowledgeReadReason && <span role="status" data-testid="chat-knowledge-read-status" className="ml-1 text-tiny text-muted-foreground">{t(`composer.knowledgeRead.${knowledgeReadReason}`)}</span>}
               <Tooltip>
                 <TooltipTrigger asChild>
               <button
@@ -4023,6 +4107,8 @@ export function ChatInput({
                       )}
                       data-testid={`chat-knowledge-scope-${scope}`}
                       onClick={() => {
+                        cancelKnowledgeRead();
+                        setSelectedKnowledgeRefs([]);
                         void onKnowledgeScopeChange?.(scope);
                         setKnowledgePickerOpen(false);
                         textareaRef.current?.focus();
@@ -4101,7 +4187,7 @@ export function ChatInput({
                       <Search className="h-3.5 w-3.5 text-muted-foreground/60" />
                       <input
                         value={knowledgeQuery}
-                        onChange={(event) => setKnowledgeQuery(event.target.value)}
+                        onChange={(event) => { cancelKnowledgeRead(); setKnowledgeQuery(event.target.value); }}
                         onKeyDown={(event) => {
                           if (event.key === 'Enter') {
                             event.preventDefault();
@@ -4325,7 +4411,7 @@ export function ChatInput({
                         variant="ghost"
                         data-testid="chat-intervention-queue"
                         className="composer-intervention-button composer-intervention-button--queue"
-                        disabled={!canIntervene}
+                        disabled={!canQueueDraft}
                         onClick={() => void handleInterventionSend('queue')}
                         aria-label={t('composer.intervention.queue')}
                       >
@@ -4521,6 +4607,20 @@ export function ChatInput({
           )}
         </div>
       </div>
+      <Dialog open={Boolean(inspectedKnowledge)} onOpenChange={open => { if (!open) setInspectedKnowledge(null); }}>
+        <DialogContent className="max-w-xl rounded-lg border border-border bg-surface-modal p-5 shadow-xl" data-testid="chat-knowledge-source-inspector">
+          <DialogTitle className="font-serif font-normal tracking-tight">{inspectedKnowledge?.candidate.title}</DialogTitle>
+          <DialogDescription className="mt-2 text-sm text-muted-foreground">
+            {t('composer.knowledgeRead.inspect')}
+            {inspectedKnowledge?.candidate.sourceRef && ` · ${t('composer.knowledgeRead.version', { version: inspectedKnowledge.candidate.sourceRef.revision })}`}
+          </DialogDescription>
+          <pre className="my-3 max-h-80 overflow-auto whitespace-pre-wrap break-words rounded-md bg-surface-input p-3 text-sm" data-testid="chat-knowledge-inspected-body">{inspectedKnowledge?.content}</pre>
+          <Button data-testid="chat-knowledge-inspected-attach" onClick={() => {
+            if (inspectedKnowledge) addKnowledgeReference({ ...inspectedKnowledge.candidate, snippet: inspectedKnowledge.content });
+            setInspectedKnowledge(null);
+          }}>{t('composer.knowledgeRoute.attach')}</Button>
+        </DialogContent>
+      </Dialog>
       <Dialog
         open={Boolean(pendingCapabilitySend)}
         onOpenChange={(open) => {

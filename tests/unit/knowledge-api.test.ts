@@ -991,6 +991,19 @@ describe('knowledge host API', () => {
     });
   });
 
+  it('forwards the selected profile for explicit Wiki search', async () => {
+    const gatewayManager = { rpc: vi.fn(async (method: string) => {
+      if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+      if (method === 'wiki.retrieve') return retrievalFixture([{ id: 'manual', title: 'Manual source', lookup: 'source.md' }]);
+      throw new Error(`Unexpected ${method}`);
+    }) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const result = await createKnowledgeApi({ gatewayManager: gatewayManager as never }).search({ query: 'manual query', profile: 'quality', corpus: 'wiki' });
+    expect(result.success).toBe(true);
+    expect(result.results?.[0].title).toBe('Manual source');
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('wiki.retrieve', expect.objectContaining({ profile: 'quality', mode: 'suggest' }), expect.any(Number));
+  });
+
   it('routes knowledge context only when scope and mode allow read-only search', async () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, _params?: unknown, _timeout?: number) => {

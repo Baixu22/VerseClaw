@@ -32,3 +32,4 @@ requiredTests:
 11. 新增测试进入 requiredTests；plannedTests 必须实际实现。完成状态来自 clean candidate 的磁盘证据，保留 partial、unknown、未运行和失败。所有模拟与验收标为 agent 驱动。
 12. Task Forest 维护实际进度与工作树绑定，源码 program 只保存稳定工作包合同，不保存第二套运行进度。每叶开始重新核对绑定和 diffBase。
 13. DCS 按知识候选的准入 ordinal 保序，以 chunk/冲突组为完整预算单元。RetainedEvidenceManifest/v1 绑定实际 retained bytes；model-only QA 发送 owner pins，由相同的 DCS 路径装配正文。
+14. 可选知识读取有本地取消和等待上限，响应绑定完整查询、会话、workspace、scope、mode 与 profile。Auto-read 只接受当前 confirmed 来源的唯一精确命中及内容证据，或有效校准结果；Used Knowledge 读取同一运行的最终 DCS 收据。普通排队发送保留引用与附件。

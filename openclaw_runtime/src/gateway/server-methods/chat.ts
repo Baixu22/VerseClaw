@@ -4084,6 +4084,7 @@ export const chatHandlers: GatewayRequestHandlers = {
           chatKnowledgeResolution = await resolveChatKnowledgeIntent({
             scope: p.knowledgeScope,
             mode: p.knowledgeMode,
+            message: p.message,
             references: p.knowledgeReferences,
             signal: activeRunAbort.controller.signal,
             adapters: createProductionChatKnowledgeSourceAdapters(cfg, {

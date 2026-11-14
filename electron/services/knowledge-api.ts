@@ -3070,7 +3070,8 @@ function routeCandidatesFromSearch(result: unknown, corpus: 'wiki' | 'memory' | 
     const candidate = routeCandidateFromRow(row, corpus, attachKind, reason);
     if (!candidate) return [];
     if (mode === 'auto-read' && (!isRecord(row.autoReadAdmission) || row.autoReadAdmission.eligible !== true
-      || !candidate.sourceRef || candidate.freshnessLevel === 'stale' || candidate.matchedClaimStatus === 'contradicted')) return [];
+      || !candidate.sourceRef || candidate.freshnessLevel !== 'fresh' || candidate.conflictGroupId
+      || ['contested','contradicted','conflict'].includes(candidate.matchedClaimStatus ?? ''))) return [];
     return [candidate];
   }).slice(0, ROUTER_BUDGET.maxReferences);
 }
@@ -4079,16 +4080,26 @@ export function createKnowledgeApi({
         const roleTag = typeof body.roleTag === 'string' ? body.roleTag.trim() : undefined;
         const corpus = body.corpus === 'memory' || body.corpus === 'all' || body.corpus === 'wiki' ? body.corpus : 'wiki';
         const mode = typeof body.mode === 'string' && body.mode ? body.mode : 'keyword';
+        if (body.profile !== undefined && !['local', 'quality', 'research'].includes(String(body.profile))) {
+          return { success: false, error: 'Invalid retrieval profile', results: [] };
+        }
         const readScope = await prepareKnowledgeReadScope(gatewayManager, {
           sessionKey: getString(body.sessionKey), workspaceId: getString(body.workspaceId),
         });
-        const result = await rpc<Record<string, unknown>>('wiki.search', {
+        const retrieval = body.profile !== undefined && corpus !== 'memory' ? await retrieveFromOwner({
+          query, profile: payload.profile, mode: 'suggest', sessionKey: payload.sessionKey, workspaceId: payload.workspaceId,
+        }) : undefined;
+        const result: Record<string, unknown> = retrieval ? {
+          results: retrieval.results.slice(0, clampPositiveInt(body.maxResults, 10, 50)), retrieval,
+          ...(retrieval.status !== 'complete' ? { profileFallback: 'retrieval-partial' } : {}),
+        } : await rpc<Record<string, unknown>>('wiki.search', {
           query,
           maxResults: clampPositiveInt(body.maxResults, 10, 50),
           corpus,
           ...(mode !== 'keyword' ? { mode } : {}),
           readIdentity: readScope.identity,
         }, 30_000);
+        if (corpus === 'memory' && body.profile && body.profile !== 'local') result.profileFallback = 'memory-profile-unavailable';
         await assertKnowledgeReadScopeCurrent(gatewayManager, readScope);
         const rows = getRouteSearchRows(result);
         const searchMetadata = isRecord(result) ? result : {};

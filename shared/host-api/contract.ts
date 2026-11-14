@@ -4174,6 +4174,7 @@ export type KnowledgeOkfImportResult = HostSuccess & {
 };
 export type KnowledgeSearchPayload = {
   query: string;
+  profile?: RetrievalProfile;
   maxResults?: number;
   corpus?: 'wiki' | 'memory' | 'all';
   mode?: string;

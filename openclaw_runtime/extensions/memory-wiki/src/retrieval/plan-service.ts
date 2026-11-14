@@ -296,14 +296,13 @@ export async function retrieveMemoryWiki(input: {
       if (reason) return reason;
       if (page.ownerSnapshot.content !== hit.data.snippet) return "chunk-content-changed";
       hit.data.title = page.title;
-      hit.data.freshnessLevel = page.ownerSnapshot.policy.updatedAt ? "known" : "unknown";
+      const freshnessKnown = [page.ownerSnapshot.policy.verifiedAt, page.ownerSnapshot.policy.updatedAt]
+        .some(value => Number.isFinite(Date.parse(value ?? "")));
+      hit.data.freshnessLevel = freshnessKnown ? "fresh" : "unknown";
       hit.data.matchedClaimStatus = page.hasConflicts ? "contradicted" : undefined;
       hit.data.ownerConfirmed =
         ["confirmed", "high-trust"].includes(page.ownerSnapshot.policy.trust) &&
-        Boolean(
-          page.ownerSnapshot.policy.updatedAt &&
-          Number.isFinite(Date.parse(page.ownerSnapshot.policy.updatedAt)),
-        );
+        freshnessKnown;
       hit.data.metadata = {
         type: page.pageType ?? page.kind,
         knowledgeKind: page.pageType ?? page.kind,
@@ -339,6 +338,8 @@ export async function retrieveMemoryWiki(input: {
         exactParents.size === 1 &&
         hit.rankSignals.lanes.some((lane) => lane.lane === "exact") &&
         ownerConfirmed === true &&
+        hit.data.freshnessLevel === "fresh" &&
+        Boolean(hit.data.snippet?.trim()) &&
         hit.data.matchedClaimStatus !== "contradicted";
       return {
         ...data,

@@ -96,6 +96,18 @@ describe('Project RAG owner-side plan', () => {
     expect(search).not.toHaveBeenCalled();
   });
 
+  it('reads a current chunk pin without separate line arguments and rejects an altered digest', async () => {
+    const f = await fixture();
+    const chunk = (await f.projection.search(f.identity, 'gateway')).candidates[0];
+    const page = await getMemoryWikiPage({ config: f.config, lookup: chunk.sourceRef.subjectId,
+      sourceRef: chunk.sourceRef, readIdentity: f.identity });
+    expect(page?.sourceRef).toEqual(chunk.sourceRef);
+    expect(page?.content).toEqual(chunk.quote);
+    const invalid = await getMemoryWikiPage({ config: f.config, lookup: chunk.sourceRef.subjectId,
+      sourceRef: { ...chunk.sourceRef, sourceDigest: `sha256:${'0'.repeat(64)}` }, readIdentity: f.identity });
+    expect(invalid).toMatchObject({ status: 'denied', reason: 'digest_mismatch', content: '' });
+  });
+
   it('rejects a revoked owner pin even when a lane supplies the previous quote', async () => {
     const f = await fixture(), rows = (await f.projection.search(f.identity, 'gateway')).candidates;
     await writeFile(f.file, f.raw('The gateway configuration uses port 18789.', true));
@@ -159,5 +171,46 @@ describe('Project RAG owner-side plan', () => {
     const page = await getMemoryWikiPage({ config: f.config, lookup: 'concepts/gateway.md', readIdentity: f.identity });
     const result = await retrieveMemoryWiki({ ...f, query: '', mode: 'auto-read', explicitRefs: [page!.sourceRef!] });
     expect(result.results[0].autoReadAdmission).toMatchObject({ eligible: false, reason: 'source-conflict' });
+  });
+
+  it('admits a single current confirmed exact source with content', async () => {
+    const f = await fixture();
+    const result = await retrieveMemoryWiki({ ...f, query: 'concepts/gateway.md', mode: 'auto-read' });
+    expect(result.results[0]).toMatchObject({ freshnessLevel: 'fresh',
+      autoReadAdmission: { eligible: true, reason: 'owner-confirmed-exact-ref' } });
+    expect(result.results[0].snippet).toContain('18789');
+  });
+
+  it('keeps unknown freshness and advisory trust out of Auto-read', async () => {
+    const f = await fixture();
+    for (const raw of [f.original.replace('2026-11-12T00:00:00Z', 'unknown'), f.original.replace('trust: confirmed', 'trust: advisory')]) {
+      await writeFile(f.file, raw);
+      const result = await retrieveMemoryWiki({ ...f, query: 'concepts/gateway.md', mode: 'auto-read' });
+      expect(result.results[0].autoReadAdmission).toMatchObject({ eligible: false,
+        reason: 'source-confirmation-or-freshness-unavailable' });
+    }
+  });
+
+  it('accepts either valid owner timestamp without a malformed timestamp masking the other', async () => {
+    const f = await fixture();
+    for (const raw of [f.original.replace('updatedAt:', 'verifiedAt:'),
+      f.original.replace('updatedAt:', 'verifiedAt: "unknown"\nupdatedAt:')]) {
+      await writeFile(f.file, raw);
+      const result = await retrieveMemoryWiki({ ...f, query: 'concepts/gateway.md', mode: 'auto-read' });
+      expect(result.results[0].autoReadAdmission.eligible).toBe(true);
+      expect(result.results[0].freshnessLevel).toBe('fresh');
+    }
+  });
+
+  it('does not admit ambiguous exact parents or empty evidence', async () => {
+    const f = await fixture();
+    const other = join(root!, 'vault/concepts/other.md');
+    await writeFile(other, f.raw('Another deployment guide.'));
+    const page = await getMemoryWikiPage({ config: f.config, lookup: 'concepts/other.md', readIdentity: f.identity });
+    const result = await retrieveMemoryWiki({ ...f, query: '', mode: 'auto-read', explicitRefs: [f.sourceRef, page!.sourceRef!] });
+    expect(result.results.every(row => !row.autoReadAdmission.eligible)).toBe(true);
+    await writeFile(f.file, f.raw(''));
+    const empty = await retrieveMemoryWiki({ ...f, query: 'concepts/gateway.md', mode: 'auto-read' });
+    expect(empty.results.every(row => !row.autoReadAdmission.eligible)).toBe(true);
   });
 });

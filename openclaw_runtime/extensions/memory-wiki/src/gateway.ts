@@ -159,6 +159,10 @@ export function registerMemoryWikiGatewayMethods(params: {
           (typeof request.deadlineAtMs !== "number" || !Number.isFinite(request.deadlineAtMs))
         )
           throw new Error("Invalid retrieval deadline");
+        const profile = readEnumParam(request, "profile", ["local", "quality", "research"] as const);
+        const mode = readEnumParam(request, "mode", ["off", "manual", "suggest", "auto-read"] as const);
+        // Prepare the same owner bytes that wiki.get will read before sealing retrieval pins.
+        if (mode !== "off") await syncImportedSourcesIfNeeded(config, appConfig);
         respond(
           true,
           await retrieveMemoryWiki({
@@ -166,13 +170,8 @@ export function registerMemoryWikiGatewayMethods(params: {
             appConfig,
             identity,
             query: readStringParam(request, "query") ?? "",
-            profile: readEnumParam(request, "profile", ["local", "quality", "research"] as const),
-            mode: readEnumParam(request, "mode", [
-              "off",
-              "manual",
-              "suggest",
-              "auto-read",
-            ] as const),
+            profile,
+            mode,
             explicitRefs: refs.filter((ref) => ref !== undefined),
             deadlineAtMs: request.deadlineAtMs as number | undefined,
             requestId: readStringParam(request, "requestId"),

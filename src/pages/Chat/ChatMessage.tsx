@@ -1,4 +1,5 @@
 import { AssistantMarkdown } from '@/components/assistant-render/AssistantMarkdown';
+import { UsedKnowledge } from './UsedKnowledge';
 /**
  * Chat Message Component
  * Renders user / assistant / system / toolresult messages
@@ -540,6 +541,7 @@ export const ChatMessage = memo(function ChatMessage({
               ))}
           </div>
         )}
+        {isUser && <UsedKnowledge runId={message._knowledgeRunId} references={knowledgeRefs} requestedCount={message._knowledgeRequestedCount} />}
 
         {/* Main text */}
         {hasText && (

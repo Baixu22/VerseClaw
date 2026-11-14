@@ -507,7 +507,7 @@
       "acceptance": [
         "Off/Manual/Suggest/Auto-read 与 retrieval profile 正交；保持 none/suggest 的现有默认组合。",
         "Preflight 的 inspect/attach/dismiss/当前版本/预算与 Used Knowledge 反映真实结果；无未授权 snippet。",
-        "Auto-read 显式选择、来源确认/新鲜度与有效相关性校准共同准入，最多3个片段。",
+        "Auto-read 显式选择；来源确认、新鲜度、唯一精确命中及内容证据或有效相关性校准共同准入，最多3个片段。",
         "session/scope/query切换、取消、晚到响应、media/queued send、provider超时和missing-index的Electron路径通过；普通发送不被检索无限等待。",
         "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
       ],

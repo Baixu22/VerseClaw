@@ -72,6 +72,8 @@ Tool cancellation must survive runtime adaptation, client delegation, policy eva
 
 Knowledge Librarian model-only QA sends owner-bound reference intent through the agent route. The runtime re-resolves it under the current session and selected provider, then DCS packs complete knowledge units in admitted order. The retained evidence manifest contains only bytes still present in the final context; source, chunk and DCS projection digests remain distinct.
 
+Chat knowledge mode and retrieval profile are independent. Optional reads are bounded and cancellable; session, workspace, scope, profile and query changes fence late responses and preserve the current draft. Preflight inspects owner-checked bytes before attachment. Ordinary queued and media sends retain reference intent, and Used Knowledge binds the user turn to its terminal DCS receipt. See `project-rag-chat-interactions` and its Electron journey.
+
 Pending preparation and policy promises must release their local wait on cancellation without waiting for the plugin to return. Input acknowledgements must report a process that exited during the write with its owner's terminal status and output. Session alias merges must not duplicate a tool call, and changes to process poll wait duration must not reset otherwise unchanged loop evidence.
 
 Long-session archive and restore mutations cross the same boundary but remain

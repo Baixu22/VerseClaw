@@ -110,7 +110,7 @@ describe("Project RAG production owner adapters", () => {
       workspaceId: "rag-workspace",
       agentId: "rag-test",
     });
-    expect(admitted.content.length).toBeLessThanOrEqual(1200);
+    expect(admitted.content.length).toBeGreaterThan(1200);
     expect(admitted.contentDigest).toBe(snapshot.contentDigest);
     const typed = normalizeChatKnowledgeReferences([
       {
@@ -140,6 +140,36 @@ describe("Project RAG production owner adapters", () => {
     expect(bytes.subarray(range.startByte, range.endByteExclusive).toString("utf8")).toBe(
       admitted.content,
     );
+  });
+
+  it("admits confirmed automatic references with an owner update time and rejects unknown freshness", async () => {
+    const file = join(root, "vault", "concepts", "owner.md");
+    const readAuto = async (message = ref.lookup) => {
+      const source = (await read()).admitted[0]?.ownerSnapshot?.source;
+      return resolveChatKnowledgeIntent({ scope: "wiki", mode: "auto-read", message,
+        references: [{ ...ref, sourceRef: source, attachKind: "auto", score: 999, confidence: 1 }],
+        adapters: createProductionChatKnowledgeSourceAdapters(cfg, { identity: identity() }) });
+    };
+    await writeFile(file, `---\ntitle: Owner\nrevision: 1\nstatus: active\ntrust: confirmed\nupdatedAt: "2026-11-14T00:00:00Z"\n---\n${body}`, "utf8");
+    const accepted = await readAuto();
+    expect(accepted.admitted).toHaveLength(1);
+    expect(await revalidateChatKnowledgeRefs({ refs: accepted.admitted, cfg, identity: identity() })).toHaveLength(1);
+    const limited = await resolveChatKnowledgeIntent({ scope: "wiki", mode: "auto-read", message: ref.lookup,
+      references: Array.from({ length: 4 }, (_, index) => ({ ...ref, id: `auto-${index}`, attachKind: "auto",
+        sourceRef: accepted.admitted[0]!.ownerSnapshot!.source })),
+      adapters: createProductionChatKnowledgeSourceAdapters(cfg, { identity: identity() }) });
+    expect(limited.admitted).toHaveLength(3);
+    expect(limited.denied).toHaveLength(1);
+    const knownRaw = await readFile(file, 'utf8');
+    await writeFile(file, knownRaw.replace('updatedAt:', 'verifiedAt: "unknown"\nupdatedAt:'), 'utf8');
+    expect((await readAuto()).admitted).toHaveLength(1);
+    expect((await readAuto("Which project source should I read?")).admitted).toEqual([]);
+    await writeFile(file, `---\ntitle: Owner\nrevision: 1\nstatus: active\ntrust: confirmed\nupdatedAt: "2026-11-14T00:00:00Z"\ncontradictions: [unresolved conflict]\n---\n${body}`, "utf8");
+    expect((await readAuto()).admitted).toEqual([]);
+    await writeFile(file, `---\ntitle: Owner\nrevision: 1\nstatus: active\ntrust: confirmed\n---\n${body}`, "utf8");
+    expect((await readAuto()).admitted).toEqual([]);
+    await writeFile(file, `---\ntitle: Owner\nrevision: 1\nstatus: active\ntrust: advisory\nupdatedAt: "2026-11-14T00:00:00Z"\n---\n${body}`, "utf8");
+    expect((await readAuto()).admitted).toEqual([]);
   });
 
   it.each([

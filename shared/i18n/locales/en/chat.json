@@ -2088,7 +2088,7 @@
     "intervention": {
       "guide": "Guide",
       "guideTooltip": "Inject non-interrupting guidance into the active run.",
-      "longTaskRequired": "Interrupt/guide/queue/revise-goal requires an active /loop long-task context for this session.",
+      "longTaskRequired": "Interrupt and guidance require an active long task.",
       "reviseGoal": "Revise goal",
       "reviseGoalTooltip": "Checkpoint the active run and restart from a revised user goal.",
       "queueDefault": "Running: Enter queues this message",
@@ -2222,6 +2222,30 @@
     "knowledgeRuntimeLessons": {
       "title": "Runtime Lessons",
       "description": "Opt in to reviewed SEKB principles as a visible knowledge source."
+    },
+    "knowledgeInteraction": {
+      "label": "Knowledge mode",
+      "off": "Off",
+      "manual": "Manual",
+      "suggest": "Suggest",
+      "auto-read": "Auto-read"
+    },
+    "knowledgeProfile": {
+      "label": "Retrieval profile",
+      "local": "Local",
+      "quality": "Quality",
+      "research": "Research"
+    },
+    "knowledgeRead": {
+      "cancel": "Cancel read",
+      "cancelled": "Cancelled",
+      "timeout": "Read timed out",
+      "error": "Read unavailable",
+      "inspect": "Inspect source",
+      "version": "Version {{version}}",
+      "bytes": "Candidate body {{bytes}} bytes",
+      "fallback": "Using source search fallback",
+      "partial": "Partial retrieval"
     }
   },
   "historyBuckets": {
@@ -2914,5 +2938,12 @@
       "binding-committed": "Confirming target",
       "confirmed": "Ready in target"
     }
+  },
+  "knowledgeUsage": {
+    "summary": "Used Knowledge: {{count}} fragments · {{chars}} chars · ~{{tokens}} tokens",
+    "unavailable": "Usage receipt unavailable",
+    "pending": "Awaiting final knowledge receipt",
+    "dropped": "{{count}} selected sources not retained",
+    "selectionUnavailable": "Selection comparison unavailable"
   }
 }

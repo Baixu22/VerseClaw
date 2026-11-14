@@ -509,6 +509,29 @@ function forceNextHistoryLoad(sessionKey: string): void {
   _forceNextHistoryLoadBySession.add(sessionKey);
 }
 
+function preserveKnowledgeUsage(current: RawMessage[], next: RawMessage[]): RawMessage[] {
+  const merged = [...next];
+  const used = new Set<number>();
+  for (const local of current) {
+    if (local.role !== 'user' || (!local._knowledgeRunId && !local._knowledgeRefs?.length)) continue;
+    let index = next.findIndex((message, at) => !used.has(at) && message.role === 'user' && local.id && message.id === local.id);
+    if (index < 0 && local.timestamp) {
+      const matches = next.map((message, at) => ({ message, at,
+        delta: Math.abs(toMs(local.timestamp!) - toMs(message.timestamp ?? 0)) }))
+        .filter(({ message, at, delta }) => !used.has(at) && message.role === 'user' && message.timestamp
+          && delta < 5000 && matchesOptimisticUserMessage(message, local, toMs(local.timestamp!)))
+        .sort((a, b) => a.delta - b.delta);
+      if (matches.length === 1 || (matches.length > 1 && matches[0].delta < matches[1].delta)) index = matches[0].at;
+    }
+    if (index < 0) continue;
+    used.add(index);
+    merged[index] = { ...merged[index], _knowledgeRefs: local._knowledgeRefs, _knowledgeRunId: local._knowledgeRunId,
+      _knowledgeRequestedCount: local._knowledgeRequestedCount, _knowledgeScope: local._knowledgeScope,
+      _knowledgeMode: local._knowledgeMode };
+  }
+  return merged;
+}
+
 function cloneHistoryMessages(messages: RawMessage[]): RawMessage[] {
   return messages.map((message) => ({
     ...message,
@@ -3643,6 +3666,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
       }
       finalMessages = dropRedundantOptimisticUserMessages(currentSessionKey, finalMessages);
       finalMessages = preserveExistingAttachmentPreviews(get().messages, finalMessages);
+      finalMessages = preserveKnowledgeUsage(get().messages, finalMessages);
 
       const { pendingFinal, lastUserMessageAt, sending: isSendingNow } = get();
       const userMsTs = lastUserMessageAt != null ? toMs(lastUserMessageAt) : 0;
@@ -4350,7 +4374,7 @@ export const useChatStore = create<ChatState>((set, get, api) => {
         filePath: a.stagedPath,
       })),
       ...(knowledgeReferences && knowledgeReferences.length > 0
-        ? { _knowledgeRefs: knowledgeReferences.map((reference) => ({ ...reference })) }
+        ? { _knowledgeRefs: knowledgeReferences.map((reference) => ({ ...reference })), _knowledgeRequestedCount: knowledgeReferences.length }
         : {}),
     };
     rememberPendingOptimisticUserMessage(currentSessionKey, userMsg, nowMs);
@@ -4605,9 +4629,16 @@ export const useChatStore = create<ChatState>((set, get, api) => {
           );
         }
         const latest = get();
-        if (result.knowledgeReferences && latest.currentSessionKey === currentSessionKey) {
-          set(state => ({ messages: state.messages.map(message => message.id === userMsg.id
-            ? { ...message, _knowledgeRefs: result.knowledgeReferences } : message) }));
+        const boundUser = { ...userMsg, _knowledgeRunId: returnedRunId,
+          ...(result.knowledgeReferences ? { _knowledgeRefs: result.knowledgeReferences } : {}) };
+        for (const entry of _pendingOptimisticUserMessages.get(currentSessionKey) ?? []) {
+          if (entry.message.id === userMsg.id) entry.message = boundUser;
+        }
+        const cachedHistory = getCachedSessionHistory(currentSessionKey);
+        if (cachedHistory) cacheSessionHistory(currentSessionKey,
+          preserveKnowledgeUsage([boundUser], cachedHistory.messages), cachedHistory.thinkingLevel);
+        if (latest.currentSessionKey === currentSessionKey) {
+          set(state => ({ messages: preserveKnowledgeUsage([boundUser], state.messages) }));
         }
         const sendStillCurrent = _activeSendGenerationBySession.get(currentSessionKey) === sendGeneration;
         const canAttachToCurrentSession = latest.currentSessionKey === currentSessionKey
@@ -5169,6 +5200,9 @@ export const useChatStore = create<ChatState>((set, get, api) => {
         break;
       }
     }
+    if ((resolvedState === 'final' || resolvedState === 'error') && !get().sending) {
+      get().drainPendingMessages();
+    }
   },
 
   handleRuntimeEvent: (event: ChatRuntimeEvent) => {
@@ -5269,6 +5303,9 @@ export const useChatStore = create<ChatState>((set, get, api) => {
     }
 
     set(nextPatch);
+    if (event.type === 'run.ended' && nextPatch.sending === false && event.status !== 'aborted') {
+      get().drainPendingMessages();
+    }
   },
 
   // ── Refresh: reload history + sessions ──

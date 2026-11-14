@@ -1,14 +1,34 @@
 ---
 lifecycleStatus: active
-implementationStatus: planned
+implementationStatus: implemented
 id: project-rag-chat-interactions
 title: 完成按需知识交互和安全 Auto-read
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-11
 intent: 让知识检索可选择、可解释、可取消，并且不拖住普通聊天。
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: ffe47ae8e40ca518a786e5b0e94e651e10ba3876
 touchedAreas:
+  - "openclaw_runtime/src/gateway/server-methods/agent.ts"
+  - "shared/host-api/contract.ts"
+  - "artifacts/agent-dev-deep-test/**"
+  - "artifacts/agent-dev-quality/**"
+  - "artifacts/agent-dev-workbench/**"
+  - "openclaw_runtime/src/gateway/server-methods/chat.ts"
+  - "openclaw_runtime/src/context-engine/chat-knowledge-intent.ts"
+  - "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"
+  - "tests/unit/chat-store-history-retry.test.ts"
+  - "harness/specs/scenarios/gateway-backend-communication.md"
+  - "openclaw_runtime/extensions/memory-wiki/src/retrieval/plan-service.ts"
+  - "openclaw_runtime/extensions/memory-wiki/src/gateway.ts"
+  - "tests/unit/project-rag-plan-owner.test.ts"
+  - "electron/services/knowledge-api.ts"
+  - "src/lib/knowledge-interaction.ts"
+  - "src/pages/Chat/UsedKnowledge.tsx"
+  - "src/pages/Chat/ChatMessage.tsx"
+  - "shared/chat/types.ts"
+  - "docs/dev/evidence/project-rag/RAG-11/**"
+  - "tests/unit/knowledge-api.test.ts"
   - "src/pages/Chat/ChatInput.tsx"
   - "src/pages/Chat/index.tsx"
   - "src/stores/chat.ts"
@@ -44,6 +64,12 @@ requiredRules:
   - "knowledge-source-set-read-admission"
   - "project-rag-long-term-boundary"
 requiredTests:
+  - "tests/unit/chat-store-history-retry.test.ts"
+  - "openclaw_runtime/src/context-engine/project-rag-owner-adapters.test.ts"
+  - "tests/unit/project-rag-plan-owner.test.ts"
+  - "tests/unit/project-rag-chat-policy.test.tsx"
+  - "tests/unit/knowledge-api.test.ts"
+  - "tests/e2e/project-rag-chat-modes.spec.ts"
   - "tests/unit/chat-input.test.tsx"
   - "tests/unit/chat-knowledge-scope.test.ts"
 plannedTests:
@@ -55,7 +81,7 @@ expectedUserBehavior:
 acceptance:
   - "Off/Manual/Suggest/Auto-read 与 retrieval profile 正交；保持 none/suggest 的现有默认组合。"
   - "Preflight 的 inspect/attach/dismiss/当前版本/预算与 Used Knowledge 反映真实结果；无未授权 snippet。"
-  - "Auto-read 显式选择、来源确认/新鲜度与有效相关性校准共同准入，最多3个片段。"
+  - "Auto-read 显式选择；来源确认、新鲜度、唯一精确命中及内容证据或有效相关性校准共同准入，最多3个片段。"
   - "session/scope/query切换、取消、晚到响应、media/queued send、provider超时和missing-index的Electron路径通过；普通发送不被检索无限等待。"
   - "本叶plannedTests与plannedE2E已实际实现并纳入requiredTests，磁盘结果绑定当前候选；旧基线测试不能替代新增能力验证。"
 docs:
@@ -64,6 +90,7 @@ docs:
   files:
     - docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md
     - docs/dev/project-rag/WORK-PACKAGES.md
+    - docs/dev/project-rag/CHAT-INTERACTION-CONTRACT.md
 ---
 
 # 完成按需知识交互和安全 Auto-read

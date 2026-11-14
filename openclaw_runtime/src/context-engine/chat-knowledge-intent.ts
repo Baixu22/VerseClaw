@@ -203,6 +203,7 @@ function denial(
 export async function resolveChatKnowledgeIntent(params: {
   scope?: unknown;
   mode?: unknown;
+  message?: unknown;
   references?: unknown;
   adapters: readonly ChatKnowledgeSourceAdapter[];
   signal?: AbortSignal;
@@ -210,6 +211,10 @@ export async function resolveChatKnowledgeIntent(params: {
   const scope = normalizeChatKnowledgeScope(params.scope);
   const mode = normalizeChatKnowledgeMode(params.mode);
   const references = normalizeChatKnowledgeReferences(params.references);
+  const exactMessage = typeof params.message === "string" ? params.message.trim() : "";
+  const autoParents = new Set(references.filter(ref => ref.attachKind === "auto").map(ref =>
+    JSON.stringify([ref.sourceRef?.authorityId, ref.sourceRef?.namespaceId, ref.sourceRef?.subjectId])));
+  let autoAdmitted = 0;
   const admitted: ResolvedChatKnowledgeRef[] = [];
   const denied: ChatKnowledgeDenial[] = [];
   const adaptersByOwner = new Map(params.adapters.map((adapter) => [adapter.owner, adapter]));
@@ -310,7 +315,8 @@ export async function resolveChatKnowledgeIntent(params: {
           ref.attachKind === "auto" &&
           (!result.resolved.ownerSnapshot ||
             !["confirmed", "high-trust"].includes(result.resolved.ownerSnapshot.policy.trust) ||
-            !Number.isFinite(Date.parse(result.resolved.ownerSnapshot.policy.verifiedAt ?? "")))
+            ![result.resolved.ownerSnapshot.policy.verifiedAt, result.resolved.ownerSnapshot.policy.updatedAt]
+              .some(value => Number.isFinite(Date.parse(value ?? ""))))
         ) {
           denied.push(
             denial(
@@ -322,6 +328,14 @@ export async function resolveChatKnowledgeIntent(params: {
           resolvedForRef = true;
           break;
         }
+        if (ref.attachKind === "auto" && (result.resolved.conflictGroupId || !result.resolved.content.trim()
+          || (mode !== "manual" && (!ref.sourceRef || autoParents.size !== 1
+            || exactMessage !== result.resolved.ownerSnapshot?.source.subjectId || autoAdmitted >= 3)))) {
+          denied.push(denial(ref, "denied", "Automatic knowledge read requires a unique exact, conflict-free source and at most three fragments."));
+          resolvedForRef = true;
+          break;
+        }
+        if (ref.attachKind === "auto") autoAdmitted++;
         admitted.push(result.resolved);
         resolvedForRef = true;
         break;

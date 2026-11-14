@@ -212,6 +212,7 @@ vi.mock('@/lib/host-api', () => ({
       status: () => Promise.resolve({ state: 'running', port: 18789 }),
     },
     knowledge: {
+      get: (input: unknown) => hostApiFetchMock('/api/knowledge/get', { method: 'POST', body: JSON.stringify(input) }),
       search: (input: unknown) => hostApiFetchMock('/api/knowledge/search', {
         method: 'POST',
         body: JSON.stringify(input),
@@ -1933,6 +1934,7 @@ describe('ChatInput read-only context status', () => {
     const view = renderChatInput(onSend, {
       sending: true,
       draftValue: 'please keep the current validation evidence queued',
+      longTaskControlStatus: { available: true, queueCount: 0, warnings: [] },
       onPauseSession,
     });
 
@@ -1955,8 +1957,9 @@ describe('ChatInput read-only context status', () => {
     await waitFor(() => {
       expect(onSend).toHaveBeenCalledWith(
         'please keep the current validation evidence queued',
-        expect.objectContaining({ targetAgentId: null, knowledgeScope: 'none', knowledgeMode: 'suggest', inputMode: 'queue' }),
+        expect.objectContaining({ targetAgentId: null, knowledgeScope: 'none', knowledgeMode: 'suggest' }),
       );
+      expect(onSend.mock.calls[0][1].inputMode).toBeUndefined();
     });
 
     view.rerender(
@@ -2012,7 +2015,7 @@ describe('ChatInput read-only context status', () => {
     await waitFor(() => {
       expect(onSend).toHaveBeenCalledWith(
         'queue this follow-up after the run',
-        expect.objectContaining({ inputMode: 'queue' }),
+        expect.not.objectContaining({ inputMode: expect.anything() }),
       );
     });
   });
@@ -3094,3 +3097,82 @@ describe('ChatInput agent targeting', () => {
   });
 });
 
+
+
+describe('RAG-11 composer cancellation', () => {
+  beforeEach(() => {
+    setProviderReady();
+    chatState.currentSessionKey = 'agent:main:main';
+    hostApiFetchMock.mockReset();
+    permissionMocks.approvals.mockResolvedValue({ success: true, approvals: [] });
+  });
+
+  it('preserves a changed draft and ignores a late Auto-read result', async () => {
+    let finish!: (value: unknown) => void;
+    hostApiFetchMock.mockImplementation(url => url === '/api/knowledge/route-context'
+      ? new Promise(resolve => { finish = resolve; }) : Promise.resolve({ success: true }));
+    const send = vi.fn();
+    renderChatInput(send, { knowledgeScope: 'wiki', knowledgeMode: 'auto-read', draftValue: 'Read the project deployment knowledge' });
+    const input = screen.getByTestId('chat-composer-input');
+    fireEvent.keyDown(input, { key: 'Enter' });
+    await waitFor(() => expect(screen.getByTestId('chat-knowledge-cancel')).toBeVisible());
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(hostApiFetchMock.mock.calls.filter(call => call[0] === '/api/knowledge/route-context')).toHaveLength(1);
+    fireEvent.change(input, { target: { value: 'Keep this new draft' } });
+    await act(async () => finish({ success: true, decision: 'auto_attach', candidates: [{ id: 'old', title: 'Old', lookup: 'old.md' }] }));
+    expect(send).not.toHaveBeenCalled();
+    expect(input).toHaveValue('Keep this new draft');
+    expect(screen.queryByTestId('chat-knowledge-suggestion')).not.toBeInTheDocument();
+  });
+
+  it('cancels an optional Auto-read and completes the requested plain send once', async () => {
+    let finish!: (value: unknown) => void;
+    hostApiFetchMock.mockImplementation(url => url === '/api/knowledge/route-context'
+      ? new Promise(resolve => { finish = resolve; }) : Promise.resolve({ success: true }));
+    const send = vi.fn();
+    renderChatInput(send, { knowledgeScope: 'wiki', knowledgeMode: 'auto-read', draftValue: 'Read project deployment knowledge' });
+    fireEvent.keyDown(screen.getByTestId('chat-composer-input'), { key: 'Enter' });
+    await waitFor(() => expect(screen.getByTestId('chat-knowledge-cancel')).toBeVisible());
+    fireEvent.click(screen.getByTestId('chat-knowledge-cancel'));
+    await waitFor(() => expect(send).toHaveBeenCalledTimes(1));
+    expect(send.mock.calls[0][1].knowledgeReferences).toBeUndefined();
+    await act(async () => finish({ success: true, decision: 'auto_attach', candidates: [{ id: 'late', title: 'Late', lookup: 'late.md' }] }));
+    expect(send).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not reopen source inspection after a profile change', async () => {
+    let finish!: (value: unknown) => void;
+    hostApiFetchMock.mockImplementation(url => {
+      if (url === '/api/knowledge/get') return new Promise(resolve => { finish = resolve; });
+      if (url === '/api/knowledge/route-context') return Promise.resolve({ success: true, decision: 'suggest', candidates: [{ id: 'source', title: 'Source', lookup: 'source.md', corpus: 'wiki', routingReason: 'exact' }] });
+      return Promise.resolve({ success: true });
+    });
+    renderChatInput(vi.fn(), { knowledgeScope: 'wiki', knowledgeMode: 'suggest', draftValue: 'Project deployment knowledge for this source' });
+    fireEvent.click(await screen.findByTestId('chat-knowledge-suggestion-open'));
+    fireEvent.click(screen.getByTestId('chat-knowledge-inspect-source'));
+    fireEvent.change(screen.getByTestId('chat-knowledge-profile'), { target: { value: 'quality' } });
+    await act(async () => finish({ success: true, content: 'Late body' }));
+    expect(screen.queryByTestId('chat-knowledge-source-inspector')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('chat-knowledge-search-result')).not.toBeInTheDocument();
+    expect(screen.getByTestId('chat-composer-input')).toHaveValue('Project deployment knowledge for this source');
+  });
+
+  it('queues ordinary follow-ups when long-task interventions are unavailable', async () => {
+    const send = vi.fn();
+    renderChatInput(send, { sending: true, draftValue: 'Ordinary queued knowledge follow-up', longTaskControlStatus: { available: false, queueCount: 0, warnings: [] } });
+    expect(screen.getByTestId('chat-intervention-queue')).toBeEnabled();
+    fireEvent.keyDown(screen.getByTestId('chat-composer-input'), { key: 'Enter' });
+    await waitFor(() => expect(send).toHaveBeenCalledTimes(1));
+    expect(send.mock.calls[0][1].inputMode).toBeUndefined();
+  });
+
+  it('uses the long-task queue only when a checkpoint names the owned root', async () => {
+    const send = vi.fn();
+    const checkpoint = { taskLedgerRootId: 'owned-loop' } as NonNullable<ComponentProps<typeof ChatInput>['longTaskControlStatus']>['latestCheckpoint'];
+    renderChatInput(send, { sending: true, draftValue: 'Owned loop follow-up',
+      longTaskControlStatus: { available: true, queueCount: 0, warnings: [], latestCheckpoint: checkpoint } });
+    fireEvent.keyDown(screen.getByTestId('chat-composer-input'), { key: 'Enter' });
+    await waitFor(() => expect(send).toHaveBeenCalledTimes(1));
+    expect(send.mock.calls[0][1].inputMode).toBe('queue');
+  });
+});

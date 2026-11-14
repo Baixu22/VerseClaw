@@ -302,3 +302,4 @@ Verse Claw 基于 [OpenClaw](https://github.com/openclaw/openclaw) 与 ValueCell
 任务由 agent 在会话中管理。定位后，顶部只保留一个任务头，显示真实步骤进度，支持隐藏和重开。对话画布保持纯净，文件实际发生变化后才在输入框下方显示小入口；真实分支和工作树操作放在详情中。
 
 - 知识助手支持仅依据来源与 open 回答。原文引句、版本范围和 agent 驱动的语义支持分别核验；引用点击后重验 owner 权限并定位原文范围，一般知识与推断保持空引用。
+- Chat 支持关闭、手动、建议和自动读取，检索方案可独立选择本地、质量或研究。Preflight 可查看当前原文再附加；发送后显示 DCS 实际保留的知识及用量估算。按需读取支持取消和限时等待，普通排队消息保留已选证据，见[聊天交互合同](docs/dev/project-rag/CHAT-INTERACTION-CONTRACT.md)。

@@ -2763,9 +2763,6 @@ export const agentHandlers: GatewayRequestHandlers = {
     const respondWithEvidence = async (payload: Record<string, unknown>) => {
       const canRead =
         clientHasAdminScope(client) || client?.connect?.scopes?.includes("operator.read");
-      const retainedEvidence = canRead
-        ? listContextFinalSnapshots(runId).at(-1)?.budget.retainedEvidence
-        : undefined;
       let text: string | undefined;
       if (
         canRead &&
@@ -2794,6 +2791,9 @@ export const agentHandlers: GatewayRequestHandlers = {
           result?.meta?.finalAssistantRawText;
         if (output && output.length <= 100000) text = output;
       }
+      const retainedEvidence = canRead
+        ? listContextFinalSnapshots(runId).at(-1)?.budget.retainedEvidence
+        : undefined;
       respond(true, {
         ...payload,
         ...(retainedEvidence ? { retainedEvidence } : {}),

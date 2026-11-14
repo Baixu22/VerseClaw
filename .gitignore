@@ -3292,6 +3292,7 @@ openclaw_runtime/_tmp_*
 !/docs/dev/evidence/project-rag/RAG-10/20261114-99fb6a21d8/SHA256SUMS
 !/docs/dev/evidence/project-rag/RAG-10/20261114-99fb6a21d8/source-inputs.json
 !/docs/dev/evidence/project-rag/RAG-10/20261114-99fb6a21d8/typecheck.log
+!/docs/dev/project-rag/CHAT-INTERACTION-CONTRACT.md
 # END reviewed repository inputs
 
 # Durable Harness gap baseline; raw runs and Task Forest remain local.
