@@ -157,6 +157,18 @@ async function armGatedDurable(runId: string, terminal = true) {
 }
 
 describe("durable helper authority admission", () => {
+  it("keeps a lost helper outcome unknown when no durable exit was observed", async () => {
+    const { cfg, arm } = await armGatedDurable("run_lost_uncertain", false);
+    await runDurableHelperSweepOnce({
+      options: { rootDir },
+      cfg,
+      dispatch: async () => ({ ok: true, duplicate: false }),
+    });
+    const task = getGoalWaitTask(arm.taskId)!;
+    const authority = JSON.parse(task.progress_summary!).recoveryAuthority;
+    expect(task.status).toBe("lost");
+    expect(authority.decision).toMatchObject({ kind: "reconcile", effect: "unknown" });
+  });
   it("keeps a live helper in reconciliation across repeated sweeps and legacy rollback", async () => {
     const { arm, cfg, intent } = await armGatedDurable("run_live_owner", false);
     await writeDurableHelperStarted(

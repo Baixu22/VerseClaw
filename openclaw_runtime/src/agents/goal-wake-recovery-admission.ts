@@ -219,7 +219,11 @@ export function beginGoalWakeRecovery(
   runOpenClawStateWriteTransaction(() => {
     const current = currentTask(task.task_id);
     if (!current || !matchesGoalWakeRecovery(context, current)) return;
-    recordGoalWakeRecovery(context, current, !["queued", "running"].includes(current.status));
+    recordGoalWakeRecovery(
+      context,
+      current,
+      !["queued", "running", "lost"].includes(current.status),
+    );
     ready = true;
   });
   return ready ? { kind: "ready", context } : { kind: "rejected" };

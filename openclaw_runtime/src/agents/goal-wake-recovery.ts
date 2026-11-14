@@ -189,6 +189,7 @@ async function finalizeTaskFromExit(params: {
     if (!existing || (params.recovery && !matchesGoalWakeRecovery(params.recovery, existing)))
       return;
     if (isTerminalTaskStatus(existing.status)) {
+      if (params.recovery) recordGoalWakeRecovery(params.recovery, existing, true);
       updated = true;
       return;
     }
@@ -249,7 +250,7 @@ async function finalizeTaskLost(params: {
         })
         .where("task_id", "=", params.taskId),
     );
-    if (params.recovery) recordGoalWakeRecovery(params.recovery, existing, true);
+    if (params.recovery) recordGoalWakeRecovery(params.recovery, existing, false);
     updated = true;
   });
   return updated;
