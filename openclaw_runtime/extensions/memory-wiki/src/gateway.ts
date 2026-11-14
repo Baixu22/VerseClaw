@@ -161,8 +161,6 @@ export function registerMemoryWikiGatewayMethods(params: {
           throw new Error("Invalid retrieval deadline");
         const profile = readEnumParam(request, "profile", ["local", "quality", "research"] as const);
         const mode = readEnumParam(request, "mode", ["off", "manual", "suggest", "auto-read"] as const);
-        // Prepare the same owner bytes that wiki.get will read before sealing retrieval pins.
-        if (mode !== "off") await syncImportedSourcesIfNeeded(config, appConfig);
         respond(
           true,
           await retrieveMemoryWiki({
@@ -637,7 +635,6 @@ export function registerMemoryWikiGatewayMethods(params: {
     "wiki.get",
     async ({ params: requestParams, respond, client }) => {
       try {
-        await syncImportedSourcesIfNeeded(config, appConfig);
         const lookup = readStringParam(requestParams, "lookup", { required: true });
         const fromLine = readPositiveIntegerParam(requestParams, "fromLine");
         const lineCount = readPositiveIntegerParam(requestParams, "lineCount");
@@ -647,6 +644,9 @@ export function registerMemoryWikiGatewayMethods(params: {
         const sourceRef = normalizeSourceRefV2(requestParams.sourceRef);
         if (requestParams.sourceRef !== undefined && !sourceRef)
           throw new Error("Invalid SourceRef/v2 pin.");
+        const identity = readIdentity(requestParams, client);
+        // A pinned read preserves the owner bytes sealed by retrieval and indexing.
+        if (!sourceRef) await syncImportedSourcesIfNeeded(config, appConfig);
         respond(
           true,
           await getMemoryWikiPage({
@@ -659,7 +659,7 @@ export function registerMemoryWikiGatewayMethods(params: {
             searchBackend,
             searchCorpus,
             sourceRef,
-            readIdentity: readIdentity(requestParams, client),
+            readIdentity: identity,
           }),
         );
       } catch (error) {

@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -9,6 +9,9 @@ import {
 } from '../../openclaw_runtime/extensions/memory-wiki/runtime-api';
 import { createPluginStateKeyedStoreForTests } from '../../openclaw_runtime/src/plugin-sdk/plugin-state-test-runtime';
 import { closeOpenClawStateDatabase } from '../../openclaw_runtime/src/state/openclaw-state-db';
+import { closeTrackedSqliteHandlesUnder } from '../../openclaw_runtime/src/infra/node-sqlite';
+import memoryWikiPlugin from '../../openclaw_runtime/extensions/memory-wiki';
+import type { OpenClawPluginApi } from '../../openclaw_runtime/extensions/memory-wiki/api';
 
 let root: string | undefined;
 let projection: ReturnType<typeof createMemoryWikiProjectionService> | undefined;
@@ -18,7 +21,10 @@ afterEach(async () => {
   projection = undefined;
   closeOpenClawStateDatabase();
   vi.unstubAllEnvs();
-  if (root) await rm(root, { recursive: true, force: true });
+  if (root) {
+    closeTrackedSqliteHandlesUnder(root);
+    await rm(root, { recursive: true, force: true });
+  }
   root = undefined;
   expect(backgroundErrors.filter(error => !error.message.includes('cancelled'))).toEqual([]);
   backgroundErrors = [];
@@ -46,6 +52,45 @@ async function fixture() {
 }
 
 describe('Project RAG owner-side plan', () => {
+  it('keeps indexed owner bytes unchanged during gateway retrieval and pinned inspection', async () => {
+    const f = await fixture();
+    type Handler = Parameters<OpenClawPluginApi['registerGatewayMethod']>[1];
+    const methods = new Map<string, Handler>();
+    memoryWikiPlugin.register!({
+      pluginConfig: { vaultMode: 'isolated', vault: { path: f.config.vault.path }, search: { backend: 'local', corpus: 'wiki' } },
+      config: { agents: { defaults: { workspace: f.identity.workspaceDir } } },
+      runtime: { state: { openKeyedStore: <T>(options: Parameters<typeof createPluginStateKeyedStoreForTests<T>>[1]) =>
+        createPluginStateKeyedStoreForTests<T>('memory-wiki', options) } },
+      logger: { warn: vi.fn() },
+      registerGatewayMethod: (name: string, handler: Handler) => methods.set(name, handler),
+      registerMemoryPromptSupplement: vi.fn(), registerMemoryCorpusSupplement: vi.fn(),
+      registerService: vi.fn(), registerTool: vi.fn(), registerCli: vi.fn(),
+    } as unknown as OpenClawPluginApi);
+    const invoke = async (method: string, request: Record<string, unknown>) => {
+      const respond = vi.fn();
+      await methods.get(method)!({ params: { ...request, readIdentity: f.identity }, respond,
+        client: { connect: { client: { mode: 'backend' } } } } as unknown as Parameters<Handler>[0]);
+      expect(respond).toHaveBeenCalledOnce();
+      return respond.mock.calls[0];
+    };
+    const [retrieved, result] = await invoke('wiki.retrieve', { query: 'gateway configuration', profile: 'local', mode: 'suggest' });
+    expect(retrieved).toBe(true);
+    expect(result.results.some((row: { snippet: string }) => row.snippet.includes('18789'))).toBe(true);
+    expect(await readFile(f.file, 'utf8')).toBe(f.original);
+    const [inspected, page] = await invoke('wiki.get', { lookup: f.sourceRef.subjectId, sourceRef: f.sourceRef });
+    expect(inspected).toBe(true);
+    expect(page.status).not.toBe('denied');
+    expect(page.sourceRef).toEqual(f.sourceRef);
+    expect(await readFile(f.file, 'utf8')).toBe(f.original);
+    const [invalid] = await invoke('wiki.get', { lookup: f.sourceRef.subjectId, sourceRef: {} });
+    expect(invalid).toBe(false);
+    expect(await readFile(f.file, 'utf8')).toBe(f.original);
+    await writeFile(f.file, f.raw('Changed source', true));
+    const [checked, denied] = await invoke('wiki.get', { lookup: f.sourceRef.subjectId, sourceRef: f.sourceRef });
+    expect(checked).toBe(true);
+    expect(denied).toMatchObject({ status: 'denied', content: '' });
+  });
+
   it('fuses actual FTS candidates with an injected dense lane using the same chunk pins', async () => {
     const f = await fixture();
     const rows = (await f.projection.search(f.identity, 'gateway configuration')).candidates;

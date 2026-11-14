@@ -74,6 +74,8 @@ Knowledge Librarian model-only QA sends owner-bound reference intent through the
 
 Chat knowledge mode and retrieval profile are independent. Optional reads are bounded and cancellable; session, workspace, scope, profile and query changes fence late responses and preserve the current draft. Preflight inspects owner-checked bytes before attachment. Ordinary queued and media sends retain reference intent, and Used Knowledge binds the user turn to its terminal DCS receipt. See `project-rag-chat-interactions` and its Electron journey.
 
+Retrieval and SourceRef-pinned inspection read the owner's current bytes without materializing imports or derived Markdown. Pinned inspection rechecks permission, revision, digest and raw range; unpinned owner operations retain their existing import refresh path.
+
 Pending preparation and policy promises must release their local wait on cancellation without waiting for the plugin to return. Input acknowledgements must report a process that exited during the write with its owner's terminal status and output. Session alias merges must not duplicate a tool call, and changes to process poll wait duration must not reset otherwise unchanged loop evidence.
 
 Long-session archive and restore mutations cross the same boundary but remain

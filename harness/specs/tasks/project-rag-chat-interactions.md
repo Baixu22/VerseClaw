@@ -55,6 +55,7 @@ touchedAreas:
   - "tests/unit/chat-knowledge-scope.test.ts"
   - "tests/unit/project-rag-chat-policy.test.tsx"
   - "tests/e2e/project-rag-chat-modes.spec.ts"
+  - "tests/e2e/project-rag-rerank.spec.ts"
 requiredProfiles:
   - "fast"
   - "comms"
@@ -70,6 +71,7 @@ requiredTests:
   - "tests/unit/project-rag-chat-policy.test.tsx"
   - "tests/unit/knowledge-api.test.ts"
   - "tests/e2e/project-rag-chat-modes.spec.ts"
+  - "tests/e2e/project-rag-rerank.spec.ts"
   - "tests/unit/chat-input.test.tsx"
   - "tests/unit/chat-knowledge-scope.test.ts"
 plannedTests:

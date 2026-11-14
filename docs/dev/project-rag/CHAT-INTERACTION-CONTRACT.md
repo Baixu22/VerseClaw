@@ -13,6 +13,8 @@ Chat 的知识模式决定何时读取，检索方案决定查询路径，来源
 
 Preflight 显示当前来源版本、候选原文范围的 UTF-8 字节数、命中原因和冲突状态。查看来源重新经过 owner 检查，在只读窗口展示当前 pin 对应的原文；窗口内也可附加该来源。拒绝访问或版本失效时不展示正文。Dismiss 保留草稿，并在同一会话、workspace、范围、模式、方案和完整查询下抑制重复建议 10 分钟。
 
+检索与带 SourceRef pin 的检查直接读取当前 owner 字节，重验权限、revision、digest 和原文范围。导入和派生 Markdown 的刷新由既有未固定来源的 owner 操作执行，已建立的检索代际及引用保持其原文字节绑定。
+
 AutoReadAdmission/v1 要求当前 owner 权限和版本有效、状态 active、trust 为 confirmed 或 high-trust、verifiedAt 或 updatedAt 至少一项可解析、存在内容且没有未解决冲突。还须为唯一精确来源，或达到已验证校准的相关性准入条件。当前 owner 实现使用唯一精确来源分支；普通 lexical、dense、RRF 和未校准的重排分数不能触发自动读取。
 
 前端最多等待自动读取 5 秒，建议、手动搜索和原文检查各 12 秒；Host 保留自己的查询期限。取消使这次可选读取立即结束。已经请求发送的 Auto-read 在取消、超时或不可用时继续普通发送；会话、workspace、范围、方案、查询或草稿附件发生变化时保留新草稿，结束旧发送准备。旧请求的晚到响应不重新打开 Preflight 或原文窗口。扩展 before-send 检查结束后也会核对草稿身份。

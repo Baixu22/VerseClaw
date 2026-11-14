@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { createServer } from 'node:http';
 import type { Page } from '@playwright/test';
@@ -56,9 +56,12 @@ test('Project RAG rerank settings call an admitted local endpoint and preserve R
     }
     type RetrieveResult = { success: boolean; retrieval?: { status: string; rerank?: { status: string; candidateCount: number; calibrated: boolean }; fallbackReasons: string[] } };
     const retrieve = async (profile: 'local' | 'quality' | 'research') => host<RetrieveResult>(page, 'knowledge', 'retrieve', { query: 'gateway deployment port', workspaceId: owner.id, sessionKey: owner.activeSessionKey, profile, mode: 'suggest' });
+    const indexedRaw = await readFile(join(vault, 'concepts/evidence.md'), 'utf8');
     const quality: RetrieveResult = await retrieve('quality');
     receipt.quality = quality;
     expect(quality.retrieval?.rerank).toMatchObject({ status: 'complete', candidateCount: 1, calibrated: false });
+    expect(await readFile(join(vault, 'concepts/evidence.md'), 'utf8')).toBe(indexedRaw);
+    receipt.retrievalPreservedOwnerBytes = true;
     expect(requests.some(request => request.model === 'Qwen/Qwen3-Reranker-0.6B' && request.documents.includes('The gateway deployment port is 18789.\n'))).toBe(true);
     const research: RetrieveResult = await retrieve('research');
     receipt.research = research;
