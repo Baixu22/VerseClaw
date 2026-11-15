@@ -446,7 +446,9 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
     expect(observedWorkerManagedStopControls).toBe(0);
 
     const requestedWide = { width: 1280, height: 800 };
+    const browserWindow = await app.browserWindow(page);
     const wide = await pinWindowContentSize(app, requestedWide);
+    const wideZoom = await browserWindow.evaluate(window => window.webContents.getZoomFactor());
     const widePath = testInfo.outputPath('coordination-wide.png');
     await page.screenshot({ path: widePath, fullPage: true });
     const wideEvidence = await pngEvidence(widePath);
@@ -458,6 +460,7 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
 
     const requestedNarrow = { width: 680, height: 760 };
     const narrow = await pinWindowContentSize(app, requestedNarrow);
+    const narrowZoom = await browserWindow.evaluate(window => window.webContents.getZoomFactor());
     const narrowPath = testInfo.outputPath('coordination-narrow.png');
     await page.screenshot({ path: narrowPath, fullPage: true });
     const narrowEvidence = await pngEvidence(narrowPath);
@@ -468,12 +471,12 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
     }));
     expect(wide.width).toBeGreaterThan(0);
     expect(wide.height).toBeGreaterThan(0);
-    expect(Math.abs(wideViewport.innerWidth - wide.width)).toBeLessThanOrEqual(2);
-    expect(Math.abs(wideViewport.innerHeight - wide.height)).toBeLessThanOrEqual(2);
+    expect(Math.abs(wideViewport.innerWidth * wideZoom - wide.width)).toBeLessThanOrEqual(2);
+    expect(Math.abs(wideViewport.innerHeight * wideZoom - wide.height)).toBeLessThanOrEqual(2);
     expect(narrow.width).toBeGreaterThan(0);
     expect(narrow.height).toBeGreaterThan(0);
-    expect(Math.abs(narrowViewport.innerWidth - narrow.width)).toBeLessThanOrEqual(2);
-    expect(Math.abs(narrowViewport.innerHeight - narrow.height)).toBeLessThanOrEqual(2);
+    expect(Math.abs(narrowViewport.innerWidth * narrowZoom - narrow.width)).toBeLessThanOrEqual(2);
+    expect(Math.abs(narrowViewport.innerHeight * narrowZoom - narrow.height)).toBeLessThanOrEqual(2);
     expect(narrowViewport.innerWidth).toBeLessThan(wideViewport.innerWidth);
     expect(narrowEvidence.pixels.width).toBeLessThan(wideEvidence.pixels.width);
     await pinWindowContentSize(app, requestedWide);
@@ -484,6 +487,7 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
         path: 'coordination-wide.png',
         requestedViewport: requestedWide,
         contentSize: wide,
+        zoomFactor: wideZoom,
         browserViewport: wideViewport,
         pixels: wideEvidence.pixels,
         bytes: wideEvidence.bytes,
@@ -494,6 +498,7 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
         path: 'coordination-narrow.png',
         requestedViewport: requestedNarrow,
         contentSize: narrow,
+        zoomFactor: narrowZoom,
         browserViewport: narrowViewport,
         pixels: narrowEvidence.pixels,
         bytes: narrowEvidence.bytes,

@@ -1,7 +1,9 @@
 // @vitest-environment node
-import { expect, it, vi } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
 import type { ElectronApplication } from '@playwright/test';
 import { pinWindowContentSize } from '../e2e/fixtures/electron';
+
+afterEach(() => vi.restoreAllMocks());
 
 it('waits for the visible window and its renderer to settle at the clamped content size', async () => {
   let width = 1280, height = 800, nativeReads = 0, viewportReads = 0;
@@ -31,4 +33,8 @@ it('waits for the visible window and its renderer to settle at the clamped conte
   await expect(pinWindowContentSize(app, { width: 680, height: 760 })).resolves.toEqual({ width: 960, height: 760 });
   expect(hiddenResize).not.toHaveBeenCalled();
   expect(viewportReads).toBeGreaterThanOrEqual(2);
+  let now = 0;
+  vi.spyOn(Date, 'now').mockImplementation(() => now);
+  window.webContents.executeJavaScript = async () => { now = 30_001; return { width, height }; };
+  await expect(pinWindowContentSize(app, { width: 680, height: 760 })).rejects.toThrow('exceeded the resize deadline');
 });

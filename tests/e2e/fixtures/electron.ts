@@ -284,9 +284,20 @@ async function pinWindowContentSize(
       const [width, height] = win.getContentSize();
       measured = { width, height };
       if (width > 0 && height > 0 && Math.abs(width - expected.width) <= 2 && Math.abs(height - expected.height) <= 2) {
-        const viewport = await win.webContents.executeJavaScript('({ width: window.innerWidth, height: window.innerHeight })') as { width: number; height: number };
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        let viewport: { width: number; height: number };
+        try {
+          viewport = await Promise.race([
+            win.webContents.executeJavaScript('({ width: window.innerWidth, height: window.innerHeight })') as Promise<{ width: number; height: number }>,
+            new Promise<never>((_, reject) => { timer = setTimeout(() => reject(new Error('pinWindowContentSize: renderer measurement timed out')), Math.max(0, deadline - Date.now())); }),
+          ]);
+        } finally { clearTimeout(timer); }
+        if (Date.now() >= deadline) throw new Error('pinWindowContentSize: renderer measurement exceeded the resize deadline');
+        if (win.isDestroyed() || win.webContents.isDestroyed()) throw new Error('pinWindowContentSize: window closed during measurement');
+        const [currentWidth, currentHeight] = win.getContentSize();
         const zoom = win.webContents.getZoomFactor();
-        if (Math.abs(viewport.width * zoom - width) <= 2 && Math.abs(viewport.height * zoom - height) <= 2) return measured;
+        if (currentWidth > 0 && currentHeight > 0 && Math.abs(currentWidth - expected.width) <= 2 && Math.abs(currentHeight - expected.height) <= 2
+          && Math.abs(viewport.width * zoom - currentWidth) <= 2 && Math.abs(viewport.height * zoom - currentHeight) <= 2) return { width: currentWidth, height: currentHeight };
       }
       await settle();
     }

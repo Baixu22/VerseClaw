@@ -132,6 +132,7 @@ acceptance:
   - Paired crash recovery consumes the already-validated TF-0662 restart path from bb8541ba6: the known Host start timeout and eventual Gateway readiness are recorded separately before reading back the original generation and objective.
   - Source E2E launches may select a byte-identical staged Electron runtime through the existing G4 executable resolver; explicit per-test executables take precedence.
   - Window sizing selects the visible live window, waits for restored window state and measured renderer dimensions, and reports the actual size after minimum-size clamping; zero or unchanged wide/narrow captures cannot satisfy the coordination journey.
+  - Renderer measurement uses the remaining resize deadline and rechecks window identity and native dimensions after the read; CSS viewport assertions convert through the owning window's zoom factor.
   - Paired baseline inputs permit only the declared transitive executable resolver alongside the five measured helpers; both sides retain identical dependency bytes and reject other input changes.
   - Opening the resource popover reads the current session's activity owner through the existing store even when background status polling has stopped.
   - Cleanup reports launch markers remaining on disk after native process checks and removal, retains the detected count, and preserves markers when process discovery is unavailable.
