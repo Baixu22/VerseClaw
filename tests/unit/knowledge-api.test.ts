@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync
 import { closeOpenClawStateDatabaseForTest } from '../../openclaw_runtime/src/state/openclaw-state-db';
 import { createOwnerReadSnapshot, deriveReadAdmissionContext, digestOwnerReadContent } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
 import { createRetrievalPlan } from '../../openclaw_runtime/src/knowledge/retrieval/plan';
+import { PROJECT_RAG_DEFAULTS } from '../../shared/knowledge/operations';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -140,6 +141,56 @@ describe('knowledge host API', () => {
       error: 'gateway unavailable',
     });
     expect(gatewayManager.rpc).toHaveBeenNthCalledWith(1, 'wiki.status', {}, 12000);
+  });
+
+  it('validates operations config before RPC and preserves the config base hash', async () => {
+    const gatewayManager = { rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+      if (method === 'sessions.describe') return { session: { key: params.key, sessionId: 'physical-rag12-config' } };
+      if (method === 'config.get') return { hash: 'rag12-base-hash' };
+      return { ok: true };
+    }) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    expect(await api.operationsConfigure({ mode: 'auto-read' } as never)).toMatchObject({ success: false });
+    expect(gatewayManager.rpc).not.toHaveBeenCalled();
+    expect(await api.operationsConfigure({ profile: 'quality', answerMode: 'open', maxStorageBytes: 1024 ** 3 }))
+      .toMatchObject({ success: true, restartRequired: true });
+    const patch = gatewayManager.rpc.mock.calls.find(([method]) => method === 'config.patch')![1];
+    expect(patch.baseHash).toBe('rag12-base-hash');
+    expect(JSON.parse(patch.raw as string)).toEqual({ plugins: { entries: { 'memory-wiki': { config: { retrieval: {
+      profile: 'quality', answerMode: 'open', maxStorageBytes: 1024 ** 3,
+    } } } } } });
+  });
+
+  it('rejects late operations snapshots after a session generation changes', async () => {
+    let generation = 'physical-rag12-before';
+    const gatewayManager = { rpc: vi.fn(async (method: string, params: Record<string, unknown>) => {
+      if (method === 'sessions.describe') return { session: { key: params.key, sessionId: generation } };
+      if (method === 'wiki.operations.status') { generation = 'physical-rag12-after'; return { owner: 'old-scope' }; }
+      return {};
+    }) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    expect(await api.operationsStatus()).toMatchObject({ success: false, error: expect.stringMatching(/identity changed/i) });
+  });
+
+  it('uses owner config for omitted profiles, keeps explicit bounds and fails closed without config', async () => {
+    let configAvailable = true;
+    const gatewayManager = { rpc: vi.fn(async (method: string, params: Record<string, unknown>, _timeoutMs?: number) => {
+      if (method === 'sessions.describe') return { session: { key: params.key, sessionId: 'physical-rag12-profile' } };
+      if (method === 'wiki.operations.config') return configAvailable ? { ...PROJECT_RAG_DEFAULTS, profile: 'quality' } : undefined;
+      if (method === 'wiki.retrieve') return { ...retrievalFixture([]), plan: createRetrievalPlan({ query: 'owner fixture', profile: params.profile as 'local' | 'quality', namespaceIds: ['wiki-owner-fixture'] }) };
+      return {};
+    }) };
+    const { createKnowledgeApi } = await import('@electron/services/knowledge-api');
+    const api = createKnowledgeApi({ gatewayManager: gatewayManager as never });
+    expect(await api.retrieve({ query: 'owner fixture' })).toMatchObject({ success: true, retrieval: { plan: { profile: 'quality' } } });
+    expect(await api.retrieve({ query: 'owner fixture', profile: 'local' })).toMatchObject({ success: true, retrieval: { plan: { profile: 'local' } } });
+    const calls = gatewayManager.rpc.mock.calls.filter(([method]) => method === 'wiki.retrieve');
+    expect(calls[0][2]).toBeLessThanOrEqual(2500); expect(calls[1][2]).toBeLessThanOrEqual(900);
+    configAvailable = false; gatewayManager.rpc.mockClear();
+    expect(await api.retrieve({ query: 'owner fixture' })).toMatchObject({ success: false, error: expect.stringMatching(/configuration is unavailable/) });
+    expect(gatewayManager.rpc.mock.calls.some(([method]) => method === 'wiki.retrieve')).toBe(false);
   });
 
   it('returns a read-only SEKB runtime lessons report without Gateway writes', async () => {
@@ -561,7 +612,7 @@ describe('knowledge host API', () => {
       off: vi.fn((_event: string, listener: (event: unknown) => void) => {
         listeners.delete(listener);
       }),
-      rpc: vi.fn(async (method: string) => {
+      rpc: vi.fn(async (method: string, _params?: Record<string, unknown>, _timeoutMs?: number) => {
         if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
         if (method === 'agent') {
           return { runId: 'steward-run-1' };
@@ -599,8 +650,14 @@ describe('knowledge host API', () => {
     expect(review.tags).toContain('governance');
     expect(review.notes).toContain('Semantic steward pass');
     expect(review.warnings.some((w) => w.includes('[quality]'))).toBe(true);
-    expect(gatewayManager.rpc).toHaveBeenCalledWith('agent', expect.objectContaining({ modelRun: true }), 60000);
-    expect(gatewayManager.rpc).toHaveBeenCalledWith('agent.wait', expect.objectContaining({ runId: 'steward-run-1' }), 65000);
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('agent', expect.objectContaining({ modelRun: true }), expect.any(Number));
+    expect(gatewayManager.rpc).toHaveBeenCalledWith('agent.wait', expect.objectContaining({ runId: 'steward-run-1' }), expect.any(Number));
+    const agentCall = gatewayManager.rpc.mock.calls.find(([method]) => method === 'agent')!;
+    const waitCall = gatewayManager.rpc.mock.calls.find(([method]) => method === 'agent.wait')!;
+    expect(agentCall[2]).toBeGreaterThan(0);
+    expect(agentCall[2]).toBeLessThanOrEqual(60000);
+    expect(waitCall[2]).toBeLessThanOrEqual(65000);
+    expect(waitCall[2]).toBe((waitCall[1]!.timeoutMs as number) + 5000);
   });
 
   it('orchestrates inbox candidates into drafts without applying wiki writes', async () => {
@@ -994,6 +1051,7 @@ describe('knowledge host API', () => {
   it('forwards the selected profile for explicit Wiki search', async () => {
     const gatewayManager = { rpc: vi.fn(async (method: string) => {
       if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+      if (method === 'wiki.operations.config') return PROJECT_RAG_DEFAULTS;
       if (method === 'wiki.retrieve') return retrievalFixture([{ id: 'manual', title: 'Manual source', lookup: 'source.md' }]);
       throw new Error(`Unexpected ${method}`);
     }) };
@@ -1008,6 +1066,7 @@ describe('knowledge host API', () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string, _params?: unknown, _timeout?: number) => {
         if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+        if (method === 'wiki.operations.config') return PROJECT_RAG_DEFAULTS;
         if (method === 'wiki.retrieve') {
           return retrievalFixture([
               {
@@ -1138,6 +1197,7 @@ describe('knowledge host API', () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
         if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+        if (method === 'wiki.operations.config') return PROJECT_RAG_DEFAULTS;
         if (method === 'wiki.retrieve') {
           return retrievalFixture([{
               id: 'route-1',
@@ -1477,6 +1537,7 @@ describe('knowledge host API', () => {
     const gatewayManager = {
       rpc: vi.fn(async (method: string) => {
         if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+        if (method === 'wiki.operations.config') return PROJECT_RAG_DEFAULTS;
         if (method === 'wiki.retrieve') {
           return retrievalFixture([
               { id: 'fresh', title: 'Fresh', lookup: 'fresh.md', score: 0.9, freshnessLevel: 'fresh', matchedClaimStatus: 'supported', autoReadEligible: true },
@@ -1798,6 +1859,7 @@ describe('knowledge host API', () => {
       off: vi.fn((_event: string, callback: (value: unknown) => void) => listeners.delete(callback)),
       rpc: vi.fn(async (method: string, params: Record<string, unknown> = {}) => {
         if (method === 'sessions.describe') return { session: { sessionId: '10000000-0000-4000-8000-000000000001' } };
+        if (method === 'wiki.operations.config') return PROJECT_RAG_DEFAULTS;
         if (method === 'wiki.retrieve') return retrievalFixture([{ pagePath: 'port.md', lookup: 'port.md', title: 'Gateway port', sourceRef: snapshotFor(params.readIdentity as never).source }]);
         if (method === 'wiki.get') return { corpus: 'wiki', path: 'port.md', content: sourceBody, revision: 1, status: 'active', ownerSnapshot: snapshotFor(params.readIdentity as never) };
         if (method === 'agent') {

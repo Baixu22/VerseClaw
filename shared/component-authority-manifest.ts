@@ -419,7 +419,12 @@ export const AUTHORITY_COMPONENTS: readonly ComponentAuthorityDefinition[] = [
     runtimeAvailabilitySource: 'static:knowledge-retrieval-source',
     defaultMode: 'read-only',
     authorizationRole: 'none',
-    sourceAnchors: [anchor('shared/knowledge/governance-contract.ts', 'export interface ContextSourceAdapter')],
+    catalogFlagIds: catalog('project-rag-default-profile', 'project-rag-answer-strategy', 'project-rag-index-storage-budget'),
+    sourceAnchors: [
+      anchor('shared/knowledge/governance-contract.ts', 'export interface ContextSourceAdapter'),
+      anchor('shared/knowledge/operations.ts', 'export function normalizeProjectRagConfig'),
+      anchor('openclaw_runtime/extensions/memory-wiki/src/retrieval-index.ts', 'createMemoryWikiProjectionService'),
+    ],
   }),
   component({
     id: 'sekb-candidate-provider',

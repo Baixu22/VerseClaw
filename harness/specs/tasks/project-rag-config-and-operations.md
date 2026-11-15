@@ -1,14 +1,35 @@
 ---
 lifecycleStatus: active
-implementationStatus: planned
+implementationStatus: implemented
 id: project-rag-config-and-operations
 title: 交付完整配置、索引运维和能力状态界面
 scenario: gateway-backend-communication
 taskType: runtime-bridge
 programKey: RAG-12
 intent: 让长期运行中的来源、模型、索引、预算和失败都可管理。
-diffBase: 806855309fb9d0ab4ffcf9f897f42fb0117e4f40
+diffBase: 8bff5be359d987c3308bc8886f0b4296be1d01f2
 touchedAreas:
+  - "openclaw_runtime/extensions/memory-wiki/**"
+  - "openclaw_runtime/src/knowledge/retrieval/index-controller.ts"
+  - "openclaw_runtime/src/knowledge/retrieval/index.worker.ts"
+  - "openclaw_runtime/src/knowledge/retrieval/vector.worker.ts"
+  - "openclaw_runtime/src/infra/sqlite-wal.ts"
+  - "openclaw_runtime/src/state/openclaw-state-db.ts"
+  - "openclaw_runtime/src/plugin-sdk/knowledge-retrieval.ts"
+  - "shared/knowledge/operations.ts"
+  - "shared/host-api/contract.ts"
+  - "harness/specs/scenarios/gateway-backend-communication.md"
+  - "electron/services/knowledge-api.ts"
+  - "src/lib/host-api/knowledge/**"
+  - "src/pages/Models/index.tsx"
+  - "src/pages/Chat/KnowledgeChat.tsx"
+  - "tests/unit/knowledge-api.test.ts"
+  - "tests/unit/project-rag-plan-owner.test.ts"
+  - "tests/unit/project-rag-vector-service.test.ts"
+  - "tests/unit/component-authority-manifest.test.ts"
+  - "tests/unit/component-disposition-catalog.test.ts"
+  - "tests/e2e/project-rag-provider-settings.spec.ts"
+  - "docs/dev/evidence/project-rag/RAG-12/**"
   - "openclaw_runtime/src/config/**"
   - "shared/dcs/component-disposition-catalog.ts"
   - "shared/component-authority-manifest.ts"
@@ -31,9 +52,11 @@ touchedAreas:
   - "harness/specs/rules/project-rag-long-term-boundary.md"
   - ".gitignore"
   - "scripts/repository-artifacts.json"
+  - "scripts/duplicate-assets-allowlist.json"
   - "README*.md"
   - "tests/unit/host-api-facade.test.ts"
   - "tests/unit/project-rag-config-parity.test.ts"
+  - "tests/unit/resource-sqlite-wal.test.ts"
   - "tests/e2e/project-rag-settings-operations.spec.ts"
 requiredProfiles:
   - "fast"
@@ -45,6 +68,19 @@ requiredRules:
   - "project-rag-long-term-boundary"
 requiredTests:
   - "tests/unit/host-api-facade.test.ts"
+  - "tests/unit/resource-sqlite-wal.test.ts"
+  - "tests/unit/project-rag-config-parity.test.ts"
+  - "tests/unit/project-rag-index-recovery.test.ts"
+  - "tests/unit/project-rag-plan-owner.test.ts"
+  - "tests/unit/knowledge-api.test.ts"
+  - "tests/unit/knowledge-chat.test.tsx"
+  - "tests/unit/project-rag-embedding-lifecycle.test.ts"
+  - "tests/unit/project-rag-vector-service.test.ts"
+  - "openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts"
+  - "tests/unit/component-authority-manifest.test.ts"
+  - "tests/unit/component-disposition-catalog.test.ts"
+  - "tests/e2e/project-rag-settings-operations.spec.ts"
+  - "tests/e2e/project-rag-provider-settings.spec.ts"
 plannedTests:
   - "tests/unit/project-rag-config-parity.test.ts"
 plannedE2E:
@@ -63,6 +99,7 @@ docs:
   files:
     - docs/dev/adr/2026-11-09-project-rag-retrieval-plane.md
     - docs/dev/project-rag/WORK-PACKAGES.md
+    - docs/dev/project-rag/CONFIG-OPERATIONS-CONTRACT.md
 ---
 
 # 交付完整配置、索引运维和能力状态界面
@@ -71,7 +108,7 @@ docs:
 
 契约：ProjectRagConfig/v2、RetrievalCapabilitySnapshot/v1、IndexStatus/v1。
 
-本文件冻结实现合同。当前规划不代表产品实现已通过；执行该叶前复核绑定的工作树、前置证据与实际 HEAD，刷新 diffBase。新增测试必须实现并加入 requiredTests；plannedE2E 指定的是必须补齐的产品旅程。
+配置和索引运维复用 owner-side 严格配置、后台索引服务与 Host API。验收回读本叶 requiredTests、Electron 运维与模型生命周期旅程，以及绑定候选的配置、权限和回滚收据。
 
 所有检索来源和模型调用接受 owner 准入，DCS 保留最终上下文决定权；验证结果标记 driven_by: agent。
 

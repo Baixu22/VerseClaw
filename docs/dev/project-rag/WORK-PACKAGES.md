@@ -292,11 +292,13 @@
 
 ### RAG-12 交付完整配置、索引运维和能力状态界面
 
+配置、状态语义和回滚步骤见[配置与运维合同](CONFIG-OPERATIONS-CONTRACT.md)。
+
 让长期运行中的来源、模型、索引、预算和失败都可管理。
 
 - Owner：Settings / runtime config / retrieval operations。
 - 契约：ProjectRagConfig/v2、RetrievalCapabilitySnapshot/v1、IndexStatus/v1。
-- 落点：`openclaw_runtime/src/config/**`、`shared/dcs/component-disposition-catalog.ts`、`shared/component-authority-manifest.ts`、`src/components/settings/**`、`src/pages/Knowledge/**`、`shared/i18n/locales/*/knowledge.json`、`shared/i18n/locales/*/settings.json`。
+- 落点：`openclaw_runtime/extensions/memory-wiki/**` 的 owner 配置与索引服务、`openclaw_runtime/src/knowledge/retrieval/index-controller.ts`、`shared/knowledge/operations.ts`、`shared/host-api/contract.ts`、`electron/services/knowledge-api.ts`、`src/components/settings/**`、`src/pages/Models/index.tsx`、`shared/i18n/locales/*/settings.json`。
 - 新测试：`tests/unit/project-rag-config-parity.test.ts`。
 - Electron：`tests/e2e/project-rag-settings-operations.spec.ts`。
 - 回滚：doctor迁移与profile关闭恢复旧有效配置，保留owner数据和有效generation。

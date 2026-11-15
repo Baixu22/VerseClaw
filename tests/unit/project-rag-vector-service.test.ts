@@ -101,21 +101,31 @@ function fixture(enable: () => Promise<void> = async () => {}) {
       enable: async () => {
         await enable();
         return {
-          status: "ready",
+          schema: "IndexStatus/v1",
+          status: "running",
           lastError: null,
           sources: [],
           jobs: [],
           activeWorker: false,
           workerThreadIds: [],
+          lagCount: 0,
+          logicalDeletedCount: 0,
+          cleanupPendingGenerations: 0,
+          storage: { bytes: 0, budgetBytes: null, budgetExceeded: false },
         };
       },
       idle: async () => ({
-        status: "ready",
+        schema: "IndexStatus/v1",
+        status: "running",
         lastError: null,
         sources: [],
         jobs: [],
         activeWorker: false,
         workerThreadIds: [],
+        lagCount: 0,
+        logicalDeletedCount: 0,
+        cleanupPendingGenerations: 0,
+        storage: { bytes: 0, budgetBytes: null, budgetExceeded: false },
       }),
     },
     openKeyedStore: <T>(options: Parameters<typeof createPluginStateKeyedStoreForTests<T>>[1]) =>
@@ -408,7 +418,8 @@ describe("vector activation ownership", () => {
     const { service, identity, embedding } = fixture();
     await service.enable(identity, "sqlite-flat");
     await service.idle(identity);
-    const entered = deferred(), release = deferred();
+    const entered = deferred(),
+      release = deferred();
     const embed = embedding.embed;
     let captured: Parameters<typeof embedding.embed>[1] | undefined;
     embedding.embed = async (...args) => {
@@ -417,7 +428,8 @@ describe("vector activation ownership", () => {
       await release.promise;
       return embed(...args);
     };
-    const request = new AbortController(), deadlineAt = Date.now() + 900;
+    const request = new AbortController(),
+      deadlineAt = Date.now() + 900;
     const query = service.search(identity, "query", 4, { signal: request.signal, deadlineAt });
     const rejected = expect(query).rejects.toThrow("request cancelled");
     await entered.promise;

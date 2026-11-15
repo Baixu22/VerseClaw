@@ -2,6 +2,7 @@ import { relative } from "node:path";
 import {
   KnowledgeProjectionController,
   getWatcherHub,
+  type IndexStatusV1,
 } from "openclaw/plugin-sdk/knowledge-retrieval";
 import {
   type OpenKeyedStoreOptions,
@@ -18,7 +19,12 @@ import {
 import { getMemoryWikiPage, listMemoryWikiPagePaths } from "./query.js";
 import { initializeMemoryWikiVault } from "./vault.js";
 
-type IndexSelection = { enabled: boolean; identity: MemoryWikiReadIdentity; vault: string };
+type IndexSelection = {
+  enabled: boolean;
+  paused?: boolean;
+  identity: MemoryWikiReadIdentity;
+  vault: string;
+};
 type IndexState = PluginStateKeyedStore<IndexSelection>;
 
 /** One explicitly enabled source scope per vault. Startup restores only the saved scope. */
@@ -61,6 +67,19 @@ export function createMemoryWikiProjectionService(options: {
     )
       throw new Error("Projection scope is not enabled for this session/workspace");
   };
+  const emptyStatus = (unavailable = false): IndexStatusV1 => ({
+    schema: "IndexStatus/v1",
+    status: unavailable ? "unavailable" : "disabled",
+    lastError: unavailable ? lastError : null,
+    sources: [],
+    jobs: [],
+    activeWorker: false,
+    workerThreadIds: [],
+    lagCount: 0,
+    logicalDeletedCount: 0,
+    cleanupPendingGenerations: 0,
+    storage: { bytes: null, budgetBytes: config.retrieval.maxStorageBytes, budgetExceeded: null },
+  });
 
   const activate = async (selection: IndexSelection) => {
     await controller?.stop();
@@ -118,8 +137,11 @@ export function createMemoryWikiProjectionService(options: {
         },
       },
       onError: error,
+      maxStorageBytes: config.retrieval.maxStorageBytes,
+      paused: selection.paused,
     });
     await controller.start();
+    if (selection.paused) await controller.pause();
     lastError = null;
   };
 
@@ -175,15 +197,40 @@ export function createMemoryWikiProjectionService(options: {
         return controller!.status();
       });
     },
+    pause(identity: MemoryWikiReadIdentity) {
+      return enqueue(async () => {
+        assertScope(identity);
+        await controller!.pause();
+        selected = { ...selected!, paused: true };
+        await state().register(key, selected);
+        return controller!.status();
+      });
+    },
+    resume(identity: MemoryWikiReadIdentity) {
+      return enqueue(async () => {
+        assertScope(identity);
+        await controller!.resume();
+        selected = { ...selected!, paused: false };
+        await state().register(key, selected);
+        return controller!.status();
+      });
+    },
     async idle(identity: MemoryWikiReadIdentity, timeoutMs?: number) {
       assertScope(identity);
       await controller!.idle(timeoutMs);
       return controller!.status();
     },
-    status(identity: MemoryWikiReadIdentity) {
-      if (!selected) return { status: lastError ? "unavailable" : "disabled", lastError };
-      assertScope(identity);
-      return controller?.status() ?? { status: "unavailable", lastError };
+    status(identity: MemoryWikiReadIdentity): IndexStatusV1 {
+      if (!selected) return emptyStatus(Boolean(lastError));
+      // A new workspace may explicitly enable its own scope. Status never exposes
+      // another scope's source/job inventory; reads and mutations still assert it.
+      try {
+        assertScope(identity);
+      } catch {
+        return emptyStatus();
+      }
+      if (!controller) throw new Error("Projection controller is unavailable");
+      return controller.status();
     },
     async search(identity: MemoryWikiReadIdentity, query: string, limit?: number) {
       assertScope(identity);

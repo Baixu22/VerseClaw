@@ -12,7 +12,13 @@ export {
   readMemoryWikiRetrievalChunks,
   readMemoryWikiChunkCitation,
 } from "./src/retrieval-document.js";
-export { resolveMemoryWikiConfig, type MemoryWikiPluginConfig } from "./src/config.js";
+export {
+  resolveMemoryWikiConfig,
+  memoryWikiConfigSchema,
+  type MemoryWikiPluginConfig,
+} from "./src/config.js";
+export { resolveMemoryWikiStatus, buildMemoryWikiDoctorReport } from "./src/status.js";
+export { normalizeCompatibilityConfig } from "./src/config-compat.js";
 export {
   createMemoryWikiReadContext,
   memoryWikiNamespaceId,

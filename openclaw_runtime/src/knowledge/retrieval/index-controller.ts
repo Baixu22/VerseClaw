@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
+import { statSync } from "node:fs";
 import { isDeepStrictEqual } from "node:util";
+import type { IndexStatusV1 } from "../../../../shared/knowledge/operations.js";
 import { getBackgroundWorkGate } from "../../resources/background-work-gate.js";
 import { resolveOpenClawStateSqlitePath } from "../../state/openclaw-state-db.paths.js";
 import type {
@@ -31,6 +33,8 @@ export class KnowledgeProjectionController {
   readonly #databasePath: string;
   readonly #store: ProjectionStore;
   readonly #onError: (error: Error) => void;
+  readonly #maxStorageBytes?: number;
+  #paused = false;
   #stopped = true;
   #unsubscribe?: () => void;
   #timer?: ReturnType<typeof setInterval>;
@@ -45,9 +49,13 @@ export class KnowledgeProjectionController {
   constructor(options: {
     owner: ProjectionOwnerAdapter;
     databasePath?: string;
+    maxStorageBytes?: number;
+    paused?: boolean;
     onError: (error: Error) => void;
   }) {
     this.#owner = options.owner;
+    this.#maxStorageBytes = options.maxStorageBytes;
+    this.#paused = options.paused ?? false;
     this.#databasePath = options.databasePath ?? resolveOpenClawStateSqlitePath();
     this.#store = new ProjectionStore({ database: { path: this.#databasePath } });
     this.#onError = options.onError;
@@ -181,9 +189,19 @@ export class KnowledgeProjectionController {
   }
 
   #pump() {
-    if (this.#stopped || this.#running || getBackgroundWorkGate().shouldDefer("background")) return;
+    if (
+      this.#stopped ||
+      this.#paused ||
+      this.#running ||
+      getBackgroundWorkGate().shouldDefer("background")
+    )
+      return;
     const run = async () => {
-      while (!this.#stopped && !getBackgroundWorkGate().shouldDefer("background")) {
+      while (
+        !this.#stopped &&
+        !this.#paused &&
+        !getBackgroundWorkGate().shouldDefer("background")
+      ) {
         this.#store.recover(this.#owner.namespaceId);
         const job = this.#store.claim({
           namespaceId: this.#owner.namespaceId,
@@ -194,7 +212,8 @@ export class KnowledgeProjectionController {
           // Retired generations remain the durable cleanup backlog. Repeating
           // cleanup after a crash is safe and never changes current eligibility.
           for (const source of this.#store.sources(this.#owner.namespaceId)) {
-            if (this.#stopped || getBackgroundWorkGate().shouldDefer("background")) return;
+            if (this.#stopped || this.#paused || getBackgroundWorkGate().shouldDefer("background"))
+              return;
             if (
               !this.#store
                 .generations(source.sourceKey)
@@ -214,6 +233,8 @@ export class KnowledgeProjectionController {
                 { signal: abort.signal, verifyBeforePublish: async () => false },
               );
               this.#workerThreadIds = [...this.#workerThreadIds, receipt.threadId].slice(-32);
+            } catch (error) {
+              if (!abort.signal.aborted && !this.#stopped && !this.#paused) throw error;
             } finally {
               this.#active = undefined;
             }
@@ -234,12 +255,18 @@ export class KnowledgeProjectionController {
             );
             continue;
           }
+          if (this.#maxStorageBytes && this.#storageBytes() >= this.#maxStorageBytes)
+            throw new Error("index-storage-budget-exceeded");
           const receipt = await runProjectionWorker(
             { kind: "build", job, snapshot: result.snapshot, databasePath: this.#databasePath },
             {
               signal: abort.signal,
               verifyBeforePublish: async () => {
-                if (this.#stopped) return false;
+                if (this.#stopped || this.#paused) return false;
+                // Staging may consume space, but a generation above the configured
+                // database/WAL budget must never become the active projection.
+                if (this.#maxStorageBytes && this.#storageBytes() > this.#maxStorageBytes)
+                  throw new Error("index-storage-budget-exceeded");
                 const current = await this.#owner.read(job.source);
                 return (
                   current.status === "admitted" &&
@@ -249,6 +276,7 @@ export class KnowledgeProjectionController {
             },
           );
           this.#workerThreadIds = [...this.#workerThreadIds, receipt.threadId].slice(-32);
+          this.#lastError = undefined;
         } catch (error) {
           this.#store.fail(job, error instanceof Error ? error.message : String(error), 500);
           if (!this.#stopped && !abort.signal.aborted) this.#error(error);
@@ -264,16 +292,55 @@ export class KnowledgeProjectionController {
       });
   }
 
-  status() {
+  #storageBytes() {
+    return [this.#databasePath, this.#databasePath + "-wal", this.#databasePath + "-shm"].reduce(
+      (sum, file) => {
+        try {
+          return sum + statSync(file).size;
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code === "ENOENT") return sum;
+          throw error;
+        }
+      },
+      0,
+    );
+  }
+
+  async pause() {
+    this.#paused = true;
+    this.#active?.abort.abort();
+    await this.#running;
+  }
+
+  async resume() {
+    this.#paused = false;
+    await this.reconcile();
+  }
+
+  status(): IndexStatusV1 {
     const jobs = this.#store.jobs(this.#owner.namespaceId);
+    const sources = this.#store.sources(this.#owner.namespaceId);
+    const currentFailure = jobs.some(
+      (job) =>
+        job.state === "failed" &&
+        sources.some(
+          (source) =>
+            source.sourceKey === job.sourceKey && source.intentSequence === job.intentSequence,
+        ),
+    );
+    const bytes = this.#storageBytes();
+    const budgetExceeded = this.#maxStorageBytes !== undefined && bytes > this.#maxStorageBytes;
     return {
+      schema: "IndexStatus/v1",
       status: this.#stopped
         ? "stopped"
-        : this.#lastError || jobs.some((job) => job.state === "failed")
-          ? "degraded"
-          : "running",
+        : this.#paused
+          ? "paused"
+          : budgetExceeded || this.#lastError || currentFailure
+            ? "degraded"
+            : "running",
       lastError: this.#lastError ?? null,
-      sources: this.#store.sources(this.#owner.namespaceId).map((source) => ({
+      sources: sources.map((source) => ({
         sourceKey: source.sourceKey,
         intentSequence: source.intentSequence,
         eligible: source.eligible,
@@ -288,10 +355,22 @@ export class KnowledgeProjectionController {
       })),
       activeWorker: Boolean(this.#active),
       workerThreadIds: [...this.#workerThreadIds],
+      lagCount: sources.filter((source) => source.desiredEligible && !source.eligible).length,
+      logicalDeletedCount: sources.filter((source) => source.reason === "not_found").length,
+      cleanupPendingGenerations: sources.reduce(
+        (sum, source) =>
+          sum +
+          this.#store
+            .generations(source.sourceKey)
+            .filter((generation) => generation.generationId !== source.activeGeneration).length,
+        0,
+      ),
+      storage: { bytes, budgetBytes: this.#maxStorageBytes ?? null, budgetExceeded },
     };
   }
 
   async idle(timeoutMs = 60_000) {
+    if (this.#paused) return;
     const deadline = Date.now() + timeoutMs;
     while (!this.#stopped) {
       const scan = this.#scan;

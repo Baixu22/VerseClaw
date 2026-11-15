@@ -4,6 +4,8 @@
  * Must stay aligned with openclaw_runtime coding-runtime-flags / dcs-context-tools-flags.
  * Does NOT flip any production defaults.
  */
+import { PROJECT_RAG_DEFAULTS } from '../knowledge/operations';
+
 export type DcsProdFlagRisk =
   | 'baseline-on'
   | 'opt-in'
@@ -33,6 +35,33 @@ export type DcsProdFlagEntry = {
 };
 
 export const DCS_PROD_FLAGS: readonly DcsProdFlagEntry[] = [
+  {
+    id: 'project-rag-default-profile', wave: 'RAG-12', kind: 'config',
+    key: 'plugins.entries.memory-wiki.config.retrieval.profile', defaultDisplay: 'local',
+    defaultValue: PROJECT_RAG_DEFAULTS.profile, risk: 'opt-in',
+    enable: 'Choose Local, Quality or Research in Settings > Models & Providers > Knowledge operations.',
+    rollback: 'Restore local and reread the owner configuration after Gateway restart.',
+    riskNote: 'The configured default applies to omitted profiles; source scope and interaction mode remain request facts.',
+    executor: { status: 'wired', sites: ['openclaw_runtime/extensions/memory-wiki/src/retrieval/plan-service.ts:119'] },
+  },
+  {
+    id: 'project-rag-answer-strategy', wave: 'RAG-12', kind: 'config',
+    key: 'plugins.entries.memory-wiki.config.retrieval.answerMode', defaultDisplay: 'strict',
+    defaultValue: PROJECT_RAG_DEFAULTS.answerMode, risk: 'opt-in',
+    enable: 'Choose the default answer strategy in Knowledge operations; Knowledge Librarian keeps the current explicit selection.',
+    rollback: 'Restore strict in Knowledge operations.',
+    riskNote: 'Open answers identify model knowledge separately from owner evidence.',
+    executor: { status: 'wired', sites: ['src/pages/Chat/KnowledgeChat.tsx:62'] },
+  },
+  {
+    id: 'project-rag-index-storage-budget', wave: 'RAG-12', kind: 'config',
+    key: 'plugins.entries.memory-wiki.config.retrieval.maxStorageBytes', defaultDisplay: '512 MiB',
+    defaultValue: String(PROJECT_RAG_DEFAULTS.maxStorageBytes), risk: 'opt-in',
+    enable: 'Set the index publication storage budget in Knowledge operations.',
+    rollback: 'Restore the previous verified budget and rebuild the current owner index.',
+    riskNote: 'Publication checks actual database, WAL and SHM bytes; staging and retired-generation cleanup remain visible.',
+    executor: { status: 'wired', sites: ['openclaw_runtime/src/knowledge/retrieval/index-controller.ts:258', 'openclaw_runtime/src/knowledge/retrieval/index-controller.ts:268'] },
+  },
   {
     id: 'context-view-tools',
     wave: 'C1',

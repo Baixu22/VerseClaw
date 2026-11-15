@@ -13,6 +13,7 @@ import { createDraftPayloadFromGroundedAnswer, createErrorExperienceInboxPayload
 import { type SearchRow, makeLibrarianMessage, parseLibrarianCheckpoint, KNOWLEDGE_LIBRARIAN_STORAGE_KEY, type KnowledgeLibrarianMessage, type KnowledgeLibrarianCitation, type KnowledgeLibrarianCheckpoint } from '../Knowledge/knowledge-view-utils';
 import { KnowledgeAssistantMessage, KnowledgeAssistantPromptInput, KnowledgeAssistantErrorCard } from '../Knowledge/KnowledgeAssistant';
 import type { KnowledgeAnswerMode } from '@shared/knowledge/answer';
+import { useWorkspacesStore } from '@/stores/workspaces';
 
 export type KnowledgeChatContext = {
   editorTitle?: string;
@@ -49,6 +50,20 @@ export function KnowledgeChat({ context: suppliedContext, embedded = false, onCl
   const [status, setStatus] = useState<KnowledgeStatusResult['status'] | null>(null);
   const [running, setRunning] = useState<string | null>(null);
   const [answerMode, setAnswerMode] = useState<KnowledgeAnswerMode>('strict');
+  const answerModeEdited = useRef(false);
+  const workspaceId = useWorkspacesStore(state => state.activeWorkspaceId);
+  useEffect(() => {
+    let active = true;
+    answerModeEdited.current = false;
+    void (async () => {
+      try {
+        const result = await hostApi.knowledge.operationsStatus();
+        if (active && !answerModeEdited.current && result.success && result.operations)
+          setAnswerMode(result.operations.config.answerMode);
+      } catch { /* The existing strict default remains available during Gateway recovery. */ }
+    })();
+    return () => { active = false; };
+  }, [workspaceId]);
   const [error, setError] = useState<string | null>(null);
   const { state: botState, setActivity, setComposing, reset: resetBot } = useKnowledgeBotActivity();
   const busy = Boolean(running);
@@ -278,7 +293,7 @@ export function KnowledgeChat({ context: suppliedContext, embedded = false, onCl
   return (<div className="mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col bg-background" data-testid="knowledge-chat-page" data-bot-state={botState} data-compact={embedded}>
           <header className={`flex shrink-0 items-center gap-3 text-left ${embedded ? 'justify-end px-3 py-1.5' : 'justify-between border-b border-black/10 px-4 py-3 dark:border-white/10'}`}>
             <select data-testid="knowledge-answer-mode" aria-label={t('librarian.answerMode.label')} value={answerMode}
-              disabled={busy} onChange={event => setAnswerMode(event.target.value as KnowledgeAnswerMode)}
+              disabled={busy} onChange={event => { answerModeEdited.current = true; setAnswerMode(event.target.value as KnowledgeAnswerMode); }}
               className="rounded-md border border-border bg-surface-input px-2 py-1 text-xs text-foreground">
               <option value="strict">{t('librarian.answerMode.strict')}</option>
               <option value="open">{t('librarian.answerMode.open')}</option>

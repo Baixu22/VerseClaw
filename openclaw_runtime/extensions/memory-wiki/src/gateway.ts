@@ -32,6 +32,8 @@ import type { MemoryWikiEmbeddingService } from "./retrieval-embeddings.js";
 import type { MemoryWikiVectorService } from "./retrieval/vector-service.js";
 import type { MemoryWikiRerankService } from "./retrieval-rerank.js";
 import { retrieveMemoryWiki } from "./retrieval/plan-service.js";
+import { memoryWikiNamespaceId } from "./owner-read.js";
+import type { RetrievalCapabilitySnapshotV1 } from "openclaw/plugin-sdk/knowledge-retrieval";
 
 const READ_SCOPE = "operator.read" as const;
 const WRITE_SCOPE = "operator.write" as const;
@@ -136,6 +138,79 @@ export function registerMemoryWikiGatewayMethods(params: {
 }) {
   const { api, config, appConfig } = params;
   api.registerGatewayMethod(
+    "wiki.operations.config",
+    async ({ params: request, respond, client }) => {
+      try {
+        const identity = readIdentity(request, client);
+        if (!identity?.workspaceId || !identity.sessionId)
+          throw new Error("Retrieval configuration requires a backend-owned workspace/session");
+        respond(true, config.retrieval);
+      } catch (error) {
+        respondError(respond, error);
+      }
+    },
+    { scope: READ_SCOPE },
+  );
+  api.registerGatewayMethod(
+    "wiki.operations.status",
+    async ({ params: request, respond, client }) => {
+      try {
+        const identity = readIdentity(request, client);
+        if (!identity?.workspaceId || !identity.sessionId || !params.projection)
+          throw new Error("Retrieval operations require an active backend-owned workspace/session");
+        const current = async <T>(read: () => T | Promise<T>): Promise<T | undefined> => {
+          try {
+            return await read();
+          } catch {
+            return undefined;
+          }
+        };
+        const [embedding, vector, rerank] = await Promise.all([
+          current(() => params.embedding?.status(identity)),
+          current(() => params.vector?.status(identity)),
+          current(() => params.rerank?.status(identity)),
+        ]);
+        const index = params.projection.status(identity);
+        const reasons: string[] = [];
+        if (index.status === "paused") reasons.push("index-paused");
+        if (index.status === "unavailable" || index.status === "degraded")
+          reasons.push("index-unavailable");
+        if (index.storage.budgetExceeded) reasons.push("storage-budget");
+        if (index.lagCount) reasons.push("index-lag");
+        if (config.retrieval.profile !== "local") {
+          if (embedding?.status !== "ready" || vector?.status !== "ready")
+            reasons.push("dense-unavailable");
+          if (rerank?.status !== "ready") reasons.push("rerank-unavailable");
+        }
+        const snapshot: RetrievalCapabilitySnapshotV1 = {
+          schema: "RetrievalCapabilitySnapshot/v1",
+          owner: {
+            namespaceId: memoryWikiNamespaceId(config),
+            workspaceId: identity.workspaceId,
+            sessionId: identity.sessionId,
+          },
+          config: config.retrieval,
+          index,
+          embedding,
+          vector,
+          rerank,
+          reasons,
+          status: ["disabled", "stopped"].includes(index.status)
+            ? "disabled"
+            : reasons.length
+              ? "degraded"
+              : index.sources.some((source) => source.eligible && source.activeGeneration)
+                ? "ready"
+                : "enabled",
+        };
+        respond(true, snapshot);
+      } catch (error) {
+        respondError(respond, error);
+      }
+    },
+    { scope: READ_SCOPE },
+  );
+  api.registerGatewayMethod(
     "wiki.retrieve",
     async ({ params: request, respond, client }) => {
       try {
@@ -159,8 +234,17 @@ export function registerMemoryWikiGatewayMethods(params: {
           (typeof request.deadlineAtMs !== "number" || !Number.isFinite(request.deadlineAtMs))
         )
           throw new Error("Invalid retrieval deadline");
-        const profile = readEnumParam(request, "profile", ["local", "quality", "research"] as const);
-        const mode = readEnumParam(request, "mode", ["off", "manual", "suggest", "auto-read"] as const);
+        const profile = readEnumParam(request, "profile", [
+          "local",
+          "quality",
+          "research",
+        ] as const);
+        const mode = readEnumParam(request, "mode", [
+          "off",
+          "manual",
+          "suggest",
+          "auto-read",
+        ] as const);
         respond(
           true,
           await retrieveMemoryWiki({
@@ -340,6 +424,8 @@ export function registerMemoryWikiGatewayMethods(params: {
     const operations = [
       "start",
       "stop",
+      "pause",
+      "resume",
       "status",
       "reconcile",
       "rebuild",
@@ -361,16 +447,20 @@ export function registerMemoryWikiGatewayMethods(params: {
                   ? await projection.disable(identity)
                   : operation === "status"
                     ? projection.status(identity)
-                    : operation === "reconcile" || operation === "rebuild"
-                      ? await projection.reconcile(identity, operation === "rebuild")
-                      : operation === "idle"
-                        ? await projection.idle(identity)
-                        : await projection.search(
-                            identity,
-                            readStringParam(request, "query", { required: true }),
-                            readPositiveIntegerParam(request, "limit"),
-                          );
-            respond(true, result);
+                    : operation === "pause"
+                      ? await projection.pause(identity)
+                      : operation === "resume"
+                        ? await projection.resume(identity)
+                        : operation === "reconcile" || operation === "rebuild"
+                          ? await projection.reconcile(identity, operation === "rebuild")
+                          : operation === "idle"
+                            ? await projection.idle(identity)
+                            : await projection.search(
+                                identity,
+                                readStringParam(request, "query", { required: true }),
+                                readPositiveIntegerParam(request, "limit"),
+                              );
+            respond(true, operation === "stop" ? projection.status(identity) : result);
           } catch (error) {
             respondError(respond, error);
           }

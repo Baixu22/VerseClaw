@@ -1,6 +1,11 @@
 // Memory Wiki helper module supports config behavior.
 import os from "node:os";
 import path from "node:path";
+import {
+  normalizeProjectRagConfig,
+  type ProjectRagConfigInput,
+  type ProjectRagConfigV2,
+} from "openclaw/plugin-sdk/knowledge-retrieval";
 import { mapPluginConfigIssues } from "openclaw/plugin-sdk/extension-shared";
 import { buildPluginConfigSchema, z, type OpenClawPluginConfigSchema } from "../api.js";
 
@@ -15,6 +20,7 @@ export type WikiSearchBackend = (typeof WIKI_SEARCH_BACKENDS)[number];
 export type WikiSearchCorpus = (typeof WIKI_SEARCH_CORPORA)[number];
 
 export type MemoryWikiPluginConfig = {
+  retrieval?: ProjectRagConfigInput;
   vaultMode?: WikiVaultMode;
   vault?: {
     path?: string;
@@ -61,6 +67,7 @@ export type MemoryWikiPluginConfig = {
 };
 
 export type ResolvedMemoryWikiConfig = {
+  retrieval: ProjectRagConfigV2;
   vaultMode: WikiVaultMode;
   vault: {
     path: string;
@@ -112,6 +119,18 @@ export const DEFAULT_WIKI_SEARCH_BACKEND: WikiSearchBackend = "shared";
 export const DEFAULT_WIKI_SEARCH_CORPUS: WikiSearchCorpus = "wiki";
 
 const MemoryWikiConfigSource = z.strictObject({
+  retrieval: z
+    .strictObject({
+      profile: z.enum(["local", "quality", "research"]).optional(),
+      answerMode: z.enum(["strict", "open"]).optional(),
+      maxStorageBytes: z
+        .number()
+        .int()
+        .min(1024 * 1024)
+        .max(64 * 1024 ** 3)
+        .optional(),
+    })
+    .optional(),
   vaultMode: z.enum(WIKI_VAULT_MODES).optional(),
   vault: z
     .strictObject({
@@ -214,10 +233,10 @@ export function resolveMemoryWikiConfig(
   options?: { homedir?: string },
 ): ResolvedMemoryWikiConfig {
   const homedir = options?.homedir ?? os.homedir();
-  const parsed = config ? MemoryWikiConfigSource.safeParse(config) : null;
-  const safeConfig = parsed?.success ? parsed.data : (config ?? {});
+  const safeConfig = MemoryWikiConfigSource.parse(config ?? {});
 
   return {
+    retrieval: normalizeProjectRagConfig(safeConfig.retrieval ?? {}),
     vaultMode: safeConfig.vaultMode ?? DEFAULT_WIKI_VAULT_MODE,
     vault: {
       path: expandHomePath(

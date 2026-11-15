@@ -1,4 +1,14 @@
 /** Owner-bound source normalization, structural projection and citation verification. */
+export {
+  normalizeProjectRagConfig,
+  PROJECT_RAG_DEFAULTS,
+} from "../../../shared/knowledge/operations.js";
+export type {
+  ProjectRagConfigInput,
+  ProjectRagConfigV2,
+  IndexStatusV1,
+  RetrievalCapabilitySnapshotV1,
+} from "../../../shared/knowledge/operations.js";
 export { normalizeKnowledgeSourceDocument } from "../knowledge/retrieval/source-document.js";
 export { chunkKnowledgeDocument } from "../knowledge/retrieval/chunker.js";
 export { VectorStore, validateVectorRow } from "../knowledge/retrieval/vector-store.js";

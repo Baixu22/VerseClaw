@@ -43,6 +43,7 @@ import { readBoundedKnowledgePage, retrieveSelectedSourceSetEvidence } from './k
 import { prepareKnowledgeReadScope, assertKnowledgeReadScopeCurrent } from './knowledge-read-scope';
 import { normalizeSourceRefV2, isOwnerReadSnapshotV1, evaluateOwnerReadSnapshot } from '../../openclaw_runtime/src/runtime-core/knowledge-owner-read';
 import type { KnowledgeEmbeddingSelection, KnowledgeEmbeddingStatus, KnowledgeEmbeddingStatusResult } from '../../shared/knowledge/embedding';
+import { normalizeProjectRagConfig, type ProjectRagConfigV2, type IndexStatusV1, type KnowledgeIndexResult, type RetrievalCapabilitySnapshotV1 } from '../../shared/knowledge/operations';
 import type { KnowledgeVectorStatus, KnowledgeVectorStatusResult } from '../../shared/knowledge/vector';
 import type { KnowledgeRerankSelection, KnowledgeRerankStatusResult } from '../../shared/knowledge/rerank';
 import type { KnowledgeRerankStatus } from '../../shared/knowledge/rerank';
@@ -3325,13 +3326,31 @@ export function createKnowledgeApi({
   const rpc = <T>(method: string, params: unknown = {}, timeoutMs = 30_000) =>
     gatewayManager.rpc(method, params, timeoutMs) as Promise<T>;
 
+  const indexOperation = async (operation: 'start' | 'stop' | 'pause' | 'resume' | 'rebuild' | 'reconcile' | 'idle'): Promise<KnowledgeIndexResult> => {
+    try {
+      const scope = await prepareKnowledgeReadScope(gatewayManager, {});
+      const index = await rpc<IndexStatusV1>(`wiki.index.${operation}`, { readIdentity: scope.identity }, 30_000);
+      await assertKnowledgeReadScopeCurrent(gatewayManager, scope);
+      return { success: true, index };
+    } catch (error) { return { success: false, error: sanitizeUiErrorText(error) }; }
+  };
+
   const retrieveFromOwner = async (payload: KnowledgeRetrievePayload): Promise<KnowledgeRetrievalReport> => {
-    const profile = payload.profile ?? 'local';
-    if (!Object.hasOwn(RETRIEVAL_PROFILES, profile)) throw new Error('Invalid retrieval profile');
-    const deadlineAtMs = Date.now() + RETRIEVAL_PROFILES[profile].deadlineMs;
-    const signal = AbortSignal.timeout(RETRIEVAL_PROFILES[profile].deadlineMs);
+    if (payload.profile !== undefined && !Object.hasOwn(RETRIEVAL_PROFILES, payload.profile)) throw new Error('Invalid retrieval profile');
+    const startedAt = Date.now();
+    const totalSignal = AbortSignal.timeout(RETRIEVAL_PROFILES[payload.profile ?? 'research'].deadlineMs);
     return waitForRetrievalOperation((async () => {
       const scope = await prepareKnowledgeReadScope(gatewayManager, { sessionKey: payload.sessionKey, workspaceId: payload.workspaceId });
+      let profile = payload.profile;
+      if (profile === undefined) {
+        const remaining = Math.max(1, RETRIEVAL_PROFILES.local.deadlineMs - (Date.now() - startedAt));
+        const selectionSignal = AbortSignal.any([totalSignal, AbortSignal.timeout(remaining)]);
+        const config = await waitForRetrievalOperation(rpc<ProjectRagConfigV2>('wiki.operations.config', { readIdentity: scope.identity }, remaining), selectionSignal);
+        if (config?.schema !== 'ProjectRagConfig/v2') throw new Error('Retrieval configuration is unavailable');
+        profile = normalizeProjectRagConfig({ profile: config.profile, answerMode: config.answerMode, maxStorageBytes: config.maxStorageBytes }).profile;
+      }
+      const deadlineAtMs = startedAt + RETRIEVAL_PROFILES[profile].deadlineMs;
+      const signal = AbortSignal.any([totalSignal, AbortSignal.timeout(Math.max(1, deadlineAtMs - Date.now()))]);
       signal.throwIfAborted();
       const retrieval = await rpc<KnowledgeRetrievalReport>('wiki.retrieve', {
         query: payload.query, profile, mode: payload.mode ?? 'suggest', sourceRefs: payload.sourceRefs,
@@ -3342,7 +3361,7 @@ export function createKnowledgeApi({
       await assertKnowledgeReadScopeCurrent(gatewayManager, scope);
       signal.throwIfAborted();
       return retrieval;
-    })(), signal);
+    })(), totalSignal);
   };
 
   // KS-03: register the three governed target adapters once per process.
@@ -3843,6 +3862,33 @@ export function createKnowledgeApi({
   };
 
   return {
+    operationsStatus: async () => {
+      try {
+        const scope = await prepareKnowledgeReadScope(gatewayManager, {});
+        const operations = await rpc<RetrievalCapabilitySnapshotV1>('wiki.operations.status', { readIdentity: scope.identity }, 12_000);
+        await assertKnowledgeReadScopeCurrent(gatewayManager, scope);
+        return { success: true, operations };
+      } catch (error) { return { success: false, error: sanitizeUiErrorText(error) }; }
+    },
+    operationsConfigure: async payload => {
+      try {
+        const config = normalizeProjectRagConfig(payload);
+        const scope = await prepareKnowledgeReadScope(gatewayManager, {});
+        const snapshot = await rpc<ConfigSnapshot>('config.get', {}, 12_000);
+        await assertKnowledgeReadScopeCurrent(gatewayManager, scope);
+        const { schema: _schema, ...retrieval } = config;
+        await rpc('config.patch', { raw: JSON.stringify({ plugins: { entries: { 'memory-wiki': { config: { retrieval } } } } }),
+          ...(snapshot.hash ? { baseHash: snapshot.hash } : {}), note: 'Update owner-side retrieval configuration.' }, 30_000);
+        return { success: true, config, restartRequired: true };
+      } catch (error) { return { success: false, error: sanitizeUiErrorText(error) }; }
+    },
+    indexEnable: () => indexOperation('start'),
+    indexDisable: () => indexOperation('stop'),
+    indexPause: () => indexOperation('pause'),
+    indexResume: () => indexOperation('resume'),
+    indexRebuild: () => indexOperation('rebuild'),
+    indexReconcile: () => indexOperation('reconcile'),
+    indexCleanup: () => indexOperation('idle'),
     vectorStatus: () => vectorOperation('status'),
     vectorConfigure: payload => vectorOperation('start', payload),
     vectorDisable: () => vectorOperation('stop'),

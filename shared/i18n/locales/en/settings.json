@@ -1037,16 +1037,29 @@
       "cancelled": "Cancelled"
     }
   },
-    "rerank": {
-      "title": "Project evidence reranking",
-      "description": "Reorder admitted evidence with a local endpoint or a configured remote cross-encoder. Local retrieval does not require this service.",
-      "mode": "Service location", "local": "Local endpoint", "remote": "Remote service",
-      "model": "Cross-encoder model", "provider": "Configured provider", "endpoint": "Local endpoint",
-      "configure": "Use this service", "retry": "Retry / refresh credential", "cancel": "Cancel", "disable": "Disable",
-      "status": "Status", "failed": "Reranking service is unavailable.",
-      "states": { "disabled": "Disabled", "ready": "Ready", "unavailable": "Unavailable", "cancelled": "Cancelled" }
-    },
-    "vector": {
+  "rerank": {
+    "title": "Project evidence reranking",
+    "description": "Reorder admitted evidence with a local endpoint or a configured remote cross-encoder. Local retrieval does not require this service.",
+    "mode": "Service location",
+    "local": "Local endpoint",
+    "remote": "Remote service",
+    "model": "Cross-encoder model",
+    "provider": "Configured provider",
+    "endpoint": "Local endpoint",
+    "configure": "Use this service",
+    "retry": "Retry / refresh credential",
+    "cancel": "Cancel",
+    "disable": "Disable",
+    "status": "Status",
+    "failed": "Reranking service is unavailable.",
+    "states": {
+      "disabled": "Disabled",
+      "ready": "Ready",
+      "unavailable": "Unavailable",
+      "cancelled": "Cancelled"
+    }
+  },
+  "vector": {
     "title": "Project vector index",
     "description": "Build a derived vector index from permitted project sources after the embedding model is ready.",
     "backend": "Index backend",
@@ -1065,6 +1078,55 @@
       "ready": "Ready",
       "unavailable": "Unavailable",
       "cancelled": "Cancelled"
+    }
+  },
+  "operations": {
+    "title": "Knowledge operations",
+    "description": "Manage retrieval defaults and the current workspace index.",
+    "sources": "Choose sources and source sets",
+    "owner": "Source owner: Memory Wiki in the current workspace",
+    "profile": "Default retrieval profile",
+    "answerMode": "Default answer strategy",
+    "storageBudget": "Index publication budget (MiB)",
+    "save": "Save configuration",
+    "status": "Capability",
+    "enable": "Enable index",
+    "pause": "Pause",
+    "resume": "Resume",
+    "rebuild": "Rebuild",
+    "reconcile": "Synchronize",
+    "cleanup": "Clean retired generations",
+    "disable": "Disable index",
+    "generations": "Active source generations",
+    "lag": "Sources awaiting indexing",
+    "deleted": "Logically deleted sources",
+    "cleanupPending": "Retired generations awaiting cleanup",
+    "storageUsed": "Database usage (MiB)",
+    "restarting": "Configuration saved. Waiting for Gateway restart and configuration readback.",
+    "failed": "Knowledge operations are unavailable. Retry after the Gateway is ready.",
+    "profiles": {
+      "local": "Local",
+      "quality": "Quality",
+      "research": "Research"
+    },
+    "answers": {
+      "strict": "Strict source evidence",
+      "open": "Source evidence and labeled model knowledge"
+    },
+    "states": {
+      "enabled": "Enabled, awaiting sources",
+      "ready": "Ready",
+      "degraded": "Degraded",
+      "disabled": "Disabled",
+      "unavailable": "Unavailable"
+    },
+    "reasons": {
+      "index-paused": "Indexing is paused. Current owner reads still enforce revocation.",
+      "index-unavailable": "The index needs recovery.",
+      "storage-budget": "The index publication budget has been exceeded.",
+      "index-lag": "Some source changes are awaiting indexing.",
+      "dense-unavailable": "Embedding or vector retrieval is unavailable for this profile.",
+      "rerank-unavailable": "Reranking is unavailable for this profile."
     }
   }
 }

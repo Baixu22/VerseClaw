@@ -54,7 +54,9 @@ async function main() {
       error: error instanceof Error ? error.message : String(error),
     });
   } finally {
-    closeOpenClawStateDatabase();
+    // The long-lived owner checkpoints this shared WAL. A per-job TRUNCATE
+    // waits for concurrent readers and can stall both publication and Gateway RPC.
+    closeOpenClawStateDatabase({ checkpoint: false });
     port.close();
   }
 }

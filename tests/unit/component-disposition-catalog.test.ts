@@ -54,12 +54,12 @@ function mutableManifest(): ComponentDispositionManifest {
 describe('ComponentDispositionManifest/v1', () => {
   it('covers every authority component, DCS flag, runtime leaf, route, Settings section and Settings panel exactly once', () => {
     const result = validateComponentDispositionManifest(COMPONENT_DISPOSITION_MANIFEST, inputs);
-    expect(result.issues).toEqual([]);
+    expect(result.issues, JSON.stringify(result.issues)).toEqual([]);
     expect(result.ok).toBe(true);
     expect(COMPONENT_DISPOSITION_MANIFEST.schemaVersion).toBe('ComponentDispositionManifest/v1');
     expect(new Set(COMPONENT_DISPOSITION_ENTRIES.map((entry) => entry.id)).size).toBe(COMPONENT_DISPOSITION_ENTRIES.length);
     expect(COMPONENT_AUTHORITY_MANIFEST.components).toHaveLength(35);
-    expect(DCS_PROD_FLAGS).toHaveLength(22);
+    expect(DCS_PROD_FLAGS).toHaveLength(25);
     expect(runtimeLeafPaths.length).toBeGreaterThan(100);
   });
 

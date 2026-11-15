@@ -11,4 +11,5 @@ parentPort?.on("message", ({ id, query }: { id: number; query: VectorSearchV1 })
     parentPort?.postMessage({ id, error: error instanceof Error ? error.message : String(error) });
   }
 });
-parentPort?.on("close", () => closeOpenClawStateDatabase());
+// The shared database owner maintains its WAL; this worker only releases its handle.
+parentPort?.on("close", () => closeOpenClawStateDatabase({ checkpoint: false }));

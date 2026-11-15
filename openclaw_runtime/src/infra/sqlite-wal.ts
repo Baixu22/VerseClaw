@@ -13,7 +13,7 @@ type SqliteWalCheckpointMode = "PASSIVE" | "FULL" | "RESTART" | "TRUNCATE";
 
 export type SqliteWalMaintenance = {
   checkpoint: () => boolean;
-  close: () => boolean;
+  close: (options?: { checkpoint?: boolean }) => boolean;
 };
 
 /** Options controlling WAL autocheckpoint and periodic checkpoint behavior. */
@@ -75,10 +75,10 @@ export function configureSqliteWalMaintenance(
 
   return {
     checkpoint,
-    close: () => {
+    close: (closeOptions) => {
       unregister?.();
       unregister = null;
-      return checkpoint();
+      return closeOptions?.checkpoint === false ? true : checkpoint();
     },
   };
 }

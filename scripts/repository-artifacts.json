@@ -3409,7 +3409,8 @@
     "docs/dev/evidence/project-rag/RAG-11/20261115-1451682601/typecheck-report.json",
     "docs/dev/evidence/project-rag/RAG-11/20261115-1451682601/typecheck.log",
     "docs/dev/evidence/project-rag/RAG-11/20261115-1451682601/typecheck.stderr.log",
-    "docs/dev/evidence/project-rag/RAG-11/20261115-1451682601/wrapper-gates.json"
+    "docs/dev/evidence/project-rag/RAG-11/20261115-1451682601/wrapper-gates.json",
+    "docs/dev/project-rag/CONFIG-OPERATIONS-CONTRACT.md"
   ],
   "artifactBatches": {}
 }

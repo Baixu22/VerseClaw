@@ -23,7 +23,7 @@ afterEach(async () => {
   vi.unstubAllEnvs();
   if (root) {
     closeTrackedSqliteHandlesUnder(root);
-    await rm(root, { recursive: true, force: true });
+    await rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   }
   root = undefined;
   expect(backgroundErrors.filter(error => !error.message.includes('cancelled'))).toEqual([]);

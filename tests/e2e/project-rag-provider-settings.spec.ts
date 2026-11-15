@@ -21,7 +21,7 @@ test('Project RAG model settings configure, cancel, retry and refresh real embed
   test.setTimeout(420_000);
   const workspace = join(homeDir, 'embedding-workspace'), vault = join(homeDir, 'embedding-vault');
   await mkdir(workspace, { recursive: true }); await mkdir(join(vault, 'concepts'), { recursive: true });
-  const receipt: Json = { actor: 'codex/project-rag-embedding-electron', driven_by: 'agent', status: 'fail', steps: {} };
+  const receipt: Json = { actor: 'codex/project-rag-g2-20261115', driven_by: 'agent', realHumanEvidence: false, status: 'fail', steps: {} };
   const app = await launchElectronApp({ skipSetup: true, env: { VERSE_CLAW_OPENCLAW_RUNTIME: 'source' } });
   try {
     const page = await getStableWindow(app);

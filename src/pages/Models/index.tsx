@@ -13,6 +13,7 @@ import { trackUiEvent } from '@/lib/telemetry';
 import { cn } from '@/lib/utils';
 import { ProvidersSettings } from '@/components/settings/ProvidersSettings';
 import { KnowledgeEmbeddingSettings } from '@/components/settings/KnowledgeEmbeddingSettings';
+import { KnowledgeOperationsSettings } from '@/components/settings/KnowledgeOperationsSettings';
 import { KnowledgeVectorSettings } from '@/components/settings/KnowledgeVectorSettings';
 import { KnowledgeRerankSettings } from '@/components/settings/KnowledgeRerankSettings';
 import { FeedbackState } from '@/components/common/FeedbackState';
@@ -300,6 +301,7 @@ export function Models({ embedded = false }: { embedded?: boolean } = {}) {
           
           {/* AI Providers Section */}
           <ProvidersSettings />
+          <KnowledgeOperationsSettings />
           <KnowledgeEmbeddingSettings />
           <KnowledgeVectorSettings />
           <KnowledgeRerankSettings />

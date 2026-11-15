@@ -15,6 +15,15 @@ beforeEach(() => {
 });
 
 describe('hostApi facade', () => {
+  it('routes knowledge operations and index controls through the existing Host boundary', async () => {
+    hostInvoke.mockResolvedValue({ ok: true, data: { success: true } });
+    const { hostApi } = await import('@/lib/host-api');
+    await hostApi.knowledge.operationsStatus();
+    await hostApi.knowledge.operationsConfigure({ profile: 'quality', answerMode: 'strict' });
+    await hostApi.knowledge.indexPause(); await hostApi.knowledge.indexResume();
+    expect(hostInvoke.mock.calls.map(([request]) => request.action)).toEqual(['operationsStatus', 'operationsConfigure', 'indexPause', 'indexResume']);
+    expect(hostInvoke.mock.calls.every(([request]) => request.module === 'knowledge')).toBe(true);
+  });
   it('routes handoff creation through Main with the source session and edited draft', async () => {
     hostInvoke.mockResolvedValueOnce({ ok: true, data: { success: true, sessionKey: 'agent:main:derived', handoffDepth: 1 } });
     const { hostApi } = await import('@/lib/host-api');

@@ -116,7 +116,7 @@ export async function retrieveMemoryWiki(input: {
     ]);
   const plan = createRetrievalPlan({
     query: input.query,
-    profile: input.profile,
+    profile: input.profile ?? input.config.retrieval.profile,
     mode: input.mode,
     explicitRefs: input.explicitRefs,
     namespaceIds: [memoryWikiNamespaceId(input.config)],
@@ -296,13 +296,14 @@ export async function retrieveMemoryWiki(input: {
       if (reason) return reason;
       if (page.ownerSnapshot.content !== hit.data.snippet) return "chunk-content-changed";
       hit.data.title = page.title;
-      const freshnessKnown = [page.ownerSnapshot.policy.verifiedAt, page.ownerSnapshot.policy.updatedAt]
-        .some(value => Number.isFinite(Date.parse(value ?? "")));
+      const freshnessKnown = [
+        page.ownerSnapshot.policy.verifiedAt,
+        page.ownerSnapshot.policy.updatedAt,
+      ].some((value) => Number.isFinite(Date.parse(value ?? "")));
       hit.data.freshnessLevel = freshnessKnown ? "fresh" : "unknown";
       hit.data.matchedClaimStatus = page.hasConflicts ? "contradicted" : undefined;
       hit.data.ownerConfirmed =
-        ["confirmed", "high-trust"].includes(page.ownerSnapshot.policy.trust) &&
-        freshnessKnown;
+        ["confirmed", "high-trust"].includes(page.ownerSnapshot.policy.trust) && freshnessKnown;
       hit.data.metadata = {
         type: page.pageType ?? page.kind,
         knowledgeKind: page.pageType ?? page.kind,

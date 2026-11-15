@@ -207,6 +207,14 @@
         "harness/specs/fixtures/rsi-live-acceptance/complete-cohort-20261106-v8/calibration/tf-0298-a06/admission.json"
       ],
       "reason": "The completed frozen run and its independent admission pack retain the same immutable calibration receipt under their separately verified manifests."
+    },
+    {
+      "sha256": "dd0741f5198468bc148c6220ce18097df173a92283afc9bb27aae8c22f5c6939",
+      "paths": [
+        "docs/dev/evidence/project-rag/RAG-08/20261113-2355b6c19/provider-retry/electron/project-rag-provider-setti-69fa0-esh-real-embedding-services/embedding-local-ready.png",
+        "docs/dev/evidence/project-rag/RAG-11/20261115-1451682601/diagnostic-electron/electron/project-rag-provider-setti-69fa0-esh-real-embedding-services/embedding-local-ready.png"
+      ],
+      "reason": "Candidate-bound RAG-08 and RAG-11 acceptance receipts retain the same embedding-ready screen under their own run paths; keep both immutable evidence references."
     }
   ]
 }
