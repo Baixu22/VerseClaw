@@ -390,18 +390,45 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
     coordinator = await openCoordinator(page);
     await expect(coordinator).toContainText(task.id);
 
-    const locales: Array<{ locale: Locale; title: string; active: string }> = [];
+    await app.evaluate((_electron, target) => {
+      const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+      const observed = ipcMain as unknown as {
+        _invokeHandlers: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
+        coordinatorActivityReads: number;
+      };
+      const handler = observed._invokeHandlers.get('host:invoke');
+      if (!handler) throw new Error('host:invoke unavailable');
+      observed.coordinatorActivityReads = 0;
+      observed._invokeHandlers.set('host:invoke', async (event, request) => {
+        const result = await handler(event, request);
+        const input = request as { module?: string; action?: string; payload?: { workspaceId?: string; sessionKey?: string } };
+        const response = result as HostResponse<ActivitySnapshot>;
+        if (input.module === 'sessionActivity' && input.action === 'snapshot'
+          && input.payload?.workspaceId === target.workspaceId && input.payload?.sessionKey === target.sessionKey
+          && response.ok && response.data?.snapshot.completionBatches.some((item) => item.batchId === target.batchId)) {
+          observed.coordinatorActivityReads++;
+        }
+        return result;
+      });
+    }, { workspaceId: workspace.id, sessionKey, batchId: batch.batchId });
+    const activityReadCount = () => app.evaluate(() => {
+      const { ipcMain } = process.mainModule!.require('electron') as typeof import('electron');
+      return (ipcMain as unknown as { coordinatorActivityReads: number }).coordinatorActivityReads;
+    });
+    const locales: Array<{ locale: Locale; title: string; active: string; activityReadsOnOpen: number }> = [];
     for (const locale of ['en', 'zh', 'ja', 'ru'] as const) {
       await hostInvoke(app, 'settings', 'set', { key: 'language', value: locale });
       await reloadChat(app, page, sessionKey);
       await expect(page.locator('html')).toHaveAttribute('lang', locale);
+      const readsBeforeOpen = await activityReadCount();
       coordinator = await openCoordinator(page);
       const copy = COORDINATOR_COPY[locale];
       const title = coordinator.getByText(copy.title, { exact: true });
       await expect(title).toBeVisible({ timeout: 30_000 });
       await expect(coordinator).toContainText(copy.active);
       await expect(coordinator.getByTestId(`coordinator-worker-${batch.batchId}`)).toContainText(worker.roleName);
-      locales.push({ locale, title: await title.innerText(), active: copy.active });
+      await expect.poll(activityReadCount).toBeGreaterThan(readsBeforeOpen);
+      locales.push({ locale, title: await title.innerText(), active: copy.active, activityReadsOnOpen: await activityReadCount() - readsBeforeOpen });
       await page.getByTestId('resource-popover-close').click();
     }
 

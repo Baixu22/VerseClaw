@@ -27,6 +27,8 @@ Chat 可将同一会话和任务迁移到另一个已配置检出，保留目标
 
 Runtime 管理的工作树归属、创建阶段和合并意图持久保存在 SQLite 中。重启后可恢复归属；路径被替换、创建未完成或合并结果未知时保留资源并拒绝继续使用旧资格。[注册与恢复契约](harness/specs/guides/execution-domain-registry.md)。
 
+打开资源弹窗会刷新当前会话的协调器状态与 worker 回执。
+
 受管工具在执行前联合核对任务领取、会话代次和持久 checkout writer，并与现有合并、冻结和清理共用资源 owner。writer 在工具之间保持占用，未知效果与后台进程需要原 owner 结清。[写入占用契约](harness/specs/guides/checkout-writer-ownership.md)说明转交、恢复和外部写入边界。
 
 会话菜单采用浅灰／石墨灰的不透明表面，显示模型品牌图标和完整模型名，并在会话状态中标识关联工作树。

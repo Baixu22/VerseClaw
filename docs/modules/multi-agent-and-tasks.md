@@ -18,6 +18,8 @@ Handoff 在激活前固定运行时确认的子会话代次。激活失败保留
 
 目录绑定先在既有 coordinator binding 中保存暂停的待生效意图，再更新 Runtime 和任务引用，确认后激活。响应丢失或激活写盘失败保留该意图；重读和同参重试复用原修订，代次变化会拒绝恢复。
 
+打开资源弹窗会刷新当前会话的协调器状态与 worker 回执；重新加载页面后，可在这里读取已完成子会话的结果并返回其会话。
+
 检查点对话框读取当前会话代次，恢复请求携带同一代次供 Host 核对；身份尚未加载时保留列表并禁用恢复。
 
 > 面向问题：Agent、Persona、Role、Team、Subagent 分别是什么？普通 Chat 何时进入多智能体？Task Ledger、Task Loop、ClawGraph 和 Mission Control 各自拥有哪一层状态？

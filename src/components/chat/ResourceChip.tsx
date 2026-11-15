@@ -40,6 +40,7 @@ export function ResourceChip() {
   const activeWorkspace = useWorkspacesStore((state) => state.activeWorkspace);
   const generation = useChatStore((state) => state.sessions.find((session) => session.key === currentSessionKey)?.sessionId);
   const activitySnapshot = useSessionActivityStore((state) => selectSessionActivitySnapshot(state, activeWorkspace?.id, currentSessionKey, generation));
+  const loadSessionActivity = useSessionActivityStore((state) => state.load);
   const scope = useMemo(() => ({ workspaceId: activeWorkspace?.id, rootPath: activeWorkspace?.rootPath, sessionKey: currentSessionKey, generation }), [activeWorkspace?.id, activeWorkspace?.rootPath, currentSessionKey, generation]);
   const scopeRef = useRef(scope); scopeRef.current = scope;
   const [coordinatorBinding, setCoordinatorBinding] = useState<WorkspaceCoordinatorBinding | null>(null);
@@ -71,6 +72,7 @@ export function ResourceChip() {
     const [resolved, envelope] = await Promise.allSettled([
       hostApi.workspaces.resolveCoordinator({ workspaceId: scope.workspaceId, agentId, sessionKey: currentSessionKey }),
       hostApi.resourceEnvelope.getState(),
+      loadSessionActivity({ workspaceId: scope.workspaceId, sessionKey: currentSessionKey }),
     ]);
     if (scopeRef.current !== scope) return;
     if (resolved.status === 'fulfilled') {
@@ -80,7 +82,7 @@ export function ResourceChip() {
       setCoordinatorBinding(cachedBinding);
     }
     if (envelope.status === 'fulfilled') setResourceEnvelope(envelope.value);
-  }, [agentId, cachedBinding, currentSessionKey, scope]);
+  }, [agentId, cachedBinding, currentSessionKey, loadSessionActivity, scope]);
   const binding = coordinatorBinding?.workspaceId === activeWorkspace?.id && coordinatorBinding?.sessionKey === currentSessionKey
     ? coordinatorBinding : cachedBinding;
   const runCoordinatorAction = async (action: 'bind' | 'pause' | 'resume') => {
