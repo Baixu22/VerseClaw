@@ -70,7 +70,6 @@ ownedPaths: &paths
   - tests/e2e/fixtures/electron.ts
   - tests/e2e/autonomy-host-readiness.spec.ts
   - tests/e2e/visual-tune.spec.ts
-  - tests/e2e/fixtures/electron-executable.mjs
   - tests/e2e/fixtures/electron-executable.ts
   - tests/e2e/fixtures/electron-process-cleanup.ts
   - tests/unit/electron-executable.test.ts
@@ -130,6 +129,7 @@ acceptance:
   - Child-session fixture preparation creates at most four independent sessions per batch, waits for every creation response, and saves confirmed drafts serially through the existing Workspace owner in child order. The original counts, labels, and acceptance time limits remain fixed.
   - Paired crash recovery consumes the already-validated TF-0662 restart path from bb8541ba6: the known Host start timeout and eventual Gateway readiness are recorded separately before reading back the original generation and objective.
   - Source E2E launches may select a byte-identical staged Electron runtime through the existing G4 executable resolver; explicit per-test executables take precedence.
+  - Paired baseline inputs permit only the declared transitive executable resolver alongside the five measured helpers; both sides retain identical dependency bytes and reject other input changes.
   - Cleanup reports launch markers remaining on disk after native process checks and removal, retains the detected count, and preserves markers when process discovery is unavailable.
 requiredTests:
   - pnpm exec vitest run tests/unit/electron-executable.test.ts tests/unit/electron-process-identity.test.ts --maxWorkers=1 --no-file-parallelism
