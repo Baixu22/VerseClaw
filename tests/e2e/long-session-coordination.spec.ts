@@ -466,6 +466,16 @@ test('opens the long-session coordinator from Chat and verifies receipts, naviga
       innerHeight: window.innerHeight,
       devicePixelRatio: window.devicePixelRatio,
     }));
+    expect(wide.width).toBeGreaterThan(0);
+    expect(wide.height).toBeGreaterThan(0);
+    expect(Math.abs(wideViewport.innerWidth - wide.width)).toBeLessThanOrEqual(2);
+    expect(Math.abs(wideViewport.innerHeight - wide.height)).toBeLessThanOrEqual(2);
+    expect(narrow.width).toBeGreaterThan(0);
+    expect(narrow.height).toBeGreaterThan(0);
+    expect(Math.abs(narrowViewport.innerWidth - narrow.width)).toBeLessThanOrEqual(2);
+    expect(Math.abs(narrowViewport.innerHeight - narrow.height)).toBeLessThanOrEqual(2);
+    expect(narrowViewport.innerWidth).toBeLessThan(wideViewport.innerWidth);
+    expect(narrowEvidence.pixels.width).toBeLessThan(wideEvidence.pixels.width);
     await pinWindowContentSize(app, requestedWide);
 
     const screenshots = [

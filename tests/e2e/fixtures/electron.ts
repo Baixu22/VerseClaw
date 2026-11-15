@@ -259,13 +259,38 @@ async function pinWindowContentSize(
   size: { width: number; height: number },
 ): Promise<{ width: number; height: number }> {
   return await app.evaluate(async ({ BrowserWindow }, target) => {
-    const win = BrowserWindow.getAllWindows()[0];
+    const windows = BrowserWindow.getAllWindows().filter(window => !window.isDestroyed() && !window.webContents.isDestroyed());
+    const win = windows.find(window => window.isVisible()) ?? windows[0];
     if (!win) throw new Error('pinWindowContentSize: no BrowserWindow available');
+    const deadline = Date.now() + 30_000;
+    const settle = () => new Promise(resolve => setTimeout(resolve, 50));
+    if (win.isMinimized()) win.restore();
     if (win.isFullScreen()) win.setFullScreen(false);
     if (win.isMaximized()) win.unmaximize();
+    while (win.isMinimized() || win.isFullScreen() || win.isMaximized()) {
+      if (Date.now() >= deadline) throw new Error('pinWindowContentSize: window state did not settle');
+      await settle();
+    }
+    const bounds = win.getBounds(), content = win.getContentBounds();
+    const [minimumWidth, minimumHeight] = win.getMinimumSize();
+    const expected = {
+      width: Math.max(target.width, minimumWidth - (bounds.width - content.width)),
+      height: Math.max(target.height, minimumHeight - (bounds.height - content.height)),
+    };
     win.setContentSize(target.width, target.height);
-    const [width, height] = win.getContentSize();
-    return { width, height };
+    let measured = { width: 0, height: 0 };
+    while (Date.now() < deadline) {
+      if (win.isDestroyed() || win.webContents.isDestroyed()) throw new Error('pinWindowContentSize: window closed during resize');
+      const [width, height] = win.getContentSize();
+      measured = { width, height };
+      if (width > 0 && height > 0 && Math.abs(width - expected.width) <= 2 && Math.abs(height - expected.height) <= 2) {
+        const viewport = await win.webContents.executeJavaScript('({ width: window.innerWidth, height: window.innerHeight })') as { width: number; height: number };
+        const zoom = win.webContents.getZoomFactor();
+        if (Math.abs(viewport.width * zoom - width) <= 2 && Math.abs(viewport.height * zoom - height) <= 2) return measured;
+      }
+      await settle();
+    }
+    throw new Error(`pinWindowContentSize: resize did not settle; requested=${JSON.stringify(target)} expected=${JSON.stringify(expected)} measured=${JSON.stringify(measured)}`);
   }, size);
 }
 
