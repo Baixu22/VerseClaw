@@ -528,7 +528,7 @@ const SUMMARIZATION_PROMPT = `The messages above are the live conversation being
 
 Evidence-fidelity rules:
 - Preserve every still-valid user objective, explicit deliverable, completed task, and current goal state. Never claim work is unfinished when the transcript shows it completed.
-- When the user requires facts to be preserved verbatim, copy each still-valid statement exactly, including its labels, wording, and punctuation.
+- When the user requires facts to be preserved verbatim, copy each still-valid statement exactly as one complete original line, including its labels, wording, and punctuation. Keep the label and value together; do not extract a new label, add a colon, repeat an identifier, or quote only a fragment.
 - Preserve exact file paths, function/method names, command lines, error messages, exit codes, test counts, identifiers, and verification evidence.
 - For failures, preserve the chain: what was tried -> exact failure -> evidenced root cause -> adjustment/fallback -> validation -> next action. Do not speculate beyond the transcript.
 - Do not state numeric repetition counts or attempt numbers unless you counted each occurrence in the transcript and the count is exact; when uncertain write "repeatedly".
@@ -548,7 +548,7 @@ Use the previous summary only as background. Produce a fresh readable handoff th
 
 Rules:
 - Preserve still-valid objectives, decisions, constraints, blockers, file paths, test results, and causal chains.
-- When the user requires facts to be preserved verbatim, copy each still-valid statement exactly, including its labels, wording, and punctuation.
+- When the user requires facts to be preserved verbatim, copy each still-valid statement exactly as one complete original line, including its labels, wording, and punctuation. Keep the label and value together; do not extract a new label, add a colon, repeat an identifier, or quote only a fragment.
 - Remove or mark obsolete branches as superseded instead of presenting them as current.
 - Preserve every explicit user deliverable and completed work item, including verification evidence and final report content.
 - For failures, preserve the chain: attempt -> exact failure -> evidenced root cause -> adjustment -> validation -> next action.

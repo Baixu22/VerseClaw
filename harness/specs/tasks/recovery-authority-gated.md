@@ -165,7 +165,7 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
-  - Initial and update model calls pass the verbatim statement contract and active statements; branch regressions and same-candidate live compression readback verify preservation.
+  - Initial and update model calls pass active statements as complete original lines without synthesized labels, colons, or repeated identifiers; branch regressions and same-candidate live compression readback verify preservation.
   - A recovery observer accepts a running Session reconciliation only after its original execution phase records needsReconciliation; owner reservation decisions remain pending within the original observation budget.
   - Probe decisions retain observation order independently of PID filenames; the frozen baseline projection and its retained fields remain unchanged.
   - All five real entry points query recoveryAuthorityV1 in gated mode; adapters describe observed facts rather than independently authorizing effects.
