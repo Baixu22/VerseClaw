@@ -95,6 +95,25 @@ export function isRecoveryWarmupSettled(
   );
 }
 
+/** Reconciliation is complete when the original execution phase records it. */
+export function isRecoveryDiskVerdictSettled(value: {
+  disk: Pick<ReturnType<typeof readRecoveryDisk>, "main" | "flows">;
+  decisions: Array<{ action: string }>;
+}): boolean {
+  const main = value.disk.main;
+  if (!main?.status) return false;
+  return (
+    main.status !== "running" ||
+    (main.abortedLastRun === true &&
+      value.decisions.some((decision) => decision.action === "reconcile") &&
+      value.disk.flows.some(
+        (flow) =>
+          flow.execution_phase === "effect_pending" &&
+          JSON.parse(String(flow.state_json))?.recovery?.needsReconciliation === true,
+      ))
+  );
+}
+
 export function effectLines(path: string): string[] {
   return existsSync(path) ? readFileSync(path, "utf8").trim().split("\n").filter(Boolean) : [];
 }
@@ -115,7 +134,8 @@ export function readProbeFiles(dir: string, prefix: string) {
           observedAt: number;
           facts?: Record<string, unknown>;
         },
-    );
+    )
+    .sort((left, right) => left.observedAt - right.observedAt || left.file.localeCompare(right.file));
 }
 export async function eventually<T>(
   read: () => T | Promise<T>,

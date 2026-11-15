@@ -19,6 +19,7 @@ import {
   effectLines,
   eventually,
   isRecoveryWarmupSettled,
+  isRecoveryDiskVerdictSettled,
   observeRecoveryVerdict,
   persistEvidence,
   persistFailedRecoveryObservation,
@@ -330,10 +331,7 @@ test.describe("recovery contract eval windows", () => {
           });
           const observed = await observeRecoveryVerdict(
             observe,
-            (v) =>
-              v.disk.main?.status !== "running" ||
-              (v.disk.main?.abortedLastRun === true &&
-                v.decisions.some((d) => d.action === "reconcile")),
+            isRecoveryDiskVerdictSettled,
           );
           const final = observed.value;
           const observationTimedOut = observed.timedOut,

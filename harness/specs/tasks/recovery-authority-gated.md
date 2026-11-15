@@ -25,6 +25,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/embedded-agent-runner/run.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/run/params.ts
   - openclaw_runtime/packages/agent-core/src/harness/compaction/compaction.ts
+  - openclaw_runtime/src/agents/agent-hooks/compaction-summary-contract.test.ts
   - openclaw_runtime/extensions/codex/src/app-server/run-attempt.ts
   - openclaw_runtime/src/agents/command/attempt-execution.ts
   - openclaw_runtime/src/agents/command/types.ts
@@ -92,8 +93,10 @@ touchedAreas:
   - openclaw_runtime/src/state/openclaw-state-schema.generated.ts
   - openclaw_runtime/src/state/openclaw-state-db.delivery-backfill.test.ts
   - tests/unit/recovery-authority*.test.ts
+  - tests/unit/recovery-observation.test.ts
   - tests/unit/session-lifecycle-generation-barrier.test.ts
   - tests/e2e/recovery*.spec.ts
+  - tests/e2e/fixtures/recovery-contract-probe.ts
   - scripts/recovery*.mjs
   - scripts/typecheck-agent-dev.mjs
   - src/components/file-preview/MonacoViewer.tsx
@@ -130,10 +133,12 @@ requiredRules:
   - runtime-lifecycle-governance-boundary
   - recovery-authority-owner-admission
 expectedUserBehavior:
+  - Initial and updated compaction summaries preserve active user-designated statements verbatim, including their labels, wording, and punctuation.
   - An explicit authority gate makes all five existing recovery owners consult the same decision policy before mutation or continuation.
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - tests/unit/recovery-observation.test.ts
   - openclaw_runtime/src/agents/agent-hooks/compaction-summary-contract.test.ts
   - openclaw_runtime/packages/agent-core/src/harness/compaction/prepare-compaction.test.ts
   - openclaw_runtime/src/acp/control-plane/manager.recovery.flow.test.ts
@@ -160,6 +165,9 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Initial and update model calls pass the verbatim statement contract and active statements; branch regressions and same-candidate live compression readback verify preservation.
+  - A recovery observer accepts a running Session reconciliation only after its original execution phase records needsReconciliation; owner reservation decisions remain pending within the original observation budget.
+  - Probe decisions retain observation order independently of PID filenames; the frozen baseline projection and its retained fields remain unchanged.
   - All five real entry points query recoveryAuthorityV1 in gated mode; adapters describe observed facts rather than independently authorizing effects.
   - Owner identity, boundary digest, decision, attempt consumption, and pending admission commit together in the existing owner store before a continuation.
   - Concurrent and repeated admissions of the same boundary produce one continuation; failed, ambiguous, and unacknowledged attempts remain recorded across a real process restart.
