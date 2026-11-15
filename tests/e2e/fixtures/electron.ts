@@ -466,6 +466,19 @@ async function launchVerseClawElectron(
    * when diagnosing one.
    */
   if (process.env.CLAWX_E2E_APP_LOGS === '1') {
+    app.process().once('exit', (code, signal) => {
+      process.stderr.write(`[app:exit] pid=${app.process().pid} code=${code} signal=${signal}\n`);
+    });
+    const trackWindow = (window: Page) => {
+      window.once('close', () => process.stderr.write(`[app:window-close] pid=${app.process().pid}\n`));
+      window.once('crash', () => process.stderr.write(`[app:window-crash] pid=${app.process().pid}\n`));
+    };
+    for (const window of app.windows()) trackWindow(window);
+    app.on('window', trackWindow);
+    await app.evaluate(({ app: electronApp }) => {
+      electronApp.on('window-all-closed', () => console.error('[app:lifecycle] window-all-closed'));
+      electronApp.on('render-process-gone', (_event, _contents, details) => console.error('[app:renderer-gone]', details.reason));
+    });
     app.process().stdout?.on('data', (chunk: Buffer) => {
       process.stderr.write(`[app:out] ${String(chunk)}`);
     });

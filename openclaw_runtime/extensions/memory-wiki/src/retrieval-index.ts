@@ -172,6 +172,16 @@ export function createMemoryWikiProjectionService(options: {
           throw new Error("Trusted workspace/session identity is required to enable an index");
         const selection: IndexSelection = {
           enabled: true,
+          // Vector startup may enable an already selected owner. Only resume clears its pause.
+          paused:
+            selected?.enabled &&
+            ["workspaceId", "workspaceDir", "agentSessionKey", "sessionId"].every(
+              (field) =>
+                identity[field as keyof MemoryWikiReadIdentity] ===
+                selected!.identity[field as keyof MemoryWikiReadIdentity],
+            )
+              ? selected.paused
+              : false,
           identity: structuredClone(identity),
           vault: config.vault.path,
         };

@@ -35,6 +35,9 @@ async function main() {
       profile: lexicalProjectionProfile,
       tokenizer: lexicalProjectionTokenizer,
     });
+    const store = new ProjectionStore({ database: { path: input.databasePath } });
+    const staged = store.stage(input.job, chunks);
+    if (!staged) throw new Error("Projection staging lost its source or lease fence");
     const permitted = new Promise<boolean>((resolve) => {
       port.once("message", (message: { nonce?: string; kind?: string; allowed?: boolean }) => {
         resolve(
@@ -44,8 +47,7 @@ async function main() {
     });
     port.postMessage({ nonce: input.nonce, kind: "prepared" });
     if (!(await permitted)) throw new Error("Owner rejected projection publication");
-    const store = new ProjectionStore({ database: { path: input.databasePath } });
-    const generation = store.publish(input.job, chunks);
+    const generation = store.activate(input.job, staged.generationId, input.maxStorageBytes);
     port.postMessage({ nonce: input.nonce, kind: "published", generation });
   } catch (error) {
     port.postMessage({

@@ -196,6 +196,42 @@ describe("Project RAG canonical config and operational recovery", () => {
     expect(restored.errors).toEqual([]);
   }, 120000);
 
+  it("keeps paused observation bounded and renews expired work only on resume", async () => {
+    const f = await fixture(), { service } = f.make();
+    await writeFile(f.file, f.raw(1, "RAG12_PAUSED_TTL"));
+    await service.enable(f.identity);
+    await service.idle(f.identity);
+    await service.pause(f.identity);
+    await writeFile(f.file, f.raw(2, "RAG12_PAUSED_CHANGED"));
+    await service.reconcile(f.identity);
+    const before = service.status(f.identity);
+    openOpenClawStateDatabase().db.exec("UPDATE knowledge_index_jobs SET deadline_at = 0 WHERE state = 'pending'");
+    await service.reconcile(f.identity);
+    await service.reconcile(f.identity);
+    expect(service.status(f.identity).jobs.map(job => job.jobId)).toEqual(before.jobs.map(job => job.jobId));
+    expect(service.status(f.identity).sources[0].intentSequence).toBe(before.sources[0].intentSequence);
+    await service.resume(f.identity);
+    await service.idle(f.identity);
+    expect((await service.search(f.identity, "RAG12_PAUSED_CHANGED")).candidates.length).toBeGreaterThan(0);
+  }, 120000);
+
+  it("preserves the pause intent when a vector service enables the same owner again", async () => {
+    const f = await fixture(), { service } = f.make();
+    await writeFile(f.file, f.raw(1, "RAG12_VECTOR_PAUSED"));
+    await service.enable(f.identity);
+    await service.idle(f.identity);
+    const generation = service.status(f.identity).sources[0].activeGeneration;
+    await service.pause(f.identity);
+    await service.enable(structuredClone(f.identity));
+    expect(service.status(f.identity)).toMatchObject({ status: "paused", activeWorker: false });
+    expect(service.status(f.identity).sources[0].activeGeneration).toBe(generation);
+    await service.stop();
+    const restored = f.make().service;
+    await restored.start();
+    await restored.enable(structuredClone(f.identity));
+    expect(restored.status(f.identity).status).toBe("paused");
+  }, 120000);
+
   it("hides foreign index inventory and requires explicit owner selection for mutations", async () => {
     const f = await fixture(),
       { service } = f.make();
@@ -251,6 +287,17 @@ describe("Project RAG canonical config and operational recovery", () => {
     ).toBeGreaterThan(0);
     expect(await readFile(f.file, "utf8")).toBe(original);
     expect(rollback.errors).toEqual([]);
+  }, 120000);
+
+  it("rejects new generation growth when the database began below its budget", async () => {
+    const f = await fixture(), { service, errors } = f.make(1024 ** 2);
+    await writeFile(f.file, f.raw(1, "RAG12_GROWTH owner controlled publication.\n".repeat(5000)));
+    await service.enable(f.identity);
+    await service.idle(f.identity);
+    expect(service.status(f.identity).sources.every(source => !source.eligible)).toBe(true);
+    expect(service.status(f.identity).jobs.some(job => job.error === "index-storage-budget-exceeded")).toBe(true);
+    expect((await service.search(f.identity, "RAG12_GROWTH")).candidates).toEqual([]);
+    expect(errors.some(error => error === "index-storage-budget-exceeded")).toBe(true);
   }, 120000);
 
   it("uses canonical default profile while explicit requests override it", async () => {

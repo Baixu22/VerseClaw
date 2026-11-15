@@ -12,6 +12,7 @@ export type ProjectionSourceIntent = {
   reason?: string;
   deadlineAt: number;
   force?: boolean;
+  refreshInterrupted?: boolean;
 };
 
 export type ProjectionIndexJob = {

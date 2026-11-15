@@ -12,6 +12,7 @@ export type ProjectionWorkerInput =
       job: ProjectionIndexJob;
       snapshot: OwnerReadSnapshotV1;
       databasePath: string;
+      maxStorageBytes?: number;
     }
   | { kind: "cleanup"; sourceKey: string; databasePath: string; deadlineAt: number };
 

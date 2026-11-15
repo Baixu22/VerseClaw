@@ -1,4 +1,5 @@
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -16,6 +17,7 @@ import { knowledgeChunkId } from "./citation.js";
 import type { KnowledgeChunkV2 } from "./contracts.js";
 import { lexicalProjectionProfile, lexicalProjectionProfileDigest } from "./index-profile.js";
 import { ProjectionStore } from "./projection-store.js";
+import { runProjectionWorker } from "./index-worker.js";
 import type { ProjectionSourceIntent } from "./projection-contracts.js";
 
 let root: string | undefined;
@@ -112,6 +114,50 @@ describe("ProjectionStore real SQLite lifecycle", () => {
     });
     expect(result.status).toBe("available");
     expect(result.candidates[0]?.chunk.chunkId).toBe(f.chunk.chunkId);
+  });
+
+  it("measures committed staging before activating within the storage budget", () => {
+    const f = fixture();
+    f.store.observe(f.intent());
+    const job = f.store.claim({ namespaceId: "ns-1", leaseOwner: "budget", leaseMs: 30_000 })!;
+    const pathToDb = path.join(root!, "openclaw.sqlite");
+    const bytes = () =>
+      [pathToDb, pathToDb + "-wal", pathToDb + "-shm"].reduce((sum, file) => {
+        try {
+          return sum + statSync(file).size;
+        } catch {
+          return sum;
+        }
+      }, 0);
+    const maximum = bytes() + 8192;
+    const generation = f.store.stage(job, [f.chunk])!;
+    expect(generation.state).toBe("building");
+    expect(f.store.sources("ns-1")[0].eligible).toBe(false);
+    expect(
+      f.store.search({ namespaceId: "ns-1", query: "alpha", limit: 10, context: f.context })
+        .candidates,
+    ).toEqual([]);
+    expect(bytes()).toBeGreaterThan(maximum);
+    expect(() => f.store.activate(job, generation.generationId, maximum)).toThrow(
+      "index-storage-budget-exceeded",
+    );
+    expect(f.store.sources("ns-1")[0].eligible).toBe(false);
+    expect(f.store.generations(job.sourceKey)[0].state).toBe("building");
+    expect(f.store.activate(job, generation.generationId, 8 * 1024 ** 2)?.state).toBe("active");
+  });
+
+  it("keeps a staged generation unreadable when its owner is revoked before activation", () => {
+    const f = fixture();
+    f.store.observe(f.intent());
+    const job = f.store.claim({ namespaceId: "ns-1", leaseOwner: "stage", leaseMs: 30_000 })!;
+    const generation = f.store.stage(job, [f.chunk])!;
+    f.store.observe(f.intent({ eventId: "revoke-staged", eligible: false, reason: "revoked" }));
+    expect(() => f.store.activate(job, generation.generationId)).toThrow(/fence/);
+    expect(f.store.sources("ns-1")[0].eligible).toBe(false);
+    expect(
+      f.store.search({ namespaceId: "ns-1", query: "alpha", limit: 10, context: f.context })
+        .candidates,
+    ).toEqual([]);
   });
 
   it("revokes readability on invalidate and does not resurrect an old event", () => {
@@ -224,6 +270,126 @@ describe("ProjectionStore real SQLite lifecycle", () => {
         .candidates,
     ).toEqual([]);
     expect(f.store.publish(job, [f.chunk])).toBeUndefined();
+  });
+
+  it("refreshes an expired unfinished intent without rebuilding an active generation", () => {
+    const f = fixture();
+    const first = f.store.observe(f.intent());
+    f.clock.now += 60_001;
+    f.store.recover("ns-1");
+    expect(f.store.jobs("ns-1")[0].state).toBe("failed");
+    const next = f.store.observe(
+      f.intent({ eventId: "resume", deadlineAt: f.clock.now + 60_000, refreshInterrupted: true }),
+    );
+    expect(next.job?.jobId).not.toBe(first.job?.jobId);
+    expect(next.job).toMatchObject({ state: "pending", attempt: 0 });
+    expect(
+      f.store.jobs("ns-1").some((job) => job.jobId === first.job?.jobId && job.state === "failed"),
+    ).toBe(true);
+    const claimed = f.store.claim({ namespaceId: "ns-1", leaseOwner: "resumed", leaseMs: 30_000 })!;
+    const generation = f.store.publish(claimed, [f.chunk]);
+    f.clock.now += 60_001;
+    const stable = f.store.observe(
+      f.intent({ eventId: "observe-active", deadlineAt: f.clock.now + 60_000 }),
+    );
+    expect(stable.source.activeGeneration).toBe(generation?.generationId);
+    expect(stable.source.intentSequence).toBe(next.source.intentSequence);
+  });
+
+  it("does not consume the failure budget when claims are cancelled repeatedly", () => {
+    const f = fixture();
+    const first = f.store.observe(f.intent());
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const claimed = f.store.claim({
+        namespaceId: "ns-1",
+        leaseOwner: "paused",
+        leaseMs: 30_000,
+      })!;
+      f.store.fail(claimed, "Projection worker cancelled", 0);
+    }
+    expect(f.store.jobs("ns-1")[0]).toMatchObject({ state: "pending", attempt: 0 });
+    const resumed = f.store.observe(
+      f.intent({
+        eventId: "resume-cancelled",
+        deadlineAt: f.clock.now + 60_000,
+        refreshInterrupted: true,
+      }),
+    );
+    expect(resumed.job?.jobId).not.toBe(first.job?.jobId);
+    expect(resumed.job).toMatchObject({ state: "pending", attempt: 0 });
+  });
+
+  it("carries genuine failures through cancellation and recovery without resetting their budget", () => {
+    const f = fixture();
+    f.store.observe(f.intent());
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const claimed = f.store.claim({
+        namespaceId: "ns-1",
+        leaseOwner: "failing",
+        leaseMs: 30_000,
+      })!;
+      f.store.fail(claimed, "actual build failure", 0);
+    }
+    const cancelled = f.store.claim({ namespaceId: "ns-1", leaseOwner: "pause", leaseMs: 30_000 })!;
+    f.store.fail(cancelled, "Projection worker cancelled", 0);
+    expect(f.store.jobs("ns-1")[0]).toMatchObject({ state: "pending", attempt: 2 });
+    const recovered = f.store.observe(
+      f.intent({ eventId: "recover-mixed", refreshInterrupted: true }),
+    );
+    expect(recovered.job).toMatchObject({ state: "pending", attempt: 2 });
+    const final = f.store.claim({ namespaceId: "ns-1", leaseOwner: "last", leaseMs: 30_000 })!;
+    expect(final.attempt).toBe(3);
+    f.store.fail(final, "actual build failure", 0);
+    const stillFailed = f.store.observe(
+      f.intent({ eventId: "cannot-reset", refreshInterrupted: true }),
+    );
+    expect(stillFailed.job).toMatchObject({ jobId: final.jobId, state: "failed", attempt: 3 });
+  });
+
+  it("does not renew interrupted jobs during a passive paused observation", () => {
+    const f = fixture();
+    const first = f.store.observe(f.intent());
+    f.clock.now += 60_001;
+    f.store.recover("ns-1");
+    for (let index = 0; index < 3; index++) {
+      f.clock.now += 60_001;
+      const observed = f.store.observe(
+        f.intent({ eventId: `paused-${index}`, deadlineAt: f.clock.now + 60_000 }),
+      );
+      expect(observed.source.intentSequence).toBe(first.source.intentSequence);
+      expect(observed.job?.jobId).toBe(first.job?.jobId);
+    }
+    expect(f.store.jobs("ns-1")).toHaveLength(1);
+  });
+
+  it("renews an actual worker deadline failure during explicit recovery", async () => {
+    const f = fixture(Date.now());
+    f.store.observe(f.intent({ deadlineAt: f.clock.now + 100 }));
+    const job = f.store.claim({ namespaceId: "ns-1", leaseOwner: "timeout", leaseMs: 100 })!;
+    const worker = path.join(root!, "deadline-worker.mjs");
+    writeFileSync(worker, "setInterval(() => {}, 1000);");
+    await expect(
+      runProjectionWorker(
+        {
+          kind: "cleanup",
+          sourceKey: job.sourceKey,
+          databasePath: path.join(root!, "openclaw.sqlite"),
+          deadlineAt: job.deadlineAt,
+        },
+        { workerUrl: pathToFileURL(worker), verifyBeforePublish: async () => false },
+      ),
+    ).rejects.toThrow("Projection worker deadline exceeded");
+    f.clock.now = Date.now();
+    f.store.fail(job, "Projection worker deadline exceeded", 0);
+    const recovered = f.store.observe(
+      f.intent({
+        eventId: "recover-deadline",
+        deadlineAt: f.clock.now + 60_000,
+        refreshInterrupted: true,
+      }),
+    );
+    expect(recovered.job?.jobId).not.toBe(job.jobId);
+    expect(recovered.job).toMatchObject({ state: "pending", attempt: 1 });
   });
 
   it("fences a recovered lease across independent store instances", () => {

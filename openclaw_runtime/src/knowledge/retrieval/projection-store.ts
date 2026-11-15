@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { statSync } from "node:fs";
 import type { Selectable } from "kysely";
 import {
   executeSqliteQuerySync,
@@ -525,7 +526,9 @@ export class ProjectionStore {
           existing.reason === reason
         : false;
 
-      if (existing && sameIntent && !intent.force) {
+      let refresh = intent.force === true;
+      let carriedAttempts = 0;
+      if (existing && sameIntent && !refresh) {
         const currentJob = executeSqliteQueryTakeFirstSync(
           database.db,
           kysely
@@ -536,10 +539,29 @@ export class ProjectionStore {
             .orderBy("updated_at", "desc")
             .limit(1),
         );
-        return {
-          source: sourceState(existing),
-          ...(currentJob ? { job: jobFromRow(currentJob) } : {}),
-        };
+        const interrupted =
+          currentJob?.error === "Projection worker cancelled" ||
+          currentJob?.error === "Projection worker deadline exceeded";
+        const expired =
+          currentJob &&
+          currentJob.deadline_at <= now &&
+          ((currentJob.state === "pending" && currentJob.error === null) ||
+            currentJob.error === "projection deadline exceeded" ||
+            currentJob.error === "projection deadline or attempt budget exhausted");
+        // Execution recovery renews interrupted work after a fresh owner observation.
+        // Passive scans keep completed data and failure history at the same intent.
+        refresh =
+          intent.refreshInterrupted === true &&
+          intent.eligible &&
+          existing.eligible === 0 &&
+          (currentJob?.attempt ?? 3) < 3 &&
+          Boolean(interrupted || expired);
+        if (!refresh)
+          return {
+            source: sourceState(existing),
+            ...(currentJob ? { job: jobFromRow(currentJob) } : {}),
+          };
+        carriedAttempts = currentJob?.attempt ?? 0;
       }
 
       // A changed owner range needs a new projection even when the full-file
@@ -547,8 +569,7 @@ export class ProjectionStore {
       const sourceChanged = !existing || !sameSource(sourceFromColumns(existing), intent.source);
       const profileChanged = !existing || existing.profile_digest !== intent.profileDigest;
       const desiredChanged = !existing || existing.desired_eligible !== desiredEligible;
-      const advancesIntent =
-        sourceChanged || profileChanged || desiredChanged || intent.force === true;
+      const advancesIntent = sourceChanged || profileChanged || desiredChanged || refresh;
       const intentSequence = advancesIntent
         ? (existing?.intent_sequence ?? 0) + 1
         : existing!.intent_sequence;
@@ -629,7 +650,7 @@ export class ProjectionStore {
               profile_digest: intent.profileDigest,
               intent_sequence: intentSequence,
               state: deadlineExceeded ? "failed" : "pending",
-              attempt: 0,
+              attempt: carriedAttempts,
               lease_owner: null,
               lease_expires_at: null,
               deadline_at: intent.deadlineAt,
@@ -812,6 +833,33 @@ export class ProjectionStore {
     }, this.#database);
   }
   publish(job: ProjectionIndexJob, chunks: KnowledgeChunkV2[]): ProjectionGeneration | undefined {
+    return this.#writeGeneration(job, chunks, true);
+  }
+
+  stage(job: ProjectionIndexJob, chunks: KnowledgeChunkV2[]): ProjectionGeneration | undefined {
+    return this.#writeGeneration(job, chunks, false);
+  }
+
+  activate(
+    job: ProjectionIndexJob,
+    generationId: string,
+    maxStorageBytes?: number,
+  ): ProjectionGeneration | undefined {
+    if (job.schema !== "IndexJob/v1" || sourceKeyFor(job.source) !== job.sourceKey)
+      throw new Error("projection job identity is invalid");
+    requiredString(generationId, "generationId");
+    if (maxStorageBytes !== undefined) integer(maxStorageBytes, "maxStorageBytes", 1);
+    return runOpenClawStateWriteTransaction(
+      (database) => this.#activatePrepared(database, job, generationId, maxStorageBytes),
+      this.#database,
+    );
+  }
+
+  #writeGeneration(
+    job: ProjectionIndexJob,
+    chunks: KnowledgeChunkV2[],
+    activate: boolean,
+  ): ProjectionGeneration | undefined {
     if (job.schema !== "IndexJob/v1" || sourceKeyFor(job.source) !== job.sourceKey) {
       throw new Error("projection job identity is invalid");
     }
@@ -930,93 +978,155 @@ export class ProjectionStore {
         );
       }
 
-      const activationNow = this.#time();
-      const finalJob = executeSqliteQueryTakeFirstSync(
-        transactionDatabase.db,
-        kysely
-          .selectFrom("knowledge_index_jobs")
-          .selectAll()
-          .where("job_id", "=", job.jobId)
-          .where("source_key", "=", job.sourceKey)
-          .where("intent_sequence", "=", job.intentSequence),
-      );
-      const finalSource = executeSqliteQueryTakeFirstSync(
-        transactionDatabase.db,
-        kysely
-          .selectFrom("knowledge_index_sources")
-          .selectAll()
-          .where("source_key", "=", job.sourceKey),
-      );
-      if (
-        !finalJob ||
-        finalJob.state !== "leased" ||
-        finalJob.lease_owner !== job.leaseOwner ||
-        finalJob.lease_expires_at === null ||
-        finalJob.lease_expires_at <= activationNow ||
-        finalJob.deadline_at <= activationNow ||
-        finalJob.profile_digest !== job.profileDigest ||
-        !finalSource ||
-        finalSource.intent_sequence !== job.intentSequence ||
-        finalSource.profile_digest !== job.profileDigest ||
-        finalSource.desired_eligible !== 1 ||
-        !sameSource(sourceFromColumns(finalSource), job.source)
-      ) {
-        throw new Error("projection publication lost its lease, deadline, or source fence");
-      }
-      executeSqliteQuerySync(
-        transactionDatabase.db,
-        kysely
-          .updateTable("knowledge_index_generations")
-          .set({ state: "retired", retired_at: activationNow })
-          .where("source_key", "=", job.sourceKey)
-          .where("state", "=", "active"),
-      );
-      const activated = executeSqliteQuerySync(
-        transactionDatabase.db,
-        kysely
-          .updateTable("knowledge_index_generations")
-          .set({ state: "active", published_at: activationNow })
-          .where("generation_id", "=", generationId)
-          .where("state", "=", "building")
-          .returningAll(),
-      ).rows[0];
-      if (!activated) {
-        throw new Error("projection generation activation CAS failed");
-      }
-      const sourceUpdate = executeSqliteQuerySync(
-        transactionDatabase.db,
-        kysely
-          .updateTable("knowledge_index_sources")
-          .set({ eligible: 1, active_generation_id: generationId, updated_at: activationNow })
-          .where("source_key", "=", job.sourceKey)
-          .where("intent_sequence", "=", job.intentSequence)
-          .where("profile_digest", "=", job.profileDigest)
-          .where("desired_eligible", "=", 1),
-      );
-      const jobUpdate = executeSqliteQuerySync(
-        transactionDatabase.db,
-        kysely
-          .updateTable("knowledge_index_jobs")
-          .set({
-            state: "complete",
-            lease_owner: null,
-            lease_expires_at: null,
-            error: null,
-            updated_at: activationNow,
-          })
-          .where("job_id", "=", job.jobId)
-          .where("state", "=", "leased")
-          .where("lease_owner", "=", job.leaseOwner),
-      );
-      if (
-        Number(sourceUpdate.numAffectedRows ?? 0n) !== 1 ||
-        Number(jobUpdate.numAffectedRows ?? 0n) !== 1
-      ) {
-        throw new Error("projection activation fence changed during publication");
-      }
-      return generationFromRow(activated);
+      if (!activate)
+        return {
+          schema: "ProjectionGeneration/v1",
+          generationId,
+          sourceKey: job.sourceKey,
+          intentSequence: job.intentSequence,
+          state: "building",
+          chunkCount: chunks.length,
+        };
+      return this.#activatePrepared(transactionDatabase, job, generationId);
     }, this.#database);
   }
+  #activatePrepared(
+    transactionDatabase: OpenClawStateDatabase,
+    job: ProjectionIndexJob,
+    generationId: string,
+    maxStorageBytes?: number,
+  ): ProjectionGeneration {
+    const kysely = getNodeSqliteKysely<ProjectionDatabase>(transactionDatabase.db);
+    const activationNow = this.#time();
+    const finalJob = executeSqliteQueryTakeFirstSync(
+      transactionDatabase.db,
+      kysely
+        .selectFrom("knowledge_index_jobs")
+        .selectAll()
+        .where("job_id", "=", job.jobId)
+        .where("source_key", "=", job.sourceKey)
+        .where("intent_sequence", "=", job.intentSequence),
+    );
+    const finalSource = executeSqliteQueryTakeFirstSync(
+      transactionDatabase.db,
+      kysely
+        .selectFrom("knowledge_index_sources")
+        .selectAll()
+        .where("source_key", "=", job.sourceKey),
+    );
+    if (
+      !finalJob ||
+      finalJob.state !== "leased" ||
+      finalJob.lease_owner !== job.leaseOwner ||
+      finalJob.lease_expires_at === null ||
+      finalJob.lease_expires_at <= activationNow ||
+      finalJob.deadline_at <= activationNow ||
+      finalJob.profile_digest !== job.profileDigest ||
+      !finalSource ||
+      finalSource.intent_sequence !== job.intentSequence ||
+      finalSource.profile_digest !== job.profileDigest ||
+      finalSource.desired_eligible !== 1 ||
+      !sameSource(sourceFromColumns(finalSource), job.source)
+    ) {
+      throw new Error("projection publication lost its lease, deadline, or source fence");
+    }
+    executeSqliteQuerySync(
+      transactionDatabase.db,
+      kysely
+        .updateTable("knowledge_index_generations")
+        .set({ state: "retired", retired_at: activationNow })
+        .where("source_key", "=", job.sourceKey)
+        .where("state", "=", "active"),
+    );
+    const activated = executeSqliteQuerySync(
+      transactionDatabase.db,
+      kysely
+        .updateTable("knowledge_index_generations")
+        .set({ state: "active", published_at: activationNow })
+        .where("generation_id", "=", generationId)
+        .where("source_key", "=", job.sourceKey)
+        .where("intent_sequence", "=", job.intentSequence)
+        .where("profile_digest", "=", job.profileDigest)
+        .where("state", "=", "building")
+        .returningAll(),
+    ).rows[0];
+    if (!activated) {
+      throw new Error("projection generation activation CAS failed");
+    }
+    const sourceUpdate = executeSqliteQuerySync(
+      transactionDatabase.db,
+      kysely
+        .updateTable("knowledge_index_sources")
+        .set({ eligible: 1, active_generation_id: generationId, updated_at: activationNow })
+        .where("source_key", "=", job.sourceKey)
+        .where("intent_sequence", "=", job.intentSequence)
+        .where("profile_digest", "=", job.profileDigest)
+        .where("desired_eligible", "=", 1),
+    );
+    const jobUpdate = executeSqliteQuerySync(
+      transactionDatabase.db,
+      kysely
+        .updateTable("knowledge_index_jobs")
+        .set({
+          state: "complete",
+          lease_owner: null,
+          lease_expires_at: null,
+          error: null,
+          updated_at: activationNow,
+        })
+        .where("job_id", "=", job.jobId)
+        .where("state", "=", "leased")
+        .where("lease_owner", "=", job.leaseOwner),
+    );
+    if (
+      Number(sourceUpdate.numAffectedRows ?? 0n) !== 1 ||
+      Number(jobUpdate.numAffectedRows ?? 0n) !== 1
+    ) {
+      throw new Error("projection activation fence changed during publication");
+    }
+    if (maxStorageBytes !== undefined)
+      this.#assertStorageBudget(transactionDatabase, maxStorageBytes);
+    return generationFromRow(activated);
+  }
+
+  #assertStorageBudget(database: OpenClawStateDatabase, maximum: number): void {
+    const fileSize = (file: string) => {
+      try {
+        return statSync(file).size;
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === "ENOENT") return 0;
+        throw error;
+      }
+    };
+    const dbBytes = fileSize(database.path);
+    const bytes = dbBytes + fileSize(database.path + "-wal") + fileSize(database.path + "-shm");
+    const pageSize = Number(database.db.prepare("PRAGMA page_size").get()?.page_size);
+    const logicalBytes =
+      Number(database.db.prepare("PRAGMA page_count").get()?.page_count) * pageSize;
+    // Chunk/FTS staging has committed before the owner grants activation. Reserve
+    // every page of the metadata tables and indexes touched by this transaction;
+    // WAL commit/checkpoint and SHM growth must also fit before visibility changes.
+    const metadataBytes = Number(
+      database.db
+        .prepare(`
+      SELECT COALESCE(sum(pgsize), 0) AS bytes FROM dbstat
+      WHERE name IN (SELECT name FROM sqlite_schema WHERE tbl_name IN (
+        'knowledge_index_sources', 'knowledge_index_generations', 'knowledge_index_jobs'
+      ))
+    `)
+        .get()?.bytes,
+    );
+    const reserve =
+      metadataBytes + Math.ceil(metadataBytes / pageSize) * 24 + pageSize * 2 + 32768 + 32;
+    if (
+      ![bytes, pageSize, logicalBytes, metadataBytes, reserve].every(Number.isSafeInteger) ||
+      pageSize <= 0
+    )
+      throw new Error("index-storage-budget-accounting-unavailable");
+    if (bytes + Math.max(0, logicalBytes - dbBytes) + reserve > maximum)
+      throw new Error("index-storage-budget-exceeded");
+  }
+
   fail(job: ProjectionIndexJob, reason: string, retryDelayMs: number): void {
     if (typeof reason !== "string") {
       throw new Error("projection failure reason must be a string");
@@ -1040,14 +1150,20 @@ export class ProjectionStore {
         return;
       }
       const nextAttemptAt = Math.min(current.deadline_at, now + delay);
+      // Pausing releases this claim; earlier genuine failures remain spent.
+      const attempt =
+        reason === "Projection worker cancelled"
+          ? Math.max(0, current.attempt - 1)
+          : current.attempt;
       const exhausted =
-        current.attempt >= 3 || current.deadline_at <= now || nextAttemptAt >= current.deadline_at;
+        attempt >= 3 || current.deadline_at <= now || nextAttemptAt >= current.deadline_at;
       executeSqliteQuerySync(
         database.db,
         kysely
           .updateTable("knowledge_index_jobs")
           .set({
             state: exhausted ? "failed" : "pending",
+            attempt,
             lease_owner: null,
             lease_expires_at: null,
             next_attempt_at: nextAttemptAt,

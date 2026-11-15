@@ -11,6 +11,10 @@ diffBase: 8bff5be359d987c3308bc8886f0b4296be1d01f2
 touchedAreas:
   - "openclaw_runtime/extensions/memory-wiki/**"
   - "openclaw_runtime/src/knowledge/retrieval/index-controller.ts"
+  - "openclaw_runtime/src/knowledge/retrieval/index-worker.ts"
+  - "openclaw_runtime/src/knowledge/retrieval/projection-store.ts"
+  - "openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts"
+  - "openclaw_runtime/src/knowledge/retrieval/projection-contracts.ts"
   - "openclaw_runtime/src/knowledge/retrieval/index.worker.ts"
   - "openclaw_runtime/src/knowledge/retrieval/vector.worker.ts"
   - "openclaw_runtime/src/infra/sqlite-wal.ts"
@@ -29,6 +33,7 @@ touchedAreas:
   - "tests/unit/component-authority-manifest.test.ts"
   - "tests/unit/component-disposition-catalog.test.ts"
   - "tests/e2e/project-rag-provider-settings.spec.ts"
+  - "tests/e2e/fixtures/electron.ts"
   - "docs/dev/evidence/project-rag/RAG-12/**"
   - "artifacts/agent-dev-deep-test/history.json"
   - "artifacts/agent-dev-deep-test/report.json"

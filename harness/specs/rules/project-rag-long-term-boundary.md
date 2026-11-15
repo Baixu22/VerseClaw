@@ -34,4 +34,4 @@ requiredTests:
 13. DCS 按知识候选的准入 ordinal 保序，以 chunk/冲突组为完整预算单元。RetainedEvidenceManifest/v1 绑定实际 retained bytes；model-only QA 发送 owner pins，由相同的 DCS 路径装配正文。
 14. 可选知识读取有本地取消和等待上限，响应绑定完整查询、会话、workspace、scope、mode 与 profile。Auto-read 只接受当前 confirmed 来源的唯一精确命中及内容证据，或有效校准结果；Used Knowledge 读取同一运行的最终 DCS 收据。普通排队发送保留引用与附件。
 15. 检索与带 SourceRef pin 的原文检查直接读取当前 owner 字节，重验权限、revision、digest 和原文范围。导入及派生 Markdown 刷新由既有未固定来源的 owner 操作执行。
-16. 默认检索方案、回答策略和索引发布空间预算由 owner 的严格配置解析；scope/mode 不双存。暂停意图存入既有 SQLite state，撤权继续生效；状态分别回读当前代际、索引滞后、逻辑删除、旧代际清理与真实磁盘占用。
+16. 默认检索方案、回答策略和索引发布空间预算由 owner 的严格配置解析；scope/mode 不双存。暂停意图存入既有 SQLite state，同一 owner 的重复启用保持暂停，撤权继续生效；恢复或未暂停启动时，过期或取消的未完成作业在新 owner 观察后重新调度，暂停扫描保持原 intent。chunk/FTS staging 提交后仍不可检索，激活事务重验 owner、lease 和包含元数据提交预留的空间预算；状态分别回读当前代际、索引滞后、逻辑删除、旧代际清理与真实磁盘占用。

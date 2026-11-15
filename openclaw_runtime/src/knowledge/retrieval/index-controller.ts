@@ -74,7 +74,7 @@ export class KnowledgeProjectionController {
         void this.reconcile().catch((error) => this.#error(error));
       }, 1000);
       this.#timer.unref();
-      await this.reconcile();
+      await this.reconcile(false, !this.#paused);
     } catch (error) {
       await this.stop();
       this.#error(error);
@@ -121,8 +121,8 @@ export class KnowledgeProjectionController {
     this.#debounce.unref();
   }
 
-  reconcile(force = false): Promise<void> {
-    if (this.#scanInFlight && !force) return this.#scanInFlight;
+  reconcile(force = false, refreshInterrupted = false): Promise<void> {
+    if (this.#scanInFlight && !force && !refreshInterrupted) return this.#scanInFlight;
     const operation = this.#scan.then(async () => {
       if (this.#stopped) return;
       let subjects: string[];
@@ -171,6 +171,7 @@ export class KnowledgeProjectionController {
           eventId: randomUUID(),
           deadlineAt: Date.now() + 60_000,
           force,
+          refreshInterrupted,
         });
       }
       this.#lastError = undefined;
@@ -258,7 +259,13 @@ export class KnowledgeProjectionController {
           if (this.#maxStorageBytes && this.#storageBytes() >= this.#maxStorageBytes)
             throw new Error("index-storage-budget-exceeded");
           const receipt = await runProjectionWorker(
-            { kind: "build", job, snapshot: result.snapshot, databasePath: this.#databasePath },
+            {
+              kind: "build",
+              job,
+              snapshot: result.snapshot,
+              databasePath: this.#databasePath,
+              maxStorageBytes: this.#maxStorageBytes,
+            },
             {
               signal: abort.signal,
               verifyBeforePublish: async () => {
@@ -314,7 +321,8 @@ export class KnowledgeProjectionController {
 
   async resume() {
     this.#paused = false;
-    await this.reconcile();
+    this.#store.recover(this.#owner.namespaceId);
+    await this.reconcile(false, true);
   }
 
   status(): IndexStatusV1 {

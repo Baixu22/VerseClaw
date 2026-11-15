@@ -63,6 +63,17 @@ test('Project RAG model settings configure, cancel, retry and refresh real embed
     await expect(page.getByTestId('knowledge-embedding-settings')).toHaveCount(0);
     await page.evaluate(() => { window.location.hash = '#/settings/models'; });
     await expect(page.getByTestId('embedding-mode')).toHaveValue('local');
+    const file = join(vault, 'concepts/embedding.md');
+    await writeFile(file, `---\ntitle: Embedding source\nrevision: 1\nstatus: active\ntrust: confirmed\nscope:\n  workspaceId: ${owner.id}\n---\nProject RAG source owners enforce access before embedding.\n`);
+    await page.getByTestId('index-enable').click();
+    await expect(page.getByTestId('operations-status')).toHaveAttribute('data-state', 'ready', { timeout: 30_000 });
+    await page.getByTestId('vector-configure').click();
+    await expect(page.getByTestId('vector-status')).toHaveAttribute('data-state', 'ready', { timeout: 90_000 });
+    await page.getByTestId('index-pause').click();
+    await expect.poll(async () => {
+      const status = await host(page, 'knowledge', 'operationsStatus');
+      return (status.operations as { index: { status: string } }).index.status;
+    }).toBe('paused');
     await host(page, 'gateway', 'stop');
     try { await host(page, 'gateway', 'start'); } catch (error) { if (!String(error).includes('timed out')) throw error; }
     await expect.poll(async () => (await host(page, 'gateway', 'status')).state, { timeout: 120_000 }).toBe('running');
@@ -70,8 +81,15 @@ test('Project RAG model settings configure, cancel, retry and refresh real embed
       { timeout: 120_000 }).toBe('ready');
     await expect(page.getByTestId('embedding-status')).toHaveAttribute('data-state', 'ready', { timeout: 15_000 });
     await expect(page.getByTestId('knowledge-embedding-settings').getByRole('alert')).toHaveCount(0);
-    const file = join(vault, 'concepts/embedding.md');
-    await writeFile(file, `---\ntitle: Embedding source\nrevision: 1\nstatus: active\ntrust: confirmed\nscope:\n  workspaceId: ${owner.id}\n---\nProject RAG source owners enforce access before embedding.\n`);
+    await expect.poll(async () => {
+      const status = await host(page, 'knowledge', 'operationsStatus');
+      return (status.operations as { index: { status: string } }).index.status;
+    }, { timeout: 30_000 }).toBe('paused');
+    (receipt.steps as Json).vectorStartupPreservedPause = true;
+    await page.getByTestId('index-resume').click();
+    await expect(page.getByTestId('operations-status')).toHaveAttribute('data-state', 'ready', { timeout: 30_000 });
+    await page.getByTestId('vector-disable').click();
+    await expect(page.getByTestId('vector-status')).toHaveAttribute('data-state', 'disabled');
     const answer = await host(page, 'knowledge', 'answerFromSourceSet', {
       question: 'Who checks access before embedding?', sourceRefs: [{ id: 'concepts/embedding.md', path: 'concepts/embedding.md', kind: 'wiki' }],
       workspaceId: owner.id, semantic: true,
