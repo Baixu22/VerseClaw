@@ -1,0 +1,53 @@
+{
+  "schema": "ProjectRagVisualReadback/v1",
+  "candidate": "258457d6a45a0bab5b32eed47b88745dde84f666",
+  "actor": "codex/project-rag-g2-relay-01a1df5c",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "status": "pass",
+  "inspectedBy": "main-agent through view_image",
+  "images": [
+    {
+      "name": "ready",
+      "path": "D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-operations-2584\\electron\\project-rag-settings-opera-9209a-ery-revocation-and-rollback\\rag12-ready.png",
+      "sha256": "f511d4e4cfb4dbb7646f1a72a42441fc7a122ead14a767a02c1d6749911f886a",
+      "status": "pass",
+      "observation": "Local / Strict / 512 MiB 显示清楚，ready 为 1 个有效来源、0 滞后；表单与操作无重叠。"
+    },
+    {
+      "name": "paused",
+      "path": "D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-operations-2584\\electron\\project-rag-settings-opera-9209a-ery-revocation-and-rollback\\rag12-paused.png",
+      "sha256": "8aae2e5a7bab734357e61cdac34b45471590c9f6acc38cea557fbb7bac090905",
+      "status": "pass",
+      "observation": "paused 与待索引原因可见，Resume 可用，1 个待索引来源和旧代际清理与收据一致。"
+    },
+    {
+      "name": "quality-degraded",
+      "path": "D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-operations-2584\\electron\\project-rag-settings-opera-9209a-ery-revocation-and-rollback\\rag12-quality-degraded.png",
+      "sha256": "056f4d295b6ec76744043f00c86b0d2b1c3fc5baa0dfc1cf2fc6947f4de12784",
+      "status": "pass",
+      "observation": "Quality / Open / 256 MiB 回读，dense 与 rerank 不可用原因逐项显示。"
+    },
+    {
+      "name": "rollback",
+      "path": "D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-operations-2584\\electron\\project-rag-settings-opera-9209a-ery-revocation-and-rollback\\rag12-rollback-ready.png",
+      "sha256": "56d1043acdeb74468983802934c0b77f0401284fd39dd1a55cf36c11cf9c967c",
+      "status": "pass",
+      "observation": "恢复 Local / Strict / 512 MiB 与 ready，10 个有效来源、0 滞后和0待清理显示清楚。"
+    },
+    {
+      "name": "local-provider",
+      "path": "D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-electron-2584\\electron\\project-rag-provider-setti-69fa0-esh-real-embedding-services\\embedding-local-ready.png",
+      "sha256": "23ef344fc37d846cb10a1bf520291fd99fe23189faa53d6550d979438c6d35fd",
+      "status": "pass",
+      "observation": "本地 google/embeddinggemma-300m ready / 768 可见，按钮与状态布局正常。"
+    },
+    {
+      "name": "remote-provider",
+      "path": "D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-electron-2584\\electron\\project-rag-provider-setti-69fa0-esh-real-embedding-services\\embedding-remote-ready.png",
+      "sha256": "97d9c911c00e137872eae9345705285ee02496651099b6881bb3f079510657bd",
+      "status": "pass",
+      "observation": "SiliconFlow / Qwen3-VL-Embedding-8B ready / 4096 可见，远端表单正常换行。"
+    }
+  ]
+}

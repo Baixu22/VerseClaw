@@ -1,0 +1,380 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 2,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 21,
+  "numPassedTests": 21,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1794762848322,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle publishes chunks and FTS atomically, then searches the active generation",
+          "status": "passed",
+          "title": "publishes chunks and FTS atomically, then searches the active generation",
+          "duration": 1193.8821000000007,
+          "failureMessages": [],
+          "location": {
+            "line": 96,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle measures committed staging before activating within the storage budget",
+          "status": "passed",
+          "title": "measures committed staging before activating within the storage budget",
+          "duration": 227.41659999999956,
+          "failureMessages": [],
+          "location": {
+            "line": 119,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle keeps a staged generation unreadable when its owner is revoked before activation",
+          "status": "passed",
+          "title": "keeps a staged generation unreadable when its owner is revoked before activation",
+          "duration": 162.16920000000027,
+          "failureMessages": [],
+          "location": {
+            "line": 149,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle revokes readability on invalidate and does not resurrect an old event",
+          "status": "passed",
+          "title": "revokes readability on invalidate and does not resurrect an old event",
+          "duration": 193.58140000000003,
+          "failureMessages": [],
+          "location": {
+            "line": 163,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle keeps repeated semantic polls idempotent without growing the event ledger",
+          "status": "passed",
+          "title": "keeps repeated semantic polls idempotent without growing the event ledger",
+          "duration": 172.95740000000023,
+          "failureMessages": [],
+          "location": {
+            "line": 189,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle recovers expired pending deadlines and expired leases through one CAS claim",
+          "status": "passed",
+          "title": "recovers expired pending deadlines and expired leases through one CAS claim",
+          "duration": 176.9421000000002,
+          "failureMessages": [],
+          "location": {
+            "line": 200,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle rejects a locator whose byte and line spans do not match the quote",
+          "status": "passed",
+          "title": "rejects a locator whose byte and line spans do not match the quote",
+          "duration": 144.71370000000024,
+          "failureMessages": [],
+          "location": {
+            "line": 217,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle keeps the subject row stable when its byte locator changes during a stop",
+          "status": "passed",
+          "title": "keeps the subject row stable when its byte locator changes during a stop",
+          "duration": 203.54080000000067,
+          "failureMessages": [],
+          "location": {
+            "line": 228,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle fences the old generation when only the admitted source range changes",
+          "status": "passed",
+          "title": "fences the old generation when only the admitted source range changes",
+          "duration": 341.1243000000004,
+          "failureMessages": [],
+          "location": {
+            "line": 252,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle refreshes an expired unfinished intent without rebuilding an active generation",
+          "status": "passed",
+          "title": "refreshes an expired unfinished intent without rebuilding an active generation",
+          "duration": 161.4396999999999,
+          "failureMessages": [],
+          "location": {
+            "line": 275,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle does not consume the failure budget when claims are cancelled repeatedly",
+          "status": "passed",
+          "title": "does not consume the failure budget when claims are cancelled repeatedly",
+          "duration": 180.48649999999998,
+          "failureMessages": [],
+          "location": {
+            "line": 299,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle carries genuine failures through cancellation and recovery without resetting their budget",
+          "status": "passed",
+          "title": "carries genuine failures through cancellation and recovery without resetting their budget",
+          "duration": 187.46370000000024,
+          "failureMessages": [],
+          "location": {
+            "line": 322,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle does not renew interrupted jobs during a passive paused observation",
+          "status": "passed",
+          "title": "does not renew interrupted jobs during a passive paused observation",
+          "duration": 167.3085000000001,
+          "failureMessages": [],
+          "location": {
+            "line": 349,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle renews an actual worker deadline failure during explicit recovery",
+          "status": "passed",
+          "title": "renews an actual worker deadline failure during explicit recovery",
+          "duration": 237.3172999999997,
+          "failureMessages": [],
+          "location": {
+            "line": 365,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle fences a recovered lease across independent store instances",
+          "status": "passed",
+          "title": "fences a recovered lease across independent store instances",
+          "duration": 162.9277000000002,
+          "failureMessages": [],
+          "location": {
+            "line": 395,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle rolls back a whole generation when FTS insertion fails and leaves shared state readable",
+          "status": "passed",
+          "title": "rolls back a whole generation when FTS insertion fails and leaves shared state readable",
+          "duration": 265.54149999999936,
+          "failureMessages": [],
+          "location": {
+            "line": 413,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle keeps terminal budgets closed until an explicit rebuild and expires unclaimed jobs",
+          "status": "passed",
+          "title": "keeps terminal budgets closed until an explicit rebuild and expires unclaimed jobs",
+          "duration": 269.1128000000008,
+          "failureMessages": [],
+          "location": {
+            "line": 432,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle supersedes an in-flight build and cleanup never changes the invalidation tombstone",
+          "status": "passed",
+          "title": "supersedes an in-flight build and cleanup never changes the invalidation tombstone",
+          "duration": 190.35380000000077,
+          "failureMessages": [],
+          "location": {
+            "line": 452,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle publishes more chunks than one SQLite parameter batch atomically",
+          "status": "passed",
+          "title": "publishes more chunks than one SQLite parameter batch atomically",
+          "duration": 303.08040000000074,
+          "failureMessages": [],
+          "location": {
+            "line": 475,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle never relabels recreated empty FTS as complete and recovers on explicit rebuild",
+          "status": "passed",
+          "title": "never relabels recreated empty FTS as complete and recovers on explicit rebuild",
+          "duration": 223.0013999999992,
+          "failureMessages": [],
+          "location": {
+            "line": 516,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "ProjectionStore real SQLite lifecycle"
+          ],
+          "fullName": "ProjectionStore real SQLite lifecycle returns unavailable when the FTS table has an invalid format",
+          "status": "passed",
+          "title": "returns unavailable when the FTS table has an invalid format",
+          "duration": 125.03130000000056,
+          "failureMessages": [],
+          "location": {
+            "line": 543,
+            "column": 3
+          },
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794762851938,
+      "endTime": 1794762857238.0312,
+      "status": "passed",
+      "message": "",
+      "name": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/openclaw_runtime/src/knowledge/retrieval/projection-store.test.ts"
+    }
+  ],
+  "actor": "codex/project-rag-g2-relay-01a1df5c",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "258457d6a45a0bab5b32eed47b88745dde84f666"
+}

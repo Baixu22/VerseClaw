@@ -1,0 +1,356 @@
+{
+  "schema": "ProjectRagOperationsElectron/v1",
+  "actor": "codex/project-rag-g2-20261115",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "platform": "win32",
+  "arch": "x64",
+  "candidate": "258457d6a45a0bab5b32eed47b88745dde84f666",
+  "status": "fail",
+  "steps": {
+    "canonicalDefaults": true,
+    "ownerIndexReady": true,
+    "pauseAndRestart": true
+  },
+  "initial": {
+    "success": true,
+    "operations": {
+      "schema": "RetrievalCapabilitySnapshot/v1",
+      "owner": {
+        "namespaceId": "memory-wiki:129713a0b504a2fbd4de6874340767427e1ad38bf49b4952f2f93156a97bc781",
+        "workspaceId": "agent-rag-operations",
+        "sessionId": "0f429367-c2b8-49da-87ec-7e2745ca2bac"
+      },
+      "config": {
+        "schema": "ProjectRagConfig/v2",
+        "profile": "local",
+        "answerMode": "strict",
+        "maxStorageBytes": 536870912
+      },
+      "index": {
+        "schema": "IndexStatus/v1",
+        "status": "running",
+        "lastError": null,
+        "sources": [
+          {
+            "sourceKey": "source:sha256:9ad0916072164abe2d065ba3ac579bb48a44682eb135184ef5689a566c5abf21",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "b334f4d8-56bd-4f3c-83aa-cc1ca16660ed",
+            "reason": null
+          }
+        ],
+        "jobs": [
+          {
+            "jobId": "9feeec98-abce-4866-9f6e-ce75ab6044aa",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          }
+        ],
+        "activeWorker": false,
+        "workerThreadIds": [
+          2
+        ],
+        "lagCount": 0,
+        "logicalDeletedCount": 0,
+        "cleanupPendingGenerations": 0,
+        "storage": {
+          "bytes": 5692944,
+          "budgetBytes": 536870912,
+          "budgetExceeded": false
+        }
+      },
+      "embedding": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0
+      },
+      "vector": {
+        "status": "disabled",
+        "requestedBackend": null,
+        "effectiveBackend": "sqlite-flat",
+        "capability": {
+          "schema": "IndexBackendCapabilities/v1",
+          "backend": "sqlite-flat",
+          "available": true,
+          "platform": "win32",
+          "arch": "x64",
+          "maxReferenceRows": 20000,
+          "prefilter": true,
+          "includesUnindexedRows": true
+        },
+        "reason": null,
+        "generation": null,
+        "indexing": false
+      },
+      "rerank": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0,
+        "models": [
+          {
+            "model": "Qwen/Qwen3-Reranker-0.6B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-4B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-8B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          }
+        ]
+      },
+      "reasons": [],
+      "status": "ready"
+    }
+  },
+  "restoredPause": {
+    "success": true,
+    "operations": {
+      "schema": "RetrievalCapabilitySnapshot/v1",
+      "owner": {
+        "namespaceId": "memory-wiki:129713a0b504a2fbd4de6874340767427e1ad38bf49b4952f2f93156a97bc781",
+        "workspaceId": "agent-rag-operations",
+        "sessionId": "0f429367-c2b8-49da-87ec-7e2745ca2bac"
+      },
+      "config": {
+        "schema": "ProjectRagConfig/v2",
+        "profile": "local",
+        "answerMode": "strict",
+        "maxStorageBytes": 536870912
+      },
+      "index": {
+        "schema": "IndexStatus/v1",
+        "status": "paused",
+        "lastError": null,
+        "sources": [
+          {
+            "sourceKey": "source:sha256:9ad0916072164abe2d065ba3ac579bb48a44682eb135184ef5689a566c5abf21",
+            "intentSequence": 4,
+            "eligible": false,
+            "activeGeneration": null,
+            "reason": null
+          }
+        ],
+        "jobs": [
+          {
+            "jobId": "9feeec98-abce-4866-9f6e-ce75ab6044aa",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "bf44a102-154d-4b84-8a0e-03ac6e412eb6",
+            "state": "superseded",
+            "attempt": 0,
+            "error": null
+          },
+          {
+            "jobId": "a0eaf73f-bb33-4519-8839-9cba08afabdd",
+            "state": "pending",
+            "attempt": 0,
+            "error": null
+          }
+        ],
+        "activeWorker": false,
+        "workerThreadIds": [],
+        "lagCount": 1,
+        "logicalDeletedCount": 0,
+        "cleanupPendingGenerations": 1,
+        "storage": {
+          "bytes": 5692944,
+          "budgetBytes": 536870912,
+          "budgetExceeded": false
+        }
+      },
+      "embedding": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0
+      },
+      "vector": {
+        "status": "disabled",
+        "requestedBackend": null,
+        "effectiveBackend": "sqlite-flat",
+        "capability": {
+          "schema": "IndexBackendCapabilities/v1",
+          "backend": "sqlite-flat",
+          "available": true,
+          "platform": "win32",
+          "arch": "x64",
+          "maxReferenceRows": 20000,
+          "prefilter": true,
+          "includesUnindexedRows": true
+        },
+        "reason": null,
+        "generation": null,
+        "indexing": false
+      },
+      "rerank": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0,
+        "models": [
+          {
+            "model": "Qwen/Qwen3-Reranker-0.6B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-4B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-8B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          }
+        ]
+      },
+      "reasons": [
+        "index-paused",
+        "index-lag"
+      ],
+      "status": "degraded"
+    }
+  },
+  "finalOperations": {
+    "success": true,
+    "operations": {
+      "schema": "RetrievalCapabilitySnapshot/v1",
+      "owner": {
+        "namespaceId": "memory-wiki:129713a0b504a2fbd4de6874340767427e1ad38bf49b4952f2f93156a97bc781",
+        "workspaceId": "agent-rag-operations",
+        "sessionId": "0f429367-c2b8-49da-87ec-7e2745ca2bac"
+      },
+      "config": {
+        "schema": "ProjectRagConfig/v2",
+        "profile": "local",
+        "answerMode": "strict",
+        "maxStorageBytes": 536870912
+      },
+      "index": {
+        "schema": "IndexStatus/v1",
+        "status": "running",
+        "lastError": null,
+        "sources": [
+          {
+            "sourceKey": "source:sha256:9ad0916072164abe2d065ba3ac579bb48a44682eb135184ef5689a566c5abf21",
+            "intentSequence": 4,
+            "eligible": true,
+            "activeGeneration": "199ad6a4-216f-4b4a-89fb-42dca7cc6b86",
+            "reason": null
+          }
+        ],
+        "jobs": [
+          {
+            "jobId": "9feeec98-abce-4866-9f6e-ce75ab6044aa",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "bf44a102-154d-4b84-8a0e-03ac6e412eb6",
+            "state": "superseded",
+            "attempt": 0,
+            "error": null
+          },
+          {
+            "jobId": "a0eaf73f-bb33-4519-8839-9cba08afabdd",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          }
+        ],
+        "activeWorker": false,
+        "workerThreadIds": [
+          2,
+          3
+        ],
+        "lagCount": 0,
+        "logicalDeletedCount": 0,
+        "cleanupPendingGenerations": 0,
+        "storage": {
+          "bytes": 5692944,
+          "budgetBytes": 536870912,
+          "budgetExceeded": false
+        }
+      },
+      "embedding": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0
+      },
+      "vector": {
+        "status": "disabled",
+        "requestedBackend": null,
+        "effectiveBackend": "sqlite-flat",
+        "capability": {
+          "schema": "IndexBackendCapabilities/v1",
+          "backend": "sqlite-flat",
+          "available": true,
+          "platform": "win32",
+          "arch": "x64",
+          "maxReferenceRows": 20000,
+          "prefilter": true,
+          "includesUnindexedRows": true
+        },
+        "reason": null,
+        "generation": null,
+        "indexing": false
+      },
+      "rerank": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0,
+        "models": [
+          {
+            "model": "Qwen/Qwen3-Reranker-0.6B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-4B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-8B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          }
+        ]
+      },
+      "reasons": [],
+      "status": "ready"
+    }
+  },
+  "finalGateway": {
+    "state": "running",
+    "port": 50063,
+    "reconnectAttempts": 0,
+    "gatewayReady": true,
+    "pid": 44352,
+    "connectedAt": 1794763323923,
+    "uptime": 2
+  },
+  "failureLogs": {
+    "content": "[2026-11-15T17:21:22.047Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=50063, entry=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 50063 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\", bundledBin=no, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n[2026-11-15T17:21:22.190Z] [INFO] Gateway process started (pid=47728)\n[2026-11-15T17:21:22.191Z] [DEBUG] Gateway manager now owns process pid=47728\n[2026-11-15T17:21:22.438Z] [WARN] [Gateway stderr] (node:47728) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n[2026-11-15T17:21:22.439Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n[2026-11-15T17:21:24.305Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n[2026-11-15T17:21:26.422Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n[2026-11-15T17:21:28.041Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n[2026-11-15T17:21:28.534Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n[2026-11-15T17:21:30.608Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)\n[2026-11-15T17:21:31.687Z] [DEBUG] [Gateway stderr] (node:47728) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n[2026-11-15T17:21:31.688Z] [DEBUG] [Gateway stderr] (node:47728) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n[2026-11-15T17:21:31.688Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n[2026-11-15T17:21:34.194Z] [DEBUG] Still waiting for Gateway... (attempt 51/2400)\n[2026-11-15T17:21:41.473Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=0725e58f-2e96-43fd-b06a-d6f299c9ec0d peer=127.0.0.1:54790->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n[2026-11-15T17:21:41.477Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=089addc2-ce27-4621-aeb2-7f18e2aa3a72 peer=127.0.0.1:54770->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n[2026-11-15T17:21:41.480Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=726823cf-2052-462f-b01a-6630af62b60d peer=127.0.0.1:60719->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n[2026-11-15T17:21:41.483Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=02adab12-1d07-4140-bd72-446a91ba1b1b peer=127.0.0.1:60761->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n[2026-11-15T17:21:41.490Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=cac7ade3-0e52-46f6-a91a-ec4fdf2a84e1 peer=127.0.0.1:60757->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n[2026-11-15T17:21:41.501Z] [DEBUG] Gateway ready after 56 attempt(s)\n[2026-11-15T17:21:41.502Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:50063/ws)\n[2026-11-15T17:21:41.506Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=4a79fb14-4029-4c29-a4ab-39f8d4269f9d peer=127.0.0.1:54818->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n[2026-11-15T17:21:41.509Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n[2026-11-15T17:21:41.510Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-15T17:21:41.511Z] [DEBUG] Sending connect handshake with challenge nonce\n[2026-11-15T17:21:41.621Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:50063/ws)\n[2026-11-15T17:21:41.623Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n[2026-11-15T17:21:44.911Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n[2026-11-15T17:21:44.912Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-15T17:21:44.912Z] [DEBUG] Sending connect handshake with challenge nonce\n[2026-11-15T17:21:45.695Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n[2026-11-15T17:21:45.696Z] [DEBUG] Gateway state changed: starting -> running\n[2026-11-15T17:21:45.697Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n[2026-11-15T17:21:45.700Z] [INFO] [metric] gateway.startup {\"configSyncMs\":636,\"spawnToReadyMs\":19310,\"readyToConnectMs\":4199,\"totalMs\":24145}\n[2026-11-15T17:21:45.790Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-15T17:21:45.790Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-15T17:21:45.791Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-15T17:21:45.791Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n[2026-11-15T17:21:45.898Z] [INFO] [provider-sync] Seeded provider account \"openai\" from openclaw.json\n[2026-11-15T17:21:48.887Z] [INFO] Gateway stop requested\n[2026-11-15T17:21:48.887Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n[2026-11-15T17:21:48.888Z] [INFO] Sending kill to Gateway process (pid=47728)\n[2026-11-15T17:21:48.942Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n[2026-11-15T17:21:48.943Z] [DEBUG] Gateway state changed: running -> stopped\n[2026-11-15T17:21:49.712Z] [INFO] Gateway process exited (code=1, expected=yes)\n[2026-11-15T17:21:49.713Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n[2026-11-15T17:21:49.730Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)\n[2026-11-15T17:21:49.731Z] [INFO] Gateway start requested (port=50063)\n[2026-11-15T17:21:49.733Z] [DEBUG] Gateway state changed: stopped -> starting\n[2026-11-15T17:21:50.083Z] [DEBUG] Checking for existing Gateway...\n[2026-11-15T17:21:50.459Z] [DEBUG] No existing Gateway found, starting new process...\n[2026-11-15T17:21:50.495Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n[2026-11-15T17:21:50.498Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":1,\"defaultProviderRuntimeSyncMs\":0,\"providerEnvMs\":8,\"channelStartupPolicyMs\":1,\"uvEnvMs\":3,\"mcpEnvMs\":3,\"runtimeConfigReadMs\":1,\"verseShellBundleMs\":0,\"totalMs\":34,\"maintenance\":{},\"configuredChannelCount\":0}\n[2026-11-15T17:21:50.498Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=50063, entry=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 50063 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\", bundledBin=no, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n[2026-11-15T17:21:50.636Z] [INFO] Gateway process started (pid=44352)\n[2026-11-15T17:21:50.637Z] [DEBUG] Gateway manager now owns process pid=44352\n[2026-11-15T17:21:50.801Z] [WARN] [Gateway stderr] (node:44352) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n[2026-11-15T17:21:50.802Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n[2026-11-15T17:21:52.734Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n[2026-11-15T17:21:54.860Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n[2026-11-15T17:21:56.765Z] [DEBUG] [Gateway stderr] (node:44352) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n[2026-11-15T17:21:56.765Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n[2026-11-15T17:21:56.984Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n[2026-11-15T17:21:59.995Z] [DEBUG] Gateway ready after 33 attempt(s)\n[2026-11-15T17:21:59.996Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:50063/ws)\n[2026-11-15T17:22:00.000Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=73da8b10-9c51-4d3c-9fa5-42a586648825 peer=127.0.0.1:53764->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n[2026-11-15T17:22:00.013Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n[2026-11-15T17:22:00.013Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-15T17:22:00.014Z] [DEBUG] Sending connect handshake with challenge nonce\n[2026-11-15T17:22:00.020Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=93244463-d6cc-4fd7-b071-4c1afede7491 peer=127.0.0.1:53765->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n[2026-11-15T17:22:00.031Z] [ERROR] Gateway connect handshake failed: GatewayRpcError: gateway starting; retry shortly\nGatewayRpcError: gateway starting; retry shortly\n    at xs.handleMessage (D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\dist-electron\\main\\index-d5-74u4p.js:2337:36015)\n    at Object.onMessage (D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\dist-electron\\main\\index-d5-74u4p.js:2337:34845)\n    at WebSocket.<anonymous> (D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\dist-electron\\main\\index-d5-74u4p.js:78:9293)\n    at WebSocket.emit (node:events:508:28)\n    at Receiver.receiverOnMessage (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\websocket.js:1225:20)\n    at Receiver.emit (node:events:508:28)\n    at Receiver.dataMessage (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:596:14)\n    at Receiver.getData (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:496:10)\n    at Receiver.startLoop (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:167:16)\n    at Receiver._write (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:94:10)\n[2026-11-15T17:22:00.032Z] [WARN] Gateway connect rejected while still starting (GatewayRpcError: gateway starting; retry shortly); retrying in 500ms (1/6)\n[2026-11-15T17:22:00.033Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n[2026-11-15T17:22:00.037Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=3352a4a6-7fef-43cc-8b58-37ba09466fe4 peer=127.0.0.1:53770->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n[2026-11-15T17:22:00.542Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:50063/ws)\n[2026-11-15T17:22:00.545Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n[2026-11-15T17:22:00.546Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-15T17:22:00.546Z] [DEBUG] Sending connect handshake with challenge nonce\n[2026-11-15T17:22:00.567Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:50063/ws)\n[2026-11-15T17:22:00.569Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n[2026-11-15T17:22:02.980Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n[2026-11-15T17:22:02.980Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-15T17:22:02.980Z] [DEBUG] Sending connect handshake with challenge nonce\n[2026-11-15T17:22:03.923Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n[2026-11-15T17:22:03.924Z] [DEBUG] Gateway state changed: starting -> running\n[2026-11-15T17:22:03.924Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n[2026-11-15T17:22:03.925Z] [INFO] Gateway connect succeeded after 2 attempt(s)\n[2026-11-15T17:22:03.926Z] [INFO] [metric] gateway.startup {\"configSyncMs\":554,\"spawnToReadyMs\":9358,\"readyToConnectMs\":3931,\"totalMs\":13843}\n"
+  }
+}

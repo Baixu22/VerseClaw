@@ -1,0 +1,59 @@
+{
+  "schema": "ProjectRagCandidateGate/v1",
+  "actor": "codex/project-rag-g2-relay-01a1df5c",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "phase": "lint",
+  "candidate": {
+    "head": "258457d6a45a0bab5b32eed47b88745dde84f666",
+    "tree": "7e49b714cfa2a77d9ba53c7c405f4b57f74b050d",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "startedAt": "2026-11-15T17:18:25.800070+00:00",
+  "commands": [
+    {
+      "name": "lint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "electron/services/knowledge-api.ts",
+        "shared/component-authority-manifest.ts",
+        "shared/dcs/component-disposition-catalog.ts",
+        "shared/dcs/prod-flags-catalog.ts",
+        "shared/host-api/contract.ts",
+        "shared/knowledge/operations.ts",
+        "src/components/settings/KnowledgeOperationsSettings.tsx",
+        "src/lib/host-api/knowledge/library.ts",
+        "src/pages/Chat/KnowledgeChat.tsx",
+        "src/pages/Models/index.tsx",
+        "tests/e2e/fixtures/electron.ts",
+        "tests/e2e/project-rag-provider-settings.spec.ts",
+        "tests/e2e/project-rag-settings-operations.spec.ts",
+        "tests/unit/component-disposition-catalog.test.ts",
+        "tests/unit/host-api-facade.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/project-rag-config-parity.test.ts",
+        "tests/unit/project-rag-plan-owner.test.ts",
+        "tests/unit/project-rag-vector-service.test.ts",
+        "tests/unit/typecheck-gate.test.ts"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 14004,
+      "stdout": "lint.stdout.log",
+      "stderr": "lint.stderr.log"
+    }
+  ],
+  "status": "pass",
+  "after": {
+    "head": "258457d6a45a0bab5b32eed47b88745dde84f666",
+    "tree": "7e49b714cfa2a77d9ba53c7c405f4b57f74b050d",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "sourceUnchanged": true,
+  "completedAt": "2026-11-15T17:18:43.407321+00:00"
+}

@@ -1,0 +1,1134 @@
+{
+  "schema": "ProjectRagOperationsElectron/v1",
+  "actor": "codex/project-rag-g2-20261115",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "platform": "win32",
+  "arch": "x64",
+  "candidate": "258457d6a45a0bab5b32eed47b88745dde84f666",
+  "status": "pass",
+  "steps": {
+    "canonicalDefaults": true,
+    "ownerIndexReady": true,
+    "pauseAndRestart": true,
+    "resumeUpdatedOwnerBytes": true,
+    "revocationRejected": true,
+    "logicalAndPhysicalCleanup": true,
+    "configPersistedAndCapabilitiesDegraded": true,
+    "defaultAnswerStrategy": true,
+    "unknownAndInvalidConfigRejected": true,
+    "configAndGenerationRollback": true,
+    "disablePreservedOwnerBytes": true
+  },
+  "initial": {
+    "success": true,
+    "operations": {
+      "schema": "RetrievalCapabilitySnapshot/v1",
+      "owner": {
+        "namespaceId": "memory-wiki:bcf478a2f6458624c6908012e929692639b0f529131578f663a1f795edf0c0cc",
+        "workspaceId": "agent-rag-operations",
+        "sessionId": "cfa86d14-dd5a-45e2-8513-2aff4e46bb89"
+      },
+      "config": {
+        "schema": "ProjectRagConfig/v2",
+        "profile": "local",
+        "answerMode": "strict",
+        "maxStorageBytes": 536870912
+      },
+      "index": {
+        "schema": "IndexStatus/v1",
+        "status": "running",
+        "lastError": null,
+        "sources": [
+          {
+            "sourceKey": "source:sha256:4557dc1e061b2bde169d18f7f3bff3e46a621168fc6115b8fe82a8fba2e5b81a",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "596e58cc-d0d4-49a5-ac84-51c778e01589",
+            "reason": null
+          }
+        ],
+        "jobs": [
+          {
+            "jobId": "3972bf74-1465-419c-87b6-040272c48d51",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          }
+        ],
+        "activeWorker": false,
+        "workerThreadIds": [
+          1
+        ],
+        "lagCount": 0,
+        "logicalDeletedCount": 0,
+        "cleanupPendingGenerations": 0,
+        "storage": {
+          "bytes": 5692944,
+          "budgetBytes": 536870912,
+          "budgetExceeded": false
+        }
+      },
+      "embedding": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0
+      },
+      "vector": {
+        "status": "disabled",
+        "requestedBackend": null,
+        "effectiveBackend": "sqlite-flat",
+        "capability": {
+          "schema": "IndexBackendCapabilities/v1",
+          "backend": "sqlite-flat",
+          "available": true,
+          "platform": "win32",
+          "arch": "x64",
+          "maxReferenceRows": 20000,
+          "prefilter": true,
+          "includesUnindexedRows": true
+        },
+        "reason": null,
+        "generation": null,
+        "indexing": false
+      },
+      "rerank": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0,
+        "models": [
+          {
+            "model": "Qwen/Qwen3-Reranker-0.6B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-4B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-8B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          }
+        ]
+      },
+      "reasons": [],
+      "status": "ready"
+    }
+  },
+  "restoredPause": {
+    "success": true,
+    "operations": {
+      "schema": "RetrievalCapabilitySnapshot/v1",
+      "owner": {
+        "namespaceId": "memory-wiki:bcf478a2f6458624c6908012e929692639b0f529131578f663a1f795edf0c0cc",
+        "workspaceId": "agent-rag-operations",
+        "sessionId": "cfa86d14-dd5a-45e2-8513-2aff4e46bb89"
+      },
+      "config": {
+        "schema": "ProjectRagConfig/v2",
+        "profile": "local",
+        "answerMode": "strict",
+        "maxStorageBytes": 536870912
+      },
+      "index": {
+        "schema": "IndexStatus/v1",
+        "status": "paused",
+        "lastError": null,
+        "sources": [
+          {
+            "sourceKey": "source:sha256:4557dc1e061b2bde169d18f7f3bff3e46a621168fc6115b8fe82a8fba2e5b81a",
+            "intentSequence": 4,
+            "eligible": false,
+            "activeGeneration": null,
+            "reason": null
+          }
+        ],
+        "jobs": [
+          {
+            "jobId": "3972bf74-1465-419c-87b6-040272c48d51",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "11560eea-41af-4fc1-890b-1da7baa6c508",
+            "state": "superseded",
+            "attempt": 0,
+            "error": null
+          },
+          {
+            "jobId": "9eb9ab48-67b9-4a1a-b832-07961a5c069e",
+            "state": "pending",
+            "attempt": 0,
+            "error": null
+          }
+        ],
+        "activeWorker": false,
+        "workerThreadIds": [],
+        "lagCount": 1,
+        "logicalDeletedCount": 0,
+        "cleanupPendingGenerations": 1,
+        "storage": {
+          "bytes": 5692944,
+          "budgetBytes": 536870912,
+          "budgetExceeded": false
+        }
+      },
+      "embedding": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0
+      },
+      "vector": {
+        "status": "disabled",
+        "requestedBackend": null,
+        "effectiveBackend": "sqlite-flat",
+        "capability": {
+          "schema": "IndexBackendCapabilities/v1",
+          "backend": "sqlite-flat",
+          "available": true,
+          "platform": "win32",
+          "arch": "x64",
+          "maxReferenceRows": 20000,
+          "prefilter": true,
+          "includesUnindexedRows": true
+        },
+        "reason": null,
+        "generation": null,
+        "indexing": false
+      },
+      "rerank": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0,
+        "models": [
+          {
+            "model": "Qwen/Qwen3-Reranker-0.6B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-4B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-8B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          }
+        ]
+      },
+      "reasons": [
+        "index-paused",
+        "index-lag"
+      ],
+      "status": "degraded"
+    }
+  },
+  "revoked": {
+    "success": true,
+    "retrieval": {
+      "schema": "RetrievalResult/v2",
+      "plan": {
+        "schema": "RetrievalPlan/v2",
+        "planId": "8ae932e8-0053-46ab-9553-a5e7c6e4d167",
+        "requestId": "e8b2ed78-3df3-4bba-8739-a8e469aa12de",
+        "admissionContextId": "5bab5b42-7b94-4fd0-9af3-c3f4d94233bf",
+        "policyVersion": "project-rag-rrf/v2",
+        "mode": "suggest",
+        "profile": "local",
+        "intent": "lookup",
+        "namespaceIds": [
+          "memory-wiki:bcf478a2f6458624c6908012e929692639b0f529131578f663a1f795edf0c0cc"
+        ],
+        "queries": [
+          {
+            "text": "RAG12_UI_UPDATED",
+            "family": "root"
+          }
+        ],
+        "explicitRefs": [],
+        "generations": [],
+        "lanes": [
+          "exact",
+          "lexical",
+          "dense"
+        ],
+        "budget": {
+          "candidateK": 40,
+          "rerankK": 0,
+          "finalK": 4,
+          "maxPerParent": 2,
+          "maxTokens": 1200,
+          "maxChars": 3200,
+          "maxQueries": 1,
+          "maxModelCalls": 0,
+          "deadlineAtMs": 1794763508646
+        }
+      },
+      "status": "partial",
+      "effectiveProfile": "lexical",
+      "results": [],
+      "lanes": [
+        {
+          "lane": "exact",
+          "namespaceId": "memory-wiki:bcf478a2f6458624c6908012e929692639b0f529131578f663a1f795edf0c0cc",
+          "queryFamily": "root",
+          "status": "available",
+          "candidateCount": 0,
+          "elapsedMs": 2.7679000000007363
+        },
+        {
+          "lane": "lexical",
+          "namespaceId": "memory-wiki:bcf478a2f6458624c6908012e929692639b0f529131578f663a1f795edf0c0cc",
+          "queryFamily": "root",
+          "status": "available",
+          "candidateCount": 0,
+          "elapsedMs": 2.738199999999779
+        },
+        {
+          "lane": "dense",
+          "namespaceId": "memory-wiki:bcf478a2f6458624c6908012e929692639b0f529131578f663a1f795edf0c0cc",
+          "queryFamily": "root",
+          "status": "unavailable",
+          "reason": "Embedding must be ready before vector indexing",
+          "candidateCount": 0,
+          "elapsedMs": 1.5508999999983644
+        }
+      ],
+      "filters": [],
+      "fallbackReasons": [
+        "dense:Embedding must be ready before vector indexing"
+      ],
+      "snapshotStatus": "current"
+    }
+  },
+  "deleted": {
+    "success": true,
+    "operations": {
+      "schema": "RetrievalCapabilitySnapshot/v1",
+      "owner": {
+        "namespaceId": "memory-wiki:bcf478a2f6458624c6908012e929692639b0f529131578f663a1f795edf0c0cc",
+        "workspaceId": "agent-rag-operations",
+        "sessionId": "cfa86d14-dd5a-45e2-8513-2aff4e46bb89"
+      },
+      "config": {
+        "schema": "ProjectRagConfig/v2",
+        "profile": "local",
+        "answerMode": "strict",
+        "maxStorageBytes": 536870912
+      },
+      "index": {
+        "schema": "IndexStatus/v1",
+        "status": "running",
+        "lastError": null,
+        "sources": [
+          {
+            "sourceKey": "source:sha256:4557dc1e061b2bde169d18f7f3bff3e46a621168fc6115b8fe82a8fba2e5b81a",
+            "intentSequence": 5,
+            "eligible": false,
+            "activeGeneration": null,
+            "reason": "not_found"
+          }
+        ],
+        "jobs": [
+          {
+            "jobId": "3972bf74-1465-419c-87b6-040272c48d51",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "11560eea-41af-4fc1-890b-1da7baa6c508",
+            "state": "superseded",
+            "attempt": 0,
+            "error": null
+          },
+          {
+            "jobId": "9eb9ab48-67b9-4a1a-b832-07961a5c069e",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          }
+        ],
+        "activeWorker": false,
+        "workerThreadIds": [
+          1,
+          2,
+          3
+        ],
+        "lagCount": 0,
+        "logicalDeletedCount": 1,
+        "cleanupPendingGenerations": 0,
+        "storage": {
+          "bytes": 5692944,
+          "budgetBytes": 536870912,
+          "budgetExceeded": false
+        }
+      },
+      "embedding": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0
+      },
+      "vector": {
+        "status": "disabled",
+        "requestedBackend": null,
+        "effectiveBackend": "sqlite-flat",
+        "capability": {
+          "schema": "IndexBackendCapabilities/v1",
+          "backend": "sqlite-flat",
+          "available": true,
+          "platform": "win32",
+          "arch": "x64",
+          "maxReferenceRows": 20000,
+          "prefilter": true,
+          "includesUnindexedRows": true
+        },
+        "reason": null,
+        "generation": null,
+        "indexing": false
+      },
+      "rerank": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0,
+        "models": [
+          {
+            "model": "Qwen/Qwen3-Reranker-0.6B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-4B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-8B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          }
+        ]
+      },
+      "reasons": [],
+      "status": "enabled"
+    }
+  },
+  "quality": {
+    "success": true,
+    "operations": {
+      "schema": "RetrievalCapabilitySnapshot/v1",
+      "owner": {
+        "namespaceId": "memory-wiki:bcf478a2f6458624c6908012e929692639b0f529131578f663a1f795edf0c0cc",
+        "workspaceId": "agent-rag-operations",
+        "sessionId": "cfa86d14-dd5a-45e2-8513-2aff4e46bb89"
+      },
+      "config": {
+        "schema": "ProjectRagConfig/v2",
+        "profile": "quality",
+        "answerMode": "open",
+        "maxStorageBytes": 268435456
+      },
+      "index": {
+        "schema": "IndexStatus/v1",
+        "status": "running",
+        "lastError": null,
+        "sources": [
+          {
+            "sourceKey": "source:sha256:4557dc1e061b2bde169d18f7f3bff3e46a621168fc6115b8fe82a8fba2e5b81a",
+            "intentSequence": 6,
+            "eligible": true,
+            "activeGeneration": "88f52632-2ada-42c1-86f1-bc50f2a7cf91",
+            "reason": null
+          }
+        ],
+        "jobs": [
+          {
+            "jobId": "3972bf74-1465-419c-87b6-040272c48d51",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "11560eea-41af-4fc1-890b-1da7baa6c508",
+            "state": "superseded",
+            "attempt": 0,
+            "error": null
+          },
+          {
+            "jobId": "9eb9ab48-67b9-4a1a-b832-07961a5c069e",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "a0b6d849-741a-436d-9db3-7e9c07d5f7f5",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          }
+        ],
+        "activeWorker": false,
+        "workerThreadIds": [],
+        "lagCount": 0,
+        "logicalDeletedCount": 0,
+        "cleanupPendingGenerations": 0,
+        "storage": {
+          "bytes": 5692944,
+          "budgetBytes": 268435456,
+          "budgetExceeded": false
+        }
+      },
+      "embedding": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0
+      },
+      "vector": {
+        "status": "disabled",
+        "requestedBackend": null,
+        "effectiveBackend": "sqlite-flat",
+        "capability": {
+          "schema": "IndexBackendCapabilities/v1",
+          "backend": "sqlite-flat",
+          "available": true,
+          "platform": "win32",
+          "arch": "x64",
+          "maxReferenceRows": 20000,
+          "prefilter": true,
+          "includesUnindexedRows": true
+        },
+        "reason": null,
+        "generation": null,
+        "indexing": false
+      },
+      "rerank": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0,
+        "models": [
+          {
+            "model": "Qwen/Qwen3-Reranker-0.6B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-4B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-8B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          }
+        ]
+      },
+      "reasons": [
+        "dense-unavailable",
+        "rerank-unavailable"
+      ],
+      "status": "degraded"
+    }
+  },
+  "ownerBeforeRollback": "---\ntitle: Agent operations source\nrevision: 5\nstatus: active\ntrust: confirmed\nscope:\n  workspaceId: agent-rag-operations\n---\n# Operations\n\nRAG12_UI_RESTORED\n\n## Related\n<!-- openclaw:wiki:related:start -->\n- No related pages yet.\n<!-- openclaw:wiki:related:end -->\n",
+  "rollbackReadback": {
+    "success": true,
+    "operations": {
+      "schema": "RetrievalCapabilitySnapshot/v1",
+      "owner": {
+        "namespaceId": "memory-wiki:bcf478a2f6458624c6908012e929692639b0f529131578f663a1f795edf0c0cc",
+        "workspaceId": "agent-rag-operations",
+        "sessionId": "cfa86d14-dd5a-45e2-8513-2aff4e46bb89"
+      },
+      "config": {
+        "schema": "ProjectRagConfig/v2",
+        "profile": "local",
+        "answerMode": "strict",
+        "maxStorageBytes": 536870912
+      },
+      "index": {
+        "schema": "IndexStatus/v1",
+        "status": "running",
+        "lastError": null,
+        "sources": [
+          {
+            "sourceKey": "source:sha256:4557dc1e061b2bde169d18f7f3bff3e46a621168fc6115b8fe82a8fba2e5b81a",
+            "intentSequence": 8,
+            "eligible": true,
+            "activeGeneration": "efd29ae9-abd1-4c0a-80c0-105a31a84d35",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:34b07fce627e0903b4797438e2189659f6f6277685abf149d71115ce47d5f09f",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "50f6832c-cce0-44f8-bb30-992f86b69c68",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:d7b6ef08dc3dbcbc4557d4ac947c7ed5e7a73ea7b5947be3c04200569881ab92",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "95258e60-4bf4-48ab-be39-06c7dba30cec",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:478f92f505e2a908d2b5d16dbe879bdc1b879949114dae9743ad707224e64883",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "287c8947-b239-42ad-bb9f-bc660fcb33e0",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:a76d45d9bf0bbab8c75072292d99f804f0b6cee15abb7e1ca428c116962a435e",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "a0046ac2-bbda-4b0b-a526-3791bff93457",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:66ae6a783e3a804f02abd0a4d28a99e022409c38f7c06ee80f4a17eb2ede8156",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "e42fc7ab-2b20-4360-9b59-468567978bb0",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:6cec99bf05ce076fe645ae9b6f4bc195030d48ccede05e56296dbf0061201f34",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "ab854052-42eb-47a8-849f-bfadfebf17f8",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:89e945b87e9acc75b46d0eba6685f113321fae3d173c9579b2a6ed20e46ee9a8",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "91c20bd3-d559-442d-b675-0851353b2d00",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:afb37770da50ed7c360ad96ba80493f803ea6dab53843d8c9217df644b448c8e",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "afee8a74-31ad-4ef3-9789-84cb4c9ad0c0",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:fca9851eeb0703ce2140077be7d19ebdf0465efaf645e0191844461403ac4433",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "d760064b-fd11-450b-b331-690983d51611",
+            "reason": null
+          }
+        ],
+        "jobs": [
+          {
+            "jobId": "3972bf74-1465-419c-87b6-040272c48d51",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "11560eea-41af-4fc1-890b-1da7baa6c508",
+            "state": "superseded",
+            "attempt": 0,
+            "error": null
+          },
+          {
+            "jobId": "9eb9ab48-67b9-4a1a-b832-07961a5c069e",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "a0b6d849-741a-436d-9db3-7e9c07d5f7f5",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "fe14402a-2271-42b2-b755-3ba00bd4d288",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "85ea23c8-ff2f-43b3-b71d-7f147bd7be07",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "b20a3cff-48bf-4052-aa41-da18f3bec922",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "f8e54748-eae6-4a85-be14-6fa130d38ab4",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "8ce32ea0-7335-498b-958c-8c8be5bcd7b0",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "6f43e816-0468-4f3d-97a0-e1dd47f1ce35",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "7cc3ddb8-0983-4466-8b6d-aa0520620cb8",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "121e84b4-0c0c-4d40-96ea-6305a53d77eb",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "22fab5ec-2a25-4119-8d49-c80c5dd55510",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "7211dd01-4542-4133-8c53-0180a0df74d4",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          }
+        ],
+        "activeWorker": false,
+        "workerThreadIds": [],
+        "lagCount": 0,
+        "logicalDeletedCount": 0,
+        "cleanupPendingGenerations": 0,
+        "storage": {
+          "bytes": 5692944,
+          "budgetBytes": 536870912,
+          "budgetExceeded": false
+        }
+      },
+      "embedding": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0
+      },
+      "vector": {
+        "status": "disabled",
+        "requestedBackend": null,
+        "effectiveBackend": "sqlite-flat",
+        "capability": {
+          "schema": "IndexBackendCapabilities/v1",
+          "backend": "sqlite-flat",
+          "available": true,
+          "platform": "win32",
+          "arch": "x64",
+          "maxReferenceRows": 20000,
+          "prefilter": true,
+          "includesUnindexedRows": true
+        },
+        "reason": null,
+        "generation": null,
+        "indexing": false
+      },
+      "rerank": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0,
+        "models": [
+          {
+            "model": "Qwen/Qwen3-Reranker-0.6B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-4B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-8B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          }
+        ]
+      },
+      "reasons": [],
+      "status": "ready"
+    }
+  },
+  "rollbackGateway": {
+    "state": "running",
+    "port": 60213,
+    "reconnectAttempts": 0,
+    "gatewayReady": true,
+    "pid": 48932,
+    "connectedAt": 1794763505325,
+    "uptime": 1
+  },
+  "rollback": {
+    "success": true,
+    "operations": {
+      "schema": "RetrievalCapabilitySnapshot/v1",
+      "owner": {
+        "namespaceId": "memory-wiki:bcf478a2f6458624c6908012e929692639b0f529131578f663a1f795edf0c0cc",
+        "workspaceId": "agent-rag-operations",
+        "sessionId": "cfa86d14-dd5a-45e2-8513-2aff4e46bb89"
+      },
+      "config": {
+        "schema": "ProjectRagConfig/v2",
+        "profile": "local",
+        "answerMode": "strict",
+        "maxStorageBytes": 536870912
+      },
+      "index": {
+        "schema": "IndexStatus/v1",
+        "status": "running",
+        "lastError": null,
+        "sources": [
+          {
+            "sourceKey": "source:sha256:4557dc1e061b2bde169d18f7f3bff3e46a621168fc6115b8fe82a8fba2e5b81a",
+            "intentSequence": 8,
+            "eligible": true,
+            "activeGeneration": "efd29ae9-abd1-4c0a-80c0-105a31a84d35",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:34b07fce627e0903b4797438e2189659f6f6277685abf149d71115ce47d5f09f",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "50f6832c-cce0-44f8-bb30-992f86b69c68",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:d7b6ef08dc3dbcbc4557d4ac947c7ed5e7a73ea7b5947be3c04200569881ab92",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "95258e60-4bf4-48ab-be39-06c7dba30cec",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:478f92f505e2a908d2b5d16dbe879bdc1b879949114dae9743ad707224e64883",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "287c8947-b239-42ad-bb9f-bc660fcb33e0",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:a76d45d9bf0bbab8c75072292d99f804f0b6cee15abb7e1ca428c116962a435e",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "a0046ac2-bbda-4b0b-a526-3791bff93457",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:66ae6a783e3a804f02abd0a4d28a99e022409c38f7c06ee80f4a17eb2ede8156",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "e42fc7ab-2b20-4360-9b59-468567978bb0",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:6cec99bf05ce076fe645ae9b6f4bc195030d48ccede05e56296dbf0061201f34",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "ab854052-42eb-47a8-849f-bfadfebf17f8",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:89e945b87e9acc75b46d0eba6685f113321fae3d173c9579b2a6ed20e46ee9a8",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "91c20bd3-d559-442d-b675-0851353b2d00",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:afb37770da50ed7c360ad96ba80493f803ea6dab53843d8c9217df644b448c8e",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "afee8a74-31ad-4ef3-9789-84cb4c9ad0c0",
+            "reason": null
+          },
+          {
+            "sourceKey": "source:sha256:fca9851eeb0703ce2140077be7d19ebdf0465efaf645e0191844461403ac4433",
+            "intentSequence": 1,
+            "eligible": true,
+            "activeGeneration": "d760064b-fd11-450b-b331-690983d51611",
+            "reason": null
+          }
+        ],
+        "jobs": [
+          {
+            "jobId": "3972bf74-1465-419c-87b6-040272c48d51",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "11560eea-41af-4fc1-890b-1da7baa6c508",
+            "state": "superseded",
+            "attempt": 0,
+            "error": null
+          },
+          {
+            "jobId": "9eb9ab48-67b9-4a1a-b832-07961a5c069e",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "a0b6d849-741a-436d-9db3-7e9c07d5f7f5",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "fe14402a-2271-42b2-b755-3ba00bd4d288",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "85ea23c8-ff2f-43b3-b71d-7f147bd7be07",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "b20a3cff-48bf-4052-aa41-da18f3bec922",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "f8e54748-eae6-4a85-be14-6fa130d38ab4",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "8ce32ea0-7335-498b-958c-8c8be5bcd7b0",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "6f43e816-0468-4f3d-97a0-e1dd47f1ce35",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "7cc3ddb8-0983-4466-8b6d-aa0520620cb8",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "121e84b4-0c0c-4d40-96ea-6305a53d77eb",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "22fab5ec-2a25-4119-8d49-c80c5dd55510",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          },
+          {
+            "jobId": "7211dd01-4542-4133-8c53-0180a0df74d4",
+            "state": "complete",
+            "attempt": 1,
+            "error": null
+          }
+        ],
+        "activeWorker": false,
+        "workerThreadIds": [],
+        "lagCount": 0,
+        "logicalDeletedCount": 0,
+        "cleanupPendingGenerations": 0,
+        "storage": {
+          "bytes": 5692944,
+          "budgetBytes": 536870912,
+          "budgetExceeded": false
+        }
+      },
+      "embedding": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0
+      },
+      "vector": {
+        "status": "disabled",
+        "requestedBackend": null,
+        "effectiveBackend": "sqlite-flat",
+        "capability": {
+          "schema": "IndexBackendCapabilities/v1",
+          "backend": "sqlite-flat",
+          "available": true,
+          "platform": "win32",
+          "arch": "x64",
+          "maxReferenceRows": 20000,
+          "prefilter": true,
+          "includesUnindexedRows": true
+        },
+        "reason": null,
+        "generation": null,
+        "indexing": false
+      },
+      "rerank": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0,
+        "models": [
+          {
+            "model": "Qwen/Qwen3-Reranker-0.6B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-4B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-8B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          }
+        ]
+      },
+      "reasons": [],
+      "status": "ready"
+    }
+  },
+  "finalOperations": {
+    "success": true,
+    "operations": {
+      "schema": "RetrievalCapabilitySnapshot/v1",
+      "owner": {
+        "namespaceId": "memory-wiki:bcf478a2f6458624c6908012e929692639b0f529131578f663a1f795edf0c0cc",
+        "workspaceId": "agent-rag-operations",
+        "sessionId": "cfa86d14-dd5a-45e2-8513-2aff4e46bb89"
+      },
+      "config": {
+        "schema": "ProjectRagConfig/v2",
+        "profile": "local",
+        "answerMode": "strict",
+        "maxStorageBytes": 536870912
+      },
+      "index": {
+        "schema": "IndexStatus/v1",
+        "status": "disabled",
+        "lastError": null,
+        "sources": [],
+        "jobs": [],
+        "activeWorker": false,
+        "workerThreadIds": [],
+        "lagCount": 0,
+        "logicalDeletedCount": 0,
+        "cleanupPendingGenerations": 0,
+        "storage": {
+          "bytes": null,
+          "budgetBytes": 536870912,
+          "budgetExceeded": null
+        }
+      },
+      "embedding": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0
+      },
+      "vector": {
+        "status": "disabled",
+        "requestedBackend": null,
+        "effectiveBackend": "sqlite-flat",
+        "capability": {
+          "schema": "IndexBackendCapabilities/v1",
+          "backend": "sqlite-flat",
+          "available": true,
+          "platform": "win32",
+          "arch": "x64",
+          "maxReferenceRows": 20000,
+          "prefilter": true,
+          "includesUnindexedRows": true
+        },
+        "reason": null,
+        "generation": null,
+        "indexing": false
+      },
+      "rerank": {
+        "mode": "disabled",
+        "status": "disabled",
+        "credentialEpoch": 0,
+        "models": [
+          {
+            "model": "Qwen/Qwen3-Reranker-0.6B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-4B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          },
+          {
+            "model": "Qwen/Qwen3-Reranker-8B",
+            "architecture": "cross-encoder",
+            "languages": "100+",
+            "maxInputTokens": 32768
+          }
+        ]
+      },
+      "reasons": [],
+      "status": "disabled"
+    }
+  },
+  "finalGateway": {
+    "state": "running",
+    "port": 60213,
+    "reconnectAttempts": 0,
+    "gatewayReady": true,
+    "pid": 48932,
+    "connectedAt": 1794763505325,
+    "uptime": 1
+  }
+}

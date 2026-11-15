@@ -1,0 +1,89 @@
+{
+  "actor": "codex/project-rag-g2-relay-01a1df5c",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "schema": "ProjectRagOperationsAcceptance/v1",
+  "programKey": "RAG-12",
+  "node": "TF-0889",
+  "candidate": "258457d6a45a0bab5b32eed47b88745dde84f666",
+  "tree": "7e49b714cfa2a77d9ba53c7c405f4b57f74b050d",
+  "status": "pass",
+  "checks": {
+    "rootUnit": 270,
+    "runtimeUnit": 21,
+    "electronJourneys": 2,
+    "ciStages": 12,
+    "visuals": 6,
+    "typeProjects": [
+      "node",
+      "web",
+      "test"
+    ],
+    "independentReviewFindings": 0
+  },
+  "criteria": [
+    {
+      "index": 1,
+      "status": "pass",
+      "evidence": [
+        "gates/unit/root-unit.json",
+        "source-inputs.json"
+      ]
+    },
+    {
+      "index": 2,
+      "status": "pass",
+      "evidence": [
+        "electron/operations/artifacts",
+        "visual-readback.json"
+      ]
+    },
+    {
+      "index": 3,
+      "status": "pass",
+      "evidence": [
+        "electron/operations/artifacts",
+        "electron/provider/artifacts",
+        "gates/unit/root-unit.json",
+        "gates/unit/runtime-unit.json"
+      ]
+    },
+    {
+      "index": 4,
+      "status": "pass",
+      "evidence": [
+        "gates/checks/i18n.stdout.log",
+        "gates/checks/contract.stdout.log",
+        "visual-readback.json"
+      ]
+    },
+    {
+      "index": 5,
+      "status": "pass",
+      "evidence": [
+        "required-test-coverage.json",
+        "gate-summary.json",
+        "ci/report.json"
+      ]
+    }
+  ],
+  "controlPlane": {
+    "auditStatus": "pass",
+    "auditScore": 91,
+    "dailyStatus": "needs-full-gate",
+    "requiredFullGates": [
+      "pnpm run build:vite",
+      "pnpm run typecheck",
+      "pnpm test:e2e:agent-dev-quality"
+    ],
+    "fullFunctionalStepsPassed": true,
+    "fullPerformanceStatus": "limit retained for RAG-19"
+  },
+  "next": "RAG-13 / TF-0890",
+  "remainingLongTerm": [
+    "RAG-13 through RAG-19",
+    "240 queries",
+    "60 tasks x 3 repeats x 3 arms",
+    "72-hour agent soak"
+  ]
+}

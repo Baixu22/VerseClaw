@@ -1,0 +1,320 @@
+{
+  "actor": "codex/project-rag-g2-relay-01a1df5c",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "schema": "ProjectRagGateSummary/v1",
+  "candidate": "258457d6a45a0bab5b32eed47b88745dde84f666",
+  "status": "pass",
+  "commands": [
+    {
+      "phase": "unit",
+      "name": "root-unit",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "tests/unit/typecheck-gate.test.ts",
+        "tests/unit/project-rag-config-parity.test.ts",
+        "tests/unit/resource-sqlite-wal.test.ts",
+        "tests/unit/knowledge-source-set-answer.test.ts",
+        "tests/unit/knowledge-evidence-qa.test.ts",
+        "tests/unit/project-rag-index-recovery.test.ts",
+        "tests/unit/project-rag-plan-owner.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/host-api-facade.test.ts",
+        "tests/unit/knowledge-chat.test.tsx",
+        "tests/unit/project-rag-embedding-lifecycle.test.ts",
+        "tests/unit/project-rag-vector-service.test.ts",
+        "tests/unit/component-authority-manifest.test.ts",
+        "tests/unit/component-disposition-catalog.test.ts",
+        "--maxWorkers=1",
+        "--cache=false",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-unit-2584\\root-unit.json"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 168682,
+      "stdout": "root-unit.stdout.log",
+      "stderr": "root-unit.stderr.log"
+    },
+    {
+      "phase": "unit",
+      "name": "runtime-unit",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.unit-src.config.ts",
+        "src/knowledge/retrieval/projection-store.test.ts",
+        "--maxWorkers=1",
+        "--cache=false",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-unit-2584\\runtime-unit.json"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime",
+      "exitCode": 0,
+      "elapsedMs": 12529,
+      "stdout": "runtime-unit.stdout.log",
+      "stderr": "runtime-unit.stderr.log"
+    },
+    {
+      "phase": "types",
+      "name": "bridge",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/generate-ext-bridge.mjs"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 185,
+      "stdout": "bridge.stdout.log",
+      "stderr": "bridge.stderr.log"
+    },
+    {
+      "phase": "types",
+      "name": "typecheck-node",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\node_modules\\@typescript\\native-preview\\bin\\tsgo",
+        "--noEmit",
+        "-p",
+        "tsconfig.node.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 28001,
+      "stdout": "typecheck-node.stdout.log",
+      "stderr": "typecheck-node.stderr.log"
+    },
+    {
+      "phase": "types",
+      "name": "typecheck-web",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\node_modules\\@typescript\\native-preview\\bin\\tsgo",
+        "--noEmit",
+        "-p",
+        "tsconfig.web.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 4320,
+      "stdout": "typecheck-web.stdout.log",
+      "stderr": "typecheck-web.stderr.log"
+    },
+    {
+      "phase": "types",
+      "name": "typecheck-test",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\node_modules\\@typescript\\native-preview\\bin\\tsgo",
+        "--noEmit",
+        "-p",
+        "tsconfig.test.json",
+        "--composite",
+        "false"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 45614,
+      "stdout": "typecheck-test.stdout.log",
+      "stderr": "typecheck-test.stderr.log"
+    },
+    {
+      "phase": "build",
+      "name": "runtime-build",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 62707,
+      "stdout": "runtime-build.stdout.log",
+      "stderr": "runtime-build.stderr.log"
+    },
+    {
+      "phase": "build",
+      "name": "desktop-build",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 75002,
+      "stdout": "desktop-build.stdout.log",
+      "stderr": "desktop-build.stderr.log"
+    },
+    {
+      "phase": "checks",
+      "name": "contract",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 1573,
+      "stdout": "contract.stdout.log",
+      "stderr": "contract.stderr.log"
+    },
+    {
+      "phase": "checks",
+      "name": "i18n",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/i18n-lint.mjs"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 964,
+      "stdout": "i18n.stdout.log",
+      "stderr": "i18n.stderr.log"
+    },
+    {
+      "phase": "checks",
+      "name": "catalogs",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--import",
+        "./openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+        "scripts/generate-catalogs.mjs",
+        "--check"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 2319,
+      "stdout": "catalogs.stdout.log",
+      "stderr": "catalogs.stderr.log"
+    },
+    {
+      "phase": "checks",
+      "name": "comms-replay",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 524,
+      "stdout": "comms-replay.stdout.log",
+      "stderr": "comms-replay.stderr.log"
+    },
+    {
+      "phase": "checks",
+      "name": "comms-compare",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 347,
+      "stdout": "comms-compare.stdout.log",
+      "stderr": "comms-compare.stderr.log"
+    },
+    {
+      "phase": "checks",
+      "name": "harness-validate",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/project-rag-config-and-operations.md"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 1524,
+      "stdout": "harness-validate.stdout.log",
+      "stderr": "harness-validate.stderr.log"
+    },
+    {
+      "phase": "checks",
+      "name": "harness-dry-run",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/project-rag-config-and-operations.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 1169,
+      "stdout": "harness-dry-run.stdout.log",
+      "stderr": "harness-dry-run.stderr.log"
+    },
+    {
+      "phase": "lint",
+      "name": "lint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "electron/services/knowledge-api.ts",
+        "shared/component-authority-manifest.ts",
+        "shared/dcs/component-disposition-catalog.ts",
+        "shared/dcs/prod-flags-catalog.ts",
+        "shared/host-api/contract.ts",
+        "shared/knowledge/operations.ts",
+        "src/components/settings/KnowledgeOperationsSettings.tsx",
+        "src/lib/host-api/knowledge/library.ts",
+        "src/pages/Chat/KnowledgeChat.tsx",
+        "src/pages/Models/index.tsx",
+        "tests/e2e/fixtures/electron.ts",
+        "tests/e2e/project-rag-provider-settings.spec.ts",
+        "tests/e2e/project-rag-settings-operations.spec.ts",
+        "tests/unit/component-disposition-catalog.test.ts",
+        "tests/unit/host-api-facade.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/project-rag-config-parity.test.ts",
+        "tests/unit/project-rag-plan-owner.test.ts",
+        "tests/unit/project-rag-vector-service.test.ts",
+        "tests/unit/typecheck-gate.test.ts"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 14004,
+      "stdout": "lint.stdout.log",
+      "stderr": "lint.stderr.log"
+    },
+    {
+      "phase": "electron-operations",
+      "name": "electron",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\node_modules\\@playwright\\test\\cli.js",
+        "test",
+        "tests/e2e/project-rag-settings-operations.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=json",
+        "--output",
+        "D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-operations-2584\\electron"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 58703,
+      "stdout": "electron.stdout.log",
+      "stderr": "electron.stderr.log"
+    }
+  ],
+  "ci": {
+    "total": 12,
+    "passed": 12
+  },
+  "runtimeLint": {
+    "exitCode": 0,
+    "preparation": "existing generated source declarations; unrelated Slack-wide preparation failure retained"
+  }
+}

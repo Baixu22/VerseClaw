@@ -1,0 +1,5 @@
+[qa-channel boundary dts] fresh; skipping
+[plugin-sdk boundary dts] [plugin-sdk-source-dts] staged 4407 declaration files
+[plugin-sdk boundary dts] [plugin-sdk-source-dts] staged 4334 package declaration files
+[plugin-sdk package boundary dts] [plugin-sdk-source-dts] staged 5064 package declaration files
+[slack boundary dts] extensions/slack/src/outbound-payload.test-harness.ts(2,46): error TS2307: Cannot find module 'openclaw/plugin-sdk/channel-contract-testing' or its corresponding type declarations.

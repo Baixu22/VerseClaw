@@ -1,0 +1,53 @@
+{
+  "schema": "ProjectRagCandidateGate/v1",
+  "actor": "codex/project-rag-g2-relay-01a1df5c",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "phase": "build",
+  "candidate": {
+    "head": "258457d6a45a0bab5b32eed47b88745dde84f666",
+    "tree": "7e49b714cfa2a77d9ba53c7c405f4b57f74b050d",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "startedAt": "2026-11-15T17:15:47.928905+00:00",
+  "commands": [
+    {
+      "name": "runtime-build",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/build-openclaw-runtime.mjs"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 62707,
+      "stdout": "runtime-build.stdout.log",
+      "stderr": "runtime-build.stderr.log"
+    },
+    {
+      "name": "desktop-build",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--max-old-space-size=6144",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 75002,
+      "stdout": "desktop-build.stdout.log",
+      "stderr": "desktop-build.stderr.log"
+    }
+  ],
+  "status": "pass",
+  "after": {
+    "head": "258457d6a45a0bab5b32eed47b88745dde84f666",
+    "tree": "7e49b714cfa2a77d9ba53c7c405f4b57f74b050d",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "sourceUnchanged": true,
+  "completedAt": "2026-11-15T17:18:11.464510+00:00"
+}

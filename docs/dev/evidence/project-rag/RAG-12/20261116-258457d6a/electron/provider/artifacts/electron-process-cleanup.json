@@ -1,0 +1,43 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-electron-2584\\fixtures\\verse-claw-e2e-run-Rmodob",
+  "ledgerEntries": 10,
+  "checks": [
+    {
+      "pid": 48540,
+      "creationTime": 1794763129714,
+      "status": "exited"
+    },
+    {
+      "pid": 25620,
+      "creationTime": 1794763141615,
+      "status": "exited"
+    },
+    {
+      "pid": 41092,
+      "creationTime": 1794763142333,
+      "status": "exited"
+    },
+    {
+      "pid": 35200,
+      "creationTime": 1794763270730,
+      "status": "exited"
+    },
+    {
+      "pid": 37800,
+      "creationTime": 1794763278983,
+      "status": "exited"
+    },
+    {
+      "pid": 14520,
+      "creationTime": 1794763279466,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

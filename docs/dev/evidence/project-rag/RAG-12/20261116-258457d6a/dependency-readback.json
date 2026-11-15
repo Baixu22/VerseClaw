@@ -1,0 +1,8 @@
+{
+  "candidate": "c8aef961e75cb5d86bac18b3ad3fedba80a93bd1",
+  "rootCompiler": "7.0.0-dev.20260707.2",
+  "runtimeCompiler": "7.0.0-dev.20260527.2",
+  "actor": "codex/project-rag-g2-relay-01a1df5c",
+  "driven_by": "agent",
+  "realHumanEvidence": false
+}

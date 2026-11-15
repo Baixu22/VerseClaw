@@ -1,0 +1,28 @@
+{
+  "driven_by": "agent",
+  "actor": "playwright-runner",
+  "runRoot": "D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-operations-2584\\fixtures\\verse-claw-e2e-run-mkivse",
+  "ledgerEntries": 5,
+  "checks": [
+    {
+      "pid": 41032,
+      "creationTime": 1794763473070,
+      "status": "exited"
+    },
+    {
+      "pid": 38752,
+      "creationTime": 1794763477723,
+      "status": "exited"
+    },
+    {
+      "pid": 42416,
+      "creationTime": 1794763477950,
+      "status": "exited"
+    }
+  ],
+  "owned": [],
+  "remaining": [],
+  "survivors": [],
+  "pendingLaunches": 0,
+  "status": "passed"
+}

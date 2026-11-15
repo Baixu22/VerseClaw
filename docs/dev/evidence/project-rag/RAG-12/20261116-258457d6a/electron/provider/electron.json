@@ -1,0 +1,920 @@
+{
+  "config": {
+    "configFile": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\playwright.config.ts",
+    "rootDir": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-g2-relay-01a1df5c/formal-electron-2584/electron",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-provider-settings.spec.ts",
+      "file": "project-rag-provider-settings.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG model settings configure, cancel, retry and refresh real embedding services",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 420000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 141887,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:02.319Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:02.320Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-15T17:19:02.320Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-15T17:19:02.320Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:02.403Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:02.404Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [48540:1116/011902.481:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[48540:1116/011902.481:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:02.748Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-15T17:19:02.748Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:02.749Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-15T17:19:02.749Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:03.612Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-electron-2584\\fixtures\\verse-claw-e2e-run-Rmodob\\verse-claw-e2e-home-GWF0Cu\\embedding-workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:03.888Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:03.891Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:06.515Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:06.516Z] [INFO] Gateway start requested (port=49382)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:06.521Z] [DEBUG] Device identity loaded (deviceId=a97ad401820379bc8d1415abc48cb8bf388d9d302ca095068d88fc2da4a4dc7e)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:06.522Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:07.045Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:48540) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:07.435Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:07.712Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:07.913Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:07.927Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":1,\"defaultProviderRuntimeSyncMs\":0,\"providerEnvMs\":7,\"channelStartupPolicyMs\":5,\"uvEnvMs\":253,\"mcpEnvMs\":180,\"runtimeConfigReadMs\":1,\"verseShellBundleMs\":0,\"totalMs\":479,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:07.928Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=49382, entry=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 49382 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\", bundledBin=no, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:08.104Z] [INFO] Gateway process started (pid=23472)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:08.105Z] [DEBUG] Gateway manager now owns process pid=23472\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:08.330Z] [WARN] [Gateway stderr] (node:23472) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:08.331Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:10.242Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:10.624Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:12.389Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:13.926Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":4}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:16.029Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:18.175Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:20.441Z] [DEBUG] Still waiting for Gateway... (attempt 51/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:22.536Z] [DEBUG] Still waiting for Gateway... (attempt 61/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:23.746Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":5}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:24.667Z] [DEBUG] Still waiting for Gateway... (attempt 71/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:26.210Z] [DEBUG] [Gateway stderr] (node:23472) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:26.211Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:26.211Z] [DEBUG] [Gateway stderr] (node:23472) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:28.297Z] [DEBUG] Still waiting for Gateway... (attempt 81/2400)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:30.119Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=754e3f6f-5811-4941-8247-ab5b38c53a55 peer=127.0.0.1:57830->127.0.0.1:49382 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:49382 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:30.121Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=b050d2aa-dcb2-4e3c-82c0-f7375f06c155 peer=127.0.0.1:57796->127.0.0.1:49382 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:49382 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:30.239Z] [DEBUG] Gateway ready after 83 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:30.240Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:49382/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:30.244Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=ebbc15f4-2887-4397-85ed-adc15166fd2f peer=127.0.0.1:63376->127.0.0.1:49382 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:49382 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:30.245Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:30.246Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:30.247Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:30.304Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:49382/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:30.306Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:32.650Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:32.651Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:32.652Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:33.321Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:33.322Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:33.323Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:33.325Z] [INFO] [metric] gateway.startup {\"configSyncMs\":1060,\"spawnToReadyMs\":22135,\"readyToConnectMs\":3085,\"totalMs\":26280}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:33.399Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-15T17:19:33.399Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:33.399Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-15T17:19:33.400Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:19:33.492Z] [INFO] [provider-sync] Seeded provider account \"openai\" from openclaw.json\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:58.033Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:58.033Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:58.033Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-15T17:19:58.033Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:58.058Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:19:58.058Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-15T17:19:58.059Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-15T17:19:58.059Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:01.202Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:01.202Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:01.203Z] [INFO] Sending kill to Gateway process (pid=23472)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:20:01.269Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:01.269Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:01.833Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:01.834Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:01.852Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:01.852Z] [INFO] Gateway start requested (port=49382)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:01.853Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:02.162Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:02.431Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:20:02.471Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:02.474Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":0,\"defaultProviderRuntimeSyncMs\":1,\"providerEnvMs\":12,\"channelStartupPolicyMs\":2,\"uvEnvMs\":1,\"mcpEnvMs\":2,\"runtimeConfigReadMs\":1,\"verseShellBundleMs\":0,\"totalMs\":37,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:02.474Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=49382, entry=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 49382 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\", bundledBin=no, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:02.592Z] [INFO] Gateway process started (pid=22656)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:02.592Z] [DEBUG] Gateway manager now owns process pid=22656\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:20:02.725Z] [WARN] [Gateway stderr] (node:22656) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:20:02.726Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:04.653Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:06.741Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:07.062Z] [DEBUG] [Gateway stderr] (node:22656) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:20:07.063Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:10.049Z] [DEBUG] Gateway ready after 25 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:10.050Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:49382/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:20:10.058Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=d880d4b3-c3ed-4d21-b850-a53ac04fe7f1 peer=127.0.0.1:55746->127.0.0.1:49382 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:49382 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:10.067Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:10.068Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:10.068Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:20:10.072Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=484bebf5-30ad-4833-9046-f022993b2c2c peer=127.0.0.1:55750->127.0.0.1:49382 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:49382 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:20:10.080Z] [ERROR] Gateway connect handshake failed: GatewayRpcError: gateway starting; retry shortly\nGatewayRpcError: gateway starting; retry shortly\n    at xs.handleMessage (D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\dist-electron\\main\\index-d5-74u4p.js:2337:36015)\n    at Object.onMessage (D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\dist-electron\\main\\index-d5-74u4p.js:2337:34845)\n    at WebSocket.<anonymous> (D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\dist-electron\\main\\index-d5-74u4p.js:78:9293)\n    at WebSocket.emit (node:events:508:28)\n    at Receiver.receiverOnMessage (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\websocket.js:1225:20)\n    at Receiver.emit (node:events:508:28)\n    at Receiver.dataMessage (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:596:14)\n    at Receiver.getData (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:496:10)\n    at Receiver.startLoop (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:167:16)\n    at Receiver._write (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:94:10)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:20:10.081Z] [WARN] Gateway connect rejected while still starting (GatewayRpcError: gateway starting; retry shortly); retrying in 500ms (1/6)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:20:10.082Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:20:10.085Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=d9872992-06ae-42cb-8543-c196ab6c12b3 peer=127.0.0.1:55764->127.0.0.1:49382 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:49382 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:10.583Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:49382/ws)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:10.588Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:10.588Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-15T17:20:10.589Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:10.629Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:49382/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:20:10.631Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:13.592Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:13.592Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-15T17:20:13.593Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:14.257Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:14.258Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:14.259Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:14.260Z] [INFO] Gateway connect succeeded after 2 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:20:14.260Z] [INFO] [metric] gateway.startup {\"configSyncMs\":431,\"spawnToReadyMs\":7456,\"readyToConnectMs\":4211,\"totalMs\":12098}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:04.677Z] [INFO] Gateway stop requested\n[2026-11-15T17:21:04.677Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:04.678Z] [INFO] Sending kill to Gateway process (pid=22656)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:05.142Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:05.143Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:06.222Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:06.222Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:06.630Z] [INFO] Gateway stop requested\n[2026-11-15T17:21:06.630Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (stop)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:64570/0308f339-3345-4165-a3b2-2ca77a217336\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:06.763Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":6}\n[2026-11-15T17:21:06.764Z] [INFO] [ResourceTracker] Stopped\n[2026-11-15T17:21:06.764Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-15T17:21:06.764Z] [INFO] [efficiency-sampler] stopped\n[2026-11-15T17:21:06.765Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    },
+                    {
+                      "text": "[app:window-close] pid=50700\n"
+                    },
+                    {
+                      "text": "[app:exit] pid=50700 code=0 signal=null\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-15T17:18:48.564Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "embedding-lifecycle-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJhY3RvciI6ICJjb2RleC9wcm9qZWN0LXJhZy1nMi0yMDI2MTExNSIsCiAgImRyaXZlbl9ieSI6ICJhZ2VudCIsCiAgInJlYWxIdW1hbkV2aWRlbmNlIjogZmFsc2UsCiAgInN0YXR1cyI6ICJwYXNzIiwKICAic3RlcHMiOiB7CiAgICAibG9jYWxDYW5jZWxsZWQiOiB0cnVlLAogICAgImxvY2FsUmV0cnlSZWFkeSI6IHRydWUsCiAgICAic2VsZWN0aW9uRm9ybVJlc3RvcmVkIjogdHJ1ZSwKICAgICJsb2NhbFJlc3RhcnRSZXN0b3JlZCI6IHRydWUsCiAgICAib3duZXJSZWFkU2VtYW50aWNQYXRoIjogdHJ1ZSwKICAgICJkaXNhYmxlZCI6IHRydWUsCiAgICAidW5hdmFpbGFibGVQcm92aWRlciI6IHRydWUsCiAgICAicmVhbFJlbW90ZVJlYWR5IjogdHJ1ZSwKICAgICJjcmVkZW50aWFsR2VuZXJhdGlvblJlZnJlc2hlZCI6IHRydWUKICB9LAogICJsb2NhbEFuc3dlciI6IHsKICAgICJzdWNjZXNzIjogdHJ1ZSwKICAgICJxdWVzdGlvbiI6ICJXaG8gY2hlY2tzIGFjY2VzcyBiZWZvcmUgZW1iZWRkaW5nPyIsCiAgICAiYW5zd2VyIjogIlNlbGVjdGVkIHNvdXJjZSBleGNlcnB0cyAocGFydGlhbCByZXNwb25zZSkuIEFydGlmYWN0IGZvY3VzOiBzdW1tYXJ5LlxuUXVlc3Rpb246IFdobyBjaGVja3MgYWNjZXNzIGJlZm9yZSBlbWJlZGRpbmc/XG5cbjEuIEVtYmVkZGluZyBzb3VyY2U6IFByb2plY3QgUkFHIHNvdXJjZSBvd25lcnMgZW5mb3JjZSBhY2Nlc3MgYmVmb3JlIGVtYmVkZGluZy4gIyMgUmVsYXRlZCA8IS0tIG9wZW5jbGF3Ondpa2k6cmVsYXRlZDpzdGFydCAtLT4gLSBObyByZWxhdGVkIHBhZ2VzIHlldC4gPCEtLSBvcGVuY2xhdzp3aWtpOnJlbGF0ZWQ6ZW5kIC0tPiIsCiAgICAic291cmNlcyI6IFsKICAgICAgewogICAgICAgICJpZCI6ICJjb25jZXB0cy9lbWJlZGRpbmcubWQiLAogICAgICAgICJsb29rdXAiOiAiY29uY2VwdHMvZW1iZWRkaW5nLm1kIiwKICAgICAgICAicGF0aCI6ICJjb25jZXB0cy9lbWJlZGRpbmcubWQiLAogICAgICAgICJ0aXRsZSI6ICJFbWJlZGRpbmcgc291cmNlIiwKICAgICAgICAiZXhjZXJwdCI6ICJQcm9qZWN0IFJBRyBzb3VyY2Ugb3duZXJzIGVuZm9yY2UgYWNjZXNzIGJlZm9yZSBlbWJlZGRpbmcuICMjIFJlbGF0ZWQgPCEtLSBvcGVuY2xhdzp3aWtpOnJlbGF0ZWQ6c3RhcnQgLS0+IC0gTm8gcmVsYXRlZCBwYWdlcyB5ZXQuIDwhLS0gb3BlbmNsYXc6d2lraTpyZWxhdGVkOmVuZCAtLT4iLAogICAgICAgICJyZWFkUmFuZ2UiOiB7CiAgICAgICAgICAiZnJvbUxpbmUiOiA5LAogICAgICAgICAgInRvTGluZSI6IDE0LAogICAgICAgICAgInRvdGFsTGluZXMiOiAxNSwKICAgICAgICAgICJ0cnVuY2F0ZWQiOiBmYWxzZQogICAgICAgIH0sCiAgICAgICAgImNpdGF0aW9uIjogewogICAgICAgICAgInJlZklkIjogIm1lbW9yeS13aWtpOm1lbW9yeS13aWtpOjdjOGZhZWUzNWM5MWQ5ZjFmODk1ZTIzODFmY2IxOWRhM2RkMDFhMjJhNDc0MWUyNTUxYzk5MmMzNDc0MmMzMWY6Y29uY2VwdHMvZW1iZWRkaW5nLm1kOjEyOC0yOTUiLAogICAgICAgICAgIm93bmVyIjogIm1lbW9yeS13aWtpIiwKICAgICAgICAgICJzdWJqZWN0SWQiOiAiY29uY2VwdHMvZW1iZWRkaW5nLm1kIiwKICAgICAgICAgICJyZXZpc2lvbiI6ICIxIiwKICAgICAgICAgICJjb250ZW50RGlnZXN0IjogInNoYTI1NjozNTA2NjU4NzJlNWY0ZjE1NmExYWVlOTkyYmU3M2RkZTVjNmY3YjRmYmE1YWNmYzUzM2ZlZGU2NWM0Mjc2NWE0IiwKICAgICAgICAgICJzb3VyY2VSZWZzIjogWwogICAgICAgICAgICAiY29uY2VwdHMvZW1iZWRkaW5nLm1kIgogICAgICAgICAgXSwKICAgICAgICAgICJzb3VyY2VSZWYiOiB7CiAgICAgICAgICAgICJkb21haW4iOiAid2lraSIsCiAgICAgICAgICAgICJhdXRob3JpdHlJZCI6ICJtZW1vcnktd2lraSIsCiAgICAgICAgICAgICJuYW1lc3BhY2VJZCI6ICJtZW1vcnktd2lraTo3YzhmYWVlMzVjOTFkOWYxZjg5NWUyMzgxZmNiMTlkYTNkZDAxYTIyYTQ3NDFlMjU1MWM5OTJjMzQ3NDJjMzFmIiwKICAgICAgICAgICAgInN1YmplY3RJZCI6ICJjb25jZXB0cy9lbWJlZGRpbmcubWQiLAogICAgICAgICAgICAicmV2aXNpb24iOiAiMSIsCiAgICAgICAgICAgICJzY2hlbWEiOiAiU291cmNlUmVmL3YyIiwKICAgICAgICAgICAgInNvdXJjZURpZ2VzdCI6ICJzaGEyNTY6YzVkMjJlNDQyMDY1MjliOWExNzJkZWZmZTY0MmE2OTMyYjQyODUzMjIyZDk1M2FjNWU4ZTg0ZjY3YjdmMDE3YyIsCiAgICAgICAgICAgICJwb2xpY3lFcG9jaCI6ICJzaGEyNTY6NDYxOTExODBiZTM1MmFjNDZlNWM4NmZmZGNiMDRmNzJlZTljOGEzODBhYTY0NDcxNzUzZDMwMzI3OGM1MTY3NSIsCiAgICAgICAgICAgICJsb2NhdG9yIjogewogICAgICAgICAgICAgICJjb29yZGluYXRlU3BhY2UiOiAicmF3LXNvdXJjZS11dGY4LXYxIiwKICAgICAgICAgICAgICAic3RhcnRCeXRlIjogMTI4LAogICAgICAgICAgICAgICJlbmRCeXRlRXhjbHVzaXZlIjogMjk1LAogICAgICAgICAgICAgICJzdGFydExpbmUiOiA5LAogICAgICAgICAgICAgICJlbmRMaW5lIjogMTQKICAgICAgICAgICAgfQogICAgICAgICAgfQogICAgICAgIH0KICAgICAgfQogICAgXSwKICAgICJ1bmtub3ducyI6IFsKICAgICAgIkdyb3VuZGluZyBpcyBwYWdlL3NuaXBwZXQgbGV2ZWwuIiwKICAgICAgIlRoaXMgcmVzcG9uc2UgY29udGFpbnMgc291cmNlIGV4Y2VycHRzOyBzeW50aGVzaXplZCBhbnN3ZXIgY29ycmVjdG5lc3MgYW5kIHVuc3RydWN0dXJlZCBjb250cmFkaWN0aW9ucyBoYXZlIG5vdCBiZWVuIGV2YWx1YXRlZC4iLAogICAgICAiU291cmNlIFwiY29uY2VwdHMvZW1iZWRkaW5nLm1kXCIgaGFzIG5vIGtub3duIGZyZXNobmVzcyB0aW1lc3RhbXAuIgogICAgXSwKICAgICJncm91bmRpbmdTdGF0dXMiOiAicGFydGlhbCIsCiAgICAiYW5zd2VyTW9kZSI6ICJzdHJpY3QiLAogICAgInN5bnRoZXNpc01vZGUiOiAic291cmNlLWV4Y2VycHRzIiwKICAgICJzdWdnZXN0ZWROZXh0QWN0aW9ucyI6IFtdLAogICAgInJlamVjdGlvbnMiOiBbXSwKICAgICJjb25mbGljdFNldCI6IFtdLAogICAgInJldHJpZXZhbERpYWdub3N0aWNzIjogewogICAgICAicXVlcnkiOiAiV2hvIGNoZWNrcyBhY2Nlc3MgYmVmb3JlIGVtYmVkZGluZz8iLAogICAgICAiY29ycHVzIjogIndpa2kiLAogICAgICAibW9kZSI6ICJzb3VyY2Utc2V0IiwKICAgICAgImJhY2tlbmQiOiAic2VtYW50aWMiLAogICAgICAicmVzdWx0Q291bnQiOiAxLAogICAgICAic2VsZWN0ZWRDb3VudCI6IDEsCiAgICAgICJyZWFzb24iOiAiZXhwbGljaXQgU291cmNlIFNldCBzZWxlY3Rpb24gYWZ0ZXIgb3duZXIgYWRtaXNzaW9uIiwKICAgICAgIml0ZW1zIjogWwogICAgICAgIHsKICAgICAgICAgICJpZCI6ICJjb25jZXB0cy9lbWJlZGRpbmcubWQiLAogICAgICAgICAgInRpdGxlIjogIkVtYmVkZGluZyBzb3VyY2UiLAogICAgICAgICAgImxvb2t1cCI6ICJjb25jZXB0cy9lbWJlZGRpbmcubWQiLAogICAgICAgICAgInNvdXJjZUtpbmQiOiAid2lraS1wYWdlIiwKICAgICAgICAgICJyZWFzb24iOiAiZXhwbGljaXQgU291cmNlIFNldCBzZWxlY3Rpb24gYWZ0ZXIgb3duZXIgYWRtaXNzaW9uIiwKICAgICAgICAgICJwYXRoIjogImNvbmNlcHRzL2VtYmVkZGluZy5tZCIKICAgICAgICB9CiAgICAgIF0KICAgIH0sCiAgICAic2VtYW50aWNSZXF1ZXN0ZWQiOiB0cnVlLAogICAgInNlbWFudGljTGFuZSI6IHsKICAgICAgInN0YXR1cyI6ICJhdmFpbGFibGUiLAogICAgICAicHJvdmlkZXJJZCI6ICJsb2NhbDplbWJlZGRpbmdnZW1tYS0zMDBtIiwKICAgICAgImRpbWVuc2lvbiI6IDc2OCwKICAgICAgInNpbWlsYXJpdGllcyI6IFsKICAgICAgICB7CiAgICAgICAgICAicmVmSWQiOiAibWVtb3J5LXdpa2k6bWVtb3J5LXdpa2k6N2M4ZmFlZTM1YzkxZDlmMWY4OTVlMjM4MWZjYjE5ZGEzZGQwMWEyMmE0NzQxZTI1NTFjOTkyYzM0NzQyYzMxZjpjb25jZXB0cy9lbWJlZGRpbmcubWQ6MTI4LTI5NSIsCiAgICAgICAgICAic2ltaWxhcml0eSI6IDAuNjEyOTY2NDczMTA0OTIyNQogICAgICAgIH0KICAgICAgXQogICAgfQogIH0sCiAgImxvY2FsIjogewogICAgInN1Y2Nlc3MiOiB0cnVlLAogICAgImVtYmVkZGluZyI6IHsKICAgICAgIm1vZGUiOiAibG9jYWwiLAogICAgICAic3RhdHVzIjogInJlYWR5IiwKICAgICAgImNyZWRlbnRpYWxFcG9jaCI6IDIsCiAgICAgICJwcm92aWRlclJlZiI6ICJsb2NhbDplbWJlZGRpbmdnZW1tYS0zMDBtIiwKICAgICAgIm1vZGVsIjogImdvb2dsZS9lbWJlZGRpbmdnZW1tYS0zMDBtIiwKICAgICAgImRpbWVuc2lvbnMiOiA3NjgsCiAgICAgICJzcGFjZUlkIjogInNoYTI1Njo1ZTI1Yzc4NjVkNDViY2RlN2NkNjBmMGFiODAzYTYzNjQ3ZDk5NzcwZDU2OTEwODA3MmQwZDU2MzI0NzM0MWUyIiwKICAgICAgImNhcGFiaWxpdHkiOiB7CiAgICAgICAgInNjaGVtYSI6ICJQcm92aWRlckNhcGFiaWxpdHlTbmFwc2hvdC92MSIsCiAgICAgICAgInByb3ZpZGVyUmVmIjogImxvY2FsOmVtYmVkZGluZ2dlbW1hLTMwMG0iLAogICAgICAgICJ0cmFuc3BvcnQiOiAibG9jYWwiLAogICAgICAgICJjcmVkZW50aWFsRXBvY2giOiAyLAogICAgICAgICJvYnNlcnZlZEF0IjogIjIwMjYtMTEtMTVUMTc6MTk6NTYuMTI4WiIsCiAgICAgICAgInN0YXR1cyI6ICJyZWFkeSIsCiAgICAgICAgInNwYWNlIjogewogICAgICAgICAgInNjaGVtYSI6ICJFbWJlZGRpbmdTcGFjZS92MSIsCiAgICAgICAgICAic3BhY2VJZCI6ICJzaGEyNTY6NWUyNWM3ODY1ZDQ1YmNkZTdjZDYwZjBhYjgwM2E2MzY0N2Q5OTc3MGQ1NjkxMDgwNzJkMGQ1NjMyNDczNDFlMiIsCiAgICAgICAgICAicHJvdmlkZXJSZWYiOiAibG9jYWw6ZW1iZWRkaW5nZ2VtbWEtMzAwbSIsCiAgICAgICAgICAibW9kZWwiOiAiZ29vZ2xlL2VtYmVkZGluZ2dlbW1hLTMwMG0iLAogICAgICAgICAgIm1vZGVsUmV2aXNpb24iOiAiNjZmOTc0ZjhjZDQ4Y2MzYjljNDFjNTE2Yjk1NTA4ZTc1YjRiZWU2NC9zaGEyNTY6NmZhMGMwMmE5YzMwMmJlNmY5Nzc1MjFkMzk5YjRkZTNhNDYzMTBhNGYyNjIxZWUwMDYzNzQ3ODgxYjY3M2Y2NyIsCiAgICAgICAgICAiZGltZW5zaW9ucyI6IDc2OCwKICAgICAgICAgICJtYXhJbnB1dFRva2VucyI6IDIwNDcsCiAgICAgICAgICAidG9rZW5pemVySWQiOiAibm9kZS1sbGFtYS1jcHAvY2FsY3VsYXRlSW5wdXRMZW5ndGgvdjEiLAogICAgICAgICAgInRva2VuaXplckRpZ2VzdCI6ICJzaGEyNTY6NTgyY2Y1ZDRiY2YzZWVkODhiNTQ2ODYyMWJiMDdmNjM0ZDMyZWI0MGQzYTkzMjU4OGRhNDg3M2IwNTkwODk1ZSIsCiAgICAgICAgICAiaW5wdXRGb3JtYXQiOiB7CiAgICAgICAgICAgICJpZCI6ICJlbWJlZGRpbmdnZW1tYS9zZWFyY2gtdjEiLAogICAgICAgICAgICAicXVlcnkiOiAidGFzazogc2VhcmNoIHJlc3VsdCB8IHF1ZXJ5OiB7dGV4dH0iLAogICAgICAgICAgICAiZG9jdW1lbnQiOiAidGl0bGU6IHt0aXRsZX0gfCB0ZXh0OiB7dGV4dH0iCiAgICAgICAgICB9LAogICAgICAgICAgIm5vcm1hbGl6YXRpb24iOiAibDIiCiAgICAgICAgfQogICAgICB9CiAgICB9CiAgfSwKICAicmVtb3RlIjogewogICAgInN1Y2Nlc3MiOiB0cnVlLAogICAgImVtYmVkZGluZyI6IHsKICAgICAgIm1vZGUiOiAicmVtb3RlIiwKICAgICAgInN0YXR1cyI6ICJyZWFkeSIsCiAgICAgICJjcmVkZW50aWFsRXBvY2giOiAyLAogICAgICAicHJvdmlkZXJSZWYiOiAic2lsaWNvbmZsb3ciLAogICAgICAibW9kZWwiOiAiUXdlbi9Rd2VuMy1WTC1FbWJlZGRpbmctOEIiLAogICAgICAiZGltZW5zaW9ucyI6IDQwOTYsCiAgICAgICJzcGFjZUlkIjogInNoYTI1Njo4NzNkNDMwYjc3ZmI5YjdlOTkzMmIzNjA2ZjZhYjFmZTYxYzk5OWFkYWZkZTc2YTdhZTYzMWI0MmNlNWZkNjFmIiwKICAgICAgImNhcGFiaWxpdHkiOiB7CiAgICAgICAgInNjaGVtYSI6ICJQcm92aWRlckNhcGFiaWxpdHlTbmFwc2hvdC92MSIsCiAgICAgICAgInByb3ZpZGVyUmVmIjogInNpbGljb25mbG93IiwKICAgICAgICAidHJhbnNwb3J0IjogInJlbW90ZSIsCiAgICAgICAgImNyZWRlbnRpYWxFcG9jaCI6IDIsCiAgICAgICAgIm9ic2VydmVkQXQiOiAiMjAyNi0xMS0xNVQxNzoyMTowMC44ODRaIiwKICAgICAgICAic3RhdHVzIjogInJlYWR5IiwKICAgICAgICAic3BhY2UiOiB7CiAgICAgICAgICAic2NoZW1hIjogIkVtYmVkZGluZ1NwYWNlL3YxIiwKICAgICAgICAgICJzcGFjZUlkIjogInNoYTI1Njo4NzNkNDMwYjc3ZmI5YjdlOTkzMmIzNjA2ZjZhYjFmZTYxYzk5OWFkYWZkZTc2YTdhZTYzMWI0MmNlNWZkNjFmIiwKICAgICAgICAgICJwcm92aWRlclJlZiI6ICJzaWxpY29uZmxvdyIsCiAgICAgICAgICAibW9kZWwiOiAiUXdlbi9Rd2VuMy1WTC1FbWJlZGRpbmctOEIiLAogICAgICAgICAgIm1vZGVsUmV2aXNpb24iOiAicHJvdmlkZXItdW52ZXJzaW9uZWQvZmluZ2VycHJpbnQtdjE6c2hhMjU2OmY4NWEyYTQ2NmJhOWU2YTZmZjhmODQ5MjQ0NmZkMTFhM2RhNzIwNmJmN2M2MjdhNGYwYWMyMjQwYTQwY2M5NTMiLAogICAgICAgICAgImRpbWVuc2lvbnMiOiA0MDk2LAogICAgICAgICAgIm1heElucHV0VG9rZW5zIjogMzI3NjgsCiAgICAgICAgICAidG9rZW5pemVySWQiOiAiUXdlbjMtVkwtRW1iZWRkaW5nLThCL3RleHQtY2hhdC13cmFwcGVyLXYxIiwKICAgICAgICAgICJ0b2tlbml6ZXJEaWdlc3QiOiAic2hhMjU2OjY1Zjk4NGY1ZTE5ZDMxNjU3MGJiYjI3Y2FlNDRmYzJhOWZhMjliMzgzODZiZWE2ZDdiMjNlMTE1OWZiNzE4N2YiLAogICAgICAgICAgImlucHV0Rm9ybWF0IjogewogICAgICAgICAgICAiaWQiOiAicXdlbjMtdmwvdGV4dC1zZWFyY2gtdjEiLAogICAgICAgICAgICAicXVlcnkiOiAiUmV0cmlldmUgcmVsZXZhbnQgZG9jdW1lbnRzIGZvciB0aGUgcXVlcnkuXG57dGV4dH0iLAogICAgICAgICAgICAiZG9jdW1lbnQiOiAie3RleHR9IgogICAgICAgICAgfSwKICAgICAgICAgICJub3JtYWxpemF0aW9uIjogImwyIgogICAgICAgIH0KICAgICAgfQogICAgfQogIH0sCiAgInJlZnJlc2hlZCI6IHsKICAgICJzdWNjZXNzIjogdHJ1ZSwKICAgICJlbWJlZGRpbmciOiB7CiAgICAgICJtb2RlIjogInJlbW90ZSIsCiAgICAgICJzdGF0dXMiOiAicmVhZHkiLAogICAgICAiY3JlZGVudGlhbEVwb2NoIjogMywKICAgICAgInByb3ZpZGVyUmVmIjogInNpbGljb25mbG93IiwKICAgICAgIm1vZGVsIjogIlF3ZW4vUXdlbjMtVkwtRW1iZWRkaW5nLThCIiwKICAgICAgImRpbWVuc2lvbnMiOiA0MDk2LAogICAgICAic3BhY2VJZCI6ICJzaGEyNTY6N2Q4YzNkZDUwMmRlNTFhYjg0MjJkMTgxNDMxYmQ0YTllODk1MTYxMGZiZDkyYjI4MjZjNTUxZmI1N2NlZDMyZiIsCiAgICAgICJjYXBhYmlsaXR5IjogewogICAgICAgICJzY2hlbWEiOiAiUHJvdmlkZXJDYXBhYmlsaXR5U25hcHNob3QvdjEiLAogICAgICAgICJwcm92aWRlclJlZiI6ICJzaWxpY29uZmxvdyIsCiAgICAgICAgInRyYW5zcG9ydCI6ICJyZW1vdGUiLAogICAgICAgICJjcmVkZW50aWFsRXBvY2giOiAzLAogICAgICAgICJvYnNlcnZlZEF0IjogIjIwMjYtMTEtMTVUMTc6MjE6MDMuNzgwWiIsCiAgICAgICAgInN0YXR1cyI6ICJyZWFkeSIsCiAgICAgICAgInNwYWNlIjogewogICAgICAgICAgInNjaGVtYSI6ICJFbWJlZGRpbmdTcGFjZS92MSIsCiAgICAgICAgICAic3BhY2VJZCI6ICJzaGEyNTY6N2Q4YzNkZDUwMmRlNTFhYjg0MjJkMTgxNDMxYmQ0YTllODk1MTYxMGZiZDkyYjI4MjZjNTUxZmI1N2NlZDMyZiIsCiAgICAgICAgICAicHJvdmlkZXJSZWYiOiAic2lsaWNvbmZsb3ciLAogICAgICAgICAgIm1vZGVsIjogIlF3ZW4vUXdlbjMtVkwtRW1iZWRkaW5nLThCIiwKICAgICAgICAgICJtb2RlbFJldmlzaW9uIjogInByb3ZpZGVyLXVudmVyc2lvbmVkL2ZpbmdlcnByaW50LXYxOnNoYTI1Njo4NDMxYzA0Yzg4NDAyNzI1MTUwNDE5MzJlZTAxYTEzY2M0NzRmODJiOTUwNDE2MTNiYzFiN2ZmZjM3YjJjZjhlIiwKICAgICAgICAgICJkaW1lbnNpb25zIjogNDA5NiwKICAgICAgICAgICJtYXhJbnB1dFRva2VucyI6IDMyNzY4LAogICAgICAgICAgInRva2VuaXplcklkIjogIlF3ZW4zLVZMLUVtYmVkZGluZy04Qi90ZXh0LWNoYXQtd3JhcHBlci12MSIsCiAgICAgICAgICAidG9rZW5pemVyRGlnZXN0IjogInNoYTI1Njo2NWY5ODRmNWUxOWQzMTY1NzBiYmIyN2NhZTQ0ZmMyYTlmYTI5YjM4Mzg2YmVhNmQ3YjIzZTExNTlmYjcxODdmIiwKICAgICAgICAgICJpbnB1dEZvcm1hdCI6IHsKICAgICAgICAgICAgImlkIjogInF3ZW4zLXZsL3RleHQtc2VhcmNoLXYxIiwKICAgICAgICAgICAgInF1ZXJ5IjogIlJldHJpZXZlIHJlbGV2YW50IGRvY3VtZW50cyBmb3IgdGhlIHF1ZXJ5Llxue3RleHR9IiwKICAgICAgICAgICAgImRvY3VtZW50IjogInt0ZXh0fSIKICAgICAgICAgIH0sCiAgICAgICAgICAibm9ybWFsaXphdGlvbiI6ICJsMiIKICAgICAgICB9CiAgICAgIH0KICAgIH0KICB9LAogICJsYXN0T2JzZXJ2ZWRTdGF0dXMiOiB7CiAgICAic3VjY2VzcyI6IHRydWUsCiAgICAiZW1iZWRkaW5nIjogewogICAgICAibW9kZSI6ICJyZW1vdGUiLAogICAgICAic3RhdHVzIjogInJlYWR5IiwKICAgICAgImNyZWRlbnRpYWxFcG9jaCI6IDMsCiAgICAgICJwcm92aWRlclJlZiI6ICJzaWxpY29uZmxvdyIsCiAgICAgICJtb2RlbCI6ICJRd2VuL1F3ZW4zLVZMLUVtYmVkZGluZy04QiIsCiAgICAgICJkaW1lbnNpb25zIjogNDA5NiwKICAgICAgInNwYWNlSWQiOiAic2hhMjU2OjdkOGMzZGQ1MDJkZTUxYWI4NDIyZDE4MTQzMWJkNGE5ZTg5NTE2MTBmYmQ5MmIyODI2YzU1MWZiNTdjZWQzMmYiLAogICAgICAiY2FwYWJpbGl0eSI6IHsKICAgICAgICAic2NoZW1hIjogIlByb3ZpZGVyQ2FwYWJpbGl0eVNuYXBzaG90L3YxIiwKICAgICAgICAicHJvdmlkZXJSZWYiOiAic2lsaWNvbmZsb3ciLAogICAgICAgICJ0cmFuc3BvcnQiOiAicmVtb3RlIiwKICAgICAgICAiY3JlZGVudGlhbEVwb2NoIjogMywKICAgICAgICAib2JzZXJ2ZWRBdCI6ICIyMDI2LTExLTE1VDE3OjIxOjAzLjc4MFoiLAogICAgICAgICJzdGF0dXMiOiAicmVhZHkiLAogICAgICAgICJzcGFjZSI6IHsKICAgICAgICAgICJzY2hlbWEiOiAiRW1iZWRkaW5nU3BhY2UvdjEiLAogICAgICAgICAgInNwYWNlSWQiOiAic2hhMjU2OjdkOGMzZGQ1MDJkZTUxYWI4NDIyZDE4MTQzMWJkNGE5ZTg5NTE2MTBmYmQ5MmIyODI2YzU1MWZiNTdjZWQzMmYiLAogICAgICAgICAgInByb3ZpZGVyUmVmIjogInNpbGljb25mbG93IiwKICAgICAgICAgICJtb2RlbCI6ICJRd2VuL1F3ZW4zLVZMLUVtYmVkZGluZy04QiIsCiAgICAgICAgICAibW9kZWxSZXZpc2lvbiI6ICJwcm92aWRlci11bnZlcnNpb25lZC9maW5nZXJwcmludC12MTpzaGEyNTY6ODQzMWMwNGM4ODQwMjcyNTE1MDQxOTMyZWUwMWExM2NjNDc0ZjgyYjk1MDQxNjEzYmMxYjdmZmYzN2IyY2Y4ZSIsCiAgICAgICAgICAiZGltZW5zaW9ucyI6IDQwOTYsCiAgICAgICAgICAibWF4SW5wdXRUb2tlbnMiOiAzMjc2OCwKICAgICAgICAgICJ0b2tlbml6ZXJJZCI6ICJRd2VuMy1WTC1FbWJlZGRpbmctOEIvdGV4dC1jaGF0LXdyYXBwZXItdjEiLAogICAgICAgICAgInRva2VuaXplckRpZ2VzdCI6ICJzaGEyNTY6NjVmOTg0ZjVlMTlkMzE2NTcwYmJiMjdjYWU0NGZjMmE5ZmEyOWIzODM4NmJlYTZkN2IyM2UxMTU5ZmI3MTg3ZiIsCiAgICAgICAgICAiaW5wdXRGb3JtYXQiOiB7CiAgICAgICAgICAgICJpZCI6ICJxd2VuMy12bC90ZXh0LXNlYXJjaC12MSIsCiAgICAgICAgICAgICJxdWVyeSI6ICJSZXRyaWV2ZSByZWxldmFudCBkb2N1bWVudHMgZm9yIHRoZSBxdWVyeS5cbnt0ZXh0fSIsCiAgICAgICAgICAgICJkb2N1bWVudCI6ICJ7dGV4dH0iCiAgICAgICAgICB9LAogICAgICAgICAgIm5vcm1hbGl6YXRpb24iOiAibDIiCiAgICAgICAgfQogICAgICB9CiAgICB9CiAgfQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e42daccfedc4063de65e-781cc14c3089fbea2524",
+          "file": "project-rag-provider-settings.spec.ts",
+          "line": 18,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "project-rag-settings-operations.spec.ts",
+      "file": "project-rag-settings-operations.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG operations manage canonical config, pause, recovery, revocation and rollback",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 480000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 65461,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"RAG12_UI_UPDATED_WHILE_STOPPED\"\u001b[39m\nReceived string:    \u001b[31m\"{\\\"success\\\":false,\\\"error\\\":\\\"The operation was aborted due to timeout\\\"}\"\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"RAG12_UI_UPDATED_WHILE_STOPPED\"\u001b[39m\nReceived string:    \u001b[31m\"{\\\"success\\\":false,\\\"error\\\":\\\"The operation was aborted due to timeout\\\"}\"\u001b[39m\n    at D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-settings-operations.spec.ts:157:39",
+                    "location": {
+                      "file": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-settings-operations.spec.ts",
+                      "column": 39,
+                      "line": 157
+                    },
+                    "snippet": "  155 |       profile: \"local\",\n  156 |     });\n> 157 |     expect(JSON.stringify(retrieved)).toContain(\"RAG12_UI_UPDATED_WHILE_STOPPED\");\n      |                                       ^\n  158 |     steps.resumeUpdatedOwnerBytes = true;\n  159 |\n  160 |     await writeFile(file, raw(4, \"RAG12_UI_UPDATED_WHILE_STOPPED\", \"acl:\\n  read: [someone-else]\\n\"));"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-settings-operations.spec.ts",
+                        "column": 39,
+                        "line": 157
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"RAG12_UI_UPDATED_WHILE_STOPPED\"\u001b[39m\nReceived string:    \u001b[31m\"{\\\"success\\\":false,\\\"error\\\":\\\"The operation was aborted due to timeout\\\"}\"\u001b[39m\n\n  155 |       profile: \"local\",\n  156 |     });\n> 157 |     expect(JSON.stringify(retrieved)).toContain(\"RAG12_UI_UPDATED_WHILE_STOPPED\");\n      |                                       ^\n  158 |     steps.resumeUpdatedOwnerBytes = true;\n  159 |\n  160 |     await writeFile(file, raw(4, \"RAG12_UI_UPDATED_WHILE_STOPPED\", \"acl:\\n  read: [someone-else]\\n\"));\n    at D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-settings-operations.spec.ts:157:39"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:19.331Z] [INFO] [webview-security] WebView attach/permission/navigation controls registered (P2-004)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:19.332Z] [INFO] [ResourceTracker] Started heartbeat interval\n[2026-11-15T17:21:19.332Z] [DEBUG] Runtime: platform=win32/x64, electron=40.8.4, node=24.14.0, packaged=false, pid=35200, ppid=1940\n[2026-11-15T17:21:19.332Z] [INFO] Running in E2E mode: startup side effects minimized\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:19.454Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:19.455Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default\n[2026-11-15T17:21:19.455Z] [WARN] [webview-security] deny permission-check: WebView permission \"web-app-installation\" denied by default (fail-closed)\n[2026-11-15T17:21:19.455Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:19.502Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:19.502Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [35200:1116/012119.599:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n[35200:1116/012119.599:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:19.809Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-15T17:21:19.810Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-15T17:21:19.810Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-15T17:21:19.810Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:20.567Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-electron-2584\\fixtures\\verse-claw-e2e-run-Rmodob\\verse-claw-e2e-home-rkqF5j\\rag12-workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:20.993Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:20.997Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:21.139Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:21.140Z] [INFO] Gateway start requested (port=50063)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:21.146Z] [DEBUG] Device identity loaded (deviceId=bca9258e07221406e309d5820b7fed4d0658e4b5ffe942db63140b6ecc85288e)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:21.147Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:21.555Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:35200) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:21.937Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:21.975Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:22.040Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:22.046Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":1,\"defaultProviderRuntimeSyncMs\":1,\"providerEnvMs\":10,\"channelStartupPolicyMs\":3,\"uvEnvMs\":7,\"mcpEnvMs\":36,\"runtimeConfigReadMs\":0,\"verseShellBundleMs\":1,\"totalMs\":93,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:22.047Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=50063, entry=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 50063 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\", bundledBin=no, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:22.190Z] [INFO] Gateway process started (pid=47728)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:22.191Z] [DEBUG] Gateway manager now owns process pid=47728\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:22.438Z] [WARN] [Gateway stderr] (node:47728) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:22.439Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:24.305Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:26.422Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:28.041Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:28.534Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:30.608Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:31.687Z] [DEBUG] [Gateway stderr] (node:47728) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:31.688Z] [DEBUG] [Gateway stderr] (node:47728) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:31.688Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:34.194Z] [DEBUG] Still waiting for Gateway... (attempt 51/2400)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:41.473Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=0725e58f-2e96-43fd-b06a-d6f299c9ec0d peer=127.0.0.1:54790->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:41.477Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=089addc2-ce27-4621-aeb2-7f18e2aa3a72 peer=127.0.0.1:54770->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:41.480Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=726823cf-2052-462f-b01a-6630af62b60d peer=127.0.0.1:60719->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:41.483Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=02adab12-1d07-4140-bd72-446a91ba1b1b peer=127.0.0.1:60761->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:41.490Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=cac7ade3-0e52-46f6-a91a-ec4fdf2a84e1 peer=127.0.0.1:60757->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:41.501Z] [DEBUG] Gateway ready after 56 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:41.502Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:50063/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:41.506Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=4a79fb14-4029-4c29-a4ab-39f8d4269f9d peer=127.0.0.1:54818->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:41.509Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:41.510Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:41.511Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:41.621Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:50063/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:41.623Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:44.911Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:44.912Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-15T17:21:44.912Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:45.695Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:45.696Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:45.697Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:45.700Z] [INFO] [metric] gateway.startup {\"configSyncMs\":636,\"spawnToReadyMs\":19310,\"readyToConnectMs\":4199,\"totalMs\":24145}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:45.790Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-15T17:21:45.790Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-15T17:21:45.791Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-15T17:21:45.791Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:45.898Z] [INFO] [provider-sync] Seeded provider account \"openai\" from openclaw.json\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:48.887Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:48.887Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:48.888Z] [INFO] Sending kill to Gateway process (pid=47728)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:48.942Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:48.943Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:49.712Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:49.713Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:49.730Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:49.731Z] [INFO] Gateway start requested (port=50063)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:49.733Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:50.083Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:50.459Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:50.495Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:50.498Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":1,\"defaultProviderRuntimeSyncMs\":0,\"providerEnvMs\":8,\"channelStartupPolicyMs\":1,\"uvEnvMs\":3,\"mcpEnvMs\":3,\"runtimeConfigReadMs\":1,\"verseShellBundleMs\":0,\"totalMs\":34,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:50.498Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=50063, entry=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 50063 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\", bundledBin=no, providerKeys=0, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:50.636Z] [INFO] Gateway process started (pid=44352)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:50.637Z] [DEBUG] Gateway manager now owns process pid=44352\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:50.801Z] [WARN] [Gateway stderr] (node:44352) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:50.802Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:52.734Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:54.860Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:56.765Z] [DEBUG] [Gateway stderr] (node:44352) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:21:56.765Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:56.984Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:59.995Z] [DEBUG] Gateway ready after 33 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:21:59.996Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:50063/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:22:00.000Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=73da8b10-9c51-4d3c-9fa5-42a586648825 peer=127.0.0.1:53764->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:00.013Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:00.013Z] [DEBUG] Received connect.challenge, sending handshake\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:00.014Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:22:00.020Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=93244463-d6cc-4fd7-b071-4c1afede7491 peer=127.0.0.1:53765->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:22:00.031Z] [ERROR] Gateway connect handshake failed: GatewayRpcError: gateway starting; retry shortly\nGatewayRpcError: gateway starting; retry shortly\n    at xs.handleMessage (D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\dist-electron\\main\\index-d5-74u4p.js:2337:36015)\n    at Object.onMessage (D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\dist-electron\\main\\index-d5-74u4p.js:2337:34845)\n    at WebSocket.<anonymous> (D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\dist-electron\\main\\index-d5-74u4p.js:78:9293)\n    at WebSocket.emit (node:events:508:28)\n    at Receiver.receiverOnMessage (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\websocket.js:1225:20)\n    at Receiver.emit (node:events:508:28)\n    at Receiver.dataMessage (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:596:14)\n    at Receiver.getData (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:496:10)\n    at Receiver.startLoop (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:167:16)\n    at Receiver._write (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\ws@8.20.0\\node_modules\\ws\\lib\\receiver.js:94:10)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:22:00.032Z] [WARN] Gateway connect rejected while still starting (GatewayRpcError: gateway starting; retry shortly); retrying in 500ms (1/6)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:22:00.033Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:22:00.037Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=3352a4a6-7fef-43cc-8b58-37ba09466fe4 peer=127.0.0.1:53770->127.0.0.1:50063 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:50063 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:00.542Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:50063/ws)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:00.545Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:00.546Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-15T17:22:00.546Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:00.567Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:50063/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:22:00.569Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:02.980Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:02.980Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-15T17:22:02.980Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:03.923Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:03.924Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:03.924Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:03.925Z] [INFO] Gateway connect succeeded after 2 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:03.926Z] [INFO] [metric] gateway.startup {\"configSyncMs\":554,\"spawnToReadyMs\":9358,\"readyToConnectMs\":3931,\"totalMs\":13843}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:11.532Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:11.532Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:11.533Z] [INFO] Sending kill to Gateway process (pid=44352)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-15T17:22:11.808Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:11.809Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:13.758Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:13.758Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:14.033Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:14.033Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (stop)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:62312/df73ebb3-a67c-4909-80c0-dcf01df2a981\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:window-close] pid=1940\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-15T17:22:14.224Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":4}\n[2026-11-15T17:22:14.224Z] [INFO] [ResourceTracker] Stopped\n[2026-11-15T17:22:14.225Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-15T17:22:14.225Z] [INFO] [efficiency-sampler] stopped\n[2026-11-15T17:22:14.225Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    },
+                    {
+                      "text": "[app:exit] pid=1940 code=0 signal=null\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-15T17:21:10.498Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "operations-lifecycle-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJzY2hlbWEiOiAiUHJvamVjdFJhZ09wZXJhdGlvbnNFbGVjdHJvbi92MSIsCiAgImFjdG9yIjogImNvZGV4L3Byb2plY3QtcmFnLWcyLTIwMjYxMTE1IiwKICAiZHJpdmVuX2J5IjogImFnZW50IiwKICAicmVhbEh1bWFuRXZpZGVuY2UiOiBmYWxzZSwKICAicGxhdGZvcm0iOiAid2luMzIiLAogICJhcmNoIjogIng2NCIsCiAgImNhbmRpZGF0ZSI6ICIyNTg0NTdkNmE0NWEwYmFiNWIzMmVlZDQ3Yjg4NzQ1ZGRlODRmNjY2IiwKICAic3RhdHVzIjogImZhaWwiLAogICJzdGVwcyI6IHsKICAgICJjYW5vbmljYWxEZWZhdWx0cyI6IHRydWUsCiAgICAib3duZXJJbmRleFJlYWR5IjogdHJ1ZSwKICAgICJwYXVzZUFuZFJlc3RhcnQiOiB0cnVlCiAgfSwKICAiaW5pdGlhbCI6IHsKICAgICJzdWNjZXNzIjogdHJ1ZSwKICAgICJvcGVyYXRpb25zIjogewogICAgICAic2NoZW1hIjogIlJldHJpZXZhbENhcGFiaWxpdHlTbmFwc2hvdC92MSIsCiAgICAgICJvd25lciI6IHsKICAgICAgICAibmFtZXNwYWNlSWQiOiAibWVtb3J5LXdpa2k6MTI5NzEzYTBiNTA0YTJmYmQ0ZGU2ODc0MzQwNzY3NDI3ZTFhZDM4YmY0OWI0OTUyZjJmOTMxNTZhOTdiYzc4MSIsCiAgICAgICAgIndvcmtzcGFjZUlkIjogImFnZW50LXJhZy1vcGVyYXRpb25zIiwKICAgICAgICAic2Vzc2lvbklkIjogIjBmNDI5MzY3LWMyYjgtNDlkYS04N2VjLTdlMjc0NWNhMmJhYyIKICAgICAgfSwKICAgICAgImNvbmZpZyI6IHsKICAgICAgICAic2NoZW1hIjogIlByb2plY3RSYWdDb25maWcvdjIiLAogICAgICAgICJwcm9maWxlIjogImxvY2FsIiwKICAgICAgICAiYW5zd2VyTW9kZSI6ICJzdHJpY3QiLAogICAgICAgICJtYXhTdG9yYWdlQnl0ZXMiOiA1MzY4NzA5MTIKICAgICAgfSwKICAgICAgImluZGV4IjogewogICAgICAgICJzY2hlbWEiOiAiSW5kZXhTdGF0dXMvdjEiLAogICAgICAgICJzdGF0dXMiOiAicnVubmluZyIsCiAgICAgICAgImxhc3RFcnJvciI6IG51bGwsCiAgICAgICAgInNvdXJjZXMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJzb3VyY2VLZXkiOiAic291cmNlOnNoYTI1Njo5YWQwOTE2MDcyMTY0YWJlMmQwNjViYTNhYzU3OWJiNDhhNDQ2ODJlYjEzNTE4NGVmNTY4OWE1NjZjNWFiZjIxIiwKICAgICAgICAgICAgImludGVudFNlcXVlbmNlIjogMSwKICAgICAgICAgICAgImVsaWdpYmxlIjogdHJ1ZSwKICAgICAgICAgICAgImFjdGl2ZUdlbmVyYXRpb24iOiAiYjMzNGY0ZDgtNTZiZC00ZjNjLTgzYWEtY2MxY2ExNjY2MGVkIiwKICAgICAgICAgICAgInJlYXNvbiI6IG51bGwKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJqb2JzIjogWwogICAgICAgICAgewogICAgICAgICAgICAiam9iSWQiOiAiOWZlZWVjOTgtYWJjZS00ODY2LTlmNmUtY2U3NWFiNjA0NGFhIiwKICAgICAgICAgICAgInN0YXRlIjogImNvbXBsZXRlIiwKICAgICAgICAgICAgImF0dGVtcHQiOiAxLAogICAgICAgICAgICAiZXJyb3IiOiBudWxsCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAiYWN0aXZlV29ya2VyIjogZmFsc2UsCiAgICAgICAgIndvcmtlclRocmVhZElkcyI6IFsKICAgICAgICAgIDIKICAgICAgICBdLAogICAgICAgICJsYWdDb3VudCI6IDAsCiAgICAgICAgImxvZ2ljYWxEZWxldGVkQ291bnQiOiAwLAogICAgICAgICJjbGVhbnVwUGVuZGluZ0dlbmVyYXRpb25zIjogMCwKICAgICAgICAic3RvcmFnZSI6IHsKICAgICAgICAgICJieXRlcyI6IDU2OTI5NDQsCiAgICAgICAgICAiYnVkZ2V0Qnl0ZXMiOiA1MzY4NzA5MTIsCiAgICAgICAgICAiYnVkZ2V0RXhjZWVkZWQiOiBmYWxzZQogICAgICAgIH0KICAgICAgfSwKICAgICAgImVtYmVkZGluZyI6IHsKICAgICAgICAibW9kZSI6ICJkaXNhYmxlZCIsCiAgICAgICAgInN0YXR1cyI6ICJkaXNhYmxlZCIsCiAgICAgICAgImNyZWRlbnRpYWxFcG9jaCI6IDAKICAgICAgfSwKICAgICAgInZlY3RvciI6IHsKICAgICAgICAic3RhdHVzIjogImRpc2FibGVkIiwKICAgICAgICAicmVxdWVzdGVkQmFja2VuZCI6IG51bGwsCiAgICAgICAgImVmZmVjdGl2ZUJhY2tlbmQiOiAic3FsaXRlLWZsYXQiLAogICAgICAgICJjYXBhYmlsaXR5IjogewogICAgICAgICAgInNjaGVtYSI6ICJJbmRleEJhY2tlbmRDYXBhYmlsaXRpZXMvdjEiLAogICAgICAgICAgImJhY2tlbmQiOiAic3FsaXRlLWZsYXQiLAogICAgICAgICAgImF2YWlsYWJsZSI6IHRydWUsCiAgICAgICAgICAicGxhdGZvcm0iOiAid2luMzIiLAogICAgICAgICAgImFyY2giOiAieDY0IiwKICAgICAgICAgICJtYXhSZWZlcmVuY2VSb3dzIjogMjAwMDAsCiAgICAgICAgICAicHJlZmlsdGVyIjogdHJ1ZSwKICAgICAgICAgICJpbmNsdWRlc1VuaW5kZXhlZFJvd3MiOiB0cnVlCiAgICAgICAgfSwKICAgICAgICAicmVhc29uIjogbnVsbCwKICAgICAgICAiZ2VuZXJhdGlvbiI6IG51bGwsCiAgICAgICAgImluZGV4aW5nIjogZmFsc2UKICAgICAgfSwKICAgICAgInJlcmFuayI6IHsKICAgICAgICAibW9kZSI6ICJkaXNhYmxlZCIsCiAgICAgICAgInN0YXR1cyI6ICJkaXNhYmxlZCIsCiAgICAgICAgImNyZWRlbnRpYWxFcG9jaCI6IDAsCiAgICAgICAgIm1vZGVscyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgIm1vZGVsIjogIlF3ZW4vUXdlbjMtUmVyYW5rZXItMC42QiIsCiAgICAgICAgICAgICJhcmNoaXRlY3R1cmUiOiAiY3Jvc3MtZW5jb2RlciIsCiAgICAgICAgICAgICJsYW5ndWFnZXMiOiAiMTAwKyIsCiAgICAgICAgICAgICJtYXhJbnB1dFRva2VucyI6IDMyNzY4CiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAibW9kZWwiOiAiUXdlbi9Rd2VuMy1SZXJhbmtlci00QiIsCiAgICAgICAgICAgICJhcmNoaXRlY3R1cmUiOiAiY3Jvc3MtZW5jb2RlciIsCiAgICAgICAgICAgICJsYW5ndWFnZXMiOiAiMTAwKyIsCiAgICAgICAgICAgICJtYXhJbnB1dFRva2VucyI6IDMyNzY4CiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAibW9kZWwiOiAiUXdlbi9Rd2VuMy1SZXJhbmtlci04QiIsCiAgICAgICAgICAgICJhcmNoaXRlY3R1cmUiOiAiY3Jvc3MtZW5jb2RlciIsCiAgICAgICAgICAgICJsYW5ndWFnZXMiOiAiMTAwKyIsCiAgICAgICAgICAgICJtYXhJbnB1dFRva2VucyI6IDMyNzY4CiAgICAgICAgICB9CiAgICAgICAgXQogICAgICB9LAogICAgICAicmVhc29ucyI6IFtdLAogICAgICAic3RhdHVzIjogInJlYWR5IgogICAgfQogIH0sCiAgInJlc3RvcmVkUGF1c2UiOiB7CiAgICAic3VjY2VzcyI6IHRydWUsCiAgICAib3BlcmF0aW9ucyI6IHsKICAgICAgInNjaGVtYSI6ICJSZXRyaWV2YWxDYXBhYmlsaXR5U25hcHNob3QvdjEiLAogICAgICAib3duZXIiOiB7CiAgICAgICAgIm5hbWVzcGFjZUlkIjogIm1lbW9yeS13aWtpOjEyOTcxM2EwYjUwNGEyZmJkNGRlNjg3NDM0MDc2NzQyN2UxYWQzOGJmNDliNDk1MmYyZjkzMTU2YTk3YmM3ODEiLAogICAgICAgICJ3b3Jrc3BhY2VJZCI6ICJhZ2VudC1yYWctb3BlcmF0aW9ucyIsCiAgICAgICAgInNlc3Npb25JZCI6ICIwZjQyOTM2Ny1jMmI4LTQ5ZGEtODdlYy03ZTI3NDVjYTJiYWMiCiAgICAgIH0sCiAgICAgICJjb25maWciOiB7CiAgICAgICAgInNjaGVtYSI6ICJQcm9qZWN0UmFnQ29uZmlnL3YyIiwKICAgICAgICAicHJvZmlsZSI6ICJsb2NhbCIsCiAgICAgICAgImFuc3dlck1vZGUiOiAic3RyaWN0IiwKICAgICAgICAibWF4U3RvcmFnZUJ5dGVzIjogNTM2ODcwOTEyCiAgICAgIH0sCiAgICAgICJpbmRleCI6IHsKICAgICAgICAic2NoZW1hIjogIkluZGV4U3RhdHVzL3YxIiwKICAgICAgICAic3RhdHVzIjogInBhdXNlZCIsCiAgICAgICAgImxhc3RFcnJvciI6IG51bGwsCiAgICAgICAgInNvdXJjZXMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJzb3VyY2VLZXkiOiAic291cmNlOnNoYTI1Njo5YWQwOTE2MDcyMTY0YWJlMmQwNjViYTNhYzU3OWJiNDhhNDQ2ODJlYjEzNTE4NGVmNTY4OWE1NjZjNWFiZjIxIiwKICAgICAgICAgICAgImludGVudFNlcXVlbmNlIjogNCwKICAgICAgICAgICAgImVsaWdpYmxlIjogZmFsc2UsCiAgICAgICAgICAgICJhY3RpdmVHZW5lcmF0aW9uIjogbnVsbCwKICAgICAgICAgICAgInJlYXNvbiI6IG51bGwKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJqb2JzIjogWwogICAgICAgICAgewogICAgICAgICAgICAiam9iSWQiOiAiOWZlZWVjOTgtYWJjZS00ODY2LTlmNmUtY2U3NWFiNjA0NGFhIiwKICAgICAgICAgICAgInN0YXRlIjogImNvbXBsZXRlIiwKICAgICAgICAgICAgImF0dGVtcHQiOiAxLAogICAgICAgICAgICAiZXJyb3IiOiBudWxsCiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiam9iSWQiOiAiYmY0NGExMDItMTU0ZC00Yjg0LThhMGUtMDNhYzZlNDEyZWI2IiwKICAgICAgICAgICAgInN0YXRlIjogInN1cGVyc2VkZWQiLAogICAgICAgICAgICAiYXR0ZW1wdCI6IDAsCiAgICAgICAgICAgICJlcnJvciI6IG51bGwKICAgICAgICAgIH0sCiAgICAgICAgICB7CiAgICAgICAgICAgICJqb2JJZCI6ICJhMGVhZjczZi1iYjMzLTQ1MTktODgzOS05Y2JhMDhhZmFiZGQiLAogICAgICAgICAgICAic3RhdGUiOiAicGVuZGluZyIsCiAgICAgICAgICAgICJhdHRlbXB0IjogMCwKICAgICAgICAgICAgImVycm9yIjogbnVsbAogICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgImFjdGl2ZVdvcmtlciI6IGZhbHNlLAogICAgICAgICJ3b3JrZXJUaHJlYWRJZHMiOiBbXSwKICAgICAgICAibGFnQ291bnQiOiAxLAogICAgICAgICJsb2dpY2FsRGVsZXRlZENvdW50IjogMCwKICAgICAgICAiY2xlYW51cFBlbmRpbmdHZW5lcmF0aW9ucyI6IDEsCiAgICAgICAgInN0b3JhZ2UiOiB7CiAgICAgICAgICAiYnl0ZXMiOiA1NjkyOTQ0LAogICAgICAgICAgImJ1ZGdldEJ5dGVzIjogNTM2ODcwOTEyLAogICAgICAgICAgImJ1ZGdldEV4Y2VlZGVkIjogZmFsc2UKICAgICAgICB9CiAgICAgIH0sCiAgICAgICJlbWJlZGRpbmciOiB7CiAgICAgICAgIm1vZGUiOiAiZGlzYWJsZWQiLAogICAgICAgICJzdGF0dXMiOiAiZGlzYWJsZWQiLAogICAgICAgICJjcmVkZW50aWFsRXBvY2giOiAwCiAgICAgIH0sCiAgICAgICJ2ZWN0b3IiOiB7CiAgICAgICAgInN0YXR1cyI6ICJkaXNhYmxlZCIsCiAgICAgICAgInJlcXVlc3RlZEJhY2tlbmQiOiBudWxsLAogICAgICAgICJlZmZlY3RpdmVCYWNrZW5kIjogInNxbGl0ZS1mbGF0IiwKICAgICAgICAiY2FwYWJpbGl0eSI6IHsKICAgICAgICAgICJzY2hlbWEiOiAiSW5kZXhCYWNrZW5kQ2FwYWJpbGl0aWVzL3YxIiwKICAgICAgICAgICJiYWNrZW5kIjogInNxbGl0ZS1mbGF0IiwKICAgICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICAgInBsYXRmb3JtIjogIndpbjMyIiwKICAgICAgICAgICJhcmNoIjogIng2NCIsCiAgICAgICAgICAibWF4UmVmZXJlbmNlUm93cyI6IDIwMDAwLAogICAgICAgICAgInByZWZpbHRlciI6IHRydWUsCiAgICAgICAgICAiaW5jbHVkZXNVbmluZGV4ZWRSb3dzIjogdHJ1ZQogICAgICAgIH0sCiAgICAgICAgInJlYXNvbiI6IG51bGwsCiAgICAgICAgImdlbmVyYXRpb24iOiBudWxsLAogICAgICAgICJpbmRleGluZyI6IGZhbHNlCiAgICAgIH0sCiAgICAgICJyZXJhbmsiOiB7CiAgICAgICAgIm1vZGUiOiAiZGlzYWJsZWQiLAogICAgICAgICJzdGF0dXMiOiAiZGlzYWJsZWQiLAogICAgICAgICJjcmVkZW50aWFsRXBvY2giOiAwLAogICAgICAgICJtb2RlbHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJtb2RlbCI6ICJRd2VuL1F3ZW4zLVJlcmFua2VyLTAuNkIiLAogICAgICAgICAgICAiYXJjaGl0ZWN0dXJlIjogImNyb3NzLWVuY29kZXIiLAogICAgICAgICAgICAibGFuZ3VhZ2VzIjogIjEwMCsiLAogICAgICAgICAgICAibWF4SW5wdXRUb2tlbnMiOiAzMjc2OAogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgIm1vZGVsIjogIlF3ZW4vUXdlbjMtUmVyYW5rZXItNEIiLAogICAgICAgICAgICAiYXJjaGl0ZWN0dXJlIjogImNyb3NzLWVuY29kZXIiLAogICAgICAgICAgICAibGFuZ3VhZ2VzIjogIjEwMCsiLAogICAgICAgICAgICAibWF4SW5wdXRUb2tlbnMiOiAzMjc2OAogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgIm1vZGVsIjogIlF3ZW4vUXdlbjMtUmVyYW5rZXItOEIiLAogICAgICAgICAgICAiYXJjaGl0ZWN0dXJlIjogImNyb3NzLWVuY29kZXIiLAogICAgICAgICAgICAibGFuZ3VhZ2VzIjogIjEwMCsiLAogICAgICAgICAgICAibWF4SW5wdXRUb2tlbnMiOiAzMjc2OAogICAgICAgICAgfQogICAgICAgIF0KICAgICAgfSwKICAgICAgInJlYXNvbnMiOiBbCiAgICAgICAgImluZGV4LXBhdXNlZCIsCiAgICAgICAgImluZGV4LWxhZyIKICAgICAgXSwKICAgICAgInN0YXR1cyI6ICJkZWdyYWRlZCIKICAgIH0KICB9LAogICJmaW5hbE9wZXJhdGlvbnMiOiB7CiAgICAic3VjY2VzcyI6IHRydWUsCiAgICAib3BlcmF0aW9ucyI6IHsKICAgICAgInNjaGVtYSI6ICJSZXRyaWV2YWxDYXBhYmlsaXR5U25hcHNob3QvdjEiLAogICAgICAib3duZXIiOiB7CiAgICAgICAgIm5hbWVzcGFjZUlkIjogIm1lbW9yeS13aWtpOjEyOTcxM2EwYjUwNGEyZmJkNGRlNjg3NDM0MDc2NzQyN2UxYWQzOGJmNDliNDk1MmYyZjkzMTU2YTk3YmM3ODEiLAogICAgICAgICJ3b3Jrc3BhY2VJZCI6ICJhZ2VudC1yYWctb3BlcmF0aW9ucyIsCiAgICAgICAgInNlc3Npb25JZCI6ICIwZjQyOTM2Ny1jMmI4LTQ5ZGEtODdlYy03ZTI3NDVjYTJiYWMiCiAgICAgIH0sCiAgICAgICJjb25maWciOiB7CiAgICAgICAgInNjaGVtYSI6ICJQcm9qZWN0UmFnQ29uZmlnL3YyIiwKICAgICAgICAicHJvZmlsZSI6ICJsb2NhbCIsCiAgICAgICAgImFuc3dlck1vZGUiOiAic3RyaWN0IiwKICAgICAgICAibWF4U3RvcmFnZUJ5dGVzIjogNTM2ODcwOTEyCiAgICAgIH0sCiAgICAgICJpbmRleCI6IHsKICAgICAgICAic2NoZW1hIjogIkluZGV4U3RhdHVzL3YxIiwKICAgICAgICAic3RhdHVzIjogInJ1bm5pbmciLAogICAgICAgICJsYXN0RXJyb3IiOiBudWxsLAogICAgICAgICJzb3VyY2VzIjogWwogICAgICAgICAgewogICAgICAgICAgICAic291cmNlS2V5IjogInNvdXJjZTpzaGEyNTY6OWFkMDkxNjA3MjE2NGFiZTJkMDY1YmEzYWM1NzliYjQ4YTQ0NjgyZWIxMzUxODRlZjU2ODlhNTY2YzVhYmYyMSIsCiAgICAgICAgICAgICJpbnRlbnRTZXF1ZW5jZSI6IDQsCiAgICAgICAgICAgICJlbGlnaWJsZSI6IHRydWUsCiAgICAgICAgICAgICJhY3RpdmVHZW5lcmF0aW9uIjogIjE5OWFkNmE0LTIxNmYtNGI0YS04OWZiLTQyZGNhN2NjNmI4NiIsCiAgICAgICAgICAgICJyZWFzb24iOiBudWxsCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAiam9icyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImpvYklkIjogIjlmZWVlYzk4LWFiY2UtNDg2Ni05ZjZlLWNlNzVhYjYwNDRhYSIsCiAgICAgICAgICAgICJzdGF0ZSI6ICJjb21wbGV0ZSIsCiAgICAgICAgICAgICJhdHRlbXB0IjogMSwKICAgICAgICAgICAgImVycm9yIjogbnVsbAogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgImpvYklkIjogImJmNDRhMTAyLTE1NGQtNGI4NC04YTBlLTAzYWM2ZTQxMmViNiIsCiAgICAgICAgICAgICJzdGF0ZSI6ICJzdXBlcnNlZGVkIiwKICAgICAgICAgICAgImF0dGVtcHQiOiAwLAogICAgICAgICAgICAiZXJyb3IiOiBudWxsCiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiam9iSWQiOiAiYTBlYWY3M2YtYmIzMy00NTE5LTg4MzktOWNiYTA4YWZhYmRkIiwKICAgICAgICAgICAgInN0YXRlIjogImNvbXBsZXRlIiwKICAgICAgICAgICAgImF0dGVtcHQiOiAxLAogICAgICAgICAgICAiZXJyb3IiOiBudWxsCiAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAiYWN0aXZlV29ya2VyIjogZmFsc2UsCiAgICAgICAgIndvcmtlclRocmVhZElkcyI6IFsKICAgICAgICAgIDIsCiAgICAgICAgICAzCiAgICAgICAgXSwKICAgICAgICAibGFnQ291bnQiOiAwLAogICAgICAgICJsb2dpY2FsRGVsZXRlZENvdW50IjogMCwKICAgICAgICAiY2xlYW51cFBlbmRpbmdHZW5lcmF0aW9ucyI6IDAsCiAgICAgICAgInN0b3JhZ2UiOiB7CiAgICAgICAgICAiYnl0ZXMiOiA1NjkyOTQ0LAogICAgICAgICAgImJ1ZGdldEJ5dGVzIjogNTM2ODcwOTEyLAogICAgICAgICAgImJ1ZGdldEV4Y2VlZGVkIjogZmFsc2UKICAgICAgICB9CiAgICAgIH0sCiAgICAgICJlbWJlZGRpbmciOiB7CiAgICAgICAgIm1vZGUiOiAiZGlzYWJsZWQiLAogICAgICAgICJzdGF0dXMiOiAiZGlzYWJsZWQiLAogICAgICAgICJjcmVkZW50aWFsRXBvY2giOiAwCiAgICAgIH0sCiAgICAgICJ2ZWN0b3IiOiB7CiAgICAgICAgInN0YXR1cyI6ICJkaXNhYmxlZCIsCiAgICAgICAgInJlcXVlc3RlZEJhY2tlbmQiOiBudWxsLAogICAgICAgICJlZmZlY3RpdmVCYWNrZW5kIjogInNxbGl0ZS1mbGF0IiwKICAgICAgICAiY2FwYWJpbGl0eSI6IHsKICAgICAgICAgICJzY2hlbWEiOiAiSW5kZXhCYWNrZW5kQ2FwYWJpbGl0aWVzL3YxIiwKICAgICAgICAgICJiYWNrZW5kIjogInNxbGl0ZS1mbGF0IiwKICAgICAgICAgICJhdmFpbGFibGUiOiB0cnVlLAogICAgICAgICAgInBsYXRmb3JtIjogIndpbjMyIiwKICAgICAgICAgICJhcmNoIjogIng2NCIsCiAgICAgICAgICAibWF4UmVmZXJlbmNlUm93cyI6IDIwMDAwLAogICAgICAgICAgInByZWZpbHRlciI6IHRydWUsCiAgICAgICAgICAiaW5jbHVkZXNVbmluZGV4ZWRSb3dzIjogdHJ1ZQogICAgICAgIH0sCiAgICAgICAgInJlYXNvbiI6IG51bGwsCiAgICAgICAgImdlbmVyYXRpb24iOiBudWxsLAogICAgICAgICJpbmRleGluZyI6IGZhbHNlCiAgICAgIH0sCiAgICAgICJyZXJhbmsiOiB7CiAgICAgICAgIm1vZGUiOiAiZGlzYWJsZWQiLAogICAgICAgICJzdGF0dXMiOiAiZGlzYWJsZWQiLAogICAgICAgICJjcmVkZW50aWFsRXBvY2giOiAwLAogICAgICAgICJtb2RlbHMiOiBbCiAgICAgICAgICB7CiAgICAgICAgICAgICJtb2RlbCI6ICJRd2VuL1F3ZW4zLVJlcmFua2VyLTAuNkIiLAogICAgICAgICAgICAiYXJjaGl0ZWN0dXJlIjogImNyb3NzLWVuY29kZXIiLAogICAgICAgICAgICAibGFuZ3VhZ2VzIjogIjEwMCsiLAogICAgICAgICAgICAibWF4SW5wdXRUb2tlbnMiOiAzMjc2OAogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgIm1vZGVsIjogIlF3ZW4vUXdlbjMtUmVyYW5rZXItNEIiLAogICAgICAgICAgICAiYXJjaGl0ZWN0dXJlIjogImNyb3NzLWVuY29kZXIiLAogICAgICAgICAgICAibGFuZ3VhZ2VzIjogIjEwMCsiLAogICAgICAgICAgICAibWF4SW5wdXRUb2tlbnMiOiAzMjc2OAogICAgICAgICAgfSwKICAgICAgICAgIHsKICAgICAgICAgICAgIm1vZGVsIjogIlF3ZW4vUXdlbjMtUmVyYW5rZXItOEIiLAogICAgICAgICAgICAiYXJjaGl0ZWN0dXJlIjogImNyb3NzLWVuY29kZXIiLAogICAgICAgICAgICAibGFuZ3VhZ2VzIjogIjEwMCsiLAogICAgICAgICAgICAibWF4SW5wdXRUb2tlbnMiOiAzMjc2OAogICAgICAgICAgfQogICAgICAgIF0KICAgICAgfSwKICAgICAgInJlYXNvbnMiOiBbXSwKICAgICAgInN0YXR1cyI6ICJyZWFkeSIKICAgIH0KICB9LAogICJmaW5hbEdhdGV3YXkiOiB7CiAgICAic3RhdGUiOiAicnVubmluZyIsCiAgICAicG9ydCI6IDUwMDYzLAogICAgInJlY29ubmVjdEF0dGVtcHRzIjogMCwKICAgICJnYXRld2F5UmVhZHkiOiB0cnVlLAogICAgInBpZCI6IDQ0MzUyLAogICAgImNvbm5lY3RlZEF0IjogMTc5NDc2MzMyMzkyMywKICAgICJ1cHRpbWUiOiAyCiAgfSwKICAiZmFpbHVyZUxvZ3MiOiB7CiAgICAiY29udGVudCI6ICJbMjAyNi0xMS0xNVQxNzoyMToyMi4wNDdaXSBbSU5GT10gU3RhcnRpbmcgR2F0ZXdheSBwcm9jZXNzIChtb2RlPWRldiwgcnVudGltZT1zb3VyY2UsIHBvcnQ9NTAwNjMsIGVudHJ5PVwiRDpcXHRtcFxccHJvamVjdC1yYWctZzItcmVsYXktMDFhMWRjYTBcXHNvdXJjZS1wcm9qZWN0aW9uXFxvcGVuY2xhd19ydW50aW1lXFxkaXN0XFxlbnRyeS5qc1wiLCBhcmdzPVwiZ2F0ZXdheSAtLXBvcnQgNTAwNjMgLS1hbGxvdy11bmNvbmZpZ3VyZWRcIiwgZXhlY0FyZ3Y9XCJcIiwgY3dkPVwiRDpcXHRtcFxccHJvamVjdC1yYWctZzItcmVsYXktMDFhMWRjYTBcXHNvdXJjZS1wcm9qZWN0aW9uXFxvcGVuY2xhd19ydW50aW1lXCIsIGJ1bmRsZWRCaW49bm8sIHByb3ZpZGVyS2V5cz0wLCBjaGFubmVscz1za2lwcGVkKG5vIGNvbmZpZ3VyZWQgY2hhbm5lbHMpLCBwcm94eT1kaXNhYmxlZClcblsyMDI2LTExLTE1VDE3OjIxOjIyLjE5MFpdIFtJTkZPXSBHYXRld2F5IHByb2Nlc3Mgc3RhcnRlZCAocGlkPTQ3NzI4KVxuWzIwMjYtMTEtMTVUMTc6MjE6MjIuMTkxWl0gW0RFQlVHXSBHYXRld2F5IG1hbmFnZXIgbm93IG93bnMgcHJvY2VzcyBwaWQ9NDc3MjhcblsyMDI2LTExLTE1VDE3OjIxOjIyLjQzOFpdIFtXQVJOXSBbR2F0ZXdheSBzdGRlcnJdIChub2RlOjQ3NzI4KSBXYXJuaW5nOiBUaGUgJ05PX0NPTE9SJyBlbnYgaXMgaWdub3JlZCBkdWUgdG8gdGhlICdGT1JDRV9DT0xPUicgZW52IGJlaW5nIHNldC5cblsyMDI2LTExLTE1VDE3OjIxOjIyLjQzOVpdIFtXQVJOXSBbR2F0ZXdheSBzdGRlcnJdIChVc2UgYGVsZWN0cm9uIC0tdHJhY2Utd2FybmluZ3MgLi4uYCB0byBzaG93IHdoZXJlIHRoZSB3YXJuaW5nIHdhcyBjcmVhdGVkKVxuWzIwMjYtMTEtMTVUMTc6MjE6MjQuMzA1Wl0gW0RFQlVHXSBTdGlsbCB3YWl0aW5nIGZvciBHYXRld2F5Li4uIChhdHRlbXB0IDExLzI0MDApXG5bMjAyNi0xMS0xNVQxNzoyMToyNi40MjJaXSBbREVCVUddIFN0aWxsIHdhaXRpbmcgZm9yIEdhdGV3YXkuLi4gKGF0dGVtcHQgMjEvMjQwMClcblsyMDI2LTExLTE1VDE3OjIxOjI4LjA0MVpdIFtJTkZPXSBbZWZmaWNpZW5jeV0gc2hlZCBzdGF0ZSBjaGFuZ2VkIHtcInNoZWRkaW5nXCI6dHJ1ZSxcInJlYXNvblwiOlwicG93ZXItc2F2ZXJcIixcImFjdGl2ZVJlYXNvbnNcIjpbXCJwb3dlci1zYXZlclwiXSxcInRyYW5zaXRpb25Db3VudFwiOjN9XG5bMjAyNi0xMS0xNVQxNzoyMToyOC41MzRaXSBbREVCVUddIFN0aWxsIHdhaXRpbmcgZm9yIEdhdGV3YXkuLi4gKGF0dGVtcHQgMzEvMjQwMClcblsyMDI2LTExLTE1VDE3OjIxOjMwLjYwOFpdIFtERUJVR10gU3RpbGwgd2FpdGluZyBmb3IgR2F0ZXdheS4uLiAoYXR0ZW1wdCA0MS8yNDAwKVxuWzIwMjYtMTEtMTVUMTc6MjE6MzEuNjg3Wl0gW0RFQlVHXSBbR2F0ZXdheSBzdGRlcnJdIChub2RlOjQ3NzI4KSBFeHBlcmltZW50YWxXYXJuaW5nOiBTUUxpdGUgaXMgYW4gZXhwZXJpbWVudGFsIGZlYXR1cmUgYW5kIG1pZ2h0IGNoYW5nZSBhdCBhbnkgdGltZVxuWzIwMjYtMTEtMTVUMTc6MjE6MzEuNjg4Wl0gW0RFQlVHXSBbR2F0ZXdheSBzdGRlcnJdIChub2RlOjQ3NzI4KSBbT1BFTkNMQVdfTEVHQUNZX0VOVl9WQVJTXSBEZXByZWNhdGlvbldhcm5pbmc6IExlZ2FjeSBDTEFXREJPVF8qIGVudmlyb25tZW50IHZhcmlhYmxlcyB3ZXJlIGRldGVjdGVkICgxIHRvdGFsKSwgYnV0IE9wZW5DbGF3IG9ubHkgcmVhZHMgT1BFTkNMQVdfKiBuYW1lcyBub3cuXG5bMjAyNi0xMS0xNVQxNzoyMTozMS42ODhaXSBbV0FSTl0gW0dhdGV3YXkgc3RkZXJyXSBSZW5hbWUgdGhlbSBieSByZXBsYWNpbmcgdGhlIGxlZ2FjeSBwcmVmaXggd2l0aCBPUEVOQ0xBV187IHRoZSBvbGQgbmFtZXMgYXJlIGlnbm9yZWQuXG5bMjAyNi0xMS0xNVQxNzoyMTozNC4xOTRaXSBbREVCVUddIFN0aWxsIHdhaXRpbmcgZm9yIEdhdGV3YXkuLi4gKGF0dGVtcHQgNTEvMjQwMClcblsyMDI2LTExLTE1VDE3OjIxOjQxLjQ3M1pdIFtXQVJOXSBbR2F0ZXdheSBzdGRlcnJdIFx1MDAxYlszNm1bd3NdXHUwMDFiWzM5bSBcdTAwMWJbMzNtY2xvc2VkIGJlZm9yZSBjb25uZWN0IGNvbm49MDcyNWU1OGYtMmU5Ni00M2ZkLWIwNmEtZDZmMjk5YzllYzBkIHBlZXI9MTI3LjAuMC4xOjU0NzkwLT4xMjcuMC4wLjE6NTAwNjMgcmVtb3RlPTEyNy4wLjAuMSBmd2Q9bi9hIG9yaWdpbj1uL2EgaG9zdD0xMjcuMC4wLjE6NTAwNjMgdWE9bi9hIGNvZGU9MTAwNiByZWFzb249bi9hXHUwMDFiWzM5bVxuWzIwMjYtMTEtMTVUMTc6MjE6NDEuNDc3Wl0gW1dBUk5dIFtHYXRld2F5IHN0ZGVycl0gXHUwMDFiWzM2bVt3c11cdTAwMWJbMzltIFx1MDAxYlszM21jbG9zZWQgYmVmb3JlIGNvbm5lY3QgY29ubj0wODlhZGRjMi1jZTI3LTQ2MjEtYWViMi03ZjE4ZTJhYTNhNzIgcGVlcj0xMjcuMC4wLjE6NTQ3NzAtPjEyNy4wLjAuMTo1MDA2MyByZW1vdGU9MTI3LjAuMC4xIGZ3ZD1uL2Egb3JpZ2luPW4vYSBob3N0PTEyNy4wLjAuMTo1MDA2MyB1YT1uL2EgY29kZT0xMDA2IHJlYXNvbj1uL2FcdTAwMWJbMzltXG5bMjAyNi0xMS0xNVQxNzoyMTo0MS40ODBaXSBbV0FSTl0gW0dhdGV3YXkgc3RkZXJyXSBcdTAwMWJbMzZtW3dzXVx1MDAxYlszOW0gXHUwMDFiWzMzbWNsb3NlZCBiZWZvcmUgY29ubmVjdCBjb25uPTcyNjgyM2NmLTIwNTItNDYyZi1iMDFhLTY2MzBhZjYyYjYwZCBwZWVyPTEyNy4wLjAuMTo2MDcxOS0+MTI3LjAuMC4xOjUwMDYzIHJlbW90ZT0xMjcuMC4wLjEgZndkPW4vYSBvcmlnaW49bi9hIGhvc3Q9MTI3LjAuMC4xOjUwMDYzIHVhPW4vYSBjb2RlPTEwMDYgcmVhc29uPW4vYVx1MDAxYlszOW1cblsyMDI2LTExLTE1VDE3OjIxOjQxLjQ4M1pdIFtXQVJOXSBbR2F0ZXdheSBzdGRlcnJdIFx1MDAxYlszNm1bd3NdXHUwMDFiWzM5bSBcdTAwMWJbMzNtY2xvc2VkIGJlZm9yZSBjb25uZWN0IGNvbm49MDJhZGFiMTItMWQwNy00MTQwLWJkNzItNDQ2YTkxYmExYjFiIHBlZXI9MTI3LjAuMC4xOjYwNzYxLT4xMjcuMC4wLjE6NTAwNjMgcmVtb3RlPTEyNy4wLjAuMSBmd2Q9bi9hIG9yaWdpbj1uL2EgaG9zdD0xMjcuMC4wLjE6NTAwNjMgdWE9bi9hIGNvZGU9MTAwNiByZWFzb249bi9hXHUwMDFiWzM5bVxuWzIwMjYtMTEtMTVUMTc6MjE6NDEuNDkwWl0gW1dBUk5dIFtHYXRld2F5IHN0ZGVycl0gXHUwMDFiWzM2bVt3c11cdTAwMWJbMzltIFx1MDAxYlszM21jbG9zZWQgYmVmb3JlIGNvbm5lY3QgY29ubj1jYWM3YWRlMy0wZTUyLTQ2ZjYtYTkxYS1lYzRmZGYyYTg0ZTEgcGVlcj0xMjcuMC4wLjE6NjA3NTctPjEyNy4wLjAuMTo1MDA2MyByZW1vdGU9MTI3LjAuMC4xIGZ3ZD1uL2Egb3JpZ2luPW4vYSBob3N0PTEyNy4wLjAuMTo1MDA2MyB1YT1uL2EgY29kZT0xMDA2IHJlYXNvbj1uL2FcdTAwMWJbMzltXG5bMjAyNi0xMS0xNVQxNzoyMTo0MS41MDFaXSBbREVCVUddIEdhdGV3YXkgcmVhZHkgYWZ0ZXIgNTYgYXR0ZW1wdChzKVxuWzIwMjYtMTEtMTVUMTc6MjE6NDEuNTAyWl0gW0RFQlVHXSBDb25uZWN0aW5nIEdhdGV3YXkgV2ViU29ja2V0ICh3czovLzEyNy4wLjAuMTo1MDA2My93cylcblsyMDI2LTExLTE1VDE3OjIxOjQxLjUwNlpdIFtXQVJOXSBbR2F0ZXdheSBzdGRlcnJdIFx1MDAxYlszNm1bd3NdXHUwMDFiWzM5bSBcdTAwMWJbMzNtY2xvc2VkIGJlZm9yZSBjb25uZWN0IGNvbm49NGE3OWZiMTQtNDAyOS00YzI5LWE0YWItMzlmOGQ0MjY5ZjlkIHBlZXI9MTI3LjAuMC4xOjU0ODE4LT4xMjcuMC4wLjE6NTAwNjMgcmVtb3RlPTEyNy4wLjAuMSBmd2Q9bi9hIG9yaWdpbj1uL2EgaG9zdD0xMjcuMC4wLjE6NTAwNjMgdWE9bi9hIGNvZGU9MTAwNiByZWFzb249bi9hXHUwMDFiWzM5bVxuWzIwMjYtMTEtMTVUMTc6MjE6NDEuNTA5Wl0gW0RFQlVHXSBHYXRld2F5IFdlYlNvY2tldCBvcGVuZWQsIHdhaXRpbmcgZm9yIGNvbm5lY3QuY2hhbGxlbmdlLi4uXG5bMjAyNi0xMS0xNVQxNzoyMTo0MS41MTBaXSBbREVCVUddIFJlY2VpdmVkIGNvbm5lY3QuY2hhbGxlbmdlLCBzZW5kaW5nIGhhbmRzaGFrZVxuWzIwMjYtMTEtMTVUMTc6MjE6NDEuNTExWl0gW0RFQlVHXSBTZW5kaW5nIGNvbm5lY3QgaGFuZHNoYWtlIHdpdGggY2hhbGxlbmdlIG5vbmNlXG5bMjAyNi0xMS0xNVQxNzoyMTo0MS42MjFaXSBbREVCVUddIENvbm5lY3RpbmcgR2F0ZXdheSBXZWJTb2NrZXQgKHdzOi8vMTI3LjAuMC4xOjUwMDYzL3dzKVxuWzIwMjYtMTEtMTVUMTc6MjE6NDEuNjIzWl0gW1dBUk5dIEdhdGV3YXkgV2ViU29ja2V0IGNsb3NlZCAoY29kZT0xMDA2LCByZWFzb249dW5rbm93biwgaGFuZHNoYWtlPXBlbmRpbmcpXG5bMjAyNi0xMS0xNVQxNzoyMTo0NC45MTFaXSBbREVCVUddIEdhdGV3YXkgV2ViU29ja2V0IG9wZW5lZCwgd2FpdGluZyBmb3IgY29ubmVjdC5jaGFsbGVuZ2UuLi5cblsyMDI2LTExLTE1VDE3OjIxOjQ0LjkxMlpdIFtERUJVR10gUmVjZWl2ZWQgY29ubmVjdC5jaGFsbGVuZ2UsIHNlbmRpbmcgaGFuZHNoYWtlXG5bMjAyNi0xMS0xNVQxNzoyMTo0NC45MTJaXSBbREVCVUddIFNlbmRpbmcgY29ubmVjdCBoYW5kc2hha2Ugd2l0aCBjaGFsbGVuZ2Ugbm9uY2VcblsyMDI2LTExLTE1VDE3OjIxOjQ1LjY5NVpdIFtERUJVR10gR2F0ZXdheSBjb25uZWN0IGhhbmRzaGFrZSBjb21wbGV0ZWQgKHByb3RvY29sPTQpXG5bMjAyNi0xMS0xNVQxNzoyMTo0NS42OTZaXSBbREVCVUddIEdhdGV3YXkgc3RhdGUgY2hhbmdlZDogc3RhcnRpbmcgLT4gcnVubmluZ1xuWzIwMjYtMTEtMTVUMTc6MjE6NDUuNjk3Wl0gW0lORk9dIEdhdGV3YXkgY29yZSBSUEMgc3VyZmFjZSByZWFkeSAoaGFuZHNoYWtlIGNhcGFiaWxpdGllcyB2ZXJpZmllZClcblsyMDI2LTExLTE1VDE3OjIxOjQ1LjcwMFpdIFtJTkZPXSBbbWV0cmljXSBnYXRld2F5LnN0YXJ0dXAge1wiY29uZmlnU3luY01zXCI6NjM2LFwic3Bhd25Ub1JlYWR5TXNcIjoxOTMxMCxcInJlYWR5VG9Db25uZWN0TXNcIjo0MTk5LFwidG90YWxNc1wiOjI0MTQ1fVxuWzIwMjYtMTEtMTVUMTc6MjE6NDUuNzkwWl0gW1dBUk5dIFt3ZWJ2aWV3LXNlY3VyaXR5XSBkZW55IHBlcm1pc3Npb24tY2hlY2s6IFdlYlZpZXcgcGVybWlzc2lvbiBcIm1lZGlhXCIgZGVuaWVkIGJ5IGRlZmF1bHQgKGZpbGU6Ly8vKVxuWzIwMjYtMTEtMTVUMTc6MjE6NDUuNzkwWl0gW1dBUk5dIFt3ZWJ2aWV3LXNlY3VyaXR5XSBkZW55IHBlcm1pc3Npb24tY2hlY2s6IFdlYlZpZXcgcGVybWlzc2lvbiBcIm1lZGlhXCIgZGVuaWVkIGJ5IGRlZmF1bHQgKGZpbGU6Ly8vKVxuWzIwMjYtMTEtMTVUMTc6MjE6NDUuNzkxWl0gW1dBUk5dIFt3ZWJ2aWV3LXNlY3VyaXR5XSBkZW55IHBlcm1pc3Npb24tY2hlY2s6IFdlYlZpZXcgcGVybWlzc2lvbiBkZW5pZWQgZm9yIHVudHJ1c3RlZCBvcmlnaW46IGZpbGU6IFdlYlZpZXcgc3JjIGlzIG5vdCBhbGxvd2VkIChmaWxlOi8vLylcblsyMDI2LTExLTE1VDE3OjIxOjQ1Ljc5MVpdIFtXQVJOXSBbd2Vidmlldy1zZWN1cml0eV0gZGVueSBwZXJtaXNzaW9uLWNoZWNrOiBXZWJWaWV3IHBlcm1pc3Npb24gXCJnZW9sb2NhdGlvblwiIGRlbmllZCBieSBkZWZhdWx0IChmaWxlOi8vLylcblsyMDI2LTExLTE1VDE3OjIxOjQ1Ljg5OFpdIFtJTkZPXSBbcHJvdmlkZXItc3luY10gU2VlZGVkIHByb3ZpZGVyIGFjY291bnQgXCJvcGVuYWlcIiBmcm9tIG9wZW5jbGF3Lmpzb25cblsyMDI2LTExLTE1VDE3OjIxOjQ4Ljg4N1pdIFtJTkZPXSBHYXRld2F5IHN0b3AgcmVxdWVzdGVkXG5bMjAyNi0xMS0xNVQxNzoyMTo0OC44ODdaXSBbREVCVUddIEdhdGV3YXkgbGlmZWN5Y2xlIGVwb2NoIGFkdmFuY2VkIHRvIDIgKHN0b3ApXG5bMjAyNi0xMS0xNVQxNzoyMTo0OC44ODhaXSBbSU5GT10gU2VuZGluZyBraWxsIHRvIEdhdGV3YXkgcHJvY2VzcyAocGlkPTQ3NzI4KVxuWzIwMjYtMTEtMTVUMTc6MjE6NDguOTQyWl0gW1dBUk5dIEdhdGV3YXkgV2ViU29ja2V0IGNsb3NlZCAoY29kZT0xMDA2LCByZWFzb249dW5rbm93biwgaGFuZHNoYWtlPW9rKVxuWzIwMjYtMTEtMTVUMTc6MjE6NDguOTQzWl0gW0RFQlVHXSBHYXRld2F5IHN0YXRlIGNoYW5nZWQ6IHJ1bm5pbmcgLT4gc3RvcHBlZFxuWzIwMjYtMTEtMTVUMTc6MjE6NDkuNzEyWl0gW0lORk9dIEdhdGV3YXkgcHJvY2VzcyBleGl0ZWQgKGNvZGU9MSwgZXhwZWN0ZWQ9eWVzKVxuWzIwMjYtMTEtMTVUMTc6MjE6NDkuNzEzWl0gW0RFQlVHXSBHYXRld2F5IHJlY29ubmVjdCBza2lwcGVkIChhdXRvLXJlY29ubmVjdCBkaXNhYmxlZClcblsyMDI2LTExLTE1VDE3OjIxOjQ5LjczMFpdIFtERUJVR10gR2F0ZXdheSBsaWZlY3ljbGUgZXBvY2ggYWR2YW5jZWQgdG8gMyAoc3RhcnQpXG5bMjAyNi0xMS0xNVQxNzoyMTo0OS43MzFaXSBbSU5GT10gR2F0ZXdheSBzdGFydCByZXF1ZXN0ZWQgKHBvcnQ9NTAwNjMpXG5bMjAyNi0xMS0xNVQxNzoyMTo0OS43MzNaXSBbREVCVUddIEdhdGV3YXkgc3RhdGUgY2hhbmdlZDogc3RvcHBlZCAtPiBzdGFydGluZ1xuWzIwMjYtMTEtMTVUMTc6MjE6NTAuMDgzWl0gW0RFQlVHXSBDaGVja2luZyBmb3IgZXhpc3RpbmcgR2F0ZXdheS4uLlxuWzIwMjYtMTEtMTVUMTc6MjE6NTAuNDU5Wl0gW0RFQlVHXSBObyBleGlzdGluZyBHYXRld2F5IGZvdW5kLCBzdGFydGluZyBuZXcgcHJvY2Vzcy4uLlxuWzIwMjYtMTEtMTVUMTc6MjE6NTAuNDk1Wl0gW1dBUk5dIFNvdXJjZSBydW50aW1lIERvY2tlciBzYW5kYm94IGltYWdlIGlzIHVuYXZhaWxhYmxlOyBzYW5kYm94Lm1vZGU9b2ZmIGZvciB0aGUgaXNvbGF0ZWQgc291cmNlIHJ1bnRpbWUgY29uZmlnLlxuWzIwMjYtMTEtMTVUMTc6MjE6NTAuNDk4Wl0gW0lORk9dIFttZXRyaWNdIGdhdGV3YXkucHJlbGF1bmNoIHtcInNldHRpbmdzTXNcIjoxLFwiZGVmYXVsdFByb3ZpZGVyUnVudGltZVN5bmNNc1wiOjAsXCJwcm92aWRlckVudk1zXCI6OCxcImNoYW5uZWxTdGFydHVwUG9saWN5TXNcIjoxLFwidXZFbnZNc1wiOjMsXCJtY3BFbnZNc1wiOjMsXCJydW50aW1lQ29uZmlnUmVhZE1zXCI6MSxcInZlcnNlU2hlbGxCdW5kbGVNc1wiOjAsXCJ0b3RhbE1zXCI6MzQsXCJtYWludGVuYW5jZVwiOnt9LFwiY29uZmlndXJlZENoYW5uZWxDb3VudFwiOjB9XG5bMjAyNi0xMS0xNVQxNzoyMTo1MC40OThaXSBbSU5GT10gU3RhcnRpbmcgR2F0ZXdheSBwcm9jZXNzIChtb2RlPWRldiwgcnVudGltZT1zb3VyY2UsIHBvcnQ9NTAwNjMsIGVudHJ5PVwiRDpcXHRtcFxccHJvamVjdC1yYWctZzItcmVsYXktMDFhMWRjYTBcXHNvdXJjZS1wcm9qZWN0aW9uXFxvcGVuY2xhd19ydW50aW1lXFxkaXN0XFxlbnRyeS5qc1wiLCBhcmdzPVwiZ2F0ZXdheSAtLXBvcnQgNTAwNjMgLS1hbGxvdy11bmNvbmZpZ3VyZWRcIiwgZXhlY0FyZ3Y9XCJcIiwgY3dkPVwiRDpcXHRtcFxccHJvamVjdC1yYWctZzItcmVsYXktMDFhMWRjYTBcXHNvdXJjZS1wcm9qZWN0aW9uXFxvcGVuY2xhd19ydW50aW1lXCIsIGJ1bmRsZWRCaW49bm8sIHByb3ZpZGVyS2V5cz0wLCBjaGFubmVscz1za2lwcGVkKG5vIGNvbmZpZ3VyZWQgY2hhbm5lbHMpLCBwcm94eT1kaXNhYmxlZClcblsyMDI2LTExLTE1VDE3OjIxOjUwLjYzNlpdIFtJTkZPXSBHYXRld2F5IHByb2Nlc3Mgc3RhcnRlZCAocGlkPTQ0MzUyKVxuWzIwMjYtMTEtMTVUMTc6MjE6NTAuNjM3Wl0gW0RFQlVHXSBHYXRld2F5IG1hbmFnZXIgbm93IG93bnMgcHJvY2VzcyBwaWQ9NDQzNTJcblsyMDI2LTExLTE1VDE3OjIxOjUwLjgwMVpdIFtXQVJOXSBbR2F0ZXdheSBzdGRlcnJdIChub2RlOjQ0MzUyKSBXYXJuaW5nOiBUaGUgJ05PX0NPTE9SJyBlbnYgaXMgaWdub3JlZCBkdWUgdG8gdGhlICdGT1JDRV9DT0xPUicgZW52IGJlaW5nIHNldC5cblsyMDI2LTExLTE1VDE3OjIxOjUwLjgwMlpdIFtXQVJOXSBbR2F0ZXdheSBzdGRlcnJdIChVc2UgYGVsZWN0cm9uIC0tdHJhY2Utd2FybmluZ3MgLi4uYCB0byBzaG93IHdoZXJlIHRoZSB3YXJuaW5nIHdhcyBjcmVhdGVkKVxuWzIwMjYtMTEtMTVUMTc6MjE6NTIuNzM0Wl0gW0RFQlVHXSBTdGlsbCB3YWl0aW5nIGZvciBHYXRld2F5Li4uIChhdHRlbXB0IDExLzI0MDApXG5bMjAyNi0xMS0xNVQxNzoyMTo1NC44NjBaXSBbREVCVUddIFN0aWxsIHdhaXRpbmcgZm9yIEdhdGV3YXkuLi4gKGF0dGVtcHQgMjEvMjQwMClcblsyMDI2LTExLTE1VDE3OjIxOjU2Ljc2NVpdIFtERUJVR10gW0dhdGV3YXkgc3RkZXJyXSAobm9kZTo0NDM1MikgW09QRU5DTEFXX0xFR0FDWV9FTlZfVkFSU10gRGVwcmVjYXRpb25XYXJuaW5nOiBMZWdhY3kgQ0xBV0RCT1RfKiBlbnZpcm9ubWVudCB2YXJpYWJsZXMgd2VyZSBkZXRlY3RlZCAoMSB0b3RhbCksIGJ1dCBPcGVuQ2xhdyBvbmx5IHJlYWRzIE9QRU5DTEFXXyogbmFtZXMgbm93LlxuWzIwMjYtMTEtMTVUMTc6MjE6NTYuNzY1Wl0gW1dBUk5dIFtHYXRld2F5IHN0ZGVycl0gUmVuYW1lIHRoZW0gYnkgcmVwbGFjaW5nIHRoZSBsZWdhY3kgcHJlZml4IHdpdGggT1BFTkNMQVdfOyB0aGUgb2xkIG5hbWVzIGFyZSBpZ25vcmVkLlxuWzIwMjYtMTEtMTVUMTc6MjE6NTYuOTg0Wl0gW0RFQlVHXSBTdGlsbCB3YWl0aW5nIGZvciBHYXRld2F5Li4uIChhdHRlbXB0IDMxLzI0MDApXG5bMjAyNi0xMS0xNVQxNzoyMTo1OS45OTVaXSBbREVCVUddIEdhdGV3YXkgcmVhZHkgYWZ0ZXIgMzMgYXR0ZW1wdChzKVxuWzIwMjYtMTEtMTVUMTc6MjE6NTkuOTk2Wl0gW0RFQlVHXSBDb25uZWN0aW5nIEdhdGV3YXkgV2ViU29ja2V0ICh3czovLzEyNy4wLjAuMTo1MDA2My93cylcblsyMDI2LTExLTE1VDE3OjIyOjAwLjAwMFpdIFtXQVJOXSBbR2F0ZXdheSBzdGRlcnJdIFx1MDAxYlszNm1bd3NdXHUwMDFiWzM5bSBcdTAwMWJbMzNtY2xvc2VkIGJlZm9yZSBjb25uZWN0IGNvbm49NzNkYThiMTAtOWM1MS00ZDNjLTlmYTUtNDJhNTg2NjQ4ODI1IHBlZXI9MTI3LjAuMC4xOjUzNzY0LT4xMjcuMC4wLjE6NTAwNjMgcmVtb3RlPTEyNy4wLjAuMSBmd2Q9bi9hIG9yaWdpbj1uL2EgaG9zdD0xMjcuMC4wLjE6NTAwNjMgdWE9bi9hIGNvZGU9MTAwNiByZWFzb249bi9hXHUwMDFiWzM5bVxuWzIwMjYtMTEtMTVUMTc6MjI6MDAuMDEzWl0gW0RFQlVHXSBHYXRld2F5IFdlYlNvY2tldCBvcGVuZWQsIHdhaXRpbmcgZm9yIGNvbm5lY3QuY2hhbGxlbmdlLi4uXG5bMjAyNi0xMS0xNVQxNzoyMjowMC4wMTNaXSBbREVCVUddIFJlY2VpdmVkIGNvbm5lY3QuY2hhbGxlbmdlLCBzZW5kaW5nIGhhbmRzaGFrZVxuWzIwMjYtMTEtMTVUMTc6MjI6MDAuMDE0Wl0gW0RFQlVHXSBTZW5kaW5nIGNvbm5lY3QgaGFuZHNoYWtlIHdpdGggY2hhbGxlbmdlIG5vbmNlXG5bMjAyNi0xMS0xNVQxNzoyMjowMC4wMjBaXSBbV0FSTl0gW0dhdGV3YXkgc3RkZXJyXSBcdTAwMWJbMzZtW3dzXVx1MDAxYlszOW0gXHUwMDFiWzMzbWNsb3NlZCBiZWZvcmUgY29ubmVjdCBjb25uPTkzMjQ0NDYzLWQ2Y2MtNGZkNy1iMDcxLTRjMWFmZWRlNzQ5MSBwZWVyPTEyNy4wLjAuMTo1Mzc2NS0+MTI3LjAuMC4xOjUwMDYzIHJlbW90ZT0xMjcuMC4wLjEgZndkPW4vYSBvcmlnaW49bi9hIGhvc3Q9MTI3LjAuMC4xOjUwMDYzIHVhPW4vYSBjb2RlPTEwMDYgcmVhc29uPW4vYVx1MDAxYlszOW1cblsyMDI2LTExLTE1VDE3OjIyOjAwLjAzMVpdIFtFUlJPUl0gR2F0ZXdheSBjb25uZWN0IGhhbmRzaGFrZSBmYWlsZWQ6IEdhdGV3YXlScGNFcnJvcjogZ2F0ZXdheSBzdGFydGluZzsgcmV0cnkgc2hvcnRseVxuR2F0ZXdheVJwY0Vycm9yOiBnYXRld2F5IHN0YXJ0aW5nOyByZXRyeSBzaG9ydGx5XG4gICAgYXQgeHMuaGFuZGxlTWVzc2FnZSAoRDpcXHRtcFxccHJvamVjdC1yYWctZzItcmVsYXktMDFhMWRjYTBcXHNvdXJjZS1wcm9qZWN0aW9uXFxkaXN0LWVsZWN0cm9uXFxtYWluXFxpbmRleC1kNS03NHU0cC5qczoyMzM3OjM2MDE1KVxuICAgIGF0IE9iamVjdC5vbk1lc3NhZ2UgKEQ6XFx0bXBcXHByb2plY3QtcmFnLWcyLXJlbGF5LTAxYTFkY2EwXFxzb3VyY2UtcHJvamVjdGlvblxcZGlzdC1lbGVjdHJvblxcbWFpblxcaW5kZXgtZDUtNzR1NHAuanM6MjMzNzozNDg0NSlcbiAgICBhdCBXZWJTb2NrZXQuPGFub255bW91cz4gKEQ6XFx0bXBcXHByb2plY3QtcmFnLWcyLXJlbGF5LTAxYTFkY2EwXFxzb3VyY2UtcHJvamVjdGlvblxcZGlzdC1lbGVjdHJvblxcbWFpblxcaW5kZXgtZDUtNzR1NHAuanM6Nzg6OTI5MylcbiAgICBhdCBXZWJTb2NrZXQuZW1pdCAobm9kZTpldmVudHM6NTA4OjI4KVxuICAgIGF0IFJlY2VpdmVyLnJlY2VpdmVyT25NZXNzYWdlIChEOlxcdG1wXFxwcm9qZWN0LXJhZy1sb25ndGVybS0yMDI2MTEwOS1kZXBzXFxjbGF3eFxcLnBucG1cXHdzQDguMjAuMFxcbm9kZV9tb2R1bGVzXFx3c1xcbGliXFx3ZWJzb2NrZXQuanM6MTIyNToyMClcbiAgICBhdCBSZWNlaXZlci5lbWl0IChub2RlOmV2ZW50czo1MDg6MjgpXG4gICAgYXQgUmVjZWl2ZXIuZGF0YU1lc3NhZ2UgKEQ6XFx0bXBcXHByb2plY3QtcmFnLWxvbmd0ZXJtLTIwMjYxMTA5LWRlcHNcXGNsYXd4XFwucG5wbVxcd3NAOC4yMC4wXFxub2RlX21vZHVsZXNcXHdzXFxsaWJcXHJlY2VpdmVyLmpzOjU5NjoxNClcbiAgICBhdCBSZWNlaXZlci5nZXREYXRhIChEOlxcdG1wXFxwcm9qZWN0LXJhZy1sb25ndGVybS0yMDI2MTEwOS1kZXBzXFxjbGF3eFxcLnBucG1cXHdzQDguMjAuMFxcbm9kZV9tb2R1bGVzXFx3c1xcbGliXFxyZWNlaXZlci5qczo0OTY6MTApXG4gICAgYXQgUmVjZWl2ZXIuc3RhcnRMb29wIChEOlxcdG1wXFxwcm9qZWN0LXJhZy1sb25ndGVybS0yMDI2MTEwOS1kZXBzXFxjbGF3eFxcLnBucG1cXHdzQDguMjAuMFxcbm9kZV9tb2R1bGVzXFx3c1xcbGliXFxyZWNlaXZlci5qczoxNjc6MTYpXG4gICAgYXQgUmVjZWl2ZXIuX3dyaXRlIChEOlxcdG1wXFxwcm9qZWN0LXJhZy1sb25ndGVybS0yMDI2MTEwOS1kZXBzXFxjbGF3eFxcLnBucG1cXHdzQDguMjAuMFxcbm9kZV9tb2R1bGVzXFx3c1xcbGliXFxyZWNlaXZlci5qczo5NDoxMClcblsyMDI2LTExLTE1VDE3OjIyOjAwLjAzMlpdIFtXQVJOXSBHYXRld2F5IGNvbm5lY3QgcmVqZWN0ZWQgd2hpbGUgc3RpbGwgc3RhcnRpbmcgKEdhdGV3YXlScGNFcnJvcjogZ2F0ZXdheSBzdGFydGluZzsgcmV0cnkgc2hvcnRseSk7IHJldHJ5aW5nIGluIDUwMG1zICgxLzYpXG5bMjAyNi0xMS0xNVQxNzoyMjowMC4wMzNaXSBbV0FSTl0gR2F0ZXdheSBXZWJTb2NrZXQgY2xvc2VkIChjb2RlPTEwMDYsIHJlYXNvbj11bmtub3duLCBoYW5kc2hha2U9cGVuZGluZylcblsyMDI2LTExLTE1VDE3OjIyOjAwLjAzN1pdIFtXQVJOXSBbR2F0ZXdheSBzdGRlcnJdIFx1MDAxYlszNm1bd3NdXHUwMDFiWzM5bSBcdTAwMWJbMzNtY2xvc2VkIGJlZm9yZSBjb25uZWN0IGNvbm49MzM1MmE0YTYtN2ZlZi00M2NjLThiNTgtMzdiYTA5NDY2ZmU0IHBlZXI9MTI3LjAuMC4xOjUzNzcwLT4xMjcuMC4wLjE6NTAwNjMgcmVtb3RlPTEyNy4wLjAuMSBmd2Q9bi9hIG9yaWdpbj1uL2EgaG9zdD0xMjcuMC4wLjE6NTAwNjMgdWE9bi9hIGNvZGU9MTAwNiByZWFzb249bi9hXHUwMDFiWzM5bVxuWzIwMjYtMTEtMTVUMTc6MjI6MDAuNTQyWl0gW0RFQlVHXSBDb25uZWN0aW5nIEdhdGV3YXkgV2ViU29ja2V0ICh3czovLzEyNy4wLjAuMTo1MDA2My93cylcblsyMDI2LTExLTE1VDE3OjIyOjAwLjU0NVpdIFtERUJVR10gR2F0ZXdheSBXZWJTb2NrZXQgb3BlbmVkLCB3YWl0aW5nIGZvciBjb25uZWN0LmNoYWxsZW5nZS4uLlxuWzIwMjYtMTEtMTVUMTc6MjI6MDAuNTQ2Wl0gW0RFQlVHXSBSZWNlaXZlZCBjb25uZWN0LmNoYWxsZW5nZSwgc2VuZGluZyBoYW5kc2hha2VcblsyMDI2LTExLTE1VDE3OjIyOjAwLjU0NlpdIFtERUJVR10gU2VuZGluZyBjb25uZWN0IGhhbmRzaGFrZSB3aXRoIGNoYWxsZW5nZSBub25jZVxuWzIwMjYtMTEtMTVUMTc6MjI6MDAuNTY3Wl0gW0RFQlVHXSBDb25uZWN0aW5nIEdhdGV3YXkgV2ViU29ja2V0ICh3czovLzEyNy4wLjAuMTo1MDA2My93cylcblsyMDI2LTExLTE1VDE3OjIyOjAwLjU2OVpdIFtXQVJOXSBHYXRld2F5IFdlYlNvY2tldCBjbG9zZWQgKGNvZGU9MTAwNiwgcmVhc29uPXVua25vd24sIGhhbmRzaGFrZT1wZW5kaW5nKVxuWzIwMjYtMTEtMTVUMTc6MjI6MDIuOTgwWl0gW0RFQlVHXSBHYXRld2F5IFdlYlNvY2tldCBvcGVuZWQsIHdhaXRpbmcgZm9yIGNvbm5lY3QuY2hhbGxlbmdlLi4uXG5bMjAyNi0xMS0xNVQxNzoyMjowMi45ODBaXSBbREVCVUddIFJlY2VpdmVkIGNvbm5lY3QuY2hhbGxlbmdlLCBzZW5kaW5nIGhhbmRzaGFrZVxuWzIwMjYtMTEtMTVUMTc6MjI6MDIuOTgwWl0gW0RFQlVHXSBTZW5kaW5nIGNvbm5lY3QgaGFuZHNoYWtlIHdpdGggY2hhbGxlbmdlIG5vbmNlXG5bMjAyNi0xMS0xNVQxNzoyMjowMy45MjNaXSBbREVCVUddIEdhdGV3YXkgY29ubmVjdCBoYW5kc2hha2UgY29tcGxldGVkIChwcm90b2NvbD00KVxuWzIwMjYtMTEtMTVUMTc6MjI6MDMuOTI0Wl0gW0RFQlVHXSBHYXRld2F5IHN0YXRlIGNoYW5nZWQ6IHN0YXJ0aW5nIC0+IHJ1bm5pbmdcblsyMDI2LTExLTE1VDE3OjIyOjAzLjkyNFpdIFtJTkZPXSBHYXRld2F5IGNvcmUgUlBDIHN1cmZhY2UgcmVhZHkgKGhhbmRzaGFrZSBjYXBhYmlsaXRpZXMgdmVyaWZpZWQpXG5bMjAyNi0xMS0xNVQxNzoyMjowMy45MjVaXSBbSU5GT10gR2F0ZXdheSBjb25uZWN0IHN1Y2NlZWRlZCBhZnRlciAyIGF0dGVtcHQocylcblsyMDI2LTExLTE1VDE3OjIyOjAzLjkyNlpdIFtJTkZPXSBbbWV0cmljXSBnYXRld2F5LnN0YXJ0dXAge1wiY29uZmlnU3luY01zXCI6NTU0LFwic3Bhd25Ub1JlYWR5TXNcIjo5MzU4LFwicmVhZHlUb0Nvbm5lY3RNc1wiOjM5MzEsXCJ0b3RhbE1zXCI6MTM4NDN9XG4iCiAgfQp9"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-electron-2584\\electron\\project-rag-settings-opera-9209a-ery-revocation-and-rollback\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-electron-2584\\electron\\project-rag-settings-opera-9209a-ery-revocation-and-rollback\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-electron-2584\\electron\\project-rag-settings-opera-9209a-ery-revocation-and-rollback\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-settings-operations.spec.ts",
+                    "column": 39,
+                    "line": 157
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "58396934e4678ef9cf0d-f3ce59eb2774835e5a21",
+          "file": "project-rag-settings-operations.spec.ts",
+          "line": 31,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-15T17:18:46.639Z",
+    "duration": 210703.163,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "actor": "codex/project-rag-g2-relay-01a1df5c",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "258457d6a45a0bab5b32eed47b88745dde84f666"
+}

@@ -1,0 +1,121 @@
+{
+  "schema": "ProjectRagCandidateGate/v1",
+  "actor": "codex/project-rag-g2-relay-01a1df5c",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "phase": "checks",
+  "candidate": {
+    "head": "258457d6a45a0bab5b32eed47b88745dde84f666",
+    "tree": "7e49b714cfa2a77d9ba53c7c405f4b57f74b050d",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "startedAt": "2026-11-15T17:18:14.139767+00:00",
+  "commands": [
+    {
+      "name": "contract",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/contract-check.mjs"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 1573,
+      "stdout": "contract.stdout.log",
+      "stderr": "contract.stderr.log"
+    },
+    {
+      "name": "i18n",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/i18n-lint.mjs"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 964,
+      "stdout": "i18n.stdout.log",
+      "stderr": "i18n.stderr.log"
+    },
+    {
+      "name": "catalogs",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "--import",
+        "./openclaw_runtime/node_modules/tsx/dist/loader.mjs",
+        "scripts/generate-catalogs.mjs",
+        "--check"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 2319,
+      "stdout": "catalogs.stdout.log",
+      "stderr": "catalogs.stderr.log"
+    },
+    {
+      "name": "comms-replay",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/replay.mjs"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 524,
+      "stdout": "comms-replay.stdout.log",
+      "stderr": "comms-replay.stderr.log"
+    },
+    {
+      "name": "comms-compare",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/comms/compare.mjs"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 347,
+      "stdout": "comms-compare.stdout.log",
+      "stderr": "comms-compare.stderr.log"
+    },
+    {
+      "name": "harness-validate",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/project-rag-config-and-operations.md"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 1524,
+      "stdout": "harness-validate.stdout.log",
+      "stderr": "harness-validate.stderr.log"
+    },
+    {
+      "name": "harness-dry-run",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "harness/src/cli.mjs",
+        "run",
+        "--spec",
+        "harness/specs/tasks/project-rag-config-and-operations.md",
+        "--dry-run"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 1169,
+      "stdout": "harness-dry-run.stdout.log",
+      "stderr": "harness-dry-run.stderr.log"
+    }
+  ],
+  "status": "pass",
+  "after": {
+    "head": "258457d6a45a0bab5b32eed47b88745dde84f666",
+    "tree": "7e49b714cfa2a77d9ba53c7c405f4b57f74b050d",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "sourceUnchanged": true,
+  "completedAt": "2026-11-15T17:18:23.917350+00:00"
+}

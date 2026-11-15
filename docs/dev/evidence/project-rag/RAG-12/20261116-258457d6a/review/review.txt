@@ -1,0 +1,3 @@
+autoreview clean: no accepted/actionable findings reported
+overall: patch is correct (0.88)
+只读核查未发现本变更新增的可操作缺陷。暂停保持、同一 intent 的恢复与尝试预算、staging 查询隔离、激活事务的来源/lease/generation CAS 及提交空间预留与调用链一致。已读取 staging 的18/18、15/15及最新21/21、27/27通过证据，并核对暂停和过期回归的首轮失败记录。修复后的正式 Electron E2E 结果仍待补齐；本次未执行测试。driven_by: agent；actor: codex/project-rag-g2-relay-01a1df5c；realHumanEvidence: false。

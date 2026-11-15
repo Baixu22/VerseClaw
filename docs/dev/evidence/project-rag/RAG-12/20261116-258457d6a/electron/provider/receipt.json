@@ -1,0 +1,55 @@
+{
+  "schema": "ProjectRagCandidateGate/v1",
+  "actor": "codex/project-rag-g2-relay-01a1df5c",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "phase": "electron",
+  "candidate": {
+    "head": "258457d6a45a0bab5b32eed47b88745dde84f666",
+    "tree": "7e49b714cfa2a77d9ba53c7c405f4b57f74b050d",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "startedAt": "2026-11-15T17:18:45.219026+00:00",
+  "commands": [
+    {
+      "name": "electron",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\node_modules\\@playwright\\test\\cli.js",
+        "test",
+        "tests/e2e/project-rag-settings-operations.spec.ts",
+        "tests/e2e/project-rag-provider-settings.spec.ts",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=json",
+        "--output",
+        "D:\\tmp\\project-rag-g2-relay-01a1df5c\\formal-electron-2584\\electron"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 1,
+      "elapsedMs": 212157,
+      "stdout": "electron.stdout.log",
+      "stderr": "electron.stderr.log"
+    }
+  ],
+  "status": "fail",
+  "stats": {
+    "startTime": "2026-11-15T17:18:46.639Z",
+    "duration": 210703.163,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "after": {
+    "head": "258457d6a45a0bab5b32eed47b88745dde84f666",
+    "tree": "7e49b714cfa2a77d9ba53c7c405f4b57f74b050d",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "sourceUnchanged": true,
+  "completedAt": "2026-11-15T17:22:18.606624+00:00"
+}

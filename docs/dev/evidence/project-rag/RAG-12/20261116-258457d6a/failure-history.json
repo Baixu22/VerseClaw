@@ -1,0 +1,51 @@
+{
+  "actor": "codex/project-rag-g2-relay-01a1df5c",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "schema": "ProjectRagFailureHistory/v1",
+  "retainedLocalRoot": "D:\\tmp\\project-rag-g2-relay-01a1df5c",
+  "entries": [
+    {
+      "run": "formal-electron-c8",
+      "candidate": "c8aef961e75cb5d86bac18b3ad3fedba80a93bd1",
+      "status": "failed",
+      "reason": "both pages closed after Gateway restart"
+    },
+    {
+      "run": "formal-electron-2584",
+      "candidate": "258457d6a45a0bab5b32eed47b88745dde84f666",
+      "status": "one passed, one failed",
+      "reason": "first operations retrieval timed out; unchanged-candidate isolated rerun passed"
+    },
+    {
+      "run": "rag12-frozen-review-c8",
+      "status": "findings",
+      "result": "pause reset, expired work, pre-staging budget; fixed by 258457d6a"
+    },
+    {
+      "run": "rag12-review-fix-2",
+      "status": "findings",
+      "result": "passive renewal and actual timeout classification; fixed"
+    },
+    {
+      "run": "rag12-review-fix-3",
+      "status": "findings",
+      "result": "mixed failure/cancellation budget; fixed"
+    },
+    {
+      "run": "agent-dev-full-2584",
+      "status": "functionally complete, timing blocked",
+      "result": "typecheck 49.212s > 45s"
+    },
+    {
+      "run": "agent-dev-full-2584-v2",
+      "status": "functionally complete, timing blocked",
+      "result": "typecheck 224.743s; build 58.580s > 58s"
+    },
+    {
+      "run": "formal-ci-2584",
+      "status": "failed",
+      "result": "performance audit failed; v2 passed after documented daily path"
+    }
+  ]
+}

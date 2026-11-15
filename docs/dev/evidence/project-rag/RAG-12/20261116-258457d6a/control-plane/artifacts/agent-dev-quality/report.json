@@ -1,0 +1,96 @@
+{
+  "schema": "clawx.agent-dev.quality-report.v1",
+  "generatedAt": "2026-11-15T18:17:40.627Z",
+  "success": true,
+  "buildReuse": {
+    "mode": "reuse",
+    "status": "reused",
+    "reusable": true,
+    "reason": "all required build artifacts are newer than relevant Agent Dev sources",
+    "oldestArtifact": "dist/index.html",
+    "artifacts": [
+      {
+        "path": "dist/index.html",
+        "mtimeMs": 1794764299665.0237
+      },
+      {
+        "path": "dist-electron/main/index.js",
+        "mtimeMs": 1794764304679.2593
+      },
+      {
+        "path": "dist-electron/preload/index.js",
+        "mtimeMs": 1794764304741.0288
+      }
+    ],
+    "requiredArtifacts": [
+      "dist/index.html",
+      "dist-electron/main/index.js",
+      "dist-electron/preload/index.js"
+    ],
+    "sourcePaths": [
+      "src",
+      "electron",
+      "shared",
+      "index.html",
+      "vite.config.ts",
+      "package.json",
+      "pnpm-lock.yaml"
+    ]
+  },
+  "decision": {
+    "status": "needs-full-gate",
+    "reason": "Daily-loop fast-path evidence passed; run the listed full gates before PR/release review.",
+    "dailyLoopReady": true,
+    "releaseReady": false,
+    "fullGateComplete": false,
+    "budgetStatus": "watch",
+    "fastPathModes": [
+      "reuse-build",
+      "cached-typecheck",
+      "smoke-e2e"
+    ],
+    "requiredFullGates": [
+      "pnpm run build:vite",
+      "pnpm run typecheck",
+      "pnpm test:e2e:agent-dev-quality"
+    ],
+    "watchSteps": [
+      "playwright-agent-dev",
+      "contract"
+    ],
+    "limitSteps": []
+  },
+  "unitMode": "full",
+  "typecheckMode": "cached",
+  "e2eMode": "smoke",
+  "build": {
+    "ok": true,
+    "durationMs": 1,
+    "commandLine": "reuse existing build",
+    "reused": true,
+    "skipped": true,
+    "reuseStatus": "reused"
+  },
+  "playwright": {
+    "ok": true,
+    "durationMs": 16226,
+    "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
+    "spec": "tests/e2e/agent-dev-quality.spec.ts",
+    "mode": "smoke",
+    "expectedTests": 1,
+    "diagnostics": {
+      "kind": "playwright",
+      "passed": 1,
+      "reportedDurationMs": 14300,
+      "tests": [
+        {
+          "title": "tests\\e2e\\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario",
+          "durationMs": 11800
+        }
+      ]
+    },
+    "evidence": [
+      "Settings > Developer Agent Dev Workbench host-api record path"
+    ]
+  }
+}

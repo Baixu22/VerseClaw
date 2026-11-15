@@ -1,0 +1,30 @@
+{
+  "actor": "codex/project-rag-g2-relay-01a1df5c",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "schema": "ProjectRagRequiredTestReadback/v1",
+  "candidate": "258457d6a45a0bab5b32eed47b88745dde84f666",
+  "status": "pass",
+  "root": {
+    "total": 270,
+    "passed": 270,
+    "failed": 0,
+    "pending": 0
+  },
+  "runtime": {
+    "total": 21,
+    "passed": 21,
+    "failed": 0,
+    "pending": 0
+  },
+  "plannedTests": [
+    "tests/unit/project-rag-config-parity.test.ts"
+  ],
+  "plannedE2E": [
+    "tests/e2e/project-rag-settings-operations.spec.ts"
+  ],
+  "electron": {
+    "provider": "passed in formal-electron-2584",
+    "operations": "passed in formal-operations-2584"
+  }
+}
