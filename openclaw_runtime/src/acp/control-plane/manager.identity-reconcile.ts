@@ -21,8 +21,8 @@ import {
   acknowledgeCommittedManagerRecoveryIdentity,
   matchesManagerTurnRecovery,
   rebindManagerTurnRecoveryIdentity,
-  type ManagerTurnRecoveryState,
 } from "./manager.recovery-admission.js";
+import type { ManagerTurnRecoveryState } from "./manager.types.js";
 
 /** Reconciles runtime-reported session identifiers into persisted ACP session metadata. */
 export async function reconcileManagerRuntimeSessionIdentifiers(params: {

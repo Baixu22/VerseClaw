@@ -10,20 +10,18 @@ import { CONTEXT_TOOL_SUMMARY_BY_NAME } from "../../context-engine/coding-tool-n
 import type { WorkspaceFactService } from "../../context-engine/factstore/workspace-fact-service.js";
 import { parseBooleanValue } from "../../utils/boolean.js";
 
-export {
-  CONTEXT_UNDERSTAND_TOOL_NAME,
-  CONTEXT_IMPACT_TOOL_NAME,
-  CONTEXT_REUSE_TOOL_NAME,
-  CONTEXT_VERIFY_TOOL_NAME,
-} from "./context-agent-tools.js";
+export const CONTEXT_UNDERSTAND_TOOL_NAME = "context_understand";
+export const CONTEXT_IMPACT_TOOL_NAME = "context_impact";
+export const CONTEXT_REUSE_TOOL_NAME = "context_reuse";
+export const CONTEXT_VERIFY_TOOL_NAME = "context_verify";
 
 export const CONTEXT_VIEW_TOOL_SURFACE_SCHEMA = "ContextViewToolSurface/v1" as const;
 
 export const CONTEXT_VIEW_TOOL_NAMES = [
-  "context_understand",
-  "context_impact",
-  "context_reuse",
-  "context_verify",
+  CONTEXT_UNDERSTAND_TOOL_NAME,
+  CONTEXT_IMPACT_TOOL_NAME,
+  CONTEXT_REUSE_TOOL_NAME,
+  CONTEXT_VERIFY_TOOL_NAME,
 ] as const;
 
 export type ContextViewToolName = (typeof CONTEXT_VIEW_TOOL_NAMES)[number];
@@ -100,16 +98,11 @@ export type ContextViewToolSurfaceOptions = {
   unavailableReason?: string;
 };
 
-function explicitViewToolsSwitch(
-  env: NodeJS.ProcessEnv,
-  explicit?: boolean,
-): boolean | undefined {
+function explicitViewToolsSwitch(env: NodeJS.ProcessEnv, explicit?: boolean): boolean | undefined {
   if (typeof explicit === "boolean") {
     return explicit;
   }
-  const raw =
-    env.OPENCLAW_DCS_CONTEXT_VIEW_TOOLS ??
-    env.OPENCLAW_DCS_CONTEXT_TOOLS;
+  const raw = env.OPENCLAW_DCS_CONTEXT_VIEW_TOOLS ?? env.OPENCLAW_DCS_CONTEXT_TOOLS;
   if (raw === undefined) {
     return undefined;
   }

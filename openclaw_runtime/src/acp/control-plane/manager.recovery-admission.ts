@@ -2,7 +2,6 @@
 import { resolveSessionIdentityFromMeta } from "@openclaw/acp-core/runtime/session-identity";
 import type {
   EffectCertainty,
-  RecoveryOwnerAdmission,
   RecoveryAuthorityRequest,
 } from "../../../../shared/recovery-authority/contract.js";
 import {
@@ -28,33 +27,16 @@ import { AcpRuntimeError } from "../../runtime/errors.ts";
 import { readAcpSessionEntry } from "../runtime/session-meta.js";
 import type {
   AcpSessionManagerDeps,
+  ManagerTurnRecovery,
+  ManagerTurnRecoveryState,
   SessionAcpMeta,
   WriteManagerSessionMeta,
 } from "./manager.types.js";
 
-export type ManagerTurnRecoveryState = {
-  sessionId: string;
-  requestId: string;
-  boundary: string;
-  identity: string;
-  attempts: number;
-  maxAttempts: number;
-  effect: EffectCertainty;
-  visibleOutputObserved: boolean;
-  processId?: number;
-  authority?: RecoveryOwnerAdmission;
-};
-
-export type ManagerTurnRecovery = {
-  cfg: OpenClawConfig;
-  sessionKey: string;
-  storePath: string;
-  storeKey: string;
-  state: ManagerTurnRecoveryState;
-  writeSessionMeta: WriteManagerSessionMeta;
-};
-
 type RecoveryDatabase = Pick<DB, "acp_sessions">;
+
+// Process-local activity fences the durable PID claim until the whole turn settles.
+const activeClaims = new Map<string, symbol>();
 
 /** Only immutable runtime identity fields participate in the owner check. */
 export function managerRuntimeIdentity(meta: SessionAcpMeta): string {
@@ -133,26 +115,31 @@ function retainCommittedManagerRecovery(
 
 /** Release only this exact claim; uncertain effects retain their reconciliation state. */
 export function releaseManagerTurnRecovery(context: ManagerTurnRecovery): void {
-  runOpenClawStateWriteTransaction(() => {
-    if (context.state.processId !== process.pid || !isCurrentManagerTurnRecovery(context)) return;
-    const authority = context.state.authority;
-    const next = {
-      ...context.state,
-      processId: undefined,
-      ...(authority
-        ? {
-            authority:
-              finishOwnerRecoveryAdmission(
-                authority,
-                authority,
-                context.state.effect === "unknown" ? "reconcile" : "failed",
-              ) ?? authority,
-          }
-        : {}),
-    };
-    saveRecoveryState(context.sessionKey, next);
-    context.state = next;
-  });
+  try {
+    runOpenClawStateWriteTransaction(() => {
+      if (context.state.processId !== process.pid || !isCurrentManagerTurnRecovery(context)) return;
+      const authority = context.state.authority;
+      const next = {
+        ...context.state,
+        processId: undefined,
+        ...(authority
+          ? {
+              authority:
+                finishOwnerRecoveryAdmission(
+                  authority,
+                  authority,
+                  context.state.effect === "unknown" ? "reconcile" : "failed",
+                ) ?? authority,
+            }
+          : {}),
+      };
+      saveRecoveryState(context.sessionKey, next);
+      context.state = next;
+    });
+  } finally {
+    if (context.claim && activeClaims.get(context.claim.key) === context.claim.token)
+      activeClaims.delete(context.claim.key);
+  }
 }
 
 /** An owned handle/status acknowledgement may rebind identity without resetting its budget. */
@@ -209,6 +196,7 @@ export function matchesManagerTurnRecovery(params: {
 }
 
 export function isCurrentManagerTurnRecovery(context: ManagerTurnRecovery): boolean {
+  if (context.claim && activeClaims.get(context.claim.key) !== context.claim.token) return false;
   const entry = loadSessionStore(context.storePath, { skipCache: true })[context.storeKey];
   const row = readRecoveryRow(context.sessionKey);
   if (!entry || !row) return false;
@@ -290,8 +278,12 @@ export async function beginManagerTurnRecovery(params: {
   const stored = params.deps.readSessionEntry({ cfg: params.cfg, sessionKey: params.sessionKey });
   const initial = readRecoveryRow(stored?.storeSessionKey ?? params.sessionKey);
   const old = initial ? parseRecoveryState(initial.recovery_json) : undefined;
+  const claimKey = stored?.entry
+    ? JSON.stringify([stored.storePath, stored.storeSessionKey, stored.entry.sessionId])
+    : undefined;
   if (
     !isRecoveryAuthorityEnabled() &&
+    (!claimKey || !activeClaims.has(claimKey)) &&
     (!old || (old.requestId !== params.requestId && old.effect !== "unknown" && !old.processId))
   )
     return {};
@@ -310,93 +302,112 @@ export async function beginManagerTurnRecovery(params: {
     params.requestId,
     JSON.stringify([params.text, params.attachments ?? null, params.mode]),
   );
-  const persisted = await params
-    .writeSessionMeta({
-      cfg: params.cfg,
-      sessionKey,
-      failOnError: true,
-      expectedSessionId: stored.entry.sessionId,
-      mutate: (current, entry) => {
-        if (
-          !current ||
-          entry?.sessionId !== stored.entry!.sessionId ||
-          managerRuntimeIdentity(current) !== managerRuntimeIdentity(params.meta)
-        )
-          return undefined;
-        const row = readRecoveryRow(sessionKey);
-        if (!row || (row.session_id != null && row.session_id !== entry.sessionId))
-          return undefined;
-        const previous = parseRecoveryState(row.recovery_json);
-        if (previous?.sessionId === entry.sessionId) {
-          if (previous.processId && !isPidDefinitelyDead(previous.processId)) {
-            state = prepareRecovery(previous, current, sessionKey, false).next;
-          } else if (previous.requestId === params.requestId || previous.effect === "unknown") {
-            const match = previous.requestId === params.requestId && previous.boundary === boundary;
-            const result = prepareRecovery(
-              previous,
-              current,
-              sessionKey,
-              match &&
-                (previous.effect === "applied" ||
-                  previous.effect === "reconciled" ||
-                  previous.identity === managerRuntimeIdentity(current)),
-            );
-            state = result.next;
-            allowed = match && result.prepared.admitted;
-            settled = match && result.prepared.decision.kind === "settle";
-          }
-        }
-        if (!state) {
-          const uncertain = !previous && current.state !== "idle";
-          state = {
-            sessionId: entry.sessionId,
-            requestId: params.requestId,
-            boundary,
-            identity: managerRuntimeIdentity(current),
-            attempts: uncertain ? 0 : 1,
-            maxAttempts: params.maxAttempts,
-            effect: uncertain ? "unknown" : "not_applied",
-            visibleOutputObserved: false,
-            ...(!uncertain ? { processId: process.pid } : {}),
-          };
-          if (uncertain) state = prepareRecovery(state, current, sessionKey, true).next;
-          else allowed = true;
-        }
-        saveRecoveryState(sessionKey, state);
-        return current;
-      },
-    })
-    .catch((error) => {
-      if (state && readRecoveryRow(sessionKey)?.recovery_json === JSON.stringify(state)) {
-        releaseManagerTurnRecovery({
-          cfg: params.cfg,
-          sessionKey,
-          storePath: stored.storePath,
-          storeKey: stored.storeSessionKey,
-          state,
-          writeSessionMeta: params.writeSessionMeta,
-        });
-      }
-      throw error;
-    });
-  if (!persisted || !state)
-    throw new AcpRuntimeError("ACP_TURN_FAILED", "ACP recovery owner changed before admission.");
-  if (!allowed && !settled)
+  const claim = { key: claimKey!, token: Symbol() };
+  if (activeClaims.has(claim.key))
     throw new AcpRuntimeError(
       "ACP_TURN_FAILED",
-      "ACP recovery requires reconciliation or has exhausted its persisted budget.",
+      "ACP recovery requires reconciliation while a turn owner is active.",
     );
-  return {
-    context: {
-      cfg: params.cfg,
-      sessionKey,
-      storePath: stored.storePath,
-      storeKey: stored.storeSessionKey,
-      state,
-      writeSessionMeta: params.writeSessionMeta,
-    },
-    settled,
-  };
+  activeClaims.set(claim.key, claim.token);
+  try {
+    const persisted = await params
+      .writeSessionMeta({
+        cfg: params.cfg,
+        sessionKey,
+        failOnError: true,
+        expectedSessionId: stored.entry.sessionId,
+        mutate: (current, entry) => {
+          if (
+            !current ||
+            entry?.sessionId !== stored.entry!.sessionId ||
+            managerRuntimeIdentity(current) !== managerRuntimeIdentity(params.meta)
+          )
+            return undefined;
+          const row = readRecoveryRow(sessionKey);
+          if (!row || (row.session_id != null && row.session_id !== entry.sessionId))
+            return undefined;
+          const previous = parseRecoveryState(row.recovery_json);
+          if (previous?.sessionId === entry.sessionId) {
+            if (
+              previous.processId &&
+              previous.processId !== process.pid &&
+              !isPidDefinitelyDead(previous.processId)
+            ) {
+              state = prepareRecovery(previous, current, sessionKey, false).next;
+            } else if (previous.requestId === params.requestId || previous.effect === "unknown") {
+              const match =
+                previous.requestId === params.requestId && previous.boundary === boundary;
+              const result = prepareRecovery(
+                previous,
+                current,
+                sessionKey,
+                match &&
+                  (previous.effect === "applied" ||
+                    previous.effect === "reconciled" ||
+                    previous.identity === managerRuntimeIdentity(current)),
+              );
+              state = result.next;
+              allowed = match && result.prepared.admitted;
+              settled = match && result.prepared.decision.kind === "settle";
+            }
+          }
+          if (!state) {
+            const uncertain = !previous && current.state !== "idle";
+            state = {
+              sessionId: entry.sessionId,
+              requestId: params.requestId,
+              boundary,
+              identity: managerRuntimeIdentity(current),
+              attempts: uncertain ? 0 : 1,
+              maxAttempts: params.maxAttempts,
+              effect: uncertain ? "unknown" : "not_applied",
+              visibleOutputObserved: false,
+              ...(!uncertain ? { processId: process.pid } : {}),
+            };
+            if (uncertain) state = prepareRecovery(state, current, sessionKey, true).next;
+            else allowed = true;
+          }
+          saveRecoveryState(sessionKey, state);
+          return current;
+        },
+      })
+      .catch((error) => {
+        if (state && readRecoveryRow(sessionKey)?.recovery_json === JSON.stringify(state)) {
+          releaseManagerTurnRecovery({
+            cfg: params.cfg,
+            sessionKey,
+            storePath: stored.storePath,
+            storeKey: stored.storeSessionKey,
+            state,
+            claim,
+            writeSessionMeta: params.writeSessionMeta,
+          });
+        }
+        throw error;
+      });
+    if (!persisted || !state)
+      throw new AcpRuntimeError("ACP_TURN_FAILED", "ACP recovery owner changed before admission.");
+    if (!allowed && !settled)
+      throw new AcpRuntimeError(
+        "ACP_TURN_FAILED",
+        "ACP recovery requires reconciliation or has exhausted its persisted budget.",
+      );
+    return {
+      context: {
+        cfg: params.cfg,
+        sessionKey,
+        storePath: stored.storePath,
+        storeKey: stored.storeSessionKey,
+        state,
+        claim,
+        writeSessionMeta: params.writeSessionMeta,
+      },
+      settled,
+    };
+  } catch (error) {
+    if (activeClaims.get(claim.key) === claim.token) activeClaims.delete(claim.key);
+    throw error;
+  }
 }
 
 /** Journal output before publication; reject a stale generation, identity or attempt. */
@@ -410,6 +421,8 @@ export async function markManagerTurnRecovery(
   },
   expectedMeta?: SessionAcpMeta,
 ): Promise<void> {
+  if (context.claim && activeClaims.get(context.claim.key) !== context.claim.token)
+    throw new AcpRuntimeError("ACP_TURN_FAILED", "ACP turn owner is no longer active.");
   let next: ManagerTurnRecoveryState | undefined;
   const persisted = await context
     .writeSessionMeta({
@@ -478,6 +491,7 @@ export async function markManagerTurnRecovery(
 
 /** Both fresh-handle retries and backend failover use this same committed decision. */
 export async function admitManagerTurnRecovery(context: ManagerTurnRecovery): Promise<boolean> {
+  if (context.claim && activeClaims.get(context.claim.key) !== context.claim.token) return false;
   let admitted = false;
   let next: ManagerTurnRecoveryState | undefined;
   const persisted = await context

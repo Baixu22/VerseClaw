@@ -1,0 +1,125 @@
+{
+  "schema": "RecoveryOwnersAcceptance/v1",
+  "driven_by": "agent",
+  "actor": "codex-recovery-ga-closeout",
+  "realHumanEvidence": false,
+  "candidate": {
+    "commit": "6ec53ffe53fef41283eadf8efdacdbfab23d4b3f",
+    "tree": "7cdba8f794c787be92dec40b90e4daa3c7c51a4c",
+    "dirty": false
+  },
+  "status": "PASS",
+  "nodes": [
+    "TF-0815",
+    "TF-0816",
+    "TF-0817",
+    "TF-0715",
+    "TF-0712",
+    "TF-0716"
+  ],
+  "sourceFiles": 47,
+  "nativeStages": 21,
+  "processProofs": 4,
+  "ownerEntries": [
+    "main-session",
+    "subagent",
+    "final-delivery",
+    "ACP",
+    "goal-wake"
+  ],
+  "tests": [
+    {
+      "name": "acp",
+      "passed": 25,
+      "failed": 0
+    },
+    {
+      "name": "goal",
+      "passed": 87,
+      "failed": 0
+    },
+    {
+      "name": "main-subagent",
+      "passed": 54,
+      "failed": 0
+    },
+    {
+      "name": "nested-owner",
+      "passed": 24,
+      "failed": 0
+    },
+    {
+      "name": "attempt",
+      "passed": 7,
+      "failed": 0
+    },
+    {
+      "name": "cli",
+      "passed": 20,
+      "failed": 0
+    },
+    {
+      "name": "gateway",
+      "passed": 16,
+      "failed": 0
+    },
+    {
+      "name": "state-config",
+      "passed": 17,
+      "failed": 0
+    },
+    {
+      "name": "delivery",
+      "passed": 53,
+      "failed": 0
+    },
+    {
+      "name": "root",
+      "passed": 56,
+      "failed": 0
+    },
+    {
+      "name": "parent-phase-root",
+      "passed": 52,
+      "failed": 0
+    },
+    {
+      "name": "parent-phase-runtime",
+      "passed": 73,
+      "failed": 0
+    }
+  ],
+  "ownerRegressionPassed": 359,
+  "parentRegressionPassed": 125,
+  "duplicateEffects": 0,
+  "activeOwnedChildren": 0,
+  "review": {
+    "model": "gpt-6.1-sol",
+    "authorization": "Direct user selection for this R3j candidate",
+    "exitCode": 0,
+    "findings": [],
+    "overallCorrectness": "patch is correct",
+    "reportSha256": "dcabfc617c09f03e963037d97e5f8ddb4c565cdab6807cca6153ea8bb180793b"
+  },
+  "preservedFailures": [
+    "Initial release control expected applied after a blocked terminal commit; corrected to observed unknown.",
+    "Corrected before control had 24/25 pass; fixed control has 25/25 pass.",
+    "Initial local-claim implementation skipped post-turn identity cleanup; corrected release ordering, all 25 controls passed.",
+    "DeepSeek malformed output and expired IAM source runs remain in the private run archive."
+  ],
+  "rawEvidence": {
+    "file": "raw-evidence.json.gz",
+    "sha256": "1c8ccd86cb26ba8faaaad4b0598a7f2a4a5290abf04f1ffcf6d4f681446e68cf",
+    "files": 244,
+    "readbackPassed": true
+  },
+  "credentialScan": {
+    "file": "credential-scan.json",
+    "hits": 0
+  },
+  "gaStatus": "NO_GO",
+  "gaPending": [
+    "Frozen live metrics and independent legacy repeat",
+    "Full performance audit and full Harness/package gates"
+  ]
+}

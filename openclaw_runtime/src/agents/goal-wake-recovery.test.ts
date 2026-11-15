@@ -28,7 +28,8 @@ import {
 } from "./goal-wake-recovery.js";
 import { ackGoalWaitYield } from "./goal-wake-runtime.js";
 import { getGoalWaitTask } from "./goal-wake-read.js";
-import { saveMissionRun } from "./mission-control/store.js";
+import { getMissionRun, saveMissionRun } from "./mission-control/store.js";
+import { claimMissionTick, finishMissionTick } from "./goal-wake-fencing.js";
 import type { MissionRunRecord } from "./mission-control/types.js";
 
 const tempRoots: string[] = [];
@@ -156,7 +157,118 @@ async function armGatedDurable(runId: string, terminal = true) {
   return { ...seeded, cfg: { session: { store } } };
 }
 
+async function writeStarted(
+  runId: string,
+  intent: Awaited<ReturnType<typeof createDurableHelperIntent>>,
+) {
+  await writeDurableHelperStarted(
+    {
+      runId,
+      runNonce: intent.nonce,
+      helperPid: process.pid,
+      childPid: process.pid,
+      startedAtMs: Date.now(),
+      commandDigest: intent.commandDigest,
+    },
+    { rootDir },
+  );
+}
+
 describe("durable helper authority admission", () => {
+  it("reuses the consumed wake identity when a lost task receives a late exit after ACK loss", async () => {
+    const { cfg, intent } = await armGatedDurable("run_late_consumed_wake", false);
+    await writeStarted("run_late_consumed_wake", intent);
+    let ticks = 0;
+    const dispatch = async (input: { wakeId: string }) => {
+      const mission = getMissionRun("mission-recovery")!;
+      const tickId = "tick-late-wake";
+      const claim = claimMissionTick({
+        missionId: mission.missionId,
+        expectedRevision: mission.revision!,
+        activeTickId: tickId,
+        wakeId: input.wakeId,
+        allowedStatuses: ["running", "sleeping"],
+        requireIdle: true,
+      });
+      if (!claim.ok)
+        return { ok: claim.reason === "duplicate-wake", duplicate: true, reason: claim.reason };
+      ticks += 1;
+      const finished = finishMissionTick({
+        missionId: mission.missionId,
+        expectedRevision: claim.revision,
+        activeTickId: tickId,
+        lastWakeId: input.wakeId,
+        status: "running",
+      });
+      expect(finished.ok).toBe(true);
+      throw new Error("wake ACK lost after commit");
+    };
+    await expect(
+      reconcileDurableRun({
+        runId: "run_late_consumed_wake",
+        options: { rootDir },
+        cfg,
+        dispatch,
+        isHelperAlive: () => false,
+      }),
+    ).rejects.toThrow("wake ACK lost");
+    await writeDurableHelperExit(
+      {
+        runId: "run_late_consumed_wake",
+        nonce: intent.nonce,
+        exitCode: 0,
+        signal: null,
+        timedOut: false,
+        endedAtMs: Date.now() + 1,
+        outcomeDigest: durableOutcomeDigest({ exitCode: 0, signal: null, timedOut: false }),
+      },
+      { rootDir },
+    );
+    await runDurableHelperSweepOnce({ options: { rootDir }, cfg, dispatch });
+    expect(ticks).toBe(1);
+  });
+  it("reconciles a late exit for the same lost helper before waking the pending flow", async () => {
+    const { cfg, arm, intent } = await armGatedDurable("run_late_exit", false);
+    await writeStarted("run_late_exit", intent);
+    const lost = await reconcileDurableRun({
+      runId: "run_late_exit",
+      options: { rootDir },
+      cfg,
+      dispatch: async () => ({ ok: false, reason: "temporarily-parked", retryable: false }),
+      isHelperAlive: () => false,
+    });
+    expect(lost.reason).toBe("started-helper-dead");
+    expect(getGoalWaitTask(arm.taskId)?.status).toBe("lost");
+    await writeDurableHelperExit(
+      {
+        runId: "run_late_exit",
+        nonce: intent.nonce,
+        exitCode: 0,
+        signal: null,
+        timedOut: false,
+        endedAtMs: Date.now(),
+        outcomeDigest: durableOutcomeDigest({ exitCode: 0, signal: null, timedOut: false }),
+      },
+      { rootDir },
+    );
+    const statuses: string[] = [];
+    await runDurableHelperSweepOnce({
+      options: { rootDir },
+      cfg,
+      dispatch: async (input) => {
+        statuses.push(input.taskStatus);
+        return { ok: true, duplicate: false };
+      },
+    });
+    const task = getGoalWaitTask(arm.taskId)!;
+    expect(task.status).toBe("succeeded");
+    expect(task.error).toBeNull();
+    expect(JSON.parse(task.progress_summary!).recoveryAuthority.decision).toMatchObject({
+      effect: "reconciled",
+      kind: "settle",
+    });
+    expect(statuses).toEqual(["succeeded"]);
+  });
   it("keeps a lost helper outcome unknown when no durable exit was observed", async () => {
     const { cfg, arm } = await armGatedDurable("run_lost_uncertain", false);
     await runDurableHelperSweepOnce({

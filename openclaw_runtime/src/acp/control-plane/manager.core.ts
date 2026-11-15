@@ -59,7 +59,7 @@ import {
   validateRuntimeOptionPatch,
 } from "./runtime-options.js";
 import { SessionActorQueue } from "./session-actor-queue.js";
-import type { ManagerTurnRecoveryState } from "./manager.recovery-admission.js";
+import type { ManagerTurnRecoveryState } from "./manager.types.js";
 
 /** Coordinates ACP session metadata, runtime handles, per-session queues, and turn execution. */
 export class AcpSessionManager {

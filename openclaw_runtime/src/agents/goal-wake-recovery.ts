@@ -10,10 +10,7 @@ import {
   executeSqliteQueryTakeFirstSync,
   getNodeSqliteKysely,
 } from "../infra/kysely-sync.js";
-import {
-  openOpenClawStateDatabase,
-  runOpenClawStateWriteTransaction,
-} from "../state/openclaw-state-db.js";
+import { openOpenClawStateDatabase } from "../state/openclaw-state-db.js";
 import type { DB as OpenClawStateKyselyDatabase } from "../state/openclaw-state-db.generated.js";
 import { resolveConfigDir } from "../utils.js";
 import { goalWakeEnabled, resolveDurableHelperPolicy } from "./goal-wake-config.js";
@@ -25,7 +22,6 @@ import {
   readDurableHelperTail,
   removeDurableHelperRunDir,
   resolveDurableHelperRoot,
-  type DurableHelperExit,
   type DurableHelperProtocolOptions,
 } from "./goal-wake-helper-protocol.js";
 import { runGoalWakeLevelCheckForTask } from "./goal-wake-dispatch.js";
@@ -39,9 +35,10 @@ import { GOAL_WAKE_CONTROLLER_ID } from "./goal-wake-read.js";
 import {
   beginGoalWakeRecovery,
   isCurrentGoalWakeRecovery,
-  matchesGoalWakeRecovery,
-  recordGoalWakeRecovery,
-  type GoalWakeRecoveryContext,
+  isTerminalTaskStatus,
+  writeTaskRunningClaim,
+  finalizeTaskFromExit,
+  finalizeTaskLost,
   type GoalWakeRecoveryGate,
 } from "./goal-wake-recovery-admission.js";
 
@@ -56,13 +53,8 @@ function isHelperAlive(pid: number): boolean {
   }
 }
 
-function isTerminalTaskStatus(status: string): boolean {
-  return ["succeeded", "failed", "timed_out", "cancelled", "lost", "needs_cleanup"].includes(
-    status,
-  );
-}
-
 async function getTaskByRunId(runId: string): Promise<GoalWakeTaskRunRow | undefined> {
+  // Exec process waits own helper run IDs; other trigger controllers resume their own waits.
   const { db } = openOpenClawStateDatabase();
   const query = getNodeSqliteKysely<RecoveryDatabase>(db);
   return executeSqliteQueryTakeFirstSync(
@@ -102,158 +94,6 @@ async function listRecoveryRunIds(): Promise<string[]> {
       ),
   ).rows;
   return [...new Set(rows.map((row) => String(row.run_id)).filter(Boolean))];
-}
-
-function mapExitToTaskStatus(
-  exit: DurableHelperExit,
-  cancelled: boolean,
-): "succeeded" | "failed" | "timed_out" | "cancelled" {
-  if (cancelled) return "cancelled";
-  if (exit.timedOut) return "timed_out";
-  if (exit.exitCode === 0) return "succeeded";
-  return "failed";
-}
-
-async function writeTaskRunningClaim(params: {
-  taskId: string;
-  helperPid: number;
-  childPid: number;
-  runNonce: string;
-  recovery?: GoalWakeRecoveryContext;
-}): Promise<boolean> {
-  let updated = false;
-  runOpenClawStateWriteTransaction(() => {
-    const { db } = openOpenClawStateDatabase();
-    const query = getNodeSqliteKysely<RecoveryDatabase>(db);
-    const existing = executeSqliteQueryTakeFirstSync(
-      db,
-      query.selectFrom("task_runs").selectAll().where("task_id", "=", params.taskId),
-    );
-    if (!existing || (params.recovery && !matchesGoalWakeRecovery(params.recovery, existing)))
-      return;
-    if (existing.status !== "queued") {
-      updated = existing.status === "running";
-      return;
-    }
-    executeSqliteQuerySync(
-      db,
-      query
-        .updateTable("task_runs")
-        .set({
-          status: "running",
-          started_at: Date.now(),
-          last_event_at: Date.now(),
-          progress_summary: JSON.stringify({
-            ...(() => {
-              try {
-                return JSON.parse(existing.progress_summary ?? "{}") as Record<string, unknown>;
-              } catch {
-                return {};
-              }
-            })(),
-            helperPid: params.helperPid,
-            childPid: params.childPid,
-            runNonce: params.runNonce,
-          }),
-        })
-        .where("task_id", "=", params.taskId),
-    );
-    if (params.recovery) {
-      const current = executeSqliteQueryTakeFirstSync(
-        db,
-        query.selectFrom("task_runs").selectAll().where("task_id", "=", params.taskId),
-      )!;
-      recordGoalWakeRecovery(params.recovery, current, false);
-    }
-    updated = true;
-  });
-  return updated;
-}
-
-async function finalizeTaskFromExit(params: {
-  taskId: string;
-  exit: DurableHelperExit;
-  cancelled: boolean;
-  tail: string;
-  recovery?: GoalWakeRecoveryContext;
-}): Promise<boolean> {
-  const status = mapExitToTaskStatus(params.exit, params.cancelled);
-  let updated = false;
-  runOpenClawStateWriteTransaction(() => {
-    const { db } = openOpenClawStateDatabase();
-    const query = getNodeSqliteKysely<RecoveryDatabase>(db);
-    const existing = executeSqliteQueryTakeFirstSync(
-      db,
-      query.selectFrom("task_runs").selectAll().where("task_id", "=", params.taskId),
-    );
-    if (!existing || (params.recovery && !matchesGoalWakeRecovery(params.recovery, existing)))
-      return;
-    if (isTerminalTaskStatus(existing.status)) {
-      if (params.recovery) recordGoalWakeRecovery(params.recovery, existing, true);
-      updated = true;
-      return;
-    }
-    executeSqliteQuerySync(
-      db,
-      query
-        .updateTable("task_runs")
-        .set({
-          status,
-          ended_at: params.exit.endedAtMs,
-          last_event_at: params.exit.endedAtMs,
-          error:
-            status === "failed"
-              ? `goal-owned process exited ${params.exit.exitCode ?? "without an exit code"}`
-              : existing.error,
-          terminal_summary:
-            params.tail.trim() || `goal-owned process reached durable terminal ${status}`,
-          terminal_outcome: status === "succeeded" ? "succeeded" : "blocked",
-        })
-        .where("task_id", "=", params.taskId),
-    );
-    if (params.recovery) recordGoalWakeRecovery(params.recovery, existing, true);
-    updated = true;
-  });
-  return updated;
-}
-
-async function finalizeTaskLost(params: {
-  taskId: string;
-  reason: string;
-  recovery?: GoalWakeRecoveryContext;
-}): Promise<boolean> {
-  let updated = false;
-  runOpenClawStateWriteTransaction(() => {
-    const { db } = openOpenClawStateDatabase();
-    const query = getNodeSqliteKysely<RecoveryDatabase>(db);
-    const existing = executeSqliteQueryTakeFirstSync(
-      db,
-      query.selectFrom("task_runs").selectAll().where("task_id", "=", params.taskId),
-    );
-    if (!existing || (params.recovery && !matchesGoalWakeRecovery(params.recovery, existing)))
-      return;
-    if (isTerminalTaskStatus(existing.status)) {
-      updated = true;
-      return;
-    }
-    executeSqliteQuerySync(
-      db,
-      query
-        .updateTable("task_runs")
-        .set({
-          status: "lost",
-          ended_at: Date.now(),
-          last_event_at: Date.now(),
-          error: `durable helper lost: ${params.reason}. Command was not replayed.`,
-          terminal_summary: `durable helper lost: ${params.reason}`,
-          terminal_outcome: "blocked",
-        })
-        .where("task_id", "=", params.taskId),
-    );
-    if (params.recovery) recordGoalWakeRecovery(params.recovery, existing, false);
-    updated = true;
-  });
-  return updated;
 }
 
 export type DurableRecoveryOutcome = {
@@ -427,7 +267,7 @@ export async function runDurableHelperSweepOnce(
       }
     }
 
-    if (task && !isTerminalTaskStatus(task.status)) {
+    if (task && (!isTerminalTaskStatus(task.status) || (task.status === "lost" && files.exit))) {
       const outputBytes = await durableRunOutputBytes(runId, options).catch(() => 0);
       if (policy.maxOutputBytesPerRun > 0 && outputBytes > policy.maxOutputBytesPerRun) {
         if (gate.kind === "ready" && !isCurrentGoalWakeRecovery(gate.context)) continue;

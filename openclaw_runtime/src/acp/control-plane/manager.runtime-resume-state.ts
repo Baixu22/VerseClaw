@@ -8,6 +8,7 @@ import type { AcpRuntimeError } from "../../runtime/errors.ts";
 import type { ManagerRuntimeHandleCache } from "./manager.runtime-handle-cache.js";
 import type {
   AcpSessionManagerDeps,
+  ManagerTurnRecovery,
   SessionAcpMeta,
   WriteManagerSessionMeta,
 } from "./manager.types.js";
@@ -17,7 +18,6 @@ import {
   managerRuntimeIdentity,
   markManagerTurnRecovery,
   matchesManagerTurnRecovery,
-  type ManagerTurnRecovery,
 } from "./manager.recovery-admission.js";
 
 /** Detects acpx exits that are safe to retry with a fresh runtime handle. */

@@ -3,10 +3,10 @@
  * Navigation sidebar with menu items.
  * No longer fixed - sits inside the flex layout below the title bar.
  */
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { useShallow } from 'zustand/shallow';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate, type NavLinkRenderProps } from 'react-router-dom';
 import {
   Settings as SettingsIcon,
   MoreHorizontal,
@@ -531,11 +531,11 @@ function SidebarSettingsNavItem({ collapsed }: { collapsed: boolean }) {
       to="/settings/general"
       data-testid="sidebar-nav-settings"
       aria-label={t('sidebar.settings')}
-      onClick={(event) => {
+      onClick={(event: MouseEvent<HTMLAnchorElement>) => {
         event.preventDefault();
         openSettings('/settings/general');
       }}
-      className={({ isActive }) =>
+      className={({ isActive }: NavLinkRenderProps) =>
         cn(
           'profile-menu-trigger',
           (isActive || settingsOpen) && 'open',

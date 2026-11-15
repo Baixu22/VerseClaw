@@ -2,7 +2,11 @@ import { mkdtempSync, rmSync } from "node:fs";
 import path from "node:path";
 import { tmpdir } from "node:os";
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from "vitest";
-import type { AcpRuntime, AcpRuntimeHandle } from "@openclaw/acp-core/runtime/types";
+import type {
+  AcpRuntime,
+  AcpRuntimeHandle,
+  AcpRuntimeTurnResult,
+} from "@openclaw/acp-core/runtime/types";
 import { updateSessionStoreAtomic } from "../../config/sessions/store.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import { upsertAcpSessionMeta, readAcpSessionEntry } from "../runtime/session-meta.js";
@@ -47,7 +51,11 @@ function journal() {
     effect: string;
     visibleOutputObserved: boolean;
     identity: string;
-    authority?: { attempts: number; decision: { authorityId: string; kind: string } };
+    authority?: {
+      attempts: number;
+      state: string;
+      decision: { authorityId: string; kind: string };
+    };
   };
 }
 
@@ -75,6 +83,9 @@ async function run(
   requestId = "original-request",
   onEvent?: Parameters<typeof runManagerTurn>[0]["input"]["onEvent"],
   text = "original task",
+  overrides: Partial<
+    Pick<Parameters<typeof runManagerTurn>[0], "ensureRuntimeHandle" | "runtimeHandles">
+  > = {},
 ) {
   return runManagerTurn({
     input: { cfg, sessionKey: key, text, mode: "prompt", requestId, onEvent },
@@ -110,6 +121,7 @@ async function run(
       meta: params.meta,
     }),
     writeSessionMeta: writeMeta,
+    ...overrides,
   });
 }
 
@@ -162,6 +174,65 @@ beforeEach(async () => {
   await upsertAcpSessionMeta({ cfg, sessionKey: key, mutate: () => meta });
 });
 
+describe("authoritative ACP terminal result", () => {
+  it("keeps a streamed done unknown when the independent result fails", async () => {
+    const startTurn = vi.fn(() => ({
+      requestId: "original-request",
+      events: (async function* () {
+        yield { type: "done" as const };
+      })(),
+      result: new Promise<AcpRuntimeTurnResult>((resolve) =>
+        setTimeout(
+          () =>
+            resolve({
+              status: "failed",
+              error: { code: "ACP_TURN_FAILED", message: "independent result failed" },
+            }),
+          20,
+        ),
+      ),
+      closeStream: async () => {},
+      cancel: async () => {},
+    }));
+    runtime.startTurn = startTurn;
+    const published: string[] = [];
+    await expect(
+      run("original-request", (event) => {
+        published.push(event.type);
+      }),
+    ).rejects.toThrow("independent result failed");
+    expect(published).not.toContain("done");
+    expect(journal().effect).toBe("unknown");
+    await expect(run()).rejects.toThrow("reconciliation");
+    expect(journal()).toMatchObject({
+      effect: "unknown",
+      authority: { decision: { kind: "reconcile" } },
+    });
+    expect(startTurn).toHaveBeenCalledOnce();
+  });
+
+  it("does not settle a legacy done followed by a stream error", async () => {
+    runTurnMock.mockImplementation(async function* () {
+      yield { type: "done" as const };
+      yield { type: "error" as const, code: "ACP_TURN_FAILED", message: "late stream failure" };
+    });
+    const published: string[] = [];
+    await expect(
+      run("original-request", (event) => {
+        published.push(event.type);
+      }),
+    ).rejects.toThrow("late stream failure");
+    expect(published).not.toContain("done");
+    expect(journal().effect).toBe("unknown");
+    await expect(run()).rejects.toThrow("reconciliation");
+    expect(journal()).toMatchObject({
+      effect: "unknown",
+      authority: { decision: { kind: "reconcile" } },
+    });
+    expect(runTurnMock).toHaveBeenCalledOnce();
+  });
+});
+
 afterEach(() => {
   closeOpenClawAgentDatabasesForTest();
   closeOpenClawStateDatabase();
@@ -171,6 +242,42 @@ afterEach(() => {
 });
 
 describe("ACP production turn recovery with the existing durable owner", () => {
+  it("keeps the fallback admission owned until the next backend enters its turn", async () => {
+    cfg = { ...cfg, acp: { ...cfg.acp, fallbacks: ["backup"] } };
+    controls.mockRejectedValueOnce(
+      new AcpRuntimeError("ACP_SESSION_INIT_FAILED", "backend temporarily unavailable"),
+    );
+    const cache = new ManagerRuntimeHandleCache();
+    vi.spyOn(cache, "close").mockImplementation(async () => {
+      const saved = JSON.parse(String(row().recovery_json));
+      expect(saved.processId).toBe(process.pid);
+      expect(saved.authority).toMatchObject({ state: "pending", attempts: 2 });
+      const before = row().recovery_json;
+      await expect(run()).rejects.toThrow();
+      expect(row().recovery_json).toBe(before);
+    });
+    await run("original-request", undefined, "original task", { runtimeHandles: cache });
+    expect(journal().authority).toMatchObject({ state: "accepted", attempts: 2 });
+    expect(runTurnMock).toHaveBeenCalledOnce();
+  });
+
+  it("records a failed fallback ensure against the persisted owner before trying the next backend", async () => {
+    cfg = { ...cfg, acp: { ...cfg.acp, fallbacks: ["backup", "last"] } };
+    controls.mockRejectedValueOnce(
+      new AcpRuntimeError("ACP_SESSION_INIT_FAILED", "backend temporarily unavailable"),
+    );
+    await run("original-request", undefined, "original task", {
+      ensureRuntimeHandle: async ({ meta: requested }) => {
+        if (requested.backend === "backup")
+          throw new AcpRuntimeError("ACP_SESSION_INIT_FAILED", "backend temporarily unavailable");
+        if (requested.backend !== meta.backend)
+          await upsertAcpSessionMeta({ cfg, sessionKey: key, mutate: () => requested });
+        return { runtime, handle: { ...handle, backend: requested.backend }, meta: requested };
+      },
+    });
+    expect(journal()).toMatchObject({ attempts: 3, effect: "applied" });
+    expect(runTurnMock).toHaveBeenCalledOnce();
+  });
   it.each(["ensure", "status"] as const)(
     "confirms a committed %s identity after its write acknowledgement is lost",
     async (stage) => {
@@ -334,6 +441,8 @@ describe("ACP production turn recovery with the existing durable owner", () => {
     await expect(run()).rejects.toThrow();
     expect(runTurnMock).toHaveBeenCalledOnce();
     expect(journal()).toMatchObject({ effect: "unknown", attempts: 1, maxAttempts: 4 });
+    expect(controls).toHaveBeenCalledOnce();
+    expect(journal().authority?.decision.kind).toBe("reconcile");
   });
 
   it("commits a fallback admission before a core-proven unstarted turn continues", async () => {
@@ -395,6 +504,42 @@ describe("ACP production turn recovery with the existing durable owner", () => {
     await expect(run()).rejects.toThrow("journal failure");
     expect(runTurnMock).not.toHaveBeenCalled();
     expect(controls).not.toHaveBeenCalled();
+  });
+
+  it("recovers its unstarted claim in the same process after release storage fails", async () => {
+    const db = openOpenClawStateDatabase().db;
+    db.exec(`CREATE TRIGGER block_acp_release BEFORE UPDATE OF recovery_json ON acp_sessions
+      WHEN json_extract(OLD.recovery_json, '$.processId') IS NOT NULL
+        AND json_extract(NEW.recovery_json, '$.processId') IS NULL
+      BEGIN SELECT RAISE(ABORT, 'release storage failure'); END`);
+    controls.mockRejectedValueOnce(
+      new AcpRuntimeError("ACP_SESSION_INIT_FAILED", "invalid runtime configuration"),
+    );
+    await expect(run()).rejects.toThrow("release storage failure");
+    expect(runTurnMock).not.toHaveBeenCalled();
+    expect(journal()).toMatchObject({ attempts: 1, effect: "not_applied" });
+    expect(JSON.parse(String(row().recovery_json))).toMatchObject({ processId: process.pid });
+    db.exec("DROP TRIGGER block_acp_release");
+    await run();
+    expect(runTurnMock).toHaveBeenCalledOnce();
+    expect(controls).toHaveBeenCalledTimes(2);
+    expect(journal()).toMatchObject({ attempts: 2, effect: "applied" });
+  });
+
+  it("keeps an uncertain turn blocked after terminal and release storage fail", async () => {
+    const db = openOpenClawStateDatabase().db;
+    db.exec(`CREATE TRIGGER block_acp_release BEFORE UPDATE OF recovery_json ON acp_sessions
+      WHEN json_extract(OLD.recovery_json, '$.processId') IS NOT NULL
+        AND json_extract(NEW.recovery_json, '$.processId') IS NULL
+      BEGIN SELECT RAISE(ABORT, 'release storage failure'); END`);
+    await expect(run()).rejects.toThrow("release storage failure");
+    expect(journal()).toMatchObject({ attempts: 1, effect: "unknown" });
+    expect(JSON.parse(String(row().recovery_json))).toMatchObject({ processId: process.pid });
+    db.exec("DROP TRIGGER block_acp_release");
+    await expect(run()).rejects.toThrow("reconciliation");
+    expect(runTurnMock).toHaveBeenCalledOnce();
+    expect(controls).toHaveBeenCalledOnce();
+    expect(journal()).toMatchObject({ attempts: 1, effect: "unknown" });
   });
 
   it("keeps an existing uncertain intent protected after rollback to legacy", async () => {

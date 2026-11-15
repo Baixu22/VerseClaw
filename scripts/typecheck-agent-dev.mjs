@@ -65,7 +65,9 @@ const bridge = await run('node', ['scripts/generate-ext-bridge.mjs']);
 if (bridge.exitCode !== 0) {
   process.exitCode = bridge.exitCode;
 } else {
-  const fingerprint = await createTypecheckFingerprint();
+  const fingerprint = cacheEnabled
+    ? await createTypecheckFingerprint()
+    : { key: null, files: [] };
   const cached = cacheEnabled && !force
     ? await readUsableCache(fingerprint.key)
     : null;
@@ -154,7 +156,7 @@ function runTestCheck(command, args) {
       const errorLog = resolve(CACHE_DIR, 'test-typecheck-errors.log');
       const result = {
         commandLine,
-        exitCode: code ?? 1,
+        exitCode: errorCount > 0 ? (code || 1) : (code ?? 1),
         durationMs: Math.round(performance.now() - commandStartedAt),
         observationMode: false,
         errorCount,

@@ -48,7 +48,15 @@ touchedAreas:
   - openclaw_runtime/src/agents/subagent-registry-lifecycle.ts
   - openclaw_runtime/src/agents/subagent-registry-owners.recovery.test.ts
   - openclaw_runtime/src/agents/goal-wake-recovery*
+  - openclaw_runtime/src/agents/goal-wake-triggers.test.ts
   - openclaw_runtime/src/agents/goal-wake-dispatch.ts
+  - openclaw_runtime/src/agents/tools/context-agent-tools.ts
+  - openclaw_runtime/src/agents/tools/context-view-tool-surface.ts
+  - openclaw_runtime/src/context-engine/cvk/engine.ts
+  - openclaw_runtime/src/context-engine/types.ts
+  - openclaw_runtime/src/context-engine/registry.ts
+  - openclaw_runtime/src/context-engine/enhancement-kill-switch.ts
+  - openclaw_runtime/src/context-engine/chat-turn-vtoken-injection.ts
   - openclaw_runtime/src/agents/command/delivery*
   - openclaw_runtime/src/agents/command/attempt-execution.shared.ts
   - openclaw_runtime/src/agents/command/session-store.ts
@@ -61,6 +69,7 @@ touchedAreas:
   - openclaw_runtime/src/acp/control-plane/manager.identity-reconcile.ts
   - openclaw_runtime/src/acp/runtime/session-meta.ts
   - openclaw_runtime/src/acp/control-plane/manager.turn-runner.ts
+  - openclaw_runtime/src/acp/control-plane/manager.turn-stream.ts
   - openclaw_runtime/src/acp/control-plane/manager.types.ts
   - openclaw_runtime/src/acp/control-plane/manager*.test.ts
   - openclaw_runtime/src/config/sessions/types.ts
@@ -76,6 +85,7 @@ touchedAreas:
   - openclaw_runtime/src/infra/outbound/**
   - openclaw_runtime/src/infra/delivery-queue-sqlite.ts
   - openclaw_runtime/src/state/openclaw-state-db.ts
+  - openclaw_runtime/src/state/openclaw-agent-db.ts
   - openclaw_runtime/src/state/openclaw-state-db.generated.d.ts
   - openclaw_runtime/src/state/openclaw-state-schema.sql
   - openclaw_runtime/src/state/openclaw-state-schema.generated.ts
@@ -84,6 +94,14 @@ touchedAreas:
   - tests/unit/session-lifecycle-generation-barrier.test.ts
   - tests/e2e/recovery*.spec.ts
   - scripts/recovery*.mjs
+  - scripts/typecheck-agent-dev.mjs
+  - src/components/file-preview/MonacoViewer.tsx
+  - src/components/layout/Sidebar.tsx
+  - artifacts/agent-dev-deep-test/history.json
+  - artifacts/agent-dev-deep-test/report.json
+  - artifacts/agent-dev-deep-test/report.md
+  - artifacts/agent-dev-quality/report.json
+  - artifacts/agent-dev-workbench/evidence.json
   - scripts/recovery-owner-process-proof-child.mts
   - scripts/recovery-delivery-process-proof-child.mts
   - scripts/recovery-acp-process-proof-child.mts
@@ -134,6 +152,7 @@ requiredTests:
   - node scripts/recovery-delivery-process-proof.mjs
   - openclaw_runtime/src/state/openclaw-state-db.delivery-backfill.test.ts
   - openclaw_runtime/src/agents/goal-wake-recovery.test.ts
+  - openclaw_runtime/src/agents/goal-wake-triggers.test.ts
   - node scripts/recovery-goal-process-proof.mjs
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts

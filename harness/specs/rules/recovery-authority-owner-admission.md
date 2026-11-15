@@ -91,6 +91,19 @@ only observes the original helper and consumes zero new helper dispatches. Task
 terminal truth commits before protocol cleanup. A pending wait remains selected
 from the original flow even after helper files are pruned; Mission CAS owns wake
 deduplication across restart and concurrent observers.
+A valid exit for the same lost helper replaces the lost task outcome and clears
+its stale error. If Mission already consumed that wait, recovery reuses the
+committed wake identity so a later exit cannot cause another tick.
+
+ACP publishes done only after validating the complete event stream and the
+independent startTurn result. An early done followed by failure retains unknown
+effect truth and cannot settle the recovery journal.
+
+ACP holds a process-local claim through backend fallback and post-turn identity
+cleanup. The original ACP row retains budget and effect truth when claim cleanup
+cannot commit. After the local turn ends, a controller in the same process can
+query that durable state again: confirmed unstarted work may resume and unknown
+work reconciles. Live peer processes retain their existing PID guard.
 
 The default stays legacy. Read-only shadow never mutates an owner. One authority
 mode gate controls all five entry points and supports rollback. Frozen product

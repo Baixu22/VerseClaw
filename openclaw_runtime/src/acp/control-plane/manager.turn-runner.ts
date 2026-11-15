@@ -25,7 +25,6 @@ import {
   isCurrentManagerTurnRecovery,
   markManagerTurnRecovery,
   releaseManagerTurnRecovery,
-  type ManagerTurnRecovery,
 } from "./manager.recovery-admission.js";
 import { prepareFreshManagerRuntimeHandleRetry } from "./manager.runtime-resume-state.js";
 import { consumeAcpTurnStream } from "./manager.turn-stream.js";
@@ -39,6 +38,7 @@ import type {
   AcpSessionManagerDeps,
   ActiveTurnState,
   EnsureManagerRuntimeHandle,
+  ManagerTurnRecovery,
   ReconcileManagerRuntimeSessionIdentifiers,
   ResolveManagerSession,
   SetManagerSessionState,
@@ -114,7 +114,11 @@ export async function runManagerTurn(params: {
   });
   recovery = started.context;
   if (started.settled) {
-    await input.onEvent?.({ type: "done", stopReason: "already-completed" });
+    try {
+      await input.onEvent?.({ type: "done", stopReason: "already-completed" });
+    } finally {
+      if (recovery) releaseManagerTurnRecovery(recovery);
+    }
     return;
   }
   if (taskContext) createBackgroundTaskRecord(taskContext, turnStartedAt);
@@ -211,6 +215,7 @@ export async function runManagerTurn(params: {
         const preTurnEffect = recovery?.state.effect;
         let sawTurnOutput = false;
         let retryFreshHandle = false;
+        let retryBackend = false;
         let skipPostTurnCleanup = false;
         try {
           if (recovery && !isCurrentManagerTurnRecovery(recovery))
@@ -388,7 +393,7 @@ export async function runManagerTurn(params: {
                   ? { effect: "not_applied" as const }
                   : {}),
               },
-              meta ?? metaWithBackend,
+              meta,
             );
           }
           retryFreshHandle = await prepareFreshManagerRuntimeHandleRetry({
@@ -426,49 +431,63 @@ export async function runManagerTurn(params: {
           }
           if (recovery && !(await admitManagerTurnRecovery(recovery)))
             await recordBackendFailure(acpError);
+          retryBackend = true;
           break;
         } finally {
-          if (recovery && !retryFreshHandle) releaseManagerTurnRecovery(recovery);
-          if (input.signal && onCallerAbort) {
-            input.signal.removeEventListener("abort", onCallerAbort);
-          }
-          if (activeTurn && params.activeTurnBySession.get(actorKey) === activeTurn) {
-            params.activeTurnBySession.delete(actorKey);
-          }
-          if (recovery && !isCurrentManagerTurnRecovery(recovery)) skipPostTurnCleanup = true;
-          if (!retryFreshHandle && !skipPostTurnCleanup && runtime && handle && meta) {
-            ({ handle, meta } = await params.reconcileRuntimeSessionIdentifiers({
-              cfg: input.cfg,
-              sessionKey,
-              runtime,
-              handle,
-              meta,
-              failOnStatusError: false,
-              expectedRecovery: recovery?.state,
-            }));
-            if (recovery && !isCurrentManagerTurnRecovery(recovery)) skipPostTurnCleanup = true;
-          }
-          if (
-            !retryFreshHandle &&
-            !skipPostTurnCleanup &&
-            runtime &&
-            handle &&
-            meta &&
-            meta.mode === "oneshot"
-          ) {
-            try {
-              await runtime.close({
-                handle,
-                reason: "oneshot-complete",
-              });
-            } catch (error) {
-              logVerbose(
-                `acp-manager: ACP oneshot close failed for ${sessionKey}: ${String(error)}`,
-              );
-            } finally {
-              if (recovery) params.runtimeHandles.clearIfHandleMatches({ sessionKey, handle });
-              else params.runtimeHandles.clear(sessionKey);
+          try {
+            if (input.signal && onCallerAbort) {
+              input.signal.removeEventListener("abort", onCallerAbort);
             }
+            if (activeTurn && params.activeTurnBySession.get(actorKey) === activeTurn) {
+              params.activeTurnBySession.delete(actorKey);
+            }
+            if (recovery && !isCurrentManagerTurnRecovery(recovery)) skipPostTurnCleanup = true;
+            if (
+              !retryFreshHandle &&
+              !retryBackend &&
+              !skipPostTurnCleanup &&
+              runtime &&
+              handle &&
+              meta
+            ) {
+              ({ handle, meta } = await params.reconcileRuntimeSessionIdentifiers({
+                cfg: input.cfg,
+                sessionKey,
+                runtime,
+                handle,
+                meta,
+                failOnStatusError: false,
+                expectedRecovery: recovery?.state,
+              }));
+              if (recovery && !isCurrentManagerTurnRecovery(recovery)) skipPostTurnCleanup = true;
+            }
+            if (
+              !retryFreshHandle &&
+              !retryBackend &&
+              !skipPostTurnCleanup &&
+              runtime &&
+              handle &&
+              meta &&
+              meta.mode === "oneshot"
+            ) {
+              try {
+                await runtime.close({
+                  handle,
+                  reason: "oneshot-complete",
+                });
+              } catch (error) {
+                logVerbose(
+                  `acp-manager: ACP oneshot close failed for ${sessionKey}: ${String(error)}`,
+                );
+              } finally {
+                if (recovery) params.runtimeHandles.clearIfHandleMatches({ sessionKey, handle });
+                else params.runtimeHandles.clear(sessionKey);
+              }
+            }
+          } finally {
+            // Backend fallback and post-turn identity cleanup retain the same pending owner.
+            if (recovery && !retryFreshHandle && !retryBackend)
+              releaseManagerTurnRecovery(recovery);
           }
         }
         if (retryFreshHandle) {

@@ -100,7 +100,13 @@ function ensureOpenClawAgentDatabasePermissions(
   for (const suffix of OPENCLAW_AGENT_DB_SIDECAR_SUFFIXES) {
     const candidate = `${pathname}${suffix}`;
     if (existsSync(candidate)) {
-      chmodSync(candidate, OPENCLAW_AGENT_DB_FILE_MODE);
+      try {
+        chmodSync(candidate, OPENCLAW_AGENT_DB_FILE_MODE);
+      } catch (error) {
+        // Another SQLite connection may remove a WAL/SHM file after the existence check.
+        if (suffix && (error as NodeJS.ErrnoException)?.code === "ENOENT") continue;
+        throw error;
+      }
     }
   }
 }

@@ -16,13 +16,39 @@ import type {
 } from "../../config/sessions/types.js";
 import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import type { AcpRuntimeError } from "../../runtime/errors.ts";
-import type { ManagerTurnRecoveryState } from "./manager.recovery-admission.js";
+import type {
+  EffectCertainty,
+  RecoveryOwnerAdmission,
+} from "../../../../shared/recovery-authority/contract.js";
 import { getAcpRuntimeBackend, requireAcpRuntimeBackend } from "../../runtime/registry.ts";
 import {
   listAcpSessionEntries,
   readAcpSessionEntry,
   upsertAcpSessionMeta,
 } from "../../runtime/session-meta.ts";
+
+export type ManagerTurnRecoveryState = {
+  sessionId: string;
+  requestId: string;
+  boundary: string;
+  identity: string;
+  attempts: number;
+  maxAttempts: number;
+  effect: EffectCertainty;
+  visibleOutputObserved: boolean;
+  processId?: number;
+  authority?: RecoveryOwnerAdmission;
+};
+
+export type ManagerTurnRecovery = {
+  cfg: OpenClawConfig;
+  sessionKey: string;
+  storePath: string;
+  storeKey: string;
+  state: ManagerTurnRecoveryState;
+  claim?: { key: string; token: symbol };
+  writeSessionMeta: WriteManagerSessionMeta;
+};
 
 /** Result of resolving persisted ACP metadata for a session key. */
 export type AcpSessionResolution =

@@ -168,25 +168,7 @@ export function readAcpSessionMeta(params: {
   env?: NodeJS.ProcessEnv;
   databasePath?: string;
 }): SessionAcpMeta | undefined {
-  const sessionKey = params.sessionKey.trim();
-  if (!sessionKey) {
-    return undefined;
-  }
-  const storeEntry = readSessionEntryFromStore({
-    sessionKey,
-    cfg: params.cfg,
-    env: params.env,
-    clone: false,
-  });
-  const database = openOpenClawStateDatabase({
-    env: params.env,
-    path: params.databasePath,
-  });
-  const row = selectAcpSessionRow(database.db, storeEntry.storeSessionKey);
-  if (!row || !acpSessionRowMatchesEntry(row, storeEntry.entry)) {
-    return undefined;
-  }
-  return rowToAcpSessionMeta(row);
+  return readAcpSessionEntry({ ...params, clone: false })?.acp;
 }
 
 export function readAcpSessionMetaForEntry(params: {

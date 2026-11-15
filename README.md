@@ -262,4 +262,6 @@ Gated final delivery binds the pending Session reply to its existing durable sen
 
 Gated ACP recovery persists the original request, runtime identity, output boundary and consumed attempts in the existing ACP row. Fresh handles and backend fallback use the same admission and retain the original two-attempt-per-backend ceiling across controller restarts. Core-proven unstarted turns may continue; unknown results remain available for reconciliation and completed requests settle without another turn.
 
+A process holds one turn claim through identity cleanup. If SQLite cannot clear that claim, its budget remains durable; a rebuilt controller in the same process can continue a confirmed unstarted request while uncertain results stay in reconciliation.
+
 Committed ensure/status identity writes are confirmed from the same ACP row and current Session generation when an acknowledgement is lost. Goal-wake uses the same authority to reconcile the original durable helper and task. It checks the helper nonce and Session epoch, persists terminal task truth before cleanup, and resumes pending waits after restart through the existing Mission CAS without starting another helper.

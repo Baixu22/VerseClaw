@@ -21,11 +21,11 @@ import {
   acknowledgeCommittedManagerRecoveryIdentity,
   matchesManagerTurnRecovery,
   rebindManagerTurnRecoveryIdentity,
-  type ManagerTurnRecoveryState,
 } from "./manager.recovery-admission.js";
 import type { ManagerRuntimeHandleCache } from "./manager.runtime-handle-cache.js";
 import type {
   AcpSessionManagerDeps,
+  ManagerTurnRecoveryState,
   SessionAcpMeta,
   WriteManagerSessionMeta,
 } from "./manager.types.js";

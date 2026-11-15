@@ -260,4 +260,6 @@ Verse Claw は [OpenClaw](https://github.com/openclaw/openclaw) と ValueCell te
 
 統一復旧モードの ACP は、元の要求、実行時 ID、出力境界、消費した試行回数を既存の ACP 行に保存します。新しい handle と backend fallback は同じ準入を使用し、コントローラー再起動後も backend ごとの既存の2回上限を保持します。Core が turn 未開始を確認した場合に再開し、不明な結果は照合用に保持、完了済み要求は再実行せず確定します。
 
+同じプロセス内の turn claim は ID の後処理が終わるまで保持します。SQLite による claim の解除が失敗しても元の試行予算を保存し、再構築したコントローラーは未開始と確認できる要求を続行します。不明な結果は引き続き照合します。
+
 ensure/status の ACK が失われた場合、既存の ACP 行と現在の Session 世代からコミットを確認します。Goal-wake も同じ authority を使って元の durable helper と task を照合します。nonce と Session epoch を検証し、ファイル削除前に task の終端を保存します。再起動後は既存の Mission CAS で未処理の wait を進め、元の helper を保持します。

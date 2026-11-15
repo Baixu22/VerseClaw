@@ -30,7 +30,11 @@ ACP 在统一模式下将原请求、运行时身份、输出边界和预算存�
 
 ensure/status 的身份写入 ACK 丢失后，按原 ACP 行的精确快照和当前 Session 世代确认提交，并保持同一请求预算。
 
+ACP 的终态 done 在完整事件流与独立 startTurn result 共同校验后发布。早到 done 后出现的流错误或失败结果保持 unknown 对账，阻止错误地结算为 applied。
+
 Goal-wake 在原 `task_runs.progress_summary` 中保存统一对账决定。原 task、Mission、runId、nonce 与 Session epoch 共同校验归属；活 helper 继续被观察，所有恢复都保持零次新 helper 派发。终态与决定在原 SQLite 事务内提交，再沿现有 wait/Mission CAS 推进。过期 exit 先入库后清理，终态 task 对应的待处理 wait 即使已清理 helper 文件也继续 level-check。
+
+同一 helper 的有效 exit 可以将原 lost task 更新为实际终态并清除旧错误。Mission 已消费该 wait 而 ACK 丢失时，恢复复用已提交的 wake 身份，后续 exit 不会再产生一次 tick。
 
 `node scripts/recovery-goal-process-proof.mjs --out <fresh-output-directory>` 启动原生 durable helper，在 Gateway 中断、终态已落盘而 wake 尚未确认、两个恢复进程并发以及文件清理后验证原 helper 效果与 Mission tick 各一次。
 
