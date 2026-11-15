@@ -24,6 +24,7 @@ touchedAreas:
   - openclaw_runtime/src/agents/embedded-agent-subscribe.handlers.types.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/run.ts
   - openclaw_runtime/src/agents/embedded-agent-runner/run/params.ts
+  - openclaw_runtime/packages/agent-core/src/harness/compaction/compaction.ts
   - openclaw_runtime/extensions/codex/src/app-server/run-attempt.ts
   - openclaw_runtime/src/agents/command/attempt-execution.ts
   - openclaw_runtime/src/agents/command/types.ts
@@ -133,6 +134,8 @@ expectedUserBehavior:
   - A failed or interrupted admission consumes its durable attempt; repeating the same boundary cannot start an independent recovery or repeat an uncertain effect.
   - One gate returns all five entries to their existing recovery paths; the default remains legacy and shadow remains read-only.
 requiredTests:
+  - openclaw_runtime/src/agents/agent-hooks/compaction-summary-contract.test.ts
+  - openclaw_runtime/packages/agent-core/src/harness/compaction/prepare-compaction.test.ts
   - openclaw_runtime/src/acp/control-plane/manager.recovery.flow.test.ts
   - node scripts/recovery-acp-process-proof.mjs
   - openclaw_runtime/src/agents/embedded-agent-runner/run/attempt.recovery-admission.test.ts
