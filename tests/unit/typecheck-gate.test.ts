@@ -22,7 +22,8 @@ it('fails on test type errors and invalidates cached checks when tests or runtim
       cwd: root, encoding: 'utf8', windowsHide: true, timeout: 20_000,
     });
     expect(result.error).toBeUndefined();
-    return { exitCode: result.status, report: JSON.parse(result.stdout) };
+    // pnpm script banners precede the gate's JSON report on some installations.
+    return { exitCode: result.status, report: JSON.parse(result.stdout.slice(result.stdout.indexOf('\n{') + 1)) };
   };
   try {
     write('scripts/generate-ext-bridge.mjs', '');

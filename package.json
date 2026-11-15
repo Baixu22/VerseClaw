@@ -361,7 +361,7 @@
     "@types/ws": "^8.18.1",
     "@typescript-eslint/eslint-plugin": "^8.56.0",
     "@typescript-eslint/parser": "^8.56.0",
-    "@typescript/native-preview": "7.0.0-dev.20260527.2",
+    "@typescript/native-preview": "7.0.0-dev.20260707.2",
     "@vitejs/plugin-react": "^5.1.4",
     "@wecom/wecom-openclaw-plugin": "^2026.5.14",
     "@whiskeysockets/baileys": "7.0.0-rc.9",

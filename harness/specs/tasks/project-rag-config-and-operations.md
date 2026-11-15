@@ -60,6 +60,9 @@ touchedAreas:
   - ".gitignore"
   - "scripts/repository-artifacts.json"
   - "scripts/duplicate-assets-allowlist.json"
+  - "package.json"
+  - "pnpm-lock.yaml"
+  - "tests/unit/typecheck-gate.test.ts"
   - "README*.md"
   - "tests/unit/host-api-facade.test.ts"
   - "tests/unit/project-rag-config-parity.test.ts"
@@ -74,6 +77,7 @@ requiredRules:
   - "knowledge-source-set-read-admission"
   - "project-rag-long-term-boundary"
 requiredTests:
+  - "tests/unit/typecheck-gate.test.ts"
   - "tests/unit/host-api-facade.test.ts"
   - "tests/unit/resource-sqlite-wal.test.ts"
   - "tests/unit/project-rag-config-parity.test.ts"
