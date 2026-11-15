@@ -165,7 +165,14 @@
     "harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-owners-20261115/manifest.json",
     "harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-owners-20261115/credential-scan.json",
     "harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-owners-20261115/raw-evidence.json.gz",
-    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-owners-20261115/SHA256SUMS"
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/final-owners-20261115/SHA256SUMS",
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/baseline-9e238192-20261116/README.md",
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/baseline-9e238192-20261116/SHA256SUMS",
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/baseline-9e238192-20261116/baseline-report.json",
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/baseline-9e238192-20261116/credential-scan.json",
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/baseline-9e238192-20261116/manifest.json",
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/baseline-9e238192-20261116/raw-evidence.json.gz",
+    "harness/specs/fixtures/recovery-contract-eval/ga-20261106/baseline-9e238192-20261116/recovery-contract-eval-manifest.json"
   ],
   "preservedMixedUseDirectories": [
     "artifacts/agent-dev-workbench",
