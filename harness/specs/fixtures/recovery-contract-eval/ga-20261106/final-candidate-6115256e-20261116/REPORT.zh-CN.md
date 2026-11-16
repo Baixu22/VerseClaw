@@ -22,6 +22,8 @@ candidate 的前七项冻结指标通过，P50/P95 超出 5,000/15,000 ms 门槛
 
 本候选的两轮 legacy 各 15/15 槽完整，逐槽匹配 15/15，无不完整重复，结构 hash 均为 `689c99ac956746a62f6173028bb93cdc4486f0efcfcbc31d4f04b6d9aec6ba6b`。原比较器 SHA-256 保持 `71062d7d652a18dcaa3071921b1907554de3499fd37fb8c9cc5e4bf99371b81b`。`baseline-report.json` 保存完整投影和比较结果。
 
+单独统计 15 个故障窗口，candidate P95 为 96,472 ms，legacy 为 82,213.2 ms，比值 1.173437，超过相对 1.10 判据。三次连续重启窗口中，candidate 的总时延为 90,769、90,613、109,779 ms，legacy 对应为 82,230、82,206、81,424 ms。第 2 槽的第三次 kill 至 resume 决定，candidate 为 35,393 ms，legacy 为 17,083 ms；原记录均无观察超时，观察预算仍为 150,000 ms。该段等待解释了本轮连续重启的主要慢点，内部耗时拆分继续纳入 GA 时延优化。`comparison.json` 保留各槽和时间戳，不改变九指标使用的 45 条时延统计。
+
 Agent Dev 完整功能步骤通过；严格性能审计因构建 1,621,766 ms 超出 58,000 ms 失败。类型检查为 27,079 ms，满足 45,000 ms 限额。完整 Harness CI 受相同性能审计阻断；源码门禁有 165 项行数失败（34 项新超限、131 项增长）。Harness 证据与覆盖尾门通过。原退出码、日志和哈希保存在 `gates.json` 与开发原件归档中。
 
 本轮证据来自 Windows x64 的原生进程、SQLite 和 fsynced 本地效果日志；长会话调用固定 SiliconFlow `deepseek-ai/DeepSeek-V4.1-Flash`，参数与输入随原采样 bundle 保留。完整 candidate 批次为一轮，跨批次置信区间未测，`comparison.json` 将区间状态记为 `EVIDENCE_INSUFFICIENT`。该跑次覆盖打包 helper，发行安装包验收继续依照发布门禁执行。

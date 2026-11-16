@@ -107,5 +107,215 @@
     "lifecycleWriter": "legacy",
     "executionPhaseWriter": "legacy"
   },
-  "recordedAt": "2026-11-16T02:30:09.400Z"
+  "recordedAt": "2026-11-16T02:30:09.400Z",
+  "faultWindowTiming": {
+    "candidate": {
+      "samples": 15,
+      "p95Ms": 96471.99999999999,
+      "repeatedRestart": [
+        {
+          "trialIndex": 0,
+          "recoveryLatencyMs": 90769,
+          "crashes": [
+            {
+              "at": 1794769929091,
+              "point": "user-intent-durable"
+            },
+            {
+              "at": 1794769954922,
+              "point": "recovery-before-dispatch"
+            },
+            {
+              "at": 1794769981945,
+              "point": "recovery-before-dispatch"
+            }
+          ],
+          "resumeDecisions": [
+            {
+              "at": 1794769945559
+            },
+            {
+              "at": 1794769969550
+            },
+            {
+              "at": 1794769999307
+            }
+          ],
+          "observationTimedOut": false,
+          "observationBudgetMs": 150000
+        },
+        {
+          "trialIndex": 1,
+          "recoveryLatencyMs": 90613,
+          "crashes": [
+            {
+              "at": 1794770053072,
+              "point": "user-intent-durable"
+            },
+            {
+              "at": 1794770079752,
+              "point": "recovery-before-dispatch"
+            },
+            {
+              "at": 1794770108086,
+              "point": "recovery-before-dispatch"
+            }
+          ],
+          "resumeDecisions": [
+            {
+              "at": 1794770070249
+            },
+            {
+              "at": 1794770094381
+            },
+            {
+              "at": 1794770124762
+            }
+          ],
+          "observationTimedOut": false,
+          "observationBudgetMs": 150000
+        },
+        {
+          "trialIndex": 2,
+          "recoveryLatencyMs": 109779,
+          "crashes": [
+            {
+              "at": 1794770179584,
+              "point": "user-intent-durable"
+            },
+            {
+              "at": 1794770205600,
+              "point": "recovery-before-dispatch"
+            },
+            {
+              "at": 1794770235975,
+              "point": "recovery-before-dispatch"
+            }
+          ],
+          "resumeDecisions": [
+            {
+              "at": 1794770196894
+            },
+            {
+              "at": 1794770221128
+            },
+            {
+              "at": 1794770271368
+            }
+          ],
+          "observationTimedOut": false,
+          "observationBudgetMs": 150000
+        }
+      ]
+    },
+    "legacy": {
+      "samples": 15,
+      "p95Ms": 82213.2,
+      "repeatedRestart": [
+        {
+          "trialIndex": 0,
+          "recoveryLatencyMs": 82230,
+          "crashes": [
+            {
+              "at": 1794768973368,
+              "point": "user-intent-durable"
+            },
+            {
+              "at": 1794769000415,
+              "point": "recovery-before-dispatch"
+            },
+            {
+              "at": 1794769025153,
+              "point": "recovery-before-dispatch"
+            }
+          ],
+          "resumeDecisions": [
+            {
+              "at": 1794768989990
+            },
+            {
+              "at": 1794769016237
+            },
+            {
+              "at": 1794769042179
+            }
+          ],
+          "observationTimedOut": false,
+          "observationBudgetMs": 150000
+        },
+        {
+          "trialIndex": 1,
+          "recoveryLatencyMs": 82206,
+          "crashes": [
+            {
+              "at": 1794769088167,
+              "point": "user-intent-durable"
+            },
+            {
+              "at": 1794769116055,
+              "point": "recovery-before-dispatch"
+            },
+            {
+              "at": 1794769141473,
+              "point": "recovery-before-dispatch"
+            }
+          ],
+          "resumeDecisions": [
+            {
+              "at": 1794769105541
+            },
+            {
+              "at": 1794769132305
+            },
+            {
+              "at": 1794769158248
+            }
+          ],
+          "observationTimedOut": false,
+          "observationBudgetMs": 150000
+        },
+        {
+          "trialIndex": 2,
+          "recoveryLatencyMs": 81424,
+          "crashes": [
+            {
+              "at": 1794769204107,
+              "point": "user-intent-durable"
+            },
+            {
+              "at": 1794769229286,
+              "point": "recovery-before-dispatch"
+            },
+            {
+              "at": 1794769253927,
+              "point": "recovery-before-dispatch"
+            }
+          ],
+          "resumeDecisions": [
+            {
+              "at": 1794769220663
+            },
+            {
+              "at": 1794769245899
+            },
+            {
+              "at": 1794769271010
+            }
+          ],
+          "observationTimedOut": false,
+          "observationBudgetMs": 150000
+        }
+      ]
+    },
+    "p95Ratio": 1.1734368690186003,
+    "relativeThreshold": 1.1,
+    "relativeThresholdPassed": false,
+    "explanationProvided": true,
+    "diagnosticInterval": {
+      "basis": "third kill to next resume decision, repeated-restart trial 2",
+      "candidateMs": 35393,
+      "legacyMs": 17083
+    },
+    "frozenCombinedLatencyStatisticsUnchanged": true
+  }
 }
