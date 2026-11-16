@@ -1,0 +1,71 @@
+{
+  "schema": "ProjectRagReviewAdjudication/v1",
+  "actor": "codex-g2-rag-relay-20261116-01a1e43b",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "review": "dev-review-02/review.json",
+  "originalSourceReceipt": "dev-review-02/receipt.json",
+  "counterexamples": {
+    "root": "adjudication-red-01/root-unit.json",
+    "extension": "adjudication-extension-red-01/result.json",
+    "rootPassed": 218,
+    "rootFailed": 7
+  },
+  "findings": [
+    {
+      "id": 1,
+      "decision": "accepted",
+      "reason": "backend operator.read can receive snapshot; now requires authenticated operator.admin scopes used by Main plus backend mode",
+      "evidence": [
+        "Project RAG independent memory owners denies backend owner snapshots without admin scope"
+      ]
+    },
+    {
+      "id": 2,
+      "decision": "rejected",
+      "reason": "isSourceRefV2 rejects reversed/fractional coordinates; EOF bound, fatal decoder and matchOwnerReadPin reject forged ranges before admission. Five native coordinate counterexamples passed on original source."
+    },
+    {
+      "id": 3,
+      "decision": "rejected",
+      "reason": "refId includes owner/namespace/subject/locator; verification passes candidate SourceRef and resolveExact continues past sibling mismatches. Two distinct-range and later-denial counterexamples passed on original source."
+    },
+    {
+      "id": 4,
+      "decision": "rejected",
+      "reason": "plain native memory is a configured owner format; safe provider paths, selected agent/session/workspace namespace and derived policy scope apply without YAML. Default operator policy is the existing owner contract. Plain-memory and cross-scope tests pass."
+    },
+    {
+      "id": 5,
+      "decision": "rejected",
+      "reason": "SDK enforces isMemoryPath or explicitly configured extraPaths, .md, canonical root and symlink parent gates. Three unpinned paths outside the configured memory owner were denied by original source."
+    },
+    {
+      "id": 6,
+      "decision": "accepted",
+      "reason": "two original API stale-memory cases reported wiki on empty admission; diagnostic corpus now derives from requested owners, including explicit legacy memory prefixes"
+    },
+    {
+      "id": 7,
+      "decision": "partially-accepted",
+      "reason": "MemorySource union is memory|sessions; QMD roots use that union. An invalid runtime provider tag was nevertheless forwarded; unknown tags now fail closed; declared native hits always use owner read."
+    },
+    {
+      "id": 8,
+      "decision": "duplicate",
+      "duplicateOf": 1,
+      "reason": "same backend scope issue as finding 1, fixed at descriptor and handler"
+    },
+    {
+      "id": 9,
+      "decision": "accepted",
+      "reason": "legacy memory selections need a current owner pin; common bounded reader rejects explicit unpinned memory before Wiki dispatch, SourceSet rejections and diagnostics retain requested owner. Chat bootstrap prefixes continue to materialize pins."
+    },
+    {
+      "id": 10,
+      "decision": "accepted",
+      "reason": "original success/error attempt counterexamples retained binding after attempt; finally now releases the exact owned binding after resolution/model completion or failure and preserves later rebinding"
+    }
+  ],
+  "status": "fixes-awaiting-validation"
+}

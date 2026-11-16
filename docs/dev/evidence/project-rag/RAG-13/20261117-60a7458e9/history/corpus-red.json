@@ -1,0 +1,601 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 0,
+  "numFailedTestSuites": 2,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 50,
+  "numPassedTests": 0,
+  "numFailedTests": 2,
+  "numPendingTests": 48,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1794848426647,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native-memory bootstrap prefix conflicting with wiki corpus before reading",
+          "status": "failed",
+          "title": "rejects a native-memory bootstrap prefix conflicting with wiki corpus before reading",
+          "duration": 7201.562900000001,
+          "failureMessages": [
+            "AssertionError: expected [ { intentId: 'conflict', …(15) } ] to deeply equal []\n    at C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-memory-domains.test.ts:77:29\n    at file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:20"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a memory-slot bootstrap prefix conflicting with wiki corpus before reading",
+          "status": "failed",
+          "title": "rejects a memory-slot bootstrap prefix conflicting with wiki corpus before reading",
+          "duration": 1163.4297000000006,
+          "failureMessages": [
+            "AssertionError: expected [ { intentId: 'conflict', …(15) } ] to deeply equal []\n    at C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-memory-domains.test.ts:77:29\n    at file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:20"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners keeps the runtime owner distinct from a public-artifact bridge",
+          "status": "skipped",
+          "title": "keeps the runtime owner distinct from a public-artifact bridge",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners denies backend owner snapshots without admin scope []",
+          "status": "skipped",
+          "title": "denies backend owner snapshots without admin scope []",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners denies backend owner snapshots without admin scope [\"operator.read\"]",
+          "status": "skipped",
+          "title": "denies backend owner snapshots without admin scope [\"operator.read\"]",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners denies backend owner snapshots without admin scope [\"operator.write\"]",
+          "status": "skipped",
+          "title": "denies backend owner snapshots without admin scope [\"operator.write\"]",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners binds a plain native file to the configured owner workspace and agent",
+          "status": "skipped",
+          "title": "binds a plain native file to the configured owner workspace and agent",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects an unpinned native lookup at absolute-outside",
+          "status": "skipped",
+          "title": "rejects an unpinned native lookup at absolute-outside",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects an unpinned native lookup at relative-outside",
+          "status": "skipped",
+          "title": "rejects an unpinned native lookup at relative-outside",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects an unpinned native lookup at workspace-nonmemory",
+          "status": "skipped",
+          "title": "rejects an unpinned native lookup at workspace-nonmemory",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native pin with reverse coordinates",
+          "status": "skipped",
+          "title": "rejects a native pin with reverse coordinates",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native pin with past-eof coordinates",
+          "status": "skipped",
+          "title": "rejects a native pin with past-eof coordinates",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native pin with fractional coordinates",
+          "status": "skipped",
+          "title": "rejects a native pin with fractional coordinates",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native pin with wrong-line coordinates",
+          "status": "skipped",
+          "title": "rejects a native pin with wrong-line coordinates",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native pin with split-utf8 coordinates",
+          "status": "skipped",
+          "title": "rejects a native pin with split-utf8 coordinates",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners releases only its own internal read binding after attempt success",
+          "status": "skipped",
+          "title": "releases only its own internal read binding after attempt success",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners releases only its own internal read binding after attempt error",
+          "status": "skipped",
+          "title": "releases only its own internal read binding after attempt error",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners releases only its own internal read binding after attempt rebind",
+          "status": "skipped",
+          "title": "releases only its own internal read binding after attempt rebind",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects invalid UTF8 byte 128 before assigning an owner digest or pin",
+          "status": "skipped",
+          "title": "rejects invalid UTF8 byte 128 before assigning an owner digest or pin",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects invalid UTF8 byte 129 before assigning an owner digest or pin",
+          "status": "skipped",
+          "title": "rejects invalid UTF8 byte 129 before assigning an owner digest or pin",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rereads a non-default agent from that agent provider and rejects a conflicting session",
+          "status": "skipped",
+          "title": "rereads a non-default agent from that agent provider and rejects a conflicting session",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners binds internal memory to the registered run while ordinary missing sessions stay denied",
+          "status": "skipped",
+          "title": "binds internal memory to the registered run while ordinary missing sessions stay denied",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds internal memory when its run owner changes by end during IO",
+          "status": "skipped",
+          "title": "withholds internal memory when its run owner changes by end during IO",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds internal memory when its run owner changes by rebind during IO",
+          "status": "skipped",
+          "title": "withholds internal memory when its run owner changes by rebind during IO",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners forwards validated backend egress providers and rejects malformed provider selectors",
+          "status": "skipped",
+          "title": "forwards validated backend egress providers and rejects malformed provider selectors",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners resolves native and role refs with the same ID to separate bodies and namespaces",
+          "status": "skipped",
+          "title": "resolves native and role refs with the same ID to separate bodies and namespaces",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners preserves raw UTF8/CRLF bytes and fences correction, deletion, scope and slot changes",
+          "status": "skipped",
+          "title": "preserves raw UTF8/CRLF bytes and fences correction, deletion, scope and slot changes",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects owner policy acl:\n  read: [someone-else]\n before returning native content",
+          "status": "skipped",
+          "title": "rejects owner policy acl:\n  read: [someone-else]\n before returning native content",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects owner policy sensitivity: secret\n before returning native content",
+          "status": "skipped",
+          "title": "rejects owner policy sensitivity: secret\n before returning native content",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects owner policy status: revoked\n before returning native content",
+          "status": "skipped",
+          "title": "rejects owner policy status: revoked\n before returning native content",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects owner policy scope:\n  workspaceId: other-workspace\n before returning native content",
+          "status": "skipped",
+          "title": "rejects owner policy scope:\n  workspaceId: other-workspace\n before returning native content",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects owner policy retention:\n  policy: source-coupled\n  expiresAt: \"2020-01-01T00:00:00Z\"\n before returning native content",
+          "status": "skipped",
+          "title": "rejects owner policy retention:\n  policy: source-coupled\n  expiresAt: \"2020-01-01T00:00:00Z\"\n before returning native content",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners does not read the previous role store under a foreign namespace pin",
+          "status": "skipped",
+          "title": "does not read the previous role store under a foreign namespace pin",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners uses the explicit role lookup without falling back to a conflicting reference ID",
+          "status": "skipped",
+          "title": "uses the explicit role lookup without falling back to a conflicting reference ID",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a disabled selected memory owner instead of reading the previous plugin",
+          "status": "skipped",
+          "title": "rejects a disabled selected memory owner instead of reading the previous plugin",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rereads the provider canonical path when the initial lookup contains an alias segment",
+          "status": "skipped",
+          "title": "rereads the provider canonical path when the initial lookup contains an alias segment",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners binds a provider junction and the captured physical workspace to one namespace",
+          "status": "skipped",
+          "title": "binds a provider junction and the captured physical workspace to one namespace",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when the provider workspace changes during file IO",
+          "status": "skipped",
+          "title": "withholds content when the provider workspace changes during file IO",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners returns a source denial for invalid metadata",
+          "status": "skipped",
+          "title": "returns a source denial for invalid metadata",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners returns a source denial for invalid provider-io",
+          "status": "skipped",
+          "title": "returns a source denial for invalid provider-io",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners fences a session workspace-id rebind during the read",
+          "status": "skipped",
+          "title": "fences a session workspace-id rebind during the read",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners fences a session workspace-root rebind during the read",
+          "status": "skipped",
+          "title": "fences a session workspace-root rebind during the read",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when slot changes during the owner read",
+          "status": "skipped",
+          "title": "withholds content when slot changes during the owner read",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when disable changes during the owner read",
+          "status": "skipped",
+          "title": "withholds content when disable changes during the owner read",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when search-disable changes during the owner read",
+          "status": "skipped",
+          "title": "withholds content when search-disable changes during the owner read",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when runtime changes during the owner read",
+          "status": "skipped",
+          "title": "withholds content when runtime changes during the owner read",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when session changes during the owner read",
+          "status": "skipped",
+          "title": "withholds content when session changes during the owner read",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when cancel changes during the owner read",
+          "status": "skipped",
+          "title": "withholds content when cancel changes during the owner read",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners preserves the default tool page while raw owner reads retain the full file",
+          "status": "skipped",
+          "title": "preserves the default tool page while raw owner reads retain the full file",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rereads a late native range with the whole-file version",
+          "status": "skipped",
+          "title": "rereads a late native range with the whole-file version",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794848455294,
+      "endTime": 1794848463658.4297,
+      "status": "failed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-memory-domains.test.ts"
+    }
+  ],
+  "actor": "codex-g2-rag-relay-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "evidenceKind": "development-counterexample",
+  "originalFileSha256": "24a0585f8638575a41ef5c70e871d76d3aebbe708019bc230cf9532947ea8656"
+}

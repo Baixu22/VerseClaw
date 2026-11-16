@@ -1,0 +1,101 @@
+{
+  "schema": "HarnessCiReport/v1",
+  "actor": "codex-g2-rag-relay-20261117",
+  "driven_by": "agent",
+  "success": false,
+  "totalStages": 12,
+  "results": [
+    {
+      "args": [
+        "harness",
+        "list"
+      ],
+      "exitCode": 0,
+      "durationMs": 2215
+    },
+    {
+      "args": [
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/scenarios/gateway-backend-communication.md"
+      ],
+      "exitCode": 0,
+      "durationMs": 3100
+    },
+    {
+      "args": [
+        "harness",
+        "validate",
+        "--spec",
+        "harness/specs/tasks/fix-chat-history-gateway-timeout.example.md",
+        "--no-diff"
+      ],
+      "exitCode": 0,
+      "durationMs": 1730
+    },
+    {
+      "args": [
+        "harness",
+        "run",
+        "--spec",
+        "harness/specs/scenarios/gateway-backend-communication.md",
+        "--dry-run"
+      ],
+      "exitCode": 0,
+      "durationMs": 2640
+    },
+    {
+      "args": [
+        "exec",
+        "vitest",
+        "run",
+        "tests/unit/harness-specs.test.ts",
+        "tests/unit/harness-git.test.ts",
+        "tests/unit/harness-spec-lifecycle.test.ts",
+        "tests/unit/docs-index.test.ts",
+        "tests/unit/runtime-source-policy.test.ts",
+        "tests/unit/harness-ci-runner.test.ts"
+      ],
+      "exitCode": 0,
+      "durationMs": 14341
+    },
+    {
+      "args": [
+        "harness:specs:lifecycle"
+      ],
+      "exitCode": 0,
+      "durationMs": 1048
+    },
+    {
+      "args": [
+        "repo:duplicates:check"
+      ],
+      "exitCode": 0,
+      "durationMs": 4953
+    },
+    {
+      "args": [
+        "docs:policy:validate"
+      ],
+      "exitCode": 0,
+      "durationMs": 658
+    },
+    {
+      "args": [
+        "catalogs:check"
+      ],
+      "exitCode": 0,
+      "durationMs": 2163
+    },
+    {
+      "args": [
+        "agent-dev:audit"
+      ],
+      "exitCode": 1,
+      "durationMs": 3545
+    }
+  ],
+  "realHumanEvidence": false,
+  "candidate": "35921979c405cf5c8d97286a472cf237785f1440"
+}

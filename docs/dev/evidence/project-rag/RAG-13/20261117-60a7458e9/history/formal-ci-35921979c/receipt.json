@@ -1,0 +1,40 @@
+{
+  "schema": "ProjectRagCandidateGate/v1",
+  "actor": "codex-g2-rag-relay-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "phase": "ci",
+  "candidate": {
+    "head": "35921979c405cf5c8d97286a472cf237785f1440",
+    "tree": "e4c0c985ddd54c7666deae3a6afcfa31a8e72eec",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "startedAt": "2026-11-16T17:43:07.273869+00:00",
+  "commands": [
+    {
+      "name": "harness-ci",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/harness-ci.mjs"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 1,
+      "elapsedMs": 36600,
+      "stdout": "harness-ci.stdout.log",
+      "stderr": "harness-ci.stderr.log"
+    }
+  ],
+  "status": "fail",
+  "generatedReportReadback": [],
+  "after": {
+    "head": "35921979c405cf5c8d97286a472cf237785f1440",
+    "tree": "e4c0c985ddd54c7666deae3a6afcfa31a8e72eec",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "sourceUnchanged": true,
+  "completedAt": "2026-11-16T17:43:44.900238+00:00"
+}

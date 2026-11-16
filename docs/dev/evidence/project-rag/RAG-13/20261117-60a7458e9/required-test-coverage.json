@@ -1,0 +1,90 @@
+{
+  "actor": "codex-g2-rag-relay-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "schema": "ProjectRagRequiredTestReadback/v1",
+  "candidate": "60a7458e9351329a4cd89bee29bd99f59e9cd2f5",
+  "counts": {
+    "root-unit": 243,
+    "runtime-unit": 35,
+    "extension-unit": 3
+  },
+  "coverage": [
+    {
+      "file": "tests/unit/knowledge-page.test.tsx",
+      "passed": 13,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/unit/chat-knowledge-scope.test.ts",
+      "passed": 8,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/unit/project-rag-memory-domains.test.ts",
+      "passed": 50,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/e2e/project-rag-source-domains.spec.ts",
+      "passed": 1,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "openclaw_runtime/extensions/memory-wiki/src/query.native-memory.test.ts",
+      "passed": 2,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "openclaw_runtime/extensions/memory-core/src/memory/qmd-manager.raw-read.test.ts",
+      "passed": 1,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/unit/knowledge-api.test.ts",
+      "passed": 60,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/unit/knowledge-source-set-answer.test.ts",
+      "passed": 46,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "tests/unit/gateway-permissions-api.test.ts",
+      "passed": 8,
+      "failed": 0,
+      "pending": 0
+    }
+  ],
+  "electron": {
+    "journeys": 1,
+    "steps": {
+      "conflictingCorpusDenied": true,
+      "independentOwnerReads": true,
+      "memoryCitationUi": true,
+      "unpinnedHostMemoryDenied": true,
+      "invalidUtf8DeniedBeforePrompt": true,
+      "gatewayOwnerIdentityFenced": true,
+      "memorySourceSetAndStudio": true,
+      "missingMemoryPinDenied": true,
+      "correctionInvalidatedPin": true,
+      "deleteInvalidatedPin": true,
+      "roleDeleteInvalidatedPin": true,
+      "rejectedMemoryDomainPreserved": true
+    }
+  },
+  "controlPlaneFullE2E": {
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0
+  }
+}

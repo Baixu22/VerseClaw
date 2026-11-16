@@ -1,0 +1,10 @@
+{
+  "actor": "codex-g2-rag-relay-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "review": "owner-ui-review-budget64/review.json",
+  "decision": "accepted",
+  "counterexamples": "corpus-red.json",
+  "failed": 2,
+  "fix": "Reject contradictory wiki corpus before resolving either explicit memory bootstrap owner."
+}

@@ -1,0 +1,26 @@
+{
+  "status": "fail",
+  "grade": "B",
+  "totalScore": 80,
+  "maxScore": 100,
+  "output": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\artifacts\\agent-dev-audit\\report.json",
+  "markdown": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\artifacts\\agent-dev-audit\\report.md",
+  "disqualifiers": [
+    {
+      "dimension": "performance-discipline",
+      "id": "latest-decision-blocked",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "Latest deep-test decision is blocked: typecheck exceeded hard performance limits.",
+      "recommendation": "Treat this as an audit failure until limit steps are optimized or the budget is intentionally revised with evidence."
+    },
+    {
+      "dimension": "performance-discipline",
+      "id": "performance-limit:typecheck",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "typecheck exceeded hard limit: 58215ms > 45000ms.",
+      "recommendation": "Use pnpm run typecheck:cached for repeated daily loops, and keep pnpm run typecheck as the uncached release gate."
+    }
+  ]
+}

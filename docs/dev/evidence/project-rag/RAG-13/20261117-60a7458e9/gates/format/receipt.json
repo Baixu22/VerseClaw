@@ -1,0 +1,65 @@
+{
+  "schema": "ProjectRagCandidateGate/v1",
+  "actor": "codex-g2-rag-relay-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "phase": "format",
+  "candidate": {
+    "head": "60a7458e9351329a4cd89bee29bd99f59e9cd2f5",
+    "tree": "cbde3e0d54482d338f14b8b0146df48b5acdaa92",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "startedAt": "2026-11-16T17:57:24.335892+00:00",
+  "commands": [
+    {
+      "name": "runtime-format",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/oxfmt/dist/cli.js",
+        "--check",
+        "--threads=1",
+        "extensions/memory-core/src/memory/manager.ts",
+        "extensions/memory-core/src/memory/qmd-manager.raw-read.test.ts",
+        "extensions/memory-core/src/memory/qmd-manager.ts",
+        "extensions/memory-core/src/memory/search-manager.ts",
+        "extensions/memory-wiki/src/owner-read.ts",
+        "extensions/memory-wiki/src/query.native-memory.test.ts",
+        "extensions/memory-wiki/src/query.ts",
+        "packages/memory-host-sdk/src/host/read-file.ts",
+        "packages/memory-host-sdk/src/host/types.ts",
+        "src/agents/command/attempt-execution.ts",
+        "src/agents/embedded-agent-runner/extensions.ts",
+        "src/context-engine/chat-knowledge-intent.ts",
+        "src/context-engine/chat-knowledge-source-adapters.ts",
+        "src/context-engine/source-set.ts",
+        "src/gateway/methods/core-descriptors.ts",
+        "src/gateway/server-methods.ts",
+        "src/gateway/server-methods/role-orchestration-methods.ts",
+        "src/infra/agent-events.ts",
+        "src/memory/native-memory-source.ts",
+        "src/plugin-sdk/knowledge-retrieval.ts",
+        "src/plugin-sdk/memory-host-core.ts",
+        "src/plugins/memory-runtime.ts",
+        "src/plugins/memory-state.ts",
+        "src/runtime-core/knowledge-owner-read.ts"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime",
+      "exitCode": 0,
+      "elapsedMs": 495,
+      "stdout": "runtime-format.stdout.log",
+      "stderr": "runtime-format.stderr.log"
+    }
+  ],
+  "status": "pass",
+  "after": {
+    "head": "60a7458e9351329a4cd89bee29bd99f59e9cd2f5",
+    "tree": "cbde3e0d54482d338f14b8b0146df48b5acdaa92",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "sourceUnchanged": true,
+  "completedAt": "2026-11-16T17:57:26.386276+00:00"
+}

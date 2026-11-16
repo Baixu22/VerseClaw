@@ -1,0 +1,94 @@
+{
+  "schema": "ProjectRagCandidateGate/v1",
+  "actor": "codex-g2-rag-relay-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "phase": "unit",
+  "candidate": {
+    "head": "60a7458e9351329a4cd89bee29bd99f59e9cd2f5",
+    "tree": "cbde3e0d54482d338f14b8b0146df48b5acdaa92",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "startedAt": "2026-11-16T17:49:18.813278+00:00",
+  "commands": [
+    {
+      "name": "root-unit",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "tests/unit/knowledge-page.test.tsx",
+        "tests/unit/project-rag-memory-domains.test.ts",
+        "tests/unit/chat-knowledge-scope.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/knowledge-source-set-answer.test.ts",
+        "tests/unit/knowledge-evidence-qa.test.ts",
+        "tests/unit/host-api-facade.test.ts",
+        "tests/unit/gateway-permissions-api.test.ts",
+        "--maxWorkers=1",
+        "--cache=false",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\project-rag-g2-relay-20261117\\formal-unit-60a7458e9\\root-unit.json"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 110255,
+      "stdout": "root-unit.stdout.log",
+      "stderr": "root-unit.stderr.log"
+    },
+    {
+      "name": "runtime-unit",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.unit-src.config.ts",
+        "src/knowledge/retrieval/projection-store.test.ts",
+        "src/context-engine/project-rag-owner-adapters.test.ts",
+        "--maxWorkers=1",
+        "--cache=false",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\project-rag-g2-relay-20261117\\formal-unit-60a7458e9\\runtime-unit.json"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime",
+      "exitCode": 0,
+      "elapsedMs": 24855,
+      "stdout": "runtime-unit.stdout.log",
+      "stderr": "runtime-unit.stderr.log"
+    },
+    {
+      "name": "extension-unit",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "scripts/run-vitest.mjs",
+        "run",
+        "--config",
+        "test/vitest/vitest.extension-memory.config.ts",
+        "extensions/memory-wiki/src/query.native-memory.test.ts",
+        "extensions/memory-core/src/memory/qmd-manager.raw-read.test.ts",
+        "--maxWorkers=1",
+        "--cache=false",
+        "--reporter=json",
+        "--outputFile=D:\\tmp\\project-rag-g2-relay-20261117\\formal-unit-60a7458e9\\extension-unit.json"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime",
+      "exitCode": 0,
+      "elapsedMs": 11660,
+      "stdout": "extension-unit.stdout.log",
+      "stderr": "extension-unit.stderr.log"
+    }
+  ],
+  "status": "pass",
+  "after": {
+    "head": "60a7458e9351329a4cd89bee29bd99f59e9cd2f5",
+    "tree": "cbde3e0d54482d338f14b8b0146df48b5acdaa92",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "sourceUnchanged": true,
+  "completedAt": "2026-11-16T17:51:46.614136+00:00"
+}

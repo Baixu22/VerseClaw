@@ -1,0 +1,17 @@
+{
+  "actor": "codex-g2-rag-relay-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "status": "pass",
+  "completeReview": "corpus-review/review.json",
+  "completeReviewHelperExit": 0,
+  "deltaReview": "final-delta-review/review.json",
+  "unchangedCount": 43,
+  "deltaFiles": [
+    "openclaw_runtime/src/context-engine/chat-knowledge-intent.ts",
+    "openclaw_runtime/src/plugins/memory-state.ts",
+    "tests/e2e/project-rag-source-domains.spec.ts",
+    "tests/unit/project-rag-memory-domains.test.ts"
+  ],
+  "currentInputCount": 47
+}

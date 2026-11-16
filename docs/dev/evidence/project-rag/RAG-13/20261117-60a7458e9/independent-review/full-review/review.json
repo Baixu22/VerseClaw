@@ -1,0 +1,6 @@
+{
+  "findings": [],
+  "overall_correctness": "patch is correct",
+  "overall_explanation": "\u5df2\u6838\u5bf9 ownerCandidates \u5bf9 native-memory:/memory-slot: \u4e0e corpus=wiki \u7684\u51b2\u7a81\u5904\u7406\u3001SourceRef/v2 pin \u7684\u9886\u57df/namespace/\u7248\u672c/digest/\u8303\u56f4\u6821\u9a8c\u3001\u539f\u751f\u4e0e Role Memory \u72ec\u7acb adapter\u3001runtimePluginId bridge \u4fdd\u7559\u3001Host knowledge.get \u7684\u65e0 pin \u62d2\u7edd\u53ca readBoundedKnowledgePage \u7684 96k \u4e0a\u9650\u3002\u4fee\u590d\u8986\u76d6\u4e86\u4e0a\u4e00\u8f6e\u552f\u4e00\u786e\u5b9a\u95ee\u9898\uff0c\u5f53\u524d\u53d8\u66f4\u672a\u53d1\u73b0\u65b0\u7684\u786e\u5b9a\u53ef\u64cd\u4f5c\u7f3a\u9677\u3002",
+  "overall_confidence": 0.93
+}

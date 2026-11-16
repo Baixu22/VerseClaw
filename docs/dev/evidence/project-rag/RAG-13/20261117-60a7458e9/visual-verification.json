@@ -1,0 +1,21 @@
+{
+  "actor": "codex-g2-rag-relay-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "60a7458e9351329a4cd89bee29bd99f59e9cd2f5",
+  "status": "pass",
+  "observations": [
+    "Original role memory body and raw source line range are visible in Knowledge preview.",
+    "Provider and index settings render with the independent memory journey completed."
+  ],
+  "images": [
+    {
+      "path": "D:\\tmp\\project-rag-g2-relay-20261117\\formal-electron-60a7458e9\\electron\\project-rag-source-domains-35288-y-and-fences-changed-owners\\memory-citation-preview.png",
+      "sha256": "b6158172434b7cfde3c80a5cc8a78272df8593046e58cfc259202a1c8cf58d2a"
+    },
+    {
+      "path": "D:\\tmp\\project-rag-g2-relay-20261117\\formal-electron-60a7458e9\\electron\\project-rag-source-domains-35288-y-and-fences-changed-owners\\memory-domain-settings.png",
+      "sha256": "9da67fa995b397e66b6c4cd34ee1c43782111fd60c55f4946fe85362d9fcb928"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "actor": "codex-g2-rag-relay-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "schema": "ProjectRagMemorySourcesAcceptance/v1",
+  "programKey": "RAG-13",
+  "node": "TF-0890",
+  "candidate": "60a7458e9351329a4cd89bee29bd99f59e9cd2f5",
+  "tree": "cbde3e0d54482d338f14b8b0146df48b5acdaa92",
+  "status": "pass",
+  "completedAt": "2026-11-16T17:58:51.699407+00:00",
+  "tests": {
+    "root-unit": 243,
+    "runtime-unit": 35,
+    "extension-unit": 3
+  },
+  "electronJourneys": 1,
+  "ciStages": 12,
+  "independentReviewFindings": 0,
+  "acceptance": [
+    {
+      "criterion": 1,
+      "status": "pass",
+      "evidence": [
+        "gates/unit/root-unit.json",
+        "gates/electron/electron"
+      ]
+    },
+    {
+      "criterion": 2,
+      "status": "pass",
+      "evidence": [
+        "gates/unit/root-unit.json",
+        "gates/electron/electron"
+      ]
+    },
+    {
+      "criterion": 3,
+      "status": "pass",
+      "evidence": [
+        "source-inputs.json",
+        "gates/electron/electron"
+      ]
+    },
+    {
+      "criterion": 4,
+      "status": "pass",
+      "evidence": [
+        "gates/unit/root-unit.json",
+        "gates/electron/electron"
+      ]
+    },
+    {
+      "criterion": 5,
+      "status": "pass",
+      "evidence": [
+        "required-test-coverage.json",
+        "gates/ci/report.json",
+        "independent-review/review.json"
+      ]
+    }
+  ],
+  "providerEvidence": "Agent-driven local scripted provider with real Electron/Host/Gateway/owner/DCS routes",
+  "next": "RAG-14 / TF-0891"
+}

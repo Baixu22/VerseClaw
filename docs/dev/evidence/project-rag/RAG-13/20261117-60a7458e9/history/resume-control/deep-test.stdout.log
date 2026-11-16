@@ -1,0 +1,220 @@
+[ext-bridge] No external extensions configured — empty stubs up to date.
+{
+  "success": true,
+  "mode": "parallel",
+  "testTypes": {
+    "commandLine": "pnpm run typecheck:test",
+    "exitCode": 0,
+    "durationMs": 48735,
+    "observationMode": false,
+    "errorCount": 0,
+    "errorLog": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+  },
+  "cache": {
+    "enabled": true,
+    "status": "miss",
+    "key": "a69fef746535ceef22db40b1f6adde248ea70f460e5e295d4e58d841ffa4af89",
+    "inputCount": 13468,
+    "report": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\artifacts\\typecheck-cache\\report.json"
+  },
+  "totalDurationMs": 57324,
+  "coverageNote": "Checks node, web and tests after generating the extension bridge. Every project must pass; runtime-wide checks remain separate gates.",
+  "results": [
+    {
+      "commandLine": "node scripts/generate-ext-bridge.mjs",
+      "exitCode": 0,
+      "durationMs": 111
+    },
+    {
+      "commandLine": "pnpm run typecheck:node",
+      "exitCode": 0,
+      "durationMs": 48696
+    },
+    {
+      "commandLine": "pnpm run typecheck:web",
+      "exitCode": 0,
+      "durationMs": 8372
+    },
+    {
+      "commandLine": "pnpm run typecheck:test",
+      "exitCode": 0,
+      "durationMs": 48735,
+      "observationMode": false,
+      "errorCount": 0,
+      "errorLog": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\artifacts\\typecheck-cache\\test-typecheck-errors.log"
+    }
+  ]
+}
+Contract check passed.
+i18n lint passed.
+{
+  "success": true,
+  "scenarioCount": 15,
+  "reports": {
+    "quality": true,
+    "channelConformance": false,
+    "scenarioRecordings": true
+  },
+  "output": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\artifacts\\agent-dev-workbench\\index.html",
+  "evidence": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\artifacts\\agent-dev-workbench\\evidence.json"
+}
+Spec is valid: harness\specs\scenarios\agent-dev-composable-scenarios.md
+
+ RUN  v4.1.1 D:/tmp/project-rag-g2-relay-01a1dca0/source-projection
+
+
+ Test Files  7 passed (7)
+      Tests  185 passed (185)
+   Start at  00:26:59
+   Duration  5.55s (transform 501ms, setup 226ms, import 578ms, tests 6.83s, environment 1.42s)
+
+Wrote comms replay metrics to D:\tmp\project-rag-g2-relay-01a1dca0\source-projection\artifacts\comms\current-metrics.json
+# Comms Regression Report
+
+- Generated at: 2026-11-16T16:27:06.788Z
+- Candidate: c6460d144281486c0561175ae56a3898712dcab1 (be09d989c19721da44182b4493568fe2afefd527)
+- Result: PASS
+
+| Metric | Current | Threshold | Status |
+|---|---:|---:|---|
+| gateway-restart-during-run.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |
+| gateway-restart-during-run.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |
+| gateway-restart-during-run.history_inflight_max | 1.0000 | <= 1 | PASS |
+| gateway-restart-during-run.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |
+| gateway-restart-during-run.message_loss_count | 0.0000 | <= 0 | PASS |
+| gateway-restart-during-run.message_order_violation_count | 0.0000 | <= 0 | PASS |
+| happy-path-chat.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |
+| happy-path-chat.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |
+| happy-path-chat.history_inflight_max | 1.0000 | <= 1 | PASS |
+| happy-path-chat.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |
+| happy-path-chat.message_loss_count | 0.0000 | <= 0 | PASS |
+| happy-path-chat.message_order_violation_count | 0.0000 | <= 0 | PASS |
+| history-overlap-guard.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |
+| history-overlap-guard.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |
+| history-overlap-guard.history_inflight_max | 1.0000 | <= 1 | PASS |
+| history-overlap-guard.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |
+| history-overlap-guard.message_loss_count | 0.0000 | <= 0 | PASS |
+| history-overlap-guard.message_order_violation_count | 0.0000 | <= 0 | PASS |
+| invalid-config-patch-recovered.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |
+| invalid-config-patch-recovered.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |
+| invalid-config-patch-recovered.history_inflight_max | 1.0000 | <= 1 | PASS |
+| invalid-config-patch-recovered.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |
+| invalid-config-patch-recovered.message_loss_count | 0.0000 | <= 0 | PASS |
+| invalid-config-patch-recovered.message_order_violation_count | 0.0000 | <= 0 | PASS |
+| multi-agent-channel-switch.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |
+| multi-agent-channel-switch.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |
+| multi-agent-channel-switch.history_inflight_max | 0.0000 | <= 1 | PASS |
+| multi-agent-channel-switch.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |
+| multi-agent-channel-switch.message_loss_count | 0.0000 | <= 0 | PASS |
+| multi-agent-channel-switch.message_order_violation_count | 0.0000 | <= 0 | PASS |
+| network-degraded.duplicate_event_rate | 0.0000 | <= 0.005 | PASS |
+| network-degraded.event_fanout_ratio | 1.0000 | <= 1.2 | PASS |
+| network-degraded.history_inflight_max | 1.0000 | <= 1 | PASS |
+| network-degraded.rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |
+| network-degraded.message_loss_count | 0.0000 | <= 0 | PASS |
+| network-degraded.message_order_violation_count | 0.0000 | <= 0 | PASS |
+| duplicate_event_rate | 0.0000 | <= 0.005 | PASS |
+| event_fanout_ratio | 1.0000 | <= 1.2 | PASS |
+| history_inflight_max | 1.0000 | <= 1 | PASS |
+| rpc_timeout_rate | 0.0000 | <= 0.01 | PASS |
+| message_loss_count | 0.0000 | <= 0 | PASS |
+| message_order_violation_count | 0.0000 | <= 0 | PASS |
+| history_load_qps | 0.4127 (baseline 0.4127) | delta <= 10.00% | PASS (0.00%) |
+| rpc_p95_ms | 284.1667 (baseline 284.1667) | delta <= 15.00% | PASS (0.00%) |
+
+
+Wrote comparison report to D:\tmp\project-rag-g2-relay-01a1dca0\source-projection\artifacts\comms\compare-report.md
+{"skipped":true,"id":"e2e-build","reuseStatus":"reused","commandLine":"reuse existing build"}
+
+Running 1 test using 1 worker
+
+  ok 1 tests\e2e\agent-dev-quality.spec.ts:74:7 › agent dev quality gates › loads the in-app Agent Dev Workbench through host-api and records a scenario (13.9s)
+
+  1 passed (16.2s)
+{
+  "success": true,
+  "scenarioCount": 15,
+  "reports": {
+    "quality": true,
+    "channelConformance": false,
+    "scenarioRecordings": true
+  },
+  "output": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\artifacts\\agent-dev-workbench\\index.html",
+  "evidence": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\artifacts\\agent-dev-workbench\\evidence.json"
+}
+{
+  "success": true,
+  "totalDurationMs": 95084,
+  "output": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\artifacts\\agent-dev-deep-test\\report.json",
+  "markdown": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\artifacts\\agent-dev-deep-test\\report.md",
+  "buildReuse": {
+    "mode": "reuse",
+    "status": "reused",
+    "reusable": true,
+    "reason": "all required build artifacts are newer than relevant Agent Dev sources",
+    "oldestArtifact": "dist/index.html",
+    "artifacts": [
+      {
+        "path": "dist/index.html",
+        "mtimeMs": 1794846123359.5562
+      },
+      {
+        "path": "dist-electron/main/index.js",
+        "mtimeMs": 1794846132782.3513
+      },
+      {
+        "path": "dist-electron/preload/index.js",
+        "mtimeMs": 1794846132821.3484
+      }
+    ],
+    "requiredArtifacts": [
+      "dist/index.html",
+      "dist-electron/main/index.js",
+      "dist-electron/preload/index.js"
+    ],
+    "sourcePaths": [
+      "src",
+      "electron",
+      "shared",
+      "index.html",
+      "vite.config.ts",
+      "package.json",
+      "pnpm-lock.yaml"
+    ]
+  },
+  "unitMode": "full",
+  "typecheckMode": "cached",
+  "e2eMode": "smoke",
+  "bottlenecks": [
+    {
+      "id": "typecheck",
+      "durationMs": 58215,
+      "commandLine": "pnpm run typecheck:cached",
+      "skipped": false
+    },
+    {
+      "id": "playwright-agent-dev",
+      "durationMs": 17662,
+      "commandLine": "pnpm run test:e2e:agent-dev-quality:smoke",
+      "skipped": false
+    },
+    {
+      "id": "vitest-agent-dev",
+      "durationMs": 8417,
+      "commandLine": "pnpm agent-dev:unit",
+      "skipped": false
+    },
+    {
+      "id": "harness-agent-dev",
+      "durationMs": 3665,
+      "commandLine": "pnpm harness validate --spec harness/specs/scenarios/agent-dev-composable-scenarios.md",
+      "skipped": false
+    },
+    {
+      "id": "contract",
+      "durationMs": 2923,
+      "commandLine": "pnpm contract:check",
+      "skipped": false
+    }
+  ]
+}

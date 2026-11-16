@@ -1,0 +1,51 @@
+{
+  "schema": "ProjectRagCandidateGate/v1",
+  "actor": "codex-g2-rag-relay-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "phase": "lint",
+  "candidate": {
+    "head": "60a7458e9351329a4cd89bee29bd99f59e9cd2f5",
+    "tree": "cbde3e0d54482d338f14b8b0146df48b5acdaa92",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "startedAt": "2026-11-16T17:56:56.588309+00:00",
+  "commands": [
+    {
+      "name": "lint",
+      "argv": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "electron/services/gateway-api.ts",
+        "electron/services/knowledge-api.ts",
+        "electron/services/knowledge-source-set-answer.ts",
+        "shared/host-api/contract.ts",
+        "shared/knowledge/memory.ts",
+        "src/pages/Knowledge/index.tsx",
+        "tests/e2e/project-rag-source-domains.spec.ts",
+        "tests/unit/gateway-permissions-api.test.ts",
+        "tests/unit/knowledge-api.test.ts",
+        "tests/unit/knowledge-page.test.tsx",
+        "tests/unit/knowledge-source-set-answer.test.ts",
+        "tests/unit/project-rag-memory-domains.test.ts"
+      ],
+      "cwd": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection",
+      "exitCode": 0,
+      "elapsedMs": 10603,
+      "stdout": "lint.stdout.log",
+      "stderr": "lint.stderr.log"
+    }
+  ],
+  "status": "pass",
+  "after": {
+    "head": "60a7458e9351329a4cd89bee29bd99f59e9cd2f5",
+    "tree": "cbde3e0d54482d338f14b8b0146df48b5acdaa92",
+    "branch": "",
+    "dirty": "",
+    "worktreeInputs": {}
+  },
+  "sourceUnchanged": true,
+  "completedAt": "2026-11-16T17:57:08.578960+00:00"
+}

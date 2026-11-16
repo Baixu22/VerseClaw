@@ -1,0 +1,43 @@
+{
+  "schema": "ProjectRagControlPlaneRefresh/v1",
+  "actor": "codex-g2-rag-relay-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "sourceHead": "c6460d144281486c0561175ae56a3898712dcab1",
+  "startedAt": "2026-11-16T16:25:49.993566+00:00",
+  "commands": [
+    {
+      "name": "workbench",
+      "argv": [
+        "node",
+        "scripts/agent-dev-workbench.mjs"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 139
+    },
+    {
+      "name": "deep-test",
+      "argv": [
+        "node",
+        "scripts/agent-dev-deep-test.mjs",
+        "--reuse-build",
+        "--cached-typecheck",
+        "--smoke-e2e"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 95228
+    },
+    {
+      "name": "strict-audit",
+      "argv": [
+        "node",
+        "scripts/agent-dev-audit.mjs"
+      ],
+      "exitCode": 1,
+      "elapsedMs": 2238
+    }
+  ],
+  "status": "fail",
+  "codeInputsUnchanged": true,
+  "completedAt": "2026-11-16T16:27:28.096166+00:00"
+}

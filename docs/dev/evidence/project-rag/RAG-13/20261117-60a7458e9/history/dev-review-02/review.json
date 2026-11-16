@@ -1,0 +1,117 @@
+{
+  "findings": [
+    {
+      "title": "memory.readSource can be reached with a read-only operator token that the handler treats as trusted backend",
+      "body": "The new `memory.readSource` route authorizes callers solely by checking `client.connect.client.mode === \"backend\"` and never verifies that the connection is the Main-process knowledge service rather than any operator client. In this runtime, read-only gateway clients also connect in backend mode; a client with `operator.read` can therefore call the route directly with a valid SourceRef and its own session identity. The owner adapters then return `ownerSnapshot.content` in the response, exposing native memory and role-memory bytes that the renderer bridge deliberately rejects at `electron/services/gateway-api.ts:475`. The route needs a separate read-source capability/role or an authenticated Main-process identity, not just `backend` mode plus `operator.read`.",
+      "priority": "P1",
+      "confidence": 0.88,
+      "category": "security",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+        "line": 460
+      }
+    },
+    {
+      "title": "Pinned native memory reads accept locators whose startByte is past the current file and can return empty snapshots",
+      "body": "`readNativeMemorySource` only rejects `range.endByteExclusive > bytes.length`; it does not reject `range.startByte > range.endByteExclusive` (normalization permits it) or `range.startByte > bytes.length`. A crafted or stale SourceRef with a start beyond EOF reaches `bytes.subarray(startByte, endByteExclusive)`, decodes to an empty string, and `createOwnerReadSnapshot` accepts it because `startChar === endChar`. The result is a valid `admitted` snapshot with empty content and a locator that does not correspond to the requested source, allowing the SourceSet and model pipeline to treat a forged empty pin as a successful owner read. Validate the whole byte range against the current bytes before admission.",
+      "priority": "P1",
+      "confidence": 0.9,
+      "category": "bug",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/memory/native-memory-source.ts",
+        "line": 192
+      }
+    },
+    {
+      "title": "Aggregate selected-source reads re-read only the first mismatched owner and can hide later source failures",
+      "body": "`retrieveSelectedSourceSetEvidence` materializes every selected ref in parallel, but its `verifyOwnerRead` callback re-reads exactly one page: `materialized.indexOf(original)` and `input.sourceRefs[index]`. If two refs point at the same canonical owner subject but different byte ranges (permitted for native memory), the second entry is overwritten in `byRefId` during deduplication; the callback can then compare the fresh read of one range against the candidate content of another range. This produces `digest_mismatch`/`revision_mismatch` rejections for valid sibling ranges or, depending on which entry wins, validates only one range while another selected range has changed. Verify the source using the candidate\u2019s own `sourceRef` and range, and re-read every admitted candidate before prompt assembly.",
+      "priority": "P1",
+      "confidence": 0.82,
+      "category": "bug",
+      "code_location": {
+        "file_path": "electron/services/knowledge-source-set-answer.ts",
+        "line": 265
+      }
+    },
+    {
+      "title": "Readable native memory files without YAML frontmatter default to operator ACL, bypassing scope checks",
+      "body": "For a native memory file with no frontmatter, `readOwnerReadPolicyMetadata({})` returns the default `acl.read = [\"operator\"]`, `sensitivity = \"workspace\"`, and no `scope`. The read context always uses `principalId: \"operator\"`, so any selected memory file in the workspace is admitted even though it has no owner-declared scope or ACL. This lets arbitrary workspace Markdown under `memory/` become a knowledge source without an explicit owner policy; the same code path is now reachable through the new `memory.readSource` and SourceSet flows. Require explicit owner policy for native memory or derive the policy from a trusted owner manifest rather than defaulting to full operator access.",
+      "priority": "P2",
+      "confidence": 0.78,
+      "category": "security",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/runtime-core/knowledge-owner-read.ts",
+        "line": 438
+      }
+    },
+    {
+      "title": "Unbounded `native-memory:` lookup can bypass the selected owner and read arbitrary file paths",
+      "body": "`NativeMemoryChatKnowledgeSourceAdapter.resolve` treats values beginning with `native-memory:` as native memory and passes the remainder to `readNativeMemorySource`, which eventually calls `manager.readFile({ relPath: lookup, raw: true })`. The source ref is optional, so a renderer-supplied lookup such as `native-memory:C:/path/to/file.md` or a relative path outside the memory directory can reach the provider\u2019s file reader without an owner pin. The provider\u2019s path checks protect the workspace boundary, but they do not enforce the memory namespace or the intended memory file policy; the read is admitted if the file exists and its frontmatter passes or defaults the policy. Resolve and canonicalize the subject ID before reading and require a prior admitted pin/owner descriptor for non-bootstrap lookups.",
+      "priority": "P2",
+      "confidence": 0.76,
+      "category": "security",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/context-engine/chat-knowledge-source-adapters.ts",
+        "line": 217
+      }
+    },
+    {
+      "title": "SourceSet diagnostics can retain a memory owner even when all source reads were rejected, misrepresenting the corpus",
+      "body": "`buildAnswerFromSourceSet` builds `corpora` from `sources` after admission. When a selected native or role-memory source is rejected, `sources` is empty and `corpora` has no memory entry; the diagnostics then report `corpus: 'wiki'` because the default branch wins. The UI and later diagnostics interpret this as a wiki-source answer even though the request was a memory source and the rejection was for a memory owner. This breaks the source-domain diagnostics required for independent memory owners and can mask a memory-specific denial as an unrelated empty wiki result. Derive diagnostics from the requested source refs and rejection causes, not only from admitted sources.",
+      "priority": "P2",
+      "confidence": 0.8,
+      "category": "regression",
+      "code_location": {
+        "file_path": "electron/services/knowledge-api.ts",
+        "line": 3567
+      }
+    },
+    {
+      "title": "Native memory search re-reads only hits with `source === \"memory\"` and silently drops provider-native hits from other sources",
+      "body": "The new code replaces only raw hits whose `source` is exactly `\"memory\"`. Native memory providers can return file hits under other source labels (for example `qmd` collections or supplement-backed sources), and those hits continue through `toMemoryWikiSearchResult` with the provider\u2019s stale snippet and no owner pin. For the independent-owner contract, every native file hit that will enter Chat must be reread from the selected owner; relying on a single string label leaves a path where a memory hit enters the model without a fresh owner snapshot. Normalize the provider source to the owner or require a sourceRef for all non-transcript memory hits.",
+      "priority": "P2",
+      "confidence": 0.72,
+      "category": "security",
+      "code_location": {
+        "file_path": "openclaw_runtime/extensions/memory-wiki/src/query.ts",
+        "line": 1590
+      }
+    },
+    {
+      "title": "`memory.readSource` returns owner snapshots to operator clients and the bridge rejection only covers the renderer RPC",
+      "body": "The new backend route responds with the full `ownerSnapshot`, including `content` and `context`, after only a `sourceRef` and `readIdentity` check. The Electron renderer bridge rejects `memory.readSource`, but the Gateway route itself is registered with `operator.read` and accepts any backend-mode connection. This leaves the full memory body available over the gateway read surface even though the UI path is blocked. Return only the minimum citation fields to non-Main callers, or require a distinct capability and never serialize raw content on the diagnostic route.",
+      "priority": "P1",
+      "confidence": 0.83,
+      "category": "security",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/gateway/server-methods/role-orchestration-methods.ts",
+        "line": 528
+      }
+    },
+    {
+      "title": "Selected SourceSet can carry an empty `sourceRef` after a legacy unpinned read, and later model references then fail owner admission",
+      "body": "`readMemoryOwnerSource` returns `sourceRef: snapshot.source`, but `buildAnswerFromSourceSet` pins model references from `source.citation!.sourceRef` and only maps `corpus` from the same field. In the new test fixture, an input `MemorySourceRef` is required, so the path is covered. For legacy selected refs without `sourceRef`, `readMemoryOwnerSource` is not called because `isMemorySourceRef` is false; the wiki path then returns a result without `ownerSnapshot`, and Studio preserves an unpinned source. This behavior differs between API and UI flows and can produce a model reference with no owner pin. Normalize all admitted memory citations to SourceRef/v2 before they enter SourceSet and Studio.",
+      "priority": "P2",
+      "confidence": 0.62,
+      "category": "test_gap",
+      "code_location": {
+        "file_path": "electron/services/knowledge-api.ts",
+        "line": 3500
+      }
+    },
+    {
+      "title": "Internal run context registration is not scoped to a successful Chat run and clean-up depends on outer lifecycle",
+      "body": "`attempt-execution.ts` registers `internalKnowledgeRead` before resolving knowledge refs, but the cleanup is owned by `agent-command.ts`'s outer `finally`. If knowledge resolution throws, times out, or the attempt is retried before the outer lifecycle completes, the run context remains usable until the outer cleanup runs or the 30-minute sweep. During that window another internal read for the same runId can use stale workspace/session metadata. Tie registration to the attempt's own failure/success boundary or clear it immediately after the knowledge resolution fails.",
+      "priority": "P2",
+      "confidence": 0.7,
+      "category": "security",
+      "code_location": {
+        "file_path": "openclaw_runtime/src/agents/command/attempt-execution.ts",
+        "line": 695
+      }
+    }
+  ],
+  "overall_correctness": "patch is incorrect",
+  "overall_explanation": "The change adds the intended memory owner/source separation, strict raw UTF-8 reads, and revision/scope pinning, but several admission and exposure paths remain unsafe. Most importantly, the new memory.readSource gateway route treats any backend-mode connection with operator.read as trusted and returns full owner snapshots, while native memory can be read through unpinned lookups and default owner policies. There are also correctness gaps in byte-range validation, selected-source revalidation, and diagnostics when memory sources are rejected. The patch should not be considered correct until these paths require an authenticated Main-process capability, validate every pin/range against the exact requested owner, and keep rejected memory sources visible as memory-domain diagnostics.",
+  "overall_confidence": 0.84
+}

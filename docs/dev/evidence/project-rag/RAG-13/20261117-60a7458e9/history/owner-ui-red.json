@@ -1,0 +1,2098 @@
+{
+  "numTotalTestSuites": 11,
+  "numPassedTestSuites": 3,
+  "numFailedTestSuites": 8,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 167,
+  "numPassedTests": 160,
+  "numFailedTests": 7,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1794847117356,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API rejects unpinned memory reads and an all-corpus raw-memory fallback",
+          "status": "failed",
+          "title": "rejects unpinned memory reads and an all-corpus raw-memory fallback",
+          "duration": 2778.0051999999996,
+          "failureMessages": [
+            "AssertionError: expected { success: true, …(2) } to match object { Object (success, readDenial) }\n(2 matching properties omitted from actual)\n    at Proxy.<anonymous> (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1282:10)\n    at Proxy.<anonymous> (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1155:15)\n    at Proxy.methodWrapper (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)\n    at C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-api.test.ts:115:22\n    at file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:20"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API reads native-memory for SourceSet answers and preserves Studio pins",
+          "status": "passed",
+          "title": "reads native-memory for SourceSet answers and preserves Studio pins",
+          "duration": 527.0151000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API reads role-memory for SourceSet answers and preserves Studio pins",
+          "status": "passed",
+          "title": "reads role-memory for SourceSet answers and preserves Studio pins",
+          "duration": 322.47929999999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API wraps wiki.status and reports Gateway failures",
+          "status": "passed",
+          "title": "wraps wiki.status and reports Gateway failures",
+          "duration": 77.3155999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API validates operations config before RPC and preserves the config base hash",
+          "status": "passed",
+          "title": "validates operations config before RPC and preserves the config base hash",
+          "duration": 152.77740000000085,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API rejects late operations snapshots after a session generation changes",
+          "status": "passed",
+          "title": "rejects late operations snapshots after a session generation changes",
+          "duration": 84.79150000000118,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API uses owner config for omitted profiles, keeps explicit bounds and fails closed without config",
+          "status": "passed",
+          "title": "uses owner config for omitted profiles, keeps explicit bounds and fails closed without config",
+          "duration": 295.4809000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API returns a read-only SEKB runtime lessons report without Gateway writes",
+          "status": "passed",
+          "title": "returns a read-only SEKB runtime lessons report without Gateway writes",
+          "duration": 84.35319999999956,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API resolves Host SEKB state dir and workspace root without using process.cwd defaults",
+          "status": "passed",
+          "title": "resolves Host SEKB state dir and workspace root without using process.cwd defaults",
+          "duration": 80.87669999999889,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API exposes SEKB ops host routes without gateway RPC and without auto-writes",
+          "status": "passed",
+          "title": "exposes SEKB ops host routes without gateway RPC and without auto-writes",
+          "duration": 131.73240000000078,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API passes explicit experienceShadow through the production SEKB confirm route",
+          "status": "passed",
+          "title": "passes explicit experienceShadow through the production SEKB confirm route",
+          "duration": 189.08770000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API omits experienceShadow entirely when the explicit request is absent",
+          "status": "passed",
+          "title": "omits experienceShadow entirely when the explicit request is absent",
+          "duration": 399.0023999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API configures memory-wiki defaults without overwriting unrelated plugin config",
+          "status": "passed",
+          "title": "configures memory-wiki defaults without overwriting unrelated plugin config",
+          "duration": 75.04719999999907,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API enumerates bounded text files and skips large or non-text imports",
+          "status": "passed",
+          "title": "enumerates bounded text files and skips large or non-text imports",
+          "duration": 85.07290000000103,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API keeps draft review and steward review local until a reviewed change is applied",
+          "status": "passed",
+          "title": "keeps draft review and steward review local until a reviewed change is applied",
+          "duration": 224.83510000000024,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API runs the semantic steward invoker through the gateway agent RPC when the active role is semantic",
+          "status": "passed",
+          "title": "runs the semantic steward invoker through the gateway agent RPC when the active role is semantic",
+          "duration": 442.876400000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API orchestrates inbox candidates into drafts without applying wiki writes",
+          "status": "passed",
+          "title": "orchestrates inbox candidates into drafts without applying wiki writes",
+          "duration": 247.8820999999989,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API keeps automatic knowledge candidates as pending Inbox items without reviewed apply",
+          "status": "passed",
+          "title": "keeps automatic knowledge candidates as pending Inbox items without reviewed apply",
+          "duration": 205.91659999999865,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API triages inbox candidates as duplicate, incomplete, or ready for review",
+          "status": "passed",
+          "title": "triages inbox candidates as duplicate, incomplete, or ready for review",
+          "duration": 72.72149999999965,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API forces watched-directory automation to remain review-gated",
+          "status": "passed",
+          "title": "forces watched-directory automation to remain review-gated",
+          "duration": 413.0596000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API reconciles watched file changes into versioned agent-driven review candidates",
+          "status": "passed",
+          "title": "reconciles watched file changes into versioned agent-driven review candidates",
+          "duration": 519.2722000000012,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API records knowledge provenance references as metadata only",
+          "status": "passed",
+          "title": "records knowledge provenance references as metadata only",
+          "duration": 414.4223000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API validates proposals and applies only approved create proposals",
+          "status": "passed",
+          "title": "validates proposals and applies only approved create proposals",
+          "duration": 333.09689999999864,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API converts legacy applyDraft calls into review-gated drafts without direct wiki apply",
+          "status": "passed",
+          "title": "converts legacy applyDraft calls into review-gated drafts without direct wiki apply",
+          "duration": 248.05829999999878,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API forwards the selected profile for explicit Wiki search",
+          "status": "passed",
+          "title": "forwards the selected profile for explicit Wiki search",
+          "duration": 88.69779999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API routes knowledge context only when scope and mode allow read-only search",
+          "status": "passed",
+          "title": "routes knowledge context only when scope and mode allow read-only search",
+          "duration": 441.5549999999985,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API keeps Runtime Lessons opt-in and exposes principle provenance",
+          "status": "passed",
+          "title": "keeps Runtime Lessons opt-in and exposes principle provenance",
+          "duration": 185.00690000000031,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API preserves array Gateway rows and SourceRef in Host search",
+          "status": "passed",
+          "title": "preserves array Gateway rows and SourceRef in Host search",
+          "duration": 72.61670000000049,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API preserves results Gateway rows and SourceRef in Host search",
+          "status": "passed",
+          "title": "preserves results Gateway rows and SourceRef in Host search",
+          "duration": 72.57749999999942,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API preserves hits Gateway rows and SourceRef in Host search",
+          "status": "passed",
+          "title": "preserves hits Gateway rows and SourceRef in Host search",
+          "duration": 68.08609999999862,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API matches error-experience advisories and updates effectiveness counters",
+          "status": "passed",
+          "title": "matches error-experience advisories and updates effectiveness counters",
+          "duration": 226.78539999999884,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API aggregates governance quality metrics from audit issues and error-experience counters",
+          "status": "passed",
+          "title": "aggregates governance quality metrics from audit issues and error-experience counters",
+          "duration": 219.53669999999875,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API auto-read uses owner admission and rejects raw scores without it",
+          "status": "passed",
+          "title": "auto-read uses owner admission and rejects raw scores without it",
+          "duration": 178.5563000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API validates OKF bundles while preserving frontmatter and treating compatibility issues as warnings",
+          "status": "passed",
+          "title": "validates OKF bundles while preserving frontmatter and treating compatibility issues as warnings",
+          "duration": 201.96399999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API rejects OKF concept files missing frontmatter or type",
+          "status": "passed",
+          "title": "rejects OKF concept files missing frontmatter or type",
+          "duration": 201.15459999999985,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API imports selected OKF concepts through wiki.ingest and records mapping metadata without wiki.apply",
+          "status": "passed",
+          "title": "imports selected OKF concepts through wiki.ingest and records mapping metadata without wiki.apply",
+          "duration": 232.88730000000032,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API rejects archived Source Set evidence without fallback (semantic=false)",
+          "status": "passed",
+          "title": "rejects archived Source Set evidence without fallback (semantic=false)",
+          "duration": 80.66430000000037,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API rejects archived Source Set evidence without fallback (semantic=true)",
+          "status": "passed",
+          "title": "rejects archived Source Set evidence without fallback (semantic=true)",
+          "duration": 71.51519999999982,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API retains explicit Source Set version pins and rejects a changed owner revision",
+          "status": "passed",
+          "title": "retains explicit Source Set version pins and rejects a changed owner revision",
+          "duration": 202.73070000000007,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API reports unverified Source Set excerpts as partial rather than a calibrated answer",
+          "status": "passed",
+          "title": "reports unverified Source Set excerpts as partial rather than a calibrated answer",
+          "duration": 85.24029999999948,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API keeps Studio drafts bound to admitted evidence and prevents client metadata from upgrading it",
+          "status": "passed",
+          "title": "keeps Studio drafts bound to admitted evidence and prevents client metadata from upgrading it",
+          "duration": 214.39210000000094,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API applies saved Source Set workspace context without granting cross-workspace reads",
+          "status": "passed",
+          "title": "applies saved Source Set workspace context without granting cross-workspace reads",
+          "duration": 246.34180000000015,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API checks source answers and support outcome: same",
+          "status": "passed",
+          "title": "checks source answers and support outcome: same",
+          "duration": 120.8687000000009,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API checks source answers and support outcome: changed",
+          "status": "passed",
+          "title": "checks source answers and support outcome: changed",
+          "duration": 91.37139999999818,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API checks source answers and support outcome: provider-error",
+          "status": "passed",
+          "title": "checks source answers and support outcome: provider-error",
+          "duration": 85.3156999999992,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API checks source answers and support outcome: unsupported",
+          "status": "passed",
+          "title": "checks source answers and support outcome: unsupported",
+          "duration": 90.60559999999896,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API persists source sets and answers from their selected sources without applying durable wiki changes",
+          "status": "passed",
+          "title": "persists source sets and answers from their selected sources without applying durable wiki changes",
+          "duration": 236.63670000000275,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API uses the selected semantic service with owner pins and one shared deadline (query expires=false)",
+          "status": "passed",
+          "title": "uses the selected semantic service with owner pins and one shared deadline (query expires=false)",
+          "duration": 91.60469999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API uses the selected semantic service with owner pins and one shared deadline (query expires=true)",
+          "status": "passed",
+          "title": "uses the selected semantic service with owner pins and one shared deadline (query expires=true)",
+          "duration": 73.57049999999799,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API normalizes provider whitespace before deriving owner egress and sending configure",
+          "status": "passed",
+          "title": "normalizes provider whitespace before deriving owner egress and sending configure",
+          "duration": 66.02179999999862,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API keeps admitted lexical evidence available when the embedding status service fails",
+          "status": "passed",
+          "title": "keeps admitted lexical evidence available when the embedding status service fails",
+          "duration": 69.60099999999875,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API"
+          ],
+          "fullName": "knowledge host API creates reviewable studio artifact drafts from selected source sets",
+          "status": "passed",
+          "title": "creates reviewable studio artifact drafts from selected source sets",
+          "duration": 220.62319999999818,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-01 ReviewBundle and governance integrity hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-01 ReviewBundle and governance integrity hard acceptance pairs 10 drafts and 10 proposals without cross-selection",
+          "status": "passed",
+          "title": "pairs 10 drafts and 10 proposals without cross-selection",
+          "duration": 287.34130000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-01 ReviewBundle and governance integrity hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-01 ReviewBundle and governance integrity hard acceptance rejects stale approvals as conflicts and never calls wiki.apply",
+          "status": "passed",
+          "title": "rejects stale approvals as conflicts and never calls wiki.apply",
+          "duration": 181.89960000000065,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-01 ReviewBundle and governance integrity hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-01 ReviewBundle and governance integrity hard acceptance concurrent same captureKey calls create exactly one inbox candidate",
+          "status": "passed",
+          "title": "concurrent same captureKey calls create exactly one inbox candidate",
+          "duration": 182.74109999999928,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-01 ReviewBundle and governance integrity hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-01 ReviewBundle and governance integrity hard acceptance idempotent apply retry is duplicate success and writes an operation journal",
+          "status": "passed",
+          "title": "idempotent apply retry is duplicate success and writes an operation journal",
+          "duration": 206.73950000000332,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-03 GovernanceStore cutover hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-03 GovernanceStore cutover hard acceptance new inbox/draft/proposal records go to SQLite and JSON governance writers stay zero",
+          "status": "passed",
+          "title": "new inbox/draft/proposal records go to SQLite and JSON governance writers stay zero",
+          "duration": 212.53099999999904,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-03 GovernanceStore cutover hard acceptance"
+          ],
+          "fullName": "knowledge host API KS-03 GovernanceStore cutover hard acceptance imports legacy JSON in one transaction and leaves it read-only with parity 100%",
+          "status": "passed",
+          "title": "imports legacy JSON in one transaction and leaves it read-only with parity 100%",
+          "duration": 179.59660000000076,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-02 truthful DCS projection sink"
+          ],
+          "fullName": "knowledge host API KS-02 truthful DCS projection sink exposes a blockstore sink with read-back verification when state DB opens",
+          "status": "passed",
+          "title": "exposes a blockstore sink with read-back verification when state DB opens",
+          "duration": 184.26989999999932,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "knowledge host API",
+            "KS-02 truthful DCS projection sink"
+          ],
+          "fullName": "knowledge host API KS-02 truthful DCS projection sink falls back to a journal sink and never claims blockstore when state DB cannot open",
+          "status": "passed",
+          "title": "falls back to a journal sink and never claims blockstore when state DB cannot open",
+          "duration": 88.31590000000142,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794847122275,
+      "endTime": 1794847136443.316,
+      "status": "failed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-api.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page opens a native-memory pin with its memory corpus",
+          "status": "failed",
+          "title": "opens a native-memory pin with its memory corpus",
+          "duration": 1318.0005,
+          "failureMessages": [
+            "AssertionError: expected \"vi.fn()\" to be called with arguments: [ ObjectContaining{…} ]\n\nReceived:\n\n  1st vi.fn() call:\n\n  [\n-   ObjectContaining {\n-     \"corpus\": \"memory\",\n+   {\n+     \"corpus\": \"wiki\",\n+     \"lineCount\": 120,\n+     \"lookup\": \"memory/source.md\",\n+     \"sessionKey\": undefined,\n      \"sourceRef\": {\n        \"authorityId\": \"native-memory\",\n        \"domain\": \"native-memory\",\n        \"namespaceId\": \"memory-owner\",\n        \"policyEpoch\": \"sha256:policy\",\n        \"revision\": \"1\",\n        \"schema\": \"SourceRef/v2\",\n        \"sourceDigest\": \"sha256:digest\",\n        \"subjectId\": \"memory/source.md\",\n      },\n+     \"workspaceId\": undefined,\n    },\n  ]\n\n\nNumber of calls: 1\n\n\nIgnored nodes: comments, script, style\n\u001b[36m<html\u001b[39m\n  \u001b[33mlang\u001b[39m=\u001b[32m\"en\"\u001b[39m\n\u001b[36m>\u001b[39m\n  \u001b[36m<head />\u001b[39m\n  \u001b[36m<body>\u001b[39m\n    \u001b[36m<div>\u001b[39m\n      \u001b[36m<div\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"-m-5 flex h-[calc(100%+2.5rem)] min-h-0 flex-col overflow-hidden bg-surface-sidebar\"\u001b[39m\n        \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-page\"\u001b[39m\n      \u001b[36m>\u001b[39m\n        \u001b[36m<div\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"flex min-h-0 flex-1 flex-col overflow-hidden rounded-tl-xl bg-material-canvas shadow-[inset_1px_0_0_hsl(var(--border)/0.65)]\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<h1\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"sr-only\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mKnowledge\u001b[0m\n          \u001b[36m</h1>\u001b[39m\n          \u001b[36m<header\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"shrink-0 border-b border-border/40 bg-material-canvas px-3 md:px-5\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<div\u001b[39m\n              \u001b[33mclass\u001b[39m=\u001b[32m\"flex min-w-0 items-center justify-between gap-3\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<nav\u001b[39m\n                \u001b[33maria-label\u001b[39m=\u001b[32m\"Knowledge primary navigation\"\u001b[39m\n                \u001b[33mclass\u001b[39m=\u001b[32m\"flex h-12 min-w-0 items-center gap-0.5 overflow-x-auto\"\u001b[39m\n                \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-workbench-tabs\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<button\u001b[39m\n                  \u001b[33maria-current\u001b[39m=\u001b[32m\"page\"\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"flex h-9 shrink-0 items-center gap-1.5 border-b-2 px-2 text-meta font-medium transition-colors border-foreground text-foreground\"\u001b[39m\n                  \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-tab-library\"\u001b[39m\n                  \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<svg\u001b[39m\n                    \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"lucide lucide-layers h-3.5 w-3.5\"\u001b[39m\n                    \u001b[33mfill\u001b[39m=\u001b[32m\"none\"\u001b[39m\n                    \u001b[33mheight\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mstroke\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                    \u001b[33mstroke-linecap\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-linejoin\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-width\u001b[39m=\u001b[32m\"2\"\u001b[39m\n                    \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 24 24\"\u001b[39m\n                    \u001b[33mwidth\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                  \u001b[36m</svg>\u001b[39m\n                  \u001b[0mLibrary\u001b[0m\n                \u001b[36m</button>\u001b[39m\n                \u001b[36m<button\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"flex h-9 shrink-0 items-center gap-1.5 border-b-2 px-2 text-meta font-medium transition-colors border-transparent text-muted-foreground hover:text-foreground\"\u001b[39m\n                  \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-tab-review-queue\"\u001b[39m\n                  \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<svg\u001b[39m\n                    \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"lucide lucide-list-todo h-3.5 w-3.5\"\u001b[39m\n                    \u001b[33mfill\u001b[39m=\u001b[32m\"none\"\u001b[39m\n                    \u001b[33mheight\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mstroke\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                    \u001b[33mstroke-linecap\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-linejoin\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-width\u001b[39m=\u001b[32m\"2\"\u001b[39m\n                    \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 24 24\"\u001b[39m\n                    \u001b[33mwidth\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M13 5h8\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M13 12h8\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M13 19h8\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"m3 17 2 2 4-4\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<rect\u001b[39m\n                      \u001b[33mheight\u001b[39m=\u001b[32m\"6\"\u001b[39m\n                      \u001b[33mrx\u001b[39m=\u001b[32m\"1\"\u001b[39m\n                      \u001b[33mwidth\u001b[39m=\u001b[32m\"6\"\u001b[39m\n                      \u001b[33mx\u001b[39m=\u001b[32m\"3\"\u001b[39m\n                      \u001b[33my\u001b[39m=\u001b[32m\"4\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                  \u001b[36m</svg>\u001b[39m\n                  \u001b[0mReview Queue\u001b[0m\n                  \u001b[36m<span\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"text-2xs tabular-nums text-muted-foreground\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[0m6\u001b[0m\n                  \u001b[36m</span>\u001b[39m\n                \u001b[36m</button>\u001b[39m\n              \u001b[36m</nav>\u001b[39m\n              \u001b[36m<div\u001b[39m\n                \u001b[33mclass\u001b[39m=\u001b[32m\"flex shrink-0 items-center gap-1.5\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<button\u001b[39m\n                  \u001b[33maria-label\u001b[39m=\u001b[32m\"Vault Status: Missing\"\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"knowledge-press relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5 text-amber-700 dark:text-amber-400\"\u001b[39m\n                  \u001b[33mdata-state\u001b[39m=\u001b[32m\"closed\"\u001b[39m\n                  \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-status-trigger\"\u001b[39m\n                  \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<svg\u001b[39m\n                    \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"lucide lucide-database h-4 w-4\"\u001b[39m\n                    \u001b[33mfill\u001b[39m=\u001b[32m\"none\"\u001b[39m\n                    \u001b[33mheight\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mstroke\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                    \u001b[33mstroke-linecap\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-linejoin\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-width\u001b[39m=\u001b[32m\"2\"\u001b[39m\n                    \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 24 24\"\u001b[39m\n                    \u001b[33mwidth\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[36m<ellipse\u001b[39m\n                      \u001b[33mcx\u001b[39m=\u001b[32m\"12\"\u001b[39m\n     ...\n    at Proxy.<anonymous> (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1486:10)\n    at Proxy.<anonymous> (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1155:15)\n    at Proxy.methodWrapper (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)\n    at C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-page.test.tsx:1099:49\n    at runWithExpensiveErrorDiagnosticsDisabled (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\@testing-library+dom@10.4.1\\node_modules\\@testing-library\\dom\\dist\\config.js:47:12)\n    at checkCallback (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\@testing-library+dom@10.4.1\\node_modules\\@testing-library\\dom\\dist\\wait-for.js:124:77)\n    at MutationObserver.checkRealTimersCallback (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\@testing-library+dom@10.4.1\\node_modules\\@testing-library\\dom\\dist\\wait-for.js:118:16)\n    at MutationObserver.invokeTheCallbackFunction (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\jsdom@28.1.0\\node_modules\\jsdom\\lib\\generated\\idl\\MutationCallback.js:19:26)\n    at notifyMutationObservers (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\jsdom@28.1.0\\node_modules\\jsdom\\lib\\jsdom\\living\\helpers\\mutation-observers.js:160:22)\n    at D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\jsdom@28.1.0\\node_modules\\jsdom\\lib\\jsdom\\living\\helpers\\mutation-observers.js:133:5"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page opens a role-memory pin with its memory corpus",
+          "status": "failed",
+          "title": "opens a role-memory pin with its memory corpus",
+          "duration": 1174.4903000000004,
+          "failureMessages": [
+            "AssertionError: expected \"vi.fn()\" to be called with arguments: [ ObjectContaining{…} ]\n\nReceived:\n\n  1st vi.fn() call:\n\n  [\n-   ObjectContaining {\n-     \"corpus\": \"memory\",\n+   {\n+     \"corpus\": \"wiki\",\n+     \"lineCount\": 120,\n+     \"lookup\": \"memory/source.md\",\n+     \"sessionKey\": undefined,\n      \"sourceRef\": {\n        \"authorityId\": \"memory-slot\",\n        \"domain\": \"role-memory\",\n        \"namespaceId\": \"memory-owner\",\n        \"policyEpoch\": \"sha256:policy\",\n        \"revision\": \"1\",\n        \"schema\": \"SourceRef/v2\",\n        \"sourceDigest\": \"sha256:digest\",\n        \"subjectId\": \"memory/source.md\",\n      },\n+     \"workspaceId\": undefined,\n    },\n  ]\n\n\nNumber of calls: 1\n\n\nIgnored nodes: comments, script, style\n\u001b[36m<html\u001b[39m\n  \u001b[33mlang\u001b[39m=\u001b[32m\"en\"\u001b[39m\n\u001b[36m>\u001b[39m\n  \u001b[36m<head />\u001b[39m\n  \u001b[36m<body>\u001b[39m\n    \u001b[36m<div>\u001b[39m\n      \u001b[36m<div\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"-m-5 flex h-[calc(100%+2.5rem)] min-h-0 flex-col overflow-hidden bg-surface-sidebar\"\u001b[39m\n        \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-page\"\u001b[39m\n      \u001b[36m>\u001b[39m\n        \u001b[36m<div\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"flex min-h-0 flex-1 flex-col overflow-hidden rounded-tl-xl bg-material-canvas shadow-[inset_1px_0_0_hsl(var(--border)/0.65)]\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<h1\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"sr-only\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mKnowledge\u001b[0m\n          \u001b[36m</h1>\u001b[39m\n          \u001b[36m<header\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"shrink-0 border-b border-border/40 bg-material-canvas px-3 md:px-5\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<div\u001b[39m\n              \u001b[33mclass\u001b[39m=\u001b[32m\"flex min-w-0 items-center justify-between gap-3\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<nav\u001b[39m\n                \u001b[33maria-label\u001b[39m=\u001b[32m\"Knowledge primary navigation\"\u001b[39m\n                \u001b[33mclass\u001b[39m=\u001b[32m\"flex h-12 min-w-0 items-center gap-0.5 overflow-x-auto\"\u001b[39m\n                \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-workbench-tabs\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<button\u001b[39m\n                  \u001b[33maria-current\u001b[39m=\u001b[32m\"page\"\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"flex h-9 shrink-0 items-center gap-1.5 border-b-2 px-2 text-meta font-medium transition-colors border-foreground text-foreground\"\u001b[39m\n                  \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-tab-library\"\u001b[39m\n                  \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<svg\u001b[39m\n                    \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"lucide lucide-layers h-3.5 w-3.5\"\u001b[39m\n                    \u001b[33mfill\u001b[39m=\u001b[32m\"none\"\u001b[39m\n                    \u001b[33mheight\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mstroke\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                    \u001b[33mstroke-linecap\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-linejoin\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-width\u001b[39m=\u001b[32m\"2\"\u001b[39m\n                    \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 24 24\"\u001b[39m\n                    \u001b[33mwidth\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                  \u001b[36m</svg>\u001b[39m\n                  \u001b[0mLibrary\u001b[0m\n                \u001b[36m</button>\u001b[39m\n                \u001b[36m<button\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"flex h-9 shrink-0 items-center gap-1.5 border-b-2 px-2 text-meta font-medium transition-colors border-transparent text-muted-foreground hover:text-foreground\"\u001b[39m\n                  \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-tab-review-queue\"\u001b[39m\n                  \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<svg\u001b[39m\n                    \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"lucide lucide-list-todo h-3.5 w-3.5\"\u001b[39m\n                    \u001b[33mfill\u001b[39m=\u001b[32m\"none\"\u001b[39m\n                    \u001b[33mheight\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mstroke\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                    \u001b[33mstroke-linecap\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-linejoin\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-width\u001b[39m=\u001b[32m\"2\"\u001b[39m\n                    \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 24 24\"\u001b[39m\n                    \u001b[33mwidth\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M13 5h8\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M13 12h8\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M13 19h8\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"m3 17 2 2 4-4\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<rect\u001b[39m\n                      \u001b[33mheight\u001b[39m=\u001b[32m\"6\"\u001b[39m\n                      \u001b[33mrx\u001b[39m=\u001b[32m\"1\"\u001b[39m\n                      \u001b[33mwidth\u001b[39m=\u001b[32m\"6\"\u001b[39m\n                      \u001b[33mx\u001b[39m=\u001b[32m\"3\"\u001b[39m\n                      \u001b[33my\u001b[39m=\u001b[32m\"4\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                  \u001b[36m</svg>\u001b[39m\n                  \u001b[0mReview Queue\u001b[0m\n                  \u001b[36m<span\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"text-2xs tabular-nums text-muted-foreground\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[0m6\u001b[0m\n                  \u001b[36m</span>\u001b[39m\n                \u001b[36m</button>\u001b[39m\n              \u001b[36m</nav>\u001b[39m\n              \u001b[36m<div\u001b[39m\n                \u001b[33mclass\u001b[39m=\u001b[32m\"flex shrink-0 items-center gap-1.5\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<button\u001b[39m\n                  \u001b[33maria-label\u001b[39m=\u001b[32m\"Vault Status: Missing\"\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"knowledge-press relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5 text-amber-700 dark:text-amber-400\"\u001b[39m\n                  \u001b[33mdata-state\u001b[39m=\u001b[32m\"closed\"\u001b[39m\n                  \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-status-trigger\"\u001b[39m\n                  \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<svg\u001b[39m\n                    \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"lucide lucide-database h-4 w-4\"\u001b[39m\n                    \u001b[33mfill\u001b[39m=\u001b[32m\"none\"\u001b[39m\n                    \u001b[33mheight\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mstroke\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                    \u001b[33mstroke-linecap\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-linejoin\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-width\u001b[39m=\u001b[32m\"2\"\u001b[39m\n                    \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 24 24\"\u001b[39m\n                    \u001b[33mwidth\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[36m<ellipse\u001b[39m\n                      \u001b[33mcx\u001b[39m=\u001b[32m\"12\"\u001b[39m\n     ...\n    at Proxy.<anonymous> (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1486:10)\n    at Proxy.<anonymous> (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1155:15)\n    at Proxy.methodWrapper (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)\n    at C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-page.test.tsx:1099:49\n    at runWithExpensiveErrorDiagnosticsDisabled (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\@testing-library+dom@10.4.1\\node_modules\\@testing-library\\dom\\dist\\config.js:47:12)\n    at checkCallback (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\@testing-library+dom@10.4.1\\node_modules\\@testing-library\\dom\\dist\\wait-for.js:124:77)\n    at MutationObserver.checkRealTimersCallback (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\@testing-library+dom@10.4.1\\node_modules\\@testing-library\\dom\\dist\\wait-for.js:118:16)\n    at MutationObserver.invokeTheCallbackFunction (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\jsdom@28.1.0\\node_modules\\jsdom\\lib\\generated\\idl\\MutationCallback.js:19:26)\n    at notifyMutationObservers (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\jsdom@28.1.0\\node_modules\\jsdom\\lib\\jsdom\\living\\helpers\\mutation-observers.js:160:22)\n    at D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\jsdom@28.1.0\\node_modules\\jsdom\\lib\\jsdom\\living\\helpers\\mutation-observers.js:133:5"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page initializes, imports, searches, opens results, and applies drafts",
+          "status": "passed",
+          "title": "initializes, imports, searches, opens results, and applies drafts",
+          "duration": 1369.6035999999986,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page builds a Source Set from search results and creates Studio artifact drafts without applying",
+          "status": "passed",
+          "title": "builds a Source Set from search results and creates Studio artifact drafts without applying",
+          "duration": 450.3855999999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page shows grouped inbox candidates and promotes or dismisses them without applying",
+          "status": "passed",
+          "title": "shows grouped inbox candidates and promotes or dismisses them without applying",
+          "duration": 114.13500000000022,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page shows Governance quality metrics after a health check",
+          "status": "passed",
+          "title": "shows Governance quality metrics after a health check",
+          "duration": 240.07589999999982,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page answers knowledge librarian questions with local citations and a checkpoint",
+          "status": "failed",
+          "title": "answers knowledge librarian questions with local citations and a checkpoint",
+          "duration": 1556.2760999999991,
+          "failureMessages": [
+            "AssertionError: expected \"vi.fn()\" to be called with arguments: [ { …(4) } ]\n\nNumber of calls: 0\n\n\nIgnored nodes: comments, script, style\n\u001b[36m<html\u001b[39m\n  \u001b[33mlang\u001b[39m=\u001b[32m\"en\"\u001b[39m\n\u001b[36m>\u001b[39m\n  \u001b[36m<head />\u001b[39m\n  \u001b[36m<body\u001b[39m\n    \u001b[33mstyle\u001b[39m=\u001b[32m\"\"\u001b[39m\n  \u001b[36m>\u001b[39m\n    \u001b[36m<div>\u001b[39m\n      \u001b[36m<div\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"-m-5 flex h-[calc(100%+2.5rem)] min-h-0 flex-col overflow-hidden bg-surface-sidebar\"\u001b[39m\n        \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-page\"\u001b[39m\n      \u001b[36m>\u001b[39m\n        \u001b[36m<div\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"flex min-h-0 flex-1 flex-col overflow-hidden rounded-tl-xl bg-material-canvas shadow-[inset_1px_0_0_hsl(var(--border)/0.65)]\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<h1\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"sr-only\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[0mKnowledge\u001b[0m\n          \u001b[36m</h1>\u001b[39m\n          \u001b[36m<header\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"shrink-0 border-b border-border/40 bg-material-canvas px-3 md:px-5\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<div\u001b[39m\n              \u001b[33mclass\u001b[39m=\u001b[32m\"flex min-w-0 items-center justify-between gap-3\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<nav\u001b[39m\n                \u001b[33maria-label\u001b[39m=\u001b[32m\"Knowledge primary navigation\"\u001b[39m\n                \u001b[33mclass\u001b[39m=\u001b[32m\"flex h-12 min-w-0 items-center gap-0.5 overflow-x-auto\"\u001b[39m\n                \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-workbench-tabs\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<button\u001b[39m\n                  \u001b[33maria-current\u001b[39m=\u001b[32m\"page\"\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"flex h-9 shrink-0 items-center gap-1.5 border-b-2 px-2 text-meta font-medium transition-colors border-foreground text-foreground\"\u001b[39m\n                  \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-tab-library\"\u001b[39m\n                  \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<svg\u001b[39m\n                    \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"lucide lucide-layers h-3.5 w-3.5\"\u001b[39m\n                    \u001b[33mfill\u001b[39m=\u001b[32m\"none\"\u001b[39m\n                    \u001b[33mheight\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mstroke\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                    \u001b[33mstroke-linecap\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-linejoin\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-width\u001b[39m=\u001b[32m\"2\"\u001b[39m\n                    \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 24 24\"\u001b[39m\n                    \u001b[33mwidth\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                  \u001b[36m</svg>\u001b[39m\n                  \u001b[0mLibrary\u001b[0m\n                \u001b[36m</button>\u001b[39m\n                \u001b[36m<button\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"flex h-9 shrink-0 items-center gap-1.5 border-b-2 px-2 text-meta font-medium transition-colors border-transparent text-muted-foreground hover:text-foreground\"\u001b[39m\n                  \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-tab-review-queue\"\u001b[39m\n                  \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<svg\u001b[39m\n                    \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"lucide lucide-list-todo h-3.5 w-3.5\"\u001b[39m\n                    \u001b[33mfill\u001b[39m=\u001b[32m\"none\"\u001b[39m\n                    \u001b[33mheight\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mstroke\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                    \u001b[33mstroke-linecap\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-linejoin\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-width\u001b[39m=\u001b[32m\"2\"\u001b[39m\n                    \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 24 24\"\u001b[39m\n                    \u001b[33mwidth\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M13 5h8\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M13 12h8\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"M13 19h8\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<path\u001b[39m\n                      \u001b[33md\u001b[39m=\u001b[32m\"m3 17 2 2 4-4\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<rect\u001b[39m\n                      \u001b[33mheight\u001b[39m=\u001b[32m\"6\"\u001b[39m\n                      \u001b[33mrx\u001b[39m=\u001b[32m\"1\"\u001b[39m\n                      \u001b[33mwidth\u001b[39m=\u001b[32m\"6\"\u001b[39m\n                      \u001b[33mx\u001b[39m=\u001b[32m\"3\"\u001b[39m\n                      \u001b[33my\u001b[39m=\u001b[32m\"4\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                  \u001b[36m</svg>\u001b[39m\n                  \u001b[0mReview Queue\u001b[0m\n                  \u001b[36m<span\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"text-2xs tabular-nums text-muted-foreground\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[0m6\u001b[0m\n                  \u001b[36m</span>\u001b[39m\n                \u001b[36m</button>\u001b[39m\n              \u001b[36m</nav>\u001b[39m\n              \u001b[36m<div\u001b[39m\n                \u001b[33mclass\u001b[39m=\u001b[32m\"flex shrink-0 items-center gap-1.5\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<button\u001b[39m\n                  \u001b[33maria-label\u001b[39m=\u001b[32m\"Vault Status: Missing\"\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"knowledge-press relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5 text-amber-700 dark:text-amber-400\"\u001b[39m\n                  \u001b[33mdata-state\u001b[39m=\u001b[32m\"closed\"\u001b[39m\n                  \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-status-trigger\"\u001b[39m\n                  \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<svg\u001b[39m\n                    \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"lucide lucide-database h-4 w-4\"\u001b[39m\n                    \u001b[33mfill\u001b[39m=\u001b[32m\"none\"\u001b[39m\n                    \u001b[33mheight\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mstroke\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                    \u001b[33mstroke-linecap\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-linejoin\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                    \u001b[33mstroke-width\u001b[39m=\u001b[32m\"2\"\u001b[39m\n                    \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 24 24\"\u001b[39m\n                    \u001b[33mwidth\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                    \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[36m<ellipse\u001b[39m\n         ...\n    at Proxy.<anonymous> (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1486:10)\n    at Proxy.<anonymous> (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1155:15)\n    at Proxy.methodWrapper (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)\n    at C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-page.test.tsx:1326:52\n    at runWithExpensiveErrorDiagnosticsDisabled (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\@testing-library+dom@10.4.1\\node_modules\\@testing-library\\dom\\dist\\config.js:47:12)\n    at checkCallback (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\@testing-library+dom@10.4.1\\node_modules\\@testing-library\\dom\\dist\\wait-for.js:124:77)\n    at MutationObserver.checkRealTimersCallback (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\@testing-library+dom@10.4.1\\node_modules\\@testing-library\\dom\\dist\\wait-for.js:118:16)\n    at MutationObserver.invokeTheCallbackFunction (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\jsdom@28.1.0\\node_modules\\jsdom\\lib\\generated\\idl\\MutationCallback.js:19:26)\n    at notifyMutationObservers (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\jsdom@28.1.0\\node_modules\\jsdom\\lib\\jsdom\\living\\helpers\\mutation-observers.js:160:22)\n    at D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\jsdom@28.1.0\\node_modules\\jsdom\\lib\\jsdom\\living\\helpers\\mutation-observers.js:133:5"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page shows a recoverable librarian retrieval error with retry",
+          "status": "failed",
+          "title": "shows a recoverable librarian retrieval error with retry",
+          "duration": 1142.8652000000002,
+          "failureMessages": [
+            "Error: Unable to find an element by: [data-testid=\"knowledge-librarian-error\"]\n\nIgnored nodes: comments, script, style\n\u001b[36m<body\u001b[39m\n  \u001b[33mstyle\u001b[39m=\u001b[32m\"\"\u001b[39m\n\u001b[36m>\u001b[39m\n  \u001b[36m<div>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"-m-5 flex h-[calc(100%+2.5rem)] min-h-0 flex-col overflow-hidden bg-surface-sidebar\"\u001b[39m\n      \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-page\"\u001b[39m\n    \u001b[36m>\u001b[39m\n      \u001b[36m<div\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"flex min-h-0 flex-1 flex-col overflow-hidden rounded-tl-xl bg-material-canvas shadow-[inset_1px_0_0_hsl(var(--border)/0.65)]\"\u001b[39m\n      \u001b[36m>\u001b[39m\n        \u001b[36m<h1\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"sr-only\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[0mKnowledge\u001b[0m\n        \u001b[36m</h1>\u001b[39m\n        \u001b[36m<header\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"shrink-0 border-b border-border/40 bg-material-canvas px-3 md:px-5\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<div\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"flex min-w-0 items-center justify-between gap-3\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<nav\u001b[39m\n              \u001b[33maria-label\u001b[39m=\u001b[32m\"Knowledge primary navigation\"\u001b[39m\n              \u001b[33mclass\u001b[39m=\u001b[32m\"flex h-12 min-w-0 items-center gap-0.5 overflow-x-auto\"\u001b[39m\n              \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-workbench-tabs\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<button\u001b[39m\n                \u001b[33maria-current\u001b[39m=\u001b[32m\"page\"\u001b[39m\n                \u001b[33mclass\u001b[39m=\u001b[32m\"flex h-9 shrink-0 items-center gap-1.5 border-b-2 px-2 text-meta font-medium transition-colors border-foreground text-foreground\"\u001b[39m\n                \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-tab-library\"\u001b[39m\n                \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<svg\u001b[39m\n                  \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"lucide lucide-layers h-3.5 w-3.5\"\u001b[39m\n                  \u001b[33mfill\u001b[39m=\u001b[32m\"none\"\u001b[39m\n                  \u001b[33mheight\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                  \u001b[33mstroke\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                  \u001b[33mstroke-linecap\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                  \u001b[33mstroke-linejoin\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                  \u001b[33mstroke-width\u001b[39m=\u001b[32m\"2\"\u001b[39m\n                  \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 24 24\"\u001b[39m\n                  \u001b[33mwidth\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                  \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<path\u001b[39m\n                    \u001b[33md\u001b[39m=\u001b[32m\"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z\"\u001b[39m\n                  \u001b[36m/>\u001b[39m\n                  \u001b[36m<path\u001b[39m\n                    \u001b[33md\u001b[39m=\u001b[32m\"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12\"\u001b[39m\n                  \u001b[36m/>\u001b[39m\n                  \u001b[36m<path\u001b[39m\n                    \u001b[33md\u001b[39m=\u001b[32m\"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17\"\u001b[39m\n                  \u001b[36m/>\u001b[39m\n                \u001b[36m</svg>\u001b[39m\n                \u001b[0mLibrary\u001b[0m\n              \u001b[36m</button>\u001b[39m\n              \u001b[36m<button\u001b[39m\n                \u001b[33mclass\u001b[39m=\u001b[32m\"flex h-9 shrink-0 items-center gap-1.5 border-b-2 px-2 text-meta font-medium transition-colors border-transparent text-muted-foreground hover:text-foreground\"\u001b[39m\n                \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-tab-review-queue\"\u001b[39m\n                \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<svg\u001b[39m\n                  \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"lucide lucide-list-todo h-3.5 w-3.5\"\u001b[39m\n                  \u001b[33mfill\u001b[39m=\u001b[32m\"none\"\u001b[39m\n                  \u001b[33mheight\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                  \u001b[33mstroke\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                  \u001b[33mstroke-linecap\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                  \u001b[33mstroke-linejoin\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                  \u001b[33mstroke-width\u001b[39m=\u001b[32m\"2\"\u001b[39m\n                  \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 24 24\"\u001b[39m\n                  \u001b[33mwidth\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                  \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<path\u001b[39m\n                    \u001b[33md\u001b[39m=\u001b[32m\"M13 5h8\"\u001b[39m\n                  \u001b[36m/>\u001b[39m\n                  \u001b[36m<path\u001b[39m\n                    \u001b[33md\u001b[39m=\u001b[32m\"M13 12h8\"\u001b[39m\n                  \u001b[36m/>\u001b[39m\n                  \u001b[36m<path\u001b[39m\n                    \u001b[33md\u001b[39m=\u001b[32m\"M13 19h8\"\u001b[39m\n                  \u001b[36m/>\u001b[39m\n                  \u001b[36m<path\u001b[39m\n                    \u001b[33md\u001b[39m=\u001b[32m\"m3 17 2 2 4-4\"\u001b[39m\n                  \u001b[36m/>\u001b[39m\n                  \u001b[36m<rect\u001b[39m\n                    \u001b[33mheight\u001b[39m=\u001b[32m\"6\"\u001b[39m\n                    \u001b[33mrx\u001b[39m=\u001b[32m\"1\"\u001b[39m\n                    \u001b[33mwidth\u001b[39m=\u001b[32m\"6\"\u001b[39m\n                    \u001b[33mx\u001b[39m=\u001b[32m\"3\"\u001b[39m\n                    \u001b[33my\u001b[39m=\u001b[32m\"4\"\u001b[39m\n                  \u001b[36m/>\u001b[39m\n                \u001b[36m</svg>\u001b[39m\n                \u001b[0mReview Queue\u001b[0m\n                \u001b[36m<span\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"text-2xs tabular-nums text-muted-foreground\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[0m6\u001b[0m\n                \u001b[36m</span>\u001b[39m\n              \u001b[36m</button>\u001b[39m\n            \u001b[36m</nav>\u001b[39m\n            \u001b[36m<div\u001b[39m\n              \u001b[33mclass\u001b[39m=\u001b[32m\"flex shrink-0 items-center gap-1.5\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<button\u001b[39m\n                \u001b[33maria-label\u001b[39m=\u001b[32m\"Vault Status: Missing\"\u001b[39m\n                \u001b[33mclass\u001b[39m=\u001b[32m\"knowledge-press relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5 text-amber-700 dark:text-amber-400\"\u001b[39m\n                \u001b[33mdata-state\u001b[39m=\u001b[32m\"closed\"\u001b[39m\n                \u001b[33mdata-testid\u001b[39m=\u001b[32m\"knowledge-status-trigger\"\u001b[39m\n                \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<svg\u001b[39m\n                  \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"lucide lucide-database h-4 w-4\"\u001b[39m\n                  \u001b[33mfill\u001b[39m=\u001b[32m\"none\"\u001b[39m\n                  \u001b[33mheight\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                  \u001b[33mstroke\u001b[39m=\u001b[32m\"currentColor\"\u001b[39m\n                  \u001b[33mstroke-linecap\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                  \u001b[33mstroke-linejoin\u001b[39m=\u001b[32m\"round\"\u001b[39m\n                  \u001b[33mstroke-width\u001b[39m=\u001b[32m\"2\"\u001b[39m\n                  \u001b[33mviewBox\u001b[39m=\u001b[32m\"0 0 24 24\"\u001b[39m\n                  \u001b[33mwidth\u001b[39m=\u001b[32m\"24\"\u001b[39m\n                  \u001b[33mxmlns\u001b[39m=\u001b[32m\"http://www.w3.org/2000/svg\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<ellipse\u001b[39m\n                    \u001b[33mcx\u001b[39m=\u001b[32m\"12\"\u001b[39m\n                    \u001b[33mcy\u001b[39m=\u001b[32m\"5\"\u001b[39m\n                    \u001b[33mrx\u001b[39m=\u001b[32m\"9\"\u001b[39m\n                    \u001b[33mry\u001b[39m=\u001b[32m\"3\"\u001b[39m\n                  \u001b[36m/>\u001b[39m\n                  \u001b[36m<path\u001b[39m\n                    \u001b[33md\u001b[39m=\u001b[32m\"M3 5V19A9 3 0 0 0 21 19V5\"\u001b[39m\n                  \u001b[36...\n    at waitForWrapper (D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\@testing-library+dom@10.4.1\\node_modules\\@testing-library\\dom\\dist\\wait-for.js:163:27)\n    at D:\\tmp\\project-rag-longterm-20261109-deps\\clawx\\.pnpm\\@testing-library+dom@10.4.1\\node_modules\\@testing-library\\dom\\dist\\query-helpers.js:86:33\n    at C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-page.test.tsx:1400:18\n    at file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:20"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page keeps an unfinished note mounted while opening and closing the knowledge floating window",
+          "status": "passed",
+          "title": "keeps an unfinished note mounted while opening and closing the knowledge floating window",
+          "duration": 314.3630000000012,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page requires the selected draft to have its own proposal before approval",
+          "status": "passed",
+          "title": "requires the selected draft to have its own proposal before approval",
+          "duration": 235.9425999999985,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page keeps the current draft and proposal when an earlier proposal request finishes late",
+          "status": "passed",
+          "title": "keeps the current draft and proposal when an earlier proposal request finishes late",
+          "duration": 126.51280000000042,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page validates an OKF folder and imports only user-selected concepts",
+          "status": "passed",
+          "title": "validates an OKF folder and imports only user-selected concepts",
+          "duration": 245.29559999999947,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Knowledge page"
+          ],
+          "fullName": "Knowledge page keeps SEKB suggestions review-only until explicit confirm and supports reject plus retrieve",
+          "status": "passed",
+          "title": "keeps SEKB suggestions review-only until explicit confirm and supports reject plus retrieve",
+          "duration": 547.6058999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794847142824,
+      "endTime": 1794847151659.606,
+      "status": "failed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-page.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission enforces the read budget for an explicit pinned source",
+          "status": "failed",
+          "title": "enforces the read budget for an explicit pinned source",
+          "duration": 8.167899999999918,
+          "failureMessages": [
+            "AssertionError: expected { Object (content) } to match object { Object (success, readDenial) }\n(1 matching property omitted from actual)\n    at Proxy.<anonymous> (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1282:10)\n    at Proxy.<anonymous> (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1155:15)\n    at Proxy.methodWrapper (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)\n    at C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-source-set-answer.test.ts:19:20\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:20"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission revalidates distinct ranges of one native subject, later denial=false",
+          "status": "passed",
+          "title": "revalidates distinct ranges of one native subject, later denial=false",
+          "duration": 5.356699999999819,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission revalidates distinct ranges of one native subject, later denial=true",
+          "status": "passed",
+          "title": "revalidates distinct ranges of one native subject, later denial=true",
+          "duration": 1.1182999999998628,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission preserves native-memory ownership through selected-source materialization",
+          "status": "passed",
+          "title": "preserves native-memory ownership through selected-source materialization",
+          "duration": 0.7690000000000055,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission preserves role-memory ownership through selected-source materialization",
+          "status": "passed",
+          "title": "preserves role-memory ownership through selected-source materialization",
+          "duration": 0.5959000000000287,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission retains owner revision, freshness, exact read bytes and advisory trust",
+          "status": "passed",
+          "title": "retains owner revision, freshness, exact read bytes and advisory trust",
+          "duration": 0.9434999999998581,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status archived",
+          "status": "passed",
+          "title": "rejects owner status archived",
+          "duration": 0.5469000000000506,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status revoked",
+          "status": "passed",
+          "title": "rejects owner status revoked",
+          "duration": 0.37400000000002365,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status deleted",
+          "status": "passed",
+          "title": "rejects owner status deleted",
+          "duration": 0.30529999999998836,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status denied",
+          "status": "passed",
+          "title": "rejects owner status denied",
+          "duration": 0.2742000000000644,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status stale",
+          "status": "passed",
+          "title": "rejects owner status stale",
+          "duration": 0.23289999999997235,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects owner status unexpected-state",
+          "status": "passed",
+          "title": "rejects owner status unexpected-state",
+          "duration": 0.22329999999988104,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier sensitive",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier sensitive",
+          "duration": 0.24060000000008586,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier secret-adjacent",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier secret-adjacent",
+          "duration": 0.2135000000000673,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier secret",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier secret",
+          "duration": 0.15079999999989013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier personal",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier personal",
+          "duration": 0.14909999999986212,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier unknown-tier",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier unknown-tier",
+          "duration": 0.1372999999998683,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier __proto__",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier __proto__",
+          "duration": 0.1332999999999629,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier constructor",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier constructor",
+          "duration": 0.12930000000005748,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects restricted or unknown privacy tier null",
+          "status": "passed",
+          "title": "rejects restricted or unknown privacy tier null",
+          "duration": 0.13169999999990978,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission cannot replace an owner ACL with operator access: {\"read\":[\"another-operator\"]}",
+          "status": "passed",
+          "title": "cannot replace an owner ACL with operator access: {\"read\":[\"another-operator\"]}",
+          "duration": 0.23480000000017753,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission cannot replace an owner ACL with operator access: null",
+          "status": "passed",
+          "title": "cannot replace an owner ACL with operator access: null",
+          "duration": 0.1632999999999356,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission cannot replace an owner ACL with operator access: {\"read\":\"operator\"}",
+          "status": "passed",
+          "title": "cannot replace an owner ACL with operator access: {\"read\":\"operator\"}",
+          "duration": 0.13869999999997162,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission enforces a supplied workspace filter against the owner scope",
+          "status": "passed",
+          "title": "enforces a supplied workspace filter against the owner scope",
+          "duration": 0.264699999999948,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: null",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: null",
+          "duration": 0.1511000000000422,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {}",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: {}",
+          "duration": 0.09169999999994616,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {\"title\":\"An empty source\"}",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: {\"title\":\"An empty source\"}",
+          "duration": 0.07799999999997453,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {\"content\":\"   \",\"title\":\"No source body\"}",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: {\"content\":\"   \",\"title\":\"No source body\"}",
+          "duration": 0.09120000000007167,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {\"content\":\"\",\"body\":\"Stale fallback body\"}",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: {\"content\":\"\",\"body\":\"Stale fallback body\"}",
+          "duration": 0.10639999999989413,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not turn an empty or wrong-owner result into title evidence: {\"corpus\":\"memory\",\"content\":\"  Review before applying.\\nKeep the original read bytes.\\n\"}",
+          "status": "passed",
+          "title": "does not turn an empty or wrong-owner result into title evidence: {\"corpus\":\"memory\",\"content\":\"  Review before applying.\\nKeep the original read bytes.\\n\"}",
+          "duration": 0.10560000000009495,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission discloses a truncated range without pretending it read the complete page",
+          "status": "passed",
+          "title": "discloses a truncated range without pretending it read the complete page",
+          "duration": 0.35760000000004766,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects malformed owner scope metadata: {\"scope\":null}",
+          "status": "passed",
+          "title": "rejects malformed owner scope metadata: {\"scope\":null}",
+          "duration": 0.3203000000000884,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects malformed owner scope metadata: {\"scope\":{\"workspaceId\":42}}",
+          "status": "passed",
+          "title": "rejects malformed owner scope metadata: {\"scope\":{\"workspaceId\":42}}",
+          "duration": 0.17210000000000036,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects malformed owner scope metadata: {\"workspaceId\":0}",
+          "status": "passed",
+          "title": "rejects malformed owner scope metadata: {\"workspaceId\":0}",
+          "duration": 0.20010000000002037,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects an invalid supplied read range: {\"fromLine\":0}",
+          "status": "passed",
+          "title": "rejects an invalid supplied read range: {\"fromLine\":0}",
+          "duration": 0.23759999999992942,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects an invalid supplied read range: {\"totalLines\":2}",
+          "status": "passed",
+          "title": "rejects an invalid supplied read range: {\"totalLines\":2}",
+          "duration": 0.18910000000005311,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects an invalid supplied read range: {\"truncated\":\"false\"}",
+          "status": "passed",
+          "title": "rejects an invalid supplied read range: {\"truncated\":\"false\"}",
+          "duration": 0.157399999999825,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not invent an indexing timestamp for a legacy owner result",
+          "status": "passed",
+          "title": "does not invent an indexing timestamp for a legacy owner result",
+          "duration": 0.34979999999995925,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not relax an explicit version pin after a mismatch: {\"revision\":\"18\"}",
+          "status": "passed",
+          "title": "does not relax an explicit version pin after a mismatch: {\"revision\":\"18\"}",
+          "duration": 0.20849999999995816,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not relax an explicit version pin after a mismatch: {\"contentDigest\":\"sha256:2f04f3044eb15f46d7f1f6e22cbb7e34761eb9daa5d91ce425a4048dd82172eb\"}",
+          "status": "passed",
+          "title": "does not relax an explicit version pin after a mismatch: {\"contentDigest\":\"sha256:2f04f3044eb15f46d7f1f6e22cbb7e34761eb9daa5d91ce425a4048dd82172eb\"}",
+          "duration": 0.1590000000001055,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission rejects a supplied owner content digest that does not match the read bytes",
+          "status": "passed",
+          "title": "rejects a supplied owner content digest that does not match the read bytes",
+          "duration": 0.20240000000012515,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission passes only admitted content into the optional embedding provider",
+          "status": "passed",
+          "title": "passes only admitted content into the optional embedding provider",
+          "duration": 0.7005999999998949,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not call the provider or refill rejected text when no source is admitted",
+          "status": "passed",
+          "title": "does not call the provider or refill rejected text when no source is admitted",
+          "duration": 0.35960000000000036,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission preserves structured owner claim conflicts and their version-bound citations",
+          "status": "passed",
+          "title": "preserves structured owner claim conflicts and their version-bound citations",
+          "duration": 7.567199999999957,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission deduplicates canonical aliases without duplicating the evidence",
+          "status": "passed",
+          "title": "deduplicates canonical aliases without duplicating the evidence",
+          "duration": 0.47849999999994,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "selected Source Set owner admission"
+          ],
+          "fullName": "selected Source Set owner admission does not let an active alias hide a later archived read of the same owner",
+          "status": "passed",
+          "title": "does not let an active alias hide a later archived read of the same owner",
+          "duration": 0.3044999999999618,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794847197476,
+      "endTime": 1794847197510.3044,
+      "status": "failed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/knowledge-source-set-answer.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners keeps the runtime owner distinct from a public-artifact bridge",
+          "status": "failed",
+          "title": "keeps the runtime owner distinct from a public-artifact bridge",
+          "duration": 2973.1594999999998,
+          "failureMessages": [
+            "AssertionError: expected { status: 'denied', …(1) } to match object { status: 'admitted' }\n(1 matching property omitted from actual)\n    at Proxy.<anonymous> (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1282:10)\n    at Proxy.<anonymous> (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+expect@4.1.1/node_modules/@vitest/expect/dist/index.js:1155:15)\n    at Proxy.methodWrapper (file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/chai@6.2.2/node_modules/chai/index.js:1700:25)\n    at C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-memory-domains.test.ts:74:8\n    at file:///D:/tmp/project-rag-longterm-20261109-deps/clawx/.pnpm/@vitest+runner@4.1.1/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:20"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners denies backend owner snapshots without admin scope []",
+          "status": "passed",
+          "title": "denies backend owner snapshots without admin scope []",
+          "duration": 9553.279999999999,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners denies backend owner snapshots without admin scope [\"operator.read\"]",
+          "status": "passed",
+          "title": "denies backend owner snapshots without admin scope [\"operator.read\"]",
+          "duration": 115.45049999999901,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners denies backend owner snapshots without admin scope [\"operator.write\"]",
+          "status": "passed",
+          "title": "denies backend owner snapshots without admin scope [\"operator.write\"]",
+          "duration": 102.04530000000159,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners binds a plain native file to the configured owner workspace and agent",
+          "status": "passed",
+          "title": "binds a plain native file to the configured owner workspace and agent",
+          "duration": 88.34029999999984,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects an unpinned native lookup at absolute-outside",
+          "status": "passed",
+          "title": "rejects an unpinned native lookup at absolute-outside",
+          "duration": 79.10050000000047,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects an unpinned native lookup at relative-outside",
+          "status": "passed",
+          "title": "rejects an unpinned native lookup at relative-outside",
+          "duration": 88.39159999999902,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects an unpinned native lookup at workspace-nonmemory",
+          "status": "passed",
+          "title": "rejects an unpinned native lookup at workspace-nonmemory",
+          "duration": 96.70690000000104,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native pin with reverse coordinates",
+          "status": "passed",
+          "title": "rejects a native pin with reverse coordinates",
+          "duration": 118.1482999999971,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native pin with past-eof coordinates",
+          "status": "passed",
+          "title": "rejects a native pin with past-eof coordinates",
+          "duration": 133.14389999999912,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native pin with fractional coordinates",
+          "status": "passed",
+          "title": "rejects a native pin with fractional coordinates",
+          "duration": 92.61380000000281,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native pin with wrong-line coordinates",
+          "status": "passed",
+          "title": "rejects a native pin with wrong-line coordinates",
+          "duration": 106.99150000000009,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a native pin with split-utf8 coordinates",
+          "status": "passed",
+          "title": "rejects a native pin with split-utf8 coordinates",
+          "duration": 109.03810000000158,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners releases only its own internal read binding after attempt success",
+          "status": "passed",
+          "title": "releases only its own internal read binding after attempt success",
+          "duration": 12844.034399999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners releases only its own internal read binding after attempt error",
+          "status": "passed",
+          "title": "releases only its own internal read binding after attempt error",
+          "duration": 1116.886400000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners releases only its own internal read binding after attempt rebind",
+          "status": "passed",
+          "title": "releases only its own internal read binding after attempt rebind",
+          "duration": 1063.5809000000008,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects invalid UTF8 byte 128 before assigning an owner digest or pin",
+          "status": "passed",
+          "title": "rejects invalid UTF8 byte 128 before assigning an owner digest or pin",
+          "duration": 96.68480000000272,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects invalid UTF8 byte 129 before assigning an owner digest or pin",
+          "status": "passed",
+          "title": "rejects invalid UTF8 byte 129 before assigning an owner digest or pin",
+          "duration": 99.87900000000081,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rereads a non-default agent from that agent provider and rejects a conflicting session",
+          "status": "passed",
+          "title": "rereads a non-default agent from that agent provider and rejects a conflicting session",
+          "duration": 86.49369999999908,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners binds internal memory to the registered run while ordinary missing sessions stay denied",
+          "status": "passed",
+          "title": "binds internal memory to the registered run while ordinary missing sessions stay denied",
+          "duration": 108.93890000000101,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds internal memory when its run owner changes by end during IO",
+          "status": "passed",
+          "title": "withholds internal memory when its run owner changes by end during IO",
+          "duration": 107.12909999999829,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds internal memory when its run owner changes by rebind during IO",
+          "status": "passed",
+          "title": "withholds internal memory when its run owner changes by rebind during IO",
+          "duration": 93.26030000000173,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners forwards validated backend egress providers and rejects malformed provider selectors",
+          "status": "passed",
+          "title": "forwards validated backend egress providers and rejects malformed provider selectors",
+          "duration": 100.3315999999977,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners resolves native and role refs with the same ID to separate bodies and namespaces",
+          "status": "passed",
+          "title": "resolves native and role refs with the same ID to separate bodies and namespaces",
+          "duration": 451.6131999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners preserves raw UTF8/CRLF bytes and fences correction, deletion, scope and slot changes",
+          "status": "passed",
+          "title": "preserves raw UTF8/CRLF bytes and fences correction, deletion, scope and slot changes",
+          "duration": 113.5396000000037,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects owner policy acl:\n  read: [someone-else]\n before returning native content",
+          "status": "passed",
+          "title": "rejects owner policy acl:\n  read: [someone-else]\n before returning native content",
+          "duration": 97.98969999999827,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects owner policy sensitivity: secret\n before returning native content",
+          "status": "passed",
+          "title": "rejects owner policy sensitivity: secret\n before returning native content",
+          "duration": 129.3596000000034,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects owner policy status: revoked\n before returning native content",
+          "status": "passed",
+          "title": "rejects owner policy status: revoked\n before returning native content",
+          "duration": 105.89790000000357,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects owner policy scope:\n  workspaceId: other-workspace\n before returning native content",
+          "status": "passed",
+          "title": "rejects owner policy scope:\n  workspaceId: other-workspace\n before returning native content",
+          "duration": 101.27759999999398,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects owner policy retention:\n  policy: source-coupled\n  expiresAt: \"2020-01-01T00:00:00Z\"\n before returning native content",
+          "status": "passed",
+          "title": "rejects owner policy retention:\n  policy: source-coupled\n  expiresAt: \"2020-01-01T00:00:00Z\"\n before returning native content",
+          "duration": 92.5138999999981,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners does not read the previous role store under a foreign namespace pin",
+          "status": "passed",
+          "title": "does not read the previous role store under a foreign namespace pin",
+          "duration": 718.9170000000013,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners uses the explicit role lookup without falling back to a conflicting reference ID",
+          "status": "passed",
+          "title": "uses the explicit role lookup without falling back to a conflicting reference ID",
+          "duration": 458.33980000000156,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rejects a disabled selected memory owner instead of reading the previous plugin",
+          "status": "passed",
+          "title": "rejects a disabled selected memory owner instead of reading the previous plugin",
+          "duration": 94.32179999999789,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rereads the provider canonical path when the initial lookup contains an alias segment",
+          "status": "passed",
+          "title": "rereads the provider canonical path when the initial lookup contains an alias segment",
+          "duration": 111.83580000000075,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners binds a provider junction and the captured physical workspace to one namespace",
+          "status": "passed",
+          "title": "binds a provider junction and the captured physical workspace to one namespace",
+          "duration": 165.01720000000205,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when the provider workspace changes during file IO",
+          "status": "passed",
+          "title": "withholds content when the provider workspace changes during file IO",
+          "duration": 110.79780000000028,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners returns a source denial for invalid metadata",
+          "status": "passed",
+          "title": "returns a source denial for invalid metadata",
+          "duration": 94.84749999999622,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners returns a source denial for invalid provider-io",
+          "status": "passed",
+          "title": "returns a source denial for invalid provider-io",
+          "duration": 96.01759999999922,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners fences a session workspace-id rebind during the read",
+          "status": "passed",
+          "title": "fences a session workspace-id rebind during the read",
+          "duration": 111.35499999999593,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners fences a session workspace-root rebind during the read",
+          "status": "passed",
+          "title": "fences a session workspace-root rebind during the read",
+          "duration": 133.8162999999986,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when slot changes during the owner read",
+          "status": "passed",
+          "title": "withholds content when slot changes during the owner read",
+          "duration": 124.37349999999424,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when disable changes during the owner read",
+          "status": "passed",
+          "title": "withholds content when disable changes during the owner read",
+          "duration": 93.62710000000516,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when search-disable changes during the owner read",
+          "status": "passed",
+          "title": "withholds content when search-disable changes during the owner read",
+          "duration": 98.0737999999983,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when runtime changes during the owner read",
+          "status": "passed",
+          "title": "withholds content when runtime changes during the owner read",
+          "duration": 97.20449999999983,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when session changes during the owner read",
+          "status": "passed",
+          "title": "withholds content when session changes during the owner read",
+          "duration": 109.79740000000311,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners withholds content when cancel changes during the owner read",
+          "status": "passed",
+          "title": "withholds content when cancel changes during the owner read",
+          "duration": 94.05289999999513,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners preserves the default tool page while raw owner reads retain the full file",
+          "status": "passed",
+          "title": "preserves the default tool page while raw owner reads retain the full file",
+          "duration": 113.20560000000114,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "Project RAG independent memory owners"
+          ],
+          "fullName": "Project RAG independent memory owners rereads a late native range with the whole-file version",
+          "status": "passed",
+          "title": "rereads a late native range with the whole-file version",
+          "duration": 152.15310000000318,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1794847162930,
+      "endTime": 1794847196374.153,
+      "status": "failed",
+      "message": "",
+      "name": "C:/Users/27933/.codex/worktrees/project-rag-longterm-20261109/ClawX/tests/unit/project-rag-memory-domains.test.ts"
+    }
+  ],
+  "actor": "codex-g2-rag-relay-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "evidenceKind": "development-counterexample",
+  "originalFileSha256": "2b0b28ff1724d36dc73e8e9b943a23dcb9350383294b0ed877eed53be537e973"
+}

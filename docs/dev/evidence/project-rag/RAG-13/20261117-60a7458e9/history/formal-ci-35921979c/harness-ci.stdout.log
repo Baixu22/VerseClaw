@@ -1,0 +1,288 @@
+Profiles:
+- fast
+- comms
+- e2e
+- rsi
+- concurrency-aux
+
+Scenario specs:
+- agent-dev-composable-scenarios: harness\specs\scenarios\agent-dev-composable-scenarios.md
+- autonomous-project-system: harness\specs\scenarios\autonomous-project-system.md
+- autonomy-resource-admission: harness\specs\scenarios\autonomy-resource-admission.md
+- autonomy-session-task-scope: harness\specs\scenarios\autonomy-session-task-scope.md
+- autonomy-task-completion: harness\specs\scenarios\autonomy-task-completion.md
+- capability-registry-v3: harness\specs\scenarios\capability-registry-v3.md
+- context-family: harness\specs\scenarios\context-family.md
+- context-folding-rlm: harness\specs\scenarios\context-folding-rlm.md
+- context-runtime-kit: harness\specs\scenarios\context-runtime-kit.md
+- conversation-resource-rendering: harness\specs\scenarios\conversation-resource-rendering.md
+- durable-task-system: harness\specs\scenarios\durable-task-system.md
+- execution-environment-migration: harness\specs\scenarios\execution-environment-migration.md
+- gateway-backend-communication: harness\specs\scenarios\gateway-backend-communication.md
+- gateway-startup-diagnostics: harness\specs\scenarios\gateway-startup-diagnostics.md
+- identity-scope-compatibility: harness\specs\scenarios\identity-scope-compatibility.md
+- plugin-lifecycle-management: harness\specs\scenarios\plugin-lifecycle-management.md
+- rareui-conversation-interactions: harness\specs\scenarios\rareui-conversation-interactions.md
+- session-derivation-ui: harness\specs\scenarios\session-derivation-ui.md
+- sidebar-session-row-management: harness\specs\scenarios\sidebar-session-row-management.md
+- sidebar-session-workgroup-drag-drop: harness\specs\scenarios\sidebar-session-workgroup-drag-drop.md
+- system-maturity-traceability: harness\specs\scenarios\system-maturity-traceability.md
+- versegit-validation-layer-extension: harness\specs\scenarios\versegit-validation-layer-extension.md
+- windows-release-trust: harness\specs\scenarios\windows-release-trust.md
+- windows-ui-v2: harness\specs\scenarios\windows-ui-v2.md
+- workspace-harness-bootstrap: harness\specs\scenarios\workspace-harness-bootstrap.md
+
+Rule specs:
+- active-config-guards: harness\specs\rules\active-config-guards.md
+- adaptive-resource-pressure: harness\specs\rules\adaptive-resource-pressure.md
+- agency-role-memory-import-boundary: harness\specs\rules\agency-role-memory-import-boundary.md
+- agency-role-package-boundary: harness\specs\rules\agency-role-package-boundary.md
+- agency-role-promotion-boundary: harness\specs\rules\agency-role-promotion-boundary.md
+- agent-browser-multi-tab: harness\specs\rules\agent-browser-multi-tab.md
+- agent-browser-supervised-task-boundary: harness\specs\rules\agent-browser-supervised-task-boundary.md
+- agent-browser-tool-interception: harness\specs\rules\agent-browser-tool-interception.md
+- agent-dev-conformance-evidence: harness\specs\rules\agent-dev-conformance-evidence.md
+- agent-engineering-acceptance-boundary: harness\specs\rules\agent-engineering-acceptance-boundary.md
+- api-client-transport-policy: harness\specs\rules\api-client-transport-policy.md
+- autonomy-resource-owner-admission: harness\specs\rules\autonomy-resource-owner-admission.md
+- autonomy-session-task-scope-boundary: harness\specs\rules\autonomy-session-task-scope-boundary.md
+- autonomy-task-completion-boundary: harness\specs\rules\autonomy-task-completion-boundary.md
+- backend-communication-boundary: harness\specs\rules\backend-communication-boundary.md
+- c1-gate-corpus-authority: harness\specs\rules\c1-gate-corpus-authority.md
+- capability-owner-resolution: harness\specs\rules\capability-owner-resolution.md
+- capability-registry-v3-boundary: harness\specs\rules\capability-registry-v3-boundary.md
+- channel-plugin-migration-guards: harness\specs\rules\channel-plugin-migration-guards.md
+- chat-loop-boundary: harness\specs\rules\chat-loop-boundary.md
+- chat-stream-publication: harness\specs\rules\chat-stream-publication.md
+- chat-viewport-budget: harness\specs\rules\chat-viewport-budget.md
+- clean-release-baseline-reproducibility: harness\specs\rules\clean-release-baseline-reproducibility.md
+- coding-approval-rate-diagnostics: harness\specs\rules\coding-approval-rate-diagnostics.md
+- coding-mutation-consistency-boundary: harness\specs\rules\coding-mutation-consistency-boundary.md
+- coding-runtime-workspace-dcs-producer-boundary: harness\specs\rules\coding-runtime-workspace-dcs-producer-boundary.md
+- comms-regression: harness\specs\rules\comms-regression.md
+- context-family-boundary: harness\specs\rules\context-family-boundary.md
+- context-folding-boundary: harness\specs\rules\context-folding-boundary.md
+- context-runtime-kit-boundary: harness\specs\rules\context-runtime-kit-boundary.md
+- contract-first-boundary: harness\specs\rules\contract-first-boundary.md
+- conversation-resource-boundary: harness\specs\rules\conversation-resource-boundary.md
+- dcs-production-flags-locale-quality: harness\specs\rules\dcs-production-flags-localization.md
+- dcs-stage2-handoff-boundary: harness\specs\rules\dcs-stage2-handoff-boundary.md
+- dcs-stage3-tool-registry-boundary: harness\specs\rules\dcs-stage3-tool-registry-boundary.md
+- dcs-stage4-knowledge-unification-boundary: harness\specs\rules\dcs-stage4-knowledge-unification-boundary.md
+- dcs-stage5-sekb-closure-boundary: harness\specs\rules\dcs-stage5-sekb-closure-boundary.md
+- disk-temp-policy: harness\specs\rules\disk-temp-policy.md
+- docs-sync: harness\specs\rules\docs-sync.md
+- durable-task-system-boundary: harness\specs\rules\durable-task-system-boundary.md
+- error-governance-boundary: harness\specs\rules\error-governance-boundary.md
+- exec-default-safety: harness\specs\rules\exec-default-safety.md
+- gateway-endpoint-single-source: harness\specs\rules\gateway-endpoint-single-source.md
+- gateway-readiness-policy: harness\specs\rules\gateway-readiness-policy.md
+- host-api-fallback-policy: harness\specs\rules\host-api-fallback-policy.md
+- host-events-fallback-policy: harness\specs\rules\host-events-fallback-policy.md
+- i18n-locale-coverage: harness\specs\rules\i18n-locale-coverage.md
+- identity-scope-boundary: harness\specs\rules\identity-scope-boundary.md
+- knowledge-bot-runtime-state: harness\specs\rules\knowledge-bot-runtime-state.md
+- knowledge-continuous-source-sync: harness\specs\rules\knowledge-continuous-source-sync.md
+- knowledge-evidence-and-connectors: harness\specs\rules\knowledge-evidence-and-connectors.md
+- knowledge-source-set-read-admission: harness\specs\rules\knowledge-source-set-read-admission.md
+- local-data-fail-closed-config: harness\specs\rules\local-data-fail-closed-config.md
+- locomo-evaluation-integrity: harness\specs\rules\locomo-evaluation-integrity.md
+- memory-self-edit-provenance-boundary: harness\specs\rules\memory-self-edit-provenance.md
+- outbound-protocol-payload-consistency: harness\specs\rules\outbound-protocol-payload-consistency.md
+- packaged-runtime-pruning-guards: harness\specs\rules\packaged-runtime-pruning-guards.md
+- paired-ablation-boundary: harness\specs\rules\paired-ablation-boundary.md
+- portable-spec-commands: harness\specs\rules\portable-spec-commands.md
+- process-control-backpressure: harness\specs\rules\process-control-backpressure.md
+- process-metrics-identity-and-freshness: harness\specs\rules\process-metrics-identity-and-freshness.md
+- product-policy-doc-truthfulness: harness\specs\rules\product-policy-doc-truthfulness.md
+- project-rag-long-term-boundary: harness\specs\rules\project-rag-long-term-boundary.md
+- prompt-cache-observation-boundary: harness\specs\rules\prompt-cache-observation-boundary.md
+- prompt-contribution-authority: harness\specs\rules\prompt-contribution-authority.md
+- prompt-injection-accounting: harness\specs\rules\prompt-injection-accounting.md
+- provider-envelope-reject-boundary: harness\specs\rules\provider-envelope-reject-boundary.md
+- provider-error-retry-boundaries: harness\specs\rules\provider-error-retry-boundaries.md
+- provider-outbound-concurrency-budget: harness\specs\rules\provider-outbound-concurrency-budget.md
+- rareui-interaction-adaptation: harness\specs\rules\rareui-interaction-adaptation.md
+- rc03-seal-coverage: harness\specs\rules\rc03-seal-coverage.md
+- reach-readers-credential-hygiene: harness\specs\rules\reach-readers-credential-hygiene.md
+- reach-readers-readonly-network-boundary: harness\specs\rules\reach-readers-readonly-network-boundary.md
+- reach-readers-upstream-integrity: harness\specs\rules\reach-readers-upstream-integrity.md
+- release-artifact-attestation-integrity: harness\specs\rules\release-artifact-attestation-integrity.md
+- reliability-aggregation-boundary: harness\specs\rules\reliability-aggregation-boundary.md
+- remote-forge-expansion-boundary: harness\specs\rules\remote-forge-expansion-boundary.md
+- renderer-loading-experience: harness\specs\rules\renderer-loading-experience.md
+- renderer-main-boundary: harness\specs\rules\renderer-main-boundary.md
+- repository-artifact-retention: harness\specs\rules\repository-artifact-retention.md
+- resource-bounded-waiting: harness\specs\rules\resource-bounded-waiting.md
+- resource-budget-integration: harness\specs\rules\resource-budget-integration.md
+- resource-lifecycle-soak: harness\specs\rules\resource-lifecycle-soak.md
+- resource-mixed-measurement: harness\specs\rules\resource-mixed-measurement.md
+- resource-observer-lifetime: harness\specs\rules\resource-observer-lifetime.md
+- rsi-campaign-budget-boundary: harness\specs\rules\rsi-campaign-budget-boundary.md
+- rsi-candidate-evolution-boundary: harness\specs\rules\rsi-candidate-evolution-boundary.md
+- rsi-experience-attribution-boundary: harness\specs\rules\rsi-experience-attribution-boundary.md
+- rsi-public-input-boundary: harness\specs\rules\rsi-public-input-boundary.md
+- runtime-authority-convergence-boundary: harness\specs\rules\runtime-authority-convergence-boundary.md
+- runtime-deep-reference-boundary: harness\specs\rules\runtime-deep-reference-boundary.md
+- runtime-efficiency-observability-boundary: harness\specs\rules\runtime-efficiency-observability-boundary.md
+- runtime-feature-leaf-consumers: harness\specs\rules\runtime-feature-leaf-consumers.md
+- runtime-lifecycle-governance-boundary: harness\specs\rules\runtime-lifecycle-governance-boundary.md
+- runtime-lineage-boundary: harness\specs\rules\runtime-lineage-boundary.md
+- runtime-local-ecosystem-boundary: harness\specs\rules\runtime-local-ecosystem-boundary.md
+- sandbox-strength-fail-closed: harness\specs\rules\sandbox-strength-fail-closed.md
+- sekb-assisted-review-boundary: harness\specs\rules\sekb-assisted-review-boundary.md
+- sekb-hermes-default-off-boundary: harness\specs\rules\sekb-hermes-default-off-boundary.md
+- sekb-hermes-promotion-boundary: harness\specs\rules\sekb-hermes-promotion-boundary.md
+- sekb-hermes-tier-d-boundary: harness\specs\rules\sekb-hermes-tier-d-boundary.md
+- sekb-hermes-write-path-boundary: harness\specs\rules\sekb-hermes-write-path-boundary.md
+- sekb-runtime-development-loop: harness\specs\rules\sekb-runtime-development-loop.md
+- sensitive-sink-ledger-boundary: harness\specs\rules\sensitive-sink-ledger-boundary.md
+- session-derivation-ui-contract: harness\specs\rules\session-derivation-ui-contract.md
+- session-storage-ownership: harness\specs\rules\session-storage-ownership.md
+- shared-watchers-read-models: harness\specs\rules\shared-watchers-read-models.md
+- sidebar-session-row-controls: harness\specs\rules\sidebar-session-row-controls.md
+- spec-doc-gardening-boundary: harness\specs\rules\spec-doc-gardening-boundary.md
+- supply-chain-integrity-pinning: harness\specs\rules\supply-chain-integrity-pinning.md
+- system-maturity-privacy-controls: harness\specs\rules\system-maturity-privacy-controls.md
+- system-maturity-quarterly-audit: harness\specs\rules\system-maturity-quarterly-audit.md
+- system-maturity-security-regression: harness\specs\rules\system-maturity-security-regression.md
+- system-maturity-status-gate: harness\specs\rules\system-maturity-status-gate.md
+- system-maturity-traceability: harness\specs\rules\system-maturity-traceability.md
+- task-forest-autoclose-and-roles: harness\specs\rules\task-forest-autoclose-and-roles.md
+- task-review-outcome-boundary: harness\specs\rules\task-review-outcome-boundary.md
+- telemetry-consent-lifecycle: harness\specs\rules\telemetry-consent-lifecycle.md
+- tf0009-real-canary-authority: harness\specs\rules\tf0009-real-canary-authority.md
+- tool-runtime-lifecycle: harness\specs\rules\tool-runtime-lifecycle.md
+- trace-cost-sampling-boundary: harness\specs\rules\trace-cost-sampling-boundary.md
+- uas-00-evidence-freeze-boundary: harness\specs\rules\uas-00-evidence-freeze-boundary.md
+- ui-motion-material-system: harness\specs\rules\ui-motion-material-system.md
+- versebrowser-upstream-preservation: harness\specs\rules\versebrowser-upstream-preservation.md
+- versegit-validation-layer-extension-boundary: harness\specs\rules\versegit-validation-layer-extension-boundary.md
+- verseshell-command-profile-boundary: harness\specs\rules\verseshell-command-profile-boundary.md
+- verseshell-external-write-policy-boundary: harness\specs\rules\verseshell-external-write-policy-boundary.md
+- verseshell-foundation-p0-boundary: harness\specs\rules\verseshell-foundation-p0-boundary.md
+- verseshell-job-object-limits: harness\specs\rules\verseshell-job-object-limits.md
+- verseshell-mcp-compatibility-boundary: harness\specs\rules\verseshell-mcp-compatibility-boundary.md
+- verseshell-patch-preview-journal-bridge-boundary: harness\specs\rules\verseshell-patch-preview-journal-bridge-boundary.md
+- verseshell-process-lifecycle-boundary: harness\specs\rules\verseshell-process-lifecycle-boundary.md
+- verseshell-readonly-facade-boundary: harness\specs\rules\verseshell-readonly-facade-boundary.md
+- verseshell-single-local-exec-canary-boundary: harness\specs\rules\verseshell-single-local-exec-canary-boundary.md
+- verseshell-upstream-preservation: harness\specs\rules\verseshell-upstream-preservation.md
+- vtoken-foundation-boundary: harness\specs\rules\vtoken-foundation-boundary.md
+- windows-delivery-entry-boundary: harness\specs\rules\windows-delivery-entry-boundary.md
+- windows-release-signing-policy: harness\specs\rules\windows-release-signing-policy.md
+- windows-update-feed-integrity: harness\specs\rules\windows-update-feed-integrity.md
+- workspace-harness-single-source: harness\specs\rules\workspace-harness-single-source.md
+
+Guide specs:
+- admission-seam-migration: harness\specs\guides\admission-seam-migration.md
+- agent-first-acceptance: harness\specs\guides\agent-first-acceptance.md
+- agent-harness-routing: harness\specs\guides\agent-harness-routing.md
+- autonomous-project-system-plan: harness\specs\guides\autonomous-project-system-plan.md
+- checkout-writer-ownership: harness\specs\guides\checkout-writer-ownership.md
+- context-folding-rlm-design: harness\specs\guides\context-folding-rlm-design.md
+- delta-informed-change-context-review-loop-options: harness\specs\guides\delta-informed-change-context-review-loop-options.md
+- execution-domain-registry-design: harness\specs\guides\execution-domain-registry.md
+- long-session-delegation-admission: harness\specs\guides\long-session-delegation-admission.md
+- ontology-agent-systems-research: harness\specs\guides\ontology-agent-systems-research.md
+- ontology-lite-existing-contracts-research: harness\specs\guides\ontology-lite-existing-contracts-research.md
+- pretext-text-measurement-integration: harness\specs\guides\pretext-text-measurement-integration.md
+- product-acceptance-strategy: harness\specs\guides\product-acceptance-strategy.md
+- rsi-evidence-binding: harness\specs\guides\rsi-evidence-binding.md
+- rsi-remediation-roadmap: harness\specs\guides\rsi-remediation-roadmap.md
+- scoped-development-validation: harness\specs\guides\scoped-development-validation.md
+- sekb-long-task-stages: harness\specs\guides\sekb-long-task-stages.md
+- session-derivation-ui-design: harness\specs\guides\session-derivation-ui-design.md
+- session-lifecycle-worktree-and-node-development: harness\specs\guides\session-lifecycle-worktree-and-node-development.md
+- spec-update: harness\specs\guides\spec-update.md
+- sustained-development-continuity: harness\specs\guides\sustained-development-continuity.md
+- terminal-resource-ownership: harness\specs\guides\terminal-resource-ownership.md
+- unified-concurrent-development-management: harness\specs\guides\unified-concurrent-development-management.md
+- versebrowser-reintegration-playbook: harness\specs\guides\versebrowser-reintegration-playbook.md
+- versegit-cross-agent-concurrency-research: harness\specs\guides\versegit-concurrency\cross-agent-concurrency-research-2026-10-21.md
+- versegit-harness-lifecycle-contracts: harness\specs\guides\versegit-concurrency\harness-lifecycle-and-contracts.md
+- versegit-module-implementation-roadmap: harness\specs\guides\versegit-concurrency\implementation-roadmap-and-acceptance.md
+- versegit-migration-control-plan: harness\specs\guides\versegit-concurrency\versegit-migration-control-plan.md
+- versegit-planning-correction-matrix: harness\specs\guides\versegit-concurrency\versegit-planning-correction-matrix.md
+- versegit-verseshell-behavior-observability: harness\specs\guides\versegit-concurrency\verseshell-and-behavior-observability.md
+- versegit-wp9-lifecycle-closeout: harness\specs\guides\versegit-concurrency\wp9-lifecycle-closeout.md
+- verseshell-reintegration-playbook: harness\specs\guides\verseshell-reintegration-playbook.md
+
+Layer specs:
+- electron-main: harness\specs\layers\electron-main.md
+- harness: harness\specs\layers\harness.md
+- openclaw-runtime: harness\specs\layers\openclaw-runtime.md
+- plugins: harness\specs\layers\plugins.md
+- renderer: harness\specs\layers\renderer.md
+Spec is valid: harness\specs\scenarios\gateway-backend-communication.md
+Spec is valid: harness\specs\tasks\fix-chat-history-gateway-timeout.example.md
+Harness report: D:\tmp\project-rag-g2-relay-01a1dca0\source-projection\artifacts\harness\latest.md
+Harness result: pass
+
+ RUN  v4.1.1 D:/tmp/project-rag-g2-relay-01a1dca0/source-projection
+
+
+ Test Files  6 passed (6)
+      Tests  62 passed (62)
+   Start at  01:43:19
+   Duration  12.09s (transform 601ms, setup 1.04s, import 557ms, tests 23.01s, environment 8.57s)
+
+[specs] lifecycle status present for 797 task specs.
+[duplicates] 25 reviewed duplicate groups matched the allowlist.
+[policy-docs] PASS package-version-resolvable
+[policy-docs] PASS security-policy-no-template-text
+[policy-docs] PASS security-policy-supported-version
+[policy-docs] PASS security-policy-reporting-path
+[policy-docs] PASS security-policy-tracking-process
+[policy-docs] PASS security-policy-references-resolve
+[policy-docs] PASS security-policy-no-credential-shapes
+[policy-docs] PASS acceleration-source-matches-decision
+[policy-docs] PASS acceleration-decision-record
+[policy-docs] PASS security-process-assets-exist
+[policy-docs] report: D:\tmp\project-rag-g2-relay-01a1dca0\source-projection\artifacts\policy-doc-truthfulness\report.json
+[policy-docs] PASS: 10 checks
+catalogs:check passed — generated catalogs are fresh and match their sources.
+{
+  "status": "fail",
+  "grade": "D",
+  "totalScore": 65,
+  "maxScore": 100,
+  "output": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\artifacts\\agent-dev-audit\\report.json",
+  "markdown": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\artifacts\\agent-dev-audit\\report.md",
+  "disqualifiers": [
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-source-newer:workbench",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-workbench/evidence.json is older than relevant Agent Dev source shared/host-api/contract.ts.",
+      "recommendation": "Regenerate Agent Dev Workbench, deep-test, quality, and audit evidence after changing Agent Dev control-plane files."
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-source-newer:deep-test",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-deep-test/report.json is older than relevant Agent Dev source shared/host-api/contract.ts.",
+      "recommendation": "Regenerate Agent Dev Workbench, deep-test, quality, and audit evidence after changing Agent Dev control-plane files."
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-source-newer:deep-test-history",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-deep-test/history.json is older than relevant Agent Dev source shared/host-api/contract.ts.",
+      "recommendation": "Regenerate Agent Dev Workbench, deep-test, quality, and audit evidence after changing Agent Dev control-plane files."
+    },
+    {
+      "dimension": "evidence-completeness",
+      "id": "evidence-source-newer:quality",
+      "severity": "fail",
+      "priority": "P0",
+      "message": "artifacts/agent-dev-quality/report.json is older than relevant Agent Dev source shared/host-api/contract.ts.",
+      "recommendation": "Regenerate Agent Dev Workbench, deep-test, quality, and audit evidence after changing Agent Dev control-plane files."
+    }
+  ]
+}
+[ELIFECYCLE] Command failed with exit code 1.
+{"success":false,"completedStages":10,"totalStages":12,"report":"D:\\tmp\\project-rag-g2-relay-20261117\\formal-ci-35921979c\\report.json"}

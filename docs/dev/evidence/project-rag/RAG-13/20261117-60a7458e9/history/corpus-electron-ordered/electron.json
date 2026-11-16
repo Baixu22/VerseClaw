@@ -1,0 +1,520 @@
+{
+  "config": {
+    "configFile": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\playwright.config.ts",
+    "rootDir": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\fixtures\\electron-process-cleanup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/tmp/project-rag-g2-relay-20261117/corpus-electron-ordered/electron",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/tmp/project-rag-g2-relay-01a1dca0/source-projection/tests/e2e",
+        "testIgnore": [
+          "**/resource-lifecycle-soak.spec.ts",
+          "**/product-acceptance-space-bunny.spec.ts",
+          "**/product-acceptance-moyu.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "project-rag-source-domains.spec.ts",
+      "file": "project-rag-source-domains.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Project RAG reads native and role memory independently and fences changed owners",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 360000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 91532,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\n\u001b[1mMatcher error\u001b[22m: \u001b[31mreceived\u001b[39m value must not be null nor undefined\n\nReceived has value: \u001b[31mundefined\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\n\u001b[1mMatcher error\u001b[22m: \u001b[31mreceived\u001b[39m value must not be null nor undefined\n\nReceived has value: \u001b[31mundefined\u001b[39m\n    at D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-source-domains.spec.ts:83:59",
+                    "location": {
+                      "file": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-source-domains.spec.ts",
+                      "column": 59,
+                      "line": 83
+                    },
+                    "snippet": "  81 |     };\n  82 |     const conflict = await send(refs.map(ref => ({ ...ref, corpus: 'wiki' })), 'wiki-corpus-conflict');\n> 83 |     expect(JSON.stringify(conflict.retainedEvidence)).not.toContain('native-memory');\n     |                                                           ^\n  84 |     expect(JSON.stringify(conflict.retainedEvidence)).not.toContain('role-memory');\n  85 |     expect(wire.at(-1)).not.toContain('RAG13_NATIVE_ORIGINAL');\n  86 |     expect(wire.at(-1)).not.toContain('RAG13_ROLE_ORIGINAL');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-source-domains.spec.ts",
+                        "column": 59,
+                        "line": 83
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\n\u001b[1mMatcher error\u001b[22m: \u001b[31mreceived\u001b[39m value must not be null nor undefined\n\nReceived has value: \u001b[31mundefined\u001b[39m\n\n  81 |     };\n  82 |     const conflict = await send(refs.map(ref => ({ ...ref, corpus: 'wiki' })), 'wiki-corpus-conflict');\n> 83 |     expect(JSON.stringify(conflict.retainedEvidence)).not.toContain('native-memory');\n     |                                                           ^\n  84 |     expect(JSON.stringify(conflict.retainedEvidence)).not.toContain('role-memory');\n  85 |     expect(wire.at(-1)).not.toContain('RAG13_NATIVE_ORIGINAL');\n  86 |     expect(wire.at(-1)).not.toContain('RAG13_ROLE_ORIGINAL');\n    at D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-source-domains.spec.ts:83:59"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:04.130Z] [INFO] [extensions] Extension \"builtin/clawhub-marketplace\" initialized\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:04.131Z] [INFO] [extensions] Extension \"builtin/diagnostics\" initialized\n"
+                    },
+                    {
+                      "text": "[app:err] [34380:1117/012004.257:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:err] [34380:1117/012004.257:ERROR:gpu\\ipc\\service\\gpu_channel_manager.cc:915] ContextResult::kFatalFailure: Failed to create shared context for virtualization.\r\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:04.604Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":2}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:04.606Z] [INFO] Gateway auto-start skipped in E2E mode\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:04.606Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:04.606Z] [WARN] [webview-security] deny permission-check: WebView permission \"media\" denied by default (file:///)\n[2026-11-16T17:20:04.607Z] [WARN] [webview-security] deny permission-check: WebView permission denied for untrusted origin: file: WebView src is not allowed (file:///)\n[2026-11-16T17:20:04.607Z] [WARN] [webview-security] deny permission-check: WebView permission \"geolocation\" denied by default (file:///)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:06.276Z] [INFO] Seeded Verse Claw workspace harness (16 file(s)) at D:\\tmp\\project-rag-g2-relay-20261117\\corpus-electron-ordered\\fixtures\\verse-claw-e2e-run-oFuh9K\\verse-claw-e2e-home-uY6bMY\\rag13-workspace\\.verse-claw\\harness\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"openai\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:07.158Z] [INFO] Scheduling Gateway reload after saving provider \"openai\" config\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:07.159Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"openai/mock-coder\" for provider \"openai\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:08.363Z] [INFO] [gateway-refresh] mode=reload requested pid=n/a state=stopped\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:08.363Z] [WARN] [gateway-refresh] mode=reload result=fallback_restart cause=not_running\n[2026-11-16T17:20:08.363Z] [WARN] Gateway reload requested while not running; falling back to restart\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:08.364Z] [INFO] [gateway-refresh] mode=restart requested pidBefore=n/a\n[2026-11-16T17:20:08.364Z] [INFO] Gateway stop requested\n[2026-11-16T17:20:08.364Z] [DEBUG] Gateway lifecycle epoch advanced to 1 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:08.364Z] [DEBUG] Gateway lifecycle epoch advanced to 2 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:08.365Z] [INFO] Gateway start requested (port=18789)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:08.427Z] [DEBUG] Device identity loaded (deviceId=d9f46e3d4a4fa9a0b1ad9af5ccb7211cad79f204267c5ff169fca7db42b33784)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:08.428Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:08.805Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:err] (node:34380) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"openai\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"openai\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:08.959Z] [INFO] Scheduling Gateway reload after provider switch to \"openai\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:08.959Z] [DEBUG] Gateway reload debounced (will fire in 1200ms)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:08.970Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:08.971Z] [DEBUG] Gateway lifecycle epoch advanced to 3 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:09.082Z] [DEBUG] Gateway start/find-existing superseded (expectedEpoch=2, currentEpoch=3)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:09.083Z] [DEBUG] Gateway state changed: starting -> stopped\n[2026-11-16T17:20:09.083Z] [INFO] [metric] gateway.restart.executed {\"gateway_restart_executed_total\":1,\"gateway_restart_suppressed_total\":0,\"gateway_restart_circuit_open_until\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:09.083Z] [INFO] [gateway-refresh] mode=restart result=applied pidBefore=n/a pidAfter=n/a suppressed=0 executed=1 circuitOpenUntil=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:09.183Z] [DEBUG] Gateway lifecycle epoch advanced to 4 (start)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:09.184Z] [INFO] Gateway start requested (port=53403)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:09.185Z] [DEBUG] Gateway state changed: stopped -> starting\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:09.403Z] [DEBUG] Checking for existing Gateway...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:09.541Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":3}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:09.684Z] [DEBUG] No existing Gateway found, starting new process...\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:10.632Z] [WARN] [provider-runtime] Pinned embedded agent runtime for models.providers entries before switch: openai\n"
+                    },
+                    {
+                      "text": "[app:out] Set OpenClaw default model to \"openai/mock-coder\" for provider \"openai\" (runtime override)\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:out] Saved API key for provider \"openai\" to OpenClaw auth-profiles (agents: main)\n"
+                    },
+                    {
+                      "text": "[app:out] Updated models.json for agent \"main\" provider \"openai\"\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:13.716Z] [INFO] Region optimization enabled via locale/timezone (locale=en-US, tz=Asia/Shanghai)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:13.993Z] [WARN] Source runtime Docker sandbox image is unavailable; sandbox.mode=off for the isolated source runtime config.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:14.206Z] [INFO] [metric] gateway.prelaunch {\"settingsMs\":1,\"defaultProviderRuntimeSyncMs\":2679,\"providerEnvMs\":8,\"channelStartupPolicyMs\":3,\"uvEnvMs\":1155,\"mcpEnvMs\":252,\"runtimeConfigReadMs\":1,\"verseShellBundleMs\":0,\"totalMs\":4336,\"maintenance\":{},\"configuredChannelCount\":0}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:14.207Z] [INFO] Starting Gateway process (mode=dev, runtime=source, port=53403, entry=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\entry.js\", args=\"gateway --port 53403 --allow-unconfigured\", execArgv=\"\", cwd=\"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\", bundledBin=no, providerKeys=1, channels=skipped(no configured channels), proxy=disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:15.541Z] [INFO] Gateway process started (pid=34056)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:15.542Z] [DEBUG] Gateway manager now owns process pid=34056\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:17.750Z] [DEBUG] Still waiting for Gateway... (attempt 11/2400)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:17.958Z] [WARN] [Gateway stderr] (node:34056) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:17.958Z] [WARN] [Gateway stderr] (Use `electron --trace-warnings ...` to show where the warning was created)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:19.843Z] [DEBUG] Still waiting for Gateway... (attempt 21/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:21.903Z] [DEBUG] Still waiting for Gateway... (attempt 31/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:23.949Z] [DEBUG] Still waiting for Gateway... (attempt 41/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:26.023Z] [DEBUG] Still waiting for Gateway... (attempt 51/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:28.412Z] [DEBUG] Still waiting for Gateway... (attempt 61/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:30.465Z] [DEBUG] Still waiting for Gateway... (attempt 71/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:32.531Z] [DEBUG] Still waiting for Gateway... (attempt 81/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:34.602Z] [DEBUG] Still waiting for Gateway... (attempt 91/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:36.847Z] [DEBUG] Still waiting for Gateway... (attempt 101/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:38.911Z] [DEBUG] Still waiting for Gateway... (attempt 111/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:40.969Z] [DEBUG] Still waiting for Gateway... (attempt 121/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:41.235Z] [DEBUG] [Gateway stderr] (node:34056) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:41.236Z] [WARN] [Gateway stderr] Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:41.236Z] [DEBUG] [Gateway stderr] (node:34056) [OPENCLAW_LEGACY_ENV_VARS] DeprecationWarning: Legacy CLAWDBOT_* environment variables were detected (1 total), but OpenClaw only reads OPENCLAW_* names now.\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:48.654Z] [INFO] [efficiency] shed state changed {\"shedding\":false,\"reason\":null,\"activeReasons\":[],\"transitionCount\":4}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:52.125Z] [DEBUG] Still waiting for Gateway... (attempt 131/2400)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:53.687Z] [DEBUG] Gateway ready after 132 attempt(s)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:53.688Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:53403/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:53.741Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=13d78bb0-c404-45b2-b917-6e8289ea2c95 peer=127.0.0.1:63083->127.0.0.1:53403 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:53403 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:53.744Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=bfd3c5ed-4e6a-4e04-8b8f-9728a6326894 peer=127.0.0.1:64357->127.0.0.1:53403 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:53403 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:53.746Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=c6fa608b-9e1a-4077-b08c-e173b0c46d71 peer=127.0.0.1:53771->127.0.0.1:53403 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:53403 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:53.748Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=83f21b27-8cb8-4537-b878-dd4c51184a06 peer=127.0.0.1:53769->127.0.0.1:53403 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:53403 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:53.750Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=c3dcad5e-961d-404d-9466-cf62f15ff293 peer=127.0.0.1:53776->127.0.0.1:53403 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:53403 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:53.772Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:53.773Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-16T17:20:53.774Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:53.778Z] [WARN] [Gateway stderr] \u001b[36m[ws]\u001b[39m \u001b[33mclosed before connect conn=61b987ac-5955-494c-bf51-dd5face97479 peer=127.0.0.1:63084->127.0.0.1:53403 remote=127.0.0.1 fwd=n/a origin=n/a host=127.0.0.1:53403 ua=n/a code=1006 reason=n/a\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:53.859Z] [DEBUG] Connecting Gateway WebSocket (ws://127.0.0.1:53403/ws)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:53.861Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=pending)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:57.436Z] [DEBUG] Gateway WebSocket opened, waiting for connect.challenge...\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:57.437Z] [DEBUG] Received connect.challenge, sending handshake\n[2026-11-16T17:20:57.437Z] [DEBUG] Sending connect handshake with challenge nonce\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:58.032Z] [DEBUG] Gateway connect handshake completed (protocol=4)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:58.033Z] [DEBUG] Gateway state changed: starting -> running\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:58.034Z] [INFO] Gateway core RPC surface ready (handshake capabilities verified)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:58.035Z] [INFO] [metric] gateway.startup {\"configSyncMs\":6140,\"spawnToReadyMs\":38145,\"readyToConnectMs\":4347,\"totalMs\":48632}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:59.724Z] [INFO] [chat:sendWithMedia] Sending: message=\"RAG13 bounded memory use\", attachments=0, fileRefs=0\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:59.732Z] [INFO] [gateway-rpc] chat.send serialized id=848545e3-4350-4c79-852a-c0291b36dc0c timeoutMs=900000 bytes=818\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:59.732Z] [INFO] [gateway-rpc] chat.send ws.send callback ok id=848545e3-4350-4c79-852a-c0291b36dc0c\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:59.733Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send req received conn=bef1903d-08f4-432b-9df7-470f4054f73d id=848545e3-4350-4c79-852a-c0291b36dc0c\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:59.733Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch begin conn=bef1903d-08f4-432b-9df7-470f4054f73d id=848545e3-4350-4c79-852a-c0291b36dc0c\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:59.734Z] [WARN] [Gateway stderr] [chat.send.trace] handler entered\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:59.744Z] [WARN] [Gateway stderr] [chat.send.trace] session loaded runId=rag13-wiki-corpus-conflict sessionKey=agent:main:main loadSessionMs=0.914\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:59.749Z] [WARN] [Gateway stderr] [chat.send.trace] pre-ack ready runId=rag13-wiki-corpus-conflict sessionKey=agent:main:main attachments=0\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:59.752Z] [WARN] [Gateway stderr] [chat.send.trace] ack responding runId=rag13-wiki-corpus-conflict sessionKey=agent:main:main\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:59.753Z] [INFO] [gateway-rpc] chat.send response id received durationMs=21\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:20:59.753Z] [INFO] [chat:sendWithMedia] RPC result: {\"runId\":\"rag13-wiki-corpus-conflict\",\"status\":\"started\",\"knowledgeDenials\":[{\"id\":\"native\",\"title\":\"Native memory\",\"lookup\":\"native-memory:memory/shared.md\",\"reason\":\"unsupported_owner\",\"visibleReason\":\"Knowledge reference owner does not match the selected corpus.\"},{\"id\":\"role\",\"title\":\"Role memory\",\"lookup\":\"memory-slot:mem_918cde92-cda7-487a-83cc-701305d28f15\",\"reason\":\"unsupported_owner\",\"visibleReason\":\"Knowledge reference owner does not match the selected corpus.\"}],\"knowledgeReferences\":[]}\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:20:59.761Z] [WARN] [Gateway stderr] [gateway.ws.trace] chat.send dispatch returned conn=bef1903d-08f4-432b-9df7-470f4054f73d id=848545e3-4350-4c79-852a-c0291b36dc0c\n"
+                    },
+                    {
+                      "text": "[app:out] [auth-profiles] main: sealed 1 legacy plaintext credential field(s)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:21:00.501Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-g2-relay-20261117\\corpus-electron-ordered\\fixtures\\verse-claw-e2e-run-oFuh9K\\verse-claw-e2e-user-data-eWLBJI\\openclaw-source-state\\plugin-skills\\browser-automation\" → \"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation\": Error: EPERM: operation not permitted, symlink 'D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\browser\\skills\\browser-automation' -> 'D:\\tmp\\project-rag-g2-relay-20261117\\corpus-electron-ordered\\fixtures\\verse-claw-e2e-run-oFuh9K\\verse-claw-e2e-user-data-eWLBJI\\openclaw-source-state\\plugin-skills\\browser-automation'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:21:00.565Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-g2-relay-20261117\\corpus-electron-ordered\\fixtures\\verse-claw-e2e-run-oFuh9K\\verse-claw-e2e-user-data-eWLBJI\\openclaw-source-state\\plugin-skills\\obsidian-vault-maintainer\" → \"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\obsidian-vault-maintainer\": Error: EPERM: operation not permitted, symlink 'D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\obsidian-vault-maintainer' -> 'D:\\tmp\\project-rag-g2-relay-20261117\\corpus-electron-ordered\\fixtures\\verse-claw-e2e-run-oFuh9K\\verse-claw-e2e-user-data-eWLBJI\\openclaw-source-state\\plugin-skills\\obsidian-vault-maintainer'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:21:00.633Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-g2-relay-20261117\\corpus-electron-ordered\\fixtures\\verse-claw-e2e-run-oFuh9K\\verse-claw-e2e-user-data-eWLBJI\\openclaw-source-state\\plugin-skills\\wiki-maintainer\" → \"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\wiki-maintainer\": Error: EPERM: operation not permitted, symlink 'D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\memory-wiki\\skills\\wiki-maintainer' -> 'D:\\tmp\\project-rag-g2-relay-20261117\\corpus-electron-ordered\\fixtures\\verse-claw-e2e-run-oFuh9K\\verse-claw-e2e-user-data-eWLBJI\\openclaw-source-state\\plugin-skills\\wiki-maintainer'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:21:00.639Z] [WARN] [Gateway stderr] \u001b[36m[skills]\u001b[39m \u001b[33mfailed to create plugin skill symlink \"D:\\tmp\\project-rag-g2-relay-20261117\\corpus-electron-ordered\\fixtures\\verse-claw-e2e-run-oFuh9K\\verse-claw-e2e-user-data-eWLBJI\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff\" → \"D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff\": Error: EPERM: operation not permitted, symlink 'D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\openclaw_runtime\\dist\\extensions\\reach-readers\\skills\\agent-reach-login-handoff' -> 'D:\\tmp\\project-rag-g2-relay-20261117\\corpus-electron-ordered\\fixtures\\verse-claw-e2e-run-oFuh9K\\verse-claw-e2e-user-data-eWLBJI\\openclaw-source-state\\plugin-skills\\agent-reach-login-handoff'\u001b[39m\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:21:01.757Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"power-saver\",\"activeReasons\":[\"power-saver\"],\"transitionCount\":5}\n"
+                    },
+                    {
+                      "text": "[fp-p1-harness] connection #1\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:21:05.833Z] [INFO] Gateway stop requested\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:21:05.833Z] [DEBUG] Gateway lifecycle epoch advanced to 5 (stop)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:21:05.834Z] [INFO] Sending kill to Gateway process (pid=34056)\n"
+                    },
+                    {
+                      "text": "[app:err] [2026-11-16T17:21:05.851Z] [WARN] Gateway WebSocket closed (code=1006, reason=unknown, handshake=ok)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:21:05.852Z] [DEBUG] Gateway state changed: running -> stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:21:06.463Z] [INFO] Gateway process exited (code=1, expected=yes)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:21:06.464Z] [DEBUG] Gateway reconnect skipped (auto-reconnect disabled)\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:21:06.691Z] [INFO] Gateway stop requested\n[2026-11-16T17:21:06.692Z] [DEBUG] Gateway lifecycle epoch advanced to 6 (stop)\n"
+                    },
+                    {
+                      "text": "[app:err] Debugger ending on ws://127.0.0.1:57709/541efcea-11ae-4e87-b93b-73dcb89dc202\r\nFor help, see: https://nodejs.org/en/docs/inspector\r\n"
+                    },
+                    {
+                      "text": "[app:window-close] pid=34748\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:21:06.711Z] [INFO] [efficiency] shed state changed {\"shedding\":true,\"reason\":\"window-hidden\",\"activeReasons\":[\"window-hidden\",\"power-saver\"],\"transitionCount\":6}\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:21:06.712Z] [INFO] [ResourceTracker] Stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:21:06.712Z] [INFO] [ResourceTracker] Shutdown complete\n[2026-11-16T17:21:06.712Z] [INFO] [efficiency-sampler] stopped\n"
+                    },
+                    {
+                      "text": "[app:out] [2026-11-16T17:21:06.712Z] [INFO] [efficiency] runtime efficiency sampling stopped\n"
+                    },
+                    {
+                      "text": "[app:exit] pid=34748 code=0 signal=null\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-16T17:19:40.176Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "memory-domains",
+                      "contentType": "application/json",
+                      "body": "ewogICJzY2hlbWEiOiAiUHJvamVjdFJhZ01lbW9yeURvbWFpbnNFbGVjdHJvbi92MSIsCiAgImFjdG9yIjogImNvZGV4LWcyLXJhZy1yZWxheS0yMDI2MTExNyIsCiAgImRyaXZlbl9ieSI6ICJhZ2VudCIsCiAgInJlYWxIdW1hbkV2aWRlbmNlIjogZmFsc2UsCiAgInN0YXR1cyI6ICJmYWlsIiwKICAic3RlcHMiOiB7fSwKICAicm9sZVByb3Bvc2FsIjogewogICAgImxlZ2FjeSI6IHRydWUsCiAgICAiYWN0aW9uIjogImFjY2VwdCIsCiAgICAiYWNjZXB0ZWQiOiB0cnVlLAogICAgImNhcmQiOiB7CiAgICAgICJpZCI6ICJtZW1fOTE4Y2RlOTItY2RhNy00ODdhLTgzY2MtNzAxMzA1ZDI4ZjE1IiwKICAgICAgInR5cGUiOiAiZmFjdCIsCiAgICAgICJzY29wZSI6ICJ3b3Jrc3BhY2UiLAogICAgICAic2NvcGVLZXkiOiAiYWdlbnQtbWVtb3J5LWRvbWFpbnMiLAogICAgICAicm9sZVRhZ3MiOiBbXSwKICAgICAgIm93bmVyUm9sZSI6IG51bGwsCiAgICAgICJzb3VyY2VSb2xlIjogbnVsbCwKICAgICAgImFwcGxpY2FibGVSb2xlcyI6IFtdLAogICAgICAiYWxsb3dlZE11dGF0b3JzIjogWwogICAgICAgICJ1c2VyIiwKICAgICAgICAib3BlcmF0b3IiCiAgICAgIF0sCiAgICAgICJwaGFzZVRhZ3MiOiBbXSwKICAgICAgImNvbnRlbnQiOiAiUkFHMTNfUk9MRV9PUklHSU5BTCIsCiAgICAgICJldmlkZW5jZSI6IFtdLAogICAgICAiZXZpZGVuY2VSZWZzIjogW10sCiAgICAgICJjb25maWRlbmNlIjogMSwKICAgICAgImltcG9ydGFuY2UiOiAwLjUsCiAgICAgICJsYXN0QWNjZXNzZWRBdCI6ICIyMDI2LTExLTE2VDE3OjIwOjU5LjI2N1oiLAogICAgICAiY3JlYXRlZEF0IjogIjIwMjYtMTEtMTZUMTc6MjA6NTkuMjY3WiIsCiAgICAgICJ1cGRhdGVkQXQiOiAiMjAyNi0xMS0xNlQxNzoyMDo1OS4yNjdaIiwKICAgICAgImFjY2Vzc0NvdW50IjogMCwKICAgICAgInZlcnNpb24iOiAxLAogICAgICAic3RhdHVzIjogImFjdGl2ZSIsCiAgICAgICJzZW5zaXRpdml0eSI6ICJub3JtYWwiLAogICAgICAiZHVyYWJpbGl0eSI6ICJwcm9qZWN0IiwKICAgICAgInNvdXJjZSI6ICJ1c2VyIiwKICAgICAgInN1cGVyc2VkZXMiOiBudWxsLAogICAgICAic3VwZXJzZWRlZEJ5IjogbnVsbCwKICAgICAgImV4cGlyZXNBdCI6IG51bGwKICAgIH0sCiAgICAicmlza0xldmVsIjogIm1lZGl1bSIsCiAgICAiaW1wYWN0U2NvcGUiOiAid29ya3NwYWNlIiwKICAgICJzdWdnZXN0ZWRBY3Rpb24iOiAiYXBwcm92ZSIsCiAgICAicmVhc29uU3VtbWFyeSI6ICJtZWRpdW0gcmlzayBjcmVhdGUgb24gd29ya3NwYWNlIGZhY3QiLAogICAgInBlcm1pc3Npb25EZWNpc2lvbiI6ICJhbGxvdyIsCiAgICAicGVybWlzc2lvblJlYXNvbiI6ICJMb3ctcmlzayBtZW1vcnkgbXV0YXRpb24gaXMgYWxsb3dlZCBieSBwb2xpY3kuIiwKICAgICJwcm9wb3NhbCI6IHsKICAgICAgImlkIjogInByb3BfZGEyNTczYmItMjE3Yi00MjY2LTkyZjAtMzkyNGI2ZWQ3NzliIiwKICAgICAgIm9wZXJhdGlvbiI6ICJjcmVhdGUiLAogICAgICAidGFyZ2V0SWQiOiBudWxsLAogICAgICAicHJvcG9zYWwiOiB7CiAgICAgICAgImNvbnRlbnQiOiAiUkFHMTNfUk9MRV9PUklHSU5BTCIsCiAgICAgICAgInR5cGUiOiAiZmFjdCIsCiAgICAgICAgInNjb3BlIjogIndvcmtzcGFjZSIsCiAgICAgICAgInNjb3BlS2V5IjogImFnZW50LW1lbW9yeS1kb21haW5zIiwKICAgICAgICAicm9sZVRhZ3MiOiBbXSwKICAgICAgICAiZXZpZGVuY2UiOiBbXSwKICAgICAgICAiY29uZmlkZW5jZSI6IDEsCiAgICAgICAgImltcG9ydGFuY2UiOiAwLjUsCiAgICAgICAgInNvdXJjZSI6ICJ1c2VyIgogICAgICB9LAogICAgICAibm9ybWFsaXplZCI6IHsKICAgICAgICAiY29udGVudCI6ICJSQUcxM19ST0xFX09SSUdJTkFMIiwKICAgICAgICAidHlwZSI6ICJmYWN0IiwKICAgICAgICAic2NvcGUiOiAid29ya3NwYWNlIiwKICAgICAgICAic2NvcGVLZXkiOiAiYWdlbnQtbWVtb3J5LWRvbWFpbnMiLAogICAgICAgICJyb2xlVGFncyI6IFtdLAogICAgICAgICJldmlkZW5jZSI6IFtdLAogICAgICAgICJjb25maWRlbmNlIjogMSwKICAgICAgICAiaW1wb3J0YW5jZSI6IDAuNSwKICAgICAgICAic291cmNlIjogInVzZXIiLAogICAgICAgICJvd25lclJvbGUiOiBudWxsLAogICAgICAgICJzb3VyY2VSb2xlIjogbnVsbCwKICAgICAgICAiYXBwbGljYWJsZVJvbGVzIjogW10sCiAgICAgICAgImFsbG93ZWRNdXRhdG9ycyI6IFsKICAgICAgICAgICJ1c2VyIiwKICAgICAgICAgICJvcGVyYXRvciIKICAgICAgICBdLAogICAgICAgICJwaGFzZVRhZ3MiOiBbXSwKICAgICAgICAiZXZpZGVuY2VSZWZzIjogW10sCiAgICAgICAgInNlbnNpdGl2aXR5IjogIm5vcm1hbCIsCiAgICAgICAgImR1cmFiaWxpdHkiOiAicHJvamVjdCIKICAgICAgfSwKICAgICAgImRlY2lzaW9uIjogImFjY2VwdCIsCiAgICAgICJzdGF0dXMiOiAiYXBwbGllZCIsCiAgICAgICJyZXZpZXdSZWFzb24iOiBudWxsLAogICAgICAiY29uZmxpY3RJZHMiOiBbXSwKICAgICAgImFjdG9yIjogewogICAgICAgICJ0eXBlIjogInN5c3RlbSIKICAgICAgfSwKICAgICAgInJpc2tMZXZlbCI6ICJtZWRpdW0iLAogICAgICAiaW1wYWN0U2NvcGUiOiAid29ya3NwYWNlIiwKICAgICAgInN1Z2dlc3RlZEFjdGlvbiI6ICJhcHByb3ZlIiwKICAgICAgInJlYXNvblN1bW1hcnkiOiAibWVkaXVtIHJpc2sgY3JlYXRlIG9uIHdvcmtzcGFjZSBmYWN0IiwKICAgICAgInBlcm1pc3Npb25EZWNpc2lvbiI6ICJhbGxvdyIsCiAgICAgICJwZXJtaXNzaW9uUmVhc29uIjogIkxvdy1yaXNrIG1lbW9yeSBtdXRhdGlvbiBpcyBhbGxvd2VkIGJ5IHBvbGljeS4iLAogICAgICAiYmF0Y2hJZCI6IG51bGwsCiAgICAgICJyZXRlbnRpb25SZWFzb24iOiBudWxsLAogICAgICAicG9saWN5U25hcHNob3QiOiB7CiAgICAgICAgInZlcnNpb24iOiAicm9sZS1tZW1vcnktZ292ZXJuYW5jZS12NCIsCiAgICAgICAgImNvbnRleHRQb2xpY3lWZXJzaW9uIjogInJvbGUtbWVtb3J5LWNvbnRleHQtdjMiLAogICAgICAgICJzZW1hbnRpY1R5cGVzIjogWwogICAgICAgICAgImZhY3QiLAogICAgICAgICAgImNvbnN0cmFpbnQiLAogICAgICAgICAgInByZWZlcmVuY2UiLAogICAgICAgICAgInByb2NlZHVyZSIsCiAgICAgICAgICAicmlzayIsCiAgICAgICAgICAiZGVjaXNpb24iLAogICAgICAgICAgImVwaXNvZGUiLAogICAgICAgICAgImhhbmRvZmYiLAogICAgICAgICAgImFydGlmYWN0X3JlZiIKICAgICAgICBdLAogICAgICAgICJpbmplY3Rpb25DbGFzc2VzIjogWwogICAgICAgICAgIm11c3QiLAogICAgICAgICAgInNob3VsZCIsCiAgICAgICAgICAibWF5IiwKICAgICAgICAgICJuZXZlciIKICAgICAgICBdLAogICAgICAgICJsaWZlY3ljbGVQb2xpY3kiOiB7CiAgICAgICAgICAiYXV0b21hdGljTXV0YXRpb24iOiBmYWxzZSwKICAgICAgICAgICJhbGxvd2VkQWN0aW9ucyI6IFsKICAgICAgICAgICAgImtlZXAiLAogICAgICAgICAgICAiY29sZCIsCiAgICAgICAgICAgICJhcmNoaXZlIiwKICAgICAgICAgICAgInRvbWJzdG9uZSIsCiAgICAgICAgICAgICJyZXZpZXciCiAgICAgICAgICBdCiAgICAgICAgfSwKICAgICAgICAiZXZpZGVuY2VQb2xpY3kiOiB7CiAgICAgICAgICAibmF0aXZlQnJpZGdlIjogInJlYWRfb25seSIsCiAgICAgICAgICAic3RhdHVzZXMiOiBbCiAgICAgICAgICAgICJ2ZXJpZmllZCIsCiAgICAgICAgICAgICJtaXNzaW5nIiwKICAgICAgICAgICAgInN0YWxlIiwKICAgICAgICAgICAgIndlYWsiLAogICAgICAgICAgICAiY29udHJhZGljdGVkIiwKICAgICAgICAgICAgInVuY2hlY2tlZCIKICAgICAgICAgIF0KICAgICAgICB9LAogICAgICAgICJiYXRjaFJldmlld1BvbGljeSI6IHsKICAgICAgICAgICJwYXJ0aWFsRmFpbHVyZSI6ICJjb250aW51ZSIsCiAgICAgICAgICAibXV0YXRpbmdBY3Rpb25zIjogWwogICAgICAgICAgICAiYXBwcm92ZSIsCiAgICAgICAgICAgICJyZWplY3QiLAogICAgICAgICAgICAiYXBwbHlBc0NvbGQiLAogICAgICAgICAgICAic3VwZXJzZWRlIiwKICAgICAgICAgICAgIm1lcmdlIgogICAgICAgICAgXQogICAgICAgIH0KICAgICAgfSwKICAgICAgImNyZWF0ZWRBdCI6ICIyMDI2LTExLTE2VDE3OjIwOjU5LjI2OFoiLAogICAgICAiZGVjaWRlZEF0IjogIjIwMjYtMTEtMTZUMTc6MjA6NTkuMzUzWiIKICAgIH0KICB9Cn0="
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\tmp\\project-rag-g2-relay-20261117\\corpus-electron-ordered\\electron\\project-rag-source-domains-35288-y-and-fences-changed-owners\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\tmp\\project-rag-g2-relay-20261117\\corpus-electron-ordered\\electron\\project-rag-source-domains-35288-y-and-fences-changed-owners\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "D:\\tmp\\project-rag-g2-relay-20261117\\corpus-electron-ordered\\electron\\project-rag-source-domains-35288-y-and-fences-changed-owners\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\tmp\\project-rag-g2-relay-01a1dca0\\source-projection\\tests\\e2e\\project-rag-source-domains.spec.ts",
+                    "column": 59,
+                    "line": 83
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "297f115fc458f7c63e83-1cbc50e09c6bf6fb7686",
+          "file": "project-rag-source-domains.spec.ts",
+          "line": 18,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-16T17:19:38.304Z",
+    "duration": 94950.594,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "actor": "codex-g2-rag-relay-20261117",
+  "driven_by": "agent",
+  "realHumanEvidence": false,
+  "candidate": "c6460d144281486c0561175ae56a3898712dcab1"
+}
