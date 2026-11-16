@@ -5,6 +5,8 @@ import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { freemem, tmpdir } from "node:os";
 import type { ElectronApplication } from "@playwright/test";
+import type { WorkspaceSnapshotResult } from "../../shared/host-api/contract";
+import type { TaskResolution, TaskView } from "../../shared/task-system/types";
 import { getStableWindow, test, expect } from "./fixtures/electron";
 import {
   allocatePort,
@@ -161,13 +163,45 @@ test.describe("recovery contract eval windows", () => {
           },
         });
         await getStableWindow(app);
-        await hostInvoke(app, "workspaces", "create", {
+        const workspaceResult = await hostInvoke<WorkspaceSnapshotResult>(app, "workspaces", "create", {
           rootPath: workspace,
           permissionMode: "fullAccess",
           name: "recovery-eval",
+          agentId: "main",
+          activeSessionKey: MAIN_RECOVERY_KEY,
         });
+        const workspaceId = workspaceResult.activeWorkspace?.id;
+        expect(workspaceId, "recovery workspace owner must exist").toBeTruthy();
         await hostInvoke(app, "gateway", "start");
         await ready(app);
+        await hostInvoke(app, "gateway", "rpc", {
+          method: "sessions.patch", params: { key: MAIN_RECOVERY_KEY },
+        });
+        const created = await hostInvoke<{ success: boolean; result: TaskResolution }>(app, "taskLedger", "command", {
+          workspaceId,
+          command: {
+            action: "create", requestId: `recovery-task-${id}`,
+            contract: {
+              objective: `Observe the frozen ${WINDOW} recovery boundary`, target: workspace,
+              constraints: ["Apply the fixture effect at most once"],
+              acceptance: [{ id: "effect", description: "Frozen disk verdict", verification: { kind: "owner-receipt", owner: "recovery-eval" } }],
+            },
+          },
+        });
+        expect(created.success, JSON.stringify(created)).toBe(true);
+        await hostInvoke(app, "workspaces", "bindCoordinator", {
+          workspaceId, sessionKey: MAIN_RECOVERY_KEY, agentId: "main", expectedRevision: 0,
+          taskLedgerNodeIds: [created.result.task.contract.taskNodeId],
+          environment: { kind: "local", rootPath: workspace }, archiveRestorePolicy: "restore",
+        });
+        const claimed = await hostInvoke<{ success: boolean; result: TaskView }>(app, "taskLedger", "command", {
+          workspaceId,
+          command: { action: "claim", taskNodeId: created.result.task.contract.taskNodeId,
+            sessionKey: MAIN_RECOVERY_KEY, requestId: `recovery-claim-${id}` },
+        });
+        expect(claimed.success, JSON.stringify(claimed)).toBe(true);
+        expect(claimed.result.claim?.sessionKey).toBe(MAIN_RECOVERY_KEY);
+        evidence.push(persistEvidence(trialDir, "task-owner.json", { workspaceId, task: claimed.result }));
         await send(app, "RECOVERY-WARMUP", "warmup-" + id);
         // chat.send lifecycle can end before final delivery is persisted/cleared.
         // agent.wait prefers the chat pipeline's terminal acknowledgement.

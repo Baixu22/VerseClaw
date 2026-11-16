@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { freemem, tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import type { ElectronApplication } from "@playwright/test";
+import type { WorkspaceSnapshotResult } from "../../shared/host-api/contract";
 import { getStableWindow, test, expect } from "./fixtures/electron";
 import { allocatePort, buildMockProviderConfig, hostInvoke } from "./fixtures/fp-p1-harness";
 import { buildRecoveryContractManifest } from "../../shared/recovery-contract-eval";
@@ -123,13 +124,14 @@ test.describe("long-session recovery evaluation", () => {
     };
     try {
       await launch();
-      const workspaceResult = await hostInvoke<{ workspace?: { id?: string }; id?: string }>(
+      const workspaceResult = await hostInvoke<WorkspaceSnapshotResult>(
         app!,
         "workspaces",
         "create",
         { rootPath: workspace, permissionMode: "fullAccess", name: "recovery-quality" },
       );
-      const workspaceId = workspaceResult.workspace?.id ?? workspaceResult.id;
+      const workspaceId = workspaceResult.activeWorkspace?.id;
+      expect(workspaceId, "recovery workspace owner must exist").toBeTruthy();
       const all = buildRecoveryContractManifest().longSessionPairs.filter(
         (pair) => (!FAMILY || pair.family === FAMILY) && (!IDS.length || IDS.includes(pair.id)),
       );

@@ -1,5 +1,9 @@
 # 恢复统一与 GA 验收
 
+恢复验收先检查 Electron 可执行路径、桌面与 runtime 构建产物。故障夹具通过现有 Host API 创建任务、绑定协调会话并认领任务后再注入故障；长会话夹具使用 `activeWorkspace.id` 作为交接和分支的 owner。`recovery-contract-acceptance.mjs` 将九指标结论写入 `acceptance.json`，候选未通过时以非零状态退出。每个跑次单独保留 Playwright 诊断，关闭隐式重试，避免覆盖原始失败。
+
+Windows 插件加载将 `file:` URL 转回原生路径后执行已编译 JavaScript，并按同一身份清理模块缓存。源码插件与依赖加载失败沿用原回退策略。
+
 当前开发已实现子代理恢复的持久化准入：同一边界复用运行身份，派发前提交决定和尝试次数，旧回调按会话代次与运行身份校验。并发领取会读取已有决定；旧进程退出后，owner 确认效果尚未发生才允许继续。统一决定层遇到已经应用的效果时返回 settle，不再消耗派发预算。
 
 启用条件为 `OPENCLAW_RECOVERY_AUTHORITY_MODE=authority`，并同时选择 `OPENCLAW_TASK_LOOP_LIFECYCLE_WRITER=taskflow` 和 `OPENCLAW_EXECUTION_PHASE_WRITER=taskflow`。恢复预算记录保存在现有 Session SQLite 中。未知效果保留为对账状态；切回 legacy 后，这些保留记录仍阻止重复执行。

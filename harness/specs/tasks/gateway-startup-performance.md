@@ -13,6 +13,7 @@ touchedAreas:
   - openclaw_runtime/src/entry.ts
   - openclaw_runtime/src/gateway/**
   - openclaw_runtime/src/plugins/doctor-contract-registry.ts
+  - openclaw_runtime/src/plugins/native-module-require.ts
   - openclaw_runtime/scripts/profile-extension-memory.mjs
   - tests/unit/gateway-doctor-contract-loading.test.ts
   - scripts/measure-gateway-startup.mjs
@@ -34,6 +35,7 @@ requiredRules:
 acceptance:
   - Before and after measurements use the same built runtime, isolated state, and real Electron utility processes; the baseline explicitly reconstructs the prior contract loader, and raw phase timings are retained and agent driven.
   - Startup optimizations reduce measured latency without treating socket listening as authenticated RPC readiness.
+  - Compiled plugin file URLs reach the native loader on Windows; encoded names and cache invalidation preserve filesystem identity, and source/dependency fallback policies remain intact.
   - Focused tests cover the optimization and its failure path; Electron coverage exercises a real Gateway with an authenticated RPC and clean shutdown.
   - Source overlays and external plugin roots remain authoritative; the benchmark uses loopback-only binding, per-attempt random credentials, and observed loader invocations despite inherited bypass flags.
   - Communication replay, comparison, relevant type checks, and Harness validation pass, or exact residual failures are recorded.

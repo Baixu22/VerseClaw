@@ -98,6 +98,11 @@ touchedAreas:
   - tests/e2e/recovery*.spec.ts
   - tests/e2e/fixtures/recovery-contract-probe.ts
   - scripts/recovery*.mjs
+  - scripts/recovery*.d.mts
+  - tests/unit/recovery-acceptance-checks.test.ts
+  - tests/unit/gateway-native-module-loading.test.ts
+  - openclaw_runtime/src/plugins/native-module-require.ts
+  - harness/specs/tasks/gateway-startup-performance.md
   - scripts/typecheck-agent-dev.mjs
   - src/components/file-preview/MonacoViewer.tsx
   - src/components/layout/Sidebar.tsx
@@ -174,6 +179,8 @@ requiredTests:
   - tests/unit/recovery-authority-contract.test.ts
   - tests/unit/recovery-contract-eval.test.ts
 acceptance:
+  - Native fault fixtures create and claim the real workspace task before injection; handoff/fork fixtures consume the typed active workspace owner returned by the Host API.
+  - Frozen acceptance rejects missing build inputs before live calls and returns failure for a failed candidate evaluation even when all sample receipts are present.
   - Initial and update model calls pass active statements as complete original lines without synthesized labels, colons, or repeated identifiers; branch regressions and same-candidate live compression readback verify preservation.
   - A recovery observer accepts a running Session reconciliation only after its original execution phase records needsReconciliation; owner reservation decisions remain pending within the original observation budget.
   - Probe decisions retain observation order independently of PID filenames; the frozen baseline projection and its retained fields remain unchanged.
