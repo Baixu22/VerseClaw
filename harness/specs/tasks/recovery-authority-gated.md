@@ -118,6 +118,10 @@ touchedAreas:
   - openclaw_runtime/scripts/generate-ts-max-loc-baseline.mjs
   - openclaw_runtime/scripts/ts-max-loc-baseline.json
   - openclaw_runtime/src/agents/main-session-restart-recovery.schedule.test.ts
+  - scripts/agent-dev-deep-test.mjs
+  - electron/gateway/manager.ts
+  - electron/gateway/process-policy.ts
+  - openclaw_runtime/src/agents/main-session-restart-recovery.ts
   - scripts/repository-artifacts.json
   - .gitignore
   - README.md

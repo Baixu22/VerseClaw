@@ -1,0 +1,40 @@
+{
+  "schema": "G3LatencyComponentFix/v1",
+  "driven_by": "agent",
+  "actor": "codex-g3-loc-closeout",
+  "realHumanEvidence": false,
+  "problem": {
+    "frozenCandidate": "6115256e882051a154945b5b7298ef8a83d756cc",
+    "recoveryP50Ms": 17439,
+    "recoveryP95Ms": 83204,
+    "repeatedRestartMs": [90769, 90613, 109779],
+    "thirdKillToResumeMs": 35393,
+    "buildObservedMs": 1621766,
+    "buildReportedPassesMs": [36290, 3310, 13]
+  },
+  "changes": {
+    "candidateRecoveryInitialDelayMs": { "from": 1000, "to": 0 },
+    "candidateRecoveryRetryDelayMs": { "from": "exponential up to 10000", "to": 250 },
+    "gatewayRestartCooldownMs": { "from": 5000, "to": 1000 },
+    "gatewayReconnectBaseAndMaxDelayMs": { "from": [1000, 30000], "to": [250, 1000] },
+    "deepTestWindowsSpawn": "windowsHide: true"
+  },
+  "focusedGates": {
+    "typecheck": "PASS",
+    "targetEslint": "PASS",
+    "rootRecoveryAndAgentDevUnitTests": "91 passed",
+    "runtimeScheduleAndFlowTests": "25 passed",
+    "gatewayManagerUnitTests": "22 passed",
+    "contract": "PASS",
+    "i18n": "PASS",
+    "commsReplayAndCompare": "PASS",
+    "runtimeSourcePolicyAndLoc": "PASS",
+    "harnessValidateAndDryRun": "PASS"
+  },
+  "newMeasurements": {
+    "buildViteElapsedMs": 78538,
+    "deepTestFreshBuildMs": 62370,
+    "frozenAcceptance": "NOT_RUN"
+  },
+  "gaStatus": "NO_GO"
+}

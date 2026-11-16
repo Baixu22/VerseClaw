@@ -66,6 +66,8 @@ import type { SessionLockInspection } from "./session-write-lock.js";
 const log = createSubsystemLogger("main-session-restart-recovery");
 
 const DEFAULT_RECOVERY_DELAY_MS = 5_000;
+const CANDIDATE_RECOVERY_DELAY_MS = 0;
+const CANDIDATE_RETRY_DELAY_MS = 250;
 const MAX_RECOVERY_RETRIES = 3;
 const RETRY_BACKOFF_MULTIPLIER = 2;
 const UNRESUMABLE_SESSION_NOTICE =
@@ -926,11 +928,9 @@ export function scheduleRestartAbortedMainSessionRecovery(
   } = {},
 ): void {
   const candidateMode = isExecutionPhaseWriterEnabled();
-  const initialDelay = params.delayMs ?? (candidateMode ? 1_000 : DEFAULT_RECOVERY_DELAY_MS);
+  const initialDelay = params.delayMs ?? (candidateMode ? CANDIDATE_RECOVERY_DELAY_MS : DEFAULT_RECOVERY_DELAY_MS);
   const nextDelay = (delay: number) =>
-    candidateMode
-      ? Math.min(delay * RETRY_BACKOFF_MULTIPLIER, 10_000)
-      : delay * RETRY_BACKOFF_MULTIPLIER;
+    candidateMode ? CANDIDATE_RETRY_DELAY_MS : delay * RETRY_BACKOFF_MULTIPLIER;
   const maxRetries = params.maxRetries ?? MAX_RECOVERY_RETRIES;
   const resumedSessionKeys = new Set<string>();
 

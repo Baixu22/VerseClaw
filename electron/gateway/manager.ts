@@ -279,7 +279,8 @@ export class GatewayManager extends EventEmitter {
   private static readonly HEARTBEAT_INTERVAL_MS = 60_000;
   private static readonly HEARTBEAT_TIMEOUT_MS = 30_000;
   private static readonly HEARTBEAT_MAX_MISSES = 4;
-  public static readonly RESTART_COOLDOWN_MS = 5_000;
+  /** Crash reconnects are bounded by a fixed cooldown instead of compounding an exponential delay. */
+  public static readonly RESTART_COOLDOWN_MS = 1_000;
   /** R0-4: a reconnect only settles the attempt counter after this much proven uptime. */
   public static readonly RECONNECT_STABLE_RESET_MS = 60_000;
   /** R0-5: self-heal probe cadence after reconnect attempts are exhausted. */

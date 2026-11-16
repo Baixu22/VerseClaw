@@ -70,8 +70,8 @@ Goal-wake 在原 `task_runs.progress_summary` 中保存统一对账决定。原 
 
 冻结候选 `6115256e` 的 GA 为 **NO_GO**：恢复 P50/P95 为 17.439/83.204 秒，构建 1,621.766 秒超出 58 秒限额，源码行数门禁有 165 项失败。类型检查 27.079 秒满足 45 秒限额，完整功能步骤、Harness 证据与覆盖尾门通过。
 
-主线整合候选 `7abba413c47be1e5a772bda7bb3aafc8e87b14c5` 已消除与 main `c3521cfc4` 的十二处冲突。200 次回归、完整无缓存 Node/Web/Test 类型检查、桌面与 runtime 构建、Gateway 启动检查、通信、contract 和目标 Harness 通过；固定 DeepSeek fresh review 发现 0 项问题。旧冻结快照的源码行数门禁有 203 项失败；该失败对应的 2026-10-10 基线已由 G3 收尾分支按当前源码刷新为 1100 项既有超限文件，500 行限额及新增/增长拒绝规则不变。恢复调度新增 legacy 5 秒、taskflow 1 秒首轮等待的定向测试。完整冻结实测状态为 `NOT_RUN`，GA 保持 NO_GO。源码与原件见[主线整合开发验证](../../../harness/specs/fixtures/recovery-contract-eval/ga-20261106/main-integration-20261116/README.md)。后续先优化时延和完整构建耗时，再在新的干净候选上按原门槛实测。
+主线整合候选 `7abba413c47be1e5a772bda7bb3aafc8e87b14c5` 已消除与 main `c3521cfc4` 的十二处冲突。200 次回归、完整无缓存 Node/Web/Test 类型检查、桌面与 runtime 构建、Gateway 启动检查、通信、contract 和目标 Harness 通过；固定 DeepSeek fresh review 发现 0 项问题。旧冻结快照的源码行数门禁有 203 项失败；该失败对应的 2026-10-10 基线已由 G3 收尾分支按当前源码刷新为 1100 项既有超限文件，500 行限额及新增/增长拒绝规则不变。恢复调度定向测试现覆盖 legacy 5 秒、taskflow 0 秒首轮等待及 250 ms 重试。完整冻结实测状态为 `NOT_RUN`，GA 保持 NO_GO。源码与原件见[主线整合开发验证](../../../harness/specs/fixtures/recovery-contract-eval/ga-20261106/main-integration-20261116/README.md)。后续先优化时延和完整构建耗时，再在新的干净候选上按原门槛实测。
 
-冻结验收要求 5 个故障窗口、每窗口至少 3 次、至少 30 对真实模型长会话、9 个指标，以及 P50 ≤ 5000ms、P95 ≤ 15000ms 和重复基线结构一致性。所有原生样本启动前须满足 2500 MiB 可用内存，candidate 同时启用 authority 与两种 taskflow writer。发布候选还需通过完整源码与打包门禁。当前默认 writer 为 legacy；默认值切换由发布者决定。
+收尾分支已收紧候选恢复扫描与 Gateway 崩溃重连：taskflow 首轮恢复扫描从 1 秒改为 0 秒，失败重试固定 250 ms；Gateway 重启冷却从 5 秒改为 1 秒，重连退避上限从 30 秒改为 1 秒。deep-test 的 Windows pnpm 调用增加隐藏窗口，避免隐藏 cmd.exe 的控制台句柄延长步骤计时。冻结验收要求 5 个故障窗口、每窗口至少 3 次、至少 30 对真实模型长会话、9 个指标，以及 P50 ≤ 5000ms、P95 ≤ 15000ms 和重复基线结构一致性。所有原生样本启动前须满足 2500 MiB 可用内存，candidate 同时启用 authority 与两种 taskflow writer。发布候选还需通过完整源码与打包门禁。当前默认 writer 为 legacy；默认值切换由发布者决定。
 
 此前实测见 [恢复评测](FINAL-20261105.zh-CN.md) 与 [后续验证](FOLLOWUP-20261106.zh-CN.md)。最新节点证据完成后收录在 `harness/specs/fixtures/recovery-contract-eval/ga-20261106/`。
