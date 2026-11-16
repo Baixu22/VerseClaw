@@ -51,13 +51,15 @@ test('a real isolated schedule admits its first write without replacing the proj
     });
     ((evidence.workspaceConfig ??= []) as unknown[]).push({ stage, profiles, config });
     await writeFile(testInfo.outputPath('scheduled-task-scope.json'), JSON.stringify(evidence, null, 2));
+    return config;
   };
   try {
     await getStableWindow(app);
     await configureSessionChainProvider(app, llm.port);
     await captureWorkspaceConfig('after-provider');
     const project = await createSessionChainProject(app, testInfo.outputPath('scheduled-workspace'), 'Scheduled project');
-    await captureWorkspaceConfig('after-project-start');
+    const effectiveConfig = await captureWorkspaceConfig('after-project-start');
+    expect(effectiveConfig.isolated?.defaultWorkspace).toBe(project.rootPath);
     const job = await hostInvoke<{ id: string }>(app, 'cron', 'create', { name: 'Agent schedule acceptance', agentId: 'main',
       schedule: '0 0 1 1 *', enabled: false, message: 'A4-SCHEDULED-EFFECT: write the assigned result.', delivery: { mode: 'none' } });
     const trigger = await hostInvoke(app, 'cron', 'trigger', { id: job.id });

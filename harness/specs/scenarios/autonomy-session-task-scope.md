@@ -20,3 +20,4 @@ requiredRules:
 8. Fork 与 Handoff 的链接记录其独立运行时 generation。Handoff 先通过 runtime owner 创建并核实父关系，再关联 Workspace 和任务；同一操作恢复时复用 child 和首发 key。协调器和执行准入仍独立验证。
 9. 明确执行由 `task_control.start` 原子建立或选择带验收条件的持久合同；首个非纯读工具效果通过专用 runtime → Main 准入复用该 TaskID 和执行 epoch。未知工具需要准入；缺合同、只读引用、陈旧 owner 或没有实际效果 owner 时拒绝写操作。
 10. worker 在派发时保存 requester generation 和只读任务引用；父会话后来选择另一任务不改变该来源。worker 后续运行通过原 child 记录重新核验。
+11. 活动项目的目录、权限和模型配置经同一配置 owner 串行提交；定时任务在 Gateway 生效配置中使用该项目目录，并保留原项目协调器。

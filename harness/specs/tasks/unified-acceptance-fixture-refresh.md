@@ -13,8 +13,11 @@ ownedPaths: &paths
   - README.ru-RU.md
   - docs/modules/multi-agent-and-tasks.md
   - harness/specs/rules/session-derivation-ui-contract.md
+  - harness/specs/rules/autonomy-session-task-scope-boundary.md
+  - harness/specs/scenarios/autonomy-session-task-scope.md
   - electron/services/sessions-api.ts
   - electron/services/workspaces-api.ts
+  - electron/services/workspace-runtime-sync.ts
   - openclaw_runtime/src/gateway/session-utils.ts
   - openclaw_runtime/src/gateway/server-methods/session-activity.ts
   - openclaw_runtime/src/gateway/server-methods/session-activity.test.ts
@@ -38,6 +41,7 @@ ownedPaths: &paths
   - harness/specs/rules/gateway-readiness-policy.md
   - shared/host-api/contract.ts
   - tests/unit/workspace-session.test.ts
+  - tests/unit/workspace-runtime-sync.test.ts
   - tests/unit/session-family-navigation.test.tsx
   - tests/unit/session-generation-freshness.test.ts
   - tests/unit/session-handoff-recovery.test.ts
@@ -81,6 +85,7 @@ ownedPaths: &paths
   - tests/e2e/fixtures/windows-process.ts
   - harness/specs/guides/long-session-delegation-admission.md
   - harness/specs/tasks/unified-acceptance-fixture-refresh.md
+  - harness/specs/tasks/unified-active-workspace-config.md
   - harness/specs/tasks/autonomy-task-actions.md
   - harness/specs/tasks/autonomy-task-completion.md
   - harness/specs/tasks/autonomy-host-readiness.md
@@ -94,6 +99,7 @@ requiredRules:
   - docs-sync
   - comms-regression
   - repository-artifact-retention
+  - local-data-fail-closed-config
 requiredProfiles:
   - fast
   - comms
@@ -103,6 +109,7 @@ expectedUserBehavior:
   - Delegation uses a live task claim; task acceptance remains separate from worker completion.
   - Lifecycle operations retain their original workspace and retry operation identity.
 acceptance:
+  - Workspace directory and permission updates share the existing configuration mutex with model writers and read the current active project after acquiring that lock.
   - Fork and Handoff regression journeys open the current session menu through its existing header control and retain the original action and rejection assertions.
   - Chat passes the active session generation to its checkpoint dialog; restoring a checkpoint sends that exact generation through the Host API.
   - Electron Main bundles local media-core imports from checked-in runtime sources, so startup does not require a root node_modules copy of that private workspace package.
@@ -140,6 +147,7 @@ acceptance:
   - Opening the resource popover reads the current session's activity owner through the existing store even when background status polling has stopped.
   - Cleanup reports launch markers remaining on disk after native process checks and removal, retains the detected count, and preserves markers when process discovery is unavailable.
 requiredTests:
+  - pnpm exec vitest run tests/unit/workspace-runtime-sync.test.ts tests/unit/atomic-config-write-p5-001.test.ts tests/unit/r0-2-models-json-lock.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec vitest run tests/unit/dcs-preview-switch.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec vitest run tests/unit/electron-window-size.test.ts --maxWorkers=1 --no-file-parallelism
   - pnpm exec vitest run tests/unit/resource-chip-activity-readback.test.tsx tests/unit/session-activity-store-scope.test.ts --maxWorkers=1 --no-file-parallelism

@@ -8,6 +8,8 @@ Provider spend limits can be enabled explicitly with `runtime.providerBudget` fo
 
 # Verse Claw
 
+Activating a project keeps its directory and permission policy aligned with the runtime while preserving the selected model.
+
 Git initialization and worktree creation or switching are available inside the project menu, alongside the existing workspace choices.
 
 Session controls retain drafts and show outcomes confirmed by their owners. Archive settings lists interrupted archive, restore and delete operations and continues the saved operation. Context changes verify the session generation; Storage preserves checkouts owned by tasks or sessions. Checkpoint recovery sends the current session generation and uses the conversation’s recorded working directory. Chat reads current connection readiness and session controls from the Gateway after reload.

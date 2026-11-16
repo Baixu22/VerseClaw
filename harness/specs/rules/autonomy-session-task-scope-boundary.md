@@ -16,3 +16,4 @@ appliesTo:
 5. Handoff 后旧 generation 的写 claim 失效；重新绑定后才能产生副作用。
 6. 任务未变化时绑定已有任务不得改动其完成状态；连续普通讨论不创建业务 task。
 7. 外部 Forest 任务只能作为 execution anchor 的 externalRef；不得把 externalRef 当作 Task Ledger done。
+8. 活动项目的目录和权限同步使用既有配置锁，在锁内读取当前 Workspace owner 与配置；与模型配置更新并发时，最终配置保留三者，并在 Gateway 启动后回读生效目录。

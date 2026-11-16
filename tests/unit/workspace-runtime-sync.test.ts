@@ -20,10 +20,16 @@ const state = vi.hoisted(() => ({
 }));
 
 vi.mock('@electron/utils/channel-config', () => ({
-  readOpenClawConfig: vi.fn(async () => state.config),
+  readOpenClawConfig: vi.fn(async () => structuredClone(state.config)),
   writeOpenClawConfig: vi.fn(async (config: Record<string, unknown>) => {
+    state.config = structuredClone(config);
     state.writes.push(JSON.parse(JSON.stringify(config)) as Record<string, unknown>);
   }),
+}));
+
+vi.mock('@electron/utils/atomic-write', async (importOriginal) => ({
+  ...await importOriginal<typeof import('@electron/utils/atomic-write')>(),
+  withFileLock: async (_target: string, fn: () => Promise<unknown>) => fn(),
 }));
 
 vi.mock('@electron/services/sandbox-state', () => ({
@@ -155,6 +161,48 @@ describe('FP-P1-02 syncActiveWorkspaceRootToRuntime', () => {
   beforeEach(() => {
     state.config = {};
     state.writes = [];
+    state.activeWorkspace.rootPath = 'C:/project';
+    readActiveWorkspace.mockClear();
+  });
+
+  it('preserves a concurrent model update and reads the active workspace after the writer completes', async () => {
+    const { readOpenClawConfig, writeOpenClawConfig } = await import('@electron/utils/channel-config');
+    const { withConfigLock } = await import('@electron/utils/config-mutex');
+    const { syncActiveWorkspacePermissionToRuntime } = await import('@electron/services/workspace-runtime-sync');
+    state.activeWorkspace.permissionMode = 'readOnly';
+    state.effectiveProviderId = 'policy-light';
+    let releaseWriter!: () => void;
+    let signalRead!: () => void;
+    const writerGate = new Promise<void>((resolve) => { releaseWriter = resolve; });
+    const writerRead = new Promise<void>((resolve) => { signalRead = resolve; });
+    const modelUpdate = withConfigLock(async () => {
+      const config = await readOpenClawConfig();
+      signalRead();
+      await writerGate;
+      config.agents = { defaults: { model: { primary: 'fixture/model' } } };
+      await writeOpenClawConfig(config);
+    }, { lockTargetPath: null });
+    await writerRead;
+    let rootSettled = false;
+    const permission = syncActiveWorkspacePermissionToRuntime(readActiveWorkspace);
+    const root = syncActiveWorkspaceRootToRuntime(readActiveWorkspace).then(() => { rootSettled = true; });
+    await new Promise<void>((resolve) => { setTimeout(resolve, 0); });
+    const settledBeforeModelWrite = rootSettled;
+    const ownerReadsBeforeModelWrite = readActiveWorkspace.mock.calls.length;
+    state.activeWorkspace.rootPath = 'D:/current-project';
+    state.activeWorkspace.permissionMode = 'fullAccess';
+    releaseWriter();
+    await Promise.all([modelUpdate, permission, root]);
+    expect(settledBeforeModelWrite).toBe(false);
+    expect(ownerReadsBeforeModelWrite).toBe(0);
+    expect(state.config).toMatchObject({
+      agents: { defaults: {
+        model: { primary: 'fixture/model' },
+        workspace: 'D:/current-project',
+        sandbox: { workspaceAccess: 'none' },
+      } },
+      tools: { exec: { security: 'full', ask: 'off' } },
+    });
   });
 
   it('writes the active rootPath into agents.defaults.workspace', async () => {
