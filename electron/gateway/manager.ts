@@ -782,7 +782,9 @@ export class GatewayManager extends EventEmitter {
       // in restart-governor.ts.)
       const waitMs = Math.max(0, decision.retryAfterMs);
       if (waitMs > 0 && waitMs <= RESTART_COOLDOWN_MAX_WAIT_MS) {
+        const restartEpoch = this.lifecycleController.getCurrentEpoch();
         await new Promise((resolve) => setTimeout(resolve, waitMs + 50));
+        if (this.lifecycleController.getCurrentEpoch() !== restartEpoch) return;
         await this.restart();
       }
       return;
@@ -791,10 +793,18 @@ export class GatewayManager extends EventEmitter {
     const pidBefore = this.status.pid;
     logger.info(`[gateway-refresh] mode=restart requested pidBefore=${pidBefore ?? 'n/a'}`);
     this.restartInFlight = (async () => {
-      await this.stop();
+      const stopping = this.stop();
+      const stopEpoch = this.lifecycleController.getCurrentEpoch();
+      await stopping;
+      this.lifecycleController.assert(stopEpoch, 'restart/stop');
+      const starting = this.start();
+      const startEpoch = this.lifecycleController.getCurrentEpoch();
       try {
-        await this.start();
+        await starting;
+        this.lifecycleController.assert(startEpoch, 'restart/start');
       } catch (err) {
+        this.lifecycleController.assert(startEpoch, 'restart/recovery');
+        if (err instanceof LifecycleSupersededError) throw err;
         // stop() set shouldReconnect=false. Restore it so the gateway
         // can self-heal via scheduleReconnect() instead of dying permanently.
         logger.warn('Gateway restart: start() failed after stop(), enabling auto-reconnect recovery', err);
@@ -819,6 +829,9 @@ export class GatewayManager extends EventEmitter {
         `[gateway-refresh] mode=restart result=applied pidBefore=${pidBefore ?? 'n/a'} pidAfter=${this.status.pid ?? 'n/a'} ` +
         `suppressed=${observability.suppressed_total} executed=${observability.executed_total} circuitOpenUntil=${observability.circuit_open_until}`,
       );
+    } catch (error) {
+      if (!(error instanceof LifecycleSupersededError)) throw error;
+      logger.debug(`Gateway restart superseded: ${error.message}`);
     } finally {
       this.restartInFlight = null;
       this.restartController.flushDeferredRestart(

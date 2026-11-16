@@ -179,6 +179,7 @@ describe('GatewayManager restart recovery', () => {
     { name: 'reload on external process attachment', before: ['reload'], after: [], outcome: 'external', restarts: 1 },
     { name: 'reload on owned process reconnection without configuration capture', before: ['reload'], after: [], outcome: 'owned', restarts: 1 },
     { name: 'reload after a spawned process recovers on retry', before: ['reload'], after: [], outcome: 'spawned-retry', restarts: 0 },
+    { name: 'later reload before a spawned process recovers on retry', before: ['reload'], after: ['reload'], outcome: 'spawned-retry', restarts: 1 },
   ])('handles $name', async ({ before, after, outcome, restarts }) => {
     const { GatewayManager } = await import('@electron/gateway/manager');
     const { runGatewayStartupSequence } = await import('@electron/gateway/startup-orchestrator');
@@ -252,5 +253,67 @@ describe('GatewayManager restart recovery', () => {
     await internals.restartInFlight;
     expect(runGatewayStartupSequence).toHaveBeenCalledTimes(2);
     expect(manager.getStatus().state).toBe('running');
+  });
+
+  it.each(['stop', 'start', 'start-failure'] as const)('preserves an explicit stop during restart %s', async (phase) => {
+    const { GatewayManager } = await import('@electron/gateway/manager');
+    const manager = new GatewayManager();
+    const internals = manager as unknown as {
+      status: { state: string; port: number };
+      shouldReconnect: boolean;
+      scheduleReconnect: () => void;
+      restartGovernor: { getObservability: () => { executed_total: number } };
+    };
+    internals.status = { state: 'running', port: 18789 };
+    internals.shouldReconnect = true;
+    let entered!: () => void;
+    let release!: () => void;
+    const waiting = new Promise<void>(resolve => { entered = resolve; });
+    const pending = new Promise<void>(resolve => { release = resolve; });
+    const originalStop = manager.stop.bind(manager);
+    if (phase === 'stop') {
+      vi.spyOn(manager, 'stop').mockImplementationOnce(async () => {
+        await originalStop();
+        entered();
+        await pending;
+      });
+    }
+    const start = vi.spyOn(manager, 'start').mockImplementation(async () => {
+      if (phase !== 'stop') {
+        entered();
+        await pending;
+        if (phase === 'start-failure') throw new Error('cancelled startup failure');
+      }
+    });
+    const reconnect = vi.spyOn(internals, 'scheduleReconnect').mockImplementation(() => undefined);
+    const restart = manager.restart();
+    const outcome = restart.catch(error => error);
+    await waiting;
+    await manager.stop();
+    release();
+    await outcome;
+    expect(internals.shouldReconnect).toBe(false);
+    expect(manager.getStatus().state).toBe('stopped');
+    expect(reconnect).not.toHaveBeenCalled();
+    expect(internals.restartGovernor.getObservability().executed_total).toBe(0);
+    if (phase === 'stop') expect(start).not.toHaveBeenCalled();
+  });
+
+  it('cancels a restart waiting for its cooldown when explicitly stopped', async () => {
+    const { GatewayManager } = await import('@electron/gateway/manager');
+    const manager = new GatewayManager();
+    const internals = manager as unknown as {
+      status: { state: string; port: number };
+      restartGovernor: { recordExecuted: () => void };
+    };
+    internals.status = { state: 'running', port: 18789 };
+    internals.restartGovernor.recordExecuted();
+    const start = vi.spyOn(manager, 'start').mockResolvedValue(undefined);
+    const restart = manager.restart();
+    await manager.stop();
+    await vi.advanceTimersByTimeAsync(3000);
+    await restart;
+    expect(start).not.toHaveBeenCalled();
+    expect(manager.getStatus().state).toBe('stopped');
   });
 });

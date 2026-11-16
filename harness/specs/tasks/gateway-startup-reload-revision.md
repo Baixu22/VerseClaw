@@ -39,6 +39,7 @@ acceptance:
   - A monotonic request revision is captured before launch configuration is read; only a successful launch can consume the unchanged reload-only queue.
   - Reloads after capture, explicit restarts, failed starts and attachment to existing processes retain unresolved refresh requests.
   - Requests queued during an explicit restart are flushed after its in-flight promise settles.
+  - An explicit stop supersedes pending restart phases through the existing lifecycle epoch, including startup failure recovery, without recording a successful restart.
   - The original task-scope and coordinator Electron journeys retain their assertions, case identities and timeouts.
 requiredTests:
   - pnpm exec vitest run tests/unit/gateway-manager-restart-recovery.test.ts tests/unit/gateway-restart-cooldown-fp-p1-12.test.ts tests/unit/gateway-manager-reload-policy-refresh.test.ts tests/unit/gateway-process-policy.test.ts --maxWorkers=1 --no-file-parallelism

@@ -27,3 +27,7 @@ their request revision was captured before launch configuration was read and has
 not changed. Explicit restarts, later reloads and reconnects without that capture
 remain pending. Flush requests queued during a restart after its promise settles;
 completion timestamps do not establish which configuration a process loaded.
+
+An explicit stop supersedes pending restart work at each asynchronous boundary.
+A superseded restart must not start a new process, re-enable reconnect, or record
+a successful restart after the stop.
