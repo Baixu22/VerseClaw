@@ -21,3 +21,9 @@ Status confirmation and reconciliation consume the complete Main Gateway snapsho
 A status event received after a snapshot request started remains current when that snapshot replies late.
 
 Confirmation and reconciliation share a request sequence. A superseded response cannot apply or prevent the latest requested snapshot from applying.
+
+A successful managed launch may consume queued configuration reloads only when
+their request revision was captured before launch configuration was read and has
+not changed. Explicit restarts, later reloads and reconnects without that capture
+remain pending. Flush requests queued during a restart after its promise settles;
+completion timestamps do not establish which configuration a process loaded.

@@ -16,8 +16,8 @@ type DeferredRestartContext = RestartDeferralState & {
 
 export class GatewayRestartController {
   private deferredRestartPending = false;
-  private deferredRestartRequestedAt = 0;
-  private lastRestartCompletedAt = 0;
+  private deferredRestartRevision = 0;
+  private deferredReloadOnly = true;
   private restartDebounceTimer: NodeJS.Timeout | null = null;
 
   isRestartDeferred(context: RestartDeferralState): boolean {
@@ -35,13 +35,19 @@ export class GatewayRestartController {
       );
     }
     this.deferredRestartPending = true;
-    if (this.deferredRestartRequestedAt === 0) {
-      this.deferredRestartRequestedAt = Date.now();
-    }
+    this.deferredRestartRevision++;
+    this.deferredReloadOnly &&= reason === 'reload';
   }
 
-  recordRestartCompleted(): void {
-    this.lastRestartCompletedAt = Date.now();
+  captureStartupReloadRevision(): number {
+    return this.deferredRestartRevision;
+  }
+
+  consumeStartupReload(revision: number): void {
+    if (this.deferredRestartPending && this.deferredReloadOnly && this.deferredRestartRevision === revision) {
+      logger.info(`Gateway launch consumed deferred configuration reload (revision=${revision})`);
+      this.resetDeferredRestart();
+    }
   }
 
   flushDeferredRestart(
@@ -64,22 +70,10 @@ export class GatewayRestartController {
       return;
     }
 
-    const requestedAt = this.deferredRestartRequestedAt;
-    this.deferredRestartPending = false;
-    this.deferredRestartRequestedAt = 0;
+    this.resetDeferredRestart();
     if (action === 'drop') {
       logger.info(
         `Dropping deferred Gateway restart (${trigger}) because lifecycle already recovered (state=${context.state}, shouldReconnect=${context.shouldReconnect})`,
-      );
-      return;
-    }
-
-    // If a restart already completed after this deferred request was made,
-    // the current process is already running with the latest config —
-    // skip the redundant restart to avoid "just started then restart" loops.
-    if (requestedAt > 0 && this.lastRestartCompletedAt >= requestedAt) {
-      logger.info(
-        `Dropping deferred Gateway restart (${trigger}): a restart already completed after the request (requested=${requestedAt}, completed=${this.lastRestartCompletedAt})`,
       );
       return;
     }
@@ -108,6 +102,6 @@ export class GatewayRestartController {
 
   resetDeferredRestart(): void {
     this.deferredRestartPending = false;
-    this.deferredRestartRequestedAt = 0;
+    this.deferredReloadOnly = true;
   }
 }

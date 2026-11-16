@@ -537,6 +537,7 @@ export class GatewayManager extends EventEmitter {
       const t0 = Date.now();
       let tSpawned = 0;
       let tReady = 0;
+      let startupReloadRevision: number | undefined;
 
       await runGatewayStartupSequence({
         port: this.status.port,
@@ -570,13 +571,10 @@ export class GatewayManager extends EventEmitter {
             this.setStatus({ pid: undefined });
           }
 
-          // Treat a successful reconnect to the owned process as a restart
-          // completion (e.g. after a Gateway code-1012 in-process restart).
-          // This updates lastRestartCompletedAt so that flushDeferredRestart
-          // drops any deferred restart requested before this reconnect,
-          // avoiding a redundant kill+respawn cycle.
-          if (isOwnProcess) {
-            this.restartController.recordRestartCompleted();
+          // A retry may connect to the process spawned by this same startup.
+          // An ordinary reconnect gives no evidence of which config it read.
+          if (isOwnProcess && startupReloadRevision !== undefined) {
+            this.restartController.consumeStartupReload(startupReloadRevision);
           }
 
           this.startHealthCheck();
@@ -585,6 +583,8 @@ export class GatewayManager extends EventEmitter {
           await waitForPortFree(port);
         },
         startProcess: async () => {
+          // Capture before prepareGatewayLaunchContext reads configuration.
+          startupReloadRevision = this.restartController.captureStartupReloadRevision();
           await this.startProcess();
           tSpawned = Date.now();
         },
@@ -599,6 +599,9 @@ export class GatewayManager extends EventEmitter {
           tReady = Date.now();
         },
         onConnectedToManagedGateway: () => {
+          if (startupReloadRevision !== undefined) {
+            this.restartController.consumeStartupReload(startupReloadRevision);
+          }
           this.startHealthCheck();
           const tConnected = Date.now();
           logger.info('[metric] gateway.startup', {
@@ -633,7 +636,9 @@ export class GatewayManager extends EventEmitter {
       throw error;
     } finally {
       this.startLock = false;
-      this.restartController.flushDeferredRestart(
+      // The enclosing restart must settle before a new restart can execute;
+      // otherwise restart() joins the old promise and loses the queued update.
+      if (!this.restartInFlight) this.restartController.flushDeferredRestart(
         'start:finally',
         {
           state: this.status.state,
@@ -802,7 +807,6 @@ export class GatewayManager extends EventEmitter {
     try {
       await this.restartInFlight;
       this.restartGovernor.recordExecuted();
-      this.restartController.recordRestartCompleted();
       const observability = this.restartGovernor.getObservability();
       const props = {
         gateway_restart_executed_total: observability.executed_total,

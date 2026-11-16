@@ -146,20 +146,17 @@ test('real Gateway keeps discussion empty, admits one write, and restores the sa
         workspaceId, sessionKey: key, message: marker, idempotencyKey: `acceptance-${marker}`, ...extra,
       });
       expect(result.success, result.error).toBe(true);
+      const runId = result.result?.runId;
+      expect(runId).toBeTruthy();
+      await expect.poll(async () => {
+        const state = await rpc<{ status: string }>('agent.wait', { runId: runId!, timeoutMs: 1000 });
+        await record(`completion-${marker}`, state);
+        return state.status;
+      }, { timeout: 30_000 }).toBe('ok');
       await expect.poll(async () => JSON.stringify((await rpc<{ messages?: unknown[] }>('chat.history', { sessionKey: key, limit: 100 })).messages ?? [])
         .includes(`FINISHED ${marker}`), { timeout: 60_000 }).toBe(true);
       await expect.poll(async () => (await rpc<{ session?: { hasActiveRun?: boolean } }>('sessions.describe', { key })).session?.hasActiveRun ?? false,
         { timeout: 30_000 }).toBe(false);
-      if (marker === 'A4-EXECUTE' || marker === 'A4-CONTINUE') {
-        expect(result.result?.runId).toBeTruthy();
-        await expect.poll(async () => {
-          const state = await rpc<{ status: string }>('agent.wait', {
-            runId: result.result?.runId, timeoutMs: 1000,
-          });
-          await record(`completion-${marker}`, state);
-          return state.status;
-        }, { timeout: 30_000 }).toBe('ok');
-      }
     };
     for (let turn = 0; turn < 10; turn++) await send(sessionKey, `A4-DISCUSS-${turn}`);
     const discussion = await hostInvoke<{ snapshot: TaskLedgerSnapshot }>(app, 'taskLedger', 'snapshot', { workspaceId });

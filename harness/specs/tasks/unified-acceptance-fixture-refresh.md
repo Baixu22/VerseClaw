@@ -18,6 +18,11 @@ ownedPaths: &paths
   - electron/services/sessions-api.ts
   - electron/services/workspaces-api.ts
   - electron/services/workspace-runtime-sync.ts
+  - electron/gateway/manager.ts
+  - electron/gateway/restart-controller.ts
+  - tests/unit/gateway-manager-restart-recovery.test.ts
+  - harness/specs/tasks/gateway-startup-reload-revision.md
+  - harness/specs/scenarios/gateway-backend-communication.md
   - openclaw_runtime/src/gateway/session-utils.ts
   - openclaw_runtime/src/gateway/server-methods/session-activity.ts
   - openclaw_runtime/src/gateway/server-methods/session-activity.test.ts
