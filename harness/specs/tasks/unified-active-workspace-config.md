@@ -11,6 +11,7 @@ ownedPaths: &paths
   - tests/unit/workspace-runtime-sync.test.ts
   - tests/e2e/session-task-scope-completion.spec.ts
   - harness/specs/tasks/unified-active-workspace-config.md
+  - harness/specs/tasks/unified-acceptance-fixture-refresh.md
   - harness/specs/rules/autonomy-session-task-scope-boundary.md
   - harness/specs/scenarios/autonomy-session-task-scope.md
   - docs/modules/multi-agent-and-tasks.md
